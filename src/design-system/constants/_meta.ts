@@ -1,11 +1,11 @@
 // src/design-system/constants/_meta.ts
 
 export const APP = {
-  name: "Exium.id",
-  poweredBy: "Exium.id",
-  link: "https://exium.id",
-  defaultTitle: "Exium.id",
-  titleTemplate: "%s | Exium.id",
+  name: "ATR-BPN",
+  poweredBy: "ATR-BPN",
+  link: "https://ATR-BPN",
+  defaultTitle: "ATR-BPN",
+  titleTemplate: "%s | ATR-BPN",
   description: "",
   version: "1.0.0",
   lastUpdated: "2025-09-13",

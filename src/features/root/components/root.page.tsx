@@ -1,7 +1,5 @@
 // src/features/root/components/root.page.tsx
 
-import { BrandWatermark } from "@/design-system/components/branding/brand-watermark";
-import { Logo } from "@/design-system/components/branding/logo";
 import {
   Button,
   IconButton,
@@ -57,7 +55,6 @@ export const RootPage = () => {
   return (
     <VStack minH={"100dvh"} bg={"bg.canvas"} gap={4}>
       <KeyFeatures />
-      <Branding />
       <Buttons />
       <DataDisplay />
       <Feedback />
@@ -100,24 +97,6 @@ export const KeyFeatures = () => {
             <AppTablerIcon icon={IconLanguage} />
             {getLocaleLabel(getLocale())}
           </Button>
-        </HStack>
-      </Container.Body>
-    </Container.Root>
-  );
-};
-
-export const Branding = () => {
-  return (
-    <Container.Root w={"full"} px={SPACING_MD}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Branding
-        </P>
-
-        <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
-          <Logo />
-
-          <BrandWatermark />
         </HStack>
       </Container.Body>
     </Container.Root>
