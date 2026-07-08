@@ -1,0 +1,10 @@
+// src/design-system/chakra/providers/chakra-system.provider.tsx
+
+"use client";
+
+import { chakraSystem } from "@/design-system/chakra/chakra-system";
+import { ChakraProvider } from "@chakra-ui/react";
+
+export function ChakraSystemProvider({ children }: React.PropsWithChildren) {
+  return <ChakraProvider value={chakraSystem}>{children}</ChakraProvider>;
+}
