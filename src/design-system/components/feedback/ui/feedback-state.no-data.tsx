@@ -10,8 +10,7 @@ import { IconHourglassEmpty } from "@tabler/icons-react";
 export const FeedbackNoData = (props: FeedbackStateProps) => {
   // Props
   const {
-    icon,
-    tablerIcon = IconHourglassEmpty,
+    icon = IconHourglassEmpty,
     title = t["common.no_data"](),
     description,
     children,
@@ -21,7 +20,6 @@ export const FeedbackNoData = (props: FeedbackStateProps) => {
   return (
     <FeedbackState
       icon={icon}
-      tablerIcon={tablerIcon}
       title={title}
       description={description}
       {...restProps}

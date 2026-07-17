@@ -154,7 +154,7 @@ const SigninCarousel = () => {
       <Carousel.Root
         loop
         autoplay={{
-          delay: 6500,
+          delay: 6000,
         }}
         slideCount={SIGNIN_CAROUSEL.length}
         flex={1}

@@ -11,8 +11,7 @@ import { IconMoodPuzzled } from "@tabler/icons-react";
 export const FeedbackNoResult = (props: FeedbackNoResultProps) => {
   // Props
   const {
-    icon,
-    tablerIcon = IconMoodPuzzled,
+    icon = IconMoodPuzzled,
     title = t["common.no_results_found_for"](),
     query = "...",
     children,
@@ -22,7 +21,6 @@ export const FeedbackNoResult = (props: FeedbackNoResultProps) => {
   return (
     <FeedbackState
       icon={icon}
-      tablerIcon={tablerIcon}
       title={title}
       {...restProps}
     >

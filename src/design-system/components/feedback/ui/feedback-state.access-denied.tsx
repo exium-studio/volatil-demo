@@ -10,8 +10,7 @@ import { IconForbid } from "@tabler/icons-react";
 export const FeedbackAccessDenied = (props: FeedbackStateProps) => {
   // Props
   const {
-    icon,
-    tablerIcon = IconForbid,
+    icon = IconForbid,
     title = t["common.forbidden"](),
     description = t["common.dont_have_access"](),
     children,
@@ -21,7 +20,6 @@ export const FeedbackAccessDenied = (props: FeedbackStateProps) => {
   return (
     <FeedbackState
       icon={icon}
-      tablerIcon={tablerIcon}
       title={title}
       description={description}
       {...restProps}

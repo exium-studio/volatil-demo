@@ -17,3 +17,6 @@ export type NoResultStateProps = FeedbackStateProps & {
 export type RetryStateProps = FeedbackStateProps & {
   onRetry?: () => void;
 };
+
+export type FeedbackNoResultProps = NoResultStateProps;
+export type FeedbackRetryProps = RetryStateProps;

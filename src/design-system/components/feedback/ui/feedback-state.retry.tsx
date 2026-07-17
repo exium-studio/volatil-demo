@@ -13,8 +13,7 @@ import { IconAlertTriangle } from "@tabler/icons-react";
 export const FeedbackRetry = (props: FeedbackRetryProps) => {
   // Props
   const {
-    icon,
-    tablerIcon = IconAlertTriangle,
+    icon = IconAlertTriangle,
     title = t["common.something_went_wrong"](),
     description = t["common.please_try_again"](),
     onRetry,
@@ -28,7 +27,6 @@ export const FeedbackRetry = (props: FeedbackRetryProps) => {
   return (
     <FeedbackState
       icon={icon}
-      tablerIcon={tablerIcon}
       title={title}
       description={description}
       {...restProps}
