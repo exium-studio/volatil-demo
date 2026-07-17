@@ -26,7 +26,6 @@ export function useToastHistory() {
       group,
       entries: entries.sort((a, b) => b.createdAt - a.createdAt),
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `all` is a fresh array each render by design (lazy TTL prune)
   }, [all]);
 
   const { deleteOne, deleteMany, clear, markRead, markAllRead } =
