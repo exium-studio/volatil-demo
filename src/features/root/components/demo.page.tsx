@@ -1,4 +1,4 @@
-// src/features/root/components/root.page.tsx
+// src/features/root/components/demo.page.tsx
 
 import {
   Button,
@@ -123,8 +123,6 @@ export const DemoPage = () => {
       <Feedback />
       <DataDisplay />
       <Utilities />
-
-      <ColorModeToggleButton pos={"fixed"} bottom={0} right={0} />
     </VStack>
   );
 };
