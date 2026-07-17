@@ -2,9 +2,7 @@
 
 import type { SETTINGS_NAVS } from "@/features/settings/constants/settings.navs";
 import type { TranslationKey } from "@/shared/libs/i18n/type";
-import type { ComponentType } from "react";
-
-export type SettingNavKey = keyof typeof SETTINGS_NAVS;
+import type { NavGroupItem, NavItem } from "@/shared/types/nav.type";
 
 export type GroupTitleKey = Extract<
   TranslationKey,
@@ -18,14 +16,6 @@ export type DescriptionKey = Extract<
   `settings.${string}.description`
 >;
 
-export type SettingNav = {
-  icon?: ComponentType;
-  titleKey?: TitleKey;
-  descriptionKey?: DescriptionKey;
-  keywords?: string[];
-};
-
-export type SettingsNavGroupItem = {
-  titleKey?: GroupTitleKey;
-  list: SettingNavKey[];
-};
+export type SettingNavKey = keyof typeof SETTINGS_NAVS;
+export type SettingNav = NavItem<TitleKey, DescriptionKey>;
+export type SettingsNavGroupItem = NavGroupItem<SettingNavKey, GroupTitleKey>;

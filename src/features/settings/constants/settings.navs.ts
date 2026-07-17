@@ -17,58 +17,58 @@ import {
 
 export const SETTINGS_NAVS = {
   profile: {
+    icon: User,
     titleKey: "settings.profile.title",
     descriptionKey: "settings.profile.description",
-    icon: User,
   },
   account: {
+    icon: UserCircle,
     titleKey: "settings.account.title",
     descriptionKey: "settings.account.description",
-    icon: UserCircle,
   },
   privacy: {
+    icon: Lock,
     titleKey: "settings.privacy.title",
     descriptionKey: "settings.privacy.description",
-    icon: Lock,
   },
   notification: {
+    icon: Bell,
     titleKey: "settings.notification.title",
     descriptionKey: "settings.notification.description",
-    icon: Bell,
   },
   appearance: {
+    icon: Monitor,
     titleKey: "settings.appearance.title",
     descriptionKey: "settings.appearance.description",
-    icon: Monitor,
   },
   language: {
+    icon: Languages,
     titleKey: "settings.language.title",
     descriptionKey: "settings.language.description",
-    icon: Languages,
   },
   datetime: {
+    icon: Clock,
     titleKey: "settings.datetime.title",
     descriptionKey: "settings.datetime.description",
-    icon: Clock,
   },
   integration: {
+    icon: Plug,
     titleKey: "settings.integration.title",
     descriptionKey: "settings.integration.description",
-    icon: Plug,
   },
   advanced: {
+    icon: SlidersHorizontal,
     titleKey: "settings.advanced.title",
     descriptionKey: "settings.advanced.description",
-    icon: SlidersHorizontal,
   },
   support: {
+    icon: HelpCircle,
     titleKey: "settings.support.title",
     descriptionKey: "settings.support.description",
-    icon: HelpCircle,
   },
   about: {
+    icon: Info,
     titleKey: "settings.about.title",
     descriptionKey: "settings.about.description",
-    icon: Info,
   },
 } satisfies Record<string, SettingNav>;
