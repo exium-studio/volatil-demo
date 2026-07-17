@@ -1,3 +1,5 @@
+// src/design-system/chakra/slot-recipes/carousel.recipe.ts
+
 // theme/recipes/carousel.ts
 
 import { carouselAnatomy } from "@chakra-ui/react/anatomy";

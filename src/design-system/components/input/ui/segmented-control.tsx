@@ -5,33 +5,46 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { SegmentGroup as ChakraSegmentGroup } from "@chakra-ui/react";
 import * as React from "react";
 
-export const SegmentedControl = React.forwardRef<HTMLInputElement, SegmentedControlProps>(
-  function SegmentedControl(props, ref) {
-    // Props
-    const { options, ...restProps } = props;
+export const SegmentedControl = React.forwardRef<
+  HTMLInputElement,
+  SegmentedControlProps
+>(function SegmentedControl(props, ref) {
+  // Props
+  const { options, ...restProps } = props;
 
-    // Stores
-    const { theme } = useThemeStore();
+  // Stores
+  const { theme } = useThemeStore();
 
-    return (
-      <ChakraSegmentGroup.Root
-        ref={ref}
-        colorPalette={theme.colorPalette}
-        {...restProps}
-      >
-        <ChakraSegmentGroup.Indicator />
-        {options.map((option) => (
-          <ChakraSegmentGroup.Item
-            key={option.value}
-            value={option.value}
-            disabled={option.disabled}
-            cursor={"pointer"}
+  return (
+    <ChakraSegmentGroup.Root
+      ref={ref}
+      colorPalette={theme.colorPalette}
+      rounded={theme.radii.component}
+      {...restProps}
+    >
+      <ChakraSegmentGroup.Indicator
+        border={"1px solid"}
+        borderColor={"border.subtle"}
+        rounded={theme.radii.component}
+      />
+
+      {options.map((option) => (
+        <ChakraSegmentGroup.Item
+          key={option.value}
+          value={option.value}
+          disabled={option.disabled}
+          cursor={"pointer"}
+        >
+          <ChakraSegmentGroup.ItemHiddenInput />
+
+          <ChakraSegmentGroup.ItemText
+            color={"fg.subtle"}
+            _checked={{ color: "fg" }}
           >
-            <ChakraSegmentGroup.ItemHiddenInput />
-            <ChakraSegmentGroup.ItemText>{option.label}</ChakraSegmentGroup.ItemText>
-          </ChakraSegmentGroup.Item>
-        ))}
-      </ChakraSegmentGroup.Root>
-    );
-  }
-);
+            {option.label}
+          </ChakraSegmentGroup.ItemText>
+        </ChakraSegmentGroup.Item>
+      ))}
+    </ChakraSegmentGroup.Root>
+  );
+});

@@ -1,4 +1,4 @@
-// src/features/root/components/root.page.tsx
+// src/features/root/components/demo.page.tsx
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import {

@@ -1,3 +1,5 @@
+// src/design-system/components/utilities/ui/offline-alert.tsx
+
 "use client";
 
 import { Button } from "@/design-system/components/button/ui/button";

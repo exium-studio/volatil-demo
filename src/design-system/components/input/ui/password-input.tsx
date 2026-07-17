@@ -69,7 +69,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     }
 
     return (
-      <VStack gap={2} w={restProps?.w || "fit"}>
+      <VStack gap={2} w={restProps?.w || "full"}>
         <InputGroup
           endElement={
             <VisibilityTrigger

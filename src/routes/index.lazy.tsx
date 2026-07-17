@@ -1,6 +1,6 @@
 // src/routes/index.lazy.tsx
 
-import { AuthPage } from "@/features/auth/auth.page";
+import { SigninPage } from "@/features/auth/pages/signin.page";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/")({
@@ -8,5 +8,5 @@ export const Route = createLazyFileRoute("/")({
 });
 
 function RouteComponent() {
-  return <AuthPage />;
+  return <SigninPage />;
 }

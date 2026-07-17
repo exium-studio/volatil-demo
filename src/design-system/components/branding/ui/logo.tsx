@@ -1,4 +1,4 @@
-// src/design-system/components/branding/logo.tsx
+// src/design-system/components/branding/ui/logo.tsx
 
 "use client";
 
