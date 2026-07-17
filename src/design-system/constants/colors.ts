@@ -27,7 +27,7 @@ export const COLOR_PALETTES = [
   { palette: "cyan", label: "Cyan", primaryHex: "#06b6d4" },
   { palette: "sky", label: "Sky", primaryHex: "#0EA5E9" },
   { palette: "powderBlue", label: "Powder Blue", primaryHex: "#769cc2" },
-  { palette: "blue", label: "Blue", primaryHex: "#3a72ed" },
+  { palette: "blue", label: "Blue", primaryHex: "#1860a9" },
   { palette: "sapphire", label: "Sapphire", primaryHex: "#1939B7" },
   { palette: "indigo", label: "Indigo", primaryHex: "#3F51B5" },
   { palette: "discord", label: "Discord", primaryHex: "#5865F2" },

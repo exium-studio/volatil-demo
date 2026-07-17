@@ -1,6 +1,5 @@
 // src/features/root/components/demo.page.tsx
 
-import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import {
   Button,
   IconButton,
@@ -925,20 +924,6 @@ export const Overlay = () => {
 
 // -------------------------------------------------------------------------------------
 
-const ActionButton = (props: IconButtonProps) => {
-  return (
-    <IconButton
-      {...props}
-      size="xs"
-      variant="outline"
-      rounded="full"
-      pos="absolute"
-      zIndex="1"
-      bg="bg"
-    />
-  );
-};
-
 export const Disclosure = () => {
   const items = [
     { value: "a", title: "First Item", text: "Some value 1..." },
@@ -953,7 +938,6 @@ export const Disclosure = () => {
     "https://images.unsplash.com/photo-1703505841379-2f863b201212?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2371",
     "https://images.unsplash.com/photo-1607776905497-b4f788205f6a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2370",
   ];
-
   const steps = [
     {
       title: "Step 1",
@@ -968,7 +952,6 @@ export const Disclosure = () => {
       description: "Step 3 description",
     },
   ];
-
   const tabs = [
     { icon: UserIcon, triggerLabel: "Members" },
     { icon: FolderIcon, triggerLabel: "Projects" },
@@ -1032,9 +1015,9 @@ export const Disclosure = () => {
           >
             <Carousel.Control>
               <Carousel.PrevTrigger asChild>
-                <ActionButton left={4}>
+                <Carousel.ActionButton left={4}>
                   <LuArrowLeft />
-                </ActionButton>
+                </Carousel.ActionButton>
               </Carousel.PrevTrigger>
 
               <Carousel.ItemGroup width="full">
@@ -1053,9 +1036,9 @@ export const Disclosure = () => {
               </Carousel.ItemGroup>
 
               <Carousel.NextTrigger asChild>
-                <ActionButton right={4}>
+                <Carousel.ActionButton right={4}>
                   <LuArrowRight />
-                </ActionButton>
+                </Carousel.ActionButton>
               </Carousel.NextTrigger>
 
               <Box pos={"absolute"} bottom={4} w={"full"}>
