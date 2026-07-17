@@ -152,6 +152,10 @@ const SigninCarousel = () => {
       bg={`${theme.colorPalette}.solid`}
     >
       <Carousel.Root
+        loop
+        autoplay={{
+          delay: 6500,
+        }}
         slideCount={SIGNIN_CAROUSEL.length}
         flex={1}
         gap={4}
