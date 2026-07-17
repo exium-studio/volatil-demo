@@ -16,7 +16,7 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Kbd } from "@/design-system/components/typography/ui/kbd";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useFocusSearch } from "@/design-system/hooks/use-focus-search";
-import { useSearch } from "@/design-system/hooks/use-search";
+import { useSearch } from "@/design-system/hooks/use-search-input";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   SearchIndex,

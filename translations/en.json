@@ -1,0 +1,285 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "common": {
+    "show_less": "Show less",
+    "welcome_user": "Welcome back, {name}!",
+    "loading": "Loading...",
+    "loading_with_context": "Loading {context}...",
+    "processing": "Processing, please wait...",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Information",
+    "no_data": "No data available",
+    "please_add_data": "Please add data",
+    "no_results_found": "No results found",
+    "no_results_found_for": "No results found for",
+    "no_results_found_query": "No results found for \"{query}\"",
+    "something_went_wrong": "Something went wrong",
+    "please_try_again": "Please retry",
+    "forbidden": "Access denied",
+    "dont_have_access": "You do not have access to this resource",
+    "all": "All",
+    "any": "Any",
+    "none": "None",
+    "empty": "Empty",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "active": "Active",
+    "inactive": "Inactive",
+    "status": "Status",
+    "version": "Version {version}",
+    "copyright": "© {year} {company}. All rights reserved.",
+    "navigate": "Navigate",
+    "select": "Select",
+    "close": "Close",
+    "recent": "Recent",
+    "clear_all": "Clear all",
+    "upload_files": "Upload files",
+    "browse_files": "Browse files",
+    "chose_or_drag_to_upload": "Chose a file or drag & drop it here",
+    "drop_it_here": "Drop it here",
+    "remove_file": "Remove file",
+    "undo_remove_file": "Undo remove file",
+    "selected_count": "{count} selected",
+    "select_all": "Select all",
+    "select_option": "Select option",
+    "optional": "Optional",
+    "select_date": "Select Date",
+    "previous": "Previous",
+    "next": "Next",
+    "toggle_password_visibility": "Toggle password visibility",
+    "system": "System",
+    "settings": "Settings",
+    "dismiss_all": "Dismiss all",
+    "notifications": "Notifications"
+  },
+  "action": {
+    "save": "Save",
+    "save_changes": "Save Changes",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "delete": "Delete",
+    "remove": "Remove",
+    "edit": "Edit",
+    "update": "Update",
+    "create": "Create",
+    "add_new": "Add New",
+    "view": "View",
+    "view_details": "View Details",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "clear": "Clear",
+    "clear_all": "Clear All",
+    "reset": "Reset",
+    "search": "Search...",
+    "filter": "Filter",
+    "sort": "Sort",
+    "download": "Download",
+    "export": "Export",
+    "import": "Import",
+    "print": "Print",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied to clipboard!",
+    "retry": "Retry",
+    "approve": "Approve",
+    "reject": "Reject",
+    "apply": "Apply",
+    "undo": "Undo",
+    "select": "Select",
+    "clock_in": "Clock In",
+    "clock_out": "Clock Out",
+    "measure": "Measure",
+    "draw": "Draw",
+    "show_less": "Show less"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "profile": "Profile",
+    "users": "Users",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "billing": "Billing & Subscription",
+    "notifications": "Notifications",
+    "help": "Help & Support",
+    "faq": "FAQ",
+    "pricing": "Pricing",
+    "contact_us": "Contact Us",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "map": "Map View",
+    "terminal": "Terminal Console",
+    "directory": "Directory"
+  },
+  "auth": {
+    "signin": {
+      "title": "Sign In",
+      "subtitle": "Access your account dashboard",
+      "btn_submit": "Sign In",
+      "forgot_password_link": "Forgot password?",
+      "singup_prompt": "Don't have an account?",
+      "register_link": "Sign up here",
+      "oauth_continue_with": "Continue with {provider}"
+    },
+    "singup": {
+      "title": "Create Account",
+      "subtitle": "Get started with your free trial today",
+      "btn_submit": "Register",
+      "signin_prompt": "Already have an account?",
+      "signin_link": "Sign in",
+      "terms_agreement": "I agree to the Terms of Service and Privacy Policy."
+    },
+    "signout": {
+      "title": "Sign Out",
+      "confirm_prompt": "Are you sure you want to log out?"
+    },
+    "forgot": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email to receive a reset link",
+      "btn_submit": "Send Reset Link",
+      "success_message": "If that email exists, a reset link has been sent."
+    },
+    "otp": {
+      "title": "Two-Factor Verification",
+      "subtitle": "Enter the 6-digit code sent to your device",
+      "resend_prompt": "Didn't receive the code?",
+      "resend_btn": "Resend Code"
+    }
+  },
+  "validation": {
+    "required": "This field is required.",
+    "email_invalid": "Please enter a valid email address.",
+    "password_too_short": "Password must be at least {min} characters long.",
+    "password_mismatch": "Passwords do not match.",
+    "number_min": "Value must be greater than or equal to {min}.",
+    "number_max": "Value must be less than or equal to {max}.",
+    "file_too_large": "File size exceeds the maximum limit of {size}.",
+    "file_invalid_format": "Invalid file format. Allowed types: {formats}.",
+    "url_invalid": "Please enter a valid URL.",
+    "phone_invalid": "Please enter a valid phone number."
+  },
+  "error": {
+    "network": "Network connection error. Check your internet.",
+    "server": "Internal server error (500). Please try again later.",
+    "unauthorized": "Session expired. Please log in again.",
+    "forbidden": "You do not have permission to access this resource.",
+    "not_found": "The requested resource could not be found.",
+    "bad_request": "Invalid request parameters."
+  },
+  "profile": {
+    "id": "ID: {id}",
+    "details": "Profile Details",
+    "avatar": "Profile Picture",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "bio": "Biography",
+    "role": "Role / Designation",
+    "department": "Department"
+  },
+  "preference": {
+    "title": "Preferences",
+    "general": "General Settings",
+    "security": "Security & Privacy",
+    "theme": "Interface Theme",
+    "theme_light": "Light Mode",
+    "theme_dark": "Dark Mode",
+    "theme_system": "Follow System",
+    "language": "Language / Locale",
+    "password_current": "Current Password",
+    "password_new": "New Password",
+    "password_confirm": "Confirm New Password"
+  },
+  "settings": {
+    "index": {
+      "title": "Select a setting",
+      "description": "The selected setting will appear here"
+    },
+    "search": {
+      "placeholder": "Search settings",
+      "empty": {
+        "title": "Type to find settings",
+        "description": "Search results and recent activity will appear here."
+      }
+    },
+    "group": {
+      "account": {
+        "title": "Account"
+      },
+      "preferences": {
+        "title": "Preferences"
+      },
+      "system": {
+        "title": "System"
+      },
+      "help": {
+        "title": "Help"
+      }
+    },
+    "profile": {
+      "title": "Profile",
+      "description": "Manage your personal information and profile details."
+    },
+    "account": {
+      "title": "Account",
+      "description": "Manage your account settings and credentials."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "description": "Control your privacy preferences and data visibility."
+    },
+    "notification": {
+      "title": "Notifications",
+      "description": "Configure how and when you receive notifications."
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize theme, layout, and visual preferences."
+    },
+    "language": {
+      "title": "Language",
+      "description": "Set your preferred language for the interface."
+    },
+    "datetime": {
+      "title": "Date & Time",
+      "description": "Adjust date, time, and regional format settings."
+    },
+    "integration": {
+      "title": "Integrations",
+      "description": "Manage connected services and third-party integrations."
+    },
+    "advanced": {
+      "title": "Advanced",
+      "description": "Advanced system settings and developer options."
+    },
+    "support": {
+      "title": "Support",
+      "description": "Get help, report issues, or contact support."
+    },
+    "about": {
+      "title": "About",
+      "description": "Information about the application and version details."
+    }
+  },
+  "file_input": {
+    "replace_hint": "Uploading new files will replace the current files.",
+    "limit_reached": "Limit reached. Remove files to upload new ones.",
+    "scheduled_removal": "Will be removed on save",
+    "auto_trimmed_warning": "File restored. Newer uploads were discarded to stay within the limit."
+  },
+  "rich_text_editor": {
+    "default_placeholder": "Start typing your content here"
+  },
+  "example_message": "Hello world {username}",
+  "offline_alert": {
+    "title": "No internet connection",
+    "description": "Hang tight — we'll reconnect you automatically once your network is back"
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "common": {
+    "show_less": "Tampilkan lebih sedikit",
+    "welcome_user": "Selamat datang kembali, {name}!",
+    "loading": "Memuat...",
+    "loading_with_context": "Memuat {context}...",
+    "processing": "Memproses, mohon tunggu...",
+    "success": "Berhasil",
+    "error": "Gagal",
+    "warning": "Peringatan",
+    "info": "Informasi",
+    "no_data": "Tidak ada data",
+    "please_add_data": "Silakan tambahkan data",
+    "no_results_found": "Hasil tidak ditemukan",
+    "no_results_found_for": "Hasil tidak ditemukan untuk",
+    "no_results_found_query": "Hasil tidak ditemukan untuk \"{query}\"",
+    "something_went_wrong": "Terjadi kesalahan",
+    "please_try_again": "Coba lagi",
+    "forbidden": "Akses ditolak",
+    "dont_have_access": "Anda tidak memiliki akses ke sumber daya ini",
+    "all": "Semua",
+    "any": "Sembarang",
+    "none": "Tidak ada",
+    "empty": "Kosong",
+    "enabled": "Aktif",
+    "disabled": "Nonaktif",
+    "active": "Aktif",
+    "inactive": "Tidak Aktif",
+    "status": "Status",
+    "version": "Versi {version}",
+    "copyright": "© {year} {company}. Hak cipta dilindungi undang-undang.",
+    "navigate": "Navigasi",
+    "select": "Pilih",
+    "close": "Tutup",
+    "recent": "Terbaru",
+    "clear_all": "Bersihkan semua",
+    "upload_files": "Unggah berkas",
+    "browse_files": "Pilih berkas",
+    "chose_or_drag_to_upload": "Pilih berkas atau seret & lepas di sini",
+    "drop_it_here": "Lepaskan di sini",
+    "remove_file": "Hapus berkas",
+    "undo_remove_file": "Batalkan hapus berkas",
+    "selected_count": "{count} dipilih",
+    "select_all": "Pilih semua",
+    "select_option": "Pilih opsi",
+    "optional": "Opsional",
+    "select_date": "Pilih Tanggal",
+    "previous": "Sebelumnya",
+    "next": "Selanjutnya",
+    "toggle_password_visibility": "Tampilkan/Sembunyikan kata sandi",
+    "system": "Sistem",
+    "settings": "Pengaturan",
+    "notifications": "Notifikasi",
+    "dismiss_all": "Singkirkan semua"
+  },
+  "action": {
+    "save": "Simpan",
+    "save_changes": "Simpan Perubahan",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "submit": "Kirim",
+    "delete": "Hapus",
+    "remove": "Hapus",
+    "edit": "Ubah",
+    "update": "Perbarui",
+    "create": "Buat",
+    "add_new": "Tambah Baru",
+    "view": "Lihat",
+    "view_details": "Lihat Detail",
+    "close": "Tutup",
+    "back": "Kembali",
+    "next": "Lanjut",
+    "finish": "Selesai",
+    "clear": "Bersihkan",
+    "clear_all": "Bersihkan Semua",
+    "reset": "Atur Ulang",
+    "search": "Cari...",
+    "filter": "Filter",
+    "sort": "Urutkan",
+    "download": "Unduh",
+    "export": "Ekspor",
+    "import": "Impor",
+    "print": "Cetak",
+    "share": "Bagikan",
+    "copy": "Salin",
+    "copied": "Tersalin ke papan klip!",
+    "retry": "Coba Lagi",
+    "approve": "Setujui",
+    "reject": "Tolak",
+    "apply": "Terapkan",
+    "undo": "Batal",
+    "select": "Pilih",
+    "clock_in": "Masuk Kerja",
+    "clock_out": "Keluar Kerja",
+    "measure": "Ukur",
+    "draw": "Gambar",
+    "show_less": "Tampilkan lebih sedikit"
+  },
+  "nav": {
+    "home": "Beranda",
+    "dashboard": "Dasbor",
+    "settings": "Pengaturan",
+    "profile": "Profil",
+    "users": "Pengguna",
+    "analytics": "Analitik",
+    "reports": "Laporan",
+    "billing": "Tagihan & Langganan",
+    "notifications": "Notifikasi",
+    "help": "Bantuan & Dukungan",
+    "faq": "FAQ",
+    "pricing": "Harga",
+    "contact_us": "Hubungi Kami",
+    "privacy_policy": "Kebijakan Privasi",
+    "terms_of_service": "Syarat & Ketentuan",
+    "map": "Tampilan Peta",
+    "terminal": "Konsol Terminal",
+    "directory": "Direktori"
+  },
+  "auth": {
+    "signin": {
+      "title": "Masuk",
+      "subtitle": "Akses dasbor akun Anda",
+      "btn_submit": "Masuk",
+      "forgot_password_link": "Lupa kata sandi?",
+      "singup_prompt": "Belum memiliki akun?",
+      "register_link": "Daftar di sini",
+      "oauth_continue_with": "Lanjutkan dengan {provider}"
+    },
+    "singup": {
+      "title": "Buat Akun",
+      "subtitle": "Mulai uji coba gratis Anda hari ini",
+      "btn_submit": "Daftar",
+      "signin_prompt": "Sudah memiliki akun?",
+      "signin_link": "Masuk",
+      "terms_agreement": "Saya menyetujui Syarat & Ketentuan dan Kebijakan Privasi."
+    },
+    "signout": {
+      "title": "Keluar",
+      "confirm_prompt": "Apakah Anda yakin ingin keluar?"
+    },
+    "forgot": {
+      "title": "Atur Ulang Kata Sandi",
+      "subtitle": "Masukkan email Anda untuk menerima tautan atur ulang kata sandi",
+      "btn_submit": "Kirim Tautan Atur Ulang",
+      "success_message": "Jika email tersebut terdaftar, tautan atur ulang telah dikirim."
+    },
+    "otp": {
+      "title": "Verifikasi Dua Langkah",
+      "subtitle": "Masukkan 6 digit kode yang dikirim ke perangkat Anda",
+      "resend_prompt": "Tidak menerima kode?",
+      "resend_btn": "Kirim Ulang Kode"
+    }
+  },
+  "validation": {
+    "required": "Bidang ini wajib diisi.",
+    "email_invalid": "Harap masukkan alamat email yang valid.",
+    "password_too_short": "Kata sandi harus terdiri dari minimal {min} karakter.",
+    "password_mismatch": "Kata sandi tidak cocok.",
+    "number_min": "Nilai harus lebih besar dari atau sama dengan {min}.",
+    "number_max": "Nilai harus kurang dari atau sama dengan {max}.",
+    "file_too_large": "Ukuran berkas melebihi batas maksimum {size}.",
+    "file_invalid_format": "Format berkas tidak valid. Format yang diperbolehkan: {formats}.",
+    "url_invalid": "Harap masukkan URL yang valid.",
+    "phone_invalid": "Harap masukkan nomor telepon yang valid."
+  },
+  "error": {
+    "network": "Kesalahan koneksi jaringan. Periksa internet Anda.",
+    "server": "Kesalahan server internal (500). Silakan coba lagi nanti.",
+    "unauthorized": "Sesi telah berakhir. Silakan masuk kembali.",
+    "forbidden": "Anda tidak memiliki izin untuk mengakses sumber daya ini.",
+    "not_found": "Sumber daya yang diminta tidak dapat ditemukan.",
+    "bad_request": "Parameter permintaan tidak valid."
+  },
+  "profile": {
+    "id": "ID: {id}",
+    "details": "Detail Profil",
+    "avatar": "Foto Profil",
+    "first_name": "Nama Depan",
+    "last_name": "Nama Belakang",
+    "email": "Alamat Email",
+    "phone": "Nomor Telepon",
+    "bio": "Biografi",
+    "role": "Peran / Jabatan",
+    "department": "Departemen"
+  },
+  "preference": {
+    "title": "Preferensi",
+    "general": "Pengaturan Umum",
+    "security": "Keamanan & Privasi",
+    "theme": "Tema Tampilan",
+    "theme_light": "Mode Terang",
+    "theme_dark": "Mode Gelap",
+    "theme_system": "Ikuti Sistem",
+    "language": "Bahasa / Bahasa Lokal",
+    "password_current": "Kata Sandi Saat Ini",
+    "password_new": "Kata Sandi Baru",
+    "password_confirm": "Konfirmasi Kata Sandi Baru"
+  },
+  "settings": {
+    "index": {
+      "title": "Pilih pengaturan",
+      "description": "Pengaturan yang dipilih akan ditampilkan di sini"
+    },
+    "search": {
+      "placeholder": "Cari pengaturan",
+      "empty": {
+        "title": "Ketik untuk mencari pengaturan",
+        "description": "Hasil pencarian dan aktivitas terbaru akan ditampilkan di sini."
+      }
+    },
+    "group": {
+      "account": {
+        "title": "Akun"
+      },
+      "preferences": {
+        "title": "Preferensi"
+      },
+      "system": {
+        "title": "Sistem"
+      },
+      "help": {
+        "title": "Bantuan"
+      }
+    },
+    "profile": {
+      "title": "Profil",
+      "description": "Kelola informasi pribadi dan detail profil Anda."
+    },
+    "account": {
+      "title": "Akun",
+      "description": "Kelola pengaturan akun dan kredensial Anda."
+    },
+    "privacy": {
+      "title": "Privasi",
+      "description": "Atur preferensi privasi dan visibilitas data Anda."
+    },
+    "notification": {
+      "title": "Notifikasi",
+      "description": "Atur bagaimana dan kapan Anda menerima notifikasi."
+    },
+    "appearance": {
+      "title": "Tampilan",
+      "description": "Kustomisasi tema, tata letak, dan preferensi visual."
+    },
+    "language": {
+      "title": "Bahasa",
+      "description": "Atur bahasa pilihan Anda untuk antarmuka."
+    },
+    "datetime": {
+      "title": "Tanggal & Waktu",
+      "description": "Atur tanggal, waktu, dan format regional."
+    },
+    "integration": {
+      "title": "Integrasi",
+      "description": "Kelola layanan terhubung dan integrasi pihak ketiga."
+    },
+    "advanced": {
+      "title": "Lanjutan",
+      "description": "Pengaturan sistem tingkat lanjut dan opsi pengembang."
+    },
+    "support": {
+      "title": "Dukungan",
+      "description": "Dapatkan bantuan, laporkan masalah, atau hubungi dukungan."
+    },
+    "about": {
+      "title": "Tentang",
+      "description": "Informasi tentang aplikasi dan detail versi."
+    }
+  },
+  "file_input": {
+    "replace_hint": "Mengunggah berkas baru akan menggantikan berkas saat ini.",
+    "limit_reached": "Batas tercapai. Hapus berkas untuk mengunggah berkas baru.",
+    "scheduled_removal": "Akan dihapus saat disimpan",
+    "auto_trimmed_warning": "Berkas dipulihkan. Unggahan terbaru dibatalkan untuk menjaga batas kapasitas."
+  },
+  "rich_text_editor": {
+    "default_placeholder": "Mulai mengetik konten Anda di sini"
+  },
+  "offline_alert": {
+    "title": "Tidak Ada Koneksi Internet",
+    "description": "Tenang — kami akan otomatis terhubung kembali begitu jaringannya sudah pulih."
+  }
+}

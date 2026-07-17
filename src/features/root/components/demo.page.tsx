@@ -1,4 +1,4 @@
-// src/features/root/components/demo.page.tsx
+// src/features/root/components/root.page.tsx
 
 import {
   Button,
@@ -1007,19 +1007,13 @@ export const Disclosure = () => {
           </Breadcrumb.Root>
 
           <Carousel.Root
-            allowMouseDrag
+            loop
             slideCount={images.length}
             maxW={"350px"}
             gap={4}
             pos={"relative"}
           >
             <Carousel.Control>
-              <Carousel.PrevTrigger asChild>
-                <Carousel.ActionButton left={4}>
-                  <LuArrowLeft />
-                </Carousel.ActionButton>
-              </Carousel.PrevTrigger>
-
               <Carousel.ItemGroup width="full">
                 {images.map((src, index) => (
                   <Carousel.Item key={index} index={index}>
@@ -1035,11 +1029,39 @@ export const Disclosure = () => {
                 ))}
               </Carousel.ItemGroup>
 
-              <Carousel.NextTrigger asChild>
-                <Carousel.ActionButton right={4}>
-                  <LuArrowRight />
-                </Carousel.ActionButton>
-              </Carousel.NextTrigger>
+              <HStack
+                align={"center"}
+                justify={"space-between"}
+                w={"full"}
+                px={2}
+                pos={"absolute"}
+                top={"50%"}
+                transform={"translateY(-50%)"}
+              >
+                <Carousel.PrevTrigger asChild>
+                  <Carousel.ActionButton
+                    color={"white"}
+                    borderColor={"border.subtle"}
+                    _hover={{
+                      bg: "an1",
+                    }}
+                  >
+                    <LuArrowLeft />
+                  </Carousel.ActionButton>
+                </Carousel.PrevTrigger>
+
+                <Carousel.NextTrigger asChild>
+                  <Carousel.ActionButton
+                    color={"white"}
+                    borderColor={"border.subtle"}
+                    _hover={{
+                      bg: "an1",
+                    }}
+                  >
+                    <LuArrowRight />
+                  </Carousel.ActionButton>
+                </Carousel.NextTrigger>
+              </HStack>
 
               <Box pos={"absolute"} bottom={4} w={"full"}>
                 <Carousel.Indicators

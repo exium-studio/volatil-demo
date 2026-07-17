@@ -14,7 +14,7 @@
     "sitemap:generate": "node src/scripts/generate-sitemap.js",
     "filepath:generate": "node src/scripts/generate-file-path-header.cjs",
     "chakra:typegen": "pnpm exec chakra typegen ./src/design-system/chakra/chakra-system.ts",
-    "i18n:compile": "npx @inlang/paraglide-js compile --project ./project.inlang"
+    "i18n:compile": "pnpm exec paraglide-js compile --project ./project.inlang"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.36.0",

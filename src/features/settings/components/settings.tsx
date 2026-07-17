@@ -29,7 +29,7 @@ export const SettingsTrigger = (props: PopModalTriggerProps) => {
       opened={isOpen}
       open={open}
       close={close}
-      size={isSmallViewport ? "full" : "xl"}
+      size={isSmallViewport ? "full" : "5xl"}
       dialogClickOriginAnimation={true}
       drawerPlacement={"end"}
       drawerSwipeToDismiss={false}
