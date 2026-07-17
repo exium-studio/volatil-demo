@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build": "eslint . && tsc -b && vite build",
+    "build": "eslint . && pnpm run i18n:compile && tsc -b && vite build",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "typecheck:watch": "tsc -p tsconfig.app.json --noEmit --watch --preserveWatchOutput",
