@@ -16,7 +16,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { PageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Image } from "@/design-system/components/media/ui/image";
-import { P, PSerif } from "@/design-system/components/typography/ui/p";
+import { P, PLink, PSerif } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { IMAGES_PATH } from "@/shared/constants/paths";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
@@ -236,9 +236,6 @@ const SigninCarousel = () => {
 };
 
 const MitraSignin = () => {
-  // Stores
-  const { theme } = useThemeStore();
-
   return (
     <VStack flex={1}>
       <Fieldset mb={"auto"}>
@@ -250,16 +247,7 @@ const MitraSignin = () => {
           <PasswordInput placeholder={"••••••••"} />
         </Field>
 
-        <P
-          ml={"auto"}
-          color={`${theme.colorPalette}.fg`}
-          cursor={"pointer"}
-          borderBottom={"1px solid"}
-          borderColor={"transparent"}
-          _hover={{ borderColor: `${theme.colorPalette}` }}
-        >
-          Lupa kata sandi?
-        </P>
+        <PLink ml={"auto"}>Lupa kata sandi?</PLink>
       </Fieldset>
 
       <Button primary type={"submit"}>
