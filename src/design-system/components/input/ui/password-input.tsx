@@ -1,8 +1,7 @@
 // src/design-system/components/input/ui/password-input.tsx
 
-import { mergeRefs } from "@/design-system/chakra/utils/mergeRefs";
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type {
   PasswordInputProps,
   PasswordStrengthMeterProps,
@@ -10,11 +9,12 @@ import type {
 import { Input } from "@/design-system/components/input/ui/input";
 import { InputGroup } from "@/design-system/components/input/ui/input-group";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/stack";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import { useControllableState, type ButtonProps } from "@chakra-ui/react";
-import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { passwordStrength, type Options } from "check-password-strength";
-import * as React from "react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { forwardRef, useRef, useState, type ChangeEvent } from "react";
 
 const DEFAULT_STRENGTH_OPTIONS: Options<string> = [
   { id: 1, value: "weak", minDiversity: 0, minLength: 0 },
@@ -23,88 +23,90 @@ const DEFAULT_STRENGTH_OPTIONS: Options<string> = [
   { id: 4, value: "very-strong", minDiversity: 4, minLength: 10 },
 ];
 
-export const PasswordInput = React.forwardRef<
-  HTMLInputElement,
-  PasswordInputProps
->(function PasswordInput(props, ref) {
-  // Props
-  const {
-    rootProps,
-    defaultVisible,
-    visible: visibleProp,
-    onVisibleChange,
-    visibilityIcon = {
-      on: <AppTablerIcon icon={IconEye} />,
-      off: <AppTablerIcon icon={IconEyeOff} />,
-    },
-    withPasswordStrength = false,
-    strengthOptions = DEFAULT_STRENGTH_OPTIONS,
-    onChange,
-    ...restProps
-  } = props;
+export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
+  function PasswordInput(props, ref) {
+    // Props
+    const {
+      rootProps,
+      defaultVisible,
+      visible: visibleProp,
+      onVisibleChange,
+      visibilityIcon = {
+        on: <AppIcon icon={EyeIcon} />,
+        off: <AppIcon icon={EyeOffIcon} />,
+      },
+      withPasswordStrength = false,
+      strengthOptions = DEFAULT_STRENGTH_OPTIONS,
+      onChange,
+      ...restProps
+    } = props;
 
-  // Refs
-  const inputRef = React.useRef<HTMLInputElement>(null);
+    // Refs
+    const inputRef = useRef<HTMLInputElement>(null);
 
-  // States
-  const [visible, setVisible] = useControllableState({
-    value: visibleProp,
-    defaultValue: defaultVisible || false,
-    onChange: onVisibleChange,
-  });
-  const [strength, setStrength] = React.useState(0);
+    // States
+    const [visible, setVisible] = useControllableState({
+      value: visibleProp,
+      defaultValue: defaultVisible || false,
+      onChange: onVisibleChange,
+    });
+    const [strength, setStrength] = useState(0);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    onChange?.(e);
+    function handleChange(e: ChangeEvent<HTMLInputElement>) {
+      onChange?.(e);
 
-    if (!withPasswordStrength) return;
+      if (!withPasswordStrength) return;
 
-    const value = e.currentTarget.value;
+      const value = e.currentTarget.value;
 
-    if (!value) {
-      setStrength(0);
-      return;
+      if (!value) {
+        setStrength(0);
+        return;
+      }
+
+      const result = passwordStrength(value, strengthOptions);
+      setStrength(result.id);
     }
 
-    const result = passwordStrength(value, strengthOptions);
-    setStrength(result.id);
-  }
+    return (
+      <VStack gap={2} w={restProps?.w || "fit"}>
+        <InputGroup
+          endElement={
+            <VisibilityTrigger
+              disabled={restProps.disabled}
+              onPointerDown={(e) => {
+                if (restProps.disabled) return;
+                if (e.button !== 0) return;
+                e.preventDefault();
+                setVisible(!visible);
+              }}
+            >
+              {visible ? visibilityIcon.off : visibilityIcon.on}
+            </VisibilityTrigger>
+          }
+          w={"full"}
+          {...rootProps}
+        >
+          <Input
+            {...restProps}
+            ref={mergeRefs(ref, inputRef)}
+            type={visible ? "text" : "password"}
+            onChange={handleChange}
+          />
+        </InputGroup>
 
-  return (
-    <VStack gap={2} w={restProps?.w || "fit"}>
-      <InputGroup
-        endElement={
-          <VisibilityTrigger
-            disabled={restProps.disabled}
-            onPointerDown={(e) => {
-              if (restProps.disabled) return;
-              if (e.button !== 0) return;
-              e.preventDefault();
-              setVisible(!visible);
-            }}
-          >
-            {visible ? visibilityIcon.off : visibilityIcon.on}
-          </VisibilityTrigger>
-        }
-        w={"full"}
-        {...rootProps}
-      >
-        <Input
-          {...restProps}
-          ref={mergeRefs(ref, inputRef)}
-          type={visible ? "text" : "password"}
-          onChange={handleChange}
-        />
-      </InputGroup>
+        {withPasswordStrength && (
+          <PasswordStrengthMeter
+            max={strengthOptions.length}
+            value={strength}
+          />
+        )}
+      </VStack>
+    );
+  },
+);
 
-      {withPasswordStrength && (
-        <PasswordStrengthMeter max={strengthOptions.length} value={strength} />
-      )}
-    </VStack>
-  );
-});
-
-const VisibilityTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const VisibilityTrigger = forwardRef<HTMLButtonElement, ButtonProps>(
   function VisibilityTrigger(props, ref) {
     return (
       <IconButton
@@ -121,7 +123,7 @@ const VisibilityTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 
-export const PasswordStrengthMeter = React.forwardRef<
+export const PasswordStrengthMeter = forwardRef<
   HTMLDivElement,
   PasswordStrengthMeterProps
 >(function PasswordStrengthMeter(props, ref) {

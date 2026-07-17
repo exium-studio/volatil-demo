@@ -4,16 +4,17 @@
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { FocusSearchTrigger } from "@/design-system/components/overlay/ui/focus-search";
 import { useModalContext } from "@/design-system/components/overlay/ui/modal";
 import { useSettingSearchIndex } from "@/features/settings/hooks/use-settings-search-index";
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
 import { RootRoute } from "@/routes/-typed";
-import { IconSearch } from "@tabler/icons-react";
+import { SearchIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface SettingsSearchTriggerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   modalKey: string;
   queryKey: string;
 }
@@ -60,7 +61,7 @@ export const SettingsSearchButton = (props: IconButtonProps) => {
       queryKey={"settingsSearch"}
     >
       <IconButton {...props}>
-        <AppTablerIcon icon={IconSearch} />
+        <AppIcon icon={SearchIcon} />
       </IconButton>
     </SettingsSearchTrigger>
   );

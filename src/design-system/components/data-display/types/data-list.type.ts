@@ -11,11 +11,12 @@ export type DataListItemActionsGenerator<T = Record<string, unknown>> = (
   index: number,
 ) => ReactNode;
 
-export type DataListItemActionsTriggerProps<T = Record<string, unknown>> = {
-  item: FormattedListItem<T>;
-  itemActions?: DataListItemActionsGenerator[];
-  contextedTrigger?: boolean;
-} & MenuRootProps;
+export type DataListItemActionsTriggerProps<T = Record<string, unknown>> =
+  MenuRootProps & {
+    item: FormattedListItem<T>;
+    itemActions?: DataListItemActionsGenerator[];
+    contextedTrigger?: boolean;
+  };
 
 export type DataListBatchActionsGenerator = (params: {
   selectedItemIds: string[];
@@ -23,7 +24,7 @@ export type DataListBatchActionsGenerator = (params: {
   clearSelectedItems: () => void;
 }) => ReactNode;
 
-export type DataListBatchActionsTriggerProps = {
+export type DataListBatchActionsTriggerProps = MenuRootProps & {
   selectedItemIds: string[];
   selectedItems: FormattedListItem[];
   clearSelectedItems: () => void;
@@ -32,16 +33,16 @@ export type DataListBatchActionsTriggerProps = {
   selectAllItems: (isChecked: boolean) => void;
   menuRootProps?: Omit<MenuRootProps, "children">;
   triggerActionBarMode?: boolean;
-} & MenuRootProps;
+};
 
-export type DataListBatchActionBarProps = {
+export type DataListBatchActionBarProps = Omit<ActionBarRootProps, "children"> & {
   selectedItemIds: string[];
   selectedItems: FormattedListItem[];
   clearSelectedItems: () => void;
   batchActions?: DataListBatchActionsGenerator[];
-} & Omit<ActionBarRootProps, "children">;
+};
 
-export type DataListFooterProps = {
+export type DataListFooterProps = Omit<StackProps, "page"> & {
   currentDataLength?: number;
   totalData?: number;
   perPage: number;
@@ -49,16 +50,16 @@ export type DataListFooterProps = {
   page: number;
   setPage?: (page: number) => void;
   totalPage?: number;
-} & Omit<StackProps, "page">;
+};
 
-export type DataListPerPageProps = {
+export type DataListPerPageProps = SelectProps & {
   perPage: number;
   setPerPage?: (perPage: number) => void;
   options?: number[];
-} & SelectProps;
+};
 
-export type DataListPaginationProps = {
+export type DataListPaginationProps = IconButtonProps & {
   page: number;
   setPage?: (page: number) => void;
   totalPage?: number;
-} & IconButtonProps;
+};

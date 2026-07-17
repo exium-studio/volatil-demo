@@ -2,14 +2,15 @@
 
 "use client";
 
+import type { BrandWatermarkProps } from "@/design-system/components/branding/types/brand-watermark.type";
 import { Link } from "@/design-system/components/navigation/ui/link";
-import { P, type PProps } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { APP } from "@/design-system/constants/_meta";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 
 // ---------------------------------------------------------------------------
 
-export const BrandWatermark = (props: PProps) => {
+export const BrandWatermark = (props: BrandWatermarkProps) => {
   // Props
   const { ...restProps } = props;
 

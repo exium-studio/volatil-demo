@@ -1,26 +1,31 @@
 // src/design-system/components/overlay/types/popover.type.ts
 
 import { Popover as ChakraPopover } from "@chakra-ui/react";
+import type { RefObject } from "react";
 
-export type PopoverRootProps = {} & ChakraPopover.RootProps;
+export type PopoverRootProps = ChakraPopover.RootProps & {};
 
-export type PopoverContentProps = {
+export type PopoverTriggerProps = ChakraPopover.TriggerProps & {};
+
+export type PopoverPositionerProps = ChakraPopover.PositionerProps & {};
+
+export type PopoverContentProps = ChakraPopover.ContentProps & {
   portalled?: boolean;
-  portalRef?: React.RefObject<HTMLElement | null>;
-} & ChakraPopover.ContentProps;
+  portalRef?: RefObject<HTMLElement | null>;
+};
 
-export type PopoverArrowProps = {} & ChakraPopover.ArrowProps;
+export type PopoverArrowProps = ChakraPopover.ArrowProps & {};
 
-export type PopoverCloseTriggerProps = {} & ChakraPopover.CloseTriggerProps;
+export type PopoverArrowTipProps = ChakraPopover.ArrowTipProps & {};
 
-export type PopoverTitleProps = {} & ChakraPopover.TitleProps;
+export type PopoverCloseTriggerProps = ChakraPopover.CloseTriggerProps & {};
 
-export type PopoverDescriptionProps = {} & ChakraPopover.DescriptionProps;
+export type PopoverTitleProps = ChakraPopover.TitleProps & {};
 
-export type PopoverFooterProps = {} & ChakraPopover.FooterProps;
+export type PopoverDescriptionProps = ChakraPopover.DescriptionProps & {};
 
-export type PopoverHeaderProps = {} & ChakraPopover.HeaderProps;
+export type PopoverHeaderProps = ChakraPopover.HeaderProps & {};
 
-export type PopoverBodyProps = {} & ChakraPopover.BodyProps;
+export type PopoverBodyProps = ChakraPopover.BodyProps & {};
 
-export type PopoverTriggerProps = {} & ChakraPopover.TriggerProps;
+export type PopoverFooterProps = ChakraPopover.FooterProps & {};

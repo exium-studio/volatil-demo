@@ -16,15 +16,15 @@ import type {
   DataListItemActionsGenerator,
 } from "@/design-system/components/data-display/types/data-list.type";
 import {
-  DataListBatchActionsTrigger,
   DataListBatchActionBar,
+  DataListBatchActionsTrigger,
 } from "@/design-system/components/data-display/ui/data-list-batch-actions";
 import { DataListItemActionsTrigger } from "@/design-system/components/data-display/ui/data-list-item-actions";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
-import type { StackProps } from "@/design-system/components/layout/types/stack.type";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
-import { HStack, VStack } from "@/design-system/components/layout/ui/stack";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
   TABLE_ACTIONS_CELL_W,
@@ -37,10 +37,10 @@ import { Box, Center } from "@chakra-ui/react";
 import {
   IconCaretDownFilled,
   IconCaretUpFilled,
-  IconDots,
   IconListCheck,
 } from "@tabler/icons-react";
-import { createContext, useContext, useMemo, forwardRef } from "react";
+import { EllipsisIcon } from "lucide-react";
+import { createContext, forwardRef, useContext, useMemo } from "react";
 
 type DataListTableContextValue = {
   headers: FormattedTableHeader[];
@@ -205,30 +205,24 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
   },
 );
 
-const DataListTableCell = forwardRef<HTMLDivElement, StackProps>(
-  (props, ref) => {
-    return (
-      <HStack
-        className="table-cell"
-        ref={ref}
-        align={"center"}
-        justify={"center"}
-        gap={2}
-        px={4}
-        py={2}
-        bg={"bg.body"}
-        whiteSpace={"nowrap"}
-        userSelect={"none"}
-        {...props}
-      />
-    );
-  },
-);
+const DataListTableCell = (props: StackProps) => {
+  return (
+    <HStack
+      className="table-cell"
+      align={"center"}
+      justify={"center"}
+      gap={2}
+      px={4}
+      py={2}
+      bg={"bg.body"}
+      whiteSpace={"nowrap"}
+      userSelect={"none"}
+      {...props}
+    />
+  );
+};
 
-const DataListTableHeader = forwardRef<
-  HTMLDivElement,
-  DataListTableHeaderProps
->((props, ref) => {
+const DataListTableHeader = (props: DataListTableHeaderProps) => {
   // Stores
   const { theme } = useThemeStore();
 
@@ -249,7 +243,6 @@ const DataListTableHeader = forwardRef<
   return (
     <Box
       role={"row"}
-      ref={ref}
       display={"grid"}
       gridTemplateColumns={"subgrid"}
       gridColumn={"1 / -1"}
@@ -274,7 +267,7 @@ const DataListTableHeader = forwardRef<
             selectAllItems={selectAllItems}
           >
             <IconButton variant={"ghost"} size={"xs"}>
-              <AppTablerIcon icon={IconListCheck} />
+              <AppIcon icon={IconListCheck} />
             </IconButton>
           </DataListBatchActionsTrigger>
         </DataListTableCell>
@@ -312,7 +305,7 @@ const DataListTableHeader = forwardRef<
       )}
     </Box>
   );
-});
+};
 
 const DataListTableBody = () => {
   // Stores
@@ -408,7 +401,7 @@ const DataListTableBody = () => {
                   item={item}
                 >
                   <IconButton variant={"ghost"} size={"xs"}>
-                    <AppTablerIcon icon={IconDots} />
+                    <AppIcon icon={EllipsisIcon} />
                   </IconButton>
                 </DataListItemActionsTrigger>
               </Center>
@@ -434,13 +427,13 @@ const DataListTableSortIcon = ({
 
   return (
     <VStack align={"center"}>
-      <AppTablerIcon
+      <AppIcon
         icon={IconCaretUpFilled}
         boxSize={"11px"}
         color={isAscActive ? primaryFg : "fg.subtle"}
         mb={"-6px"}
       />
-      <AppTablerIcon
+      <AppIcon
         icon={IconCaretDownFilled}
         boxSize={"11px"}
         color={isDescActive ? primaryFg : "fg.subtle"}

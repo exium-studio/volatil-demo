@@ -1,19 +1,10 @@
 // src/design-system/chakra/slot-recipes/dialog.recipe.ts
 
 import { defineSlotRecipe } from "@chakra-ui/react";
+import { dialogAnatomy } from "@chakra-ui/react/anatomy";
 
 export const dialogRecipe = defineSlotRecipe({
-  slots: [
-    "backdrop",
-    "positioner",
-    "content",
-    "header",
-    "body",
-    "footer",
-    "title",
-    "description",
-    "closeTrigger",
-  ],
+  slots: dialogAnatomy.keys(),
 
   variants: {
     size: {

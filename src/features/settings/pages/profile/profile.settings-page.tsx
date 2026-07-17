@@ -2,8 +2,8 @@
 
 "use client";
 
-import type { StackProps } from "@/design-system/components/layout/types/stack.type";
-import { VStack } from "@/design-system/components/layout/ui/stack";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 
 interface ProfileSettingsPageProps extends StackProps {}
 

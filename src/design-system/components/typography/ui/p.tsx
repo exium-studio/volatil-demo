@@ -3,11 +3,13 @@
 "use client";
 
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { Span, Text, type TextProps, type SpanProps } from "@chakra-ui/react";
+import { Span, Text } from "@chakra-ui/react";
 import parse, { domToReact, type DOMNode } from "html-react-parser";
 import { forwardRef } from "react";
-
-export type PProps = TextProps;
+import type {
+  PProps,
+  TNumProps,
+} from "@/design-system/components/typography/types/p.type";
 
 export const P = forwardRef<HTMLParagraphElement, PProps>(
   function P(props, ref) {
@@ -73,11 +75,7 @@ export const ClampedP = forwardRef<HTMLParagraphElement, PProps>(
   },
 );
 
-export type TNumProps = {
-  numberFont?: boolean;
-} & SpanProps;
-
-export const TNum = forwardRef<HTMLParagraphElement, TNumProps>(
+export const TNum = forwardRef<HTMLSpanElement, TNumProps>(
   function TNum(props, ref) {
     // Props
     const { children = "", numberFont = false, ...restProps } = props;
@@ -88,9 +86,11 @@ export const TNum = forwardRef<HTMLParagraphElement, TNumProps>(
     if (numberFont)
       return (
         <Span
+          ref={ref}
           fontFamily={"number"}
           fontSize={"inherit"}
           fontVariantNumeric={"tabular-nums"}
+          {...restProps}
         >
           {children}
         </Span>
@@ -107,7 +107,7 @@ export const TNum = forwardRef<HTMLParagraphElement, TNumProps>(
           <Span
             key={index}
             display={"inline-block"}
-            w={"0.85ch"}
+            w={"0.95ch"}
             fontSize={"inherit"}
             textAlign={"center"}
           >

@@ -4,10 +4,11 @@ import type {
   DataListBatchActionsGenerator,
   DataListItemActionsGenerator,
 } from "@/design-system/components/data-display/types/data-list.type";
-import type { StackProps } from "@/design-system/components/layout/types/stack.type";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
+import type { ReactNode } from "react";
 
-export type DataListTableRootProps = {
-  children: React.ReactNode;
+export type DataListTableRootProps = Omit<StackProps, "page"> & {
+  children: ReactNode;
   headers: FormattedTableHeader[];
   items: FormattedListItem[];
   initialSortColumnIndex?: number;
@@ -15,11 +16,11 @@ export type DataListTableRootProps = {
   batchActions?: DataListBatchActionsGenerator[];
   itemActions?: DataListItemActionsGenerator[];
   withNumbering?: boolean;
-} & Omit<StackProps, "page">;
+};
 
-export type DataListTableHeaderProps = {} & StackProps;
+export type DataListTableHeaderProps = StackProps & {};
 
-export type DataListTableBodyProps = {} & StackProps; // Unused type
+export type DataListTableBodyProps = StackProps & {}; // Unused type
 
 export type DataListTableSortIconProps = {
   active: boolean;
@@ -44,14 +45,14 @@ export type DataListTableSortHandler = (
 ) => number;
 
 export type FormattedTableHeader = {
-  th: React.ReactNode;
+  th: ReactNode;
   sortable?: boolean;
   align?: "start" | "center" | "end";
   headerCellProps?: StackProps;
 };
 
 export type FormattedTableColumn = {
-  td: React.ReactNode;
+  td: ReactNode;
   value: unknown;
   align?: "start" | "center" | "end";
   dataType?: DataListTableColumnDataType;

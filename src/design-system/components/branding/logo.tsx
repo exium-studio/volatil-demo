@@ -5,13 +5,9 @@
 import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { Center, type CenterProps } from "@chakra-ui/react";
+import type { LogoProps } from "@/design-system/components/branding/types/logo.type";
+import { Center } from "@chakra-ui/react";
 import { useMemo } from "react";
-
-export type LogoProps = {
-  color?: string;
-  size?: number;
-} & CenterProps;
 
 export const Logo = (props: LogoProps) => {
   // Props

@@ -4,26 +4,30 @@
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
+import { CloseButton } from "@/design-system/components/button/ui/close-button";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import type {
   DrawerCloseButtonProps,
   DrawerContentProps,
   DrawerRootProps,
 } from "@/design-system/components/overlay/types/drawer.type";
-import { Portal } from "@/design-system/components/utilities/portal";
+import { Portal } from "@/design-system/components/utilities/ui/portal";
 import { MODAL_BASE_ZINDEX } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { back } from "@/shared/utils/client/navigation";
 import { Drawer as ChakraDrawer } from "@chakra-ui/react";
-import { IconSquare, IconSquares, IconX } from "@tabler/icons-react";
+import { IconSquare, IconSquares } from "@tabler/icons-react";
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
+  type Dispatch,
+  type SetStateAction,
   type TouchEvent,
 } from "react";
 
@@ -35,7 +39,7 @@ type DrawerContextValue = {
   open?: () => void;
   close?: () => void;
   fullscreen: boolean;
-  setFullscreen: React.Dispatch<React.SetStateAction<boolean>>;
+  setFullscreen: Dispatch<SetStateAction<boolean>>;
   swipeToDismiss: boolean;
   placement: ChakraDrawer.RootProps["placement"];
   size: ChakraDrawer.RootProps["size"];
@@ -154,7 +158,11 @@ const DrawerRoot = (props: DrawerRootProps) => {
         trapFocus={false}
         preventScroll
         onEscapeKeyDown={() => {
-          back();
+          if (close) {
+            close();
+          } else {
+            back();
+          }
         }}
       />
     </DrawerContext.Provider>
@@ -218,7 +226,7 @@ const DrawerContent = (props: DrawerContentProps) => {
   } = props;
 
   // Contexts
-  const { modalKey, fullscreen, swipeToDismiss, placement, size } =
+  const { modalKey, opened, fullscreen, swipeToDismiss, placement, size } =
     useDrawerContext();
   const { theme } = useThemeStore();
 
@@ -323,6 +331,13 @@ const DrawerContent = (props: DrawerContentProps) => {
     scrollElRef.current = null;
   }
 
+  useEffect(() => {
+    if (opened && contentRef.current) {
+      contentRef.current.style.transform = "";
+      contentRef.current.style.transition = "";
+    }
+  }, [opened]);
+
   return (
     <Portal disabled={!portalled} container={portalRef}>
       <DrawerPositioner zIndex={zIndex}>
@@ -330,6 +345,8 @@ const DrawerContent = (props: DrawerContentProps) => {
 
         <ChakraDrawer.Content
           ref={contentRef}
+          overflow={"clip"}
+          pos={"relative"}
           bg={"bg.body"}
           border={"1px solid"}
           borderColor={"border.subtle"}
@@ -378,8 +395,8 @@ const DrawerCloseTrigger = (props: ChakraDrawer.CloseTriggerProps) => {
     <ChakraDrawer.CloseTrigger
       asChild
       pos={"absolute"}
-      top={3}
-      right={3}
+      top={3.5}
+      right={3.5}
       {...restProps}
       onClick={(event) => {
         if (close) {
@@ -399,15 +416,13 @@ const DrawerCloseButton = (props: DrawerCloseButtonProps) => {
 
   return (
     <DrawerCloseTrigger {...closeTriggerProps}>
-      <IconButton
+      <CloseButton
         size={"2xs"}
         variant={"subtle"}
         bg={"an1"}
         rounded={"full"}
         {...restProps}
-      >
-        <AppTablerIcon icon={IconX} boxSize={4} />
-      </IconButton>
+      />
     </DrawerCloseTrigger>
   );
 };
@@ -428,7 +443,7 @@ const DrawerFullscreenButton = (props: IconButtonProps) => {
       }}
       {...props}
     >
-      <AppTablerIcon
+      <AppIcon
         icon={fullscreen ? IconSquares : IconSquare}
         transform={"scaleX(-1)"}
         boxSize={3.5}
@@ -442,7 +457,9 @@ const DrawerHeader = (props: ChakraDrawer.HeaderProps) => {
 };
 
 const DrawerBody = (props: ChakraDrawer.BodyProps) => {
-  return <ChakraDrawer.Body p={4} {...props} />;
+  return (
+    <ChakraDrawer.Body display={"flex"} flexDir={"column"} p={4} {...props} />
+  );
 };
 
 const DrawerFooter = (props: ChakraDrawer.FooterProps) => {

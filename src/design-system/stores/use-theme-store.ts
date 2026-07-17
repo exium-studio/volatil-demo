@@ -17,10 +17,11 @@ type ThemeStore = {
     container: string;
   };
   ambienceColor: boolean;
+  // currency: string
 };
 
 export const DEFAULT: ThemeStore = {
-  colorPalette: COLOR_PALETTES[0].palette,
+  colorPalette: COLOR_PALETTES[25].palette,
   primaryColor: `${COLOR_PALETTES[0].palette}.solid`,
   primaryColorHex: COLOR_PALETTES[0].primaryHex,
   radii: ROUNDED_PRESETS[4],

@@ -1,6 +1,12 @@
 // src/shared/libs/i18n/locale-provider.tsx
 
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  type ReactNode,
+} from "react";
 import {
   setLocale as paraglideSetLocale,
   getLocale,
@@ -14,7 +20,7 @@ export type LocaleContextValue = {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
-export function LocaleProvider({ children }: { children: React.ReactNode }) {
+export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(getLocale());
 
   const setLocale = useCallback((newLocale: Locale) => {

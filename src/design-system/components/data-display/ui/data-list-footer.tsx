@@ -1,11 +1,11 @@
 // src/design-system/components/data-display/ui/data-list-footer.tsx
 
-import { HStack, VStack } from "@/design-system/components/layout/ui/stack";
+import type { DataListFooterProps } from "@/design-system/components/data-display/types/data-list.type";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
-import { DataListPerPage } from "./data-list-per-page";
-import { DataListPagination } from "./data-list-pagination";
-import type { DataListFooterProps } from "../types/data-list.type";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { DataListPagination } from "./data-list-pagination";
+import { DataListPerPage } from "./data-list-per-page";
 
 const formatDataLengthText = (
   currentDataLength?: number,

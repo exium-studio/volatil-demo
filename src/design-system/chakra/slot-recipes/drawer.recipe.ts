@@ -1,19 +1,10 @@
 // src/design-system/chakra/slot-recipes/drawer.recipe.ts
 
 import { defineSlotRecipe } from "@chakra-ui/react";
+import { drawerAnatomy } from "@chakra-ui/react/anatomy";
 
 export const drawerRecipe = defineSlotRecipe({
-  slots: [
-    "backdrop",
-    "positioner",
-    "content",
-    "header",
-    "body",
-    "footer",
-    "title",
-    "description",
-    "closeTrigger",
-  ],
+  slots: drawerAnatomy.keys(),
 
   variants: {
     size: {

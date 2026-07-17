@@ -1,9 +1,10 @@
 // src/design-system/chakra/slot-recipes/checkbox.recipe.ts
 
 import { defineSlotRecipe } from "@chakra-ui/react";
+import { checkboxAnatomy } from "@chakra-ui/react/anatomy";
 
 export const checkboxRecipe = defineSlotRecipe({
-  slots: ["root", "control"],
+  slots: checkboxAnatomy.keys(),
 
   base: {
     control: {

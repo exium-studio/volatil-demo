@@ -3,13 +3,13 @@
 "use client";
 
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { SearchInputProps } from "@/design-system/components/input/types/search-input.type";
 import { Input } from "@/design-system/components/input/ui/input";
-import { useSearchParam } from "@/design-system/hooks/use-search-param";
+import { useFocusSearch } from "@/design-system/hooks/use-focus-search";
 import { InputGroup } from "@chakra-ui/react";
-import { IconSearch, IconX } from "@tabler/icons-react";
-import { forwardRef, useRef, useState } from "react";
+import { SearchIcon, XIcon } from "lucide-react";
+import { forwardRef, useRef, useState, type ChangeEvent } from "react";
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   (
@@ -21,7 +21,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     // Hooks
     const { isUrlMode, queryValue, setQueryValue, clearQueryValue } =
-      useSearchParam(queryKey);
+      useFocusSearch(queryKey);
 
     // States
     const [value, setValue] = useState<string>(
@@ -29,7 +29,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     );
 
     // Handlers
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleChange(e: ChangeEvent<HTMLInputElement>) {
       const next = e.currentTarget.value;
       setValue(next);
       setQueryValue(next);
@@ -45,11 +45,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <InputGroup
-        startElement={<AppTablerIcon icon={IconSearch} />}
+        startElement={<AppIcon icon={SearchIcon} />}
         endElement={
           value ? (
             <IconButton size="xs" onClick={handleClear} me="-2">
-              <AppTablerIcon icon={IconX} />
+              <AppIcon icon={XIcon} />
             </IconButton>
           ) : undefined
         }

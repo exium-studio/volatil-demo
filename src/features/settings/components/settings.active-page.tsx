@@ -4,10 +4,10 @@
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { StackProps } from "@/design-system/components/layout/types/stack.type";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
-import { HStack, VStack } from "@/design-system/components/layout/ui/stack";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -21,16 +21,21 @@ import { SettingsSearchButton } from "@/features/settings/components/settings.se
 import { SETTINGS_PAGES } from "@/features/settings/constants/settings.pages";
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
 import { RootRoute } from "@/routes/-typed";
-import { t } from "@/shared/libs/i18n/-typed";
+import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
-import { IconChevronLeft } from "@tabler/icons-react";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+import { ChevronLeftIcon } from "lucide-react";
 
 export type SettingsActivePageContextValue = {
   activeSettingNavKey: SettingNavKey | undefined;
-  setActiveSettingNavKey: React.Dispatch<
-    React.SetStateAction<SettingNavKey | undefined>
-  >;
+  setActiveSettingNavKey: Dispatch<SetStateAction<SettingNavKey | undefined>>;
 };
 
 const SettingsActivePageContext =
@@ -103,7 +108,7 @@ export const SettingsActivePageHeader = (props: StackProps) => {
       <HStack w={MODAL_CONTROL_CONTAINER_W}>
         {isSmallViewport && (
           <IconButton onClick={() => back()}>
-            <AppTablerIcon icon={IconChevronLeft} />
+            <AppIcon icon={ChevronLeftIcon} />
           </IconButton>
         )}
       </HStack>

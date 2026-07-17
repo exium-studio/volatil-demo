@@ -1,19 +1,21 @@
 // src/design-system/components/data-display/ui/data-list-batch-actions.tsx
 
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
-import type { DataListBatchActionBarProps } from "@/design-system/components/data-display/types/data-list.type";
+import type {
+  DataListBatchActionBarProps,
+  DataListBatchActionsTriggerProps,
+} from "@/design-system/components/data-display/types/data-list.type";
 import { CheckIndicator } from "@/design-system/components/feedback/ui/indicator";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { VStack } from "@/design-system/components/layout/ui/stack";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { ActionBar } from "@/design-system/components/overlay/ui/action-bar";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
-import { Portal } from "@/design-system/components/utilities/portal";
+import { Portal } from "@/design-system/components/utilities/ui/portal";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { Fragment } from "react";
-import type { DataListBatchActionsTriggerProps } from "../types/data-list.type";
 import { Button } from "@/design-system/components/button/ui/button";
 
 export const DataListBatchActionsTrigger = (

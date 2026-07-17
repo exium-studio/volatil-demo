@@ -5,7 +5,7 @@ import type {
   ContainerHeaderProps,
   ContainerRootProps,
 } from "@/design-system/components/layout/types/container.type";
-import { HStack, VStack } from "@/design-system/components/layout/ui/stack";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import {
   HEADER_H,
   SM_SCREEN_BREAKPOINT,

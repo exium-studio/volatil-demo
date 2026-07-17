@@ -3,8 +3,6 @@
 "use client";
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
-import { IconButton } from "@/design-system/components/button/ui/button";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { DialogRootProps } from "@/design-system/components/overlay/types/dialog.type";
 import type {
   ModalBackdropProps,
@@ -19,11 +17,16 @@ import type {
 } from "@/design-system/components/overlay/types/modal.type";
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Drawer } from "@/design-system/components/overlay/ui/drawer";
-import { triggerFullscreenAnimation } from "@/design-system/components/overlay/utils/fullscreen-animation-registry";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { type DrawerRootProps } from "@chakra-ui/react";
-import { IconSquare, IconSquares, IconX } from "@tabler/icons-react";
-import { createContext, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 
 export type ModalContextValue = {
   modalKey: string;
@@ -31,7 +34,7 @@ export type ModalContextValue = {
   open?: () => void;
   close?: () => void;
   fullscreen: boolean;
-  setFullscreen: React.Dispatch<React.SetStateAction<boolean>>;
+  setFullscreen: Dispatch<SetStateAction<boolean>>;
   isSmallViewport: boolean;
 };
 
@@ -149,28 +152,13 @@ const ModalContent = (props: ModalContentProps) => {
 
 const ModalFullscreenButton = (props: IconButtonProps) => {
   // Contexts
-  const { modalKey, fullscreen, setFullscreen } = useModalContext();
+  const { isSmallViewport } = useModalContext();
 
-  return (
-    <IconButton
-      size={"2xs"}
-      variant={"subtle"}
-      bg={"an1"}
-      rounded={"full"}
-      onClick={() => {
-        const next = !fullscreen;
-        triggerFullscreenAnimation(modalKey, next);
-        setFullscreen(next);
-      }}
-      {...props}
-    >
-      <AppTablerIcon
-        icon={fullscreen ? IconSquares : IconSquare}
-        transform={"scaleX(-1)"}
-        boxSize={3.5}
-      />
-    </IconButton>
-  );
+  if (isSmallViewport) {
+    return <Drawer.FullscreenButton {...props} />;
+  }
+
+  return <Dialog.FullscreenButton {...props} />;
 };
 
 const ModalCloseTrigger = (props: ModalCloseTriggerProps) => {
@@ -180,39 +168,23 @@ const ModalCloseTrigger = (props: ModalCloseTriggerProps) => {
   // Contexts
   const { isSmallViewport } = useModalContext();
 
+  const resolvedPos = pos ?? position;
+
   if (isSmallViewport) {
-    return (
-      <Drawer.CloseTrigger
-        asChild
-        pos={pos}
-        position={position}
-        {...restProps}
-      />
-    );
+    return <Drawer.CloseTrigger asChild pos={resolvedPos} {...restProps} />;
   }
 
-  return (
-    <Dialog.CloseTrigger asChild pos={pos} position={position} {...restProps} />
-  );
+  return <Dialog.CloseTrigger asChild pos={resolvedPos} {...restProps} />;
 };
 
 const ModalCloseButton = (props: ModalCloseButtonProps) => {
-  // Props
-  const { closeTriggerProps, ...restProps } = props;
+  // Contexts
+  const { isSmallViewport } = useModalContext();
 
-  return (
-    <Modal.CloseTrigger {...closeTriggerProps}>
-      <IconButton
-        size={"2xs"}
-        variant={"subtle"}
-        bg={"an1"}
-        rounded={"full"}
-        {...restProps}
-      >
-        <AppTablerIcon icon={IconX} boxSize={4} />
-      </IconButton>
-    </Modal.CloseTrigger>
-  );
+  if (isSmallViewport) {
+    return <Drawer.CloseButton {...props} />;
+  }
+  return <Dialog.CloseButton {...props} />;
 };
 
 const ModalHeader = (props: ModalHeaderProps) => {

@@ -1,11 +1,11 @@
 // src/design-system/components/data-display/ui/data-list-pagination.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { LucideIcon } from "@/design-system/components/icon/ui/lucide-icon";
-import { HStack } from "@/design-system/components/layout/ui/stack";
+import type { DataListPaginationProps } from "@/design-system/components/data-display/types/data-list.type";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import type { DataListPaginationProps } from "../types/data-list.type";
 
 export const DataListPagination = (props: DataListPaginationProps) => {
   // Props
@@ -23,7 +23,7 @@ export const DataListPagination = (props: DataListPaginationProps) => {
         onClick={() => setPage?.(page - 1)}
         {...restProps}
       >
-        <LucideIcon icon={ChevronLeftIcon} />
+        <AppIcon icon={ChevronLeftIcon} />
       </IconButton>
 
       <P whiteSpace={"nowrap"}>
@@ -37,7 +37,7 @@ export const DataListPagination = (props: DataListPaginationProps) => {
         onClick={() => setPage?.(page + 1)}
         {...restProps}
       >
-        <LucideIcon icon={ChevronRightIcon} />
+        <AppIcon icon={ChevronRightIcon} />
       </IconButton>
     </HStack>
   );

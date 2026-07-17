@@ -1,9 +1,9 @@
 // src/design-system/components/data-display/ui/data-list-item-actions.tsx
 
-import { VStack } from "@/design-system/components/layout/ui/stack";
+import type { DataListItemActionsTriggerProps } from "@/design-system/components/data-display/types/data-list.type";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
-import React from "react";
-import type { DataListItemActionsTriggerProps } from "../types/data-list.type";
+import { Fragment } from "react";
 
 export const DataListItemActionsTrigger = (
   props: DataListItemActionsTriggerProps,
@@ -43,7 +43,7 @@ export const DataListItemActionsTrigger = (
 
             if (!node) return null;
 
-            return <React.Fragment key={index}>{node}</React.Fragment>;
+            return <Fragment key={index}>{node}</Fragment>;
           })}
         </VStack>
       </Menu.Content>

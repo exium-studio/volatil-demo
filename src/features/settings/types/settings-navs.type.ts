@@ -2,7 +2,7 @@
 
 import type { SETTINGS_NAVS } from "@/features/settings/constants/settings.navs";
 import type { TranslationKey } from "@/shared/libs/i18n/type";
-import type { TablerIcon } from "@tabler/icons-react";
+import type { ComponentType } from "react";
 
 export type SettingNavKey = keyof typeof SETTINGS_NAVS;
 
@@ -19,7 +19,7 @@ export type DescriptionKey = Extract<
 >;
 
 export type SettingNav = {
-  icon?: TablerIcon;
+  icon?: ComponentType;
   titleKey?: TitleKey;
   descriptionKey?: DescriptionKey;
   keywords?: string[];

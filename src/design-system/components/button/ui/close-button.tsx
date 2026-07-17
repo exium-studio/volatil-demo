@@ -4,15 +4,18 @@
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
-import { IconX } from "@tabler/icons-react";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { XIcon } from "lucide-react";
 import { forwardRef } from "react";
 
 export const CloseButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   function CloseButton(props, ref) {
+    // Props
+    const { boxSize = 4, ...restProps } = props;
+
     return (
-      <IconButton ref={ref} {...props}>
-        <AppTablerIcon icon={IconX} />
+      <IconButton ref={ref} {...restProps}>
+        <AppIcon icon={XIcon} boxSize={boxSize} />
       </IconButton>
     );
   },

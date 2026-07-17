@@ -5,10 +5,10 @@ import type {
   DotIndicatorProps,
   RadioIndicatorProps,
 } from "@/design-system/components/feedback/types/indicator.type";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Circle } from "@/design-system/components/layout/ui/box";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { IconCheck } from "@tabler/icons-react";
+import { CheckIcon } from "lucide-react";
 
 export const DotIndicator = (props: DotIndicatorProps) => {
   // Props
@@ -37,8 +37,8 @@ export const CheckIndicator = (props: CheckIndicatorProps) => {
   if (!checked) return null;
 
   return (
-    <AppTablerIcon
-      icon={IconCheck}
+    <AppIcon
+      icon={CheckIcon}
       boxSize={4}
       color={`${theme.colorPalette}.solid`}
       {...restProps}

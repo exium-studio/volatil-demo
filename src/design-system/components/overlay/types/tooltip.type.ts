@@ -1,12 +1,14 @@
 // src/design-system/components/overlay/types/tooltip.type.ts
 
 import { Tooltip as ChakraTooltip } from "@chakra-ui/react";
+import type { ReactNode, RefObject } from "react";
 
-export type TooltipProps = {
+export type TooltipProps = ChakraTooltip.RootProps & {
   showArrow?: boolean;
   portalled?: boolean;
-  portalRef?: React.RefObject<HTMLElement | null>;
-  content: React.ReactNode;
+  portalRef?: RefObject<HTMLElement | null>;
+  content: ReactNode;
   contentProps?: ChakraTooltip.ContentProps;
   disabled?: boolean;
-} & ChakraTooltip.RootProps;
+  asChild?: boolean;
+};

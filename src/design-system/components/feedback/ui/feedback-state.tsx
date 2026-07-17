@@ -3,15 +3,14 @@
 "use client";
 
 import type { FeedbackStateProps } from "@/design-system/components/feedback/types/feedback-state.type";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
-import { VStack } from "@/design-system/components/layout/ui/stack";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FEEDBACK_CONTAINER_MIN_H } from "@/design-system/constants/styles";
 
 const FeedbackState = (props: FeedbackStateProps) => {
   // Props
-  const { icon, tablerIcon, title, description, children, ...restProps } =
-    props;
+  const { icon, title, description, children, ...restProps } = props;
 
   // States
   const isTitleString = typeof title === "string";
@@ -27,15 +26,13 @@ const FeedbackState = (props: FeedbackStateProps) => {
       m={"auto"}
       {...restProps}
     >
-      {tablerIcon ? (
-        <AppTablerIcon
-          icon={tablerIcon}
+      {icon && (
+        <AppIcon
+          icon={icon}
           boxSize={9}
           strokeWidth={1.5}
           color={"fg.subtle"}
         />
-      ) : (
-        icon
       )}
 
       <VStack align={"center"} gap={2} maxW={"300px"}>
@@ -55,7 +52,6 @@ const FeedbackState = (props: FeedbackStateProps) => {
 
         {!isDescriptionString && description}
       </VStack>
-
       {children}
     </VStack>
   );

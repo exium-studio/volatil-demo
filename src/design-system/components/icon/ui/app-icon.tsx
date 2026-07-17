@@ -1,53 +1,33 @@
 // src/design-system/components/icon/ui/app-icon.tsx
 
-import type {
-  AppLucideIconProps,
-  AppTablerIconProps,
-} from "@/design-system/components/icon/types/app-icon.type";
+import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import { Icon } from "@/design-system/components/icon/ui/icon";
-import { LucideIcon } from "@/design-system/components/icon/ui/lucide-icon";
-import { LUCIDE_ICON_BASE_ICON_BOX_SIZE } from "@/design-system/constants/styles";
+import { CircleQuestionMarkIcon } from "lucide-react";
 
-export const AppLucideIcon = (props: AppLucideIconProps) => {
-  // Props
-  const { icon, lucideIconProps, ...restProps } = props;
-
-  return (
-    icon && (
-      <Icon boxSize={LUCIDE_ICON_BASE_ICON_BOX_SIZE} {...restProps}>
-        <LucideIcon icon={icon} {...lucideIconProps} />
-      </Icon>
-    )
-  );
-};
-
-export const AppTablerIcon = (props: AppTablerIconProps) => {
+export const AppIcon = (props: AppIconProps) => {
   // Props
   const {
-    icon: TablerIcon,
-    tablerIconProps,
+    icon = CircleQuestionMarkIcon,
     size = "md",
     boxSize,
     ...restProps
   } = props;
 
+  // Constants
   const sizes = {
-    xs: 3,
+    xs: 3.5,
     sm: 4,
     md: 5,
     lg: 6,
     xl: 7,
   };
 
+  // Derived Values
+  const IconComponent = icon;
+
   return (
-    TablerIcon && (
-      <Icon
-        boxSize={boxSize ?? sizes[size as keyof typeof sizes]}
-        strokeWidth={1.8}
-        {...restProps}
-      >
-        <TablerIcon {...tablerIconProps} />
-      </Icon>
-    )
+    <Icon boxSize={boxSize ?? sizes[size as keyof typeof sizes]} {...restProps}>
+      <IconComponent />
+    </Icon>
   );
 };

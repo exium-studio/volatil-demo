@@ -34,6 +34,9 @@ export const PADDING_SM = "8px";
 export const PADDING_MD = "16px";
 export const PADDING_LG = "24px";
 
+// Effect
+export const BACKDROP_FILTER_BLUR = "blur(5px)";
+
 // Data Table
 export const TABLE_ACTIONS_CELL_W = "56px";
 export const TABLE_ROW_H = "56px";

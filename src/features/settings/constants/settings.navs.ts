@@ -2,73 +2,73 @@
 
 import type { SettingNav } from "@/features/settings/types/settings-navs.type";
 import {
-  IconAdjustmentsHorizontal,
-  IconBell,
-  IconClock,
-  IconDeviceDesktop,
-  IconHelpCircle,
-  IconInfoCircle,
-  IconLanguage,
-  IconLock,
-  IconPlug,
-  IconUser,
-  IconUserCircle,
-} from "@tabler/icons-react";
+  Bell,
+  Clock,
+  HelpCircle,
+  Info,
+  Languages,
+  Lock,
+  Monitor,
+  Plug,
+  SlidersHorizontal,
+  User,
+  UserCircle,
+} from "lucide-react";
 
 export const SETTINGS_NAVS = {
   profile: {
     titleKey: "settings.profile.title",
     descriptionKey: "settings.profile.description",
-    icon: IconUser,
+    icon: User,
   },
   account: {
     titleKey: "settings.account.title",
     descriptionKey: "settings.account.description",
-    icon: IconUserCircle,
+    icon: UserCircle,
   },
   privacy: {
     titleKey: "settings.privacy.title",
     descriptionKey: "settings.privacy.description",
-    icon: IconLock,
+    icon: Lock,
   },
   notification: {
     titleKey: "settings.notification.title",
     descriptionKey: "settings.notification.description",
-    icon: IconBell,
+    icon: Bell,
   },
   appearance: {
     titleKey: "settings.appearance.title",
     descriptionKey: "settings.appearance.description",
-    icon: IconDeviceDesktop,
+    icon: Monitor,
   },
   language: {
     titleKey: "settings.language.title",
     descriptionKey: "settings.language.description",
-    icon: IconLanguage,
+    icon: Languages,
   },
   datetime: {
     titleKey: "settings.datetime.title",
     descriptionKey: "settings.datetime.description",
-    icon: IconClock,
+    icon: Clock,
   },
   integration: {
     titleKey: "settings.integration.title",
     descriptionKey: "settings.integration.description",
-    icon: IconPlug,
+    icon: Plug,
   },
   advanced: {
     titleKey: "settings.advanced.title",
     descriptionKey: "settings.advanced.description",
-    icon: IconAdjustmentsHorizontal,
+    icon: SlidersHorizontal,
   },
   support: {
     titleKey: "settings.support.title",
     descriptionKey: "settings.support.description",
-    icon: IconHelpCircle,
+    icon: HelpCircle,
   },
   about: {
     titleKey: "settings.about.title",
     descriptionKey: "settings.about.description",
-    icon: IconInfoCircle,
+    icon: Info,
   },
 } satisfies Record<string, SettingNav>;

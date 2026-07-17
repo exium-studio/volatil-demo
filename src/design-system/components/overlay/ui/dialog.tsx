@@ -4,14 +4,15 @@
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { AppTablerIcon } from "@/design-system/components/icon/ui/app-icon";
+import { CloseButton } from "@/design-system/components/button/ui/close-button";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
   DIALOG_OFFSET_X_VAR,
   DIALOG_OFFSET_Y_VAR,
   getDialogOffset,
   updateClickOrigin,
   updateDialogOffset,
-} from "@/design-system/components/overlay/stores/use-dialog-animation-store";
+} from "@/design-system/components/overlay/stores/dialog-animation-store";
 import type {
   DialogCloseButtonProps,
   DialogContentProps,
@@ -22,20 +23,23 @@ import {
   triggerFullscreenAnimation,
   unregisterFullscreenAnimator,
 } from "@/design-system/components/overlay/utils/fullscreen-animation-registry";
-import { Portal } from "@/design-system/components/utilities/portal";
+import { Portal } from "@/design-system/components/utilities/ui/portal";
 import { MODAL_BASE_ZINDEX } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { back } from "@/shared/utils/client/navigation";
 import { Dialog as ChakraDialog } from "@chakra-ui/react";
-import { IconSquare, IconSquares, IconX } from "@tabler/icons-react";
-import React, {
+import { IconSquare, IconSquares } from "@tabler/icons-react";
+import {
   createContext,
   useContext,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
+  type Dispatch,
+  type MouseEvent,
+  type SetStateAction,
 } from "react";
 
 export type DialogContextValue = {
@@ -44,7 +48,7 @@ export type DialogContextValue = {
   open?: () => void;
   close?: () => void;
   fullscreen: boolean;
-  setFullscreen: React.Dispatch<React.SetStateAction<boolean>>;
+  setFullscreen: Dispatch<SetStateAction<boolean>>;
   clickOriginAnimation: boolean;
   size: ChakraDialog.RootProps["size"];
 };
@@ -140,7 +144,12 @@ const DialogRoot = (props: DialogRootProps) => {
         trapFocus={false}
         preventScroll
         onEscapeKeyDown={() => {
-          back();
+          if (close) {
+            close();
+          } else {
+            back();
+          }
+          setTimeout(() => setFullscreen(false), 200);
         }}
       />
     </DialogContext.Provider>
@@ -156,7 +165,7 @@ const DialogTrigger = (props: ChakraDialog.TriggerProps) => {
 
   // Handlers
   const initOriginPoint = clickOriginAnimation
-    ? (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    ? (e: MouseEvent) => {
         updateClickOrigin(modalKey, e.currentTarget);
       }
     : undefined;
@@ -183,7 +192,7 @@ const DialogBackdrop = (props: ChakraDialog.BackdropProps) => {
   const { onClick, ...restProps } = props;
 
   // Contexts
-  const { close } = useDialogContext();
+  const { close, setFullscreen } = useDialogContext();
 
   return (
     <ChakraDialog.Backdrop
@@ -194,6 +203,7 @@ const DialogBackdrop = (props: ChakraDialog.BackdropProps) => {
         } else {
           back();
         }
+        setTimeout(() => setFullscreen(false), 200);
         onClick?.(event);
       }}
       {...restProps}
@@ -278,6 +288,7 @@ const DialogContent = (props: DialogContentProps) => {
         <ChakraDialog.Content
           ref={contentRef}
           overflow={"clip"}
+          pos={"relative"}
           bg={"bg.body"}
           rounded={isFullscreen ? 0 : theme.radii.container}
           border={"1px solid"}
@@ -314,14 +325,14 @@ const DialogCloseTrigger = (props: ChakraDialog.CloseTriggerProps) => {
   const { onClick, ...restProps } = props;
 
   // Contexts
-  const { close } = useDialogContext();
+  const { close, setFullscreen } = useDialogContext();
 
   return (
     <ChakraDialog.CloseTrigger
       asChild
       pos={"absolute"}
-      top={3}
-      right={3}
+      top={3.5}
+      right={3.5}
       {...restProps}
       onClick={(event) => {
         if (close) {
@@ -329,6 +340,7 @@ const DialogCloseTrigger = (props: ChakraDialog.CloseTriggerProps) => {
         } else {
           back();
         }
+        setTimeout(() => setFullscreen(false), 200);
         onClick?.(event);
       }}
     />
@@ -341,15 +353,13 @@ const DialogCloseButton = (props: DialogCloseButtonProps) => {
 
   return (
     <DialogCloseTrigger {...closeTriggerProps}>
-      <IconButton
+      <CloseButton
         size={"2xs"}
         variant={"subtle"}
         bg={"an1"}
         rounded={"full"}
         {...restProps}
-      >
-        <AppTablerIcon icon={IconX} boxSize={4} />
-      </IconButton>
+      />
     </DialogCloseTrigger>
   );
 };
@@ -371,7 +381,7 @@ const DialogFullscreenButton = (props: IconButtonProps) => {
       }}
       {...props}
     >
-      <AppTablerIcon
+      <AppIcon
         icon={fullscreen ? IconSquares : IconSquare}
         transform={"scaleX(-1)"}
         boxSize={3.5}
@@ -385,7 +395,9 @@ const DialogHeader = (props: ChakraDialog.TitleProps) => {
 };
 
 const DialogBody = (props: ChakraDialog.BodyProps) => {
-  return <ChakraDialog.Body p={4} {...props} />;
+  return (
+    <ChakraDialog.Body display={"flex"} flexDir={"column"} p={4} {...props} />
+  );
 };
 
 const DialogFooter = (props: ChakraDialog.FooterProps) => {

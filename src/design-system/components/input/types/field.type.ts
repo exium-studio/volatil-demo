@@ -1,12 +1,13 @@
 // src/design-system/components/input/types/field.type.ts
 
 import { Field as ChakraField } from "@chakra-ui/react";
+import type { ReactNode } from "react";
 
 export type FieldProps = Omit<ChakraField.RootProps, "label"> & {
-  label?: React.ReactNode;
+  label?: ReactNode;
   labelProps?: ChakraField.LabelProps;
-  helperText?: React.ReactNode;
-  errorText?: React.ReactNode;
-  optionalText?: React.ReactNode;
+  helperText?: ReactNode;
+  errorText?: ReactNode;
+  optionalText?: ReactNode;
   optional?: boolean;
 };

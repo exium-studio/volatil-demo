@@ -2,12 +2,12 @@
 
 import { ActionBar as ChakraActionBar } from "@chakra-ui/react";
 
-export type ActionBarRootProps = {} & ChakraActionBar.RootProps;
+export type ActionBarRootProps = ChakraActionBar.RootProps & {};
 
-export type ActionBarPositionerProps = {} & ChakraActionBar.PositionerProps;
+export type ActionBarPositionerProps = ChakraActionBar.PositionerProps & {};
 
-export type ActionBarContentProps = {} & ChakraActionBar.ContentProps;
+export type ActionBarContentProps = ChakraActionBar.ContentProps & {};
 
-export type ActionBarSeparatorProps = {} & ChakraActionBar.SeparatorProps;
+export type ActionBarSeparatorProps = ChakraActionBar.SeparatorProps & {};
 
-export type ActionBarCloseTriggerProps = {} & ChakraActionBar.CloseTriggerProps;
+export type ActionBarCloseTriggerProps = ChakraActionBar.CloseTriggerProps & {};

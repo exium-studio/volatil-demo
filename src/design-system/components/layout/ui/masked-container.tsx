@@ -4,7 +4,7 @@ import type {
   HMaskedContainerProps,
   VMaskedContainerProps,
 } from "@/design-system/components/layout/types/masked-container.type";
-import { VStack } from "@/design-system/components/layout/ui/stack";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { forwardRef } from "react";
 
 export const VMaskedContainer = forwardRef<

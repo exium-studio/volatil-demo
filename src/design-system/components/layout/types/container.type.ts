@@ -1,11 +1,20 @@
 // src/design-system/components/layout/types/container.type.ts
 
-import type { StackProps } from "@/design-system/components/layout/types/stack.type";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 
-export type ContainerRootProps = {
+export type ContainerRootProps = StackProps & {
   withContext?: boolean;
-} & StackProps;
+};
 
 export type ContainerHeaderProps = StackProps;
 
 export type ContainerBodyProps = StackProps;
+
+export type ContainerContextValue = {
+  dimension: {
+    width: number;
+    height: number;
+  };
+  isValidDimension: boolean;
+  isSmContainer: boolean;
+};

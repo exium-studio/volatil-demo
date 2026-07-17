@@ -32,9 +32,27 @@ export const Skeleton = (props: SkeletonProps) => {
 };
 
 export const SkeletonCircle = (props: SkeletonCircleProps) => {
-  return <ChakraSkeletonCircle {...props} />;
+  return (
+    <ChakraSkeletonCircle
+      variant={"shine"}
+      css={{
+        "--start-color": "transparent",
+        "--end-color": "colors.bg.subtle",
+      }}
+      {...props}
+    />
+  );
 };
 
 export const SkeletonText = (props: SkeletonTextProps) => {
-  return <ChakraSkeletonText {...props} />;
+  return (
+    <ChakraSkeletonText
+      variant={"shine"}
+      css={{
+        "--start-color": "transparent",
+        "--end-color": "colors.bg.subtle",
+      }}
+      {...props}
+    />
+  );
 };

@@ -7,6 +7,7 @@ import { forwardRef } from "react";
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
   function Tooltip(props, ref) {
     const {
+      asChild = true,
       showArrow,
       children,
       disabled,
@@ -21,7 +22,9 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
 
     return (
       <ChakraTooltip.Root {...rest}>
-        <ChakraTooltip.Trigger asChild>{children}</ChakraTooltip.Trigger>
+        <ChakraTooltip.Trigger asChild={asChild} as={"span"}>
+          {children}
+        </ChakraTooltip.Trigger>
 
         <Portal disabled={!portalled} container={portalRef}>
           <ChakraTooltip.Positioner>

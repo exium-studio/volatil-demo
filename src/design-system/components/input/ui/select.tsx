@@ -1,7 +1,9 @@
 // src/design-system/components/input/ui/select.tsx
 
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { SelectProps } from "@/design-system/components/input/types/select.type";
-import { HStack } from "@/design-system/components/layout/ui/stack";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import {
   Select as ChakraSelect,
@@ -9,7 +11,7 @@ import {
   createListCollection,
 } from "@chakra-ui/react";
 
-export default function Select(props: SelectProps) {
+export default function SelectInput(props: SelectProps) {
   // Props
   const {
     value,
@@ -20,6 +22,7 @@ export default function Select(props: SelectProps) {
     portalled = true,
     portalRef,
     suffixLabel,
+    _hover,
     ...restProps
   } = props;
 
@@ -48,25 +51,38 @@ export default function Select(props: SelectProps) {
     >
       <ChakraSelect.HiddenSelect />
 
-      <ChakraSelect.Control>
-        <ChakraSelect.Trigger
-          rounded={theme.radii.component}
-          cursor={"pointer"}
-        >
-          <HStack w={"full"}>
+      <Tooltip
+        content={
+          <HStack w={"200%"}>
             <ChakraSelect.ValueText
-              fontSize={props?.fontSize}
+              fontSize={"sm"}
               placeholder={placeholder}
-              minH={"20px"}
+              whiteSpace={"nowrap"}
             />
             {suffixLabel}
           </HStack>
-        </ChakraSelect.Trigger>
+        }
+      >
+        <ChakraSelect.Control rounded={theme.radii.component} _hover={_hover}>
+          <ChakraSelect.Trigger
+            rounded={theme.radii.component}
+            cursor={"pointer"}
+          >
+            <HStack w={"full"}>
+              <ChakraSelect.ValueText
+                fontSize={props?.fontSize}
+                placeholder={placeholder}
+                minH={"20px"}
+              />
+              {suffixLabel}
+            </HStack>
+          </ChakraSelect.Trigger>
 
-        <ChakraSelect.IndicatorGroup>
-          <ChakraSelect.Indicator boxSize={5} color={props?.color} />
-        </ChakraSelect.IndicatorGroup>
-      </ChakraSelect.Control>
+          <ChakraSelect.IndicatorGroup>
+            <ChakraSelect.Indicator boxSize={5} color={props?.color} />
+          </ChakraSelect.IndicatorGroup>
+        </ChakraSelect.Control>
+      </Tooltip>
 
       <Portal container={portalRef} disabled={!portalled}>
         <ChakraSelect.Positioner>
@@ -80,22 +96,28 @@ export default function Select(props: SelectProps) {
           >
             {collection.items.map((item) => (
               <ChakraSelect.Item
-                item={item}
                 key={String(item.value)}
+                item={item}
+                gap={2}
                 p={2}
                 rounded={theme?.radii.component}
+                fontSize={restProps.fontSize}
                 cursor={"pointer"}
                 transition={"200ms"}
                 _hover={{
                   bg: "bg.subtle",
                 }}
                 _selected={{
-                  bg: "bg.subtle",
+                  bg: "bg.muted",
                 }}
               >
+                {item.icon && <AppIcon icon={item.icon} />}
+
                 {item.label}
 
-                <ChakraSelect.ItemIndicator />
+                <ChakraSelect.ItemIndicator
+                  color={`${theme.colorPalette}.solid`}
+                />
               </ChakraSelect.Item>
             ))}
           </ChakraSelect.Content>

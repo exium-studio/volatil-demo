@@ -2,7 +2,7 @@
 
 "use client";
 
-import { HStack } from "@/design-system/components/layout/ui/stack";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import type { PopModalTriggerProps } from "@/design-system/components/overlay/types/modal.type";
 import { Modal } from "@/design-system/components/overlay/ui/modal";

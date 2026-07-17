@@ -2,20 +2,21 @@
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { Drawer as ChakraDrawer } from "@chakra-ui/react";
+import type { RefObject } from "react";
 
-export type DrawerRootProps = {
+export type DrawerRootProps = Omit<ChakraDrawer.RootProps, "open"> & {
   modalKey: string;
   opened: boolean;
   open?: () => void;
   close?: () => void;
   swipeToDismiss?: boolean;
-} & Omit<ChakraDrawer.RootProps, "open">;
+};
 
-export type DrawerContentProps = {
+export type DrawerContentProps = ChakraDrawer.ContentProps & {
   portalled?: boolean;
-  portalRef?: React.RefObject<HTMLElement | null>;
+  portalRef?: RefObject<HTMLElement | null>;
   backdrop?: boolean;
-} & ChakraDrawer.ContentProps;
+};
 
 export type DrawerCloseButtonProps = IconButtonProps & {
   closeTriggerProps?: ChakraDrawer.CloseTriggerProps;

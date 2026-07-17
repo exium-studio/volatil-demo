@@ -3,10 +3,10 @@
 "use client";
 
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
-import { FeedbackNoResult } from "@/design-system/components/feedback/ui/feedback-state.no-result";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
-import { HStack, VStack } from "@/design-system/components/layout/ui/stack";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import type {
   FocusSearchResultItemProps,
@@ -15,17 +15,23 @@ import type {
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Kbd } from "@/design-system/components/typography/ui/kbd";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useSearchParam } from "@/design-system/hooks/use-search-param";
+import { useFocusSearch } from "@/design-system/hooks/use-focus-search";
 import { useSearch } from "@/design-system/hooks/use-search";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   SearchIndex,
   SearchIndexItem,
 } from "@/design-system/types/search.type";
-import { t } from "@/shared/libs/i18n/-typed";
+import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type KeyboardEvent,
+} from "react";
 
 type FocusTriggerContextValue = {
   modalKey: string;
@@ -145,7 +151,7 @@ const FocusSearchResultItem = (
 
 const FocusSearchBody = () => {
   const { queryKey, searchIndex, onResultSelect } = useFocusTriggerContext();
-  const { queryValue } = useSearchParam(queryKey);
+  const { queryValue } = useFocusSearch(queryKey);
   const [query, setQuery] = useState<string>(queryValue ?? "");
 
   const { results, recentResults, addRecent, clearAllRecent } = useSearch(
@@ -172,7 +178,7 @@ const FocusSearchBody = () => {
     back();
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (items.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -250,7 +256,7 @@ const FocusSearchBody = () => {
 
         {hasQuery && (
           <>
-            {isEmptyArray(results) && <FeedbackNoResult query={query} />}
+            {isEmptyArray(results) && <NoResultState query={query} />}
 
             {!isEmptyArray(results) && (
               <VStack gap={1}>

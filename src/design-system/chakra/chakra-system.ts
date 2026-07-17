@@ -1,16 +1,16 @@
 // src/design-system/chakra/chakra-system.ts
 
-import { SM_SCREEN_BREAKPOINT } from "@/design-system/constants/styles";
-import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
+import { carouselRecipe } from "@/design-system/chakra/slot-recipes/carousel.recipe";
+import { checkboxRecipe } from "@/design-system/chakra/slot-recipes/checkbox.recipe";
 import { dialogRecipe } from "@/design-system/chakra/slot-recipes/dialog.recipe";
 import { drawerRecipe } from "@/design-system/chakra/slot-recipes/drawer.recipe";
+import { selectRecipe } from "@/design-system/chakra/slot-recipes/select.recipe";
 import {
   DIALOG_OFFSET_X_VAR,
   DIALOG_OFFSET_Y_VAR,
-} from "@/design-system/components/overlay/stores/use-dialog-animation-store";
-import { checkboxRecipe } from "@/design-system/chakra/slot-recipes/checkbox.recipe";
-import { inputRecipe } from "@/design-system/chakra/recipes/input.recipe";
-import { selectRecipe } from "@/design-system/chakra/slot-recipes/select.recipe";
+} from "@/design-system/components/overlay/stores/dialog-animation-store";
+import { SM_SCREEN_BREAKPOINT } from "@/design-system/constants/styles";
+import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
 export const chakraConfig = defineConfig({
   conditions: {
@@ -40,6 +40,31 @@ export const chakraConfig = defineConfig({
     },
 
     keyframes: {
+      "scale-up": {
+        "0%": {
+          transform: "scale(0.25)",
+          opacity: 0,
+        },
+        "100%": {
+          transform: "scale(1)",
+          opacity: 1,
+        },
+      },
+
+      "scale-up-overshoot": {
+        "0%": {
+          transform: "scale(0.85)",
+          opacity: 0,
+        },
+        "50%": {
+          transform: "scale(1.015)",
+          opacity: 1,
+        },
+        "100%": {
+          transform: "scale(1)",
+        },
+      },
+
       "scale-up-overshoot-from-click-origin": {
         "0%": {
           transform: `translate(var(${DIALOG_OFFSET_X_VAR}), var(${DIALOG_OFFSET_Y_VAR})) scale(0)`,
@@ -54,6 +79,17 @@ export const chakraConfig = defineConfig({
         },
       },
 
+      "scale-down": {
+        "0%": {
+          transform: "scale(1)",
+          opacity: 1,
+        },
+        "100%": {
+          transform: "scale(0.85)",
+          opacity: 0,
+        },
+      },
+
       "scale-down-to-click-origin": {
         "0%": {
           transform: "translate(0, 0) scale(1)",
@@ -65,39 +101,12 @@ export const chakraConfig = defineConfig({
         },
       },
 
-      "scale-up": {
+      "shrink-x": {
         "0%": {
-          transform: "scale(0.25)",
-          opacity: 0,
+          transform: "scaleX(1)",
         },
         "100%": {
-          transform: "scale(1)",
-          opacity: 1,
-        },
-      },
-
-      "scale-up-overshoot": {
-        "0%": {
-          transform: "scale(0.25)",
-          opacity: 0,
-        },
-        "50%": {
-          transform: "scale(1.025)",
-          opacity: 1,
-        },
-        "100%": {
-          transform: "scale(1)",
-        },
-      },
-
-      "scale-down": {
-        "0%": {
-          transform: "scale(1)",
-          opacity: 1,
-        },
-        "100%": {
-          transform: "scale(0.75)",
-          opacity: 0,
+          transform: `scaleX(0)`,
         },
       },
     },
@@ -110,8 +119,6 @@ export const chakraConfig = defineConfig({
         bodyLight: { value: "#ffffff" },
         bodyDark: { value: "#1f1f1f" },
 
-        shadowLine: { value: "#8a90960c" },
-
         an0: { value: "#757b800f" },
         an1: { value: "#757b801f" },
         an2: { value: "#757b802f" },
@@ -121,18 +128,47 @@ export const chakraConfig = defineConfig({
         placeholder: { value: "#96969691" },
 
         neutral: {
-          50: { value: "#f8f8f8" },
+          50: { value: "#f8f8fa" },
           100: { value: "#f3f3f5" },
-          200: { value: "#e8e8e9" },
+          200: { value: "#ececef" },
           300: { value: "#dbdbdd" },
-          400: { value: "#cdcac6" },
-          500: { value: "#88827c" },
+          400: { value: "#a5a5ad" },
+          500: { value: "#6e6e76" },
           600: { value: "#66615c" },
           700: { value: "#3d3f3f" },
           800: { value: "#2e2f2f" },
           900: { value: "#292929" },
-          950: { value: "#171717" },
+          950: { value: "#252525" },
         },
+
+        // gray: {
+        //   50: { value: "#f8f8f8" },
+
+        //   100: { value: "#f3f3f5" },
+
+        //   200: { value: "#e8e8e9" },
+
+        //   300: { value: "#dbdbdd" },
+
+        //   // fg.muted-dark
+        //   // fg.subtle-light
+        //   400: { value: "#a5a5ad" },
+
+        //   // fg.subtle-dark
+        //   500: { value: "#6e6e76" },
+
+        //   // fg.muted-light
+        //   600: { value: "#66615c" },
+
+        //   // placeholder-light
+        //   700: { value: "#3d3f3f" },
+
+        //   800: { value: "#2e2f2f" },
+
+        //   900: { value: "#292929" },
+
+        //   950: { value: "#171717" },
+        // },
 
         // slight blue tint
         grey: {
@@ -581,19 +617,19 @@ export const chakraConfig = defineConfig({
         // "7xl": { value: "3.9375rem" }, // 63px
         // "8xl": { value: "5rem" }, // 80px
         // "9xl": { value: "6.3125rem" }, // 101px
-        xs: { value: "0.75rem" }, // 12px
-        sm: { value: "0.875rem" }, // 14px
+        xs: { value: "0.6875rem" }, // 11px
+        sm: { value: "0.8125rem" }, // 13px
         md: { value: "0.9375rem" }, // 15px
-        lg: { value: "1rem" }, // 16px
-        xl: { value: "1.125rem" }, // 18px
-        "2xl": { value: "1.375rem" }, // 22px
-        "3xl": { value: "1.75rem" }, // 28px
-        "4xl": { value: "2.125rem" }, // 34px
-        "5xl": { value: "2.625rem" }, // 42px
-        "6xl": { value: "3.375rem" }, // 54px
-        "7xl": { value: "4.25rem" }, // 68px
-        "8xl": { value: "5.5rem" }, // 88px
-        "9xl": { value: "7rem" }, // 112px,
+        lg: { value: "1.0625rem" }, // 17px
+        xl: { value: "1.1875rem" }, // 19px
+        "2xl": { value: "1.4375rem" }, // 23px
+        "3xl": { value: "1.8125rem" }, // 29px
+        "4xl": { value: "2.1875rem" }, // 35px
+        "5xl": { value: "2.9375rem" }, // 47px
+        "6xl": { value: "3.6875rem" }, // 59px
+        "7xl": { value: "4.4375rem" }, // 71px
+        "8xl": { value: "5.9375rem" }, // 95px
+        "9xl": { value: "7.9375rem" }, // 127px
       },
       fontWeights: {
         normal: { value: "500" },
@@ -651,7 +687,16 @@ export const chakraConfig = defineConfig({
           value: "scale-up-overshoot-from-click-origin",
         },
         "scale-up": {
-          value: "scale-up cubic-bezier(0.16, 1, 0.3, 1)",
+          value: "scale-up cubic-bezier(0.4, 0, 0.2, 1)",
+        },
+        "scale-up-overshoot": {
+          value: "scale-up-overshoot cubic-bezier(0.4, 0, 0.2, 1)",
+        },
+        "scale-down": {
+          value: "scale-down cubic-bezier(0.4, 0, 0.2, 1)",
+        },
+        "shrink-x": {
+          value: "shrink-x",
         },
       },
 
@@ -663,20 +708,20 @@ export const chakraConfig = defineConfig({
         bg: {
           subtle: {
             value: {
-              base: "{colors.neutral.100} !important",
-              _dark: "{colors.neutral.900} !important",
+              base: "{colors.neutral.50} !important",
+              _dark: "{colors.neutral.950} !important",
             },
           },
           muted: {
             value: {
-              base: "{colors.neutral.200} !important",
-              _dark: "{colors.neutral.800} !important",
+              base: "{colors.neutral.100} !important",
+              _dark: "{colors.neutral.900} !important",
             },
           },
           emphasized: {
             value: {
-              base: "{colors.neutral.300} !important",
-              _dark: "{colors.neutral.700} !important",
+              base: "{colors.neutral.200} !important",
+              _dark: "{colors.neutral.800} !important",
             },
           },
           canvas: {
@@ -703,9 +748,21 @@ export const chakraConfig = defineConfig({
               _dark: "rgba(40, 40, 40, 0.5)",
             },
           },
+          backdrop: {
+            value: {
+              base: "{colors.blackAlpha.500}",
+              _dark: "{colors.blackAlpha.500}",
+            },
+          },
         },
 
         border: {
+          DEFAULT: {
+            value: {
+              base: "{colors.neutral.200} !important",
+              _dark: "{colors.neutral.800} !important",
+            },
+          },
           subtle: {
             value: {
               base: "{colors.an1} !important",
@@ -803,7 +860,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.grey.900}",
             },
           },
-          emphasized: { value: "{colors.grey.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.grey.200}",
+              _dark: "{colors.grey.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.grey.500}",
@@ -849,7 +911,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.cream.900}",
             },
           },
-          emphasized: { value: "{colors.cream.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.cream.200}",
+              _dark: "{colors.cream.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.cream.500}",
@@ -895,7 +962,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.caramel.900}",
             },
           },
-          emphasized: { value: "{colors.caramel.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.caramel.200}",
+              _dark: "{colors.caramel.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.caramel.500}",
@@ -938,7 +1010,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.mocha.900}",
             },
           },
-          emphasized: { value: "{colors.mocha.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.mocha.200}",
+              _dark: "{colors.mocha.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.mocha.500}",
@@ -981,7 +1058,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.brown.900}",
             },
           },
-          emphasized: { value: "{colors.brown.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.brown.200}",
+              _dark: "{colors.brown.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.brown.500}",
@@ -1027,7 +1109,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.maroon.900}",
             },
           },
-          emphasized: { value: "{colors.maroon.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.maroon.200}",
+              _dark: "{colors.maroon.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.maroon.500}",
@@ -1073,7 +1160,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.red.900} !important",
             },
           },
-          emphasized: { value: "{colors.red.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.red.200} !important",
+              _dark: "{colors.red.800} !important",
+            },
+          },
           solid: {
             value: {
               base: "{colors.red.500}",
@@ -1119,7 +1211,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.salmon.900}",
             },
           },
-          emphasized: { value: "{colors.salmon.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.salmon.200}",
+              _dark: "{colors.salmon.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.salmon.500}",
@@ -1165,7 +1262,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.pastelOrange.900}",
             },
           },
-          emphasized: { value: "{colors.pastelOrange.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.pastelOrange.200}",
+              _dark: "{colors.pastelOrange.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.pastelOrange.500}",
@@ -1211,7 +1313,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.orange.900} !important",
             },
           },
-          emphasized: { value: "{colors.orange.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.orange.200} !important",
+              _dark: "{colors.orange.800} !important",
+            },
+          },
           solid: {
             value: {
               base: "{colors.orange.500} !important",
@@ -1257,7 +1364,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.gold.900}",
             },
           },
-          emphasized: { value: "{colors.gold.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.gold.200}",
+              _dark: "{colors.gold.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.gold.500}",
@@ -1303,7 +1415,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.yellow.900} !important",
             },
           },
-          emphasized: { value: "{colors.yellow.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.yellow.200} !important",
+              _dark: "{colors.yellow.800} !important",
+            },
+          },
           solid: {
             value: {
               base: "{colors.yellow.500}",
@@ -1349,7 +1466,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.lime.900}",
             },
           },
-          emphasized: { value: "{colors.lime.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.lime.200}",
+              _dark: "{colors.lime.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.lime.500}",
@@ -1395,7 +1517,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.olive.900}",
             },
           },
-          emphasized: { value: "{colors.olive.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.olive.200}",
+              _dark: "{colors.olive.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.olive.500}",
@@ -1441,7 +1568,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.green.900} !important",
             },
           },
-          emphasized: { value: "{colors.green.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.green.200} !important",
+              _dark: "{colors.green.800} !important",
+            },
+          },
           solid: {
             value: {
               base: "{colors.green.500}",
@@ -1487,7 +1619,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.jade.900}",
             },
           },
-          emphasized: { value: "{colors.jade.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.jade.200}",
+              _dark: "{colors.jade.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.jade.500}",
@@ -1533,7 +1670,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.teal.900} !important",
             },
           },
-          emphasized: { value: "{colors.teal.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.teal.200} !important",
+              _dark: "{colors.teal.800} !important",
+            },
+          },
           solid: {
             value: {
               base: "{colors.teal.500} !important",
@@ -1579,7 +1721,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.tealBlue.900}",
             },
           },
-          emphasized: { value: "{colors.tealBlue.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.tealBlue.200}",
+              _dark: "{colors.tealBlue.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.tealBlue.500}",
@@ -1625,7 +1772,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.cyan.900} !important",
             },
           },
-          emphasized: { value: "{colors.cyan.800}" },
+          emphasized: {
+            value: {
+              base: "{colors.cyan.200} !important",
+              _dark: "{colors.cyan.800} !important",
+            },
+          },
           solid: {
             value: {
               base: "{colors.cyan.500} !important",
@@ -1668,7 +1820,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.sky.900}",
             },
           },
-          emphasized: { value: "{colors.sky.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.sky.200}",
+              _dark: "{colors.sky.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.sky.500}",
@@ -1714,7 +1871,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.powderBlue.900}",
             },
           },
-          emphasized: { value: "{colors.powderBlue.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.powderBlue.200}",
+              _dark: "{colors.powderBlue.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.powderBlue.500}",
@@ -1760,7 +1922,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.blue.900} !important",
             },
           },
-          emphasized: { value: "{colors.blue.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.blue.200} !important",
+              _dark: "{colors.blue.800} !important",
+            },
+          },
           solid: {
             value: {
               base: "{colors.blue.500}",
@@ -1806,7 +1973,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.sapphire.900}",
             },
           },
-          emphasized: { value: "{colors.sapphire.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.sapphire.200}",
+              _dark: "{colors.sapphire.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.sapphire.500}",
@@ -1849,7 +2021,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.indigo.900}",
             },
           },
-          emphasized: { value: "{colors.indigo.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.indigo.200}",
+              _dark: "{colors.indigo.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.indigo.500}",
@@ -1895,7 +2072,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.discord.900}",
             },
           },
-          emphasized: { value: "{colors.discord.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.discord.200}",
+              _dark: "{colors.discord.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.discord.500}",
@@ -1941,7 +2123,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.powderLavender.900}",
             },
           },
-          emphasized: { value: "{colors.powderLavender.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.powderLavender.200}",
+              _dark: "{colors.powderLavender.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.powderLavender.500}",
@@ -1987,7 +2174,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.lavender.900}",
             },
           },
-          emphasized: { value: "{colors.lavender.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.lavender.200}",
+              _dark: "{colors.lavender.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.lavender.500}",
@@ -2033,7 +2225,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.purple.900}",
             },
           },
-          emphasized: { value: "{colors.purple.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.purple.200}",
+              _dark: "{colors.purple.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.purple.500}",
@@ -2079,7 +2276,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.bubblegumPink.900}",
             },
           },
-          emphasized: { value: "{colors.bubblegumPink.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.bubblegumPink.200}",
+              _dark: "{colors.bubblegumPink.800}",
+            },
+          },
           solid: {
             value: {
               base: "{colors.bubblegumPink.500}",
@@ -2125,7 +2327,12 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.pink.900} !important",
             },
           },
-          emphasized: { value: "{colors.pink.400}" },
+          emphasized: {
+            value: {
+              base: "{colors.pink.200} !important",
+              _dark: "{colors.pink.800} !important",
+            },
+          },
           solid: {
             value: {
               base: "{colors.pink.500}",
@@ -2201,15 +2408,14 @@ export const chakraConfig = defineConfig({
 
     animationStyles: {},
 
-    recipes: {
-      input: inputRecipe,
-    },
+    recipes: {},
 
     slotRecipes: {
       select: selectRecipe,
       checkbox: checkboxRecipe,
       dialog: dialogRecipe,
       drawer: drawerRecipe,
+      carousel: carouselRecipe,
     },
   },
 });

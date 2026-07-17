@@ -8,7 +8,7 @@ import type {
   MenuRootProps,
   MenuTriggerProps,
 } from "@/design-system/components/overlay/types/menu.type";
-import { Portal } from "@/design-system/components/utilities/portal";
+import { Portal } from "@/design-system/components/utilities/ui/portal";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { Menu as ChakraMenu } from "@chakra-ui/react";
 
@@ -48,6 +48,14 @@ const MenuContent = (props: MenuContentProps) => {
           border={"1px solid"}
           borderColor={"border.subtle"}
           shadow={"sm"}
+          _open={{
+            animation: "scale-up-overshoot",
+            animationDuration: "slow",
+          }}
+          _closed={{
+            animation: "scale-down",
+            animationDuration: "moderate",
+          }}
           {...restProps}
         />
       </ChakraMenu.Positioner>

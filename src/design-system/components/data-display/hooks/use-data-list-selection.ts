@@ -1,7 +1,7 @@
 // src/design-system/components/data-display/hooks/use-data-list-selection.ts
 
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { useState } from "react";
-import type { FormattedListItem } from "../types/data-list-table.type";
 
 export function useDataListSelection(formattedListItems: FormattedListItem[]) {
   const [isAllItemsSelected, setAllItemsSelected] = useState(false);
