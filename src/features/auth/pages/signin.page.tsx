@@ -4,7 +4,6 @@
 
 import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
 import { Button } from "@/design-system/components/button/ui/button";
-import { ColorModeToggleButton } from "@/design-system/components/button/ui/color-mode-button";
 import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -85,7 +84,6 @@ export const SigninPage = () => {
 
   return (
     <PageContainer align={"center"} justify={"center"}>
-      <ColorModeToggleButton />
       <SimpleGrid
         columns={[1, null, 2]}
         flex={1}
