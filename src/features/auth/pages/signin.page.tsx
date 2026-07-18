@@ -73,11 +73,11 @@ export const SigninPage = () => {
   };
   const ROLE_OPTIONS: RoleOption[] = [
     {
-      label: "Mitra Kementrian",
+      label: "Mitra Kementrian ATR/BPN",
       value: "mitra",
     },
     {
-      label: "Internal Kementrian",
+      label: "Internal Kementrian ATR/BPN",
       value: "internal",
     },
   ];
@@ -90,7 +90,7 @@ export const SigninPage = () => {
         overflow={"clip"}
         w={"full"}
         maxW={"1200px"}
-        maxH={[null, null, "720px"]}
+        maxH={[null, null, "680px"]}
         my={"auto"}
         // border={"1px solid"}
         borderColor={"border.subtle"}

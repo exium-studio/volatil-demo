@@ -21,7 +21,6 @@ export const SegmentedControl = React.forwardRef<
       ref={ref}
       colorPalette={theme.colorPalette}
       rounded={theme.radii.component}
-      flex={1}
       minW={0}
       {...restProps}
     >
