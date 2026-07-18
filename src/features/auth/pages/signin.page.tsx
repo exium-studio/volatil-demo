@@ -73,24 +73,25 @@ export const SigninPage = () => {
   };
   const ROLE_OPTIONS: RoleOption[] = [
     {
-      label: "Mitra Kementrian ATR/BPN",
+      label: "Mitra Kementrian",
       value: "mitra",
     },
     {
-      label: "Internal Kementrian ATR/BPN",
+      label: "Internal Kementrian",
       value: "internal",
     },
   ];
 
   return (
-    <PageContainer align={"center"} justify={"center"}>
+    <PageContainer align={"center"} p={4}>
       <SimpleGrid
         columns={[1, null, 2]}
         flex={1}
         overflow={"clip"}
         w={"full"}
         maxW={"1200px"}
-        maxH={"720px"}
+        maxH={[null, null, "720px"]}
+        my={"auto"}
         // border={"1px solid"}
         borderColor={"border.subtle"}
         rounded={theme.radii.container}
@@ -98,8 +99,8 @@ export const SigninPage = () => {
       >
         <SigninCarousel />
 
-        <VStack align={"center"} justify={"center"} p={[4, null, 12]}>
-          <HStack align={"center"} gap={2}>
+        <VStack overflowY={"auto"} px={[0, null, 12]} py={12}>
+          <HStack align={"center"} justify={"center"} gap={2} ml={-4}>
             <AtrLogo />
 
             <VStack>
@@ -111,10 +112,10 @@ export const SigninPage = () => {
             </VStack>
           </HStack>
 
-          <VStack flex={1} align={"center"} mt={16}>
+          <VStack flex={1} mt={12}>
             <VStack align={"center"} gap={1}>
               <P fontSize={"2xl"} fontWeight={"semibold"} textAlign={"center"}>
-                Selamat Datang Kembali👋🏻
+                Selamat Datang Kembali 👋🏻
               </P>
 
               <P color={"fg.muted"} textAlign={"center"}>
@@ -122,13 +123,15 @@ export const SigninPage = () => {
               </P>
             </VStack>
 
-            <VStack flex={1} gap={10} mt={4}>
+            <VStack flex={1} gap={10} px={[0, null, 8]} mt={4}>
               <SegmentedControl
                 options={ROLE_OPTIONS}
                 defaultValue={"mitra"}
                 onValueChange={(details) => {
                   setRole(details.value as Role);
                 }}
+                w={"fit"}
+                mx={"auto"}
                 mt={4}
               />
 
@@ -252,7 +255,7 @@ const MitraSignin = () => {
         <PLink ml={"auto"}>Lupa kata sandi?</PLink>
       </Fieldset>
 
-      <Button primary type={"submit"}>
+      <Button primary type={"submit"} mt={8}>
         Masuk
       </Button>
     </VStack>

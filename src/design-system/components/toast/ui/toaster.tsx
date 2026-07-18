@@ -70,7 +70,7 @@ export function Toaster() {
           },
         }}
       >
-        <VStack w={"360px"}>
+        <VStack w={"full"} maxW={"360px"}>
           {/* {groups.map(({ group, items }) => (
           <ToastStack
             key={group}
