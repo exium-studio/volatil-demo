@@ -20,12 +20,15 @@ export const SegmentedControl = React.forwardRef<
     <ChakraSegmentGroup.Root
       ref={ref}
       colorPalette={theme.colorPalette}
-      rounded={theme.radii.component}
+      overflow={"clip"}
       minW={0}
+      rounded={theme.radii.component}
+      bg={"bg.subtle"}
       {...restProps}
     >
       <ChakraSegmentGroup.Indicator
         border={"1px solid"}
+        bg={"bg.muted"}
         borderColor={"border.subtle"}
         rounded={theme.radii.component}
       />
@@ -35,9 +38,9 @@ export const SegmentedControl = React.forwardRef<
           key={option.value}
           value={option.value}
           disabled={option.disabled}
-          cursor={"pointer"}
           flex={1}
           minW={0}
+          cursor={"pointer"}
         >
           <ChakraSegmentGroup.ItemHiddenInput />
 
