@@ -13,14 +13,13 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { HEADER_H } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
-import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { SettingsSearchButton } from "@/features/settings/components/settings.search";
 import { SETTINGS_NAV_GROUPS } from "@/features/settings/constants/settings.nav-groups";
 import { SETTINGS_NAVS } from "@/features/settings/constants/settings.navs";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
 
@@ -85,9 +84,9 @@ export const SettingsMenuBody = (props: StackProps) => {
   const { theme } = useThemeStore();
 
   // Hooks
-  const { queryValue: activeSettingNavKey } = useSearchParam(
-    "activeSettingNavKey",
-  );
+  const { activeSettingNavKey } = useSearch({
+    strict: false,
+  });
   const navigate = useNavigate();
   const isSmallViewport = useIsSmallViewport();
 
