@@ -1,13 +1,11 @@
 // src/features/settings/components/settings.active-page.tsx
 
-"use client";
-
 import { IconButton } from "@/design-system/components/button/ui/button";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -20,9 +18,10 @@ import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport"
 import { SettingsSearchButton } from "@/features/settings/components/settings.search";
 import { SETTINGS_PAGES } from "@/features/settings/constants/settings.pages";
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
-import { RootRoute } from "@/routes/-typed";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
+import { useSearch } from "@tanstack/react-router";
+import { ChevronLeftIcon } from "lucide-react";
 import {
   createContext,
   useContext,
@@ -31,7 +30,6 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { ChevronLeftIcon } from "lucide-react";
 
 export type SettingsActivePageContextValue = {
   activeSettingNavKey: SettingNavKey | undefined;
@@ -55,8 +53,9 @@ export const useActivePageContext = () => {
 
 export const SettingsActivePage = () => {
   // Hooks
-  const { activeSettingNavKey: activeSettingNavKeySearch } =
-    RootRoute.useSearch();
+  const { activeSettingNavKey: activeSettingNavKeySearch } = useSearch({
+    strict: false,
+  });
 
   // States
   const [activeSettingNavKey, setActiveSettingNavKey] = useState<
@@ -161,8 +160,9 @@ export const SettingsActivePageBody = (props: StackProps) => {
     useActivePageContext();
 
   // Hooks
-  const { activeSettingNavKey: activeSettingsNavKeySearch } =
-    RootRoute.useSearch();
+  const { activeSettingNavKey: activeSettingsNavKeySearch } = useSearch({
+    strict: false,
+  });
   // const isSmallViewport = useIsSmallViewport();
 
   // Derived Values

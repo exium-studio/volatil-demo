@@ -23,7 +23,7 @@ function saveRecent(queryKey: string, ids: string[]) {
   localStorage.setItem(`${RECENT_KEY}:${queryKey}`, JSON.stringify(ids));
 }
 
-export function useSearch<T>(
+export function useSearchInput<T>(
   queryKey: string,
   query: string,
   index: SearchIndex<T>,

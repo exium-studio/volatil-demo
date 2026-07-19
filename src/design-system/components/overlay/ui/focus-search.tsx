@@ -1,7 +1,5 @@
 // src/design-system/components/overlay/ui/focus-search.tsx
 
-"use client";
-
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -15,8 +13,8 @@ import type {
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Kbd } from "@/design-system/components/typography/ui/kbd";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useFocusSearch } from "@/design-system/hooks/use-focus-search";
-import { useSearch } from "@/design-system/hooks/use-search-input";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
+import { useSearchInput } from "@/design-system/hooks/use-search-input";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   SearchIndex,
@@ -151,10 +149,10 @@ const FocusSearchResultItem = (
 
 const FocusSearchBody = () => {
   const { queryKey, searchIndex, onResultSelect } = useFocusTriggerContext();
-  const { queryValue } = useFocusSearch(queryKey);
+  const { queryValue } = useSearchParam(queryKey);
   const [query, setQuery] = useState<string>(queryValue ?? "");
 
-  const { results, recentResults, addRecent, clearAllRecent } = useSearch(
+  const { results, recentResults, addRecent, clearAllRecent } = useSearchInput(
     queryKey,
     query,
     searchIndex,

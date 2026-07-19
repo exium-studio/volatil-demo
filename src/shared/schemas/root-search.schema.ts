@@ -4,7 +4,7 @@ import { modalSchema } from "@/design-system/components/overlay/schemas/modal.sc
 import { settingsNavKeySchema } from "@/features/settings/schemas/setting-nav-key.schema";
 import { z } from "zod";
 
-export const rootSearchSchema = z.object({
+export const globalSearchParamsSchema = z.object({
   activeModalKey: modalSchema.optional(),
   activeSettingNavKey: settingsNavKeySchema.optional(),
 });

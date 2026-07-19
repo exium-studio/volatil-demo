@@ -7,13 +7,13 @@ import { Toaster } from "@/design-system/components/toast";
 import { DebugMenu } from "@/design-system/components/utilities/ui/debug-menu";
 import { OfflineAlert } from "@/design-system/components/utilities/ui/offline-alert";
 import { LocaleProvider } from "@/shared/libs/i18n/locale-provider";
-import { rootSearchSchema } from "@/shared/schemas/root-search.schema";
+import { globalSearchParamsSchema } from "@/shared/schemas/root-search.schema";
 import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource-variable/wix-madefor-text";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
-  validateSearch: rootSearchSchema,
+  validateSearch: globalSearchParamsSchema,
   component: RootComponent,
 });
 
