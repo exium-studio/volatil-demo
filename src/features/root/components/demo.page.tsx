@@ -1,5 +1,7 @@
 // src/features/root/components/demo.page.tsx
 
+import { BrandWatermark } from "@/design-system/components/branding/ui/brand-watermark";
+import { Logo } from "@/design-system/components/branding/ui/logo";
 import {
   Button,
   IconButton,
@@ -65,7 +67,7 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { Group } from "@/design-system/components/layout/ui/group";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
 import { Image } from "@/design-system/components/media/ui/image";
-import { Link } from "@/design-system/components/navigation/ui/link";
+import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Drawer } from "@/design-system/components/overlay/ui/drawer";
@@ -112,6 +114,7 @@ export const DemoPage = () => {
   return (
     <VStack minH={"100dvh"} bg={"bg.canvas"} gap={4}>
       <IntegratedFeatures />
+      <Branding />
       <Typography />
       <Navigation />
       <Buttons />
@@ -154,6 +157,24 @@ const IntegratedFeatures = () => {
             <AppIcon icon={IconLanguage} />
             {getLocaleLabel(getLocale())}
           </Button>
+        </HStack>
+      </Container.Body>
+    </Container.Root>
+  );
+};
+
+const Branding = () => {
+  return (
+    <Container.Root w={"full"} px={SPACING_MD}>
+      <Container.Body gap={4} p={4}>
+        <P textAlign={"center"} fontWeight={"semibold"}>
+          Branding
+        </P>
+
+        <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
+          <Logo />
+
+          <BrandWatermark />
         </HStack>
       </Container.Body>
     </Container.Root>
@@ -222,9 +243,7 @@ const Navigation = () => {
         </P>
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
-          <Link to={"https://youtube.com"} target={"_blank"}>
-            youtube.com
-          </Link>
+          <ExternalLink href={"https://youtube.com"}>youtube.com</ExternalLink>
         </HStack>
       </Container.Body>
     </Container.Root>

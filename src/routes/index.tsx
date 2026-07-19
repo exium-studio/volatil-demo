@@ -1,9 +1,9 @@
 // src/routes/index.lazy.tsx
 
 import { SigninPage } from "@/features/auth/pages/signin.page";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute("/")({
+export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
