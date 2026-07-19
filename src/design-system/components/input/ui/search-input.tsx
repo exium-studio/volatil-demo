@@ -1,27 +1,27 @@
 // src/design-system/components/input/ui/search-input.tsx
 
-"use client";
-
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { SearchInputProps } from "@/design-system/components/input/types/search-input.type";
 import { Input } from "@/design-system/components/input/ui/input";
-import { useFocusSearch } from "@/design-system/hooks/use-focus-search";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { InputGroup } from "@chakra-ui/react";
 import { SearchIcon, XIcon } from "lucide-react";
 import { forwardRef, useRef, useState, type ChangeEvent } from "react";
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  (
+  function SeachInput(
     { queryKey, value: controlledValue, onValueChange, w, ...restProps },
     ref,
-  ) => {
+  ) {
     // Refs
     const internalRef = useRef<HTMLInputElement | null>(null);
 
     // Hooks
-    const { isUrlMode, queryValue, setQueryValue, clearQueryValue } =
-      useFocusSearch(queryKey);
+    const { queryValue, setQueryValue, clearQueryValue } = useSearchParam(
+      queryKey ?? "",
+    );
+    const isUrlMode = !queryKey;
 
     // States
     const [value, setValue] = useState<string>(
@@ -69,5 +69,3 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     );
   },
 );
-
-SearchInput.displayName = "SearchInput";
