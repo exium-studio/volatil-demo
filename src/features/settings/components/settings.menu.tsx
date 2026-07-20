@@ -102,7 +102,7 @@ export const SettingsMenuBody = (props: StackProps) => {
 
             <VStack>
               {groupTitle && (
-                <P fontSize={"xs"} color={"fg.subtle"} px={2} mb={2}>
+                <P fontSize={"sm"} color={"fg.subtle"} px={2} mb={2}>
                   {groupTitle}
                 </P>
               )}
@@ -136,6 +136,7 @@ export const SettingsMenuBody = (props: StackProps) => {
                           navigate({
                             to: ".",
                             resetScroll: false,
+                            replace: activeSettingNavKey ? true : false,
                             search: (old) => ({
                               ...old,
                               activeSettingNavKey: navKey,
