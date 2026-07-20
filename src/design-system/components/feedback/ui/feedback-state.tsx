@@ -1,7 +1,5 @@
 // src/design-system/components/feedback/ui/feedback-state.tsx
 
-"use client";
-
 import type { FeedbackStateProps } from "@/design-system/components/feedback/types/feedback-state.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -10,7 +8,7 @@ import { FEEDBACK_CONTAINER_MIN_H } from "@/design-system/constants/styles";
 
 const FeedbackState = (props: FeedbackStateProps) => {
   // Props
-  const { icon, title, description, children, ...restProps } = props;
+  const { icon, iconProps, title, description, children, ...restProps } = props;
 
   // States
   const isTitleString = typeof title === "string";
@@ -29,9 +27,10 @@ const FeedbackState = (props: FeedbackStateProps) => {
       {icon && (
         <AppIcon
           icon={icon}
-          boxSize={9}
           strokeWidth={1.5}
           color={"fg.subtle"}
+          size={"5xl"}
+          {...iconProps}
         />
       )}
 
@@ -52,6 +51,7 @@ const FeedbackState = (props: FeedbackStateProps) => {
 
         {!isDescriptionString && description}
       </VStack>
+
       {children}
     </VStack>
   );

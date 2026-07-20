@@ -20,6 +20,10 @@ export const AppIcon = (props: AppIconProps) => {
     md: 5,
     lg: 6,
     xl: 7,
+    "2xl": 7,
+    "3xl": 8,
+    "4xl": 9,
+    "5xl": 10,
   };
 
   // Derived Values

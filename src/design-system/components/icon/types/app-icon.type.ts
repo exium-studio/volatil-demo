@@ -5,5 +5,5 @@ import type { ComponentType } from "react";
 
 export type AppIconProps = IconProps & {
   icon?: ComponentType;
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
 };

@@ -95,7 +95,8 @@
     "clock_out": "Keluar Kerja",
     "measure": "Ukur",
     "draw": "Gambar",
-    "show_less": "Tampilkan lebih sedikit"
+    "show_less": "Tampilkan lebih sedikit",
+    "back_to_main_page": "Kembali ke halaman utama"
   },
   "nav": {
     "home": "Beranda",
@@ -280,5 +281,11 @@
   "offline_alert": {
     "title": "Tidak Ada Koneksi Internet",
     "description": "Tenang — kami akan otomatis terhubung kembali begitu jaringannya sudah pulih."
+  },
+  "error_page": {
+    "not_found": {
+      "title": "Halaman Tidak Ditemukan",
+      "description": "Sepertinya halaman yang kamu cari sudah dipindah atau tidak pernah ada."
+    }
   }
 }

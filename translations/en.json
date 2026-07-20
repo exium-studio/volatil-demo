@@ -95,7 +95,8 @@
     "clock_out": "Clock Out",
     "measure": "Measure",
     "draw": "Draw",
-    "show_less": "Show less"
+    "show_less": "Show less",
+    "back_to_main_page": "Back to main page"
   },
   "nav": {
     "home": "Home",
@@ -281,5 +282,11 @@
   "offline_alert": {
     "title": "No internet connection",
     "description": "Hang tight — we'll reconnect you automatically once your network is back"
+  },
+  "error_page": {
+    "not_found": {
+      "title": "Page Not Found",
+      "description": "The page you're looking for may have been moved or doesn't exist"
+    }
   }
 }
