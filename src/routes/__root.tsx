@@ -7,7 +7,7 @@ import { Toaster } from "@/design-system/components/toast";
 import { DebugMenu } from "@/design-system/components/utilities/ui/debug-menu";
 import { OfflineAlert } from "@/design-system/components/utilities/ui/offline-alert";
 import { LocaleProvider } from "@/shared/libs/i18n/locale-provider";
-import { globalSearchParamsSchema } from "@/shared/schemas/root-search.schema";
+import { globalSearchParamsSchema } from "@/shared/schemas/root-search.params-schema";
 import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource-variable/wix-madefor-text";
 import { Outlet, createRootRoute } from "@tanstack/react-router";

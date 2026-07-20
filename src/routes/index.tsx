@@ -1,4 +1,4 @@
-// src/routes/index.lazy.tsx
+// src/routes/index.tsx
 
 import { SigninPage } from "@/features/auth/pages/signin.page";
 import { createFileRoute } from "@tanstack/react-router";
