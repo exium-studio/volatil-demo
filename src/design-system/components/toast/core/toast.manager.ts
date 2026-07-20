@@ -111,6 +111,8 @@ export function resumeAllTimers(): void {
 export const toastTimerControls = {
   pauseTimer,
   resumeTimer,
+  pauseAll: pauseAllTimers,
+  resumeAll: resumeAllTimers,
   resumeIfOrphaned: (id: string) => resumeTimer(id),
 };
 

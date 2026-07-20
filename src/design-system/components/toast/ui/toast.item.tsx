@@ -121,8 +121,10 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
         record.status === "visible" ? "translateY(0)" : "translateY(-20px)"
       }
       transition={"transform 300ms, opacity 300ms"}
-      onPointerEnter={() => toastTimerControls.pauseTimer(record.id)}
-      onPointerLeave={() => toastTimerControls.resumeTimer(record.id)}
+      onPointerEnter={() => toastTimerControls.pauseAll()}
+      onPointerLeave={() => toastTimerControls.resumeAll()}
+      onFocus={() => toastTimerControls.pauseAll()}
+      onBlur={() => toastTimerControls.resumeAll()}
       onKeyDown={(event) => {
         if (event.key === "Escape") toast.close(record.id);
       }}

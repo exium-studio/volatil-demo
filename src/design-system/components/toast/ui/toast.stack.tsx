@@ -16,6 +16,7 @@ import { t } from "@/shared/libs/i18n";
 import { Box } from "@chakra-ui/react";
 import { Minimize2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { toastTimerControls } from "@/design-system/components/toast/core/toast.manager";
 
 export function ToastStack<TItem>({
   groupLabel,
@@ -86,6 +87,10 @@ export function ToastStack<TItem>({
       flexShrink={0}
       gap={expanded ? 2 : 0}
       pointerEvents={"auto"}
+      onPointerEnter={() => toastTimerControls.pauseAll()}
+      onPointerLeave={() => toastTimerControls.resumeAll()}
+      onFocus={() => toastTimerControls.pauseAll()}
+      onBlur={() => toastTimerControls.resumeAll()}
     >
       {/* Header (expanded) */}
       <HStack
