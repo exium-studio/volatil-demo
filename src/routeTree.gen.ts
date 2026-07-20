@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppPortalWelcomeRouteImport } from './routes/_app/portal/welcome'
+import { Route as AppAdminWelcomeRouteImport } from './routes/_app/admin/welcome'
 
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
@@ -22,31 +24,54 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppPortalWelcomeRoute = AppPortalWelcomeRouteImport.update({
+  id: '/_app/portal/welcome',
+  path: '/portal/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppAdminWelcomeRoute = AppAdminWelcomeRouteImport.update({
+  id: '/_app/admin/welcome',
+  path: '/admin/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/admin/welcome': typeof AppAdminWelcomeRoute
+  '/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/admin/welcome': typeof AppAdminWelcomeRoute
+  '/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/_app/admin/welcome': typeof AppAdminWelcomeRoute
+  '/_app/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo'
+  fullPaths: '/' | '/demo' | '/admin/welcome' | '/portal/welcome'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo'
-  id: '__root__' | '/' | '/demo'
+  to: '/' | '/demo' | '/admin/welcome' | '/portal/welcome'
+  id:
+    | '__root__'
+    | '/'
+    | '/demo'
+    | '/_app/admin/welcome'
+    | '/_app/portal/welcome'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoRoute: typeof DemoRoute
+  AppAdminWelcomeRoute: typeof AppAdminWelcomeRoute
+  AppPortalWelcomeRoute: typeof AppPortalWelcomeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +90,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/portal/welcome': {
+      id: '/_app/portal/welcome'
+      path: '/portal/welcome'
+      fullPath: '/portal/welcome'
+      preLoaderRoute: typeof AppPortalWelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/admin/welcome': {
+      id: '/_app/admin/welcome'
+      path: '/admin/welcome'
+      fullPath: '/admin/welcome'
+      preLoaderRoute: typeof AppAdminWelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoRoute: DemoRoute,
+  AppAdminWelcomeRoute: AppAdminWelcomeRoute,
+  AppPortalWelcomeRoute: AppPortalWelcomeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

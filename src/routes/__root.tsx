@@ -3,6 +3,7 @@
 import "@/app.css";
 import { ChakraSystemProvider } from "@/design-system/chakra/providers/chakra-system.provider";
 import { ColorModeProvider } from "@/design-system/chakra/providers/color-mode-provider";
+import { NotFoundPage } from "@/design-system/components/error-boundary/ui/not-found.page";
 import { Toaster } from "@/design-system/components/toast";
 import { DebugMenu } from "@/design-system/components/utilities/ui/debug-menu";
 import { OfflineAlert } from "@/design-system/components/utilities/ui/offline-alert";
@@ -22,6 +23,7 @@ export const Route = createRootRoute({
       { name: "description", content: APP.description },
     ],
   }),
+  notFoundComponent: NotFoundPage,
 });
 
 function RootComponent() {
