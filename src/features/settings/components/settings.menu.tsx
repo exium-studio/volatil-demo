@@ -7,7 +7,7 @@ import { ColorModeToggleButton } from "@/design-system/components/button/ui/colo
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { NavButton } from "@/design-system/components/layout/ui/nav";
+import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
