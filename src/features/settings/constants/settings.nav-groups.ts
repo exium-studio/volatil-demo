@@ -1,25 +1,31 @@
 // src/features/settings/constants/settings.nav-groups.ts
 
-import type { SettingsNavGroupItem } from "@/features/settings/types/settings-navs.type";
+import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
+import type { NavGroup } from "@/shared/types/nav.type";
 
-export const SETTINGS_NAV_GROUPS: SettingsNavGroupItem[] = [
+export const SETTINGS_NAV_GROUPS: NavGroup<SettingNavKey>[] = [
   {
     titleKey: "settings.group.account.title",
-    list: ["profile", "account", "privacy", "notification"],
+    items: [
+      { key: "profile" },
+      { key: "account" },
+      { key: "privacy" },
+      { key: "notification" },
+    ],
   },
 
   {
     titleKey: "settings.group.preferences.title",
-    list: ["appearance", "language", "datetime"],
+    items: [{ key: "appearance" }, { key: "language" }, { key: "datetime" }],
   },
 
   {
     titleKey: "settings.group.system.title",
-    list: ["integration", "advanced"],
+    items: [{ key: "integration" }, { key: "advanced" }],
   },
 
   {
     titleKey: "settings.group.help.title",
-    list: ["support", "about"],
+    items: [{ key: "support" }, { key: "about" }],
   },
 ];

@@ -113,15 +113,17 @@ export const SettingsMenuBody = (props: StackProps) => {
                 bg={"bg.body"}
                 rounded={theme.radii.container}
               >
-                {group.list.map((navKey, itemIndex) => {
-                  const isNavActive = activeSettingNavKey === navKey;
-                  const isItemFirstIndex = itemIndex === 0;
+                {group.items.map((navNode, itemIndex) => {
+                  const navKey = navNode.key;
                   const nav = SETTINGS_NAVS_MAP[navKey];
                   const navTitle = t[nav.titleKey]();
 
+                  const isNavActive = activeSettingNavKey === navKey;
+                  const isFirstIndex = itemIndex === 0;
+
                   return (
                     <Fragment key={navKey}>
-                      {!isItemFirstIndex && isSmallViewport && (
+                      {!isFirstIndex && isSmallViewport && (
                         <Separator borderColor={"bg.canvas"} />
                       )}
 

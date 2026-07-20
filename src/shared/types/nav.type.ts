@@ -10,7 +10,12 @@ export type NavItem = {
   keywords?: string[];
 };
 
-export type NavGroupItem<TNavKey extends string = string> = {
+export type NavNode<TNavKey extends string = string> = {
+  key: TNavKey;
+  children?: NavNode<TNavKey>[];
+};
+
+export type NavGroup<TNavKey extends string = string> = {
   titleKey: ParameterlessTranslationKey;
-  list: TNavKey[];
+  items: NavNode<TNavKey>[];
 };
