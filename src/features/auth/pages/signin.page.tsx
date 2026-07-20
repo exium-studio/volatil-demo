@@ -43,7 +43,7 @@ export const SigninPage = () => {
   ];
 
   return (
-    <PageContainer align={"center"} p={4}>
+    <PageContainer p={4}>
       <SimpleGrid
         columns={[1, null, 2]}
         flex={1}
@@ -51,11 +51,9 @@ export const SigninPage = () => {
         w={"full"}
         maxW={"1200px"}
         maxH={[null, null, "680px"]}
-        my={"auto"}
-        // border={"1px solid"}
+        m={"auto"}
         borderColor={"border.subtle"}
         rounded={theme.radii.container}
-        // shadow={"md"}
       >
         <FeaturesCarousel />
 

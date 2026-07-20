@@ -3,10 +3,12 @@
 import { useState } from "react";
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { CenterProps } from "@/design-system/components/layout/types/center.type";
+import { AspectRatio } from "@/design-system/components/layout/ui/aspect-ratio";
+import type { AspectRatioProps } from "@/design-system/components/layout/types/aspect-ratio.type";
 import { Center } from "@/design-system/components/layout/ui/center";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import type { ImageProps } from "@/design-system/components/media/types/image.type";
-import { Image as ChakraImage } from "@chakra-ui/react";
+import { Box, Image as ChakraImage } from "@chakra-ui/react";
 import { ImageOffIcon } from "lucide-react";
 
 export const Image = (props: ImageProps) => {
@@ -14,7 +16,24 @@ export const Image = (props: ImageProps) => {
 };
 
 const ImageImpl = (props: ImageProps) => {
-  const { fallback, src, onLoad, onError, ...rest } = props;
+  const {
+    // Image props
+    src,
+    alt,
+    onLoad,
+    onError,
+    objectFit,
+    objectPosition,
+    loading,
+    crossOrigin,
+    referrerPolicy,
+    srcSet,
+    sizes,
+    fallback,
+    // AspectRatio props
+    aspectRatio,
+    ...aspectRatioProps
+  } = props;
 
   const [status, setStatus] = useState<"loading" | "loaded" | "failed">(
     src ? "loading" : "failed",
@@ -30,77 +49,59 @@ const ImageImpl = (props: ImageProps) => {
     onError?.(e);
   };
 
-  const fallbackComponent = fallback ?? (
-    <ImageFallback
-      w={props.w ?? props.width ?? props.boxSize}
-      h={props.h ?? props.height ?? props.boxSize}
-      borderRadius={props.borderRadius}
-    />
-  );
-
   if (status === "failed") {
-    return fallbackComponent;
+    return (
+      fallback ?? (
+        <AspectRatio {...aspectRatioProps} ratio={aspectRatio}>
+          <ImageFallback />
+        </AspectRatio>
+      )
+    );
   }
 
   return (
-    <>
-      {status === "loading" && fallbackComponent}
-      <ChakraImage
-        src={src}
-        onLoad={handleLoad}
-        onError={handleError}
-        display={status === "loading" ? "none" : rest.display}
-        {...rest}
-      />
-    </>
+    <AspectRatio {...aspectRatioProps} ratio={aspectRatio}>
+      <Box position={"relative"} w={"100%"} h={"100%"}>
+        {status === "loading" && <Skeleton position={"absolute"} inset={0} />}
+
+        <ChakraImage
+          src={src}
+          alt={alt}
+          w={"100%"}
+          h={"100%"}
+          objectFit={objectFit ?? "contain"}
+          objectPosition={objectPosition}
+          loading={loading}
+          crossOrigin={crossOrigin}
+          referrerPolicy={referrerPolicy}
+          srcSet={srcSet}
+          sizes={sizes}
+          onLoad={handleLoad}
+          onError={handleError}
+          display={status === "loading" ? "none" : undefined}
+        />
+      </Box>
+    </AspectRatio>
   );
 };
 
-/** Icon size as a fraction of the container's dimension (e.g. 0.4 = 40%). */
+/** Icon size as a fraction of the container's dimension. */
 const ICON_SIZE_RATIO = 0.5;
 
-export const ImageFallback = (props: CenterProps) => {
-  // Props
-  const { w, h, width, height, boxSize, ...rest } = props;
-
-  // Match the dimension of the Image/Container
-  const resolvedW = w ?? width ?? boxSize ?? "100%";
-  const resolvedH = h ?? height ?? boxSize ?? "100%";
-
-  // Icon boxSize = ICON_SIZE_RATIO of the container's dimension
-  let resolvedIconBoxSize: string | number = `${ICON_SIZE_RATIO * 100}%`;
-
-  const targetDimension = boxSize ?? w ?? width ?? h ?? height;
-  if (typeof targetDimension === "number") {
-    resolvedIconBoxSize = targetDimension * ICON_SIZE_RATIO;
-  } else if (typeof targetDimension === "string") {
-    if (targetDimension.endsWith("px")) {
-      const val = parseFloat(targetDimension);
-      if (!isNaN(val)) {
-        resolvedIconBoxSize = `${val * ICON_SIZE_RATIO}px`;
-      }
-    } else if (targetDimension.endsWith("rem")) {
-      const val = parseFloat(targetDimension);
-      if (!isNaN(val)) {
-        resolvedIconBoxSize = `${val * ICON_SIZE_RATIO}rem`;
-      }
-    } else if (targetDimension.endsWith("em")) {
-      const val = parseFloat(targetDimension);
-      if (!isNaN(val)) {
-        resolvedIconBoxSize = `${val * ICON_SIZE_RATIO}em`;
-      }
-    }
-  }
-
+export const ImageFallback = (props: AspectRatioProps) => {
   return (
     <Center
-      w={resolvedW}
-      h={resolvedH}
       bg={"bg.subtle"}
-      color={"fg.muted"}
-      {...rest}
+      color={"fg.subtle"}
+      position={"absolute"}
+      inset={"0"}
+      {...props}
     >
-      <AppIcon icon={ImageOffIcon} boxSize={resolvedIconBoxSize} />
+      <AppIcon
+        icon={ImageOffIcon}
+        boxSize={`${ICON_SIZE_RATIO * 100}%`}
+        strokeWidth={(2 + ICON_SIZE_RATIO) * ICON_SIZE_RATIO}
+      />
     </Center>
   );
 };

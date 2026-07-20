@@ -1,3 +1,5 @@
+// src/features/branding/components/ui/features-carousel.tsx
+
 "use client";
 
 import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
@@ -59,37 +61,40 @@ export const FeaturesCarousel = (props: FeaturesCarouselProps) => {
         pos={"relative"}
       >
         <Carousel.Control flex={1} gap={[4, null, 6]}>
-          <VStack
+          <Carousel.ItemGroup
+            w={"full"}
             flex={1}
             rounded={theme.radii.container}
             bg={"whiteAlpha.200"}
           >
-            <Carousel.ItemGroup w={"full"}>
-              {CAROUSEL_ITEMS.map((carousel, index) => (
-                <Carousel.Item key={index} index={index} color={"white"}>
-                  <VStack gap={4} p={[4, null, 6]}>
-                    <P
-                      fontSize={"xl"}
-                      fontWeight={"semibold"}
-                      textAlign={"center"}
-                    >
-                      {carousel.title}
-                    </P>
+            {CAROUSEL_ITEMS.map((carousel, index) => (
+              <Carousel.Item
+                key={index}
+                index={index}
+                flex={1}
+                gap={4}
+                p={[4, null, 6]}
+                color={"white"}
+              >
+                <P fontSize={"xl"} fontWeight={"semibold"} textAlign={"center"}>
+                  {carousel.title}
+                </P>
 
-                    <Image
-                      src={carousel.image}
-                      alt={`Image ${index + 1}`}
-                      objectFit={"contain"}
-                      w={"full"}
-                      aspectRatio={16 / 10}
-                    />
+                <Image
+                  src={carousel.image}
+                  alt={`Image ${index + 1}`}
+                  objectFit={"contain"}
+                  w={"full"}
+                  mt={4}
+                  aspectRatio={16 / 10}
+                />
 
-                    <P textAlign={"center"}>{carousel.description}</P>
-                  </VStack>
-                </Carousel.Item>
-              ))}
-            </Carousel.ItemGroup>
-          </VStack>
+                <P textAlign={"center"} mt={"auto"}>
+                  {carousel.description}
+                </P>
+              </Carousel.Item>
+            ))}
+          </Carousel.ItemGroup>
 
           <HStack align={"center"} gap={4} w={"full"}>
             <Carousel.PrevTrigger asChild>

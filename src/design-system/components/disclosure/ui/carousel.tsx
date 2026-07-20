@@ -59,7 +59,14 @@ const CarouselItemGroup = forwardRef<HTMLDivElement, CarouselItemGroupProps>(
 
 const CarouselItem = forwardRef<HTMLDivElement, CarouselItemProps>(
   (props, ref) => {
-    return <ChakraCarousel.Item ref={ref} {...props} />;
+    return (
+      <ChakraCarousel.Item
+        ref={ref}
+        display={"flex"}
+        flexDir={"column"}
+        {...props}
+      />
+    );
   },
 );
 
