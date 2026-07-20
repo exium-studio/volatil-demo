@@ -1,6 +1,6 @@
 // src/features/settings/hooks/use-settings-search-index.ts
 
-import { SETTINGS_NAVS } from "@/features/settings/constants/settings.navs";
+import { SETTINGS_NAVS_MAP } from "@/features/settings/constants/settings.navs";
 import { t } from "@/shared/libs/i18n";
 import type { SearchIndex } from "@/design-system/types/search.type";
 import type {
@@ -16,7 +16,7 @@ export type SettingsNavSearchData = {
 export function useSettingSearchIndex(): SearchIndex<SettingsNavSearchData> {
   return useMemo(
     () =>
-      (Object.entries(SETTINGS_NAVS) as [SettingNavKey, SettingNav][]).map(
+      (Object.entries(SETTINGS_NAVS_MAP) as [SettingNavKey, SettingNav][]).map(
         ([navKey, nav]) => ({
           id: navKey,
           title: nav.titleKey

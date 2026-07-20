@@ -1,14 +1,17 @@
 // src/design-system/components/layout/ui/scroll-container.tsx
 
-"use client";
-
 import type { VScrollContainerProps } from "@/design-system/components/layout/types/scroll-container.type";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useEffect, useRef, useState } from "react";
 
 export const VScrollContainer = (props: VScrollContainerProps) => {
   // Props
-  const { children, borderColor = "an1", ...restProps } = props;
+  const {
+    children,
+    borderColor = "an1",
+    showTopBorderOnScroll = true,
+    ...restProps
+  } = props;
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -37,7 +40,7 @@ export const VScrollContainer = (props: VScrollContainerProps) => {
       ref={containerRef}
       tabIndex={-1}
       overflowY={"auto"}
-      borderTop={"1px solid"}
+      borderTop={showTopBorderOnScroll ? "1px solid" : "none"}
       borderColor={scrollTop !== 0 ? borderColor : "transparent"}
       transition={"200ms"}
       {...restProps}

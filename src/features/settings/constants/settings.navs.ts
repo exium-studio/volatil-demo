@@ -15,7 +15,7 @@ import {
   UserCircle,
 } from "lucide-react";
 
-export const SETTINGS_NAVS = {
+export const SETTINGS_NAVS_MAP = {
   profile: {
     icon: User,
     titleKey: "settings.profile.title",

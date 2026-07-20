@@ -16,7 +16,7 @@ import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport"
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { SettingsSearchButton } from "@/features/settings/components/settings.search";
 import { SETTINGS_NAV_GROUPS } from "@/features/settings/constants/settings.nav-groups";
-import { SETTINGS_NAVS } from "@/features/settings/constants/settings.navs";
+import { SETTINGS_NAVS_MAP } from "@/features/settings/constants/settings.navs";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -116,7 +116,7 @@ export const SettingsMenuBody = (props: StackProps) => {
                 {group.list.map((navKey, itemIndex) => {
                   const isNavActive = activeSettingNavKey === navKey;
                   const isItemFirstIndex = itemIndex === 0;
-                  const nav = SETTINGS_NAVS[navKey];
+                  const nav = SETTINGS_NAVS_MAP[navKey];
                   const navTitle = t[nav.titleKey]();
 
                   return (
