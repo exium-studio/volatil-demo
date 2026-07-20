@@ -5,7 +5,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { FocusSearchTrigger } from "@/design-system/components/overlay/ui/focus-search";
 import { useModalContext } from "@/design-system/components/overlay/ui/modal";
-import { useSettingSearchIndex } from "@/features/settings/hooks/use-settings-search-index";
+import { useSettingsSearchIndex } from "@/features/settings/hooks/use-settings-search-index";
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { SearchIcon } from "lucide-react";
@@ -24,7 +24,7 @@ export const SettingsSearchTrigger = (props: SettingsSearchTriggerProps) => {
   // Hooks
   const { activeSettingNavKey } = useSearch({ strict: false });
   const navigate = useNavigate();
-  const searchIndex = useSettingSearchIndex();
+  const searchIndex = useSettingsSearchIndex();
 
   return (
     <FocusSearchTrigger

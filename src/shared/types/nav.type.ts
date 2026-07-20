@@ -1,21 +1,16 @@
 // src/shared/types/nav.type.ts
 
+import type { ParameterlessTranslationKey } from "@/shared/libs/i18n/translation.type";
 import type { ComponentType } from "react";
 
-export type NavItem<
-  TTitleKey extends string = string,
-  TDescriptionKey extends string = string,
-> = {
+export type NavItem = {
   icon?: ComponentType;
-  titleKey: TTitleKey;
-  descriptionKey?: TDescriptionKey;
+  titleKey: ParameterlessTranslationKey;
+  descriptionKey?: ParameterlessTranslationKey;
   keywords?: string[];
 };
 
-export type NavGroupItem<
-  TNavKey extends string = string,
-  TTitleKey extends string = string,
-> = {
-  titleKey?: TTitleKey;
+export type NavGroupItem<TNavKey extends string = string> = {
+  titleKey: ParameterlessTranslationKey;
   list: TNavKey[];
 };

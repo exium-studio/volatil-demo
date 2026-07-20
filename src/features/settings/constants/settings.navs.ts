@@ -1,6 +1,6 @@
 // src/features/settings/constants/settings.navs.ts
 
-import type { SettingNav } from "@/features/settings/types/settings-navs.type";
+import type { NavItem } from "@/shared/types/nav.type";
 import {
   Bell,
   Clock,
@@ -71,4 +71,4 @@ export const SETTINGS_NAVS_MAP = {
     titleKey: "settings.about.title",
     descriptionKey: "settings.about.description",
   },
-} satisfies Record<string, SettingNav>;
+} as const satisfies Record<string, NavItem>;
