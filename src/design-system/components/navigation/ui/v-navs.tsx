@@ -1,6 +1,6 @@
 // src/design-system/components/navigation/ui/vnavs.tsx
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -24,7 +24,8 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
   const {
     groups,
     navs,
-    activeKey,
+    activeKey: controlledActiveKey,
+    defaultActiveKey,
     expanded = true,
     onNavClick,
     ...restProps
@@ -35,6 +36,28 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
+
+  // States
+  const [internalActiveKey, setInternalActiveKey] = useState<
+    TNavKey | undefined
+  >(defaultActiveKey);
+
+  // Derived Values
+  const isControlled = controlledActiveKey !== undefined;
+
+  // Resolved Values
+  const resolvedActiveKey = isControlled
+    ? controlledActiveKey
+    : internalActiveKey;
+
+  // Utils
+  function handleNavClick(key: TNavKey) {
+    if (!isControlled) {
+      setInternalActiveKey(key);
+    }
+
+    onNavClick?.(key);
+  }
 
   return (
     <VScrollContainer gap={expanded ? 2 : 3} {...restProps}>
@@ -72,9 +95,9 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
                       <VNavNode
                         node={node}
                         navs={navs}
-                        activeKey={activeKey}
+                        activeKey={resolvedActiveKey}
                         expanded={expanded}
-                        onNavClick={onNavClick}
+                        onNavClick={handleNavClick}
                       />
                     </Fragment>
                   );
@@ -182,7 +205,6 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   );
 };
 
-/** Render icon nav; fallback = First title's letter . */
 const NavIcon = ({ nav, title }: { nav: NavItem; title: string }) => {
   if (nav.icon) {
     return <AppIcon icon={nav.icon} />;

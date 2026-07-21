@@ -16,6 +16,6 @@ export type NavNode<TNavKey extends string = string> = {
 };
 
 export type NavGroup<TNavKey extends string = string> = {
-  titleKey: ParameterlessTranslationKey;
+  titleKey?: ParameterlessTranslationKey;
   items: NavNode<TNavKey>[];
 };
