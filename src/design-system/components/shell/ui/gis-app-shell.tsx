@@ -152,7 +152,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
       border={"1px solid"}
       borderColor={"border.subtle"}
       rounded={"full"}
-      //   opacity={0}
+      opacity={0}
       transition={"200ms"}
       _groupHover={{ opacity: 1 }}
       {...props}
