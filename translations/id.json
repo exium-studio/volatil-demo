@@ -82,6 +82,8 @@
     "dismiss_all": "Singkirkan semua"
   },
   "action": {
+    "expand": "Perluas",
+    "collapse": "Ciutkan",
     "save": "Simpan",
     "save_changes": "Simpan Perubahan",
     "cancel": "Batal",

@@ -2,7 +2,7 @@
 
 import type { CenterProps } from "@chakra-ui/react";
 
-export type LogoProps = {
+export type LogoProps = CenterProps & {
   color?: string;
-  size?: number;
-} & CenterProps;
+  boxSize?: number | `${number}px`;
+};

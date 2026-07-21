@@ -9,24 +9,25 @@ import {
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP } from "@/design-system/constants/_meta";
 import { HEADER_H } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useNavStore } from "@/design-system/stores/use-nav-store";
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { SettingsTrigger } from "@/features/settings/components/settings";
 import { APP_NAV_GROUPS } from "@/shared/constants/app.nav-groups.";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
-import type { AppNavKey } from "@/shared/types/app-navs.type";
-import { Outlet, useNavigate } from "@tanstack/react-router";
-import { ChevronRightIcon, HelpCircleIcon, UserIcon } from "lucide-react";
-import { Box } from "@chakra-ui/react";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { t } from "@/shared/libs/i18n";
-import { Separator } from "@/design-system/components/layout/ui/separator";
+import type { AppNavKey } from "@/shared/types/app-navs.type";
+import { Box } from "@chakra-ui/react";
+import { Outlet, useNavigate } from "@tanstack/react-router";
+import { ChevronsRightIcon, HelpCircleIcon, UserIcon } from "lucide-react";
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 
@@ -77,28 +78,46 @@ const SideBar = () => {
         {/* Header */}
         <HStack
           align={"center"}
-          justify={"center"}
+          justify={"space-between"}
           h={HEADER_H}
           p={4}
           w={"full"}
         >
-          <Logo />
+          <HStack>
+            <Logo ml={2} />
 
-          <ClampedP
-            w={expanded ? "" : 0}
-            ml={expanded ? 2 : 0}
-            mr={1}
-            fontSize={"lg"}
-            fontWeight={"semibold"}
-            transition={"200ms"}
-            color={`${theme.colorPalette}.fg`}
-          >
-            {APP.title}
-          </ClampedP>
+            <HStack align={"center"} gap={1}>
+              <ClampedP
+                w={expanded ? "" : 0}
+                ml={3}
+                mr={1}
+                fontWeight={"semibold"}
+                color={`${theme.colorPalette}.fg`}
+                lineHeight={1.2}
+              >
+                {APP.title}
+              </ClampedP>
+
+              <ClampedP
+                w={expanded ? "" : 0}
+                fontSize={"sm"}
+                transition={"200ms"}
+                color={"fg.subtle"}
+                lineHeight={1}
+              >
+                {APP.version}
+              </ClampedP>
+            </HStack>
+          </HStack>
+
+          {expanded && <ExpandToggleButton />}
         </HStack>
+
+        <Separator borderColor={"border.subtle"} mx={2} />
 
         {/* Nav items */}
         <VNavs<AppNavKey>
+          showTopBorderOnScroll={false}
           flex={1}
           groups={APP_NAV_GROUPS}
           navs={APP_NAVS_MAP}
@@ -112,7 +131,7 @@ const SideBar = () => {
           p={3}
         />
 
-        <Separator borderColor={"border.subtle"} />
+        <Separator borderColor={"border.subtle"} mx={2} />
 
         <VStack gap={1} p={3}>
           <NavButton>
@@ -127,7 +146,15 @@ const SideBar = () => {
         </VStack>
       </VStack>
 
-      <ExpandToggleButton />
+      {!expanded && (
+        <ExpandToggleButton
+          pos={"absolute"}
+          right={"-13px"}
+          top={`calc(${HEADER_H} - 18px)`}
+          opacity={0}
+          _groupHover={{ opacity: 1 }}
+        />
+      )}
     </Box>
   );
 };
@@ -140,32 +167,26 @@ const ExpandToggleButton = (props: IconButtonProps) => {
   const toggleExpanded = useNavStore((s) => s.toggleExpanded);
 
   return (
-    <IconButton
-      variant={"blend"}
-      size={"2xs"}
-      pos={"absolute"}
-      right={"-13px"}
-      top={`calc(${HEADER_H} - 13px)`}
-      zIndex={99}
-      minW={"26px"}
-      h={"26px"}
-      border={"1px solid"}
-      borderColor={"border.subtle"}
-      rounded={"full"}
-      opacity={0}
-      transition={"200ms"}
-      _groupHover={{ opacity: 1 }}
-      {...props}
-      onClick={() => {
-        toggleExpanded("app");
-      }}
-    >
-      <AppIcon
-        icon={ChevronRightIcon}
-        transform={
-          expanded ? "rotate(180deg) translateX(1px)" : "translateX(1px)"
-        }
-      />
-    </IconButton>
+    <Tooltip content={expanded ? t["action.collapse"]() : t["action.expand"]()}>
+      <IconButton
+        variant={"blend"}
+        size={"xs"}
+        zIndex={99}
+        rounded={"full"}
+        border={expanded ? "none" : "1px solid"}
+        borderColor={"border.subtle"}
+        color={"fg.muted"}
+        transition={"200ms"}
+        {...props}
+        onClick={() => {
+          toggleExpanded("app");
+        }}
+      >
+        <AppIcon
+          icon={ChevronsRightIcon}
+          transform={expanded ? "rotate(180deg)" : ""}
+        />
+      </IconButton>
+    </Tooltip>
   );
 };

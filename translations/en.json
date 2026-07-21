@@ -82,6 +82,8 @@
     "notifications": "Notifications"
   },
   "action": {
+    "expand": "Expand",
+    "collapse": "Collapse",
     "save": "Save",
     "save_changes": "Save Changes",
     "cancel": "Cancel",
