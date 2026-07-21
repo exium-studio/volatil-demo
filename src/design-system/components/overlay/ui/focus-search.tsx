@@ -3,8 +3,8 @@
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import type {
   FocusSearchResultItemProps,
@@ -13,8 +13,8 @@ import type {
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Kbd } from "@/design-system/components/typography/ui/kbd";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useSearchInput } from "@/design-system/hooks/use-search-input";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   SearchIndex,
@@ -231,7 +231,7 @@ const FocusSearchBody = () => {
                     cursor={"pointer"}
                     onClick={clearAllRecent}
                   >
-                    {t["common.clear_all"]()}
+                    {t["action.clear"]()}
                   </P>
                 </HStack>
 
