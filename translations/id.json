@@ -5,24 +5,28 @@
     "nav": {
       "home": "Beranda",
       "dashboard": "Dasbor",
-      "settings": "Pengaturan",
+      "map": "Tampilan Peta",
+      "terminal": "Konsol Terminal",
+      "directory": "Direktori",
+
       "profile": "Profil",
+      "settings": "Pengaturan",
+      "notifications": "Notifikasi",
+
       "users": "Pengguna",
       "analytics": "Analitik",
       "reports": "Laporan",
       "billing": "Tagihan & Langganan",
-      "notifications": "Notifikasi",
-      "help": "Bantuan & Dukungan",
-      "faq": "FAQ",
+
       "pricing": "Harga",
+      "help": "Bantuan & Dukungan",
+      "faq": "Pertanyaan Umum",
       "contact_us": "Hubungi Kami",
       "privacy_policy": "Kebijakan Privasi",
-      "terms_of_service": "Syarat & Ketentuan",
-      "map": "Tampilan Peta",
-      "terminal": "Konsol Terminal",
-      "directory": "Direktori"
+      "terms_of_service": "Syarat Layanan"
     }
   },
+
   "common": {
     "show_less": "Tampilkan lebih sedikit",
     "welcome_user": "Selamat datang kembali, {name}!",

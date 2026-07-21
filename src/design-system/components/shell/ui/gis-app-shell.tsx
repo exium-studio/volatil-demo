@@ -21,9 +21,11 @@ import { APP_NAV_GROUPS } from "@/shared/constants/app.nav-groups.";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import type { AppNavKey } from "@/shared/types/app-navs.type";
 import { Outlet, useNavigate } from "@tanstack/react-router";
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, HelpCircleIcon, UserIcon } from "lucide-react";
 import { Box } from "@chakra-ui/react";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { NavButton } from "@/design-system/components/navigation/ui/nav";
+import { t } from "@/shared/libs/i18n";
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 
@@ -107,6 +109,23 @@ const SideBar = () => {
           }}
           p={3}
         />
+
+        <VStack
+          gap={1}
+          p={3}
+          borderTop={"1px solid"}
+          borderColor={"border.subtle"}
+        >
+          <NavButton>
+            <AppIcon icon={HelpCircleIcon} />
+            {expanded && t["app.nav.help"]()}
+          </NavButton>
+
+          <NavButton>
+            <AppIcon icon={UserIcon} />
+            {expanded && t["app.nav.profile"]()}
+          </NavButton>
+        </VStack>
       </VStack>
 
       <ExpandToggleButton />
@@ -134,7 +153,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
       border={"1px solid"}
       borderColor={"border.subtle"}
       rounded={"full"}
-      opacity={0}
+      //   opacity={0}
       transition={"200ms"}
       _groupHover={{ opacity: 1 }}
       {...props}

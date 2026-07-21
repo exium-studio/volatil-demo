@@ -5,22 +5,25 @@
     "nav": {
       "home": "Home",
       "dashboard": "Dashboard",
-      "settings": "Settings",
+      "map": "Map View",
+      "terminal": "Terminal Console",
+      "directory": "Directory",
+
       "profile": "Profile",
+      "settings": "Settings",
+      "notifications": "Notifications",
+
       "users": "Users",
       "analytics": "Analytics",
       "reports": "Reports",
       "billing": "Billing & Subscription",
-      "notifications": "Notifications",
+
+      "pricing": "Pricing",
       "help": "Help & Support",
       "faq": "FAQ",
-      "pricing": "Pricing",
       "contact_us": "Contact Us",
       "privacy_policy": "Privacy Policy",
-      "terms_of_service": "Terms of Service",
-      "map": "Map View",
-      "terminal": "Terminal Console",
-      "directory": "Directory"
+      "terms_of_service": "Terms of Service"
     }
   },
 
