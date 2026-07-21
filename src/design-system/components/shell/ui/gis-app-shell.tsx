@@ -8,7 +8,7 @@ import {
 } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { PageContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
@@ -33,7 +33,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
   const isSmallViewport = useIsSmallViewport();
 
   return (
-    <PageContainer
+    <AppPageContainer
       flexDir={isSmallViewport ? "column" : "row"}
       bg={"bg.canvas"}
       {...restProps}
@@ -44,7 +44,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
         <Button>Settings</Button>
       </SettingsTrigger>
       <Outlet />
-    </PageContainer>
+    </AppPageContainer>
   );
 };
 
