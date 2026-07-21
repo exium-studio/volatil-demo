@@ -23,7 +23,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
 
     return (
       <ChakraTooltip.Root {...restProps}>
-        <ChakraTooltip.Trigger asChild as={"span"} w={w ?? width}>
+        <ChakraTooltip.Trigger asChild w={w ?? width}>
           {children}
         </ChakraTooltip.Trigger>
 

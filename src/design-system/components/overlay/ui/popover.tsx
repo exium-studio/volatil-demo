@@ -1,207 +1,196 @@
-// src/design-system/components/overlay/ui/popover.tsx
+// src/design-system/components/shell/ui/gis-app-shell.tsx
 
-"use client";
-
+import { Logo } from "@/design-system/components/branding/ui/logo";
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
-import { CloseButton } from "@/design-system/components/button/ui/close-button";
-import type {
-  PopoverArrowProps,
-  PopoverArrowTipProps,
-  PopoverBodyProps,
-  PopoverCloseTriggerProps,
-  PopoverContentProps,
-  PopoverDescriptionProps,
-  PopoverFooterProps,
-  PopoverHeaderProps,
-  PopoverPositionerProps,
-  PopoverRootProps,
-  PopoverTitleProps,
-  PopoverTriggerProps,
-} from "@/design-system/components/overlay/types/popover.type";
-import { Portal } from "@/design-system/components/utilities/ui/portal";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { NavButton } from "@/design-system/components/navigation/ui/nav";
+import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
+import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { APP } from "@/design-system/constants/_meta";
+import { HEADER_H } from "@/design-system/constants/styles";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
+import { useNavStore } from "@/design-system/stores/use-nav-store";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { Popover as ChakraPopover } from "@chakra-ui/react";
-import { forwardRef } from "react";
+import { SettingsTrigger } from "@/features/settings/components/settings";
+import { APP_NAV_GROUPS } from "@/shared/constants/app.nav-groups.";
+import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
+import { t } from "@/shared/libs/i18n";
+import type { AppNavKey } from "@/shared/types/app-navs.type";
+import { Box } from "@chakra-ui/react";
+import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { ChevronsRightIcon, HelpCircleIcon, UserIcon } from "lucide-react";
 
-const PopoverRoot = (props: PopoverRootProps) => {
-  const { children, ...restProps } = props;
+const DEFAULT_SIDEBAR_EXPANDED = true;
+
+export const GisAppShell = (props: GisAppShellProps) => {
+  // Props
+  const { ...restProps } = props;
+
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
 
   return (
-    <ChakraPopover.Root autoFocus={false} {...restProps}>
-      {children}
-    </ChakraPopover.Root>
+    <AppPageContainer
+      flexDir={isSmallViewport ? "column" : "row"}
+      bg={"bg.canvas"}
+      {...restProps}
+    >
+      <SideBar />
+
+      <SettingsTrigger modalKey={"settings"} mt={"auto"}>
+        <Button>Settings</Button>
+      </SettingsTrigger>
+
+      <Outlet />
+    </AppPageContainer>
   );
 };
 
-const PopoverTrigger = forwardRef<HTMLButtonElement, PopoverTriggerProps>(
-  (props, ref) => {
-    const { children, ...restProps } = props;
+const SideBar = () => {
+  // Stores
+  const { theme } = useThemeStore();
+  const expanded = useNavStore(
+    (s) => s.expandedByKey["app"] ?? DEFAULT_SIDEBAR_EXPANDED,
+  );
 
-    return (
-      <ChakraPopover.Trigger ref={ref} as={"span"} {...restProps}>
-        {children}
-      </ChakraPopover.Trigger>
-    );
-  },
-);
-
-const PopoverPositioner = forwardRef<HTMLDivElement, PopoverPositionerProps>(
-  (props, ref) => {
-    const { children, ...restProps } = props;
-
-    return (
-      <ChakraPopover.Positioner ref={ref} {...restProps}>
-        {children}
-      </ChakraPopover.Positioner>
-    );
-  },
-);
-
-const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
-  (props, ref) => {
-    // Props
-    const { portalled = true, portalRef, ...restProps } = props;
-
-    // Stores
-    const { theme } = useThemeStore();
-
-    return (
-      <Portal disabled={!portalled} container={portalRef}>
-        <ChakraPopover.Positioner>
-          <ChakraPopover.Content
-            ref={ref}
-            p={0}
-            bg={"bg.body"}
-            border={"1px solid"}
-            borderColor={"border.subtle"}
-            rounded={theme.radii.container}
-            shadow={"soft"}
-            {...restProps}
-          />
-        </ChakraPopover.Positioner>
-      </Portal>
-    );
-  },
-);
-
-const PopoverArrow = forwardRef<HTMLDivElement, PopoverArrowProps>(
-  (props, ref) => {
-    return (
-      <ChakraPopover.Arrow ref={ref}>
-        <ChakraPopover.ArrowTip bg={"bg.body"} {...props} />
-      </ChakraPopover.Arrow>
-    );
-  },
-);
-
-const PopoverArrowTip = forwardRef<HTMLDivElement, PopoverArrowTipProps>(
-  (props, ref) => {
-    return <ChakraPopover.ArrowTip ref={ref} bg={"bg.body"} {...props} />;
-  },
-);
-
-const PopoverCloseTrigger = forwardRef<
-  HTMLButtonElement,
-  PopoverCloseTriggerProps
->((props, ref) => {
-  const { children, ...restProps } = props;
+  // Hooks
+  const navigate = useNavigate();
+  const pathname = useLocation().pathname;
+  const activeKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
 
   return (
-    <ChakraPopover.CloseTrigger
-      ref={ref}
-      asChild
-      pos={"absolute"}
-      top={"1"}
-      insetEnd={"1"}
-      {...restProps}
+    <Box
+      className={"group"}
+      pos={"relative"}
+      w={expanded ? "240px" : `calc(40px + 24px)`}
+      transition={"width 200ms"}
+      h={"full"}
+      zIndex={10}
     >
-      {children}
-    </ChakraPopover.CloseTrigger>
+      <VStack h={"full"} overflowY={"auto"} bg={"bg.body"} overflowX={"hidden"}>
+        {/* Header */}
+        <HStack
+          align={"center"}
+          justify={"space-between"}
+          h={HEADER_H}
+          p={4}
+          w={"full"}
+        >
+          <HStack>
+            <Logo ml={2} />
+
+            <HStack align={"center"} gap={1}>
+              <ClampedP
+                w={expanded ? "" : 0}
+                ml={3}
+                mr={1}
+                fontWeight={"semibold"}
+                color={`${theme.colorPalette}.fg`}
+                lineHeight={1.2}
+              >
+                {APP.title}
+              </ClampedP>
+
+              <ClampedP
+                w={expanded ? "" : 0}
+                fontSize={"sm"}
+                transition={"200ms"}
+                color={"fg.subtle"}
+                lineHeight={1}
+              >
+                {APP.version}
+              </ClampedP>
+            </HStack>
+          </HStack>
+
+          {expanded && <ExpandToggleButton />}
+        </HStack>
+
+        <Separator borderColor={"border.subtle"} mx={2} />
+
+        {/* Nav items */}
+        <VNavs<AppNavKey>
+          showTopBorderOnScroll={false}
+          flex={1}
+          groups={APP_NAV_GROUPS}
+          navs={APP_NAVS_MAP}
+          activeKey={activeKey}
+          expanded={expanded}
+          onNavClick={(key) => {
+            navigate({
+              to: APP_NAVS_MAP[key].pathname,
+              resetScroll: false,
+            });
+          }}
+          p={3}
+        />
+
+        <Separator borderColor={"border.subtle"} mx={2} />
+
+        <VStack gap={1} p={3}>
+          <NavButton>
+            <AppIcon icon={HelpCircleIcon} />
+            {expanded && t["app.navs.help"]()}
+          </NavButton>
+
+          <NavButton>
+            <AppIcon icon={UserIcon} />
+            {expanded && t["app.navs.profile"]()}
+          </NavButton>
+        </VStack>
+      </VStack>
+
+      {!expanded && (
+        <ExpandToggleButton
+          pos={"absolute"}
+          right={"-13px"}
+          top={"16px"}
+          opacity={0}
+          _groupHover={{ opacity: 1 }}
+        />
+      )}
+    </Box>
   );
-});
+};
 
-const PopoverCloseButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  (props, ref) => {
-    return (
-      <PopoverCloseTrigger>
-        <CloseButton ref={ref} size={"sm"} {...props} />
-      </PopoverCloseTrigger>
-    );
-  },
-);
+const ExpandToggleButton = (props: IconButtonProps) => {
+  // Stores
+  const expanded = useNavStore(
+    (s) => s.expandedByKey["app"] ?? DEFAULT_SIDEBAR_EXPANDED,
+  );
+  const toggleExpanded = useNavStore((s) => s.toggleExpanded);
 
-const PopoverHeader = forwardRef<HTMLDivElement, PopoverHeaderProps>(
-  (props, ref) => {
-    const { children, ...restProps } = props;
-
-    return (
-      <ChakraPopover.Header ref={ref} {...restProps}>
-        {children}
-      </ChakraPopover.Header>
-    );
-  },
-);
-
-const PopoverBody = forwardRef<HTMLDivElement, PopoverBodyProps>(
-  (props, ref) => {
-    const { children, ...restProps } = props;
-
-    return (
-      <ChakraPopover.Body ref={ref} {...restProps}>
-        {children}
-      </ChakraPopover.Body>
-    );
-  },
-);
-
-const PopoverFooter = forwardRef<HTMLDivElement, PopoverFooterProps>(
-  (props, ref) => {
-    const { children, ...restProps } = props;
-
-    return (
-      <ChakraPopover.Footer ref={ref} {...restProps}>
-        {children}
-      </ChakraPopover.Footer>
-    );
-  },
-);
-
-const PopoverTitle = forwardRef<HTMLDivElement, PopoverTitleProps>(
-  (props, ref) => {
-    const { children, ...restProps } = props;
-
-    return (
-      <ChakraPopover.Title ref={ref} {...restProps}>
-        {children}
-      </ChakraPopover.Title>
-    );
-  },
-);
-
-const PopoverDescription = forwardRef<HTMLDivElement, PopoverDescriptionProps>(
-  (props, ref) => {
-    const { children, ...restProps } = props;
-
-    return (
-      <ChakraPopover.Description ref={ref} {...restProps}>
-        {children}
-      </ChakraPopover.Description>
-    );
-  },
-);
-
-export const Popover = {
-  Root: PopoverRoot,
-  Trigger: PopoverTrigger,
-  Positioner: PopoverPositioner,
-  Content: PopoverContent,
-  Arrow: PopoverArrow,
-  ArrowTip: PopoverArrowTip,
-  CloseTrigger: PopoverCloseTrigger,
-  CLoseButton: PopoverCloseButton,
-  Header: PopoverHeader,
-  Body: PopoverBody,
-  Footer: PopoverFooter,
-  Title: PopoverTitle,
-  Description: PopoverDescription,
+  return (
+    <Tooltip content={expanded ? t["action.collapse"]() : t["action.expand"]()}>
+      <IconButton
+        variant={"blend"}
+        size={"2xs"}
+        zIndex={99}
+        rounded={"full"}
+        border={expanded ? "none" : "1px solid"}
+        borderColor={"border.subtle"}
+        color={"fg.muted"}
+        transition={"200ms"}
+        {...props}
+        onClick={() => {
+          toggleExpanded("app");
+        }}
+      >
+        <AppIcon
+          icon={ChevronsRightIcon}
+          transform={expanded ? "rotate(180deg)" : ""}
+        />
+      </IconButton>
+    </Tooltip>
+  );
 };
