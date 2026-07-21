@@ -23,6 +23,7 @@ import type { AppNavKey } from "@/shared/types/app-navs.type";
 import { Outlet, useNavigate } from "@tanstack/react-router";
 import { ChevronRightIcon } from "lucide-react";
 import { Box } from "@chakra-ui/react";
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 
@@ -52,6 +53,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
 
 const SideBar = () => {
   // Stores
+  const { theme } = useThemeStore();
   const expanded = useNavStore(
     (s) => s.expandedByKey["app"] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
@@ -81,10 +83,12 @@ const SideBar = () => {
 
           <ClampedP
             w={expanded ? "" : 0}
-            ml={expanded ? 1 : 0}
+            ml={expanded ? 2 : 0}
             mr={1}
             fontSize={"lg"}
             fontWeight={"semibold"}
+            transition={"200ms"}
+            color={`${theme.colorPalette}.fg`}
           >
             {APP.title}
           </ClampedP>
@@ -122,17 +126,15 @@ const ExpandToggleButton = (props: IconButtonProps) => {
       variant={"blend"}
       size={"2xs"}
       pos={"absolute"}
-      right={"-8px"}
-      top={"50%"}
+      right={"-13px"}
+      top={`calc(${HEADER_H} - 13px)`}
       zIndex={99}
-      minW={"16px"}
-      w={"16px"}
-      h={"50px"}
+      minW={"26px"}
+      h={"26px"}
       border={"1px solid"}
       borderColor={"border.subtle"}
       rounded={"full"}
       opacity={0}
-      transform={"translateY(-50%)"}
       transition={"200ms"}
       _groupHover={{ opacity: 1 }}
       {...props}
@@ -143,7 +145,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
       <AppIcon
         icon={ChevronRightIcon}
         transform={
-          expanded ? "rotate(180deg) translateX(-1px)" : "translateX(1px)"
+          expanded ? "rotate(180deg) translateX(1px)" : "translateX(1px)"
         }
       />
     </IconButton>

@@ -35,7 +35,7 @@ export const PADDING_MD = "16px";
 export const PADDING_LG = "24px";
 
 // Effect
-export const BACKDROP_FILTER_BLUR = "blur(5px)";
+export const BACKDROP_FILTER_BLUR = "blur(2px)";
 
 // Data Table
 export const TABLE_ACTIONS_CELL_W = "56px";
