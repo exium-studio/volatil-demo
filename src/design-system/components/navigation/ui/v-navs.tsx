@@ -55,6 +55,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
 
               <VStack
                 align={expanded ? "stretch" : "center"}
+                gap={isSmallViewport ? 0 : 1}
                 overflow={"clip"}
                 bg={"bg.body"}
                 rounded={theme.radii.container}
