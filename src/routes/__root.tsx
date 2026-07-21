@@ -17,13 +17,13 @@ import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
 export const Route = createRootRoute({
   validateSearch: globalSearchParamsSchema,
   component: RootComponent,
+  notFoundComponent: NotFoundPage,
   head: () => ({
     meta: [
       { title: APP.title },
       { name: "description", content: APP.description },
     ],
   }),
-  notFoundComponent: NotFoundPage,
 });
 
 function RootComponent() {

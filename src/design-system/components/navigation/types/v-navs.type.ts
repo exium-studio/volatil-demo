@@ -10,6 +10,7 @@ export type VNavsProps<TNavKey extends string = string> = Omit<
   groups: NavGroup<TNavKey>[];
   navs: Record<TNavKey, NavItem>;
   activeKey?: TNavKey;
+  defaultActiveKey?: TNavKey;
   expanded?: boolean;
   onNavClick?: (key: TNavKey) => void;
 };

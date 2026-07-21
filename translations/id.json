@@ -1,5 +1,28 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
+
+  "app": {
+    "nav": {
+      "home": "Beranda",
+      "dashboard": "Dasbor",
+      "settings": "Pengaturan",
+      "profile": "Profil",
+      "users": "Pengguna",
+      "analytics": "Analitik",
+      "reports": "Laporan",
+      "billing": "Tagihan & Langganan",
+      "notifications": "Notifikasi",
+      "help": "Bantuan & Dukungan",
+      "faq": "FAQ",
+      "pricing": "Harga",
+      "contact_us": "Hubungi Kami",
+      "privacy_policy": "Kebijakan Privasi",
+      "terms_of_service": "Syarat & Ketentuan",
+      "map": "Tampilan Peta",
+      "terminal": "Konsol Terminal",
+      "directory": "Direktori"
+    }
+  },
   "common": {
     "show_less": "Tampilkan lebih sedikit",
     "welcome_user": "Selamat datang kembali, {name}!",
@@ -98,26 +121,6 @@
     "show_less": "Tampilkan lebih sedikit",
     "back_to_main_page": "Kembali ke halaman utama"
   },
-  "nav": {
-    "home": "Beranda",
-    "dashboard": "Dasbor",
-    "settings": "Pengaturan",
-    "profile": "Profil",
-    "users": "Pengguna",
-    "analytics": "Analitik",
-    "reports": "Laporan",
-    "billing": "Tagihan & Langganan",
-    "notifications": "Notifikasi",
-    "help": "Bantuan & Dukungan",
-    "faq": "FAQ",
-    "pricing": "Harga",
-    "contact_us": "Hubungi Kami",
-    "privacy_policy": "Kebijakan Privasi",
-    "terms_of_service": "Syarat & Ketentuan",
-    "map": "Tampilan Peta",
-    "terminal": "Konsol Terminal",
-    "directory": "Direktori"
-  },
   "auth": {
     "signin": {
       "title": "Masuk",
@@ -173,31 +176,28 @@
     "not_found": "Sumber daya yang diminta tidak dapat ditemukan.",
     "bad_request": "Parameter permintaan tidak valid."
   },
-  "profile": {
-    "id": "ID: {id}",
-    "details": "Detail Profil",
-    "avatar": "Foto Profil",
-    "first_name": "Nama Depan",
-    "last_name": "Nama Belakang",
-    "email": "Alamat Email",
-    "phone": "Nomor Telepon",
-    "bio": "Biografi",
-    "role": "Peran / Jabatan",
-    "department": "Departemen"
+
+  "file_input": {
+    "replace_hint": "Mengunggah berkas baru akan menggantikan berkas saat ini.",
+    "limit_reached": "Batas tercapai. Hapus berkas untuk mengunggah berkas baru.",
+    "scheduled_removal": "Akan dihapus saat disimpan",
+    "auto_trimmed_warning": "Berkas dipulihkan. Unggahan terbaru dibatalkan untuk menjaga batas kapasitas."
   },
-  "preference": {
-    "title": "Preferensi",
-    "general": "Pengaturan Umum",
-    "security": "Keamanan & Privasi",
-    "theme": "Tema Tampilan",
-    "theme_light": "Mode Terang",
-    "theme_dark": "Mode Gelap",
-    "theme_system": "Ikuti Sistem",
-    "language": "Bahasa / Bahasa Lokal",
-    "password_current": "Kata Sandi Saat Ini",
-    "password_new": "Kata Sandi Baru",
-    "password_confirm": "Konfirmasi Kata Sandi Baru"
+  "rich_text_editor": {
+    "default_placeholder": "Mulai mengetik konten Anda di sini"
   },
+
+  "offline_alert": {
+    "title": "Tidak Ada Koneksi Internet",
+    "description": "Tenang — kami akan otomatis terhubung kembali begitu jaringannya sudah pulih."
+  },
+  "error_page": {
+    "not_found": {
+      "title": "Halaman Tidak Ditemukan",
+      "description": "Sepertinya halaman yang kamu cari sudah dipindah atau tidak pernah ada."
+    }
+  },
+
   "settings": {
     "index": {
       "title": "Pilih pengaturan",
@@ -267,25 +267,6 @@
     "about": {
       "title": "Tentang",
       "description": "Informasi tentang aplikasi dan detail versi."
-    }
-  },
-  "file_input": {
-    "replace_hint": "Mengunggah berkas baru akan menggantikan berkas saat ini.",
-    "limit_reached": "Batas tercapai. Hapus berkas untuk mengunggah berkas baru.",
-    "scheduled_removal": "Akan dihapus saat disimpan",
-    "auto_trimmed_warning": "Berkas dipulihkan. Unggahan terbaru dibatalkan untuk menjaga batas kapasitas."
-  },
-  "rich_text_editor": {
-    "default_placeholder": "Mulai mengetik konten Anda di sini"
-  },
-  "offline_alert": {
-    "title": "Tidak Ada Koneksi Internet",
-    "description": "Tenang — kami akan otomatis terhubung kembali begitu jaringannya sudah pulih."
-  },
-  "error_page": {
-    "not_found": {
-      "title": "Halaman Tidak Ditemukan",
-      "description": "Sepertinya halaman yang kamu cari sudah dipindah atau tidak pernah ada."
     }
   }
 }

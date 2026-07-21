@@ -1,5 +1,29 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
+
+  "app": {
+    "nav": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "settings": "Settings",
+      "profile": "Profile",
+      "users": "Users",
+      "analytics": "Analytics",
+      "reports": "Reports",
+      "billing": "Billing & Subscription",
+      "notifications": "Notifications",
+      "help": "Help & Support",
+      "faq": "FAQ",
+      "pricing": "Pricing",
+      "contact_us": "Contact Us",
+      "privacy_policy": "Privacy Policy",
+      "terms_of_service": "Terms of Service",
+      "map": "Map View",
+      "terminal": "Terminal Console",
+      "directory": "Directory"
+    }
+  },
+
   "common": {
     "show_less": "Show less",
     "welcome_user": "Welcome back, {name}!",
@@ -98,26 +122,6 @@
     "show_less": "Show less",
     "back_to_main_page": "Back to main page"
   },
-  "nav": {
-    "home": "Home",
-    "dashboard": "Dashboard",
-    "settings": "Settings",
-    "profile": "Profile",
-    "users": "Users",
-    "analytics": "Analytics",
-    "reports": "Reports",
-    "billing": "Billing & Subscription",
-    "notifications": "Notifications",
-    "help": "Help & Support",
-    "faq": "FAQ",
-    "pricing": "Pricing",
-    "contact_us": "Contact Us",
-    "privacy_policy": "Privacy Policy",
-    "terms_of_service": "Terms of Service",
-    "map": "Map View",
-    "terminal": "Terminal Console",
-    "directory": "Directory"
-  },
   "auth": {
     "signin": {
       "title": "Sign In",
@@ -173,31 +177,28 @@
     "not_found": "The requested resource could not be found.",
     "bad_request": "Invalid request parameters."
   },
-  "profile": {
-    "id": "ID: {id}",
-    "details": "Profile Details",
-    "avatar": "Profile Picture",
-    "first_name": "First Name",
-    "last_name": "Last Name",
-    "email": "Email Address",
-    "phone": "Phone Number",
-    "bio": "Biography",
-    "role": "Role / Designation",
-    "department": "Department"
+
+  "file_input": {
+    "replace_hint": "Uploading new files will replace the current files.",
+    "limit_reached": "Limit reached. Remove files to upload new ones.",
+    "scheduled_removal": "Will be removed on save",
+    "auto_trimmed_warning": "File restored. Newer uploads were discarded to stay within the limit."
   },
-  "preference": {
-    "title": "Preferences",
-    "general": "General Settings",
-    "security": "Security & Privacy",
-    "theme": "Interface Theme",
-    "theme_light": "Light Mode",
-    "theme_dark": "Dark Mode",
-    "theme_system": "Follow System",
-    "language": "Language / Locale",
-    "password_current": "Current Password",
-    "password_new": "New Password",
-    "password_confirm": "Confirm New Password"
+  "rich_text_editor": {
+    "default_placeholder": "Start typing your content here"
   },
+
+  "offline_alert": {
+    "title": "No internet connection",
+    "description": "Hang tight — we'll reconnect you automatically once your network is back"
+  },
+  "error_page": {
+    "not_found": {
+      "title": "Page Not Found",
+      "description": "The page you're looking for may have been moved or doesn't exist"
+    }
+  },
+
   "settings": {
     "index": {
       "title": "Select a setting",
@@ -267,26 +268,6 @@
     "about": {
       "title": "About",
       "description": "Information about the application and version details."
-    }
-  },
-  "file_input": {
-    "replace_hint": "Uploading new files will replace the current files.",
-    "limit_reached": "Limit reached. Remove files to upload new ones.",
-    "scheduled_removal": "Will be removed on save",
-    "auto_trimmed_warning": "File restored. Newer uploads were discarded to stay within the limit."
-  },
-  "rich_text_editor": {
-    "default_placeholder": "Start typing your content here"
-  },
-  "example_message": "Hello world {username}",
-  "offline_alert": {
-    "title": "No internet connection",
-    "description": "Hang tight — we'll reconnect you automatically once your network is back"
-  },
-  "error_page": {
-    "not_found": {
-      "title": "Page Not Found",
-      "description": "The page you're looking for may have been moved or doesn't exist"
     }
   }
 }
