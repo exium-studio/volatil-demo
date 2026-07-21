@@ -1,6 +1,6 @@
 // src/design-system/components/navigation/ui/v-navs.tsx
 
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -24,8 +24,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
   const {
     groups,
     navs,
-    activeKey: controlledActiveKey,
-    defaultActiveKey,
+    activeKey,
     expanded = true,
     onNavClick,
     ...restProps
@@ -36,28 +35,6 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
-
-  // States
-  const [internalActiveKey, setInternalActiveKey] = useState<
-    TNavKey | undefined
-  >(defaultActiveKey);
-
-  // Derived Values
-  const isControlled = controlledActiveKey !== undefined;
-
-  // Resolved Values
-  const resolvedActiveKey = isControlled
-    ? controlledActiveKey
-    : internalActiveKey;
-
-  // Utils
-  function handleNavClick(key: TNavKey) {
-    if (!isControlled) {
-      setInternalActiveKey(key);
-    }
-
-    onNavClick?.(key);
-  }
 
   return (
     <VScrollContainer className={"noScroll"} {...restProps}>
@@ -95,9 +72,9 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
                       <VNavNode
                         node={node}
                         navs={navs}
-                        activeKey={resolvedActiveKey}
+                        activeKey={activeKey}
                         expanded={expanded}
-                        onNavClick={handleNavClick}
+                        onNavClick={onNavClick}
                       />
                     </Fragment>
                   );

@@ -12,6 +12,7 @@ import { AppPageContainer } from "@/design-system/components/layout/ui/page-cont
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
+import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
@@ -26,7 +27,7 @@ import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AppNavKey } from "@/shared/types/app-navs.type";
 import { Box } from "@chakra-ui/react";
-import { Outlet, useNavigate } from "@tanstack/react-router";
+import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { ChevronsRightIcon, HelpCircleIcon, UserIcon } from "lucide-react";
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
@@ -64,6 +65,8 @@ const SideBar = () => {
 
   // Hooks
   const navigate = useNavigate();
+  const pathname = useLocation().pathname;
+  const activeKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
 
   return (
     <Box
@@ -121,10 +124,11 @@ const SideBar = () => {
           flex={1}
           groups={APP_NAV_GROUPS}
           navs={APP_NAVS_MAP}
+          activeKey={activeKey}
           expanded={expanded}
           onNavClick={(key) => {
             navigate({
-              to: APP_NAVS_MAP[key].href,
+              to: APP_NAVS_MAP[key].pathname,
               resetScroll: false,
             });
           }}

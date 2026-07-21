@@ -13,26 +13,26 @@ export const APP_NAVS_MAP = {
   home: {
     icon: HouseIcon,
     titleKey: "app.nav.home",
-    href: "/portal/home",
+    pathname: "/portal/home",
   },
   users: {
     icon: UsersIcon,
     titleKey: "app.nav.users",
-    href: "/portal/home",
+    pathname: "/portal/home",
   },
   analytics: {
     icon: ChartLineIcon,
     titleKey: "app.nav.analytics",
-    href: "/portal/home",
+    pathname: "/portal/home",
   },
   reports: {
     icon: ClipboardListIcon,
     titleKey: "app.nav.reports",
-    href: "/portal/home",
+    pathname: "/portal/home",
   },
   billing: {
     icon: ReceiptIcon,
     titleKey: "app.nav.billing",
-    href: "/portal/home",
+    pathname: "/portal/home",
   },
 } as const satisfies Record<string, NavItem>;

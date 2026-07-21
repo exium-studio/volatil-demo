@@ -9,7 +9,7 @@ export type NavItem = {
   titleKey: ParameterlessTranslationKey;
   descriptionKey?: ParameterlessTranslationKey;
   keywords?: string[];
-  href?: NavLinkProps["to"];
+  pathname?: NavLinkProps["to"];
 };
 
 export type NavNode<TNavKey extends string = string> = {
