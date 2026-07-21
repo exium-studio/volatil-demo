@@ -60,12 +60,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
   }
 
   return (
-    <VScrollContainer
-      gap={expanded ? 2 : 3}
-      overflowY={"auto"}
-      overflowX={"clip"}
-      {...restProps}
-    >
+    <VScrollContainer className={"noScroll"} {...restProps}>
       {groups.map((group, groupIndex) => {
         const isFirstGroup = groupIndex === 0;
         const groupTitle = group.titleKey ? t[group.titleKey]() : null;
@@ -92,7 +87,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
                   const isFirstNode = nodeIndex === 0;
 
                   return (
-                    <Fragment key={node.key}>
+                    <Fragment key={nodeIndex}>
                       {!isFirstNode && isSmallViewport && (
                         <Separator ml={"46px"} />
                       )}
