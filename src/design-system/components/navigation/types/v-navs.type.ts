@@ -1,4 +1,4 @@
-// src/design-system/components/navigation/types/vnavs.type.ts
+// src/design-system/components/navigation/types/v-navs.type.ts
 
 import type { VScrollContainerProps } from "@/design-system/components/layout/types/scroll-container.type";
 import type { NavGroup, NavItem, NavNode } from "@/shared/types/nav.type";

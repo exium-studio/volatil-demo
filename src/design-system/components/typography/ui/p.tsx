@@ -1,7 +1,5 @@
 // src/design-system/components/typography/ui/p.tsx
 
-"use client";
-
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Span, Text } from "@chakra-ui/react";
 import parse, { domToReact, type DOMNode } from "html-react-parser";
@@ -91,7 +89,7 @@ export const ClampedP = forwardRef<HTMLParagraphElement, PProps>(
     const { children, ...restProps } = props;
 
     return (
-      <Tooltip content={children}>
+      <Tooltip content={children} w={restProps.w ?? restProps.width}>
         <P ref={ref} lineClamp={1} {...restProps}>
           {children}
         </P>

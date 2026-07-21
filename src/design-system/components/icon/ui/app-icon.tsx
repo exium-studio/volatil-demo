@@ -30,7 +30,11 @@ export const AppIcon = (props: AppIconProps) => {
   const IconComponent = icon;
 
   return (
-    <Icon boxSize={boxSize ?? sizes[size as keyof typeof sizes]} {...restProps}>
+    <Icon
+      boxSize={boxSize ?? sizes[size as keyof typeof sizes]}
+      strokeWidth={1.75}
+      {...restProps}
+    >
       <IconComponent />
     </Icon>
   );

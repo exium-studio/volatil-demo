@@ -1,4 +1,4 @@
-// src/features/settings/components/settings.menu.tsx
+// src/features/settings/components/settings.sidebar.tsx
 
 "use client";
 

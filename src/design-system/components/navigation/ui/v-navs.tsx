@@ -1,4 +1,4 @@
-// src/design-system/components/navigation/ui/vnavs.tsx
+// src/design-system/components/navigation/ui/v-navs.tsx
 
 import { Fragment, useState } from "react";
 
@@ -60,16 +60,21 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
   }
 
   return (
-    <VScrollContainer gap={expanded ? 2 : 3} {...restProps}>
+    <VScrollContainer
+      gap={expanded ? 2 : 3}
+      overflowY={"auto"}
+      overflowX={"clip"}
+      {...restProps}
+    >
       {groups.map((group, groupIndex) => {
         const isFirstGroup = groupIndex === 0;
         const groupTitle = group.titleKey ? t[group.titleKey]() : null;
 
         return (
-          <Fragment key={group.titleKey}>
+          <Fragment key={groupIndex}>
             {!isFirstGroup && !isSmallViewport && <Separator />}
 
-            <VStack align={expanded ? "stretch" : "center"}>
+            <VStack align={expanded ? "stretch" : "start"} overflow={"clip"}>
               {expanded && groupTitle && (
                 <P fontSize={"sm"} color={"fg.subtle"} px={2} mb={2}>
                   {groupTitle}
@@ -164,29 +169,18 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
     );
   }
 
-  // Rail mode, no children → icon-only button
-  if (!expanded) {
-    return (
+  return (
+    <VStack gap={1} w={"full"}>
       <NavButton
         aria-label={navTitle}
         variant={isActive ? "subtle" : "ghost"}
-        onClick={() => onNavClick?.(node.key)}
-      >
-        <NavIcon nav={nav} title={navTitle} />
-      </NavButton>
-    );
-  }
-
-  // Expanded mode → icon + title, children dirender indented di bawahnya
-  return (
-    <VStack gap={1} align={"stretch"} w={"full"}>
-      <NavButton
-        variant={isActive ? "subtle" : "ghost"}
+        size={"md"}
         rounded={isSmallViewport ? 0 : theme.radii.component}
         onClick={() => onNavClick?.(node.key)}
       >
         <NavIcon nav={nav} title={navTitle} />
-        {navTitle}
+
+        {expanded && navTitle}
       </NavButton>
 
       {hasChildren &&

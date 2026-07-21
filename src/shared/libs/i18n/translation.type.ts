@@ -1,4 +1,4 @@
-// src/shared/libs/i18n/type.ts
+// src/shared/libs/i18n/translation.type.ts
 
 import type { t } from "@/shared/libs/i18n";
 

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppPortalWelcomeRouteImport } from './routes/_app/portal/welcome'
+import { Route as AppPortalHomeRouteImport } from './routes/_app/portal/home'
 import { Route as AppAdminWelcomeRouteImport } from './routes/_app/admin/welcome'
 
 const DemoRoute = DemoRouteImport.update({
@@ -29,6 +30,11 @@ const AppPortalWelcomeRoute = AppPortalWelcomeRouteImport.update({
   path: '/portal/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppPortalHomeRoute = AppPortalHomeRouteImport.update({
+  id: '/_app/portal/home',
+  path: '/portal/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppAdminWelcomeRoute = AppAdminWelcomeRouteImport.update({
   id: '/_app/admin/welcome',
   path: '/admin/welcome',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
   '/admin/welcome': typeof AppAdminWelcomeRoute
+  '/portal/home': typeof AppPortalHomeRoute
   '/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
   '/admin/welcome': typeof AppAdminWelcomeRoute
+  '/portal/home': typeof AppPortalHomeRoute
   '/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRoutesById {
@@ -52,18 +60,25 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
   '/_app/admin/welcome': typeof AppAdminWelcomeRoute
+  '/_app/portal/home': typeof AppPortalHomeRoute
   '/_app/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo' | '/admin/welcome' | '/portal/welcome'
+  fullPaths:
+    | '/'
+    | '/demo'
+    | '/admin/welcome'
+    | '/portal/home'
+    | '/portal/welcome'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo' | '/admin/welcome' | '/portal/welcome'
+  to: '/' | '/demo' | '/admin/welcome' | '/portal/home' | '/portal/welcome'
   id:
     | '__root__'
     | '/'
     | '/demo'
     | '/_app/admin/welcome'
+    | '/_app/portal/home'
     | '/_app/portal/welcome'
   fileRoutesById: FileRoutesById
 }
@@ -71,6 +86,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemoRoute: typeof DemoRoute
   AppAdminWelcomeRoute: typeof AppAdminWelcomeRoute
+  AppPortalHomeRoute: typeof AppPortalHomeRoute
   AppPortalWelcomeRoute: typeof AppPortalWelcomeRoute
 }
 
@@ -97,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPortalWelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/portal/home': {
+      id: '/_app/portal/home'
+      path: '/portal/home'
+      fullPath: '/portal/home'
+      preLoaderRoute: typeof AppPortalHomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/admin/welcome': {
       id: '/_app/admin/welcome'
       path: '/admin/welcome'
@@ -111,6 +134,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemoRoute: DemoRoute,
   AppAdminWelcomeRoute: AppAdminWelcomeRoute,
+  AppPortalHomeRoute: AppPortalHomeRoute,
   AppPortalWelcomeRoute: AppPortalWelcomeRoute,
 }
 export const routeTree = rootRouteImport

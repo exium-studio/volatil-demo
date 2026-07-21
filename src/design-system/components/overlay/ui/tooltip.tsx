@@ -15,14 +15,16 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       content,
       contentProps,
       portalRef,
-      ...rest
+      w,
+      width,
+      ...restProps
     } = props;
 
     if (disabled) return children;
 
     return (
-      <ChakraTooltip.Root {...rest}>
-        <ChakraTooltip.Trigger asChild={asChild} as={"span"}>
+      <ChakraTooltip.Root {...restProps}>
+        <ChakraTooltip.Trigger asChild={asChild} as={"span"} w={w ?? width}>
           {children}
         </ChakraTooltip.Trigger>
 

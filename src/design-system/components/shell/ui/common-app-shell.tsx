@@ -1,4 +1,4 @@
-// src/design-system/components/shell/ui/basic-app-shell.tsx
+// src/design-system/components/shell/ui/common-app-shell.tsx
 
 "use client";
 
