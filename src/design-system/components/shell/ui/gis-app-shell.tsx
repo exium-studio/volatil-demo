@@ -154,7 +154,7 @@ const SideBar = () => {
         <ExpandToggleButton
           pos={"absolute"}
           right={"-13px"}
-          top={`calc(${HEADER_H} - 18px)`}
+          top={"16px"}
           opacity={0}
           _groupHover={{ opacity: 1 }}
         />
@@ -174,7 +174,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
     <Tooltip content={expanded ? t["action.collapse"]() : t["action.expand"]()}>
       <IconButton
         variant={"blend"}
-        size={"xs"}
+        size={"2xs"}
         zIndex={99}
         rounded={"full"}
         border={expanded ? "none" : "1px solid"}
