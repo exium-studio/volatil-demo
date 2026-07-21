@@ -13,8 +13,8 @@ export const FEEDBACK_CONTAINER_MIN_H = "250px";
 export const MODAL_BASE_ZINDEX = 1400;
 
 // Sizes
-export const MAIN_BUTTON_SIZE = ["md", null, "md"] as ButtonProps["size"];
-export const MAIN_INPUT_SIZE = ["md", null, "md"] as InputProps["size"];
+export const MAIN_BUTTON_SIZE = ["lg", null, "md"] as ButtonProps["size"];
+export const MAIN_INPUT_SIZE = ["lg", null, "md"] as InputProps["size"];
 
 export const LUCIDE_ICON_BASE_ICON_BOX_SIZE = 5;
 export const LUCIDE_ICON_MENU_ICON_BOX_SIZE = 4.5;

@@ -3,15 +3,18 @@
 import { Fragment } from "react";
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { NavButton } from "@/design-system/components/navigation/ui/nav";
+import { Center } from "@/design-system/components/layout/ui/center";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import type {
   VNavNodeProps,
   VNavsProps,
 } from "@/design-system/components/navigation/types/v-navs.type";
+import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { P } from "@/design-system/components/typography/ui/p";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { t } from "@/shared/libs/i18n";
 import type { NavItem } from "@/shared/types/nav.type";
 import { Menu } from "@chakra-ui/react";
@@ -27,6 +30,12 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
     ...restProps
   } = props;
 
+  // Stores
+  const { theme } = useThemeStore();
+
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
+
   return (
     <VScrollContainer gap={expanded ? 2 : 3} {...restProps}>
       {groups.map((group, groupIndex) => {
@@ -34,8 +43,8 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
         const groupTitle = group.titleKey ? t[group.titleKey]() : null;
 
         return (
-          <Fragment key={groupIndex}>
-            {!isFirstGroup && <Separator />}
+          <Fragment key={group.titleKey}>
+            {!isFirstGroup && !isSmallViewport && <Separator />}
 
             <VStack align={expanded ? "stretch" : "center"}>
               {expanded && groupTitle && (
@@ -44,17 +53,31 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
                 </P>
               )}
 
-              <VStack gap={1} align={expanded ? "stretch" : "center"}>
-                {group.items.map((node) => (
-                  <VNavNode
-                    key={node.key}
-                    node={node}
-                    navs={navs}
-                    activeKey={activeKey}
-                    expanded={expanded}
-                    onNavClick={onNavClick}
-                  />
-                ))}
+              <VStack
+                align={expanded ? "stretch" : "center"}
+                overflow={"clip"}
+                bg={"bg.body"}
+                rounded={theme.radii.container}
+              >
+                {group.items.map((node, nodeIndex) => {
+                  const isFirstNode = nodeIndex === 0;
+
+                  return (
+                    <Fragment key={node.key}>
+                      {!isFirstNode && isSmallViewport && (
+                        <Separator ml={"46px"} />
+                      )}
+
+                      <VNavNode
+                        node={node}
+                        navs={navs}
+                        activeKey={activeKey}
+                        expanded={expanded}
+                        onNavClick={onNavClick}
+                      />
+                    </Fragment>
+                  );
+                })}
               </VStack>
             </VStack>
           </Fragment>
@@ -65,22 +88,31 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
 };
 
 const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
+  // Props
   const { node, navs, activeKey, expanded, onNavClick, depth = 0 } = props;
 
+  // Stores
+  const { theme } = useThemeStore();
+
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
+
+  // Constants
   const nav = navs[node.key];
   const navTitle = t[nav.titleKey]();
+
+  // Derived Values
   const isActive = activeKey === node.key;
   const hasChildren = !!node.children?.length;
 
-  // Rail mode (!expanded) + punya children → icon-only trigger + Chakra Menu popup
+  // Rail mode (!expanded) + has children → icon-only trigger + Chakra Menu popup
   if (!expanded && hasChildren) {
     return (
       <Menu.Root>
         <Menu.Trigger asChild>
           <NavButton
-            size={"lg"}
-            variant={isActive ? "subtle" : "ghost"}
             aria-label={navTitle}
+            variant={isActive ? "subtle" : "ghost"}
           >
             <NavIcon nav={nav} title={navTitle} />
           </NavButton>
@@ -97,6 +129,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
                   onClick={() => onNavClick?.(child.key)}
                 >
                   {childNav.icon && <AppIcon icon={childNav.icon} />}
+
                   {t[childNav.titleKey]()}
                 </Menu.Item>
               );
@@ -111,9 +144,8 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   if (!expanded) {
     return (
       <NavButton
-        size={"lg"}
-        variant={isActive ? "subtle" : "ghost"}
         aria-label={navTitle}
+        variant={isActive ? "subtle" : "ghost"}
         onClick={() => onNavClick?.(node.key)}
       >
         <NavIcon nav={nav} title={navTitle} />
@@ -125,9 +157,8 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   return (
     <VStack gap={1} align={"stretch"} w={"full"}>
       <NavButton
-        size={"lg"}
         variant={isActive ? "subtle" : "ghost"}
-        pl={3 + depth * 4}
+        rounded={isSmallViewport ? 0 : theme.radii.component}
         onClick={() => onNavClick?.(node.key)}
       >
         <NavIcon nav={nav} title={navTitle} />
@@ -150,23 +181,15 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   );
 };
 
-/** Render icon nav; fallback ke huruf awal title kalau icon gak ada. */
+/** Render icon nav; fallback = First title's letter . */
 const NavIcon = ({ nav, title }: { nav: NavItem; title: string }) => {
   if (nav.icon) {
     return <AppIcon icon={nav.icon} />;
   }
 
   return (
-    <HStack
-      boxSize={5}
-      align={"center"}
-      justify={"center"}
-      rounded={"full"}
-      bg={"bg.subtle"}
-      fontSize={"xs"}
-      fontWeight={"semibold"}
-    >
+    <Center boxSize={5} fontWeight={"semibold"}>
       {title.charAt(0).toUpperCase()}
-    </HStack>
+    </Center>
   );
 };

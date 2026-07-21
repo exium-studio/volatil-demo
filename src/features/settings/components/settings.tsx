@@ -6,7 +6,7 @@ import type { PopModalTriggerProps } from "@/design-system/components/overlay/ty
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { SettingsActivePage } from "@/features/settings/components/settings.active-page";
-import { SettingsMenu } from "@/features/settings/components/settings.menu";
+import { SettingsSidebar } from "@/features/settings/components/settings.sidebar";
 import { useSearch } from "@tanstack/react-router";
 
 export const SettingsTrigger = (props: PopModalTriggerProps) => {
@@ -68,7 +68,7 @@ const SettingsView = () => {
 
   return (
     <HStack className={"settings-view"} flex={1} overflowY={"auto"}>
-      {shouldRenderMenu && <SettingsMenu />}
+      {shouldRenderMenu && <SettingsSidebar />}
 
       {shouldRenderActivePage && <SettingsActivePage />}
     </HStack>
