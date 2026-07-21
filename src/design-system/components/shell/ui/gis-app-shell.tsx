@@ -26,6 +26,7 @@ import { Box } from "@chakra-ui/react";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { t } from "@/shared/libs/i18n";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 
@@ -98,6 +99,7 @@ const SideBar = () => {
 
         {/* Nav items */}
         <VNavs<AppNavKey>
+          flex={1}
           groups={APP_NAV_GROUPS}
           navs={APP_NAVS_MAP}
           expanded={expanded}
@@ -110,12 +112,9 @@ const SideBar = () => {
           p={3}
         />
 
-        <VStack
-          gap={1}
-          p={3}
-          borderTop={"1px solid"}
-          borderColor={"border.subtle"}
-        >
+        <Separator borderColor={"border.subtle"} />
+
+        <VStack gap={1} p={3}>
           <NavButton>
             <AppIcon icon={HelpCircleIcon} />
             {expanded && t["app.nav.help"]()}
