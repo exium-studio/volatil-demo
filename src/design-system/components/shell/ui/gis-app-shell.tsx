@@ -140,12 +140,12 @@ const SideBar = () => {
         <VStack gap={1} p={3}>
           <NavButton>
             <AppIcon icon={HelpCircleIcon} />
-            {expanded && t["app.nav.help"]()}
+            {expanded && t["app.navs.help"]()}
           </NavButton>
 
           <NavButton>
             <AppIcon icon={UserIcon} />
-            {expanded && t["app.nav.profile"]()}
+            {expanded && t["app.navs.profile"]()}
           </NavButton>
         </VStack>
       </VStack>
