@@ -122,9 +122,11 @@ const ExpandToggleButton = (props: IconButtonProps) => {
       variant={"blend"}
       size={"2xs"}
       pos={"absolute"}
-      right={"-10px"}
+      right={"-8px"}
       top={"50%"}
       zIndex={99}
+      minW={"16px"}
+      w={"16px"}
       h={"50px"}
       border={"1px solid"}
       borderColor={"border.subtle"}
@@ -141,7 +143,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
       <AppIcon
         icon={ChevronRightIcon}
         transform={
-          expanded ? "rotate(180deg) translateX(1px)" : "translateX(1px)"
+          expanded ? "rotate(180deg) translateX(-1px)" : "translateX(1px)"
         }
       />
     </IconButton>
