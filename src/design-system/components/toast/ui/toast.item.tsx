@@ -144,27 +144,36 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
 
         <VStack flex={1}>
           {/* Header */}
-          <HStack align={"center"} gap={2}>
+          <HStack align={"start"} gap={2}>
             {/* Title */}
             {record.title && (
               <P
+                flex={"0 1 auto"}
+                minW={0}
                 fontWeight={"medium"}
                 color={TOAST_VARIANT_MAP[record.variant].color}
-                whiteSpace={"nowrap"}
+                whiteSpace={toastItemExpanded ? undefined : "nowrap"}
+                overflow={toastItemExpanded ? undefined : "hidden"}
+                textOverflow={toastItemExpanded ? undefined : "ellipsis"}
               >
                 {record.title}
               </P>
             )}
 
-            {/* Description (collapsed) */}
+            {/* Description */}
             {record.description && (
               <P
+                flex={"0 1 auto"}
+                flexShrink={99}
+                minW={0}
+                overflow={"hidden"}
+                lineClamp={1}
+                textOverflow={"ellipsis"}
                 ml={1}
+                mt={"1px"}
                 fontSize={"sm"}
                 color={"fg.subtle"}
-                lineClamp={1}
-                mt={"1px"}
-                opacity={toastItemExpanded ? 0 : 1}
+                display={toastItemExpanded ? "none" : undefined}
                 transition={"200ms"}
               >
                 {record.description}

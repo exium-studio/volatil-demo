@@ -145,9 +145,9 @@ export function ToastStack<TItem>({
       {/* Items */}
       <VStack
         pos={"relative"}
-        onClick={!expanded ? () => setExpanded(true) : undefined}
         cursor={!expanded ? "pointer" : undefined}
         rounded={theme.radii.container}
+        onClick={!expanded ? () => setExpanded(true) : undefined}
       >
         {(() => {
           let nonLeavingCount = 0;
