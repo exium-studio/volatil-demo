@@ -2,7 +2,7 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
 
   "app": {
-    "nav": {
+    "navs": {
       "home": "Home",
       "dashboard": "Dashboard",
       "map": "Map View",
