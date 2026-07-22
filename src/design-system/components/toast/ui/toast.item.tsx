@@ -240,7 +240,7 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
             pointerEvents={stackExpanded || isFirstIndex ? "auto" : "none"}
             transition={"opacity 200ms"}
           >
-            <Collapsible.Root open={toastItemExpanded}>
+            <Collapsible.Root opened={toastItemExpanded}>
               <Collapsible.Content>
                 {/* Description */}
                 {record.description && stackExpanded && (
