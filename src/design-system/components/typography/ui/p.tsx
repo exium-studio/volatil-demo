@@ -52,7 +52,12 @@ export const PSerif = forwardRef<HTMLParagraphElement, PProps>(
     const { children = "", ...restProps } = props;
 
     return (
-      <P ref={ref} as={"p"} fontFamily={"Times New Roman"} {...restProps}>
+      <P
+        ref={ref}
+        as={"p"}
+        fontFamily={"'Sorts Mill Goudy', serif"}
+        {...restProps}
+      >
         {children}
       </P>
     );

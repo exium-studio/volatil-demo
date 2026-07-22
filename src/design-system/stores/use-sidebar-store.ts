@@ -1,4 +1,4 @@
-// src/design-system/stores/use-nav-store.ts
+// src/design-system/stores/use-sidebar-store.ts
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

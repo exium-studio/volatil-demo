@@ -10,8 +10,8 @@ import { OfflineAlert } from "@/design-system/components/utilities/ui/offline-al
 import { APP } from "@/design-system/constants/_meta";
 import { LocaleProvider } from "@/shared/libs/i18n/locale-provider";
 import { globalSearchParamsSchema } from "@/shared/schemas/root-search.params-schema";
-import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource-variable/wix-madefor-text";
+import "@fontsource/sorts-mill-goudy";
 import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
