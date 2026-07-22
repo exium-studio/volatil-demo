@@ -280,7 +280,7 @@ const SidebarFooter = () => {
 const ExpandToggleButton = (props: IconButtonProps) => {
   // Stores
   const expanded = useSidebarStore(
-    (s) => s.expandedByKey["app"] ?? DEFAULT_SIDEBAR_EXPANDED,
+    (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
   const toggleExpanded = useSidebarStore((s) => s.toggleExpanded);
 
@@ -303,7 +303,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
         _groupHover={{ opacity: 1 }}
         transition={"200ms"}
         onClick={() => {
-          toggleExpanded("app");
+          toggleExpanded(SIDE_BAR_KEY);
         }}
       >
         <IconButton
