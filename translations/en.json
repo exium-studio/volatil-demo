@@ -15,6 +15,7 @@
   },
 
   "common": {
+    "double_click_to_reset": "Double click to reset",
     "profile": "Profile",
     "show_less": "Show less",
     "welcome_user": "Welcome back, {name}!",

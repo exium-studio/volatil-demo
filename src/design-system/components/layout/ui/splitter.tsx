@@ -7,6 +7,8 @@ import type {
   SplitterResizeTriggerProps,
   SplitterRootProps,
 } from "@/design-system/components/layout/types/splitter.type";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { t } from "@/shared/libs/i18n";
 import { Splitter as ChakraSplitter } from "@chakra-ui/react";
 import { GripVertical } from "lucide-react";
 import { forwardRef } from "react";
@@ -39,38 +41,45 @@ const SplitterResizeTrigger = forwardRef<
   return (
     <ChakraSplitter.Context>
       {(context) => (
-        <ChakraSplitter.ResizeTrigger
-          ref={ref}
-          className={"group"}
-          transition={"200ms"}
-          w={"8px"}
-          _hover={{
-            bg: "border",
+        <Tooltip
+          content={t["common.double_click_to_reset"]()}
+          positioning={{
+            placement: "right",
           }}
-          onDoubleClick={() => {
-            context.resetSizes();
-          }}
-          {...restProps}
         >
-          <Splitter.ResizeTriggerIndicator
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            bg={"bg.body"}
-            w={"16px"}
-            h={"80px"}
-            opacity={0}
-            transform={"translateX(-4px)"}
+          <ChakraSplitter.ResizeTrigger
+            ref={ref}
+            className={"group"}
             transition={"200ms"}
-            _groupHover={{
-              opacity: 1,
+            w={"8px"}
+            _hover={{
+              bg: "border",
             }}
+            onDoubleClick={() => {
+              context.resetSizes();
+            }}
+            {...restProps}
           >
-            <AppIcon icon={GripVertical} size={"sm"} color={"fg.subtle"} />
-          </Splitter.ResizeTriggerIndicator>
+            <Splitter.ResizeTriggerIndicator
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              bg={"bg.body"}
+              w={"16px"}
+              h={"80px"}
+              opacity={0}
+              transform={"translateX(-4px)"}
+              transition={"200ms"}
+              _groupHover={{
+                opacity: 1,
+              }}
+            >
+              <AppIcon icon={GripVertical} size={"sm"} color={"fg.subtle"} />
+            </Splitter.ResizeTriggerIndicator>
 
-          <Splitter.ResizeTriggerSeparator bg={"border"} />
-        </ChakraSplitter.ResizeTrigger>
+            <Splitter.ResizeTriggerSeparator bg={"border"} />
+          </ChakraSplitter.ResizeTrigger>
+        </Tooltip>
       )}
     </ChakraSplitter.Context>
   );
