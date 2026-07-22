@@ -135,7 +135,7 @@ const Sidebar = () => {
       w={expanded ? "300px" : `calc(40px + 24px)`}
       h={"full"}
       borderRight={"1px solid"}
-      borderColor={"an1"}
+      borderColor={"border"}
       transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
     >
       <VStack
@@ -147,11 +147,11 @@ const Sidebar = () => {
       >
         <SidebarHeader />
 
-        <Separator borderColor={"border.subtle"} mx={2} />
+        <Separator mx={2} />
 
         <SidebarBody />
 
-        <Separator borderColor={"border.subtle"} mx={2} />
+        <Separator mx={2} />
 
         <SidebarFooter />
       </VStack>
