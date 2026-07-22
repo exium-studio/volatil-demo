@@ -10,7 +10,14 @@ export const NavButton = forwardRef<HTMLButtonElement, NavButtonProps>(
     const { children, ...restProps } = props;
 
     return (
-      <Button ref={ref} justifyContent={"start"} gap={3} px={2} {...restProps}>
+      <Button
+        ref={ref}
+        justifyContent={"start"}
+        textAlign={"start"}
+        gap={3}
+        px={2}
+        {...restProps}
+      >
         {children}
       </Button>
     );
