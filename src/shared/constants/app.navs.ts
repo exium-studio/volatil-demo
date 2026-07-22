@@ -26,15 +26,15 @@ export const APP_NAVS_MAP = {
     titleKey: "app.navs.cart",
     pathname: "/portal/cart",
   },
-  my_data: {
-    icon: DatabaseIcon,
-    titleKey: "app.navs.my_data",
-    pathname: "/portal/my-data",
-  },
   purchase_history: {
     icon: HistoryIcon,
     titleKey: "app.navs.purchase_history",
     pathname: "/portal/purchase-history",
+  },
+  my_data: {
+    icon: DatabaseIcon,
+    titleKey: "app.navs.my_data",
+    pathname: "/portal/my-data",
   },
   help: {
     icon: TicketIcon,

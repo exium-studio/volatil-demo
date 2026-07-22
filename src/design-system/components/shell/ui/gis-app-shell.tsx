@@ -15,22 +15,27 @@ import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP } from "@/design-system/constants/_meta";
 import { HEADER_H } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
-import { useNavStore } from "@/design-system/stores/use-nav-store";
+import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { APP_NAV_GROUPS } from "@/shared/constants/app.nav-groups.";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AppNavKey } from "@/shared/types/app-navs.type";
 import { Box } from "@chakra-ui/react";
-import { IconSquare } from "@tabler/icons-react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { ChevronsRightIcon, HelpCircleIcon, UserIcon } from "lucide-react";
+import {
+  BellIcon,
+  ChevronsRightIcon,
+  HelpCircleIcon,
+  UserIcon,
+} from "lucide-react";
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
+const SIDE_BAR_KEY = "app";
 
 export const GisAppShell = (props: GisAppShellProps) => {
   // Props
@@ -46,7 +51,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
       // p={2}
       {...restProps}
     >
-      {!isSmallViewport && <SideBar />}
+      {!isSmallViewport && <Sidebar />}
 
       <Content />
     </AppPageContainer>
@@ -61,7 +66,7 @@ const Content = () => {
   // Derived Values
   const panels = [
     { id: "map", minSize: isSmallViewport ? 5 : 5 },
-    { id: "content", minSize: isSmallViewport ? 5 : "400px" },
+    { id: "content", minSize: isSmallViewport ? 5 : "100px" },
   ];
 
   // Constants
@@ -70,23 +75,31 @@ const Content = () => {
 
   // Components
   const contentPanel = (
-    <Splitter.Panel key={"content"} id={"content"} bg={"bg.body"}>
-      <HStack align={"center"} justify={"space-between"} h={HEADER_H} px={4}>
-        {navTitle && <P fontWeight={"semibold"}>{navTitle}</P>}
+    <Splitter.Panel key={"content"} id={"content"} alignItems={"end"}>
+      <VStack minW={"400px"} w={"full"}>
+        <HStack
+          align={"center"}
+          justify={"space-between"}
+          minH={HEADER_H}
+          maxH={HEADER_H}
+          px={4}
+        >
+          {navTitle && <ClampedP fontWeight={"semibold"}>{navTitle}</ClampedP>}
 
-        <HStack align={"center"} ml={"auto"}>
-          <IconButton variant={"subtle"} size={"2xs"} rounded={"full"}>
-            <AppIcon icon={IconSquare} size={"xs"} />
-          </IconButton>
+          {/* <HStack align={"center"} ml={"auto"}>
+            <IconButton variant={"subtle"} size={"2xs"} rounded={"full"}>
+              <AppIcon icon={XIcon} size={"sm"} />
+            </IconButton>
+          </HStack> */}
         </HStack>
-      </HStack>
 
-      <Outlet />
+        <Outlet />
+      </VStack>
     </Splitter.Panel>
   );
   const mapPanel = (
     <Splitter.Panel key={"map"} id={"map"}>
-      <Center boxSize={"full"} textStyle={"2xl"}>
+      <Center boxSize={"full"} textStyle={"2xl"} bg={"bg.success"}>
         Base map
       </Center>
     </Splitter.Panel>
@@ -110,18 +123,13 @@ const Content = () => {
     </Splitter.Root>
   );
 };
+// -------------------------------------------------------------------------------------
 
-const SideBar = () => {
+const Sidebar = () => {
   // Stores
-  const { theme } = useThemeStore();
-  const expanded = useNavStore(
-    (s) => s.expandedByKey["app"] ?? DEFAULT_SIDEBAR_EXPANDED,
+  const expanded = useSidebarStore(
+    (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
-
-  // Hooks
-  const navigate = useNavigate();
-  const pathname = useLocation().pathname;
-  const activeKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
 
   return (
     <Box
@@ -141,118 +149,173 @@ const SideBar = () => {
         bg={"bg.body"}
         // rounded={theme.radii.container}
       >
-        {/* Header */}
-        <HStack
-          align={"center"}
-          justify={"space-between"}
-          h={HEADER_H}
-          p={4}
-          w={"full"}
-        >
-          <HStack align={"center"} gap={1} ml={"-2px"}>
-            {/* <Logo /> */}
-            <AtrLogo boxSize={"36px"} minW={"36px"} />
-
-            <ClampedP
-              w={expanded ? "" : 0}
-              fontWeight={"semibold"}
-              color={`${theme.colorPalette}.fg`}
-              lineHeight={1.2}
-            >
-              {APP.title}
-            </ClampedP>
-          </HStack>
-
-          <ClampedP
-            w={expanded ? "" : 0}
-            mr={1}
-            fontSize={"sm"}
-            transition={"200ms"}
-            color={"fg.subtle"}
-            lineHeight={1}
-          >
-            v{APP.version}
-          </ClampedP>
-
-          {/* {expanded && <ExpandToggleButton />} */}
-        </HStack>
+        <SidebarHeader />
 
         <Separator borderColor={"border.subtle"} mx={2} />
 
-        {/* Nav items */}
-        <VNavs<AppNavKey>
-          showTopBorderOnScroll={false}
-          flex={1}
-          groups={APP_NAV_GROUPS}
-          navs={APP_NAVS_MAP}
-          activeKey={activeKey}
-          expanded={expanded}
-          onNavClick={(key) => {
-            navigate({
-              to: APP_NAVS_MAP[key].pathname,
-              resetScroll: false,
-            });
-          }}
-          p={3}
-        />
+        <SidebarBody />
 
         <Separator borderColor={"border.subtle"} mx={2} />
 
-        <VStack gap={1} p={3}>
-          <NavLink to={APP_NAVS_MAP["help"].pathname}>
-            <NavButton w={"full"}>
-              <AppIcon icon={HelpCircleIcon} />
-              {expanded && t["app.navs.help"]()}
-            </NavButton>
-          </NavLink>
-
-          <NavButton>
-            <AppIcon icon={UserIcon} />
-            {expanded && t["common.profile"]()}
-          </NavButton>
-        </VStack>
+        <SidebarFooter />
       </VStack>
 
-      <ExpandToggleButton
-        pos={"absolute"}
-        right={"-13px"}
-        top={"16px"}
-        opacity={0}
-        _groupHover={{ opacity: 1 }}
-      />
+      <ExpandToggleButton />
     </Box>
   );
 };
 
-const ExpandToggleButton = (props: IconButtonProps) => {
+const SidebarHeader = () => {
   // Stores
-  const expanded = useNavStore(
-    (s) => s.expandedByKey["app"] ?? DEFAULT_SIDEBAR_EXPANDED,
+  const { theme } = useThemeStore();
+  const expanded = useSidebarStore(
+    (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
-  const toggleExpanded = useNavStore((s) => s.toggleExpanded);
 
   return (
-    <Tooltip content={expanded ? t["action.collapse"]() : t["action.expand"]()}>
-      <IconButton
-        variant={"blend"}
-        size={"2xs"}
-        zIndex={99}
-        rounded={"full"}
-        border={"1px solid"}
-        borderColor={"border.subtle"}
-        color={"fg.muted"}
+    <HStack
+      align={"center"}
+      justify={"space-between"}
+      h={HEADER_H}
+      p={4}
+      w={"full"}
+    >
+      <HStack align={"center"} gap={1} ml={"-2px"}>
+        {/* <Logo /> */}
+        <AtrLogo boxSize={"36px"} minW={"36px"} />
+
+        <ClampedP
+          w={expanded ? "" : 0}
+          fontWeight={"semibold"}
+          color={`${theme.colorPalette}.fg`}
+          lineHeight={1.2}
+        >
+          {APP.title}
+        </ClampedP>
+      </HStack>
+
+      <ClampedP
+        w={expanded ? "" : 0}
+        mr={1}
+        fontSize={"sm"}
         transition={"200ms"}
-        {...props}
+        color={"fg.subtle"}
+        lineHeight={1}
+      >
+        v{APP.version}
+      </ClampedP>
+    </HStack>
+  );
+};
+
+const SidebarBody = () => {
+  // Stores
+  const expanded = useSidebarStore(
+    (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
+  );
+
+  // Hooks
+  const navigate = useNavigate();
+  const pathname = useLocation().pathname;
+  const activeKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
+
+  return (
+    <VNavs<AppNavKey>
+      showTopBorderOnScroll={false}
+      flex={1}
+      groups={APP_NAV_GROUPS}
+      navs={APP_NAVS_MAP}
+      activeKey={activeKey}
+      expanded={expanded}
+      onNavClick={(key) => {
+        navigate({
+          to: APP_NAVS_MAP[key].pathname,
+          resetScroll: false,
+        });
+      }}
+      p={3}
+    />
+  );
+};
+
+const SidebarFooter = () => {
+  // Stores
+  const expanded = useSidebarStore(
+    (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
+  );
+
+  return (
+    <VStack gap={1} p={3}>
+      <NavButton>
+        <AppIcon icon={BellIcon} />
+        {expanded && t["common.notifications"]()}
+      </NavButton>
+
+      <NavLink to={APP_NAVS_MAP["help"].pathname}>
+        <NavButton w={"full"}>
+          <AppIcon icon={HelpCircleIcon} />
+          {expanded && t["app.navs.help"]()}
+        </NavButton>
+      </NavLink>
+
+      <NavButton>
+        <AppIcon icon={UserIcon} />
+        {expanded && t["common.profile"]()}
+      </NavButton>
+    </VStack>
+  );
+};
+
+// -------------------------------------------------------------------------------------
+
+const ExpandToggleButton = (props: IconButtonProps) => {
+  // Stores
+  const expanded = useSidebarStore(
+    (s) => s.expandedByKey["app"] ?? DEFAULT_SIDEBAR_EXPANDED,
+  );
+  const toggleExpanded = useSidebarStore((s) => s.toggleExpanded);
+
+  return (
+    <Tooltip
+      content={expanded ? t["action.collapse"]() : t["action.expand"]()}
+      positioning={{
+        placement: "right",
+      }}
+    >
+      <Center
+        h={"full"}
+        w={"16px"}
+        pos={"absolute"}
+        right={"-8px"}
+        top={0}
+        zIndex={99}
+        opacity={0}
+        cursor={"pointer"}
+        _groupHover={{ opacity: 1 }}
         onClick={() => {
           toggleExpanded("app");
         }}
       >
-        <AppIcon
-          icon={ChevronsRightIcon}
-          size={"sm"}
-          transform={expanded ? "rotate(180deg)" : ""}
-        />
-      </IconButton>
+        <IconButton
+          variant={"blend"}
+          size={"2xs"}
+          minW={"16px"}
+          w={"16px"}
+          h={"80px"}
+          color={"fg.muted"}
+          rounded={"full"}
+          border={"1px solid"}
+          borderColor={"border.subtle"}
+          transition={"200ms"}
+          {...props}
+        >
+          <AppIcon
+            icon={ChevronsRightIcon}
+            size={"sm"}
+            transform={expanded ? "rotate(180deg)" : ""}
+          />
+        </IconButton>
+      </Center>
     </Tooltip>
   );
 };

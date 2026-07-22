@@ -8,8 +8,9 @@ export const APP_NAV_GROUPS: NavGroup<AppNavKey>[] = [
     items: [
       { key: "home" },
       { key: "data_request" },
-      { key: "my_data" },
+      { key: "cart" },
       { key: "purchase_history" },
+      { key: "my_data" },
     ],
   },
 ];

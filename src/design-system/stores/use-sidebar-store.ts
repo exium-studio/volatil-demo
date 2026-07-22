@@ -3,16 +3,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type NavState = {
+type SidebarState = {
   expandedByKey: Record<string, boolean>;
 };
 
-type NavActions = {
+type SidebarActions = {
   setExpanded: (key: string, value: boolean) => void;
   toggleExpanded: (key: string, defaultValue?: boolean) => void;
 };
 
-export const useNavStore = create<NavState & NavActions>()(
+export const useSidebarStore = create<SidebarState & SidebarActions>()(
   persist(
     (set, get) => ({
       expandedByKey: {},
