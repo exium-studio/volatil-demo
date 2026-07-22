@@ -288,6 +288,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
         opacity={0}
         cursor={"pointer"}
         _groupHover={{ opacity: 1 }}
+        transition={"200ms"}
         onClick={() => {
           toggleExpanded("app");
         }}
@@ -302,7 +303,6 @@ const ExpandToggleButton = (props: IconButtonProps) => {
           rounded={"full"}
           border={"1px solid"}
           borderColor={"border.subtle"}
-          transition={"200ms"}
           {...props}
         >
           <AppIcon
