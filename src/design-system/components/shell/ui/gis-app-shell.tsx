@@ -27,7 +27,10 @@ import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AppNavKey } from "@/shared/types/app-navs.type";
 import { Box } from "@chakra-ui/react";
-import { IconChevronCompactRight } from "@tabler/icons-react";
+import {
+  IconChevronCompactLeft,
+  IconChevronCompactRight,
+} from "@tabler/icons-react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { BellIcon, HelpCircleIcon, UserIcon } from "lucide-react";
 
@@ -322,9 +325,8 @@ const ExpandToggleButton = (props: IconButtonProps) => {
           {...props}
         >
           <AppIcon
-            icon={IconChevronCompactRight}
+            icon={expanded ? IconChevronCompactLeft : IconChevronCompactRight}
             size={"sm"}
-            transform={expanded ? "rotate(180deg)" : ""}
           />
         </IconButton>
       </Center>
