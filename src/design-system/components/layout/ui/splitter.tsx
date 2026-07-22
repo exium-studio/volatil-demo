@@ -18,7 +18,14 @@ const SplitterRoot = forwardRef<HTMLDivElement, SplitterRootProps>(
 
 const SplitterPanel = forwardRef<HTMLDivElement, SplitterPanelProps>(
   (props, ref) => {
-    return <ChakraSplitter.Panel ref={ref} {...props} />;
+    return (
+      <ChakraSplitter.Panel
+        ref={ref}
+        display={"flex"}
+        flexDir={"column"}
+        {...props}
+      />
+    );
   },
 );
 

@@ -15,7 +15,7 @@ import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
-import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { APP } from "@/design-system/constants/_meta";
 import { HEADER_H } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
@@ -26,6 +26,7 @@ import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AppNavKey } from "@/shared/types/app-navs.type";
 import { Box } from "@chakra-ui/react";
+import { IconSquare } from "@tabler/icons-react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { ChevronsRightIcon, HelpCircleIcon, UserIcon } from "lucide-react";
 
@@ -47,32 +48,42 @@ export const GisAppShell = (props: GisAppShellProps) => {
     >
       {!isSmallViewport && <SideBar />}
 
-      <MainContent />
+      <Content />
     </AppPageContainer>
   );
 };
 
-const MainContent = () => {
+const Content = () => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
+  const pathname = useLocation().pathname;
 
   // Derived Values
-  const panels = isSmallViewport
-    ? [
-        { id: "map", minSize: 30 },
-        { id: "content", minSize: 30 },
-      ]
-    : [
-        { id: "content", minSize: 30 },
-        { id: "map", minSize: 30 },
-      ];
+  const panels = [
+    { id: "map", minSize: isSmallViewport ? 5 : 5 },
+    { id: "content", minSize: isSmallViewport ? 5 : "400px" },
+  ];
 
+  // Constants
+  const navKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
+  const navTitle = navKey ? t[APP_NAVS_MAP[navKey].titleKey]() : "";
+
+  // Components
   const contentPanel = (
     <Splitter.Panel key={"content"} id={"content"} bg={"bg.body"}>
+      <HStack align={"center"} justify={"space-between"} h={HEADER_H} px={4}>
+        {navTitle && <P fontWeight={"semibold"}>{navTitle}</P>}
+
+        <HStack align={"center"} ml={"auto"}>
+          <IconButton variant={"subtle"} size={"2xs"} rounded={"full"}>
+            <AppIcon icon={IconSquare} size={"xs"} />
+          </IconButton>
+        </HStack>
+      </HStack>
+
       <Outlet />
     </Splitter.Panel>
   );
-
   const mapPanel = (
     <Splitter.Panel key={"map"} id={"map"}>
       <Center boxSize={"full"} textStyle={"2xl"}>
@@ -80,7 +91,6 @@ const MainContent = () => {
       </Center>
     </Splitter.Panel>
   );
-
   const resizeTrigger = (
     <Splitter.ResizeTrigger
       key={"trigger"}
@@ -118,9 +128,11 @@ const SideBar = () => {
       className={"group"}
       pos={"relative"}
       zIndex={10}
-      w={expanded ? "240px" : `calc(40px + 24px)`}
+      w={expanded ? "300px" : `calc(40px + 24px)`}
       h={"full"}
-      transition={"2000ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
+      borderRight={"1px solid"}
+      borderColor={"an1"}
+      transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
     >
       <VStack
         overflowY={"auto"}
