@@ -6,6 +6,7 @@ import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { PLink } from "@/design-system/components/typography/ui/p";
 
 export const MitraSignin = () => {
@@ -23,9 +24,11 @@ export const MitraSignin = () => {
         <PLink ml={"auto"}>Lupa kata sandi?</PLink>
       </Fieldset>
 
-      <Button primary type={"submit"} mt={8}>
-        Masuk
-      </Button>
+      <NavLink to={"/portal/welcome"}>
+        <Button primary type={"submit"} w={"full"} mt={8}>
+          Masuk
+        </Button>
+      </NavLink>
     </VStack>
   );
 };

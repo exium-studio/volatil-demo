@@ -77,7 +77,7 @@ const SideBar = () => {
       zIndex={10}
       w={expanded ? "240px" : `calc(40px + 24px)`}
       h={"full"}
-      transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
+      transition={"2000ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
     >
       <VStack
         overflowY={"auto"}
@@ -116,7 +116,7 @@ const SideBar = () => {
             color={"fg.subtle"}
             lineHeight={1}
           >
-            {APP.version}
+            v{APP.version}
           </ClampedP>
 
           {/* {expanded && <ExpandToggleButton />} */}

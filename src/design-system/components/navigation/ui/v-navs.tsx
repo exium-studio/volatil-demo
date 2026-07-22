@@ -202,7 +202,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
     >
       <Collapsible.Trigger
         _open={{
-          bg: isActive || isAncestorActive ? "bg.subtle" : "transparent",
+          bg: isActive || isAncestorActive ? "bg.muted" : "transparent",
         }}
       >
         <NavButton

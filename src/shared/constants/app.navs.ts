@@ -2,11 +2,11 @@
 
 import type { NavItem } from "@/shared/types/nav.type";
 import {
-  ClipboardListIcon,
   DatabaseIcon,
   HistoryIcon,
   HouseIcon,
   ShoppingCartIcon,
+  SquarePen,
   TicketIcon,
 } from "lucide-react";
 
@@ -17,7 +17,7 @@ export const APP_NAVS_MAP = {
     pathname: "/portal/home",
   },
   data_request: {
-    icon: ClipboardListIcon,
+    icon: SquarePen,
     titleKey: "app.navs.data_request",
     pathname: "/portal/data-request",
   },
