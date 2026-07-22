@@ -113,6 +113,9 @@ const Content = () => {
     <Splitter.ResizeTrigger
       key={"trigger"}
       id={isSmallViewport ? "map:content" : "content:map"}
+      onDoubleClick={() => {
+        setSplitterSize(SPLITTER_KEY, DEFAULT_SPLITTER_SIZE);
+      }}
     />
   );
 

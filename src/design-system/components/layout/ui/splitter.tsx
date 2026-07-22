@@ -34,6 +34,8 @@ const SplitterResizeTrigger = forwardRef<
   HTMLButtonElement,
   SplitterResizeTriggerProps
 >((props, ref) => {
+  const { ...restProps } = props;
+
   return (
     <ChakraSplitter.Context>
       {(context) => (
@@ -48,7 +50,7 @@ const SplitterResizeTrigger = forwardRef<
           onDoubleClick={() => {
             context.resetSizes();
           }}
-          {...props}
+          {...restProps}
         >
           <Splitter.ResizeTriggerIndicator
             display={"flex"}
