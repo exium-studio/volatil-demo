@@ -10,14 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppPortalWelcomeRouteImport } from './routes/_app/portal/welcome'
+import { Route as AppPortalSupportTicketRouteImport } from './routes/_app/portal/support-ticket'
+import { Route as AppPortalPurchaseHistoryRouteImport } from './routes/_app/portal/purchase-history'
+import { Route as AppPortalMyDataRouteImport } from './routes/_app/portal/my-data'
 import { Route as AppPortalHomeRouteImport } from './routes/_app/portal/home'
+import { Route as AppPortalDataRequestRouteImport } from './routes/_app/portal/data-request'
+import { Route as AppPortalCartRouteImport } from './routes/_app/portal/cart'
 import { Route as AppAdminWelcomeRouteImport } from './routes/_app/admin/welcome'
 
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRouteRoute = AppRouteRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -26,41 +36,83 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppPortalWelcomeRoute = AppPortalWelcomeRouteImport.update({
-  id: '/_app/portal/welcome',
+  id: '/portal/welcome',
   path: '/portal/welcome',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppPortalSupportTicketRoute = AppPortalSupportTicketRouteImport.update({
+  id: '/portal/support-ticket',
+  path: '/portal/support-ticket',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppPortalPurchaseHistoryRoute =
+  AppPortalPurchaseHistoryRouteImport.update({
+    id: '/portal/purchase-history',
+    path: '/portal/purchase-history',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
+const AppPortalMyDataRoute = AppPortalMyDataRouteImport.update({
+  id: '/portal/my-data',
+  path: '/portal/my-data',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AppPortalHomeRoute = AppPortalHomeRouteImport.update({
-  id: '/_app/portal/home',
+  id: '/portal/home',
   path: '/portal/home',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppPortalDataRequestRoute = AppPortalDataRequestRouteImport.update({
+  id: '/portal/data-request',
+  path: '/portal/data-request',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppPortalCartRoute = AppPortalCartRouteImport.update({
+  id: '/portal/cart',
+  path: '/portal/cart',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AppAdminWelcomeRoute = AppAdminWelcomeRouteImport.update({
-  id: '/_app/admin/welcome',
+  id: '/admin/welcome',
   path: '/admin/welcome',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
   '/admin/welcome': typeof AppAdminWelcomeRoute
+  '/portal/cart': typeof AppPortalCartRoute
+  '/portal/data-request': typeof AppPortalDataRequestRoute
   '/portal/home': typeof AppPortalHomeRoute
+  '/portal/my-data': typeof AppPortalMyDataRoute
+  '/portal/purchase-history': typeof AppPortalPurchaseHistoryRoute
+  '/portal/support-ticket': typeof AppPortalSupportTicketRoute
   '/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
   '/admin/welcome': typeof AppAdminWelcomeRoute
+  '/portal/cart': typeof AppPortalCartRoute
+  '/portal/data-request': typeof AppPortalDataRequestRoute
   '/portal/home': typeof AppPortalHomeRoute
+  '/portal/my-data': typeof AppPortalMyDataRoute
+  '/portal/purchase-history': typeof AppPortalPurchaseHistoryRoute
+  '/portal/support-ticket': typeof AppPortalSupportTicketRoute
   '/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteRouteWithChildren
   '/demo': typeof DemoRoute
   '/_app/admin/welcome': typeof AppAdminWelcomeRoute
+  '/_app/portal/cart': typeof AppPortalCartRoute
+  '/_app/portal/data-request': typeof AppPortalDataRequestRoute
   '/_app/portal/home': typeof AppPortalHomeRoute
+  '/_app/portal/my-data': typeof AppPortalMyDataRoute
+  '/_app/portal/purchase-history': typeof AppPortalPurchaseHistoryRoute
+  '/_app/portal/support-ticket': typeof AppPortalSupportTicketRoute
   '/_app/portal/welcome': typeof AppPortalWelcomeRoute
 }
 export interface FileRouteTypes {
@@ -69,25 +121,44 @@ export interface FileRouteTypes {
     | '/'
     | '/demo'
     | '/admin/welcome'
+    | '/portal/cart'
+    | '/portal/data-request'
     | '/portal/home'
+    | '/portal/my-data'
+    | '/portal/purchase-history'
+    | '/portal/support-ticket'
     | '/portal/welcome'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo' | '/admin/welcome' | '/portal/home' | '/portal/welcome'
+  to:
+    | '/'
+    | '/demo'
+    | '/admin/welcome'
+    | '/portal/cart'
+    | '/portal/data-request'
+    | '/portal/home'
+    | '/portal/my-data'
+    | '/portal/purchase-history'
+    | '/portal/support-ticket'
+    | '/portal/welcome'
   id:
     | '__root__'
     | '/'
+    | '/_app'
     | '/demo'
     | '/_app/admin/welcome'
+    | '/_app/portal/cart'
+    | '/_app/portal/data-request'
     | '/_app/portal/home'
+    | '/_app/portal/my-data'
+    | '/_app/portal/purchase-history'
+    | '/_app/portal/support-ticket'
     | '/_app/portal/welcome'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRouteRoute: typeof AppRouteRouteWithChildren
   DemoRoute: typeof DemoRoute
-  AppAdminWelcomeRoute: typeof AppAdminWelcomeRoute
-  AppPortalHomeRoute: typeof AppPortalHomeRoute
-  AppPortalWelcomeRoute: typeof AppPortalWelcomeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -97,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/demo'
       fullPath: '/demo'
       preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -111,31 +189,90 @@ declare module '@tanstack/react-router' {
       path: '/portal/welcome'
       fullPath: '/portal/welcome'
       preLoaderRoute: typeof AppPortalWelcomeRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/portal/support-ticket': {
+      id: '/_app/portal/support-ticket'
+      path: '/portal/support-ticket'
+      fullPath: '/portal/support-ticket'
+      preLoaderRoute: typeof AppPortalSupportTicketRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/portal/purchase-history': {
+      id: '/_app/portal/purchase-history'
+      path: '/portal/purchase-history'
+      fullPath: '/portal/purchase-history'
+      preLoaderRoute: typeof AppPortalPurchaseHistoryRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/portal/my-data': {
+      id: '/_app/portal/my-data'
+      path: '/portal/my-data'
+      fullPath: '/portal/my-data'
+      preLoaderRoute: typeof AppPortalMyDataRouteImport
+      parentRoute: typeof AppRouteRoute
     }
     '/_app/portal/home': {
       id: '/_app/portal/home'
       path: '/portal/home'
       fullPath: '/portal/home'
       preLoaderRoute: typeof AppPortalHomeRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/portal/data-request': {
+      id: '/_app/portal/data-request'
+      path: '/portal/data-request'
+      fullPath: '/portal/data-request'
+      preLoaderRoute: typeof AppPortalDataRequestRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/portal/cart': {
+      id: '/_app/portal/cart'
+      path: '/portal/cart'
+      fullPath: '/portal/cart'
+      preLoaderRoute: typeof AppPortalCartRouteImport
+      parentRoute: typeof AppRouteRoute
     }
     '/_app/admin/welcome': {
       id: '/_app/admin/welcome'
       path: '/admin/welcome'
       fullPath: '/admin/welcome'
       preLoaderRoute: typeof AppAdminWelcomeRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AppRouteRoute
     }
   }
 }
 
+interface AppRouteRouteChildren {
+  AppAdminWelcomeRoute: typeof AppAdminWelcomeRoute
+  AppPortalCartRoute: typeof AppPortalCartRoute
+  AppPortalDataRequestRoute: typeof AppPortalDataRequestRoute
+  AppPortalHomeRoute: typeof AppPortalHomeRoute
+  AppPortalMyDataRoute: typeof AppPortalMyDataRoute
+  AppPortalPurchaseHistoryRoute: typeof AppPortalPurchaseHistoryRoute
+  AppPortalSupportTicketRoute: typeof AppPortalSupportTicketRoute
+  AppPortalWelcomeRoute: typeof AppPortalWelcomeRoute
+}
+
+const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppAdminWelcomeRoute: AppAdminWelcomeRoute,
+  AppPortalCartRoute: AppPortalCartRoute,
+  AppPortalDataRequestRoute: AppPortalDataRequestRoute,
+  AppPortalHomeRoute: AppPortalHomeRoute,
+  AppPortalMyDataRoute: AppPortalMyDataRoute,
+  AppPortalPurchaseHistoryRoute: AppPortalPurchaseHistoryRoute,
+  AppPortalSupportTicketRoute: AppPortalSupportTicketRoute,
+  AppPortalWelcomeRoute: AppPortalWelcomeRoute,
+}
+
+const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
+  AppRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRouteRoute: AppRouteRouteWithChildren,
   DemoRoute: DemoRoute,
-  AppAdminWelcomeRoute: AppAdminWelcomeRoute,
-  AppPortalHomeRoute: AppPortalHomeRoute,
-  AppPortalWelcomeRoute: AppPortalWelcomeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

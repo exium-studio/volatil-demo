@@ -2,11 +2,12 @@
 
 import type { NavItem } from "@/shared/types/nav.type";
 import {
-  ChartLineIcon,
   ClipboardListIcon,
+  DatabaseIcon,
+  HistoryIcon,
   HouseIcon,
-  ReceiptIcon,
-  UsersIcon,
+  ShoppingCartIcon,
+  TicketIcon,
 } from "lucide-react";
 
 export const APP_NAVS_MAP = {
@@ -15,24 +16,29 @@ export const APP_NAVS_MAP = {
     titleKey: "app.navs.home",
     pathname: "/portal/home",
   },
-  users: {
-    icon: UsersIcon,
-    titleKey: "app.navs.users",
-    pathname: "/portal/home",
-  },
-  analytics: {
-    icon: ChartLineIcon,
-    titleKey: "app.navs.analytics",
-    pathname: "/portal/home",
-  },
-  reports: {
+  data_request: {
     icon: ClipboardListIcon,
-    titleKey: "app.navs.reports",
-    pathname: "/portal/home",
+    titleKey: "app.navs.data_request",
+    pathname: "/portal/data-request",
   },
-  billing: {
-    icon: ReceiptIcon,
-    titleKey: "app.navs.billing",
-    pathname: "/portal/home",
+  cart: {
+    icon: ShoppingCartIcon,
+    titleKey: "app.navs.cart",
+    pathname: "/portal/cart",
+  },
+  my_data: {
+    icon: DatabaseIcon,
+    titleKey: "app.navs.my_data",
+    pathname: "/portal/my-data",
+  },
+  purchase_history: {
+    icon: HistoryIcon,
+    titleKey: "app.navs.purchase_history",
+    pathname: "/portal/purchase-history",
+  },
+  help: {
+    icon: TicketIcon,
+    titleKey: "app.navs.help",
+    pathname: "/portal/support-ticket",
   },
 } as const satisfies Record<string, NavItem>;

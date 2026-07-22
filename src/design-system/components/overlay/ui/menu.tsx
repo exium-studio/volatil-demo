@@ -42,6 +42,9 @@ const MenuContent = (props: MenuContentProps) => {
     <Portal disabled={!portalled}>
       <ChakraMenu.Positioner>
         <ChakraMenu.Content
+          display={"flex"}
+          flexDir={"column"}
+          gap={1}
           p={1}
           bg={"bg.body"}
           rounded={theme.radii.container}

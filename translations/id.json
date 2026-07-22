@@ -4,30 +4,18 @@
   "app": {
     "navs": {
       "home": "Beranda",
-      "dashboard": "Dasbor",
-      "map": "Tampilan Peta",
-      "terminal": "Konsol Terminal",
-      "directory": "Direktori",
 
-      "profile": "Profil",
-      "settings": "Pengaturan",
-      "notifications": "Notifikasi",
+      "data_request": "Permohonan Data",
+      "cart": "Keranjang",
+      "my_data": "Data Saya",
+      "purchase_history": "Riwayat Pembelian",
 
-      "users": "Pengguna",
-      "analytics": "Analitik",
-      "reports": "Laporan",
-      "billing": "Tagihan & Langganan",
-
-      "pricing": "Harga",
-      "help": "Bantuan & Dukungan",
-      "faq": "Pertanyaan Umum",
-      "contact_us": "Hubungi Kami",
-      "privacy_policy": "Kebijakan Privasi",
-      "terms_of_service": "Syarat Layanan"
+      "help": "Tiket Laporan"
     }
   },
 
   "common": {
+    "profile": "Profil",
     "show_less": "Tampilkan lebih sedikit",
     "welcome_user": "Selamat datang kembali, {name}!",
     "loading": "Memuat...",

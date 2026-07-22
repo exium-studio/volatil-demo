@@ -6,7 +6,7 @@ import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
-import { ColorModeToggleTrigger } from "@/design-system/components/button/ui/color-mode-button";
+import { ColorModeToggleTrigger } from "@/design-system/components/button/ui/color-mode";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";

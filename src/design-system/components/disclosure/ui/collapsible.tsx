@@ -1,7 +1,5 @@
 // src/design-system/components/disclosure/ui/collapsible.tsx
 
-"use client";
-
 import type {
   CollapsibleContentProps,
   CollapsibleIndicatorProps,
@@ -13,17 +11,20 @@ import {
 } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
-const CollapsibleRoot = (props: CollapsibleRootProps) => (
-  <ChakraCollapsible.Root {...props} />
-);
+const CollapsibleRoot = (props: CollapsibleRootProps) => {
+  // Props
+  const { opened, ...restProps } = props;
+
+  return <ChakraCollapsible.Root open={opened} {...restProps} />;
+};
 
 const CollapsibleContext = (props: {
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children: (context: any) => ReactNode;
 }) => <ChakraCollapsible.Context {...props} />;
 
 const CollapsibleTrigger = (props: CollapsibleTriggerProps) => (
-  <ChakraCollapsible.Trigger {...props} />
+  <ChakraCollapsible.Trigger asChild {...props} />
 );
 
 const CollapsibleContent = (props: CollapsibleContentProps) => (

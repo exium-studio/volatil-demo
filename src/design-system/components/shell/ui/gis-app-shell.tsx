@@ -1,6 +1,6 @@
 // src/design-system/components/shell/ui/gis-app-shell.tsx
 
-import { Logo } from "@/design-system/components/branding/ui/logo";
+import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import {
   Button,
@@ -10,6 +10,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
@@ -41,8 +42,9 @@ export const GisAppShell = (props: GisAppShellProps) => {
 
   return (
     <AppPageContainer
-      flexDir={isSmallViewport ? "column" : "row"}
+      flexDir={isSmallViewport ? "column-reverse" : "row"}
       bg={"bg.canvas"}
+      // p={2}
       {...restProps}
     >
       <SideBar />
@@ -72,12 +74,18 @@ const SideBar = () => {
     <Box
       className={"group"}
       pos={"relative"}
-      w={expanded ? "240px" : `calc(40px + 24px)`}
-      transition={"width 200ms"}
-      h={"full"}
       zIndex={10}
+      w={expanded ? "240px" : `calc(40px + 24px)`}
+      h={"full"}
+      transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
     >
-      <VStack h={"full"} overflowY={"auto"} bg={"bg.body"} overflowX={"hidden"}>
+      <VStack
+        overflowY={"auto"}
+        overflowX={"clip"}
+        h={"full"}
+        bg={"bg.body"}
+        // rounded={theme.radii.container}
+      >
         {/* Header */}
         <HStack
           align={"center"}
@@ -86,34 +94,32 @@ const SideBar = () => {
           p={4}
           w={"full"}
         >
-          <HStack>
-            <Logo ml={2} />
+          <HStack align={"center"} gap={1} ml={"-2px"}>
+            {/* <Logo /> */}
+            <AtrLogo boxSize={"36px"} minW={"36px"} />
 
-            <HStack align={"center"} gap={1}>
-              <ClampedP
-                w={expanded ? "" : 0}
-                ml={3}
-                mr={1}
-                fontWeight={"semibold"}
-                color={`${theme.colorPalette}.fg`}
-                lineHeight={1.2}
-              >
-                {APP.title}
-              </ClampedP>
-
-              <ClampedP
-                w={expanded ? "" : 0}
-                fontSize={"sm"}
-                transition={"200ms"}
-                color={"fg.subtle"}
-                lineHeight={1}
-              >
-                {APP.version}
-              </ClampedP>
-            </HStack>
+            <ClampedP
+              w={expanded ? "" : 0}
+              fontWeight={"semibold"}
+              color={`${theme.colorPalette}.fg`}
+              lineHeight={1.2}
+            >
+              {APP.title}
+            </ClampedP>
           </HStack>
 
-          {expanded && <ExpandToggleButton />}
+          <ClampedP
+            w={expanded ? "" : 0}
+            mr={1}
+            fontSize={"sm"}
+            transition={"200ms"}
+            color={"fg.subtle"}
+            lineHeight={1}
+          >
+            {APP.version}
+          </ClampedP>
+
+          {/* {expanded && <ExpandToggleButton />} */}
         </HStack>
 
         <Separator borderColor={"border.subtle"} mx={2} />
@@ -138,27 +144,27 @@ const SideBar = () => {
         <Separator borderColor={"border.subtle"} mx={2} />
 
         <VStack gap={1} p={3}>
-          <NavButton>
-            <AppIcon icon={HelpCircleIcon} />
-            {expanded && t["app.navs.help"]()}
-          </NavButton>
+          <NavLink to={APP_NAVS_MAP["help"].pathname}>
+            <NavButton w={"full"}>
+              <AppIcon icon={HelpCircleIcon} />
+              {expanded && t["app.navs.help"]()}
+            </NavButton>
+          </NavLink>
 
           <NavButton>
             <AppIcon icon={UserIcon} />
-            {expanded && t["app.navs.profile"]()}
+            {expanded && t["common.profile"]()}
           </NavButton>
         </VStack>
       </VStack>
 
-      {!expanded && (
-        <ExpandToggleButton
-          pos={"absolute"}
-          right={"-13px"}
-          top={"16px"}
-          opacity={0}
-          _groupHover={{ opacity: 1 }}
-        />
-      )}
+      <ExpandToggleButton
+        pos={"absolute"}
+        right={"-13px"}
+        top={"16px"}
+        opacity={0}
+        _groupHover={{ opacity: 1 }}
+      />
     </Box>
   );
 };
@@ -177,7 +183,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
         size={"2xs"}
         zIndex={99}
         rounded={"full"}
-        border={expanded ? "none" : "1px solid"}
+        border={"1px solid"}
         borderColor={"border.subtle"}
         color={"fg.muted"}
         transition={"200ms"}
@@ -188,6 +194,7 @@ const ExpandToggleButton = (props: IconButtonProps) => {
       >
         <AppIcon
           icon={ChevronsRightIcon}
+          size={"sm"}
           transform={expanded ? "rotate(180deg)" : ""}
         />
       </IconButton>

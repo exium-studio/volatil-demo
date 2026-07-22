@@ -7,7 +7,7 @@ import {
   IconButton,
 } from "@/design-system/components/button/ui/button";
 import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
-import { ColorModeToggleButton } from "@/design-system/components/button/ui/color-mode-button";
+import { ColorModeToggleButton } from "@/design-system/components/button/ui/color-mode";
 import type {
   DataListBatchActionsGenerator,
   DataListItemActionsGenerator,
