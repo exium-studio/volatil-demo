@@ -56,27 +56,47 @@ const MainContent = () => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
 
+  // Derived Values
+  const panels = isSmallViewport
+    ? [
+        { id: "map", minSize: 30 },
+        { id: "content", minSize: 30 },
+      ]
+    : [
+        { id: "content", minSize: 30 },
+        { id: "map", minSize: 30 },
+      ];
+
+  const contentPanel = (
+    <Splitter.Panel key={"content"} id={"content"} bg={"bg.body"}>
+      <Outlet />
+    </Splitter.Panel>
+  );
+
+  const mapPanel = (
+    <Splitter.Panel key={"map"} id={"map"}>
+      <Center boxSize={"full"} textStyle={"2xl"}>
+        Base map
+      </Center>
+    </Splitter.Panel>
+  );
+
+  const resizeTrigger = (
+    <Splitter.ResizeTrigger
+      key={"trigger"}
+      id={isSmallViewport ? "map:content" : "content:map"}
+    />
+  );
+
   return (
     <Splitter.Root
-      panels={[
-        { id: "a", minSize: 30 },
-        { id: "b", minSize: 30 },
-      ]}
+      panels={panels}
       defaultSize={[50, 50]}
       orientation={isSmallViewport ? "vertical" : "horizontal"}
-      minH={"60"}
     >
-      <Splitter.Panel id={"a"} bg={"bg.body"}>
-        <Outlet />
-      </Splitter.Panel>
-
-      <Splitter.ResizeTrigger id={"a:b"} />
-
-      <Splitter.Panel id={"b"}>
-        <Center boxSize={"full"} textStyle={"2xl"}>
-          Base map
-        </Center>
-      </Splitter.Panel>
+      {isSmallViewport
+        ? [mapPanel, resizeTrigger, contentPanel]
+        : [contentPanel, resizeTrigger, mapPanel]}
     </Splitter.Root>
   );
 };
