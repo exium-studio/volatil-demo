@@ -72,7 +72,7 @@ const Content = () => {
   // Components
   const contentPanel = (
     <Splitter.Panel key={"content"} id={"content"} alignItems={"end"}>
-      <VStack minW={"400px"} w={"full"}>
+      <VStack minW={"360px"} w={"full"}>
         <HStack
           align={"center"}
           justify={"space-between"}
