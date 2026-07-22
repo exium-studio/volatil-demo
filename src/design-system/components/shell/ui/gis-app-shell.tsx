@@ -45,7 +45,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
       // p={2}
       {...restProps}
     >
-      <SideBar />
+      {!isSmallViewport && <SideBar />}
 
       <MainContent />
     </AppPageContainer>
