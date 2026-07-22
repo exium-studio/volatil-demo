@@ -158,7 +158,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
                 key={child.key}
                 value={child.key}
                 onClick={() => onNavClick?.(child.key)}
-                bg={isChildActive ? "colorPalette.subtle" : undefined}
+                bg={isChildActive ? "neutral.subtle" : undefined}
                 // color={isChildActive ? `${theme.colorPalette}.fg` : undefined}
               >
                 {childNav.icon && <AppIcon icon={childNav.icon} />}
@@ -177,7 +177,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
     return (
       <NavButton
         aria-label={navTitle}
-        variant={isActive ? "subtle" : "ghost"}
+        variant={isActive && depth === 0 ? "subtle" : "ghost"}
         // color={isActive ? `${theme.colorPalette}.fg` : undefined}
         h={"40px"}
         w={"full"}
