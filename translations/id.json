@@ -15,7 +15,7 @@
   },
 
   "common": {
-    "double_click_to_reset": "Klik 2x untuk reset",
+    "splitter_trigger_helper": "Seret untuk ubah ukuran. Klik dua kali untuk reset",
     "profile": "Profil",
     "show_less": "Tampilkan lebih sedikit",
     "welcome_user": "Selamat datang kembali, {name}!",

@@ -42,7 +42,7 @@ const SplitterResizeTrigger = forwardRef<
     <ChakraSplitter.Context>
       {(context) => (
         <Tooltip
-          content={t["common.double_click_to_reset"]()}
+          content={t["common.splitter_trigger_helper"]()}
           positioning={{
             placement: "right",
           }}
