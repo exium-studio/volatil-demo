@@ -33,6 +33,14 @@ import {
 } from "@tabler/icons-react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { BellIcon, HelpCircleIcon, UserIcon } from "lucide-react";
+import { BaseMap } from "@/design-system/components/map/ui/base-map";
+import { MAP_STYLE_URL } from "@/design-system/components/map/constants/map.constant";
+import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
+
+// -------------------------------------------------------------------------------------
+
+// TODO: replace with real WFS/raster/vector layer config once endpoints are ready
+const MAP_LAYERS: MapLayerConfig[] = [];
 
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDE_BAR_KEY = "gis-app";
@@ -270,7 +278,7 @@ const Content = () => {
   // Derived Values
   const panels = [
     { id: "map", minSize: isSmallViewport ? 5 : 5 },
-    { id: "content", minSize: isSmallViewport ? 5 : "100px" },
+    { id: "content", minSize: isSmallViewport ? 5 : 5 },
   ];
 
   // Constants
@@ -303,9 +311,16 @@ const Content = () => {
   );
   const mapPanel = (
     <Splitter.Panel key={"map"} id={"map"}>
-      <Center boxSize={"full"} textStyle={"2xl"} bg={"bg.success"}>
-        Base map
-      </Center>
+      <Box pos={"relative"} minW={"360px"} boxSize={"full"}>
+        <BaseMap
+          styleUrl={MAP_STYLE_URL}
+          layers={MAP_LAYERS}
+          onDrawFinish={(feature) => {
+            console.log(feature);
+            // TODO: handle the finished polygon (e.g. push into form state or send to API)
+          }}
+        />
+      </Box>
     </Splitter.Panel>
   );
   const resizeTrigger = (

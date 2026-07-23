@@ -68,7 +68,7 @@ const SplitterResizeTrigger = forwardRef<
               w={"16px"}
               h={"80px"}
               opacity={0}
-              transform={"translateX(-4px)"}
+              transform={"translateX(-8px)"}
               transition={"200ms"}
               _groupHover={{
                 opacity: 1,
