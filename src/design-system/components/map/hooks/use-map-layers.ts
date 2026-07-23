@@ -69,21 +69,23 @@ export const useMapLayers = (
 
     const setupLayers = () => {
       layers.forEach((layer) => {
-        // TODO: call toast.error(`Failed to load layer "${layer.id}"`) when a layer fails (e.g. WFS request error)
-        void addLayer(layer).catch((error: unknown) => {
-          console.error(`Failed to add layer "${layer.id}"`, error);
-        });
+        if (!map.getLayer(layer.id) && !map.getSource(layer.id)) {
+          // TODO: call toast.error(`Failed to load layer "${layer.id}"`) when a layer fails (e.g. WFS request error)
+          void addLayer(layer).catch((error: unknown) => {
+            console.error(`Failed to add layer "${layer.id}"`, error);
+          });
+        }
       });
     };
 
     if (map.isStyleLoaded()) {
       setupLayers();
-    } else {
-      map.once("load", setupLayers);
     }
+    map.on("style.load", setupLayers);
 
     return () => {
       controller.abort();
+      map.off("style.load", setupLayers);
 
       layers.forEach((layer) => {
         if (map.getLayer(layer.id)) map.removeLayer(layer.id);

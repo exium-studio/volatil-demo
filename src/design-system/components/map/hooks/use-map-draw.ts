@@ -125,11 +125,11 @@ export const useMapDraw = (
 
     if (map.isStyleLoaded()) {
       setupPreviewLayers();
-    } else {
-      map.once("load", setupPreviewLayers);
     }
+    map.on("style.load", setupPreviewLayers);
 
     return () => {
+      map.off("style.load", setupPreviewLayers);
       [DRAW_VERTEX_LAYER_ID, DRAW_LINE_LAYER_ID, DRAW_FILL_LAYER_ID].forEach(
         (id) => {
           if (map.getLayer(id)) map.removeLayer(id);

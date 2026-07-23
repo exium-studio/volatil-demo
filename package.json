@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5174",
     "preview": "vite preview",
     "build": "eslint . && pnpm run chakra:typegen && pnpm run i18n:compile && tsc -b && vite build",
     "routes": "tsr generate",

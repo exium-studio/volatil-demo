@@ -34,7 +34,6 @@ import {
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { BellIcon, HelpCircleIcon, UserIcon } from "lucide-react";
 import { BaseMap } from "@/design-system/components/map/ui/base-map";
-import { MAP_STYLE_URL } from "@/design-system/components/map/constants/map.constant";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 
 // -------------------------------------------------------------------------------------
@@ -313,7 +312,6 @@ const Content = () => {
     <Splitter.Panel key={"map"} id={"map"}>
       <Box pos={"relative"} minW={"360px"} boxSize={"full"}>
         <BaseMap
-          styleUrl={MAP_STYLE_URL}
           layers={MAP_LAYERS}
           onDrawFinish={(feature) => {
             console.log(feature);

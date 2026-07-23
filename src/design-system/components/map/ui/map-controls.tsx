@@ -4,6 +4,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { useGeolocation } from "@/design-system/components/map/hooks/use-geolocation";
+import { MapBasemapPopover } from "@/design-system/components/map/ui/map-basemap-popover";
 import {
   CompassIcon,
   LocateFixedIcon,
@@ -38,6 +39,10 @@ export const MapControls = ({ map }: MapControlsProps) => {
 
   return (
     <VStack position={"absolute"} bottom={2.5} right={2.5} gap={"8px"}>
+      <VStack bg={"bg.body"} rounded={theme.radii.container} p={1}>
+        <MapBasemapPopover />
+      </VStack>
+
       <VStack bg={"bg.body"} rounded={theme.radii.container} p={1}>
         <IconButton aria-label={"Zoom in"} size={"sm"} onClick={zoomIn}>
           <ZoomInIcon size={16} />
