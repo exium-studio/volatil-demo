@@ -60,84 +60,6 @@ export const GisAppShell = (props: GisAppShellProps) => {
   );
 };
 
-const Content = () => {
-  // Stores
-  const splitterSize = useSplitterStore(
-    (s) => s.sizesByKey[SPLITTER_KEY] ?? DEFAULT_SPLITTER_SIZE,
-  );
-  const setSplitterSize = useSplitterStore((s) => s.setSize);
-
-  // Hooks
-  const isSmallViewport = useIsSmallViewport();
-  const pathname = useLocation().pathname;
-
-  // Derived Values
-  const panels = [
-    { id: "map", minSize: isSmallViewport ? 5 : 5 },
-    { id: "content", minSize: isSmallViewport ? 5 : "100px" },
-  ];
-
-  // Constants
-  const navKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
-  const navTitle = navKey ? t[APP_NAVS_MAP[navKey].titleKey]() : "";
-
-  // Components
-  const contentPanel = (
-    <Splitter.Panel key={"content"} id={"content"} alignItems={"end"}>
-      <VStack minW={"360px"} w={"full"}>
-        <HStack
-          align={"center"}
-          justify={"space-between"}
-          minH={HEADER_H}
-          maxH={HEADER_H}
-          px={4}
-        >
-          {navTitle && <ClampedP fontWeight={"semibold"}>{navTitle}</ClampedP>}
-
-          {/* <HStack align={"center"} ml={"auto"}>
-            <IconButton variant={"subtle"} size={"2xs"} rounded={"full"}>
-              <AppIcon icon={XIcon} size={"sm"} />
-            </IconButton>
-          </HStack> */}
-        </HStack>
-
-        <Outlet />
-      </VStack>
-    </Splitter.Panel>
-  );
-  const mapPanel = (
-    <Splitter.Panel key={"map"} id={"map"}>
-      <Center boxSize={"full"} textStyle={"2xl"} bg={"bg.success"}>
-        Base map
-      </Center>
-    </Splitter.Panel>
-  );
-  const resizeTrigger = (
-    <Splitter.ResizeTrigger
-      key={"trigger"}
-      id={isSmallViewport ? "map:content" : "content:map"}
-      onDoubleClick={() => {
-        setSplitterSize(SPLITTER_KEY, DEFAULT_SPLITTER_SIZE);
-      }}
-    />
-  );
-
-  return (
-    <Splitter.Root
-      panels={panels}
-      size={splitterSize}
-      onResize={(details) => {
-        setSplitterSize(SPLITTER_KEY, details.size);
-      }}
-      orientation={isSmallViewport ? "vertical" : "horizontal"}
-    >
-      {isSmallViewport
-        ? [mapPanel, resizeTrigger, contentPanel]
-        : [contentPanel, resizeTrigger, mapPanel]}
-    </Splitter.Root>
-  );
-};
-
 // -------------------------------------------------------------------------------------
 
 const Sidebar = () => {
@@ -175,7 +97,7 @@ const Sidebar = () => {
         <SidebarFooter />
       </VStack>
 
-      <ExpandToggleButton />
+      <SidebarToggleButton />
     </Box>
   );
 };
@@ -281,9 +203,7 @@ const SidebarFooter = () => {
   );
 };
 
-// -------------------------------------------------------------------------------------
-
-const ExpandToggleButton = (props: IconButtonProps) => {
+const SidebarToggleButton = (props: IconButtonProps) => {
   // Stores
   const expanded = useSidebarStore(
     (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
@@ -331,5 +251,85 @@ const ExpandToggleButton = (props: IconButtonProps) => {
         </IconButton>
       </Center>
     </Tooltip>
+  );
+};
+
+// -------------------------------------------------------------------------------------
+
+const Content = () => {
+  // Stores
+  const splitterSize = useSplitterStore(
+    (s) => s.sizesByKey[SPLITTER_KEY] ?? DEFAULT_SPLITTER_SIZE,
+  );
+  const setSplitterSize = useSplitterStore((s) => s.setSize);
+
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
+  const pathname = useLocation().pathname;
+
+  // Derived Values
+  const panels = [
+    { id: "map", minSize: isSmallViewport ? 5 : 5 },
+    { id: "content", minSize: isSmallViewport ? 5 : "100px" },
+  ];
+
+  // Constants
+  const navKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
+  const navTitle = navKey ? t[APP_NAVS_MAP[navKey].titleKey]() : "";
+
+  // Components
+  const contentPanel = (
+    <Splitter.Panel key={"content"} id={"content"} alignItems={"end"}>
+      <VStack minW={"360px"} w={"full"}>
+        <HStack
+          align={"center"}
+          justify={"space-between"}
+          minH={HEADER_H}
+          maxH={HEADER_H}
+          px={4}
+        >
+          {navTitle && <ClampedP fontWeight={"semibold"}>{navTitle}</ClampedP>}
+
+          {/* <HStack align={"center"} ml={"auto"}>
+            <IconButton variant={"subtle"} size={"2xs"} rounded={"full"}>
+              <AppIcon icon={XIcon} size={"sm"} />
+            </IconButton>
+          </HStack> */}
+        </HStack>
+
+        <Outlet />
+      </VStack>
+    </Splitter.Panel>
+  );
+  const mapPanel = (
+    <Splitter.Panel key={"map"} id={"map"}>
+      <Center boxSize={"full"} textStyle={"2xl"} bg={"bg.success"}>
+        Base map
+      </Center>
+    </Splitter.Panel>
+  );
+  const resizeTrigger = (
+    <Splitter.ResizeTrigger
+      key={"trigger"}
+      id={isSmallViewport ? "map:content" : "content:map"}
+      onDoubleClick={() => {
+        setSplitterSize(SPLITTER_KEY, DEFAULT_SPLITTER_SIZE);
+      }}
+    />
+  );
+
+  return (
+    <Splitter.Root
+      panels={panels}
+      size={splitterSize}
+      onResize={(details) => {
+        setSplitterSize(SPLITTER_KEY, details.size);
+      }}
+      orientation={isSmallViewport ? "vertical" : "horizontal"}
+    >
+      {isSmallViewport
+        ? [mapPanel, resizeTrigger, contentPanel]
+        : [contentPanel, resizeTrigger, mapPanel]}
+    </Splitter.Root>
   );
 };
