@@ -18,7 +18,7 @@ export const DebugMenu = () => {
   const { colorMode } = useColorMode();
 
   return (
-    <Box pos={"fixed"} left={"20px"} top={"14px"} zIndex={"toast"}>
+    <Box pos={"fixed"} left={"20px"} top={"15px"} zIndex={"toast"}>
       <Popover.Root>
         <Popover.Trigger>
           <IconButton variant={"solid"} size={"2xs"}>

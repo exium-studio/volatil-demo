@@ -5,7 +5,7 @@ import type { WfsLayerConfig } from "@/design-system/components/map/types/map.ty
 
 /** Indonesia national view — default map center and zoom on first load. */
 export const DEFAULT_MAP_CENTER: [number, number] = [117.5, -2.5];
-export const DEFAULT_MAP_ZOOM = 4.2;
+export const DEFAULT_MAP_ZOOM = 2;
 
 export const WFS_BASE_URL = "https://your-geoserver.com/wfs";
 export const WFS_VERSION = "2.0.0";

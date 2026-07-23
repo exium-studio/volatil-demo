@@ -2,14 +2,14 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { BasemapStyleId } from "@/design-system/components/map/constants/basemap.constant";
+import type { BasemapStyleId } from "@/design-system/components/map/constants/base-layer-style.constant";
 
 interface MapBasemapState {
   activeStyleId: BasemapStyleId;
   setActiveStyleId: (styleId: BasemapStyleId) => void;
 }
 
-export const useMapBasemapStore = create<MapBasemapState>()(
+export const useMapBaseLayerStore = create<MapBasemapState>()(
   persist(
     (set) => ({
       activeStyleId: "color",

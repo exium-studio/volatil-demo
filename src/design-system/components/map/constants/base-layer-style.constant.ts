@@ -2,21 +2,21 @@
 
 import type maplibregl from "maplibre-gl";
 
-export type BasemapStyleId =
+export type BaseLayerStyleKey =
   | "color"
   | "plain-light"
   | "plain-dark"
   | "plain-adaptive"
   | "satellite";
 
-export interface BasemapOption {
-  id: BasemapStyleId;
+export interface BaseLayerOption {
+  id: BaseLayerStyleKey;
   label: string;
   description: string;
   attributions: string[];
 }
 
-export const BASEMAP_OPTIONS: BasemapOption[] = [
+export const BASE_LAYER_OPTIONS: BaseLayerOption[] = [
   {
     id: "color",
     label: "Color",
@@ -153,7 +153,7 @@ export const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   Returns the MapLibre GL style definition based on selected basemap ID and current theme color mode.
  */
 export const getBasemapStyle = (
-  styleId: BasemapStyleId,
+  styleId: BaseLayerStyleKey,
   colorMode: "light" | "dark",
 ): maplibregl.StyleSpecification => {
   switch (styleId) {

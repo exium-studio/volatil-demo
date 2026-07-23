@@ -3,10 +3,10 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import {
-  BASEMAP_OPTIONS,
+  BASE_LAYER_OPTIONS,
   type BasemapStyleId,
-} from "@/design-system/components/map/constants/basemap.constant";
-import { useMapBasemapStore } from "@/design-system/components/map/stores/map-basemap.store";
+} from "@/design-system/components/map/constants/base-layer-style.constant";
+import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import type { ElementType } from "react";
 
-const BASEMAP_ICON_MAP: Record<BasemapStyleId, ElementType> = {
+const BASE_LAYER_ICON_MAP: Record<BasemapStyleId, ElementType> = {
   color: PaletteIcon,
   "plain-light": SunIcon,
   "plain-dark": MoonIcon,
@@ -31,9 +31,9 @@ const BASEMAP_ICON_MAP: Record<BasemapStyleId, ElementType> = {
   satellite: GlobeIcon,
 };
 
-export const MapBasemapPopover = () => {
+export const MapBaseLayerSelect = () => {
   // Stores
-  const { activeStyleId, setActiveStyleId } = useMapBasemapStore();
+  const { activeStyleId, setActiveStyleId } = useMapBaseLayerStore();
   const { theme } = useThemeStore();
 
   return (
@@ -73,9 +73,9 @@ export const MapBasemapPopover = () => {
 
         <Popover.Body p={2}>
           <VStack gap={1} align={"stretch"}>
-            {BASEMAP_OPTIONS.map((item) => {
+            {BASE_LAYER_OPTIONS.map((item) => {
               const isSelected = activeStyleId === item.id;
-              const IconComp = BASEMAP_ICON_MAP[item.id];
+              const IconComp = BASE_LAYER_ICON_MAP[item.id];
 
               return (
                 <HStack

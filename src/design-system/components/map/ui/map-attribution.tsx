@@ -2,8 +2,8 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { BASEMAP_OPTIONS } from "@/design-system/components/map/constants/basemap.constant";
-import { useMapBasemapStore } from "@/design-system/components/map/stores/map-basemap.store";
+import { BASE_LAYER_OPTIONS } from "@/design-system/components/map/constants/base-layer-style.constant";
+import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { InfoIcon } from "lucide-react";
@@ -11,9 +11,9 @@ import { InfoIcon } from "lucide-react";
 export const MapAttribution = () => {
   // Stores
   const { theme } = useThemeStore();
-  const { activeStyleId } = useMapBasemapStore();
+  const { activeStyleId } = useMapBaseLayerStore();
 
-  const activeBasemap = BASEMAP_OPTIONS.find(
+  const activeBasemap = BASE_LAYER_OPTIONS.find(
     (option) => option.id === activeStyleId,
   );
   const attributions = activeBasemap?.attributions ?? [];
