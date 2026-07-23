@@ -1,22 +1,22 @@
-// src/design-system/components/map/stores/map-basemap.store.ts
+// src/design-system/components/map/stores/map-base-layer.store.ts
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { BasemapStyleId } from "@/design-system/components/map/constants/base-layer-style.constant";
+import type { BaseLayerStyleKey } from "@/design-system/components/map/constants/base-layer-style.constant";
 
-interface MapBasemapState {
-  activeStyleId: BasemapStyleId;
-  setActiveStyleId: (styleId: BasemapStyleId) => void;
+interface MapBaseLayerState {
+  activeStyleId: BaseLayerStyleKey;
+  setActiveStyleId: (styleId: BaseLayerStyleKey) => void;
 }
 
-export const useMapBaseLayerStore = create<MapBasemapState>()(
+export const useMapBaseLayerStore = create<MapBaseLayerState>()(
   persist(
     (set) => ({
       activeStyleId: "color",
       setActiveStyleId: (activeStyleId) => set({ activeStyleId }),
     }),
     {
-      name: "map-basemap-config",
+      name: "map-base-layer-config",
     },
   ),
 );

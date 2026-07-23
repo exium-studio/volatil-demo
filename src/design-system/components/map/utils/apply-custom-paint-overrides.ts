@@ -1,3 +1,5 @@
+// src/design-system/components/map/utils/apply-custom-paint-overrides.ts
+
 export function applyCustomPaintOverrides(map: maplibregl.Map) {
   const setIfExists = (
     layerId: string,

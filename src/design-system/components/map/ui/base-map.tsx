@@ -1,4 +1,4 @@
-// src/features/map/ui/base-map.tsx
+// src/design-system/components/map/ui/base-map.tsx
 
 import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
@@ -8,7 +8,7 @@ import {
   DEFAULT_MAP_ZOOM,
 } from "@/design-system/components/map/constants/map.constant";
 import {
-  getBasemapStyle,
+  getBaseLayerStyle,
   OPENFREEMAP_LIBERTY_STYLE_URL,
 } from "@/design-system/components/map/constants/base-layer-style.constant";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
@@ -41,7 +41,7 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     styleUrl ??
     (activeStyleId === "color"
       ? OPENFREEMAP_LIBERTY_STYLE_URL
-      : getBasemapStyle(activeStyleId, colorMode));
+      : getBaseLayerStyle(activeStyleId, colorMode));
 
   useEffect(() => {
     if (!containerRef.current) return;

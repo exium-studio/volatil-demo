@@ -1,4 +1,4 @@
-// src/design-system/components/map/constants/basemap.constant.ts
+// src/design-system/components/map/constants/base-layer-style.constant.ts
 
 import type maplibregl from "maplibre-gl";
 
@@ -152,7 +152,7 @@ export const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
 /**
   Returns the MapLibre GL style definition based on selected basemap ID and current theme color mode.
  */
-export const getBasemapStyle = (
+export const getBaseLayerStyle = (
   styleId: BaseLayerStyleKey,
   colorMode: "light" | "dark",
 ): maplibregl.StyleSpecification => {

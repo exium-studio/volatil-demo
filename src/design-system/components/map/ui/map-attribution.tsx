@@ -13,10 +13,10 @@ export const MapAttribution = () => {
   const { theme } = useThemeStore();
   const { activeStyleId } = useMapBaseLayerStore();
 
-  const activeBasemap = BASE_LAYER_OPTIONS.find(
+  const activeBaseLayer = BASE_LAYER_OPTIONS.find(
     (option) => option.id === activeStyleId,
   );
-  const attributions = activeBasemap?.attributions ?? [];
+  const attributions = activeBaseLayer?.attributions ?? [];
 
   return (
     <VStack

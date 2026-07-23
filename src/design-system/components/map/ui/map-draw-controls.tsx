@@ -1,4 +1,4 @@
-// src/features/map/ui/map-draw-controls.tsx
+// src/design-system/components/map/ui/map-draw-controls.tsx
 
 import { PencilIcon, XIcon } from "lucide-react";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map-draw.store";

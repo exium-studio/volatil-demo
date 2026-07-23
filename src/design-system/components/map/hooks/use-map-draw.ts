@@ -1,4 +1,4 @@
-// src/features/map/hooks/use-map-draw.ts
+// src/design-system/components/map/hooks/use-map-draw.ts
 
 import { useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";

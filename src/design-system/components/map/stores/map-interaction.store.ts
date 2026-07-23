@@ -1,4 +1,4 @@
-// src/features/map/store/map-interaction.store.ts
+// src/design-system/components/map/stores/map-interaction.store.ts
 
 import { create } from "zustand";
 

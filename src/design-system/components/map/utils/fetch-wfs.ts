@@ -1,4 +1,4 @@
-// src/features/map/utils/fetch-wfs.ts
+// src/design-system/components/map/utils/fetch-wfs.ts
 
 import type { FeatureCollection } from "geojson";
 import {

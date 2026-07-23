@@ -1,4 +1,4 @@
-// src/features/map/hooks/use-geolocation.ts
+// src/design-system/components/map/hooks/use-geolocation.ts
 
 import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";

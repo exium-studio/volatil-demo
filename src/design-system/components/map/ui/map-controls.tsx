@@ -1,4 +1,4 @@
-// src/features/map/ui/map-controls.tsx
+// src/design-system/components/map/ui/map-controls.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";

@@ -1,10 +1,10 @@
-// src/design-system/components/map/ui/map-basemap-popover.tsx
+// src/design-system/components/map/ui/map-base-layer-select.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import {
   BASE_LAYER_OPTIONS,
-  type BasemapStyleId,
+  type BaseLayerStyleKey,
 } from "@/design-system/components/map/constants/base-layer-style.constant";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import type { ElementType } from "react";
 
-const BASE_LAYER_ICON_MAP: Record<BasemapStyleId, ElementType> = {
+const BASE_LAYER_ICON_MAP: Record<BaseLayerStyleKey, ElementType> = {
   color: PaletteIcon,
   "plain-light": SunIcon,
   "plain-dark": MoonIcon,

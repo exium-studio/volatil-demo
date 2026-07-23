@@ -1,4 +1,4 @@
-// src/features/map/utils/geometry.util.ts
+// src/design-system/components/map/utils/geometry.util.ts
 
 import type { Feature, Polygon } from "geojson";
 import type { DrawPoint } from "@/design-system/components/map/types/map.type";
