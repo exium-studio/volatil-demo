@@ -1,10 +1,5 @@
 // src/design-system/components/map/utils/apply-custom-paint-overrides.ts
 
-/**
- * Grey road palette — applied consistently across road_*, bridge_*, and
- * tunnel_* layer variants, since OpenMapTiles/Liberty duplicates the same
- * road classes per rendering context (surface, bridge, tunnel).
- */
 const ROAD_COLORS = {
   motorway: { fill: "#e2e2e5", casing: "#9aa0a6" },
   trunkPrimary: { fill: "#eeeeee", casing: "#a8adb3" },
@@ -16,7 +11,7 @@ const ROAD_COLORS = {
 } as const;
 
 // Building fill
-const BUILDING_FILL = "#f4f4f6";
+const BUILDING_FILL = "#f0f0f2";
 const BUILDING_OUTLINE = "#e0e0e3";
 
 export function applyCustomPaintOverrides(map: maplibregl.Map) {
@@ -230,6 +225,8 @@ export function applyCustomPaintOverrides(map: maplibregl.Map) {
     "hsl(20, 20%, 95%)",
     11,
     "hsl(20, 18%, 91%)",
+    13,
+    "#f4f0ef",
   ]);
 
   // Landcover
