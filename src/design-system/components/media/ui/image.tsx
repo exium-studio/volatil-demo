@@ -60,7 +60,7 @@ const ImageImpl = (props: ImageProps) => {
   }
 
   return (
-    <AspectRatio {...aspectRatioProps} ratio={aspectRatio}>
+    <AspectRatio {...aspectRatioProps} ratio={aspectRatio} overflow={"clip"}>
       <Box position={"relative"} w={"100%"} h={"100%"}>
         {status === "loading" && <Skeleton position={"absolute"} inset={0} />}
 

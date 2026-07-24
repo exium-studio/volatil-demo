@@ -2,7 +2,7 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { BASE_LAYER_OPTIONS } from "@/design-system/components/map/constants/base-layer-style.constant";
+import { getBaseLayerOption } from "@/design-system/components/map/constants/base-layer-style.constant";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
@@ -13,9 +13,7 @@ export const MapAttribution = () => {
   const { theme } = useThemeStore();
   const { activeStyleKey } = useMapBaseLayerStore();
 
-  const activeBaseLayer = BASE_LAYER_OPTIONS.find(
-    (option) => option.id === activeStyleKey,
-  );
+  const activeBaseLayer = getBaseLayerOption(activeStyleKey);
   const attributions = activeBaseLayer?.attributions ?? [];
 
   return (

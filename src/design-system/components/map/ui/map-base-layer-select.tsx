@@ -1,44 +1,38 @@
 // src/design-system/components/map/ui/map-base-layer-select.tsx
 
-import { IconButton } from "@/design-system/components/button/ui/button";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import {
   BASE_LAYER_OPTIONS,
-  type BaseLayerStyleKey,
+  getBaseLayerOption,
 } from "@/design-system/components/map/constants/base-layer-style.constant";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
+import { Image } from "@/design-system/components/media/ui/image";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { Box } from "@chakra-ui/react";
-import {
-  CheckIcon,
-  GlobeIcon,
-  LayersIcon,
-  MoonIcon,
-  PaletteIcon,
-  SunIcon,
-  SunMoonIcon,
-} from "lucide-react";
-import type { ElementType } from "react";
 
-const BASE_LAYER_ICON_MAP: Record<BaseLayerStyleKey, ElementType> = {
-  color: PaletteIcon,
-  "plain-light": SunIcon,
-  "plain-dark": MoonIcon,
-  "plain-adaptive": SunMoonIcon,
-  satellite: GlobeIcon,
-};
+const ITEM_WIDTH = "64px";
 
 export const MapBaseLayerSelect = () => {
   // Stores
   const { activeStyleKey, setActiveStyleKey } = useMapBaseLayerStore();
   const { theme } = useThemeStore();
 
+  // Constants
+  const activeStyle = getBaseLayerOption(activeStyleKey);
+
   return (
     <Popover.Root
-    // positioning={{ placement: "left-start" }}
+      positioning={{
+        placement: "top-start",
+        offset: {
+          crossAxis: -2,
+        },
+      }}
     >
       <Popover.Trigger>
         <Box>
@@ -46,94 +40,77 @@ export const MapBaseLayerSelect = () => {
             content={"Gaya Peta Base"}
             positioning={{ placement: "left" }}
           >
-            <Box>
-              <IconButton
-                aria-label={"Pilih gaya peta"}
-                size={"sm"}
-                variant={"ghost"}
-              >
-                <LayersIcon size={16} />
-              </IconButton>
-            </Box>
+            <Center cursor={"pointer"}>
+              <Image
+                src={activeStyle.thumbnail}
+                aspectRatio={1}
+                w={"36px"}
+                rounded={theme.radii.component}
+              />
+            </Center>
           </Tooltip>
         </Box>
       </Popover.Trigger>
 
-      <Popover.Content width={"260px"} p={0}>
-        <Popover.Header
-          p={3}
-          pb={2}
-          borderBottom={"1px solid"}
-          borderColor={"border.subtle"}
-        >
-          <Popover.Title fontSize={"sm"} fontWeight={"semibold"}>
-            {"Pilih Gaya Peta"}
-          </Popover.Title>
+      <Popover.Content>
+        <Popover.Header p={3} borderBottom={"1px solid"} borderColor={"border"}>
+          <P fontWeight={"semibold"}>{"Pilih Gaya Peta"}</P>
         </Popover.Header>
 
         <Popover.Body p={2}>
-          <VStack gap={1} align={"stretch"}>
-            {BASE_LAYER_OPTIONS.map((item) => {
-              const isSelected = activeStyleKey === item.id;
-              const IconComp = BASE_LAYER_ICON_MAP[item.id];
+          <HStack gap={1} align={"flex-start"}>
+            {BASE_LAYER_OPTIONS.map((styleKey) => {
+              const isSelected = activeStyleKey === styleKey;
+              const item = getBaseLayerOption(styleKey);
 
               return (
-                <HStack
-                  key={item.id}
-                  p={2}
-                  rounded={theme.radii.component}
-                  cursor={"pointer"}
-                  bg={
-                    isSelected ? `${theme.colorPalette}.subtle` : "transparent"
-                  }
-                  _hover={{
-                    bg: isSelected
-                      ? `${theme.colorPalette}.subtle`
-                      : "bg.muted",
-                  }}
-                  transition={"200ms"}
-                  onClick={() => setActiveStyleKey(item.id)}
-                  justify={"space-between"}
+                <VStack
+                  key={styleKey}
+                  w={ITEM_WIDTH}
                   align={"center"}
+                  gap={1}
+                  cursor={"pointer"}
+                  transition={"200ms"}
+                  onClick={() => setActiveStyleKey(styleKey)}
                 >
-                  <HStack gap={2.5} align={"center"}>
-                    <Box
-                      p={1.5}
-                      rounded={"md"}
-                      bg={
-                        isSelected ? `${theme.colorPalette}.solid` : "bg.muted"
-                      }
-                      color={
-                        isSelected
-                          ? `${theme.colorPalette}.contrast`
-                          : "fg.muted"
-                      }
-                    >
-                      <IconComp size={16} />
-                    </Box>
+                  <Center
+                    p={1}
+                    rounded={theme.radii.component}
+                    border={"1px solid"}
+                    borderColor={
+                      isSelected ? `${theme.colorPalette}.solid` : "transparent"
+                    }
+                    transition={"200ms"}
+                  >
+                    <Image
+                      src={item.thumbnail}
+                      aspectRatio={1}
+                      w={"52px"}
+                      rounded={`calc(${theme.radii.component} - 2px)`}
+                    />
+                  </Center>
 
-                    <VStack gap={0} align={"start"}>
-                      <P
-                        fontWeight={isSelected ? "bold" : "medium"}
-                        color={
-                          isSelected ? `${theme.colorPalette}.fg` : "fg.default"
-                        }
-                      >
-                        {item.label}
-                      </P>
-                      <P color={"fg.subtle"}>{item.description}</P>
-                    </VStack>
-                  </HStack>
+                  <P
+                    fontSize={"sm"}
+                    textAlign={"center"}
+                    whiteSpace={"normal"}
+                    lineHeight={"1.2"}
+                  >
+                    {item.label}
+                  </P>
 
-                  {isSelected && (
-                    <Box color={`${theme.colorPalette}.fg`}>
-                      <CheckIcon size={16} />
-                    </Box>
-                  )}
-                </HStack>
+                  <InfoTip
+                    appIconProps={{
+                      size: "xs",
+                      color: "fg.subtle",
+                    }}
+                  >
+                    {item.description}
+                  </InfoTip>
+                </VStack>
               );
             })}
-          </VStack>
+          </HStack>
         </Popover.Body>
       </Popover.Content>
     </Popover.Root>

@@ -1,4 +1,4 @@
-// src/design-system/components/map/utils/geometry.util.ts
+// src/design-system/components/map/utils/geometry.ts
 
 import type GeoJSON from "geojson";
 import type { DrawPoint } from "@/design-system/components/map/types/map.type";

@@ -1,8 +1,8 @@
 // src/design-system/components/map/stores/map-base-layer.store.ts
 
+import type { BaseLayerStyleKey } from "@/design-system/components/map/types/base-layer.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { BaseLayerStyleKey } from "@/design-system/components/map/constants/base-layer-style.constant";
 
 interface MapBaseLayerState {
   activeStyleKey: BaseLayerStyleKey;

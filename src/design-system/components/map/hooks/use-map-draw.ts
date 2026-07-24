@@ -6,7 +6,7 @@ import { useMapDrawStore } from "@/design-system/components/map/stores/map-draw.
 import {
   isNearFirstPoint,
   toPolygonFeature,
-} from "@/design-system/components/map/utils/geometry.util";
+} from "@/design-system/components/map/utils/geometry";
 import { DRAW_CLOSE_HIT_RADIUS_PX } from "@/design-system/components/map/constants/map.constant";
 
 const DRAW_SOURCE_ID = "map-draw-source";

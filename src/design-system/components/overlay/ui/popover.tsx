@@ -68,6 +68,8 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
         <ChakraPopover.Positioner>
           <ChakraPopover.Content
             ref={ref}
+            minW={0}
+            w={"fit"}
             p={0}
             bg={"bg.body"}
             border={"1px solid"}

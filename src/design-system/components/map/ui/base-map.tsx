@@ -76,6 +76,7 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Change base layer style effect
   useEffect(() => {
     if (!map) return;
     map.setStyle(currentStyle);

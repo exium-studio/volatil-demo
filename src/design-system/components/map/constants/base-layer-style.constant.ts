@@ -1,74 +1,16 @@
 // src/design-system/components/map/constants/base-layer-style.constant.ts
 
+import type {
+  BaseLayerOption,
+  BaseLayerStyleKey,
+} from "@/design-system/components/map/types/base-layer.type";
+import { IMAGES_PATH } from "@/shared/constants/paths";
 import type maplibregl from "maplibre-gl";
 
-export type BaseLayerStyleKey =
-  | "color"
-  | "plain-light"
-  | "plain-dark"
-  | "plain-adaptive"
-  | "satellite";
-
-export interface BaseLayerOption {
-  id: BaseLayerStyleKey;
-  label: string;
-  description: string;
-  attributions: string[];
-}
-
-export const BASE_LAYER_OPTIONS: BaseLayerOption[] = [
-  {
-    id: "color",
-    label: "Color",
-    description: "Gaya peta penuh warna OpenFreeMap Liberty",
-    attributions: [
-      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-      '&copy; <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>',
-    ],
-  },
-  {
-    id: "plain-light",
-    label: "Plain Light",
-    description: "Gaya terang polos CARTO Positron",
-    attributions: [
-      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    ],
-  },
-  {
-    id: "plain-dark",
-    label: "Plain Dark",
-    description: "Gaya gelap polos CARTO Dark Matter",
-    attributions: [
-      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    ],
-  },
-  {
-    id: "plain-adaptive",
-    label: "Plain Adaptive",
-    description: "Polos adaptif mengikuti tema aplikasi (Terang/Gelap)",
-    attributions: [
-      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    ],
-  },
-  {
-    id: "satellite",
-    label: "Satellite",
-    description: "Citra satelit Esri World Imagery",
-    attributions: [
-      'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a>',
-      "Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
-    ],
-  },
-];
-
-/** OpenFreeMap Liberty — full-color vector style, same as the original default. */
 export const OPENFREEMAP_LIBERTY_STYLE_URL =
   "https://tiles.openfreemap.org/styles/liberty";
 
-export const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
+const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
   version: 8,
   name: "CARTO Positron",
   sources: {
@@ -96,7 +38,7 @@ export const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
-export const CARTO_DARK_MATTER_STYLE: maplibregl.StyleSpecification = {
+const CARTO_DARK_MATTER_STYLE: maplibregl.StyleSpecification = {
   version: 8,
   name: "CARTO Dark Matter",
   sources: {
@@ -124,7 +66,7 @@ export const CARTO_DARK_MATTER_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
-export const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
+const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   version: 8,
   name: "Esri Satellite",
   sources: {
@@ -149,28 +91,85 @@ export const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
-/**
-  Returns the MapLibre GL style definition based on selected basemap ID and current theme color mode.
- */
+export const BASE_LAYER_MAP = {
+  color: {
+    thumbnail: `${IMAGES_PATH}/base_map_styles/colorful.png`,
+    label: "Color",
+    description: "Gaya peta penuh warna OpenFreeMap Liberty",
+    attributions: [
+      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+      '&copy; <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>',
+    ],
+    style: {
+      light: OPENFREEMAP_LIBERTY_STYLE_URL,
+      dark: OPENFREEMAP_LIBERTY_STYLE_URL,
+    },
+  },
+  "plain-light": {
+    thumbnail: `${IMAGES_PATH}/base_map_styles/plain_light.png`,
+    label: "Plain Light",
+    description: "Gaya terang polos CARTO Positron",
+    attributions: [
+      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+    ],
+    style: {
+      light: CARTO_POSITRON_STYLE,
+      dark: CARTO_POSITRON_STYLE,
+    },
+  },
+  "plain-dark": {
+    thumbnail: `${IMAGES_PATH}/base_map_styles/plain_dark.png`,
+    label: "Plain Dark",
+    description: "Gaya gelap polos CARTO Dark Matter",
+    attributions: [
+      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+    ],
+    style: {
+      light: CARTO_DARK_MATTER_STYLE,
+      dark: CARTO_DARK_MATTER_STYLE,
+    },
+  },
+  "plain-adaptive": {
+    thumbnail: `${IMAGES_PATH}/base_map_styles/plain_adaptive.png`,
+    label: "Plain Adaptive",
+    description: "Polos adaptif mengikuti tema aplikasi (Terang/Gelap)",
+    attributions: [
+      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+    ],
+    style: {
+      light: CARTO_POSITRON_STYLE,
+      dark: CARTO_DARK_MATTER_STYLE,
+    },
+  },
+  satellite: {
+    thumbnail: `${IMAGES_PATH}/base_map_styles/satellite.png`,
+    label: "Satellite",
+    description: "Citra satelit Esri World Imagery",
+    attributions: [
+      'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a>',
+      "Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+    ],
+    style: {
+      light: ESRI_SATELLITE_STYLE,
+      dark: ESRI_SATELLITE_STYLE,
+    },
+  },
+} as const satisfies Record<BaseLayerStyleKey, BaseLayerOption>;
+
+export const BASE_LAYER_OPTIONS = Object.keys(
+  BASE_LAYER_MAP,
+) as BaseLayerStyleKey[];
+
+// -----------------------------------------------------------------
+
+export const getBaseLayerOption = (key: BaseLayerStyleKey): BaseLayerOption =>
+  BASE_LAYER_MAP[key];
+
 export const getBaseLayerStyle = (
-  styleKey: BaseLayerStyleKey,
+  key: BaseLayerStyleKey,
   colorMode: "light" | "dark",
-): maplibregl.StyleSpecification => {
-  switch (styleKey) {
-    case "color":
-      // OpenFreeMap Liberty is a URL-based style, handled separately in BaseMap
-      return CARTO_POSITRON_STYLE; // fallback — overridden by string URL in BaseMap
-    case "plain-light":
-      return CARTO_POSITRON_STYLE;
-    case "plain-dark":
-      return CARTO_DARK_MATTER_STYLE;
-    case "plain-adaptive":
-      return colorMode === "dark"
-        ? CARTO_DARK_MATTER_STYLE
-        : CARTO_POSITRON_STYLE;
-    case "satellite":
-      return ESRI_SATELLITE_STYLE;
-    default:
-      return CARTO_POSITRON_STYLE;
-  }
-};
+): string | maplibregl.StyleSpecification =>
+  BASE_LAYER_MAP[key].style[colorMode];

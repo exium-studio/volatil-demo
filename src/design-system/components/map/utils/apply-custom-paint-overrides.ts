@@ -257,6 +257,6 @@ export function applyCustomPaintOverrides(map: maplibregl.Map) {
     map.setPaintProperty("natural_earth", "raster-saturation", 0.6);
     map.setPaintProperty("natural_earth", "raster-brightness-min", 0.32);
     map.setPaintProperty("natural_earth", "raster-brightness-max", 1);
-    map.setPaintProperty("natural_earth", "raster-contrast", 0.12);
+    map.setPaintProperty("natural_earth", "raster-contrast", 0.2);
   }
 }
