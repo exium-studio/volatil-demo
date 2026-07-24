@@ -1,5 +1,6 @@
 // src/design-system/components/input/ui/segmented-control.tsx
 
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { SegmentedControlProps } from "@/design-system/components/input/types/segmented-control.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
@@ -11,7 +12,9 @@ export const SegmentedControl = React.forwardRef<
   SegmentedControlProps
 >(function SegmentedControl(props, ref) {
   // Props
-  const { options, ...restProps } = props;
+  const { options, itemProps, colorPalette, ...restProps } = props;
+  const indicatorBg = colorPalette ? `${colorPalette}.solid` : undefined;
+  const activeIndicatorColor = colorPalette ? `${colorPalette}.contrast` : "fg";
 
   // Stores
   const { theme } = useThemeStore();
@@ -28,7 +31,7 @@ export const SegmentedControl = React.forwardRef<
     >
       <ChakraSegmentGroup.Indicator
         border={"1px solid"}
-        bg={"bg.muted"}
+        bg={indicatorBg}
         borderColor={"border.subtle"}
         rounded={theme.radii.component}
       />
@@ -41,17 +44,25 @@ export const SegmentedControl = React.forwardRef<
           flex={1}
           minW={0}
           cursor={"pointer"}
+          color={"fg.subtle"}
+          _checked={{ color: activeIndicatorColor }}
+          {...itemProps}
         >
           <ChakraSegmentGroup.ItemHiddenInput />
 
-          <ChakraSegmentGroup.ItemText
-            minW={0}
-            overflow={"clip"}
-            color={"fg.subtle"}
-            _checked={{ color: "fg" }}
-          >
-            <ClampedP>{option.label}</ClampedP>
-          </ChakraSegmentGroup.ItemText>
+          {option.leftIcon && (
+            <AppIcon icon={option.leftIcon} w={"20px"} h={"20px"} />
+          )}
+
+          {option.label && (
+            <ChakraSegmentGroup.ItemText minW={0} overflow={"clip"}>
+              <ClampedP>{option.label}</ClampedP>
+            </ChakraSegmentGroup.ItemText>
+          )}
+
+          {option.rightIcon && (
+            <AppIcon icon={option.rightIcon} w={"20px"} h={"20px"} />
+          )}
         </ChakraSegmentGroup.Item>
       ))}
     </ChakraSegmentGroup.Root>

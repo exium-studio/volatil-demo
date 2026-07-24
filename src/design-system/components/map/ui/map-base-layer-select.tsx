@@ -1,12 +1,13 @@
-// src/design-system/components/map/ui/map-base-layer-select.tsx
+// src/design-system/components/map/ui/map-controls/map-base-layer-select.tsx
 
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Grid } from "@/design-system/components/layout/ui/grid";
 import {
-  BASE_LAYER_OPTIONS,
+  MAP_BASE_LAYER_OPTIONS,
   getBaseLayerOption,
-} from "@/design-system/components/map/constants/base-layer-style.constant";
+} from "@/design-system/components/map/constants/map-base-layer-style.constant";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
 import { Image } from "@/design-system/components/media/ui/image";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
@@ -14,8 +15,6 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { Box } from "@chakra-ui/react";
-
-const ITEM_WIDTH = "64px";
 
 export const MapBaseLayerSelect = () => {
   // Stores
@@ -57,21 +56,26 @@ export const MapBaseLayerSelect = () => {
           <P fontWeight={"semibold"}>{"Pilih Gaya Peta"}</P>
         </Popover.Header>
 
-        <Popover.Body p={2}>
-          <HStack gap={1} align={"flex-start"}>
-            {BASE_LAYER_OPTIONS.map((styleKey) => {
+        <Popover.Body
+          className={"noScroll"}
+          w={["full", null, "400px"]}
+          p={2}
+          overflowY={"auto"}
+        >
+          <Grid
+            gridTemplateColumns={"repeat(auto-fill, minmax(100px, 1fr))"}
+            gapY={4}
+          >
+            {MAP_BASE_LAYER_OPTIONS.map((styleKey) => {
               const isSelected = activeStyleKey === styleKey;
               const item = getBaseLayerOption(styleKey);
 
               return (
                 <VStack
                   key={styleKey}
-                  w={ITEM_WIDTH}
                   align={"center"}
                   gap={1}
-                  cursor={"pointer"}
                   transition={"200ms"}
-                  onClick={() => setActiveStyleKey(styleKey)}
                 >
                   <Center
                     p={1}
@@ -84,33 +88,34 @@ export const MapBaseLayerSelect = () => {
                   >
                     <Image
                       src={item.thumbnail}
-                      aspectRatio={1}
-                      w={"52px"}
+                      aspectRatio={2 / 1}
+                      w={"100px"}
+                      objectFit={"cover"}
                       rounded={`calc(${theme.radii.component} - 2px)`}
+                      cursor={"pointer"}
+                      onClick={() => setActiveStyleKey(styleKey)}
                     />
                   </Center>
 
-                  <P
-                    fontSize={"sm"}
-                    textAlign={"center"}
-                    whiteSpace={"normal"}
-                    lineHeight={"1.2"}
-                  >
-                    {item.label}
-                  </P>
+                  <HStack align={"center"} justify={"center"} gap={1}>
+                    <P fontSize={"sm"} whiteSpace={"nowrap"} lineHeight={"1.2"}>
+                      {item.label}
+                    </P>
 
-                  <InfoTip
-                    appIconProps={{
-                      size: "xs",
-                      color: "fg.subtle",
-                    }}
-                  >
-                    {item.description}
-                  </InfoTip>
+                    <InfoTip
+                      variant={"icon"}
+                      appIconProps={{
+                        size: "xs",
+                        color: "fg.subtle",
+                      }}
+                    >
+                      {item.description}
+                    </InfoTip>
+                  </HStack>
                 </VStack>
               );
             })}
-          </HStack>
+          </Grid>
         </Popover.Body>
       </Popover.Content>
     </Popover.Root>

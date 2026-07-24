@@ -109,21 +109,7 @@ const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
-export const BASE_LAYER_MAP = {
-  color: {
-    thumbnail: `${IMAGES_PATH}/base_map_styles/colorful.png`,
-    label: "Color",
-    description: "Gaya peta penuh warna OpenFreeMap Liberty",
-    attributions: [
-      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-      '&copy; <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>',
-    ],
-    style: {
-      light: OPENFREEMAP_LIBERTY_STYLE_URL,
-      dark: OPENFREEMAP_LIBERTY_STYLE_URL,
-    },
-    maxZoom: 20,
-  },
+export const MAP_BASE_LAYER_MAP = {
   "plain-light": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_light.png`,
     label: "Plain Light",
@@ -166,6 +152,20 @@ export const BASE_LAYER_MAP = {
     },
     maxZoom: CARTO_MAX_ZOOM,
   },
+  color: {
+    thumbnail: `${IMAGES_PATH}/base_map_styles/colorful.png`,
+    label: "Color",
+    description: "Gaya peta penuh warna OpenFreeMap Liberty",
+    attributions: [
+      '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+      '&copy; <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>',
+    ],
+    style: {
+      light: OPENFREEMAP_LIBERTY_STYLE_URL,
+      dark: OPENFREEMAP_LIBERTY_STYLE_URL,
+    },
+    maxZoom: 20,
+  },
   satellite: {
     thumbnail: `${IMAGES_PATH}/base_map_styles/satellite.png`,
     label: "Satellite",
@@ -182,17 +182,17 @@ export const BASE_LAYER_MAP = {
   },
 } as const satisfies Record<BaseLayerStyleKey, BaseLayerOption>;
 
-export const BASE_LAYER_OPTIONS = Object.keys(
-  BASE_LAYER_MAP,
+export const MAP_BASE_LAYER_OPTIONS = Object.keys(
+  MAP_BASE_LAYER_MAP,
 ) as BaseLayerStyleKey[];
 
 // -----------------------------------------------------------------
 
 export const getBaseLayerOption = (key: BaseLayerStyleKey): BaseLayerOption =>
-  BASE_LAYER_MAP[key];
+  MAP_BASE_LAYER_MAP[key];
 
 export const getBaseLayerStyle = (
   key: BaseLayerStyleKey,
   colorMode: "light" | "dark",
 ): string | maplibregl.StyleSpecification =>
-  BASE_LAYER_MAP[key].style[colorMode];
+  MAP_BASE_LAYER_MAP[key].style[colorMode];

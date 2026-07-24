@@ -18,4 +18,5 @@ export type ToggleTipProps = PopoverRootProps & {
 export type InfoTipProps = Partial<ToggleTipProps> & {
   iconButtonProps?: IconButtonProps;
   appIconProps?: AppIconProps;
+  variant?: "iconButton" | "icon";
 };

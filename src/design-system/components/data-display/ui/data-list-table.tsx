@@ -154,7 +154,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
     );
 
     const gridCols = useMemo(() => {
-      const cols = [];
+      const cols: string[] = [];
 
       if (!isEmptyArray(batchActions)) {
         cols.push(TABLE_ACTIONS_CELL_W);

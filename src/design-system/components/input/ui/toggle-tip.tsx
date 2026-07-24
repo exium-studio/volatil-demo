@@ -54,18 +54,30 @@ export const ToggleTip = React.forwardRef<HTMLDivElement, ToggleTipProps>(
 
 export const InfoTip = React.forwardRef<HTMLDivElement, InfoTipProps>(
   function InfoTip(props, ref) {
-    const { children, iconButtonProps, appIconProps, ...restProps } = props;
+    // Props
+    const {
+      children,
+      iconButtonProps,
+      appIconProps,
+      variant = "iconButton",
+      ...restProps
+    } = props;
+
     return (
       <ToggleTip ref={ref} content={children} {...restProps}>
-        <IconButton
-          variant={"ghost"}
-          aria-label={"info"}
-          size={"2xs"}
-          rounded={"full"}
-          {...iconButtonProps}
-        >
-          <AppIcon icon={InfoIcon} {...appIconProps} />
-        </IconButton>
+        {variant === "iconButton" ? (
+          <IconButton
+            variant={"ghost"}
+            aria-label={"info"}
+            size={"2xs"}
+            rounded={"full"}
+            {...iconButtonProps}
+          >
+            <AppIcon icon={InfoIcon} {...appIconProps} />
+          </IconButton>
+        ) : (
+          <AppIcon icon={InfoIcon} cursor={"pointer"} {...appIconProps} />
+        )}
       </ToggleTip>
     );
   },

@@ -5,7 +5,7 @@ import {
   getBaseLayerOption,
   getBaseLayerStyle,
   OPENFREEMAP_LIBERTY_STYLE_URL,
-} from "@/design-system/components/map/constants/base-layer-style.constant";
+} from "@/design-system/components/map/constants/map-base-layer-style.constant";
 import {
   DEFAULT_MAP_CENTER,
   DEFAULT_MAP_ZOOM,
