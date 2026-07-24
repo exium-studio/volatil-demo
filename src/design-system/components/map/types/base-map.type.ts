@@ -1,3 +1,5 @@
+// src/design-system/components/map/types/base-map.type.ts
+
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 
 export type BaseMapProps = {

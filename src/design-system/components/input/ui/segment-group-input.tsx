@@ -1,4 +1,4 @@
-// src/design-system/components/input/ui/segmented-control.tsx
+// src/design-system/components/input/ui/segment-group-input.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { SegmentGroupInputProps } from "@/design-system/components/input/types/segmented-control.type";
