@@ -5,7 +5,8 @@ export type BaseLayerStyleKey =
   | "plain-light"
   | "plain-dark"
   | "plain-adaptive"
-  | "satellite";
+  | "satellite"
+  | "topo";
 
 export type BaseLayerOption = {
   thumbnail?: string;

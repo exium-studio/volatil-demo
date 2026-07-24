@@ -22,8 +22,8 @@ export const OPENFREEMAP_LIBERTY_STYLE_URL =
 // - Vector styles (OpenFreeMap Liberty) don't have this problem — geometry
 //   scales without quality loss, so no cap needed here.
 
-const CARTO_MAX_ZOOM = 20;
-const ESRI_MAX_ZOOM = 19;
+const SOURCE_CARTO_MAX_ZOOM = 20;
+const SOURCE_ESRI_MAX_ZOOM = 17;
 
 const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
   version: 8,
@@ -38,7 +38,7 @@ const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
         "https://d.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
       ],
       tileSize: 256,
-      maxzoom: CARTO_MAX_ZOOM,
+      maxzoom: SOURCE_CARTO_MAX_ZOOM,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
     },
@@ -49,7 +49,7 @@ const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
       type: "raster",
       source: "carto-positron",
       minzoom: 0,
-      maxzoom: CARTO_MAX_ZOOM,
+      maxzoom: 24,
     },
   ],
 };
@@ -67,7 +67,7 @@ const CARTO_DARK_MATTER_STYLE: maplibregl.StyleSpecification = {
         "https://d.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
       ],
       tileSize: 256,
-      maxzoom: CARTO_MAX_ZOOM,
+      maxzoom: SOURCE_CARTO_MAX_ZOOM,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
     },
@@ -78,7 +78,7 @@ const CARTO_DARK_MATTER_STYLE: maplibregl.StyleSpecification = {
       type: "raster",
       source: "carto-dark",
       minzoom: 0,
-      maxzoom: CARTO_MAX_ZOOM,
+      maxzoom: 24,
     },
   ],
 };
@@ -93,9 +93,18 @@ const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       ],
       tileSize: 256,
-      maxzoom: ESRI_MAX_ZOOM,
+      maxzoom: SOURCE_ESRI_MAX_ZOOM,
       attribution:
         'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a> &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    },
+    "terrain-dem": {
+      type: "raster-dem",
+      tiles: [
+        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+      ],
+      encoding: "terrarium",
+      tileSize: 256,
+      maxzoom: 15,
     },
   },
   layers: [
@@ -104,7 +113,7 @@ const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
       type: "raster",
       source: "esri-satellite",
       minzoom: 0,
-      maxzoom: ESRI_MAX_ZOOM,
+      maxzoom: 24,
     },
   ],
 };
@@ -122,8 +131,9 @@ export const MAP_BASE_LAYER_MAP = {
       light: CARTO_POSITRON_STYLE,
       dark: CARTO_POSITRON_STYLE,
     },
-    maxZoom: CARTO_MAX_ZOOM,
+    maxZoom: 24,
   },
+
   "plain-dark": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_dark.png`,
     label: "Plain Dark",
@@ -136,8 +146,9 @@ export const MAP_BASE_LAYER_MAP = {
       light: CARTO_DARK_MATTER_STYLE,
       dark: CARTO_DARK_MATTER_STYLE,
     },
-    maxZoom: CARTO_MAX_ZOOM,
+    maxZoom: 24,
   },
+
   "plain-adaptive": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_adaptive.png`,
     label: "Plain Adaptive",
@@ -150,8 +161,9 @@ export const MAP_BASE_LAYER_MAP = {
       light: CARTO_POSITRON_STYLE,
       dark: CARTO_DARK_MATTER_STYLE,
     },
-    maxZoom: CARTO_MAX_ZOOM,
+    maxZoom: 24,
   },
+
   color: {
     thumbnail: `${IMAGES_PATH}/base_map_styles/colorful.png`,
     label: "Color",
@@ -164,8 +176,9 @@ export const MAP_BASE_LAYER_MAP = {
       light: OPENFREEMAP_LIBERTY_STYLE_URL,
       dark: OPENFREEMAP_LIBERTY_STYLE_URL,
     },
-    maxZoom: 20,
+    maxZoom: 24,
   },
+
   satellite: {
     thumbnail: `${IMAGES_PATH}/base_map_styles/satellite.png`,
     label: "Satellite",
@@ -178,7 +191,93 @@ export const MAP_BASE_LAYER_MAP = {
       light: ESRI_SATELLITE_STYLE,
       dark: ESRI_SATELLITE_STYLE,
     },
-    maxZoom: ESRI_MAX_ZOOM,
+    maxZoom: 24,
+  },
+
+  topo: {
+    thumbnail: `${IMAGES_PATH}/base_map_styles/plain_adaptive.png`, // Fallback using an existing thumbnail
+    label: "Terrain/Topo",
+    description: "Peta topografi 3D dengan kontur ketinggian",
+    attributions: [
+      'Kartografi &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener noreferrer">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">CC-BY-SA</a>)',
+      'Data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+      'DEM &copy; <a href="https://github.com/tilezen/joerd" target="_blank" rel="noopener noreferrer">Tilezen Joerd</a>',
+    ],
+    style: {
+      light: {
+        version: 8,
+        name: "OpenTopoMap Terrain",
+        sources: {
+          opentopomap: {
+            type: "raster",
+            tiles: [
+              "https://a.tile.opentopomap.org/{z}/{x}/{y}.png",
+              "https://b.tile.opentopomap.org/{z}/{x}/{y}.png",
+              "https://c.tile.opentopomap.org/{z}/{x}/{y}.png",
+            ],
+            tileSize: 256,
+            maxzoom: 17,
+            attribution:
+              "Kartografi &copy; OpenTopoMap (CC-BY-SA), SRTM | Map data &copy; OpenStreetMap contributors",
+          },
+          "topo-dem": {
+            type: "raster-dem",
+            tiles: [
+              "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+            ],
+            encoding: "terrarium",
+            tileSize: 256,
+            maxzoom: 15,
+          },
+        },
+        layers: [
+          {
+            id: "opentopomap-layer",
+            type: "raster",
+            source: "opentopomap",
+            minzoom: 0,
+            maxzoom: 24,
+          },
+        ],
+      },
+      dark: {
+        version: 8,
+        name: "OpenTopoMap Terrain Dark",
+        sources: {
+          opentopomap: {
+            type: "raster",
+            tiles: [
+              "https://a.tile.opentopomap.org/{z}/{x}/{y}.png",
+              "https://b.tile.opentopomap.org/{z}/{x}/{y}.png",
+              "https://c.tile.opentopomap.org/{z}/{x}/{y}.png",
+            ],
+            tileSize: 256,
+            maxzoom: 17,
+            attribution:
+              "Kartografi &copy; OpenTopoMap (CC-BY-SA), SRTM | Map data &copy; OpenStreetMap contributors",
+          },
+          "topo-dem": {
+            type: "raster-dem",
+            tiles: [
+              "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+            ],
+            encoding: "terrarium",
+            tileSize: 256,
+            maxzoom: 15,
+          },
+        },
+        layers: [
+          {
+            id: "opentopomap-layer",
+            type: "raster",
+            source: "opentopomap",
+            minzoom: 0,
+            maxzoom: 24,
+          },
+        ],
+      },
+    },
+    maxZoom: 24,
   },
 } as const satisfies Record<BaseLayerStyleKey, BaseLayerOption>;
 

@@ -2,7 +2,6 @@
 
 import { Box } from "@/design-system/components/layout/ui/box";
 import {
-  getBaseLayerOption,
   getBaseLayerStyle,
   OPENFREEMAP_LIBERTY_STYLE_URL,
 } from "@/design-system/components/map/constants/map-base-layer-style.constant";
@@ -75,6 +74,18 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     const applyGlobe = () => {
       instance.setProjection({ type: "globe" });
       applyCustomPaintOverrides(instance);
+
+      // Apply 3D topo if the selected style is topo or satellite
+      if (activeStyleKey === "topo" || activeStyleKey === "satellite") {
+        if (instance.getSource("terrain-dem")) {
+          instance.setTerrain({
+            source: "terrain-dem",
+            exaggeration: 1.5,
+          });
+        }
+      } else {
+        instance.setTerrain(null);
+      }
     };
 
     // fires after initial load AND after every map.setStyle() call.
@@ -100,13 +111,6 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     if (appliedStyleRef.current === currentStyle) return;
     appliedStyleRef.current = currentStyle;
     map.setStyle(currentStyle);
-
-    const targetMaxZoom = getBaseLayerOption(activeStyleKey).maxZoom;
-    map.setMaxZoom(targetMaxZoom);
-
-    if (map.getZoom() > targetMaxZoom) {
-      map.easeTo({ zoom: targetMaxZoom, duration: 300 });
-    }
   }, [map, currentStyle, activeStyleKey]);
 
   useMapLayers(map, layers);
