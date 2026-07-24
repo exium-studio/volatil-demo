@@ -1,10 +1,12 @@
 // src/design-system/components/map/ui/map-controls.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { useGeolocation } from "@/design-system/components/map/hooks/use-geolocation";
-import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map-base-layer-select";
+import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map-controls/map-base-layer-select";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import {
   CompassIcon,
   LocateFixedIcon,
@@ -18,9 +20,6 @@ interface MapControlsProps {
 }
 
 export const MapControls = ({ map }: MapControlsProps) => {
-  // Stores
-  const { theme } = useThemeStore();
-
   // Hooks
   const { isActive, isLocating, toggle } = useGeolocation(map);
 
@@ -38,41 +37,71 @@ export const MapControls = ({ map }: MapControlsProps) => {
   };
 
   return (
-    <VStack position={"absolute"} bottom={2.5} right={2.5} gap={"8px"}>
-      <VStack bg={"bg.body"} rounded={theme.radii.container} p={1}>
+    <HStack
+      align={"center"}
+      justify={"space-between"}
+      position={"absolute"}
+      bottom={0}
+      left={0}
+      gap={2}
+      w={"full"}
+      p={4}
+    >
+      <MapConrolContainer>
         <MapBaseLayerSelect />
-      </VStack>
+      </MapConrolContainer>
 
-      <VStack bg={"bg.body"} rounded={theme.radii.container} p={1}>
-        <IconButton aria-label={"Zoom in"} size={"sm"} onClick={zoomIn}>
-          <ZoomInIcon size={16} />
-        </IconButton>
+      <HStack gap={2}>
+        <MapConrolContainer>
+          <IconButton aria-label={"Zoom out"} size={"sm"} onClick={zoomOut}>
+            <ZoomOutIcon />
+          </IconButton>
 
-        <IconButton aria-label={"Zoom out"} size={"sm"} onClick={zoomOut}>
-          <ZoomOutIcon size={16} />
-        </IconButton>
-      </VStack>
+          <ClampedP fontSize={"sm"}>{map?.getZoom().toFixed(1)}</ClampedP>
 
-      <VStack bg={"bg.body"} rounded={theme.radii.container} p={1}>
-        <IconButton
-          aria-label={"Reset bearing"}
-          size={"sm"}
-          onClick={resetNorth}
-        >
-          <CompassIcon size={16} />
-        </IconButton>
+          <IconButton aria-label={"Zoom in"} size={"sm"} onClick={zoomIn}>
+            <ZoomInIcon />
+          </IconButton>
+        </MapConrolContainer>
 
-        <IconButton
-          aria-label={isActive ? "Turn off my location" : "Show my location"}
-          variant={isActive ? "solid" : "ghost"}
-          colorPalette={isActive ? "blue" : "gray"}
-          size={"sm"}
-          loading={isLocating}
-          onClick={toggle}
-        >
-          <LocateFixedIcon size={16} />
-        </IconButton>
-      </VStack>
-    </VStack>
+        <MapConrolContainer>
+          <IconButton
+            aria-label={isActive ? "Turn off my location" : "Show my location"}
+            variant={isActive ? "solid" : "ghost"}
+            colorPalette={isActive ? "blue" : "gray"}
+            size={"sm"}
+            loading={isLocating}
+            onClick={toggle}
+          >
+            <LocateFixedIcon />
+          </IconButton>
+        </MapConrolContainer>
+
+        <MapConrolContainer>
+          <IconButton
+            aria-label={"Reset north"}
+            size={"sm"}
+            onClick={resetNorth}
+          >
+            <CompassIcon />
+          </IconButton>
+        </MapConrolContainer>
+      </HStack>
+    </HStack>
+  );
+};
+
+const MapConrolContainer = (props: StackProps) => {
+  // Stores
+  const { theme } = useThemeStore();
+
+  return (
+    <HStack
+      align={"center"}
+      bg={"bg.body"}
+      rounded={theme.radii.container}
+      p={1}
+      {...props}
+    />
   );
 };
