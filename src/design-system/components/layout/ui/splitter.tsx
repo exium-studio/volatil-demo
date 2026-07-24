@@ -10,7 +10,7 @@ import type {
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { t } from "@/shared/libs/i18n";
 import { Splitter as ChakraSplitter } from "@chakra-ui/react";
-import { GripVertical } from "lucide-react";
+import { GripHorizontal, GripVertical } from "lucide-react";
 import { forwardRef } from "react";
 
 const SplitterRoot = forwardRef<HTMLDivElement, SplitterRootProps>(
@@ -40,47 +40,56 @@ const SplitterResizeTrigger = forwardRef<
 
   return (
     <ChakraSplitter.Context>
-      {(context) => (
-        <Tooltip
-          content={t["common.splitter_trigger_helper"]()}
-          positioning={{
-            placement: "right",
-          }}
-        >
-          <ChakraSplitter.ResizeTrigger
-            ref={ref}
-            className={"group"}
-            transition={"200ms"}
-            w={"8px"}
-            _hover={{
-              bg: "border",
-            }}
-            onDoubleClick={() => {
-              context.resetSizes();
-            }}
-            {...restProps}
-          >
-            <Splitter.ResizeTriggerIndicator
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              bg={"bg.body"}
-              w={"16px"}
-              h={"80px"}
-              opacity={0}
-              transform={"translateX(-8px)"}
-              transition={"200ms"}
-              _groupHover={{
-                opacity: 1,
-              }}
-            >
-              <AppIcon icon={GripVertical} size={"sm"} color={"fg.subtle"} />
-            </Splitter.ResizeTriggerIndicator>
+      {(context) => {
+        const isVertical = context.orientation === "vertical";
 
-            <Splitter.ResizeTriggerSeparator bg={"border"} />
-          </ChakraSplitter.ResizeTrigger>
-        </Tooltip>
-      )}
+        return (
+          <Tooltip
+            content={t["common.splitter_trigger_helper"]()}
+            positioning={{
+              placement: isVertical ? "top" : "right",
+            }}
+          >
+            <ChakraSplitter.ResizeTrigger
+              ref={ref}
+              className={"group"}
+              transition={"200ms"}
+              w={isVertical ? "full" : "8px"}
+              h={isVertical ? "8px" : "full"}
+              _hover={{
+                bg: "border",
+              }}
+              onDoubleClick={() => {
+                context.resetSizes();
+              }}
+              {...restProps}
+            >
+              <Splitter.ResizeTriggerIndicator
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                bg={"bg.body"}
+                w={isVertical ? "80px" : "16px"}
+                h={isVertical ? "16px" : "80px"}
+                opacity={0}
+                transform={isVertical ? "translateY(-8px)" : "translateX(-8px)"}
+                transition={"200ms"}
+                _groupHover={{
+                  opacity: 1,
+                }}
+              >
+                <AppIcon
+                  icon={isVertical ? GripHorizontal : GripVertical}
+                  size={"sm"}
+                  color={"fg.subtle"}
+                />
+              </Splitter.ResizeTriggerIndicator>
+
+              <Splitter.ResizeTriggerSeparator bg={"border"} />
+            </ChakraSplitter.ResizeTrigger>
+          </Tooltip>
+        );
+      }}
     </ChakraSplitter.Context>
   );
 });
