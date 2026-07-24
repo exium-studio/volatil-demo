@@ -322,6 +322,9 @@ const Content = () => {
           "radial-gradient(circle at 50% 50%, #26262e 0%, #17171a 60%, #111111 100%)",
         ].join(", ")}
         bgSize={"200px 200px, 250px 250px, 300px 300px, 350px 350px, 100% 100%"}
+        borderLeft={!isSmallViewport ? "1px solid" : undefined}
+        borderTop={isSmallViewport ? "1px solid" : undefined}
+        borderColor={"border"}
       >
         <BaseMap
           layers={MAP_LAYERS}
