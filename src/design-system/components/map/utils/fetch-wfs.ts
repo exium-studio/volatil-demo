@@ -1,6 +1,6 @@
 // src/design-system/components/map/utils/fetch-wfs.ts
 
-import type { FeatureCollection } from "geojson";
+import type GeoJSON from "geojson";
 import {
   WFS_BASE_URL,
   WFS_OUTPUT_FORMAT,
@@ -21,7 +21,7 @@ export const fetchWfs = async ({
   typeName,
   bbox,
   signal,
-}: FetchWfsParams): Promise<FeatureCollection> => {
+}: FetchWfsParams): Promise<GeoJSON.FeatureCollection> => {
   const url = new URL(WFS_BASE_URL);
   url.searchParams.set("service", "WFS");
   url.searchParams.set("version", WFS_VERSION);
@@ -40,5 +40,5 @@ export const fetchWfs = async ({
     throw new Error(`WFS request failed for "${typeName}": ${res.status}`);
   }
 
-  return res.json() as Promise<FeatureCollection>;
+  return res.json() as Promise<GeoJSON.FeatureCollection>;
 };

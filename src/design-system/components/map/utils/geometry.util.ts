@@ -1,6 +1,6 @@
 // src/design-system/components/map/utils/geometry.util.ts
 
-import type { Feature, Polygon } from "geojson";
+import type GeoJSON from "geojson";
 import type { DrawPoint } from "@/design-system/components/map/types/map.type";
 
 interface PixelPoint {
@@ -31,7 +31,9 @@ export const closePolygonRing = (points: DrawPoint[]): DrawPoint[] => {
 };
 
 /** Converts accumulated draw points into a GeoJSON Polygon feature. */
-export const toPolygonFeature = (points: DrawPoint[]): Feature<Polygon> => {
+export const toPolygonFeature = (
+  points: DrawPoint[],
+): GeoJSON.Feature<GeoJSON.Polygon> => {
   const ring = closePolygonRing(points);
 
   return {
