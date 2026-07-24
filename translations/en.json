@@ -10,7 +10,9 @@
       "my_data": "My Data",
       "purchase_history": "Purchase History",
 
-      "help": "Support Tickets"
+      "notifications": "Notifications",
+      "help": "Support Tickets",
+      "profile": "Profile"
     }
   },
 
