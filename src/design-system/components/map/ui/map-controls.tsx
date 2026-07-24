@@ -1,41 +1,14 @@
 // src/design-system/components/map/ui/map-controls.tsx
 
-import { IconButton } from "@/design-system/components/button/ui/button";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { useGeolocation } from "@/design-system/components/map/hooks/use-geolocation";
-import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map-controls/map-base-layer-select";
-import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map-controls/base-map.base-layer-select";
+import { BaseMapCompass } from "@/design-system/components/map/ui/map-controls/base-map.compass";
+import { BaseMapLocate } from "@/design-system/components/map/ui/map-controls/base-map.locate";
+import { BaseMapZoomControl } from "@/design-system/components/map/ui/map-controls/base-map.zoom-control";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import {
-  CompassIcon,
-  LocateFixedIcon,
-  ZoomInIcon,
-  ZoomOutIcon,
-} from "lucide-react";
-import type maplibregl from "maplibre-gl";
 
-interface MapControlsProps {
-  map: maplibregl.Map | null;
-}
-
-export const MapControls = ({ map }: MapControlsProps) => {
-  // Hooks
-  const { isActive, isLocating, toggle } = useGeolocation(map);
-
-  const resetNorth = () => {
-    map?.resetNorth();
-    map?.resetNorthPitch();
-  };
-
-  const zoomIn = () => {
-    map?.zoomIn();
-  };
-
-  const zoomOut = () => {
-    map?.zoomOut();
-  };
-
+export const MapControls = (props: StackProps) => {
   return (
     <HStack
       align={"center"}
@@ -46,46 +19,18 @@ export const MapControls = ({ map }: MapControlsProps) => {
       gap={2}
       w={"full"}
       p={4}
+      {...props}
     >
       <MapConrolContainer>
         <MapBaseLayerSelect />
       </MapConrolContainer>
 
       <HStack gap={2}>
-        <MapConrolContainer>
-          <IconButton aria-label={"Zoom out"} size={"sm"} onClick={zoomOut}>
-            <ZoomOutIcon />
-          </IconButton>
+        <BaseMapZoomControl />
 
-          <ClampedP fontSize={"sm"}>{map?.getZoom().toFixed(1)}</ClampedP>
+        <BaseMapLocate />
 
-          <IconButton aria-label={"Zoom in"} size={"sm"} onClick={zoomIn}>
-            <ZoomInIcon />
-          </IconButton>
-        </MapConrolContainer>
-
-        <MapConrolContainer>
-          <IconButton
-            aria-label={isActive ? "Turn off my location" : "Show my location"}
-            variant={isActive ? "solid" : "ghost"}
-            colorPalette={isActive ? "blue" : "gray"}
-            size={"sm"}
-            loading={isLocating}
-            onClick={toggle}
-          >
-            <LocateFixedIcon />
-          </IconButton>
-        </MapConrolContainer>
-
-        <MapConrolContainer>
-          <IconButton
-            aria-label={"Reset north"}
-            size={"sm"}
-            onClick={resetNorth}
-          >
-            <CompassIcon />
-          </IconButton>
-        </MapConrolContainer>
+        <BaseMapCompass />
       </HStack>
     </HStack>
   );

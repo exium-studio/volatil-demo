@@ -14,18 +14,48 @@ import { useMapLayers } from "@/design-system/components/map/hooks/use-map-layer
 import { useMapResizeObserver } from "@/design-system/components/map/hooks/use-map-resize-observer";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
 import type { BaseMapProps } from "@/design-system/components/map/types/base-map.type";
-import { MapAttribution } from "@/design-system/components/map/ui/map-attribution";
-import { MapControls } from "@/design-system/components/map/ui/map-controls";
-import { MapDrawControls } from "@/design-system/components/map/ui/map-draw-controls";
+import { BaseMapOverlay } from "@/design-system/components/map/ui/base-map.overlay";
 import { applyCustomPaintOverrides } from "@/design-system/components/map/utils/apply-custom-paint-overrides";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+// -------------------------------------------------------------------------------------
+
+export type BaseMapContextValue = {
+  map: maplibregl.Map | null;
+};
+
+export const BaseMapContext = createContext<BaseMapContextValue | null>(null);
+
+export function useBaseMapContext() {
+  const context = useContext(BaseMapContext);
+
+  if (!context) {
+    throw new Error(
+      "useBaseMapContext must be used within BaseMapContextProvider",
+    );
+  }
+
+  return context;
+}
+
+// -------------------------------------------------------------------------------------
 
 export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
+  const appliedStyleRef = useRef<string | maplibregl.StyleSpecification | null>(
+    null,
+  );
 
   // Hooks
   const { colorMode } = useColorMode();
@@ -40,14 +70,11 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     (activeStyleKey === "color"
       ? OPENFREEMAP_LIBERTY_STYLE_URL
       : getBaseLayerStyle(activeStyleKey, colorMode));
-
-  // Track which style is currently loaded so we can skip redundant setStyle()
-  // calls. Seeded with currentStyle because the map is initialised with it —
-  // prevents the "Change base layer style" effect from triggering an extra
-  // style.load on first render (which would reset globe → mercator → globe
-  // causing the visible flat-map flash on refresh).
-  const appliedStyleRef = useRef<string | maplibregl.StyleSpecification | null>(
-    null,
+  const contextValue: BaseMapContextValue = useMemo(
+    () => ({
+      map,
+    }),
+    [map],
   );
 
   useEffect(() => {
@@ -58,7 +85,6 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
       style: currentStyle,
       center: DEFAULT_MAP_CENTER,
       zoom: DEFAULT_MAP_ZOOM,
-      // maxZoom:currentStyle,
       dragRotate: true,
       touchZoomRotate: true,
       pitchWithRotate: true,
@@ -118,18 +144,17 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
   useMapResizeObserver(map, containerRef);
 
   return (
-    <Box position={"relative"} width={"100%"} height={"100%"}>
-      <Box
-        ref={containerRef}
-        width={"100%"}
-        height={"100%"}
-        data-color-mode={colorMode}
-      />
+    <BaseMapContext.Provider value={contextValue}>
+      <Box position={"relative"} width={"100%"} height={"100%"}>
+        <Box
+          ref={containerRef}
+          width={"100%"}
+          height={"100%"}
+          data-color-mode={colorMode}
+        />
 
-      <MapControls map={map} />
-      <MapDrawControls />
-
-      <MapAttribution />
-    </Box>
+        <BaseMapOverlay />
+      </Box>
+    </BaseMapContext.Provider>
   );
 };
