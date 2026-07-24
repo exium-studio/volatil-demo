@@ -42,6 +42,15 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
       ? OPENFREEMAP_LIBERTY_STYLE_URL
       : getBaseLayerStyle(activeStyleKey, colorMode));
 
+  // Track which style is currently loaded so we can skip redundant setStyle()
+  // calls. Seeded with currentStyle because the map is initialised with it —
+  // prevents the "Change base layer style" effect from triggering an extra
+  // style.load on first render (which would reset globe → mercator → globe
+  // causing the visible flat-map flash on refresh).
+  const appliedStyleRef = useRef<string | maplibregl.StyleSpecification | null>(
+    null,
+  );
+
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -57,17 +66,29 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
       attributionControl: false,
     });
 
-    // fires after initial load AND after every map.setStyle() call.
-    instance.on("style.load", () => {
+    // Seed the ref so the style-change effect skips the initial redundant call.
+    appliedStyleRef.current = currentStyle;
+
+    // Globe must be re-applied after every style swap (setStyle() triggers a
+    // new style.load, which resets the projection back to mercator).
+    // Also called on initial "load" so a hard-refresh never loses the globe.
+    const applyGlobe = () => {
       instance.setProjection({ type: "globe" });
       applyCustomPaintOverrides(instance);
-    });
+    };
 
-    instance.once("load", () => setMap(instance));
+    // fires after initial load AND after every map.setStyle() call.
+    instance.on("style.load", applyGlobe);
+
+    instance.once("load", () => {
+      applyGlobe();
+      setMap(instance);
+    });
 
     return () => {
       instance.remove();
       setMap(null);
+      appliedStyleRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -75,6 +96,9 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
   // Change base layer style effect
   useEffect(() => {
     if (!map) return;
+    // Skip if this style is already applied (e.g. first render after map init).
+    if (appliedStyleRef.current === currentStyle) return;
+    appliedStyleRef.current = currentStyle;
     map.setStyle(currentStyle);
 
     const targetMaxZoom = getBaseLayerOption(activeStyleKey).maxZoom;
