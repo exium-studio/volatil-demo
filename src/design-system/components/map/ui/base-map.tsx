@@ -30,13 +30,17 @@ type BaseMapProps = {
 };
 
 export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
+  // Refs
   const containerRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<maplibregl.Map | null>(null);
 
+  // Hooks
   const { colorMode } = useColorMode();
-
   const { activeStyleId } = useMapBaseLayerStore();
 
+  // States
+  const [map, setMap] = useState<maplibregl.Map | null>(null);
+
+  // Resolved Values
   const currentStyle =
     styleUrl ??
     (activeStyleId === "color"
