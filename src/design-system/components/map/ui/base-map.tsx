@@ -77,6 +77,13 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     [map],
   );
 
+  // Track the active style key in a ref so the event listeners in the map init effect
+  // can always access the freshest value without stale closures during HMR/updates.
+  const activeStyleKeyRef = useRef(activeStyleKey);
+  useEffect(() => {
+    activeStyleKeyRef.current = activeStyleKey;
+  }, [activeStyleKey]);
+
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -101,8 +108,9 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
       instance.setProjection({ type: "globe" });
       applyCustomPaintOverrides(instance);
 
+      const activeKey = activeStyleKeyRef.current;
       // Apply 3D topo if the selected style is topo or satellite
-      if (activeStyleKey === "topo" || activeStyleKey === "satellite") {
+      if (activeKey === "topo" || activeKey === "satellite") {
         if (instance.getSource("terrain-dem")) {
           instance.setTerrain({
             source: "terrain-dem",

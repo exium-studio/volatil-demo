@@ -141,9 +141,11 @@ export const useMapDraw = (
     };
   }, [map]);
 
-  // Sync in-progress geometry to the preview source whenever points/isDrawing change.
   useEffect(() => {
     if (!map) return;
+    // Guard: map.style becomes undefined after map.remove() (unmounting)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(map as any).style) return;
 
     const source = map.getSource(DRAW_SOURCE_ID) as
       | maplibregl.GeoJSONSource
