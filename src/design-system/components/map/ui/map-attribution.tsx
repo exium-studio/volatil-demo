@@ -11,10 +11,10 @@ import { InfoIcon } from "lucide-react";
 export const MapAttribution = () => {
   // Stores
   const { theme } = useThemeStore();
-  const { activeStyleId } = useMapBaseLayerStore();
+  const { activeStyleKey } = useMapBaseLayerStore();
 
   const activeBaseLayer = BASE_LAYER_OPTIONS.find(
-    (option) => option.id === activeStyleId,
+    (option) => option.id === activeStyleKey,
   );
   const attributions = activeBaseLayer?.attributions ?? [];
 

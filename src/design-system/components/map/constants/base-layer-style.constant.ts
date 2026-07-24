@@ -153,10 +153,10 @@ export const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   Returns the MapLibre GL style definition based on selected basemap ID and current theme color mode.
  */
 export const getBaseLayerStyle = (
-  styleId: BaseLayerStyleKey,
+  styleKey: BaseLayerStyleKey,
   colorMode: "light" | "dark",
 ): maplibregl.StyleSpecification => {
-  switch (styleId) {
+  switch (styleKey) {
     case "color":
       // OpenFreeMap Liberty is a URL-based style, handled separately in BaseMap
       return CARTO_POSITRON_STYLE; // fallback — overridden by string URL in BaseMap

@@ -35,7 +35,7 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
 
   // Hooks
   const { colorMode } = useColorMode();
-  const { activeStyleId } = useMapBaseLayerStore();
+  const { activeStyleKey } = useMapBaseLayerStore();
 
   // States
   const [map, setMap] = useState<maplibregl.Map | null>(null);
@@ -43,9 +43,9 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
   // Resolved Values
   const currentStyle =
     styleUrl ??
-    (activeStyleId === "color"
+    (activeStyleKey === "color"
       ? OPENFREEMAP_LIBERTY_STYLE_URL
-      : getBaseLayerStyle(activeStyleId, colorMode));
+      : getBaseLayerStyle(activeStyleKey, colorMode));
 
   useEffect(() => {
     if (!containerRef.current) return;

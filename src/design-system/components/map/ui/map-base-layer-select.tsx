@@ -33,7 +33,7 @@ const BASE_LAYER_ICON_MAP: Record<BaseLayerStyleKey, ElementType> = {
 
 export const MapBaseLayerSelect = () => {
   // Stores
-  const { activeStyleId, setActiveStyleId } = useMapBaseLayerStore();
+  const { activeStyleKey, setActiveStyleKey } = useMapBaseLayerStore();
   const { theme } = useThemeStore();
 
   return (
@@ -74,7 +74,7 @@ export const MapBaseLayerSelect = () => {
         <Popover.Body p={2}>
           <VStack gap={1} align={"stretch"}>
             {BASE_LAYER_OPTIONS.map((item) => {
-              const isSelected = activeStyleId === item.id;
+              const isSelected = activeStyleKey === item.id;
               const IconComp = BASE_LAYER_ICON_MAP[item.id];
 
               return (
@@ -92,7 +92,7 @@ export const MapBaseLayerSelect = () => {
                       : "bg.muted",
                   }}
                   transition={"200ms"}
-                  onClick={() => setActiveStyleId(item.id)}
+                  onClick={() => setActiveStyleKey(item.id)}
                   justify={"space-between"}
                   align={"center"}
                 >
