@@ -319,7 +319,7 @@ const Content = () => {
           "radial-gradient(1.5px 1.5px at 60px 120px, rgba(255, 255, 255, 0.6) 50%, transparent)",
           "radial-gradient(1px 1px at 150px 75px, #fff 50%, transparent)",
           "radial-gradient(2px 2px at 280px 220px, rgba(255, 255, 255, 0.4) 50%, transparent)",
-          "radial-gradient(circle at 50% 50%, #26262e 0%, #111112 60%, #000000 100%)",
+          "radial-gradient(circle at 50% 50%, #26262e 0%, #17171a 60%, #111111 100%)",
         ].join(", ")}
         bgSize={"200px 200px, 250px 250px, 300px 300px, 350px 350px, 100% 100%"}
       >
