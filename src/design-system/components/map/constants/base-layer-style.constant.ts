@@ -10,6 +10,21 @@ import type maplibregl from "maplibre-gl";
 export const OPENFREEMAP_LIBERTY_STYLE_URL =
   "https://tiles.openfreemap.org/styles/liberty";
 
+// -----------------------------------------------------------------
+// Max zoom per provider — declared once, reused in both the style's
+// source/layer config AND the option's `maxZoom` field below, so there's
+// only one number to update per provider.
+//
+// - CARTO raster (Positron/Dark Matter): officially supports z0–20.
+// - Esri World Imagery: real-world satellite coverage varies by region —
+//   many areas have no data past z19, so 19 is the safe global default
+//   (higher zooms overzoom visually instead of requesting missing tiles).
+// - Vector styles (OpenFreeMap Liberty) don't have this problem — geometry
+//   scales without quality loss, so no cap needed here.
+
+const CARTO_MAX_ZOOM = 20;
+const ESRI_MAX_ZOOM = 19;
+
 const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
   version: 8,
   name: "CARTO Positron",
@@ -23,6 +38,7 @@ const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
         "https://d.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
       ],
       tileSize: 256,
+      maxzoom: CARTO_MAX_ZOOM,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
     },
@@ -33,7 +49,7 @@ const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
       type: "raster",
       source: "carto-positron",
       minzoom: 0,
-      maxzoom: 20,
+      maxzoom: CARTO_MAX_ZOOM,
     },
   ],
 };
@@ -51,6 +67,7 @@ const CARTO_DARK_MATTER_STYLE: maplibregl.StyleSpecification = {
         "https://d.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
       ],
       tileSize: 256,
+      maxzoom: CARTO_MAX_ZOOM,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
     },
@@ -61,7 +78,7 @@ const CARTO_DARK_MATTER_STYLE: maplibregl.StyleSpecification = {
       type: "raster",
       source: "carto-dark",
       minzoom: 0,
-      maxzoom: 20,
+      maxzoom: CARTO_MAX_ZOOM,
     },
   ],
 };
@@ -76,6 +93,7 @@ const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
         "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       ],
       tileSize: 256,
+      maxzoom: ESRI_MAX_ZOOM,
       attribution:
         'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a> &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
     },
@@ -86,7 +104,7 @@ const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
       type: "raster",
       source: "esri-satellite",
       minzoom: 0,
-      maxzoom: 20,
+      maxzoom: ESRI_MAX_ZOOM,
     },
   ],
 };
@@ -104,6 +122,7 @@ export const BASE_LAYER_MAP = {
       light: OPENFREEMAP_LIBERTY_STYLE_URL,
       dark: OPENFREEMAP_LIBERTY_STYLE_URL,
     },
+    maxZoom: 20,
   },
   "plain-light": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_light.png`,
@@ -117,6 +136,7 @@ export const BASE_LAYER_MAP = {
       light: CARTO_POSITRON_STYLE,
       dark: CARTO_POSITRON_STYLE,
     },
+    maxZoom: CARTO_MAX_ZOOM,
   },
   "plain-dark": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_dark.png`,
@@ -130,6 +150,7 @@ export const BASE_LAYER_MAP = {
       light: CARTO_DARK_MATTER_STYLE,
       dark: CARTO_DARK_MATTER_STYLE,
     },
+    maxZoom: CARTO_MAX_ZOOM,
   },
   "plain-adaptive": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_adaptive.png`,
@@ -143,6 +164,7 @@ export const BASE_LAYER_MAP = {
       light: CARTO_POSITRON_STYLE,
       dark: CARTO_DARK_MATTER_STYLE,
     },
+    maxZoom: CARTO_MAX_ZOOM,
   },
   satellite: {
     thumbnail: `${IMAGES_PATH}/base_map_styles/satellite.png`,
@@ -156,6 +178,7 @@ export const BASE_LAYER_MAP = {
       light: ESRI_SATELLITE_STYLE,
       dark: ESRI_SATELLITE_STYLE,
     },
+    maxZoom: ESRI_MAX_ZOOM,
   },
 } as const satisfies Record<BaseLayerStyleKey, BaseLayerOption>;
 

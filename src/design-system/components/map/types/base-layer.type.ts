@@ -16,4 +16,5 @@ export type BaseLayerOption = {
     light: string | maplibregl.StyleSpecification;
     dark: string | maplibregl.StyleSpecification;
   };
+  maxZoom: number;
 };
