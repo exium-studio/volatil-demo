@@ -74,28 +74,21 @@ export const MapBaseLayerSelect = () => {
                 <VStack
                   key={styleKey}
                   align={"center"}
-                  gap={1}
+                  gap={2}
                   transition={"200ms"}
                 >
-                  <Center
-                    p={1}
-                    rounded={theme.radii.component}
-                    border={"1px solid"}
-                    borderColor={
-                      isSelected ? `${theme.colorPalette}.solid` : "transparent"
-                    }
-                    transition={"200ms"}
-                  >
-                    <Image
-                      src={item.thumbnail}
-                      aspectRatio={2 / 1}
-                      w={"100px"}
-                      objectFit={"cover"}
-                      rounded={`calc(${theme.radii.component} - 2px)`}
-                      cursor={"pointer"}
-                      onClick={() => setActiveStyleKey(styleKey)}
-                    />
-                  </Center>
+                  <Image
+                    src={item.thumbnail}
+                    aspectRatio={2 / 1}
+                    w={"120px"}
+                    objectFit={"cover"}
+                    rounded={`calc(${theme.radii.component} - 2px)`}
+                    cursor={"pointer"}
+                    outline={isSelected ? "2px solid" : undefined}
+                    outlineColor={`${theme.colorPalette}.solid`}
+                    outlineOffset={"2px"}
+                    onClick={() => setActiveStyleKey(styleKey)}
+                  />
 
                   <HStack align={"center"} justify={"center"} gap={1}>
                     <P fontSize={"sm"} whiteSpace={"nowrap"} lineHeight={"1.2"}>
