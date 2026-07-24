@@ -3,7 +3,7 @@
 import { SegmentGroup as ChakraSegmentGroup } from "@chakra-ui/react";
 import type { ComponentType } from "react";
 
-export type SegmentedControlOption = {
+export type SegmentGroupInputOption = {
   value: string;
   label?: string;
   leftIcon?: ComponentType;
@@ -11,8 +11,8 @@ export type SegmentedControlOption = {
   disabled?: boolean;
 };
 
-export type SegmentedControlProps = ChakraSegmentGroup.RootProps & {
-  options: SegmentedControlOption[];
+export type SegmentGroupInputProps = ChakraSegmentGroup.RootProps & {
+  options: SegmentGroupInputOption[];
   itemProps?: Omit<ChakraSegmentGroup.ItemProps, "value">;
   colorPalette?: string;
 };

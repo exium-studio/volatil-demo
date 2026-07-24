@@ -4,7 +4,7 @@ import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { SegmentedControl } from "@/design-system/components/input/ui/segmented-control";
+import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
@@ -216,7 +216,7 @@ const SidebarFooter = () => {
 
       <Separator my={2} />
 
-      <SegmentedControl
+      <SegmentGroupInput
         orientation={"vertical"}
         size={"xs"}
         w={"40px"}

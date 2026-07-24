@@ -1,7 +1,7 @@
 // src/features/auth/pages/signin.page.tsx
 
 import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
-import { SegmentedControl } from "@/design-system/components/input/ui/segmented-control";
+import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { PageContainer } from "@/design-system/components/layout/ui/page-container";
@@ -82,7 +82,7 @@ export const SigninPage = () => {
             </VStack>
 
             <VStack flex={1} gap={10} px={[0, null, 8]} mt={4}>
-              <SegmentedControl
+              <SegmentGroupInput
                 options={ROLE_OPTIONS}
                 defaultValue={"mitra"}
                 onValueChange={(details) => {

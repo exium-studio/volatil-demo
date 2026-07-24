@@ -1,15 +1,15 @@
 // src/design-system/components/input/ui/segmented-control.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { SegmentedControlProps } from "@/design-system/components/input/types/segmented-control.type";
+import type { SegmentGroupInputProps } from "@/design-system/components/input/types/segmented-control.type";
 import { SegmentGroup } from "@/design-system/components/input/ui/segment-group";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import * as React from "react";
 
-export const SegmentedControl = React.forwardRef<
+export const SegmentGroupInput = React.forwardRef<
   HTMLInputElement,
-  SegmentedControlProps
->(function SegmentedControl(props, ref) {
+  SegmentGroupInputProps
+>(function SegmentGroupInput(props, ref) {
   // Props
   const { options, itemProps, colorPalette, ...restProps } = props;
   const indicatorBg = colorPalette ? `${colorPalette}.solid` : undefined;
