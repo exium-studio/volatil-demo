@@ -130,6 +130,8 @@ export const useMapDraw = (
 
     return () => {
       map.off("style.load", setupPreviewLayers);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!(map as any).style) return;
       [DRAW_VERTEX_LAYER_ID, DRAW_LINE_LAYER_ID, DRAW_FILL_LAYER_ID].forEach(
         (id) => {
           if (map.getLayer(id)) map.removeLayer(id);
