@@ -1,13 +1,13 @@
 // src/design-system/components/map/utils/apply-custom-paint-overrides.ts
 
 const ROAD_COLORS = {
-  motorway: { fill: "#e2e2e5", casing: "#9aa0a6" },
-  trunkPrimary: { fill: "#eeeeee", casing: "#a8adb3" },
-  secondaryTertiary: { fill: "#ffffff", casing: "#c7cbd1" },
-  link: { fill: "#f0f0f0", casing: "#a8adb3" },
-  minor: { fill: "#ffffff", casing: "#d5d8dc" },
-  serviceTrack: { fill: "#ffffff", casing: "#c7cbd1" },
-  pathPedestrian: { fill: "#ffffff", casing: "#d5d8dc" },
+  motorway: { fill: "#c8c8cc", casing: "#7a8088" },
+  trunkPrimary: { fill: "#d4d4d4", casing: "#8a9098" },
+  secondaryTertiary: { fill: "#dedede", casing: "#a8adb3" },
+  link: { fill: "#d0d0d0", casing: "#8a9098" },
+  minor: { fill: "#e8e8e8", casing: "#b0b5bb" },
+  serviceTrack: { fill: "#e8e8e8", casing: "#a8adb3" },
+  pathPedestrian: { fill: "#e8e8e8", casing: "#b0b5bb" },
 } as const;
 
 // Building fill
