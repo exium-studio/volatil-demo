@@ -14,39 +14,13 @@ import { useMapLayers } from "@/design-system/components/map/hooks/use-map-layer
 import { useMapResizeObserver } from "@/design-system/components/map/hooks/use-map-resize-observer";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
 import type { BaseMapProps } from "@/design-system/components/map/types/base-map.type";
+import { BaseMapContext } from "@/design-system/components/map/contexts/base-map.context";
 import { BaseMapOverlay } from "@/design-system/components/map/ui/base-map.overlay";
 import { applyCustomPaintOverrides } from "@/design-system/components/map/utils/apply-custom-paint-overrides";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-
-// -------------------------------------------------------------------------------------
-
-export type BaseMapContextValue = {
-  map: maplibregl.Map | null;
-};
-
-export const BaseMapContext = createContext<BaseMapContextValue | null>(null);
-
-export function useBaseMapContext() {
-  const context = useContext(BaseMapContext);
-
-  if (!context) {
-    throw new Error(
-      "useBaseMapContext must be used within BaseMapContextProvider",
-    );
-  }
-
-  return context;
-}
+import { useEffect, useMemo, useRef, useState } from "react";
 
 // -------------------------------------------------------------------------------------
 
@@ -70,7 +44,7 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     (activeStyleKey === "color"
       ? OPENFREEMAP_LIBERTY_STYLE_URL
       : getBaseLayerStyle(activeStyleKey, colorMode));
-  const contextValue: BaseMapContextValue = useMemo(
+  const contextValue = useMemo(
     () => ({
       map,
     }),

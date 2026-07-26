@@ -2,7 +2,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { useGeolocation } from "@/design-system/components/map/hooks/use-geolocation";
-import { useBaseMapContext } from "@/design-system/components/map/ui/base-map";
+import { useBaseMapContext } from "@/design-system/components/map/contexts/base-map.context";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/base-map.overlay";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import {
