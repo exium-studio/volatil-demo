@@ -83,8 +83,8 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
       applyCustomPaintOverrides(instance);
 
       const activeKey = activeStyleKeyRef.current;
-      // Apply 3D topo if the selected style is topo or satellite
-      if (activeKey === "topo" || activeKey === "satellite") {
+      // Apply 3D terrain if the selected style is satellite
+      if (activeKey === "satellite") {
         if (instance.getSource("terrain-dem")) {
           instance.setTerrain({
             source: "terrain-dem",

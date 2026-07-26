@@ -4,31 +4,26 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { getBaseLayerOption } from "@/design-system/components/map/constants/map-base-layer-style.constant";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
+import { MapOverlayContainer } from "@/design-system/components/map/ui/base-map.overlay";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { InfoIcon } from "lucide-react";
 
 export const MapAttribution = () => {
   // Stores
-  const { theme } = useThemeStore();
   const { activeStyleKey } = useMapBaseLayerStore();
 
   const activeBaseLayer = getBaseLayerOption(activeStyleKey);
   const attributions = activeBaseLayer?.attributions ?? [];
 
   return (
-    <VStack
-      pos={"absolute"}
-      right={2}
-      top={2}
-      zIndex={10}
-      p={1}
-      bg={"bg.body"}
-      rounded={theme.radii.container}
-    >
+    <MapOverlayContainer>
       <Popover.Root>
         <Popover.Trigger>
-          <IconButton aria-label={"Map attribution"} size={"sm"}>
+          <IconButton
+            aria-label={"Map attribution"}
+            variant={"whiteAlphaGhost"}
+            size={"sm"}
+          >
             <AppIcon icon={InfoIcon} />
           </IconButton>
         </Popover.Trigger>
@@ -46,6 +41,6 @@ export const MapAttribution = () => {
           </Popover.Body>
         </Popover.Content>
       </Popover.Root>
-    </VStack>
+    </MapOverlayContainer>
   );
 };

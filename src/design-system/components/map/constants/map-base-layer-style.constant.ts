@@ -118,6 +118,43 @@ const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
+const TOPO_STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  name: "OpenTopoMap Terrain",
+  sources: {
+    opentopomap: {
+      type: "raster",
+      tiles: [
+        "https://a.tile.opentopomap.org/{z}/{x}/{y}.png",
+        "https://b.tile.opentopomap.org/{z}/{x}/{y}.png",
+        "https://c.tile.opentopomap.org/{z}/{x}/{y}.png",
+      ],
+      tileSize: 256,
+      maxzoom: 17,
+      attribution:
+        "Kartografi &copy; OpenTopoMap (CC-BY-SA), SRTM | Map data &copy; OpenStreetMap contributors",
+    },
+    "terrain-dem": {
+      type: "raster-dem",
+      tiles: [
+        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+      ],
+      encoding: "terrarium",
+      tileSize: 256,
+      maxzoom: 15,
+    },
+  },
+  layers: [
+    {
+      id: "opentopomap-layer",
+      type: "raster",
+      source: "opentopomap",
+      minzoom: 0,
+      maxzoom: 24,
+    },
+  ],
+};
+
 export const MAP_BASE_LAYER_MAP = {
   "plain-light": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_light.png`,
@@ -204,78 +241,8 @@ export const MAP_BASE_LAYER_MAP = {
       'DEM &copy; <a href="https://github.com/tilezen/joerd" target="_blank" rel="noopener noreferrer">Tilezen Joerd</a>',
     ],
     style: {
-      light: {
-        version: 8,
-        name: "OpenTopoMap Terrain",
-        sources: {
-          opentopomap: {
-            type: "raster",
-            tiles: [
-              "https://a.tile.opentopomap.org/{z}/{x}/{y}.png",
-              "https://b.tile.opentopomap.org/{z}/{x}/{y}.png",
-              "https://c.tile.opentopomap.org/{z}/{x}/{y}.png",
-            ],
-            tileSize: 256,
-            maxzoom: 17,
-            attribution:
-              "Kartografi &copy; OpenTopoMap (CC-BY-SA), SRTM | Map data &copy; OpenStreetMap contributors",
-          },
-          "topo-dem": {
-            type: "raster-dem",
-            tiles: [
-              "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
-            ],
-            encoding: "terrarium",
-            tileSize: 256,
-            maxzoom: 15,
-          },
-        },
-        layers: [
-          {
-            id: "opentopomap-layer",
-            type: "raster",
-            source: "opentopomap",
-            minzoom: 0,
-            maxzoom: 24,
-          },
-        ],
-      },
-      dark: {
-        version: 8,
-        name: "OpenTopoMap Terrain Dark",
-        sources: {
-          opentopomap: {
-            type: "raster",
-            tiles: [
-              "https://a.tile.opentopomap.org/{z}/{x}/{y}.png",
-              "https://b.tile.opentopomap.org/{z}/{x}/{y}.png",
-              "https://c.tile.opentopomap.org/{z}/{x}/{y}.png",
-            ],
-            tileSize: 256,
-            maxzoom: 17,
-            attribution:
-              "Kartografi &copy; OpenTopoMap (CC-BY-SA), SRTM | Map data &copy; OpenStreetMap contributors",
-          },
-          "topo-dem": {
-            type: "raster-dem",
-            tiles: [
-              "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
-            ],
-            encoding: "terrarium",
-            tileSize: 256,
-            maxzoom: 15,
-          },
-        },
-        layers: [
-          {
-            id: "opentopomap-layer",
-            type: "raster",
-            source: "opentopomap",
-            minzoom: 0,
-            maxzoom: 24,
-          },
-        ],
-      },
+      light: TOPO_STYLE,
+      dark: TOPO_STYLE,
     },
     maxZoom: 24,
   },

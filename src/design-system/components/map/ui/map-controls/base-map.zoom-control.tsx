@@ -1,10 +1,10 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
+import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { useBaseMapContext } from "@/design-system/components/map/contexts/base-map.context";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/base-map.overlay";
-import { ClampedP } from "@/design-system/components/typography/ui/p";
-import { ZoomInIcon, ZoomOutIcon } from "lucide-react";
+import { MinusIcon, PlusIcon } from "lucide-react";
 
 export const BaseMapZoomControl = (props: StackProps) => {
   // Contexts
@@ -20,15 +20,25 @@ export const BaseMapZoomControl = (props: StackProps) => {
 
   return (
     <MapOverlayContainer {...props}>
-      <IconButton aria-label={"Zoom out"} size={"sm"} onClick={zoomOut}>
-        <AppIcon icon={ZoomOutIcon} />
-      </IconButton>
+      <ButtonGroup attached color={"white"}>
+        <IconButton
+          aria-label={"Zoom out"}
+          variant={"whiteAlphaGhost"}
+          size={"sm"}
+          onClick={zoomOut}
+        >
+          <AppIcon icon={MinusIcon} />
+        </IconButton>
 
-      <ClampedP fontSize={"sm"}>{map?.getZoom().toFixed(1)}</ClampedP>
-
-      <IconButton aria-label={"Zoom in"} size={"sm"} onClick={zoomIn}>
-        <AppIcon icon={ZoomInIcon} />
-      </IconButton>
+        <IconButton
+          aria-label={"Zoom in"}
+          variant={"whiteAlphaGhost"}
+          size={"sm"}
+          onClick={zoomIn}
+        >
+          <AppIcon icon={PlusIcon} />
+        </IconButton>
+      </ButtonGroup>
     </MapOverlayContainer>
   );
 };

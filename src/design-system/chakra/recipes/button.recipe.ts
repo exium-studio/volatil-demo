@@ -36,6 +36,15 @@ export const buttonRecipe = defineRecipe({
           bg: "an3",
         },
       },
+
+      whiteAlphaGhost: {
+        _hover: {
+          bg: "whiteAlpha.100",
+        },
+        _active: {
+          bg: "whiteAlpha.200",
+        },
+      },
     },
   },
 });

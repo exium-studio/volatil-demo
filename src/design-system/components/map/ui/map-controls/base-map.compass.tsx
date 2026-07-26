@@ -34,12 +34,23 @@ export const BaseMapCompass = (props: StackProps) => {
   return (
     <MapOverlayContainer {...props}>
       <ToggleTip content={`${bearing}°`}>
-        <P mx={3} cursor={"pointer"}>
+        <P
+          w={"4ch"}
+          mx={2}
+          textAlign={"center"}
+          cursor={"pointer"}
+          whiteSpace={"nowrap"}
+        >
           <TNum>{bearing.toFixed(0)}</TNum>°
         </P>
       </ToggleTip>
 
-      <IconButton aria-label={"Reset north"} size={"sm"} onClick={resetNorth}>
+      <IconButton
+        aria-label={"Reset north"}
+        variant={"whiteAlphaGhost"}
+        size={"sm"}
+        onClick={resetNorth}
+      >
         <AppIcon
           icon={Navigation2Icon}
           fill={"red.500"}

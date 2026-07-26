@@ -24,7 +24,7 @@ export const BaseMapLocate = (props: StackProps) => {
     <MapOverlayContainer {...props}>
       <IconButton
         aria-label={isActive ? "Turn off my location" : "Show my location"}
-        variant={"ghost"}
+        variant={"whiteAlphaGhost"}
         size={"sm"}
         loading={isLocating}
         onClick={toggle}

@@ -1,5 +1,5 @@
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { MapAttribution } from "@/design-system/components/map/ui/map-attribution";
 import { MapControls } from "@/design-system/components/map/ui/map-controls";
 import { MapDrawControls } from "@/design-system/components/map/ui/map-draw-controls";
@@ -9,13 +9,23 @@ export type BaseMapOverlayProps = {};
 
 export const BaseMapOverlay = (_: BaseMapOverlayProps) => {
   return (
-    <>
-      <MapAttribution />
+    <VStack
+      justify={"space-between"}
+      position={"absolute"}
+      top={0}
+      left={0}
+      w={"full"}
+      h={"full"}
+      pointerEvents={"none"}
+    >
+      <HStack align={"start"} justify={"space-between"} p={4}>
+        <MapDrawControls />
 
-      <MapDrawControls />
+        <MapAttribution />
+      </HStack>
 
       <MapControls />
-    </>
+    </VStack>
   );
 };
 
@@ -26,9 +36,13 @@ export const MapOverlayContainer = (props: StackProps) => {
   return (
     <HStack
       align={"center"}
-      bg={"bg.body"}
-      rounded={theme.radii.container}
-      p={1}
+      bg={"blackAlpha.700"}
+      color={"white"}
+      rounded={theme.radii.component}
+      outline={"1px solid"}
+      outlineColor={"border.emphasized"}
+      backdropFilter={"blur(50px)"}
+      pointerEvents={"auto"}
       {...props}
     />
   );

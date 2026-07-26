@@ -9,12 +9,12 @@ import {
   getBaseLayerOption,
 } from "@/design-system/components/map/constants/map-base-layer-style.constant";
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
+import { MapOverlayContainer } from "@/design-system/components/map/ui/base-map.overlay";
 import { Image } from "@/design-system/components/media/ui/image";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { Box } from "@chakra-ui/react";
 
 export const MapBaseLayerSelect = () => {
   // Stores
@@ -34,7 +34,7 @@ export const MapBaseLayerSelect = () => {
       }}
     >
       <Popover.Trigger>
-        <Box>
+        <MapOverlayContainer>
           <Tooltip
             content={"Gaya Peta Base"}
             positioning={{ placement: "left" }}
@@ -42,13 +42,14 @@ export const MapBaseLayerSelect = () => {
             <Center cursor={"pointer"}>
               <Image
                 src={activeStyle.thumbnail}
-                aspectRatio={1}
-                w={"36px"}
+                aspectRatio={2 / 1}
+                objectFit={"cover"}
+                w={"70px"}
                 rounded={theme.radii.component}
               />
             </Center>
           </Tooltip>
-        </Box>
+        </MapOverlayContainer>
       </Popover.Trigger>
 
       <Popover.Content>

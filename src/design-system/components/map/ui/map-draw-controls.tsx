@@ -1,28 +1,22 @@
 // src/design-system/components/map/ui/map-draw-controls.tsx
 
-import { PencilIcon, XIcon } from "lucide-react";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map-draw.store";
-import { Button } from "@/design-system/components/button/ui/button";
+import { MapOverlayContainer } from "@/design-system/components/map/ui/base-map.overlay";
+import { PencilIcon, XIcon } from "lucide-react";
 
-/**
- * Minimal draw UI: only exposes "polygon" drawing for now.
- * The store/hook already support other geometry types, so adding more
- * buttons later doesn't require touching the store or hook.
- */
 export const MapDrawControls = () => {
   const { isDrawing, start, cancel } = useMapDrawStore();
 
   return (
-    <Button
-      position={"absolute"}
-      top={"12px"}
-      left={"12px"}
-      variant={"solid"}
-      colorPalette={isDrawing ? "red" : "blue"}
-      onClick={() => (isDrawing ? cancel() : start("polygon"))}
-    >
-      {isDrawing ? <XIcon size={16} /> : <PencilIcon size={16} />}
-      {isDrawing ? "Batalkan" : "Gambar area"}
-    </Button>
+    <MapOverlayContainer>
+      <IconButton
+        variant={"whiteAlphaGhost"}
+        colorPalette={isDrawing ? "red" : "blue"}
+        onClick={() => (isDrawing ? cancel() : start("polygon"))}
+      >
+        {isDrawing ? <XIcon size={16} /> : <PencilIcon size={16} />}
+      </IconButton>
+    </MapOverlayContainer>
   );
 };

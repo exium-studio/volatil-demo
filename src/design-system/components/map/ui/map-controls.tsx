@@ -6,24 +6,19 @@ import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map-contro
 import { BaseMapCompass } from "@/design-system/components/map/ui/map-controls/base-map.compass";
 import { BaseMapLocate } from "@/design-system/components/map/ui/map-controls/base-map.locate";
 import { BaseMapZoomControl } from "@/design-system/components/map/ui/map-controls/base-map.zoom-control";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
 
 export const MapControls = (props: StackProps) => {
   return (
     <HStack
-      align={"center"}
+      align={"end"}
+      overflowX={"auto"}
       justify={"space-between"}
-      position={"absolute"}
-      bottom={0}
-      left={0}
       gap={2}
       w={"full"}
       p={4}
       {...props}
     >
-      <MapConrolContainer>
-        <MapBaseLayerSelect />
-      </MapConrolContainer>
+      <MapBaseLayerSelect />
 
       <HStack gap={2}>
         <BaseMapZoomControl />
@@ -33,20 +28,5 @@ export const MapControls = (props: StackProps) => {
         <BaseMapCompass />
       </HStack>
     </HStack>
-  );
-};
-
-const MapConrolContainer = (props: StackProps) => {
-  // Stores
-  const { theme } = useThemeStore();
-
-  return (
-    <HStack
-      align={"center"}
-      bg={"bg.body"}
-      rounded={theme.radii.container}
-      p={1}
-      {...props}
-    />
   );
 };
