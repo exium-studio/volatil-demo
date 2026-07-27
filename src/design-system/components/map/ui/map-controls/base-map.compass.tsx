@@ -3,7 +3,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { ToggleTip } from "@/design-system/components/input/ui/toggle-tip";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { useBaseMapContext } from "@/design-system/components/map/contexts/base-map.context";
-import { MapOverlayContainer } from "@/design-system/components/map/ui/base-map.overlay";
+import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { Navigation2Icon } from "lucide-react";
 import { useEffect, useState } from "react";

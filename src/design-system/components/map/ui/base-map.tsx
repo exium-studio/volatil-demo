@@ -15,7 +15,7 @@ import { useMapResizeObserver } from "@/design-system/components/map/hooks/use-m
 import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
 import type { BaseMapProps } from "@/design-system/components/map/types/base-map.type";
 import { BaseMapContext } from "@/design-system/components/map/contexts/base-map.context";
-import { BaseMapOverlay } from "@/design-system/components/map/ui/base-map.overlay";
+import { MapOverlay } from "@/design-system/components/map/ui/map.overlay";
 import { applyCustomPaintOverrides } from "@/design-system/components/map/utils/apply-custom-paint-overrides";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import maplibregl from "maplibre-gl";
@@ -135,7 +135,7 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
           data-color-mode={colorMode}
         />
 
-        <BaseMapOverlay />
+        <MapOverlay />
       </Box>
     </BaseMapContext.Provider>
   );

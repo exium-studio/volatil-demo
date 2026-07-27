@@ -7,7 +7,7 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 
 export type BaseMapOverlayProps = {};
 
-export const BaseMapOverlay = (_: BaseMapOverlayProps) => {
+export const MapOverlay = (_: BaseMapOverlayProps) => {
   return (
     <VStack
       justify={"space-between"}

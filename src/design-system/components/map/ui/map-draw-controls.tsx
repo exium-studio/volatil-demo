@@ -2,7 +2,7 @@
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map-draw.store";
-import { MapOverlayContainer } from "@/design-system/components/map/ui/base-map.overlay";
+import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { PencilIcon, XIcon } from "lucide-react";
 
 export const MapDrawControls = () => {
