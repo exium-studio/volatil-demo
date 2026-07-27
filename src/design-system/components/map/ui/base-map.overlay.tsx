@@ -18,7 +18,7 @@ export const BaseMapOverlay = (_: BaseMapOverlayProps) => {
       h={"full"}
       pointerEvents={"none"}
     >
-      <HStack align={"start"} justify={"space-between"} p={4}>
+      <HStack align={"start"} justify={"end"} gap={2} p={4}>
         <MapDrawControls />
 
         <MapAttribution />

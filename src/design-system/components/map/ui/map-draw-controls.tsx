@@ -12,6 +12,7 @@ export const MapDrawControls = () => {
     <MapOverlayContainer>
       <IconButton
         variant={"whiteAlphaGhost"}
+        size={"sm"}
         colorPalette={isDrawing ? "red" : "blue"}
         onClick={() => (isDrawing ? cancel() : start("polygon"))}
       >
