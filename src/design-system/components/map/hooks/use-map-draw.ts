@@ -2,12 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
-import { useMapDrawStore } from "@/design-system/components/map/stores/map-draw.store";
+import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 import {
   isNearFirstPoint,
   toPolygonFeature,
 } from "@/design-system/components/map/utils/geometry";
-import { DRAW_CLOSE_HIT_RADIUS_PX } from "@/design-system/components/map/constants/map.constant";
+import { DRAW_CLOSE_HIT_RADIUS_PX } from "@/design-system/components/map/constants/map.config";
 
 const DRAW_SOURCE_ID = "map-draw-source";
 const DRAW_FILL_LAYER_ID = "map-draw-fill";

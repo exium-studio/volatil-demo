@@ -6,7 +6,7 @@ import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import {
   DEFAULT_RASTER_TILE_SIZE,
   WFS_LAYER_RENDER_TYPE_MAP,
-} from "@/design-system/components/map/constants/map.constant";
+} from "@/design-system/components/map/constants/map.config";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 
 /** Adds/removes a list of config-driven layers (WFS, raster tile, vector tile) on the given map instance. */

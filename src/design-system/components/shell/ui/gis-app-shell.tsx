@@ -11,7 +11,7 @@ import { AppPageContainer } from "@/design-system/components/layout/ui/page-cont
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
-import { BaseMap } from "@/design-system/components/map/ui/base-map";
+import { BaseMap } from "@/design-system/components/map/ui/map.basemap";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";

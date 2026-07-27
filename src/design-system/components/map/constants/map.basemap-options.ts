@@ -3,7 +3,7 @@
 import type {
   BaseLayerOption,
   BaseLayerStyleKey,
-} from "@/design-system/components/map/types/base-layer.type";
+} from "@/design-system/components/map/types/basemap.select.type";
 import { IMAGES_PATH } from "@/shared/constants/paths";
 import type maplibregl from "maplibre-gl";
 

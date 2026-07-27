@@ -7,8 +7,8 @@ import { Grid } from "@/design-system/components/layout/ui/grid";
 import {
   MAP_BASE_LAYER_OPTIONS,
   getBaseLayerOption,
-} from "@/design-system/components/map/constants/map-base-layer-style.constant";
-import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
+} from "@/design-system/components/map/constants/map.basemap-options";
+import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Image } from "@/design-system/components/media/ui/image";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
@@ -18,7 +18,7 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 
 export const MapBaseLayerSelect = () => {
   // Stores
-  const { activeStyleKey, setActiveStyleKey } = useMapBaseLayerStore();
+  const { activeStyleKey, setActiveStyleKey } = useMapBaseMapStore();
   const { theme } = useThemeStore();
 
   // Constants

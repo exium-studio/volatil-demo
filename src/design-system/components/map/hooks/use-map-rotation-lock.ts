@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import type maplibregl from "maplibre-gl";
-import { useMapInteractionStore } from "@/design-system/components/map/stores/map-interaction.store";
+import { useMapInteractionStore } from "@/design-system/components/map/stores/map.interaction.store";
 
 /** Syncs the rotation-lock toggle (store) to MapLibre's drag-rotate / touch-rotate handlers. */
 export const useMapRotationLock = (map: maplibregl.Map | null) => {

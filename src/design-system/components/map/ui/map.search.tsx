@@ -8,20 +8,21 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { useBaseMapContext } from "@/design-system/components/map/contexts/base-map.context";
-import type { MapSearchResultItem } from "@/design-system/components/map/types/map-search-overlay.type";
+import { useBaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
+import type { MapSearchResultItem } from "@/design-system/components/map/types/map.search.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
-import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { t } from "@/shared/libs/i18n";
-import { Box, Text } from "@chakra-ui/react";
+import { isEmptyArray } from "@/shared/utils/data/array";
+import { Box } from "@chakra-ui/react";
 import { Clock, MapPin, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const SEARCH_QUERY_KEY = "map-search";
 
-export const MapSearchOverlay = () => {
+export const MapSearch = () => {
   // Stores
   const { theme } = useThemeStore();
 
@@ -224,13 +225,7 @@ export const MapSearchOverlay = () => {
           {/* Recent Searches List */}
           {showRecent && (
             <VStack align={"stretch"}>
-              <Box px={3} py={2}>
-                <Text fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
-                  Pencarian Terakhir
-                </Text>
-              </Box>
-
-              {recentSearches.length === 0 ? (
+              {isEmptyArray(recentSearches) ? (
                 <Box p={2}>
                   <FeedbackState
                     title={t["settings.search.empty.title"]()}
@@ -238,40 +233,48 @@ export const MapSearchOverlay = () => {
                   />
                 </Box>
               ) : (
-                <Box px={1} pb={1}>
-                  {recentSearches.map((item) => (
-                    <Button
-                      key={item.place_id}
-                      variant={"ghost"}
-                      w={"full"}
-                      p={2}
-                      pr={"2px"}
-                      onClick={() => handleSelectLocation(item)}
-                      justifyContent={"space-between"}
-                    >
-                      <HStack
-                        align={"center"}
-                        gap={2}
-                        flex={1}
-                        overflow={"hidden"}
-                      >
-                        <AppIcon icon={Clock} color={"fg.muted"} />
+                <>
+                  <Box px={3} py={2}>
+                    <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
+                      Pencarian Terakhir
+                    </P>
+                  </Box>
 
-                        <ClampedP textAlign={"start"}>
-                          {item.display_name}
-                        </ClampedP>
-                      </HStack>
-
-                      <IconButton
-                        as={"span"}
-                        size={"sm"}
-                        onClick={(e) => handleRemoveRecent(item.place_id, e)}
+                  <Box px={1} pb={1}>
+                    {recentSearches.map((item) => (
+                      <Button
+                        key={item.place_id}
+                        variant={"ghost"}
+                        w={"full"}
+                        p={2}
+                        pr={"2px"}
+                        onClick={() => handleSelectLocation(item)}
+                        justifyContent={"space-between"}
                       >
-                        <AppIcon icon={X} />
-                      </IconButton>
-                    </Button>
-                  ))}
-                </Box>
+                        <HStack
+                          align={"center"}
+                          gap={2}
+                          flex={1}
+                          overflow={"hidden"}
+                        >
+                          <AppIcon icon={Clock} color={"fg.muted"} />
+
+                          <ClampedP textAlign={"start"}>
+                            {item.display_name}
+                          </ClampedP>
+                        </HStack>
+
+                        <IconButton
+                          as={"span"}
+                          size={"sm"}
+                          onClick={(e) => handleRemoveRecent(item.place_id, e)}
+                        >
+                          <AppIcon icon={X} />
+                        </IconButton>
+                      </Button>
+                    ))}
+                  </Box>
+                </>
               )}
             </VStack>
           )}
@@ -283,13 +286,13 @@ export const MapSearchOverlay = () => {
                 <HStack align={"center"} justify={"center"} py={4} gap={4}>
                   <Loader />
 
-                  <Text color={"fg.muted"}>Mencari lokasi...</Text>
+                  <P color={"fg.muted"}>Mencari lokasi...</P>
                 </HStack>
               )}
 
               {isError && (
                 <Box px={3} py={3}>
-                  <Text color={"fg.error"}>Gagal mengambil data lokasi.</Text>
+                  <P color={"fg.error"}>Gagal mengambil data lokasi.</P>
                 </Box>
               )}
 

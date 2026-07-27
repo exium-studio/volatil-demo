@@ -4,19 +4,19 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import {
   getBaseLayerStyle,
   OPENFREEMAP_LIBERTY_STYLE_URL,
-} from "@/design-system/components/map/constants/map-base-layer-style.constant";
+} from "@/design-system/components/map/constants/map.basemap-options";
 import {
   DEFAULT_MAP_CENTER,
   DEFAULT_MAP_ZOOM,
-} from "@/design-system/components/map/constants/map.constant";
+} from "@/design-system/components/map/constants/map.config";
 import { useMapDraw } from "@/design-system/components/map/hooks/use-map-draw";
 import { useMapLayers } from "@/design-system/components/map/hooks/use-map-layers";
 import { useMapResizeObserver } from "@/design-system/components/map/hooks/use-map-resize-observer";
-import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
-import type { BaseMapProps } from "@/design-system/components/map/types/base-map.type";
-import { BaseMapContext } from "@/design-system/components/map/contexts/base-map.context";
+import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
+import type { BaseMapProps } from "@/design-system/components/map/types/basemap.type";
+import { BaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
 import { MapOverlay } from "@/design-system/components/map/ui/map.overlay";
-import { applyCustomPaintOverrides } from "@/design-system/components/map/utils/apply-custom-paint-overrides";
+import { applyBasemapColorStyleOverride } from "@/design-system/components/map/utils/basemap-color-style-ovveride";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -33,7 +33,7 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
 
   // Hooks
   const { colorMode } = useColorMode();
-  const { activeStyleKey } = useMapBaseLayerStore();
+  const { activeStyleKey } = useMapBaseMapStore();
 
   // States
   const [map, setMap] = useState<maplibregl.Map | null>(null);
@@ -80,7 +80,7 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     // Also called on initial "load" so a hard-refresh never loses the globe.
     const applyGlobe = () => {
       instance.setProjection({ type: "globe" });
-      applyCustomPaintOverrides(instance);
+      applyBasemapColorStyleOverride(instance);
 
       const activeKey = activeStyleKeyRef.current;
       // Apply 3D terrain if the selected style is satellite

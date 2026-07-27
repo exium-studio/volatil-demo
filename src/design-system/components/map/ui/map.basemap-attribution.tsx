@@ -2,15 +2,15 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { getBaseLayerOption } from "@/design-system/components/map/constants/map-base-layer-style.constant";
-import { useMapBaseLayerStore } from "@/design-system/components/map/stores/map-base-layer.store";
+import { getBaseLayerOption } from "@/design-system/components/map/constants/map.basemap-options";
+import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { InfoIcon } from "lucide-react";
 
 export const MapAttribution = () => {
   // Stores
-  const { activeStyleKey } = useMapBaseLayerStore();
+  const { activeStyleKey } = useMapBaseMapStore();
 
   const activeBaseLayer = getBaseLayerOption(activeStyleKey);
   const attributions = activeBaseLayer?.attributions ?? [];

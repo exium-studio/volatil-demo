@@ -2,10 +2,10 @@
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map-controls/base-map.base-layer-select";
-import { BaseMapCompass } from "@/design-system/components/map/ui/map-controls/base-map.compass";
-import { BaseMapLocate } from "@/design-system/components/map/ui/map-controls/base-map.locate";
-import { BaseMapZoomControl } from "@/design-system/components/map/ui/map-controls/base-map.zoom-control";
+import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map-controls/map.basemap-select";
+import { BaseMapCompass } from "@/design-system/components/map/ui/map-controls/map.compass";
+import { BaseMapLocate } from "@/design-system/components/map/ui/map-controls/map.locate";
+import { BaseMapZoomControl } from "@/design-system/components/map/ui/map-controls/map.zoom";
 
 export const MapControls = (props: StackProps) => {
   return (

@@ -14,7 +14,7 @@ const ROAD_COLORS = {
 const BUILDING_FILL = "#f0f0f2";
 const BUILDING_OUTLINE = "#e0e0e3";
 
-export function applyCustomPaintOverrides(map: maplibregl.Map) {
+export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
   const setIfExists = (
     layerId: string,
     prop: string,

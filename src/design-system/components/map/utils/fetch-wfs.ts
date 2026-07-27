@@ -6,7 +6,7 @@ import {
   WFS_OUTPUT_FORMAT,
   WFS_SRS_NAME,
   WFS_VERSION,
-} from "@/design-system/components/map/constants/map.constant";
+} from "@/design-system/components/map/constants/map.config";
 
 export type WfsBbox = [number, number, number, number];
 
