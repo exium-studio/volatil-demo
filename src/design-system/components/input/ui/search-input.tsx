@@ -11,7 +11,15 @@ import { forwardRef, useRef, useState, type ChangeEvent } from "react";
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   function SeachInput(
-    { queryKey, value: controlledValue, onValueChange, w, ...restProps },
+    {
+      queryKey,
+      value: controlledValue,
+      onValueChange,
+      w,
+      inputGroupProps,
+      appIconProps,
+      ...restProps
+    },
     ref,
   ) {
     // Refs
@@ -22,6 +30,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       queryKey ?? "",
     );
     const isUrlMode = !queryKey;
+
+    // Constants
+    const ml = {
+      "2xs": -2,
+      xs: -1,
+      sm: -1,
+      md: 0,
+      lg: 0,
+      xl: 1,
+      "2xl": 1,
+    };
 
     // States
     const [value, setValue] = useState<string>(
@@ -45,15 +64,22 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <InputGroup
-        startElement={<AppIcon icon={SearchIcon} />}
+        startElement={
+          <AppIcon
+            icon={SearchIcon}
+            ml={ml[restProps.size as keyof typeof ml]}
+            {...appIconProps}
+          />
+        }
         endElement={
           value ? (
-            <IconButton size="xs" onClick={handleClear} me="-2">
+            <IconButton size={"xs"} onClick={handleClear} me={-2}>
               <AppIcon icon={XIcon} />
             </IconButton>
           ) : undefined
         }
         w={w || "fit"}
+        {...inputGroupProps}
       >
         <Input
           {...restProps}

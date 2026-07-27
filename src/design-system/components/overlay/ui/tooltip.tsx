@@ -79,10 +79,11 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         </ChakraTooltip.Trigger>
 
         <Portal disabled={!portalled} container={portalRef}>
-          <ChakraTooltip.Positioner>
+          <ChakraTooltip.Positioner zIndex={9999}>
             <ChakraTooltip.Content
               ref={ref}
-              bg={"bg.contrastX"}
+              bg={"bg.contrast"}
+              zIndex={9999}
               {...contentProps}
             >
               {showArrow && (

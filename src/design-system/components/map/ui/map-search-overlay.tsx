@@ -1,16 +1,23 @@
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
+import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { VStack, HStack } from "@/design-system/components/layout/ui/flex-box";
-import { Loader } from "@/design-system/components/feedback/ui/loader";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useBaseMapContext } from "@/design-system/components/map/contexts/base-map.context";
+import type { MapSearchResultItem } from "@/design-system/components/map/types/map-search-overlay.type";
+import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { t } from "@/shared/libs/i18n";
 import { Box, Text } from "@chakra-ui/react";
 import { Clock, MapPin, X } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
-import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
-import type { MapSearchResultItem } from "@/design-system/components/map/types/map-search-overlay.type";
+import { useEffect, useRef, useState } from "react";
 
 const SEARCH_QUERY_KEY = "map-search";
 
@@ -167,27 +174,33 @@ export const MapSearchOverlay = () => {
   }, []);
 
   // Determine which list to display
-  const showRecent = isFocused && !activeQuery.trim();
-  const showResults = isFocused && !!activeQuery.trim();
+  const isDebouncing = activeQuery.trim() !== debouncedQuery.trim();
+  const isOpened = isFocused || !!activeQuery.trim();
+  const showRecent = isFocused && (!activeQuery.trim() || isDebouncing);
+  const showResults = isFocused && !!activeQuery.trim() && !isDebouncing;
 
   return (
-    <VStack
-      w={"320px"}
-      align={"stretch"}
-      gap={2}
-      pointerEvents={"auto"}
-      position={"relative"}
-    >
+    <VStack gap={2} w={"300px"} pointerEvents={"auto"} position={"relative"}>
       {/* Search Input Container */}
-      <MapOverlayContainer overflow={"hidden"} bg={"bg.body"}>
+      <MapOverlayContainer
+        overflow={"clip"}
+        w={isOpened ? "full" : "36px"}
+        bg={isOpened ? "bg.body" : "darkAlpha.700"}
+        transition={"200ms"}
+      >
         <SearchInput
           queryKey={SEARCH_QUERY_KEY}
+          size={"sm"}
           placeholder={"Cari lokasi..."}
           w={"full"}
-          color={"fg"}
+          border={"none"}
+          color={isOpened ? "fg" : "white"}
           bg={"transparent"}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          appIconProps={{
+            color: isOpened ? "fg" : "white",
+          }}
         />
       </MapOverlayContainer>
 
@@ -199,128 +212,116 @@ export const MapSearchOverlay = () => {
           left={0}
           right={0}
           mt={2}
-          bg={"bg.panel"}
-          rounded={theme.radii.component}
+          bg={"bg.body"}
+          rounded={theme.radii.container}
           shadow={"lg"}
           border={"1px solid"}
           borderColor={"border.emphasized"}
-          backdropFilter={"blur(20px)"}
-          maxH={"300px"}
+          maxH={"360px"}
           overflowY={"auto"}
           zIndex={2000}
         >
           {/* Recent Searches List */}
           {showRecent && (
-            <VStack align={"stretch"} gap={0} py={2}>
-              <Box px={3} py={1}>
-                <Text fontSize={"xs"} fontWeight={"bold"} color={"fg.muted"}>
+            <VStack align={"stretch"}>
+              <Box px={3} py={2}>
+                <Text fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
                   Pencarian Terakhir
                 </Text>
               </Box>
 
               {recentSearches.length === 0 ? (
-                <Box px={3} py={3}>
-                  <Text fontSize={"sm"} color={"fg.muted"}>
-                    Belum ada riwayat pencarian
-                  </Text>
+                <Box p={2}>
+                  <FeedbackState
+                    title={t["settings.search.empty.title"]()}
+                    description={t["settings.search.empty.description"]()}
+                  />
                 </Box>
               ) : (
-                recentSearches.map((item) => (
-                  <Button
-                    key={item.place_id}
-                    variant={"ghost"}
-                    w={"full"}
-                    py={2}
-                    px={3}
-                    h={"auto"}
-                    rounded={"none"}
-                    onClick={() => handleSelectLocation(item)}
-                    _hover={{ bg: "bg.muted" }}
-                    justifyContent={"space-between"}
-                  >
-                    <HStack gap={2} flex={1} overflow={"hidden"}>
-                      <AppIcon icon={Clock} size={"xs"} color={"fg.muted"} />
-                      <Text
-                        fontSize={"sm"}
-                        truncate={true}
-                        fontWeight={"normal"}
-                      >
-                        {item.display_name}
-                      </Text>
-                    </HStack>
-
+                <Box px={1} pb={1}>
+                  {recentSearches.map((item) => (
                     <Button
-                      as={"span"}
-                      size={"xs"}
+                      key={item.place_id}
                       variant={"ghost"}
-                      p={1}
-                      onClick={(e) => handleRemoveRecent(item.place_id, e)}
-                      _hover={{ bg: "bg.emphasized" }}
+                      w={"full"}
+                      p={2}
+                      pr={"2px"}
+                      onClick={() => handleSelectLocation(item)}
+                      justifyContent={"space-between"}
                     >
-                      <AppIcon icon={X} size={"xs"} />
+                      <HStack
+                        align={"center"}
+                        gap={2}
+                        flex={1}
+                        overflow={"hidden"}
+                      >
+                        <AppIcon icon={Clock} color={"fg.muted"} />
+
+                        <ClampedP textAlign={"start"}>
+                          {item.display_name}
+                        </ClampedP>
+                      </HStack>
+
+                      <IconButton
+                        as={"span"}
+                        size={"sm"}
+                        onClick={(e) => handleRemoveRecent(item.place_id, e)}
+                      >
+                        <AppIcon icon={X} />
+                      </IconButton>
                     </Button>
-                  </Button>
-                ))
+                  ))}
+                </Box>
               )}
             </VStack>
           )}
 
           {/* Search Results List */}
           {showResults && (
-            <VStack align={"stretch"} gap={0} py={2}>
+            <VStack align={"stretch"} gap={0} py={1}>
               {isLoading && (
-                <HStack justify={"center"} py={4} gap={2}>
+                <HStack align={"center"} justify={"center"} py={4} gap={4}>
                   <Loader />
 
-                  <Text fontSize={"sm"} color={"fg.muted"}>
-                    Mencari lokasi...
-                  </Text>
+                  <Text color={"fg.muted"}>Mencari lokasi...</Text>
                 </HStack>
               )}
 
               {isError && (
                 <Box px={3} py={3}>
-                  <Text fontSize={"sm"} color={"red.fg"}>
-                    Gagal mengambil data lokasi.
-                  </Text>
+                  <Text color={"fg.error"}>Gagal mengambil data lokasi.</Text>
                 </Box>
               )}
 
               {!isLoading && !isError && results.length === 0 && (
                 <Box px={3} py={3}>
-                  <Text fontSize={"sm"} color={"fg.muted"}>
-                    Lokasi tidak ditemukan
-                  </Text>
+                  <NoResultState query={queryValue} />
                 </Box>
               )}
 
-              {!isLoading &&
-                !isError &&
-                results.map((item) => (
-                  <Button
-                    key={item.place_id}
-                    variant={"ghost"}
-                    w={"full"}
-                    py={2}
-                    px={3}
-                    h={"auto"}
-                    rounded={"none"}
-                    onClick={() => handleSelectLocation(item)}
-                    _hover={{ bg: "bg.muted" }}
-                    justifyContent={"flex-start"}
-                  >
-                    <HStack gap={2} overflow={"hidden"} w={"full"}>
-                      <AppIcon icon={MapPin} size={"xs"} color={"fg.muted"} />
-                      <Text
-                        fontSize={"sm"}
-                        truncate={true}
-                        fontWeight={"normal"}
-                      >
-                        {item.display_name}
-                      </Text>
-                    </HStack>
-                  </Button>
-                ))}
+              {!isLoading && !isError && (
+                <Box px={1}>
+                  {results.map((item) => (
+                    <Button
+                      key={item.place_id}
+                      variant={"ghost"}
+                      w={"full"}
+                      p={2}
+                      onClick={() => handleSelectLocation(item)}
+                      _hover={{ bg: "bg.muted" }}
+                      justifyContent={"flex-start"}
+                    >
+                      <HStack gap={2} overflow={"hidden"} w={"full"}>
+                        <AppIcon icon={MapPin} color={"fg.muted"} />
+
+                        <ClampedP textAlign={"start"}>
+                          {item.display_name}
+                        </ClampedP>
+                      </HStack>
+                    </Button>
+                  ))}
+                </Box>
+              )}
             </VStack>
           )}
         </Box>

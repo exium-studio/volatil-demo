@@ -34,7 +34,7 @@ export const MapBaseLayerSelect = () => {
       }}
     >
       <Popover.Trigger>
-        <MapOverlayContainer>
+        <MapOverlayContainer p={"2px"}>
           <Tooltip
             content={"Gaya Peta Base"}
             positioning={{ placement: "left" }}
@@ -44,8 +44,8 @@ export const MapBaseLayerSelect = () => {
                 src={activeStyle.thumbnail}
                 aspectRatio={2 / 1}
                 objectFit={"cover"}
-                w={"70px"}
-                rounded={theme.radii.component}
+                w={"64px"}
+                rounded={`calc(${theme.radii.component} - 2px)`}
               />
             </Center>
           </Tooltip>
