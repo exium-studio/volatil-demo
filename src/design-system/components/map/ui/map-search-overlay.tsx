@@ -10,33 +10,25 @@ import { Box, Text } from "@chakra-ui/react";
 import { Clock, MapPin, X } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
+import type { MapSearchResultItem } from "@/design-system/components/map/types/map-search-overlay.type";
 
-type SearchResultItem = {
-  place_id: number | string;
-  display_name: string;
-  lat: string;
-  lon: string;
-};
+const SEARCH_QUERY_KEY = "map-search";
 
-export type MapSearchOverlayProps = {
-  queryKey?: string;
-};
-
-export const MapSearchOverlay = ({
-  queryKey = "map-search",
-}: MapSearchOverlayProps) => {
-  // Stores & Contexts
+export const MapSearchOverlay = () => {
+  // Stores
   const { theme } = useThemeStore();
+
+  // Contexts
   const { map } = useBaseMapContext();
 
-  // Search Parameter Hook
-  const { queryValue } = useSearchParam(queryKey);
+  // hooks
+  const { queryValue } = useSearchParam(SEARCH_QUERY_KEY);
   const activeQuery = queryValue || "";
 
-  // Component States
+  // States
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [debouncedQuery, setDebouncedQuery] = useState<string>(activeQuery);
-  const [recentSearches, setRecentSearches] = useState<SearchResultItem[]>(
+  const [recentSearches, setRecentSearches] = useState<MapSearchResultItem[]>(
     () => {
       try {
         const stored = localStorage.getItem("map-recent-searches");
@@ -47,12 +39,65 @@ export const MapSearchOverlay = ({
       }
     },
   );
-  const [results, setResults] = useState<SearchResultItem[]>([]);
+  const [results, setResults] = useState<MapSearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
 
   // Ref to hold blur timeout
   const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Handle location selection (flying to coordinate and saving to recents)
+  function handleSelectLocation(item: MapSearchResultItem) {
+    if (!map) return;
+
+    // Fly to coordinates
+    map.flyTo({
+      center: [parseFloat(item.lon), parseFloat(item.lat)],
+      zoom: 14,
+    });
+
+    // Update recent searches: avoid duplicate, limit to 5 items
+    const updated = [
+      item,
+      ...recentSearches.filter((x) => x.place_id !== item.place_id),
+    ].slice(0, 5);
+
+    setRecentSearches(updated);
+    try {
+      localStorage.setItem("map-recent-searches", JSON.stringify(updated));
+    } catch (e) {
+      console.error("Failed to save recent searches", e);
+    }
+
+    // Blur search input and close lists
+    setIsFocused(false);
+  }
+
+  // Handle removing a recent search item
+  function handleRemoveRecent(placeId: number | string, e: React.MouseEvent) {
+    e.stopPropagation();
+    const updated = recentSearches.filter((x) => x.place_id !== placeId);
+    setRecentSearches(updated);
+    try {
+      localStorage.setItem("map-recent-searches", JSON.stringify(updated));
+    } catch (err) {
+      console.error("Failed to update recent searches", err);
+    }
+  }
+
+  // Input Focus/Blur Handlers
+  function handleFocus() {
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+    }
+    setIsFocused(true);
+  }
+  function handleBlur() {
+    // Small delay to allow click events inside the dropdown list to register first
+    blurTimeoutRef.current = setTimeout(() => {
+      setIsFocused(false);
+    }, 200);
+  }
 
   // Sync debounced query value
   useEffect(() => {
@@ -112,63 +157,6 @@ export const MapSearchOverlay = ({
     };
   }, [debouncedQuery]);
 
-  // Handle location selection (flying to coordinate and saving to recents)
-  const handleSelectLocation = (item: SearchResultItem) => {
-    if (!map) return;
-
-    // Fly to coordinates
-    map.flyTo({
-      center: [parseFloat(item.lon), parseFloat(item.lat)],
-      zoom: 14,
-    });
-
-    // Update recent searches: avoid duplicate, limit to 5 items
-    const updated = [
-      item,
-      ...recentSearches.filter((x) => x.place_id !== item.place_id),
-    ].slice(0, 5);
-
-    setRecentSearches(updated);
-    try {
-      localStorage.setItem("map-recent-searches", JSON.stringify(updated));
-    } catch (e) {
-      console.error("Failed to save recent searches", e);
-    }
-
-    // Blur search input and close lists
-    setIsFocused(false);
-  };
-
-  // Handle removing a recent search item
-  const handleRemoveRecent = (
-    placeId: number | string,
-    e: React.MouseEvent,
-  ) => {
-    e.stopPropagation();
-    const updated = recentSearches.filter((x) => x.place_id !== placeId);
-    setRecentSearches(updated);
-    try {
-      localStorage.setItem("map-recent-searches", JSON.stringify(updated));
-    } catch (err) {
-      console.error("Failed to update recent searches", err);
-    }
-  };
-
-  // Input Focus/Blur Handlers
-  const handleFocus = () => {
-    if (blurTimeoutRef.current) {
-      clearTimeout(blurTimeoutRef.current);
-    }
-    setIsFocused(true);
-  };
-
-  const handleBlur = () => {
-    // Small delay to allow click events inside the dropdown list to register first
-    blurTimeoutRef.current = setTimeout(() => {
-      setIsFocused(false);
-    }, 200);
-  };
-
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -193,7 +181,7 @@ export const MapSearchOverlay = ({
       {/* Search Input Container */}
       <MapOverlayContainer overflow={"hidden"} bg={"bg.body"}>
         <SearchInput
-          queryKey={queryKey}
+          queryKey={SEARCH_QUERY_KEY}
           placeholder={"Cari lokasi..."}
           w={"full"}
           color={"fg"}
