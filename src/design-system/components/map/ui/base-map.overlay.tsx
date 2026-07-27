@@ -36,7 +36,7 @@ export const MapOverlayContainer = (props: StackProps) => {
   return (
     <HStack
       align={"center"}
-      bg={"blackAlpha.700"}
+      bg={"darkAlpha.700"}
       color={"white"}
       rounded={theme.radii.component}
       outline={"1px solid"}

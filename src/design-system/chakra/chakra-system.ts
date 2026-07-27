@@ -192,6 +192,20 @@ export const chakraConfig = defineConfig({
           950: { value: "#1e2124" },
         },
 
+        darkAlpha: {
+          50: { value: "rgba(18, 18, 18, 0.04)" },
+          100: { value: "rgba(18, 18, 18, 0.06)" },
+          200: { value: "rgba(18, 18, 18, 0.08)" },
+          300: { value: "rgba(18, 18, 18, 0.16)" },
+          400: { value: "rgba(18, 18, 18, 0.24)" },
+          500: { value: "rgba(18, 18, 18, 0.36)" },
+          600: { value: "rgba(18, 18, 18, 0.48)" },
+          700: { value: "rgba(18, 18, 18, 0.64)" },
+          800: { value: "rgba(18, 18, 18, 0.80)" },
+          900: { value: "rgba(18, 18, 18, 0.92)" },
+          950: { value: "rgba(18, 18, 18, 0.96)" },
+        },
+
         cream: {
           50: { value: "#f6f0ea" },
           100: { value: "#f3ebdb" },
