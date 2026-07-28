@@ -252,10 +252,10 @@ export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
   setIfExists("landuse_track", "fill-color", "hsl(100, 70%, 85%)");
 
   // Water
-  setIfExists("water", "fill-color", "#90daee");
-  setIfExists("waterway_river", "line-color", "#90daee");
-  setIfExists("waterway_other", "line-color", "#90daee");
-  setIfExists("waterway_tunnel", "line-color", "#90daee");
+  setIfExists("water", "fill-color", "#98dcfe");
+  setIfExists("waterway_river", "line-color", "#98dcfe");
+  setIfExists("waterway_other", "line-color", "#98dcfe");
+  setIfExists("waterway_tunnel", "line-color", "#98dcfe");
 
   if (map.getLayer("natural_earth")) {
     map.setLayoutProperty("natural_earth", "visibility", "visible");
