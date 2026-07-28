@@ -1,9 +1,9 @@
 // src/design-system/components/map/constants/map.basemap-options.ts
 
 import type {
-  BaseLayerOption,
-  BaseLayerStyleKey,
-} from "@/design-system/components/map/types/basemap.select.type";
+  BasemapOption,
+  BasemapKey,
+} from "@/design-system/components/map/types/map.basemap-select.type";
 import { IMAGES_PATH } from "@/shared/constants/paths";
 import type maplibregl from "maplibre-gl";
 
@@ -246,19 +246,19 @@ export const MAP_BASE_LAYER_MAP = {
     },
     maxZoom: 24,
   },
-} as const satisfies Record<BaseLayerStyleKey, BaseLayerOption>;
+} as const satisfies Record<BasemapKey, BasemapOption>;
 
 export const MAP_BASE_LAYER_OPTIONS = Object.keys(
   MAP_BASE_LAYER_MAP,
-) as BaseLayerStyleKey[];
+) as BasemapKey[];
 
 // -----------------------------------------------------------------
 
-export const getBaseLayerOption = (key: BaseLayerStyleKey): BaseLayerOption =>
+export const getBaseLayerOption = (key: BasemapKey): BasemapOption =>
   MAP_BASE_LAYER_MAP[key];
 
 export const getBaseLayerStyle = (
-  key: BaseLayerStyleKey,
+  key: BasemapKey,
   colorMode: "light" | "dark",
 ): string | maplibregl.StyleSpecification =>
   MAP_BASE_LAYER_MAP[key].style[colorMode];

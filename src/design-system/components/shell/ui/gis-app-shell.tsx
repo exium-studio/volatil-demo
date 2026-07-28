@@ -321,7 +321,7 @@ const Content = () => {
   // Components
   const contentPanel = (
     <Splitter.Panel key={"content"} id={"content"} alignItems={"end"}>
-      <VStack minW={"360px"} w={"full"}>
+      <VStack minW={[0, null, "360px"]} w={"full"}>
         <HStack
           align={"center"}
           justify={"space-between"}
@@ -346,7 +346,7 @@ const Content = () => {
     <Splitter.Panel key={"map"} id={"map"}>
       <Box
         pos={"relative"}
-        minW={"360px"}
+        minW={[0, null, "360px"]}
         boxSize={"full"}
         bgImage={[
           "radial-gradient(1px 1px at 25px 35px, #fff 50%, transparent)",

@@ -1,12 +1,12 @@
 // src/design-system/components/map/stores/map.base-map.store.ts
 
-import type { BaseLayerStyleKey } from "@/design-system/components/map/types/basemap.select.type";
+import type { BasemapKey } from "@/design-system/components/map/types/map.basemap-select.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface MapBaseMapState {
-  activeStyleKey: BaseLayerStyleKey;
-  setActiveStyleKey: (styleKey: BaseLayerStyleKey) => void;
+  activeStyleKey: BasemapKey;
+  setActiveStyleKey: (styleKey: BasemapKey) => void;
 }
 
 export const useMapBaseMapStore = create<MapBaseMapState>()(

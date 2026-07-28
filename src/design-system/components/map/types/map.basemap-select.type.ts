@@ -1,6 +1,6 @@
 // src/design-system/components/map/types/basemap.select.type.ts
 
-export type BaseLayerStyleKey =
+export type BasemapKey =
   | "color"
   | "plain-light"
   | "plain-dark"
@@ -8,7 +8,7 @@ export type BaseLayerStyleKey =
   | "satellite"
   | "topo";
 
-export type BaseLayerOption = {
+export type BasemapOption = {
   thumbnail?: string;
   label: string;
   description: string;

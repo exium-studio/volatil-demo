@@ -13,7 +13,7 @@ import { useMapDraw } from "@/design-system/components/map/hooks/use-map-draw";
 import { useMapLayers } from "@/design-system/components/map/hooks/use-map-layers";
 import { useMapResizeObserver } from "@/design-system/components/map/hooks/use-map-resize-observer";
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
-import type { BaseMapProps } from "@/design-system/components/map/types/basemap.type";
+import type { BaseMapProps } from "@/design-system/components/map/types/map.basemap.type";
 import { BaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
 import { MapOverlay } from "@/design-system/components/map/ui/map.overlay";
 import { applyBasemapColorStyleOverride } from "@/design-system/components/map/utils/basemap-color-style-ovveride";

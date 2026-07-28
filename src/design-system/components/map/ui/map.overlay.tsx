@@ -14,6 +14,7 @@ export const MapOverlay = (_: MapOverlayProps) => {
   return (
     <VStack
       justify={"space-between"}
+      overflow={"auto"}
       position={"absolute"}
       top={0}
       left={0}
@@ -32,6 +33,7 @@ export const MapOverlay = (_: MapOverlayProps) => {
 
         <HStack align={"start"} gap={2}>
           <MapDrawControls />
+
           <MapAttribution />
         </HStack>
       </HStack>

@@ -11,8 +11,8 @@ const ROAD_COLORS = {
 } as const;
 
 // Building fill
-const BUILDING_FILL = "#e8e9ed";
-const BUILDING_OUTLINE = "#e0e0e3";
+const BUILDING_FILL = "#e0e1e8";
+const BUILDING_OUTLINE = "#e0e1e8";
 
 export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
   const setIfExists = (
@@ -215,6 +215,13 @@ export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
   setIfExists("building", "fill-color", BUILDING_FILL);
   setIfExists("building", "fill-outline-color", BUILDING_OUTLINE);
   setIfExists("building-3d", "fill-extrusion-color", BUILDING_FILL);
+  setIfExists("building-3d", "fill-extrusion-floor-color", BUILDING_FILL);
+
+  map.setLight({
+    anchor: "viewport",
+    color: "#ffffff",
+    intensity: 0.2,
+  });
 
   // Land / background
   setIfExists("background", "background-color", [
