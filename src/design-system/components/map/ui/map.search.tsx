@@ -41,12 +41,6 @@ export const MapSearch = () => {
   const [debouncedQuery, setDebouncedQuery] = useState<string>(activeQuery);
   const [prevActiveQuery, setPrevActiveQuery] = useState<string>(activeQuery);
 
-  // Sync state if activeQuery changes externally (e.g. navigation)
-  if (activeQuery !== prevActiveQuery) {
-    setInputValue(activeQuery);
-    setDebouncedQuery(activeQuery);
-    setPrevActiveQuery(activeQuery);
-  }
   const [recentSearches, setRecentSearches] = useState<MapSearchResultItem[]>(
     () => {
       try {
@@ -61,6 +55,7 @@ export const MapSearch = () => {
   const [results, setResults] = useState<MapSearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const [lastFetchedQuery, setLastFetchedQuery] = useState<string>("");
 
   // Ref to hold blur timeout
   const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -118,6 +113,13 @@ export const MapSearch = () => {
     }, 200);
   }
 
+  // Sync state if activeQuery changes externally (e.g. navigation)
+  if (activeQuery !== prevActiveQuery) {
+    setInputValue(activeQuery);
+    setDebouncedQuery(activeQuery);
+    setPrevActiveQuery(activeQuery);
+  }
+
   // Sync debounced query value
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -141,6 +143,7 @@ export const MapSearch = () => {
         setResults([]);
         setIsLoading(false);
         setIsError(false);
+        setLastFetchedQuery("");
       }, 0);
       return () => clearTimeout(timer);
     }
@@ -161,11 +164,13 @@ export const MapSearch = () => {
         const data = await response.json();
         if (active) {
           setResults(data);
+          setLastFetchedQuery(debouncedQuery);
         }
       } catch (err) {
         console.error(err);
         if (active) {
           setIsError(true);
+          setLastFetchedQuery(debouncedQuery);
         }
       } finally {
         if (active) {
@@ -190,14 +195,15 @@ export const MapSearch = () => {
     };
   }, []);
 
-  // Determine which list to display
-  // inputValue only drives the search bar expansion, NOT the container content
+  // Derived Values
   const hasInput = !!inputValue.trim();
   const isOpened = isFocused || hasInput;
   // Container content is 100% driven by debouncedQuery — static during typing
   const hasDebouncedQuery = !!debouncedQuery.trim();
   const showRecent = !hasDebouncedQuery;
   const showResults = hasDebouncedQuery;
+  const showLoader =
+    isLoading || (hasDebouncedQuery && debouncedQuery !== lastFetchedQuery);
 
   return (
     <VStack gap={2} w={"300px"} pointerEvents={"auto"} position={"relative"}>
@@ -308,7 +314,7 @@ export const MapSearch = () => {
           {/* Search Results List */}
           {showResults && (
             <VStack align={"stretch"} gap={0} py={1}>
-              {isLoading && (
+              {showLoader && (
                 <HStack align={"center"} justify={"center"} py={4} gap={4}>
                   <Loader />
 
@@ -316,19 +322,19 @@ export const MapSearch = () => {
                 </HStack>
               )}
 
-              {isError && (
+              {isError && !showLoader && (
                 <Box px={3} py={3}>
                   <P color={"fg.error"}>{t["common.error"]()}</P>
                 </Box>
               )}
 
-              {!isLoading && !isError && results.length === 0 && (
+              {!showLoader && !isError && results.length === 0 && (
                 <Box px={3} py={3}>
                   <NoResultState query={debouncedQuery} />
                 </Box>
               )}
 
-              {!isLoading && !isError && results.length > 0 && (
+              {!showLoader && !isError && results.length > 0 && (
                 <Box px={1}>
                   {results.map((item) => (
                     <Button
