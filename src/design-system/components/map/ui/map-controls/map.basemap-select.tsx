@@ -1,4 +1,4 @@
-// src/design-system/components/map/ui/map-controls/map-base-layer-select.tsx
+// src/design-system/components/map/ui/map-controls/map.basemap-select.tsx
 
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";

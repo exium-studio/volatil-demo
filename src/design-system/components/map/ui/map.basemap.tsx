@@ -1,4 +1,4 @@
-// src/design-system/components/map/ui/base-map.tsx
+// src/design-system/components/map/ui/map.basemap.tsx
 
 import { Box } from "@/design-system/components/layout/ui/box";
 import {

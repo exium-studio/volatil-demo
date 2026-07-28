@@ -1,3 +1,5 @@
+// src/design-system/components/map/ui/map-controls/map.zoom.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

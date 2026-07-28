@@ -7,7 +7,13 @@ import { Input } from "@/design-system/components/input/ui/input";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { InputGroup } from "@chakra-ui/react";
 import { SearchIcon, XIcon } from "lucide-react";
-import { forwardRef, useRef, useState, type ChangeEvent } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   function SeachInput(
@@ -29,7 +35,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const { queryValue, setQueryValue, clearQueryValue } = useSearchParam(
       queryKey ?? "",
     );
-    const isUrlMode = !queryKey;
+    const isUrlMode = !!queryKey;
 
     // Constants
     const ml = {
@@ -47,17 +53,35 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       isUrlMode ? (queryValue ?? "") : (controlledValue ?? ""),
     );
 
+    // Sync state with controlledValue prop
+    useEffect(() => {
+      if (!isUrlMode && controlledValue !== undefined) {
+        setValue(controlledValue);
+      }
+    }, [controlledValue, isUrlMode]);
+
+    // Sync state with queryValue URL param
+    useEffect(() => {
+      if (isUrlMode) {
+        setValue(queryValue ?? "");
+      }
+    }, [queryValue, isUrlMode]);
+
     // Handlers
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
       const next = e.currentTarget.value;
       setValue(next);
-      setQueryValue(next);
+      if (isUrlMode) {
+        setQueryValue(next);
+      }
       onValueChange?.(next);
     }
 
     function handleClear() {
       setValue("");
-      clearQueryValue();
+      if (isUrlMode) {
+        clearQueryValue();
+      }
       onValueChange?.("");
       internalRef.current?.focus();
     }

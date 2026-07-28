@@ -1,4 +1,4 @@
-// src/design-system/components/map/constants/map-base-layer-style.constant.ts
+// src/design-system/components/map/constants/map.basemap-options.ts
 
 import type {
   BaseLayerOption,

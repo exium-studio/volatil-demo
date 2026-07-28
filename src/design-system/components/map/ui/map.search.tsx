@@ -1,3 +1,5 @@
+// src/design-system/components/map/ui/map.search.tsx
+
 import {
   Button,
   IconButton,
@@ -30,12 +32,21 @@ export const MapSearch = () => {
   const { map } = useBaseMapContext();
 
   // hooks
-  const { queryValue } = useSearchParam(SEARCH_QUERY_KEY);
+  const { queryValue, setQueryValue } = useSearchParam(SEARCH_QUERY_KEY);
   const activeQuery = queryValue || "";
 
   // States
+  const [inputValue, setInputValue] = useState<string>(activeQuery);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [debouncedQuery, setDebouncedQuery] = useState<string>(activeQuery);
+  const [prevActiveQuery, setPrevActiveQuery] = useState<string>(activeQuery);
+
+  // Sync state if activeQuery changes externally (e.g. navigation)
+  if (activeQuery !== prevActiveQuery) {
+    setInputValue(activeQuery);
+    setDebouncedQuery(activeQuery);
+    setPrevActiveQuery(activeQuery);
+  }
   const [recentSearches, setRecentSearches] = useState<MapSearchResultItem[]>(
     () => {
       try {
@@ -110,13 +121,18 @@ export const MapSearch = () => {
   // Sync debounced query value
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedQuery(activeQuery);
+      setDebouncedQuery(inputValue);
     }, 500);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [activeQuery]);
+  }, [inputValue]);
+
+  // Sync debounced query value to URL
+  useEffect(() => {
+    setQueryValue(debouncedQuery || undefined);
+  }, [debouncedQuery, setQueryValue]);
 
   // Fetch location data from Nominatim API
   useEffect(() => {
@@ -175,10 +191,10 @@ export const MapSearch = () => {
   }, []);
 
   // Determine which list to display
-  const isDebouncing = activeQuery.trim() !== debouncedQuery.trim();
-  const isOpened = isFocused || !!activeQuery.trim();
-  const showRecent = isFocused && (!activeQuery.trim() || isDebouncing);
-  const showResults = isFocused && !!activeQuery.trim() && !isDebouncing;
+  const hasInput = !!inputValue.trim();
+  const isOpened = isFocused || hasInput;
+  const showRecent = isFocused && !hasInput;
+  const showResults = isFocused && hasInput;
 
   return (
     <VStack gap={2} w={"300px"} pointerEvents={"auto"} position={"relative"}>
@@ -190,9 +206,10 @@ export const MapSearch = () => {
         transition={"200ms"}
       >
         <SearchInput
-          queryKey={SEARCH_QUERY_KEY}
+          value={inputValue}
+          onValueChange={setInputValue}
           size={"sm"}
-          placeholder={"Cari lokasi..."}
+          placeholder={t["common.search_location"]()}
           w={"full"}
           border={"none"}
           color={isOpened ? "fg" : "white"}
@@ -228,15 +245,17 @@ export const MapSearch = () => {
               {isEmptyArray(recentSearches) ? (
                 <Box p={2}>
                   <FeedbackState
-                    title={t["settings.search.empty.title"]()}
-                    description={t["settings.search.empty.description"]()}
+                    title={t["common.type_to_find"]()}
+                    description={t[
+                      "common.search_results_and_recent_appear_here"
+                    ]()}
                   />
                 </Box>
               ) : (
                 <>
                   <Box px={3} py={2}>
                     <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
-                      Pencarian Terakhir
+                      {t["common.recent"]()}
                     </P>
                   </Box>
 
@@ -286,19 +305,19 @@ export const MapSearch = () => {
                 <HStack align={"center"} justify={"center"} py={4} gap={4}>
                   <Loader />
 
-                  <P color={"fg.muted"}>Mencari lokasi...</P>
+                  <P color={"fg.muted"}>{t["common.searching"]()}</P>
                 </HStack>
               )}
 
               {isError && (
                 <Box px={3} py={3}>
-                  <P color={"fg.error"}>Gagal mengambil data lokasi.</P>
+                  <P color={"fg.error"}>{t["common.error"]()}</P>
                 </Box>
               )}
 
               {!isLoading && !isError && results.length === 0 && (
                 <Box px={3} py={3}>
-                  <NoResultState query={queryValue} />
+                  <NoResultState query={debouncedQuery} />
                 </Box>
               )}
 

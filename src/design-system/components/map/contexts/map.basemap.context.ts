@@ -1,4 +1,4 @@
-// src/design-system/components/map/ui/base-map.context.ts
+// src/design-system/components/map/contexts/map.basemap.context.ts
 
 import type maplibregl from "maplibre-gl";
 import { createContext, useContext } from "react";

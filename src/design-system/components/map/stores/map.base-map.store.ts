@@ -1,4 +1,4 @@
-// src/design-system/components/map/stores/map-base-layer.store.ts
+// src/design-system/components/map/stores/map.base-map.store.ts
 
 import type { BaseLayerStyleKey } from "@/design-system/components/map/types/basemap.select.type";
 import { create } from "zustand";

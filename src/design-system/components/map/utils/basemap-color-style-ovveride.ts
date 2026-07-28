@@ -1,4 +1,4 @@
-// src/design-system/components/map/utils/apply-custom-paint-overrides.ts
+// src/design-system/components/map/utils/basemap-color-style-ovveride.ts
 
 const ROAD_COLORS = {
   motorway: { fill: "#c8c8cc", casing: "#7a8088" },

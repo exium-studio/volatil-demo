@@ -4,26 +4,41 @@
   "app": {
     "navs": {
       "home": "Beranda",
+      "dashboard": "Dasbor",
+      "map": "Tampilan Peta",
+      "terminal": "Konsol Terminal",
+      "directory": "Direktori",
 
-      "data_request": "Permohonan Data",
-      "cart": "Keranjang",
-      "my_data": "Data Saya",
-      "purchase_history": "Riwayat Pembelian",
-
+      "profile": "Profil",
+      "settings": "Pengaturan",
       "notifications": "Notifikasi",
-      "help": "Tiket Laporan",
-      "profile": "Profil"
+
+      "users": "Pengguna",
+      "analytics": "Analitik",
+      "reports": "Laporan",
+      "billing": "Tagihan & Langganan",
+
+      "pricing": "Harga",
+      "help": "Bantuan & Dukungan",
+      "faq": "Pertanyaan Umum",
+      "contact_us": "Hubungi Kami",
+      "privacy_policy": "Kebijakan Privasi",
+      "terms_of_service": "Syarat Layanan"
     }
   },
 
   "common": {
+    "searching": "Sedang mencari",
+    "type_to_find": "Ketik untuk mencari",
+    "search_location": "Cari lokasi...",
+    "search_results_and_recent_appear_here": "Hasil pencarian dan aktivitas terkini akan muncul di sini",
     "splitter_trigger_helper": "Seret untuk ubah ukuran. Klik dua kali untuk reset",
     "profile": "Profil",
     "show_less": "Tampilkan lebih sedikit",
     "welcome_user": "Selamat datang kembali, {name}!",
-    "loading": "Memuat...",
-    "loading_with_context": "Memuat {context}...",
-    "processing": "Memproses, mohon tunggu...",
+    "loading": "Memuat",
+    "loading_with_context": "Memuat {context}",
+    "processing": "Memproses, mohon tunggu",
     "success": "Berhasil",
     "error": "Gagal",
     "warning": "Peringatan",
@@ -95,7 +110,7 @@
     "clear": "Bersihkan",
     "clear_all": "Bersihkan Semua",
     "reset": "Atur Ulang",
-    "search": "Cari...",
+    "search": "Cari",
     "filter": "Filter",
     "sort": "Urutkan",
     "download": "Unduh",

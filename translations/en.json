@@ -4,26 +4,41 @@
   "app": {
     "navs": {
       "home": "Home",
+      "dashboard": "Dashboard",
+      "map": "Map View",
+      "terminal": "Terminal Console",
+      "directory": "Directory",
 
-      "data_request": "Data Request",
-      "cart": "Cart",
-      "my_data": "My Data",
-      "purchase_history": "Purchase History",
-
+      "profile": "Profile",
+      "settings": "Settings",
       "notifications": "Notifications",
-      "help": "Support Tickets",
-      "profile": "Profile"
+
+      "users": "Users",
+      "analytics": "Analytics",
+      "reports": "Reports",
+      "billing": "Billing & Subscription",
+
+      "pricing": "Pricing",
+      "help": "Help & Support",
+      "faq": "FAQ",
+      "contact_us": "Contact Us",
+      "privacy_policy": "Privacy Policy",
+      "terms_of_service": "Terms of Service"
     }
   },
 
   "common": {
+    "searching": "Searching",
+    "type_to_find": "Type to search",
+    "search_location": "Search location...",
+    "search_results_and_recent_appear_here": "Search results and recent activity will appear here",
     "splitter_trigger_helper": "Drag to resize. Double-click to reset.",
     "profile": "Profile",
     "show_less": "Show less",
     "welcome_user": "Welcome back, {name}!",
-    "loading": "Loading...",
-    "loading_with_context": "Loading {context}...",
-    "processing": "Processing, please wait...",
+    "loading": "Loading",
+    "loading_with_context": "Loading {context}",
+    "processing": "Processing, please wait",
     "success": "Success",
     "error": "Error",
     "warning": "Warning",
@@ -95,7 +110,7 @@
     "clear": "Clear",
     "clear_all": "Clear All",
     "reset": "Reset",
-    "search": "Search...",
+    "search": "Search",
     "filter": "Filter",
     "sort": "Sort",
     "download": "Download",

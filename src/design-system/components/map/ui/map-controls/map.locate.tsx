@@ -1,3 +1,5 @@
+// src/design-system/components/map/ui/map-controls/map.locate.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
