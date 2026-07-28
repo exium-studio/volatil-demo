@@ -259,10 +259,10 @@ export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
 
   if (map.getLayer("natural_earth")) {
     map.setLayoutProperty("natural_earth", "visibility", "visible");
-    map.setPaintProperty("natural_earth", "raster-hue-rotate", 70);
-    map.setPaintProperty("natural_earth", "raster-saturation", 0.6);
+    map.setPaintProperty("natural_earth", "raster-hue-rotate", 20);
+    map.setPaintProperty("natural_earth", "raster-saturation", 0.7);
     map.setPaintProperty("natural_earth", "raster-brightness-min", 0.32);
     map.setPaintProperty("natural_earth", "raster-brightness-max", 1);
-    map.setPaintProperty("natural_earth", "raster-contrast", 0.2);
+    map.setPaintProperty("natural_earth", "raster-contrast", 0);
   }
 }
