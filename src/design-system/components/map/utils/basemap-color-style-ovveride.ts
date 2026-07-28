@@ -1,17 +1,17 @@
 // src/design-system/components/map/utils/basemap-color-style-ovveride.ts
 
 const ROAD_COLORS = {
-  motorway: { fill: "#c8c8cc", casing: "#7a8088" },
-  trunkPrimary: { fill: "#d4d4d4", casing: "#8a9098" },
-  secondaryTertiary: { fill: "#dedede", casing: "#a8adb3" },
-  link: { fill: "#d0d0d0", casing: "#8a9098" },
-  minor: { fill: "#e8e8e8", casing: "#b0b5bb" },
-  serviceTrack: { fill: "#e8e8e8", casing: "#a8adb3" },
-  pathPedestrian: { fill: "#e8e8e8", casing: "#b0b5bb" },
+  motorway: { fill: "#a8bace", casing: "#6e8499" },
+  trunkPrimary: { fill: "#b5c6d6", casing: "#7a96a8" },
+  secondaryTertiary: { fill: "#c1cfdd", casing: "#8da4b5" },
+  link: { fill: "#b0c2d2", casing: "#7a96a8" },
+  minor: { fill: "#cdd8e3", casing: "#9ab0bf" },
+  serviceTrack: { fill: "#cdd8e3", casing: "#8da4b5" },
+  pathPedestrian: { fill: "#d6e0e9", casing: "#9ab0bf" },
 } as const;
 
 // Building fill
-const BUILDING_FILL = "#f0f0f2";
+const BUILDING_FILL = "#e8e9ed";
 const BUILDING_OUTLINE = "#e0e0e3";
 
 export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
@@ -226,7 +226,7 @@ export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
     11,
     "hsl(20, 18%, 91%)",
     13,
-    "#f4f0ef",
+    "#f8f7f7",
   ]);
 
   // Landcover
@@ -243,10 +243,10 @@ export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
   setIfExists("landuse_track", "fill-color", "hsl(100, 70%, 85%)");
 
   // Water
-  setIfExists("water", "fill-color", "hsl(200, 100%, 80%)");
-  setIfExists("waterway_river", "line-color", "hsl(200, 100%, 80%)");
-  setIfExists("waterway_other", "line-color", "hsl(200, 100%, 80%)");
-  setIfExists("waterway_tunnel", "line-color", "hsl(200, 100%, 80%)");
+  setIfExists("water", "fill-color", "#90daee");
+  setIfExists("waterway_river", "line-color", "#90daee");
+  setIfExists("waterway_other", "line-color", "#90daee");
+  setIfExists("waterway_tunnel", "line-color", "#90daee");
 
   if (map.getLayer("natural_earth")) {
     map.setLayoutProperty("natural_earth", "visibility", "visible");
