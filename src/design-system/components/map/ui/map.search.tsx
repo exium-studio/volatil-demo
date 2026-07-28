@@ -255,7 +255,7 @@ export const MapSearch = () => {
           {showRecent && (
             <VStack align={"stretch"} py={1}>
               {isEmptyArray(recentSearches) ? (
-                <Box p={2}>
+                <Box p={4}>
                   <FeedbackState
                     title={t["common.type_to_find"]()}
                     description={t[
@@ -266,7 +266,7 @@ export const MapSearch = () => {
                 </Box>
               ) : (
                 <>
-                  <Box px={3} py={2}>
+                  <Box px={3} pt={1} pb={2}>
                     <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
                       {t["common.recent"]()}
                     </P>
