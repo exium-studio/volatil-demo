@@ -55,8 +55,8 @@ export const BaseMapCompass = (props: StackProps) => {
       >
         <AppIcon
           icon={Navigation2Icon}
-          fill={"red.500"}
-          stroke={"red.500"}
+          fill={"red.400"}
+          stroke={"red.400"}
           transform={`rotate(${-bearing}deg)`}
         />
       </IconButton>
