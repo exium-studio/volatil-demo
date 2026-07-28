@@ -229,8 +229,9 @@ export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
 
   map.setLight({
     anchor: "viewport",
-    color: "#1a1a1a",
-    intensity: 0.4,
+    color: "#ffffff",
+    intensity: 0.25,
+    position: [1.5, 90, 80],
   });
 
   // Land / background
