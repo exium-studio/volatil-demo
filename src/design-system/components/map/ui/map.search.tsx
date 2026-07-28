@@ -18,7 +18,7 @@ import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { Box } from "@chakra-ui/react";
+import { Box, Presence } from "@chakra-ui/react";
 import { Clock, MapPin, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -192,6 +192,7 @@ export const MapSearch = () => {
 
   // Determine which list to display
   const hasInput = !!inputValue.trim();
+  const isDebouncing = inputValue.trim() !== debouncedQuery.trim();
   const isOpened = isFocused || hasInput;
   const showRecent = isFocused && !hasInput;
   const showResults = isFocused && hasInput;
@@ -223,13 +224,16 @@ export const MapSearch = () => {
       </MapOverlayContainer>
 
       {/* Floating Results/Recents Container */}
-      {(showRecent || showResults) && (
-        <Box
+      <Presence
+        present={isFocused}
+        animationName={{ _open: "fade-in", _closed: "fade-out" }}
+        animationDuration={"moderate"}
+      >
+        <VStack
           position={"absolute"}
           top={"100%"}
           left={0}
           right={0}
-          mt={2}
           bg={"bg.body"}
           rounded={theme.radii.container}
           shadow={"lg"}
@@ -241,7 +245,7 @@ export const MapSearch = () => {
         >
           {/* Recent Searches List */}
           {showRecent && (
-            <VStack align={"stretch"}>
+            <VStack align={"stretch"} py={1}>
               {isEmptyArray(recentSearches) ? (
                 <Box p={2}>
                   <FeedbackState
@@ -249,6 +253,7 @@ export const MapSearch = () => {
                     description={t[
                       "common.search_results_and_recent_appear_here"
                     ]()}
+                    m={"auto"}
                   />
                 </Box>
               ) : (
@@ -301,53 +306,97 @@ export const MapSearch = () => {
           {/* Search Results List */}
           {showResults && (
             <VStack align={"stretch"} gap={0} py={1}>
-              {isLoading && (
-                <HStack align={"center"} justify={"center"} py={4} gap={4}>
-                  <Loader />
+              {/* Still debouncing: show stale results or placeholder */}
+              {isDebouncing && (
+                <>
+                  {results.length > 0 ? (
+                    <Box px={1}>
+                      {results.map((item) => (
+                        <Button
+                          key={item.place_id}
+                          variant={"ghost"}
+                          w={"full"}
+                          p={2}
+                          onClick={() => handleSelectLocation(item)}
+                          _hover={{ bg: "bg.muted" }}
+                          justifyContent={"flex-start"}
+                        >
+                          <HStack gap={2} overflow={"hidden"} w={"full"}>
+                            <AppIcon icon={MapPin} color={"fg.muted"} />
 
-                  <P color={"fg.muted"}>{t["common.searching"]()}</P>
-                </HStack>
+                            <ClampedP textAlign={"start"}>
+                              {item.display_name}
+                            </ClampedP>
+                          </HStack>
+                        </Button>
+                      ))}
+                    </Box>
+                  ) : (
+                    <Box p={2}>
+                      <FeedbackState
+                        title={t["common.type_to_find"]()}
+                        description={t[
+                          "common.search_results_and_recent_appear_here"
+                        ]()}
+                        m={"auto"}
+                      />
+                    </Box>
+                  )}
+                </>
               )}
 
-              {isError && (
-                <Box px={3} py={3}>
-                  <P color={"fg.error"}>{t["common.error"]()}</P>
-                </Box>
-              )}
+              {/* Debounce settled: show live loading/error/results */}
+              {!isDebouncing && (
+                <>
+                  {isLoading && (
+                    <HStack align={"center"} justify={"center"} py={4} gap={4}>
+                      <Loader />
 
-              {!isLoading && !isError && results.length === 0 && (
-                <Box px={3} py={3}>
-                  <NoResultState query={debouncedQuery} />
-                </Box>
-              )}
+                      <P color={"fg.muted"}>{t["common.searching"]()}</P>
+                    </HStack>
+                  )}
 
-              {!isLoading && !isError && (
-                <Box px={1}>
-                  {results.map((item) => (
-                    <Button
-                      key={item.place_id}
-                      variant={"ghost"}
-                      w={"full"}
-                      p={2}
-                      onClick={() => handleSelectLocation(item)}
-                      _hover={{ bg: "bg.muted" }}
-                      justifyContent={"flex-start"}
-                    >
-                      <HStack gap={2} overflow={"hidden"} w={"full"}>
-                        <AppIcon icon={MapPin} color={"fg.muted"} />
+                  {isError && (
+                    <Box px={3} py={3}>
+                      <P color={"fg.error"}>{t["common.error"]()}</P>
+                    </Box>
+                  )}
 
-                        <ClampedP textAlign={"start"}>
-                          {item.display_name}
-                        </ClampedP>
-                      </HStack>
-                    </Button>
-                  ))}
-                </Box>
+                  {!isLoading && !isError && results.length === 0 && (
+                    <Box px={3} py={3}>
+                      <NoResultState query={debouncedQuery} />
+                    </Box>
+                  )}
+
+                  {!isLoading && !isError && results.length > 0 && (
+                    <Box px={1}>
+                      {results.map((item) => (
+                        <Button
+                          key={item.place_id}
+                          variant={"ghost"}
+                          w={"full"}
+                          p={2}
+                          onClick={() => handleSelectLocation(item)}
+                          _hover={{ bg: "bg.muted" }}
+                          justifyContent={"flex-start"}
+                        >
+                          <HStack gap={2} overflow={"hidden"} w={"full"}>
+                            <AppIcon icon={MapPin} color={"fg.muted"} />
+
+                            <ClampedP textAlign={"start"}>
+                              {item.display_name}
+                            </ClampedP>
+                          </HStack>
+                        </Button>
+                      ))}
+                    </Box>
+                  )}
+                </>
               )}
             </VStack>
           )}
-        </Box>
-      )}
+        </VStack>
+      </Presence>
     </VStack>
   );
 };
