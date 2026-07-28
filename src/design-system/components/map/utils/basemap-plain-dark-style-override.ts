@@ -240,9 +240,9 @@ export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
     ["linear"],
     ["zoom"],
     9,
-    "#141416",
+    "#141414",
     11,
-    "#161618",
+    "#161616",
     13,
     "#191a1a",
   ]);
