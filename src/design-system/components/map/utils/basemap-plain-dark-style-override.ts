@@ -1,20 +1,30 @@
-// src/design-system/components/map/utils/basemap-color-style-ovveride.ts
+// src/design-system/components/map/utils/basemap-plain-dark-style-override.ts
+
+import type maplibregl from "maplibre-gl";
 
 const ROAD_COLORS = {
-  motorway: { fill: "#a8bace", casing: "#6e8499" },
-  trunkPrimary: { fill: "#b5c6d6", casing: "#7a96a8" },
-  secondaryTertiary: { fill: "#c1cfdd", casing: "#8da4b5" },
-  link: { fill: "#b0c2d2", casing: "#7a96a8" },
-  minor: { fill: "#cdd8e3", casing: "#9ab0bf" },
-  serviceTrack: { fill: "#cdd8e3", casing: "#8da4b5" },
-  pathPedestrian: { fill: "#d6e0e9", casing: "#9ab0bf" },
+  motorway: { fill: "#2c2d30", casing: "#18191b" },
+  trunkPrimary: { fill: "#28292c", casing: "#18191b" },
+  secondaryTertiary: { fill: "#242528", casing: "#18191b" },
+  link: { fill: "#242528", casing: "#18191b" },
+  minor: { fill: "#202123", casing: "#18191b" },
+  serviceTrack: { fill: "#1c1d1e", casing: "#18191b" },
+  pathPedestrian: { fill: "#18191a", casing: "#141415" },
 } as const;
 
-// Building fill
-const BUILDING_FILL = "#e0e1e8";
-const BUILDING_OUTLINE = "#e0e1e8";
+const BUILDING_FILL = "#252629";
+const BUILDING_OUTLINE = "#1f2022";
 
-export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
+// Layers that use fill-pattern sprites — fill-color and fill-opacity are both
+// disabled when fill-pattern is active. Hiding them via layout visibility is
+// the only reliable way to suppress the pattern rendering entirely.
+const HIDDEN_PATTERN_LAYERS = [
+  "landcover_wood",
+  "landuse_track",
+  "landuse_pitch",
+];
+
+export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
   const setIfExists = (
     layerId: string,
     prop: string,
@@ -219,8 +229,8 @@ export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
 
   map.setLight({
     anchor: "viewport",
-    color: "#ffffff",
-    intensity: 0.2,
+    color: "#1a1a1a",
+    intensity: 0.4,
   });
 
   // Land / background
@@ -229,38 +239,76 @@ export function applyBasemapColorStyleOverride(map: maplibregl.Map) {
     ["linear"],
     ["zoom"],
     9,
-    "hsl(20, 20%, 95%)",
+    "#141416",
     11,
-    "hsl(20, 18%, 91%)",
+    "#161618",
     13,
-    "#f8f7f7",
+    "#191a1a",
   ]);
 
-  // Landcover
-  setIfExists("landcover_wood", "fill-color", "hsla(115, 55%, 74%, 0.8)");
-  setIfExists("landcover_grass", "fill-color", "hsla(110, 55%, 88%, 0.6)");
-  setIfExists("landcover_sand", "fill-color", "hsl(52, 65%, 86%)");
+  // Landcover & Landuse
+  setIfExists("landcover_grass", "fill-color", "#1e2320");
+  setIfExists("landcover_grass", "fill-outline-color", "#1e2320");
+  setIfExists("landcover_sand", "fill-color", "#242218");
+  setIfExists("landcover_sand", "fill-outline-color", "#242218");
 
-  setIfExists("park", "fill-color", "hsl(110, 60%, 80%)");
-  setIfExists("landuse_residential", "fill-color", "hsl(20, 7%, 97%)");
-  setIfExists("landuse_cemetery", "fill-color", "hsl(110, 48%, 85%)");
-  setIfExists("landuse_school", "fill-color", "hsl(40, 50%, 88%)");
-  setIfExists("landuse_hospital", "fill-color", "hsl(0, 50%, 92%)");
-  setIfExists("landuse_pitch", "fill-color", "hsl(100, 70%, 85%)");
-  setIfExists("landuse_track", "fill-color", "hsl(100, 70%, 85%)");
+  setIfExists("park", "fill-color", "#1c2420");
+  setIfExists("park", "fill-outline-color", "#1c2420");
+  setIfExists("park_outline", "line-color", "#1c2420");
+  setIfExists("landuse_residential", "fill-color", "#1e1f21");
+  setIfExists("landuse_cemetery", "fill-color", "#1c2420");
+  setIfExists("landuse_school", "fill-color", "#1c2122");
+  setIfExists("landuse_hospital", "fill-color", "#241e1e");
+
+  // Ice / glacier (causes the white circle at poles)
+  setIfExists("landcover_ice", "fill-color", "#1e2124");
+  setIfExists("landcover_ice", "fill-outline-color", "#1e2124");
+
+  // Wetland — has fill-pattern, must unset pattern before fill-color takes effect
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (map.setPaintProperty as any)("landcover_wetland", "fill-pattern", null);
+  setIfExists("landcover_wetland", "fill-color", "#1e2320");
+  setIfExists("landcover_wetland", "fill-outline-color", "#1e2320");
+
+  // Aeroway (airport apron/runway fill)
+  setIfExists("aeroway_fill", "fill-color", "#242528");
+  setIfExists("aeroway_runway", "line-color", "#2c2d30");
+  setIfExists("aeroway_taxiway", "line-color", "#242528");
+
+  // Pattern-sprite layers (forest/track/pitch) — fill-color and fill-opacity
+  // are both disabled when fill-pattern is active. Hide via layout visibility
+  // instead; the dark background shows through cleanly.
+  HIDDEN_PATTERN_LAYERS.forEach((id) => {
+    if (!map.getLayer(id)) return;
+    map.setLayoutProperty(id, "visibility", "none");
+  });
 
   // Water
-  setIfExists("water", "fill-color", "#90daee");
-  setIfExists("waterway_river", "line-color", "#90daee");
-  setIfExists("waterway_other", "line-color", "#90daee");
-  setIfExists("waterway_tunnel", "line-color", "#90daee");
+  setIfExists("water", "fill-color", "#262626");
+  setIfExists("waterway_river", "line-color", "#262626");
+  setIfExists("waterway_other", "line-color", "#262626");
+  setIfExists("waterway_tunnel", "line-color", "#262626");
 
   if (map.getLayer("natural_earth")) {
     map.setLayoutProperty("natural_earth", "visibility", "visible");
     map.setPaintProperty("natural_earth", "raster-hue-rotate", 70);
-    map.setPaintProperty("natural_earth", "raster-saturation", 0.6);
-    map.setPaintProperty("natural_earth", "raster-brightness-min", 0.32);
-    map.setPaintProperty("natural_earth", "raster-brightness-max", 1);
-    map.setPaintProperty("natural_earth", "raster-contrast", 0.2);
+    map.setPaintProperty("natural_earth", "raster-saturation", -0.5);
+    map.setPaintProperty("natural_earth", "raster-brightness-min", 0.05);
+    map.setPaintProperty("natural_earth", "raster-brightness-max", 0.25);
+    map.setPaintProperty("natural_earth", "raster-contrast", 0.0);
+    map.setPaintProperty("natural_earth", "raster-opacity", 0);
   }
+
+  // Label overrides to match Carto Dark Matter theme
+  map.getStyle().layers.forEach((layer) => {
+    if (layer.type === "symbol") {
+      try {
+        map.setPaintProperty(layer.id, "text-color", "#8e8e93");
+        map.setPaintProperty(layer.id, "text-halo-color", "#191a1a");
+        map.setPaintProperty(layer.id, "text-halo-width", 1.5);
+      } catch {
+        // Skip layers without text property
+      }
+    }
+  });
 }

@@ -16,7 +16,9 @@ import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.ba
 import type { BaseMapProps } from "@/design-system/components/map/types/map.basemap.type";
 import { BaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
 import { MapOverlay } from "@/design-system/components/map/ui/map.overlay";
-import { applyBasemapColorStyleOverride } from "@/design-system/components/map/utils/basemap-color-style-ovveride";
+import { applyBasemapColorStyleOverride } from "@/design-system/components/map/utils/basemap-color-style-override";
+import { applyBasemapPlainLightStyleOverride } from "@/design-system/components/map/utils/basemap-plain-light-style-override";
+import { applyBasemapPlainDarkStyleOverride } from "@/design-system/components/map/utils/basemap-plain-dark-style-override";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -27,9 +29,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
-  const appliedStyleRef = useRef<string | maplibregl.StyleSpecification | null>(
-    null,
-  );
+  const appliedStyleRef = useRef<{
+    style: string | maplibregl.StyleSpecification;
+    key: string;
+    mode: "light" | "dark";
+  } | null>(null);
 
   // Hooks
   const { colorMode } = useColorMode();
@@ -44,6 +48,7 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     (activeStyleKey === "color"
       ? OPENFREEMAP_LIBERTY_STYLE_URL
       : getBaseLayerStyle(activeStyleKey, colorMode));
+
   const contextValue = useMemo(
     () => ({
       map,
@@ -51,12 +56,14 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     [map],
   );
 
-  // Track the active style key in a ref so the event listeners in the map init effect
-  // can always access the freshest value without stale closures during HMR/updates.
+  // Track the active style key and color mode in refs so the event listeners in the map init effect
+  // can always access the freshest values without stale closures during updates/theme changes.
   const activeStyleKeyRef = useRef(activeStyleKey);
+  const colorModeRef = useRef(colorMode);
   useEffect(() => {
     activeStyleKeyRef.current = activeStyleKey;
-  }, [activeStyleKey]);
+    colorModeRef.current = colorMode;
+  }, [activeStyleKey, colorMode]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -73,16 +80,39 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     });
 
     // Seed the ref so the style-change effect skips the initial redundant call.
-    appliedStyleRef.current = currentStyle;
+    appliedStyleRef.current = {
+      style: currentStyle,
+      key: activeStyleKey,
+      mode: colorMode,
+    };
 
     // Globe must be re-applied after every style swap (setStyle() triggers a
     // new style.load, which resets the projection back to mercator).
     // Also called on initial "load" so a hard-refresh never loses the globe.
     const applyGlobe = () => {
       instance.setProjection({ type: "globe" });
-      applyBasemapColorStyleOverride(instance);
 
       const activeKey = activeStyleKeyRef.current;
+      const currentMode = colorModeRef.current;
+
+      if (activeKey === "color") {
+        applyBasemapColorStyleOverride(instance);
+      } else if (
+        activeKey === "plain-light" ||
+        activeKey === "plain-dark" ||
+        activeKey === "plain-adaptive"
+      ) {
+        let overrideMode: "light" | "dark" = currentMode;
+        if (activeKey === "plain-light") overrideMode = "light";
+        if (activeKey === "plain-dark") overrideMode = "dark";
+
+        if (overrideMode === "light") {
+          applyBasemapPlainLightStyleOverride(instance);
+        } else {
+          applyBasemapPlainDarkStyleOverride(instance);
+        }
+      }
+
       // Apply 3D terrain if the selected style is satellite
       if (activeKey === "satellite") {
         if (instance.getSource("terrain-dem")) {
@@ -102,6 +132,9 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     instance.once("load", () => {
       applyGlobe();
       setMap(instance);
+
+      // @ts-expect-error debug
+      window.__map = instance;
     });
 
     return () => {
@@ -115,11 +148,25 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
   // Change base layer style effect
   useEffect(() => {
     if (!map) return;
-    // Skip if this style is already applied (e.g. first render after map init).
-    if (appliedStyleRef.current === currentStyle) return;
-    appliedStyleRef.current = currentStyle;
-    map.setStyle(currentStyle);
-  }, [map, currentStyle, activeStyleKey]);
+
+    const previous = appliedStyleRef.current;
+    const isSameStyle = previous?.style === currentStyle;
+    const isSameKey = previous?.key === activeStyleKey;
+    const isSameMode = previous?.mode === colorMode;
+
+    if (isSameStyle && isSameKey && isSameMode) return;
+
+    appliedStyleRef.current = {
+      style: currentStyle,
+      key: activeStyleKey,
+      mode: colorMode,
+    };
+
+    // If style URL is the same but key/mode changed, force style reload by setting diff: false.
+    // This triggers "style.load" so we can re-apply paint overrides.
+    const forceReload = isSameStyle && (!isSameKey || !isSameMode);
+    map.setStyle(currentStyle, { diff: !forceReload });
+  }, [map, currentStyle, activeStyleKey, colorMode]);
 
   useMapLayers(map, layers);
   useMapDraw(map, onDrawFinish);

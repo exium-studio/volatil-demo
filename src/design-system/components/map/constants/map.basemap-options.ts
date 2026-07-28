@@ -22,66 +22,7 @@ export const OPENFREEMAP_LIBERTY_STYLE_URL =
 // - Vector styles (OpenFreeMap Liberty) don't have this problem — geometry
 //   scales without quality loss, so no cap needed here.
 
-const SOURCE_CARTO_MAX_ZOOM = 20;
 const SOURCE_ESRI_MAX_ZOOM = 17;
-
-const CARTO_POSITRON_STYLE: maplibregl.StyleSpecification = {
-  version: 8,
-  name: "CARTO Positron",
-  sources: {
-    "carto-positron": {
-      type: "raster",
-      tiles: [
-        "https://a.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
-        "https://b.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
-        "https://c.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
-        "https://d.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png",
-      ],
-      tileSize: 256,
-      maxzoom: SOURCE_CARTO_MAX_ZOOM,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    },
-  },
-  layers: [
-    {
-      id: "carto-positron-layer",
-      type: "raster",
-      source: "carto-positron",
-      minzoom: 0,
-      maxzoom: 24,
-    },
-  ],
-};
-
-const CARTO_DARK_MATTER_STYLE: maplibregl.StyleSpecification = {
-  version: 8,
-  name: "CARTO Dark Matter",
-  sources: {
-    "carto-dark": {
-      type: "raster",
-      tiles: [
-        "https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
-        "https://b.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
-        "https://c.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
-        "https://d.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png",
-      ],
-      tileSize: 256,
-      maxzoom: SOURCE_CARTO_MAX_ZOOM,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    },
-  },
-  layers: [
-    {
-      id: "carto-dark-layer",
-      type: "raster",
-      source: "carto-dark",
-      minzoom: 0,
-      maxzoom: 24,
-    },
-  ],
-};
 
 const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   version: 8,
@@ -159,14 +100,14 @@ export const MAP_BASE_LAYER_MAP = {
   "plain-light": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_light.png`,
     label: "Plain Light",
-    description: "Gaya terang polos CARTO Positron",
+    description: "Gaya terang polos 3D berbasis Liberty",
     attributions: [
       '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+      '&copy; <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>',
     ],
     style: {
-      light: CARTO_POSITRON_STYLE,
-      dark: CARTO_POSITRON_STYLE,
+      light: OPENFREEMAP_LIBERTY_STYLE_URL,
+      dark: OPENFREEMAP_LIBERTY_STYLE_URL,
     },
     maxZoom: 24,
   },
@@ -174,14 +115,14 @@ export const MAP_BASE_LAYER_MAP = {
   "plain-dark": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_dark.png`,
     label: "Plain Dark",
-    description: "Gaya gelap polos CARTO Dark Matter",
+    description: "Gaya gelap polos 3D berbasis Liberty",
     attributions: [
       '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+      '&copy; <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>',
     ],
     style: {
-      light: CARTO_DARK_MATTER_STYLE,
-      dark: CARTO_DARK_MATTER_STYLE,
+      light: OPENFREEMAP_LIBERTY_STYLE_URL,
+      dark: OPENFREEMAP_LIBERTY_STYLE_URL,
     },
     maxZoom: 24,
   },
@@ -189,14 +130,14 @@ export const MAP_BASE_LAYER_MAP = {
   "plain-adaptive": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_adaptive.png`,
     label: "Plain Adaptive",
-    description: "Polos adaptif mengikuti tema aplikasi (Terang/Gelap)",
+    description: "Polos adaptif 3D mengikuti tema aplikasi (Terang/Gelap)",
     attributions: [
       '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-      '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
+      '&copy; <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>',
     ],
     style: {
-      light: CARTO_POSITRON_STYLE,
-      dark: CARTO_DARK_MATTER_STYLE,
+      light: OPENFREEMAP_LIBERTY_STYLE_URL,
+      dark: OPENFREEMAP_LIBERTY_STYLE_URL,
     },
     maxZoom: 24,
   },
