@@ -4,7 +4,6 @@ import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
@@ -34,14 +33,7 @@ import {
   IconChevronCompactRight,
 } from "@tabler/icons-react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import {
-  BellIcon,
-  Columns2Icon,
-  HelpCircleIcon,
-  MapIcon,
-  PanelLeftIcon,
-  UserIcon,
-} from "lucide-react";
+import { BellIcon, HelpCircleIcon, UserIcon } from "lucide-react";
 
 // -------------------------------------------------------------------------------------
 
@@ -52,6 +44,24 @@ const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDE_BAR_KEY = "gis-app";
 const DEFAULT_SPLITTER_SIZE = [50, 50];
 const SPLITTER_KEY = "gis-app";
+
+// const LAYOUT_MODE_OPTIONS = [
+//   {
+//     value: "panel",
+//     label: "Main Panel",
+//     leftIcon: PanelLeftIcon,
+//   },
+//   {
+//     value: "split",
+//     label: "Split",
+//     leftIcon: Columns2Icon,
+//   },
+//   {
+//     value: "map",
+//     label: "Map",
+//     leftIcon: MapIcon,
+//   },
+// ];
 
 export const GisAppShell = (props: GisAppShellProps) => {
   // Props
@@ -214,31 +224,22 @@ const SidebarFooter = () => {
         </NavButton>
       </VStack>
 
-      <Separator my={2} />
+      {/* <Separator my={2} /> */}
 
-      <SegmentGroupInput
-        orientation={"vertical"}
-        size={"xs"}
-        w={"40px"}
-        defaultValue={"split"}
-        options={[
-          {
-            value: "panel",
-            leftIcon: PanelLeftIcon,
-          },
-          {
-            value: "split",
-            leftIcon: Columns2Icon,
-          },
-          {
-            value: "map",
-            leftIcon: MapIcon,
-          },
-        ]}
-        itemProps={{
-          minH: "40px",
-        }}
-      />
+      {/* <SegmentGroup.Root defaultValue={"split"}>
+        <SegmentGroup.Indicator />
+
+        {LAYOUT_MODE_OPTIONS.map((mode) => (
+          <Tooltip key={mode.value} content={mode.label}>
+            <Box w={"full"}>
+              <SegmentGroup.Item value={mode.value}>
+                <SegmentGroup.ItemHiddenInput />
+                <AppIcon icon={mode.leftIcon} />
+              </SegmentGroup.Item>
+            </Box>
+          </Tooltip>
+        ))}
+      </SegmentGroup.Root> */}
     </VStack>
   );
 };

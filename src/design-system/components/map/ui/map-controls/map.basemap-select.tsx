@@ -54,7 +54,7 @@ export const MapBaseLayerSelect = () => {
 
       <Popover.Content>
         <Popover.Header p={3} borderBottom={"1px solid"} borderColor={"border"}>
-          <P fontWeight={"semibold"}>{"Pilih Gaya Peta"}</P>
+          <P>{"Basemap"}</P>
         </Popover.Header>
 
         <Popover.Body
