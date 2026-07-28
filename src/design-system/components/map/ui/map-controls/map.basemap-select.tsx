@@ -6,7 +6,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
 import {
   MAP_BASE_LAYER_OPTIONS,
-  getBaseLayerOption,
+  getBasemapOption,
 } from "@/design-system/components/map/constants/map.basemap-options";
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
@@ -22,7 +22,7 @@ export const MapBaseLayerSelect = () => {
   const { theme } = useThemeStore();
 
   // Constants
-  const activeStyle = getBaseLayerOption(activeStyleKey);
+  const activeStyle = getBasemapOption(activeStyleKey);
 
   return (
     <Popover.Root
@@ -44,7 +44,7 @@ export const MapBaseLayerSelect = () => {
                 src={activeStyle.thumbnail}
                 aspectRatio={1}
                 objectFit={"cover"}
-                w={["64px", null, "80px"]}
+                w={["64px", null, "70px"]}
                 rounded={`calc(${theme.radii.component} - 2px)`}
               />
             </Center>
@@ -69,7 +69,7 @@ export const MapBaseLayerSelect = () => {
           >
             {MAP_BASE_LAYER_OPTIONS.map((styleKey) => {
               const isSelected = activeStyleKey === styleKey;
-              const item = getBaseLayerOption(styleKey);
+              const item = getBasemapOption(styleKey);
 
               return (
                 <VStack
@@ -80,8 +80,8 @@ export const MapBaseLayerSelect = () => {
                 >
                   <Image
                     src={item.thumbnail}
-                    aspectRatio={2 / 1}
-                    w={"120px"}
+                    aspectRatio={1}
+                    w={"112px"}
                     objectFit={"cover"}
                     rounded={`calc(${theme.radii.component} - 2px)`}
                     cursor={"pointer"}
