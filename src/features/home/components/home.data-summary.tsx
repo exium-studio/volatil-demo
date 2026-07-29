@@ -176,29 +176,35 @@ const Charts = () => {
   );
 };
 
+const Header = () => {
+  return (
+    <HStack align={"center"} justify={"space-between"} p={PADDING_MD}>
+      <VStack gap={1}>
+        <P>Ringkasan data Anda</P>
+        <P fontSize={"sm"} color={"fg.subtle"}>
+          Ringkasan data Anda
+        </P>
+      </VStack>
+
+      <SegmentGroupInput
+        defaultValue={"all"}
+        options={[
+          { value: "1h", label: "1H" },
+          { value: "1w", label: "1M" },
+          { value: "1b", label: "1B" },
+          { value: "1t", label: "1T" },
+          { value: "all", label: "Semua", flex: 1 },
+        ]}
+      />
+    </HStack>
+  );
+};
+
 export const DataSummary = () => {
   return (
     <Container.Root px={PADDING_SM} withContext={true}>
       <Container.Body>
-        <HStack align={"center"} justify={"space-between"} p={PADDING_MD}>
-          <VStack gap={1}>
-            <P>Ringkasan data Anda</P>
-            <P fontSize={"sm"} color={"fg.subtle"}>
-              Ringkasan data Anda
-            </P>
-          </VStack>
-
-          <SegmentGroupInput
-            defaultValue={"all"}
-            options={[
-              { value: "1h", label: "1H" },
-              { value: "1w", label: "1M" },
-              { value: "1b", label: "1B" },
-              { value: "1t", label: "1T" },
-              { value: "all", label: "Semua", flex: 1 },
-            ]}
-          />
-        </HStack>
+        <Header />
 
         <Separator borderColor={"bg.canvas"} />
 
