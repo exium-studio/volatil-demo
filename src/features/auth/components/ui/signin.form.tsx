@@ -35,16 +35,24 @@ export const MitraSignin = () => {
 
 export const InternalSignin = () => {
   return (
-    <VStack>
-      <Fieldset>
+    <VStack flex={1}>
+      <Fieldset mb={"auto"}>
         <Field label={"Email"}>
-          <Input />
+          <Input placeholder={"jolitos@email.com"} />
         </Field>
 
         <Field label={"Kata Sandi"}>
-          <PasswordInput />
+          <PasswordInput placeholder={"••••••••"} />
         </Field>
+
+        <PLink ml={"auto"}>Lupa kata sandi?</PLink>
       </Fieldset>
+
+      <NavLink to={"/portal/welcome"}>
+        <Button primary type={"submit"} w={"full"} mt={8}>
+          Masuk
+        </Button>
+      </NavLink>
     </VStack>
   );
 };
