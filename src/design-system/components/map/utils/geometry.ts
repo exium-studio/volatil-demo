@@ -30,18 +30,40 @@ export const closePolygonRing = (points: DrawPoint[]): DrawPoint[] => {
   return isAlreadyClosed ? points : [...points, first];
 };
 
+/** Interpolates intermediate points along a great circle edge so MapLibre
+ * fills the shorter side of the polygon on globe projection. Without this,
+ * MapLibre always fills the larger geodesic area regardless of winding order. */
+const densifyRing = (points: DrawPoint[], steps = 32): DrawPoint[] => {
+  const result: DrawPoint[] = [];
+
+  for (let i = 0; i < points.length - 1; i++) {
+    const a = points[i];
+    const b = points[i + 1];
+    for (let s = 0; s < steps; s++) {
+      const t = s / steps;
+      result.push({
+        lng: a.lng + (b.lng - a.lng) * t,
+        lat: a.lat + (b.lat - a.lat) * t,
+      });
+    }
+  }
+  result.push(points[points.length - 1]);
+  return result;
+};
+
 /** Converts accumulated draw points into a GeoJSON Polygon feature. */
 export const toPolygonFeature = (
   points: DrawPoint[],
 ): GeoJSON.Feature<GeoJSON.Polygon> => {
   const ring = closePolygonRing(points);
+  const densified = densifyRing(ring);
 
   return {
     type: "Feature",
     properties: {},
     geometry: {
       type: "Polygon",
-      coordinates: [ring.map((p) => [p.lng, p.lat])],
+      coordinates: [densified.map((p) => [p.lng, p.lat])],
     },
   };
 };
