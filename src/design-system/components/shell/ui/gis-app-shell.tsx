@@ -313,6 +313,7 @@ const Content = () => {
     { id: "map", minSize: isSmallViewport ? 5 : 5 },
     { id: "content", minSize: isSmallViewport ? 5 : 5 },
   ];
+  const isWelcomePathname = pathname.includes("/welcome");
 
   // Constants
   const navKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
@@ -320,23 +321,26 @@ const Content = () => {
 
   // Components
   const contentPanel = (
-    <Splitter.Panel key={"content"} id={"content"} alignItems={"end"}>
-      <VStack minW={[0, null, "360px"]} w={"full"}>
-        <HStack
-          align={"center"}
-          justify={"space-between"}
-          minH={HEADER_H}
-          maxH={HEADER_H}
-          px={4}
-        >
-          {navTitle && <ClampedP fontWeight={"semibold"}>{navTitle}</ClampedP>}
-
-          {/* <HStack align={"center"} ml={"auto"}>
-            <IconButton variant={"subtle"} size={"2xs"} rounded={"full"}>
-              <AppIcon icon={XIcon} size={"sm"} />
-            </IconButton>
-          </HStack> */}
-        </HStack>
+    <Splitter.Panel
+      key={"content"}
+      id={"content"}
+      alignItems={"end"}
+      overflow={"auto"}
+    >
+      <VStack flex={1} overflow={"auto"} minW={[0, null, "360px"]} w={"full"}>
+        {!isWelcomePathname && (
+          <HStack
+            align={"center"}
+            justify={"space-between"}
+            minH={HEADER_H}
+            maxH={HEADER_H}
+            px={4}
+          >
+            {navTitle && (
+              <ClampedP fontWeight={"semibold"}>{navTitle}</ClampedP>
+            )}
+          </HStack>
+        )}
 
         <Outlet />
       </VStack>
@@ -357,7 +361,6 @@ const Content = () => {
         ].join(", ")}
         bgSize={"200px 200px, 250px 250px, 300px 300px, 350px 350px, 100% 100%"}
         borderLeft={!isSmallViewport ? "1px solid" : undefined}
-        borderTop={isSmallViewport ? "1px solid" : undefined}
         borderColor={"border"}
       >
         <BaseMap

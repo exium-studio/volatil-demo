@@ -25,6 +25,7 @@
     "profile": "Profile",
     "show_less": "Show less",
     "welcome_user": "Welcome back, {name}!",
+    "welcome_intro": "Where do we start today?",
     "loading": "Loading...",
     "loading_with_context": "Loading {context}...",
     "processing": "Processing, please wait...",

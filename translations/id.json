@@ -25,6 +25,7 @@
     "profile": "Profil",
     "show_less": "Tampilkan lebih sedikit",
     "welcome_user": "Selamat datang kembali, {name}!",
+    "welcome_intro": "Dari mana kita mulai hari ini?",
     "loading": "Memuat...",
     "loading_with_context": "Memuat {context}...",
     "processing": "Memproses, mohon tunggu...",
