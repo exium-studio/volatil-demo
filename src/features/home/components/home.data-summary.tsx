@@ -20,10 +20,10 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import type {
-  LegendProps,
-  HomeSummaryStatus,
+  HomeDataSummaryLegendProps,
+  HomeDataSummaryStatusConfig,
 } from "@/features/home/types/home.data-summary.type";
-import { homeDataSummary } from "@/shared/constants/dummy-data";
+import { homeData } from "@/shared/constants/dummy-data";
 
 const ProgressBar = (props: ProgressRootProps) => {
   return (
@@ -35,7 +35,7 @@ const ProgressBar = (props: ProgressRootProps) => {
   );
 };
 
-const Legend = (props: LegendProps) => {
+const Legend = (props: HomeDataSummaryLegendProps) => {
   // Props
   const { legendColor, label, value, ...restProps } = props;
 
@@ -44,11 +44,9 @@ const Legend = (props: LegendProps) => {
       <Box w={"8px"} h={"8px"} bg={legendColor} mt={2} />
 
       <Box>
-        <P fontSize={"sm"} color={"fg.muted"}>
-          {label}
-        </P>
+        <P color={"fg.muted"}>{label}</P>
 
-        <P fontSize={"lg"} fontWeight={"semibold"}>
+        <P fontSize={"2xl"} fontWeight={"medium"}>
           <FormatNumber value={value} />
         </P>
       </Box>
@@ -61,57 +59,70 @@ const Charts = () => {
   const { isSmContainer } = useContainerContext();
 
   // Constants
-  const statuses: HomeSummaryStatus[] = ["active", "almostExpired", "expired"];
-
-  // Utils
-  const getSummaryItemProps = (
-    type: "field" | "area",
-    status: HomeSummaryStatus,
-  ) => {
-    switch (status) {
-      case "active": {
-        const palette = type === "field" ? "blue" : "orange";
-        return {
-          label: "Aktif",
-          colorPalette: palette,
-          bg: undefined,
-          legendColor: `${palette}.solid`,
-          striped: true,
-        };
-      }
-      case "almostExpired":
-        return {
-          label: "Hampir kadaluwarsa",
-          colorPalette: undefined,
-          bg: "an4",
-          legendColor: "an4",
-          striped: false,
-        };
-      default:
-        return {
-          label: "Kadaluwarsa",
-          colorPalette: undefined,
-          bg: "an2",
-          legendColor: "an2",
-          striped: false,
-        };
-    }
-  };
+  const FIELD_STATUSES: HomeDataSummaryStatusConfig[] = [
+    {
+      key: "active",
+      label: "Aktif",
+      colorPalette: "blue",
+      legendColor: "blue.solid",
+      striped: true,
+    },
+    {
+      key: "almostExpired",
+      label: "Hampir kadaluwarsa",
+      bg: "an4",
+      legendColor: "an4",
+      striped: false,
+    },
+    {
+      key: "expired",
+      label: "Kadaluwarsa",
+      bg: "an2",
+      legendColor: "an2",
+      striped: false,
+    },
+  ];
+  const AREA_STATUSES: HomeDataSummaryStatusConfig[] = [
+    {
+      key: "active",
+      label: "Aktif",
+      colorPalette: "orange",
+      legendColor: "orange.solid",
+      striped: true,
+    },
+    {
+      key: "almostExpired",
+      label: "Hampir kadaluwarsa",
+      bg: "an4",
+      legendColor: "an4",
+      striped: false,
+    },
+    {
+      key: "expired",
+      label: "Kadaluwarsa",
+      bg: "an2",
+      legendColor: "an2",
+      striped: false,
+    },
+  ];
 
   return (
-    <SimpleGrid columns={isSmContainer ? 1 : 2} gap={PADDING_MD} p={PADDING_MD}>
+    <SimpleGrid
+      columns={isSmContainer ? 1 : 2}
+      gap={PADDING_MD}
+      px={PADDING_MD}
+    >
       {/* IGT Berbasis Bidang */}
       <VStack align={"start"} gap={SPACING_MD}>
         <P color={"fg.muted"}>IGT berbasis bidang</P>
 
         <HStack gap={SPACING_SM} w={"full"}>
-          {statuses.map((key) => {
-            const config = getSummaryItemProps("field", key);
-            const value = homeDataSummary.field[key];
+          {FIELD_STATUSES.map((config) => {
+            const value = homeData.dataSummary.field[config.key];
 
             return (
               <ProgressBar
-                key={key}
+                key={config.key}
                 striped={config.striped}
                 colorPalette={config.colorPalette}
                 bg={config.bg}
@@ -121,13 +132,12 @@ const Charts = () => {
           })}
         </HStack>
 
-        <HStack wrap={"wrap"} gap={4}>
-          {statuses.map((key) => {
-            const config = getSummaryItemProps("field", key);
-            const value = homeDataSummary.field[key];
+        <HStack wrap={"wrap"} gap={6}>
+          {FIELD_STATUSES.map((config) => {
+            const value = homeData.dataSummary.field[config.key];
             return (
               <Legend
-                key={key}
+                key={config.key}
                 legendColor={config.legendColor}
                 label={config.label}
                 value={value}
@@ -142,12 +152,11 @@ const Charts = () => {
         <P color={"fg.muted"}>IGT berbasis kawasan</P>
 
         <HStack gap={SPACING_SM} w={"full"}>
-          {statuses.map((key) => {
-            const config = getSummaryItemProps("area", key);
-            const value = homeDataSummary.area[key];
+          {AREA_STATUSES.map((config) => {
+            const value = homeData.dataSummary.area[config.key];
             return (
               <ProgressBar
-                key={key}
+                key={config.key}
                 striped={config.striped}
                 colorPalette={config.colorPalette}
                 bg={config.bg}
@@ -157,13 +166,12 @@ const Charts = () => {
           })}
         </HStack>
 
-        <HStack wrap={"wrap"} gap={4}>
-          {statuses.map((key) => {
-            const config = getSummaryItemProps("area", key);
-            const value = homeDataSummary.area[key];
+        <HStack wrap={"wrap"} gap={6}>
+          {AREA_STATUSES.map((config) => {
+            const value = homeData.dataSummary.area[config.key];
             return (
               <Legend
-                key={key}
+                key={config.key}
                 legendColor={config.legendColor}
                 label={config.label}
                 value={value}
@@ -178,11 +186,11 @@ const Charts = () => {
 
 const Header = () => {
   return (
-    <HStack align={"center"} justify={"space-between"} p={PADDING_MD}>
+    <HStack align={"center"} justify={"space-between"} px={PADDING_MD}>
       <VStack gap={1}>
         <P>Ringkasan data Anda</P>
         <P fontSize={"sm"} color={"fg.subtle"}>
-          Ringkasan data Anda
+          Ringkasan informasi status data IGT Anda.
         </P>
       </VStack>
 
@@ -203,10 +211,10 @@ const Header = () => {
 export const DataSummary = () => {
   return (
     <Container.Root px={PADDING_SM} withContext={true}>
-      <Container.Body>
+      <Container.Body gap={4} py={PADDING_MD}>
         <Header />
 
-        <Separator borderColor={"bg.canvas"} />
+        <Separator borderWidth={"1px"} borderColor={"bg.canvas"} />
 
         <Charts />
       </Container.Body>

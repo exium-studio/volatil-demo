@@ -2,7 +2,16 @@
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 
-export type LegendProps = StackProps & {
+export type HomeDataSummaryStatusConfig = {
+  key: HomeSummaryStatus;
+  label: string;
+  colorPalette?: string;
+  bg?: string;
+  legendColor: string;
+  striped: boolean;
+};
+
+export type HomeDataSummaryLegendProps = StackProps & {
   legendColor: string;
   label: string;
   value: number;
@@ -19,4 +28,16 @@ export interface HomeSummaryResponse {
 export interface HomeDataSummaryResponse {
   field: HomeSummaryResponse;
   area: HomeSummaryResponse;
+}
+
+export interface HomeCartSummaryResponse {
+  totalField: number;
+  totalArea: number;
+  totalIgtData: number;
+  subtotalPrice: number;
+}
+
+export interface HomeDataResponse {
+  dataSummary: HomeDataSummaryResponse;
+  cartSummary: HomeCartSummaryResponse;
 }

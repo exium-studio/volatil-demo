@@ -24,7 +24,7 @@ export const DEFAULT: ThemeStore = {
   colorPalette: COLOR_PALETTES[21].palette,
   primaryColor: `${COLOR_PALETTES[0].palette}.solid`,
   primaryColorHex: COLOR_PALETTES[0].primaryHex,
-  radii: ROUNDED_PRESETS[3],
+  radii: ROUNDED_PRESETS[5],
   ambienceColor: false,
 };
 
