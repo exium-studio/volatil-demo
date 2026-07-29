@@ -1,4 +1,4 @@
-// src/features/home/components/DataSummary.tsx
+// src/features/home/components/home.data-summary.tsx
 
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";

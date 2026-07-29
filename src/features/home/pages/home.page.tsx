@@ -1,4 +1,4 @@
-// src/features/home/pages/home-page.tsx
+// src/features/home/pages/home.page.tsx
 
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { DataSummary } from "@/features/home/components/home.data-summary";
