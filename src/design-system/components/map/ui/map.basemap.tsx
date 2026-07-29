@@ -152,7 +152,8 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
     const previous = appliedStyleRef.current;
     const isSameStyle = previous?.style === currentStyle;
     const isSameKey = previous?.key === activeStyleKey;
-    const isSameMode = previous?.mode === colorMode;
+    const isSameMode =
+      activeStyleKey === "plain-adaptive" ? previous?.mode === colorMode : true;
 
     if (isSameStyle && isSameKey && isSameMode) return;
 

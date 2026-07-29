@@ -221,6 +221,7 @@ export const MapSearch = () => {
           placeholder={t["common.search_location"]()}
           w={"full"}
           border={"none"}
+          outline={"none"}
           color={isOpened ? "fg" : "white"}
           bg={"transparent"}
           onFocus={handleFocus}
@@ -243,7 +244,7 @@ export const MapSearch = () => {
           left={0}
           right={0}
           bg={"bg.body"}
-          rounded={theme.radii.container}
+          rounded={theme.radii.component}
           shadow={"lg"}
           border={"1px solid"}
           borderColor={"border.emphasized"}
