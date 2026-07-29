@@ -18,7 +18,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP } from "@/design-system/constants/_meta";
-import { HEADER_H } from "@/design-system/constants/styles";
+import { HEADER_H, PADDING_LG } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
@@ -334,7 +334,7 @@ const Content = () => {
             justify={"space-between"}
             minH={HEADER_H}
             maxH={HEADER_H}
-            px={4}
+            px={PADDING_LG}
           >
             {navTitle && (
               <ClampedP fontSize={"xl"} fontWeight={"semibold"}>

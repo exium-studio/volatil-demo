@@ -8,8 +8,9 @@ import { Toaster } from "@/design-system/components/toast";
 import { DebugMenu } from "@/design-system/components/utilities/ui/debug-menu";
 import { OfflineAlert } from "@/design-system/components/utilities/ui/offline-alert";
 import { APP } from "@/design-system/constants/_meta";
+import { LocaleProvider as ChakraLocaleProvider } from "@/design-system/components/utilities/ui/chakra-locale-provider";
 import { LocaleProvider } from "@/shared/libs/i18n/locale-provider";
-import { globalSearchParamsSchema } from "@/shared/schemas/root-search.params-schema";
+import { globalSearchParamsSchema } from "@/shared/schemas/root.search-params-schema";
 import "@fontsource-variable/wix-madefor-text";
 import "@fontsource/sorts-mill-goudy";
 import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
@@ -31,16 +32,18 @@ function RootComponent() {
     <ColorModeProvider>
       <ChakraSystemProvider>
         <LocaleProvider>
-          <>
-            <HeadContent />
-            <Outlet />
-          </>
+          <ChakraLocaleProvider>
+            <>
+              <HeadContent />
+              <Outlet />
+            </>
 
-          <>
-            <Toaster />
-            <OfflineAlert />
-            <DebugMenu />
-          </>
+            <>
+              <Toaster />
+              <OfflineAlert />
+              <DebugMenu />
+            </>
+          </ChakraLocaleProvider>
         </LocaleProvider>
       </ChakraSystemProvider>
     </ColorModeProvider>

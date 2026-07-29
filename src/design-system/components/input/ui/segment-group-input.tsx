@@ -11,7 +11,7 @@ export const SegmentGroupInput = React.forwardRef<
   SegmentGroupInputProps
 >(function SegmentGroupInput(props, ref) {
   // Props
-  const { options, itemProps, colorPalette, ...restProps } = props;
+  const { options, itemProps, colorPalette, flexItem, ...restProps } = props;
   const indicatorBg = colorPalette ? `${colorPalette}.solid` : undefined;
   const activeIndicatorColor = colorPalette ? `${colorPalette}.contrast` : "fg";
 
@@ -23,6 +23,7 @@ export const SegmentGroupInput = React.forwardRef<
         <SegmentGroup.Item
           key={option.value}
           value={option.value}
+          flex={option.flex !== undefined ? option.flex : (flexItem ? 1 : undefined)}
           disabled={option.disabled}
           _checked={{ color: activeIndicatorColor }}
           {...itemProps}
@@ -35,7 +36,7 @@ export const SegmentGroupInput = React.forwardRef<
 
           {option.label && (
             <SegmentGroup.ItemText>
-              <ClampedP>{option.label}</ClampedP>
+              <ClampedP fontSize={"sm"}>{option.label}</ClampedP>
             </SegmentGroup.ItemText>
           )}
 

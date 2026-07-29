@@ -9,10 +9,12 @@ export type SegmentGroupInputOption = {
   leftIcon?: ComponentType;
   rightIcon?: ComponentType;
   disabled?: boolean;
+  flex?: ChakraSegmentGroup.ItemProps["flex"];
 };
 
 export type SegmentGroupInputProps = ChakraSegmentGroup.RootProps & {
   options: SegmentGroupInputOption[];
   itemProps?: Omit<ChakraSegmentGroup.ItemProps, "value">;
   colorPalette?: string;
+  flexItem?: boolean;
 };

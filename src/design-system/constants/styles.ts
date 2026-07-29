@@ -32,7 +32,8 @@ export const SECTION_GAP = 8;
 // Padding
 export const PADDING_SM = "8px";
 export const PADDING_MD = "16px";
-export const PADDING_LG = "24px";
+export const PADDING_LG = "22px";
+export const PADDING_XL = "28px";
 
 // Effect
 export const BACKDROP_FILTER_BLUR = "blur(2px)";

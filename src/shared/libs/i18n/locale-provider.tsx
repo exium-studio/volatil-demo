@@ -1,5 +1,3 @@
-// src/shared/libs/i18n/locale-provider.tsx
-
 import {
   createContext,
   useContext,
