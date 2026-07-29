@@ -10,6 +10,7 @@ import {
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import {
@@ -198,6 +199,8 @@ export const DataSummary = () => {
             ]}
           />
         </HStack>
+
+        <Separator borderColor={"bg.canvas"} />
 
         <Charts />
       </Container.Body>
