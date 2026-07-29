@@ -337,7 +337,9 @@ const Content = () => {
             px={4}
           >
             {navTitle && (
-              <ClampedP fontWeight={"semibold"}>{navTitle}</ClampedP>
+              <ClampedP fontSize={"xl"} fontWeight={"semibold"}>
+                {navTitle}
+              </ClampedP>
             )}
           </HStack>
         )}
