@@ -96,7 +96,7 @@ const TOPO_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
-export const MAP_BASE_LAYER_MAP = {
+export const MAP_BASEMAP_MAP = {
   "plain-light": {
     thumbnail: `${IMAGES_PATH}/base_map_styles/plain_light.png`,
     label: "Plain Light",
@@ -189,17 +189,15 @@ export const MAP_BASE_LAYER_MAP = {
   },
 } as const satisfies Record<BasemapKey, BasemapOption>;
 
-export const MAP_BASE_LAYER_OPTIONS = Object.keys(
-  MAP_BASE_LAYER_MAP,
-) as BasemapKey[];
+export const MAP_BASEMAP_OPTIONS = Object.keys(MAP_BASEMAP_MAP) as BasemapKey[];
 
 // -----------------------------------------------------------------
 
 export const getBasemapOption = (key: BasemapKey): BasemapOption =>
-  MAP_BASE_LAYER_MAP[key];
+  MAP_BASEMAP_MAP[key];
 
 export const getBaseLayerStyle = (
   key: BasemapKey,
   colorMode: "light" | "dark",
 ): string | maplibregl.StyleSpecification =>
-  MAP_BASE_LAYER_MAP[key].style[colorMode];
+  MAP_BASEMAP_MAP[key].style[colorMode];
