@@ -69,7 +69,6 @@ const StatItem = (props: HomeCartSummaryStatItemProps) => {
       gap={2}
       h={"full"}
       p={PADDING_MD}
-      my={"auto"}
       {...restProps}
     >
       <HStack align={"center"} justify={"space-between"} gap={4} w={"full"}>
@@ -78,7 +77,7 @@ const StatItem = (props: HomeCartSummaryStatItemProps) => {
         {icon && <AppIcon icon={icon} color={"fg.subtle"} />}
       </HStack>
 
-      <P fontSize={"2xl"} fontWeight={"medium"} color={color}>
+      <P fontSize={"2xl"} fontWeight={"medium"} color={color} mt={"auto"}>
         {isCurrency ? (
           <FormatNumber
             value={value}

@@ -1,30 +1,17 @@
 // src/features/home/components/home.cart-summary.tsx
 
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
-import {
-  Container,
-  useContainerContext,
-} from "@/design-system/components/layout/ui/container";
+import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
-import { Separator } from "@/design-system/components/layout/ui/separator";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { Span } from "@/design-system/components/typography/ui/span";
-import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import type {
-  CartStatConfig,
-  HomeCartSummaryStatItemProps,
-} from "@/features/home/types/home.cart-summary.type";
-import { homeData } from "@/shared/constants/dummy-data";
+import { P } from "@/design-system/components/typography/ui/p";
 import {
-  DatabaseIcon,
-  HandCoinsIcon,
-  LandPlotIcon,
-  LayersIcon,
-} from "lucide-react";
+  PADDING_LG,
+  PADDING_MD,
+  SPACING_MD,
+} from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { Chart, useChart } from "@chakra-ui/charts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 export const HomeFinancialFlow = () => {
   return (
@@ -33,9 +20,7 @@ export const HomeFinancialFlow = () => {
         <Header />
 
         <VStack mt={"auto"}>
-          <Separator borderColor={"bg.canvas"} />
-
-          <CartStats />
+          <ChartContent />
         </VStack>
       </Container.Body>
     </Container.Root>
@@ -72,122 +57,50 @@ const Header = () => {
   );
 };
 
-const StatItem = (props: HomeCartSummaryStatItemProps) => {
-  // Props
-  const { label, value, suffix, icon, color, ...restProps } = props;
-
-  // Derived Values
-  const isCurrency = label.toLowerCase().includes("harga");
-
-  return (
-    <VStack
-      align={"start"}
-      overflow={"clip"}
-      position={"relative"}
-      p={PADDING_MD}
-      {...restProps}
-    >
-      <HStack align={"center"} justify={"space-between"} gap={4} w={"full"}>
-        <P color={"fg.muted"}>{label}</P>
-
-        {icon && <AppIcon icon={icon} color={"fg.subtle"} />}
-      </HStack>
-
-      <ClampedP fontSize={"2xl"} fontWeight={"medium"} color={color}>
-        {isCurrency ? (
-          <FormatNumber
-            value={value}
-            style={"currency"}
-            currency={"IDR"}
-            maximumFractionDigits={0}
-          />
-        ) : (
-          <FormatNumber value={value} />
-        )}
-
-        {suffix && (
-          <Span fontSize={"sm"} color={color} ml={1}>
-            {suffix}
-          </Span>
-        )}
-      </ClampedP>
-
-      {/* {icon && (
-        <AppIcon
-          icon={icon}
-          boxSize={"48px"}
-          strokeWidth={"1.25px"}
-          color={color}
-          mt={3}
-          mb={-6}
-          transform={"rotate(20deg)"}
-        />
-      )} */}
-    </VStack>
-  );
-};
-
-const CartStats = () => {
+const ChartContent = () => {
   // Stores
   const { theme } = useThemeStore();
 
-  // Contexts
-  const { isSmContainer } = useContainerContext();
-
-  // Queries
-  const { totalField, totalArea, totalIgtData, subtotalPrice } =
-    homeData.cartSummary;
-
-  // Constants
-  const cols = isSmContainer ? 2 : 4;
-  const STATS: CartStatConfig[] = [
-    {
-      icon: LayersIcon,
-      label: "Total Bidang",
-      value: totalField,
-      suffix: "bidang",
-      color: "blue.fg",
-    },
-    {
-      icon: LandPlotIcon,
-      label: "Total Kawasan",
-      value: totalArea,
-      suffix: "ha",
-      color: "orange.fg",
-    },
-    {
-      icon: DatabaseIcon,
-      label: "Total Data IGT",
-      value: totalIgtData,
-      suffix: "data",
-    },
-    {
-      icon: HandCoinsIcon,
-      label: "Subtotal Harga",
-      value: subtotalPrice,
-    },
-  ];
+  const chart = useChart({
+    data: [
+      { sale: 10, month: "January" },
+      { sale: 95, month: "February" },
+      { sale: 87, month: "March" },
+      { sale: 88, month: "May" },
+      { sale: 65, month: "June" },
+      { sale: 90, month: "August" },
+    ],
+    series: [{ name: "sale", color: `${theme.colorPalette}.solid` }],
+  });
 
   return (
-    <SimpleGrid
-      columns={cols}
-      overflow={"clip"}
-      roundedBottom={theme.radii.container}
-    >
-      {STATS.map((stat, index) => {
-        const isLastInRow = (index + 1) % cols === 0;
-        const isNotFirstRow = index >= cols;
-
-        return (
-          <StatItem
-            key={stat.label}
-            {...stat}
-            borderRight={isLastInRow ? undefined : "2px solid"}
-            borderTop={isNotFirstRow ? "2px solid" : undefined}
-            borderColor={"bg.canvas"}
+    <Chart.Root maxH={"240px"} chart={chart} pr={PADDING_LG}>
+      <LineChart data={chart.data} responsive>
+        <CartesianGrid stroke={chart.color("border")} vertical={false} />
+        <XAxis
+          axisLine={false}
+          dataKey={chart.key("month")}
+          tickFormatter={(value) => value.slice(0, 3)}
+          stroke={chart.color("border")}
+        />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          tickMargin={10}
+          stroke={chart.color("border")}
+        />
+        {chart.series.map((item) => (
+          <Line
+            type={"linear"}
+            key={item.name}
+            isAnimationActive={false}
+            dataKey={chart.key(item.name)}
+            stroke={chart.color(item.color)}
+            strokeWidth={2}
+            dot={false}
           />
-        );
-      })}
-    </SimpleGrid>
+        ))}
+      </LineChart>
+    </Chart.Root>
   );
 };
