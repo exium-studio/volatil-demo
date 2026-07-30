@@ -214,7 +214,7 @@ export const DataSummary = () => {
       <Container.Body gap={4} py={PADDING_MD}>
         <Header />
 
-        <Separator borderWidth={"1px"} borderColor={"bg.canvas"} />
+        <Separator borderColor={"bg.canvas"} />
 
         <Charts />
       </Container.Body>

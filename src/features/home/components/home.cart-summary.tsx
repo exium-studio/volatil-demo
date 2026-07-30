@@ -7,6 +7,7 @@ import {
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -144,8 +145,6 @@ const CartStats = () => {
       columns={cols}
       overflow={"clip"}
       roundedBottom={theme.radii.container}
-      borderTop={"2px solid"}
-      borderColor={"bg.canvas"}
     >
       {STATS.map((stat, index) => {
         const isLastInRow = (index + 1) % cols === 0;
@@ -171,7 +170,11 @@ export const CartSummary = () => {
       <Container.Body gap={4} pt={PADDING_MD}>
         <Header />
 
-        <CartStats />
+        <VStack>
+          <Separator borderColor={"bg.canvas"} />
+
+          <CartStats />
+        </VStack>
       </Container.Body>
     </Container.Root>
   );
