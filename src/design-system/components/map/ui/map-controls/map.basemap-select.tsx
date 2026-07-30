@@ -75,7 +75,8 @@ export const MapBaseLayerSelect = () => {
               {isActiveStylePlainAdaptive && (
                 <AppIcon
                   icon={plainAdaptiveProps[colorMode].icon}
-                  color={"an4"}
+                  size={"xs"}
+                  color={"fg.subtle"}
                   pos={"absolute"}
                   right={1}
                   top={1}
@@ -134,8 +135,7 @@ export const MapBaseLayerSelect = () => {
                     {isPlainAdaptive && (
                       <AppIcon
                         icon={plainAdaptiveProps[colorMode].icon}
-                        size={"2xl"}
-                        color={"an4"}
+                        color={"fg.subtle"}
                         pos={"absolute"}
                         right={1}
                         top={1}
