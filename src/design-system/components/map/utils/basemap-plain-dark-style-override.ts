@@ -38,9 +38,9 @@ export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
     }
   };
 
-  setIfExists("boundary_2", "line-color", "#2a2b2e");
-  setIfExists("boundary_3", "line-color", "#252628");
-  setIfExists("boundary_disputed", "line-color", "#252628");
+  setIfExists("boundary_2", "line-color", "#4e4e4eff");
+  setIfExists("boundary_3", "line-color", "#4e4e4eff");
+  setIfExists("boundary_disputed", "line-color", "#4e4e4eff");
 
   // Roads (surface)
   setIfExists("road_motorway", "line-color", ROAD_COLORS.motorway.fill);
