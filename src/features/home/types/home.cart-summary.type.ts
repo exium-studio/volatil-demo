@@ -10,3 +10,11 @@ export type HomeCartSummaryStatItemProps = StackProps & {
   icon?: ComponentType;
   color?: string;
 };
+
+export type CartStatConfig = {
+  icon: ComponentType;
+  label: string;
+  value: number;
+  suffix?: string;
+  color?: string;
+};

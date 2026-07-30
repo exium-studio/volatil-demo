@@ -105,6 +105,7 @@ const ContainerBody = (props: ContainerBodyProps) => {
 
   return (
     <VStack
+      flex={1}
       w={"full"}
       bg={"bg.body"}
       rounded={theme.radii.container}

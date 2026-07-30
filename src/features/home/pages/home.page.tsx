@@ -3,16 +3,18 @@
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { PADDING_SM } from "@/design-system/constants/styles";
-import { CartSummary } from "@/features/home/components/home.cart-summary";
-import { DataSummary } from "@/features/home/components/home.data-summary";
+import { HomeCartSummary } from "@/features/home/components/home.cart-summary";
+import { HomeDataSummary } from "@/features/home/components/home.data-summary";
+import { HomeFinancialFlow } from "@/features/home/components/home.financial-flow";
 
 export const HomePage = () => {
   return (
     <PanelContentContainer gap={PADDING_SM}>
-      <DataSummary />
+      <HomeDataSummary />
 
-      <HStack wrap={"wrap"}>
-        <CartSummary />
+      <HStack wrap={"wrap"} gap={PADDING_SM} px={PADDING_SM}>
+        <HomeCartSummary />
+        <HomeFinancialFlow />
       </HStack>
     </PanelContentContainer>
   );

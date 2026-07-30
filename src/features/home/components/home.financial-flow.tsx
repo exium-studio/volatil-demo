@@ -1,6 +1,7 @@
 // src/features/home/components/home.cart-summary.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import {
   Container,
   useContainerContext,
@@ -8,10 +9,10 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { PADDING_MD } from "@/design-system/constants/styles";
+import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   CartStatConfig,
@@ -20,18 +21,18 @@ import type {
 import { homeData } from "@/shared/constants/dummy-data";
 import {
   DatabaseIcon,
+  HandCoinsIcon,
   LandPlotIcon,
   LayersIcon,
-  ReceiptTextIcon,
 } from "lucide-react";
 
-export const HomeCartSummary = () => {
+export const HomeFinancialFlow = () => {
   return (
-    <Container.Root flex={"1 1 300px"} withContext={true}>
+    <Container.Root flex={"1 1 500px"} withContext={true}>
       <Container.Body gap={4} pt={PADDING_MD}>
         <Header />
 
-        <VStack flex={1}>
+        <VStack mt={"auto"}>
           <Separator borderColor={"bg.canvas"} />
 
           <CartStats />
@@ -43,13 +44,30 @@ export const HomeCartSummary = () => {
 
 const Header = () => {
   return (
-    <HStack align={"center"} justify={"space-between"} px={PADDING_MD}>
+    <HStack
+      wrap={"wrap"}
+      align={"center"}
+      justify={"space-between"}
+      gap={SPACING_MD}
+      px={PADDING_MD}
+    >
       <VStack gap={1}>
-        <P>Ringkasan Keranjang Pembelian</P>
+        <P>Statistik Alur Keuangan</P>
         <P fontSize={"sm"} color={"fg.subtle"}>
-          Ringkasan informasi keranjang pembelian data Anda.
+          Statistik alur keuangan pembelian data Anda
         </P>
       </VStack>
+
+      <SegmentGroupInput
+        defaultValue={"all"}
+        options={[
+          { value: "1h", label: "1H" },
+          { value: "1w", label: "1M" },
+          { value: "1b", label: "1B" },
+          { value: "1t", label: "1T" },
+          { value: "all", label: "Semua", flex: 1 },
+        ]}
+      />
     </HStack>
   );
 };
@@ -66,10 +84,7 @@ const StatItem = (props: HomeCartSummaryStatItemProps) => {
       align={"start"}
       overflow={"clip"}
       position={"relative"}
-      gap={2}
-      h={"full"}
       p={PADDING_MD}
-      my={"auto"}
       {...restProps}
     >
       <HStack align={"center"} justify={"space-between"} gap={4} w={"full"}>
@@ -78,7 +93,7 @@ const StatItem = (props: HomeCartSummaryStatItemProps) => {
         {icon && <AppIcon icon={icon} color={"fg.subtle"} />}
       </HStack>
 
-      <P fontSize={"2xl"} fontWeight={"medium"} color={color}>
+      <ClampedP fontSize={"2xl"} fontWeight={"medium"} color={color}>
         {isCurrency ? (
           <FormatNumber
             value={value}
@@ -95,7 +110,19 @@ const StatItem = (props: HomeCartSummaryStatItemProps) => {
             {suffix}
           </Span>
         )}
-      </P>
+      </ClampedP>
+
+      {/* {icon && (
+        <AppIcon
+          icon={icon}
+          boxSize={"48px"}
+          strokeWidth={"1.25px"}
+          color={color}
+          mt={3}
+          mb={-6}
+          transform={"rotate(20deg)"}
+        />
+      )} */}
     </VStack>
   );
 };
@@ -135,7 +162,7 @@ const CartStats = () => {
       suffix: "data",
     },
     {
-      icon: ReceiptTextIcon,
+      icon: HandCoinsIcon,
       label: "Subtotal Harga",
       value: subtotalPrice,
     },
@@ -143,7 +170,6 @@ const CartStats = () => {
 
   return (
     <SimpleGrid
-      flex={1}
       columns={cols}
       overflow={"clip"}
       roundedBottom={theme.radii.container}

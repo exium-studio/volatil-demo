@@ -25,31 +25,46 @@ import type {
 } from "@/features/home/types/home.data-summary.type";
 import { homeData } from "@/shared/constants/dummy-data";
 
-const ProgressBar = (props: ProgressRootProps) => {
+export const HomeDataSummary = () => {
   return (
-    <Progress.Root value={100} size={"xl"} flex={1} {...props}>
-      <Progress.Track shadow={"none"}>
-        <Progress.Range bg={props.bg} />
-      </Progress.Track>
-    </Progress.Root>
+    <Container.Root px={PADDING_SM} withContext={true}>
+      <Container.Body gap={4} py={PADDING_MD}>
+        <Header />
+
+        <Separator borderColor={"bg.canvas"} />
+
+        <Charts />
+      </Container.Body>
+    </Container.Root>
   );
 };
 
-const Legend = (props: HomeDataSummaryLegendProps) => {
-  // Props
-  const { legendColor, label, value, ...restProps } = props;
-
+const Header = () => {
   return (
-    <HStack align={"start"} gap={2} {...restProps}>
-      <Box w={"8px"} h={"8px"} bg={legendColor} mt={2} />
-
-      <Box>
-        <P color={"fg.muted"}>{label}</P>
-
-        <P fontSize={"2xl"} fontWeight={"medium"}>
-          <FormatNumber value={value} />
+    <HStack
+      wrap={"wrap"}
+      align={"center"}
+      justify={"space-between"}
+      gap={SPACING_MD}
+      px={PADDING_MD}
+    >
+      <VStack gap={1}>
+        <P>Ringkasan Data Anda</P>
+        <P fontSize={"sm"} color={"fg.subtle"}>
+          Ringkasan informasi status data IGT Anda.
         </P>
-      </Box>
+      </VStack>
+
+      <SegmentGroupInput
+        defaultValue={"all"}
+        options={[
+          { value: "1h", label: "1H" },
+          { value: "1w", label: "1M" },
+          { value: "1b", label: "1B" },
+          { value: "1t", label: "1T" },
+          { value: "all", label: "Semua", flex: 1 },
+        ]}
+      />
     </HStack>
   );
 };
@@ -184,40 +199,31 @@ const Charts = () => {
   );
 };
 
-const Header = () => {
+const ProgressBar = (props: ProgressRootProps) => {
   return (
-    <HStack align={"center"} justify={"space-between"} px={PADDING_MD}>
-      <VStack gap={1}>
-        <P>Ringkasan data Anda</P>
-        <P fontSize={"sm"} color={"fg.subtle"}>
-          Ringkasan informasi status data IGT Anda.
-        </P>
-      </VStack>
-
-      <SegmentGroupInput
-        defaultValue={"all"}
-        options={[
-          { value: "1h", label: "1H" },
-          { value: "1w", label: "1M" },
-          { value: "1b", label: "1B" },
-          { value: "1t", label: "1T" },
-          { value: "all", label: "Semua", flex: 1 },
-        ]}
-      />
-    </HStack>
+    <Progress.Root value={100} size={"xl"} flex={1} {...props}>
+      <Progress.Track shadow={"none"}>
+        <Progress.Range bg={props.bg} />
+      </Progress.Track>
+    </Progress.Root>
   );
 };
 
-export const DataSummary = () => {
+const Legend = (props: HomeDataSummaryLegendProps) => {
+  // Props
+  const { legendColor, label, value, ...restProps } = props;
+
   return (
-    <Container.Root px={PADDING_SM} withContext={true}>
-      <Container.Body gap={4} py={PADDING_MD}>
-        <Header />
+    <HStack align={"start"} gap={2} {...restProps}>
+      <Box w={"8px"} h={"8px"} bg={legendColor} mt={2} />
 
-        <Separator borderColor={"bg.canvas"} />
+      <Box>
+        <P color={"fg.muted"}>{label}</P>
 
-        <Charts />
-      </Container.Body>
-    </Container.Root>
+        <P fontSize={"2xl"} fontWeight={"medium"}>
+          <FormatNumber value={value} />
+        </P>
+      </Box>
+    </HStack>
   );
 };
