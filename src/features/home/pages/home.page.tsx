@@ -9,7 +9,7 @@ import { HomeFinancialFlow } from "@/features/home/components/home.financial-flo
 
 export const HomePage = () => {
   return (
-    <PanelContentContainer gap={PADDING_SM}>
+    <PanelContentContainer gap={PADDING_SM} pb={PADDING_SM}>
       <HomeDataSummary />
 
       <HStack wrap={"wrap"} gap={PADDING_SM} px={PADDING_SM}>

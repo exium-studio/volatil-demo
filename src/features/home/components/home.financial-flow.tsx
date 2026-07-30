@@ -1,5 +1,9 @@
 // src/features/home/components/home.cart-summary.tsx
 
+import {
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/design-system/components/charts/ui/chart-tooltip";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -11,7 +15,14 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { Chart, useChart } from "@chakra-ui/charts";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 export const HomeFinancialFlow = () => {
   return (
@@ -75,32 +86,67 @@ const ChartContent = () => {
 
   return (
     <Chart.Root maxH={"240px"} chart={chart} pr={PADDING_LG}>
-      <LineChart data={chart.data} responsive>
-        <CartesianGrid stroke={chart.color("border")} vertical={false} />
-        <XAxis
-          axisLine={false}
-          dataKey={chart.key("month")}
-          tickFormatter={(value) => value.slice(0, 3)}
-          stroke={chart.color("border")}
-        />
-        <YAxis
-          axisLine={false}
-          tickLine={false}
-          tickMargin={10}
-          stroke={chart.color("border")}
-        />
-        {chart.series.map((item) => (
-          <Line
-            type={"linear"}
-            key={item.name}
+      <ResponsiveContainer width={"100%"} height={240}>
+        <AreaChart data={chart.data}>
+          <ChartTooltip
             isAnimationActive={false}
-            dataKey={chart.key(item.name)}
-            stroke={chart.color(item.color)}
-            strokeWidth={2}
-            dot={false}
+            content={<ChartTooltipContent />}
           />
-        ))}
-      </LineChart>
+
+          <defs>
+            {chart.series.map((item) => (
+              <linearGradient
+                key={item.name}
+                id={`gradient-${item.name}`}
+                x1={"0"}
+                y1={"0"}
+                x2={"0"}
+                y2={"1"}
+              >
+                <stop
+                  offset={"0%"}
+                  stopColor={chart.color(item.color)}
+                  stopOpacity={0.2}
+                />
+                <stop
+                  offset={"100%"}
+                  stopColor={chart.color(item.color)}
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            ))}
+          </defs>
+
+          <CartesianGrid stroke={chart.color("border")} vertical={false} />
+
+          <XAxis
+            axisLine={false}
+            dataKey={chart.key("month")}
+            tickFormatter={(value) => value.slice(0, 3)}
+            stroke={chart.color("border")}
+          />
+
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tickMargin={10}
+            stroke={chart.color("border")}
+          />
+
+          {chart.series.map((item) => (
+            <Area
+              key={item.name}
+              type={"linear"}
+              isAnimationActive={false}
+              dataKey={chart.key(item.name)}
+              stroke={chart.color(item.color)}
+              strokeWidth={2}
+              fill={`url(#gradient-${item.name})`}
+              dot={false}
+            />
+          ))}
+        </AreaChart>
+      </ResponsiveContainer>
     </Chart.Root>
   );
 };
