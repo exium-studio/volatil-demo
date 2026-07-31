@@ -40,7 +40,7 @@ export const HomeFinancialFlow = () => {
 
   return (
     <Container.Root flex={"1 1 500px"} withContext={true}>
-      <Container.Body gap={4} pt={PADDING_MD}>
+      <Container.Body gap={8} pt={PADDING_MD}>
         <Header period={period} onPeriodChange={setPeriod} />
 
         <VStack mt={"auto"}>
@@ -95,7 +95,7 @@ const ChartContent = ({ period }: ChartContentProps) => {
   });
 
   return (
-    <Chart.Root maxH={"240px"} chart={chart} pr={PADDING_LG}>
+    <Chart.Root maxH={"240px"} chart={chart} px={PADDING_LG}>
       <ResponsiveContainer width={"100%"} height={240}>
         <AreaChart data={chart.data}>
           <ChartTooltip
@@ -131,8 +131,8 @@ const ChartContent = ({ period }: ChartContentProps) => {
 
           <XAxis
             axisLine={false}
-            dataKey={chart.key("month")}
-            tickFormatter={(value) => value.slice(0, 3)}
+            dataKey={chart.key("label")}
+            // tickFormatter={(value) => value.slice(0, 3)}
             stroke={chart.color("border")}
           />
 
@@ -140,6 +140,9 @@ const ChartContent = ({ period }: ChartContentProps) => {
             axisLine={false}
             tickLine={false}
             tickMargin={10}
+            tickFormatter={chart.formatNumber({
+              notation: "compact",
+            })}
             stroke={chart.color("border")}
           />
 
