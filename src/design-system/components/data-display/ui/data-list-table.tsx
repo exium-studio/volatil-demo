@@ -33,6 +33,7 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import { tintAlpha } from "@/shared/utils/style/color";
 import { Box, Center } from "@chakra-ui/react";
 import {
   IconCaretDownFilled,
@@ -331,7 +332,9 @@ const DataListTableBody = () => {
         const isItemSelected = selectedItemIds.includes(item.id);
 
         const bodyCellStyles = {
-          bg: isItemSelected ? `${theme.colorPalette}.subtle` : "bg.body",
+          bg: isItemSelected
+            ? tintAlpha(`${theme.colorPalette}.subtle`, 40)
+            : "bg.body",
         };
 
         return (
@@ -343,6 +346,7 @@ const DataListTableBody = () => {
             gridColumn={"1 / -1"}
             overflow={"clip"}
             minH={TABLE_ROW_H}
+            bg={"bg.body"}
             shadow={isItemSelected ? "md" : "none"}
           >
             {canBatchSelect && (

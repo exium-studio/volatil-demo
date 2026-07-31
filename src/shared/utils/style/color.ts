@@ -7,3 +7,7 @@ export function tintDark(color: string, percent: number): string {
 export function tintLight(color: string, percent: number): string {
   return `color-mix(in srgb, {colors.${color}} ${100 - percent}%, white ${percent}%)`;
 }
+
+export function tintAlpha(color: string, opacity: number): string {
+  return `{colors.${color}}/${opacity}`;
+}
