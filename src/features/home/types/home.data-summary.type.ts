@@ -2,14 +2,16 @@
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 
-export type HomeDataSummaryStatusConfig = {
+import type { TransactionItem } from "@/features/home/types/home.last-transaction.type";
+
+export interface HomeDataSummaryStatusConfig {
   key: HomeSummaryStatus;
   label: string;
   colorPalette?: string;
   bg?: string;
   legendColor: string;
   striped: boolean;
-};
+}
 
 export type HomeDataSummaryLegendProps = StackProps & {
   legendColor: string;
@@ -40,4 +42,5 @@ export interface HomeCartSummaryResponse {
 export interface HomeDataResponse {
   dataSummary: HomeDataSummaryResponse;
   cartSummary: HomeCartSummaryResponse;
+  lastTransactions: TransactionItem[];
 }

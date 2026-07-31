@@ -223,9 +223,6 @@ const DataListTableCell = (props: StackProps) => {
 };
 
 const DataListTableHeader = (props: DataListTableHeaderProps) => {
-  // Stores
-  const { theme } = useThemeStore();
-
   const {
     batchActions,
     selectedItemIds,
@@ -252,7 +249,6 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       top={0}
       left={0}
       zIndex={3}
-      roundedTop={theme.radii.component}
       shadow={"sm"}
       {...props}
     >
