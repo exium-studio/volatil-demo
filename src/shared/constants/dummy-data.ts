@@ -4,16 +4,63 @@ import type { HomeDataResponse } from "@/features/home/types/home.data-summary.t
 
 export const homeData: HomeDataResponse = {
   dataSummary: {
-    field: {
-      active: 12000,
-      almostExpired: 4000,
-      expired: 2000,
+    "1d": {
+      field: { active: 100, almostExpired: 20, expired: 5 },
+      area: { active: 50, almostExpired: 10, expired: 3 },
     },
-    area: {
-      active: 8500,
-      almostExpired: 3000,
-      expired: 1500,
+    "1w": {
+      field: { active: 800, almostExpired: 150, expired: 40 },
+      area: { active: 400, almostExpired: 80, expired: 20 },
     },
+    "1m": {
+      field: { active: 3000, almostExpired: 500, expired: 150 },
+      area: { active: 1500, almostExpired: 300, expired: 80 },
+    },
+    "1y": {
+      field: { active: 8000, almostExpired: 2500, expired: 1200 },
+      area: { active: 5500, almostExpired: 1800, expired: 800 },
+    },
+    all: {
+      field: { active: 12000, almostExpired: 4000, expired: 2000 },
+      area: { active: 8500, almostExpired: 3000, expired: 1500 },
+    },
+  },
+  financialFlow: {
+    "1d": [
+      { sale: 15, month: "00:00" },
+      { sale: 30, month: "06:00" },
+      { sale: 45, month: "12:00" },
+      { sale: 20, month: "18:00" },
+    ],
+    "1w": [
+      { sale: 100, month: "Senin" },
+      { sale: 150, month: "Selasa" },
+      { sale: 200, month: "Rabu" },
+      { sale: 120, month: "Kamis" },
+      { sale: 180, month: "Jumat" },
+      { sale: 90, month: "Sabtu" },
+      { sale: 70, month: "Minggu" },
+    ],
+    "1m": [
+      { sale: 350, month: "W1" },
+      { sale: 450, month: "W2" },
+      { sale: 520, month: "W3" },
+      { sale: 480, month: "W4" },
+    ],
+    "1y": [
+      { sale: 1500, month: "Q1" },
+      { sale: 2800, month: "Q2" },
+      { sale: 3200, month: "Q3" },
+      { sale: 4100, month: "Q4" },
+    ],
+    all: [
+      { sale: 10, month: "January" },
+      { sale: 95, month: "February" },
+      { sale: 87, month: "March" },
+      { sale: 88, month: "May" },
+      { sale: 65, month: "June" },
+      { sale: 90, month: "August" },
+    ],
   },
   cartSummary: {
     totalField: 150,
@@ -36,7 +83,8 @@ export const homeData: HomeDataResponse = {
       dataStatus: "active",
       quota: "1000/1000",
       themeCategory: "spatial",
-      description: "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
+      description:
+        "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
       amount: 4500000,
     },
     {
@@ -53,7 +101,8 @@ export const homeData: HomeDataResponse = {
       dataStatus: "active",
       quota: "1000/1000",
       themeCategory: "land",
-      description: "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
+      description:
+        "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
       amount: 2500000,
     },
     {
@@ -70,7 +119,8 @@ export const homeData: HomeDataResponse = {
       dataStatus: "active",
       quota: "1000/1000",
       themeCategory: "spatial",
-      description: "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
+      description:
+        "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
       amount: 4500000,
     },
     {
@@ -87,7 +137,8 @@ export const homeData: HomeDataResponse = {
       dataStatus: "inactive",
       quota: "1000/1000",
       themeCategory: "land",
-      description: "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
+      description:
+        "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
       amount: 2500000,
     },
     {
@@ -104,7 +155,8 @@ export const homeData: HomeDataResponse = {
       dataStatus: "inactive",
       quota: "1000/1000",
       themeCategory: "spatial",
-      description: "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
+      description:
+        "Data ini merupakan data IGT-PR hasil olahan Rencana Tata Ruang Kabupaten Semarang dengan skala 1:10.000",
       amount: 1500000,
     },
   ],

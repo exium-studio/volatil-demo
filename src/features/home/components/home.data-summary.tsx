@@ -20,26 +20,43 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import type {
+  HomePeriod,
   HomeDataSummaryLegendProps,
   HomeDataSummaryStatusConfig,
 } from "@/features/home/types/home.data-summary.type";
 import { homeData } from "@/shared/constants/dummy-data";
+import { useState } from "react";
+
+const PERIOD_OPTIONS = [
+  { value: "1d", label: "1H" },
+  { value: "1w", label: "1M" },
+  { value: "1m", label: "1B" },
+  { value: "1y", label: "1T" },
+  { value: "all", label: "Semua", flex: 1 },
+];
 
 export const HomeDataSummary = () => {
+  const [period, setPeriod] = useState<HomePeriod>("all");
+
   return (
     <Container.Root px={PADDING_SM} withContext={true}>
       <Container.Body gap={4} py={PADDING_MD}>
-        <Header />
+        <Header period={period} onPeriodChange={setPeriod} />
 
         <Separator borderColor={"bg.canvas"} />
 
-        <Charts />
+        <Charts period={period} />
       </Container.Body>
     </Container.Root>
   );
 };
 
-const Header = () => {
+type HeaderProps = {
+  period: HomePeriod;
+  onPeriodChange: (period: HomePeriod) => void;
+};
+
+const Header = ({ period, onPeriodChange }: HeaderProps) => {
   return (
     <HStack
       wrap={"wrap"}
@@ -56,70 +73,72 @@ const Header = () => {
       </VStack>
 
       <SegmentGroupInput
-        defaultValue={"all"}
-        options={[
-          { value: "1h", label: "1H" },
-          { value: "1w", label: "1M" },
-          { value: "1b", label: "1B" },
-          { value: "1t", label: "1T" },
-          { value: "all", label: "Semua", flex: 1 },
-        ]}
+        value={period}
+        onValueChange={(e) => onPeriodChange(e.value as HomePeriod)}
+        options={PERIOD_OPTIONS}
       />
     </HStack>
   );
 };
 
-const Charts = () => {
+type ChartsProps = {
+  period: HomePeriod;
+};
+
+const FIELD_STATUSES: HomeDataSummaryStatusConfig[] = [
+  {
+    key: "active",
+    label: "Aktif",
+    colorPalette: "blue",
+    legendColor: "blue.solid",
+    striped: true,
+  },
+  {
+    key: "almostExpired",
+    label: "Hampir kadaluwarsa",
+    bg: "an4",
+    legendColor: "an4",
+    striped: false,
+  },
+  {
+    key: "expired",
+    label: "Kadaluwarsa",
+    bg: "an2",
+    legendColor: "an2",
+    striped: false,
+  },
+];
+
+const AREA_STATUSES: HomeDataSummaryStatusConfig[] = [
+  {
+    key: "active",
+    label: "Aktif",
+    colorPalette: "orange",
+    legendColor: "orange.solid",
+    striped: true,
+  },
+  {
+    key: "almostExpired",
+    label: "Hampir kadaluwarsa",
+    bg: "an4",
+    legendColor: "an4",
+    striped: false,
+  },
+  {
+    key: "expired",
+    label: "Kadaluwarsa",
+    bg: "an2",
+    legendColor: "an2",
+    striped: false,
+  },
+];
+
+const Charts = ({ period }: ChartsProps) => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Constants
-  const FIELD_STATUSES: HomeDataSummaryStatusConfig[] = [
-    {
-      key: "active",
-      label: "Aktif",
-      colorPalette: "blue",
-      legendColor: "blue.solid",
-      striped: true,
-    },
-    {
-      key: "almostExpired",
-      label: "Hampir kadaluwarsa",
-      bg: "an4",
-      legendColor: "an4",
-      striped: false,
-    },
-    {
-      key: "expired",
-      label: "Kadaluwarsa",
-      bg: "an2",
-      legendColor: "an2",
-      striped: false,
-    },
-  ];
-  const AREA_STATUSES: HomeDataSummaryStatusConfig[] = [
-    {
-      key: "active",
-      label: "Aktif",
-      colorPalette: "orange",
-      legendColor: "orange.solid",
-      striped: true,
-    },
-    {
-      key: "almostExpired",
-      label: "Hampir kadaluwarsa",
-      bg: "an4",
-      legendColor: "an4",
-      striped: false,
-    },
-    {
-      key: "expired",
-      label: "Kadaluwarsa",
-      bg: "an2",
-      legendColor: "an2",
-      striped: false,
-    },
-  ];
+  // Data for current period
+  const dataSummary = homeData.dataSummary[period];
 
   return (
     <SimpleGrid
@@ -133,7 +152,7 @@ const Charts = () => {
 
         <HStack gap={SPACING_SM} w={"full"}>
           {FIELD_STATUSES.map((config) => {
-            const value = homeData.dataSummary.field[config.key];
+            const value = dataSummary.field[config.key];
 
             return (
               <ProgressBar
@@ -149,7 +168,7 @@ const Charts = () => {
 
         <HStack wrap={"wrap"} gap={6}>
           {FIELD_STATUSES.map((config) => {
-            const value = homeData.dataSummary.field[config.key];
+            const value = dataSummary.field[config.key];
             return (
               <Legend
                 key={config.key}
@@ -168,7 +187,7 @@ const Charts = () => {
 
         <HStack gap={SPACING_SM} w={"full"}>
           {AREA_STATUSES.map((config) => {
-            const value = homeData.dataSummary.area[config.key];
+            const value = dataSummary.area[config.key];
             return (
               <ProgressBar
                 key={config.key}
@@ -183,7 +202,7 @@ const Charts = () => {
 
         <HStack wrap={"wrap"} gap={6}>
           {AREA_STATUSES.map((config) => {
-            const value = homeData.dataSummary.area[config.key];
+            const value = dataSummary.area[config.key];
             return (
               <Legend
                 key={config.key}

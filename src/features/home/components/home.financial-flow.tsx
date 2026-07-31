@@ -1,4 +1,4 @@
-// src/features/home/components/home.cart-summary.tsx
+// src/features/home/components/home.financial-flow.tsx
 
 import {
   ChartTooltip,
@@ -14,6 +14,8 @@ import {
   SPACING_MD,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import type { HomePeriod } from "@/features/home/types/home.data-summary.type";
+import { homeData } from "@/shared/constants/dummy-data";
 import { Chart, useChart } from "@chakra-ui/charts";
 import {
   Area,
@@ -23,22 +25,38 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useState } from "react";
+
+const PERIOD_OPTIONS = [
+  { value: "1d", label: "1H" },
+  { value: "1w", label: "1M" },
+  { value: "1m", label: "1B" },
+  { value: "1y", label: "1T" },
+  { value: "all", label: "Semua", flex: 1 },
+];
 
 export const HomeFinancialFlow = () => {
+  const [period, setPeriod] = useState<HomePeriod>("all");
+
   return (
     <Container.Root flex={"1 1 500px"} withContext={true}>
       <Container.Body gap={4} pt={PADDING_MD}>
-        <Header />
+        <Header period={period} onPeriodChange={setPeriod} />
 
         <VStack mt={"auto"}>
-          <ChartContent />
+          <ChartContent period={period} />
         </VStack>
       </Container.Body>
     </Container.Root>
   );
 };
 
-const Header = () => {
+type HeaderProps = {
+  period: HomePeriod;
+  onPeriodChange: (period: HomePeriod) => void;
+};
+
+const Header = ({ period, onPeriodChange }: HeaderProps) => {
   return (
     <HStack
       wrap={"wrap"}
@@ -55,32 +73,24 @@ const Header = () => {
       </VStack>
 
       <SegmentGroupInput
-        defaultValue={"all"}
-        options={[
-          { value: "1h", label: "1H" },
-          { value: "1w", label: "1M" },
-          { value: "1b", label: "1B" },
-          { value: "1t", label: "1T" },
-          { value: "all", label: "Semua", flex: 1 },
-        ]}
+        value={period}
+        onValueChange={(e) => onPeriodChange(e.value as HomePeriod)}
+        options={PERIOD_OPTIONS}
       />
     </HStack>
   );
 };
 
-const ChartContent = () => {
+type ChartContentProps = {
+  period: HomePeriod;
+};
+
+const ChartContent = ({ period }: ChartContentProps) => {
   // Stores
   const { theme } = useThemeStore();
 
   const chart = useChart({
-    data: [
-      { sale: 10, month: "January" },
-      { sale: 95, month: "February" },
-      { sale: 87, month: "March" },
-      { sale: 88, month: "May" },
-      { sale: 65, month: "June" },
-      { sale: 90, month: "August" },
-    ],
+    data: homeData.financialFlow[period],
     series: [{ name: "sale", color: `${theme.colorPalette}.solid` }],
   });
 

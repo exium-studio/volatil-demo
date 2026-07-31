@@ -39,8 +39,12 @@ export interface HomeCartSummaryResponse {
   subtotalPrice: number;
 }
 
+export type HomePeriod = "1d" | "1w" | "1m" | "1y" | "all";
+
 export interface HomeDataResponse {
-  dataSummary: HomeDataSummaryResponse;
+  dataSummary: Record<HomePeriod, HomeDataSummaryResponse>;
+  financialFlow: Record<HomePeriod, { sale: number; month: string }[]>;
   cartSummary: HomeCartSummaryResponse;
   lastTransactions: TransactionItem[];
 }
+
