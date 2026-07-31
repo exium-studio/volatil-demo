@@ -60,6 +60,7 @@ type DataListTableContextValue = {
   toggleItemSelection: (item: FormattedListItem) => void;
   selectAllItems: (isChecked: boolean) => void;
   clearSelectedItems: () => void;
+  canBatchSelect: boolean;
 };
 
 const DataListTableContext = createContext<DataListTableContextValue | null>(
@@ -90,6 +91,8 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       initialSortColumnIndex,
       initialSortOrder = "asc",
       withNumbering = true,
+      canBatchSelect = false,
+      onItemSelect,
       ...restProps
     } = props;
 
@@ -109,7 +112,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       selectAllItems,
       clearSelectedItems,
       toggleItemSelection,
-    } = useDataListSelection(items);
+    } = useDataListSelection(items, onItemSelect);
 
     // Resolved Values
     const contextValue = useMemo<DataListTableContextValue>(
@@ -131,6 +134,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
         toggleItemSelection,
         selectAllItems,
         clearSelectedItems,
+        canBatchSelect: !isEmptyArray(batchActions) || canBatchSelect,
       }),
       [
         headers,
@@ -150,13 +154,14 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
         toggleItemSelection,
         selectAllItems,
         clearSelectedItems,
+        canBatchSelect,
       ],
     );
 
     const gridCols = useMemo(() => {
       const cols: string[] = [];
 
-      if (!isEmptyArray(batchActions)) {
+      if (canBatchSelect || !isEmptyArray(batchActions)) {
         cols.push(TABLE_ACTIONS_CELL_W);
       }
 
@@ -171,7 +176,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       }
 
       return cols.join(" ");
-    }, [batchActions, headers, itemActions, withNumbering]);
+    }, [canBatchSelect, batchActions, headers, itemActions, withNumbering]);
 
     return (
       <DataListTableContext.Provider value={contextValue}>
@@ -194,12 +199,14 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
           </Grid>
         </VStack>
 
-        <DataListBatchActionBar
-          selectedItemIds={selectedItemIds}
-          selectedItems={selectedItems}
-          clearSelectedItems={clearSelectedItems}
-          batchActions={batchActions}
-        />
+        {!isEmptyArray(batchActions) && (
+          <DataListBatchActionBar
+            selectedItemIds={selectedItemIds}
+            selectedItems={selectedItems}
+            clearSelectedItems={clearSelectedItems}
+            batchActions={batchActions}
+          />
+        )}
       </DataListTableContext.Provider>
     );
   },
@@ -224,6 +231,7 @@ const DataListTableCell = (props: StackProps) => {
 
 const DataListTableHeader = (props: DataListTableHeaderProps) => {
   const {
+    canBatchSelect,
     batchActions,
     selectedItemIds,
     selectedItems,
@@ -252,7 +260,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       shadow={"sm"}
       {...props}
     >
-      {!isEmptyArray(batchActions) && (
+      {canBatchSelect && (
         <DataListTableCell pos={"sticky"} left={0}>
           <DataListBatchActionsTrigger
             batchActions={batchActions}
@@ -309,7 +317,7 @@ const DataListTableBody = () => {
 
   // Hooks
   const {
-    batchActions,
+    canBatchSelect,
     sortedItems,
     itemActions,
     selectedItemIds,
@@ -337,7 +345,7 @@ const DataListTableBody = () => {
             minH={TABLE_ROW_H}
             shadow={isItemSelected ? "md" : "none"}
           >
-            {!isEmptyArray(batchActions) && (
+            {canBatchSelect && (
               <Center
                 h={"full"}
                 px={"10px"}

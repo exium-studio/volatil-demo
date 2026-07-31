@@ -1,4 +1,4 @@
-// src/features/home/pages/data-request.page.tsx
+// src/features/data-request/pages/data-request.page.tsx
 
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

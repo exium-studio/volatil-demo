@@ -1,3 +1,5 @@
+// src/features/data-request/types/data-request.catalog.type.ts
+
 export type IgtThemeType = "bidang" | "kawasan";
 
 export type IgtCategory =

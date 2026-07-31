@@ -1,9 +1,15 @@
 // src/design-system/components/data-display/hooks/use-data-list-selection.ts
 
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import type {
+  DataListTableOnItemSelect,
+  FormattedListItem,
+} from "@/design-system/components/data-display/types/data-list-table.type";
 import { useState } from "react";
 
-export function useDataListSelection(formattedListItems: FormattedListItem[]) {
+export function useDataListSelection(
+  formattedListItems: FormattedListItem[],
+  onItemSelect?: DataListTableOnItemSelect,
+) {
   const [isAllItemsSelected, setAllItemsSelected] = useState(false);
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
@@ -26,27 +32,30 @@ export function useDataListSelection(formattedListItems: FormattedListItem[]) {
   }
 
   function toggleItemSelection(item: FormattedListItem) {
+    let nextSelectedItems: FormattedListItem[] = [];
+
+    setSelectedItems((prev) => {
+      const isSelected = prev.some((s) => s.id === item.id);
+      nextSelectedItems = isSelected
+        ? prev.filter((s) => s.id !== item.id)
+        : [...prev, item];
+      return nextSelectedItems;
+    });
+
     setSelectedItemIds((prev) => {
       const isSelected = prev.includes(item.id);
-
       if (isSelected) {
         setAllItemsSelected(false);
         return prev.filter((id) => id !== item.id);
       }
-
       const next = [...prev, item.id];
       if (formattedListItems.length === next.length) setAllItemsSelected(true);
       return next;
     });
 
-    setSelectedItems((prev) => {
-      const isSelected = prev.some((selected) => selected.id === item.id);
-
-      if (isSelected) {
-        return prev.filter((selected) => selected.id !== item.id);
-      }
-
-      return [...prev, item];
+    onItemSelect?.({
+      selectedItems: nextSelectedItems,
+      selectedCurrentItem: item,
     });
   }
 

@@ -1,3 +1,5 @@
+// src/features/data-request/components/data-request.catalog.tabs-content.tsx
+
 import {
   Button,
   IconButton,
@@ -6,7 +8,6 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
-import type { DataListBatchActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
@@ -27,8 +28,7 @@ import {
 import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
 import { catalogData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { isEmptyArray } from "@/shared/utils/data/array";
-import { ShoppingCartIcon, SlidersHorizontalIcon } from "lucide-react";
+import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
@@ -119,8 +119,8 @@ const DataList = () => {
         { th: "Nama Data IGT-PR", sortable: true },
         { th: "Jenis Tema IGT-PR", sortable: true },
         { th: "Basis Kuota", sortable: true },
-        { th: "Kategori Tema IGT-PR", sortable: true },
-        { th: "Deskripsi Data", sortable: true },
+        { th: "Kategori Tema IGT-PR" },
+        { th: "Deskripsi Data" },
         { th: "Total Harga", sortable: true, align: "end" },
       ],
       [],
@@ -217,22 +217,6 @@ const DataList = () => {
         };
       });
     }, []),
-
-    batchActions: [
-      ({ selectedItemIds, selectedItems }) => {
-        return (
-          <Button
-            disabled={isEmptyArray(selectedItems)}
-            onClick={() => {
-              console.log({ selectedItemIds, selectedItems });
-            }}
-          >
-            <AppIcon icon={ShoppingCartIcon} />
-            Delete
-          </Button>
-        );
-      },
-    ] as DataListBatchActionsGenerator[],
   };
 
   return (
@@ -241,7 +225,7 @@ const DataList = () => {
         withNumbering={false}
         headers={dataList.headers}
         items={dataList.items}
-        batchActions={dataList.batchActions}
+        canBatchSelect
         rounded={0}
         shadow={"none"}
       >
