@@ -18,7 +18,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { IconMoonFilled, IconSunHighFilled } from "@tabler/icons-react";
+import { MoonIcon, SunIcon } from "lucide-react";
 
 export const MapBaseLayerSelect = () => {
   // Stores
@@ -33,11 +33,11 @@ export const MapBaseLayerSelect = () => {
   const plainAdaptiveProps = {
     light: {
       thumbnail: MAP_BASEMAP_MAP["plain-light"].thumbnail,
-      icon: IconSunHighFilled,
+      icon: SunIcon,
     },
     dark: {
       thumbnail: MAP_BASEMAP_MAP["plain-dark"].thumbnail,
-      icon: IconMoonFilled,
+      icon: MoonIcon,
     },
   };
 
