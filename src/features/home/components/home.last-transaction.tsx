@@ -12,20 +12,41 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
-import type { TransactionStatus } from "@/features/home/types/home.last-transaction.type";
+import type {
+  DataStatus,
+  ThemeCategory,
+  ThemeType,
+  TransactionStatus,
+} from "@/features/home/types/home.last-transaction.type";
 import { homeData } from "@/shared/constants/dummy-data";
 import { useMemo } from "react";
 
-const statusColors: Record<TransactionStatus, string> = {
-  success: "green",
-  pending: "orange",
-  failed: "red",
+const TRANSACTION_STATUS_MAP: Record<
+  TransactionStatus,
+  { label: string; color: string }
+> = {
+  success: { label: "Berhasil", color: "green" },
+  pending: { label: "Sedang Proses", color: "orange" },
+  failed: { label: "Gagal", color: "red" },
 };
 
-const statusLabels: Record<TransactionStatus, string> = {
-  success: "Berhasil",
-  pending: "Menunggu",
-  failed: "Gagal",
+const THEME_TYPE_MAP: Record<ThemeType, { label: string; color: string }> = {
+  rtr: { label: "Rencana Tata Ruang", color: "blue" },
+  boundary: { label: "Batas Wilayah", color: "purple" },
+  land: { label: "Pertanahan", color: "orange" },
+};
+
+const DATA_STATUS_MAP: Record<DataStatus, { label: string; color: string }> = {
+  active: { label: "Aktif", color: "green" },
+  inactive: { label: "Non-Aktif", color: "red" },
+};
+
+const THEME_CATEGORY_MAP: Record<
+  ThemeCategory,
+  { label: string; color: string }
+> = {
+  spatial: { label: "Tata Ruang", color: "teal" },
+  land: { label: "Pertanahan", color: "indigo" },
 };
 
 export const HomeLastTransaction = () => {
@@ -66,12 +87,20 @@ const DataList = () => {
 
   const headers = useMemo<FormattedTableHeader[]>(
     () => [
-      { th: "No. Transaksi", sortable: false, align: "start" },
-      { th: "Tanggal", sortable: false, align: "start" },
-      { th: "Deskripsi", sortable: false, align: "start" },
-      { th: "Metode Pembayaran", sortable: false, align: "start" },
-      { th: "Total", sortable: false, align: "end" },
-      { th: "Status", sortable: false, align: "center" },
+      { th: "ID Transaksi", sortable: false, align: "start" },
+      { th: "Username", sortable: false, align: "start" },
+      { th: "Tanggal Transaksi", sortable: false, align: "start" },
+      { th: "Status Transaksi", sortable: false, align: "center" },
+      { th: "Nama Data IGT-PR", sortable: false, align: "start" },
+      { th: "Jenis Tema IGT-PR", sortable: false, align: "center" },
+      { th: "Link API WPS", sortable: false, align: "start" },
+      { th: "API WPS", sortable: false, align: "start" },
+      { th: "Sisa Waktu", sortable: false, align: "start" },
+      { th: "Status Data", sortable: false, align: "center" },
+      { th: "Sisa Kuota", sortable: false, align: "start" },
+      { th: "Kategori Tema IGT-PR", sortable: false, align: "center" },
+      { th: "Deskripsi Data", sortable: false, align: "start" },
+      { th: "Total Harga", sortable: false, align: "end" },
     ],
     [],
   );
@@ -87,18 +116,91 @@ const DataList = () => {
           align: "start",
         },
         {
+          value: item.username,
+          td: <P>{item.username}</P>,
+          align: "start",
+        },
+        {
           value: item.date,
           td: <P>{item.date}</P>,
           align: "start",
         },
         {
-          value: item.description,
-          td: <P>{item.description}</P>,
+          value: item.status,
+          td: (
+            <Badge
+              colorPalette={TRANSACTION_STATUS_MAP[item.status].color}
+              variant={"subtle"}
+            >
+              {TRANSACTION_STATUS_MAP[item.status].label}
+            </Badge>
+          ),
+          align: "center",
+        },
+        {
+          value: item.dataName,
+          td: <P>{item.dataName}</P>,
           align: "start",
         },
         {
-          value: item.paymentMethod,
-          td: <P>{item.paymentMethod}</P>,
+          value: item.themeType,
+          td: (
+            <Badge
+              colorPalette={THEME_TYPE_MAP[item.themeType].color}
+              variant={"subtle"}
+            >
+              {THEME_TYPE_MAP[item.themeType].label}
+            </Badge>
+          ),
+          align: "center",
+        },
+        {
+          value: item.apiLink,
+          td: <P>{item.apiLink}</P>,
+          align: "start",
+        },
+        {
+          value: item.apiWps,
+          td: <P>{item.apiWps}</P>,
+          align: "start",
+        },
+        {
+          value: item.timeLeft,
+          td: <P>{item.timeLeft}</P>,
+          align: "start",
+        },
+        {
+          value: item.dataStatus,
+          td: (
+            <Badge
+              colorPalette={DATA_STATUS_MAP[item.dataStatus].color}
+              variant={"subtle"}
+            >
+              {DATA_STATUS_MAP[item.dataStatus].label}
+            </Badge>
+          ),
+          align: "center",
+        },
+        {
+          value: item.quota,
+          td: <P>{item.quota}</P>,
+          align: "start",
+        },
+        {
+          value: item.themeCategory,
+          td: (
+            <Badge
+              colorPalette={THEME_CATEGORY_MAP[item.themeCategory].color}
+              variant={"subtle"}
+            >
+              {THEME_CATEGORY_MAP[item.themeCategory].label}
+            </Badge>
+          ),
+          align: "center",
+        },
+        {
+          value: item.description,
+          td: <P>{item.description}</P>,
           align: "start",
         },
         {
@@ -112,15 +214,6 @@ const DataList = () => {
             />
           ),
           align: "end",
-        },
-        {
-          value: item.status,
-          td: (
-            <Badge colorPalette={statusColors[item.status]} variant={"subtle"}>
-              {statusLabels[item.status]}
-            </Badge>
-          ),
-          align: "center",
         },
       ],
     }));
