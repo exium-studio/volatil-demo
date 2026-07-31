@@ -17,7 +17,7 @@ import {
   PADDING_MD,
   PADDING_SM,
   SPACING_MD,
-  SPACING_SM,
+  SPACING_XS,
 } from "@/design-system/constants/styles";
 import type {
   HomePeriod,
@@ -150,7 +150,7 @@ const Charts = ({ period }: ChartsProps) => {
       <VStack align={"start"} gap={SPACING_MD}>
         <P color={"fg.muted"}>IGT berbasis bidang</P>
 
-        <HStack gap={SPACING_SM} w={"full"}>
+        <HStack gap={SPACING_XS} w={"full"}>
           {FIELD_STATUSES.map((config) => {
             const value = dataSummary.field[config.key];
 
@@ -185,7 +185,7 @@ const Charts = ({ period }: ChartsProps) => {
       <VStack align={"start"} gap={SPACING_MD}>
         <P color={"fg.muted"}>IGT berbasis kawasan</P>
 
-        <HStack gap={SPACING_SM} w={"full"}>
+        <HStack gap={SPACING_XS} w={"full"}>
           {AREA_STATUSES.map((config) => {
             const value = dataSummary.area[config.key];
             return (

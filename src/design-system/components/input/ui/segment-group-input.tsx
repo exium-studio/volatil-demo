@@ -23,7 +23,9 @@ export const SegmentGroupInput = React.forwardRef<
         <SegmentGroup.Item
           key={option.value}
           value={option.value}
-          flex={option.flex !== undefined ? option.flex : (flexItem ? 1 : undefined)}
+          flex={
+            option.flex !== undefined ? option.flex : flexItem ? 1 : undefined
+          }
           disabled={option.disabled}
           _checked={{ color: activeIndicatorColor }}
           {...itemProps}

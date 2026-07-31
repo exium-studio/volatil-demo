@@ -23,7 +23,8 @@ export const TABLER_ICON_MENU_ICON_BOX_SIZE = 4.5;
 
 // Spacing
 export const MODAL_CONTROL_CONTAINER_SPACING_R = 1.5;
-export const SPACING_SM = "4px";
+export const SPACING_XS = "4px";
+export const SPACING_SM = "8px";
 export const SPACING_MD = "12px";
 export const SPACING_LG = "24px";
 export const GAP = "6px";

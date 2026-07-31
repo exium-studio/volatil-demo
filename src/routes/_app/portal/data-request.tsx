@@ -1,5 +1,6 @@
 // src/routes/_app/portal/data-request.tsx
 
+import { DataRequestPage } from "@/features/data-request/pages/data-request.page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app/portal/data-request")({
@@ -7,5 +8,5 @@ export const Route = createFileRoute("/_app/portal/data-request")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/_app/portal/date-request"!</div>;
+  return <DataRequestPage />;
 }

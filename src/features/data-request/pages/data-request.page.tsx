@@ -1,0 +1,64 @@
+// src/features/home/pages/data-request.page.tsx
+
+import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Container } from "@/design-system/components/layout/ui/container";
+import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { HEADER_H, PADDING_SM } from "@/design-system/constants/styles";
+import { DataRequestCatalogTabsContent } from "@/features/data-request/components/data-request.catalog.tabs-content";
+import { IconPolygon } from "@tabler/icons-react";
+import { FolderArchiveIcon, ListIcon } from "lucide-react";
+
+export const DataRequestPage = () => {
+  return (
+    <PanelContentContainer gap={PADDING_SM} pb={PADDING_SM}>
+      <Container.Root px={PADDING_SM}>
+        <Container.Body>
+          <Tabs.Root defaultValue={"catalog"}>
+            <Tabs.List>
+              <Tabs.Trigger
+                value={"catalog"}
+                flex={1}
+                justifyContent={"center"}
+                h={HEADER_H}
+              >
+                <AppIcon icon={ListIcon} />
+                Katalog Data
+              </Tabs.Trigger>
+
+              <Tabs.Trigger
+                value={"aoi"}
+                flex={1}
+                justifyContent={"center"}
+                h={HEADER_H}
+              >
+                <AppIcon icon={FolderArchiveIcon} />
+                Upload AOI
+              </Tabs.Trigger>
+
+              <Tabs.Trigger
+                value={"polygon"}
+                flex={1}
+                justifyContent={"center"}
+                h={HEADER_H}
+              >
+                <AppIcon icon={IconPolygon} />
+                Gambar Poligon
+              </Tabs.Trigger>
+            </Tabs.List>
+
+            <>
+              <DataRequestCatalogTabsContent value={"catalog"} />
+
+              <Tabs.Content value={"aoi"}>Manage your projects</Tabs.Content>
+
+              <Tabs.Content value={"polygon"}>
+                Manage your tasks for freelancers
+              </Tabs.Content>
+            </>
+          </Tabs.Root>
+        </Container.Body>
+      </Container.Root>
+    </PanelContentContainer>
+  );
+};
