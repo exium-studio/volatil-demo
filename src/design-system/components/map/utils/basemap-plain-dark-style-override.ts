@@ -3,13 +3,13 @@
 import type maplibregl from "maplibre-gl";
 
 const ROAD_COLORS = {
-  motorway: { fill: "#2c2d30", casing: "#18191b" },
-  trunkPrimary: { fill: "#28292c", casing: "#18191b" },
-  secondaryTertiary: { fill: "#242528", casing: "#18191b" },
-  link: { fill: "#242528", casing: "#18191b" },
-  minor: { fill: "#202123", casing: "#18191b" },
-  serviceTrack: { fill: "#1c1d1e", casing: "#18191b" },
-  pathPedestrian: { fill: "#18191a", casing: "#141415" },
+  motorway: { fill: "#141516", casing: "#111213" },
+  trunkPrimary: { fill: "#131415", casing: "#111213" },
+  secondaryTertiary: { fill: "#121314", casing: "#111213" },
+  link: { fill: "#121314", casing: "#111213" },
+  minor: { fill: "#111212", casing: "#111213" },
+  serviceTrack: { fill: "#101111", casing: "#111213" },
+  pathPedestrian: { fill: "#0f1010", casing: "#0e0f0f" },
 } as const;
 
 const BUILDING_FILL = "#252629";
