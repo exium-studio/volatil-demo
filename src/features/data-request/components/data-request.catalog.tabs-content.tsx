@@ -1,45 +1,269 @@
-import { IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
+import type {
+  FormattedListItem,
+  FormattedTableHeader,
+} from "@/design-system/components/data-display/types/data-list-table.type";
+import type { DataListBatchActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
+import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
+import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
+import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
+import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import {
   PADDING_MD,
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
-import { SlidersHorizontalIcon } from "lucide-react";
+import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
+import { catalogData } from "@/shared/constants/dummy-data";
+import { t } from "@/shared/libs/i18n";
+import { isEmptyArray } from "@/shared/utils/data/array";
+import { ShoppingCartIcon, SlidersHorizontalIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 
 export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
+
+const IGT_THEME_TYPE_MAP = {
+  bidang: {
+    label: "IGT Berbasis Bidang",
+    colorPalette: "blue",
+    color: "blue.fg",
+  },
+  kawasan: {
+    label: "IGT Berbasis Kawasan",
+    colorPalette: "orange",
+    color: "orange.fg",
+  },
+} as const;
+
+const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
+  hak_atas_tanah: "IGT Hak Atas Tanah",
+  pemilikan_tanah: "IGT Pemilikan Tanah",
+  bidang_tanah: "IGT Bidang Tanah",
+  rtrw_nasional: "IGT RTRW Nasional",
+  rtrw_provinsi: "IGT RTRW Provinsi",
+  rtrw_kota: "IGT RTRW Kota",
+};
 
 export const DataRequestCatalogTabsContent = (
   props: DataRequestCatalogTabsContentProps,
 ) => {
   return (
-    <Tabs.Content {...props} p={0}>
-      <HStack
+    <Tabs.Content
+      display={"flex"}
+      flexDir={"column"}
+      flex={1}
+      overflowY={"auto"}
+      p={0}
+      {...props}
+    >
+      <VStack
         wrap={"wrap"}
         justify={"space-between"}
         gap={SPACING_MD}
         p={PADDING_MD}
       >
-        <VStack gap={1}>
+        {/* <VStack gap={1}>
           <P>Daftar Katalog Anda</P>
           <P fontSize={"sm"} color={"fg.subtle"}>
-            Daftar seluruh kalatog data yang tersedia.
+            Daftar seluruh katalog data yang tersedia.
           </P>
-        </VStack>
+        </VStack> */}
 
-        <HStack align={"center"} gap={SPACING_SM}>
-          <SearchInput />
+        <HStack
+          wrap={"wrap"}
+          align={"center"}
+          justify={"space-between"}
+          gap={SPACING_SM}
+        >
+          <HStack gap={SPACING_SM}>
+            <SearchInput placeholder={t["action.search"]()} />
 
-          <IconButton variant={"outline"}>
-            <AppIcon icon={SlidersHorizontalIcon} />
-          </IconButton>
+            <IconButton variant={"outline"}>
+              <AppIcon icon={SlidersHorizontalIcon} />
+            </IconButton>
+          </HStack>
+
+          <Button primary variant={"subtle"}>
+            Pilih semua yang terfilter
+          </Button>
         </HStack>
-      </HStack>
+      </VStack>
+
+      <Separator borderColor={"bg.canvas"} />
+
+      <DataList />
     </Tabs.Content>
+  );
+};
+
+const DataList = () => {
+  // States
+  const [perPage, setPerPage] = useState<number>(DEFAULT_PER_PAGE_OPTIONS[0]); // 20
+  const [page, setPage] = useState<number>(1);
+
+  // Resolved Values
+  const dataList = {
+    headers: useMemo<FormattedTableHeader[]>(
+      () => [
+        { th: "Nama Data IGT-PR", sortable: true },
+        { th: "Jenis Tema IGT-PR", sortable: true },
+        { th: "Basis Kuota", sortable: true },
+        { th: "Kategori Tema IGT-PR", sortable: true },
+        { th: "Deskripsi Data", sortable: true },
+        { th: "Total Harga", sortable: true, align: "end" },
+      ],
+      [],
+    ),
+
+    items: useMemo<FormattedListItem[]>(() => {
+      return catalogData.map((item) => {
+        const visibleCategories = item.categories;
+
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: item.name,
+              td: <P>{item.name}</P>,
+              align: "start",
+            },
+            {
+              value: item.themeType,
+              td: (
+                <Badge
+                  colorPalette={IGT_THEME_TYPE_MAP[item.themeType].colorPalette}
+                  variant={"subtle"}
+                >
+                  {IGT_THEME_TYPE_MAP[item.themeType].label}
+                </Badge>
+              ),
+              align: "center",
+            },
+            {
+              value: item.quotaBase,
+              td: (
+                <HStack align={"center"} gap={2}>
+                  <P>{item.quotaBase}</P>
+
+                  <P
+                    fontSize={"sm"}
+                    color={IGT_THEME_TYPE_MAP[item.themeType].color}
+                  >
+                    {item.themeType === "bidang" ? "bidang" : "ha"}
+                  </P>
+                </HStack>
+              ),
+              align: "start",
+            },
+            {
+              value: item.categories.join(", "),
+              td: (
+                <HStack
+                  wrap={"wrap"}
+                  align={"start"}
+                  gap={1}
+                  w={"max"}
+                  maxW={"300px"}
+                >
+                  {visibleCategories.map((cat) => (
+                    <Badge key={cat} fontSize={"sm"} colorPalette={"neutral"}>
+                      {IGT_CATEGORY_MAP[cat]}
+                    </Badge>
+                  ))}
+                </HStack>
+              ),
+              align: "start",
+            },
+            {
+              value: item.description,
+              td: (
+                <P
+                  color={"fg.subtle"}
+                  fontSize={"sm"}
+                  w={"max"}
+                  maxW={"300px"}
+                  whiteSpace={"wrap"}
+                >
+                  {item.description}
+                </P>
+              ),
+              align: "start",
+            },
+            {
+              value: item.price,
+              td: (
+                <FormatNumber
+                  value={item.price}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              ),
+              align: "end",
+            },
+          ],
+        };
+      });
+    }, []),
+
+    batchActions: [
+      ({ selectedItemIds, selectedItems }) => {
+        return (
+          <Button
+            disabled={isEmptyArray(selectedItems)}
+            onClick={() => {
+              console.log({ selectedItemIds, selectedItems });
+            }}
+          >
+            <AppIcon icon={ShoppingCartIcon} />
+            Delete
+          </Button>
+        );
+      },
+    ] as DataListBatchActionsGenerator[],
+  };
+
+  return (
+    <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
+      <DataListTable.Root
+        withNumbering={false}
+        headers={dataList.headers}
+        items={dataList.items}
+        batchActions={dataList.batchActions}
+        rounded={0}
+        shadow={"none"}
+      >
+        <DataListTable.Header />
+        <DataListTable.Body />
+      </DataListTable.Root>
+
+      <DataListFooter
+        perPage={perPage}
+        setPerPage={setPerPage}
+        page={page}
+        setPage={setPage}
+        currentDataLength={dataList.items.length}
+        // totalData={items.length}
+        rounded={0}
+      />
+
+      {/* <Separator borderColor={"bg.canvas"} />
+
+      <VStack flexShrink={0} p={PADDING_MD} bg={"bg.body"}>
+        <Button primary>Tambah ke keranjang</Button>
+      </VStack> */}
+    </VStack>
   );
 };

@@ -4,7 +4,7 @@ import type { DataListPerPageProps } from "@/design-system/components/data-displ
 import Select from "@/design-system/components/input/ui/select";
 import { Span } from "@/design-system/components/typography/ui/span";
 
-const DEFAULT_PER_PAGE_OPTIONS = [20, 40, 60, 100];
+export const DEFAULT_PER_PAGE_OPTIONS = [20, 40, 60, 100];
 
 export const DataListPerPage = (props: DataListPerPageProps) => {
   // Props

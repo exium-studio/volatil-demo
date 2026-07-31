@@ -334,7 +334,7 @@ const DataListTableBody = () => {
             gridTemplateColumns={"subgrid"}
             gridColumn={"1 / -1"}
             overflow={"clip"}
-            h={TABLE_ROW_H}
+            minH={TABLE_ROW_H}
             shadow={isItemSelected ? "md" : "none"}
           >
             {!isEmptyArray(batchActions) && (

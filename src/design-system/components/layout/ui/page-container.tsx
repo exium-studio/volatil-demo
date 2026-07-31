@@ -3,6 +3,7 @@
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PageContainerProps } from "@/design-system/components/layout/types/page-container.type";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HEADER_H } from "@/design-system/constants/styles";
 
 export const PageContainer = (props: PageContainerProps) => {
   return (
@@ -15,5 +16,12 @@ export const AppPageContainer = (props: PageContainerProps) => {
 };
 
 export const PanelContentContainer = (props: StackProps) => {
-  return <VStack flex={1} pos={"relative"} {...props} />;
+  return (
+    <VStack
+      flex={1}
+      pos={"relative"}
+      h={`calc(100% - ${HEADER_H})`}
+      {...props}
+    />
+  );
 };

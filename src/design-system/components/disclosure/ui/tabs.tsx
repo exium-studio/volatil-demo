@@ -28,7 +28,7 @@ const TabsList = forwardRef<HTMLDivElement, TabsListProps>((props, ref) => {
 
 const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
   (props, ref) => {
-    return <ChakraTabs.Trigger ref={ref} {...props} />;
+    return <ChakraTabs.Trigger ref={ref} fontSize={"md"} {...props} />;
   },
 );
 

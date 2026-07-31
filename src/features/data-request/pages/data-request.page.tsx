@@ -11,10 +11,16 @@ import { FolderArchiveIcon, ListIcon } from "lucide-react";
 
 export const DataRequestPage = () => {
   return (
-    <PanelContentContainer gap={PADDING_SM} pb={PADDING_SM}>
-      <Container.Root px={PADDING_SM}>
-        <Container.Body>
-          <Tabs.Root defaultValue={"catalog"}>
+    <PanelContentContainer overflowY={"auto"} gap={PADDING_SM} pb={PADDING_SM}>
+      <Container.Root flex={1} px={PADDING_SM} overflowY={"auto"}>
+        <Container.Body flex={1} overflowY={"auto"}>
+          <Tabs.Root
+            defaultValue={"catalog"}
+            flex={1}
+            display={"flex"}
+            flexDir={"column"}
+            overflowY={"auto"}
+          >
             <Tabs.List>
               <Tabs.Trigger
                 value={"catalog"}
