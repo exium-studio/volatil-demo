@@ -4,5 +4,5 @@ import type { BadgeProps } from "@/design-system/components/typography/types/bad
 import { Badge as ChakraBadge } from "@chakra-ui/react";
 
 export const Badge = (props: BadgeProps) => {
-  return <ChakraBadge {...props} />;
+  return <ChakraBadge fontSize={"sm"} {...props} />;
 };

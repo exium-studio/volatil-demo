@@ -178,7 +178,7 @@ const DataList = () => {
                   maxW={"300px"}
                 >
                   {visibleCategories.map((cat) => (
-                    <Badge key={cat} fontSize={"sm"} colorPalette={"neutral"}>
+                    <Badge key={cat} colorPalette={"neutral"}>
                       {IGT_CATEGORY_MAP[cat]}
                     </Badge>
                   ))}
@@ -191,10 +191,10 @@ const DataList = () => {
               td: (
                 <P
                   color={"fg.subtle"}
-                  fontSize={"sm"}
                   w={"max"}
                   maxW={"300px"}
                   whiteSpace={"wrap"}
+                  fontSize={"sm"}
                 >
                   {item.description}
                 </P>
