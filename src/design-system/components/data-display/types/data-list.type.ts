@@ -35,7 +35,10 @@ export type DataListBatchActionsTriggerProps = MenuRootProps & {
   triggerActionBarMode?: boolean;
 };
 
-export type DataListBatchActionBarProps = Omit<ActionBarRootProps, "children"> & {
+export type DataListBatchActionBarProps = Omit<
+  ActionBarRootProps,
+  "children"
+> & {
   selectedItemIds: string[];
   selectedItems: FormattedListItem[];
   clearSelectedItems: () => void;
