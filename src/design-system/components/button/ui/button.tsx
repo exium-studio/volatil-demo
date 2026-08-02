@@ -34,6 +34,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         fontSize={"md"}
         fontWeight={"normal"}
         userSelect={"none"}
+        // _active={{
+        //   transform: "translateY(3px)",
+        // }}
         {...restProps}
       />
     );
@@ -57,6 +60,9 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         rounded={theme.radii.component}
         fontWeight={"normal"}
         userSelect={"none"}
+        // _active={{
+        //   transform: "translateY(3px)",
+        // }}
         {...restProps}
       />
     );
