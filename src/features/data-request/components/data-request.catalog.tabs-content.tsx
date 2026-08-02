@@ -226,12 +226,11 @@ const DataList = () => {
         canBatchSelect
         rounded={0}
         shadow={"none"}
-        onItemSelect={({ selectedItems }) =>
-          setDataListState((prev) => ({
-            ...prev,
-            selectedItems: selectedItems,
-          }))
-        }
+        // selectedItems={dataListState.selectedItems}
+        onSelectedItemChange={({ selectedItems }) => {
+          console.log("selectedItems", selectedItems);
+          setDataListState((prev) => ({ ...prev, selectedItems }));
+        }}
       >
         <DataListTable.Header />
         <DataListTable.Body />

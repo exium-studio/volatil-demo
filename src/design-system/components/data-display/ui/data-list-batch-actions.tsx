@@ -37,8 +37,8 @@ export const DataListBatchActionsTrigger = (
     return (
       <Checkbox
         checked={isAllItemsSelected}
-        onCheckedChange={() => {
-          selectAllItems(isAllItemsSelected);
+        onCheckedChange={(e) => {
+          selectAllItems(!!e.checked);
         }}
         size={"sm"}
         variant={"subtle"}

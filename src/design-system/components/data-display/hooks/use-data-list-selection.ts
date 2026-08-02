@@ -1,59 +1,89 @@
 // src/design-system/components/data-display/hooks/use-data-list-selection.ts
 
 import type {
-  DataListTableOnItemSelect,
+  DataListTableOnSelectedItemChange,
   FormattedListItem,
 } from "@/design-system/components/data-display/types/data-list-table.type";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export function useDataListSelection(
   formattedListItems: FormattedListItem[],
-  onItemSelect?: DataListTableOnItemSelect,
+  controlledSelectedItems?: FormattedListItem[],
+  onSelectedItemChange?: DataListTableOnSelectedItemChange,
 ) {
-  const [isAllItemsSelected, setAllItemsSelected] = useState(false);
-  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
-  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
+  // Internal state — only used in uncontrolled mode
+  const [internalSelectedItems, setInternalSelectedItems] = useState<
+    FormattedListItem[]
+  >([]);
+  const [internalIsAllItemsSelected, setAllItemsSelected] = useState(false);
+
+  // Resolved selected items — controlled takes priority
+  const isControlled = controlledSelectedItems !== undefined;
+  const selectedItems = isControlled
+    ? controlledSelectedItems
+    : internalSelectedItems;
+  const isAllItemsSelected = isControlled
+    ? selectedItems.length === formattedListItems.length &&
+      formattedListItems.length > 0
+    : internalIsAllItemsSelected;
+
+  const selectedItemIds = useMemo(
+    () => selectedItems.map((i) => i.id),
+    [selectedItems],
+  );
 
   function selectAllItems(isChecked: boolean) {
-    setAllItemsSelected(!isAllItemsSelected);
-    if (!isChecked) {
-      setSelectedItemIds(formattedListItems.map((item) => item.id));
-      setSelectedItems(formattedListItems);
-    } else {
-      setSelectedItemIds([]);
-      setSelectedItems([]);
+    const nextSelectedItems = isChecked ? formattedListItems : [];
+
+    if (isControlled) {
+      onSelectedItemChange?.({
+        selectedItems: nextSelectedItems,
+        selectedCurrentItem: nextSelectedItems[0] ?? formattedListItems[0],
+      });
+      return;
     }
+
+    setAllItemsSelected(isChecked);
+    setInternalSelectedItems(nextSelectedItems);
+
+    // Fire callback in uncontrolled mode too
+    onSelectedItemChange?.({
+      selectedItems: nextSelectedItems,
+      selectedCurrentItem: nextSelectedItems[0] ?? formattedListItems[0],
+    });
   }
 
   function clearSelectedItems() {
     setAllItemsSelected(false);
-    setSelectedItemIds([]);
-    setSelectedItems([]);
+    if (!isControlled) {
+      setInternalSelectedItems([]);
+    }
   }
 
   function toggleItemSelection(item: FormattedListItem) {
     let nextSelectedItems: FormattedListItem[] = [];
 
-    setSelectedItems((prev) => {
-      const isSelected = prev.some((s) => s.id === item.id);
+    if (!isControlled) {
+      setInternalSelectedItems((prev) => {
+        const isSelected = prev.some((s) => s.id === item.id);
+        nextSelectedItems = isSelected
+          ? prev.filter((s) => s.id !== item.id)
+          : [...prev, item];
+        return nextSelectedItems;
+      });
+
+      setAllItemsSelected(
+        nextSelectedItems.length === formattedListItems.length,
+      );
+    } else {
+      // Controlled — compute next without setState
+      const isSelected = selectedItems.some((s) => s.id === item.id);
       nextSelectedItems = isSelected
-        ? prev.filter((s) => s.id !== item.id)
-        : [...prev, item];
-      return nextSelectedItems;
-    });
+        ? selectedItems.filter((s) => s.id !== item.id)
+        : [...selectedItems, item];
+    }
 
-    setSelectedItemIds((prev) => {
-      const isSelected = prev.includes(item.id);
-      if (isSelected) {
-        setAllItemsSelected(false);
-        return prev.filter((id) => id !== item.id);
-      }
-      const next = [...prev, item.id];
-      if (formattedListItems.length === next.length) setAllItemsSelected(true);
-      return next;
-    });
-
-    onItemSelect?.({
+    onSelectedItemChange?.({
       selectedItems: nextSelectedItems,
       selectedCurrentItem: item,
     });

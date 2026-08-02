@@ -5,6 +5,7 @@ import type { DataListPaginationProps } from "@/design-system/components/data-di
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 export const DataListPagination = (props: DataListPaginationProps) => {
@@ -27,7 +28,7 @@ export const DataListPagination = (props: DataListPaginationProps) => {
       </IconButton>
 
       <P whiteSpace={"nowrap"}>
-        <TNum>{page}</TNum>
+        <TNum>{formatNumber(page)}</TNum>
       </P>
 
       <IconButton

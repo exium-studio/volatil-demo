@@ -1,20 +1,14 @@
 // src/design-system/components/data-display/ui/data-list-table.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
+import type { DataListTableContextValue } from "@/design-system/components/data-display/contexts/data-list-table.context";
 import { useDataListSelection } from "@/design-system/components/data-display/hooks/use-data-list-selection";
 import { useDataListSort } from "@/design-system/components/data-display/hooks/use-data-list-sort";
 import type {
   DataListTableHeaderProps,
   DataListTableRootProps,
-  DataListTableSortConfig,
   DataListTableSortIconProps,
-  FormattedListItem,
-  FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
-import type {
-  DataListBatchActionsGenerator,
-  DataListItemActionsGenerator,
-} from "@/design-system/components/data-display/types/data-list.type";
 import {
   DataListBatchActionBar,
   DataListBatchActionsTrigger,
@@ -41,42 +35,11 @@ import {
   IconListCheck,
 } from "@tabler/icons-react";
 import { EllipsisIcon } from "lucide-react";
-import { createContext, forwardRef, useContext, useMemo } from "react";
-
-type DataListTableContextValue = {
-  headers: FormattedTableHeader[];
-  items: FormattedListItem[];
-  initialSortColumnIndex?: number;
-  initialSortOrder?: "asc" | "desc";
-  batchActions?: DataListBatchActionsGenerator[];
-  itemActions?: DataListItemActionsGenerator[];
-  withNumbering?: boolean;
-
-  sortConfig: DataListTableSortConfig;
-  toggleSort: (columnIndex: number) => void;
-  sortedItems: FormattedListItem[];
-  selectedItemIds: string[];
-  selectedItems: FormattedListItem[];
-  isAllItemsSelected: boolean;
-  toggleItemSelection: (item: FormattedListItem) => void;
-  selectAllItems: (isChecked: boolean) => void;
-  clearSelectedItems: () => void;
-  canBatchSelect: boolean;
-};
-
-const DataListTableContext = createContext<DataListTableContextValue | null>(
-  null,
-);
-
-const useDataListTableContext = () => {
-  const ctx = useContext(DataListTableContext);
-  if (!ctx) {
-    throw new Error(
-      "DataListTable compound components must be used within <DataListTable.Root>",
-    );
-  }
-  return ctx;
-};
+import { forwardRef, useMemo } from "react";
+import {
+  DataListTableContext,
+  useDataListTableContext,
+} from "@/design-system/components/data-display/contexts/data-list-table.context";
 
 // ---------------------------------------------------------------------------
 
@@ -93,7 +56,8 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       initialSortOrder = "asc",
       withNumbering = true,
       canBatchSelect = false,
-      onItemSelect,
+      selectedItems: controlledSelectedItems,
+      onSelectedItemChange,
       ...restProps
     } = props;
 
@@ -113,7 +77,11 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       selectAllItems,
       clearSelectedItems,
       toggleItemSelection,
-    } = useDataListSelection(items, onItemSelect);
+    } = useDataListSelection(
+      items,
+      controlledSelectedItems,
+      onSelectedItemChange,
+    );
 
     // Resolved Values
     const contextValue = useMemo<DataListTableContextValue>(
@@ -270,6 +238,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
             clearSelectedItems={clearSelectedItems}
             isAllItemsSelected={isAllItemsSelected}
             selectAllItems={selectAllItems}
+            triggerActionBarMode={true}
           >
             <IconButton variant={"ghost"} size={"xs"}>
               <AppIcon icon={IconListCheck} />

@@ -7,7 +7,7 @@ import type {
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ReactNode } from "react";
 
-export type DataListTableOnItemSelect = (payload: {
+export type DataListTableOnSelectedItemChange = (payload: {
   selectedItems: FormattedListItem[];
   selectedCurrentItem: FormattedListItem;
 }) => void;
@@ -18,11 +18,12 @@ export type DataListTableRootProps = Omit<StackProps, "page"> & {
   items: FormattedListItem[];
   initialSortColumnIndex?: number;
   initialSortOrder?: "asc" | "desc";
+  canBatchSelect?: boolean;
+  selectedItems?: FormattedListItem[];
+  onSelectedItemChange?: DataListTableOnSelectedItemChange;
   batchActions?: DataListBatchActionsGenerator[];
   itemActions?: DataListItemActionsGenerator[];
   withNumbering?: boolean;
-  canBatchSelect?: boolean;
-  onItemSelect?: DataListTableOnItemSelect;
 };
 
 export type DataListTableHeaderProps = StackProps & {};
