@@ -114,6 +114,11 @@ const DrawerRoot = (props: DrawerRootProps) => {
       },
       onUpdate: () => {
         setDelayedOpened(opened);
+        if (!opened) {
+          setTimeout(() => {
+            setFullscreen(false);
+          }, 200);
+        }
       },
     },
     [opened, isNested, delayMs],

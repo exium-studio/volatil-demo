@@ -103,6 +103,11 @@ const DialogRoot = (props: DialogRootProps) => {
       },
       onUpdate: () => {
         setDelayedOpened(opened);
+        if (!opened) {
+          setTimeout(() => {
+            setFullscreen(false);
+          }, 200);
+        }
       },
     },
     [opened, isNested, delayMs],
