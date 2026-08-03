@@ -198,7 +198,6 @@ export const MapSearch = () => {
   // Derived Values
   const hasInput = !!inputValue.trim();
   const isOpened = isFocused || hasInput;
-  // Container content is 100% driven by debouncedQuery — static during typing
   const hasDebouncedQuery = !!debouncedQuery.trim();
   const showRecent = !hasDebouncedQuery;
   const showResults = hasDebouncedQuery;
@@ -254,7 +253,7 @@ export const MapSearch = () => {
         >
           {/* Recent Searches List */}
           {showRecent && (
-            <VStack align={"stretch"} py={1}>
+            <VStack align={"stretch"}>
               {isEmptyArray(recentSearches) ? (
                 <Box p={4}>
                   <FeedbackState
@@ -267,7 +266,7 @@ export const MapSearch = () => {
                 </Box>
               ) : (
                 <>
-                  <Box px={3} pt={1} pb={2}>
+                  <Box px={3} py={1}>
                     <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
                       {t["common.recent"]()}
                     </P>

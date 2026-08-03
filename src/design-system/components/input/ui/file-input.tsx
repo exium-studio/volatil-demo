@@ -278,11 +278,11 @@ const FileInputInner = (props: FileinputInnerProps) => {
                   </VStack>
 
                   <VStack gap={1}>
-                    <FileUpload.Label>
+                    <P>
                       {dragging
                         ? t["common.drop_it_here"]()
                         : t["common.chose_or_drag_to_upload"]()}
-                    </FileUpload.Label>
+                    </P>
 
                     <P
                       fontSize={"sm"}

@@ -5,6 +5,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { HEADER_H, PADDING_SM } from "@/design-system/constants/styles";
+import { DataRequestAoiTabsContent } from "@/features/data-request/components/data-request.aoi.tabs-content";
 import { DataRequestCatalogTabsContent } from "@/features/data-request/components/data-request.catalog.tabs-content";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
@@ -56,7 +57,7 @@ export const DataRequestPage = () => {
             <>
               <DataRequestCatalogTabsContent value={"catalog"} />
 
-              <Tabs.Content value={"aoi"}>Manage your projects</Tabs.Content>
+              <DataRequestAoiTabsContent value={"aoi"} />
 
               <Tabs.Content value={"polygon"}>
                 Manage your tasks for freelancers
