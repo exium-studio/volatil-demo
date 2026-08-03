@@ -352,7 +352,7 @@ const DataListTableBody = () => {
                 justify={col.align}
                 w={"full"}
                 h={"full"}
-                px={3}
+                px={4}
                 py={2}
                 opacity={item.dim || col.dim ? 0.5 : 1}
                 whiteSpace={"nowrap"}

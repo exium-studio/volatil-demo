@@ -374,6 +374,9 @@ const DialogFullscreenButton = (props: IconButtonProps) => {
       variant={"subtle"}
       bg={"an1"}
       rounded={"full"}
+      pos={"absolute"}
+      top={3.5}
+      right={"48px"}
       onClick={() => {
         const next = !fullscreen;
         triggerFullscreenAnimation(modalKey, next);

@@ -1,5 +1,7 @@
 // src/features/data-request/types/data-request.catalog.type.ts
 
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+
 export type IgtThemeType = "bidang" | "kawasan";
 
 export type IgtCategory =
@@ -19,3 +21,8 @@ export interface CatalogItem extends Record<string, unknown> {
   description: string;
   price: number;
 }
+
+export type SelectedItemListTriggerProps = {
+  children: React.ReactNode;
+  selectedItems: FormattedListItem[];
+};

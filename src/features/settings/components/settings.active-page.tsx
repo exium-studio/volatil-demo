@@ -106,7 +106,7 @@ export const SettingsActivePageHeader = (props: StackProps) => {
     >
       <HStack w={MODAL_CONTROL_CONTAINER_W}>
         {isSmallViewport && (
-          <IconButton onClick={() => back()}>
+          <IconButton onClick={back}>
             <AppIcon icon={ChevronLeftIcon} />
           </IconButton>
         )}
@@ -126,7 +126,7 @@ export const SettingsActivePageHeader = (props: StackProps) => {
 
         {!isSmallViewport && (
           <>
-            <Dialog.FullscreenButton />
+            <Dialog.FullscreenButton pos={"static"} />
 
             <Modal.CloseButton
               closeTriggerProps={{

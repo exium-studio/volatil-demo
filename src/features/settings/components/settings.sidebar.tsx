@@ -51,7 +51,7 @@ export const SettingsSidebarHeader = () => {
     >
       <HStack>
         {isSmallViewport && (
-          <IconButton onClick={() => back()}>
+          <IconButton onClick={back}>
             <AppIcon icon={ChevronLeftIcon} />
           </IconButton>
         )}

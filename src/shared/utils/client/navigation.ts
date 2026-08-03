@@ -2,7 +2,7 @@
 
 let lastBackAt = 0;
 
-export function back(depth?: number) {
+export function backWithDepth(depth?: number) {
   if (typeof window === "undefined") {
     return;
   }
@@ -21,3 +21,7 @@ export function back(depth?: number) {
     window.history.back();
   }
 }
+
+export const back = () => {
+  window.history.back();
+};
