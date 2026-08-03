@@ -34,7 +34,7 @@ import type {
 } from "@/features/data-request/types/data-request.catalog.type";
 import { catalogData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { back } from "@/shared/utils/client/navigation";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -278,7 +278,9 @@ const DataList = () => {
           )}
         </HStack>
 
-        <Button primary>Tambah ke keranjang</Button>
+        <Button primary disabled={isEmptyArray(dataListState.selectedItems)}>
+          Tambah ke keranjang
+        </Button>
       </HStack>
     </VStack>
   );
@@ -287,8 +289,6 @@ const DataList = () => {
 const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
   // Props
   const { children, selectedItems } = props;
-
-  console.log(selectedItems);
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -332,7 +332,7 @@ const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
           <Modal.CloseButton />
         </Modal.Header>
 
-        <Modal.Body p={0}>
+        <Modal.Body p={0} pb={4}>
           <DataListTable.Root
             withNumbering={false}
             headers={dataList.headers}
@@ -345,11 +345,11 @@ const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
           </DataListTable.Root>
         </Modal.Body>
 
-        <Modal.Footer>
+        {/* <Modal.Footer>
           <Button flex={1} onClick={back}>
             {t["action.close"]()}
           </Button>
-        </Modal.Footer>
+        </Modal.Footer> */}
       </Modal.Content>
     </Modal.Root>
   );

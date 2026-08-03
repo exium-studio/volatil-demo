@@ -320,22 +320,22 @@ const DataListTableBody = () => {
           >
             {canBatchSelect && (
               <Center
-                h={"full"}
-                px={"10px"}
                 pos={"sticky"}
                 left={0}
+                bg={"bg.body"}
                 cursor={"pointer"}
-                {...bodyCellStyles}
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleItemSelection(item);
                 }}
               >
-                <Checkbox
-                  size={"sm"}
-                  checked={isItemSelected}
-                  variant={"subtle"}
-                />
+                <Center w={"full"} h={"full"} px={"10px"} {...bodyCellStyles}>
+                  <Checkbox
+                    size={"sm"}
+                    checked={isItemSelected}
+                    variant={"subtle"}
+                  />
+                </Center>
               </Center>
             )}
 
@@ -364,23 +364,23 @@ const DataListTableBody = () => {
             ))}
 
             {!isEmptyArray(itemActions) && (
-              <Center
-                h={"full"}
-                px={"10px"}
-                pos={"sticky"}
-                right={0}
-                zIndex={2}
-                {...bodyCellStyles}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <DataListItemActionsTrigger
-                  itemActions={itemActions}
-                  item={item}
+              <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
+                <Center
+                  w={"full"}
+                  h={"full"}
+                  px={"10px"}
+                  {...bodyCellStyles}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <IconButton variant={"ghost"} size={"xs"}>
-                    <AppIcon icon={EllipsisIcon} />
-                  </IconButton>
-                </DataListItemActionsTrigger>
+                  <DataListItemActionsTrigger
+                    itemActions={itemActions}
+                    item={item}
+                  >
+                    <IconButton variant={"ghost"} size={"xs"}>
+                      <AppIcon icon={EllipsisIcon} />
+                    </IconButton>
+                  </DataListItemActionsTrigger>
+                </Center>
               </Center>
             )}
           </Box>
