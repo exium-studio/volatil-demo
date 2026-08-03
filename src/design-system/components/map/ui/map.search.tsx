@@ -210,7 +210,7 @@ export const MapSearch = () => {
       <MapOverlayContainer
         overflow={"clip"}
         w={isOpened ? "full" : "36px"}
-        bg={isOpened ? "bg.body" : "darkAlpha.700"}
+        bg={isOpened ? "bg.body" : "darkAlpha.800"}
         transition={"200ms"}
       >
         <SearchInput

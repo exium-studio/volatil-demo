@@ -181,23 +181,6 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
   },
 );
 
-const DataListTableCell = (props: StackProps) => {
-  return (
-    <HStack
-      className="table-cell"
-      align={"center"}
-      justify={"center"}
-      gap={2}
-      px={4}
-      py={2}
-      bg={"bg.body"}
-      whiteSpace={"nowrap"}
-      userSelect={"none"}
-      {...props}
-    />
-  );
-};
-
 const DataListTableHeader = (props: DataListTableHeaderProps) => {
   const {
     canBatchSelect,
@@ -387,6 +370,23 @@ const DataListTableBody = () => {
         );
       })}
     </>
+  );
+};
+
+const DataListTableCell = (props: StackProps) => {
+  return (
+    <HStack
+      className="table-cell"
+      align={"center"}
+      justify={"center"}
+      gap={2}
+      px={4}
+      py={2}
+      bg={"bg.body"}
+      whiteSpace={"nowrap"}
+      userSelect={"none"}
+      {...props}
+    />
   );
 };
 

@@ -55,9 +55,11 @@ export function useDataListSelection(
 
   function clearSelectedItems() {
     setAllItemsSelected(false);
-    if (!isControlled) {
-      setInternalSelectedItems([]);
-    }
+    setInternalSelectedItems([]);
+    onSelectedItemChange?.({
+      selectedCurrentItem: undefined,
+      selectedItems: [],
+    });
   }
 
   function toggleItemSelection(item: FormattedListItem) {

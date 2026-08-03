@@ -9,7 +9,7 @@ import type { ReactNode } from "react";
 
 export type DataListTableOnSelectedItemChange = (payload: {
   selectedItems: FormattedListItem[];
-  selectedCurrentItem: FormattedListItem;
+  selectedCurrentItem?: FormattedListItem;
 }) => void;
 
 export type DataListTableRootProps = Omit<StackProps, "page"> & {

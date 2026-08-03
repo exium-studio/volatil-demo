@@ -9,37 +9,29 @@ import type {
   FormattedTableColumn,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
+import type { DataListBatchActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
-import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import {
   PADDING_MD,
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
-import type {
-  IgtCategory,
-  SelectedItemListTriggerProps,
-} from "@/features/data-request/types/data-request.catalog.type";
+import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
 import { catalogData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { ChevronRight, SlidersHorizontalIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ShoppingCartIcon, SlidersHorizontalIcon } from "lucide-react";
+import { useMemo } from "react";
 
 export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
 
@@ -101,13 +93,6 @@ export const DataRequestAoiTabsContent = (
         gap={SPACING_MD}
         p={PADDING_MD}
       >
-        {/* <VStack gap={1}>
-          <P>Daftar Katalog Anda</P>
-          <P fontSize={"sm"} color={"fg.subtle"}>
-            Daftar seluruh katalog data yang tersedia.
-          </P>
-        </VStack> */}
-
         <HStack
           wrap={"wrap"}
           align={"center"}
@@ -136,13 +121,6 @@ export const DataRequestAoiTabsContent = (
 };
 
 const DataList = () => {
-  // States
-  const [dataListState, setDataListState] = useState({
-    perPage: DEFAULT_PER_PAGE_OPTIONS[0],
-    page: 1000,
-    selectedItems: [] as FormattedListItem[],
-  });
-
   // Resolved Values
   const dataList = useMemo(
     () => ({
@@ -239,141 +217,123 @@ const DataList = () => {
           },
         ] as FormattedTableColumn[],
       })) as FormattedListItem[],
+
+      batchActions: [
+        ({ selectedItemIds, selectedItems }) => {
+          return (
+            <Button
+              disabled={isEmptyArray(selectedItems)}
+              onClick={() => {
+                console.log({ selectedItemIds, selectedItems });
+              }}
+            >
+              <AppIcon icon={ShoppingCartIcon} />
+              Tambah ke keranjang
+            </Button>
+          );
+        },
+      ] as DataListBatchActionsGenerator[],
     }),
     [],
   );
 
   return (
-    <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
+    <VStack flex={1} bg={"bg.canvas"} w={"full"}>
       <DataListTable.Root
         withNumbering={false}
         headers={dataList.headers}
         items={dataList.items}
-        canBatchSelect
-        rounded={0}
-        shadow={"none"}
-        // selectedItems={dataListState.selectedItems}
+        batchActions={dataList.batchActions}
         onSelectedItemChange={({ selectedItems }) => {
           console.log("selectedItems", selectedItems);
-          setDataListState((prev) => ({ ...prev, selectedItems }));
         }}
+        overflowY={"visible"}
+        rounded={0}
+        shadow={"none"}
       >
         <DataListTable.Header />
         <DataListTable.Body />
       </DataListTable.Root>
 
-      <DataListFooter
-        perPage={dataListState.perPage}
-        setPerPage={(perPage) =>
-          setDataListState((prev) => ({ ...prev, perPage }))
-        }
-        page={dataListState.page}
-        setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
-        // currentDataLength={items.length}
-        rounded={0}
-      />
-
       <Separator borderColor={"bg.canvas"} />
-
-      <HStack
-        flexShrink={0}
-        align={"center"}
-        justify={"space-between"}
-        gap={SPACING_SM}
-        p={PADDING_MD}
-        bg={"bg.body"}
-      >
-        <SelectedItemListTrigger selectedItems={dataListState.selectedItems}>
-          <Button variant={"outline"}>
-            <TNum>{formatNumber(dataListState.selectedItems.length)}</TNum>
-            <P>terpilih</P>
-
-            <AppIcon icon={ChevronRight} size={"sm"} />
-          </Button>
-        </SelectedItemListTrigger>
-
-        <Button primary disabled={isEmptyArray(dataListState.selectedItems)}>
-          Tambah ke keranjang
-        </Button>
-      </HStack>
     </VStack>
   );
 };
 
-const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
-  // Props
-  const { children, selectedItems } = props;
+// const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
+//   // Props
+//   const { children, selectedItems } = props;
 
-  // Hooks
-  const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: "selected-aoi-item",
-  });
+//   // Hooks
+//   const { modalKey, isOpen, open, close } = usePopModal({
+//     modalKey: "selected-aoi-item",
+//   });
 
-  // Resolved Values
-  const dataList = useMemo(
-    () => ({
-      headers: [
-        { th: "Nama Data IGT-PR", sortable: true },
-        { th: "Jenis Tema IGT-PR", sortable: true },
-        { th: "Basis Kuota", sortable: true },
-        { th: "Kategori Tema IGT-PR" },
-        { th: "Deskripsi Data" },
-        { th: "Total Harga", sortable: true, align: "end" },
-      ] as FormattedTableHeader[],
+//   // Resolved Values
+//   const dataList = useMemo(
+//     () => ({
+//       headers: [
+//         { th: "Nama Data IGT-PR", sortable: true },
+//         { th: "Jenis Tema IGT-PR", sortable: true },
+//         { th: "Basis Kuota", sortable: true },
+//         { th: "Kategori Tema IGT-PR" },
+//         { th: "Deskripsi Data" },
+//         { th: "Total Harga", sortable: true, align: "end" },
+//       ] as FormattedTableHeader[],
 
-      items: selectedItems.map((item) => ({
-        id: item.id,
-        data: item,
-        columns: item.columns,
-      })) as FormattedListItem[],
-    }),
-    [selectedItems],
-  );
+//       items: selectedItems.map((item) => ({
+//         id: item.id,
+//         data: item,
+//         columns: item.columns,
+//       })) as FormattedListItem[],
+//     }),
+//     [selectedItems],
+//   );
 
-  // Derived Values
-  const isEmpty = useMemo(() => isEmptyArray(selectedItems), [selectedItems]);
+//   // Derived Values
+//   const isEmpty = useMemo(() => isEmptyArray(selectedItems), [selectedItems]);
 
-  return (
-    <Modal.Root
-      modalKey={modalKey}
-      opened={isOpen}
-      open={open}
-      close={close}
-      size={isEmpty ? "md" : "5xl"}
-    >
-      <Modal.Trigger>{children}</Modal.Trigger>
+//   return (
+//     <Modal.Root
+//       modalKey={modalKey}
+//       opened={isOpen}
+//       open={open}
+//       close={close}
+//       size={isEmpty ? "md" : "5xl"}
+//     >
+//       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <Modal.Content>
-        <Modal.Header>
-          <P>Katalog data yang dipilih</P>
+//       <Modal.Content>
+//         <Modal.Header>
+//           <P>Katalog data yang dipilih</P>
 
-          <Modal.FullscreenButton />
-          <Modal.CloseButton />
-        </Modal.Header>
+//           <Modal.FullscreenButton />
+//           <Modal.CloseButton />
+//         </Modal.Header>
 
-        <Modal.Body p={0} pb={4}>
-          {isEmpty && <NoDataState />}
+//         <Modal.Body p={0} pb={4}>
+//           {isEmpty && <NoDataState />}
 
-          {!isEmpty && (
-            <DataListTable.Root
-              withNumbering={false}
-              headers={dataList.headers}
-              items={dataList.items}
-              rounded={0}
-              shadow={"none"}
-            >
-              <DataListTable.Header />
-              <DataListTable.Body />
-            </DataListTable.Root>
-          )}
-        </Modal.Body>
+//           {!isEmpty && (
+//             <DataListTable.Root
+//               withNumbering={false}
+//               headers={dataList.headers}
+//               items={dataList.items}
+//               rounded={0}
+//               shadow={"none"}
+//             >
+//               <DataListTable.Header />
+//               <DataListTable.Body />
+//             </DataListTable.Root>
+//           )}
+//         </Modal.Body>
 
-        {/* <Modal.Footer>
-          <Button flex={1} onClick={back}>
-            {t["action.close"]()}
-          </Button>
-        </Modal.Footer> */}
-      </Modal.Content>
-    </Modal.Root>
-  );
-};
+//         {/* <Modal.Footer>
+//           <Button flex={1} onClick={back}>
+//             {t["action.close"]()}
+//           </Button>
+//         </Modal.Footer> */}
+//       </Modal.Content>
+//     </Modal.Root>
+//   );
+// };
