@@ -16,7 +16,6 @@ import type { TabsContentProps } from "@/design-system/components/disclosure/typ
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -30,6 +29,7 @@ import {
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   IgtCategory,
   SelectedItemListTriggerProps,
@@ -38,7 +38,7 @@ import { catalogData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { ChevronRight, SlidersHorizontalIcon } from "lucide-react";
+import { ChevronRight, InfoIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
@@ -65,9 +65,12 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
   rtrw_kota: "IGT RTRW Kota",
 };
 
-export const DataRequestAoiTabsContent = (
+export const DataRequestDrawTabsContent = (
   props: DataRequestCatalogTabsContentProps,
 ) => {
+  // Stores
+  const { theme } = useThemeStore();
+
   return (
     <Tabs.Content
       display={"flex"}
@@ -90,7 +93,23 @@ export const DataRequestAoiTabsContent = (
           </P>
         </VStack> */}
 
-        <FileInput />
+        <HStack
+          align={"center"}
+          gap={SPACING_MD}
+          p={PADDING_MD}
+          bg={"bg.info"}
+          rounded={theme.radii.container}
+          color={"fg.info"}
+        >
+          <AppIcon icon={InfoIcon} />
+
+          <P>
+            Klik titik pada peta digital untuk mulai menggambar batas area
+            spesifik yang Anda inginkan. Hubungkan garis kembali ke titik awal
+            untuk selesai dan mengunci pilihan, atau klik tombol 'Reset' untuk
+            mengulang prosesnya dari awal.
+          </P>
+        </HStack>
       </VStack>
 
       <Separator borderColor={"bg.canvas"} />
@@ -306,7 +325,7 @@ const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: "selected-aoi-item",
+    modalKey: "selected-draw-item",
   });
 
   // Resolved Values
