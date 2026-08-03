@@ -10,7 +10,7 @@ import { HomeLastTransaction } from "@/features/home/components/home.last-transa
 
 export const HomePage = () => {
   return (
-    <PanelContentContainer gap={PADDING_SM} pb={PADDING_SM}>
+    <PanelContentContainer h={"auto"} gap={PADDING_SM} pb={PADDING_SM}>
       <HomeDataSummary />
 
       <HStack wrap={"wrap"} gap={PADDING_SM} px={PADDING_SM}>

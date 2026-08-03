@@ -14,6 +14,7 @@ import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-displa
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -36,7 +37,7 @@ import { catalogData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { SlidersHorizontalIcon } from "lucide-react";
+import { ChevronRight, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
@@ -263,20 +264,14 @@ const DataList = () => {
         p={PADDING_MD}
         bg={"bg.body"}
       >
-        <HStack align={"center"} justify={"center"} gap={2}>
-          <TNum>{formatNumber(dataListState.selectedItems.length)}</TNum>
-          <P>terpilih</P>
+        <SelectedItemListTrigger selectedItems={dataListState.selectedItems}>
+          <Button variant={"outline"}>
+            <TNum>{formatNumber(dataListState.selectedItems.length)}</TNum>
+            <P>terpilih</P>
 
-          {dataListState.selectedItems.length > 0 && (
-            <SelectedItemListTrigger
-              selectedItems={dataListState.selectedItems}
-            >
-              <Button primary variant={"ghost"} size={"xs"}>
-                Lihat
-              </Button>
-            </SelectedItemListTrigger>
-          )}
-        </HStack>
+            <AppIcon icon={ChevronRight} size={"sm"} />
+          </Button>
+        </SelectedItemListTrigger>
 
         <Button primary disabled={isEmptyArray(dataListState.selectedItems)}>
           Tambah ke keranjang
@@ -295,6 +290,7 @@ const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
     modalKey: "selected-catalog-item",
   });
 
+  // Resolved Values
   const dataList = useMemo(
     () => ({
       headers: [
@@ -315,34 +311,42 @@ const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
     [selectedItems],
   );
 
+  // Derived Values
+  const isEmpty = useMemo(() => isEmptyArray(selectedItems), [selectedItems]);
+
   return (
     <Modal.Root
       modalKey={modalKey}
       opened={isOpen}
       open={open}
       close={close}
-      size={"5xl"}
+      size={isEmpty ? "md" : "5xl"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
       <Modal.Content>
         <Modal.Header>
-          Katalog data yang dipilih
+          <P>Katalog data yang dipilih</P>
+
           <Modal.FullscreenButton />
           <Modal.CloseButton />
         </Modal.Header>
 
         <Modal.Body p={0} pb={4}>
-          <DataListTable.Root
-            withNumbering={false}
-            headers={dataList.headers}
-            items={dataList.items}
-            rounded={0}
-            shadow={"none"}
-          >
-            <DataListTable.Header />
-            <DataListTable.Body />
-          </DataListTable.Root>
+          {isEmpty && <NoDataState />}
+
+          {!isEmpty && (
+            <DataListTable.Root
+              withNumbering={false}
+              headers={dataList.headers}
+              items={dataList.items}
+              rounded={0}
+              shadow={"none"}
+            >
+              <DataListTable.Header />
+              <DataListTable.Body />
+            </DataListTable.Root>
+          )}
         </Modal.Body>
 
         {/* <Modal.Footer>
