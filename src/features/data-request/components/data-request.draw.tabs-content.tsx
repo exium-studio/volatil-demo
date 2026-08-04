@@ -156,7 +156,7 @@ const DataList = () => {
         { th: "Total Harga", sortable: true, align: "end" },
       ] as FormattedTableHeader[],
 
-      items: dummyIgtData.map((item) => ({
+      items: dummyIgtData.items.map((item) => ({
         id: item.id,
         data: item,
         columns: [
@@ -278,7 +278,7 @@ const DataList = () => {
 
       <DataRequestAddToCartButtons
         selectedItems={dataListState.selectedItems}
-        totalItems={1000}
+        totalItems={dummyIgtData.meta.total ?? 0}
         onAddSelectedClick={() => {
           console.log("onAddSelectedClick");
         }}
