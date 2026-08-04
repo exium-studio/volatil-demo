@@ -26,6 +26,7 @@ export const useMapDraw = (
     feature: GeoJSON.Feature<GeoJSON.Polygon>,
     originalPoints: { lng: number; lat: number }[],
   ) => void,
+  densify = false,
 ) => {
   const { geometryType, isDrawing, points, addPoint, finish } =
     useMapDrawStore();
@@ -40,7 +41,23 @@ export const useMapDraw = (
   const finalize = () => {
     if (geometryType !== "polygon" || pointsRef.current.length < 3) return;
 
-    onFinish?.(toPolygonFeature(pointsRef.current), pointsRef.current);
+    const feature = densify
+      ? toPolygonFeature(pointsRef.current)
+      : {
+          type: "Feature" as const,
+          properties: {},
+          geometry: {
+            type: "Polygon" as const,
+            coordinates: [
+              [
+                ...pointsRef.current.map((p) => [p.lng, p.lat]),
+                [pointsRef.current[0].lng, pointsRef.current[0].lat],
+              ],
+            ],
+          },
+        };
+
+    onFinish?.(feature, pointsRef.current);
     finish();
     // TODO: call toast.success("Area berhasil digambar")
   };
