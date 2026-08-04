@@ -400,8 +400,19 @@ const AoiFileListTrigger = (props: AoiFileListTriggerProps) => {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button flex={1} onClick={back}>
-            Close
+          <Button
+            flex={1}
+            _hover={{
+              color: "fg.error",
+            }}
+            onClick={() => {
+              setDataListState((prev) => ({
+                ...prev,
+                uploadedFiles: [],
+              }));
+            }}
+          >
+            Hapus semua
           </Button>
         </Modal.Footer>
       </Modal.Content>
