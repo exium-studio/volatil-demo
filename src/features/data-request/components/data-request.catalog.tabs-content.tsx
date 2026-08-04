@@ -68,21 +68,12 @@ export const DataRequestCatalogTabsContent = (props: TabsContentProps) => {
         gap={SPACING_MD}
         p={PADDING_MD}
       >
-        {/* <VStack gap={1}>
-          <P>Daftar Katalog Anda</P>
-          <P fontSize={"sm"} color={"fg.subtle"}>
-            Daftar seluruh katalog data yang tersedia.
-          </P>
-        </VStack> */}
-
         <HStack
           wrap={"wrap"}
           align={"center"}
           justify={"space-between"}
           gap={SPACING_SM}
         >
-          {/* <P color={"fg.muted"}>Daftar seluruh katalog data yang tersedia.</P> */}
-
           <HStack gap={SPACING_SM}>
             <SearchInput placeholder={t["action.search"]()} />
 

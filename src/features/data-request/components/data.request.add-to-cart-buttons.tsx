@@ -1,15 +1,20 @@
 // src/features/data-request/components/data.request.add-to-cart-buttons.tsx
 
-import type { ButtonGroupProps } from "@/design-system/components/button/types/button-group.type";
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { ToggleTip } from "@/design-system/components/input/ui/toggle-tip";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PADDING_MD, SPACING_SM } from "@/design-system/constants/styles";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { ShoppingCartIcon } from "lucide-react";
+import { InfoIcon, ShoppingCartIcon } from "lucide-react";
 
-export type DataRequestAddToCartButtonsProps = ButtonGroupProps & {
+export type DataRequestAddToCartButtonsProps = StackProps & {
   selectedItems?: FormattedListItem[];
   totalItems?: number;
   onAddAllClick?: () => void;
@@ -29,7 +34,7 @@ export const DataRequestAddToCartButtons = (
   } = props;
 
   return (
-    <ButtonGroup
+    <HStack
       align={"center"}
       justify={"space-between"}
       gap={SPACING_SM}
@@ -37,11 +42,28 @@ export const DataRequestAddToCartButtons = (
       bg={"bg.body"}
       {...restProps}
     >
-      <Button primary variant={"outline"} flex={1} onClick={onAddAllClick}>
-        <AppIcon icon={ShoppingCartIcon} />
-        {/* TODO: use data result length (accross page) */}
-        Tambah semua ({totalItems})
-      </Button>
+      <ButtonGroup flex={1} attached>
+        <ToggleTip
+          content={
+            "Tambah semua data (termasuk di semua halaman yang tersedia/terfilter)"
+          }
+        >
+          <IconButton
+            primary
+            variant={"outline"}
+            roundedRight={0}
+            borderRight={"none"}
+          >
+            <AppIcon icon={InfoIcon} />
+          </IconButton>
+        </ToggleTip>
+
+        <Button primary variant={"outline"} flex={1} onClick={onAddAllClick}>
+          <AppIcon icon={ShoppingCartIcon} />
+          {/* TODO: use data result length (accross page) */}
+          Tambah semua ({totalItems})
+        </Button>
+      </ButtonGroup>
 
       <Button
         primary
@@ -52,6 +74,6 @@ export const DataRequestAddToCartButtons = (
         <AppIcon icon={ShoppingCartIcon} />
         Tambah yang dipilih ({selectedItems?.length ?? 0})
       </Button>
-    </ButtonGroup>
+    </HStack>
   );
 };

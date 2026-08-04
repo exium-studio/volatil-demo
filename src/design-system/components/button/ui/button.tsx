@@ -55,7 +55,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       <ChakraIconButton
         ref={ref}
         size={MAIN_BUTTON_SIZE}
-        variant={primary ? "solid" : variant || "ghost"}
+        variant={variant || (primary ? "solid" : "ghost")}
         colorPalette={primary ? theme.colorPalette : colorPalette || "neutral"}
         rounded={theme.radii.component}
         fontWeight={"normal"}
