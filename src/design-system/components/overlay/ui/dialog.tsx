@@ -399,7 +399,15 @@ const DialogFullscreenButton = (props: IconButtonProps) => {
 };
 
 const DialogHeader = (props: ChakraDialog.TitleProps) => {
-  return <ChakraDialog.Header pos={"relative"} p={4} {...props} />;
+  return (
+    <ChakraDialog.Header
+      justifyContent={"center"}
+      pos={"relative"}
+      py={4}
+      px={"78px"}
+      {...props}
+    />
+  );
 };
 
 const DialogBody = (props: ChakraDialog.BodyProps) => {

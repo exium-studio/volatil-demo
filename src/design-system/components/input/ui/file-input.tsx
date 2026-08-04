@@ -4,17 +4,16 @@ import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
+import { FileIcon } from "@/design-system/components/data-display/ui/file-item";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type {
   ExistingFileItemProps,
-  FileIconProps,
   FileinputInnerProps,
   FileInputProps,
   FileInputTriggerProps,
   FileItemProps,
   NewFileItemProps,
 } from "@/design-system/components/input/types/file-input.type";
-import { getFileIcon } from "@/design-system/components/input/utils/file-input.utils";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -42,7 +41,7 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 
 export const FileInputTrigger = ({
   children,
@@ -565,14 +564,4 @@ const FileItem = (props: FileItemProps) => {
       </HStack>
     </HStack>
   );
-};
-
-const FileIcon = (props: FileIconProps) => {
-  // Props
-  const { mimeType, ...restProps } = props;
-
-  // Resolved Values
-  const icon = useMemo(() => getFileIcon(mimeType), [mimeType]);
-
-  return <AppIcon icon={icon} {...restProps} />;
 };

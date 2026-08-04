@@ -21,6 +21,8 @@ import { FileInputTrigger } from "@/design-system/components/input/ui/file-input
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
+import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -34,12 +36,14 @@ import {
   DataRequestAoiContext,
   useDataRequestAoiContext,
 } from "@/features/data-request/contexts/data-request.aoi.context";
+import type { AoiFileListTriggerProps } from "@/features/data-request/types/data-request.aoi.type";
 import type {
   IgtCategory,
   IgtDataResponse,
 } from "@/features/data-request/types/data-request.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
+import { back } from "@/shared/utils/client/navigation";
 import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -133,10 +137,13 @@ export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
                 </HStack>
 
                 <HStack align={"center"} gap={SPACING_SM}>
-                  <Button variant={"outline"}>
-                    <AppIcon icon={FilesIcon} />
-                    File anda ({dataListState.uploadedFiles.length})
-                  </Button>
+                  <AoiFileListTrigger>
+                    <Button variant={"outline"}>
+                      <AppIcon icon={FilesIcon} />
+                      File AOI anda ({dataListState.uploadedFiles.length})
+                    </Button>
+                  </AoiFileListTrigger>
+
                   <AddAoiFileButton variant={"outline"} />
                 </HStack>
               </HStack>
@@ -312,5 +319,51 @@ const AddAoiFileButton = (props: ButtonProps) => {
         Tambah File
       </Button>
     </FileInputTrigger>
+  );
+};
+
+const AoiFileListTrigger = (props: AoiFileListTriggerProps) => {
+  // Props
+  const { children } = props;
+
+  // Contexts
+  const { dataListState } = useDataRequestAoiContext();
+
+  // Hooks
+  const { modalKey, isOpen, open, close } = usePopModal({
+    modalKey: "aoi-file-list",
+  });
+
+  return (
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      size={"md"}
+    >
+      <Modal.Trigger>{children}</Modal.Trigger>
+
+      <Modal.Content>
+        <Modal.Header>
+          <P textAlign={"center"}>File AOI Anda</P>
+
+          <Modal.FullscreenButton />
+          <Modal.CloseButton />
+        </Modal.Header>
+
+        <Modal.Body>
+          {dataListState.uploadedFiles.map((file, index) => {
+            return <P key={index}>{file.name}</P>;
+          })}
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button flex={1} onClick={back}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal.Content>
+    </Modal.Root>
   );
 };

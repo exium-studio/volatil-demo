@@ -1,6 +1,5 @@
 // src/design-system/components/input/types/file-input.type.ts
 
-import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { FileUpload } from "@chakra-ui/react";
@@ -73,7 +72,3 @@ export interface FileInputExistingItem {
 }
 
 export type FileInputVariant = "auto" | "button" | "dropzone";
-
-export type FileIconProps = AppIconProps & {
-  mimeType: string;
-};

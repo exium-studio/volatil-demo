@@ -11,6 +11,7 @@ type DataListState = {
   perPage: number;
   page: number;
   selectedItems: FormattedListItem[];
+  uploadedFiles: File[];
 };
 
 export type DataRequestAoiContextValue = {
