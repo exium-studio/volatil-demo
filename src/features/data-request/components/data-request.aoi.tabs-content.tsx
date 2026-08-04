@@ -1,10 +1,7 @@
 // src/features/data-request/components/data-request.aoi.tabs-content.tsx
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableColumn,
@@ -22,7 +19,10 @@ import { FileInputTrigger } from "@/design-system/components/input/ui/file-input
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
+import {
+  MODAL_SEARCH_PARAM_KEY,
+  usePopModal,
+} from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -44,11 +44,12 @@ import type {
 } from "@/features/data-request/types/data-request.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
-import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
+import { useSearch } from "@tanstack/react-router";
+import { FilesIcon, PlusIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 
 const IGT_THEME_TYPE_MAP = {
   bidang: {
@@ -81,6 +82,13 @@ export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
     uploadedFiles: [] as File[],
   });
 
+  // Hooks
+  const search = useSearch({ strict: false }) as Record<
+    string,
+    string | undefined
+  >;
+  const isAoiFileModalOpen = search[MODAL_SEARCH_PARAM_KEY] === "aoi-file-list";
+
   // Queries
   // TODO: use tanstack query to fetch data
   // const data = null as IgtDataResponse | null;
@@ -98,12 +106,17 @@ export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
     [data, dataListState, setDataListState],
   );
 
-  // Close uploaded files modal if aoi files is empty
-  useEffect(() => {
-    if (isEmptyArray(dataListState.uploadedFiles)) {
-      back();
-    }
-  }, [dataListState.uploadedFiles]);
+  // Close uploaded files modal when all files are removed (skip first render)
+  useFirstMountEffect(
+    {
+      onUpdate: () => {
+        if (isAoiFileModalOpen && isEmptyArray(dataListState.uploadedFiles)) {
+          window.history.back();
+        }
+      },
+    },
+    [isAoiFileModalOpen, dataListState.uploadedFiles],
+  );
 
   return (
     <DataRequestAoiContext.Provider value={contextValue}>
@@ -142,10 +155,6 @@ export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
               >
                 <HStack gap={SPACING_SM}>
                   <SearchInput placeholder={t["action.search"]()} />
-
-                  <IconButton variant={"outline"}>
-                    <AppIcon icon={SlidersHorizontalIcon} />
-                  </IconButton>
                 </HStack>
 
                 <HStack align={"center"} gap={SPACING_SM}>
