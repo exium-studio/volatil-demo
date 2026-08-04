@@ -1,6 +1,6 @@
 // src/design-system/components/map/hooks/use-map-draw.ts
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 import {
@@ -145,47 +145,57 @@ export const useMapDraw = (
     // eslint-disable-next-line react-hooks/exhaustive-deps -- finalize/addPoint intentionally read via pointsRef, not re-bound every point
   }, [map, isDrawing, geometryType]);
 
+  // Robust helper to ensure source and layers are present on the map.
+  // Can be called safely multiple times.
+  const ensureLayersExist = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!map || !(map as any).style || !map.isStyleLoaded()) return false;
+
+    if (!map.getSource(DRAW_SOURCE_ID)) {
+      map.addSource(DRAW_SOURCE_ID, {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+      });
+    }
+    if (!map.getLayer(DRAW_FILL_LAYER_ID)) {
+      map.addLayer({
+        id: DRAW_FILL_LAYER_ID,
+        type: "fill",
+        source: DRAW_SOURCE_ID,
+        filter: ["==", ["geometry-type"], "Polygon"],
+        paint: { "fill-color": "#3b82f6", "fill-opacity": 0.2 },
+      } as maplibregl.LayerSpecification);
+    }
+    if (!map.getLayer(DRAW_LINE_LAYER_ID)) {
+      map.addLayer({
+        id: DRAW_LINE_LAYER_ID,
+        type: "line",
+        source: DRAW_SOURCE_ID,
+        paint: { "line-color": "#3b82f6", "line-width": 2 },
+      } as maplibregl.LayerSpecification);
+    }
+    if (!map.getLayer(DRAW_VERTEX_LAYER_ID)) {
+      map.addLayer({
+        id: DRAW_VERTEX_LAYER_ID,
+        type: "circle",
+        source: DRAW_SOURCE_ID,
+        filter: ["==", ["geometry-type"], "Point"],
+        paint: { "circle-radius": 5, "circle-color": "#3b82f6" },
+      } as maplibregl.LayerSpecification);
+    }
+
+    return true;
+  }, [map]);
+
   // Set up the preview source/layers once per map instance.
-  // Also re-populates source data after a basemap style change (style.load),
-  // fixing the bug where the draw layer is invisible on first mount or after basemap switch.
+  // Also re-populates source data after a basemap style change (style.load).
   useEffect(() => {
     if (!map) return;
 
-    const setupPreviewLayers = () => {
-      if (!map.getSource(DRAW_SOURCE_ID)) {
-        map.addSource(DRAW_SOURCE_ID, {
-          type: "geojson",
-          data: { type: "FeatureCollection", features: [] },
-        });
-      }
-      if (!map.getLayer(DRAW_FILL_LAYER_ID)) {
-        map.addLayer({
-          id: DRAW_FILL_LAYER_ID,
-          type: "fill",
-          source: DRAW_SOURCE_ID,
-          filter: ["==", ["geometry-type"], "Polygon"],
-          paint: { "fill-color": "#3b82f6", "fill-opacity": 0.2 },
-        } as maplibregl.LayerSpecification);
-      }
-      if (!map.getLayer(DRAW_LINE_LAYER_ID)) {
-        map.addLayer({
-          id: DRAW_LINE_LAYER_ID,
-          type: "line",
-          source: DRAW_SOURCE_ID,
-          paint: { "line-color": "#3b82f6", "line-width": 2 },
-        } as maplibregl.LayerSpecification);
-      }
-      if (!map.getLayer(DRAW_VERTEX_LAYER_ID)) {
-        map.addLayer({
-          id: DRAW_VERTEX_LAYER_ID,
-          type: "circle",
-          source: DRAW_SOURCE_ID,
-          filter: ["==", ["geometry-type"], "Point"],
-          paint: { "circle-radius": 5, "circle-color": "#3b82f6" },
-        } as maplibregl.LayerSpecification);
-      }
+    const onStyleLoad = () => {
+      const isReady = ensureLayersExist();
+      if (!isReady) return;
 
-      // Re-populate source data so the drawn shape is visible again after basemap change
       const source = map.getSource(DRAW_SOURCE_ID) as
         | maplibregl.GeoJSONSource
         | undefined;
@@ -197,12 +207,12 @@ export const useMapDraw = (
     };
 
     if (map.isStyleLoaded()) {
-      setupPreviewLayers();
+      onStyleLoad();
     }
-    map.on("style.load", setupPreviewLayers);
+    map.on("style.load", onStyleLoad);
 
     return () => {
-      map.off("style.load", setupPreviewLayers);
+      map.off("style.load", onStyleLoad);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(map as any).style) return;
       [DRAW_VERTEX_LAYER_ID, DRAW_LINE_LAYER_ID, DRAW_FILL_LAYER_ID].forEach(
@@ -212,7 +222,7 @@ export const useMapDraw = (
       );
       if (map.getSource(DRAW_SOURCE_ID)) map.removeSource(DRAW_SOURCE_ID);
     };
-  }, [map]);
+  }, [map, ensureLayersExist]);
 
   // Sync drawn shape to the map source whenever points or isDrawing state changes.
   useEffect(() => {
@@ -221,13 +231,17 @@ export const useMapDraw = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(map as any).style) return;
 
+    // Ensure layers exist before trying to set data. This guarantees that if the
+    // layers were somehow removed (e.g. style change races), they are instantly recreated.
+    ensureLayersExist();
+
     const source = map.getSource(DRAW_SOURCE_ID) as
       | maplibregl.GeoJSONSource
       | undefined;
     if (!source) return;
 
     source.setData(buildSourceData(points, isDrawing));
-  }, [map, points, isDrawing]);
+  }, [map, points, isDrawing, ensureLayersExist]);
 
   /**
    * The ONLY way to clear a finished drawing from the map.
