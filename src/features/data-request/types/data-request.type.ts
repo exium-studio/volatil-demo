@@ -1,4 +1,4 @@
-// src/features/data-request/types/data-request.catalog.type.ts
+// src/features/data-request/types/data-request.type.ts
 
 import type { PaginatedResponse } from "@/shared/types/response.type";
 

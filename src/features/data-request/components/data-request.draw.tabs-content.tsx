@@ -1,4 +1,4 @@
-// src/features/data-request/components/data-request.catalog.tabs-content.tsx
+// src/features/data-request/components/data-request.draw.tabs-content.tsx
 
 import {
   Button,

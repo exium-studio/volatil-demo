@@ -1,3 +1,5 @@
+// src/shared/types/response.type.ts
+
 export type PaginatedResponse<T> = {
   items: T[];
   meta: {

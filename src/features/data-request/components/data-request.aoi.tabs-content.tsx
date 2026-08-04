@@ -1,4 +1,4 @@
-// src/features/data-request/components/data-request.catalog.tabs-content.tsx
+// src/features/data-request/components/data-request.aoi.tabs-content.tsx
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import {
