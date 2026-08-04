@@ -1,9 +1,6 @@
 // src/features/data-request/components/data-request.draw.tabs-content.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableColumn,
@@ -14,10 +11,12 @@ import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-displa
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -31,8 +30,7 @@ import { DataRequestAddToCartButtons } from "@/features/data-request/components/
 import type { IgtCategory } from "@/features/data-request/types/data-request.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
-import { InfoIcon, PencilIcon, SlidersHorizontalIcon, Trash2Icon, XIcon } from "lucide-react";
+import { InfoIcon, PencilIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const IGT_THEME_TYPE_MAP = {
@@ -84,9 +82,21 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
           align={"center"}
           gap={SPACING_MD}
           p={PADDING_MD}
-          bg={isDrawing ? "bg.warning" : hasFinishedDraw ? "bg.success" : "bg.info"}
+          bg={
+            isDrawing
+              ? "bg.warning"
+              : hasFinishedDraw
+                ? "bg.success"
+                : "bg.info"
+          }
           rounded={theme.radii.container}
-          color={isDrawing ? "fg.warning" : hasFinishedDraw ? "fg.success" : "fg.info"}
+          color={
+            isDrawing
+              ? "fg.warning"
+              : hasFinishedDraw
+                ? "fg.success"
+                : "fg.info"
+          }
         >
           <AppIcon icon={InfoIcon} />
 
@@ -102,62 +112,68 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <VStack
-        wrap={"wrap"}
-        justify={"space-between"}
-        gap={SPACING_MD}
-        p={PADDING_MD}
-      >
-        <HStack
-          wrap={"wrap"}
-          align={"center"}
-          justify={"space-between"}
-          gap={SPACING_SM}
+      {!hasFinishedDraw && (
+        <NoDataState
+          description={
+            isDrawing
+              ? "Silakan gambar area di peta dengan mengklik beberapa titik, hubungkan kembali ke titik awal atau double-click untuk menyelesaikan"
+              : "Gambar area batas spesifik di peta untuk melihat data IGT yang tersedia di area tersebut"
+          }
         >
-          <HStack gap={SPACING_SM}>
-            <SearchInput placeholder={t["action.search"]()} />
+          {isDrawing ? (
+            <Button variant={"outline"} colorPalette={"red"} onClick={cancel}>
+              <AppIcon icon={XIcon} />
+              Batal Gambar
+            </Button>
+          ) : (
+            <Button
+              primary
+              variant={"outline"}
+              onClick={() => start("polygon")}
+            >
+              <AppIcon icon={PencilIcon} />
+              Mulai Gambar
+            </Button>
+          )}
+        </NoDataState>
+      )}
 
-            <IconButton variant={"outline"}>
-              <AppIcon icon={SlidersHorizontalIcon} />
-            </IconButton>
-          </HStack>
+      {hasFinishedDraw && (
+        <>
+          <VStack
+            wrap={"wrap"}
+            justify={"space-between"}
+            gap={SPACING_MD}
+            p={PADDING_MD}
+          >
+            <HStack
+              wrap={"wrap"}
+              align={"center"}
+              justify={"space-between"}
+              gap={SPACING_SM}
+            >
+              <HStack gap={SPACING_SM}>
+                <SearchInput placeholder={t["action.search"]()} />
+              </HStack>
 
-          <HStack gap={SPACING_SM}>
-            {hasFinishedDraw && (
-              <Button
-                variant={"outline"}
-                colorPalette={"red"}
-                onClick={cancel}
-              >
-                <AppIcon icon={Trash2Icon} />
-                Hapus Gambar
-              </Button>
-            )}
-
-            {isDrawing ? (
-              <Button
-                variant={"outline"}
-                colorPalette={"red"}
-                onClick={cancel}
-              >
-                <AppIcon icon={XIcon} />
-                Batal Gambar
-              </Button>
-            ) : (
-              !hasFinishedDraw && (
-                <Button primary variant={"outline"} onClick={() => start("polygon")}>
-                  <AppIcon icon={PencilIcon} />
-                  Mulai Gambar
+              <HStack gap={SPACING_SM}>
+                <Button
+                  variant={"outline"}
+                  colorPalette={"red"}
+                  onClick={cancel}
+                >
+                  <AppIcon icon={Trash2Icon} />
+                  Hapus gambar
                 </Button>
-              )
-            )}
-          </HStack>
-        </HStack>
-      </VStack>
+              </HStack>
+            </HStack>
+          </VStack>
 
-      <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} />
 
-      <DataList />
+          <DataList />
+        </>
+      )}
     </Tabs.Content>
   );
 };

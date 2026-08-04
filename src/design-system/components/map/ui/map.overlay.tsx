@@ -4,7 +4,6 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { MapAttribution } from "@/design-system/components/map/ui/map.basemap-attribution";
 import { MapControls } from "@/design-system/components/map/ui/map.controls";
-import { MapDrawControls } from "@/design-system/components/map/ui/map.draw-controls";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 
@@ -32,7 +31,7 @@ export const MapOverlay = (_: MapOverlayProps) => {
         <MapSearch />
 
         <HStack align={"start"} gap={2}>
-          <MapDrawControls />
+          {/* <MapDrawControls /> */}
 
           <MapAttribution />
         </HStack>
