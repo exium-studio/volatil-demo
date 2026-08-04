@@ -1,4 +1,5 @@
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
 import {
   createContext,
   useContext,
@@ -13,6 +14,7 @@ type DataListState = {
 };
 
 export type DataRequestAoiContextValue = {
+  igtData: IgtDataResponse | null;
   dataListState: DataListState;
   setDataListState: Dispatch<SetStateAction<DataListState>>;
 };

@@ -1,6 +1,10 @@
 // src/features/data-request/components/data-request.catalog.tabs-content.tsx
 
-import { IconButton } from "@/design-system/components/button/ui/button";
+import type { ButtonProps } from "@/design-system/components/button/types/button.type";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableColumn,
@@ -11,8 +15,9 @@ import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-displa
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { FileInput } from "@/design-system/components/input/ui/file-input";
+import { FileInputTrigger } from "@/design-system/components/input/ui/file-input";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -30,12 +35,11 @@ import {
   useDataRequestAoiContext,
 } from "@/features/data-request/contexts/data-request.aoi.context";
 import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
-import { catalogData } from "@/shared/constants/dummy-data";
+import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
+import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { SlidersHorizontalIcon } from "lucide-react";
+import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-
-export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
 
 const IGT_THEME_TYPE_MAP = {
   bidang: {
@@ -59,23 +63,28 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
   rtrw_kota: "IGT RTRW Kota",
 };
 
-export const DataRequestAoiTabsContent = (
-  props: DataRequestCatalogTabsContentProps,
-) => {
+export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
   // States
   const [dataListState, setDataListState] = useState({
     perPage: DEFAULT_PER_PAGE_OPTIONS[0],
-    page: 1000,
+    page: 1,
     selectedItems: [] as FormattedListItem[],
+    uploadedFiles: [] as File[],
   });
+
+  // Queries
+  // TODO: use tanstack query to fetch data
+  const data = dummyIgtData as IgtDataResponse | null;
+  // const data = null as IgtDataResponse | null;
 
   // Resolved Values
   const contextValue = useMemo(
     () => ({
+      igtData: data,
       dataListState,
       setDataListState,
     }),
-    [dataListState, setDataListState],
+    [data, dataListState, setDataListState],
   );
 
   return (
@@ -88,55 +97,69 @@ export const DataRequestAoiTabsContent = (
         p={0}
         {...props}
       >
-        <VStack
-          wrap={"wrap"}
-          justify={"space-between"}
-          gap={SPACING_MD}
-          p={PADDING_MD}
-        >
-          <FileInput />
-        </VStack>
-
-        <Separator borderColor={"bg.canvas"} />
-
-        <VStack
-          wrap={"wrap"}
-          justify={"space-between"}
-          gap={SPACING_MD}
-          p={PADDING_MD}
-        >
-          <HStack
-            wrap={"wrap"}
-            align={"center"}
-            justify={"space-between"}
-            gap={SPACING_SM}
+        {!data && (
+          <NoDataState
+            description={
+              "Upload file AOI untuk melihat data IGT yang tersedia di area tersebut"
+            }
           >
-            <HStack gap={SPACING_SM}>
-              <SearchInput placeholder={t["action.search"]()} />
+            <AddAoiFileButton />
+          </NoDataState>
+        )}
 
-              <IconButton variant={"outline"}>
-                <AppIcon icon={SlidersHorizontalIcon} />
-              </IconButton>
-            </HStack>
-          </HStack>
-        </VStack>
+        {data && (
+          <>
+            {/* Header */}
+            <VStack
+              wrap={"wrap"}
+              justify={"space-between"}
+              gap={SPACING_MD}
+              p={PADDING_MD}
+            >
+              <HStack
+                wrap={"wrap"}
+                align={"center"}
+                justify={"space-between"}
+                gap={SPACING_SM}
+              >
+                <HStack gap={SPACING_SM}>
+                  <SearchInput placeholder={t["action.search"]()} />
 
-        <Separator borderColor={"bg.canvas"} />
+                  <IconButton variant={"outline"}>
+                    <AppIcon icon={SlidersHorizontalIcon} />
+                  </IconButton>
+                </HStack>
 
-        <DataList />
+                <HStack align={"center"} gap={SPACING_SM}>
+                  <Button variant={"outline"}>
+                    <AppIcon icon={FilesIcon} />
+                    File anda ({dataListState.uploadedFiles.length})
+                  </Button>
+                  <AddAoiFileButton variant={"outline"} />
+                </HStack>
+              </HStack>
+            </VStack>
 
-        <Separator borderColor={"bg.canvas"} />
+            <Separator borderColor={"bg.canvas"} />
 
-        <DataRequestAddToCartButtons
-          selectedItems={dataListState.selectedItems}
-          totalItems={1000}
-          onAddSelectedClick={() => {
-            console.log("onAddSelectedClick");
-          }}
-          onAddAllClick={() => {
-            console.log("onAddAllClick");
-          }}
-        />
+            {/* Body */}
+            <DataList />
+
+            <Separator borderColor={"bg.canvas"} />
+
+            {/* Footer */}
+            <DataRequestAddToCartButtons
+              selectedItems={dataListState.selectedItems}
+              totalItems={data.meta.total ?? 0}
+              onAddSelectedClick={() => {
+                console.log("onAddSelectedClick");
+              }}
+              onAddAllClick={() => {
+                console.log("onAddAllClick");
+              }}
+            />
+          </>
+        )}
       </Tabs.Content>
     </DataRequestAoiContext.Provider>
   );
@@ -144,7 +167,8 @@ export const DataRequestAoiTabsContent = (
 
 const DataList = () => {
   // Contexts
-  const { dataListState, setDataListState } = useDataRequestAoiContext();
+  const { igtData, dataListState, setDataListState } =
+    useDataRequestAoiContext();
 
   // Resolved Values
   const dataList = useMemo(
@@ -158,7 +182,7 @@ const DataList = () => {
         { th: "Total Harga", sortable: true, align: "end" },
       ] as FormattedTableHeader[],
 
-      items: catalogData.map((item) => ({
+      items: igtData?.items?.map((item) => ({
         id: item.id,
         data: item,
         columns: [
@@ -243,7 +267,7 @@ const DataList = () => {
         ] as FormattedTableColumn[],
       })) as FormattedListItem[],
     }),
-    [],
+    [igtData],
   );
 
   return (
@@ -254,6 +278,7 @@ const DataList = () => {
         items={dataList.items}
         canBatchSelect
         onSelectedItemChange={({ selectedItems }) => {
+          setDataListState((prev) => ({ ...prev, selectedItems }));
           console.log("selectedItems", selectedItems);
         }}
         rounded={0}
@@ -274,5 +299,16 @@ const DataList = () => {
         rounded={0}
       />
     </VStack>
+  );
+};
+
+const AddAoiFileButton = (props: ButtonProps) => {
+  return (
+    <FileInputTrigger>
+      <Button primary pl={3} {...props}>
+        <AppIcon icon={PlusIcon} />
+        Tambah File
+      </Button>
+    </FileInputTrigger>
   );
 };

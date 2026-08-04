@@ -1,9 +1,9 @@
 // src/shared/constants/dummy-data.ts
 
-import type { CatalogItemDataResponse } from "@/features/data-request/types/data-request.catalog.type";
+import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
 import type { HomeDataResponse } from "@/features/home/types/home.data-summary.type";
 
-export const homeData: HomeDataResponse = {
+export const dummyHomeData: HomeDataResponse = {
   dataSummary: {
     "1d": {
       field: { active: 100, almostExpired: 20, expired: 5 },
@@ -171,205 +171,213 @@ export const homeData: HomeDataResponse = {
   ],
 };
 
-export const catalogData: CatalogItemDataResponse[] = [
-  {
-    id: "1",
-    name: "AOI - 01",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 7500000,
+export const dummyIgtData: IgtDataResponse = {
+  items: [
+    {
+      id: "1",
+      name: "AOI - 01",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 7500000,
+    },
+    {
+      id: "2",
+      name: "AOI - 02",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "3",
+      name: "AOI - 03",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 7500000,
+    },
+    {
+      id: "4",
+      name: "AOI - 04",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "5",
+      name: "AOI - 05",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 3750000,
+    },
+    {
+      id: "6",
+      name: "AOI - 06",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "7",
+      name: "AOI - 07",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 7500000,
+    },
+    {
+      id: "8",
+      name: "AOI - 08",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "9",
+      name: "AOI - 09",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 7500000,
+    },
+    {
+      id: "10",
+      name: "AOI - 10",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "11",
+      name: "AOI - 11",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 7500000,
+    },
+    {
+      id: "12",
+      name: "AOI - 12",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "13",
+      name: "AOI - 13",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 7500000,
+    },
+    {
+      id: "14",
+      name: "AOI - 14",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "15",
+      name: "AOI - 15",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 3750000,
+    },
+    {
+      id: "16",
+      name: "AOI - 16",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "17",
+      name: "AOI - 17",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 7500000,
+    },
+    {
+      id: "18",
+      name: "AOI - 18",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+    {
+      id: "19",
+      name: "AOI - 19",
+      themeType: "bidang",
+      quotaBase: 1000,
+      categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 7500000,
+    },
+    {
+      id: "20",
+      name: "AOI - 20",
+      themeType: "kawasan",
+      quotaBase: 1000,
+      categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
+      description:
+        "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
+      price: 20000000,
+    },
+  ],
+  meta: {
+    page: 1,
+    perPage: 10,
+    total: 100,
+    totalPages: 10,
   },
-  {
-    id: "2",
-    name: "AOI - 02",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "3",
-    name: "AOI - 03",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 7500000,
-  },
-  {
-    id: "4",
-    name: "AOI - 04",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "5",
-    name: "AOI - 05",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 3750000,
-  },
-  {
-    id: "6",
-    name: "AOI - 06",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "7",
-    name: "AOI - 07",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 7500000,
-  },
-  {
-    id: "8",
-    name: "AOI - 08",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "9",
-    name: "AOI - 09",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 7500000,
-  },
-  {
-    id: "10",
-    name: "AOI - 10",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "11",
-    name: "AOI - 11",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 7500000,
-  },
-  {
-    id: "12",
-    name: "AOI - 12",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "13",
-    name: "AOI - 13",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 7500000,
-  },
-  {
-    id: "14",
-    name: "AOI - 14",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "15",
-    name: "AOI - 15",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 3750000,
-  },
-  {
-    id: "16",
-    name: "AOI - 16",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "17",
-    name: "AOI - 17",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 7500000,
-  },
-  {
-    id: "18",
-    name: "AOI - 18",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-  {
-    id: "19",
-    name: "AOI - 19",
-    themeType: "bidang",
-    quotaBase: 1000,
-    categories: ["hak_atas_tanah", "pemilikan_tanah", "bidang_tanah"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis bidang dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 7500000,
-  },
-  {
-    id: "20",
-    name: "AOI - 20",
-    themeType: "kawasan",
-    quotaBase: 1000,
-    categories: ["rtrw_nasional", "rtrw_provinsi", "rtrw_kota"],
-    description:
-      "Data ini terdiri dari 8 tema IGT-PR berbasis kawasan dengan total 1000 bidang dan luas kawasan 1000 ha²",
-    price: 20000000,
-  },
-];
+};

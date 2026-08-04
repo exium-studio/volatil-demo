@@ -15,7 +15,7 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { HomePeriod } from "@/features/home/types/home.data-summary.type";
-import { homeData } from "@/shared/constants/dummy-data";
+import { dummyHomeData } from "@/shared/constants/dummy-data";
 import { Chart, useChart } from "@chakra-ui/charts";
 import {
   Area,
@@ -90,7 +90,7 @@ const ChartContent = ({ period }: ChartContentProps) => {
   const { theme } = useThemeStore();
 
   const chart = useChart({
-    data: homeData.financialFlow[period],
+    data: dummyHomeData.financialFlow[period],
     series: [{ name: "sale", color: `${theme.colorPalette}.solid` }],
   });
 

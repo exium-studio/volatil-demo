@@ -10,10 +10,12 @@ import type {
   FileIconProps,
   FileinputInnerProps,
   FileInputProps,
+  FileInputTriggerProps,
   FileItemProps,
   NewFileItemProps,
 } from "@/design-system/components/input/types/file-input.type";
 import { getFileIcon } from "@/design-system/components/input/utils/file-input.utils";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Image } from "@/design-system/components/media/ui/image";
@@ -40,103 +42,129 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 
-export const FileInput = (props: FileInputProps) => {
-  // Props
-  const {
-    inputProps,
-    variant = "auto",
-    accept,
-    maxFiles = 1,
-    maxFileSize = 5 * 1024 * 1024, // 5MB
-    disabled,
-    label = t["common.upload_files"](),
-    existingFiles = [],
-    onToggleDeleteExisting,
-    ...restProps
-  } = props;
-
-  // Contexts
-  const fieldContext = useFieldContext();
-  const isFieldInvalid = fieldContext?.invalid;
-
-  // Refs
-  const acceptedFilesRef = useRef<File[]>([]);
-  const filesToRestoreRef = useRef<File[]>([]);
-
-  // States
-  const [resetKey, setResetKey] = useState(0);
-
-  // Resolved Values
-  const existingRemainingCount = existingFiles.filter(
-    (file) => !file.markedForDelete,
-  ).length;
-  const effectiveMaxFiles = onToggleDeleteExisting
-    ? Math.max(maxFiles - existingRemainingCount, 0)
-    : maxFiles;
+export const FileInputTrigger = ({
+  children,
+  ...restProps
+}: FileInputTriggerProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <FileUpload.Root
-      key={resetKey}
-      accept={accept}
-      maxFiles={effectiveMaxFiles}
-      maxFileSize={maxFileSize}
-      disabled={disabled || effectiveMaxFiles <= 0}
-      onFileReject={(details) => {
-        filesToRestoreRef.current = acceptedFilesRef.current;
-        setResetKey((k) => k + 1);
-
-        // TODO: replace with real toast engine
-        const tooMany = details.files.some((f) =>
-          f.errors.includes("TOO_MANY_FILES"),
-        );
-        if (tooMany) {
-          console.error(
-            `Only ${effectiveMaxFiles} slot(s) left — you selected too many files at once (${details.files.length}).`,
-          );
-        }
-
-        // TODO: replace with real toast engine
-        const invalidType = details.files.some((f) =>
-          f.errors.includes("FILE_INVALID_TYPE"),
-        );
-        if (invalidType) {
-          const allowedTypes = accept?.join(", ") ?? "-";
-          console.error(`Invalid file type — allowed types: ${allowedTypes}.`);
-        }
-
-        // TODO: replace with real toast engine
-        const tooLarge = details.files.some((f) =>
-          f.errors.includes("FILE_TOO_LARGE"),
-        );
-        if (tooLarge) {
-          console.error(
-            `File too large — maximum allowed size is ${maxFileSize} bytes.`,
-          );
-        }
-      }}
-      {...restProps}
-    >
-      <FileUpload.HiddenInput {...inputProps} />
-
-      <FileInputInner
-        accept={accept}
-        maxFiles={maxFiles}
-        maxFileSize={maxFileSize}
-        variant={variant}
-        disabled={disabled}
-        label={label}
-        invalid={isFieldInvalid}
-        effectiveMaxFiles={effectiveMaxFiles}
-        existingFiles={existingFiles}
-        onToggleDeleteExisting={onToggleDeleteExisting}
-        acceptedFilesRef={acceptedFilesRef}
-        filesToRestoreRef={filesToRestoreRef}
+    <>
+      <FileInput
+        ref={inputRef}
+        variant={"button"}
+        label={"Tambah file"}
+        display={"none"}
+        w={"fit"}
       />
-    </FileUpload.Root>
+      <Box w={"fit"} onClick={() => inputRef.current?.click()} {...restProps}>
+        {children}
+      </Box>
+    </>
   );
 };
+
+export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
+  function FileInput(props, ref) {
+    // Props
+    const {
+      inputProps,
+      variant = "auto",
+      accept,
+      maxFiles = 1,
+      maxFileSize = 5 * 1024 * 1024, // 5MB
+      disabled,
+      label = t["common.upload_files"](),
+      existingFiles = [],
+      onToggleDeleteExisting,
+      ...restProps
+    } = props;
+
+    // Contexts
+    const fieldContext = useFieldContext();
+    const isFieldInvalid = fieldContext?.invalid;
+
+    // Refs
+    const acceptedFilesRef = useRef<File[]>([]);
+    const filesToRestoreRef = useRef<File[]>([]);
+
+    // States
+    const [resetKey, setResetKey] = useState(0);
+
+    // Resolved Values
+    const existingRemainingCount = existingFiles.filter(
+      (file) => !file.markedForDelete,
+    ).length;
+    const effectiveMaxFiles = onToggleDeleteExisting
+      ? Math.max(maxFiles - existingRemainingCount, 0)
+      : maxFiles;
+
+    return (
+      <FileUpload.Root
+        key={resetKey}
+        accept={accept}
+        maxFiles={effectiveMaxFiles}
+        maxFileSize={maxFileSize}
+        disabled={disabled || effectiveMaxFiles <= 0}
+        onFileReject={(details) => {
+          filesToRestoreRef.current = acceptedFilesRef.current;
+          setResetKey((k) => k + 1);
+
+          // TODO: replace with real toast engine
+          const tooMany = details.files.some((f) =>
+            f.errors.includes("TOO_MANY_FILES"),
+          );
+          if (tooMany) {
+            console.error(
+              `Only ${effectiveMaxFiles} slot(s) left — you selected too many files at once (${details.files.length}).`,
+            );
+          }
+
+          // TODO: replace with real toast engine
+          const invalidType = details.files.some((f) =>
+            f.errors.includes("FILE_INVALID_TYPE"),
+          );
+          if (invalidType) {
+            const allowedTypes = accept?.join(", ") ?? "-";
+            console.error(
+              `Invalid file type — allowed types: ${allowedTypes}.`,
+            );
+          }
+
+          // TODO: replace with real toast engine
+          const tooLarge = details.files.some((f) =>
+            f.errors.includes("FILE_TOO_LARGE"),
+          );
+          if (tooLarge) {
+            console.error(
+              `File too large — maximum allowed size is ${maxFileSize} bytes.`,
+            );
+          }
+        }}
+        {...restProps}
+      >
+        <FileUpload.HiddenInput ref={ref} {...inputProps} />
+
+        <FileInputInner
+          accept={accept}
+          maxFiles={maxFiles}
+          maxFileSize={maxFileSize}
+          variant={variant}
+          disabled={disabled}
+          label={label}
+          invalid={isFieldInvalid}
+          effectiveMaxFiles={effectiveMaxFiles}
+          existingFiles={existingFiles}
+          onToggleDeleteExisting={onToggleDeleteExisting}
+          acceptedFilesRef={acceptedFilesRef}
+          filesToRestoreRef={filesToRestoreRef}
+        />
+      </FileUpload.Root>
+    );
+  },
+);
 
 const FileInputInner = (props: FileinputInnerProps) => {
   // Props

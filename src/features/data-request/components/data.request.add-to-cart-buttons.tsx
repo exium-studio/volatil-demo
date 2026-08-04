@@ -35,7 +35,7 @@ export const DataRequestAddToCartButtons = (
       bg={"bg.body"}
       {...restProps}
     >
-      <Button variant={"outline"} flex={1} onClick={onAddAllClick}>
+      <Button primary variant={"outline"} flex={1} onClick={onAddAllClick}>
         <AppIcon icon={ShoppingCartIcon} />
         {/* TODO: use data result length (accross page) */}
         Tambah semua ({totalItems})

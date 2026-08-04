@@ -17,7 +17,7 @@ import type {
   CartStatConfig,
   HomeCartSummaryStatItemProps,
 } from "@/features/home/types/home.cart-summary.type";
-import { homeData } from "@/shared/constants/dummy-data";
+import { dummyHomeData } from "@/shared/constants/dummy-data";
 import {
   DatabaseIcon,
   LandPlotIcon,
@@ -108,7 +108,7 @@ const CartStats = () => {
 
   // Queries
   const { totalField, totalArea, totalIgtData, subtotalPrice } =
-    homeData.cartSummary;
+    dummyHomeData.cartSummary;
 
   // Constants
   const cols = isSmContainer ? 2 : 4;

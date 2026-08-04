@@ -88,7 +88,11 @@ export const DataRequestPage = () => {
             <>
               {REQUEST_METHOD_OPTIONS.map((method) => {
                 const TabsContent = method.content;
-                return <TabsContent key={method.value} value={method.value} />;
+                return (
+                  method.value === "aoi" && (
+                    <TabsContent key={method.value} value={method.value} />
+                  )
+                );
               })}
             </>
           </Tabs.Root>

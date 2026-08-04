@@ -29,7 +29,7 @@ import {
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
 import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
-import { catalogData } from "@/shared/constants/dummy-data";
+import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { InfoIcon, PencilIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -156,7 +156,7 @@ const DataList = () => {
         { th: "Total Harga", sortable: true, align: "end" },
       ] as FormattedTableHeader[],
 
-      items: catalogData.map((item) => ({
+      items: dummyIgtData.map((item) => ({
         id: item.id,
         data: item,
         columns: [

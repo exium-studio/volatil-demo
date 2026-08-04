@@ -18,7 +18,7 @@ import type {
   ThemeType,
   TransactionStatus,
 } from "@/features/home/types/home.last-transaction.type";
-import { homeData } from "@/shared/constants/dummy-data";
+import { dummyHomeData } from "@/shared/constants/dummy-data";
 import { useMemo } from "react";
 
 const TRANSACTION_STATUS_MAP: Record<
@@ -83,7 +83,7 @@ const Header = () => {
 };
 
 const DataList = () => {
-  const lastTransactions = homeData.lastTransactions;
+  const lastTransactions = dummyHomeData.lastTransactions;
 
   const headers = useMemo<FormattedTableHeader[]>(
     () => [

@@ -24,7 +24,7 @@ import type {
   HomeDataSummaryLegendProps,
   HomeDataSummaryStatusConfig,
 } from "@/features/home/types/home.data-summary.type";
-import { homeData } from "@/shared/constants/dummy-data";
+import { dummyHomeData } from "@/shared/constants/dummy-data";
 import { useState } from "react";
 
 const PERIOD_OPTIONS = [
@@ -138,7 +138,7 @@ const Charts = ({ period }: ChartsProps) => {
   const { isSmContainer } = useContainerContext();
 
   // Data for current period
-  const dataSummary = homeData.dataSummary[period];
+  const dataSummary = dummyHomeData.dataSummary[period];
 
   return (
     <SimpleGrid
