@@ -24,13 +24,11 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
-import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
+import type { IgtCategory } from "@/features/data-request/types/data-request.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-
-export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
 
 const IGT_THEME_TYPE_MAP = {
   bidang: {
@@ -54,9 +52,7 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
   rtrw_kota: "IGT RTRW Kota",
 };
 
-export const DataRequestCatalogTabsContent = (
-  props: DataRequestCatalogTabsContentProps,
-) => {
+export const DataRequestCatalogTabsContent = (props: TabsContentProps) => {
   return (
     <Tabs.Content
       display={"flex"}

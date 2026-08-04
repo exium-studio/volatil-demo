@@ -28,13 +28,11 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
-import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
+import type { IgtCategory } from "@/features/data-request/types/data-request.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { InfoIcon, PencilIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-
-export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
 
 const IGT_THEME_TYPE_MAP = {
   bidang: {
@@ -58,9 +56,7 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
   rtrw_kota: "IGT RTRW Kota",
 };
 
-export const DataRequestDrawTabsContent = (
-  props: DataRequestCatalogTabsContentProps,
-) => {
+export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
   // Stores
   const { theme } = useThemeStore();
 

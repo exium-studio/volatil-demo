@@ -34,8 +34,10 @@ import {
   DataRequestAoiContext,
   useDataRequestAoiContext,
 } from "@/features/data-request/contexts/data-request.aoi.context";
-import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
-import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
+import type {
+  IgtCategory,
+  IgtDataResponse,
+} from "@/features/data-request/types/data-request.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
