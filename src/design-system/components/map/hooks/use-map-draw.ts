@@ -22,7 +22,10 @@ const DRAW_VERTEX_LAYER_ID = "map-draw-vertex";
  */
 export const useMapDraw = (
   map: maplibregl.Map | null,
-  onFinish?: (feature: GeoJSON.Feature<GeoJSON.Polygon>) => void,
+  onFinish?: (
+    feature: GeoJSON.Feature<GeoJSON.Polygon>,
+    originalPoints: { lng: number; lat: number }[],
+  ) => void,
 ) => {
   const { geometryType, isDrawing, points, addPoint, finish } =
     useMapDrawStore();
@@ -37,7 +40,7 @@ export const useMapDraw = (
   const finalize = () => {
     if (geometryType !== "polygon" || pointsRef.current.length < 3) return;
 
-    onFinish?.(toPolygonFeature(pointsRef.current));
+    onFinish?.(toPolygonFeature(pointsRef.current), pointsRef.current);
     finish();
     // TODO: call toast.success("Area berhasil digambar")
   };

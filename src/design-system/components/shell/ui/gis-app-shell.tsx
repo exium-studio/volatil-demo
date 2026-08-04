@@ -367,8 +367,8 @@ const Content = () => {
       >
         <BaseMap
           layers={MAP_LAYERS}
-          onDrawFinish={(feature) => {
-            console.log(feature);
+          onDrawFinish={(feature, originalPoints) => {
+            console.log({ feature, originalPoints });
             // TODO: handle the finished polygon (e.g. push into form state or send to API)
           }}
         />

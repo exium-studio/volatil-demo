@@ -12,7 +12,7 @@ export type IgtCategory =
   | "rtrw_provinsi"
   | "rtrw_kota";
 
-export interface CatalogItem extends Record<string, unknown> {
+export interface CatalogItemDataResponse extends Record<string, unknown> {
   id: string;
   name: string;
   themeType: IgtThemeType;

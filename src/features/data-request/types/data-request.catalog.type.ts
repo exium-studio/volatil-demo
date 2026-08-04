@@ -12,7 +12,14 @@ export type IgtCategory =
   | "rtrw_provinsi"
   | "rtrw_kota";
 
-export interface CatalogItem extends Record<string, unknown> {
+export type SelectedItemListTriggerProps = {
+  children: React.ReactNode;
+  selectedItems: FormattedListItem[];
+};
+
+// Responses
+
+export interface CatalogItemDataResponse extends Record<string, unknown> {
   id: string;
   name: string;
   themeType: IgtThemeType;
@@ -21,8 +28,3 @@ export interface CatalogItem extends Record<string, unknown> {
   description: string;
   price: number;
 }
-
-export type SelectedItemListTriggerProps = {
-  children: React.ReactNode;
-  selectedItems: FormattedListItem[];
-};

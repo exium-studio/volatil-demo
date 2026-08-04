@@ -1,15 +1,13 @@
 // src/features/data-request/components/data-request.catalog.tabs-content.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableColumn,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
-import type { DataListBatchActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
+import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
+import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
@@ -26,12 +24,16 @@ import {
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
+import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
+import {
+  DataRequestAoiContext,
+  useDataRequestAoiContext,
+} from "@/features/data-request/contexts/data-request.aoi.context";
 import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
 import { catalogData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { isEmptyArray } from "@/shared/utils/data/array";
-import { ShoppingCartIcon, SlidersHorizontalIcon } from "lucide-react";
-import { useMemo } from "react";
+import { SlidersHorizontalIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 
 export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
 
@@ -60,67 +62,90 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
 export const DataRequestAoiTabsContent = (
   props: DataRequestCatalogTabsContentProps,
 ) => {
+  // States
+  const [dataListState, setDataListState] = useState({
+    perPage: DEFAULT_PER_PAGE_OPTIONS[0],
+    page: 1000,
+    selectedItems: [] as FormattedListItem[],
+  });
+
+  // Resolved Values
+  const contextValue = useMemo(
+    () => ({
+      dataListState,
+      setDataListState,
+    }),
+    [dataListState, setDataListState],
+  );
+
   return (
-    <Tabs.Content
-      display={"flex"}
-      flexDir={"column"}
-      flex={1}
-      overflowY={"auto"}
-      p={0}
-      {...props}
-    >
-      <VStack
-        wrap={"wrap"}
-        justify={"space-between"}
-        gap={SPACING_MD}
-        p={PADDING_MD}
+    <DataRequestAoiContext.Provider value={contextValue}>
+      <Tabs.Content
+        display={"flex"}
+        flexDir={"column"}
+        flex={1}
+        overflowY={"auto"}
+        p={0}
+        {...props}
       >
-        {/* <VStack gap={1}>
-          <P>Unggah Data AOI</P>
-          <P fontSize={"sm"} color={"fg.subtle"}>
-            Unggah data untuk menemukan informasi.
-          </P>
-        </VStack> */}
-
-        <FileInput />
-      </VStack>
-
-      <Separator borderColor={"bg.canvas"} />
-
-      <VStack
-        wrap={"wrap"}
-        justify={"space-between"}
-        gap={SPACING_MD}
-        p={PADDING_MD}
-      >
-        <HStack
+        <VStack
           wrap={"wrap"}
-          align={"center"}
           justify={"space-between"}
-          gap={SPACING_SM}
+          gap={SPACING_MD}
+          p={PADDING_MD}
         >
-          <HStack gap={SPACING_SM}>
-            <SearchInput placeholder={t["action.search"]()} />
+          <FileInput />
+        </VStack>
 
-            <IconButton variant={"outline"}>
-              <AppIcon icon={SlidersHorizontalIcon} />
-            </IconButton>
+        <Separator borderColor={"bg.canvas"} />
+
+        <VStack
+          wrap={"wrap"}
+          justify={"space-between"}
+          gap={SPACING_MD}
+          p={PADDING_MD}
+        >
+          <HStack
+            wrap={"wrap"}
+            align={"center"}
+            justify={"space-between"}
+            gap={SPACING_SM}
+          >
+            <HStack gap={SPACING_SM}>
+              <SearchInput placeholder={t["action.search"]()} />
+
+              <IconButton variant={"outline"}>
+                <AppIcon icon={SlidersHorizontalIcon} />
+              </IconButton>
+            </HStack>
           </HStack>
+        </VStack>
 
-          <Button primary variant={"subtle"}>
-            Pilih semua yang terfilter
-          </Button>
-        </HStack>
-      </VStack>
+        <Separator borderColor={"bg.canvas"} />
 
-      <Separator borderColor={"bg.canvas"} />
+        <DataList />
 
-      <DataList />
-    </Tabs.Content>
+        <Separator borderColor={"bg.canvas"} />
+
+        <DataRequestAddToCartButtons
+          selectedItems={dataListState.selectedItems}
+          totalItems={1000}
+          onAddSelectedClick={() => {
+            console.log("onAddSelectedClick");
+          }}
+          onAddAllClick={() => {
+            console.log("onAddAllClick");
+          }}
+        />
+      </Tabs.Content>
+    </DataRequestAoiContext.Provider>
   );
 };
 
 const DataList = () => {
+  // Contexts
+  const { dataListState, setDataListState } = useDataRequestAoiContext();
+
   // Resolved Values
   const dataList = useMemo(
     () => ({
@@ -217,43 +242,37 @@ const DataList = () => {
           },
         ] as FormattedTableColumn[],
       })) as FormattedListItem[],
-
-      batchActions: [
-        ({ selectedItemIds, selectedItems }) => {
-          return (
-            <Button
-              disabled={isEmptyArray(selectedItems)}
-              onClick={() => {
-                console.log({ selectedItemIds, selectedItems });
-              }}
-            >
-              <AppIcon icon={ShoppingCartIcon} />
-              Tambah ke keranjang
-            </Button>
-          );
-        },
-      ] as DataListBatchActionsGenerator[],
     }),
     [],
   );
 
   return (
-    <VStack flex={1} bg={"bg.canvas"} w={"full"}>
+    <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
       <DataListTable.Root
         withNumbering={false}
         headers={dataList.headers}
         items={dataList.items}
-        batchActions={dataList.batchActions}
+        canBatchSelect
         onSelectedItemChange={({ selectedItems }) => {
           console.log("selectedItems", selectedItems);
         }}
-        overflowY={"visible"}
         rounded={0}
         shadow={"none"}
       >
         <DataListTable.Header />
         <DataListTable.Body />
       </DataListTable.Root>
+
+      <DataListFooter
+        perPage={dataListState.perPage}
+        setPerPage={(perPage) =>
+          setDataListState((prev) => ({ ...prev, perPage }))
+        }
+        page={dataListState.page}
+        setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
+        // currentDataLength={items.length}
+        rounded={0}
+      />
     </VStack>
   );
 };

@@ -1,6 +1,6 @@
 // src/shared/constants/dummy-data.ts
 
-import type { CatalogItem } from "@/features/data-request/types/data-request.catalog.type";
+import type { CatalogItemDataResponse } from "@/features/data-request/types/data-request.catalog.type";
 import type { HomeDataResponse } from "@/features/home/types/home.data-summary.type";
 
 export const homeData: HomeDataResponse = {
@@ -171,7 +171,7 @@ export const homeData: HomeDataResponse = {
   ],
 };
 
-export const catalogData: CatalogItem[] = [
+export const catalogData: CatalogItemDataResponse[] = [
   {
     id: "1",
     name: "AOI - 01",

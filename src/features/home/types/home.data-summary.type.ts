@@ -41,10 +41,11 @@ export interface HomeCartSummaryResponse {
 
 export type HomePeriod = "1d" | "1w" | "1m" | "1y" | "all";
 
+// Responses
+
 export interface HomeDataResponse {
   dataSummary: Record<HomePeriod, HomeDataSummaryResponse>;
   financialFlow: Record<HomePeriod, { sale: number; label: string }[]>;
   cartSummary: HomeCartSummaryResponse;
   lastTransactions: TransactionItem[];
 }
-

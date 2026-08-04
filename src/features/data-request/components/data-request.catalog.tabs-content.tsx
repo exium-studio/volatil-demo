@@ -1,10 +1,6 @@
 // src/features/data-request/components/data-request.catalog.tabs-content.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
-import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableColumn,
@@ -27,11 +23,11 @@ import {
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
+import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
 import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
 import { catalogData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { isEmptyArray } from "@/shared/utils/data/array";
-import { ShoppingCartIcon, SlidersHorizontalIcon } from "lucide-react";
+import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
@@ -264,28 +260,16 @@ const DataList = () => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <ButtonGroup
-        align={"center"}
-        justify={"space-between"}
-        gap={SPACING_SM}
-        p={PADDING_MD}
-        bg={"bg.body"}
-      >
-        <Button primary variant={"outline"} flex={1}>
-          <AppIcon icon={ShoppingCartIcon} />
-          {/* TODO: use data result length (accross page) */}
-          Tambah semua ({100})
-        </Button>
-
-        <Button
-          primary
-          flex={1}
-          disabled={isEmptyArray(dataListState.selectedItems)}
-        >
-          <AppIcon icon={ShoppingCartIcon} />
-          Tambah yang dipilih ({dataListState.selectedItems.length})
-        </Button>
-      </ButtonGroup>
+      <DataRequestAddToCartButtons
+        selectedItems={dataListState.selectedItems}
+        totalItems={1000}
+        onAddSelectedClick={() => {
+          console.log("onAddSelectedClick");
+        }}
+        onAddAllClick={() => {
+          console.log("onAddAllClick");
+        }}
+      />
     </VStack>
   );
 };

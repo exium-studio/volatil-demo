@@ -14,15 +14,12 @@ import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-displa
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
-import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import {
   PADDING_MD,
@@ -30,15 +27,11 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import type {
-  IgtCategory,
-  SelectedItemListTriggerProps,
-} from "@/features/data-request/types/data-request.catalog.type";
+import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
+import type { IgtCategory } from "@/features/data-request/types/data-request.catalog.type";
 import { catalogData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { isEmptyArray } from "@/shared/utils/data/array";
-import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { ChevronRight, InfoIcon, SlidersHorizontalIcon } from "lucide-react";
+import { InfoIcon, PencilIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export type DataRequestCatalogTabsContentProps = TabsContentProps & {};
@@ -86,13 +79,6 @@ export const DataRequestDrawTabsContent = (
         gap={SPACING_MD}
         p={PADDING_MD}
       >
-        {/* <VStack gap={1}>
-          <P>Unggah Data AOI</P>
-          <P fontSize={"sm"} color={"fg.subtle"}>
-            Unggah data untuk menemukan informasi.
-          </P>
-        </VStack> */}
-
         <HStack
           align={"center"}
           gap={SPACING_MD}
@@ -120,13 +106,6 @@ export const DataRequestDrawTabsContent = (
         gap={SPACING_MD}
         p={PADDING_MD}
       >
-        {/* <VStack gap={1}>
-          <P>Daftar Katalog Anda</P>
-          <P fontSize={"sm"} color={"fg.subtle"}>
-            Daftar seluruh katalog data yang tersedia.
-          </P>
-        </VStack> */}
-
         <HStack
           wrap={"wrap"}
           align={"center"}
@@ -141,9 +120,12 @@ export const DataRequestDrawTabsContent = (
             </IconButton>
           </HStack>
 
-          <Button primary variant={"subtle"}>
-            Pilih semua yang terfilter
-          </Button>
+          <>
+            <Button primary variant={"outline"}>
+              <AppIcon icon={PencilIcon} />
+              Mulai gambar
+            </Button>
+          </>
         </HStack>
       </VStack>
 
@@ -294,105 +276,16 @@ const DataList = () => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <HStack
-        flexShrink={0}
-        align={"center"}
-        justify={"space-between"}
-        gap={SPACING_SM}
-        p={PADDING_MD}
-        bg={"bg.body"}
-      >
-        <SelectedItemListTrigger selectedItems={dataListState.selectedItems}>
-          <Button variant={"outline"}>
-            <TNum>{formatNumber(dataListState.selectedItems.length)}</TNum>
-            <P>terpilih</P>
-
-            <AppIcon icon={ChevronRight} size={"sm"} />
-          </Button>
-        </SelectedItemListTrigger>
-
-        <Button primary disabled={isEmptyArray(dataListState.selectedItems)}>
-          Tambah ke keranjang
-        </Button>
-      </HStack>
+      <DataRequestAddToCartButtons
+        selectedItems={dataListState.selectedItems}
+        totalItems={1000}
+        onAddSelectedClick={() => {
+          console.log("onAddSelectedClick");
+        }}
+        onAddAllClick={() => {
+          console.log("onAddAllClick");
+        }}
+      />
     </VStack>
-  );
-};
-
-const SelectedItemListTrigger = (props: SelectedItemListTriggerProps) => {
-  // Props
-  const { children, selectedItems } = props;
-
-  // Hooks
-  const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: "selected-draw-item",
-  });
-
-  // Resolved Values
-  const dataList = useMemo(
-    () => ({
-      headers: [
-        { th: "Nama Data IGT-PR", sortable: true },
-        { th: "Jenis Tema IGT-PR", sortable: true },
-        { th: "Basis Kuota", sortable: true },
-        { th: "Kategori Tema IGT-PR" },
-        { th: "Deskripsi Data" },
-        { th: "Total Harga", sortable: true, align: "end" },
-      ] as FormattedTableHeader[],
-
-      items: selectedItems.map((item) => ({
-        id: item.id,
-        data: item,
-        columns: item.columns,
-      })) as FormattedListItem[],
-    }),
-    [selectedItems],
-  );
-
-  // Derived Values
-  const isEmpty = useMemo(() => isEmptyArray(selectedItems), [selectedItems]);
-
-  return (
-    <Modal.Root
-      modalKey={modalKey}
-      opened={isOpen}
-      open={open}
-      close={close}
-      size={isEmpty ? "md" : "5xl"}
-    >
-      <Modal.Trigger>{children}</Modal.Trigger>
-
-      <Modal.Content>
-        <Modal.Header>
-          <P>Katalog data yang dipilih</P>
-
-          <Modal.FullscreenButton />
-          <Modal.CloseButton />
-        </Modal.Header>
-
-        <Modal.Body p={0} pb={4}>
-          {isEmpty && <NoDataState />}
-
-          {!isEmpty && (
-            <DataListTable.Root
-              withNumbering={false}
-              headers={dataList.headers}
-              items={dataList.items}
-              rounded={0}
-              shadow={"none"}
-            >
-              <DataListTable.Header />
-              <DataListTable.Body />
-            </DataListTable.Root>
-          )}
-        </Modal.Body>
-
-        {/* <Modal.Footer>
-          <Button flex={1} onClick={back}>
-            {t["action.close"]()}
-          </Button>
-        </Modal.Footer> */}
-      </Modal.Content>
-    </Modal.Root>
   );
 };
