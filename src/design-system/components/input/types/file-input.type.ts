@@ -8,6 +8,7 @@ import type { UseFormRegisterReturn } from "react-hook-form";
 
 export type FileInputTriggerProps = BoxProps & {
   children: ReactNode;
+  fileInputProps?: FileInputProps;
 };
 
 export type FileInputProps = Omit<FileUpload.RootProps, "accept"> &

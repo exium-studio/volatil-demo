@@ -13,6 +13,7 @@ import type {
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -44,8 +45,9 @@ import type {
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const IGT_THEME_TYPE_MAP = {
   bidang: {
@@ -80,8 +82,10 @@ export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
 
   // Queries
   // TODO: use tanstack query to fetch data
-  const data = dummyIgtData as IgtDataResponse | null;
   // const data = null as IgtDataResponse | null;
+  const data = (
+    !isEmptyArray(dataListState.uploadedFiles) ? dummyIgtData : null
+  ) as IgtDataResponse | null;
 
   // Resolved Values
   const contextValue = useMemo(
@@ -92,6 +96,13 @@ export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
     }),
     [data, dataListState, setDataListState],
   );
+
+  // Close uploaded files modal if aoi files is empty
+  useEffect(() => {
+    if (isEmptyArray(dataListState.uploadedFiles)) {
+      back();
+    }
+  }, [dataListState.uploadedFiles]);
 
   return (
     <DataRequestAoiContext.Provider value={contextValue}>
@@ -312,8 +323,21 @@ const DataList = () => {
 };
 
 const AddAoiFileButton = (props: ButtonProps) => {
+  // Contexts
+  const { setDataListState } = useDataRequestAoiContext();
+
   return (
-    <FileInputTrigger>
+    <FileInputTrigger
+      fileInputProps={{
+        maxFiles: 10,
+        onFileChange: ({ acceptedFiles }) => {
+          setDataListState((prev) => ({
+            ...prev,
+            uploadedFiles: acceptedFiles,
+          }));
+        },
+      }}
+    >
       <Button primary pl={3} {...props}>
         <AppIcon icon={PlusIcon} />
         Tambah File
@@ -327,7 +351,7 @@ const AoiFileListTrigger = (props: AoiFileListTriggerProps) => {
   const { children } = props;
 
   // Contexts
-  const { dataListState } = useDataRequestAoiContext();
+  const { dataListState, setDataListState } = useDataRequestAoiContext();
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -352,9 +376,26 @@ const AoiFileListTrigger = (props: AoiFileListTriggerProps) => {
           <Modal.CloseButton />
         </Modal.Header>
 
-        <Modal.Body>
+        <Modal.Body gap={SPACING_SM}>
+          {isEmptyArray(dataListState.uploadedFiles) && <NoDataState />}
+
           {dataListState.uploadedFiles.map((file, index) => {
-            return <P key={index}>{file.name}</P>;
+            return (
+              <FileItem
+                key={index}
+                name={file.name}
+                mimeType={file.type}
+                sizeLabel={file.size.toString()} // format bype
+                onDelete={() => {
+                  setDataListState((prev) => ({
+                    ...prev,
+                    uploadedFiles: prev.uploadedFiles.filter(
+                      (_, i) => i !== index,
+                    ),
+                  }));
+                }}
+              />
+            );
           })}
         </Modal.Body>
 

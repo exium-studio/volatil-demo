@@ -6,6 +6,8 @@ export type FileItemProps = StackProps & {
   mimeType: string;
   sizeLabel?: string;
   previewUrl?: string;
+  disabled?: boolean;
+  onDelete?: () => void;
 };
 
 export type FileIconProps = AppIconProps & {

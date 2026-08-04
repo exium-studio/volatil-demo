@@ -45,6 +45,7 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 
 export const FileInputTrigger = ({
   children,
+  fileInputProps,
   ...restProps
 }: FileInputTriggerProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -57,7 +58,9 @@ export const FileInputTrigger = ({
         label={"Tambah file"}
         display={"none"}
         w={"fit"}
+        {...fileInputProps}
       />
+
       <Box w={"fit"} onClick={() => inputRef.current?.click()} {...restProps}>
         {children}
       </Box>

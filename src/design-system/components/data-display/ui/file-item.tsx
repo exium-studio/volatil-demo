@@ -1,18 +1,31 @@
-import type { FileIconProps } from "@/design-system/components/data-display/types/file-item.type";
+import { IconButton } from "@/design-system/components/button/ui/button";
+import type {
+  FileIconProps,
+  FileItemProps,
+} from "@/design-system/components/data-display/types/file-item.type";
 import { getFileIcon } from "@/design-system/components/data-display/utils/file-item.utils";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { FileItemProps } from "@/design-system/components/input/types/file-input.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Image } from "@/design-system/components/media/ui/image";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { t } from "@/shared/libs/i18n";
 import { isImageFile } from "@/shared/utils/data/file";
-import { ImageOffIcon } from "lucide-react";
+import { ImageOffIcon, XIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const FileItem = (props: FileItemProps) => {
   // Props
-  const { name, mimeType, previewUrl, sizeLabel, ...restProps } = props;
+  const {
+    name,
+    mimeType,
+    previewUrl,
+    sizeLabel,
+    disabled,
+    onDelete,
+    ...restProps
+  } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -50,6 +63,20 @@ export const FileItem = (props: FileItemProps) => {
           {sizeLabel}
         </P>
       </HStack>
+
+      {onDelete && (
+        <Tooltip content={t["common.remove_file"]()}>
+          <IconButton
+            size={"xs"}
+            h={"32px"}
+            disabled={disabled}
+            aria-label={t["common.remove_file"]()}
+            onClick={onDelete}
+          >
+            <AppIcon icon={XIcon} />
+          </IconButton>
+        </Tooltip>
+      )}
     </HStack>
   );
 };
