@@ -46,6 +46,7 @@ import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -385,7 +386,7 @@ const AoiFileListTrigger = (props: AoiFileListTriggerProps) => {
                 key={index}
                 name={file.name}
                 mimeType={file.type}
-                sizeLabel={file.size.toString()} // format bype
+                sizeLabel={formatByte(file.size)}
                 onDelete={() => {
                   setDataListState((prev) => ({
                     ...prev,
