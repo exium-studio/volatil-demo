@@ -14,7 +14,14 @@ export const MapDrawControls = () => {
         variant={"whiteAlphaGhost"}
         size={"sm"}
         colorPalette={isDrawing ? "red" : "blue"}
-        onClick={() => (isDrawing ? cancel() : start("polygon"))}
+        onClick={() => {
+          if (isDrawing) {
+            // While drawing: just cancel (no finished shape to clear from map source)
+            cancel();
+          } else {
+            start("polygon");
+          }
+        }}
       >
         {isDrawing ? <XIcon size={16} /> : <PencilIcon size={16} />}
       </IconButton>

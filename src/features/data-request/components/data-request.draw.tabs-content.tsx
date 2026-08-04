@@ -31,7 +31,8 @@ import { DataRequestAddToCartButtons } from "@/features/data-request/components/
 import type { IgtCategory } from "@/features/data-request/types/data-request.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { InfoIcon, PencilIcon, SlidersHorizontalIcon } from "lucide-react";
+import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
+import { InfoIcon, PencilIcon, SlidersHorizontalIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const IGT_THEME_TYPE_MAP = {
@@ -59,6 +60,10 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
 export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
   // Stores
   const { theme } = useThemeStore();
+  const { isDrawing, points, start, cancel } = useMapDrawStore();
+
+  // Derived
+  const hasFinishedDraw = !isDrawing && points.length >= 3;
 
   return (
     <Tabs.Content
@@ -79,17 +84,18 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
           align={"center"}
           gap={SPACING_MD}
           p={PADDING_MD}
-          bg={"bg.info"}
+          bg={isDrawing ? "bg.warning" : hasFinishedDraw ? "bg.success" : "bg.info"}
           rounded={theme.radii.container}
-          color={"fg.info"}
+          color={isDrawing ? "fg.warning" : hasFinishedDraw ? "fg.success" : "fg.info"}
         >
           <AppIcon icon={InfoIcon} />
 
           <P>
-            Klik titik pada peta digital untuk mulai menggambar batas area
-            spesifik yang Anda inginkan. Hubungkan garis kembali ke titik awal
-            untuk selesai dan mengunci pilihan, atau klik tombol 'Reset' untuk
-            mengulang prosesnya dari awal.
+            {isDrawing
+              ? "Klik titik pada peta untuk menggambar. Klik titik pertama atau double-click untuk selesai."
+              : hasFinishedDraw
+                ? "Area berhasil digambar. Gunakan tombol 'Hapus Gambar' untuk menghapus dan menggambar ulang."
+                : "Klik 'Mulai Gambar' lalu klik titik pada peta untuk menentukan batas area spesifik yang Anda inginkan."}
           </P>
         </HStack>
       </VStack>
@@ -116,12 +122,36 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
             </IconButton>
           </HStack>
 
-          <>
-            <Button primary variant={"outline"}>
-              <AppIcon icon={PencilIcon} />
-              Mulai gambar
-            </Button>
-          </>
+          <HStack gap={SPACING_SM}>
+            {hasFinishedDraw && (
+              <Button
+                variant={"outline"}
+                colorPalette={"red"}
+                onClick={cancel}
+              >
+                <AppIcon icon={Trash2Icon} />
+                Hapus Gambar
+              </Button>
+            )}
+
+            {isDrawing ? (
+              <Button
+                variant={"outline"}
+                colorPalette={"red"}
+                onClick={cancel}
+              >
+                <AppIcon icon={XIcon} />
+                Batal Gambar
+              </Button>
+            ) : (
+              !hasFinishedDraw && (
+                <Button primary variant={"outline"} onClick={() => start("polygon")}>
+                  <AppIcon icon={PencilIcon} />
+                  Mulai Gambar
+                </Button>
+              )
+            )}
+          </HStack>
         </HStack>
       </VStack>
 

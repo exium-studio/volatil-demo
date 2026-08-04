@@ -14,6 +14,41 @@ const DRAW_FILL_LAYER_ID = "map-draw-fill";
 const DRAW_LINE_LAYER_ID = "map-draw-line";
 const DRAW_VERTEX_LAYER_ID = "map-draw-vertex";
 
+type DrawPoint = { lng: number; lat: number };
+
+const buildSourceData = (
+  pts: DrawPoint[],
+  drawing: boolean,
+): GeoJSON.FeatureCollection => {
+  const vertexFeatures: GeoJSON.Feature<GeoJSON.Point>[] = pts.map((p) => ({
+    type: "Feature",
+    properties: {},
+    geometry: { type: "Point", coordinates: [p.lng, p.lat] },
+  }));
+
+  const shapeFeatures: GeoJSON.Feature[] = drawing
+    ? pts.length >= 2
+      ? [
+          {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "LineString",
+              coordinates: pts.map((p) => [p.lng, p.lat]),
+            },
+          } as GeoJSON.Feature<GeoJSON.LineString>,
+        ]
+      : []
+    : pts.length >= 3
+      ? [toPolygonFeature(pts)]
+      : [];
+
+  return {
+    type: "FeatureCollection",
+    features: [...shapeFeatures, ...vertexFeatures],
+  };
+};
+
 /**
  * Wires up click/dblclick handlers to build a polygon by accumulating vertices,
  * and syncs the in-progress geometry to a preview layer on the map.
@@ -28,7 +63,7 @@ export const useMapDraw = (
   ) => void,
   densify = false,
 ) => {
-  const { geometryType, isDrawing, points, addPoint, finish } =
+  const { geometryType, isDrawing, points, addPoint, finish, cancel } =
     useMapDrawStore();
 
   // Mirrors the latest points so the click handler (registered once per map/isDrawing change)
@@ -37,6 +72,12 @@ export const useMapDraw = (
   useEffect(() => {
     pointsRef.current = points;
   }, [points]);
+
+  // Mirrors isDrawing for use inside style.load callback (registered once per map)
+  const isDrawingRef = useRef(isDrawing);
+  useEffect(() => {
+    isDrawingRef.current = isDrawing;
+  }, [isDrawing]);
 
   const finalize = () => {
     if (geometryType !== "polygon" || pointsRef.current.length < 3) return;
@@ -105,6 +146,8 @@ export const useMapDraw = (
   }, [map, isDrawing, geometryType]);
 
   // Set up the preview source/layers once per map instance.
+  // Also re-populates source data after a basemap style change (style.load),
+  // fixing the bug where the draw layer is invisible on first mount or after basemap switch.
   useEffect(() => {
     if (!map) return;
 
@@ -141,6 +184,16 @@ export const useMapDraw = (
           paint: { "circle-radius": 5, "circle-color": "#3b82f6" },
         } as maplibregl.LayerSpecification);
       }
+
+      // Re-populate source data so the drawn shape is visible again after basemap change
+      const source = map.getSource(DRAW_SOURCE_ID) as
+        | maplibregl.GeoJSONSource
+        | undefined;
+      if (source) {
+        source.setData(
+          buildSourceData(pointsRef.current, isDrawingRef.current),
+        );
+      }
     };
 
     if (map.isStyleLoaded()) {
@@ -161,6 +214,7 @@ export const useMapDraw = (
     };
   }, [map]);
 
+  // Sync drawn shape to the map source whenever points or isDrawing state changes.
   useEffect(() => {
     if (!map) return;
     // Guard: map.style becomes undefined after map.remove() (unmounting)
@@ -172,35 +226,25 @@ export const useMapDraw = (
       | undefined;
     if (!source) return;
 
-    const vertexFeatures: GeoJSON.Feature<GeoJSON.Point>[] = points.map(
-      (p) => ({
-        type: "Feature",
-        properties: {},
-        geometry: { type: "Point", coordinates: [p.lng, p.lat] },
-      }),
-    );
-
-    // While drawing: show an open line path. After finalize: show the closed polygon.
-    const shapeFeatures: GeoJSON.Feature[] = isDrawing
-      ? points.length >= 2
-        ? [
-            {
-              type: "Feature",
-              properties: {},
-              geometry: {
-                type: "LineString",
-                coordinates: points.map((p) => [p.lng, p.lat]),
-              },
-            } as GeoJSON.Feature<GeoJSON.LineString>,
-          ]
-        : []
-      : points.length >= 3
-        ? [toPolygonFeature(points)]
-        : [];
-
-    source.setData({
-      type: "FeatureCollection",
-      features: [...shapeFeatures, ...vertexFeatures],
-    });
+    source.setData(buildSourceData(points, isDrawing));
   }, [map, points, isDrawing]);
+
+  /**
+   * The ONLY way to clear a finished drawing from the map.
+   * Resets store state (via cancel) AND clears the map source data.
+   */
+  const clearDraw = () => {
+    cancel();
+    if (!map) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(map as any).style) return;
+    const source = map.getSource(DRAW_SOURCE_ID) as
+      | maplibregl.GeoJSONSource
+      | undefined;
+    if (source) {
+      source.setData({ type: "FeatureCollection", features: [] });
+    }
+  };
+
+  return { clearDraw };
 };

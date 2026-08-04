@@ -49,6 +49,10 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
       ? OPENFREEMAP_LIBERTY_STYLE_URL
       : getBaseLayerStyle(activeStyleKey, colorMode));
 
+  useMapLayers(map, layers);
+  useMapDraw(map, onDrawFinish);
+  useMapResizeObserver(map, containerRef);
+
   const contextValue = useMemo(
     () => ({
       map,
@@ -170,7 +174,6 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
   }, [map, currentStyle, activeStyleKey, colorMode]);
 
   useMapLayers(map, layers);
-  useMapDraw(map, onDrawFinish);
   useMapResizeObserver(map, containerRef);
 
   return (
