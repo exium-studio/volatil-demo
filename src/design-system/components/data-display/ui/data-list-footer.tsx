@@ -6,6 +6,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataListPagination } from "./data-list-pagination";
 import { DataListPerPage } from "./data-list-per-page";
+import { PADDING_MD } from "@/design-system/constants/styles";
 
 const formatDataLengthText = (
   currentDataLength?: number,
@@ -39,7 +40,7 @@ export const DataListFooter = (props: DataListFooterProps) => {
       justify={"center"}
       gap={2}
       w={"full"}
-      p={3}
+      p={PADDING_MD}
       zIndex={4}
       bg={"bg.body"}
       roundedBottom={theme.radii.container}
