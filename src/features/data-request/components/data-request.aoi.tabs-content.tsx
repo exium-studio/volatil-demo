@@ -325,12 +325,13 @@ const DataList = () => {
 
 const AddAoiFileButton = (props: ButtonProps) => {
   // Contexts
-  const { setDataListState } = useDataRequestAoiContext();
+  const { dataListState, setDataListState } = useDataRequestAoiContext();
 
   return (
     <FileInputTrigger
       fileInputProps={{
         maxFiles: 10,
+        value: dataListState.uploadedFiles,
         onFileChange: ({ acceptedFiles }) => {
           setDataListState((prev) => ({
             ...prev,
@@ -373,7 +374,6 @@ const AoiFileListTrigger = (props: AoiFileListTriggerProps) => {
         <Modal.Header>
           <P textAlign={"center"}>File AOI Anda</P>
 
-          <Modal.FullscreenButton />
           <Modal.CloseButton />
         </Modal.Header>
 

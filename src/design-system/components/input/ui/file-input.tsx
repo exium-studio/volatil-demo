@@ -81,6 +81,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
       label = t["common.upload_files"](),
       existingFiles = [],
       onToggleDeleteExisting,
+      value,
       ...restProps
     } = props;
 
@@ -162,6 +163,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
           onToggleDeleteExisting={onToggleDeleteExisting}
           acceptedFilesRef={acceptedFilesRef}
           filesToRestoreRef={filesToRestoreRef}
+          value={value}
         />
       </FileUpload.Root>
     );
@@ -183,6 +185,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
     onToggleDeleteExisting,
     acceptedFilesRef,
     filesToRestoreRef,
+    value,
   } = props;
 
   // Stores
@@ -231,6 +234,18 @@ const FileInputInner = (props: FileinputInnerProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Sync controlled value prop with internal acceptedFiles state
+  useEffect(() => {
+    if (value) {
+      const isDifferent =
+        value.length !== acceptedFiles.length ||
+        value.some((file, idx) => file !== acceptedFiles[idx]);
+      if (isDifferent) {
+        setFiles(value);
+      }
+    }
+  }, [value, acceptedFiles, setFiles]);
 
   return (
     <VStack gap={2} w={"full"}>

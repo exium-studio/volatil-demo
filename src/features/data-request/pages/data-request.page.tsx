@@ -30,18 +30,18 @@ const REQUEST_METHOD_MAP = {
     content: DataRequestDrawTabsContent,
   },
 };
-const REQUEST_METHOD_OPTIONS = Object.keys(REQUEST_METHOD_MAP).map(
-  (methodKey) => {
-    const item = REQUEST_METHOD_MAP[methodKey];
+const REQUEST_METHOD_OPTIONS = (
+  Object.keys(REQUEST_METHOD_MAP) as Array<keyof typeof REQUEST_METHOD_MAP>
+).map((methodKey) => {
+  const item = REQUEST_METHOD_MAP[methodKey];
 
-    return {
-      value: methodKey,
-      icon: item.icon,
-      label: item.label,
-      content: item.content,
-    };
-  },
-);
+  return {
+    value: methodKey,
+    icon: item.icon,
+    label: item.label,
+    content: item.content,
+  };
+});
 
 export const DataRequestPage = () => {
   // Hooks

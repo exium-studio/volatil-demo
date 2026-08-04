@@ -17,6 +17,7 @@ export type FileInputProps = Omit<FileUpload.RootProps, "accept"> &
 type FileInputOwnProps = {
   inputProps?: UseFormRegisterReturn;
   files?: FileList | File[] | null;
+  value?: File[];
   maxFiles?: number;
   existingFiles?: FileInputExistingItem[];
   onToggleDeleteExisting?: (id: string) => void;
