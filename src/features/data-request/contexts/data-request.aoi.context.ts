@@ -10,8 +10,6 @@ import {
 } from "react";
 
 type DataListState = {
-  perPage: number;
-  page: number;
   selectedItems: FormattedListItem[];
   uploadedFiles: File[];
 };

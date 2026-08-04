@@ -7,8 +7,6 @@ import type {
   FormattedTableColumn,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
@@ -43,14 +41,14 @@ import type {
   IgtDataResponse,
 } from "@/features/data-request/types/data-request.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
+import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
+import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
-import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { useSearch } from "@tanstack/react-router";
 import { FilesIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { back } from "@/shared/utils/client/navigation";
 
 const IGT_THEME_TYPE_MAP = {
   bidang: {
@@ -77,8 +75,6 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
 export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
   // States
   const [dataListState, setDataListState] = useState({
-    perPage: DEFAULT_PER_PAGE_OPTIONS[0],
-    page: 1,
     selectedItems: [] as FormattedListItem[],
     uploadedFiles: [] as File[],
   });
@@ -198,8 +194,7 @@ export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
 
 const DataList = () => {
   // Contexts
-  const { igtData, dataListState, setDataListState } =
-    useDataRequestAoiContext();
+  const { igtData, setDataListState } = useDataRequestAoiContext();
 
   // Resolved Values
   const dataList = useMemo(
@@ -318,17 +313,6 @@ const DataList = () => {
         <DataListTable.Header />
         <DataListTable.Body />
       </DataListTable.Root>
-
-      <DataListFooter
-        perPage={dataListState.perPage}
-        setPerPage={(perPage) =>
-          setDataListState((prev) => ({ ...prev, perPage }))
-        }
-        page={dataListState.page}
-        setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
-        // currentDataLength={items.length}
-        rounded={0}
-      />
     </VStack>
   );
 };
