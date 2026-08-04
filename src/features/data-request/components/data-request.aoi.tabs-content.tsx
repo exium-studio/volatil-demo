@@ -50,6 +50,7 @@ import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { useSearch } from "@tanstack/react-router";
 import { FilesIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
+import { back } from "@/shared/utils/client/navigation";
 
 const IGT_THEME_TYPE_MAP = {
   bidang: {
@@ -111,7 +112,7 @@ export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
     {
       onUpdate: () => {
         if (isAoiFileModalOpen && isEmptyArray(dataListState.uploadedFiles)) {
-          window.history.back();
+          back();
         }
       },
     },
