@@ -22,6 +22,7 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { t } from "@/shared/libs/i18n";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 
 const NAV_CHILD_ITEM_HEIGHT = 46;
 const NAV_INDICATOR_HEIGHT = 16;
@@ -123,14 +124,21 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   // Rail mode, no children → icon-only button
   if (!expanded && !hasChildren) {
     return (
-      <NavButton
-        aria-label={navTitle}
-        variant={isActive ? "subtle" : "ghost"}
-        // color={isActive ? `${theme.colorPalette}.fg` : undefined}
-        onClick={() => onNavClick?.(node.key)}
+      <Tooltip
+        content={navTitle}
+        positioning={{
+          placement: "right",
+        }}
       >
-        <NavIcon nav={nav} />
-      </NavButton>
+        <NavButton
+          aria-label={navTitle}
+          variant={isActive ? "subtle" : "ghost"}
+          // color={isActive ? `${theme.colorPalette}.fg` : undefined}
+          onClick={() => onNavClick?.(node.key)}
+        >
+          <NavIcon nav={nav} />
+        </NavButton>
+      </Tooltip>
     );
   }
 
@@ -139,13 +147,20 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
     return (
       <Menu.Root>
         <Menu.Trigger asChild>
-          <NavButton
-            aria-label={navTitle}
-            variant={isActive || isAncestorActive ? "subtle" : "ghost"}
-            // color={isActive ? `${theme.colorPalette}.fg` : undefined}
+          <Tooltip
+            content={navTitle}
+            positioning={{
+              placement: "right",
+            }}
           >
-            <NavIcon nav={nav} />
-          </NavButton>
+            <NavButton
+              aria-label={navTitle}
+              variant={isActive || isAncestorActive ? "subtle" : "ghost"}
+              // color={isActive ? `${theme.colorPalette}.fg` : undefined}
+            >
+              <NavIcon nav={nav} />
+            </NavButton>
+          </Tooltip>
         </Menu.Trigger>
 
         <Menu.Content>
@@ -175,19 +190,26 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   // Expanded, no children → icon + label button
   if (!hasChildren) {
     return (
-      <NavButton
-        aria-label={navTitle}
-        variant={isActive && depth === 0 ? "subtle" : "ghost"}
-        // color={isActive ? `${theme.colorPalette}.fg` : undefined}
-        h={"40px"}
-        w={"full"}
-        rounded={isSmallViewport ? 0 : theme.radii.component}
-        onClick={() => onNavClick?.(node.key)}
+      <Tooltip
+        content={navTitle}
+        positioning={{
+          placement: "right",
+        }}
       >
-        <NavIcon nav={nav} />
+        <NavButton
+          aria-label={navTitle}
+          variant={isActive && depth === 0 ? "subtle" : "ghost"}
+          // color={isActive ? `${theme.colorPalette}.fg` : undefined}
+          h={"40px"}
+          w={"full"}
+          rounded={isSmallViewport ? 0 : theme.radii.component}
+          onClick={() => onNavClick?.(node.key)}
+        >
+          <NavIcon nav={nav} />
 
-        <ClampedP>{navTitle}</ClampedP>
-      </NavButton>
+          <P lineClamp={1}>{navTitle}</P>
+        </NavButton>
+      </Tooltip>
     );
   }
 
@@ -205,29 +227,36 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           bg: isActive || isAncestorActive ? "bg.muted" : "transparent",
         }}
       >
-        <NavButton
-          aria-expanded={opened}
-          size={"md"}
-          variant={isActive || isAncestorActive ? "subtle" : "ghost"}
-          h={"40px"}
-          w={"full"}
-          rounded={isSmallViewport ? 0 : theme.radii.component}
-          _hover={{
-            bg: "bg.subtle",
+        <Tooltip
+          content={navTitle}
+          positioning={{
+            placement: "right",
           }}
         >
-          <NavIcon nav={nav} />
+          <NavButton
+            aria-expanded={opened}
+            size={"md"}
+            variant={isActive || isAncestorActive ? "subtle" : "ghost"}
+            h={"40px"}
+            w={"full"}
+            rounded={isSmallViewport ? 0 : theme.radii.component}
+            _hover={{
+              bg: "bg.subtle",
+            }}
+          >
+            <NavIcon nav={nav} />
 
-          <ClampedP>{navTitle}</ClampedP>
+            <ClampedP>{navTitle}</ClampedP>
 
-          <AppIcon
-            icon={ChevronDownIcon}
-            size={"sm"}
-            ml={"auto"}
-            transform={opened ? "rotate(180deg)" : undefined}
-            transition={"transform 150ms ease"}
-          />
-        </NavButton>
+            <AppIcon
+              icon={ChevronDownIcon}
+              size={"sm"}
+              ml={"auto"}
+              transform={opened ? "rotate(180deg)" : undefined}
+              transition={"transform 150ms ease"}
+            />
+          </NavButton>
+        </Tooltip>
       </Collapsible.Trigger>
 
       <Collapsible.Content>
