@@ -34,6 +34,8 @@ import { ADMIN_APP_NAVS_MAP, APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
 import type { NavGroup, NavItem } from "@/shared/types/nav.type";
+import type { User } from "@/shared/types/response.type";
+import { getStorage } from "@/shared/utils/client/client.storage";
 import { Box } from "@chakra-ui/react";
 import {
   IconChevronCompactLeft,
@@ -52,10 +54,14 @@ const SIDE_BAR_KEY = "gis-app";
 const DEFAULT_SPLITTER_SIZE = [50, 50];
 const SPLITTER_KEY = "gis-app";
 
-// TODO: get user data from local storage
-const user = {
-  // role: "user",
-  role: "admin",
+const getUserData = (): User | null => {
+  const raw = getStorage("user");
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as User;
+  } catch {
+    return null;
+  }
 };
 
 export const GisAppShell = (props: GisAppShellProps) => {
@@ -175,11 +181,12 @@ const SidebarBody = () => {
   const navigate = useNavigate();
 
   // Derived Values
-  const navsMap = (user.role === "admin"
+  const userData = getUserData();
+  const role = userData?.role ?? "mitra";
+  const navsMap = (role === "internal"
     ? ADMIN_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
-  const navGroups =
-    user.role === "admin" ? ADMIN_APP_NAV_GROUPS : APP_NAV_GROUPS;
+  const navGroups = role === "internal" ? ADMIN_APP_NAV_GROUPS : APP_NAV_GROUPS;
   const activeKey = getNavKeyFromPathname(navsMap, pathname);
 
   return (
@@ -208,11 +215,13 @@ const SidebarFooter = () => {
   );
 
   // Derived Values
-  const navsMap = (user.role === "admin"
+  const userData = getUserData();
+  const role = userData?.role ?? "mitra";
+  const navsMap = (role === "internal"
     ? ADMIN_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
   const otherNavGroups: NavGroup<AdminAppNavKey | AppNavKey>[] =
-    user.role === "admin" ? ADMIN_APP_OTHER_NAV_GROUPS : APP_OTHER_NAV_GROUPS;
+    role === "internal" ? ADMIN_APP_OTHER_NAV_GROUPS : APP_OTHER_NAV_GROUPS;
 
   return (
     <VStack gap={1} p={3}>
