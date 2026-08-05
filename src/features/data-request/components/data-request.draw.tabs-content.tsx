@@ -115,9 +115,7 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
       {!hasFinishedDraw && (
         <NoDataState
           description={
-            isDrawing
-              ? "Silakan gambar area di peta dengan mengklik beberapa titik, hubungkan kembali ke titik awal atau double-click untuk menyelesaikan"
-              : "Gambar area batas spesifik di peta untuk melihat data IGT yang tersedia di area tersebut"
+            "Silakan gambar area di peta dengan mengklik beberapa titik, hubungkan kembali ke titik awal atau double-click untuk menyelesaikan"
           }
         >
           {isDrawing ? (
@@ -126,11 +124,7 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
               Batal Gambar
             </Button>
           ) : (
-            <Button
-              primary
-              variant={"outline"}
-              onClick={() => start("polygon")}
-            >
+            <Button primary onClick={() => start("polygon")}>
               <AppIcon icon={PencilIcon} />
               Mulai Gambar
             </Button>
