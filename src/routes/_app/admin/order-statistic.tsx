@@ -1,3 +1,5 @@
+// src/routes/_app/admin/order-statistic.tsx
+
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app/admin/order-statistic")({
