@@ -67,7 +67,6 @@ export const InternalSignin = () => {
       email: "admin@volatil.com",
       name: "Internal Admin",
       role: "internal",
-      permissions: ["read:all", "write:all"],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

@@ -40,7 +40,6 @@ export type BaseUser = {
 
 export type InternalUser = BaseUser & {
   role: "internal";
-  permissions: string[];
 };
 
 export type MitraUser = BaseUser & {
