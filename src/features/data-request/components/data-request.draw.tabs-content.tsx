@@ -77,6 +77,7 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
         justify={"space-between"}
         gap={SPACING_MD}
         p={PADDING_MD}
+        pb={0}
       >
         <HStack
           align={"center"}
@@ -109,8 +110,6 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
           </P>
         </HStack>
       </VStack>
-
-      <Separator borderColor={"bg.canvas"} />
 
       {!hasFinishedDraw && (
         <NoDataState
