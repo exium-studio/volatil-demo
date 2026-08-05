@@ -10,10 +10,10 @@ import { HomeLastTransaction } from "@/features/home/components/home.last-transa
 
 export const HomePage = () => {
   return (
-    <PanelContentContainer h={"auto"} gap={PADDING_SM} pb={PADDING_SM}>
+    <PanelContentContainer h={"auto"} gap={PADDING_SM} p={PADDING_SM}>
       <HomeDataSummary />
 
-      <HStack wrap={"wrap"} gap={PADDING_SM} px={PADDING_SM}>
+      <HStack wrap={"wrap"} gap={PADDING_SM}>
         <HomeCartSummary />
         <HomeFinancialFlow />
         <HomeLastTransaction />

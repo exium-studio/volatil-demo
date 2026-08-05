@@ -66,7 +66,9 @@ const Header = ({ period, onPeriodChange }: HeaderProps) => {
       px={PADDING_MD}
     >
       <VStack gap={1}>
-        <P>Statistik Alur Keuangan</P>
+        <P fontSize={"lg"} fontWeight={"semibold"}>
+          Statistik Alur Keuangan
+        </P>
         <P fontSize={"sm"} color={"fg.subtle"}>
           Statistik alur keuangan pembelian data Anda
         </P>

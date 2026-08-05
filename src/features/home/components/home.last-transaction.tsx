@@ -73,7 +73,9 @@ const Header = () => {
       p={PADDING_MD}
     >
       <VStack gap={1} align={"start"}>
-        <P>Transaksi Terakhir</P>
+        <P fontSize={"lg"} fontWeight={"semibold"}>
+          Transaksi Terakhir
+        </P>
         <P fontSize={"sm"} color={"fg.subtle"}>
           Daftar 5 transaksi terbaru dari akun Anda
         </P>

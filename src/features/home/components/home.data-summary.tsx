@@ -15,14 +15,13 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import {
   PADDING_MD,
-  PADDING_SM,
   SPACING_MD,
   SPACING_XS,
 } from "@/design-system/constants/styles";
 import type {
-  HomePeriod,
   HomeDataSummaryLegendProps,
   HomeDataSummaryStatusConfig,
+  HomePeriod,
 } from "@/features/home/types/home.data-summary.type";
 import { dummyHomeData } from "@/shared/constants/dummy-data";
 import { useState } from "react";
@@ -39,7 +38,7 @@ export const HomeDataSummary = () => {
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   return (
-    <Container.Root px={PADDING_SM} withContext={true}>
+    <Container.Root withContext={true}>
       <Container.Body gap={4} py={PADDING_MD}>
         <Header period={period} onPeriodChange={setPeriod} />
 
@@ -66,7 +65,9 @@ const Header = ({ period, onPeriodChange }: HeaderProps) => {
       px={PADDING_MD}
     >
       <VStack gap={1}>
-        <P>Ringkasan Data Anda</P>
+        <P fontSize={"lg"} fontWeight={"semibold"}>
+          Ringkasan Data Anda
+        </P>
         <P fontSize={"sm"} color={"fg.subtle"}>
           Ringkasan informasi status data IGT Anda.
         </P>

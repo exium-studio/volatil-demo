@@ -18,7 +18,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP } from "@/design-system/constants/_meta";
-import { HEADER_H, PADDING_LG } from "@/design-system/constants/styles";
+import { HEADER_H } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
@@ -306,18 +306,12 @@ const Content = () => {
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
-  const pathname = useLocation().pathname;
 
   // Derived Values
   const panels = [
     { id: "map", minSize: isSmallViewport ? 5 : 5 },
     { id: "content", minSize: isSmallViewport ? 5 : 5 },
   ];
-  const isWelcomePathname = pathname.includes("/welcome");
-
-  // Constants
-  const navKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
-  const navTitle = navKey ? t[APP_NAVS_MAP[navKey].titleKey]() : "";
 
   // Components
   const contentPanel = (
@@ -327,23 +321,13 @@ const Content = () => {
       alignItems={"end"}
       overflow={"auto"}
     >
-      <VStack flex={1} overflow={"auto"} minW={[0, null, "360px"]} w={"full"}>
-        {!isWelcomePathname && (
-          <HStack
-            align={"center"}
-            justify={"space-between"}
-            minH={HEADER_H}
-            maxH={HEADER_H}
-            px={PADDING_LG}
-          >
-            {navTitle && (
-              <ClampedP fontSize={"xl"} fontWeight={"semibold"}>
-                {navTitle}
-              </ClampedP>
-            )}
-          </HStack>
-        )}
-
+      <VStack
+        flex={1}
+        overflow={"auto"}
+        minW={[0, null, "360px"]}
+        w={"full"}
+        minH={"300px"}
+      >
         <Outlet />
       </VStack>
     </Splitter.Panel>

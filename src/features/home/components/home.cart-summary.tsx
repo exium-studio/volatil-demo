@@ -45,7 +45,9 @@ const Header = () => {
   return (
     <HStack align={"center"} justify={"space-between"} px={PADDING_MD}>
       <VStack gap={1}>
-        <P>Ringkasan Keranjang Pembelian</P>
+        <P fontSize={"lg"} fontWeight={"semibold"}>
+          Ringkasan Keranjang Pembelian
+        </P>
         <P fontSize={"sm"} color={"fg.subtle"}>
           Ringkasan informasi keranjang pembelian data Anda.
         </P>
@@ -71,7 +73,14 @@ const StatItem = (props: HomeCartSummaryStatItemProps) => {
       p={PADDING_MD}
       {...restProps}
     >
-      <HStack align={"center"} justify={"space-between"} gap={4} w={"full"}>
+      <HStack
+        fontSize={"lg"}
+        fontWeight={"semibold"}
+        align={"center"}
+        justify={"space-between"}
+        gap={4}
+        w={"full"}
+      >
         <P color={"fg.muted"}>{label}</P>
 
         {icon && <AppIcon icon={icon} color={"fg.subtle"} />}

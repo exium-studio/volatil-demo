@@ -4,11 +4,14 @@ import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { HEADER_H, PADDING_SM } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { DataRequestAoiTabsContent } from "@/features/data-request/components/data-request.aoi.tabs-content";
 import { DataRequestCatalogTabsContent } from "@/features/data-request/components/data-request.catalog.tabs-content";
 import { DataRequestDrawTabsContent } from "@/features/data-request/components/data-request.draw.tabs-content";
+import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -55,9 +58,13 @@ export const DataRequestPage = () => {
   }, [tab, setTab]);
 
   return (
-    <PanelContentContainer overflowY={"auto"} gap={PADDING_SM} pb={PADDING_SM}>
-      <Container.Root flex={1} px={PADDING_SM} overflowY={"auto"}>
+    <PanelContentContainer overflowY={"auto"} gap={PADDING_SM} p={PADDING_SM}>
+      <Container.Root flex={1} overflowY={"auto"}>
         <Container.Body flex={1} overflowY={"auto"}>
+          <AppNavTitle navsMap={APP_NAVS_MAP} />
+
+          <Separator borderColor={"bg.canvas"} />
+
           <Tabs.Root
             value={tab}
             flex={1}
