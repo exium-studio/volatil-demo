@@ -7,10 +7,18 @@ import type { WfsLayerConfig } from "@/design-system/components/map/types/map.ty
 export const DEFAULT_MAP_CENTER: [number, number] = [117.5, -2.5];
 export const DEFAULT_MAP_ZOOM = 3.5;
 
-export const WFS_BASE_URL = "https://your-geoserver.com/wfs";
+export const WFS_BASE_URL =
+  "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows";
 export const WFS_VERSION = "2.0.0";
 export const WFS_OUTPUT_FORMAT = "application/json";
 export const WFS_SRS_NAME = "EPSG:4326";
+
+export const WMS_BASE_URL =
+  "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms";
+export const WMS_VERSION = "1.1.1";
+export const WMS_SRS = "EPSG:4326";
+export const WMS_LAYER_NAME = "testing_workspace:TEST_BIDANG_TANAH";
+export const WFS_LAYER_NAME = "testing_workspace:TEST_BIDANG_TANAH";
 
 /** Maps our semantic WFS layer type to the actual MapLibre render layer type. */
 export const WFS_LAYER_RENDER_TYPE_MAP: Record<

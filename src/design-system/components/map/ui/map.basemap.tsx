@@ -24,6 +24,9 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { useWmsLayer } from "@/features/clip/hooks/use-wms-layer";
+import { useClipStore } from "@/features/clip/stores/use-clip-store";
+
 // -------------------------------------------------------------------------------------
 
 export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
@@ -49,6 +52,9 @@ export const BaseMap = ({ layers, styleUrl, onDrawFinish }: BaseMapProps) => {
       ? OPENFREEMAP_LIBERTY_STYLE_URL
       : getBaseLayerStyle(activeStyleKey, colorMode));
 
+  const wmsVisible = useClipStore((s) => s.wmsVisible);
+
+  useWmsLayer(map, wmsVisible);
   useMapLayers(map, layers);
   useMapDraw(map, onDrawFinish);
   useMapResizeObserver(map, containerRef);
