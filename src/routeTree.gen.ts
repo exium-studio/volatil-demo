@@ -15,11 +15,18 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppPortalWelcomeRouteImport } from './routes/_app/portal/welcome'
 import { Route as AppPortalSupportTicketRouteImport } from './routes/_app/portal/support-ticket'
 import { Route as AppPortalPurchaseHistoryRouteImport } from './routes/_app/portal/purchase-history'
+import { Route as AppPortalNotificationRouteImport } from './routes/_app/portal/notification'
 import { Route as AppPortalMyDataRouteImport } from './routes/_app/portal/my-data'
 import { Route as AppPortalHomeRouteImport } from './routes/_app/portal/home'
 import { Route as AppPortalDataRequestRouteImport } from './routes/_app/portal/data-request'
 import { Route as AppPortalCartRouteImport } from './routes/_app/portal/cart'
 import { Route as AppAdminWelcomeRouteImport } from './routes/_app/admin/welcome'
+import { Route as AppAdminUserManagementRouteImport } from './routes/_app/admin/user-management'
+import { Route as AppAdminSupportTicketRouteImport } from './routes/_app/admin/support-ticket'
+import { Route as AppAdminOrderStatisticRouteImport } from './routes/_app/admin/order-statistic'
+import { Route as AppAdminNotificationRouteImport } from './routes/_app/admin/notification'
+import { Route as AppAdminHomeRouteImport } from './routes/_app/admin/home'
+import { Route as AppAdminDataManagementRouteImport } from './routes/_app/admin/data-management'
 
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
@@ -51,6 +58,11 @@ const AppPortalPurchaseHistoryRoute =
     path: '/portal/purchase-history',
     getParentRoute: () => AppRouteRoute,
   } as any)
+const AppPortalNotificationRoute = AppPortalNotificationRouteImport.update({
+  id: '/portal/notification',
+  path: '/portal/notification',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppPortalMyDataRoute = AppPortalMyDataRouteImport.update({
   id: '/portal/my-data',
   path: '/portal/my-data',
@@ -76,15 +88,52 @@ const AppAdminWelcomeRoute = AppAdminWelcomeRouteImport.update({
   path: '/admin/welcome',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppAdminUserManagementRoute = AppAdminUserManagementRouteImport.update({
+  id: '/admin/user-management',
+  path: '/admin/user-management',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppAdminSupportTicketRoute = AppAdminSupportTicketRouteImport.update({
+  id: '/admin/support-ticket',
+  path: '/admin/support-ticket',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppAdminOrderStatisticRoute = AppAdminOrderStatisticRouteImport.update({
+  id: '/admin/order-statistic',
+  path: '/admin/order-statistic',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppAdminNotificationRoute = AppAdminNotificationRouteImport.update({
+  id: '/admin/notification',
+  path: '/admin/notification',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppAdminHomeRoute = AppAdminHomeRouteImport.update({
+  id: '/admin/home',
+  path: '/admin/home',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppAdminDataManagementRoute = AppAdminDataManagementRouteImport.update({
+  id: '/admin/data-management',
+  path: '/admin/data-management',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/admin/data-management': typeof AppAdminDataManagementRoute
+  '/admin/home': typeof AppAdminHomeRoute
+  '/admin/notification': typeof AppAdminNotificationRoute
+  '/admin/order-statistic': typeof AppAdminOrderStatisticRoute
+  '/admin/support-ticket': typeof AppAdminSupportTicketRoute
+  '/admin/user-management': typeof AppAdminUserManagementRoute
   '/admin/welcome': typeof AppAdminWelcomeRoute
   '/portal/cart': typeof AppPortalCartRoute
   '/portal/data-request': typeof AppPortalDataRequestRoute
   '/portal/home': typeof AppPortalHomeRoute
   '/portal/my-data': typeof AppPortalMyDataRoute
+  '/portal/notification': typeof AppPortalNotificationRoute
   '/portal/purchase-history': typeof AppPortalPurchaseHistoryRoute
   '/portal/support-ticket': typeof AppPortalSupportTicketRoute
   '/portal/welcome': typeof AppPortalWelcomeRoute
@@ -92,11 +141,18 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/admin/data-management': typeof AppAdminDataManagementRoute
+  '/admin/home': typeof AppAdminHomeRoute
+  '/admin/notification': typeof AppAdminNotificationRoute
+  '/admin/order-statistic': typeof AppAdminOrderStatisticRoute
+  '/admin/support-ticket': typeof AppAdminSupportTicketRoute
+  '/admin/user-management': typeof AppAdminUserManagementRoute
   '/admin/welcome': typeof AppAdminWelcomeRoute
   '/portal/cart': typeof AppPortalCartRoute
   '/portal/data-request': typeof AppPortalDataRequestRoute
   '/portal/home': typeof AppPortalHomeRoute
   '/portal/my-data': typeof AppPortalMyDataRoute
+  '/portal/notification': typeof AppPortalNotificationRoute
   '/portal/purchase-history': typeof AppPortalPurchaseHistoryRoute
   '/portal/support-ticket': typeof AppPortalSupportTicketRoute
   '/portal/welcome': typeof AppPortalWelcomeRoute
@@ -106,11 +162,18 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteRouteWithChildren
   '/demo': typeof DemoRoute
+  '/_app/admin/data-management': typeof AppAdminDataManagementRoute
+  '/_app/admin/home': typeof AppAdminHomeRoute
+  '/_app/admin/notification': typeof AppAdminNotificationRoute
+  '/_app/admin/order-statistic': typeof AppAdminOrderStatisticRoute
+  '/_app/admin/support-ticket': typeof AppAdminSupportTicketRoute
+  '/_app/admin/user-management': typeof AppAdminUserManagementRoute
   '/_app/admin/welcome': typeof AppAdminWelcomeRoute
   '/_app/portal/cart': typeof AppPortalCartRoute
   '/_app/portal/data-request': typeof AppPortalDataRequestRoute
   '/_app/portal/home': typeof AppPortalHomeRoute
   '/_app/portal/my-data': typeof AppPortalMyDataRoute
+  '/_app/portal/notification': typeof AppPortalNotificationRoute
   '/_app/portal/purchase-history': typeof AppPortalPurchaseHistoryRoute
   '/_app/portal/support-ticket': typeof AppPortalSupportTicketRoute
   '/_app/portal/welcome': typeof AppPortalWelcomeRoute
@@ -120,11 +183,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/demo'
+    | '/admin/data-management'
+    | '/admin/home'
+    | '/admin/notification'
+    | '/admin/order-statistic'
+    | '/admin/support-ticket'
+    | '/admin/user-management'
     | '/admin/welcome'
     | '/portal/cart'
     | '/portal/data-request'
     | '/portal/home'
     | '/portal/my-data'
+    | '/portal/notification'
     | '/portal/purchase-history'
     | '/portal/support-ticket'
     | '/portal/welcome'
@@ -132,11 +202,18 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/demo'
+    | '/admin/data-management'
+    | '/admin/home'
+    | '/admin/notification'
+    | '/admin/order-statistic'
+    | '/admin/support-ticket'
+    | '/admin/user-management'
     | '/admin/welcome'
     | '/portal/cart'
     | '/portal/data-request'
     | '/portal/home'
     | '/portal/my-data'
+    | '/portal/notification'
     | '/portal/purchase-history'
     | '/portal/support-ticket'
     | '/portal/welcome'
@@ -145,11 +222,18 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/demo'
+    | '/_app/admin/data-management'
+    | '/_app/admin/home'
+    | '/_app/admin/notification'
+    | '/_app/admin/order-statistic'
+    | '/_app/admin/support-ticket'
+    | '/_app/admin/user-management'
     | '/_app/admin/welcome'
     | '/_app/portal/cart'
     | '/_app/portal/data-request'
     | '/_app/portal/home'
     | '/_app/portal/my-data'
+    | '/_app/portal/notification'
     | '/_app/portal/purchase-history'
     | '/_app/portal/support-ticket'
     | '/_app/portal/welcome'
@@ -205,6 +289,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPortalPurchaseHistoryRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/portal/notification': {
+      id: '/_app/portal/notification'
+      path: '/portal/notification'
+      fullPath: '/portal/notification'
+      preLoaderRoute: typeof AppPortalNotificationRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/portal/my-data': {
       id: '/_app/portal/my-data'
       path: '/portal/my-data'
@@ -240,26 +331,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminWelcomeRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/admin/user-management': {
+      id: '/_app/admin/user-management'
+      path: '/admin/user-management'
+      fullPath: '/admin/user-management'
+      preLoaderRoute: typeof AppAdminUserManagementRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/admin/support-ticket': {
+      id: '/_app/admin/support-ticket'
+      path: '/admin/support-ticket'
+      fullPath: '/admin/support-ticket'
+      preLoaderRoute: typeof AppAdminSupportTicketRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/admin/order-statistic': {
+      id: '/_app/admin/order-statistic'
+      path: '/admin/order-statistic'
+      fullPath: '/admin/order-statistic'
+      preLoaderRoute: typeof AppAdminOrderStatisticRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/admin/notification': {
+      id: '/_app/admin/notification'
+      path: '/admin/notification'
+      fullPath: '/admin/notification'
+      preLoaderRoute: typeof AppAdminNotificationRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/admin/home': {
+      id: '/_app/admin/home'
+      path: '/admin/home'
+      fullPath: '/admin/home'
+      preLoaderRoute: typeof AppAdminHomeRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/admin/data-management': {
+      id: '/_app/admin/data-management'
+      path: '/admin/data-management'
+      fullPath: '/admin/data-management'
+      preLoaderRoute: typeof AppAdminDataManagementRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
 interface AppRouteRouteChildren {
+  AppAdminDataManagementRoute: typeof AppAdminDataManagementRoute
+  AppAdminHomeRoute: typeof AppAdminHomeRoute
+  AppAdminNotificationRoute: typeof AppAdminNotificationRoute
+  AppAdminOrderStatisticRoute: typeof AppAdminOrderStatisticRoute
+  AppAdminSupportTicketRoute: typeof AppAdminSupportTicketRoute
+  AppAdminUserManagementRoute: typeof AppAdminUserManagementRoute
   AppAdminWelcomeRoute: typeof AppAdminWelcomeRoute
   AppPortalCartRoute: typeof AppPortalCartRoute
   AppPortalDataRequestRoute: typeof AppPortalDataRequestRoute
   AppPortalHomeRoute: typeof AppPortalHomeRoute
   AppPortalMyDataRoute: typeof AppPortalMyDataRoute
+  AppPortalNotificationRoute: typeof AppPortalNotificationRoute
   AppPortalPurchaseHistoryRoute: typeof AppPortalPurchaseHistoryRoute
   AppPortalSupportTicketRoute: typeof AppPortalSupportTicketRoute
   AppPortalWelcomeRoute: typeof AppPortalWelcomeRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppAdminDataManagementRoute: AppAdminDataManagementRoute,
+  AppAdminHomeRoute: AppAdminHomeRoute,
+  AppAdminNotificationRoute: AppAdminNotificationRoute,
+  AppAdminOrderStatisticRoute: AppAdminOrderStatisticRoute,
+  AppAdminSupportTicketRoute: AppAdminSupportTicketRoute,
+  AppAdminUserManagementRoute: AppAdminUserManagementRoute,
   AppAdminWelcomeRoute: AppAdminWelcomeRoute,
   AppPortalCartRoute: AppPortalCartRoute,
   AppPortalDataRequestRoute: AppPortalDataRequestRoute,
   AppPortalHomeRoute: AppPortalHomeRoute,
   AppPortalMyDataRoute: AppPortalMyDataRoute,
+  AppPortalNotificationRoute: AppPortalNotificationRoute,
   AppPortalPurchaseHistoryRoute: AppPortalPurchaseHistoryRoute,
   AppPortalSupportTicketRoute: AppPortalSupportTicketRoute,
   AppPortalWelcomeRoute: AppPortalWelcomeRoute,

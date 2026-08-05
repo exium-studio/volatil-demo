@@ -10,8 +10,17 @@
       "my_data": "My Data",
       "purchase_history": "Purchase History",
 
-      "notifications": "Notifications",
+      "notification": "Notification",
       "help": "Support Tickets",
+      "profile": "Profile"
+    },
+    "admin_navs": {
+      "home": "Home",
+      "user_management": "User Management",
+      "data_management": "Data Management",
+      "order_statistic": "Order Statistic",
+      "help": "Support Tickets",
+      "notification": "Notification",
       "profile": "Profile"
     }
   },

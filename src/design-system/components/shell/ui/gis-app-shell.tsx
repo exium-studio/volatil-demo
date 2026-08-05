@@ -11,6 +11,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { BaseMap } from "@/design-system/components/map/ui/map.basemap";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
@@ -23,17 +24,23 @@ import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport"
 import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { APP_NAV_GROUPS } from "@/shared/constants/app.nav-groups.";
-import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
+import {
+  ADMIN_APP_NAV_GROUPS,
+  ADMIN_APP_OTHER_NAV_GROUPS,
+  APP_NAV_GROUPS,
+  APP_OTHER_NAV_GROUPS,
+} from "@/shared/constants/app.nav-groups.";
+import { ADMIN_APP_NAVS_MAP, APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
-import type { AppNavKey } from "@/shared/types/app-navs.type";
+import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
+import type { NavGroup, NavItem } from "@/shared/types/nav.type";
 import { Box } from "@chakra-ui/react";
 import {
   IconChevronCompactLeft,
   IconChevronCompactRight,
 } from "@tabler/icons-react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { BellIcon, HelpCircleIcon, UserIcon } from "lucide-react";
+import { UserIcon } from "lucide-react";
 
 // -------------------------------------------------------------------------------------
 
@@ -45,23 +52,11 @@ const SIDE_BAR_KEY = "gis-app";
 const DEFAULT_SPLITTER_SIZE = [50, 50];
 const SPLITTER_KEY = "gis-app";
 
-// const LAYOUT_MODE_OPTIONS = [
-//   {
-//     value: "panel",
-//     label: "Main Panel",
-//     leftIcon: PanelLeftIcon,
-//   },
-//   {
-//     value: "split",
-//     label: "Split",
-//     leftIcon: Columns2Icon,
-//   },
-//   {
-//     value: "map",
-//     label: "Map",
-//     leftIcon: MapIcon,
-//   },
-// ];
+// TODO: get user data from local storage
+const user = {
+  // role: "user",
+  role: "admin",
+};
 
 export const GisAppShell = (props: GisAppShellProps) => {
   // Props
@@ -176,21 +171,28 @@ const SidebarBody = () => {
   );
 
   // Hooks
-  const navigate = useNavigate();
   const pathname = useLocation().pathname;
-  const activeKey = getNavKeyFromPathname(APP_NAVS_MAP, pathname);
+  const navigate = useNavigate();
+
+  // Derived Values
+  const navsMap = (user.role === "admin"
+    ? ADMIN_APP_NAVS_MAP
+    : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
+  const navGroups =
+    user.role === "admin" ? ADMIN_APP_NAV_GROUPS : APP_NAV_GROUPS;
+  const activeKey = getNavKeyFromPathname(navsMap, pathname);
 
   return (
-    <VNavs<AppNavKey>
+    <VNavs
       showTopBorderOnScroll={false}
       flex={1}
-      groups={APP_NAV_GROUPS}
-      navs={APP_NAVS_MAP}
+      groups={navGroups}
+      navs={navsMap}
       activeKey={activeKey}
       expanded={expanded}
       onNavClick={(key) => {
         navigate({
-          to: APP_NAVS_MAP[key].pathname,
+          to: navsMap[key].pathname,
           resetScroll: false,
         });
       }}
@@ -205,41 +207,40 @@ const SidebarFooter = () => {
     (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
 
+  // Derived Values
+  const navsMap = (user.role === "admin"
+    ? ADMIN_APP_NAVS_MAP
+    : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
+  const otherNavGroups: NavGroup<AdminAppNavKey | AppNavKey>[] =
+    user.role === "admin" ? ADMIN_APP_OTHER_NAV_GROUPS : APP_OTHER_NAV_GROUPS;
+
   return (
     <VStack gap={1} p={3}>
       <VStack gap={1}>
-        <NavButton>
-          <AppIcon icon={BellIcon} />
-          {expanded && t["app.navs.notifications"]()}
-        </NavButton>
+        {otherNavGroups.map((navGroup, index) => {
+          return (
+            <VStack key={navGroup.titleKey ?? index}>
+              {navGroup.items.map((item) => {
+                const nav = navsMap[item.key];
 
-        <NavButton>
-          <AppIcon icon={HelpCircleIcon} />
-          {expanded && t["app.navs.help"]()}
-        </NavButton>
+                return (
+                  <NavLink key={item.key} to={nav.pathname}>
+                    <NavButton>
+                      <AppIcon icon={nav.icon} />
+                      {expanded && t[nav.titleKey]()}
+                    </NavButton>
+                  </NavLink>
+                );
+              })}
+            </VStack>
+          );
+        })}
 
         <NavButton>
           <AppIcon icon={UserIcon} />
           {expanded && t["app.navs.profile"]()}
         </NavButton>
       </VStack>
-
-      {/* <Separator my={2} /> */}
-
-      {/* <SegmentGroup.Root defaultValue={"split"}>
-        <SegmentGroup.Indicator />
-
-        {LAYOUT_MODE_OPTIONS.map((mode) => (
-          <Tooltip key={mode.value} content={mode.label}>
-            <Box w={"full"}>
-              <SegmentGroup.Item value={mode.value}>
-                <SegmentGroup.ItemHiddenInput />
-                <AppIcon icon={mode.leftIcon} />
-              </SegmentGroup.Item>
-            </Box>
-          </Tooltip>
-        ))}
-      </SegmentGroup.Root> */}
     </VStack>
   );
 };
