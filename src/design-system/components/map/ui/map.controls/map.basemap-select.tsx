@@ -79,6 +79,7 @@ export const MapBaseLayerSelect = () => {
                 <AbsoluteCenter>
                   <AppIcon
                     icon={plainAdaptiveProps[colorMode].icon}
+                    size={"lg"}
                     color={"fg.subtle"}
                   />
                 </AbsoluteCenter>
@@ -137,6 +138,7 @@ export const MapBaseLayerSelect = () => {
                       <AbsoluteCenter>
                         <AppIcon
                           icon={plainAdaptiveProps[colorMode].icon}
+                          size={"2xl"}
                           color={"fg.subtle"}
                         />
                       </AbsoluteCenter>
