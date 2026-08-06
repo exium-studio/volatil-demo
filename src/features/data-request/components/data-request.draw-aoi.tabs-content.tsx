@@ -1,4 +1,4 @@
-// src/features/data-request/components/data-request.draw.tabs-content.tsx
+// src/features/data-request/components/data-request.draw-aoi.tabs-content.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type {
@@ -130,7 +130,7 @@ const bidangFeatureToItem = (
   return { id, data: feature as unknown as Record<string, unknown>, columns };
 };
 
-export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
+export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
   // Stores
   const { theme } = useThemeStore();
   const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();

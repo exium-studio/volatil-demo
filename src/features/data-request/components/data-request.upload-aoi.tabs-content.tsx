@@ -1,4 +1,4 @@
-// src/features/data-request/components/data-request.aoi.tabs-content.tsx
+// src/features/data-request/components/data-request.upload-aoi.tabs-content.tsx
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import { Button } from "@/design-system/components/button/ui/button";
@@ -32,10 +32,10 @@ import {
 } from "@/design-system/constants/styles";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
 import {
-  DataRequestAoiContext,
-  useDataRequestAoiContext,
-} from "@/features/data-request/contexts/data-request.aoi.context";
-import type { AoiFileListTriggerProps } from "@/features/data-request/types/data-request.aoi.type";
+  DataRequestUploadAoiContext,
+  useDataRequestUploadAoiContext,
+} from "@/features/data-request/contexts/data-request.upload-aoi.context";
+import type { UploadAoiFileListTriggerProps } from "@/features/data-request/types/data-request.upload-aoi.type";
 import type {
   IgtCategory,
   IgtDataResponse,
@@ -116,7 +116,7 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
   );
 
   return (
-    <DataRequestAoiContext.Provider value={contextValue}>
+    <DataRequestUploadAoiContext.Provider value={contextValue}>
       <Tabs.Content
         display={"flex"}
         flexDir={"column"}
@@ -155,12 +155,12 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
                 </HStack>
 
                 <HStack align={"center"} gap={SPACING_SM}>
-                  <AoiFileListTrigger>
+                  <UploadAoiFileListTrigger>
                     <Button variant={"outline"}>
                       <AppIcon icon={FilesIcon} />
                       File AOI anda ({dataListState.uploadedFiles.length})
                     </Button>
-                  </AoiFileListTrigger>
+                  </UploadAoiFileListTrigger>
 
                   <AddAoiFileButton variant={"outline"} />
                 </HStack>
@@ -188,13 +188,13 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
           </>
         )}
       </Tabs.Content>
-    </DataRequestAoiContext.Provider>
+    </DataRequestUploadAoiContext.Provider>
   );
 };
 
 const DataList = () => {
   // Contexts
-  const { igtData, setDataListState } = useDataRequestAoiContext();
+  const { igtData, setDataListState } = useDataRequestUploadAoiContext();
 
   // Resolved Values
   const dataList = useMemo(
@@ -319,7 +319,7 @@ const DataList = () => {
 
 const AddAoiFileButton = (props: ButtonProps) => {
   // Contexts
-  const { dataListState, setDataListState } = useDataRequestAoiContext();
+  const { dataListState, setDataListState } = useDataRequestUploadAoiContext();
 
   return (
     <FileInputTrigger
@@ -342,12 +342,12 @@ const AddAoiFileButton = (props: ButtonProps) => {
   );
 };
 
-const AoiFileListTrigger = (props: AoiFileListTriggerProps) => {
+const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
   // Props
   const { children } = props;
 
   // Contexts
-  const { dataListState, setDataListState } = useDataRequestAoiContext();
+  const { dataListState, setDataListState } = useDataRequestUploadAoiContext();
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({

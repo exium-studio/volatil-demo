@@ -1,3 +1,5 @@
+// src/features/clip/hooks/use-global-map.ts
+
 /* eslint-disable */
 // src/features/clip/hooks/use-global-map.ts
 

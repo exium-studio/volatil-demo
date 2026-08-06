@@ -1,4 +1,4 @@
-// src/design-system/components/map/ui/map-controls/map.basemap-select.tsx
+// src/design-system/components/map/ui/map.controls/map.basemap-select.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";

@@ -10,7 +10,7 @@ import { HEADER_H, PADDING_SM } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { DataRequestUploadAoiTabsContent } from "@/features/data-request/components/data-request.upload-aoi.tabs-content";
 import { DataRequestCatalogTabsContent } from "@/features/data-request/components/data-request.catalog.tabs-content";
-import { DataRequestDrawTabsContent } from "@/features/data-request/components/data-request.draw.tabs-content";
+import { DataRequestDrawAoiTabsContent } from "@/features/data-request/components/data-request.draw-aoi.tabs-content";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
@@ -22,15 +22,15 @@ const REQUEST_METHOD_MAP = {
     label: "Katalog Data",
     content: DataRequestCatalogTabsContent,
   },
-  aoi: {
+  uploadAoi: {
     icon: FolderArchiveIcon,
     label: "Upload AOI",
     content: DataRequestUploadAoiTabsContent,
   },
-  draw: {
+  drawAoi: {
     icon: IconPolygon,
     label: "Gambar AOI",
-    content: DataRequestDrawTabsContent,
+    content: DataRequestDrawAoiTabsContent,
   },
 };
 const REQUEST_METHOD_OPTIONS = (

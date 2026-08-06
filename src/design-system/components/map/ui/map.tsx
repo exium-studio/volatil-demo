@@ -1,4 +1,4 @@
-// src/design-system/components/map/ui/map.component.tsx
+// src/design-system/components/map/ui/map.tsx
 
 import { useBaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
 import { useMapDraw } from "@/design-system/components/map/hooks/use-map-draw";
