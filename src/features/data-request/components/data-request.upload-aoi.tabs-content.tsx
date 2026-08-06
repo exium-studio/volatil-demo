@@ -72,7 +72,7 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
   rtrw_kota: "IGT RTRW Kota",
 };
 
-export const DataRequestAoiTabsContent = (props: TabsContentProps) => {
+export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
   // States
   const [dataListState, setDataListState] = useState({
     selectedItems: [] as FormattedListItem[],
@@ -324,7 +324,7 @@ const AddAoiFileButton = (props: ButtonProps) => {
   return (
     <FileInputTrigger
       fileInputProps={{
-        maxFiles: 10,
+        maxFiles: 1,
         value: dataListState.uploadedFiles,
         onFileChange: ({ acceptedFiles }) => {
           setDataListState((prev) => ({

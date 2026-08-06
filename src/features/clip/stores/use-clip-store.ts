@@ -5,14 +5,12 @@ import type { ClipStatus } from "@/features/clip/types/clip.type";
 import type GeoJSON from "geojson";
 
 interface ClipStore {
-  wmsVisible: boolean;
   clippingPolygon: GeoJSON.Feature<GeoJSON.Polygon> | null;
   rawWfsFeatures: GeoJSON.FeatureCollection | null;
   clippedFeatures: GeoJSON.FeatureCollection | null;
   status: ClipStatus;
   error: string | null;
 
-  setWmsVisible: (v: boolean) => void;
   setClippingPolygon: (
     polygon: GeoJSON.Feature<GeoJSON.Polygon> | null,
   ) => void;
@@ -24,7 +22,6 @@ interface ClipStore {
 }
 
 const initialState = {
-  wmsVisible: true,
   clippingPolygon: null,
   rawWfsFeatures: null,
   clippedFeatures: null,
@@ -35,7 +32,6 @@ const initialState = {
 export const useClipStore = create<ClipStore>((set) => ({
   ...initialState,
 
-  setWmsVisible: (v) => set({ wmsVisible: v }),
   setClippingPolygon: (polygon) => set({ clippingPolygon: polygon }),
   setRawWfsFeatures: (fc) => set({ rawWfsFeatures: fc }),
   setClippedFeatures: (fc) => set({ clippedFeatures: fc }),
@@ -43,3 +39,4 @@ export const useClipStore = create<ClipStore>((set) => ({
   setError: (e) => set({ error: e }),
   reset: () => set({ ...initialState }),
 }));
+

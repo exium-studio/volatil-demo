@@ -32,6 +32,8 @@ import { DataRequestAddToCartButtons } from "@/features/data-request/components/
 import type { IgtCategory } from "@/features/data-request/types/data-request.type";
 import { useClipStore } from "@/features/clip/stores/use-clip-store";
 import { useWfsClip } from "@/features/clip/hooks/use-wfs-clip";
+import { useGlobalMap } from "@/features/clip/hooks/use-global-map";
+import { useClipResultLayer } from "@/features/clip/hooks/use-clip-result-layer";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
 import {
@@ -76,6 +78,11 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
   const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();
   const { status, error, clippedFeatures, reset: resetClip } = useClipStore();
   const { run, cancel: cancelClip } = useWfsClip();
+
+  // Maps / Result sync
+  const map = useGlobalMap();
+  useClipResultLayer(map);
+
 
   // Derived
   const hasFinishedDraw = !isDrawing && points.length >= 3;

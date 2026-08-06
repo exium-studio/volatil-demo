@@ -2,7 +2,10 @@
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import { Center } from "@/design-system/components/layout/ui/center";
+import {
+  AbsoluteCenter,
+  Center,
+} from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
 import {
@@ -73,14 +76,12 @@ export const MapBaseLayerSelect = () => {
               />
 
               {isActiveStylePlainAdaptive && (
-                <AppIcon
-                  icon={plainAdaptiveProps[colorMode].icon}
-                  size={"xs"}
-                  color={"fg.subtle"}
-                  pos={"absolute"}
-                  right={1}
-                  top={1}
-                />
+                <AbsoluteCenter>
+                  <AppIcon
+                    icon={plainAdaptiveProps[colorMode].icon}
+                    color={"fg.subtle"}
+                  />
+                </AbsoluteCenter>
               )}
             </Center>
           </Tooltip>
@@ -133,13 +134,12 @@ export const MapBaseLayerSelect = () => {
                     />
 
                     {isPlainAdaptive && (
-                      <AppIcon
-                        icon={plainAdaptiveProps[colorMode].icon}
-                        color={"fg.subtle"}
-                        pos={"absolute"}
-                        right={1}
-                        top={1}
-                      />
+                      <AbsoluteCenter>
+                        <AppIcon
+                          icon={plainAdaptiveProps[colorMode].icon}
+                          color={"fg.subtle"}
+                        />
+                      </AbsoluteCenter>
                     )}
                   </Center>
 

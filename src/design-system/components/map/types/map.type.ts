@@ -12,10 +12,13 @@ export interface DrawPoint {
 export type MapLayerConfig =
   | WfsLayerConfig
   | RasterTileLayerConfig
-  | VectorTileLayerConfig;
+  | VectorTileLayerConfig
+  | WmsRasterLayerConfig;
 
 interface BaseLayerConfig {
   id: string;
+  /** When false the layer is added but hidden (layout visibility "none"). Defaults to true. */
+  visible?: boolean;
   paint?: Record<string, unknown>;
   layout?: Record<string, unknown>;
 }
@@ -35,4 +38,10 @@ export interface VectorTileLayerConfig extends BaseLayerConfig {
   type: "vector-tile";
   tileUrl: string;
   sourceLayer: string;
+}
+
+export interface WmsRasterLayerConfig extends BaseLayerConfig {
+  type: "wms-raster";
+  tileUrl: string;
+  tileSize?: number;
 }

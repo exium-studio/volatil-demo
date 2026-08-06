@@ -36,4 +36,10 @@ export const DEFAULT_RASTER_TILE_SIZE = 256;
 /** Pixel radius used to detect a click near the first vertex, to close a polygon. */
 export const DRAW_CLOSE_HIT_RADIUS_PX = 12;
 
+/** Custom event fired by BaseMap after basemap style + globe + paint overrides are settled. */
+export const MAP_STYLE_READY_EVENT = "map-style-ready";
+
+/** Custom event fired by useMapLayers after all config-driven layers have been added. */
+export const MAP_LAYERS_READY_EVENT = "map-layers-ready";
+
 export const MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";

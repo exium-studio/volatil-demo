@@ -8,7 +8,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { HEADER_H, PADDING_SM } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
-import { DataRequestAoiTabsContent } from "@/features/data-request/components/data-request.aoi.tabs-content";
+import { DataRequestUploadAoiTabsContent } from "@/features/data-request/components/data-request.upload-aoi.tabs-content";
 import { DataRequestCatalogTabsContent } from "@/features/data-request/components/data-request.catalog.tabs-content";
 import { DataRequestDrawTabsContent } from "@/features/data-request/components/data-request.draw.tabs-content";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
@@ -25,11 +25,11 @@ const REQUEST_METHOD_MAP = {
   aoi: {
     icon: FolderArchiveIcon,
     label: "Upload AOI",
-    content: DataRequestAoiTabsContent,
+    content: DataRequestUploadAoiTabsContent,
   },
   draw: {
     icon: IconPolygon,
-    label: "Gambar Poligon",
+    label: "Gambar AOI",
     content: DataRequestDrawTabsContent,
   },
 };
@@ -75,7 +75,7 @@ export const DataRequestPage = () => {
               setTab(details.value);
             }}
           >
-            <Tabs.List>
+            <Tabs.List borderColor={"bg.canvas"}>
               {REQUEST_METHOD_OPTIONS.map((method) => {
                 return (
                   <Tabs.Trigger

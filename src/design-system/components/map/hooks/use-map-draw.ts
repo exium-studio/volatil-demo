@@ -7,10 +7,16 @@ import {
   isNearFirstPoint,
   toPolygonFeature,
 } from "@/design-system/components/map/utils/geometry";
-import { DRAW_CLOSE_HIT_RADIUS_PX } from "@/design-system/components/map/constants/map.config";
+import {
+  DRAW_CLOSE_HIT_RADIUS_PX,
+  MAP_LAYERS_READY_EVENT,
+} from "@/design-system/components/map/constants/map.config";
 
 const DRAW_SOURCE_ID = "map-draw-source";
-const DRAW_FILL_LAYER_ID = "map-draw-fill";
+
+/** Exported so useMapLayers can insert config layers below the draw stack using beforeId. */
+export const DRAW_FILL_LAYER_ID = "map-draw-fill";
+
 const DRAW_LINE_LAYER_ID = "map-draw-line";
 const DRAW_VERTEX_LAYER_ID = "map-draw-vertex";
 
@@ -188,11 +194,12 @@ export const useMapDraw = (
   }, [map]);
 
   // Set up the preview source/layers once per map instance.
-  // Also re-populates source data after a basemap style change (style.load).
+  // Listens to MAP_LAYERS_READY_EVENT so draw layers are always added AFTER
+  // config-driven layers (wms-raster, wfs-*), guaranteeing top-most ordering.
   useEffect(() => {
     if (!map) return;
 
-    const onStyleLoad = () => {
+    const onLayersReady = () => {
       const isReady = ensureLayersExist();
       if (!isReady) return;
 
@@ -207,12 +214,12 @@ export const useMapDraw = (
     };
 
     if (map.isStyleLoaded()) {
-      onStyleLoad();
+      onLayersReady();
     }
-    map.on("style.load", onStyleLoad);
+    map.on(MAP_LAYERS_READY_EVENT as string, onLayersReady);
 
     return () => {
-      map.off("style.load", onStyleLoad);
+      map.off(MAP_LAYERS_READY_EVENT as string, onLayersReady);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(map as any).style) return;
       [DRAW_VERTEX_LAYER_ID, DRAW_LINE_LAYER_ID, DRAW_FILL_LAYER_ID].forEach(
