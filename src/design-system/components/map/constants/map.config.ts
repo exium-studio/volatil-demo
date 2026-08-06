@@ -9,7 +9,12 @@ export const DEFAULT_MAP_ZOOM = 3.5;
 
 export const WFS_BASE_URL =
   "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows";
-export const WFS_VERSION = "2.0.0";
+/**
+ * WFS 1.0.0 is used instead of 2.0.0 because this GeoServer instance does not
+ * return features when CQL_FILTER is applied under version 2.0.0 (always returns 0).
+ * Under 1.0.0, spatial CQL filters (INTERSECTS) work correctly.
+ */
+export const WFS_VERSION = "1.0.0";
 export const WFS_OUTPUT_FORMAT = "application/json";
 export const WFS_SRS_NAME = "EPSG:4326";
 
