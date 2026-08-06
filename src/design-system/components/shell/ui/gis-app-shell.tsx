@@ -28,7 +28,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP } from "@/design-system/constants/_meta";
-import { HEADER_H } from "@/design-system/constants/styles";
+import { HEADER_H, SPACING_SM } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
@@ -123,8 +123,6 @@ const Sidebar = () => {
       zIndex={10}
       w={expanded ? "300px" : `calc(40px + 24px)`}
       h={"full"}
-      borderRight={"1px solid"}
-      borderColor={"border"}
       transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
     >
       <VStack
@@ -165,9 +163,9 @@ const SidebarHeader = () => {
       p={4}
       w={"full"}
     >
-      <HStack align={"center"} gap={1} ml={"-2px"}>
+      <HStack align={"center"} gap={SPACING_SM}>
         {/* <Logo /> */}
-        <AtrLogo boxSize={"36px"} minW={"36px"} />
+        <AtrLogo boxSize={"24px"} ml={1} />
 
         <ClampedP
           w={expanded ? "" : 0}
