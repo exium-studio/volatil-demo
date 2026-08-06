@@ -145,11 +145,7 @@ export const ClipPanel = () => {
         {status !== "idle" && (
           <Badge
             colorPalette={
-              status === "done"
-                ? "green"
-                : status === "error"
-                  ? "red"
-                  : "blue"
+              status === "done" ? "green" : status === "error" ? "red" : "blue"
             }
           >
             {status}
@@ -165,9 +161,7 @@ export const ClipPanel = () => {
               setWmsVisible(e.checked)
             }
           />
-          <P fontSize={"sm"}>
-            {wmsVisible ? "Visible" : "Hidden"}
-          </P>
+          <P fontSize={"sm"}>{wmsVisible ? "Visible" : "Hidden"}</P>
         </HStack>
       </Field>
 

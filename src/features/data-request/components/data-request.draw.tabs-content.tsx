@@ -11,9 +11,11 @@ import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-displa
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
@@ -28,9 +30,17 @@ import {
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
 import type { IgtCategory } from "@/features/data-request/types/data-request.type";
+import { useClipStore } from "@/features/clip/stores/use-clip-store";
+import { useWfsClip } from "@/features/clip/hooks/use-wfs-clip";
 import { dummyIgtData } from "@/shared/constants/dummy-data";
 import { t } from "@/shared/libs/i18n";
-import { InfoIcon, PencilIcon, Trash2Icon, XIcon } from "lucide-react";
+import {
+  CheckIcon,
+  InfoIcon,
+  PencilIcon,
+  Trash2Icon,
+  XIcon,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 
 const IGT_THEME_TYPE_MAP = {
@@ -55,13 +65,45 @@ const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
   rtrw_kota: "IGT RTRW Kota",
 };
 
+const CLIP_STATUS_LABELS: Partial<Record<string, string>> = {
+  fetching: "Mengambil data di AOI...",
+  clipping: "Menyiapkan data IGT Anda...",
+};
+
 export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
   // Stores
   const { theme } = useThemeStore();
-  const { isDrawing, points, start, cancel } = useMapDrawStore();
+  const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();
+  const { status, error, clippedFeatures, reset: resetClip } = useClipStore();
+  const { run, cancel: cancelClip } = useWfsClip();
 
   // Derived
   const hasFinishedDraw = !isDrawing && points.length >= 3;
+  const isProcessing = status === "fetching" || status === "clipping";
+  const isDone = status === "done";
+
+  const handleHapusGambar = () => {
+    cancelClip();
+    resetClip();
+    cancelDraw();
+  };
+
+  const handleConfirmAndClip = () => {
+    const polygon: GeoJSON.Feature<GeoJSON.Polygon> = {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            ...points.map((p) => [p.lng, p.lat]),
+            [points[0].lng, points[0].lat],
+          ],
+        ],
+      },
+    };
+    void run(polygon);
+  };
 
   return (
     <Tabs.Content
@@ -72,6 +114,7 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
       p={0}
       {...props}
     >
+      {/* Info banner */}
       <VStack
         wrap={"wrap"}
         justify={"space-between"}
@@ -84,41 +127,52 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
           gap={SPACING_MD}
           p={PADDING_MD}
           bg={
-            isDrawing
-              ? "bg.warning"
-              : hasFinishedDraw
-                ? "bg.success"
-                : "bg.info"
+            isProcessing
+              ? "bg.info"
+              : isDrawing
+                ? "bg.warning"
+                : hasFinishedDraw
+                  ? "bg.success"
+                  : "bg.info"
           }
           rounded={theme.radii.container}
           color={
-            isDrawing
-              ? "fg.warning"
-              : hasFinishedDraw
-                ? "fg.success"
-                : "fg.info"
+            isProcessing
+              ? "fg.info"
+              : isDrawing
+                ? "fg.warning"
+                : hasFinishedDraw
+                  ? "fg.success"
+                  : "fg.info"
           }
         >
           <AppIcon icon={InfoIcon} />
 
           <P>
-            {isDrawing
-              ? "Klik titik pada peta untuk menggambar. Klik titik pertama atau double-click untuk selesai."
-              : hasFinishedDraw
-                ? "Area berhasil digambar. Gunakan tombol 'Hapus Gambar' untuk menghapus dan menggambar ulang."
-                : "Klik 'Mulai Gambar' lalu klik titik pada peta untuk menentukan batas area spesifik yang Anda inginkan."}
+            {isProcessing
+              ? (CLIP_STATUS_LABELS[status] ?? "Memproses...")
+              : isDrawing
+                ? "Klik titik pada peta untuk menggambar. Klik titik pertama atau double-click untuk selesai."
+                : hasFinishedDraw
+                  ? "Area berhasil digambar. Klik 'Kon  firmasi & Clip' untuk mengambil data, atau 'Hapus Gambar' untuk menggambar ulang."
+                  : "Klik 'Mulai Gambar' lalu klik titik pada peta untuk menentukan batas area spesifik yang Anda inginkan."}
           </P>
         </HStack>
       </VStack>
 
-      {!hasFinishedDraw && (
+      {/* === Belum draw: tampilkan NoDataState + tombol mulai/batal === */}
+      {!hasFinishedDraw && !isProcessing && (
         <NoDataState
           description={
             "Silakan gambar area di peta dengan mengklik beberapa titik, hubungkan kembali ke titik awal atau double-click untuk menyelesaikan"
           }
         >
           {isDrawing ? (
-            <Button variant={"outline"} colorPalette={"red"} onClick={cancel}>
+            <Button
+              variant={"outline"}
+              colorPalette={"red"}
+              onClick={cancelDraw}
+            >
               <AppIcon icon={XIcon} />
               Batal Gambar
             </Button>
@@ -131,7 +185,58 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
         </NoDataState>
       )}
 
-      {hasFinishedDraw && (
+      {/* === Draw selesai, belum konfirmasi & belum processing === */}
+      {hasFinishedDraw && !isProcessing && !isDone && (
+        <NoDataState
+          description={
+            "Area berhasil digambar. Klik 'Konfirmasi & Clip' untuk mengambil data IGT di area tersebut."
+          }
+        >
+          <HStack gap={SPACING_SM}>
+            <Button
+              variant={"outline"}
+              colorPalette={"red"}
+              onClick={handleHapusGambar}
+            >
+              <AppIcon icon={Trash2Icon} />
+              Hapus Gambar
+            </Button>
+
+            <Button primary onClick={handleConfirmAndClip}>
+              <AppIcon icon={CheckIcon} />
+              Konfirmasi &amp; Clip
+            </Button>
+          </HStack>
+        </NoDataState>
+      )}
+
+      {/* === Sedang proses: spinner === */}
+      {isProcessing && (
+        <Box
+          flex={1}
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
+          <HStack align={"center"} gap={SPACING_SM}>
+            <Loader />
+            <P>{CLIP_STATUS_LABELS[status] ?? "Memproses..."}</P>
+          </HStack>
+        </Box>
+      )}
+
+      {/* === Error === */}
+      {status === "error" && error && (
+        <VStack gap={SPACING_SM} p={PADDING_MD}>
+          <P color={"fg.error"}>{error}</P>
+          <Button variant={"outline"} onClick={handleHapusGambar}>
+            Coba Lagi
+          </Button>
+        </VStack>
+      )}
+
+      {/* === Done: tampilkan hasil clip + tombol reset === */}
+      {isDone && clippedFeatures && (
         <>
           <VStack
             wrap={"wrap"}
@@ -153,10 +258,10 @@ export const DataRequestDrawTabsContent = (props: TabsContentProps) => {
                 <Button
                   variant={"outline"}
                   colorPalette={"red"}
-                  onClick={cancel}
+                  onClick={handleHapusGambar}
                 >
                   <AppIcon icon={Trash2Icon} />
-                  Hapus gambar
+                  Hapus Gambar
                 </Button>
               </HStack>
             </HStack>
@@ -288,7 +393,6 @@ const DataList = () => {
         canBatchSelect
         rounded={0}
         shadow={"none"}
-        // selectedItems={dataListState.selectedItems}
         onSelectedItemChange={({ selectedItems }) => {
           console.log("selectedItems", selectedItems);
           setDataListState((prev) => ({ ...prev, selectedItems }));
@@ -305,7 +409,6 @@ const DataList = () => {
         }
         page={dataListState.page}
         setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
-        // currentDataLength={items.length}
         rounded={0}
       />
 
