@@ -22,6 +22,7 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
   PADDING_MD,
+  PADDING_SM,
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
@@ -356,6 +357,9 @@ interface DataListProps {
 }
 
 const DataList = ({ clippedFeatures }: DataListProps) => {
+  // Stores
+  const { theme } = useThemeStore();
+
   // States
   const [dataListState, setDataListState] = useState({
     perPage: DEFAULT_PER_PAGE_OPTIONS[0],
@@ -377,13 +381,21 @@ const DataList = ({ clippedFeatures }: DataListProps) => {
   const totalItems = dataList.items.length;
 
   return (
-    <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
+    <VStack
+      flex={1}
+      gap={PADDING_SM}
+      overflowY={"auto"}
+      bg={"bg.canvas"}
+      w={"full"}
+    >
       <DataListTable.Root
         withNumbering={true}
         headers={dataList.headers}
         items={dataList.items}
         canBatchSelect
-        rounded={0}
+        pb={0}
+        roundedTop={0}
+        roundedBottom={theme.radii.container}
         shadow={"none"}
         onSelectedItemChange={({ selectedItems }) => {
           setDataListState((prev) => ({ ...prev, selectedItems }));
@@ -393,7 +405,7 @@ const DataList = ({ clippedFeatures }: DataListProps) => {
         <DataListTable.Body />
       </DataListTable.Root>
 
-      <Separator borderColor={"bg.canvas"} mt={"auto"} />
+      {/* <Separator borderColor={"bg.canvas"} mt={"auto"} /> */}
 
       <DataRequestAddToCartButtons
         selectedItems={dataListState.selectedItems}
@@ -404,6 +416,7 @@ const DataList = ({ clippedFeatures }: DataListProps) => {
         onAddAllClick={() => {
           console.log("onAddAllClick");
         }}
+        mt={"auto"}
       />
     </VStack>
   );

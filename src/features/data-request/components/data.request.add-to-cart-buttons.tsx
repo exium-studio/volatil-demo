@@ -11,6 +11,7 @@ import { ToggleTip } from "@/design-system/components/input/ui/toggle-tip";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PADDING_MD, SPACING_SM } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { InfoIcon, ShoppingCartIcon } from "lucide-react";
 
@@ -33,12 +34,16 @@ export const DataRequestAddToCartButtons = (
     ...restProps
   } = props;
 
+  // Stores
+  const { theme } = useThemeStore();
+
   return (
     <HStack
       align={"center"}
       justify={"space-between"}
       gap={SPACING_SM}
       p={PADDING_MD}
+      rounded={theme.radii.container}
       bg={"bg.body"}
       {...restProps}
     >
@@ -59,9 +64,9 @@ export const DataRequestAddToCartButtons = (
         </ToggleTip>
 
         <Button primary variant={"outline"} flex={1} onClick={onAddAllClick}>
-          <AppIcon icon={ShoppingCartIcon} />
+          {/* <AppIcon icon={ShoppingCartIcon} /> */}
           {/* TODO: use data result length (accross page) */}
-          Tambah semua ({totalItems})
+          Tambah semua ({totalItems}) ...
         </Button>
       </ButtonGroup>
 
