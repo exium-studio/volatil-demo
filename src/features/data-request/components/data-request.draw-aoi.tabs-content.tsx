@@ -126,6 +126,13 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
               </HStack>
             )}
           </NoDataState>
+
+          <GuideAlert
+            isLoading={isLoading}
+            isDrawing={isDrawing}
+            hasFinishedDraw={hasFinishedDraw}
+            isVisible={false}
+          />
         </>
       )}
 
@@ -165,18 +172,20 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
   );
 };
 
-type ExtendedGuideAlertProps = DrawAoiGuideAlertProps & {
-  isVisible: boolean;
-};
+const GuideAlert = (props: DrawAoiGuideAlertProps) => {
+  // Props
+  const {
+    isLoading,
+    isDrawing,
+    hasFinishedDraw,
+    isVisible = true,
+    ...restProps
+  } = props;
 
-const GuideAlert = ({
-  isLoading,
-  isDrawing,
-  hasFinishedDraw,
-  isVisible,
-}: ExtendedGuideAlertProps) => {
+  // Stores
   const { theme } = useThemeStore();
 
+  // Utils
   const getAlertBg = () => {
     if (isLoading) return "bg.info";
     if (isDrawing) return "bg.warning";
@@ -209,6 +218,7 @@ const GuideAlert = ({
       pb={0}
       visibility={isVisible ? "visible" : "hidden"}
       pointerEvents={isVisible ? "auto" : "none"}
+      {...restProps}
     >
       <HStack
         align={"center"}
