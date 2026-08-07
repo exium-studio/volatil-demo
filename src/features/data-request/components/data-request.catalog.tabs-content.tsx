@@ -1,11 +1,7 @@
 // src/features/data-request/components/data-request.catalog.tabs-content.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
-import type {
-  FormattedListItem,
-  FormattedTableColumn,
-  FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
@@ -26,7 +22,6 @@ import {
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
 import { useIgtCatalog } from "@/features/data-request/hooks/use-data-request";
-import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -34,13 +29,6 @@ import { useMemo, useState } from "react";
 const MAX_VISIBLE_THEMES = 2;
 const BASIS_BIDANG_COLOR = "blue" as const;
 const BASIS_KAWASAN_COLOR = "orange" as const;
-
-const CATALOG_HEADERS: FormattedTableHeader[] = [
-  { th: "ID Bidang", sortable: true },
-  { th: "Tema IGT-PR" },
-  { th: "Basis IGT-PR", sortable: true },
-  { th: "Deskripsi" },
-];
 
 export const DataRequestCatalogTabsContent = (props: TabsContentProps) => {
   return (
@@ -76,12 +64,12 @@ export const DataRequestCatalogTabsContent = (props: TabsContentProps) => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <CatalogResultTable />
+      <DataList />
     </Tabs.Content>
   );
 };
 
-const CatalogResultTable = () => {
+const DataList = () => {
   const { theme } = useThemeStore();
 
   const [dataListState, setDataListState] = useState({
@@ -97,10 +85,80 @@ const CatalogResultTable = () => {
 
   const dataList = useMemo(
     () => ({
-      headers: CATALOG_HEADERS,
-      items: rawItems.map((item) =>
-        igtItemToFormattedItem(item),
-      ) as FormattedListItem[],
+      headers: [
+        { th: "ID Bidang", sortable: true },
+        { th: "Tema IGT-PR" },
+        { th: "Basis IGT-PR", sortable: true },
+        { th: "Deskripsi" },
+      ],
+      items: rawItems.map((item) => {
+        const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
+        const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
+
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: item.id,
+              td: <P fontSize={"sm"}>{item.id}</P>,
+              align: "start" as const,
+            },
+            {
+              value: item.themes.map((th) => th.name).join(", "),
+              td: (
+                <HStack wrap={"wrap"} gap={1}>
+                  {visibleThemes.map((theme) => (
+                    <Badge
+                      key={theme.name}
+                      colorPalette={"neutral"}
+                      variant={"subtle"}
+                    >
+                      {theme.name}
+                    </Badge>
+                  ))}
+                  {remainingCount > 0 && (
+                    <Badge colorPalette={"neutral"} variant={"outline"}>
+                      +{remainingCount} lainnya
+                    </Badge>
+                  )}
+                </HStack>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.basis,
+              td: (
+                <Badge
+                  colorPalette={
+                    item.basis === "bidang"
+                      ? BASIS_BIDANG_COLOR
+                      : BASIS_KAWASAN_COLOR
+                  }
+                  variant={"subtle"}
+                >
+                  {item.basis}
+                </Badge>
+              ),
+              align: "center" as const,
+            },
+            {
+              value: item.description ?? "",
+              td: (
+                <P
+                  fontSize={"sm"}
+                  color={"fg.subtle"}
+                  maxW={"280px"}
+                  whiteSpace={"wrap"}
+                >
+                  {item.description ?? "-"}
+                </P>
+              ),
+              align: "start" as const,
+            },
+          ],
+        };
+      }),
     }),
     [rawItems],
   );
@@ -153,67 +211,4 @@ const CatalogResultTable = () => {
       />
     </VStack>
   );
-};
-
-const igtItemToFormattedItem = (
-  item: IgtDataItem,
-): FormattedListItem<IgtDataItem> => {
-  const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
-  const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
-
-  const columns: FormattedTableColumn[] = [
-    {
-      value: item.id,
-      td: <P fontSize={"sm"}>{item.id}</P>,
-      align: "start",
-    },
-    {
-      value: item.themes.map((th) => th.name).join(", "),
-      td: (
-        <HStack wrap={"wrap"} gap={1}>
-          {visibleThemes.map((theme) => (
-            <Badge key={theme.name} colorPalette={"neutral"} variant={"subtle"}>
-              {theme.name}
-            </Badge>
-          ))}
-          {remainingCount > 0 && (
-            <Badge colorPalette={"neutral"} variant={"outline"}>
-              +{remainingCount} lainnya
-            </Badge>
-          )}
-        </HStack>
-      ),
-      align: "start",
-    },
-    {
-      value: item.basis,
-      td: (
-        <Badge
-          colorPalette={
-            item.basis === "bidang" ? BASIS_BIDANG_COLOR : BASIS_KAWASAN_COLOR
-          }
-          variant={"subtle"}
-        >
-          {item.basis}
-        </Badge>
-      ),
-      align: "center",
-    },
-    {
-      value: item.description ?? "",
-      td: (
-        <P
-          fontSize={"sm"}
-          color={"fg.subtle"}
-          maxW={"280px"}
-          whiteSpace={"wrap"}
-        >
-          {item.description ?? "-"}
-        </P>
-      ),
-      align: "start",
-    },
-  ];
-
-  return { id: item.id, data: item, columns };
 };

@@ -1,11 +1,7 @@
 // src/features/data-request/components/data-request.draw-aoi.tabs-content.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
-import type {
-  FormattedListItem,
-  FormattedTableColumn,
-  FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
@@ -17,8 +13,6 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
-import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
@@ -29,35 +23,26 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
-import {
-  useFetchIgtByAoi,
-  useFlyToIgtGeometry,
-} from "@/features/data-request/hooks/use-data-request";
+import { useDrawAoi } from "@/features/data-request/hooks/use-draw-aoi";
+import type {
+  DrawAoiControlsProps,
+  DrawAoiDataListProps,
+  DrawAoiGuideAlertProps,
+} from "@/features/data-request/types/data-request.draw-aoi.type";
 import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
 import { t } from "@/shared/libs/i18n";
 import {
   IconCheck,
   IconInfoCircle,
-  IconMapPin,
   IconPencil,
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
-import type GeoJSON from "geojson";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
-const MIN_PURCHASE_COUNT = 1;
 const MAX_VISIBLE_THEMES = 2;
-
 const BASIS_BIDANG_COLOR = "blue" as const;
 const BASIS_KAWASAN_COLOR = "orange" as const;
-
-const IGT_BY_AOI_HEADERS: FormattedTableHeader[] = [
-  { th: "ID Bidang", sortable: true },
-  { th: "Tema IGT-PR" },
-  { th: "Basis IGT-PR", sortable: true },
-  { th: "Deskripsi" },
-];
 
 export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
   const {
@@ -72,9 +57,6 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
     isDone,
     hasEnoughItems,
     igtItems,
-    formattedItems,
-    selectedItems,
-    setSelectedItems,
     handleResetDraw,
     handleConfirmAndFetch,
     itemActions,
@@ -103,14 +85,14 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
       )}
 
       {hasStartedDrawing && !isDone && (
-        <DrawAoiGuideAlert
+        <GuideAlert
           isLoading={isLoading}
           isDrawing={isDrawing}
           hasFinishedDraw={hasFinishedDraw}
         />
       )}
 
-      <DrawAoiControls
+      <DrawControls
         isDrawing={isDrawing}
         isLoading={isLoading}
         hasFinishedDraw={hasFinishedDraw}
@@ -146,26 +128,17 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
       )}
 
       {isDone && hasEnoughItems && (
-        <DrawAoiResultTable
+        <DataList
           igtItems={igtItems}
-          formattedItems={formattedItems}
-          selectedItems={selectedItems}
           itemActions={itemActions}
           onResetDraw={handleResetDraw}
-          onSelectedItemsChange={setSelectedItems}
         />
       )}
     </Tabs.Content>
   );
 };
 
-type DrawAoiGuideAlertProps = {
-  isLoading: boolean;
-  isDrawing: boolean;
-  hasFinishedDraw: boolean;
-};
-
-const DrawAoiGuideAlert = ({
+const GuideAlert = ({
   isLoading,
   isDrawing,
   hasFinishedDraw,
@@ -218,17 +191,7 @@ const DrawAoiGuideAlert = ({
   );
 };
 
-type DrawAoiControlsProps = {
-  isDrawing: boolean;
-  isLoading: boolean;
-  hasFinishedDraw: boolean;
-  isDone: boolean;
-  onCancelDraw: () => void;
-  onResetDraw: () => void;
-  onConfirmAndFetch: () => void;
-};
-
-const DrawAoiControls = ({
+const DrawControls = ({
   isDrawing,
   isLoading,
   hasFinishedDraw,
@@ -283,24 +246,95 @@ const DrawAoiControls = ({
   return null;
 };
 
-type DrawAoiResultTableProps = {
-  igtItems: IgtDataItem[];
-  formattedItems: FormattedListItem<IgtDataItem>[];
-  selectedItems: FormattedListItem<IgtDataItem>[];
-  itemActions: DataListItemActionsGenerator<IgtDataItem>[];
-  onResetDraw: () => void;
-  onSelectedItemsChange: (items: FormattedListItem<IgtDataItem>[]) => void;
-};
-
-const DrawAoiResultTable = ({
+const DataList = ({
   igtItems,
-  formattedItems,
-  selectedItems,
   itemActions,
   onResetDraw,
-  onSelectedItemsChange,
-}: DrawAoiResultTableProps) => {
+}: DrawAoiDataListProps) => {
   const { theme } = useThemeStore();
+  const [selectedItems, setSelectedItems] = useState<
+    FormattedListItem<IgtDataItem>[]
+  >([]);
+
+  const dataList = useMemo(
+    () => ({
+      headers: [
+        { th: "ID Bidang", sortable: true },
+        { th: "Tema IGT-PR" },
+        { th: "Basis IGT-PR", sortable: true },
+        { th: "Deskripsi" },
+      ],
+      items: igtItems.map((item) => {
+        const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
+        const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
+
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: item.id,
+              td: <P fontSize={"sm"}>{item.id}</P>,
+              align: "start" as const,
+            },
+            {
+              value: item.themes.map((th) => th.name).join(", "),
+              td: (
+                <HStack wrap={"wrap"} gap={1}>
+                  {visibleThemes.map((theme) => (
+                    <Badge
+                      key={theme.name}
+                      colorPalette={"neutral"}
+                      variant={"subtle"}
+                    >
+                      {theme.name}
+                    </Badge>
+                  ))}
+                  {remainingCount > 0 && (
+                    <Badge colorPalette={"neutral"} variant={"outline"}>
+                      +{remainingCount} lainnya
+                    </Badge>
+                  )}
+                </HStack>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.basis,
+              td: (
+                <Badge
+                  colorPalette={
+                    item.basis === "bidang"
+                      ? BASIS_BIDANG_COLOR
+                      : BASIS_KAWASAN_COLOR
+                  }
+                  variant={"subtle"}
+                >
+                  {item.basis}
+                </Badge>
+              ),
+              align: "center" as const,
+            },
+            {
+              value: item.description ?? "",
+              td: (
+                <P
+                  fontSize={"sm"}
+                  color={"fg.subtle"}
+                  maxW={"280px"}
+                  whiteSpace={"wrap"}
+                >
+                  {item.description ?? "-"}
+                </P>
+              ),
+              align: "start" as const,
+            },
+          ],
+        };
+      }),
+    }),
+    [igtItems],
+  );
 
   return (
     <>
@@ -343,8 +377,8 @@ const DrawAoiResultTable = ({
         <DataListTable.Root
           withNumbering={true}
           fixedItemHeight={false}
-          headers={IGT_BY_AOI_HEADERS}
-          items={formattedItems}
+          headers={dataList.headers}
+          items={dataList.items}
           itemActions={itemActions as DataListItemActionsGenerator[]}
           canBatchSelect
           pb={0}
@@ -352,7 +386,7 @@ const DrawAoiResultTable = ({
           roundedBottom={theme.radii.container}
           shadow={"none"}
           onSelectedItemChange={({ selectedItems: sel }) => {
-            onSelectedItemsChange(sel as FormattedListItem<IgtDataItem>[]);
+            setSelectedItems(sel as FormattedListItem<IgtDataItem>[]);
           }}
         >
           <DataListTable.Header />
@@ -379,147 +413,4 @@ const DrawAoiResultTable = ({
       </VStack>
     </>
   );
-};
-
-const useDrawAoi = () => {
-  const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();
-  const fetchIgtMutation = useFetchIgtByAoi();
-  const flyToMutation = useFlyToIgtGeometry();
-
-  const [selectedItems, setSelectedItems] = useState<
-    FormattedListItem<IgtDataItem>[]
-  >([]);
-
-  const hasStartedDrawing = isDrawing || points.length > 0;
-  const hasFinishedDraw = !isDrawing && points.length >= 3;
-
-  const igtItems = useMemo(
-    () => fetchIgtMutation.data ?? [],
-    [fetchIgtMutation.data],
-  );
-  const hasEnoughItems = igtItems.length >= MIN_PURCHASE_COUNT;
-
-  const formattedItems = useMemo<FormattedListItem<IgtDataItem>[]>(
-    () => igtItems.map(igtItemToFormattedItem),
-    [igtItems],
-  );
-
-  const handleResetDraw = useCallback(() => {
-    fetchIgtMutation.reset();
-    setSelectedItems([]);
-    cancelDraw();
-  }, [cancelDraw, fetchIgtMutation]);
-
-  const handleConfirmAndFetch = useCallback(async () => {
-    if (!hasFinishedDraw) return;
-
-    const polygon: GeoJSON.Polygon = {
-      type: "Polygon",
-      coordinates: [
-        [...points.map((p) => [p.lng, p.lat]), [points[0].lng, points[0].lat]],
-      ],
-    };
-
-    setSelectedItems([]);
-    await fetchIgtMutation.mutateAsync(polygon);
-  }, [fetchIgtMutation, hasFinishedDraw, points]);
-
-  const itemActions: DataListItemActionsGenerator<IgtDataItem>[] = useMemo(
-    () => [
-      (item) => (
-        <Menu.Item
-          key={"fly-to"}
-          value={"fly-to"}
-          onClick={() => void flyToMutation.mutateAsync(item.id)}
-        >
-          <AppIcon icon={IconMapPin} />
-          Lihat di Peta
-        </Menu.Item>
-      ),
-    ],
-    [flyToMutation],
-  );
-
-  return {
-    isDrawing,
-    startDraw: () => start("polygon"),
-    cancelDraw,
-    hasStartedDrawing,
-    hasFinishedDraw,
-    isLoading: fetchIgtMutation.isPending,
-    isDone: fetchIgtMutation.isSuccess,
-    isError: fetchIgtMutation.isError,
-    error: fetchIgtMutation.error,
-    hasEnoughItems,
-    igtItems,
-    formattedItems,
-    selectedItems,
-    setSelectedItems,
-    handleResetDraw,
-    handleConfirmAndFetch,
-    itemActions,
-  };
-};
-
-const igtItemToFormattedItem = (
-  item: IgtDataItem,
-): FormattedListItem<IgtDataItem> => {
-  const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
-  const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
-
-  const columns: FormattedTableColumn[] = [
-    {
-      value: item.id,
-      td: <P fontSize={"sm"}>{item.id}</P>,
-      align: "start",
-    },
-    {
-      value: item.themes.map((th) => th.name).join(", "),
-      td: (
-        <HStack wrap={"wrap"} gap={1}>
-          {visibleThemes.map((theme) => (
-            <Badge key={theme.name} colorPalette={"neutral"} variant={"subtle"}>
-              {theme.name}
-            </Badge>
-          ))}
-          {remainingCount > 0 && (
-            <Badge colorPalette={"neutral"} variant={"outline"}>
-              +{remainingCount} lainnya
-            </Badge>
-          )}
-        </HStack>
-      ),
-      align: "start",
-    },
-    {
-      value: item.basis,
-      td: (
-        <Badge
-          colorPalette={
-            item.basis === "bidang" ? BASIS_BIDANG_COLOR : BASIS_KAWASAN_COLOR
-          }
-          variant={"subtle"}
-        >
-          {item.basis}
-        </Badge>
-      ),
-      align: "center",
-    },
-    {
-      value: item.description ?? "",
-      td: (
-        <P
-          fontSize={"sm"}
-          color={"fg.subtle"}
-          maxW={"280px"}
-          whiteSpace={"wrap"}
-        >
-          {item.description ?? "-"}
-        </P>
-      ),
-      align: "start",
-    },
-  ];
-
-  return { id: item.id, data: item, columns };
 };

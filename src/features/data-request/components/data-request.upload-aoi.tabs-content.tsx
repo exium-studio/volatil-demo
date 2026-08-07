@@ -2,11 +2,7 @@
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import { Button } from "@/design-system/components/button/ui/button";
-import type {
-  FormattedListItem,
-  FormattedTableColumn,
-  FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
@@ -39,7 +35,6 @@ import {
 import { useFetchIgtByUploadedAoi } from "@/features/data-request/hooks/use-data-request";
 import type { UploadAoiFileListTriggerProps } from "@/features/data-request/types/data-request.upload-aoi.type";
 import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
-import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
@@ -52,13 +47,6 @@ import { useEffect, useMemo, useState } from "react";
 const MAX_VISIBLE_THEMES = 2;
 const BASIS_BIDANG_COLOR = "blue" as const;
 const BASIS_KAWASAN_COLOR = "orange" as const;
-
-const UPLOAD_AOI_HEADERS: FormattedTableHeader[] = [
-  { th: "ID Bidang", sortable: true },
-  { th: "Tema IGT-PR" },
-  { th: "Basis IGT-PR", sortable: true },
-  { th: "Deskripsi" },
-];
 
 export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
   const [dataListState, setDataListState] = useState({
@@ -123,7 +111,7 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
               "Upload file AOI untuk melihat data IGT yang tersedia di area tersebut"
             }
           >
-            <AddAoiFileButton />
+            <AddFileButton />
           </NoDataState>
         )}
 
@@ -146,14 +134,14 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
                 </HStack>
 
                 <HStack align={"center"} gap={SPACING_SM}>
-                  <UploadAoiFileListTrigger>
+                  <FileListTrigger>
                     <Button variant={"outline"}>
                       <AppIcon icon={FilesIcon} />
                       File AOI anda ({dataListState.uploadedFiles.length})
                     </Button>
-                  </UploadAoiFileListTrigger>
+                  </FileListTrigger>
 
-                  <AddAoiFileButton variant={"outline"} />
+                  <AddFileButton variant={"outline"} />
                 </HStack>
               </HStack>
             </VStack>
@@ -166,7 +154,7 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
               overflowY={"auto"}
               bg={"bg.canvas"}
             >
-              <UploadAoiResultTable />
+              <DataList />
 
               <DataRequestAddToCartButtons
                 selectedItems={dataListState.selectedItems}
@@ -185,7 +173,7 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
   );
 };
 
-const AddAoiFileButton = (props: ButtonProps) => {
+const AddFileButton = (props: ButtonProps) => {
   const { dataListState, setDataListState } = useDataRequestUploadAoiContext();
 
   return (
@@ -209,7 +197,7 @@ const AddAoiFileButton = (props: ButtonProps) => {
   );
 };
 
-const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
+const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
   const { children } = props;
   const { dataListState, setDataListState } = useDataRequestUploadAoiContext();
 
@@ -275,16 +263,86 @@ const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
   );
 };
 
-const UploadAoiResultTable = () => {
+const DataList = () => {
   const { theme } = useThemeStore();
   const { igtData, setDataListState } = useDataRequestUploadAoiContext();
 
   const dataList = useMemo(
     () => ({
-      headers: UPLOAD_AOI_HEADERS,
-      items: igtData?.items?.map((item) =>
-        igtItemToFormattedItem(item),
-      ) as FormattedListItem[],
+      headers: [
+        { th: "ID Bidang", sortable: true },
+        { th: "Tema IGT-PR" },
+        { th: "Basis IGT-PR", sortable: true },
+        { th: "Deskripsi" },
+      ],
+      items: (igtData?.items ?? []).map((item) => {
+        const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
+        const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
+
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: item.id,
+              td: <P fontSize={"sm"}>{item.id}</P>,
+              align: "start" as const,
+            },
+            {
+              value: item.themes.map((th) => th.name).join(", "),
+              td: (
+                <HStack wrap={"wrap"} gap={1}>
+                  {visibleThemes.map((theme) => (
+                    <Badge
+                      key={theme.name}
+                      colorPalette={"neutral"}
+                      variant={"subtle"}
+                    >
+                      {theme.name}
+                    </Badge>
+                  ))}
+                  {remainingCount > 0 && (
+                    <Badge colorPalette={"neutral"} variant={"outline"}>
+                      +{remainingCount} lainnya
+                    </Badge>
+                  )}
+                </HStack>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.basis,
+              td: (
+                <Badge
+                  colorPalette={
+                    item.basis === "bidang"
+                      ? BASIS_BIDANG_COLOR
+                      : BASIS_KAWASAN_COLOR
+                  }
+                  variant={"subtle"}
+                >
+                  {item.basis}
+                </Badge>
+              ),
+              align: "center" as const,
+            },
+            {
+              value: item.description ?? "",
+              td: (
+                <P
+                  fontSize={"sm"}
+                  color={"fg.subtle"}
+                  maxW={"280px"}
+                  whiteSpace={"wrap"}
+                >
+                  {item.description ?? "-"}
+                </P>
+              ),
+              align: "start" as const,
+            },
+          ],
+        };
+      }),
     }),
     [igtData],
   );
@@ -294,7 +352,7 @@ const UploadAoiResultTable = () => {
       <DataListTable.Root
         withNumbering={false}
         headers={dataList.headers}
-        items={dataList.items ?? []}
+        items={dataList.items}
         canBatchSelect
         pb={0}
         roundedTop={0}
@@ -310,67 +368,4 @@ const UploadAoiResultTable = () => {
       </DataListTable.Root>
     </VStack>
   );
-};
-
-const igtItemToFormattedItem = (
-  item: IgtDataItem,
-): FormattedListItem<IgtDataItem> => {
-  const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
-  const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
-
-  const columns: FormattedTableColumn[] = [
-    {
-      value: item.id,
-      td: <P fontSize={"sm"}>{item.id}</P>,
-      align: "start",
-    },
-    {
-      value: item.themes.map((th) => th.name).join(", "),
-      td: (
-        <HStack wrap={"wrap"} gap={1}>
-          {visibleThemes.map((theme) => (
-            <Badge key={theme.name} colorPalette={"neutral"} variant={"subtle"}>
-              {theme.name}
-            </Badge>
-          ))}
-          {remainingCount > 0 && (
-            <Badge colorPalette={"neutral"} variant={"outline"}>
-              +{remainingCount} lainnya
-            </Badge>
-          )}
-        </HStack>
-      ),
-      align: "start",
-    },
-    {
-      value: item.basis,
-      td: (
-        <Badge
-          colorPalette={
-            item.basis === "bidang" ? BASIS_BIDANG_COLOR : BASIS_KAWASAN_COLOR
-          }
-          variant={"subtle"}
-        >
-          {item.basis}
-        </Badge>
-      ),
-      align: "center",
-    },
-    {
-      value: item.description ?? "",
-      td: (
-        <P
-          fontSize={"sm"}
-          color={"fg.subtle"}
-          maxW={"280px"}
-          whiteSpace={"wrap"}
-        >
-          {item.description ?? "-"}
-        </P>
-      ),
-      align: "start",
-    },
-  ];
-
-  return { id: item.id, data: item, columns };
 };
