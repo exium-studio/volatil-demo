@@ -23,21 +23,11 @@ export const BaseMapZoomControl = (props: StackProps) => {
   return (
     <MapOverlayContainer {...props}>
       <ButtonGroup attached color={"white"}>
-        <IconButton
-          aria-label={"Zoom out"}
-          variant={"whiteAlphaGhost"}
-          size={"sm"}
-          onClick={zoomOut}
-        >
+        <IconButton aria-label={"Zoom out"} size={"sm"} onClick={zoomOut}>
           <AppIcon icon={MinusIcon} />
         </IconButton>
 
-        <IconButton
-          aria-label={"Zoom in"}
-          variant={"whiteAlphaGhost"}
-          size={"sm"}
-          onClick={zoomIn}
-        >
+        <IconButton aria-label={"Zoom in"} size={"sm"} onClick={zoomIn}>
           <AppIcon icon={PlusIcon} />
         </IconButton>
       </ButtonGroup>

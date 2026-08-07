@@ -210,7 +210,7 @@ export const MapSearch = () => {
       <MapOverlayContainer
         overflow={"clip"}
         w={isOpened ? "full" : "36px"}
-        bg={isOpened ? "bg.body" : "darkAlpha.800"}
+        bg={"bg.body"}
         transition={"200ms"}
       >
         <SearchInput
@@ -221,13 +221,9 @@ export const MapSearch = () => {
           w={"full"}
           border={"none"}
           outline={"none"}
-          color={isOpened ? "fg" : "white"}
           bg={"transparent"}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          appIconProps={{
-            color: isOpened ? "fg" : "white",
-          }}
         />
       </MapOverlayContainer>
 

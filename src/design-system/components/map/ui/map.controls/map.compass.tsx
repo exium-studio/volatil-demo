@@ -47,12 +47,7 @@ export const BaseMapCompass = (props: StackProps) => {
         </P>
       </ToggleTip>
 
-      <IconButton
-        aria-label={"Reset north"}
-        variant={"whiteAlphaGhost"}
-        size={"sm"}
-        onClick={resetNorth}
-      >
+      <IconButton aria-label={"Reset north"} size={"sm"} onClick={resetNorth}>
         <AppIcon
           icon={Navigation2Icon}
           fill={"red.400"}

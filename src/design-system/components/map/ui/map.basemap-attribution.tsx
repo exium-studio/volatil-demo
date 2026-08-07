@@ -20,11 +20,7 @@ export const MapAttribution = () => {
     <MapOverlayContainer>
       <Popover.Root>
         <Popover.Trigger>
-          <IconButton
-            aria-label={"Map attribution"}
-            variant={"whiteAlphaGhost"}
-            size={"sm"}
-          >
+          <IconButton aria-label={"Map attribution"} size={"sm"}>
             <AppIcon icon={InfoIcon} />
           </IconButton>
         </Popover.Trigger>
