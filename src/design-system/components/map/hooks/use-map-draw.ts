@@ -155,7 +155,7 @@ export const useMapDraw = (
   // Can be called safely multiple times.
   const ensureLayersExist = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!map || !(map as any).style || !map.isStyleLoaded()) return false;
+    if (!map || !(map as any).style) return false;
 
     if (!map.getSource(DRAW_SOURCE_ID)) {
       map.addSource(DRAW_SOURCE_ID, {

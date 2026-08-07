@@ -63,21 +63,52 @@ export const useMapLayers = (
       return data;
     };
 
-    const addLayer = async (layer: MapLayerConfig) => {
-      // Skip if already added (idempotent guard).
-      if (map.getSource(layer.id)) return;
+    const safeAddSource = (
+      id: string,
+      sourceSpec: maplibregl.SourceSpecification,
+    ) => {
+      if (map.getSource(id)) return;
+      try {
+        map.addSource(id, sourceSpec);
+      } catch (err) {
+        console.error(`Failed to add source "${id}"`, err);
+      }
+    };
 
+    const safeAddLayer = (
+      spec: maplibregl.LayerSpecification,
+      beforeId?: string,
+    ) => {
+      if (map.getLayer(spec.id)) return;
+      const targetBeforeId =
+        beforeId && map.getLayer(beforeId) ? beforeId : undefined;
+      try {
+        map.addLayer(spec, targetBeforeId);
+      } catch (err) {
+        console.warn(
+          `Fallback addLayer for "${spec.id}" without beforeId`,
+          err,
+        );
+        try {
+          map.addLayer(spec);
+        } catch (e) {
+          console.error(`Failed to add layer "${spec.id}"`, e);
+        }
+      }
+    };
+
+    const addLayer = async (layer: MapLayerConfig) => {
       const beforeId = getCustomLayerBeforeId(map);
       const visibility = resolveVisibility(layer);
 
       switch (layer.type) {
         case "wms-raster": {
-          map.addSource(layer.id, {
+          safeAddSource(layer.id, {
             type: "raster",
             tiles: [layer.tileUrl],
             tileSize: layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE,
           });
-          map.addLayer(
+          safeAddLayer(
             {
               id: layer.id,
               type: "raster",
@@ -97,8 +128,8 @@ export const useMapLayers = (
 
           if (controller.signal.aborted) return;
 
-          map.addSource(layer.id, { type: "geojson", data });
-          map.addLayer(
+          safeAddSource(layer.id, { type: "geojson", data });
+          safeAddLayer(
             {
               id: layer.id,
               type: WFS_LAYER_RENDER_TYPE_MAP[layer.type],
@@ -112,12 +143,12 @@ export const useMapLayers = (
         }
 
         case "raster-tile": {
-          map.addSource(layer.id, {
+          safeAddSource(layer.id, {
             type: "raster",
             tiles: [layer.tileUrl],
             tileSize: layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE,
           });
-          map.addLayer(
+          safeAddLayer(
             {
               id: layer.id,
               type: "raster",
@@ -130,8 +161,8 @@ export const useMapLayers = (
         }
 
         case "vector-tile": {
-          map.addSource(layer.id, { type: "vector", tiles: [layer.tileUrl] });
-          map.addLayer(
+          safeAddSource(layer.id, { type: "vector", tiles: [layer.tileUrl] });
+          safeAddLayer(
             {
               id: layer.id,
               type: "fill",
@@ -158,42 +189,55 @@ export const useMapLayers = (
       });
     };
 
+    let setupSeq = 0;
+
     /**
-     * Adds all config layers from scratch, then fires MAP_LAYERS_READY_EVENT
-     * so useMapDraw can add draw layers on top.
+     * Adds all config layers from scratch in absolute order:
+     *   basemap (already present) → wms-raster → wfs-* → draw layers (added by useMapDraw)
+     *
+     * Removes own data layers first, then re-adds sequentially, then fires
+     * MAP_LAYERS_READY_EVENT so useMapDraw knows to (re)add draw layers on top.
+     *
+     * This function is passed directly to both map.on and map.off so the
+     * listener reference is stable and map.off() correctly removes it.
      */
     const setupLayers = async () => {
+      const seq = ++setupSeq;
+
+      // Remove own data layers first (idempotent — safe if already wiped by style.load)
+      removeLayers(layersRef.current);
+
       const configs = layersRef.current;
 
-      // Force-clean existing layers first — style.load wipes sources anyway,
-      // but explicit cleanup avoids leftover state from partial adds.
-      removeLayers(configs);
+      // Add layers in array order (bottom to top): wms-raster first, then wfs-*.
+      // The consumer controls ordering via the config array.
+      for (const layer of configs) {
+        if (seq !== setupSeq || controller.signal.aborted) return;
 
-      // Add layers in array order (bottom to top): wms-raster should be first,
-      // then wfs-*, etc. The consumer controls the ordering via the config array.
-      const promises = configs.map((layer) =>
-        // TODO: call toast.error(`Failed to load layer "${layer.id}"`) when a layer fails (e.g. WFS request error)
-        addLayer(layer).catch((error: unknown) => {
+        try {
+          await addLayer(layer);
+        } catch (error: unknown) {
           console.error(`Failed to add layer "${layer.id}"`, error);
-        }),
-      );
+        }
+      }
 
-      await Promise.all(promises);
-
-      if (!controller.signal.aborted) {
+      // Signal useMapDraw to (re)add draw layers on top
+      if (seq === setupSeq && !controller.signal.aborted) {
         map.fire(MAP_LAYERS_READY_EVENT);
       }
     };
 
+    // Listen for MAP_STYLE_READY_EVENT (fired by basemap after applyGlobe settles)
+    // Pass setupLayers directly — same reference used in map.off for correct cleanup
     map.on(MAP_STYLE_READY_EVENT as string, setupLayers);
 
-    // If the map is already loaded and style is ready, set up immediately.
-    if (map.isStyleLoaded()) {
-      void setupLayers();
-    }
+    // Also run immediately for initial mount
+    // (basemap may have already fired MAP_STYLE_READY_EVENT before useMapLayers mounted)
+    void setupLayers();
 
     return () => {
       controller.abort();
+      // Correct cleanup: same reference as map.on — listener is fully removed
       map.off(MAP_STYLE_READY_EVENT as string, setupLayers);
       removeLayers(layersRef.current);
     };

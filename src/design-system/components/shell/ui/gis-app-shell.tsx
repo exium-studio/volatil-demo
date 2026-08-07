@@ -129,6 +129,7 @@ const Sidebar = () => {
         overflowY={"auto"}
         overflowX={"clip"}
         h={"full"}
+        py={2}
         bg={"bg.body"}
         // rounded={theme.radii.container}
       >

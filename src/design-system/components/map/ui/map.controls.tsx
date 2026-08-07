@@ -2,6 +2,7 @@
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { BaseMap3DToggle } from "@/design-system/components/map/ui/map.controls/map.3d-toggle";
 import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map.controls/map.basemap-select";
 import { BaseMapCompass } from "@/design-system/components/map/ui/map.controls/map.compass";
 import { BaseMapLocate } from "@/design-system/components/map/ui/map.controls/map.locate";
@@ -21,6 +22,8 @@ export const MapControls = (props: StackProps) => {
       <MapBaseLayerSelect />
 
       <HStack gap={2}>
+        <BaseMap3DToggle />
+
         <BaseMapZoomControl />
 
         <BaseMapLocate />
