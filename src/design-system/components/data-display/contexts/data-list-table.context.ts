@@ -9,6 +9,7 @@ import type {
   DataListBatchActionsGenerator,
   DataListItemActionsGenerator,
 } from "@/design-system/components/data-display/types/data-list.type";
+import type { RefObject } from "react";
 import { createContext, useContext } from "react";
 
 export type DataListTableContextValue = {
@@ -19,6 +20,10 @@ export type DataListTableContextValue = {
   batchActions?: DataListBatchActionsGenerator[];
   itemActions?: DataListItemActionsGenerator[];
   withNumbering?: boolean;
+  virtualized?: boolean;
+  fixedItemHeight?: boolean;
+  tableContainerRef: RefObject<HTMLDivElement | null>;
+  tableContainerEl: HTMLDivElement | null;
 
   sortConfig: DataListTableSortConfig;
   toggleSort: (columnIndex: number) => void;

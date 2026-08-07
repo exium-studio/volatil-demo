@@ -6,7 +6,6 @@ import type {
   FormattedTableColumn,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
@@ -27,11 +26,11 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
-import { useClipStore } from "@/features/clip/stores/use-clip-store";
-import { useWfsClip } from "@/features/clip/hooks/use-wfs-clip";
-import { useGlobalMap } from "@/features/clip/hooks/use-global-map";
 import { useClipResultLayer } from "@/features/clip/hooks/use-clip-result-layer";
+import { useGlobalMap } from "@/features/clip/hooks/use-global-map";
+import { useWfsClip } from "@/features/clip/hooks/use-wfs-clip";
+import { useClipStore } from "@/features/clip/stores/use-clip-store";
+import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
 import { t } from "@/shared/libs/i18n";
 import type GeoJSON from "geojson";
 import {
@@ -377,18 +376,12 @@ const DataList = ({ clippedFeatures }: DataListProps) => {
 
   const totalItems = dataList.items.length;
 
-  // Pagination slice
-  const paginatedItems = useMemo(() => {
-    const start = (dataListState.page - 1) * dataListState.perPage;
-    return dataList.items.slice(start, start + dataListState.perPage);
-  }, [dataList.items, dataListState.page, dataListState.perPage]);
-
   return (
     <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
       <DataListTable.Root
         withNumbering={true}
         headers={dataList.headers}
-        items={paginatedItems}
+        items={dataList.items}
         canBatchSelect
         rounded={0}
         shadow={"none"}
@@ -400,17 +393,7 @@ const DataList = ({ clippedFeatures }: DataListProps) => {
         <DataListTable.Body />
       </DataListTable.Root>
 
-      <DataListFooter
-        perPage={dataListState.perPage}
-        setPerPage={(perPage) =>
-          setDataListState((prev) => ({ ...prev, perPage, page: 1 }))
-        }
-        page={dataListState.page}
-        setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
-        rounded={0}
-      />
-
-      <Separator borderColor={"bg.canvas"} />
+      <Separator borderColor={"bg.canvas"} mt={"auto"} />
 
       <DataRequestAddToCartButtons
         selectedItems={dataListState.selectedItems}

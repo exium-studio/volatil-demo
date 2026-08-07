@@ -24,6 +24,8 @@ export type DataListTableRootProps = Omit<StackProps, "page"> & {
   batchActions?: DataListBatchActionsGenerator[];
   itemActions?: DataListItemActionsGenerator[];
   withNumbering?: boolean;
+  virtualized?: boolean;
+  fixedItemHeight?: boolean;
 };
 
 export type DataListTableHeaderProps = StackProps & {};

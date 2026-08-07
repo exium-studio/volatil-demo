@@ -8,7 +8,9 @@ import type {
   DataListTableHeaderProps,
   DataListTableRootProps,
   DataListTableSortIconProps,
+  FormattedListItem,
 } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import {
   DataListBatchActionBar,
   DataListBatchActionsTrigger,
@@ -29,13 +31,21 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { tintAlpha } from "@/shared/utils/style/color";
 import { Box, Center } from "@chakra-ui/react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   IconCaretDownFilled,
   IconCaretUpFilled,
   IconListCheck,
 } from "@tabler/icons-react";
 import { EllipsisIcon } from "lucide-react";
-import { forwardRef, useMemo } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   DataListTableContext,
   useDataListTableContext,
@@ -58,8 +68,31 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       canBatchSelect = false,
       selectedItems: controlledSelectedItems,
       onSelectedItemChange,
+      virtualized = true,
+      fixedItemHeight = true,
       ...restProps
     } = props;
+
+    // Refs & Container State
+    const [tableContainerEl, setTableContainerEl] =
+      useState<HTMLDivElement | null>(null);
+    const tableContainerRef = useRef<HTMLDivElement | null>(null);
+
+    const setTableContainerRef = useCallback(
+      (node: HTMLDivElement | null) => {
+        tableContainerRef.current = node;
+        setTableContainerEl(node);
+
+        if (typeof ref === "function") {
+          ref(node);
+        } else if (ref) {
+          (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        }
+      },
+      [ref],
+    );
+
+    useImperativeHandle(ref, () => tableContainerRef.current as HTMLDivElement);
 
     // Stores
     const { theme } = useThemeStore();
@@ -93,6 +126,10 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
         batchActions,
         itemActions,
         withNumbering,
+        virtualized,
+        fixedItemHeight,
+        tableContainerRef,
+        tableContainerEl,
 
         sortConfig,
         toggleSort,
@@ -113,6 +150,10 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
         batchActions,
         itemActions,
         withNumbering,
+        virtualized,
+        fixedItemHeight,
+        tableContainerRef,
+        tableContainerEl,
 
         sortConfig,
         toggleSort,
@@ -151,7 +192,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       <DataListTableContext.Provider value={contextValue}>
         <VStack
           className={"table-container"}
-          ref={ref}
+          ref={setTableContainerRef}
           overflow={"auto"}
           pb={TABLE_ROW_GAP}
           roundedTop={theme.radii.container}
@@ -264,6 +305,109 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
   );
 };
 
+interface DataListTableRowProps {
+  item: FormattedListItem;
+  index: number;
+  isItemSelected: boolean;
+  canBatchSelect: boolean;
+  withNumbering: boolean;
+  itemActions?: DataListItemActionsGenerator[];
+  toggleItemSelection: (item: FormattedListItem) => void;
+  bodyCellStyles: { bg: string };
+  measureRef?: (element: Element | null) => void;
+  dataIndex?: number;
+  styleProps?: StackProps;
+}
+
+const DataListTableRow = ({
+  item,
+  index,
+  isItemSelected,
+  canBatchSelect,
+  withNumbering,
+  itemActions = [],
+  toggleItemSelection,
+  bodyCellStyles,
+  measureRef,
+  dataIndex,
+  styleProps,
+}: DataListTableRowProps) => {
+  return (
+    <Box
+      ref={measureRef}
+      data-index={dataIndex}
+      role={"row"}
+      display={"grid"}
+      gridTemplateColumns={"subgrid"}
+      gridColumn={"1 / -1"}
+      overflow={"clip"}
+      minH={TABLE_ROW_H}
+      bg={"bg.body"}
+      shadow={isItemSelected ? "md" : "none"}
+      {...styleProps}
+    >
+      {canBatchSelect && (
+        <Center
+          pos={"sticky"}
+          left={0}
+          bg={"bg.body"}
+          cursor={"pointer"}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleItemSelection(item);
+          }}
+        >
+          <Center w={"full"} h={"full"} px={"10px"} {...bodyCellStyles}>
+            <Checkbox size={"sm"} checked={isItemSelected} variant={"subtle"} />
+          </Center>
+        </Center>
+      )}
+
+      {withNumbering && (
+        <DataListTableCell {...bodyCellStyles}>
+          <P>{index + 1}</P>
+        </DataListTableCell>
+      )}
+
+      {item.columns.map((col, colIndex) => (
+        <HStack
+          key={colIndex}
+          align={"center"}
+          justify={col.align}
+          w={"full"}
+          h={"full"}
+          px={4}
+          py={2}
+          opacity={item.dim || col.dim ? 0.5 : 1}
+          whiteSpace={"nowrap"}
+          {...bodyCellStyles}
+          {...col?.bodyCellProps}
+        >
+          {col.td}
+        </HStack>
+      ))}
+
+      {!isEmptyArray(itemActions) && (
+        <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
+          <Center
+            w={"full"}
+            h={"full"}
+            px={"10px"}
+            {...bodyCellStyles}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DataListItemActionsTrigger itemActions={itemActions} item={item}>
+              <IconButton variant={"ghost"} size={"xs"}>
+                <AppIcon icon={EllipsisIcon} />
+              </IconButton>
+            </DataListItemActionsTrigger>
+          </Center>
+        </Center>
+      )}
+    </Box>
+  );
+};
+
 const DataListTableBody = () => {
   // Stores
   const { theme } = useThemeStore();
@@ -276,13 +420,73 @@ const DataListTableBody = () => {
     selectedItemIds,
     toggleItemSelection,
     withNumbering,
+    virtualized = true,
+    fixedItemHeight = true,
+    tableContainerRef,
+    tableContainerEl,
   } = useDataListTableContext();
+
+  const rowHeight = useMemo(() => parseInt(TABLE_ROW_H, 10), []);
+  const rowGap = useMemo(() => parseInt(TABLE_ROW_GAP, 10), []);
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const virtualizer = useVirtualizer({
+    count: sortedItems.length,
+    getScrollElement: () => tableContainerEl ?? tableContainerRef.current,
+    estimateSize: () => rowHeight,
+    gap: rowGap,
+    overscan: 10,
+  });
+
+  const virtualItems = virtualizer.getVirtualItems();
+
+  // Fallback to direct rendering if virtualized is false or if virtualizer returned no items despite items existing
+  if (!virtualized || (virtualItems.length === 0 && sortedItems.length > 0)) {
+    return (
+      <>
+        {sortedItems.map((item, index) => {
+          const isItemSelected = selectedItemIds.includes(item.id);
+          const bodyCellStyles = {
+            bg: isItemSelected
+              ? tintAlpha(`${theme.colorPalette}.subtle`, 40)
+              : "bg.body",
+          };
+
+          return (
+            <DataListTableRow
+              key={item.id}
+              item={item}
+              index={index}
+              isItemSelected={isItemSelected}
+              canBatchSelect={canBatchSelect}
+              withNumbering={Boolean(withNumbering)}
+              itemActions={itemActions}
+              toggleItemSelection={toggleItemSelection}
+              bodyCellStyles={bodyCellStyles}
+            />
+          );
+        })}
+      </>
+    );
+  }
+
+  const paddingTop = virtualItems.length > 0 ? virtualItems[0].start : 0;
+  const totalSize = virtualizer.getTotalSize();
+  const paddingBottom =
+    virtualItems.length > 0
+      ? totalSize - virtualItems[virtualItems.length - 1].end
+      : 0;
 
   return (
     <>
-      {sortedItems.map((item, index) => {
-        const isItemSelected = selectedItemIds.includes(item.id);
+      {paddingTop > 0 && (
+        <Box gridColumn={"1 / -1"} h={`${paddingTop}px`} aria-hidden={"true"} />
+      )}
 
+      {virtualItems.map((virtualRow) => {
+        const item = sortedItems[virtualRow.index];
+        const index = virtualRow.index;
+        const isItemSelected = selectedItemIds.includes(item.id);
         const bodyCellStyles = {
           bg: isItemSelected
             ? tintAlpha(`${theme.colorPalette}.subtle`, 40)
@@ -290,85 +494,31 @@ const DataListTableBody = () => {
         };
 
         return (
-          <Box
+          <DataListTableRow
             key={item.id}
-            role={"row"}
-            display={"grid"}
-            gridTemplateColumns={"subgrid"}
-            gridColumn={"1 / -1"}
-            overflow={"clip"}
-            minH={TABLE_ROW_H}
-            bg={"bg.body"}
-            shadow={isItemSelected ? "md" : "none"}
-          >
-            {canBatchSelect && (
-              <Center
-                pos={"sticky"}
-                left={0}
-                bg={"bg.body"}
-                cursor={"pointer"}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleItemSelection(item);
-                }}
-              >
-                <Center w={"full"} h={"full"} px={"10px"} {...bodyCellStyles}>
-                  <Checkbox
-                    size={"sm"}
-                    checked={isItemSelected}
-                    variant={"subtle"}
-                  />
-                </Center>
-              </Center>
-            )}
-
-            {withNumbering && (
-              <DataListTableCell {...bodyCellStyles}>
-                <P>{index + 1}</P>
-              </DataListTableCell>
-            )}
-
-            {item.columns.map((col, colIndex) => (
-              <HStack
-                key={colIndex}
-                align={"center"}
-                justify={col.align}
-                w={"full"}
-                h={"full"}
-                px={4}
-                py={2}
-                opacity={item.dim || col.dim ? 0.5 : 1}
-                whiteSpace={"nowrap"}
-                {...bodyCellStyles}
-                {...col?.bodyCellProps}
-              >
-                {col.td}
-              </HStack>
-            ))}
-
-            {!isEmptyArray(itemActions) && (
-              <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
-                <Center
-                  w={"full"}
-                  h={"full"}
-                  px={"10px"}
-                  {...bodyCellStyles}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <DataListItemActionsTrigger
-                    itemActions={itemActions}
-                    item={item}
-                  >
-                    <IconButton variant={"ghost"} size={"xs"}>
-                      <AppIcon icon={EllipsisIcon} />
-                    </IconButton>
-                  </DataListItemActionsTrigger>
-                </Center>
-              </Center>
-            )}
-          </Box>
+            item={item}
+            index={index}
+            isItemSelected={isItemSelected}
+            canBatchSelect={canBatchSelect}
+            withNumbering={Boolean(withNumbering)}
+            itemActions={itemActions}
+            toggleItemSelection={toggleItemSelection}
+            bodyCellStyles={bodyCellStyles}
+            measureRef={
+              fixedItemHeight ? undefined : virtualizer.measureElement
+            }
+            dataIndex={fixedItemHeight ? undefined : virtualRow.index}
+          />
         );
       })}
+
+      {paddingBottom > 0 && (
+        <Box
+          gridColumn={"1 / -1"}
+          h={`${paddingBottom}px`}
+          aria-hidden={"true"}
+        />
+      )}
     </>
   );
 };
