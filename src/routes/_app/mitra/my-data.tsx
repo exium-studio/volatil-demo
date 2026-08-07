@@ -1,4 +1,4 @@
-// src/routes/_app/portal/my-data.tsx
+// src/routes/_app/mitra/my-data.tsx
 
 import { createFileRoute } from '@tanstack/react-router'
 

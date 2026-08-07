@@ -1,4 +1,4 @@
-// src/routes/_app/admin/order-statistic.tsx
+// src/routes/_app/internal/order-statistic.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
 

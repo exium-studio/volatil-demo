@@ -1,7 +1,7 @@
 // src/shared/constants/dummy-data/dummy-igt-by-aoi.ts
 
-import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
-import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
+import type { IgtDataResponse } from "@/features/mitra/data-request/types/data-request.type";
+import type { IgtDataItem } from "@/features/mitra/data-request/types/igt-by-aoi.type";
 
 export const DUMMY_IGT_ITEMS: IgtDataItem[] = [
   {

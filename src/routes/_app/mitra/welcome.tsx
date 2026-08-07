@@ -1,4 +1,4 @@
-// src/routes/_app/portal/welcome.tsx
+// src/routes/_app/mitra/welcome.tsx
 
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { P } from "@/design-system/components/typography/ui/p";

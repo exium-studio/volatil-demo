@@ -1,4 +1,4 @@
-// src/routes/_app/portal/notification.tsx
+// src/routes/_app/mitra/notification.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
 

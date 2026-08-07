@@ -1,4 +1,4 @@
-// src/routes/_app/admin/welcome.tsx
+// src/routes/_app/internal/welcome.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
 

@@ -1,4 +1,4 @@
-// src/routes/_app/admin/support-ticket.tsx
+// src/routes/_app/internal/support-ticket.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
 

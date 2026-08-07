@@ -1,6 +1,6 @@
-// src/routes/_app/admin/home.tsx
+// src/routes/_app/internal/home.tsx
 
-import { HomePage } from "@/features/home/pages/home.page";
+import { HomePage } from "@/features/mitra/home/pages/home.page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app/internal/home")({

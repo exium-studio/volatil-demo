@@ -1,6 +1,6 @@
 // src/shared/constants/dummy-data/dummy-home-data.ts
 
-import type { HomeDataResponse } from "@/features/home/types/home.data-summary.type";
+import type { HomeDataResponse } from "@/features/mitra/home/types/home.data-summary.type";
 
 export const dummyHomeData: HomeDataResponse = {
   dataSummary: {
