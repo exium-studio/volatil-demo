@@ -2,10 +2,7 @@
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import {
-  AbsoluteCenter,
-  Center,
-} from "@/design-system/components/layout/ui/center";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
 import {
@@ -21,7 +18,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { IconMoonFilled, IconSunFilled } from "@tabler/icons-react";
 
 export const MapBaseLayerSelect = () => {
   // Stores
@@ -36,11 +33,11 @@ export const MapBaseLayerSelect = () => {
   const plainAdaptiveProps = {
     light: {
       thumbnail: MAP_BASEMAP_MAP["plain-light"].thumbnail,
-      icon: SunIcon,
+      icon: IconSunFilled,
     },
     dark: {
       thumbnail: MAP_BASEMAP_MAP["plain-dark"].thumbnail,
-      icon: MoonIcon,
+      icon: IconMoonFilled,
     },
   };
 
@@ -76,13 +73,15 @@ export const MapBaseLayerSelect = () => {
               />
 
               {isActiveStylePlainAdaptive && (
-                <AbsoluteCenter>
-                  <AppIcon
-                    icon={plainAdaptiveProps[colorMode].icon}
-                    size={"lg"}
-                    color={"fg.subtle"}
-                  />
-                </AbsoluteCenter>
+                // <AbsoluteCenter>
+                <AppIcon
+                  icon={plainAdaptiveProps[colorMode].icon}
+                  pos={"absolute"}
+                  left={1}
+                  bottom={1}
+                  color={"fg.inverted"}
+                />
+                // </AbsoluteCenter>
               )}
             </Center>
           </Tooltip>
@@ -135,13 +134,16 @@ export const MapBaseLayerSelect = () => {
                     />
 
                     {isPlainAdaptive && (
-                      <AbsoluteCenter>
-                        <AppIcon
-                          icon={plainAdaptiveProps[colorMode].icon}
-                          size={"2xl"}
-                          color={"fg.subtle"}
-                        />
-                      </AbsoluteCenter>
+                      // <AbsoluteCenter>
+                      <AppIcon
+                        icon={plainAdaptiveProps[colorMode].icon}
+                        size={"2xl"}
+                        pos={"absolute"}
+                        left={1}
+                        bottom={1}
+                        color={"fg.inverted"}
+                      />
+                      // </AbsoluteCenter>
                     )}
                   </Center>
 
