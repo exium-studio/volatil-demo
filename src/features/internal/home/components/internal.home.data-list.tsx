@@ -1,6 +1,9 @@
 // src/features/internal/home/components/internal.home.data-list.tsx
 
-import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -13,7 +16,11 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING_MD, SPACING_MD, SPACING_SM } from "@/design-system/constants/styles";
+import {
+  PADDING_MD,
+  SPACING_MD,
+  SPACING_SM,
+} from "@/design-system/constants/styles";
 import type {
   InternalHomeDataListItem,
   InternalHomeDataListProps,
@@ -159,7 +166,11 @@ const InternalHomeDataListTableContent = () => {
               <P fontSize={"sm"} color={"fg.subtle"} maxW={"180px"} truncate>
                 {item.wfsApiLink}
               </P>
-              <AppIcon icon={ExternalLinkIcon} color={"fg.subtle"} fontSize={"xs"} />
+              <AppIcon
+                icon={ExternalLinkIcon}
+                color={"fg.subtle"}
+                fontSize={"xs"}
+              />
             </HStack>
           ),
           align: "start",

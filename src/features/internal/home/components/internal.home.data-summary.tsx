@@ -3,10 +3,7 @@
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { Box } from "@/design-system/components/layout/ui/box";
-import {
-  Container,
-  useContainerContext,
-} from "@/design-system/components/layout/ui/container";
+import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -129,18 +126,11 @@ const InternalHomeDataSummaryCharts = (
   // Props
   const { period } = props;
 
-  // Contexts
-  const { isSmContainer } = useContainerContext();
-
   // Queries / Data for current period
   const dataSummary = dummyInternalDataSummary[period];
 
   return (
-    <SimpleGrid
-      columns={isSmContainer ? 1 : 2}
-      gap={PADDING_MD}
-      px={PADDING_MD}
-    >
+    <SimpleGrid columns={1} gap={PADDING_MD} px={PADDING_MD}>
       {/* IGT Berbasis Bidang */}
       <VStack align={"start"} gap={SPACING_MD}>
         <P color={"fg.muted"}>{"IGT Berbasis Bidang"}</P>
