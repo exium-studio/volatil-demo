@@ -5,7 +5,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { t } from "@/shared/libs/i18n";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_app/portal/welcome")({
+export const Route = createFileRoute("/_app/mitra/welcome")({
   component: RouteComponent,
 });
 

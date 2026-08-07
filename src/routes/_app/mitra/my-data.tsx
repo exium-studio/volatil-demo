@@ -2,7 +2,7 @@
 
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_app/portal/my-data')({
+export const Route = createFileRoute('/_app/mitra/my-data')({
   component: RouteComponent,
 })
 

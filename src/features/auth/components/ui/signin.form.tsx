@@ -28,7 +28,7 @@ export const MitraSignin = () => {
       updatedAt: new Date().toISOString(),
     };
     setStorage("user", JSON.stringify(dummyMitraUser));
-    navigate({ to: "/portal/welcome" });
+    navigate({ to: "/mitra/welcome" });
   };
 
   return (
@@ -71,7 +71,7 @@ export const InternalSignin = () => {
       updatedAt: new Date().toISOString(),
     };
     setStorage("user", JSON.stringify(dummyInternalUser));
-    navigate({ to: "/portal/welcome" });
+    navigate({ to: "/mitra/welcome" });
   };
 
   return (

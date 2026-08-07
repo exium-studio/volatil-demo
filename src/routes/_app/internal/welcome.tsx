@@ -2,7 +2,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_app/admin/welcome")({
+export const Route = createFileRoute("/_app/internal/welcome")({
   component: RouteComponent,
 });
 

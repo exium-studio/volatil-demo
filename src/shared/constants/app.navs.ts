@@ -17,37 +17,37 @@ export const APP_NAVS_MAP = {
   home: {
     icon: HouseIcon,
     titleKey: "app.navs.home",
-    pathname: "/portal/home",
+    pathname: "/mitra/home",
   },
   data_request: {
     icon: SquarePen,
     titleKey: "app.navs.data_request",
-    pathname: "/portal/data-request",
+    pathname: "/mitra/data-request",
   },
   cart: {
     icon: ShoppingCartIcon,
     titleKey: "app.navs.cart",
-    pathname: "/portal/cart",
+    pathname: "/mitra/cart",
   },
   purchase_history: {
     icon: HistoryIcon,
     titleKey: "app.navs.purchase_history",
-    pathname: "/portal/purchase-history",
+    pathname: "/mitra/purchase-history",
   },
   my_data: {
     icon: DatabaseIcon,
     titleKey: "app.navs.my_data",
-    pathname: "/portal/my-data",
+    pathname: "/mitra/my-data",
   },
   notification: {
     icon: BellIcon,
     titleKey: "app.navs.notification",
-    pathname: "/portal/notification",
+    pathname: "/mitra/notification",
   },
   help: {
     icon: HelpCircleIcon,
     titleKey: "app.navs.help",
-    pathname: "/portal/support-ticket",
+    pathname: "/mitra/support-ticket",
   },
 } as const satisfies Record<string, NavItem>;
 
@@ -56,31 +56,31 @@ export const ADMIN_APP_NAVS_MAP = {
   home: {
     icon: HouseIcon,
     titleKey: "app.navs.home",
-    pathname: "/admin/home",
+    pathname: "/internal/home",
   },
   user_management: {
     icon: UsersIcon,
     titleKey: "app.admin_navs.user_management",
-    pathname: "/admin/user-management",
+    pathname: "/internal/user-management",
   },
   data_management: {
     icon: DatabaseIcon,
     titleKey: "app.admin_navs.data_management",
-    pathname: "/admin/data-management",
+    pathname: "/internal/data-management",
   },
   order_statistic: {
     icon: ReceiptTextIcon,
     titleKey: "app.admin_navs.order_statistic",
-    pathname: "/admin/order-statistic",
+    pathname: "/internal/order-statistic",
   },
   help: {
     icon: HelpCircleIcon,
     titleKey: "app.admin_navs.help",
-    pathname: "/admin/support-ticket",
+    pathname: "/internal/support-ticket",
   },
   notification: {
     icon: BellIcon,
     titleKey: "app.navs.notification",
-    pathname: "/portal/notification",
+    pathname: "/internal/notification",
   },
 } as const satisfies Record<string, NavItem>;

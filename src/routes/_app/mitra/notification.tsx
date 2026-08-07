@@ -2,7 +2,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_app/portal/notification")({
+export const Route = createFileRoute("/_app/mitra/notification")({
   component: RouteComponent,
 });
 

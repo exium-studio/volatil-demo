@@ -1,8 +1,8 @@
-// src/routes/_app/admin/support-ticket.tsx
+// src/routes/_app/portal/support-ticket.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_app/admin/support-ticket")({
+export const Route = createFileRoute("/_app/mitra/support-ticket")({
   component: RouteComponent,
 });
 

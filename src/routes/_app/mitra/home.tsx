@@ -3,7 +3,7 @@
 import { HomePage } from "@/features/home/pages/home.page";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_app/portal/home")({
+export const Route = createFileRoute("/_app/mitra/home")({
   component: RouteComponent,
 });
 
