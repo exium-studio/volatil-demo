@@ -74,6 +74,7 @@ const InternalHomeDataSummaryHeader = (
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ringkasan Data"}
         </P>
+
         <P fontSize={"sm"} color={"fg.subtle"}>
           {"Ringkasan data layanan IGT yang Anda kelola."}
         </P>
@@ -165,7 +166,7 @@ const InternalHomeDataSummaryCharts = (
           })}
         </HStack>
 
-        <HStack wrap={"wrap"} gap={6} justify={"space-between"} w={"full"}>
+        <HStack wrap={"wrap"} gap={6} w={"full"}>
           {FIELD_STATUSES.map((config) => {
             const value = dataSummary.field[config.key];
             return (
@@ -204,7 +205,7 @@ const InternalHomeDataSummaryCharts = (
           })}
         </HStack>
 
-        <HStack wrap={"wrap"} gap={6} justify={"space-between"} w={"full"}>
+        <HStack wrap={"wrap"} gap={6} w={"full"}>
           {AREA_STATUSES.map((config) => {
             const value = dataSummary.area[config.key];
             return (

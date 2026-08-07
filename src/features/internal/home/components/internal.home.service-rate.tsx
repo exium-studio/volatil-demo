@@ -8,7 +8,11 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
+import {
+  PADDING_MD,
+  PADDING_SM,
+  SPACING_MD,
+} from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   InternalHomeServiceRateCardProps,
@@ -25,7 +29,7 @@ export const InternalHomeServiceRate = (
       <Container.Body gap={4} py={PADDING_MD}>
         <InternalHomeServiceRateHeader />
 
-        <SimpleGrid columns={2} gap={PADDING_MD} px={PADDING_MD} mt={"auto"}>
+        <SimpleGrid columns={2} gap={PADDING_SM} px={PADDING_SM} mt={"auto"}>
           {dummyInternalServiceRates.map((rate) => (
             <InternalHomeServiceRateCard key={rate.id} rate={rate} />
           ))}
@@ -92,7 +96,7 @@ const InternalHomeServiceRateCard = (
         </P>
       </HStack>
 
-      <VStack align={"start"} gap={0} mt={"auto"}>
+      <VStack align={"start"} mt={"auto"}>
         <P fontSize={"xl"} fontWeight={"bold"}>
           <FormatNumber
             value={rate.price}
@@ -100,7 +104,12 @@ const InternalHomeServiceRateCard = (
             currency={"IDR"}
             maximumFractionDigits={0}
           />
-          <Span fontSize={"xs"} color={"fg.subtle"} fontWeight={"normal"} ml={1}>
+          <Span
+            fontSize={"xs"}
+            color={"fg.subtle"}
+            fontWeight={"normal"}
+            ml={1}
+          >
             / {rate.unit}
           </Span>
         </P>

@@ -187,7 +187,12 @@ const InternalHomeOrderStatItem = (props: InternalHomeOrderStatItemProps) => {
         )}
 
         {stat.suffix && (
-          <Span fontSize={"xs"} color={"fg.subtle"} fontWeight={"normal"} ml={1.5}>
+          <Span
+            fontSize={"xs"}
+            color={"fg.subtle"}
+            fontWeight={"normal"}
+            ml={1.5}
+          >
             {stat.suffix}
           </Span>
         )}
