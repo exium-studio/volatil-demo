@@ -1,9 +1,11 @@
-// src/features/mitra/home/types/home.cart-summary.type.ts
+// src/features/mitra/home/types/mitra.home.cart-summary.type.ts
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ComponentType } from "react";
 
-export type HomeCartSummaryStatItemProps = StackProps & {
+export type MitraHomeCartSummaryProps = StackProps;
+
+export type MitraHomeCartSummaryStatItemProps = StackProps & {
   label: string;
   value: number;
   suffix?: string;
@@ -11,7 +13,7 @@ export type HomeCartSummaryStatItemProps = StackProps & {
   color?: string;
 };
 
-export type CartStatConfig = {
+export type MitraHomeCartStatConfig = {
   icon: ComponentType;
   label: string;
   value: number;

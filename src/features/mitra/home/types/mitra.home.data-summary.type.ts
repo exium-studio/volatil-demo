@@ -1,9 +1,20 @@
-// src/features/mitra/home/types/home.data-summary.type.ts
+// src/features/mitra/home/types/mitra.home.data-summary.type.ts
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import type { TransactionItem } from "@/features/mitra/home/types/home.last-transaction.type";
+import type { TransactionItem } from "@/features/mitra/home/types/mitra.home.last-transaction.type";
 
-export type HomeDataSummaryStatusConfig = {
+export type MitraHomeDataSummaryProps = StackProps;
+
+export type MitraHomeDataSummaryHeaderProps = {
+  period: HomePeriod;
+  onPeriodChange: (period: HomePeriod) => void;
+};
+
+export type MitraHomeDataSummaryChartsProps = {
+  period: HomePeriod;
+};
+
+export type MitraHomeDataSummaryStatusConfig = {
   key: HomeSummaryStatus;
   label: string;
   colorPalette?: string;
@@ -12,7 +23,7 @@ export type HomeDataSummaryStatusConfig = {
   striped: boolean;
 };
 
-export type HomeDataSummaryLegendProps = StackProps & {
+export type MitraHomeDataSummaryLegendProps = StackProps & {
   legendColor: string;
   label: string;
   value: number;
@@ -39,6 +50,7 @@ export type HomeCartSummaryResponse = {
 };
 
 export type HomePeriod = "1d" | "1w" | "1m" | "1y" | "all";
+export type MitraHomePeriod = HomePeriod;
 
 // Responses
 

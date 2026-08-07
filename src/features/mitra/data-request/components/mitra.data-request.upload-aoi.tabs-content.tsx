@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/components/data-request.upload-aoi.tabs-content.tsx
+// src/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content.tsx
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import { Button } from "@/design-system/components/button/ui/button";
@@ -27,15 +27,15 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { DataRequestAddToCartButtons } from "@/features/mitra/data-request/components/data.request.add-to-cart-buttons";
+import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import {
-  DataRequestUploadAoiContext,
-  useDataRequestUploadAoiContext,
-} from "@/features/mitra/data-request/contexts/data-request.upload-aoi.context";
-import { useFetchIgtByUploadedAoi } from "@/features/mitra/data-request/hooks/use-data-request";
-import type { UploadAoiFileListTriggerProps } from "@/features/mitra/data-request/types/data-request.upload-aoi.type";
-import type { IgtDataResponse } from "@/features/mitra/data-request/types/data-request.type";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/igt-by-aoi.type";
+  MitraDataRequestUploadAoiContext,
+  useMitraDataRequestUploadAoiContext,
+} from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
+import { useFetchIgtByUploadedAoi } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
+import type { IgtDataResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
+import type { UploadAoiFileListTriggerProps } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
@@ -49,12 +49,16 @@ const MAX_VISIBLE_THEMES = 2;
 const BASIS_BIDANG_COLOR = "blue" as const;
 const BASIS_KAWASAN_COLOR = "orange" as const;
 
-export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
+export const MitraDataRequestUploadAoiTabsContent = (
+  props: TabsContentProps,
+) => {
+  // States
   const [dataListState, setDataListState] = useState({
     selectedItems: [] as FormattedListItem[],
     uploadedFiles: [] as File[],
   });
 
+  // Search Params / Hooks
   const search = useSearch({ strict: false }) as Record<
     string,
     string | undefined
@@ -72,6 +76,7 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataListState.uploadedFiles]);
 
+  // Derived Values
   const data = (
     !isEmptyArray(dataListState.uploadedFiles) ? uploadAoiMutation.data : null
   ) as IgtDataResponse | null;
@@ -97,7 +102,7 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
   );
 
   return (
-    <DataRequestUploadAoiContext.Provider value={contextValue}>
+    <MitraDataRequestUploadAoiContext.Provider value={contextValue}>
       <Tabs.Content
         display={"flex"}
         flex={1}
@@ -157,7 +162,7 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
             >
               <DataList />
 
-              <DataRequestAddToCartButtons
+              <MitraDataRequestAddToCartButtons
                 selectedItems={dataListState.selectedItems}
                 onAddSelectedClick={() => {
                   console.log("onAddSelectedClick");
@@ -170,12 +175,14 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
           </>
         )}
       </Tabs.Content>
-    </DataRequestUploadAoiContext.Provider>
+    </MitraDataRequestUploadAoiContext.Provider>
   );
 };
 
 const AddFileButton = (props: ButtonProps) => {
-  const { dataListState, setDataListState } = useDataRequestUploadAoiContext();
+  // Contexts
+  const { dataListState, setDataListState } =
+    useMitraDataRequestUploadAoiContext();
 
   return (
     <FileInputTrigger
@@ -192,16 +199,21 @@ const AddFileButton = (props: ButtonProps) => {
     >
       <Button primary pl={3} {...props}>
         <AppIcon icon={PlusIcon} />
-        Tambah File
+        {"Tambah File"}
       </Button>
     </FileInputTrigger>
   );
 };
 
 const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
+  // Props
   const { children } = props;
-  const { dataListState, setDataListState } = useDataRequestUploadAoiContext();
 
+  // Contexts
+  const { dataListState, setDataListState } =
+    useMitraDataRequestUploadAoiContext();
+
+  // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: "aoi-file-list",
   });
@@ -218,7 +230,7 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
 
       <Modal.Content>
         <Modal.Header>
-          <P textAlign={"center"}>File AOI Anda</P>
+          <P textAlign={"center"}>{"File AOI Anda"}</P>
           <Modal.CloseButton />
         </Modal.Header>
 
@@ -256,7 +268,7 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
               }));
             }}
           >
-            Hapus semua
+            {"Hapus semua"}
           </Button>
         </Modal.Footer>
       </Modal.Content>
@@ -265,9 +277,13 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
 };
 
 const DataList = () => {
+  // Stores
   const { theme } = useThemeStore();
-  const { igtData, setDataListState } = useDataRequestUploadAoiContext();
 
+  // Contexts
+  const { igtData, setDataListState } = useMitraDataRequestUploadAoiContext();
+
+  // Derived Values
   const dataList = useMemo(
     () => ({
       headers: [
@@ -293,13 +309,13 @@ const DataList = () => {
               value: item.themes.map((th) => th.name).join(", "),
               td: (
                 <HStack wrap={"wrap"} gap={1}>
-                  {visibleThemes.map((theme) => (
+                  {visibleThemes.map((themeItem) => (
                     <Badge
-                      key={theme.name}
+                      key={themeItem.name}
                       colorPalette={"neutral"}
                       variant={"subtle"}
                     >
-                      {theme.name}
+                      {themeItem.name}
                     </Badge>
                   ))}
                   {remainingCount > 0 && (
@@ -370,3 +386,5 @@ const DataList = () => {
     </VStack>
   );
 };
+
+export const DataRequestUploadAoiTabsContent = MitraDataRequestUploadAoiTabsContent;

@@ -1,4 +1,4 @@
-// src/features/mitra/home/components/home.data-summary.tsx
+// src/features/mitra/home/components/mitra.home.data-summary.tsx
 
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
@@ -19,10 +19,13 @@ import {
   SPACING_XS,
 } from "@/design-system/constants/styles";
 import type {
-  HomeDataSummaryLegendProps,
-  HomeDataSummaryStatusConfig,
   HomePeriod,
-} from "@/features/mitra/home/types/home.data-summary.type";
+  MitraHomeDataSummaryChartsProps,
+  MitraHomeDataSummaryHeaderProps,
+  MitraHomeDataSummaryLegendProps,
+  MitraHomeDataSummaryProps,
+  MitraHomeDataSummaryStatusConfig,
+} from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import { useState } from "react";
 
@@ -34,28 +37,32 @@ const PERIOD_OPTIONS = [
   { value: "all", label: "Semua", flex: 1 },
 ];
 
-export const HomeDataSummary = () => {
+export const MitraHomeDataSummary = (props: MitraHomeDataSummaryProps) => {
+  // States
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   return (
-    <Container.Root withContext={true}>
+    <Container.Root withContext={true} {...props}>
       <Container.Body gap={4} py={PADDING_MD}>
-        <Header period={period} onPeriodChange={setPeriod} />
+        <MitraHomeDataSummaryHeader
+          period={period}
+          onPeriodChange={setPeriod}
+        />
 
         <Separator borderColor={"bg.canvas"} />
 
-        <Charts period={period} />
+        <MitraHomeDataSummaryCharts period={period} />
       </Container.Body>
     </Container.Root>
   );
 };
 
-type HeaderProps = {
-  period: HomePeriod;
-  onPeriodChange: (period: HomePeriod) => void;
-};
+const MitraHomeDataSummaryHeader = (
+  props: MitraHomeDataSummaryHeaderProps,
+) => {
+  // Props
+  const { period, onPeriodChange } = props;
 
-const Header = ({ period, onPeriodChange }: HeaderProps) => {
   return (
     <HStack
       wrap={"wrap"}
@@ -66,10 +73,10 @@ const Header = ({ period, onPeriodChange }: HeaderProps) => {
     >
       <VStack gap={1}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
-          Ringkasan Data Anda
+          {"Ringkasan Data Anda"}
         </P>
         <P fontSize={"sm"} color={"fg.subtle"}>
-          Ringkasan informasi status data IGT Anda.
+          {"Ringkasan informasi status data IGT Anda."}
         </P>
       </VStack>
 
@@ -82,11 +89,7 @@ const Header = ({ period, onPeriodChange }: HeaderProps) => {
   );
 };
 
-type ChartsProps = {
-  period: HomePeriod;
-};
-
-const FIELD_STATUSES: HomeDataSummaryStatusConfig[] = [
+const FIELD_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   {
     key: "active",
     label: "Aktif",
@@ -110,7 +113,7 @@ const FIELD_STATUSES: HomeDataSummaryStatusConfig[] = [
   },
 ];
 
-const AREA_STATUSES: HomeDataSummaryStatusConfig[] = [
+const AREA_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   {
     key: "active",
     label: "Aktif",
@@ -134,11 +137,16 @@ const AREA_STATUSES: HomeDataSummaryStatusConfig[] = [
   },
 ];
 
-const Charts = ({ period }: ChartsProps) => {
+const MitraHomeDataSummaryCharts = (
+  props: MitraHomeDataSummaryChartsProps,
+) => {
+  // Props
+  const { period } = props;
+
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Data for current period
+  // Queries / Data for current period
   const dataSummary = dummyHomeData.dataSummary[period];
 
   return (
@@ -149,7 +157,7 @@ const Charts = ({ period }: ChartsProps) => {
     >
       {/* IGT Berbasis Bidang */}
       <VStack align={"start"} gap={SPACING_MD}>
-        <P color={"fg.muted"}>IGT berbasis bidang</P>
+        <P color={"fg.muted"}>{"IGT berbasis bidang"}</P>
 
         <HStack gap={SPACING_XS} w={"full"}>
           {FIELD_STATUSES.map((config) => {
@@ -171,7 +179,7 @@ const Charts = ({ period }: ChartsProps) => {
           {FIELD_STATUSES.map((config) => {
             const value = dataSummary.field[config.key];
             return (
-              <Legend
+              <MitraHomeDataSummaryLegend
                 key={config.key}
                 legendColor={config.legendColor}
                 label={config.label}
@@ -184,7 +192,7 @@ const Charts = ({ period }: ChartsProps) => {
 
       {/* IGT Berbasis Kawasan */}
       <VStack align={"start"} gap={SPACING_MD}>
-        <P color={"fg.muted"}>IGT berbasis kawasan</P>
+        <P color={"fg.muted"}>{"IGT berbasis kawasan"}</P>
 
         <HStack gap={SPACING_XS} w={"full"}>
           {AREA_STATUSES.map((config) => {
@@ -205,7 +213,7 @@ const Charts = ({ period }: ChartsProps) => {
           {AREA_STATUSES.map((config) => {
             const value = dataSummary.area[config.key];
             return (
-              <Legend
+              <MitraHomeDataSummaryLegend
                 key={config.key}
                 legendColor={config.legendColor}
                 label={config.label}
@@ -229,7 +237,9 @@ const ProgressBar = (props: ProgressRootProps) => {
   );
 };
 
-const Legend = (props: HomeDataSummaryLegendProps) => {
+const MitraHomeDataSummaryLegend = (
+  props: MitraHomeDataSummaryLegendProps,
+) => {
   // Props
   const { legendColor, label, value, ...restProps } = props;
 

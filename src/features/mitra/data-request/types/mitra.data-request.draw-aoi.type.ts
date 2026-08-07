@@ -1,8 +1,8 @@
-// src/features/mitra/data-request/types/data-request.draw-aoi.type.ts
+// src/features/mitra/data-request/types/mitra.data-request.draw-aoi.type.ts
 
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/igt-by-aoi.type";
+import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 
 export type DrawAoiGuideAlertProps = StackProps & {
   isLoading: boolean;
@@ -16,3 +16,6 @@ export type DrawAoiDataListProps = {
   itemActions: DataListItemActionsGenerator<IgtDataItem>[];
   onResetDraw: () => void;
 };
+
+export type MitraDataRequestDrawAoiGuideAlertProps = DrawAoiGuideAlertProps;
+export type MitraDataRequestDrawAoiDataListProps = DrawAoiDataListProps;

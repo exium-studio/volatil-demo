@@ -1,11 +1,15 @@
-// src/features/mitra/home/types/home.last-transaction.type.ts
+// src/features/mitra/home/types/mitra.home.last-transaction.type.ts
+
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
+
+export type MitraHomeLastTransactionProps = StackProps;
 
 export type TransactionStatus = "success" | "pending" | "failed";
 export type ThemeType = "rtr" | "boundary" | "land";
 export type DataStatus = "active" | "inactive";
 export type ThemeCategory = "spatial" | "land";
 
-export interface TransactionItem extends Record<string, unknown> {
+export type TransactionItem = Record<string, unknown> & {
   id: string;
   transactionNo: string;
   username: string;
@@ -21,4 +25,4 @@ export interface TransactionItem extends Record<string, unknown> {
   themeCategory: ThemeCategory;
   description: string;
   amount: number;
-}
+};

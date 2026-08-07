@@ -1,4 +1,4 @@
-// src/features/mitra/home/components/home.last-transaction.tsx
+// src/features/mitra/home/components/mitra.home.last-transaction.tsx
 
 import type {
   FormattedListItem,
@@ -14,11 +14,12 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import type {
   DataStatus,
+  MitraHomeLastTransactionProps,
   ThemeCategory,
   ThemeType,
   TransactionItem,
   TransactionStatus,
-} from "@/features/mitra/home/types/home.last-transaction.type";
+} from "@/features/mitra/home/types/mitra.home.last-transaction.type";
 import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import { useMemo } from "react";
 
@@ -50,21 +51,23 @@ const THEME_CATEGORY_MAP: Record<
   land: { label: "Pertanahan", color: "indigo" },
 };
 
-export const HomeLastTransaction = () => {
+export const MitraHomeLastTransaction = (
+  props: MitraHomeLastTransactionProps,
+) => {
   return (
-    <Container.Root flex={"1 1 100%"} withContext={true}>
+    <Container.Root flex={"1 1 100%"} withContext={true} {...props}>
       <Container.Body pb={PADDING_MD}>
-        <Header />
+        <MitraHomeLastTransactionHeader />
 
         <Separator borderColor={"bg.canvas"} />
 
-        <DataList />
+        <MitraHomeLastTransactionDataList />
       </Container.Body>
     </Container.Root>
   );
 };
 
-const Header = () => {
+const MitraHomeLastTransactionHeader = () => {
   return (
     <HStack
       wrap={"wrap"}
@@ -75,19 +78,21 @@ const Header = () => {
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
-          Transaksi Terakhir
+          {"Transaksi Terakhir"}
         </P>
         <P fontSize={"sm"} color={"fg.subtle"}>
-          Daftar 5 transaksi terbaru dari akun Anda
+          {"Daftar 5 transaksi terbaru dari akun Anda"}
         </P>
       </VStack>
     </HStack>
   );
 };
 
-const DataList = () => {
+const MitraHomeLastTransactionDataList = () => {
+  // Queries / Data
   const lastTransactions = dummyHomeData.lastTransactions;
 
+  // Derived Values
   const headers = useMemo<FormattedTableHeader[]>(
     () => [
       { th: "ID Transaksi", sortable: false, align: "start" },

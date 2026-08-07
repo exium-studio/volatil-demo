@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/components/data.request.add-to-cart-buttons.tsx
+// src/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
@@ -12,13 +12,13 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/igt-by-aoi.type";
+import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { IconChevronDown, IconShoppingCartPlus } from "@tabler/icons-react";
 import { CheckCheckIcon, FlagIcon, LayersIcon } from "lucide-react";
 import { useMemo } from "react";
 
-export type DataRequestAddToCartButtonsProps = StackProps & {
+export type MitraDataRequestAddToCartButtonsProps = StackProps & {
   selectedItems?: FormattedListItem[];
   /** All IGT items in the current result set (for basis breakdown counts). */
   allItems?: IgtDataItem[];
@@ -28,8 +28,8 @@ export type DataRequestAddToCartButtonsProps = StackProps & {
   onAddSelectedClick?: () => void;
 };
 
-export const DataRequestAddToCartButtons = (
-  props: DataRequestAddToCartButtonsProps,
+export const MitraDataRequestAddToCartButtons = (
+  props: MitraDataRequestAddToCartButtonsProps,
 ) => {
   // Props
   const {
@@ -56,7 +56,7 @@ export const DataRequestAddToCartButtons = (
   );
   const totalCount = allItems.length;
 
-  // Derived — selected items basis breakdown (cast data to IgtDataItem for basis field)
+  // Derived — selected items basis breakdown
   const selectedBidangCount = useMemo(
     () =>
       (selectedItems ?? []).filter(
@@ -95,7 +95,7 @@ export const DataRequestAddToCartButtons = (
           <Menu.Trigger>
             <Button primary variant={"outline"} flex={"1 1 350px"}>
               <AppIcon icon={IconShoppingCartPlus} />
-              Tambah semua ({totalCount})
+              {"Tambah semua"} ({totalCount})
               <AppIcon icon={IconChevronDown} />
             </Button>
           </Menu.Trigger>
@@ -103,17 +103,17 @@ export const DataRequestAddToCartButtons = (
           <Menu.Content>
             <Menu.Item value={"add-all-bidang"} onClick={onAddAllBidangClick}>
               <AppIcon icon={LayersIcon} />
-              Tambah semua bidang ({bidangCount})
+              {"Tambah semua bidang"} ({bidangCount})
             </Menu.Item>
 
             <Menu.Item value={"add-all-kawasan"} onClick={onAddAllKawasanClick}>
               <AppIcon icon={FlagIcon} />
-              Tambah semua kawasan ({kawasanCount})
+              {"Tambah semua kawasan"} ({kawasanCount})
             </Menu.Item>
 
             <Menu.Item value={"add-all"} onClick={onAddAllClick}>
               <AppIcon icon={CheckCheckIcon} />
-              Tambah semua bidang dan kawasan ({totalCount})
+              {"Tambah semua bidang dan kawasan"} ({totalCount})
             </Menu.Item>
           </Menu.Content>
         </Menu.Root>
@@ -126,7 +126,7 @@ export const DataRequestAddToCartButtons = (
           onClick={onAddSelectedClick}
         >
           <AppIcon icon={IconShoppingCartPlus} />
-          Tambah yang dipilih{" "}
+          {"Tambah yang dipilih"}{" "}
           {!isEmptyArray(selectedItems) && (
             <>
               ({selectedBidangCount > 0 && `${selectedBidangCount} bidang`}
@@ -139,3 +139,5 @@ export const DataRequestAddToCartButtons = (
     </VStack>
   );
 };
+
+export const DataRequestAddToCartButtons = MitraDataRequestAddToCartButtons;

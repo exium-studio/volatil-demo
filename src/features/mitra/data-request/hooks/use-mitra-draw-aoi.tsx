@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/hooks/use-draw-aoi.tsx
+// src/features/mitra/data-request/hooks/use-mitra-draw-aoi.tsx
 
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -7,19 +7,23 @@ import { Menu } from "@/design-system/components/overlay/ui/menu";
 import {
   useFetchIgtByAoi,
   useFlyToIgtGeometry,
-} from "@/features/mitra/data-request/hooks/use-data-request";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/igt-by-aoi.type";
+} from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { IconMapPin } from "@tabler/icons-react";
 import type GeoJSON from "geojson";
 import { useCallback, useMemo } from "react";
 
 const MIN_PURCHASE_COUNT = 1;
 
-export const useDrawAoi = () => {
+export const useMitraDrawAoi = () => {
+  // Stores
   const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();
+
+  // Mutations
   const fetchIgtMutation = useFetchIgtByAoi();
   const flyToMutation = useFlyToIgtGeometry();
 
+  // Derived Values
   const hasStartedDrawing = isDrawing || points.length > 0;
   const hasFinishedDraw = !isDrawing && points.length >= 3;
 
@@ -29,6 +33,7 @@ export const useDrawAoi = () => {
   );
   const hasEnoughItems = igtItems.length >= MIN_PURCHASE_COUNT;
 
+  // Handlers
   const handleResetDraw = useCallback(() => {
     fetchIgtMutation.reset();
     cancelDraw();
@@ -80,3 +85,5 @@ export const useDrawAoi = () => {
     itemActions,
   };
 };
+
+export const useDrawAoi = useMitraDrawAoi;

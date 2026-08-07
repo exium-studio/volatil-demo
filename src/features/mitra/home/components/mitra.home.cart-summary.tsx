@@ -1,4 +1,4 @@
-// src/features/mitra/home/components/home.cart-summary.tsx
+// src/features/mitra/home/components/mitra.home.cart-summary.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
@@ -14,9 +14,10 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { PADDING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
-  CartStatConfig,
-  HomeCartSummaryStatItemProps,
-} from "@/features/mitra/home/types/home.cart-summary.type";
+  MitraHomeCartStatConfig,
+  MitraHomeCartSummaryProps,
+  MitraHomeCartSummaryStatItemProps,
+} from "@/features/mitra/home/types/mitra.home.cart-summary.type";
 import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import {
   DatabaseIcon,
@@ -25,38 +26,40 @@ import {
   ReceiptTextIcon,
 } from "lucide-react";
 
-export const HomeCartSummary = () => {
+export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
   return (
-    <Container.Root flex={"1 1 300px"} withContext={true}>
+    <Container.Root flex={"1 1 300px"} withContext={true} {...props}>
       <Container.Body gap={4} pt={PADDING_MD}>
-        <Header />
+        <MitraHomeCartSummaryHeader />
 
         <VStack flex={1}>
           <Separator borderColor={"bg.canvas"} />
 
-          <CartStats />
+          <MitraHomeCartStats />
         </VStack>
       </Container.Body>
     </Container.Root>
   );
 };
 
-const Header = () => {
+const MitraHomeCartSummaryHeader = () => {
   return (
     <HStack align={"center"} justify={"space-between"} px={PADDING_MD}>
       <VStack gap={1}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
-          Ringkasan Keranjang Pembelian
+          {"Ringkasan Keranjang Pembelian"}
         </P>
         <P fontSize={"sm"} color={"fg.subtle"}>
-          Ringkasan informasi keranjang pembelian data Anda.
+          {"Ringkasan informasi keranjang pembelian data Anda."}
         </P>
       </VStack>
     </HStack>
   );
 };
 
-const StatItem = (props: HomeCartSummaryStatItemProps) => {
+const MitraHomeCartSummaryStatItem = (
+  props: MitraHomeCartSummaryStatItemProps,
+) => {
   // Props
   const { label, value, suffix, icon, color, ...restProps } = props;
 
@@ -108,20 +111,20 @@ const StatItem = (props: HomeCartSummaryStatItemProps) => {
   );
 };
 
-const CartStats = () => {
+const MitraHomeCartStats = () => {
   // Stores
   const { theme } = useThemeStore();
 
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Queries
+  // Queries / Data
   const { totalField, totalArea, totalIgtData, subtotalPrice } =
     dummyHomeData.cartSummary;
 
   // Constants
   const cols = isSmContainer ? 2 : 4;
-  const STATS: CartStatConfig[] = [
+  const STATS: MitraHomeCartStatConfig[] = [
     {
       icon: LayersIcon,
       label: "Total Bidang",
@@ -161,7 +164,7 @@ const CartStats = () => {
         const isNotFirstRow = index >= cols;
 
         return (
-          <StatItem
+          <MitraHomeCartSummaryStatItem
             key={stat.label}
             {...stat}
             borderRight={isLastInRow ? undefined : "2px solid"}

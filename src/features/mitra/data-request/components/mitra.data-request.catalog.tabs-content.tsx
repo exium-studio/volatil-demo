@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/components/data-request.catalog.tabs-content.tsx
+// src/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
@@ -20,9 +20,9 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { DataRequestAddToCartButtons } from "@/features/mitra/data-request/components/data.request.add-to-cart-buttons";
-import { useIgtCatalog } from "@/features/mitra/data-request/hooks/use-data-request";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/igt-by-aoi.type";
+import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
+import { useIgtCatalog } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -31,7 +31,7 @@ const MAX_VISIBLE_THEMES = 2;
 const BASIS_BIDANG_COLOR = "blue" as const;
 const BASIS_KAWASAN_COLOR = "orange" as const;
 
-export const DataRequestCatalogTabsContent = (props: TabsContentProps) => {
+export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
   return (
     <Tabs.Content
       display={"flex"}
@@ -65,25 +65,29 @@ export const DataRequestCatalogTabsContent = (props: TabsContentProps) => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <DataList />
+      <MitraDataRequestCatalogDataList />
     </Tabs.Content>
   );
 };
 
-const DataList = () => {
+const MitraDataRequestCatalogDataList = () => {
+  // Stores
   const { theme } = useThemeStore();
 
+  // States
   const [dataListState, setDataListState] = useState({
     perPage: DEFAULT_PER_PAGE_OPTIONS[0],
     page: 1,
     selectedItems: [] as FormattedListItem[],
   });
 
+  // Queries
   const { items: rawItems } = useIgtCatalog({
     page: dataListState.page,
     perPage: dataListState.perPage,
   });
 
+  // Derived Values
   const dataList = useMemo(
     () => ({
       headers: [
@@ -109,13 +113,13 @@ const DataList = () => {
               value: item.themes.map((th) => th.name).join(", "),
               td: (
                 <HStack wrap={"wrap"} gap={1}>
-                  {visibleThemes.map((theme) => (
+                  {visibleThemes.map((themeItem) => (
                     <Badge
-                      key={theme.name}
+                      key={themeItem.name}
                       colorPalette={"neutral"}
                       variant={"subtle"}
                     >
-                      {theme.name}
+                      {themeItem.name}
                     </Badge>
                   ))}
                   {remainingCount > 0 && (
@@ -201,7 +205,7 @@ const DataList = () => {
         />
       </VStack>
 
-      <DataRequestAddToCartButtons
+      <MitraDataRequestAddToCartButtons
         selectedItems={dataListState.selectedItems}
         onAddSelectedClick={() => {
           console.log("onAddSelectedClick");
@@ -213,3 +217,5 @@ const DataList = () => {
     </VStack>
   );
 };
+
+export const DataRequestCatalogTabsContent = MitraDataRequestCatalogTabsContent;

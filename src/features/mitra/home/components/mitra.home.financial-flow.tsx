@@ -1,4 +1,4 @@
-// src/features/mitra/home/components/home.financial-flow.tsx
+// src/features/mitra/home/components/mitra.home.financial-flow.tsx
 
 import {
   ChartTooltip,
@@ -14,9 +14,15 @@ import {
   SPACING_MD,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import type { HomePeriod } from "@/features/mitra/home/types/home.data-summary.type";
+import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
+import type {
+  MitraHomeFinancialFlowChartContentProps,
+  MitraHomeFinancialFlowHeaderProps,
+  MitraHomeFinancialFlowProps,
+} from "@/features/mitra/home/types/mitra.home.financial-flow.type";
 import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import { Chart, useChart } from "@chakra-ui/charts";
+import { useState } from "react";
 import {
   Area,
   AreaChart,
@@ -25,7 +31,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useState } from "react";
 
 const PERIOD_OPTIONS = [
   { value: "1d", label: "1H" },
@@ -35,28 +40,32 @@ const PERIOD_OPTIONS = [
   { value: "all", label: "Semua", flex: 1 },
 ];
 
-export const HomeFinancialFlow = () => {
+export const MitraHomeFinancialFlow = (props: MitraHomeFinancialFlowProps) => {
+  // States
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   return (
-    <Container.Root flex={"1 1 500px"} withContext={true}>
+    <Container.Root flex={"1 1 500px"} withContext={true} {...props}>
       <Container.Body gap={8} pt={PADDING_MD}>
-        <Header period={period} onPeriodChange={setPeriod} />
+        <MitraHomeFinancialFlowHeader
+          period={period}
+          onPeriodChange={setPeriod}
+        />
 
         <VStack mt={"auto"}>
-          <ChartContent period={period} />
+          <MitraHomeFinancialFlowChartContent period={period} />
         </VStack>
       </Container.Body>
     </Container.Root>
   );
 };
 
-type HeaderProps = {
-  period: HomePeriod;
-  onPeriodChange: (period: HomePeriod) => void;
-};
+const MitraHomeFinancialFlowHeader = (
+  props: MitraHomeFinancialFlowHeaderProps,
+) => {
+  // Props
+  const { period, onPeriodChange } = props;
 
-const Header = ({ period, onPeriodChange }: HeaderProps) => {
   return (
     <HStack
       wrap={"wrap"}
@@ -67,10 +76,10 @@ const Header = ({ period, onPeriodChange }: HeaderProps) => {
     >
       <VStack gap={1}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
-          Statistik Alur Keuangan
+          {"Statistik Alur Keuangan"}
         </P>
         <P fontSize={"sm"} color={"fg.subtle"}>
-          Statistik alur keuangan pembelian data Anda
+          {"Statistik alur keuangan pembelian data Anda"}
         </P>
       </VStack>
 
@@ -83,14 +92,16 @@ const Header = ({ period, onPeriodChange }: HeaderProps) => {
   );
 };
 
-type ChartContentProps = {
-  period: HomePeriod;
-};
+const MitraHomeFinancialFlowChartContent = (
+  props: MitraHomeFinancialFlowChartContentProps,
+) => {
+  // Props
+  const { period } = props;
 
-const ChartContent = ({ period }: ChartContentProps) => {
   // Stores
   const { theme } = useThemeStore();
 
+  // Derived Values / Hooks
   const chart = useChart({
     data: dummyHomeData.financialFlow[period],
     series: [{ name: "sale", color: `${theme.colorPalette}.solid` }],
@@ -134,7 +145,6 @@ const ChartContent = ({ period }: ChartContentProps) => {
           <XAxis
             axisLine={false}
             dataKey={"label"}
-            // tickFormatter={(value) => value.slice(0, 3)}
             stroke={chart.color("border")}
           />
 

@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/components/data-request.draw-aoi.tabs-content.tsx
+// src/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
@@ -22,13 +22,13 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { DataRequestAddToCartButtons } from "@/features/mitra/data-request/components/data.request.add-to-cart-buttons";
-import { useDrawAoi } from "@/features/mitra/data-request/hooks/use-draw-aoi";
+import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
+import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import type {
   DrawAoiDataListProps,
   DrawAoiGuideAlertProps,
-} from "@/features/mitra/data-request/types/data-request.draw-aoi.type";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/igt-by-aoi.type";
+} from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
+import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { t } from "@/shared/libs/i18n";
 import {
   IconCheck,
@@ -43,7 +43,8 @@ const MAX_VISIBLE_THEMES = 2;
 const BASIS_BIDANG_COLOR = "blue" as const;
 const BASIS_KAWASAN_COLOR = "orange" as const;
 
-export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
+export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
+  // Hooks
   const {
     isDrawing,
     startDraw,
@@ -59,7 +60,7 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
     handleResetDraw,
     handleConfirmAndFetch,
     itemActions,
-  } = useDrawAoi();
+  } = useMitraDrawAoi();
 
   return (
     <Tabs.Content
@@ -87,7 +88,7 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
             {!hasStartedDrawing && (
               <Button primary pl={3} onClick={startDraw}>
                 <AppIcon icon={IconPencil} />
-                Mulai gambar
+                {"Mulai gambar"}
               </Button>
             )}
 
@@ -99,7 +100,7 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
                 onClick={cancelDraw}
               >
                 <AppIcon icon={IconX} />
-                Batal gambar
+                {"Batal gambar"}
               </Button>
             )}
 
@@ -112,7 +113,7 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
                   onClick={handleResetDraw}
                 >
                   <AppIcon icon={IconTrash} />
-                  Hapus gambar
+                  {"Hapus gambar"}
                 </Button>
 
                 <Button
@@ -121,7 +122,7 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
                   onClick={() => void handleConfirmAndFetch()}
                 >
                   <AppIcon icon={IconCheck} />
-                  Konfirmasi &amp; clip
+                  {"Konfirmasi & clip"}
                 </Button>
               </HStack>
             )}
@@ -145,7 +146,7 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
         >
           <HStack align={"center"} gap={SPACING_SM}>
             <Loader />
-            <P>Mengambil data IGT di area AOI Anda...</P>
+            <P>{"Mengambil data IGT di area AOI Anda..."}</P>
           </HStack>
         </Box>
       )}
@@ -156,7 +157,7 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
             {(error as Error)?.message ?? "Terjadi kesalahan"}
           </P>
           <Button variant={"outline"} onClick={handleResetDraw}>
-            Coba lagi
+            {"Coba lagi"}
           </Button>
         </VStack>
       )}
@@ -240,11 +241,15 @@ const DataList = ({
   itemActions,
   onResetDraw,
 }: DrawAoiDataListProps) => {
+  // Stores
   const { theme } = useThemeStore();
+
+  // States
   const [selectedItems, setSelectedItems] = useState<
     FormattedListItem<IgtDataItem>[]
   >([]);
 
+  // Derived Values
   const dataList = useMemo(
     () => ({
       headers: [
@@ -270,13 +275,13 @@ const DataList = ({
               value: item.themes.map((th) => th.name).join(", "),
               td: (
                 <HStack wrap={"wrap"} gap={1}>
-                  {visibleThemes.map((theme) => (
+                  {visibleThemes.map((themeItem) => (
                     <Badge
-                      key={theme.name}
+                      key={themeItem.name}
                       colorPalette={"neutral"}
                       variant={"subtle"}
                     >
-                      {theme.name}
+                      {themeItem.name}
                     </Badge>
                   ))}
                   {remainingCount > 0 && (
@@ -345,7 +350,7 @@ const DataList = ({
 
           <HStack gap={SPACING_SM} align={"center"}>
             <Badge colorPalette={"green"} variant={"subtle"}>
-              {igtItems.length} data ditemukan
+              {igtItems.length} {"data ditemukan"}
             </Badge>
 
             <Button
@@ -355,7 +360,7 @@ const DataList = ({
               onClick={onResetDraw}
             >
               <AppIcon icon={IconTrash} />
-              Hapus gambar
+              {"Hapus gambar"}
             </Button>
           </HStack>
         </HStack>
@@ -383,7 +388,7 @@ const DataList = ({
           <DataListTable.Body />
         </DataListTable.Root>
 
-        <DataRequestAddToCartButtons
+        <MitraDataRequestAddToCartButtons
           selectedItems={selectedItems}
           allItems={igtItems}
           onAddAllBidangClick={() => {
@@ -404,3 +409,5 @@ const DataList = ({
     </>
   );
 };
+
+export const DataRequestDrawAoiTabsContent = MitraDataRequestDrawAoiTabsContent;

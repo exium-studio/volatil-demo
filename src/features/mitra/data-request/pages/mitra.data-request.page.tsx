@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/pages/data-request.page.tsx
+// src/features/mitra/data-request/pages/mitra.data-request.page.tsx
 
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -8,9 +8,9 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { HEADER_H, PADDING_SM } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
-import { DataRequestUploadAoiTabsContent } from "@/features/mitra/data-request/components/data-request.upload-aoi.tabs-content";
-import { DataRequestCatalogTabsContent } from "@/features/mitra/data-request/components/data-request.catalog.tabs-content";
-import { DataRequestDrawAoiTabsContent } from "@/features/mitra/data-request/components/data-request.draw-aoi.tabs-content";
+import { MitraDataRequestCatalogTabsContent } from "@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content";
+import { MitraDataRequestDrawAoiTabsContent } from "@/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content";
+import { MitraDataRequestUploadAoiTabsContent } from "@/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
@@ -20,17 +20,17 @@ const REQUEST_METHOD_MAP = {
   catalog: {
     icon: ListIcon,
     label: "Katalog Data",
-    content: DataRequestCatalogTabsContent,
+    content: MitraDataRequestCatalogTabsContent,
   },
   uploadAoi: {
     icon: FolderArchiveIcon,
     label: "Upload AOI",
-    content: DataRequestUploadAoiTabsContent,
+    content: MitraDataRequestUploadAoiTabsContent,
   },
   drawAoi: {
     icon: IconPolygon,
     label: "Gambar AOI",
-    content: DataRequestDrawAoiTabsContent,
+    content: MitraDataRequestDrawAoiTabsContent,
   },
 };
 const REQUEST_METHOD_OPTIONS = (
@@ -46,7 +46,7 @@ const REQUEST_METHOD_OPTIONS = (
   };
 });
 
-export const DataRequestPage = () => {
+export const MitraDataRequestPage = () => {
   // Hooks
   const { queryValue: tab, setQueryValue: setTab } = useSearchParam("tab");
 
@@ -104,3 +104,5 @@ export const DataRequestPage = () => {
     </PanelContentContainer>
   );
 };
+
+export const DataRequestPage = MitraDataRequestPage;
