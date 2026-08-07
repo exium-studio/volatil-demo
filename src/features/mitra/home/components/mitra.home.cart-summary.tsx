@@ -1,22 +1,17 @@
 // src/features/mitra/home/components/mitra.home.cart-summary.tsx
 
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import {
   Container,
   useContainerContext,
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
-import { Span } from "@/design-system/components/typography/ui/span";
-import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { PADDING_MD } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   MitraHomeCartStatConfig,
   MitraHomeCartSummaryProps,
-  MitraHomeCartSummaryStatItemProps,
 } from "@/features/mitra/home/types/mitra.home.cart-summary.type";
 import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import {
@@ -45,7 +40,7 @@ export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
 const MitraHomeCartSummaryHeader = () => {
   return (
     <HStack align={"center"} justify={"space-between"} px={PADDING_MD}>
-      <VStack gap={1}>
+      <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ringkasan Keranjang Pembelian"}
         </P>
@@ -57,64 +52,7 @@ const MitraHomeCartSummaryHeader = () => {
   );
 };
 
-const MitraHomeCartSummaryStatItem = (
-  props: MitraHomeCartSummaryStatItemProps,
-) => {
-  // Props
-  const { label, value, suffix, icon, color, ...restProps } = props;
-
-  // Derived Values
-  const isCurrency = label.toLowerCase().includes("harga");
-
-  return (
-    <VStack
-      align={"start"}
-      overflow={"clip"}
-      position={"relative"}
-      gap={2}
-      h={"full"}
-      p={PADDING_MD}
-      {...restProps}
-    >
-      <HStack
-        fontSize={"lg"}
-        fontWeight={"semibold"}
-        align={"center"}
-        justify={"space-between"}
-        gap={4}
-        w={"full"}
-      >
-        <P color={"fg.muted"}>{label}</P>
-
-        {icon && <AppIcon icon={icon} color={"fg.subtle"} />}
-      </HStack>
-
-      <P fontSize={"2xl"} fontWeight={"medium"} color={color} mt={"auto"}>
-        {isCurrency ? (
-          <FormatNumber
-            value={value}
-            style={"currency"}
-            currency={"IDR"}
-            maximumFractionDigits={0}
-          />
-        ) : (
-          <FormatNumber value={value} />
-        )}
-
-        {suffix && (
-          <Span fontSize={"sm"} color={color} ml={1}>
-            {suffix}
-          </Span>
-        )}
-      </P>
-    </VStack>
-  );
-};
-
 const MitraHomeCartStats = () => {
-  // Stores
-  const { theme } = useThemeStore();
-
   // Contexts
   const { isSmContainer } = useContainerContext();
 
@@ -153,26 +91,26 @@ const MitraHomeCartStats = () => {
   ];
 
   return (
-    <SimpleGrid
-      flex={1}
-      columns={cols}
-      overflow={"clip"}
-      roundedBottom={theme.radii.container}
-    >
+    <StatGrid.Root columns={cols}>
       {STATS.map((stat, index) => {
-        const isLastInRow = (index + 1) % cols === 0;
-        const isNotFirstRow = index >= cols;
+        const isCurrency = stat.label.toLowerCase().includes("harga");
 
         return (
-          <MitraHomeCartSummaryStatItem
-            key={stat.label}
-            {...stat}
-            borderRight={isLastInRow ? undefined : "2px solid"}
-            borderTop={isNotFirstRow ? "2px solid" : undefined}
-            borderColor={"bg.canvas"}
-          />
+          <StatGrid.Item key={stat.label} index={index} columns={cols}>
+            <StatGrid.Header>
+              <StatGrid.Label>{stat.label}</StatGrid.Label>
+              <StatGrid.Icon icon={stat.icon} color={stat.color} />
+            </StatGrid.Header>
+
+            <StatGrid.Value
+              value={stat.value}
+              suffix={stat.suffix}
+              isCurrency={isCurrency}
+              color={stat.color}
+            />
+          </StatGrid.Item>
         );
       })}
-    </SimpleGrid>
+    </StatGrid.Root>
   );
 };

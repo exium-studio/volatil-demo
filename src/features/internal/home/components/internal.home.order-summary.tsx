@@ -1,22 +1,17 @@
 // src/features/internal/home/components/internal.home.order-summary.tsx
 
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import {
   Container,
   useContainerContext,
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
-import { Span } from "@/design-system/components/typography/ui/span";
-import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   InternalHomeOrderStatConfig,
-  InternalHomeOrderStatItemProps,
   InternalHomeOrderSummaryHeaderProps,
   InternalHomeOrderSummaryProps,
 } from "@/features/internal/home/types/internal.home.order-summary.type";
@@ -45,7 +40,7 @@ export const InternalHomeOrderSummary = (
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   return (
-    <Container.Root flex={"1 1 100%"} withContext={true} {...props}>
+    <Container.Root flex={1} withContext={true} {...props}>
       <Container.Body gap={4} pt={PADDING_MD}>
         <InternalHomeOrderSummaryHeader
           period={period}
@@ -94,61 +89,7 @@ const InternalHomeOrderSummaryHeader = (
   );
 };
 
-const InternalHomeOrderSummaryStatItem = (
-  props: InternalHomeOrderStatItemProps,
-) => {
-  // Props
-  const { stat, ...restProps } = props;
-
-  return (
-    <VStack
-      align={"start"}
-      overflow={"clip"}
-      position={"relative"}
-      gap={2}
-      h={"full"}
-      p={PADDING_MD}
-      {...restProps}
-    >
-      <HStack
-        fontSize={"lg"}
-        fontWeight={"semibold"}
-        align={"center"}
-        justify={"space-between"}
-        gap={4}
-        w={"full"}
-      >
-        <P color={"fg.muted"}>{stat.label}</P>
-
-        <AppIcon icon={stat.icon} color={"fg.subtle"} />
-      </HStack>
-
-      <P fontSize={"2xl"} fontWeight={"medium"} color={stat.color} mt={"auto"}>
-        {stat.isCurrency ? (
-          <FormatNumber
-            value={stat.value}
-            style={"currency"}
-            currency={"IDR"}
-            maximumFractionDigits={0}
-          />
-        ) : (
-          <FormatNumber value={stat.value} />
-        )}
-
-        {stat.suffix && (
-          <Span fontSize={"xs"} color={"fg.subtle"} fontWeight={"normal"} ml={1.5}>
-            {stat.suffix}
-          </Span>
-        )}
-      </P>
-    </VStack>
-  );
-};
-
 const InternalHomeOrderStats = () => {
-  // Stores
-  const { theme } = useThemeStore();
-
   // Contexts
   const { isSmContainer } = useContainerContext();
 
@@ -186,26 +127,22 @@ const InternalHomeOrderStats = () => {
   ];
 
   return (
-    <SimpleGrid
-      flex={1}
-      columns={cols}
-      overflow={"clip"}
-      roundedBottom={theme.radii.container}
-    >
-      {STATS.map((stat, index) => {
-        const isLastInRow = (index + 1) % cols === 0;
-        const isNotFirstRow = index >= cols;
+    <StatGrid.Root columns={cols}>
+      {STATS.map((stat, index) => (
+        <StatGrid.Item key={stat.label} index={index} columns={cols}>
+          <StatGrid.Header>
+            <StatGrid.Label>{stat.label}</StatGrid.Label>
+            <StatGrid.Icon icon={stat.icon} color={stat.color} />
+          </StatGrid.Header>
 
-        return (
-          <InternalHomeOrderSummaryStatItem
-            key={stat.label}
-            stat={stat}
-            borderRight={isLastInRow ? undefined : "2px solid"}
-            borderTop={isNotFirstRow ? "2px solid" : undefined}
-            borderColor={"bg.canvas"}
+          <StatGrid.Value
+            value={stat.value}
+            suffix={stat.suffix}
+            isCurrency={stat.isCurrency}
+            color={stat.color}
           />
-        );
-      })}
-    </SimpleGrid>
+        </StatGrid.Item>
+      ))}
+    </StatGrid.Root>
   );
 };
