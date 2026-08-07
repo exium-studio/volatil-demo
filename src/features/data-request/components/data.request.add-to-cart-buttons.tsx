@@ -6,7 +6,6 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
-import { P } from "@/design-system/components/typography/ui/p";
 import {
   PADDING_MD,
   SPACING_MD,
@@ -15,13 +14,8 @@ import {
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { IconChevronDown } from "@tabler/icons-react";
-import {
-  CheckSquareIcon,
-  FlagIcon,
-  LayersIcon,
-  ShoppingCartIcon,
-} from "lucide-react";
+import { IconChevronDown, IconShoppingCartPlus } from "@tabler/icons-react";
+import { CheckSquareIcon, FlagIcon, LayersIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export type DataRequestAddToCartButtonsProps = StackProps & {
@@ -86,17 +80,6 @@ export const DataRequestAddToCartButtons = (
       bg={"bg.body"}
     >
       <HStack
-        align={"center"}
-        justify={"center"}
-        gap={SPACING_SM}
-        color={"fg.muted"}
-      >
-        <AppIcon icon={ShoppingCartIcon} />
-
-        <P textAlign={"center"}>Tambah ke keranjang</P>
-      </HStack>
-
-      <HStack
         wrap={"wrap"}
         align={"center"}
         justify={"space-between"}
@@ -111,6 +94,7 @@ export const DataRequestAddToCartButtons = (
         >
           <Menu.Trigger>
             <Button primary variant={"outline"} flex={"1 1 350px"}>
+              <AppIcon icon={IconShoppingCartPlus} />
               Tambah semua ({totalCount})
               <AppIcon icon={IconChevronDown} />
             </Button>
@@ -141,6 +125,7 @@ export const DataRequestAddToCartButtons = (
           disabled={isEmptyArray(selectedItems)}
           onClick={onAddSelectedClick}
         >
+          <AppIcon icon={IconShoppingCartPlus} />
           Tambah yang dipilih{" "}
           {!isEmptyArray(selectedItems) && (
             <>
