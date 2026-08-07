@@ -152,6 +152,24 @@ export const useMapDraw = (
     // eslint-disable-next-line react-hooks/exhaustive-deps -- finalize/addPoint intentionally read via pointsRef, not re-bound every point
   }, [map, isDrawing, geometryType]);
 
+  // Set map canvas cursor to crosshair (GIS precision draw mode) during drawing mode
+  useEffect(() => {
+    if (!map) return;
+
+    const canvas = map.getCanvas();
+    if (isDrawing) {
+      canvas.style.cursor = "crosshair";
+    } else {
+      canvas.style.cursor = "";
+    }
+
+    return () => {
+      if (canvas) {
+        canvas.style.cursor = "";
+      }
+    };
+  }, [map, isDrawing]);
+
   // Robust helper to ensure source and layers are present on the map.
   // Can be called safely multiple times.
   const ensureLayersExist = useCallback(() => {
