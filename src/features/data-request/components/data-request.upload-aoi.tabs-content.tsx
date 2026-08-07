@@ -24,9 +24,9 @@ import {
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import {
   PADDING_MD,
+  PADDING_SM,
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
@@ -36,11 +36,8 @@ import {
   useDataRequestUploadAoiContext,
 } from "@/features/data-request/contexts/data-request.upload-aoi.context";
 import type { UploadAoiFileListTriggerProps } from "@/features/data-request/types/data-request.upload-aoi.type";
-import type {
-  IgtCategory,
-  IgtDataResponse,
-} from "@/features/data-request/types/data-request.type";
-import { dummyIgtData } from "@/shared/constants/dummy-data";
+import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
+import { dummyIgtData } from "@/shared/constants/dummy-data/dummy-igt-by-aoi";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
@@ -49,28 +46,7 @@ import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
 import { FilesIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-
-const IGT_THEME_TYPE_MAP = {
-  bidang: {
-    label: "IGT Berbasis Bidang",
-    colorPalette: "blue",
-    color: "blue.fg",
-  },
-  kawasan: {
-    label: "IGT Berbasis Kawasan",
-    colorPalette: "orange",
-    color: "orange.fg",
-  },
-} as const;
-
-const IGT_CATEGORY_MAP: Record<IgtCategory, string> = {
-  hak_atas_tanah: "IGT Hak Atas Tanah",
-  pemilikan_tanah: "IGT Pemilikan Tanah",
-  bidang_tanah: "IGT Bidang Tanah",
-  rtrw_nasional: "IGT RTRW Nasional",
-  rtrw_provinsi: "IGT RTRW Provinsi",
-  rtrw_kota: "IGT RTRW Kota",
-};
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
 
 export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
   // States
@@ -119,8 +95,8 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
     <DataRequestUploadAoiContext.Provider value={contextValue}>
       <Tabs.Content
         display={"flex"}
-        flexDir={"column"}
         flex={1}
+        flexDir={"column"}
         overflowY={"auto"}
         p={0}
         {...props}
@@ -169,22 +145,26 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
 
             <Separator borderColor={"bg.canvas"} />
 
-            {/* Body */}
-            <DataList />
+            <VStack
+              flex={1}
+              gap={PADDING_SM}
+              overflowY={"auto"}
+              bg={"bg.canvas"}
+            >
+              {/* Body */}
+              <DataList />
 
-            <Separator borderColor={"bg.canvas"} />
-
-            {/* Footer */}
-            <DataRequestAddToCartButtons
-              selectedItems={dataListState.selectedItems}
-              totalItems={data.meta.total ?? 0}
-              onAddSelectedClick={() => {
-                console.log("onAddSelectedClick");
-              }}
-              onAddAllClick={() => {
-                console.log("onAddAllClick");
-              }}
-            />
+              {/* Footer */}
+              <DataRequestAddToCartButtons
+                selectedItems={dataListState.selectedItems}
+                onAddSelectedClick={() => {
+                  console.log("onAddSelectedClick");
+                }}
+                onAddAllClick={() => {
+                  console.log("onAddAllClick");
+                }}
+              />
+            </VStack>
           </>
         )}
       </Tabs.Content>
@@ -193,6 +173,9 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
 };
 
 const DataList = () => {
+  // Stores
+  const { theme } = useThemeStore();
+
   // Contexts
   const { igtData, setDataListState } = useDataRequestUploadAoiContext();
 
@@ -200,98 +183,76 @@ const DataList = () => {
   const dataList = useMemo(
     () => ({
       headers: [
-        { th: "Nama Data IGT-PR", sortable: true },
-        { th: "Jenis Tema IGT-PR", sortable: true },
-        { th: "Basis Kuota", sortable: true },
-        { th: "Kategori Tema IGT-PR" },
-        { th: "Deskripsi Data" },
-        { th: "Total Harga", sortable: true, align: "end" },
+        { th: "ID Bidang", sortable: true },
+        { th: "Tema IGT-PR" },
+        { th: "Basis IGT-PR", sortable: true },
+        { th: "Deskripsi" },
       ] as FormattedTableHeader[],
 
-      items: igtData?.items?.map((item) => ({
-        id: item.id,
-        data: item,
-        columns: [
-          {
-            value: item.name,
-            td: <P>{item.name}</P>,
-            align: "start",
-          },
-          {
-            value: item.themeType,
-            td: (
-              <Badge
-                colorPalette={IGT_THEME_TYPE_MAP[item.themeType].colorPalette}
-                variant={"subtle"}
-              >
-                {IGT_THEME_TYPE_MAP[item.themeType].label}
-              </Badge>
-            ),
-            align: "center",
-          },
-          {
-            value: item.quotaBase,
-            td: (
-              <HStack align={"center"} gap={2}>
-                <P>{item.quotaBase}</P>
+      items: igtData?.items?.map((item) => {
+        const visibleThemes = item.themes.slice(0, 2);
+        const remainingCount = item.themes.length - 2;
+
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: item.id,
+              td: <P fontSize={"sm"}>{item.id}</P>,
+              align: "start",
+            },
+            {
+              value: item.themes.map((th) => th.name).join(", "),
+              td: (
+                <HStack wrap={"wrap"} gap={1}>
+                  {visibleThemes.map((theme) => (
+                    <Badge
+                      key={theme.name}
+                      colorPalette={"neutral"}
+                      variant={"subtle"}
+                    >
+                      {theme.name}
+                    </Badge>
+                  ))}
+                  {remainingCount > 0 && (
+                    <Badge colorPalette={"neutral"} variant={"outline"}>
+                      +{remainingCount} lainnya
+                    </Badge>
+                  )}
+                </HStack>
+              ),
+              align: "start",
+            },
+            {
+              value: item.basis,
+              td: (
+                <Badge
+                  colorPalette={item.basis === "bidang" ? "blue" : "orange"}
+                  variant={"subtle"}
+                >
+                  {item.basis}
+                </Badge>
+              ),
+              align: "center",
+            },
+            {
+              value: item.description ?? "",
+              td: (
                 <P
                   fontSize={"sm"}
-                  color={IGT_THEME_TYPE_MAP[item.themeType].color}
+                  color={"fg.subtle"}
+                  maxW={"280px"}
+                  whiteSpace={"wrap"}
                 >
-                  {item.themeType === "bidang" ? "bidang" : "ha"}
+                  {item.description ?? "-"}
                 </P>
-              </HStack>
-            ),
-            align: "start",
-          },
-          {
-            value: item.categories.join(", "),
-            td: (
-              <HStack
-                wrap={"wrap"}
-                align={"start"}
-                gap={1}
-                w={"max"}
-                maxW={"300px"}
-              >
-                {item.categories.map((cat) => (
-                  <Badge key={cat} colorPalette={"neutral"}>
-                    {IGT_CATEGORY_MAP[cat]}
-                  </Badge>
-                ))}
-              </HStack>
-            ),
-            align: "start",
-          },
-          {
-            value: item.description,
-            td: (
-              <P
-                color={"fg.subtle"}
-                w={"max"}
-                maxW={"300px"}
-                whiteSpace={"wrap"}
-                fontSize={"sm"}
-              >
-                {item.description}
-              </P>
-            ),
-            align: "start",
-          },
-          {
-            value: item.price,
-            td: (
-              <FormatNumber
-                value={item.price}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
-            ),
-            align: "end",
-          },
-        ] as FormattedTableColumn[],
-      })) as FormattedListItem[],
+              ),
+              align: "start",
+            },
+          ] as FormattedTableColumn[],
+        };
+      }) as FormattedListItem[],
     }),
     [igtData],
   );
@@ -303,6 +264,9 @@ const DataList = () => {
         headers={dataList.headers}
         items={dataList.items}
         canBatchSelect
+        pb={0}
+        roundedTop={0}
+        roundedBottom={theme.radii.container}
         onSelectedItemChange={({ selectedItems }) => {
           setDataListState((prev) => ({ ...prev, selectedItems }));
           console.log("selectedItems", selectedItems);

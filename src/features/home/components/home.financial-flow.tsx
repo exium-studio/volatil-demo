@@ -15,7 +15,7 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { HomePeriod } from "@/features/home/types/home.data-summary.type";
-import { dummyHomeData } from "@/shared/constants/dummy-data";
+import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import { Chart, useChart } from "@chakra-ui/charts";
 import {
   Area,

@@ -23,7 +23,7 @@ import type {
   HomeDataSummaryStatusConfig,
   HomePeriod,
 } from "@/features/home/types/home.data-summary.type";
-import { dummyHomeData } from "@/shared/constants/dummy-data";
+import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import { useState } from "react";
 
 const PERIOD_OPTIONS = [

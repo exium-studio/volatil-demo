@@ -17,7 +17,7 @@ import type {
   CartStatConfig,
   HomeCartSummaryStatItemProps,
 } from "@/features/home/types/home.cart-summary.type";
-import { dummyHomeData } from "@/shared/constants/dummy-data";
+import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import {
   DatabaseIcon,
   LandPlotIcon,

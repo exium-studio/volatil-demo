@@ -18,7 +18,7 @@ import type {
   ThemeType,
   TransactionStatus,
 } from "@/features/home/types/home.last-transaction.type";
-import { dummyHomeData } from "@/shared/constants/dummy-data";
+import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
 import { useMemo } from "react";
 
 const TRANSACTION_STATUS_MAP: Record<

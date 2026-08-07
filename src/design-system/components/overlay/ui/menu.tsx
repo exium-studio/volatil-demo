@@ -77,6 +77,7 @@ const MenuItem = (props: MenuItemProps) => {
     <Box cursor={disabled ? "not-allowed" : undefined}>
       <ChakraMenu.Item
         disabled={disabled}
+        h={"40px"}
         rounded={theme.radii.component}
         fontSize={"md"}
         cursor={"pointer"}
