@@ -12,5 +12,13 @@ export const NavLink = (props: NavLinkProps) => {
 };
 
 export const ExternalLink = (props: ExternalLinkProps) => {
-  return <ChakraLink target={"_blank"} {...props} />;
+  return (
+    <ChakraLink
+      target={"_blank"}
+      _hover={{
+        textDecor: "underline",
+      }}
+      {...props}
+    />
+  );
 };

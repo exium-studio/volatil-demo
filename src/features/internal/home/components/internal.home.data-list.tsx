@@ -1,0 +1,196 @@
+// src/features/internal/home/components/internal.home.data-list.tsx
+
+import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import type {
+  FormattedListItem,
+  FormattedTableHeader,
+} from "@/design-system/components/data-display/types/data-list-table.type";
+import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Container } from "@/design-system/components/layout/ui/container";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { P } from "@/design-system/components/typography/ui/p";
+import { PADDING_MD, SPACING_MD, SPACING_SM } from "@/design-system/constants/styles";
+import type {
+  InternalHomeDataListItem,
+  InternalHomeDataListProps,
+  SyncStatus,
+} from "@/features/internal/home/types/internal.home.data-list.type";
+import type { IgtBasis } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
+import { dummyInternalDataList } from "@/shared/constants/dummy-data/dummy-internal-home-data";
+import { t } from "@/shared/libs/i18n";
+import {
+  CopyIcon,
+  ExternalLinkIcon,
+  PlusIcon,
+  RefreshCwIcon,
+  SlidersHorizontalIcon,
+} from "lucide-react";
+import { useMemo } from "react";
+
+const SYNC_STATUS_MAP: Record<SyncStatus, { label: string; color: string }> = {
+  connected: { label: "Terhubung", color: "green" },
+  disconnected: { label: "Terputus", color: "red" },
+  syncing: { label: "Proses Sinkronisasi", color: "orange" },
+};
+
+const IGT_BASIS_MAP: Record<IgtBasis, { label: string; color: string }> = {
+  bidang: { label: "IGT Berbasis Bidang", color: "blue" },
+  kawasan: { label: "IGT Berbasis Kawasan", color: "orange" },
+};
+
+export const InternalHomeDataList = (props: InternalHomeDataListProps) => {
+  return (
+    <Container.Root flex={"1 1 100%"} withContext={true} {...props}>
+      <Container.Body pb={PADDING_MD}>
+        <InternalHomeDataListHeader />
+
+        <Separator borderColor={"bg.canvas"} />
+
+        <InternalHomeDataListTableContent />
+      </Container.Body>
+    </Container.Root>
+  );
+};
+
+const InternalHomeDataListHeader = () => {
+  return (
+    <HStack
+      wrap={"wrap"}
+      align={"center"}
+      justify={"space-between"}
+      gap={SPACING_MD}
+      p={PADDING_MD}
+    >
+      <VStack gap={1} align={"start"}>
+        <P fontSize={"lg"} fontWeight={"semibold"}>
+          {"Daftar Data"}
+        </P>
+        <P fontSize={"sm"} color={"fg.subtle"}>
+          {"Daftar keseluruhan data yang Anda kelola."}
+        </P>
+      </VStack>
+
+      <HStack wrap={"wrap"} align={"center"} gap={SPACING_SM}>
+        <SearchInput placeholder={t["action.search"]()} maxW={"220px"} />
+
+        <Button variant={"outline"} px={3}>
+          <AppIcon icon={RefreshCwIcon} />
+          {"Status Sinkronisasi"}
+        </Button>
+
+        <IconButton variant={"outline"}>
+          <AppIcon icon={SlidersHorizontalIcon} />
+        </IconButton>
+
+        <Button primary>
+          <AppIcon icon={PlusIcon} />
+          {"Tambah Data"}
+        </Button>
+      </HStack>
+    </HStack>
+  );
+};
+
+const InternalHomeDataListTableContent = () => {
+  // Queries / Data
+  const dataList = dummyInternalDataList;
+
+  // Derived Values
+  const headers = useMemo<FormattedTableHeader[]>(
+    () => [
+      { th: "Layer Data IGT-PR", sortable: true, align: "start" },
+      { th: "Status Sinkronisasi", sortable: true, align: "center" },
+      { th: "Terakhir Sinkronisasi", sortable: true, align: "start" },
+      { th: "Jenis Tema IGT-PR", sortable: true, align: "center" },
+      { th: "Link API WFS", sortable: true, align: "start" },
+      { th: "API WFS", sortable: true, align: "start" },
+    ],
+    [],
+  );
+
+  const items = useMemo<FormattedListItem[]>(() => {
+    return dataList.map((item: InternalHomeDataListItem) => ({
+      id: item.id,
+      data: item,
+      columns: [
+        {
+          value: item.layerFileName,
+          td: <P fontSize={"sm"}>{item.layerFileName}</P>,
+          align: "start",
+        },
+        {
+          value: item.syncStatus,
+          td: (
+            <Badge
+              colorPalette={SYNC_STATUS_MAP[item.syncStatus].color}
+              variant={"subtle"}
+            >
+              {SYNC_STATUS_MAP[item.syncStatus].label}
+            </Badge>
+          ),
+          align: "center",
+        },
+        {
+          value: item.lastSyncTime,
+          td: <P fontSize={"sm"}>{item.lastSyncTime}</P>,
+          align: "start",
+        },
+        {
+          value: item.igtBasis,
+          td: (
+            <Badge
+              colorPalette={IGT_BASIS_MAP[item.igtBasis].color}
+              variant={"subtle"}
+            >
+              {IGT_BASIS_MAP[item.igtBasis].label}
+            </Badge>
+          ),
+          align: "center",
+        },
+        {
+          value: item.wfsApiLink,
+          td: (
+            <HStack align={"center"} gap={2}>
+              <AppIcon icon={CopyIcon} color={"fg.subtle"} fontSize={"xs"} />
+              <P fontSize={"sm"} color={"fg.subtle"} maxW={"180px"} truncate>
+                {item.wfsApiLink}
+              </P>
+              <AppIcon icon={ExternalLinkIcon} color={"fg.subtle"} fontSize={"xs"} />
+            </HStack>
+          ),
+          align: "start",
+        },
+        {
+          value: item.wfsApiCode,
+          td: (
+            <HStack align={"center"} gap={2}>
+              <AppIcon icon={CopyIcon} color={"fg.subtle"} fontSize={"xs"} />
+              <P fontSize={"sm"} color={"fg.subtle"} maxW={"180px"} truncate>
+                {item.wfsApiCode}
+              </P>
+            </HStack>
+          ),
+          align: "start",
+        },
+      ],
+    }));
+  }, [dataList]);
+
+  return (
+    <VStack bg={"bg.canvas"} w={"full"}>
+      <DataListTable.Root
+        headers={headers}
+        items={items}
+        roundedTop={0}
+        shadow={"none"}
+      >
+        <DataListTable.Header />
+        <DataListTable.Body />
+      </DataListTable.Root>
+    </VStack>
+  );
+};

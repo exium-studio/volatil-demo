@@ -29,11 +29,6 @@ export const chakraConfig = defineConfig({
         fontSize: "md",
         fontWeight: "normal",
       },
-    a: {
-      _hover: {
-        textDecor: "underline",
-      },
-    },
   },
 
   // Theme config ---------------------------------------------------

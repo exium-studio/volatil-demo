@@ -164,19 +164,21 @@ const SidebarHeader = () => {
       p={4}
       w={"full"}
     >
-      <HStack align={"center"} gap={SPACING_SM}>
-        {/* <Logo /> */}
-        <AtrLogo boxSize={"24px"} ml={1} />
+      <NavLink to={"/"}>
+        <HStack align={"center"} gap={SPACING_SM}>
+          {/* <Logo /> */}
+          <AtrLogo boxSize={"24px"} ml={1} />
 
-        <ClampedP
-          w={expanded ? "" : 0}
-          fontWeight={"semibold"}
-          color={`${theme.colorPalette}.fg`}
-          lineHeight={1.2}
-        >
-          {APP.title}
-        </ClampedP>
-      </HStack>
+          <ClampedP
+            w={expanded ? "" : 0}
+            fontWeight={"semibold"}
+            color={`${theme.colorPalette}.fg`}
+            lineHeight={1.2}
+          >
+            {APP.title}
+          </ClampedP>
+        </HStack>
+      </NavLink>
 
       <ClampedP
         w={expanded ? "" : 0}
