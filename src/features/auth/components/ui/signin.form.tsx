@@ -71,7 +71,7 @@ export const InternalSignin = () => {
       updatedAt: new Date().toISOString(),
     };
     setStorage("user", JSON.stringify(dummyInternalUser));
-    navigate({ to: "/mitra/welcome" });
+    navigate({ to: "/internal/welcome" });
   };
 
   return (
