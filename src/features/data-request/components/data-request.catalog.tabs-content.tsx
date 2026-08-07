@@ -25,8 +25,8 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
+import { useIgtCatalog } from "@/features/data-request/hooks/use-data-request";
 import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
-import { dummyIgtData } from "@/shared/constants/dummy-data/dummy-igt-by-aoi";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -90,14 +90,19 @@ const CatalogResultTable = () => {
     selectedItems: [] as FormattedListItem[],
   });
 
+  const { items: rawItems } = useIgtCatalog({
+    page: dataListState.page,
+    perPage: dataListState.perPage,
+  });
+
   const dataList = useMemo(
     () => ({
       headers: CATALOG_HEADERS,
-      items: dummyIgtData.items.map((item) =>
+      items: rawItems.map((item) =>
         igtItemToFormattedItem(item),
       ) as FormattedListItem[],
     }),
-    [],
+    [rawItems],
   );
 
   return (

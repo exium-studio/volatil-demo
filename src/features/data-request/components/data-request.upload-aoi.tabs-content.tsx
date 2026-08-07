@@ -36,10 +36,10 @@ import {
   DataRequestUploadAoiContext,
   useDataRequestUploadAoiContext,
 } from "@/features/data-request/contexts/data-request.upload-aoi.context";
+import { useFetchIgtByUploadedAoi } from "@/features/data-request/hooks/use-data-request";
 import type { UploadAoiFileListTriggerProps } from "@/features/data-request/types/data-request.upload-aoi.type";
 import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
 import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
-import { dummyIgtData } from "@/shared/constants/dummy-data/dummy-igt-by-aoi";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
@@ -47,7 +47,7 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
 import { FilesIcon, PlusIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const MAX_VISIBLE_THEMES = 2;
 const BASIS_BIDANG_COLOR = "blue" as const;
@@ -72,8 +72,19 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
   >;
   const isAoiFileModalOpen = search[MODAL_SEARCH_PARAM_KEY] === "aoi-file-list";
 
+  const uploadAoiMutation = useFetchIgtByUploadedAoi();
+
+  useEffect(() => {
+    if (!isEmptyArray(dataListState.uploadedFiles)) {
+      void uploadAoiMutation.mutateAsync(dataListState.uploadedFiles[0]);
+    } else {
+      uploadAoiMutation.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataListState.uploadedFiles]);
+
   const data = (
-    !isEmptyArray(dataListState.uploadedFiles) ? dummyIgtData : null
+    !isEmptyArray(dataListState.uploadedFiles) ? uploadAoiMutation.data : null
   ) as IgtDataResponse | null;
 
   const contextValue = useMemo(

@@ -10,9 +10,11 @@ import { OfflineAlert } from "@/design-system/components/utilities/ui/offline-al
 import { APP } from "@/design-system/constants/_meta";
 import { LocaleProvider as ChakraLocaleProvider } from "@/design-system/components/utilities/ui/chakra-locale-provider";
 import { LocaleProvider } from "@/shared/libs/i18n/locale-provider";
+import { queryClient } from "@/shared/libs/tanstack-query/query.client";
 import { globalSearchParamsSchema } from "@/shared/schemas/root.search-params-schema";
 import "@fontsource-variable/wix-madefor-text";
 import "@fontsource/sorts-mill-goudy";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
@@ -29,23 +31,25 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <ColorModeProvider>
-      <ChakraSystemProvider>
-        <LocaleProvider>
-          <ChakraLocaleProvider>
-            <>
-              <HeadContent />
-              <Outlet />
-            </>
+    <QueryClientProvider client={queryClient}>
+      <ColorModeProvider>
+        <ChakraSystemProvider>
+          <LocaleProvider>
+            <ChakraLocaleProvider>
+              <>
+                <HeadContent />
+                <Outlet />
+              </>
 
-            <>
-              <Toaster />
-              <OfflineAlert />
-              <DebugMenu />
-            </>
-          </ChakraLocaleProvider>
-        </LocaleProvider>
-      </ChakraSystemProvider>
-    </ColorModeProvider>
+              <>
+                <Toaster />
+                <OfflineAlert />
+                <DebugMenu />
+              </>
+            </ChakraLocaleProvider>
+          </LocaleProvider>
+        </ChakraSystemProvider>
+      </ColorModeProvider>
+    </QueryClientProvider>
   );
 }

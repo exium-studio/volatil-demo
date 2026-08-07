@@ -17,9 +17,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { WFS_LAYER_NAME } from "@/design-system/components/map/constants/map.config";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
-import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -30,9 +28,11 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { useGlobalMap } from "@/features/clip/hooks/use-global-map";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
-import { fetchIgtByAoi } from "@/features/data-request/services/fetch-igt-by-aoi";
+import {
+  useFetchIgtByAoi,
+  useFlyToIgtGeometry,
+} from "@/features/data-request/hooks/use-data-request";
 import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
 import { t } from "@/shared/libs/i18n";
 import {
@@ -44,15 +44,13 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import type GeoJSON from "geojson";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 const MIN_PURCHASE_COUNT = 1;
 const MAX_VISIBLE_THEMES = 2;
 
 const BASIS_BIDANG_COLOR = "blue" as const;
 const BASIS_KAWASAN_COLOR = "orange" as const;
-
-type FetchStatus = "idle" | "loading" | "done" | "error";
 
 const IGT_BY_AOI_HEADERS: FormattedTableHeader[] = [
   { th: "ID Bidang", sortable: true },
@@ -68,8 +66,8 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
     cancelDraw,
     hasStartedDrawing,
     hasFinishedDraw,
-    fetchStatus,
-    fetchError,
+    isError,
+    error,
     isLoading,
     isDone,
     hasEnoughItems,
@@ -136,9 +134,11 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
         </Box>
       )}
 
-      {fetchStatus === "error" && fetchError && (
+      {isError && (
         <VStack gap={SPACING_SM} p={PADDING_MD}>
-          <P color={"fg.error"}>{fetchError}</P>
+          <P color={"fg.error"}>
+            {(error as Error)?.message ?? "Terjadi kesalahan"}
+          </P>
           <Button variant={"outline"} onClick={handleResetDraw}>
             Coba Lagi
           </Button>
@@ -383,21 +383,20 @@ const DrawAoiResultTable = ({
 
 const useDrawAoi = () => {
   const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();
-  const map = useGlobalMap();
+  const fetchIgtMutation = useFetchIgtByAoi();
+  const flyToMutation = useFlyToIgtGeometry();
 
-  const [fetchStatus, setFetchStatus] = useState<FetchStatus>("idle");
-  const [fetchError, setFetchError] = useState<string | null>(null);
-  const [igtItems, setIgtItems] = useState<IgtDataItem[]>([]);
   const [selectedItems, setSelectedItems] = useState<
     FormattedListItem<IgtDataItem>[]
   >([]);
 
-  const abortRef = useRef<AbortController | null>(null);
-
   const hasStartedDrawing = isDrawing || points.length > 0;
   const hasFinishedDraw = !isDrawing && points.length >= 3;
-  const isLoading = fetchStatus === "loading";
-  const isDone = fetchStatus === "done";
+
+  const igtItems = useMemo(
+    () => fetchIgtMutation.data ?? [],
+    [fetchIgtMutation.data],
+  );
   const hasEnoughItems = igtItems.length >= MIN_PURCHASE_COUNT;
 
   const formattedItems = useMemo<FormattedListItem<IgtDataItem>[]>(
@@ -406,13 +405,10 @@ const useDrawAoi = () => {
   );
 
   const handleResetDraw = useCallback(() => {
-    abortRef.current?.abort();
-    setFetchStatus("idle");
-    setFetchError(null);
-    setIgtItems([]);
+    fetchIgtMutation.reset();
     setSelectedItems([]);
     cancelDraw();
-  }, [cancelDraw]);
+  }, [cancelDraw, fetchIgtMutation]);
 
   const handleConfirmAndFetch = useCallback(async () => {
     if (!hasFinishedDraw) return;
@@ -424,66 +420,9 @@ const useDrawAoi = () => {
       ],
     };
 
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    setFetchStatus("loading");
-    setFetchError(null);
-    setIgtItems([]);
     setSelectedItems([]);
-
-    try {
-      const items = await fetchIgtByAoi(polygon, controller.signal);
-      if (controller.signal.aborted) return;
-      setIgtItems(items);
-      setFetchStatus("done");
-    } catch (err: unknown) {
-      if ((err as { name?: string }).name === "AbortError") return;
-      const message =
-        err instanceof Error ? err.message : "Gagal mengambil data IGT";
-      setFetchError(message);
-      setFetchStatus("error");
-    }
-  }, [hasFinishedDraw, points]);
-
-  const handleFlyTo = useCallback(
-    async (item: FormattedListItem<IgtDataItem>) => {
-      if (!map) return;
-
-      const controller = new AbortController();
-
-      try {
-        const fc = await fetchWfs({
-          typeName: WFS_LAYER_NAME,
-          cqlFilter: `id='${item.id}'`,
-          signal: controller.signal,
-        });
-
-        const feature = fc.features[0];
-        if (!feature?.geometry) return;
-
-        const geom = feature.geometry;
-        let lng = 0;
-        let lat = 0;
-
-        if (geom.type === "Point") {
-          [lng, lat] = geom.coordinates as [number, number];
-        } else if (geom.type === "Polygon" && geom.coordinates[0]?.length > 0) {
-          const ring = geom.coordinates[0];
-          const sumLng = ring.reduce((acc, c) => acc + c[0], 0);
-          const sumLat = ring.reduce((acc, c) => acc + c[1], 0);
-          lng = sumLng / ring.length;
-          lat = sumLat / ring.length;
-        }
-
-        map.flyTo({ center: [lng, lat], zoom: 16 });
-      } catch {
-        // Silently ignore fly-to errors
-      }
-    },
-    [map],
-  );
+    await fetchIgtMutation.mutateAsync(polygon);
+  }, [fetchIgtMutation, hasFinishedDraw, points]);
 
   const itemActions: DataListItemActionsGenerator<IgtDataItem>[] = useMemo(
     () => [
@@ -491,14 +430,14 @@ const useDrawAoi = () => {
         <Menu.Item
           key={"fly-to"}
           value={"fly-to"}
-          onClick={() => void handleFlyTo(item)}
+          onClick={() => void flyToMutation.mutateAsync(item.id)}
         >
           <AppIcon icon={IconMapPin} />
           Lihat di Peta
         </Menu.Item>
       ),
     ],
-    [handleFlyTo],
+    [flyToMutation],
   );
 
   return {
@@ -507,10 +446,10 @@ const useDrawAoi = () => {
     cancelDraw,
     hasStartedDrawing,
     hasFinishedDraw,
-    fetchStatus,
-    fetchError,
-    isLoading,
-    isDone,
+    isLoading: fetchIgtMutation.isPending,
+    isDone: fetchIgtMutation.isSuccess,
+    isError: fetchIgtMutation.isError,
+    error: fetchIgtMutation.error,
     hasEnoughItems,
     igtItems,
     formattedItems,
