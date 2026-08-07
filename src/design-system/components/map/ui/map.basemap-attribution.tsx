@@ -7,6 +7,7 @@ import { getBasemapOption } from "@/design-system/components/map/constants/map.b
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
+import { Span } from "@/design-system/components/typography/ui/span";
 import { InfoIcon } from "lucide-react";
 
 export const MapAttribution = () => {
@@ -27,9 +28,17 @@ export const MapAttribution = () => {
 
         <Popover.Content w={"200px"}>
           <Popover.Body>
-            <VStack alignItems={"flex-start"} gap={1}>
+            <VStack
+              alignItems={"flex-start"}
+              gap={1}
+              css={{
+                "& a:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
               {attributions.map((attribution) => (
-                <span
+                <Span
                   key={attribution}
                   dangerouslySetInnerHTML={{ __html: attribution }}
                 />
