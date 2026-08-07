@@ -15,10 +15,11 @@ import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { CodeIcon } from "lucide-react";
 
 export const DebugMenu = () => {
+  // Hooks
   const { colorMode } = useColorMode();
 
   return (
-    <Box pos={"fixed"} left={"16px"} bottom={"20px"} zIndex={"toast"}>
+    <Box pos={"fixed"} left={"15px"} bottom={"20px"} zIndex={"toast"}>
       <Popover.Root>
         <Popover.Trigger>
           <IconButton variant={"solid"} colorPalette={"red"} size={"xs"}>
