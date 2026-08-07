@@ -26,7 +26,7 @@ import type {
   MitraHomeDataSummaryProps,
   MitraHomeDataSummaryStatusConfig,
 } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
+import { dummyMitraHomeData } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
 import { useState } from "react";
 
 const PERIOD_OPTIONS = [
@@ -147,7 +147,7 @@ const MitraHomeDataSummaryCharts = (
   const { isSmContainer } = useContainerContext();
 
   // Queries / Data for current period
-  const dataSummary = dummyHomeData.dataSummary[period];
+  const dataSummary = dummyMitraHomeData.dataSummary[period];
 
   return (
     <SimpleGrid

@@ -1,8 +1,8 @@
-// src/shared/constants/dummy-data/dummy-home-data.ts
+// src/shared/constants/dummy-data/dummy-mitra-home-data.ts
 
 import type { HomeDataResponse } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 
-export const dummyHomeData: HomeDataResponse = {
+export const dummyMitraHomeData: HomeDataResponse = {
   dataSummary: {
     "1d": {
       field: { active: 10, almostExpired: 2, expired: 1 },

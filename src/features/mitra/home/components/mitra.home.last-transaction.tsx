@@ -20,7 +20,7 @@ import type {
   TransactionItem,
   TransactionStatus,
 } from "@/features/mitra/home/types/mitra.home.last-transaction.type";
-import { dummyHomeData } from "@/shared/constants/dummy-data/dummy-home-data";
+import { dummyMitraHomeData } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
 import { useMemo } from "react";
 
 const TRANSACTION_STATUS_MAP: Record<
@@ -90,7 +90,7 @@ const MitraHomeLastTransactionHeader = () => {
 
 const MitraHomeLastTransactionDataList = () => {
   // Queries / Data
-  const lastTransactions = dummyHomeData.lastTransactions;
+  const lastTransactions = dummyMitraHomeData.lastTransactions;
 
   // Derived Values
   const headers = useMemo<FormattedTableHeader[]>(
