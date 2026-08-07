@@ -30,6 +30,7 @@ import {
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
 import {
   DataRequestUploadAoiContext,
@@ -37,6 +38,7 @@ import {
 } from "@/features/data-request/contexts/data-request.upload-aoi.context";
 import type { UploadAoiFileListTriggerProps } from "@/features/data-request/types/data-request.upload-aoi.type";
 import type { IgtDataResponse } from "@/features/data-request/types/data-request.type";
+import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data/dummy-igt-by-aoi";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
@@ -46,40 +48,43 @@ import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
 import { FilesIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+
+const MAX_VISIBLE_THEMES = 2;
+const BASIS_BIDANG_COLOR = "blue" as const;
+const BASIS_KAWASAN_COLOR = "orange" as const;
+
+const UPLOAD_AOI_HEADERS: FormattedTableHeader[] = [
+  { th: "ID Bidang", sortable: true },
+  { th: "Tema IGT-PR" },
+  { th: "Basis IGT-PR", sortable: true },
+  { th: "Deskripsi" },
+];
 
 export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
-  // States
   const [dataListState, setDataListState] = useState({
     selectedItems: [] as FormattedListItem[],
     uploadedFiles: [] as File[],
   });
 
-  // Hooks
   const search = useSearch({ strict: false }) as Record<
     string,
     string | undefined
   >;
   const isAoiFileModalOpen = search[MODAL_SEARCH_PARAM_KEY] === "aoi-file-list";
 
-  // Queries
-  // TODO: use tanstack query to fetch data
-  // const data = null as IgtDataResponse | null;
   const data = (
     !isEmptyArray(dataListState.uploadedFiles) ? dummyIgtData : null
   ) as IgtDataResponse | null;
 
-  // Resolved Values
   const contextValue = useMemo(
     () => ({
       igtData: data,
       dataListState,
       setDataListState,
     }),
-    [data, dataListState, setDataListState],
+    [data, dataListState],
   );
 
-  // Close uploaded files modal when all files are removed (skip first render)
   useFirstMountEffect(
     {
       onUpdate: () => {
@@ -113,7 +118,6 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
 
         {data && (
           <>
-            {/* Header */}
             <VStack
               wrap={"wrap"}
               justify={"space-between"}
@@ -151,10 +155,8 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
               overflowY={"auto"}
               bg={"bg.canvas"}
             >
-              {/* Body */}
-              <DataList />
+              <UploadAoiResultTable />
 
-              {/* Footer */}
               <DataRequestAddToCartButtons
                 selectedItems={dataListState.selectedItems}
                 onAddSelectedClick={() => {
@@ -172,117 +174,7 @@ export const DataRequestUploadAoiTabsContent = (props: TabsContentProps) => {
   );
 };
 
-const DataList = () => {
-  // Stores
-  const { theme } = useThemeStore();
-
-  // Contexts
-  const { igtData, setDataListState } = useDataRequestUploadAoiContext();
-
-  // Resolved Values
-  const dataList = useMemo(
-    () => ({
-      headers: [
-        { th: "ID Bidang", sortable: true },
-        { th: "Tema IGT-PR" },
-        { th: "Basis IGT-PR", sortable: true },
-        { th: "Deskripsi" },
-      ] as FormattedTableHeader[],
-
-      items: igtData?.items?.map((item) => {
-        const visibleThemes = item.themes.slice(0, 2);
-        const remainingCount = item.themes.length - 2;
-
-        return {
-          id: item.id,
-          data: item,
-          columns: [
-            {
-              value: item.id,
-              td: <P fontSize={"sm"}>{item.id}</P>,
-              align: "start",
-            },
-            {
-              value: item.themes.map((th) => th.name).join(", "),
-              td: (
-                <HStack wrap={"wrap"} gap={1}>
-                  {visibleThemes.map((theme) => (
-                    <Badge
-                      key={theme.name}
-                      colorPalette={"neutral"}
-                      variant={"subtle"}
-                    >
-                      {theme.name}
-                    </Badge>
-                  ))}
-                  {remainingCount > 0 && (
-                    <Badge colorPalette={"neutral"} variant={"outline"}>
-                      +{remainingCount} lainnya
-                    </Badge>
-                  )}
-                </HStack>
-              ),
-              align: "start",
-            },
-            {
-              value: item.basis,
-              td: (
-                <Badge
-                  colorPalette={item.basis === "bidang" ? "blue" : "orange"}
-                  variant={"subtle"}
-                >
-                  {item.basis}
-                </Badge>
-              ),
-              align: "center",
-            },
-            {
-              value: item.description ?? "",
-              td: (
-                <P
-                  fontSize={"sm"}
-                  color={"fg.subtle"}
-                  maxW={"280px"}
-                  whiteSpace={"wrap"}
-                >
-                  {item.description ?? "-"}
-                </P>
-              ),
-              align: "start",
-            },
-          ] as FormattedTableColumn[],
-        };
-      }) as FormattedListItem[],
-    }),
-    [igtData],
-  );
-
-  return (
-    <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
-      <DataListTable.Root
-        withNumbering={false}
-        headers={dataList.headers}
-        items={dataList.items}
-        canBatchSelect
-        pb={0}
-        roundedTop={0}
-        roundedBottom={theme.radii.container}
-        onSelectedItemChange={({ selectedItems }) => {
-          setDataListState((prev) => ({ ...prev, selectedItems }));
-          console.log("selectedItems", selectedItems);
-        }}
-        rounded={0}
-        shadow={"none"}
-      >
-        <DataListTable.Header />
-        <DataListTable.Body />
-      </DataListTable.Root>
-    </VStack>
-  );
-};
-
 const AddAoiFileButton = (props: ButtonProps) => {
-  // Contexts
   const { dataListState, setDataListState } = useDataRequestUploadAoiContext();
 
   return (
@@ -307,13 +199,9 @@ const AddAoiFileButton = (props: ButtonProps) => {
 };
 
 const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
-  // Props
   const { children } = props;
-
-  // Contexts
   const { dataListState, setDataListState } = useDataRequestUploadAoiContext();
 
-  // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: "aoi-file-list",
   });
@@ -331,31 +219,28 @@ const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
       <Modal.Content>
         <Modal.Header>
           <P textAlign={"center"}>File AOI Anda</P>
-
           <Modal.CloseButton />
         </Modal.Header>
 
         <Modal.Body gap={SPACING_SM}>
           {isEmptyArray(dataListState.uploadedFiles) && <NoDataState />}
 
-          {dataListState.uploadedFiles.map((file, index) => {
-            return (
-              <FileItem
-                key={index}
-                name={file.name}
-                mimeType={file.type}
-                sizeLabel={formatByte(file.size)}
-                onDelete={() => {
-                  setDataListState((prev) => ({
-                    ...prev,
-                    uploadedFiles: prev.uploadedFiles.filter(
-                      (_, i) => i !== index,
-                    ),
-                  }));
-                }}
-              />
-            );
-          })}
+          {dataListState.uploadedFiles.map((file, index) => (
+            <FileItem
+              key={index}
+              name={file.name}
+              mimeType={file.type}
+              sizeLabel={formatByte(file.size)}
+              onDelete={() => {
+                setDataListState((prev) => ({
+                  ...prev,
+                  uploadedFiles: prev.uploadedFiles.filter(
+                    (_, i) => i !== index,
+                  ),
+                }));
+              }}
+            />
+          ))}
         </Modal.Body>
 
         <Modal.Footer>
@@ -377,4 +262,104 @@ const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
       </Modal.Content>
     </Modal.Root>
   );
+};
+
+const UploadAoiResultTable = () => {
+  const { theme } = useThemeStore();
+  const { igtData, setDataListState } = useDataRequestUploadAoiContext();
+
+  const dataList = useMemo(
+    () => ({
+      headers: UPLOAD_AOI_HEADERS,
+      items: igtData?.items?.map((item) =>
+        igtItemToFormattedItem(item),
+      ) as FormattedListItem[],
+    }),
+    [igtData],
+  );
+
+  return (
+    <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
+      <DataListTable.Root
+        withNumbering={false}
+        headers={dataList.headers}
+        items={dataList.items ?? []}
+        canBatchSelect
+        pb={0}
+        roundedTop={0}
+        roundedBottom={theme.radii.container}
+        onSelectedItemChange={({ selectedItems }) => {
+          setDataListState((prev) => ({ ...prev, selectedItems }));
+        }}
+        rounded={0}
+        shadow={"none"}
+      >
+        <DataListTable.Header />
+        <DataListTable.Body />
+      </DataListTable.Root>
+    </VStack>
+  );
+};
+
+const igtItemToFormattedItem = (
+  item: IgtDataItem,
+): FormattedListItem<IgtDataItem> => {
+  const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
+  const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
+
+  const columns: FormattedTableColumn[] = [
+    {
+      value: item.id,
+      td: <P fontSize={"sm"}>{item.id}</P>,
+      align: "start",
+    },
+    {
+      value: item.themes.map((th) => th.name).join(", "),
+      td: (
+        <HStack wrap={"wrap"} gap={1}>
+          {visibleThemes.map((theme) => (
+            <Badge key={theme.name} colorPalette={"neutral"} variant={"subtle"}>
+              {theme.name}
+            </Badge>
+          ))}
+          {remainingCount > 0 && (
+            <Badge colorPalette={"neutral"} variant={"outline"}>
+              +{remainingCount} lainnya
+            </Badge>
+          )}
+        </HStack>
+      ),
+      align: "start",
+    },
+    {
+      value: item.basis,
+      td: (
+        <Badge
+          colorPalette={
+            item.basis === "bidang" ? BASIS_BIDANG_COLOR : BASIS_KAWASAN_COLOR
+          }
+          variant={"subtle"}
+        >
+          {item.basis}
+        </Badge>
+      ),
+      align: "center",
+    },
+    {
+      value: item.description ?? "",
+      td: (
+        <P
+          fontSize={"sm"}
+          color={"fg.subtle"}
+          maxW={"280px"}
+          whiteSpace={"wrap"}
+        >
+          {item.description ?? "-"}
+        </P>
+      ),
+      align: "start",
+    },
+  ];
+
+  return { id: item.id, data: item, columns };
 };

@@ -25,17 +25,29 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
+import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
 import { dummyIgtData } from "@/shared/constants/dummy-data/dummy-igt-by-aoi";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
+const MAX_VISIBLE_THEMES = 2;
+const BASIS_BIDANG_COLOR = "blue" as const;
+const BASIS_KAWASAN_COLOR = "orange" as const;
+
+const CATALOG_HEADERS: FormattedTableHeader[] = [
+  { th: "ID Bidang", sortable: true },
+  { th: "Tema IGT-PR" },
+  { th: "Basis IGT-PR", sortable: true },
+  { th: "Deskripsi" },
+];
+
 export const DataRequestCatalogTabsContent = (props: TabsContentProps) => {
   return (
     <Tabs.Content
       display={"flex"}
-      flexDir={"column"}
       flex={1}
+      flexDir={"column"}
       overflowY={"auto"}
       p={0}
       {...props}
@@ -64,96 +76,26 @@ export const DataRequestCatalogTabsContent = (props: TabsContentProps) => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <DataList />
+      <CatalogResultTable />
     </Tabs.Content>
   );
 };
 
-const DataList = () => {
-  // Stores
+const CatalogResultTable = () => {
   const { theme } = useThemeStore();
 
-  // States
   const [dataListState, setDataListState] = useState({
     perPage: DEFAULT_PER_PAGE_OPTIONS[0],
     page: 1,
     selectedItems: [] as FormattedListItem[],
   });
 
-  // Resolved Values
   const dataList = useMemo(
     () => ({
-      headers: [
-        { th: "ID Bidang", sortable: true },
-        { th: "Tema IGT-PR" },
-        { th: "Basis IGT-PR", sortable: true },
-        { th: "Deskripsi" },
-      ] as FormattedTableHeader[],
-
-      items: dummyIgtData.items.map((item) => {
-        const visibleThemes = item.themes.slice(0, 2);
-        const remainingCount = item.themes.length - 2;
-
-        return {
-          id: item.id,
-          data: item,
-          columns: [
-            {
-              value: item.id,
-              td: <P fontSize={"sm"}>{item.id}</P>,
-              align: "start",
-            },
-            {
-              value: item.themes.map((th) => th.name).join(", "),
-              td: (
-                <HStack wrap={"wrap"} gap={1}>
-                  {visibleThemes.map((theme) => (
-                    <Badge
-                      key={theme.name}
-                      colorPalette={"neutral"}
-                      variant={"subtle"}
-                    >
-                      {theme.name}
-                    </Badge>
-                  ))}
-                  {remainingCount > 0 && (
-                    <Badge colorPalette={"neutral"} variant={"outline"}>
-                      +{remainingCount} lainnya
-                    </Badge>
-                  )}
-                </HStack>
-              ),
-              align: "start",
-            },
-            {
-              value: item.basis,
-              td: (
-                <Badge
-                  colorPalette={item.basis === "bidang" ? "blue" : "orange"}
-                  variant={"subtle"}
-                >
-                  {item.basis}
-                </Badge>
-              ),
-              align: "center",
-            },
-            {
-              value: item.description ?? "",
-              td: (
-                <P
-                  fontSize={"sm"}
-                  color={"fg.subtle"}
-                  maxW={"280px"}
-                  whiteSpace={"wrap"}
-                >
-                  {item.description ?? "-"}
-                </P>
-              ),
-              align: "start",
-            },
-          ] as FormattedTableColumn[],
-        };
-      }) as FormattedListItem[],
+      headers: CATALOG_HEADERS,
+      items: dummyIgtData.items.map((item) =>
+        igtItemToFormattedItem(item),
+      ) as FormattedListItem[],
     }),
     [],
   );
@@ -173,7 +115,6 @@ const DataList = () => {
           items={dataList.items}
           canBatchSelect
           roundedTop={0}
-          // selectedItems={dataListState.selectedItems}
           onSelectedItemChange={({ selectedItems }) => {
             console.log("selectedItems", selectedItems);
             setDataListState((prev) => ({ ...prev, selectedItems }));
@@ -192,7 +133,6 @@ const DataList = () => {
           }
           page={dataListState.page}
           setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
-          // currentDataLength={items.length}
           roundedBottom={theme.radii.container}
         />
       </VStack>
@@ -208,4 +148,67 @@ const DataList = () => {
       />
     </VStack>
   );
+};
+
+const igtItemToFormattedItem = (
+  item: IgtDataItem,
+): FormattedListItem<IgtDataItem> => {
+  const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
+  const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
+
+  const columns: FormattedTableColumn[] = [
+    {
+      value: item.id,
+      td: <P fontSize={"sm"}>{item.id}</P>,
+      align: "start",
+    },
+    {
+      value: item.themes.map((th) => th.name).join(", "),
+      td: (
+        <HStack wrap={"wrap"} gap={1}>
+          {visibleThemes.map((theme) => (
+            <Badge key={theme.name} colorPalette={"neutral"} variant={"subtle"}>
+              {theme.name}
+            </Badge>
+          ))}
+          {remainingCount > 0 && (
+            <Badge colorPalette={"neutral"} variant={"outline"}>
+              +{remainingCount} lainnya
+            </Badge>
+          )}
+        </HStack>
+      ),
+      align: "start",
+    },
+    {
+      value: item.basis,
+      td: (
+        <Badge
+          colorPalette={
+            item.basis === "bidang" ? BASIS_BIDANG_COLOR : BASIS_KAWASAN_COLOR
+          }
+          variant={"subtle"}
+        >
+          {item.basis}
+        </Badge>
+      ),
+      align: "center",
+    },
+    {
+      value: item.description ?? "",
+      td: (
+        <P
+          fontSize={"sm"}
+          color={"fg.subtle"}
+          maxW={"280px"}
+          whiteSpace={"wrap"}
+        >
+          {item.description ?? "-"}
+        </P>
+      ),
+      align: "start",
+    },
+  ];
+
+  return { id: item.id, data: item, columns };
 };
