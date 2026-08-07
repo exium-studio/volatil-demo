@@ -12,19 +12,19 @@ import {
 } from "@/design-system/components/map/constants/map.config";
 import { useMapResizeObserver } from "@/design-system/components/map/hooks/use-map-resize-observer";
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { BaseMapProps } from "@/design-system/components/map/types/map.basemap.type";
-import { BaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
 import { applyBasemapColorStyleOverride } from "@/design-system/components/map/utils/basemap-color-style-override";
-import { applyBasemapPlainLightStyleOverride } from "@/design-system/components/map/utils/basemap-plain-light-style-override";
 import { applyBasemapPlainDarkStyleOverride } from "@/design-system/components/map/utils/basemap-plain-dark-style-override";
+import { applyBasemapPlainLightStyleOverride } from "@/design-system/components/map/utils/basemap-plain-light-style-override";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Pure basemap component — initializes MapLibre GL, manages tile styles,
- * globe projection, paint overrides, and provides BaseMapContext.
+ * globe projection, paint overrides.
  *
  * Responsibility boundary:
  *  - Init maplibregl.Map
@@ -59,13 +59,6 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
       : getBaseLayerStyle(activeStyleKey, colorMode));
 
   useMapResizeObserver(map, containerRef);
-
-  const contextValue = useMemo(
-    () => ({
-      map,
-    }),
-    [map],
-  );
 
   // Track the active style key and color mode in refs for event listeners
   const activeStyleKeyRef = useRef(activeStyleKey);
@@ -159,14 +152,13 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
     // applyGlobe is NOT called here; style.load already ran it.
     instance.once("load", () => {
       setMap(instance);
-
-      // @ts-expect-error debug window handle
-      window.__map = instance;
+      useMapInstanceStore.getState().setMap(instance);
     });
 
     return () => {
       instance.remove();
       setMap(null);
+      useMapInstanceStore.getState().setMap(null);
       appliedStyleRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -219,17 +211,15 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
   }, [map, currentStyle, activeStyleKey, colorMode]);
 
   return (
-    <BaseMapContext.Provider value={contextValue}>
-      <Box position={"relative"} width={"100%"} height={"100%"}>
-        <Box
-          ref={containerRef}
-          width={"100%"}
-          height={"100%"}
-          data-color-mode={colorMode}
-        />
+    <Box position={"relative"} width={"100%"} height={"100%"}>
+      <Box
+        ref={containerRef}
+        width={"100%"}
+        height={"100%"}
+        data-color-mode={colorMode}
+      />
 
-        {children}
-      </Box>
-    </BaseMapContext.Provider>
+      {children}
+    </Box>
   );
 };

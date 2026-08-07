@@ -1,6 +1,4 @@
-// src/features/data-request/hooks/use-data-request.ts
-
-import { useGlobalMap } from "@/features/clip/hooks/use-global-map";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import {
   getIgtByAoi,
   getIgtByUploadedAoi,
@@ -64,7 +62,7 @@ export const useFetchIgtByUploadedAoi = () => {
 };
 
 export const useFlyToIgtGeometry = () => {
-  const map = useGlobalMap();
+  const map = useMapInstanceStore((state) => state.map);
 
   return useMutation({
     mutationFn: async (id: string) => {

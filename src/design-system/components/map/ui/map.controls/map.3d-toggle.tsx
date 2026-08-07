@@ -3,21 +3,21 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { MAP_STYLE_READY_EVENT } from "@/design-system/components/map/constants/map.config";
-import { useBaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { useCallback, useEffect } from "react";
 
-export const BaseMap3DToggle = (props: StackProps) => {
+export const Map3DToggle = (props: StackProps) => {
   // Stores
   const { theme } = useThemeStore();
   const { is3D, setIs3D } = useMapBaseMapStore();
 
-  // Contexts
-  const { map } = useBaseMapContext();
+  // Map Instance
+  const map = useMapInstanceStore((state) => state.map);
 
   // Sync building-3d layer visibility on map style load or ready
   const syncBuildingLayer = useCallback(() => {

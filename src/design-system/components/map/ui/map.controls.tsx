@@ -2,11 +2,11 @@
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { BaseMap3DToggle } from "@/design-system/components/map/ui/map.controls/map.3d-toggle";
-import { MapBaseLayerSelect } from "@/design-system/components/map/ui/map.controls/map.basemap-select";
-import { BaseMapCompass } from "@/design-system/components/map/ui/map.controls/map.compass";
-import { BaseMapLocate } from "@/design-system/components/map/ui/map.controls/map.locate";
-import { BaseMapZoomControl } from "@/design-system/components/map/ui/map.controls/map.zoom";
+import { Map3DToggle } from "@/design-system/components/map/ui/map.controls/map.3d-toggle";
+import { MapBasemapSelect } from "@/design-system/components/map/ui/map.controls/map.basemap-select";
+import { MapCompass } from "@/design-system/components/map/ui/map.controls/map.compass";
+import { MapLocate } from "@/design-system/components/map/ui/map.controls/map.locate";
+import { MapZoom } from "@/design-system/components/map/ui/map.controls/map.zoom";
 
 export const MapControls = (props: StackProps) => {
   return (
@@ -19,16 +19,13 @@ export const MapControls = (props: StackProps) => {
       p={4}
       {...props}
     >
-      <MapBaseLayerSelect />
+      <MapBasemapSelect />
 
       <HStack gap={2}>
-        <BaseMap3DToggle />
-
-        <BaseMapZoomControl />
-
-        <BaseMapLocate />
-
-        <BaseMapCompass />
+        <Map3DToggle />
+        <MapZoom />
+        <MapLocate />
+        <MapCompass />
       </HStack>
     </HStack>
   );

@@ -20,7 +20,7 @@ import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { IconMoonFilled, IconSunFilled } from "@tabler/icons-react";
 
-export const MapBaseLayerSelect = () => {
+export const MapBasemapSelect = () => {
   // Stores
   const { activeStyleKey, setActiveStyleKey } = useMapBaseMapStore();
   const { theme } = useThemeStore();
@@ -73,7 +73,6 @@ export const MapBaseLayerSelect = () => {
               />
 
               {isActiveStylePlainAdaptive && (
-                // <AbsoluteCenter>
                 <AppIcon
                   icon={plainAdaptiveProps[colorMode].icon}
                   pos={"absolute"}
@@ -81,7 +80,6 @@ export const MapBaseLayerSelect = () => {
                   bottom={1}
                   color={"fg.inverted"}
                 />
-                // </AbsoluteCenter>
               )}
             </Center>
           </Tooltip>
@@ -134,7 +132,6 @@ export const MapBaseLayerSelect = () => {
                     />
 
                     {isPlainAdaptive && (
-                      // <AbsoluteCenter>
                       <AppIcon
                         icon={plainAdaptiveProps[colorMode].icon}
                         size={"2xl"}
@@ -143,7 +140,6 @@ export const MapBaseLayerSelect = () => {
                         bottom={1}
                         color={"fg.inverted"}
                       />
-                      // </AbsoluteCenter>
                     )}
                   </Center>
 

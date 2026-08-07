@@ -1,14 +1,14 @@
 // src/design-system/components/map/ui/map.tsx
 
-import { useBaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
 import { useMapDraw } from "@/design-system/components/map/hooks/use-map-draw";
 import { useMapLayers } from "@/design-system/components/map/hooks/use-map-layers";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { MapProps } from "@/design-system/components/map/types/map.basemap.type";
 import { BaseMap } from "@/design-system/components/map/ui/map.basemap";
 import { MapOverlay } from "@/design-system/components/map/ui/map.overlay";
 
 /**
- * Shell rendered inside BaseMap — reads the map instance from context
+ * Shell rendered inside BaseMap — reads the map instance from Zustand store
  * and orchestrates all feature-level concerns.
  */
 const MapShell = ({
@@ -16,7 +16,7 @@ const MapShell = ({
   onDrawFinish,
   children,
 }: Omit<MapProps, "styleUrl">) => {
-  const { map } = useBaseMapContext();
+  const map = useMapInstanceStore((state) => state.map);
 
   useMapLayers(map, layers);
   useMapDraw(map, onDrawFinish);

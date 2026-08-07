@@ -10,7 +10,7 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { useBaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { MapSearchResultItem } from "@/design-system/components/map/types/map.search.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -29,7 +29,7 @@ export const MapSearch = () => {
   const { theme } = useThemeStore();
 
   // Contexts
-  const { map } = useBaseMapContext();
+  const map = useMapInstanceStore((state) => state.map);
 
   // hooks
   const { queryValue, setQueryValue } = useSearchParam(SEARCH_QUERY_KEY);

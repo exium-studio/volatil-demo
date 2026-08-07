@@ -4,15 +4,14 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { ToggleTip } from "@/design-system/components/input/ui/toggle-tip";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import { useBaseMapContext } from "@/design-system/components/map/contexts/map.basemap.context";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { Navigation2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export const BaseMapCompass = (props: StackProps) => {
-  // Contexts
-  const { map } = useBaseMapContext();
+export const MapCompass = (props: StackProps) => {
+  const map = useMapInstanceStore((state) => state.map);
 
   // States
   const [bearing, setBearing] = useState(0);
