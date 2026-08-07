@@ -58,7 +58,7 @@ export const SigninPage = () => {
         <FeaturesCarousel />
 
         <VStack overflowY={"auto"} px={[0, null, 12]} py={12}>
-          <HStack align={"center"} justify={"center"} gap={2} ml={-4}>
+          <HStack align={"center"} justify={"center"} gap={4} ml={-4}>
             <AtrLogo />
 
             <VStack>
