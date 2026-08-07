@@ -2,13 +2,13 @@
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
-import { Box } from "@/design-system/components/layout/ui/box";
 import {
   Container,
   useContainerContext,
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -46,13 +46,17 @@ export const InternalHomeOrderSummary = (
 
   return (
     <Container.Root flex={"1 1 100%"} withContext={true} {...props}>
-      <Container.Body gap={4} py={PADDING_MD}>
+      <Container.Body gap={4} pt={PADDING_MD}>
         <InternalHomeOrderSummaryHeader
           period={period}
           onPeriodChange={setPeriod}
         />
 
-        <InternalHomeOrderStats />
+        <VStack flex={1}>
+          <Separator borderColor={"bg.canvas"} />
+
+          <InternalHomeOrderStats />
+        </VStack>
       </Container.Body>
     </Container.Root>
   );
@@ -90,13 +94,69 @@ const InternalHomeOrderSummaryHeader = (
   );
 };
 
+const InternalHomeOrderSummaryStatItem = (
+  props: InternalHomeOrderStatItemProps,
+) => {
+  // Props
+  const { stat, ...restProps } = props;
+
+  return (
+    <VStack
+      align={"start"}
+      overflow={"clip"}
+      position={"relative"}
+      gap={2}
+      h={"full"}
+      p={PADDING_MD}
+      {...restProps}
+    >
+      <HStack
+        fontSize={"lg"}
+        fontWeight={"semibold"}
+        align={"center"}
+        justify={"space-between"}
+        gap={4}
+        w={"full"}
+      >
+        <P color={"fg.muted"}>{stat.label}</P>
+
+        <AppIcon icon={stat.icon} color={"fg.subtle"} />
+      </HStack>
+
+      <P fontSize={"2xl"} fontWeight={"medium"} color={stat.color} mt={"auto"}>
+        {stat.isCurrency ? (
+          <FormatNumber
+            value={stat.value}
+            style={"currency"}
+            currency={"IDR"}
+            maximumFractionDigits={0}
+          />
+        ) : (
+          <FormatNumber value={stat.value} />
+        )}
+
+        {stat.suffix && (
+          <Span fontSize={"xs"} color={"fg.subtle"} fontWeight={"normal"} ml={1.5}>
+            {stat.suffix}
+          </Span>
+        )}
+      </P>
+    </VStack>
+  );
+};
+
 const InternalHomeOrderStats = () => {
+  // Stores
+  const { theme } = useThemeStore();
+
   // Contexts
   const { isSmContainer } = useContainerContext();
 
   // Data
   const { activeOrders, completedOrders, igtRequests, totalRevenue } =
     dummyInternalOrderSummary;
+
+  const cols = isSmContainer ? 2 : 4;
 
   const STATS: InternalHomeOrderStatConfig[] = [
     {
@@ -127,76 +187,25 @@ const InternalHomeOrderStats = () => {
 
   return (
     <SimpleGrid
-      columns={isSmContainer ? 2 : 4}
-      gap={PADDING_MD}
-      px={PADDING_MD}
+      flex={1}
+      columns={cols}
+      overflow={"clip"}
+      roundedBottom={theme.radii.container}
     >
-      {STATS.map((stat) => (
-        <InternalHomeOrderStatItem key={stat.label} stat={stat} />
-      ))}
-    </SimpleGrid>
-  );
-};
+      {STATS.map((stat, index) => {
+        const isLastInRow = (index + 1) % cols === 0;
+        const isNotFirstRow = index >= cols;
 
-const InternalHomeOrderStatItem = (props: InternalHomeOrderStatItemProps) => {
-  // Props
-  const { stat, ...restProps } = props;
-
-  // Stores
-  const { theme } = useThemeStore();
-
-  return (
-    <VStack
-      align={"start"}
-      gap={4}
-      p={PADDING_MD}
-      bg={"bg.canvas"}
-      rounded={theme.radii.container}
-      border={"1px solid"}
-      borderColor={"border.subtle"}
-      {...restProps}
-    >
-      <HStack gap={3} align={"center"}>
-        <Box
-          p={2}
-          rounded={"lg"}
-          bg={"blue.subtle"}
-          color={"blue.fg"}
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"center"}
-        >
-          <AppIcon icon={stat.icon} fontSize={"md"} />
-        </Box>
-
-        <P fontSize={"sm"} color={"fg.muted"} fontWeight={"medium"}>
-          {stat.label}
-        </P>
-      </HStack>
-
-      <P fontSize={"2xl"} fontWeight={"bold"} mt={"auto"}>
-        {stat.isCurrency ? (
-          <FormatNumber
-            value={stat.value}
-            style={"currency"}
-            currency={"IDR"}
-            maximumFractionDigits={0}
+        return (
+          <InternalHomeOrderSummaryStatItem
+            key={stat.label}
+            stat={stat}
+            borderRight={isLastInRow ? undefined : "2px solid"}
+            borderTop={isNotFirstRow ? "2px solid" : undefined}
+            borderColor={"bg.canvas"}
           />
-        ) : (
-          <FormatNumber value={stat.value} />
-        )}
-
-        {stat.suffix && (
-          <Span
-            fontSize={"xs"}
-            color={"fg.subtle"}
-            fontWeight={"normal"}
-            ml={1.5}
-          >
-            {stat.suffix}
-          </Span>
-        )}
-      </P>
-    </VStack>
+        );
+      })}
+    </SimpleGrid>
   );
 };

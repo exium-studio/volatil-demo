@@ -2,17 +2,17 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Container } from "@/design-system/components/layout/ui/container";
+import {
+  Container,
+  useContainerContext,
+} from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import {
-  PADDING_MD,
-  PADDING_SM,
-  SPACING_MD,
-} from "@/design-system/constants/styles";
+import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type {
   InternalHomeServiceRateCardProps,
@@ -26,14 +26,14 @@ export const InternalHomeServiceRate = (
 ) => {
   return (
     <Container.Root flex={"1 1 350px"} withContext={true} {...props}>
-      <Container.Body gap={4} py={PADDING_MD}>
+      <Container.Body gap={4} pt={PADDING_MD}>
         <InternalHomeServiceRateHeader />
 
-        <SimpleGrid columns={2} gap={PADDING_SM} px={PADDING_SM} mt={"auto"}>
-          {dummyInternalServiceRates.map((rate) => (
-            <InternalHomeServiceRateCard key={rate.id} rate={rate} />
-          ))}
-        </SimpleGrid>
+        <VStack flex={1}>
+          <Separator borderColor={"bg.canvas"} />
+
+          <InternalHomeServiceRateStats />
+        </VStack>
       </Container.Body>
     </Container.Root>
   );
@@ -71,33 +71,35 @@ const InternalHomeServiceRateCard = (
   // Props
   const { rate, ...restProps } = props;
 
-  // Stores
-  const { theme } = useThemeStore();
-
   return (
     <VStack
       align={"start"}
-      gap={3}
+      overflow={"clip"}
+      position={"relative"}
+      gap={2}
+      h={"full"}
       p={PADDING_MD}
-      bg={"bg.canvas"}
-      rounded={theme.radii.container}
-      border={"1px solid"}
-      borderColor={"border.subtle"}
       {...restProps}
     >
-      <HStack gap={2} align={"center"}>
+      <HStack
+        fontSize={"lg"}
+        fontWeight={"semibold"}
+        align={"center"}
+        justify={"space-between"}
+        gap={4}
+        w={"full"}
+      >
+        <P color={"fg.muted"}>{rate.title}</P>
+
         <AppIcon
           icon={rate.icon}
           color={`${rate.colorPalette ?? "blue"}.fg`}
           fontSize={"md"}
         />
-        <P fontSize={"sm"} fontWeight={"semibold"}>
-          {rate.title}
-        </P>
       </HStack>
 
-      <VStack align={"start"} mt={"auto"}>
-        <P fontSize={"xl"} fontWeight={"bold"}>
+      <VStack align={"start"} gap={0} mt={"auto"}>
+        <P fontSize={"2xl"} fontWeight={"medium"}>
           <FormatNumber
             value={rate.price}
             style={"currency"}
@@ -120,5 +122,39 @@ const InternalHomeServiceRateCard = (
         </P>
       </VStack>
     </VStack>
+  );
+};
+
+const InternalHomeServiceRateStats = () => {
+  // Stores
+  const { theme } = useThemeStore();
+
+  // Contexts
+  const { isSmContainer } = useContainerContext();
+
+  const cols = isSmContainer ? 1 : 2;
+
+  return (
+    <SimpleGrid
+      flex={1}
+      columns={cols}
+      overflow={"clip"}
+      roundedBottom={theme.radii.container}
+    >
+      {dummyInternalServiceRates.map((rate, index) => {
+        const isLastInRow = (index + 1) % cols === 0;
+        const isNotFirstRow = index >= cols;
+
+        return (
+          <InternalHomeServiceRateCard
+            key={rate.id}
+            rate={rate}
+            borderRight={isLastInRow ? undefined : "2px solid"}
+            borderTop={isNotFirstRow ? "2px solid" : undefined}
+            borderColor={"bg.canvas"}
+          />
+        );
+      })}
+    </SimpleGrid>
   );
 };
