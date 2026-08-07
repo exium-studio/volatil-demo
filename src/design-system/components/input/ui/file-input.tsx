@@ -20,6 +20,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Image } from "@/design-system/components/media/ui/image";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { toast } from "@/design-system/components/toast";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { useObjectUrl } from "@/shared/hooks/use-object-url";
@@ -115,35 +116,25 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
           filesToRestoreRef.current = acceptedFilesRef.current;
           setResetKey((k) => k + 1);
 
-          // TODO: replace with real toast engine
           const tooMany = details.files.some((f) =>
             f.errors.includes("TOO_MANY_FILES"),
           );
           if (tooMany) {
-            console.error(
-              `Only ${effectiveMaxFiles} slot(s) left — you selected too many files at once (${details.files.length}).`,
-            );
+            toast.error(t["file_input.max_files_exceeded"]());
           }
 
-          // TODO: replace with real toast engine
           const invalidType = details.files.some((f) =>
             f.errors.includes("FILE_INVALID_TYPE"),
           );
           if (invalidType) {
-            const allowedTypes = accept?.join(", ") ?? "-";
-            console.error(
-              `Invalid file type — allowed types: ${allowedTypes}.`,
-            );
+            toast.error(t["file_input.invalid_file_type"]());
           }
 
-          // TODO: replace with real toast engine
           const tooLarge = details.files.some((f) =>
             f.errors.includes("FILE_TOO_LARGE"),
           );
           if (tooLarge) {
-            console.error(
-              `File too large — maximum allowed size is ${maxFileSize} bytes.`,
-            );
+            toast.error(t["file_input.max_file_size_exceeded"]());
           }
         }}
         {...restProps}
@@ -216,7 +207,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
       const newEffectiveMax = effectiveMaxFiles - 1;
       if (acceptedFiles.length > newEffectiveMax) {
         setFiles(acceptedFiles.slice(0, Math.max(newEffectiveMax, 0)));
-        // TODO: info toast wuth content t["file_input.auto_trimmed_warning"]()
+        toast.info(t["file_input.auto_trimmed_warning"]());
       }
     }
     onToggleDeleteExisting?.(id);

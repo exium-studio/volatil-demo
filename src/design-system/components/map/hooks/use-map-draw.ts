@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
+import { toast } from "@/design-system/components/toast";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 import {
   isNearFirstPoint,
@@ -106,7 +107,7 @@ export const useMapDraw = (
 
     onFinish?.(feature, pointsRef.current);
     finish();
-    // TODO: call toast.success("Area berhasil digambar")
+    toast.success("Area berhasil digambar");
   };
 
   useEffect(() => {

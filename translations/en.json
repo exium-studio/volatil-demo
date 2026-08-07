@@ -189,10 +189,13 @@
   },
 
   "file_input": {
-    "replace_hint": "Uploading new files will replace the current files.",
+    "replace_hint": "Uploading a new file will replace the current file.",
     "limit_reached": "Limit reached. Remove files to upload new ones.",
-    "scheduled_removal": "Will be removed on save",
-    "auto_trimmed_warning": "File restored. Newer uploads were discarded to stay within the limit."
+    "scheduled_removal": "Will be removed upon saving",
+    "auto_trimmed_warning": "Files restored. Latest uploads canceled to keep slot limit.",
+    "max_files_exceeded": "Number of files exceeds the allowed limit.",
+    "max_file_size_exceeded": "File size exceeds the maximum allowed limit.",
+    "invalid_file_type": "Invalid file format."
   },
   "rich_text_editor": {
     "default_placeholder": "Start typing your content here"

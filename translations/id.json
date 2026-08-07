@@ -191,7 +191,10 @@
     "replace_hint": "Mengunggah berkas baru akan menggantikan berkas saat ini.",
     "limit_reached": "Batas tercapai. Hapus berkas untuk mengunggah berkas baru.",
     "scheduled_removal": "Akan dihapus saat disimpan",
-    "auto_trimmed_warning": "Berkas dipulihkan. Unggahan terbaru dibatalkan untuk menjaga batas kapasitas."
+    "auto_trimmed_warning": "Berkas dipulihkan. Unggahan terbaru dibatalkan untuk menjaga batas kapasitas.",
+    "max_files_exceeded": "Jumlah berkas melebihi batas yang diperbolehkan.",
+    "max_file_size_exceeded": "Ukuran berkas melebihi batas maksimum.",
+    "invalid_file_type": "Format berkas tidak sesuai."
   },
   "rich_text_editor": {
     "default_placeholder": "Mulai mengetik konten Anda di sini"

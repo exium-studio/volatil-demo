@@ -1,7 +1,8 @@
 // src/design-system/components/map/hooks/use-map-geolocation.ts
 
-import { useEffect, useRef, useState } from "react";
+import { toast } from "@/design-system/components/toast";
 import maplibregl from "maplibre-gl";
+import { useEffect, useRef, useState } from "react";
 
 interface UseGeolocationResult {
   isActive: boolean;
@@ -39,8 +40,9 @@ export const useGeolocation = (
     if (!map) return;
 
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by this browser");
-      // TODO: call toast.error("Geolocation is not supported by this browser")
+      const errMsg = "Geolocation is not supported by this browser";
+      setLocationError(errMsg);
+      toast.error(errMsg);
       return;
     }
 
@@ -67,7 +69,7 @@ export const useGeolocation = (
       (error) => {
         setIsLocating(false);
         setLocationError(error.message);
-        // TODO: call toast.error(error.message)
+        toast.error(error.message);
       },
       { enableHighAccuracy: true, timeout: 10000 },
     );

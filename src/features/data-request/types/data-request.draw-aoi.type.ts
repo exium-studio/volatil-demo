@@ -9,16 +9,6 @@ export type DrawAoiGuideAlertProps = {
   hasFinishedDraw: boolean;
 };
 
-export type DrawAoiControlsProps = {
-  isDrawing: boolean;
-  isLoading: boolean;
-  hasFinishedDraw: boolean;
-  isDone: boolean;
-  onCancelDraw: () => void;
-  onResetDraw: () => void;
-  onConfirmAndFetch: () => void;
-};
-
 export type DrawAoiDataListProps = {
   igtItems: IgtDataItem[];
   itemActions: DataListItemActionsGenerator<IgtDataItem>[];

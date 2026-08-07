@@ -1,5 +1,7 @@
 // src/shared/libs/toast/toast.handler.ts
 
+import { toast } from "@/design-system/components/toast";
+
 export type ToastMessageConfig = {
   title: string;
   description?: string;
@@ -14,29 +16,41 @@ export type MutationToastOptions = {
 /**
  * Mutation Toast Handler Helper
  *
- * Wraps onMutate (loading toast), onSuccess (success toast), and onError (error toast).
+ * Connects TanStack Query mutation lifecycle (onMutate, onSuccess, onError)
+ * directly to the application's Toast Engine.
  */
 export const mutationToastHandlers = (
-  _key: string,
+  key: string,
   options: MutationToastOptions = {},
 ) => {
+  const toastId = `mutation-toast-${key}`;
+
   return {
     onLoading: () => {
       if (options.loadingMessage) {
-        console.log(`[Toast Loading]: ${options.loadingMessage.title}`);
+        toast.loading(options.loadingMessage.title, {
+          id: toastId,
+          description: options.loadingMessage.description,
+        });
       }
     },
     onSuccess: () => {
       if (options.successMessage) {
-        console.log(`[Toast Success]: ${options.successMessage.title}`);
+        toast.success(options.successMessage.title, {
+          id: toastId,
+          description: options.successMessage.description,
+        });
+      } else {
+        toast.close(toastId);
       }
     },
     onError: (error: unknown) => {
       const message =
         error instanceof Error ? error.message : "Terjadi kesalahan";
-      console.error(
-        `[Toast Error]: ${options.errorMessage?.title ?? message}`,
-      );
+      toast.error(options.errorMessage?.title ?? message, {
+        id: toastId,
+        description: options.errorMessage?.description,
+      });
     },
   };
 };

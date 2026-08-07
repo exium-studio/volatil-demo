@@ -25,7 +25,6 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataRequestAddToCartButtons } from "@/features/data-request/components/data.request.add-to-cart-buttons";
 import { useDrawAoi } from "@/features/data-request/hooks/use-draw-aoi";
 import type {
-  DrawAoiControlsProps,
   DrawAoiDataListProps,
   DrawAoiGuideAlertProps,
 } from "@/features/data-request/types/data-request.draw-aoi.type";
@@ -71,36 +70,64 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
       p={0}
       {...props}
     >
-      {!hasStartedDrawing && !isDone && !isLoading && (
-        <NoDataState
-          description={
-            "Klik 'Mulai Gambar' lalu tentukan area pada peta dengan mengklik beberapa titik untuk menentukan batas area yang Anda inginkan."
-          }
-        >
-          <Button primary onClick={startDraw}>
-            <AppIcon icon={IconPencil} />
-            Mulai Gambar
-          </Button>
-        </NoDataState>
-      )}
+      {!isDone && !isLoading && (
+        <>
+          <GuideAlert
+            isLoading={isLoading}
+            isDrawing={isDrawing}
+            hasFinishedDraw={hasFinishedDraw}
+            isVisible={hasStartedDrawing}
+          />
 
-      {hasStartedDrawing && !isDone && (
-        <GuideAlert
-          isLoading={isLoading}
-          isDrawing={isDrawing}
-          hasFinishedDraw={hasFinishedDraw}
-        />
-      )}
+          <NoDataState
+            description={
+              "Tentukan area spesifik pada peta untuk mengambil data IGT."
+            }
+          >
+            {!hasStartedDrawing && (
+              <Button primary pl={3} onClick={startDraw}>
+                <AppIcon icon={IconPencil} />
+                Mulai gambar
+              </Button>
+            )}
 
-      <DrawControls
-        isDrawing={isDrawing}
-        isLoading={isLoading}
-        hasFinishedDraw={hasFinishedDraw}
-        isDone={isDone}
-        onCancelDraw={cancelDraw}
-        onResetDraw={handleResetDraw}
-        onConfirmAndFetch={() => void handleConfirmAndFetch()}
-      />
+            {isDrawing && (
+              <Button
+                variant={"outline"}
+                colorPalette={"red"}
+                pl={3}
+                onClick={cancelDraw}
+              >
+                <AppIcon icon={IconX} />
+                Batal gambar
+              </Button>
+            )}
+
+            {hasFinishedDraw && (
+              <HStack gap={SPACING_SM}>
+                <Button
+                  variant={"outline"}
+                  colorPalette={"red"}
+                  pl={3}
+                  onClick={handleResetDraw}
+                >
+                  <AppIcon icon={IconTrash} />
+                  Hapus gambar
+                </Button>
+
+                <Button
+                  primary
+                  pl={3}
+                  onClick={() => void handleConfirmAndFetch()}
+                >
+                  <AppIcon icon={IconCheck} />
+                  Konfirmasi &amp; clip
+                </Button>
+              </HStack>
+            )}
+          </NoDataState>
+        </>
+      )}
 
       {isLoading && (
         <Box
@@ -122,7 +149,7 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
             {(error as Error)?.message ?? "Terjadi kesalahan"}
           </P>
           <Button variant={"outline"} onClick={handleResetDraw}>
-            Coba Lagi
+            Coba lagi
           </Button>
         </VStack>
       )}
@@ -138,11 +165,16 @@ export const DataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
   );
 };
 
+type ExtendedGuideAlertProps = DrawAoiGuideAlertProps & {
+  isVisible: boolean;
+};
+
 const GuideAlert = ({
   isLoading,
   isDrawing,
   hasFinishedDraw,
-}: DrawAoiGuideAlertProps) => {
+  isVisible,
+}: ExtendedGuideAlertProps) => {
   const { theme } = useThemeStore();
 
   const getAlertBg = () => {
@@ -164,8 +196,8 @@ const GuideAlert = ({
     if (isDrawing)
       return "Klik titik pada peta untuk menggambar. Klik titik pertama atau double-click untuk selesai.";
     if (hasFinishedDraw)
-      return "Area berhasil digambar. Klik 'Konfirmasi & Clip' untuk mengambil data, atau 'Hapus Gambar' untuk menggambar ulang.";
-    return "Klik 'Mulai Gambar' lalu klik titik pada peta untuk menentukan batas area spesifik yang Anda inginkan.";
+      return "Area berhasil digambar. Klik 'Konfirmasi & clip' untuk mengambil data, atau 'Hapus gambar' untuk menggambar ulang.";
+    return "Klik 'Mulai gambar' lalu klik titik pada peta untuk menentukan batas area spesifik yang Anda inginkan.";
   };
 
   return (
@@ -175,6 +207,8 @@ const GuideAlert = ({
       gap={SPACING_MD}
       p={PADDING_MD}
       pb={0}
+      visibility={isVisible ? "visible" : "hidden"}
+      pointerEvents={isVisible ? "auto" : "none"}
     >
       <HStack
         align={"center"}
@@ -189,61 +223,6 @@ const GuideAlert = ({
       </HStack>
     </VStack>
   );
-};
-
-const DrawControls = ({
-  isDrawing,
-  isLoading,
-  hasFinishedDraw,
-  isDone,
-  onCancelDraw,
-  onResetDraw,
-  onConfirmAndFetch,
-}: DrawAoiControlsProps) => {
-  if (isDrawing && !isLoading) {
-    return (
-      <Box
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        p={PADDING_MD}
-      >
-        <Button variant={"outline"} colorPalette={"red"} onClick={onCancelDraw}>
-          <AppIcon icon={IconX} />
-          Batal Gambar
-        </Button>
-      </Box>
-    );
-  }
-
-  if (hasFinishedDraw && !isLoading && !isDone) {
-    return (
-      <Box
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        p={PADDING_MD}
-      >
-        <HStack gap={SPACING_SM}>
-          <Button
-            variant={"outline"}
-            colorPalette={"red"}
-            onClick={onResetDraw}
-          >
-            <AppIcon icon={IconTrash} />
-            Hapus Gambar
-          </Button>
-
-          <Button primary onClick={onConfirmAndFetch}>
-            <AppIcon icon={IconCheck} />
-            Konfirmasi &amp; Clip
-          </Button>
-        </HStack>
-      </Box>
-    );
-  }
-
-  return null;
 };
 
 const DataList = ({
@@ -362,10 +341,11 @@ const DataList = ({
             <Button
               variant={"outline"}
               colorPalette={"red"}
+              pl={3}
               onClick={onResetDraw}
             >
               <AppIcon icon={IconTrash} />
-              Hapus Gambar
+              Hapus gambar
             </Button>
           </HStack>
         </HStack>
