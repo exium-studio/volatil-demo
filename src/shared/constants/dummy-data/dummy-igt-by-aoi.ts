@@ -8,7 +8,10 @@ export const DUMMY_IGT_ITEMS: IgtDataItem[] = [
     id: "BID-001",
     basis: "bidang",
     themes: [
-      { name: "Hak Atas Tanah", description: "Dokumen kepemilikan lahan bidang" },
+      {
+        name: "Hak Atas Tanah",
+        description: "Dokumen kepemilikan lahan bidang",
+      },
       { name: "Pemilikan Tanah", description: null },
     ],
     description: "Bidang tanah aktif di kawasan perumahan Kuta Selatan",
@@ -16,7 +19,12 @@ export const DUMMY_IGT_ITEMS: IgtDataItem[] = [
   {
     id: "BID-002",
     basis: "bidang",
-    themes: [{ name: "Bidang Tanah", description: "Data geometri bidang tanah terdaftar" }],
+    themes: [
+      {
+        name: "Bidang Tanah",
+        description: "Data geometri bidang tanah terdaftar",
+      },
+    ],
     description: null,
   },
   {
@@ -39,15 +47,23 @@ export const DUMMY_IGT_ITEMS: IgtDataItem[] = [
     id: "KAW-001",
     basis: "kawasan",
     themes: [
-      { name: "RTRW Nasional", description: "Rencana tata ruang tingkat nasional" },
-      { name: "RTRW Provinsi", description: "Rencana tata ruang Provinsi Bali" },
+      {
+        name: "RTRW Nasional",
+        description: "Rencana tata ruang tingkat nasional",
+      },
+      {
+        name: "RTRW Provinsi",
+        description: "Rencana tata ruang Provinsi Bali",
+      },
     ],
     description: "Kawasan strategis nasional di pesisir selatan Bali",
   },
   {
     id: "KAW-002",
     basis: "kawasan",
-    themes: [{ name: "RTRW Kota", description: "Rencana tata ruang Kota Denpasar" }],
+    themes: [
+      { name: "RTRW Kota", description: "Rencana tata ruang Kota Denpasar" },
+    ],
     description: null,
   },
   {
@@ -145,7 +161,12 @@ export const DUMMY_IGT_ITEMS: IgtDataItem[] = [
   {
     id: "KAW-007",
     basis: "kawasan",
-    themes: [{ name: "RTRW Nasional", description: "Kawasan strategis nasional pantai" }],
+    themes: [
+      {
+        name: "RTRW Nasional",
+        description: "Kawasan strategis nasional pantai",
+      },
+    ],
     description: "Kawasan pesisir dengan perlindungan zona nasional",
   },
   {
