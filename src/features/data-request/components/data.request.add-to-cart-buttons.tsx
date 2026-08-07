@@ -15,7 +15,7 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { IgtDataItem } from "@/features/data-request/types/igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { IconChevronDown, IconShoppingCartPlus } from "@tabler/icons-react";
-import { CheckSquareIcon, FlagIcon, LayersIcon } from "lucide-react";
+import { CheckCheckIcon, FlagIcon, LayersIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export type DataRequestAddToCartButtonsProps = StackProps & {
@@ -112,7 +112,7 @@ export const DataRequestAddToCartButtons = (
             </Menu.Item>
 
             <Menu.Item value={"add-all"} onClick={onAddAllClick}>
-              <AppIcon icon={CheckSquareIcon} />
+              <AppIcon icon={CheckCheckIcon} />
               Tambah semua bidang dan kawasan ({totalCount})
             </Menu.Item>
           </Menu.Content>

@@ -15,7 +15,10 @@ const getAuthToken = (): string | null => {
 };
 
 export const apiClient = {
-  request: async <T>(endpoint: string, options: RequestOptions = {}): Promise<T> => {
+  request: async <T>(
+    endpoint: string,
+    options: RequestOptions = {},
+  ): Promise<T> => {
     const { body, params, headers: customHeaders, ...restOptions } = options;
 
     let url = endpoint;
@@ -102,10 +105,18 @@ export const apiClient = {
   get: <T>(endpoint: string, options?: RequestOptions): Promise<T> =>
     apiClient.request<T>(endpoint, { ...options, method: "GET" }),
 
-  post: <T>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<T> =>
+  post: <T>(
+    endpoint: string,
+    body?: unknown,
+    options?: RequestOptions,
+  ): Promise<T> =>
     apiClient.request<T>(endpoint, { ...options, method: "POST", body }),
 
-  put: <T>(endpoint: string, body?: unknown, options?: RequestOptions): Promise<T> =>
+  put: <T>(
+    endpoint: string,
+    body?: unknown,
+    options?: RequestOptions,
+  ): Promise<T> =>
     apiClient.request<T>(endpoint, { ...options, method: "PUT", body }),
 
   delete: <T>(endpoint: string, options?: RequestOptions): Promise<T> =>
