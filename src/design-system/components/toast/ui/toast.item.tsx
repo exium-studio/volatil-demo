@@ -150,6 +150,7 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
               <P
                 flex={"0 1 auto"}
                 minW={0}
+                mr={record.description ? 0 : 1}
                 fontWeight={"medium"}
                 color={TOAST_VARIANT_MAP[record.variant].color}
                 whiteSpace={toastItemExpanded ? undefined : "nowrap"}
@@ -169,7 +170,7 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
                 overflow={"hidden"}
                 lineClamp={1}
                 textOverflow={"ellipsis"}
-                ml={1}
+                mx={1}
                 mt={"1px"}
                 fontSize={"sm"}
                 color={"fg.subtle"}
