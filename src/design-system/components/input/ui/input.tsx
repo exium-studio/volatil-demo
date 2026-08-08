@@ -18,6 +18,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       size={MAIN_INPUT_SIZE}
       rounded={theme.radii.component}
       fontSize={"md"}
+      colorPalette={"neutral"}
       {...props}
     />
   );

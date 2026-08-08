@@ -48,6 +48,7 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
         gap={SPACING_MD}
         p={PADDING_MD}
       >
+        {/* Header - Actions */}
         <HStack
           wrap={"wrap"}
           align={"center"}
