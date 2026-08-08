@@ -76,10 +76,8 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
   const hasSelectedItems = !isEmptyArray(selectedItems);
 
-  const isBidangMinimumNotMet =
-    selectedBidangCount > 0 && selectedBidangCount < config.minimumBidangCount;
-  const isKawasanMinimumNotMet =
-    selectedKawasanHa > 0 && selectedKawasanHa < config.minimumKawasanHa;
+  const isBidangMinimumNotMet = selectedBidangCount < config.minimumBidangCount;
+  const isKawasanMinimumNotMet = selectedKawasanHa < config.minimumKawasanHa;
   const isMinimumNotMet = isBidangMinimumNotMet || isKawasanMinimumNotMet;
 
   const isCheckoutDisabled =
@@ -110,116 +108,94 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       bg={"bg.body"}
       {...restProps}
     >
-      {/* Branding Header */}
-      <HStack gap={3} align={"center"}>
-        <AtrLogo boxSize={10} />
-        <VStack gap={0} align={"start"}>
-          <P fontWeight={"semibold"}>{"Kementerian ATR/BPN"}</P>
-          <PSerif fontSize={"sm"} color={"blue.fg"}>
-            {"Melayani, Profesional, Terpercaya"}
-          </PSerif>
-        </VStack>
-      </HStack>
-
       {/* Warning Alert & Progress - Bidang */}
-      {selectedBidangCount > 0 && (
-        <>
-          <Separator borderColor={"bg.canvas"} my={0} />
-
-          <VStack gap={2} align={"stretch"}>
-            {isBidangMinimumNotMet && (
-              <HStack
-                p={3}
-                bg={"orange.subtle"}
-                color={"orange.fg"}
-                rounded={"md"}
-                gap={2}
-                align={"start"}
-              >
-                <AppIcon icon={IconAlertTriangle} boxSize={5} mt={"2px"} />
-                <P fontSize={"xs"} fontWeight={"medium"}>
-                  {"Jumlah bidang belum memenuhi batas minimum pembelian"}
-                </P>
-              </HStack>
-            )}
-
-            <Box
-              w={"full"}
-              bg={"bg.canvas"}
-              rounded={"full"}
-              h={"8px"}
-              overflow={"hidden"}
-            >
-              <Box
-                h={"full"}
-                bg={isBidangMinimumNotMet ? "orange.fg" : "blue.fg"}
-                w={`${Math.min(100, (selectedBidangCount / config.minimumBidangCount) * 100)}%`}
-                transition={"width 0.3s ease"}
-              />
-            </Box>
-
-            <HStack justify={"space-between"} fontSize={"xs"}>
-              <P color={"fg.subtle"}>{"Bidang Terpilih:"}</P>
-              <P fontWeight={"medium"}>
-                <strong style={{ fontWeight: 600 }}>
-                  {formatDecimal(selectedBidangCount)} Bidang
-                </strong>{" "}
-                {"dari "}
-                {formatDecimal(config.minimumBidangCount)} Bidang Minimal
-                Pembelian
-              </P>
-            </HStack>
-          </VStack>
-        </>
-      )}
-
-      {/* Warning Alert & Progress - Kawasan */}
-      {selectedKawasanHa > 0 && (
-        <VStack gap={2} align={"stretch"}>
-          {isKawasanMinimumNotMet && (
-            <HStack
-              p={3}
-              bg={"orange.subtle"}
-              color={"orange.fg"}
-              rounded={"md"}
-              gap={2}
-              align={"start"}
-            >
-              <AppIcon icon={IconAlertTriangle} boxSize={5} mt={"2px"} />
-              <P fontSize={"xs"} fontWeight={"medium"}>
-                {"Jumlah kawasan (ha) belum memenuhi batas minimum pembelian"}
-              </P>
-            </HStack>
-          )}
-
-          <Box
-            w={"full"}
-            bg={"bg.canvas"}
-            rounded={"full"}
-            h={"8px"}
-            overflow={"hidden"}
+      <VStack gap={2} align={"stretch"}>
+        {isBidangMinimumNotMet && (
+          <HStack
+            p={3}
+            bg={"orange.subtle"}
+            color={"orange.fg"}
+            rounded={"md"}
+            gap={2}
+            align={"start"}
           >
-            <Box
-              h={"full"}
-              bg={isKawasanMinimumNotMet ? "orange.fg" : "orange.fg"}
-              w={`${Math.min(100, (selectedKawasanHa / config.minimumKawasanHa) * 100)}%`}
-              transition={"width 0.3s ease"}
-            />
-          </Box>
-
-          <HStack justify={"space-between"} fontSize={"xs"}>
-            <P color={"fg.subtle"}>{"Kawasan Terpilih:"}</P>
-
-            <P fontWeight={"medium"}>
-              <strong style={{ fontWeight: 600 }}>
-                {formatDecimal(selectedKawasanHa)} ha
-              </strong>{" "}
-              {"dari "}
-              {formatDecimal(config.minimumKawasanHa)} ha Minimal Pembelian
+            <AppIcon icon={IconAlertTriangle} boxSize={5} mt={"2px"} />
+            <P fontSize={"sm"} fontWeight={"medium"}>
+              {"Jumlah bidang belum memenuhi batas minimum pembelian"}
             </P>
           </HStack>
-        </VStack>
-      )}
+        )}
+
+        <Box
+          w={"full"}
+          bg={"bg.canvas"}
+          rounded={"full"}
+          h={"8px"}
+          overflow={"hidden"}
+        >
+          <Box
+            h={"full"}
+            bg={"blue.fg"}
+            w={`${Math.min(100, (selectedBidangCount / config.minimumBidangCount) * 100)}%`}
+            transition={"width 0.3s ease"}
+          />
+        </Box>
+
+        <HStack justify={"space-between"} fontSize={"sm"}>
+          <P color={"fg.subtle"}>{"Bidang"}</P>
+          <P fontWeight={"medium"}>
+            <strong style={{ fontWeight: 600 }}>
+              {formatDecimal(selectedBidangCount)}
+            </strong>
+            {` / ${formatDecimal(config.minimumBidangCount)} Bidang`}
+          </P>
+        </HStack>
+      </VStack>
+
+      {/* Warning Alert & Progress - Kawasan */}
+      <VStack gap={2} align={"stretch"}>
+        {isKawasanMinimumNotMet && (
+          <HStack
+            p={3}
+            bg={"orange.subtle"}
+            color={"orange.fg"}
+            rounded={"md"}
+            gap={2}
+            align={"start"}
+          >
+            <AppIcon icon={IconAlertTriangle} boxSize={5} mt={"2px"} />
+            <P fontSize={"sm"} fontWeight={"medium"}>
+              {"Jumlah kawasan (ha) belum memenuhi batas minimum pembelian"}
+            </P>
+          </HStack>
+        )}
+
+        <Box
+          w={"full"}
+          bg={"bg.canvas"}
+          rounded={"full"}
+          h={"8px"}
+          overflow={"hidden"}
+        >
+          <Box
+            h={"full"}
+            bg={isKawasanMinimumNotMet ? "orange.fg" : "orange.fg"}
+            w={`${Math.min(100, (selectedKawasanHa / config.minimumKawasanHa) * 100)}%`}
+            transition={"width 0.3s ease"}
+          />
+        </Box>
+
+        <HStack justify={"space-between"} fontSize={"sm"}>
+          <P color={"fg.subtle"}>{"Kawasan"}</P>
+
+          <P fontWeight={"medium"}>
+            <strong style={{ fontWeight: 600 }}>
+              {formatDecimal(selectedKawasanHa)}
+            </strong>
+            {` / ${formatDecimal(config.minimumKawasanHa)} ha`}
+          </P>
+        </HStack>
+      </VStack>
 
       <Separator borderColor={"bg.canvas"} />
 

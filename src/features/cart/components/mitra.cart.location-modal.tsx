@@ -50,7 +50,7 @@ export const MitraCartLocationModal = (
                   </P>
                 </HStack>
 
-                <P fontSize={"xs"} color={"fg.subtle"}>
+                <P fontSize={"sm"} color={"fg.subtle"}>
                   {"Cakupan Bounding Box (EPSG:4326):"}
                 </P>
 
@@ -63,7 +63,7 @@ export const MitraCartLocationModal = (
             </Box>
 
             <VStack gap={1} align={"start"} p={SPACING_SM}>
-              <P fontSize={"xs"} color={"fg.subtle"}>
+              <P fontSize={"sm"} color={"fg.subtle"}>
                 {"Informasi Coverage Area:"}
               </P>
               <P fontSize={"sm"}>
