@@ -3,9 +3,9 @@
 import type { LayerSpecification } from "maplibre-gl";
 import type { WfsLayerConfig } from "@/design-system/components/map/types/map.type";
 
-/** Indonesia national view — default map center and zoom on first load. */
-export const DEFAULT_MAP_CENTER: [number, number] = [117.5, -2.5];
-export const DEFAULT_MAP_ZOOM = 3.5;
+/** Monumen Nasional (Monas), Jakarta — default map center and zoom level on first load. */
+export const DEFAULT_MAP_CENTER: [number, number] = [106.8272, -6.1754];
+export const DEFAULT_MAP_ZOOM = 16;
 
 export const WFS_BASE_URL =
   "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows";
