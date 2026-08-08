@@ -110,6 +110,7 @@ const MitraCartContent = () => {
         <Container.Body
           flex={isSmContainer ? undefined : 1}
           alignSelf={isSmContainer ? undefined : "start"}
+          minW={"300px"}
           maxH={"full"}
           minH={isSmContainer ? undefined : 0}
           overflowY={isSmContainer ? undefined : "auto"}
