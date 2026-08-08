@@ -79,7 +79,6 @@ import { RichTextEditorPresetEssential } from "@/design-system/components/typogr
 import { Span } from "@/design-system/components/typography/ui/span";
 import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
 import { SPACING_MD } from "@/design-system/constants/styles";
-import { useBreakpointValue } from "@/design-system/hooks";
 import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { SettingsTrigger } from "@/features/settings/components/settings";
