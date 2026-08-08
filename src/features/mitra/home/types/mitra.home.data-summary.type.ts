@@ -1,21 +1,25 @@
 // src/features/mitra/home/types/mitra.home.data-summary.type.ts
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import type { TransactionItem } from "@/features/mitra/home/types/mitra.home.last-transaction.type";
+import type { MitraHomeTransactionItem } from "@/features/mitra/home/types/mitra.home.last-transaction.type";
+
+export type MitraHomePeriod = "1d" | "1w" | "1m" | "1y" | "all";
 
 export type MitraHomeDataSummaryProps = StackProps;
 
 export type MitraHomeDataSummaryHeaderProps = {
-  period: HomePeriod;
-  onPeriodChange: (period: HomePeriod) => void;
+  period: MitraHomePeriod;
+  onPeriodChange: (period: MitraHomePeriod) => void;
 };
 
 export type MitraHomeDataSummaryChartsProps = {
-  period: HomePeriod;
+  period: MitraHomePeriod;
 };
 
+export type MitraHomeSummaryStatus = "active" | "almostExpired" | "expired";
+
 export type MitraHomeDataSummaryStatusConfig = {
-  key: HomeSummaryStatus;
+  key: MitraHomeSummaryStatus;
   label: string;
   colorPalette?: string;
   bg?: string;
@@ -29,34 +33,35 @@ export type MitraHomeDataSummaryLegendProps = StackProps & {
   value: number;
 };
 
-export type HomeSummaryStatus = "active" | "almostExpired" | "expired";
-
-export type HomeSummaryResponse = {
+export type MitraHomeSummaryResponse = {
   active: number;
   almostExpired: number;
   expired: number;
 };
 
-export type HomeDataSummaryResponse = {
-  field: HomeSummaryResponse;
-  area: HomeSummaryResponse;
+export type MitraHomeDataSummaryResponse = {
+  field: MitraHomeSummaryResponse;
+  area: MitraHomeSummaryResponse;
 };
 
-export type HomeCartSummaryResponse = {
+export type MitraHomeCartSummaryResponse = {
   totalField: number;
   totalArea: number;
   totalIgtData: number;
   subtotalPrice: number;
 };
 
-export type HomePeriod = "1d" | "1w" | "1m" | "1y" | "all";
-export type MitraHomePeriod = HomePeriod;
-
-// Responses
-
-export type HomeDataResponse = {
-  dataSummary: Record<HomePeriod, HomeDataSummaryResponse>;
-  financialFlow: Record<HomePeriod, { sale: number; label: string }[]>;
-  cartSummary: HomeCartSummaryResponse;
-  lastTransactions: TransactionItem[];
+export type MitraHomeDataResponse = {
+  dataSummary: Record<MitraHomePeriod, MitraHomeDataSummaryResponse>;
+  financialFlow: Record<MitraHomePeriod, { sale: number; label: string }[]>;
+  cartSummary: MitraHomeCartSummaryResponse;
+  lastTransactions: MitraHomeTransactionItem[];
 };
+
+// Aliases for backwards compatibility
+export type HomePeriod = MitraHomePeriod;
+export type HomeSummaryStatus = MitraHomeSummaryStatus;
+export type HomeSummaryResponse = MitraHomeSummaryResponse;
+export type HomeDataSummaryResponse = MitraHomeDataSummaryResponse;
+export type HomeCartSummaryResponse = MitraHomeCartSummaryResponse;
+export type HomeDataResponse = MitraHomeDataResponse;

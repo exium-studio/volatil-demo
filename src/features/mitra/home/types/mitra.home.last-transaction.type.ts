@@ -4,25 +4,32 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 
 export type MitraHomeLastTransactionProps = StackProps;
 
-export type TransactionStatus = "success" | "pending" | "failed";
-export type ThemeType = "rtr" | "boundary" | "land";
-export type DataStatus = "active" | "inactive";
-export type ThemeCategory = "spatial" | "land";
+export type MitraHomeTransactionStatus = "success" | "pending" | "failed";
+export type MitraHomeThemeType = "rtr" | "boundary" | "land";
+export type MitraHomeDataStatus = "active" | "inactive";
+export type MitraHomeThemeCategory = "spatial" | "land";
 
-export type TransactionItem = Record<string, unknown> & {
+export type MitraHomeTransactionItem = Record<string, unknown> & {
   id: string;
   transactionNo: string;
   username: string;
   date: string;
-  status: TransactionStatus;
+  status: MitraHomeTransactionStatus;
   dataName: string;
-  themeType: ThemeType;
+  themeType: MitraHomeThemeType;
   apiLink: string;
   apiWps: string;
   timeLeft: string;
-  dataStatus: DataStatus;
+  dataStatus: MitraHomeDataStatus;
   quota: string;
-  themeCategory: ThemeCategory;
+  themeCategory: MitraHomeThemeCategory;
   description: string;
   amount: number;
 };
+
+// Aliases for compatibility
+export type TransactionStatus = MitraHomeTransactionStatus;
+export type ThemeType = MitraHomeThemeType;
+export type DataStatus = MitraHomeDataStatus;
+export type ThemeCategory = MitraHomeThemeCategory;
+export type TransactionItem = MitraHomeTransactionItem;

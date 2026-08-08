@@ -6,24 +6,22 @@ import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { toast } from "@/design-system/components/toast";
 import { PLink } from "@/design-system/components/typography/ui/p";
+import { useSigninMutation } from "@/features/auth/hooks/use-signin.mutation";
 import {
   createSigninSchema,
   type SigninFormValues,
   zodResolver,
 } from "@/features/auth/schemas/signin.schema";
-import { authService } from "@/features/auth/services/auth.service";
-import { useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 
 export const MitraSignin = () => {
   // Hooks
-  const navigate = useNavigate();
+  const signinMutation = useSigninMutation();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SigninFormValues>({
     resolver: zodResolver(createSigninSchema),
     defaultValues: {
@@ -33,25 +31,12 @@ export const MitraSignin = () => {
   });
 
   // Handlers
-  const handleLogin = async (values: SigninFormValues) => {
-    try {
-      await authService.login({
-        email: values.email,
-        password: values.password,
-        role: "mitra",
-      });
-      toast.create({
-        variant: "success",
-        title: "Berhasil masuk sebagai Mitra!",
-      });
-      navigate({ to: "/mitra/welcome" });
-    } catch (err) {
-      toast.create({
-        variant: "error",
-        title: "Gagal masuk",
-        description: err instanceof Error ? err.message : "Terjadi kesalahan saat masuk",
-      });
-    }
+  const handleLogin = (values: SigninFormValues) => {
+    signinMutation.mutate({
+      email: values.email,
+      password: values.password,
+      role: "mitra",
+    });
   };
 
   return (
@@ -67,10 +52,7 @@ export const MitraSignin = () => {
           invalid={Boolean(errors.email)}
           errorText={errors.email?.message}
         >
-          <Input
-            placeholder={"jolitos@email.com"}
-            {...register("email")}
-          />
+          <Input placeholder={"jolitos@email.com"} {...register("email")} />
         </Field>
 
         <Field
@@ -78,10 +60,7 @@ export const MitraSignin = () => {
           invalid={Boolean(errors.password)}
           errorText={errors.password?.message}
         >
-          <PasswordInput
-            placeholder={"••••••••"}
-            {...register("password")}
-          />
+          <PasswordInput placeholder={"••••••••"} {...register("password")} />
         </Field>
 
         <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink>
@@ -92,7 +71,7 @@ export const MitraSignin = () => {
         type={"submit"}
         w={"full"}
         mt={8}
-        loading={isSubmitting}
+        loading={signinMutation.isPending}
       >
         {"Masuk"}
       </Button>
@@ -102,11 +81,11 @@ export const MitraSignin = () => {
 
 export const InternalSignin = () => {
   // Hooks
-  const navigate = useNavigate();
+  const signinMutation = useSigninMutation();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SigninFormValues>({
     resolver: zodResolver(createSigninSchema),
     defaultValues: {
@@ -116,25 +95,12 @@ export const InternalSignin = () => {
   });
 
   // Handlers
-  const handleLogin = async (values: SigninFormValues) => {
-    try {
-      await authService.login({
-        email: values.email,
-        password: values.password,
-        role: "internal",
-      });
-      toast.create({
-        variant: "success",
-        title: "Berhasil masuk sebagai Internal Admin!",
-      });
-      navigate({ to: "/internal/welcome" });
-    } catch (err) {
-      toast.create({
-        variant: "error",
-        title: "Gagal masuk",
-        description: err instanceof Error ? err.message : "Terjadi kesalahan saat masuk",
-      });
-    }
+  const handleLogin = (values: SigninFormValues) => {
+    signinMutation.mutate({
+      email: values.email,
+      password: values.password,
+      role: "internal",
+    });
   };
 
   return (
@@ -150,10 +116,7 @@ export const InternalSignin = () => {
           invalid={Boolean(errors.email)}
           errorText={errors.email?.message}
         >
-          <Input
-            placeholder={"jolitos@email.com"}
-            {...register("email")}
-          />
+          <Input placeholder={"jolitos@email.com"} {...register("email")} />
         </Field>
 
         <Field
@@ -161,10 +124,7 @@ export const InternalSignin = () => {
           invalid={Boolean(errors.password)}
           errorText={errors.password?.message}
         >
-          <PasswordInput
-            placeholder={"••••••••"}
-            {...register("password")}
-          />
+          <PasswordInput placeholder={"••••••••"} {...register("password")} />
         </Field>
 
         <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink>
@@ -175,7 +135,7 @@ export const InternalSignin = () => {
         type={"submit"}
         w={"full"}
         mt={8}
-        loading={isSubmitting}
+        loading={signinMutation.isPending}
       >
         {"Masuk"}
       </Button>

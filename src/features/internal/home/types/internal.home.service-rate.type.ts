@@ -5,7 +5,7 @@ import type { ComponentType } from "react";
 
 export type InternalHomeServiceRateProps = StackProps;
 
-export type ServiceRateItem = {
+export type InternalHomeServiceRateItem = {
   id: string;
   title: string;
   icon: ComponentType;
@@ -18,5 +18,8 @@ export type ServiceRateItem = {
 };
 
 export type InternalHomeServiceRateCardProps = StackProps & {
-  rate: ServiceRateItem;
+  rate: InternalHomeServiceRateItem;
 };
+
+// Aliases for compatibility
+export type ServiceRateItem = InternalHomeServiceRateItem;

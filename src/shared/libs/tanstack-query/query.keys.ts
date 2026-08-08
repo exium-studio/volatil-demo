@@ -3,15 +3,29 @@
 import type GeoJSON from "geojson";
 
 export const queryKeys = {
-  dataRequest: {
-    all: ["data-request"] as const,
-    catalog: (params?: Record<string, unknown>) =>
-      [...queryKeys.dataRequest.all, "catalog", params] as const,
-    byAoi: (geometry: GeoJSON.Polygon) =>
-      [...queryKeys.dataRequest.all, "by-aoi", geometry] as const,
-    uploadedAoi: (fileName: string) =>
-      [...queryKeys.dataRequest.all, "uploaded-aoi", fileName] as const,
-    geometryById: (id: string) =>
-      [...queryKeys.dataRequest.all, "geometry", id] as const,
+  mitra: {
+    home: {
+      all: ["mitra", "home"] as const,
+      data: (period?: string) =>
+        [...queryKeys.mitra.home.all, "data", period] as const,
+    },
+    dataRequest: {
+      all: ["mitra", "data-request"] as const,
+      catalog: (params?: Record<string, unknown>) =>
+        [...queryKeys.mitra.dataRequest.all, "catalog", params] as const,
+      byAoi: (geometry: GeoJSON.Polygon) =>
+        [...queryKeys.mitra.dataRequest.all, "by-aoi", geometry] as const,
+      uploadedAoi: (fileName: string) =>
+        [...queryKeys.mitra.dataRequest.all, "uploaded-aoi", fileName] as const,
+      geometryById: (id: string) =>
+        [...queryKeys.mitra.dataRequest.all, "geometry", id] as const,
+    },
+  },
+  internal: {
+    home: {
+      all: ["internal", "home"] as const,
+      data: (period?: string) =>
+        [...queryKeys.internal.home.all, "data", period] as const,
+    },
   },
 };

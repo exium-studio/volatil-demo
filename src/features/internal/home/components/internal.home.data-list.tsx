@@ -27,7 +27,7 @@ import type {
   SyncStatus,
 } from "@/features/internal/home/types/internal.home.data-list.type";
 import type { IgtBasis } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
-import { dummyInternalDataList } from "@/shared/constants/dummy-data/dummy-internal-home-data";
+import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import { t } from "@/shared/libs/i18n";
 import {
   CopyIcon,
@@ -104,7 +104,7 @@ const InternalHomeDataListHeader = () => {
 
 const InternalHomeDataListTableContent = () => {
   // Queries / Data
-  const dataList = dummyInternalDataList;
+  const { dataList } = useInternalHomeData();
 
   // Derived Values
   const headers = useMemo<FormattedTableHeader[]>(

@@ -12,7 +12,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
-import { dummyInternalServiceRates } from "@/shared/constants/dummy-data/dummy-internal-home-data";
+import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { EditIcon } from "lucide-react";
 
@@ -64,11 +64,14 @@ const InternalHomeServiceRateStats = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
+  // Queries / Data
+  const { serviceRates } = useInternalHomeData();
+
   const cols = isSmContainer ? 1 : 2;
 
   return (
     <StatGrid.Root columns={cols}>
-      {dummyInternalServiceRates.map((rate, index) => (
+      {serviceRates.map((rate, index) => (
         <StatGrid.Item key={rate.id} index={index} columns={cols}>
           <StatGrid.Header>
             <StatGrid.Label>{rate.title}</StatGrid.Label>

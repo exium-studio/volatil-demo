@@ -15,8 +15,7 @@ import type {
   InternalHomeOrderSummaryHeaderProps,
   InternalHomeOrderSummaryProps,
 } from "@/features/internal/home/types/internal.home.order-summary.type";
-import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { dummyInternalOrderSummary } from "@/shared/constants/dummy-data/dummy-internal-home-data";
+import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import {
   CheckCircle2Icon,
   ClipboardListIcon,
@@ -24,6 +23,7 @@ import {
   InboxIcon,
 } from "lucide-react";
 import { useState } from "react";
+import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 
 const PERIOD_OPTIONS = [
   { value: "1d", label: "1H" },
@@ -50,7 +50,7 @@ export const InternalHomeOrderSummary = (
         <VStack flex={1}>
           <Separator borderColor={"bg.canvas"} />
 
-          <InternalHomeOrderStats />
+          <InternalHomeOrderStats period={period} />
         </VStack>
       </Container.Body>
     </Container.Root>
@@ -89,13 +89,17 @@ const InternalHomeOrderSummaryHeader = (
   );
 };
 
-const InternalHomeOrderStats = () => {
+const InternalHomeOrderStats = (props: { period: HomePeriod }) => {
+  // Props
+  const { period } = props;
+
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Data
+  // Queries / Data
+  const { orderSummary } = useInternalHomeData(period);
   const { activeOrders, completedOrders, igtRequests, totalRevenue } =
-    dummyInternalOrderSummary;
+    orderSummary;
 
   const cols = isSmContainer ? 2 : 4;
 

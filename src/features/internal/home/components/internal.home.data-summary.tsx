@@ -22,7 +22,7 @@ import type {
   InternalHomeDataSummaryProps,
 } from "@/features/internal/home/types/internal.home.data-summary.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { dummyInternalDataSummary } from "@/shared/constants/dummy-data/dummy-internal-home-data";
+import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import { useState } from "react";
 
 const PERIOD_OPTIONS = [
@@ -127,7 +127,7 @@ const InternalHomeDataSummaryCharts = (
   const { period } = props;
 
   // Queries / Data for current period
-  const dataSummary = dummyInternalDataSummary[period];
+  const { dataSummary } = useInternalHomeData(period);
 
   return (
     <SimpleGrid columns={1} gap={PADDING_MD} px={PADDING_MD}>

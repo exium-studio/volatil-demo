@@ -391,6 +391,9 @@ const DataList = ({
         <MitraDataRequestAddToCartButtons
           selectedItems={selectedItems}
           allItems={igtItems}
+          totalBidangCount={igtItems.filter((item) => item.basis === "bidang").length}
+          totalKawasanCount={igtItems.filter((item) => item.basis === "kawasan").length}
+          totalCount={igtItems.length}
           onAddAllBidangClick={() => {
             console.log("add all bidang");
           }}
@@ -409,5 +412,3 @@ const DataList = ({
     </>
   );
 };
-
-export const DataRequestDrawAoiTabsContent = MitraDataRequestDrawAoiTabsContent;

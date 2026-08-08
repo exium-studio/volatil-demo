@@ -6,16 +6,16 @@ import {
   getIgtByUploadedAoi,
   getIgtCatalog,
   getIgtGeometryById,
-  type GetIgtCatalogParams,
+  type MitraDataRequestGetCatalogParams,
 } from "@/features/mitra/data-request/services/mitra.data-request.api";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type GeoJSON from "geojson";
 
-export const useIgtCatalog = (params?: GetIgtCatalogParams) => {
+export const useIgtCatalog = (params?: MitraDataRequestGetCatalogParams) => {
   const query = useQuery({
-    queryKey: queryKeys.dataRequest.catalog(params),
+    queryKey: queryKeys.mitra.dataRequest.catalog(params),
     queryFn: ({ signal }) => getIgtCatalog(params, signal),
   });
 

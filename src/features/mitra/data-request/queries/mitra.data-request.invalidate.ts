@@ -5,7 +5,7 @@ import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 
 export const invalidateMitraDataRequestCatalog = () => {
   void queryClient.invalidateQueries({
-    queryKey: queryKeys.dataRequest.all,
+    queryKey: queryKeys.mitra.dataRequest.all,
   });
 };
 

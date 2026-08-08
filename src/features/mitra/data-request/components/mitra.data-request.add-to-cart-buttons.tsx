@@ -12,7 +12,7 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
+import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { IconChevronDown, IconShoppingCartPlus } from "@tabler/icons-react";
 import { CheckCheckIcon, FlagIcon, LayersIcon } from "lucide-react";
@@ -21,7 +21,10 @@ import { useMemo } from "react";
 export type MitraDataRequestAddToCartButtonsProps = StackProps & {
   selectedItems?: FormattedListItem[];
   /** All IGT items in the current result set (for basis breakdown counts). */
-  allItems?: IgtDataItem[];
+  allItems?: MitraDataRequestIgtDataItem[];
+  totalBidangCount?: number;
+  totalKawasanCount?: number;
+  totalCount?: number;
   onAddAllBidangClick?: () => void;
   onAddAllKawasanClick?: () => void;
   onAddAllClick?: () => void;
@@ -39,35 +42,45 @@ export const MitraDataRequestAddToCartButtons = (
     onAddSelectedClick,
     selectedItems,
     allItems = [],
+    totalBidangCount: totalBidangCountProp,
+    totalKawasanCount: totalKawasanCountProp,
+    totalCount: totalCountProp,
     ...restProps
   } = props;
 
   // Stores
   const { theme } = useThemeStore();
 
-  // Derived — basis breakdown from all result items
-  const bidangCount = useMemo(
+  // Derived — basis breakdown fallback from all result items
+  const calculatedBidang = useMemo(
     () => allItems.filter((item) => item.basis === "bidang").length,
     [allItems],
   );
-  const kawasanCount = useMemo(
+  const calculatedKawasan = useMemo(
     () => allItems.filter((item) => item.basis === "kawasan").length,
     [allItems],
   );
-  const totalCount = allItems.length;
+
+  const bidangCount = totalBidangCountProp ?? calculatedBidang;
+  const kawasanCount = totalKawasanCountProp ?? calculatedKawasan;
+  const totalCount =
+    totalCountProp ??
+    (totalBidangCountProp !== undefined && totalKawasanCountProp !== undefined
+      ? totalBidangCountProp + totalKawasanCountProp
+      : allItems.length);
 
   // Derived — selected items basis breakdown
   const selectedBidangCount = useMemo(
     () =>
       (selectedItems ?? []).filter(
-        (item) => (item.data as unknown as IgtDataItem).basis === "bidang",
+        (item) => (item.data as unknown as MitraDataRequestIgtDataItem).basis === "bidang",
       ).length,
     [selectedItems],
   );
   const selectedKawasanCount = useMemo(
     () =>
       (selectedItems ?? []).filter(
-        (item) => (item.data as unknown as IgtDataItem).basis === "kawasan",
+        (item) => (item.data as unknown as MitraDataRequestIgtDataItem).basis === "kawasan",
       ).length,
     [selectedItems],
   );

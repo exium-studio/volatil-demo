@@ -164,6 +164,10 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
               <MitraDataRequestAddToCartButtons
                 selectedItems={dataListState.selectedItems}
+                allItems={data?.items ?? []}
+                totalBidangCount={data?.meta?.totalBidang}
+                totalKawasanCount={data?.meta?.totalKawasan}
+                totalCount={data?.meta?.total}
                 onAddSelectedClick={() => {
                   console.log("onAddSelectedClick");
                 }}

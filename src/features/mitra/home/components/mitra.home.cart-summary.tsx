@@ -13,7 +13,7 @@ import type {
   MitraHomeCartStatConfig,
   MitraHomeCartSummaryProps,
 } from "@/features/mitra/home/types/mitra.home.cart-summary.type";
-import { dummyMitraHomeData } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
+import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import {
   DatabaseIcon,
   LandPlotIcon,
@@ -57,8 +57,8 @@ const MitraHomeCartStats = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries / Data
-  const { totalField, totalArea, totalIgtData, subtotalPrice } =
-    dummyMitraHomeData.cartSummary;
+  const { cartSummary } = useMitraHomeData();
+  const { totalField, totalArea, totalIgtData, subtotalPrice } = cartSummary;
 
   // Constants
   const cols = isSmContainer ? 2 : 4;

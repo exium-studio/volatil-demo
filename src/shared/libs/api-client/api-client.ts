@@ -21,7 +21,11 @@ export const apiClient = {
   ): Promise<T> => {
     const { body, params, headers: customHeaders, ...restOptions } = options;
 
-    let url = endpoint;
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+    let url =
+      endpoint.startsWith("http://") || endpoint.startsWith("https://")
+        ? endpoint
+        : `${baseUrl}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
     if (params) {
       const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {

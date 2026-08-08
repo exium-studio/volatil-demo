@@ -20,7 +20,7 @@ import type {
   MitraHomeFinancialFlowHeaderProps,
   MitraHomeFinancialFlowProps,
 } from "@/features/mitra/home/types/mitra.home.financial-flow.type";
-import { dummyMitraHomeData } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
+import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import { Chart, useChart } from "@chakra-ui/charts";
 import { useState } from "react";
 import {
@@ -101,9 +101,12 @@ const MitraHomeFinancialFlowChartContent = (
   // Stores
   const { theme } = useThemeStore();
 
+  // Queries / Data
+  const { financialFlow } = useMitraHomeData(period);
+
   // Derived Values / Hooks
   const chart = useChart({
-    data: dummyMitraHomeData.financialFlow[period],
+    data: financialFlow,
     series: [{ name: "sale", color: `${theme.colorPalette}.solid` }],
   });
 

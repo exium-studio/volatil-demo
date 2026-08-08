@@ -1,16 +1,19 @@
 // src/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type.ts
 
-export type IgtBasis = "bidang" | "kawasan";
+export type MitraDataRequestIgtBasis = "bidang" | "kawasan";
 
-export type IgtThemeItem = {
+export type MitraDataRequestIgtThemeItem = {
   name: string;
 };
 
-export type IgtDataItem = {
+export type MitraDataRequestIgtDataItem = {
   id: string;
-  basis: IgtBasis;
-  themes: IgtThemeItem[];
+  basis: MitraDataRequestIgtBasis;
+  themes: MitraDataRequestIgtThemeItem[];
   description?: string;
 };
 
-export type MitraDataRequestIgtDataItem = IgtDataItem;
+// Aliases for compatibility
+export type IgtBasis = MitraDataRequestIgtBasis;
+export type IgtThemeItem = MitraDataRequestIgtThemeItem;
+export type IgtDataItem = MitraDataRequestIgtDataItem;

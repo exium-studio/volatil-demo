@@ -23,6 +23,8 @@ export type PaginatedResponse<T> = {
     perPage: number;
     total: number; // grand total items
     totalPages: number;
+    totalBidang?: number;
+    totalKawasan?: number;
   };
 };
 

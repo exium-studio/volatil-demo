@@ -82,7 +82,7 @@ const MitraDataRequestCatalogDataList = () => {
   });
 
   // Queries
-  const { items: rawItems } = useIgtCatalog({
+  const { items: rawItems, meta } = useIgtCatalog({
     page: dataListState.page,
     perPage: dataListState.perPage,
   });
@@ -207,6 +207,10 @@ const MitraDataRequestCatalogDataList = () => {
 
       <MitraDataRequestAddToCartButtons
         selectedItems={dataListState.selectedItems}
+        allItems={rawItems}
+        totalBidangCount={meta?.totalBidang}
+        totalKawasanCount={meta?.totalKawasan}
+        totalCount={meta?.total}
         onAddSelectedClick={() => {
           console.log("onAddSelectedClick");
         }}
