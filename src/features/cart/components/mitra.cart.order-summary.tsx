@@ -1,39 +1,27 @@
-// src/features/cart/components/mitra.cart.order-summary.tsx
-
-import { Button } from "@/design-system/components/button/ui/button";
 import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
+import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING_MD, SPACING_MD, SPACING_SM } from "@/design-system/constants/styles";
+import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import {
-  MINIMUM_BIDANG_COUNT,
-  MINIMUM_KAWASAN_HA,
-  PRICE_PER_BIDANG,
-  PRICE_PER_KAWASAN_HA,
-} from "@/features/cart/constants/cart.config";
-import type { CartItem, CartSummary } from "@/features/cart/types/cart.type";
-import { formatCurrency, formatDecimal } from "@/shared/utils/formatter/number.formatter";
+import type { MitraCartOrderSummaryProps } from "@/features/cart/types/cart.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import {
+  formatCurrency,
+  formatDecimal,
+} from "@/shared/utils/formatter/number.formatter";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useMemo } from "react";
-
-export type MitraCartOrderSummaryProps = StackProps & {
-  summary: CartSummary;
-  selectedItems: CartItem[];
-  onCheckout?: () => void;
-  isCheckoutPending?: boolean;
-};
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
   const {
     summary,
+    config,
     selectedItems = [],
     onCheckout,
     isCheckoutPending = false,
@@ -48,7 +36,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
     () =>
       selectedItems
         .filter((item) => item.basis === "bidang")
-        .reduce((sum, item) => sum + item.quota, 0),
+        .reduce((sum, item) => sum + (item.quota ?? 1), 0),
     [selectedItems],
   );
 
@@ -56,14 +44,14 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
     () =>
       selectedItems
         .filter((item) => item.basis === "kawasan")
-        .reduce((sum, item) => sum + item.quota, 0),
+        .reduce((sum, item) => sum + (item.quota ?? 1), 0),
     [selectedItems],
   );
 
   const isBidangMinimumNotMet =
-    selectedBidangCount > 0 && selectedBidangCount < MINIMUM_BIDANG_COUNT;
+    selectedBidangCount > 0 && selectedBidangCount < config.minimumBidangCount;
   const isKawasanMinimumNotMet =
-    selectedKawasanHa > 0 && selectedKawasanHa < MINIMUM_KAWASAN_HA;
+    selectedKawasanHa > 0 && selectedKawasanHa < config.minimumKawasanHa;
   const isMinimumNotMet = isBidangMinimumNotMet || isKawasanMinimumNotMet;
 
   const isCheckoutDisabled =
@@ -71,14 +59,10 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
   return (
     <VStack
-      w={"full"}
-      maxW={{ base: "full", md: "380px" }}
-      bg={"bg.body"}
+      gap={SPACING_MD}
       p={PADDING_MD}
       rounded={theme.radii.container}
-      shadow={"sm"}
-      gap={SPACING_MD}
-      align={"stretch"}
+      bg={"bg.body"}
       {...restProps}
     >
       {/* Branding Header */}
@@ -94,52 +78,56 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </VStack>
       </HStack>
 
-      <Separator borderColor={"bg.canvas"} />
-
-      {/* Ringkasan Title */}
-      <P fontWeight={"semibold"} fontSize={"md"}>
-        {"Ringkasan"}
-      </P>
-
       {/* Warning Alert & Progress - Bidang */}
       {selectedBidangCount > 0 && (
-        <VStack gap={2} align={"stretch"}>
-          {isBidangMinimumNotMet && (
-            <HStack
-              p={3}
-              bg={"orange.subtle"}
-              color={"orange.fg"}
-              rounded={"md"}
-              gap={2}
-              align={"start"}
+        <>
+          <Separator borderColor={"bg.canvas"} my={0} />
+
+          <VStack gap={2} align={"stretch"}>
+            {isBidangMinimumNotMet && (
+              <HStack
+                p={3}
+                bg={"orange.subtle"}
+                color={"orange.fg"}
+                rounded={"md"}
+                gap={2}
+                align={"start"}
+              >
+                <AppIcon icon={IconAlertTriangle} boxSize={5} mt={"2px"} />
+                <P fontSize={"xs"} fontWeight={"medium"}>
+                  {"Jumlah bidang belum memenuhi batas minimum pembelian"}
+                </P>
+              </HStack>
+            )}
+
+            <Box
+              w={"full"}
+              bg={"bg.canvas"}
+              rounded={"full"}
+              h={"8px"}
+              overflow={"hidden"}
             >
-              <AppIcon icon={IconAlertTriangle} boxSize={5} mt={"2px"} />
-              <P fontSize={"xs"} fontWeight={"medium"}>
-                {"Jumlah bidang belum memenuhi batas minimum pembelian"}
+              <Box
+                h={"full"}
+                bg={isBidangMinimumNotMet ? "orange.fg" : "blue.fg"}
+                w={`${Math.min(100, (selectedBidangCount / config.minimumBidangCount) * 100)}%`}
+                transition={"width 0.3s ease"}
+              />
+            </Box>
+
+            <HStack justify={"space-between"} fontSize={"xs"}>
+              <P color={"fg.subtle"}>{"Bidang Terpilih:"}</P>
+              <P fontWeight={"medium"}>
+                <strong style={{ fontWeight: 600 }}>
+                  {formatDecimal(selectedBidangCount)} Bidang
+                </strong>{" "}
+                {"dari "}
+                {formatDecimal(config.minimumBidangCount)} Bidang Minimal
+                Pembelian
               </P>
             </HStack>
-          )}
-
-          <Box w={"full"} bg={"bg.canvas"} rounded={"full"} h={"8px"} overflow={"hidden"}>
-            <Box
-              h={"full"}
-              bg={isBidangMinimumNotMet ? "orange.fg" : "blue.fg"}
-              w={`${Math.min(100, (selectedBidangCount / MINIMUM_BIDANG_COUNT) * 100)}%`}
-              transition={"width 0.3s ease"}
-            />
-          </Box>
-
-          <HStack justify={"space-between"} fontSize={"xs"}>
-            <P color={"fg.subtle"}>{"Bidang Terpilih:"}</P>
-            <P fontWeight={"medium"}>
-              <strong style={{ fontWeight: 600 }}>
-                {formatDecimal(selectedBidangCount)} Bidang
-              </strong>{" "}
-              {"dari "}
-              {formatDecimal(MINIMUM_BIDANG_COUNT)} Bidang Minimal Pembelian
-            </P>
-          </HStack>
-        </VStack>
+          </VStack>
+        </>
       )}
 
       {/* Warning Alert & Progress - Kawasan */}
@@ -161,11 +149,17 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
             </HStack>
           )}
 
-          <Box w={"full"} bg={"bg.canvas"} rounded={"full"} h={"8px"} overflow={"hidden"}>
+          <Box
+            w={"full"}
+            bg={"bg.canvas"}
+            rounded={"full"}
+            h={"8px"}
+            overflow={"hidden"}
+          >
             <Box
               h={"full"}
               bg={isKawasanMinimumNotMet ? "orange.fg" : "orange.fg"}
-              w={`${Math.min(100, (selectedKawasanHa / MINIMUM_KAWASAN_HA) * 100)}%`}
+              w={`${Math.min(100, (selectedKawasanHa / config.minimumKawasanHa) * 100)}%`}
               transition={"width 0.3s ease"}
             />
           </Box>
@@ -177,7 +171,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
                 {formatDecimal(selectedKawasanHa)} ha
               </strong>{" "}
               {"dari "}
-              {formatDecimal(MINIMUM_KAWASAN_HA)} ha Minimal Pembelian
+              {formatDecimal(config.minimumKawasanHa)} ha Minimal Pembelian
             </P>
           </HStack>
         </VStack>
@@ -199,18 +193,17 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
           <VStack gap={2} align={"stretch"} maxH={"160px"} overflowY={"auto"}>
             {selectedItems.map((item) => {
+              const quotaVal = item.quota ?? 1;
               const itemPrice =
                 item.basis === "bidang"
-                  ? item.quota * PRICE_PER_BIDANG
-                  : item.quota * PRICE_PER_KAWASAN_HA;
+                  ? quotaVal * config.pricePerBidang
+                  : quotaVal * config.pricePerKawasanHa;
 
               return (
                 <HStack key={item.id} justify={"space-between"} fontSize={"xs"}>
                   <HStack gap={2}>
                     <P fontWeight={"medium"}>{item.name}</P>
-                    <P color={"fg.subtle"}>
-                      • {formatDecimal(item.quota)} {item.basis}
-                    </P>
+                    <P color={"fg.subtle"}>• {item.basis}</P>
                   </HStack>
                   <P fontWeight={"semibold"}>{formatCurrency(itemPrice)}</P>
                 </HStack>
@@ -275,8 +268,9 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         disabled={isCheckoutDisabled}
         loading={isCheckoutPending}
         onClick={onCheckout}
+        mt={4}
       >
-        {"Beli Sekarang"}
+        {"Bayar sekarang"}
       </Button>
     </VStack>
   );

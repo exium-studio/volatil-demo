@@ -1,14 +1,6 @@
-// src/shared/constants/dummy-data/dummy-cart-data.ts
-
-import {
-  MINIMUM_BIDANG_COUNT,
-  MINIMUM_KAWASAN_HA,
-  PRICE_PER_BIDANG,
-  PRICE_PER_KAWASAN_HA,
-} from "@/features/cart/constants/cart.config";
 import type { CartItem, CartResponse } from "@/features/cart/types/cart.type";
 
-export const DUMMY_CART_ITEMS: CartItem[] = [
+export const dummyMitraCartItems: CartItem[] = [
   {
     id: "AOI-01",
     name: "AOI - 01",
@@ -119,73 +111,58 @@ export const DUMMY_CART_ITEMS: CartItem[] = [
     name: "AOI - 12",
     basis: "bidang",
     quota: 1500,
-    themes: [
-      { name: "IGT Zona Nilai Tanah", description: "Deskripsi ZNT" },
-    ],
+    themes: [{ name: "IGT Zona Nilai Tanah", description: "Deskripsi ZNT" }],
   },
   {
     id: "AOI-13",
     name: "AOI - 13",
     basis: "kawasan",
     quota: 500,
-    themes: [
-      { name: "IGT Tata Guna Lahan", description: "Deskripsi TGL" },
-    ],
+    themes: [{ name: "IGT Tata Guna Lahan", description: "Deskripsi TGL" }],
   },
   {
     id: "AOI-14",
     name: "AOI - 14",
     basis: "bidang",
     quota: 600,
-    themes: [
-      { name: "IGT Hak Guna Bangunan", description: "Deskripsi HGB" },
-    ],
+    themes: [{ name: "IGT Hak Guna Bangunan", description: "Deskripsi HGB" }],
   },
   {
     id: "AOI-15",
     name: "AOI - 15",
     basis: "kawasan",
     quota: 1500,
-    themes: [
-      { name: "IGT Wilayah Pesisir", description: "Deskripsi Pesisir" },
-    ],
+    themes: [{ name: "IGT Wilayah Pesisir", description: "Deskripsi Pesisir" }],
   },
 ];
 
-const totalBidangCount = DUMMY_CART_ITEMS.filter(
-  (item) => item.basis === "bidang",
-).reduce((sum, item) => sum + item.quota, 0);
-
-const totalKawasanHaCount = DUMMY_CART_ITEMS.filter(
-  (item) => item.basis === "kawasan",
-).reduce((sum, item) => sum + item.quota, 0);
-
-const totalBidangPrice = totalBidangCount * PRICE_PER_BIDANG;
-const totalKawasanPrice = totalKawasanHaCount * PRICE_PER_KAWASAN_HA;
-const subtotal = totalBidangPrice + totalKawasanPrice;
-const serviceFee = Math.round(subtotal * 0.1);
-const tax = Math.round((subtotal + serviceFee) * 0.11);
-const grandTotal = subtotal + serviceFee + tax;
-
-export const DUMMY_CART_RESPONSE: CartResponse = {
-  items: DUMMY_CART_ITEMS,
+export const dummyMitraCartData: CartResponse = {
+  items: dummyMitraCartItems,
   meta: {
     page: 1,
     perPage: 20,
-    total: DUMMY_CART_ITEMS.length,
+    total: 15,
     totalPages: 1,
-    totalBidang: totalBidangCount,
-    totalKawasan: totalKawasanHaCount,
+    totalBidang: 8,
+    totalKawasan: 7,
   },
   summary: {
-    totalBidang: totalBidangCount,
-    totalBidangPrice,
-    totalKawasan: DUMMY_CART_ITEMS.filter((i) => i.basis === "kawasan").length,
-    totalKawasanHa: totalKawasanHaCount,
-    totalKawasanPrice,
-    subtotal,
-    serviceFee,
-    tax,
-    grandTotal,
+    totalBidang: 8000,
+    totalBidangPrice: 60000000,
+    totalKawasan: 7,
+    totalKawasanHa: 7000,
+    totalKawasanPrice: 105000000,
+    subtotal: 165000000,
+    serviceFee: 16500000,
+    tax: 19965000,
+    grandTotal: 201465000,
+  },
+  config: {
+    minimumBidangCount: 1000,
+    minimumKawasanHa: 1000,
+    pricePerBidang: 7500,
+    pricePerKawasanHa: 15000,
+    serviceFeeRate: 0.1,
+    taxRate: 0.11,
   },
 };

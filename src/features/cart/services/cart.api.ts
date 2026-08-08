@@ -4,7 +4,7 @@ import type {
   AddToCartPayload,
   CartResponse,
 } from "@/features/cart/types/cart.type";
-import { DUMMY_CART_RESPONSE } from "@/shared/constants/dummy-data/dummy-cart-data";
+import { dummyMitraCartData } from "@/shared/constants/dummy-data/dummy-cart-data";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type {
   ApiResponse,
@@ -25,10 +25,10 @@ export async function getCartData(
         signal,
       },
     );
-    return response.data ?? DUMMY_CART_RESPONSE;
+    return response.data ?? dummyMitraCartData;
   } catch (error) {
     console.warn("getCartData API error, falling back to dummy data:", error);
-    return DUMMY_CART_RESPONSE;
+    return dummyMitraCartData;
   }
 }
 

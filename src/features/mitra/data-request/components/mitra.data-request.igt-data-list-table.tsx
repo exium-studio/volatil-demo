@@ -23,31 +23,16 @@ export const MitraIgtDataListTable = (props: MitraIgtDataListTableProps) => {
   // Hooks (Mutations)
   const flyToMutation = useFlyToIgtGeometry();
 
-  // Derived Values
-  const itemActions: DataListItemActionsGenerator<IgtDataItem>[] = useMemo(
-    () => [
-      (item) => (
-        <Menu.Item
-          key={"fly-to"}
-          value={"fly-to"}
-          onClick={() => void flyToMutation.mutateAsync(item.id)}
-        >
-          <AppIcon icon={IconMapPin} />
-          Lihat di Peta
-        </Menu.Item>
-      ),
-    ],
-    [flyToMutation],
-  );
-
-  const { headers, items } = useMemo(() => {
-    return {
+  // Derived Values — DataList Configuration
+  const dataList = useMemo(
+    () => ({
       headers: [
         { th: "ID Bidang", sortable: true },
         { th: "Tema IGT-PR" },
         { th: "Basis IGT-PR", sortable: true },
         { th: "Deskripsi", headerCellProps: { minW: "200px" } },
       ],
+
       items: igtItems.map((item: IgtDataItem) => {
         const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
         const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
@@ -116,14 +101,28 @@ export const MitraIgtDataListTable = (props: MitraIgtDataListTableProps) => {
           ],
         };
       }),
-    };
-  }, [igtItems]);
+
+      itemActions: [
+        (item: { id: string }) => (
+          <Menu.Item
+            key={"fly-to"}
+            value={"fly-to"}
+            onClick={() => void flyToMutation.mutateAsync(item.id)}
+          >
+            <AppIcon icon={IconMapPin} />
+            Lihat di Peta
+          </Menu.Item>
+        ),
+      ] as DataListItemActionsGenerator<IgtDataItem>[],
+    }),
+    [igtItems, flyToMutation],
+  );
 
   return (
     <DataListTable.Root
-      headers={headers}
-      items={items}
-      itemActions={itemActions as DataListItemActionsGenerator[]}
+      headers={dataList.headers}
+      items={dataList.items}
+      itemActions={dataList.itemActions as DataListItemActionsGenerator[]}
       {...restProps}
     >
       {children || (

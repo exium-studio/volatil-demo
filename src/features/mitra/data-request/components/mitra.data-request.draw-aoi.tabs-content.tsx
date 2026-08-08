@@ -2,7 +2,6 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
@@ -12,7 +11,6 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
   PADDING_MD,

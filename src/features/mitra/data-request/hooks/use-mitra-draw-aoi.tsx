@@ -4,7 +4,6 @@
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 
 import { useFetchIgtByAoi } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 
 import type GeoJSON from "geojson";
 import { useCallback, useMemo } from "react";

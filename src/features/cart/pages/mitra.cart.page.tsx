@@ -1,19 +1,28 @@
 // src/features/cart/pages/mitra.cart.page.tsx
 
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import { Container, useContainerContext } from "@/design-system/components/layout/ui/container";
+import {
+  Container,
+  useContainerContext,
+} from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { PADDING_SM, SPACING_MD } from "@/design-system/constants/styles";
 import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
-import { MitraCartTable } from "@/features/cart/components/mitra.cart.table";
-import { checkout, clearCart, getCartData, removeFromCart } from "@/features/cart/services/cart.api";
-import type { CartItem, CartResponse } from "@/features/cart/types/cart.type";
-import { DUMMY_CART_RESPONSE } from "@/shared/constants/dummy-data/dummy-cart-data";
+import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
+import {
+  useCartQuery,
+  useCheckoutCart,
+  useClearCart,
+  useRemoveFromCart,
+} from "@/features/cart/hooks/use-mitra-cart";
+import type {
+  CartItem,
+  MitraCartFlexContainerProps,
+} from "@/features/cart/types/cart.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 export const MitraCartPage = () => {
@@ -29,41 +38,16 @@ export const MitraCartPage = () => {
 const MitraCartPageContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
-  const queryClient = useQueryClient();
 
   // States
   const [searchValue, setSearchValue] = useState("");
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
 
-  // Queries
-  const { data: cartData = DUMMY_CART_RESPONSE, isLoading, isFetching } = useQuery<CartResponse>({
-    queryKey: ["cart", searchValue],
-    queryFn: () => getCartData({ search: searchValue }),
-  });
-
-  // Mutations
-  const checkoutMutation = useMutation({
-    mutationFn: (itemIds: string[]) => checkout(itemIds),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-  });
-
-  const clearCartMutation = useMutation({
-    mutationFn: () => clearCart(),
-    onSuccess: () => {
-      setSelectedItems([]);
-      void queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-  });
-
-  const removeItemsMutation = useMutation({
-    mutationFn: (itemIds: string[]) => removeFromCart(itemIds),
-    onSuccess: () => {
-      setSelectedItems([]);
-      void queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-  });
+  // Hooks (Queries & Mutations)
+  const { cartData, isLoading, isFetching } = useCartQuery(searchValue);
+  const checkoutMutation = useCheckoutCart();
+  const clearCartMutation = useClearCart(() => setSelectedItems([]));
+  const removeItemsMutation = useRemoveFromCart(() => setSelectedItems([]));
 
   // Derived Values
   const selectedCartItems: CartItem[] = useMemo(() => {
@@ -78,64 +62,43 @@ const MitraCartPageContent = () => {
   };
 
   return (
-    <Container.Body flex={1} overflowY={"auto"} gap={PADDING_SM}>
-      <AppNavTitle navsMap={APP_NAVS_MAP} title={"Pembayaran Data"} />
+    <Container.Body flex={1} overflowY={"auto"}>
+      <AppNavTitle navsMap={APP_NAVS_MAP} />
 
       <Separator borderColor={"bg.canvas"} />
 
-      <FlexContainer isSmContainer={isSmContainer}>
-        {/* If small container, Order Summary is on top */}
-        {isSmContainer && (
-          <MitraCartOrderSummary
-            summary={cartData.summary}
-            selectedItems={selectedCartItems}
-            onCheckout={handleCheckout}
-            isCheckoutPending={checkoutMutation.isPending}
-          />
-        )}
+      <HStack
+        flex={1}
+        flexDir={isSmContainer ? "column" : "row-reverse"}
+        w={"full"}
+        overflowY={"auto"}
+        align={"stretch"}
+      >
+        <MitraCartOrderSummary
+          summary={cartData.summary}
+          config={cartData.config}
+          selectedItems={selectedCartItems}
+          onCheckout={handleCheckout}
+          isCheckoutPending={checkoutMutation.isPending}
+          flex={1}
+        />
 
-        {/* Cart Data Table */}
-        <MitraCartTable
+        {/* Cart Data List */}
+        <MitraCartDataList
           cartItems={cartData.items}
           selectedItems={selectedItems as FormattedListItem<CartItem>[]}
-          onSelectedItemChange={({ selectedItems: sel }) => setSelectedItems(sel)}
+          onSelectedItemChange={({ selectedItems: sel }) =>
+            setSelectedItems(sel)
+          }
           onClearCart={() => clearCartMutation.mutate()}
           onRemoveItems={(ids) => removeItemsMutation.mutate(ids)}
           searchValue={searchValue}
           onSearchChange={setSearchValue}
           isLoading={isLoading}
           isFetching={isFetching}
+          flex={2}
         />
-
-        {/* If desktop/large container, Order Summary is on right */}
-        {!isSmContainer && (
-          <MitraCartOrderSummary
-            summary={cartData.summary}
-            selectedItems={selectedCartItems}
-            onCheckout={handleCheckout}
-            isCheckoutPending={checkoutMutation.isPending}
-          />
-        )}
-      </FlexContainer>
+      </HStack>
     </Container.Body>
-  );
-};
-
-const FlexContainer = (props: { isSmContainer: boolean; children: React.ReactNode }) => {
-  // Props
-  const { isSmContainer, children } = props;
-
-  if (isSmContainer) {
-    return (
-      <VStack flex={1} w={"full"} overflowY={"auto"} gap={SPACING_MD} align={"stretch"}>
-        {children}
-      </VStack>
-    );
-  }
-
-  return (
-    <HStack flex={1} w={"full"} overflowY={"auto"} gap={SPACING_MD} align={"stretch"}>
-      {children}
-    </HStack>
   );
 };
