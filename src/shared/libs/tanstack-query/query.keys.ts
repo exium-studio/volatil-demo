@@ -13,6 +13,7 @@ export const queryKeys = {
       all: ["mitra", "cart"] as const,
       data: (search?: string) =>
         [...queryKeys.mitra.cart.all, "data", search] as const,
+      bbox: () => [...queryKeys.mitra.cart.all, "bbox"] as const,
     },
     dataRequest: {
       all: ["mitra", "data-request"] as const,

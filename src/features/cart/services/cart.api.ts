@@ -2,6 +2,7 @@
 
 import type {
   AddToCartPayload,
+  CartBboxData,
   CartResponse,
 } from "@/features/cart/types/cart.type";
 import { dummyMitraCartData } from "@/shared/constants/dummy-data/dummy-cart-data";
@@ -29,6 +30,33 @@ export async function getCartData(
   } catch (error) {
     console.warn("getCartData API error, falling back to dummy data:", error);
     return dummyMitraCartData;
+  }
+}
+
+// TODO: replace with real API call
+export async function getCartBbox(
+  signal?: AbortSignal,
+): Promise<CartBboxData> {
+  console.log("getCartBbox");
+  try {
+    const response = await apiClient.get<ApiResponse<CartBboxData>>(
+      "/mitra/cart/bbox",
+      { signal },
+    );
+    return (
+      response.data ?? {
+        bbox: [110.36, -7.05, 110.45, -6.95],
+        areaName: "Kawasan Kota Semarang dan Sekitarnya",
+        totalPolygonCount: 5,
+      }
+    );
+  } catch (error) {
+    console.warn("getCartBbox API error, falling back to dummy bbox:", error);
+    return {
+      bbox: [110.36, -7.05, 110.45, -6.95],
+      areaName: "Kawasan Kota Semarang dan Sekitarnya",
+      totalPolygonCount: 5,
+    };
   }
 }
 

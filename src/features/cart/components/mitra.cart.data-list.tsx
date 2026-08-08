@@ -26,7 +26,7 @@ import type {
 } from "@/features/cart/types/cart.type";
 import { t } from "@/shared/libs/i18n";
 import { IconTrash } from "@tabler/icons-react";
-import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
+import { MapPinIcon, SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";
 
 const MAX_VISIBLE_THEMES = 2;
@@ -41,6 +41,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
     onSelectedItemChange,
     onClearCart,
     onRemoveItems,
+    onOpenBboxModal,
     searchValue = "",
     onSearchChange,
     isLoading = false,
@@ -188,14 +189,25 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
             </IconButton>
           </HStack>
 
-          <Button
-            variant={"outline"}
-            colorPalette={"red"}
-            onClick={onClearCart}
-          >
-            <AppIcon icon={IconTrash} />
-            {"Bersihkan keranjang"}
-          </Button>
+          <HStack gap={SPACING_SM}>
+            <Button
+              variant={"outline"}
+              colorPalette={"blue"}
+              onClick={onOpenBboxModal}
+            >
+              <AppIcon icon={MapPinIcon} />
+              {"Cek Lokasi Area"}
+            </Button>
+
+            <Button
+              variant={"outline"}
+              colorPalette={"red"}
+              onClick={onClearCart}
+            >
+              <AppIcon icon={IconTrash} />
+              {"Bersihkan keranjang"}
+            </Button>
+          </HStack>
         </HStack>
       </VStack>
 
@@ -211,10 +223,10 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton w={"full"} h={"300px"} />
+          <Skeleton w={"full"} h={"full"} />
         ) : (
           <>
-            <Box w={"full"} position={"relative"}>
+            <Box w={"full"} position={"relative"} overflowY={"auto"}>
               <DataListTable.Root
                 headers={dataList.headers}
                 items={dataList.items}

@@ -4,7 +4,6 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, PSerif } from "@/design-system/components/typography/ui/p";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
@@ -219,47 +218,6 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
               {formatDecimal(config.minimumKawasanHa)} ha Minimal Pembelian
             </P>
           </HStack>
-        </VStack>
-      )}
-
-      {/* Total Pesanan Section */}
-      {hasSelectedItems && (
-        <VStack gap={2} p={3} bg={"bg.canvas"} rounded={"md"} align={"stretch"}>
-          <HStack justify={"space-between"}>
-            <P fontSize={"sm"} fontWeight={"semibold"}>
-              {"Total Pesanan"}
-            </P>
-
-            <Badge colorPalette={"neutral"} variant={"subtle"}>
-              {selectedItems.length} {"Data"}
-            </Badge>
-          </HStack>
-
-          <Separator borderColor={"border.subtle"} my={1} />
-
-          <VStack gap={2} align={"stretch"} maxH={"160px"} overflowY={"auto"}>
-            {selectedItems.map((item) => {
-              const itemPrice =
-                item.basis === "bidang"
-                  ? config.pricePerBidang
-                  : (item.areaInHa ?? 1) * config.pricePerKawasanHa;
-
-              return (
-                <HStack key={item.id} justify={"space-between"} fontSize={"xs"}>
-                  <HStack gap={2}>
-                    <P fontWeight={"medium"}>{item.name}</P>
-                    <P color={"fg.subtle"}>
-                      •{" "}
-                      {item.basis === "kawasan" && item.areaInHa
-                        ? `${item.areaInHa} ha`
-                        : item.basis}
-                    </P>
-                  </HStack>
-                  <P fontWeight={"semibold"}>{formatCurrency(itemPrice)}</P>
-                </HStack>
-              );
-            })}
-          </VStack>
         </VStack>
       )}
 

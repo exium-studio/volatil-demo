@@ -8,11 +8,12 @@ import {
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { PADDING_SM, SPACING_MD } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
+import { MitraCartLocationModal } from "@/features/cart/components/mitra.cart.location-modal";
 import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
 import {
   useCartQuery,
@@ -21,13 +22,12 @@ import {
   useRemoveFromCart,
 } from "@/features/cart/hooks/use-mitra-cart";
 import type { CartItem } from "@/features/cart/types/cart.type";
-import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { useMemo, useState } from "react";
 
 export const MitraCartPage = () => {
   return (
-    <PanelContentContainer overflowY={"auto"} gap={PADDING_SM} p={PADDING_SM}>
-      <Container.Root flex={1} overflowY={"auto"} withContext={true}>
+    <PanelContentContainer gap={PADDING_SM} p={PADDING_SM}>
+      <Container.Root flex={1} minH={0} withContext={true}>
         <MitraCartContent />
       </Container.Root>
     </PanelContentContainer>
@@ -41,6 +41,11 @@ const MitraCartContent = () => {
   // States
   const [searchValue, setSearchValue] = useState("");
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
+
+  // Hooks (Modal)
+  const locationModal = usePopModal({
+    modalKey: "mitraCartLocationModal",
+  });
 
   // Hooks (Queries & Mutations)
   const { cartData, isLoading, isFetching } = useCartQuery(searchValue);
@@ -61,53 +66,68 @@ const MitraCartContent = () => {
   };
 
   return (
-    <HStack
-      flex={1}
-      flexDir={isSmContainer ? "column" : "row-reverse"}
-      align={"start"}
-      gap={SPACING_MD}
-      overflowY={"auto"}
-      w={"full"}
-    >
-      {/* Summary Container */}
-      <Container.Body flex={1} overflowY={"auto"}>
-        <HeaderContainer>
-          <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
-            {"Ringkasan"}
-          </ClampedP>
-        </HeaderContainer>
+    <>
+      <HStack
+        flex={1}
+        flexDir={isSmContainer ? "column" : "row-reverse"}
+        // align={"start"}
+        gap={SPACING_MD}
+        minH={0}
+        overflowY={isSmContainer ? "auto" : undefined}
+        w={"full"}
+      >
+        {/* Summary Container */}
+        <Container.Body flex={1} minH={0} overflowY={"auto"}>
+          <HeaderContainer>
+            <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
+              {"Ringkasan"}
+            </ClampedP>
+          </HeaderContainer>
 
-        <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} />
 
-        <MitraCartOrderSummary
-          summary={cartData.summary}
-          config={cartData.config}
-          selectedItems={selectedCartItems}
-          onCheckout={handleCheckout}
-          isCheckoutPending={checkoutMutation.isPending}
-        />
-      </Container.Body>
+          <MitraCartOrderSummary
+            summary={cartData.summary}
+            config={cartData.config}
+            selectedItems={selectedCartItems}
+            onCheckout={handleCheckout}
+            isCheckoutPending={checkoutMutation.isPending}
+          />
+        </Container.Body>
 
-      {/* DataList Container */}
-      <Container.Body flex={2} overflowY={"auto"}>
-        <AppNavTitle navsMap={APP_NAVS_MAP} />
+        {/* DataList Container */}
+        <Container.Body flex={2} minH={0} overflowY={"auto"}>
+          <HeaderContainer>
+            <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
+              {"Keranjang"}
+            </ClampedP>
+          </HeaderContainer>
 
-        <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} />
 
-        <MitraCartDataList
-          cartItems={cartData.items}
-          selectedItems={selectedItems as FormattedListItem<CartItem>[]}
-          onSelectedItemChange={({ selectedItems: sel }) =>
-            setSelectedItems(sel)
-          }
-          onClearCart={() => clearCartMutation.mutate()}
-          onRemoveItems={(ids) => removeItemsMutation.mutate(ids)}
-          searchValue={searchValue}
-          onSearchChange={setSearchValue}
-          isLoading={isLoading}
-          isFetching={isFetching}
-        />
-      </Container.Body>
-    </HStack>
+          <MitraCartDataList
+            cartItems={cartData.items}
+            selectedItems={selectedItems as FormattedListItem<CartItem>[]}
+            onSelectedItemChange={({ selectedItems: sel }) =>
+              setSelectedItems(sel)
+            }
+            onClearCart={() => clearCartMutation.mutate()}
+            onRemoveItems={(ids) => removeItemsMutation.mutate(ids)}
+            onOpenBboxModal={locationModal.open}
+            searchValue={searchValue}
+            onSearchChange={setSearchValue}
+            isLoading={isLoading}
+            isFetching={isFetching}
+          />
+        </Container.Body>
+      </HStack>
+
+      <MitraCartLocationModal
+        modalKey={locationModal.modalKey}
+        isOpen={locationModal.isOpen}
+        open={locationModal.open}
+        close={locationModal.close}
+      />
+    </>
   );
 };
