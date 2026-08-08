@@ -1,7 +1,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
@@ -137,20 +137,18 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
       {/* Progress - Bidang */}
       <VStack gap={2} align={"stretch"} mt={2}>
-        <Box
-          w={"full"}
-          bg={"bg.canvas"}
-          rounded={"full"}
-          h={"8px"}
-          overflow={"hidden"}
+        <Progress.Root
+          value={Math.min(
+            100,
+            (selectedBidangCount / config.minimumBidangCount) * 100,
+          )}
+          colorPalette={"blue"}
+          size={"sm"}
         >
-          <Box
-            h={"full"}
-            bg={"blue.solid"}
-            w={`${Math.min(100, (selectedBidangCount / config.minimumBidangCount) * 100)}%`}
-            transition={"width 0.3s ease"}
-          />
-        </Box>
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
 
         <HStack justify={"space-between"} fontSize={"sm"}>
           <P color={"fg.subtle"}>{"Bidang"}</P>
@@ -167,20 +165,18 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
       {/* Progress - Kawasan */}
       <VStack gap={2} align={"stretch"}>
-        <Box
-          w={"full"}
-          bg={"bg.canvas"}
-          rounded={"full"}
-          h={"8px"}
-          overflow={"hidden"}
+        <Progress.Root
+          value={Math.min(
+            100,
+            (selectedKawasanHa / config.minimumKawasanHa) * 100,
+          )}
+          colorPalette={"orange"}
+          size={"sm"}
         >
-          <Box
-            h={"full"}
-            bg={"orange.solid"}
-            w={`${Math.min(100, (selectedKawasanHa / config.minimumKawasanHa) * 100)}%`}
-            transition={"width 0.3s ease"}
-          />
-        </Box>
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
 
         <HStack justify={"space-between"} fontSize={"sm"}>
           <P color={"fg.subtle"}>{"Kawasan"}</P>
@@ -196,7 +192,13 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </HStack>
       </VStack>
 
-      <Separator borderColor={"bg.canvas"} my={2} />
+      <Separator
+        variant={"dashed"}
+        borderStyle={"dashed"}
+        borderTopWidth={"2px"}
+        borderColor={"border.emphasized"}
+        my={3}
+      />
 
       {/* Ringkasan Details Section */}
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
@@ -214,7 +216,13 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           </P>
         </HStack>
 
-        <Separator borderColor={"border.subtle"} my={2} />
+        <Separator
+          variant={"dashed"}
+          borderStyle={"dashed"}
+          borderTopWidth={"2px"}
+          borderColor={"border.emphasized"}
+          my={3}
+        />
 
         <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Total Harga"}</P>
@@ -239,7 +247,13 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           </HStack>
         )}
 
-        <Separator borderColor={"border.subtle"} my={2} />
+        <Separator
+          variant={"dashed"}
+          borderStyle={"dashed"}
+          borderTopWidth={"2px"}
+          borderColor={"border.emphasized"}
+          my={3}
+        />
 
         <HStack justify={"space-between"} color={"blue.fg"}>
           <P fontSize={"lg"} fontWeight={"bold"}>

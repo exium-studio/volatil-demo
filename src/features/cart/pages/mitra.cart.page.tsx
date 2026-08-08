@@ -76,7 +76,11 @@ const MitraCartContent = () => {
         w={"full"}
       >
         {/* DataList Container */}
-        <Container.Body flex={2} minH={0} overflowY={"auto"}>
+        <Container.Body
+          flex={isSmContainer ? undefined : 2}
+          minH={isSmContainer ? undefined : 0}
+          overflowY={isSmContainer ? undefined : "auto"}
+        >
           <HeaderContainer>
             <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
               {"Keranjang"}
@@ -103,11 +107,11 @@ const MitraCartContent = () => {
 
         {/* Summary Container */}
         <Container.Body
-          flex={1}
+          flex={isSmContainer ? undefined : 1}
           alignSelf={isSmContainer ? undefined : "start"}
           maxH={"full"}
-          minH={0}
-          overflowY={"auto"}
+          minH={isSmContainer ? undefined : 0}
+          overflowY={isSmContainer ? undefined : "auto"}
         >
           <HeaderContainer>
             <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
