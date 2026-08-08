@@ -7,14 +7,13 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useFlyToIgtGeometry } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
-import { IconMapPin } from "@tabler/icons-react";
+import type { MitraIgtDataListTableProps } from "@/features/mitra/data-request/types/mitra.data-request.type";
+import { MapPinIcon } from "lucide-react";
 import { useMemo } from "react";
 
 const MAX_VISIBLE_THEMES = 2;
 const BASIS_BIDANG_COLOR = "blue" as const;
 const BASIS_KAWASAN_COLOR = "orange" as const;
-
-import type { MitraIgtDataListTableProps } from "@/features/mitra/data-request/types/mitra.data-request.type";
 
 export const MitraIgtDataListTable = (props: MitraIgtDataListTableProps) => {
   // Props
@@ -109,7 +108,7 @@ export const MitraIgtDataListTable = (props: MitraIgtDataListTableProps) => {
             value={"fly-to"}
             onClick={() => void flyToMutation.mutateAsync(item.id)}
           >
-            <AppIcon icon={IconMapPin} />
+            <AppIcon icon={MapPinIcon} />
             Lihat di Peta
           </Menu.Item>
         ),

@@ -32,13 +32,8 @@ import type {
 } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
 import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { t } from "@/shared/libs/i18n";
-import {
-  IconCheck,
-  IconInfoCircle,
-  IconPencil,
-  IconTrash,
-  IconX,
-} from "@tabler/icons-react";
+import { IconPolygonOff } from "@tabler/icons-react";
+import { CheckIcon, InfoIcon, PencilIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
@@ -84,7 +79,7 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
           >
             {!hasStartedDrawing && (
               <Button primary pl={3} onClick={startDraw}>
-                <AppIcon icon={IconPencil} />
+                <AppIcon icon={PencilIcon} />
                 {"Mulai gambar"}
               </Button>
             )}
@@ -96,7 +91,7 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
                 pl={3}
                 onClick={cancelDraw}
               >
-                <AppIcon icon={IconX} />
+                <AppIcon icon={XIcon} />
                 {"Batal gambar"}
               </Button>
             )}
@@ -109,7 +104,7 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
                   pl={3}
                   onClick={handleResetDraw}
                 >
-                  <AppIcon icon={IconTrash} />
+                  <AppIcon icon={IconPolygonOff} />
                   {"Hapus gambar"}
                 </Button>
 
@@ -118,7 +113,7 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
                   pl={3}
                   onClick={() => void handleConfirmAndFetch()}
                 >
-                  <AppIcon icon={IconCheck} />
+                  <AppIcon icon={CheckIcon} />
                   {"Konfirmasi & clip"}
                 </Button>
               </HStack>
@@ -222,7 +217,7 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
         rounded={theme.radii.container}
         color={getAlertColor()}
       >
-        <AppIcon icon={IconInfoCircle} />
+        <AppIcon icon={InfoIcon} />
         <P>{getGuideMessage()}</P>
       </HStack>
     </VStack>
@@ -269,7 +264,7 @@ const DataList = (props: DrawAoiDataListProps) => {
               pl={3}
               onClick={onResetDraw}
             >
-              <AppIcon icon={IconTrash} />
+              <AppIcon icon={IconPolygonOff} />
               {"Hapus gambar"}
             </Button>
           </HStack>

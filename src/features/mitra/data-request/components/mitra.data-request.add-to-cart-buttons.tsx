@@ -18,8 +18,12 @@ import {
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { IconChevronDown, IconShoppingCartPlus } from "@tabler/icons-react";
-import { FlagIcon, LayersIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  FlagIcon,
+  LayersIcon,
+  ShoppingCartIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export type MitraDataRequestAddToCartButtonsProps = StackProps & {
@@ -108,7 +112,7 @@ export const MitraDataRequestAddToCartButtons = (
             flex={1}
             onClick={onAddAllBothClick}
           >
-            <AppIcon icon={IconShoppingCartPlus} />
+            <AppIcon icon={ShoppingCartIcon} />
             {"Tambah semua"} ({bidangCount} bidang, {kawasanCount} kawasan)
           </Button>
 
@@ -124,7 +128,7 @@ export const MitraDataRequestAddToCartButtons = (
                 aria-label={"Pilih opsi tambah semua"}
                 roundedLeft={0}
               >
-                <AppIcon icon={IconChevronDown} />
+                <AppIcon icon={ChevronDownIcon} />
               </IconButton>
             </Menu.Trigger>
 
@@ -152,7 +156,7 @@ export const MitraDataRequestAddToCartButtons = (
           disabled={isEmptyArray(selectedItems)}
           onClick={onAddSelectedClick}
         >
-          <AppIcon icon={IconShoppingCartPlus} />
+          <AppIcon icon={ShoppingCartIcon} />
           {"Tambah yang dipilih"}{" "}
           {!isEmptyArray(selectedItems) && (
             <>

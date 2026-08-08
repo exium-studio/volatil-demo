@@ -25,7 +25,6 @@ import type {
   MitraCartTableProps,
 } from "@/features/cart/types/cart.type";
 import { t } from "@/shared/libs/i18n";
-import { IconTrash } from "@tabler/icons-react";
 import { MapPinIcon, SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";
 
@@ -197,7 +196,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
             </Button>
 
             <IconButton colorPalette={"red"} onClick={onClearCart}>
-              <AppIcon icon={IconTrash} />
+              <AppIcon icon={Trash2Icon} />
             </IconButton>
           </HStack>
         </HStack>

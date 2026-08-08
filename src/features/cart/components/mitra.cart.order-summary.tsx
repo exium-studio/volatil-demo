@@ -145,7 +145,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </Progress.Root>
 
         <HStack justify={"space-between"} fontSize={"sm"}>
-          <P color={"fg.subtle"}>{"Bidang"}</P>
+          <P color={"fg.muted"}>{"Bidang"}</P>
           <P fontWeight={"medium"}>
             <strong style={{ fontWeight: 600 }}>
               <TNum>{formatDecimal(selectedBidangCount)}</TNum>
@@ -173,7 +173,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </Progress.Root>
 
         <HStack justify={"space-between"} fontSize={"sm"}>
-          <P color={"fg.subtle"}>{"Kawasan"}</P>
+          <P color={"fg.muted"}>{"Kawasan"}</P>
 
           <P fontWeight={"medium"}>
             <strong style={{ fontWeight: 600 }}>
@@ -197,14 +197,14 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       {/* Ringkasan Details Section */}
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
         <HStack justify={"space-between"}>
-          <P color={"fg.subtle"}>{"Total Bidang"}</P>
+          <P color={"fg.muted"}>{"Total Bidang"}</P>
           <P fontWeight={"medium"}>
             <TNum>{formatDecimal(displayTotalBidang)}</TNum> {"bidang"}
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
-          <P color={"fg.subtle"}>{"Total Kawasan"}</P>
+          <P color={"fg.muted"}>{"Total Kawasan"}</P>
           <P fontWeight={"medium"}>
             <TNum>{formatDecimal(displayTotalKawasanHa)}</TNum> {"ha"}
           </P>
@@ -219,14 +219,14 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         />
 
         <HStack justify={"space-between"}>
-          <P color={"fg.subtle"}>{"Total Harga"}</P>
+          <P color={"fg.muted"}>{"Total Harga"}</P>
           <P fontWeight={"medium"}>
             <TNum>{formatCurrency(displaySubtotal)}</TNum>
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
-          <P color={"fg.subtle"}>{"Biaya Layanan"}</P>
+          <P color={"fg.muted"}>{"Biaya Layanan"}</P>
           <P fontWeight={"medium"}>
             <TNum>{formatCurrency(displayServiceFee)}</TNum>
           </P>
@@ -234,7 +234,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
         {displayTax > 0 && (
           <HStack justify={"space-between"}>
-            <P color={"fg.subtle"}>{"Pajak"}</P>
+            <P color={"fg.muted"}>{"Pajak"}</P>
             <P fontWeight={"medium"}>
               <TNum>{formatCurrency(displayTax)}</TNum>
             </P>
