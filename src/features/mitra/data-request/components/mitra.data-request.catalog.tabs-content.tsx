@@ -237,7 +237,7 @@ const MitraDataRequestCatalogDataList = () => {
             targetBasis: "kawasan",
           });
         }}
-        onAddAllClick={() => {
+        onAddAllBothClick={() => {
           addToCartAllMutation.mutate({
             source: "catalog",
             targetBasis: "all",

@@ -418,7 +418,7 @@ const DataList = ({
               targetBasis: "kawasan",
             });
           }}
-          onAddAllClick={() => {
+          onAddAllBothClick={() => {
             addToCartAllMutation.mutate({
               source: "draw_aoi",
               targetBasis: "all",

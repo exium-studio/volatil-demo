@@ -1,6 +1,10 @@
 // src/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
+import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
@@ -15,19 +19,18 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { IconChevronDown, IconShoppingCartPlus } from "@tabler/icons-react";
-import { CheckCheckIcon, FlagIcon, LayersIcon } from "lucide-react";
+import { FlagIcon, LayersIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export type MitraDataRequestAddToCartButtonsProps = StackProps & {
   selectedItems?: FormattedListItem[];
-  /** All IGT items in the current result set (for basis breakdown counts). */
   allItems?: MitraDataRequestIgtDataItem[];
   totalBidangCount?: number;
   totalKawasanCount?: number;
   totalCount?: number;
   onAddAllBidangClick?: () => void;
   onAddAllKawasanClick?: () => void;
-  onAddAllClick?: () => void;
+  onAddAllBothClick?: () => void;
   onAddSelectedClick?: () => void;
 };
 
@@ -38,13 +41,12 @@ export const MitraDataRequestAddToCartButtons = (
   const {
     onAddAllBidangClick,
     onAddAllKawasanClick,
-    onAddAllClick,
+    onAddAllBothClick,
     onAddSelectedClick,
     selectedItems,
     allItems = [],
     totalBidangCount: totalBidangCountProp,
     totalKawasanCount: totalKawasanCountProp,
-    totalCount: totalCountProp,
     ...restProps
   } = props;
 
@@ -63,11 +65,6 @@ export const MitraDataRequestAddToCartButtons = (
 
   const bidangCount = totalBidangCountProp ?? calculatedBidang;
   const kawasanCount = totalKawasanCountProp ?? calculatedKawasan;
-  const totalCount =
-    totalCountProp ??
-    (totalBidangCountProp !== undefined && totalKawasanCountProp !== undefined
-      ? totalBidangCountProp + totalKawasanCountProp
-      : allItems.length);
 
   // Derived — selected items basis breakdown
   const selectedBidangCount = useMemo(
@@ -103,37 +100,50 @@ export const MitraDataRequestAddToCartButtons = (
         justify={"space-between"}
         gap={SPACING_SM}
       >
-        {/* Add all — menu with 3 options by basis */}
-        <Menu.Root
-          positioning={{
-            placement: "top",
-          }}
-        >
-          <Menu.Trigger>
-            <Button primary variant={"outline"} flex={"1 1 350px"}>
-              <AppIcon icon={IconShoppingCartPlus} />
-              {"Tambah semua"} ({totalCount})
-              <AppIcon icon={IconChevronDown} />
-            </Button>
-          </Menu.Trigger>
+        {/* Add all — ButtonGroup with main button on left and menu trigger on right */}
+        <ButtonGroup variant={"outline"} attached flex={"1 1 350px"}>
+          <Button
+            primary
+            variant={"outline"}
+            flex={1}
+            onClick={onAddAllBothClick}
+          >
+            <AppIcon icon={IconShoppingCartPlus} />
+            {"Tambah semua"} ({bidangCount} bidang, {kawasanCount} kawasan)
+          </Button>
 
-          <Menu.Content>
-            <Menu.Item value={"add-all-bidang"} onClick={onAddAllBidangClick}>
-              <AppIcon icon={LayersIcon} />
-              {"Tambah semua bidang"} ({bidangCount})
-            </Menu.Item>
+          <Menu.Root
+            positioning={{
+              placement: "top-end",
+            }}
+          >
+            <Menu.Trigger>
+              <IconButton
+                primary
+                variant={"outline"}
+                aria-label={"Pilih opsi tambah semua"}
+                roundedLeft={0}
+              >
+                <AppIcon icon={IconChevronDown} />
+              </IconButton>
+            </Menu.Trigger>
 
-            <Menu.Item value={"add-all-kawasan"} onClick={onAddAllKawasanClick}>
-              <AppIcon icon={FlagIcon} />
-              {"Tambah semua kawasan"} ({kawasanCount})
-            </Menu.Item>
+            <Menu.Content>
+              <Menu.Item value={"add-all-bidang"} onClick={onAddAllBidangClick}>
+                <AppIcon icon={LayersIcon} />
+                {"Tambah semua bidang"} ({bidangCount})
+              </Menu.Item>
 
-            <Menu.Item value={"add-all"} onClick={onAddAllClick}>
-              <AppIcon icon={CheckCheckIcon} />
-              {"Tambah semua bidang dan kawasan"} ({totalCount})
-            </Menu.Item>
-          </Menu.Content>
-        </Menu.Root>
+              <Menu.Item
+                value={"add-all-kawasan"}
+                onClick={onAddAllKawasanClick}
+              >
+                <AppIcon icon={FlagIcon} />
+                {"Tambah semua kawasan"} ({kawasanCount})
+              </Menu.Item>
+            </Menu.Content>
+          </Menu.Root>
+        </ButtonGroup>
 
         {/* Add selected */}
         <Button

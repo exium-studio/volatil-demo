@@ -192,7 +192,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
                     targetBasis: "kawasan",
                   });
                 }}
-                onAddAllClick={() => {
+                onAddAllBothClick={() => {
                   addToCartAllMutation.mutate({
                     source: "upload_aoi",
                     targetBasis: "all",
@@ -414,3 +414,5 @@ const DataList = () => {
     </VStack>
   );
 };
+
+export const DataRequestUploadAoiTabsContent = MitraDataRequestUploadAoiTabsContent;
