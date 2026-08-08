@@ -217,8 +217,6 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
       {/* Ringkasan Details Section */}
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
-        <P fontWeight={"semibold"}>{"Ringkasan"}</P>
-
         <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Total Bidang"}</P>
           <P fontWeight={"medium"}>
@@ -264,7 +262,6 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       <Button
         primary
         w={"full"}
-        size={"lg"}
         disabled={isCheckoutDisabled}
         loading={isCheckoutPending}
         onClick={onCheckout}

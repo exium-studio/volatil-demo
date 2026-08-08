@@ -9,7 +9,9 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
-import { PADDING_SM } from "@/design-system/constants/styles";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { PADDING_SM, SPACING_MD } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
 import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
 import {
@@ -26,13 +28,13 @@ export const MitraCartPage = () => {
   return (
     <PanelContentContainer overflowY={"auto"} gap={PADDING_SM} p={PADDING_SM}>
       <Container.Root flex={1} overflowY={"auto"} withContext={true}>
-        <MitraCartPageContent />
+        <MitraCartContent />
       </Container.Root>
     </PanelContentContainer>
   );
 };
 
-const MitraCartPageContent = () => {
+const MitraCartContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
@@ -59,28 +61,39 @@ const MitraCartPageContent = () => {
   };
 
   return (
-    <Container.Body flex={1} overflowY={"auto"}>
-      <AppNavTitle navsMap={APP_NAVS_MAP} />
+    <HStack
+      flex={1}
+      flexDir={isSmContainer ? "column" : "row-reverse"}
+      align={"start"}
+      gap={SPACING_MD}
+      overflowY={"auto"}
+      w={"full"}
+    >
+      {/* Summary Container */}
+      <Container.Body flex={1} overflowY={"auto"}>
+        <HeaderContainer>
+          <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
+            {"Ringkasan"}
+          </ClampedP>
+        </HeaderContainer>
 
-      <Separator borderColor={"bg.canvas"} />
+        <Separator borderColor={"bg.canvas"} />
 
-      <HStack
-        flex={1}
-        flexDir={isSmContainer ? "column" : "row-reverse"}
-        w={"full"}
-        overflowY={"auto"}
-        align={"stretch"}
-      >
         <MitraCartOrderSummary
           summary={cartData.summary}
           config={cartData.config}
           selectedItems={selectedCartItems}
           onCheckout={handleCheckout}
           isCheckoutPending={checkoutMutation.isPending}
-          flex={1}
         />
+      </Container.Body>
 
-        {/* Cart Data List */}
+      {/* DataList Container */}
+      <Container.Body flex={2} overflowY={"auto"}>
+        <AppNavTitle navsMap={APP_NAVS_MAP} />
+
+        <Separator borderColor={"bg.canvas"} />
+
         <MitraCartDataList
           cartItems={cartData.items}
           selectedItems={selectedItems as FormattedListItem<CartItem>[]}
@@ -93,9 +106,8 @@ const MitraCartPageContent = () => {
           onSearchChange={setSearchValue}
           isLoading={isLoading}
           isFetching={isFetching}
-          flex={2}
         />
-      </HStack>
-    </Container.Body>
+      </Container.Body>
+    </HStack>
   );
 };
