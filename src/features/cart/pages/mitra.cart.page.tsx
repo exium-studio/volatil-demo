@@ -69,37 +69,12 @@ const MitraCartContent = () => {
     <>
       <HStack
         flex={1}
-        flexDir={isSmContainer ? "column" : "row-reverse"}
+        flexDir={isSmContainer ? "column-reverse" : "row"}
         gap={SPACING_MD}
         minH={0}
         overflowY={isSmContainer ? "auto" : undefined}
         w={"full"}
       >
-        {/* Summary Container */}
-        <Container.Body
-          flex={1}
-          alignSelf={isSmContainer ? undefined : "start"}
-          maxH={"full"}
-          minH={0}
-          overflowY={"auto"}
-        >
-          <HeaderContainer>
-            <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
-              {"Ringkasan"}
-            </ClampedP>
-          </HeaderContainer>
-
-          <Separator borderColor={"bg.canvas"} />
-
-          <MitraCartOrderSummary
-            summary={cartData.summary}
-            config={cartData.config}
-            selectedItems={selectedCartItems}
-            onCheckout={handleCheckout}
-            isCheckoutPending={checkoutMutation.isPending}
-          />
-        </Container.Body>
-
         {/* DataList Container */}
         <Container.Body flex={2} minH={0} overflowY={"auto"}>
           <HeaderContainer>
@@ -123,6 +98,31 @@ const MitraCartContent = () => {
             onSearchChange={setSearchValue}
             isLoading={isLoading}
             isFetching={isFetching}
+          />
+        </Container.Body>
+
+        {/* Summary Container */}
+        <Container.Body
+          flex={1}
+          alignSelf={isSmContainer ? undefined : "start"}
+          maxH={"full"}
+          minH={0}
+          overflowY={"auto"}
+        >
+          <HeaderContainer>
+            <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
+              {"Ringkasan"}
+            </ClampedP>
+          </HeaderContainer>
+
+          <Separator borderColor={"bg.canvas"} />
+
+          <MitraCartOrderSummary
+            summary={cartData.summary}
+            config={cartData.config}
+            selectedItems={selectedCartItems}
+            onCheckout={handleCheckout}
+            isCheckoutPending={checkoutMutation.isPending}
           />
         </Container.Body>
       </HStack>
