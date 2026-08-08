@@ -152,9 +152,11 @@ const MitraHomeFinancialFlowChartContent = (
             axisLine={false}
             tickLine={false}
             tickMargin={10}
-            tickFormatter={chart.formatNumber({
-              notation: "compact",
-            })}
+            tickFormatter={(value) =>
+              value === 0
+                ? ""
+                : chart.formatNumber({ notation: "compact" })(value)
+            }
             stroke={chart.color("border")}
           />
 
