@@ -1,5 +1,4 @@
-// src/features/mitra/data-request/services/mitra.data-request.api.ts
-
+import { addToCart as cartApiAddToCart } from "@/features/cart/services/cart.api";
 import { WFS_LAYER_NAME } from "@/design-system/components/map/constants/map.config";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type {
@@ -100,6 +99,10 @@ export async function addToCartSelected(
 ): Promise<MitraDataRequestAddToCartResponse> {
   console.log("addToCartSelected payload:", payload);
   try {
+    await cartApiAddToCart(
+      payload.itemIds.map((id) => ({ id, basis: "bidang" })),
+      signal,
+    );
     const response = await apiClient.post<
       ApiResponse<MitraDataRequestAddToCartResponse>
     >("/mitra/cart/add-selected", payload, { signal });
@@ -129,6 +132,7 @@ export async function addToCartAll(
 ): Promise<MitraDataRequestAddToCartResponse> {
   console.log("addToCartAll payload:", payload);
   try {
+    await cartApiAddToCart([], signal);
     const response = await apiClient.post<
       ApiResponse<MitraDataRequestAddToCartResponse>
     >("/mitra/cart/add-all", payload, { signal });

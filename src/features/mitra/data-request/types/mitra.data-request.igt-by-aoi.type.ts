@@ -1,10 +1,8 @@
-// src/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type.ts
+import type { IgtThemeItem } from "@/shared/types/common-response.type";
 
 export type MitraDataRequestIgtBasis = "bidang" | "kawasan";
 
-export type MitraDataRequestIgtThemeItem = {
-  name: string;
-};
+export type MitraDataRequestIgtThemeItem = IgtThemeItem;
 
 export type MitraDataRequestIgtDataItem = {
   id: string;
@@ -15,5 +13,5 @@ export type MitraDataRequestIgtDataItem = {
 
 // Aliases for compatibility
 export type IgtBasis = MitraDataRequestIgtBasis;
-export type IgtThemeItem = MitraDataRequestIgtThemeItem;
+export type { IgtThemeItem };
 export type IgtDataItem = MitraDataRequestIgtDataItem;

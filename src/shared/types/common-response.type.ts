@@ -28,6 +28,17 @@ export type PaginatedResponse<T> = {
   };
 };
 
+export type PaginatedParams = {
+  page?: number;
+  perPage?: number;
+  search?: string;
+};
+
+export type IgtThemeItem = {
+  name: string;
+  description?: string | null;
+};
+
 // Auth
 export type UserRole = "internal" | "mitra";
 
