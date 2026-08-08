@@ -22,6 +22,8 @@ export const Skeleton = (props: SkeletonProps) => {
     <ChakraSkeleton
       rounded={theme.radii.component}
       variant={"shine"}
+      w={"full"}
+      h={"full"}
       css={{
         "--start-color": "transparent",
         "--end-color": "colors.bg.subtle",

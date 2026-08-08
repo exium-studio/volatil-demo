@@ -215,7 +215,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton w={"full"} h={"full"} />
+          <Skeleton />
         ) : (
           <>
             <Box w={"full"} position={"relative"} overflowY={"auto"}>

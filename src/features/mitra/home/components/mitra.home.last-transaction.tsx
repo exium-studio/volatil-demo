@@ -233,7 +233,7 @@ const MitraHomeLastTransactionDataList = () => {
   return (
     <VStack bg={"bg.canvas"} w={"full"} position={"relative"}>
       {isLoading ? (
-        <Skeleton w={"full"} h={"300px"} />
+        <Skeleton />
       ) : (
         <>
           <Box w={"full"} position={"relative"}>

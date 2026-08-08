@@ -236,7 +236,7 @@ import { Loader } from "@/design-system/components/feedback/ui/loader";
 
 {
   isLoading ? (
-    <Skeleton w={"full"} h={"300px"} />
+    <Skeleton />
   ) : (
     <Box w={"full"} position={"relative"}>
       <DataListTable.Root headers={dataList.headers} items={dataList.items} />

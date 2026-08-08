@@ -32,7 +32,6 @@ import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 
-
 export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
   return (
     <Tabs.Content
@@ -88,7 +87,12 @@ const MitraDataRequestCatalogDataList = () => {
   });
 
   // Queries
-  const { items: rawItems, meta, isLoading, isFetching } = useIgtCatalog({
+  const {
+    items: rawItems,
+    meta,
+    isLoading,
+    isFetching,
+  } = useIgtCatalog({
     page: dataListState.page,
     perPage: dataListState.perPage,
   });
@@ -103,7 +107,7 @@ const MitraDataRequestCatalogDataList = () => {
       position={"relative"}
     >
       {isLoading ? (
-        <Skeleton w={"full"} h={"300px"} />
+        <Skeleton />
       ) : (
         <>
           <VStack overflowY={"auto"} w={"full"} position={"relative"}>
@@ -126,7 +130,9 @@ const MitraDataRequestCatalogDataList = () => {
                 setDataListState((prev) => ({ ...prev, perPage }))
               }
               page={dataListState.page}
-              setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
+              setPage={(page) =>
+                setDataListState((prev) => ({ ...prev, page }))
+              }
               roundedBottom={theme.radii.container}
             />
 
@@ -182,4 +188,3 @@ const MitraDataRequestCatalogDataList = () => {
     </VStack>
   );
 };
-
