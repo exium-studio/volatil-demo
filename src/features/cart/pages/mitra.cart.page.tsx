@@ -5,23 +5,20 @@ import {
   Container,
   useContainerContext,
 } from "@/design-system/components/layout/ui/container";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
-import { PADDING_SM, SPACING_MD } from "@/design-system/constants/styles";
-import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
+import { PADDING_SM } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
+import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
 import {
   useCartQuery,
   useCheckoutCart,
   useClearCart,
   useRemoveFromCart,
 } from "@/features/cart/hooks/use-mitra-cart";
-import type {
-  CartItem,
-  MitraCartFlexContainerProps,
-} from "@/features/cart/types/cart.type";
+import type { CartItem } from "@/features/cart/types/cart.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { useMemo, useState } from "react";
 
