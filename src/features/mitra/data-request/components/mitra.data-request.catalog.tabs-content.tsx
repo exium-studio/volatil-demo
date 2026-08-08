@@ -21,7 +21,11 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { useIgtCatalog } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import {
+  useAddToCartAll,
+  useAddToCartSelected,
+  useIgtCatalog,
+} from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
@@ -73,6 +77,10 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
 const MitraDataRequestCatalogDataList = () => {
   // Stores
   const { theme } = useThemeStore();
+
+  // Hooks (Mutations)
+  const addToCartSelectedMutation = useAddToCartSelected();
+  const addToCartAllMutation = useAddToCartAll();
 
   // States
   const [dataListState, setDataListState] = useState({
@@ -212,10 +220,28 @@ const MitraDataRequestCatalogDataList = () => {
         totalKawasanCount={meta?.totalKawasan}
         totalCount={meta?.total}
         onAddSelectedClick={() => {
-          console.log("onAddSelectedClick");
+          const selectedIds = dataListState.selectedItems.map((item) =>
+            String(item.id),
+          );
+          addToCartSelectedMutation.mutate({ itemIds: selectedIds });
+        }}
+        onAddAllBidangClick={() => {
+          addToCartAllMutation.mutate({
+            source: "catalog",
+            targetBasis: "bidang",
+          });
+        }}
+        onAddAllKawasanClick={() => {
+          addToCartAllMutation.mutate({
+            source: "catalog",
+            targetBasis: "kawasan",
+          });
         }}
         onAddAllClick={() => {
-          console.log("onAddAllClick");
+          addToCartAllMutation.mutate({
+            source: "catalog",
+            targetBasis: "all",
+          });
         }}
         mt={"auto"}
       />

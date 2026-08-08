@@ -2,12 +2,18 @@
 
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import {
+  addToCartAll,
+  addToCartSelected,
   getIgtByAoi,
   getIgtByUploadedAoi,
   getIgtCatalog,
   getIgtGeometryById,
   type MitraDataRequestGetCatalogParams,
 } from "@/features/mitra/data-request/services/mitra.data-request.api";
+import type {
+  MitraDataRequestAddAllPayload,
+  MitraDataRequestAddSelectedPayload,
+} from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -57,6 +63,44 @@ export const useFetchIgtByUploadedAoi = () => {
 
   return useMutation({
     mutationFn: (file: File) => getIgtByUploadedAoi(file),
+    onMutate: toast.onLoading,
+    onSuccess: toast.onSuccess,
+    onError: toast.onError,
+  });
+};
+
+export const useAddToCartSelected = () => {
+  const toast = mutationToastHandlers("add-to-cart-selected", {
+    loadingMessage: {
+      title: "Menambahkan item terpilih ke keranjang...",
+    },
+    successMessage: {
+      title: "Berhasil menambahkan item ke keranjang",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: MitraDataRequestAddSelectedPayload) =>
+      addToCartSelected(payload),
+    onMutate: toast.onLoading,
+    onSuccess: toast.onSuccess,
+    onError: toast.onError,
+  });
+};
+
+export const useAddToCartAll = () => {
+  const toast = mutationToastHandlers("add-to-cart-all", {
+    loadingMessage: {
+      title: "Menambahkan seluruh item ke keranjang...",
+    },
+    successMessage: {
+      title: "Berhasil menambahkan seluruh item ke keranjang",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: MitraDataRequestAddAllPayload) =>
+      addToCartAll(payload),
     onMutate: toast.onLoading,
     onSuccess: toast.onSuccess,
     onError: toast.onError,

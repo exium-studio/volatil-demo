@@ -32,7 +32,11 @@ import {
   MitraDataRequestUploadAoiContext,
   useMitraDataRequestUploadAoiContext,
 } from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
-import { useFetchIgtByUploadedAoi } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import {
+  useAddToCartAll,
+  useAddToCartSelected,
+  useFetchIgtByUploadedAoi,
+} from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import type { IgtDataResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import type { UploadAoiFileListTriggerProps } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
@@ -66,6 +70,8 @@ export const MitraDataRequestUploadAoiTabsContent = (
   const isAoiFileModalOpen = search[MODAL_SEARCH_PARAM_KEY] === "aoi-file-list";
 
   const uploadAoiMutation = useFetchIgtByUploadedAoi();
+  const addToCartSelectedMutation = useAddToCartSelected();
+  const addToCartAllMutation = useAddToCartAll();
 
   useEffect(() => {
     if (!isEmptyArray(dataListState.uploadedFiles)) {
@@ -169,10 +175,28 @@ export const MitraDataRequestUploadAoiTabsContent = (
                 totalKawasanCount={data?.meta?.totalKawasan}
                 totalCount={data?.meta?.total}
                 onAddSelectedClick={() => {
-                  console.log("onAddSelectedClick");
+                  const selectedIds = dataListState.selectedItems.map((item) =>
+                    String(item.id),
+                  );
+                  addToCartSelectedMutation.mutate({ itemIds: selectedIds });
+                }}
+                onAddAllBidangClick={() => {
+                  addToCartAllMutation.mutate({
+                    source: "upload_aoi",
+                    targetBasis: "bidang",
+                  });
+                }}
+                onAddAllKawasanClick={() => {
+                  addToCartAllMutation.mutate({
+                    source: "upload_aoi",
+                    targetBasis: "kawasan",
+                  });
                 }}
                 onAddAllClick={() => {
-                  console.log("onAddAllClick");
+                  addToCartAllMutation.mutate({
+                    source: "upload_aoi",
+                    targetBasis: "all",
+                  });
                 }}
               />
             </VStack>
@@ -390,5 +414,3 @@ const DataList = () => {
     </VStack>
   );
 };
-
-export const DataRequestUploadAoiTabsContent = MitraDataRequestUploadAoiTabsContent;

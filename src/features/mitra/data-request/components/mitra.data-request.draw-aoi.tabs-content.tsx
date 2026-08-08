@@ -23,6 +23,10 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
+import {
+  useAddToCartAll,
+  useAddToCartSelected,
+} from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import type {
   DrawAoiDataListProps,
@@ -244,6 +248,10 @@ const DataList = ({
   // Stores
   const { theme } = useThemeStore();
 
+  // Hooks (Mutations)
+  const addToCartSelectedMutation = useAddToCartSelected();
+  const addToCartAllMutation = useAddToCartAll();
+
   // States
   const [selectedItems, setSelectedItems] = useState<
     FormattedListItem<IgtDataItem>[]
@@ -391,20 +399,34 @@ const DataList = ({
         <MitraDataRequestAddToCartButtons
           selectedItems={selectedItems}
           allItems={igtItems}
-          totalBidangCount={igtItems.filter((item) => item.basis === "bidang").length}
-          totalKawasanCount={igtItems.filter((item) => item.basis === "kawasan").length}
+          totalBidangCount={
+            igtItems.filter((item) => item.basis === "bidang").length
+          }
+          totalKawasanCount={
+            igtItems.filter((item) => item.basis === "kawasan").length
+          }
           totalCount={igtItems.length}
           onAddAllBidangClick={() => {
-            console.log("add all bidang");
+            addToCartAllMutation.mutate({
+              source: "draw_aoi",
+              targetBasis: "bidang",
+            });
           }}
           onAddAllKawasanClick={() => {
-            console.log("add all kawasan");
+            addToCartAllMutation.mutate({
+              source: "draw_aoi",
+              targetBasis: "kawasan",
+            });
           }}
           onAddAllClick={() => {
-            console.log("add all");
+            addToCartAllMutation.mutate({
+              source: "draw_aoi",
+              targetBasis: "all",
+            });
           }}
           onAddSelectedClick={() => {
-            console.log("add selected", selectedItems);
+            const selectedIds = selectedItems.map((item) => String(item.id));
+            addToCartSelectedMutation.mutate({ itemIds: selectedIds });
           }}
           mt={"auto"}
         />
