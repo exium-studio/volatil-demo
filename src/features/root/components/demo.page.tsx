@@ -80,6 +80,7 @@ import { Span } from "@/design-system/components/typography/ui/span";
 import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
 import { SPACING_MD } from "@/design-system/constants/styles";
 import { useBreakpointValue } from "@/design-system/hooks";
+import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { SettingsTrigger } from "@/features/settings/components/settings";
 import { getLocale, getLocaleLabel } from "@/shared/libs/i18n";
@@ -392,11 +393,44 @@ const Toast = () => {
   );
 };
 
+const DEFAULT_DEMO_SPLITTER_SIZE = [50, 50];
+
 const Layout = () => {
-  const orientation = useBreakpointValue<"horizontal" | "vertical">({
-    base: "vertical",
-    md: "horizontal",
-  });
+  const splitterSize = useSplitterStore(
+    (s) => s.sizesByKey["demo-layout"] ?? DEFAULT_DEMO_SPLITTER_SIZE,
+  );
+  const setSplitterSize = useSplitterStore((s) => s.setSize);
+
+  const panelA = (
+    <Splitter.Panel
+      key={"a"}
+      id={"a"}
+      borderRight={"1px solid"}
+      borderColor={"border"}
+    >
+      <Center boxSize={"full"} textStyle={"2xl"}>
+        A
+      </Center>
+    </Splitter.Panel>
+  );
+
+  const resizeTrigger = (
+    <Splitter.ResizeTrigger
+      key={"trigger"}
+      id={"a:b"}
+      onDoubleClick={() => {
+        setSplitterSize("demo-layout", DEFAULT_DEMO_SPLITTER_SIZE);
+      }}
+    />
+  );
+
+  const panelB = (
+    <Splitter.Panel key={"b"} id={"b"}>
+      <Center boxSize={"full"} textStyle={"2xl"}>
+        B
+      </Center>
+    </Splitter.Panel>
+  );
 
   return (
     <Container.Root w={"full"} px={SPACING_MD}>
@@ -405,30 +439,26 @@ const Layout = () => {
           Layout
         </P>
 
-        <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
+        <HStack
+          wrap={"wrap"}
+          align={"center"}
+          justify={"center"}
+          gap={4}
+          h={"300px"}
+        >
           <Splitter.Root
             panels={[
               { id: "a", minSize: 30 },
               { id: "b", minSize: 30 },
             ]}
-            defaultSize={[50, 50]}
-            orientation={orientation}
+            size={splitterSize}
+            onResize={(details) => setSplitterSize("demo-layout", details.size)}
+            orientation={"horizontal"}
             borderWidth={"1px"}
-            minH={"60"}
+            h={"300px"}
+            w={"full"}
           >
-            <Splitter.Panel id={"a"}>
-              <Center boxSize={"full"} textStyle={"2xl"}>
-                A
-              </Center>
-            </Splitter.Panel>
-
-            <Splitter.ResizeTrigger id={"a:b"} />
-
-            <Splitter.Panel id={"b"}>
-              <Center boxSize={"full"} textStyle={"2xl"}>
-                B
-              </Center>
-            </Splitter.Panel>
+            {[panelA, resizeTrigger, panelB]}
           </Splitter.Root>
         </HStack>
       </Container.Body>

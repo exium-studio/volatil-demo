@@ -37,25 +37,34 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
 
     useEffect(() => clearOpenTimer, []);
 
-    const handlePointerEnter = () => {
-      if (blockedRef.current) return;
-
-      clearOpenTimer();
-      timeoutRef.current = setTimeout(() => {
-        setOpen(true);
-      }, openDelay);
+    const handlePointerEnter = (e: React.PointerEvent<HTMLElement>) => {
+      if (!blockedRef.current) {
+        clearOpenTimer();
+        timeoutRef.current = setTimeout(() => {
+          setOpen(true);
+        }, openDelay);
+      }
+      if (children && typeof children === "object" && "props" in children) {
+        (children.props as { onPointerEnter?: (e: React.PointerEvent<HTMLElement>) => void }).onPointerEnter?.(e);
+      }
     };
 
-    const handlePointerLeave = () => {
+    const handlePointerLeave = (e: React.PointerEvent<HTMLElement>) => {
       clearOpenTimer();
       blockedRef.current = false;
       setOpen(false);
+      if (children && typeof children === "object" && "props" in children) {
+        (children.props as { onPointerLeave?: (e: React.PointerEvent<HTMLElement>) => void }).onPointerLeave?.(e);
+      }
     };
 
-    const handlePointerDown = () => {
+    const handlePointerDown = (e: React.PointerEvent<HTMLElement>) => {
       clearOpenTimer();
       blockedRef.current = true;
       setOpen(false);
+      if (children && typeof children === "object" && "props" in children) {
+        (children.props as { onPointerDown?: (e: React.PointerEvent<HTMLElement>) => void }).onPointerDown?.(e);
+      }
     };
 
     if (disabled) return children;

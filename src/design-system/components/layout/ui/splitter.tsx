@@ -54,7 +54,9 @@ const SplitterResizeTrigger = forwardRef<
               ref={ref}
               className={"group"}
               transition={"200ms"}
+              minW={isVertical ? "full" : "8px"}
               w={isVertical ? "full" : "8px"}
+              minH={isVertical ? "8px" : "full"}
               h={isVertical ? "8px" : "full"}
               _hover={{
                 bg: "border",
@@ -72,7 +74,7 @@ const SplitterResizeTrigger = forwardRef<
                 w={isVertical ? "80px" : "16px"}
                 h={isVertical ? "16px" : "80px"}
                 opacity={0}
-                transform={isVertical ? "translateY(-6px)" : "translateX(-6px)"}
+                transform={isVertical ? "translateY(-4px)" : "translateX(-4px)"}
                 transition={"200ms"}
                 _groupHover={{
                   opacity: 1,
