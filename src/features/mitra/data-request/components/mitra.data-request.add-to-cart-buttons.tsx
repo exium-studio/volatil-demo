@@ -73,14 +73,18 @@ export const MitraDataRequestAddToCartButtons = (
   const selectedBidangCount = useMemo(
     () =>
       (selectedItems ?? []).filter(
-        (item) => (item.data as unknown as MitraDataRequestIgtDataItem).basis === "bidang",
+        (item) =>
+          (item.data as unknown as MitraDataRequestIgtDataItem).basis ===
+          "bidang",
       ).length,
     [selectedItems],
   );
   const selectedKawasanCount = useMemo(
     () =>
       (selectedItems ?? []).filter(
-        (item) => (item.data as unknown as MitraDataRequestIgtDataItem).basis === "kawasan",
+        (item) =>
+          (item.data as unknown as MitraDataRequestIgtDataItem).basis ===
+          "kawasan",
       ).length,
     [selectedItems],
   );
@@ -91,13 +95,13 @@ export const MitraDataRequestAddToCartButtons = (
       p={PADDING_MD}
       rounded={theme.radii.container}
       bg={"bg.body"}
+      {...restProps}
     >
       <HStack
         wrap={"wrap"}
         align={"center"}
         justify={"space-between"}
         gap={SPACING_SM}
-        {...restProps}
       >
         {/* Add all — menu with 3 options by basis */}
         <Menu.Root

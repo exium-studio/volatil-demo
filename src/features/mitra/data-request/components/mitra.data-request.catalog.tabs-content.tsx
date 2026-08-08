@@ -217,6 +217,7 @@ const MitraDataRequestCatalogDataList = () => {
         onAddAllClick={() => {
           console.log("onAddAllClick");
         }}
+        mt={"auto"}
       />
     </VStack>
   );
