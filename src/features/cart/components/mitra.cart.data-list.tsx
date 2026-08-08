@@ -138,16 +138,14 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
         ({ selectedItemIds, clearSelectedItems }) => (
           <Button
             key={"remove-selected"}
-            variant={"outline"}
             colorPalette={"red"}
-            size={"xs"}
             onClick={() => {
               onRemoveItems?.(selectedItemIds);
               clearSelectedItems();
             }}
           >
             <AppIcon icon={Trash2Icon} />
-            {"Hapus Terpilih"} ({selectedItemIds.length})
+            {"Hapus"}
           </Button>
         ),
       ] as DataListBatchActionsGenerator[],

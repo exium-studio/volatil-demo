@@ -12,7 +12,7 @@ export type CartItem = {
   id: string;
   name: string;
   basis: CartItemBasis;
-  quota?: number;
+  areaInHa?: number;
   themes: IgtThemeItem[];
   description?: string | null;
 };

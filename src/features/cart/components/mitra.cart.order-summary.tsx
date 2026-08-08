@@ -5,7 +5,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { P, PSerif } from "@/design-system/components/typography/ui/p";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { MitraCartOrderSummaryProps } from "@/features/cart/types/cart.type";
@@ -33,10 +33,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
   // Derived — Selected totals
   const selectedBidangCount = useMemo(
-    () =>
-      selectedItems
-        .filter((item) => item.basis === "bidang")
-        .reduce((sum, item) => sum + (item.quota ?? 1), 0),
+    () => selectedItems.filter((item) => item.basis === "bidang").length,
     [selectedItems],
   );
 
@@ -44,9 +41,41 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
     () =>
       selectedItems
         .filter((item) => item.basis === "kawasan")
-        .reduce((sum, item) => sum + (item.quota ?? 1), 0),
+        .reduce((sum, item) => sum + (item.areaInHa ?? 1), 0),
     [selectedItems],
   );
+
+  const selectedSubtotal = useMemo(
+    () =>
+      selectedItems.reduce((sum, item) => {
+        const price =
+          item.basis === "bidang"
+            ? config.pricePerBidang
+            : (item.areaInHa ?? 1) * config.pricePerKawasanHa;
+        return sum + price;
+      }, 0),
+    [selectedItems, config.pricePerBidang, config.pricePerKawasanHa],
+  );
+
+  const selectedServiceFee = useMemo(
+    () => Math.round(selectedSubtotal * (config.serviceFeeRate ?? 0.1)),
+    [selectedSubtotal, config.serviceFeeRate],
+  );
+
+  const selectedTax = useMemo(
+    () =>
+      Math.round(
+        (selectedSubtotal + selectedServiceFee) * (config.taxRate ?? 0.11),
+      ),
+    [selectedSubtotal, selectedServiceFee, config.taxRate],
+  );
+
+  const selectedGrandTotal = useMemo(
+    () => selectedSubtotal + selectedServiceFee + selectedTax,
+    [selectedSubtotal, selectedServiceFee, selectedTax],
+  );
+
+  const hasSelectedItems = !isEmptyArray(selectedItems);
 
   const isBidangMinimumNotMet =
     selectedBidangCount > 0 && selectedBidangCount < config.minimumBidangCount;
@@ -55,7 +84,24 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   const isMinimumNotMet = isBidangMinimumNotMet || isKawasanMinimumNotMet;
 
   const isCheckoutDisabled =
-    isEmptyArray(selectedItems) || isMinimumNotMet || isCheckoutPending;
+    !hasSelectedItems || isMinimumNotMet || isCheckoutPending;
+
+  const displayTotalBidang = hasSelectedItems
+    ? selectedBidangCount
+    : summary.totalBidang;
+  const displayTotalKawasanHa = hasSelectedItems
+    ? selectedKawasanHa
+    : summary.totalKawasanHa;
+  const displaySubtotal = hasSelectedItems
+    ? selectedSubtotal
+    : summary.subtotal;
+  const displayServiceFee = hasSelectedItems
+    ? selectedServiceFee
+    : summary.serviceFee;
+  const displayTax = hasSelectedItems ? selectedTax : summary.tax;
+  const displayGrandTotal = hasSelectedItems
+    ? selectedGrandTotal
+    : summary.grandTotal;
 
   return (
     <VStack
@@ -69,12 +115,10 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       <HStack gap={3} align={"center"}>
         <AtrLogo boxSize={10} />
         <VStack gap={0} align={"start"}>
-          <P fontWeight={"semibold"} fontSize={"md"}>
-            {"Kementerian ATR/BPN"}
-          </P>
-          <P fontSize={"xs"} color={"blue.fg"}>
+          <P fontWeight={"semibold"}>{"Kementerian ATR/BPN"}</P>
+          <PSerif fontSize={"sm"} color={"blue.fg"}>
             {"Melayani, Profesional, Terpercaya"}
-          </P>
+          </PSerif>
         </VStack>
       </HStack>
 
@@ -166,6 +210,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
           <HStack justify={"space-between"} fontSize={"xs"}>
             <P color={"fg.subtle"}>{"Kawasan Terpilih:"}</P>
+
             <P fontWeight={"medium"}>
               <strong style={{ fontWeight: 600 }}>
                 {formatDecimal(selectedKawasanHa)} ha
@@ -178,12 +223,13 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       )}
 
       {/* Total Pesanan Section */}
-      {!isEmptyArray(selectedItems) && (
+      {hasSelectedItems && (
         <VStack gap={2} p={3} bg={"bg.canvas"} rounded={"md"} align={"stretch"}>
           <HStack justify={"space-between"}>
             <P fontSize={"sm"} fontWeight={"semibold"}>
               {"Total Pesanan"}
             </P>
+
             <Badge colorPalette={"neutral"} variant={"subtle"}>
               {selectedItems.length} {"Data"}
             </Badge>
@@ -193,17 +239,21 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
           <VStack gap={2} align={"stretch"} maxH={"160px"} overflowY={"auto"}>
             {selectedItems.map((item) => {
-              const quotaVal = item.quota ?? 1;
               const itemPrice =
                 item.basis === "bidang"
-                  ? quotaVal * config.pricePerBidang
-                  : quotaVal * config.pricePerKawasanHa;
+                  ? config.pricePerBidang
+                  : (item.areaInHa ?? 1) * config.pricePerKawasanHa;
 
               return (
                 <HStack key={item.id} justify={"space-between"} fontSize={"xs"}>
                   <HStack gap={2}>
                     <P fontWeight={"medium"}>{item.name}</P>
-                    <P color={"fg.subtle"}>• {item.basis}</P>
+                    <P color={"fg.subtle"}>
+                      •{" "}
+                      {item.basis === "kawasan" && item.areaInHa
+                        ? `${item.areaInHa} ha`
+                        : item.basis}
+                    </P>
                   </HStack>
                   <P fontWeight={"semibold"}>{formatCurrency(itemPrice)}</P>
                 </HStack>
@@ -220,31 +270,31 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Total Bidang"}</P>
           <P fontWeight={"medium"}>
-            {formatDecimal(summary.totalBidang)} {"bidang"}
+            {formatDecimal(displayTotalBidang)} {"bidang"}
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Total Kawasan"}</P>
           <P fontWeight={"medium"}>
-            {formatDecimal(summary.totalKawasanHa)} {"ha"}
+            {formatDecimal(displayTotalKawasanHa)} {"ha"}
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Total Harga"}</P>
-          <P fontWeight={"medium"}>{formatCurrency(summary.subtotal)}</P>
+          <P fontWeight={"medium"}>{formatCurrency(displaySubtotal)}</P>
         </HStack>
 
         <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Biaya Layanan"}</P>
-          <P fontWeight={"medium"}>{formatCurrency(summary.serviceFee)}</P>
+          <P fontWeight={"medium"}>{formatCurrency(displayServiceFee)}</P>
         </HStack>
 
-        {summary.tax > 0 && (
+        {displayTax > 0 && (
           <HStack justify={"space-between"}>
             <P color={"fg.subtle"}>{"Pajak"}</P>
-            <P fontWeight={"medium"}>{formatCurrency(summary.tax)}</P>
+            <P fontWeight={"medium"}>{formatCurrency(displayTax)}</P>
           </HStack>
         )}
 
@@ -253,7 +303,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         <HStack justify={"space-between"} fontSize={"md"}>
           <P fontWeight={"bold"}>{"Sub Total"}</P>
           <P fontWeight={"bold"} color={"fg.default"}>
-            {formatCurrency(summary.grandTotal)}
+            {formatCurrency(displayGrandTotal)}
           </P>
         </HStack>
       </VStack>
