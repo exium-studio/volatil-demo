@@ -10,6 +10,7 @@ import {
   Portal,
   createListCollection,
 } from "@chakra-ui/react";
+import { ChevronDownIcon } from "lucide-react";
 
 export default function SelectInput(props: SelectProps) {
   // Props
@@ -79,7 +80,7 @@ export default function SelectInput(props: SelectProps) {
           </ChakraSelect.Trigger>
 
           <ChakraSelect.IndicatorGroup>
-            <ChakraSelect.Indicator boxSize={5} color={props?.color} />
+            <AppIcon icon={ChevronDownIcon} color={props?.color} mr={"-2px"} />
           </ChakraSelect.IndicatorGroup>
         </ChakraSelect.Control>
       </Tooltip>
