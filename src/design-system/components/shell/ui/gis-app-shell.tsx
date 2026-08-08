@@ -131,6 +131,8 @@ const Sidebar = () => {
         h={"full"}
         py={2}
         bg={"bg.body"}
+        borderRight={"1px solid"}
+        borderColor={"bg.canvas"}
         // rounded={theme.radii.container}
       >
         <SidebarHeader />
