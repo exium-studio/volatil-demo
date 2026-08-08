@@ -11,12 +11,15 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
+import { Box } from "@/design-system/components/layout/ui/box";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { PADDING_MD, PADDING_SM, SPACING_MD, SPACING_SM } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { CartItem } from "@/features/cart/types/cart.type";
 import { formatDecimal } from "@/shared/utils/formatter/number.formatter";
 import { t } from "@/shared/libs/i18n";
-import { IconCheck, IconTrash } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";
 
@@ -32,6 +35,8 @@ export type MitraCartTableProps = StackProps & {
   onRemoveItems?: (itemIds: string[]) => void;
   searchValue?: string;
   onSearchChange?: (val: string) => void;
+  isLoading?: boolean;
+  isFetching?: boolean;
 };
 
 export const MitraCartTable = (props: MitraCartTableProps) => {
@@ -44,6 +49,8 @@ export const MitraCartTable = (props: MitraCartTableProps) => {
     onRemoveItems,
     searchValue = "",
     onSearchChange,
+    isLoading = false,
+    isFetching = false,
     ...restProps
   } = props;
 
@@ -180,21 +187,43 @@ export const MitraCartTable = (props: MitraCartTableProps) => {
       <Separator borderColor={"bg.canvas"} />
 
       {/* Table Component */}
-      <VStack flex={1} gap={PADDING_SM} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
-        <DataListTable.Root
-          headers={headers}
-          items={items}
-          withNumbering={false}
-          canBatchSelect={true}
-          batchActions={batchActions}
-          selectedItems={selectedItems}
-          onSelectedItemChange={onSelectedItemChange}
-          rounded={0}
-          shadow={"none"}
-        >
-          <DataListTable.Header />
-          <DataListTable.Body />
-        </DataListTable.Root>
+      <VStack flex={1} gap={PADDING_SM} overflowY={"auto"} bg={"bg.canvas"} w={"full"} position={"relative"}>
+        {isLoading ? (
+          <Skeleton w={"full"} h={"300px"} />
+        ) : (
+          <>
+            <Box w={"full"} position={"relative"}>
+              <DataListTable.Root
+                headers={headers}
+                items={items}
+                withNumbering={false}
+                canBatchSelect={true}
+                batchActions={batchActions}
+                selectedItems={selectedItems}
+                onSelectedItemChange={onSelectedItemChange}
+                rounded={0}
+                shadow={"none"}
+              >
+                <DataListTable.Header />
+                <DataListTable.Body />
+              </DataListTable.Root>
+
+              {isFetching && (
+                <Box
+                  position={"absolute"}
+                  inset={0}
+                  bg={"bg.canvas/50"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  zIndex={10}
+                >
+                  <Loader size={"md"} />
+                </Box>
+              )}
+            </Box>
+          </>
+        )}
       </VStack>
     </VStack>
   );

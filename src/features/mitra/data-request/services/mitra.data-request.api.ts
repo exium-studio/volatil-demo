@@ -144,10 +144,7 @@ export async function addToCartAll(
       }
     );
   } catch (error) {
-    console.warn(
-      "addToCartAll API error, returning fallback response:",
-      error,
-    );
+    console.warn("addToCartAll API error, returning fallback response:", error);
     return {
       success: true,
       addedCount: 10,

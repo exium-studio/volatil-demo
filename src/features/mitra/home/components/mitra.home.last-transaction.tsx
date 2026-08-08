@@ -12,6 +12,9 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
+import { Box } from "@/design-system/components/layout/ui/box";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import type {
   DataStatus,
   MitraHomeLastTransactionProps,
@@ -90,7 +93,7 @@ const MitraHomeLastTransactionHeader = () => {
 
 const MitraHomeLastTransactionDataList = () => {
   // Queries / Data
-  const { lastTransactions } = useMitraHomeData();
+  const { lastTransactions, isLoading, isFetching } = useMitraHomeData();
 
   // Derived Values
   const headers = useMemo<FormattedTableHeader[]>(
@@ -228,16 +231,38 @@ const MitraHomeLastTransactionDataList = () => {
   }, [lastTransactions]);
 
   return (
-    <VStack bg={"bg.canvas"} w={"full"}>
-      <DataListTable.Root
-        headers={headers}
-        items={items}
-        roundedTop={0}
-        shadow={"none"}
-      >
-        <DataListTable.Header />
-        <DataListTable.Body />
-      </DataListTable.Root>
+    <VStack bg={"bg.canvas"} w={"full"} position={"relative"}>
+      {isLoading ? (
+        <Skeleton w={"full"} h={"300px"} />
+      ) : (
+        <>
+          <Box w={"full"} position={"relative"}>
+            <DataListTable.Root
+              headers={headers}
+              items={items}
+              roundedTop={0}
+              shadow={"none"}
+            >
+              <DataListTable.Header />
+              <DataListTable.Body />
+            </DataListTable.Root>
+
+            {isFetching && (
+              <Box
+                position={"absolute"}
+                inset={0}
+                bg={"bg.canvas/50"}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                zIndex={10}
+              >
+                <Loader size={"md"} />
+              </Box>
+            )}
+          </Box>
+        </>
+      )}
     </VStack>
   );
 };

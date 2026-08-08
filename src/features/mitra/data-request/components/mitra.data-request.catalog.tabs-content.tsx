@@ -8,8 +8,11 @@ import type { TabsContentProps } from "@/design-system/components/disclosure/typ
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import {
   PADDING_MD,
   PADDING_SM,
@@ -85,7 +88,7 @@ const MitraDataRequestCatalogDataList = () => {
   });
 
   // Queries
-  const { items: rawItems, meta } = useIgtCatalog({
+  const { items: rawItems, meta, isLoading, isFetching } = useIgtCatalog({
     page: dataListState.page,
     perPage: dataListState.perPage,
   });
@@ -97,64 +100,86 @@ const MitraDataRequestCatalogDataList = () => {
       overflowY={"auto"}
       bg={"bg.canvas"}
       w={"full"}
+      position={"relative"}
     >
-      <VStack overflowY={"auto"}>
-        <MitraIgtDataListTable
-          igtItems={rawItems}
-          withNumbering={false}
-          canBatchSelect
-          roundedTop={0}
-          onSelectedItemChange={({ selectedItems }) => {
-            console.log("selectedItems", selectedItems);
-            setDataListState((prev) => ({ ...prev, selectedItems }));
-          }}
-          rounded={0}
-          shadow={"none"}
-        />
+      {isLoading ? (
+        <Skeleton w={"full"} h={"300px"} />
+      ) : (
+        <>
+          <VStack overflowY={"auto"} w={"full"} position={"relative"}>
+            <MitraIgtDataListTable
+              igtItems={rawItems}
+              withNumbering={false}
+              canBatchSelect={true}
+              roundedTop={0}
+              onSelectedItemChange={({ selectedItems }) => {
+                console.log("selectedItems", selectedItems);
+                setDataListState((prev) => ({ ...prev, selectedItems }));
+              }}
+              rounded={0}
+              shadow={"none"}
+            />
 
-        <DataListFooter
-          perPage={dataListState.perPage}
-          setPerPage={(perPage) =>
-            setDataListState((prev) => ({ ...prev, perPage }))
-          }
-          page={dataListState.page}
-          setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
-          roundedBottom={theme.radii.container}
-        />
-      </VStack>
+            <DataListFooter
+              perPage={dataListState.perPage}
+              setPerPage={(perPage) =>
+                setDataListState((prev) => ({ ...prev, perPage }))
+              }
+              page={dataListState.page}
+              setPage={(page) => setDataListState((prev) => ({ ...prev, page }))}
+              roundedBottom={theme.radii.container}
+            />
 
-      <MitraDataRequestAddToCartButtons
-        selectedItems={dataListState.selectedItems}
-        allItems={rawItems}
-        totalBidangCount={meta?.totalBidang}
-        totalKawasanCount={meta?.totalKawasan}
-        totalCount={meta?.total}
-        onAddSelectedClick={() => {
-          const selectedIds = dataListState.selectedItems.map((item) =>
-            String(item.id),
-          );
-          addToCartSelectedMutation.mutate({ itemIds: selectedIds });
-        }}
-        onAddAllBidangClick={() => {
-          addToCartAllMutation.mutate({
-            source: "catalog",
-            targetBasis: "bidang",
-          });
-        }}
-        onAddAllKawasanClick={() => {
-          addToCartAllMutation.mutate({
-            source: "catalog",
-            targetBasis: "kawasan",
-          });
-        }}
-        onAddAllBothClick={() => {
-          addToCartAllMutation.mutate({
-            source: "catalog",
-            targetBasis: "all",
-          });
-        }}
-        mt={"auto"}
-      />
+            {isFetching && (
+              <Box
+                position={"absolute"}
+                inset={0}
+                bg={"bg.canvas/50"}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                zIndex={10}
+              >
+                <Loader size={"md"} />
+              </Box>
+            )}
+          </VStack>
+
+          <MitraDataRequestAddToCartButtons
+            selectedItems={dataListState.selectedItems}
+            allItems={rawItems}
+            totalBidangCount={meta?.totalBidang}
+            totalKawasanCount={meta?.totalKawasan}
+            totalCount={meta?.total}
+            onAddSelectedClick={() => {
+              const selectedIds = dataListState.selectedItems.map((item) =>
+                String(item.id),
+              );
+              addToCartSelectedMutation.mutate({ itemIds: selectedIds });
+            }}
+            onAddAllBidangClick={() => {
+              addToCartAllMutation.mutate({
+                source: "catalog",
+                targetBasis: "bidang",
+              });
+            }}
+            onAddAllKawasanClick={() => {
+              addToCartAllMutation.mutate({
+                source: "catalog",
+                targetBasis: "kawasan",
+              });
+            }}
+            onAddAllBothClick={() => {
+              addToCartAllMutation.mutate({
+                source: "catalog",
+                targetBasis: "all",
+              });
+            }}
+            mt={"auto"}
+          />
+        </>
+      )}
     </VStack>
   );
 };
+

@@ -36,7 +36,7 @@ const MitraCartPageContent = () => {
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
 
   // Queries
-  const { data: cartData = DUMMY_CART_RESPONSE, isLoading } = useQuery<CartResponse>({
+  const { data: cartData = DUMMY_CART_RESPONSE, isLoading, isFetching } = useQuery<CartResponse>({
     queryKey: ["cart", searchValue],
     queryFn: () => getCartData({ search: searchValue }),
   });
@@ -103,6 +103,8 @@ const MitraCartPageContent = () => {
           onRemoveItems={(ids) => removeItemsMutation.mutate(ids)}
           searchValue={searchValue}
           onSearchChange={setSearchValue}
+          isLoading={isLoading}
+          isFetching={isFetching}
         />
 
         {/* If desktop/large container, Order Summary is on right */}
