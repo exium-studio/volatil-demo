@@ -26,11 +26,9 @@ import { useMemo, useState } from "react";
 
 export const MitraCartPage = () => {
   return (
-    <PanelContentContainer gap={PADDING_SM} p={PADDING_SM}>
-      <Container.Root flex={1} minH={0} withContext={true}>
-        <MitraCartContent />
-      </Container.Root>
-    </PanelContentContainer>
+    <Container.Root flex={1} minH={0} withContext={true}>
+      <MitraCartContent />
+    </Container.Root>
   );
 };
 
@@ -66,13 +64,16 @@ const MitraCartContent = () => {
   };
 
   return (
-    <>
+    <PanelContentContainer
+      gap={PADDING_SM}
+      p={PADDING_SM}
+      overflowY={isSmContainer ? "auto" : undefined}
+    >
       <HStack
         flex={1}
         flexDir={isSmContainer ? "column-reverse" : "row"}
         gap={PADDING_SM}
-        minH={0}
-        overflowY={isSmContainer ? "auto" : undefined}
+        minH={isSmContainer ? undefined : 0}
         w={"full"}
       >
         {/* DataList Container */}
@@ -137,6 +138,6 @@ const MitraCartContent = () => {
         open={locationModal.open}
         close={locationModal.close}
       />
-    </>
+    </PanelContentContainer>
   );
 };
