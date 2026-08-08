@@ -20,7 +20,7 @@ import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   ChevronDownIcon,
-  FlagIcon,
+  LandPlotIcon,
   LayersIcon,
   ShoppingCartIcon,
 } from "lucide-react";
@@ -142,7 +142,7 @@ export const MitraDataRequestAddToCartButtons = (
                 value={"add-all-kawasan"}
                 onClick={onAddAllKawasanClick}
               >
-                <AppIcon icon={FlagIcon} />
+                <AppIcon icon={LandPlotIcon} />
                 {"Tambah semua kawasan"} ({kawasanCount})
               </Menu.Item>
             </Menu.Content>
