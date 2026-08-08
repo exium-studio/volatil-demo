@@ -104,5 +104,3 @@ export const MitraDataRequestPage = () => {
     </PanelContentContainer>
   );
 };
-
-export const DataRequestPage = MitraDataRequestPage;

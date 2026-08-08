@@ -414,5 +414,3 @@ const DataList = () => {
     </VStack>
   );
 };
-
-export const DataRequestUploadAoiTabsContent = MitraDataRequestUploadAoiTabsContent;

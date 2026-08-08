@@ -23,9 +23,6 @@ export type MitraDataRequestGetCatalogParams = {
   search?: string;
 };
 
-// Aliases for compatibility
-export type GetIgtCatalogParams = MitraDataRequestGetCatalogParams;
-
 export async function getIgtCatalog(
   params?: MitraDataRequestGetCatalogParams,
   signal?: AbortSignal,

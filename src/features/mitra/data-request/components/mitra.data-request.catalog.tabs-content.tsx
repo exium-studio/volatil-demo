@@ -248,5 +248,3 @@ const MitraDataRequestCatalogDataList = () => {
     </VStack>
   );
 };
-
-export const DataRequestCatalogTabsContent = MitraDataRequestCatalogTabsContent;

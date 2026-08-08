@@ -166,5 +166,3 @@ export const MitraDataRequestAddToCartButtons = (
     </VStack>
   );
 };
-
-export const DataRequestAddToCartButtons = MitraDataRequestAddToCartButtons;
