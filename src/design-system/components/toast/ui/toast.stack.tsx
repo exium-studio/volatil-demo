@@ -145,6 +145,8 @@ export function ToastStack<TItem>({
       {/* Items */}
       <VStack
         pos={"relative"}
+        w={"full"}
+        minW={0}
         cursor={!expanded ? "pointer" : undefined}
         rounded={theme.radii.container}
         onClick={!expanded ? () => setExpanded(true) : undefined}
@@ -173,6 +175,8 @@ export function ToastStack<TItem>({
                 key={getId(item)}
                 display={"grid"}
                 gridTemplateRows={isLeaving ? "0fr" : "1fr"}
+                w={"full"}
+                minW={0}
                 data-stack-state={
                   expanded
                     ? "expanded"
@@ -203,7 +207,7 @@ export function ToastStack<TItem>({
                 }
                 pointerEvents={expanded || isFirstVisual ? "auto" : "none"}
               >
-                <Box minH={"0px"} overflow={"visible"}>
+                <Box w={"full"} minW={0} minH={"0px"} overflow={"visible"}>
                   {renderItem({
                     item,
                     index,

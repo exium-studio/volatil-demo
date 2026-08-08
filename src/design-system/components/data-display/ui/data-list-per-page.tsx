@@ -24,12 +24,12 @@ export const DataListPerPage = (props: DataListPerPageProps) => {
 
   return (
     <Select
-      defaultValue={[String(perPage)]}
+      value={String(perPage)}
       selectOptions={selectOptions}
-      onSelect={(selectedOption) => {
-        setPerPage?.(parseInt(selectedOption?.value));
+      onValueChange={(val) => {
+        setPerPage?.(parseInt(val, 10));
       }}
-      suffixLabel={<Span ml={1}>/page</Span>}
+      suffixLabel={<Span ml={1}>{"/page"}</Span>}
       variant={"ghost"}
       minW={"120px"}
       {...restProps}

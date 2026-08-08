@@ -78,14 +78,14 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
   // Hooks
   const { showDeletedFromHistoryIndicator, showProgressBar } = getToastConfig();
 
+  // States
+  const [toastItemExpanded, setToastItemExpanded] = useState<boolean>(false);
+
   // Derived Values
   const isFirstIndex = index === 0;
   const hasExpandableContent = Boolean(
     record.description || (record.actions && !isEmptyArray(record.actions)),
   );
-
-  // States
-  const [toastItemExpanded, setToastItemExpanded] = useState<boolean>(false);
 
   // Collapse item when stack is collapsed
   useFirstMountEffect(
@@ -109,6 +109,9 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
       pos={"relative"}
       overflow={"clip"}
       py={3}
+      w={"full"}
+      maxW={"full"}
+      minW={0}
       bg={stackExpanded ? "bg.body" : tintDark("bg.body", index * 2)}
       border={"1px solid"}
       borderColor={"border.subtle"}
@@ -134,7 +137,7 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
       }}
       {...restProps}
     >
-      <HStack gap={3} px={3}>
+      <HStack gap={3} px={3} w={"full"} minW={0} align={"start"}>
         <ToastIcon
           record={record}
           icon={TOAST_VARIANT_MAP[record.variant].icon}
@@ -142,9 +145,9 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
           color={TOAST_VARIANT_MAP[record.variant].color}
         />
 
-        <VStack flex={1}>
+        <VStack flex={1} minW={0} w={"full"}>
           {/* Header */}
-          <HStack align={"start"} gap={2}>
+          <HStack align={"start"} gap={2} w={"full"} minW={0}>
             {/* Title */}
             {record.title && (
               <P
@@ -153,9 +156,9 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
                 mr={record.description ? 0 : 1}
                 fontWeight={"medium"}
                 color={TOAST_VARIANT_MAP[record.variant].color}
-                whiteSpace={toastItemExpanded ? undefined : "nowrap"}
-                overflow={toastItemExpanded ? undefined : "hidden"}
-                textOverflow={toastItemExpanded ? undefined : "ellipsis"}
+                whiteSpace={stackExpanded ? "normal" : "nowrap"}
+                overflow={stackExpanded ? undefined : "hidden"}
+                textOverflow={stackExpanded ? undefined : "ellipsis"}
               >
                 {record.title}
               </P>
@@ -182,7 +185,7 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
             )}
 
             {/* Actions */}
-            <HStack align={"center"} gap={1} ml={"auto"}>
+            <HStack align={"center"} gap={1} ml={"auto"} flexShrink={0}>
               {record.quickAction && (
                 <Button
                   variant={"subtle"}
@@ -235,6 +238,8 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
 
           {/* Content */}
           <VStack
+            w={"full"}
+            minW={0}
             mt={toastItemExpanded ? 1 : 0}
             display={stackExpanded || isFirstIndex ? "flex" : "none"}
             opacity={stackExpanded || isFirstIndex ? 1 : 0}
