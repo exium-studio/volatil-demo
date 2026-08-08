@@ -1,5 +1,6 @@
 // src/routes/_app/internal/welcome.tsx
 
+import { WelcomeState } from "@/design-system/components/feedback/ui/state.welcome";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app/internal/welcome")({
@@ -7,5 +8,5 @@ export const Route = createFileRoute("/_app/internal/welcome")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/_app/admin/welcome"!</div>;
+  return <WelcomeState />;
 }
