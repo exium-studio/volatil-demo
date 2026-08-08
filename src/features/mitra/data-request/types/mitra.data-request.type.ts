@@ -1,7 +1,7 @@
 // src/features/mitra/data-request/types/mitra.data-request.type.ts
 
 import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
-import type { PaginatedResponse } from "@/shared/types/response.type";
+import type { PaginatedResponse } from "@/shared/types/common-response.type";
 
 export type IgtDataResponse = PaginatedResponse<IgtDataItem>;
 

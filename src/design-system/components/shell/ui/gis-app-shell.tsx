@@ -43,7 +43,7 @@ import { ADMIN_APP_NAVS_MAP, APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
 import type { NavGroup, NavItem } from "@/shared/types/nav.type";
-import type { User } from "@/shared/types/response.type";
+import type { User } from "@/shared/types/common-response.type";
 import { getStorage } from "@/shared/utils/client/client.storage";
 import { Box } from "@chakra-ui/react";
 import {

@@ -1,7 +1,7 @@
 // src/features/auth/types/auth.service.type.ts
 
 import type { Role } from "@/shared/types/auth.type";
-import type { ApiResponse, User } from "@/shared/types/response.type";
+import type { ApiResponse, User } from "@/shared/types/common-response.type";
 
 export type LoginPayload = {
   email: string;

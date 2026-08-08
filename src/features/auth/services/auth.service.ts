@@ -5,8 +5,15 @@ import type {
   LoginPayload,
 } from "@/features/auth/types/auth.service.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
-import type { InternalUser, MitraUser, User } from "@/shared/types/response.type";
-import { removeStorage, setStorage } from "@/shared/utils/client/client.storage";
+import type {
+  InternalUser,
+  MitraUser,
+  User,
+} from "@/shared/types/common-response.type";
+import {
+  removeStorage,
+  setStorage,
+} from "@/shared/utils/client/client.storage";
 
 export const authService = {
   login: async (payload: LoginPayload): Promise<User> => {
