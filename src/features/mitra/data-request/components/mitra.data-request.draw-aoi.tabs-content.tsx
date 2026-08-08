@@ -3,7 +3,6 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
@@ -23,6 +22,7 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
+import { MitraIgtDataListTable } from "@/features/mitra/data-request/components/mitra.data-request.igt-data-list-table";
 import {
   useAddToCartAll,
   useAddToCartSelected,
@@ -41,11 +41,7 @@ import {
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
-
-const MAX_VISIBLE_THEMES = 2;
-const BASIS_BIDANG_COLOR = "blue" as const;
-const BASIS_KAWASAN_COLOR = "orange" as const;
+import { useState } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
   // Hooks
@@ -63,7 +59,6 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
     igtItems,
     handleResetDraw,
     handleConfirmAndFetch,
-    itemActions,
   } = useMitraDrawAoi();
 
   return (
@@ -167,11 +162,7 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
       )}
 
       {isDone && hasEnoughItems && (
-        <DataList
-          igtItems={igtItems}
-          itemActions={itemActions}
-          onResetDraw={handleResetDraw}
-        />
+        <DataList igtItems={igtItems} onResetDraw={handleResetDraw} />
       )}
     </Tabs.Content>
   );
@@ -240,11 +231,9 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
   );
 };
 
-const DataList = ({
-  igtItems,
-  itemActions,
-  onResetDraw,
-}: DrawAoiDataListProps) => {
+const DataList = (props: DrawAoiDataListProps) => {
+  // Props
+  const { igtItems, onResetDraw } = props;
   // Stores
   const { theme } = useThemeStore();
 
@@ -256,87 +245,6 @@ const DataList = ({
   const [selectedItems, setSelectedItems] = useState<
     FormattedListItem<IgtDataItem>[]
   >([]);
-
-  // Derived Values
-  const dataList = useMemo(
-    () => ({
-      headers: [
-        { th: "ID Bidang", sortable: true },
-        { th: "Tema IGT-PR" },
-        { th: "Basis IGT-PR", sortable: true },
-        { th: "Deskripsi" },
-      ],
-      items: igtItems.map((item: IgtDataItem) => {
-        const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
-        const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
-
-        return {
-          id: item.id,
-          data: item,
-          columns: [
-            {
-              value: item.id,
-              td: <P fontSize={"sm"}>{item.id}</P>,
-              align: "start" as const,
-            },
-            {
-              value: item.themes.map((th) => th.name).join(", "),
-              td: (
-                <HStack wrap={"wrap"} gap={1}>
-                  {visibleThemes.map((themeItem) => (
-                    <Badge
-                      key={themeItem.name}
-                      colorPalette={"neutral"}
-                      variant={"subtle"}
-                    >
-                      {themeItem.name}
-                    </Badge>
-                  ))}
-                  {remainingCount > 0 && (
-                    <Badge colorPalette={"neutral"} variant={"outline"}>
-                      +{remainingCount} lainnya
-                    </Badge>
-                  )}
-                </HStack>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.basis,
-              td: (
-                <Badge
-                  colorPalette={
-                    item.basis === "bidang"
-                      ? BASIS_BIDANG_COLOR
-                      : BASIS_KAWASAN_COLOR
-                  }
-                  variant={"subtle"}
-                >
-                  {item.basis}
-                </Badge>
-              ),
-              align: "center" as const,
-            },
-            {
-              value: item.description ?? "",
-              td: (
-                <P
-                  fontSize={"sm"}
-                  color={"fg.subtle"}
-                  maxW={"280px"}
-                  whiteSpace={"wrap"}
-                >
-                  {item.description ?? "-"}
-                </P>
-              ),
-              align: "start" as const,
-            },
-          ],
-        };
-      }),
-    }),
-    [igtItems],
-  );
 
   return (
     <>
@@ -357,10 +265,6 @@ const DataList = ({
           </HStack>
 
           <HStack gap={SPACING_SM} align={"center"}>
-            <Badge colorPalette={"green"} variant={"subtle"}>
-              {igtItems.length} {"data ditemukan"}
-            </Badge>
-
             <Button
               variant={"outline"}
               colorPalette={"red"}
@@ -377,12 +281,10 @@ const DataList = ({
       <Separator borderColor={"bg.canvas"} />
 
       <VStack flex={1} gap={PADDING_SM} overflowY={"auto"} bg={"bg.canvas"}>
-        <DataListTable.Root
+        <MitraIgtDataListTable
+          igtItems={igtItems}
           withNumbering={true}
           fixedItemHeight={false}
-          headers={dataList.headers}
-          items={dataList.items}
-          itemActions={itemActions as DataListItemActionsGenerator[]}
           canBatchSelect
           pb={0}
           roundedTop={0}
@@ -391,10 +293,7 @@ const DataList = ({
           onSelectedItemChange={({ selectedItems: sel }) => {
             setSelectedItems(sel as FormattedListItem<IgtDataItem>[]);
           }}
-        >
-          <DataListTable.Header />
-          <DataListTable.Body />
-        </DataListTable.Root>
+        />
 
         <MitraDataRequestAddToCartButtons
           selectedItems={selectedItems}
