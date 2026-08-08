@@ -184,29 +184,21 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
               onChange={(e) => onSearchChange?.(e.target.value)}
               placeholder={t["action.search"]()}
             />
+
             <IconButton variant={"outline"}>
               <AppIcon icon={SlidersHorizontalIcon} />
             </IconButton>
           </HStack>
 
           <HStack gap={SPACING_SM}>
-            <Button
-              variant={"outline"}
-              colorPalette={"blue"}
-              onClick={onOpenBboxModal}
-            >
+            <Button onClick={onOpenBboxModal}>
               <AppIcon icon={MapPinIcon} />
               {"Cek Lokasi Area"}
             </Button>
 
-            <Button
-              variant={"outline"}
-              colorPalette={"red"}
-              onClick={onClearCart}
-            >
+            <IconButton colorPalette={"red"} onClick={onClearCart}>
               <AppIcon icon={IconTrash} />
-              {"Bersihkan keranjang"}
-            </Button>
+            </IconButton>
           </HStack>
         </HStack>
       </VStack>

@@ -19,7 +19,6 @@ import { useMemo } from "react";
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
   const {
-    summary,
     config,
     selectedItems = [],
     onCheckout,
@@ -76,32 +75,27 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
   const hasSelectedItems = !isEmptyArray(selectedItems);
 
-  const isBidangMinimumNotMet = selectedBidangCount < config.minimumBidangCount;
-  const isKawasanMinimumNotMet = selectedKawasanHa < config.minimumKawasanHa;
-  const isMinimumNotMet = isBidangMinimumNotMet || isKawasanMinimumNotMet;
+  const isBidangMinimumNotMet =
+    selectedBidangCount > 0 && selectedBidangCount < config.minimumBidangCount;
+  const isKawasanMinimumNotMet =
+    selectedKawasanHa > 0 && selectedKawasanHa < config.minimumKawasanHa;
+  const isMinimumNotMet =
+    !hasSelectedItems || isBidangMinimumNotMet || isKawasanMinimumNotMet;
 
-  const isCheckoutDisabled =
-    !hasSelectedItems || isMinimumNotMet || isCheckoutPending;
+  const isCheckoutDisabled = isMinimumNotMet || isCheckoutPending;
 
-  const displayTotalBidang = hasSelectedItems
-    ? selectedBidangCount
-    : summary.totalBidang;
-  const displayTotalKawasanHa = hasSelectedItems
-    ? selectedKawasanHa
-    : summary.totalKawasanHa;
-  const displaySubtotal = hasSelectedItems
-    ? selectedSubtotal
-    : summary.subtotal;
-  const displayServiceFee = hasSelectedItems
-    ? selectedServiceFee
-    : summary.serviceFee;
-  const displayTax = hasSelectedItems ? selectedTax : summary.tax;
-  const displayGrandTotal = hasSelectedItems
-    ? selectedGrandTotal
-    : summary.grandTotal;
+  const displayTotalBidang = selectedBidangCount;
+  const displayTotalKawasanHa = selectedKawasanHa;
+  const displaySubtotal = selectedSubtotal;
+  const displayServiceFee = selectedServiceFee;
+  const displayTax = selectedTax;
+  const displayGrandTotal = selectedGrandTotal;
 
   // Derived — Warning Message
   const warningMessage = useMemo(() => {
+    if (!hasSelectedItems) {
+      return "Pilih item di keranjang terlebih dahulu untuk konfirmasi pembelian";
+    }
     if (isBidangMinimumNotMet && isKawasanMinimumNotMet) {
       return "Jumlah bidang dan kawasan (ha) belum memenuhi batas minimum pembelian";
     }
@@ -112,7 +106,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       return "Jumlah kawasan (ha) belum memenuhi batas minimum pembelian";
     }
     return null;
-  }, [isBidangMinimumNotMet, isKawasanMinimumNotMet]);
+  }, [hasSelectedItems, isBidangMinimumNotMet, isKawasanMinimumNotMet]);
 
   return (
     <VStack
@@ -267,7 +261,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
       {/* Beli Sekarang Button */}
       <Button
-        primary
+        primary={true}
         w={"full"}
         disabled={isCheckoutDisabled}
         loading={isCheckoutPending}
