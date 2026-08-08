@@ -70,14 +70,19 @@ const MitraCartContent = () => {
       <HStack
         flex={1}
         flexDir={isSmContainer ? "column" : "row-reverse"}
-        // align={"start"}
         gap={SPACING_MD}
         minH={0}
         overflowY={isSmContainer ? "auto" : undefined}
         w={"full"}
       >
         {/* Summary Container */}
-        <Container.Body flex={1} minH={0} overflowY={"auto"}>
+        <Container.Body
+          flex={1}
+          alignSelf={isSmContainer ? undefined : "start"}
+          maxH={"full"}
+          minH={0}
+          overflowY={"auto"}
+        >
           <HeaderContainer>
             <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
               {"Ringkasan"}

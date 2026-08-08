@@ -4,7 +4,7 @@ import {
 } from "@/design-system/components/button/ui/button";
 import type { DataListBatchActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
-import { Loader } from "@/design-system/components/feedback/ui/loader";
+import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -242,19 +242,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
                 <DataListTable.Body />
               </DataListTable.Root>
 
-              {isFetching && (
-                <Box
-                  position={"absolute"}
-                  inset={0}
-                  bg={"bg.canvas/50"}
-                  display={"flex"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
-                  zIndex={10}
-                >
-                  <Loader size={"md"} />
-                </Box>
-              )}
+              <TopBarLoader isFetching={isFetching} />
             </Box>
           </>
         )}
