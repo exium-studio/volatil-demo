@@ -11,7 +11,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
-import { PADDING_SM, SPACING_MD } from "@/design-system/constants/styles";
+import { PADDING_SM } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
 import { MitraCartLocationModal } from "@/features/cart/components/mitra.cart.location-modal";
 import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
@@ -70,7 +70,7 @@ const MitraCartContent = () => {
       <HStack
         flex={1}
         flexDir={isSmContainer ? "column-reverse" : "row"}
-        gap={SPACING_MD}
+        gap={PADDING_SM}
         minH={0}
         overflowY={isSmContainer ? "auto" : undefined}
         w={"full"}

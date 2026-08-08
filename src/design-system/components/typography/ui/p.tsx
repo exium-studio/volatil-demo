@@ -117,6 +117,7 @@ export const TNum = forwardRef<HTMLSpanElement, TNumProps>(
           ref={ref}
           fontFamily={"number"}
           fontSize={"inherit"}
+          fontWeight={"inherit"}
           fontVariantNumeric={"tabular-nums"}
           {...restProps}
         >
@@ -129,19 +130,38 @@ export const TNum = forwardRef<HTMLSpanElement, TNumProps>(
         ref={ref}
         display={"inline-flex"}
         fontSize={"inherit"}
+        fontWeight={"inherit"}
+        color={"inherit"}
         {...restProps}
       >
-        {characters.map((char, index) => (
-          <Span
-            key={index}
-            display={"inline-block"}
-            w={"0.95ch"}
-            fontSize={"inherit"}
-            textAlign={"center"}
-          >
-            {char}
-          </Span>
-        ))}
+        {characters.map((char, index) => {
+          const isSeparator = char === "." || char === ",";
+          const isSpace = char === " ";
+          const isDigit = /^[0-9]$/.test(char);
+          const width = isSeparator
+            ? "0.35ch"
+            : isSpace
+              ? "0.35ch"
+              : isDigit
+                ? "0.95ch"
+                : "auto";
+
+          return (
+            <span
+              key={index}
+              style={{
+                display: "inline-block",
+                width,
+                textAlign: "center",
+                fontWeight: "inherit",
+                fontSize: "inherit",
+                color: "inherit",
+              }}
+            >
+              {char}
+            </span>
+          );
+        })}
       </Span>
     );
   },

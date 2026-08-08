@@ -1,10 +1,10 @@
-import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
 import { Button } from "@/design-system/components/button/ui/button";
+import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { P, PSerif } from "@/design-system/components/typography/ui/p";
+import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { MitraCartOrderSummaryProps } from "@/features/cart/types/cart.type";
@@ -13,7 +13,7 @@ import {
   formatCurrency,
   formatDecimal,
 } from "@/shared/utils/formatter/number.formatter";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { TriangleAlertIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
@@ -100,6 +100,20 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
     ? selectedGrandTotal
     : summary.grandTotal;
 
+  // Derived — Warning Message
+  const warningMessage = useMemo(() => {
+    if (isBidangMinimumNotMet && isKawasanMinimumNotMet) {
+      return "Jumlah bidang dan kawasan (ha) belum memenuhi batas minimum pembelian";
+    }
+    if (isBidangMinimumNotMet) {
+      return "Jumlah bidang belum memenuhi batas minimum pembelian";
+    }
+    if (isKawasanMinimumNotMet) {
+      return "Jumlah kawasan (ha) belum memenuhi batas minimum pembelian";
+    }
+    return null;
+  }, [isBidangMinimumNotMet, isKawasanMinimumNotMet]);
+
   return (
     <VStack
       gap={SPACING_MD}
@@ -108,24 +122,21 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       bg={"bg.body"}
       {...restProps}
     >
-      {/* Warning Alert & Progress - Bidang */}
-      <VStack gap={2} align={"stretch"}>
-        {isBidangMinimumNotMet && (
-          <HStack
-            p={3}
-            bg={"orange.subtle"}
-            color={"orange.fg"}
-            rounded={"md"}
-            gap={2}
-            align={"start"}
-          >
-            <AppIcon icon={IconAlertTriangle} boxSize={5} mt={"2px"} />
-            <P fontSize={"sm"} fontWeight={"medium"}>
-              {"Jumlah bidang belum memenuhi batas minimum pembelian"}
-            </P>
-          </HStack>
-        )}
+      {/* Top Warning Alert */}
+      {warningMessage && (
+        <Alert.Root
+          status={"warning"}
+          colorPalette={"orange"}
+          variant={"subtle"}
+        >
+          <AppIcon icon={TriangleAlertIcon} mt={1} />
 
+          <Alert.Title>{warningMessage}</Alert.Title>
+        </Alert.Root>
+      )}
+
+      {/* Progress - Bidang */}
+      <VStack gap={2} align={"stretch"} mt={2}>
         <Box
           w={"full"}
           bg={"bg.canvas"}
@@ -135,7 +146,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         >
           <Box
             h={"full"}
-            bg={"blue.fg"}
+            bg={"blue.solid"}
             w={`${Math.min(100, (selectedBidangCount / config.minimumBidangCount) * 100)}%`}
             transition={"width 0.3s ease"}
           />
@@ -145,31 +156,17 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           <P color={"fg.subtle"}>{"Bidang"}</P>
           <P fontWeight={"medium"}>
             <strong style={{ fontWeight: 600 }}>
-              {formatDecimal(selectedBidangCount)}
+              <TNum>{formatDecimal(selectedBidangCount)}</TNum>
             </strong>
-            {` / ${formatDecimal(config.minimumBidangCount)} Bidang`}
+            {" / "}
+            <TNum>{formatDecimal(config.minimumBidangCount)}</TNum>
+            {" Bidang"}
           </P>
         </HStack>
       </VStack>
 
-      {/* Warning Alert & Progress - Kawasan */}
+      {/* Progress - Kawasan */}
       <VStack gap={2} align={"stretch"}>
-        {isKawasanMinimumNotMet && (
-          <HStack
-            p={3}
-            bg={"orange.subtle"}
-            color={"orange.fg"}
-            rounded={"md"}
-            gap={2}
-            align={"start"}
-          >
-            <AppIcon icon={IconAlertTriangle} boxSize={5} mt={"2px"} />
-            <P fontSize={"sm"} fontWeight={"medium"}>
-              {"Jumlah kawasan (ha) belum memenuhi batas minimum pembelian"}
-            </P>
-          </HStack>
-        )}
-
         <Box
           w={"full"}
           bg={"bg.canvas"}
@@ -179,7 +176,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         >
           <Box
             h={"full"}
-            bg={isKawasanMinimumNotMet ? "orange.fg" : "orange.fg"}
+            bg={"orange.solid"}
             w={`${Math.min(100, (selectedKawasanHa / config.minimumKawasanHa) * 100)}%`}
             transition={"width 0.3s ease"}
           />
@@ -190,54 +187,66 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
           <P fontWeight={"medium"}>
             <strong style={{ fontWeight: 600 }}>
-              {formatDecimal(selectedKawasanHa)}
+              <TNum>{formatDecimal(selectedKawasanHa)}</TNum>
             </strong>
-            {` / ${formatDecimal(config.minimumKawasanHa)} ha`}
+            {" / "}
+            <TNum>{formatDecimal(config.minimumKawasanHa)}</TNum>
+            {" ha"}
           </P>
         </HStack>
       </VStack>
 
-      <Separator borderColor={"bg.canvas"} />
+      <Separator borderColor={"bg.canvas"} my={2} />
 
       {/* Ringkasan Details Section */}
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
         <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Total Bidang"}</P>
           <P fontWeight={"medium"}>
-            {formatDecimal(displayTotalBidang)} {"bidang"}
+            <TNum>{formatDecimal(displayTotalBidang)}</TNum> {"bidang"}
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Total Kawasan"}</P>
           <P fontWeight={"medium"}>
-            {formatDecimal(displayTotalKawasanHa)} {"ha"}
+            <TNum>{formatDecimal(displayTotalKawasanHa)}</TNum> {"ha"}
+          </P>
+        </HStack>
+
+        <Separator borderColor={"border.subtle"} my={2} />
+
+        <HStack justify={"space-between"}>
+          <P color={"fg.subtle"}>{"Total Harga"}</P>
+          <P fontWeight={"medium"}>
+            <TNum>{formatCurrency(displaySubtotal)}</TNum>
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
-          <P color={"fg.subtle"}>{"Total Harga"}</P>
-          <P fontWeight={"medium"}>{formatCurrency(displaySubtotal)}</P>
-        </HStack>
-
-        <HStack justify={"space-between"}>
           <P color={"fg.subtle"}>{"Biaya Layanan"}</P>
-          <P fontWeight={"medium"}>{formatCurrency(displayServiceFee)}</P>
+          <P fontWeight={"medium"}>
+            <TNum>{formatCurrency(displayServiceFee)}</TNum>
+          </P>
         </HStack>
 
         {displayTax > 0 && (
           <HStack justify={"space-between"}>
             <P color={"fg.subtle"}>{"Pajak"}</P>
-            <P fontWeight={"medium"}>{formatCurrency(displayTax)}</P>
+            <P fontWeight={"medium"}>
+              <TNum>{formatCurrency(displayTax)}</TNum>
+            </P>
           </HStack>
         )}
 
-        <Separator borderColor={"border.subtle"} my={1} />
+        <Separator borderColor={"border.subtle"} my={2} />
 
-        <HStack justify={"space-between"} fontSize={"md"}>
-          <P fontWeight={"bold"}>{"Sub Total"}</P>
-          <P fontWeight={"bold"} color={"fg.default"}>
-            {formatCurrency(displayGrandTotal)}
+        <HStack justify={"space-between"} color={"blue.fg"}>
+          <P fontSize={"lg"} fontWeight={"bold"}>
+            {"Sub Total"}
+          </P>
+          <P fontSize={"lg"} fontWeight={"bold"}>
+            <TNum>{formatCurrency(displayGrandTotal)}</TNum>
           </P>
         </HStack>
       </VStack>
@@ -249,9 +258,9 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         disabled={isCheckoutDisabled}
         loading={isCheckoutPending}
         onClick={onCheckout}
-        mt={4}
+        mt={2}
       >
-        {"Bayar sekarang"}
+        {"Bayar"}
       </Button>
     </VStack>
   );
