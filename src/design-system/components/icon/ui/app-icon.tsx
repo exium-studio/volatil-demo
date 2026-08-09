@@ -32,7 +32,7 @@ export const AppIcon = (props: AppIconProps) => {
   return (
     <Icon
       boxSize={boxSize ?? sizes[size as keyof typeof sizes]}
-      strokeWidth={1.75}
+      strokeWidth={1.5}
       {...restProps}
     >
       <IconComponent />
