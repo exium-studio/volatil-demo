@@ -2,23 +2,28 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmationTriggerProps } from "@/design-system/components/feedback/types/confirmation-trigger.type";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
+import { SPACING_LG, SPACING_MD } from "@/design-system/constants/styles";
 import { t } from "@/shared/libs/i18n";
-import type { MouseEvent, ReactElement } from "react";
+import type { ComponentType, MouseEvent, ReactElement } from "react";
 import { cloneElement, isValidElement } from "react";
 
 export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
   // Props
   const {
     children,
+    icon,
     title,
     desc,
+    description,
     confirmLabel,
     cancelLabel,
-    confirmColorPalette = "red",
+    colorPalette,
     modalKey = "confirmationModal",
     onConfirm,
     onCancel,
@@ -32,7 +37,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
   // Resolved Values
   const resolvedTitle = title ?? t["action.confirm"]();
   const resolvedDesc =
-    desc ?? "Apakah Anda yakin ingin melanjutkan tindakan ini?";
+    description ?? desc ?? "Apakah Anda yakin ingin melanjutkan tindakan ini?";
   const resolvedConfirmLabel = confirmLabel ?? t["action.confirm"]();
   const resolvedCancelLabel = cancelLabel ?? t["action.cancel"]();
 
@@ -74,6 +79,25 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
     );
   };
 
+  // Render Icon Element
+  const renderIcon = () => {
+    if (!icon) return null;
+
+    if (isValidElement(icon)) {
+      return icon;
+    }
+
+    return (
+      <Center mb={SPACING_MD}>
+        <AppIcon
+          icon={icon as ComponentType}
+          size={"3xl"}
+          color={"fg.subtle"}
+        />
+      </Center>
+    );
+  };
+
   return (
     <>
       {renderTrigger()}
@@ -87,13 +111,23 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
       >
         <Modal.Content>
           <Modal.Header>
-            <Modal.Title>{resolvedTitle}</Modal.Title>
-
             <Modal.CloseButton />
           </Modal.Header>
 
-          <Modal.Body>
-            <P color={"fg.muted"} textAlign={"center"}>
+          <Modal.Body gap={SPACING_MD}>
+            {renderIcon()}
+
+            <P fontSize={"lg"} textAlign={"center"}>
+              {resolvedTitle}
+            </P>
+
+            <P
+              maxW={"300px"}
+              mx={"auto"}
+              mb={SPACING_LG}
+              color={"fg.subtle"}
+              textAlign={"center"}
+            >
               {resolvedDesc}
             </P>
           </Modal.Body>
@@ -106,7 +140,8 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
             <Button
               flex={1}
               primary
-              colorPalette={confirmColorPalette}
+              variant={"solid"}
+              colorPalette={colorPalette}
               onClick={handleConfirm}
             >
               {resolvedConfirmLabel}

@@ -7,16 +7,16 @@ import type {
 } from "@/design-system/components/data-display/types/data-list.type";
 import { CheckIndicator } from "@/design-system/components/feedback/ui/indicator";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ActionBar } from "@/design-system/components/overlay/ui/action-bar";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { Portal } from "@/design-system/components/utilities/ui/portal";
+import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { Fragment } from "react";
-import { Button } from "@/design-system/components/button/ui/button";
 
 export const DataListBatchActionsTrigger = (
   props: DataListBatchActionsTriggerProps,
@@ -108,9 +108,9 @@ export const DataListBatchActionBar = (props: DataListBatchActionBarProps) => {
       <Portal>
         <ActionBar.Positioner zIndex={4}>
           <ActionBar.Content>
-            <Button color={"fg.muted"} unstyled px={4}>
-              <TNum>{selectedItems.length}</TNum> selected
-            </Button>
+            <P px={4}>
+              <TNum>{selectedItems.length}</TNum> {t["common.selected"]()}
+            </P>
 
             <ActionBar.Separator />
 

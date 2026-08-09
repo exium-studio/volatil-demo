@@ -30,6 +30,7 @@ import type {
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";
+import { IconShoppingCartOff } from "@tabler/icons-react";
 
 const MAX_VISIBLE_THEMES = 2;
 const BASIS_BIDANG_COLOR = "blue" as const;
@@ -193,8 +194,11 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
 
           <HStack gap={SPACING_SM}>
             <ConfirmationTrigger
+              icon={IconShoppingCartOff}
               title={"Kosongkan Keranjang"}
-              description={"Apakah Anda yakin ingin mengosongkan seluruh item di keranjang?"}
+              description={
+                "Apakah Anda yakin ingin mengosongkan seluruh item di keranjang?"
+              }
               confirmLabel={"Kosongkan"}
               onConfirm={onClearCart}
               modalKey={"clearCartConfirmationModal"}
@@ -231,6 +235,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
               selectedItems={selectedItems}
               onSelectedItemChange={onSelectedItemChange}
               rounded={0}
+              pb={0}
               shadow={"none"}
             >
               <DataListTable.Header />

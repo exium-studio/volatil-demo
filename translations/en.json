@@ -73,6 +73,7 @@
     "drop_it_here": "Drop it here",
     "remove_file": "Remove file",
     "undo_remove_file": "Undo remove file",
+    "selected": "selected",
     "selected_count": "{count} selected",
     "select_all": "Select all",
     "select_option": "Select option",
