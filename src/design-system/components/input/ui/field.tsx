@@ -20,10 +20,10 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
     } = props;
 
     return (
-      <ChakraField.Root ref={ref} gap={2} {...restProps}>
+      <ChakraField.Root ref={ref} gap={1} {...restProps}>
         {label && (
           <ChakraField.Label fontSize={"md"} {...labelProps}>
-            <P fontWeight={"medium"} color={"fg.muted"}>
+            <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
               {label}
             </P>
 

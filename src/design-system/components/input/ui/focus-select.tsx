@@ -1,10 +1,11 @@
 // src/design-system/components/input/ui/focus-select.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { FocusSelectInputProps } from "@/design-system/components/input/types/focus-select.type";
 import { Field } from "@/design-system/components/input/ui/field";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import type { FocusSelectInputProps } from "@/design-system/components/input/types/focus-select.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -20,6 +21,8 @@ import { t } from "@/shared/libs/i18n";
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
+
+const MIN_SEARCHABLE_OPTIONS_COUNT = 8;
 
 export function FocusSelectInput(props: FocusSelectInputProps) {
   // Props
@@ -50,6 +53,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   // Derived Values
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
+  const isSearchable = options.length > MIN_SEARCHABLE_OPTIONS_COUNT;
 
   const generatedKey = useMemo(
     () =>
@@ -165,48 +169,56 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           </Modal.Header>
 
           <Modal.Body p={0}>
-            <VStack w={"full"} px={PADDING_MD} pt={"2px"}>
-              <SearchInput
-                placeholder={t["action.search"]()}
-                onValueChange={setSearchQuery}
-                w={"full"}
-                autoFocus={true}
-              />
-            </VStack>
+            {isSearchable && (
+              <VStack w={"full"} px={PADDING_MD} pt={"2px"} mb={SPACING_SM}>
+                <SearchInput
+                  placeholder={t["action.search"]()}
+                  onValueChange={setSearchQuery}
+                  w={"full"}
+                  autoFocus={true}
+                />
+              </VStack>
+            )}
 
-            <VScrollContainer w={"full"} p={PADDING_MD} pt={SPACING_SM}>
+            <VScrollContainer w={"full"} px={PADDING_MD} pb={PADDING_MD}>
               <VStack gap={1} w={"full"}>
                 {filteredOptions.length === 0 && (
-                  <P textAlign={"center"} color={"fg.subtle"} py={PADDING_MD}>
-                    {t["common.no_data"]()}
-                  </P>
+                  <NoResultState query={searchQuery || "..."} />
                 )}
 
                 {filteredOptions.map((opt) => {
                   const isSelected = opt.value === currentValue;
                   return (
-                    <HStack
+                    <Button
                       key={opt.value}
+                      variant={isSelected ? "subtle" : "ghost"}
                       w={"full"}
-                      p={PADDING_SM}
-                      px={PADDING_MD}
-                      rounded={theme.radii.component}
-                      justify={"space-between"}
-                      align={"center"}
-                      cursor={"pointer"}
-                      bg={isSelected ? "bg.subtle" : undefined}
-                      _hover={{ bg: "bg.subtle" }}
+                      h={"auto"}
+                      py={PADDING_SM}
+                      px={3}
+                      justifyContent={"space-between"}
+                      alignItems={"center"}
+                      fontWeight={"normal"}
                       onClick={() => handleOptionSelect(opt.value)}
                     >
-                      <HStack gap={SPACING_SM} align={"center"} flex={1}>
+                      <HStack
+                        gap={SPACING_SM}
+                        align={"center"}
+                        flex={1}
+                        minW={0}
+                        justify={"start"}
+                      >
                         {opt.icon && <AppIcon icon={opt.icon} size={"sm"} />}
-                        <VStack align={"start"} gap={0}>
-                          <P fontWeight={isSelected ? "semibold" : "normal"}>
+                        <VStack align={"start"} gap={0} minW={0} flex={1}>
+                          <P
+                            fontWeight={isSelected ? "semibold" : "normal"}
+                            truncate
+                          >
                             {opt.label}
                           </P>
 
                           {opt.description && (
-                            <P fontSize={"xs"} color={"fg.subtle"}>
+                            <P fontSize={"xs"} color={"fg.subtle"} truncate>
                               {opt.description}
                             </P>
                           )}
@@ -217,9 +229,10 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                         <AppIcon
                           icon={CheckIcon}
                           color={`${theme.colorPalette}.solid`}
+                          mr={"-2px"}
                         />
                       )}
-                    </HStack>
+                    </Button>
                   );
                 })}
               </VStack>

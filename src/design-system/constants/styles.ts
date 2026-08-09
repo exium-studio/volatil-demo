@@ -53,22 +53,31 @@ export const STYLE_CONFIG = {
 
 // Individual export tokens for backward compatibility
 export const SM_SCREEN_BREAKPOINT = STYLE_CONFIG.dimensions.smScreenBreakpoint;
-export const MODAL_CONTROL_CONTAINER_W = STYLE_CONFIG.dimensions.modalControlContainerW;
+export const MODAL_CONTROL_CONTAINER_W =
+  STYLE_CONFIG.dimensions.modalControlContainerW;
 export const HEADER_H = STYLE_CONFIG.dimensions.headerH;
-export const FEEDBACK_CONTAINER_MIN_H = STYLE_CONFIG.dimensions.feedbackContainerMinH;
+export const FEEDBACK_CONTAINER_MIN_H =
+  STYLE_CONFIG.dimensions.feedbackContainerMinH;
 
 export const MODAL_BASE_ZINDEX = STYLE_CONFIG.modal.baseZIndex;
-export const MODAL_CONTROL_CONTAINER_SPACING_R = STYLE_CONFIG.modal.controlContainerSpacingR;
-export const MODAL_ANIMATION_DURATION_MS = STYLE_CONFIG.modal.animationDurationMs;
-export const DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION = STYLE_CONFIG.modal.defaultDialogClickOriginAnimation;
+export const MODAL_CONTROL_CONTAINER_SPACING_R =
+  STYLE_CONFIG.modal.controlContainerSpacingR;
+export const MODAL_ANIMATION_DURATION_MS =
+  STYLE_CONFIG.modal.animationDurationMs;
+export const DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION =
+  STYLE_CONFIG.modal.defaultDialogClickOriginAnimation;
 
 export const MAIN_BUTTON_SIZE = STYLE_CONFIG.sizes.mainButton;
 export const MAIN_INPUT_SIZE = STYLE_CONFIG.sizes.mainInput;
 
-export const LUCIDE_ICON_BASE_ICON_BOX_SIZE = STYLE_CONFIG.icons.lucideBaseBoxSize;
-export const LUCIDE_ICON_MENU_ICON_BOX_SIZE = STYLE_CONFIG.icons.lucideMenuBoxSize;
-export const TABLER_ICON_BASE_ICON_BOX_SIZE = STYLE_CONFIG.icons.tablerBaseBoxSize;
-export const TABLER_ICON_MENU_ICON_BOX_SIZE = STYLE_CONFIG.icons.tablerMenuBoxSize;
+export const LUCIDE_ICON_BASE_ICON_BOX_SIZE =
+  STYLE_CONFIG.icons.lucideBaseBoxSize;
+export const LUCIDE_ICON_MENU_ICON_BOX_SIZE =
+  STYLE_CONFIG.icons.lucideMenuBoxSize;
+export const TABLER_ICON_BASE_ICON_BOX_SIZE =
+  STYLE_CONFIG.icons.tablerBaseBoxSize;
+export const TABLER_ICON_MENU_ICON_BOX_SIZE =
+  STYLE_CONFIG.icons.tablerMenuBoxSize;
 
 export const SPACING_XS = STYLE_CONFIG.spacing.xs;
 export const SPACING_SM = STYLE_CONFIG.spacing.sm;
