@@ -10,13 +10,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
-import {
-  DEFAULT_RASTER_TILE_SIZE,
-  WFS_LAYER_NAME,
-  WMS_BASE_URL,
-  WMS_LAYER_NAME,
-  WMS_VERSION,
-} from "@/design-system/components/map/constants/map.config";
+import { DEFAULT_MAP_LAYERS } from "@/design-system/components/map/constants/map.config";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { Map } from "@/design-system/components/map/ui/map";
@@ -56,22 +50,6 @@ import { useMemo } from "react";
 
 // -------------------------------------------------------------------------------------
 
-/** Builds the GetMap tile URL template for the WMS raster overlay. */
-function buildWmsTileUrl(): string {
-  const params = new URLSearchParams({
-    service: "WMS",
-    version: WMS_VERSION,
-    request: "GetMap",
-    layers: WMS_LAYER_NAME,
-    format: "image/png",
-    transparent: "true",
-    srs: "EPSG:3857", // Match projection of MapLibre bbox placeholder coordinates
-    width: String(DEFAULT_RASTER_TILE_SIZE),
-    height: String(DEFAULT_RASTER_TILE_SIZE),
-  });
-  return `${WMS_BASE_URL}?${params.toString()}&bbox={bbox-epsg-3857}`;
-}
-
 const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDE_BAR_KEY = "gis-app";
 const DEFAULT_SPLITTER_SIZE = [50, 50];
@@ -98,7 +76,6 @@ export const GisAppShell = (props: GisAppShellProps) => {
     <AppPageContainer
       flexDir={isSmallViewport ? "column" : "row"}
       bg={"bg.canvas"}
-      // p={2}
       {...restProps}
     >
       {!isSmallViewport && <Sidebar />}
@@ -133,7 +110,6 @@ const Sidebar = () => {
         bg={"bg.body"}
         borderRight={"1px solid"}
         borderColor={"bg.canvas"}
-        // rounded={theme.radii.container}
       >
         <SidebarHeader />
 
@@ -168,7 +144,6 @@ const SidebarHeader = () => {
     >
       <NavLink to={"/"}>
         <HStack align={"center"} gap={SPACING_SM}>
-          {/* <Logo /> */}
           <AtrLogo boxSize={"24px"} ml={1} />
 
           <ClampedP
@@ -344,41 +319,14 @@ const Content = () => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
 
-  // Build layer config array — ordering is bottom-to-top:
-  // 1. wms-raster first (primary visual overlay with SLD styling from GeoServer when zoomed in)
-  // 2. wfs-fill second (subtle fill layer for vector interaction)
-  // 3. wfs-line third (vector boundary outlines visible across all zoom levels)
+  // Build layer config array using DEFAULT_MAP_LAYERS
   const mapLayers = useMemo<MapLayerConfig[]>(
-    () => [
-      {
-        id: "clip-wms-layer",
-        type: "wms-raster",
-        tileUrl: buildWmsTileUrl(),
-        tileSize: DEFAULT_RASTER_TILE_SIZE,
-        visible: wmsVisible,
-      },
-      {
-        id: "default-wfs-fill-layer",
-        type: "wfs-fill",
-        wfsTypeName: WFS_LAYER_NAME,
-        paint: {
-          "fill-color": "#f59e0b",
-          "fill-opacity": 0.15,
-        },
-        visible: true,
-      },
-      {
-        id: "default-wfs-line-layer",
-        type: "wfs-line",
-        wfsTypeName: WFS_LAYER_NAME,
-        paint: {
-          "line-color": "#f59e0b",
-          "line-width": 1,
-          "line-opacity": 0.8,
-        },
-        visible: true,
-      },
-    ],
+    () =>
+      DEFAULT_MAP_LAYERS.map((layer) =>
+        layer.type === "wms-raster"
+          ? { ...layer, visible: wmsVisible }
+          : layer,
+      ),
     [wmsVisible],
   );
 
@@ -428,7 +376,6 @@ const Content = () => {
           layers={mapLayers}
           onDrawFinish={(feature, originalPoints) => {
             console.log({ feature, originalPoints });
-            // TODO: handle the finished polygon (e.g. push into form state or send to API)
           }}
         />
       </Box>

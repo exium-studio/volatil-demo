@@ -4,13 +4,38 @@ import { useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import {
+  DEFAULT_MAP_SERVER_ENDPOINT,
   DEFAULT_RASTER_TILE_SIZE,
   MAP_LAYERS_READY_EVENT,
   MAP_STYLE_READY_EVENT,
   WFS_LAYER_RENDER_TYPE_MAP,
+  WMS_LAYER_NAME,
 } from "@/design-system/components/map/constants/map.config";
-import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
+import type {
+  MapLayerConfig,
+  WmsRasterLayerConfig,
+} from "@/design-system/components/map/types/map.type";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+
+/** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
+const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
+  if (layer.tileUrl) return layer.tileUrl;
+
+  const baseUrl = layer.wmsUrl ?? DEFAULT_MAP_SERVER_ENDPOINT.wmsUrl;
+  const layerName = layer.layers ?? WMS_LAYER_NAME;
+  const params = new URLSearchParams({
+    service: "WMS",
+    version: layer.version ?? DEFAULT_MAP_SERVER_ENDPOINT.wmsVersion ?? "1.1.1",
+    request: "GetMap",
+    layers: layerName,
+    format: layer.format ?? "image/png",
+    transparent: layer.transparent !== false ? "true" : "false",
+    srs: layer.srs ?? "EPSG:3857",
+    width: String(layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE),
+    height: String(layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE),
+  });
+  return `${baseUrl}?${params.toString()}&bbox={bbox-epsg-3857}`;
+};
 
 /**
  * Returns the layer ID to insert custom layers before:
@@ -52,14 +77,16 @@ export const useMapLayers = (
 
     const wfsCache = new Map<string, GeoJSON.FeatureCollection>();
 
-    const getWfsData = async (typeName: string) => {
-      const cached = wfsCache.get(typeName);
+    const getWfsData = async (typeName: string, wfsUrl?: string) => {
+      const cacheKey = `${wfsUrl ?? ""}:${typeName}`;
+      const cached = wfsCache.get(cacheKey);
       if (cached) return cached;
       const data = await fetchWfs({
         typeName,
+        wfsUrl,
         signal: controller.signal,
       });
-      wfsCache.set(typeName, data);
+      wfsCache.set(cacheKey, data);
       return data;
     };
 
@@ -103,9 +130,10 @@ export const useMapLayers = (
 
       switch (layer.type) {
         case "wms-raster": {
+          const tileUrl = resolveWmsTileUrl(layer);
           safeAddSource(layer.id, {
             type: "raster",
-            tiles: [layer.tileUrl],
+            tiles: [tileUrl],
             tileSize: layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE,
           });
           safeAddLayer(
@@ -124,7 +152,7 @@ export const useMapLayers = (
         case "wfs-line":
         case "wfs-circle":
         case "wfs-symbol": {
-          const data = await getWfsData(layer.wfsTypeName);
+          const data = await getWfsData(layer.wfsTypeName, layer.wfsUrl);
 
           if (controller.signal.aborted) return;
 
