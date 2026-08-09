@@ -21,7 +21,7 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   ChevronDownIcon,
   LandPlotIcon,
-  LayersIcon,
+  Layers2Icon,
   ShoppingCartIcon,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -109,16 +109,25 @@ export const MitraDataRequestAddToCartButtons = (
         align={"center"}
         justify={"space-between"}
         gap={SPACING_SM}
+        w={"full"}
       >
         {/* Add all — ButtonGroup with main button on left and menu trigger on right */}
-        <ButtonGroup variant={"outline"} attached flex={"1 1 350px"}>
+        <ButtonGroup
+          variant={"outline"}
+          attached
+          flex={"1 1 300px"}
+          w={"full"}
+          maxW={"full"}
+          minW={0}
+        >
           <Button
             primary
             variant={"outline"}
             flex={1}
+            minW={0}
             onClick={onAddAllBothClick}
           >
-            <AppIcon icon={ShoppingCartIcon} />
+            <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
             {"Tambah semua"} ({bidangCount} bidang, {kawasanCount} kawasan)
           </Button>
 
@@ -133,6 +142,7 @@ export const MitraDataRequestAddToCartButtons = (
                 variant={"outline"}
                 aria-label={"Pilih opsi tambah semua"}
                 roundedLeft={0}
+                flexShrink={0}
               >
                 <AppIcon icon={ChevronDownIcon} />
               </IconButton>
@@ -140,7 +150,7 @@ export const MitraDataRequestAddToCartButtons = (
 
             <Menu.Content>
               <Menu.Item value={"add-all-bidang"} onClick={onAddAllBidangClick}>
-                <AppIcon icon={LayersIcon} />
+                <AppIcon icon={Layers2Icon} />
                 {"Tambah semua bidang"} ({bidangCount})
               </Menu.Item>
 
@@ -158,19 +168,22 @@ export const MitraDataRequestAddToCartButtons = (
         {/* Add selected */}
         <Button
           primary
-          flex={"1 1 350px"}
+          flex={"1 1 300px"}
+          w={"full"}
+          maxW={"full"}
+          minW={0}
           disabled={isEmptyArray(selectedItems)}
           onClick={onAddSelectedClick}
         >
-          <AppIcon icon={ShoppingCartIcon} />
+          <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
           {"Tambah yang dipilih"}{" "}
-          {!isEmptyArray(selectedItems) && (
-            <>
-              ({selectedBidangCount > 0 && `${selectedBidangCount} bidang`}
-              {selectedBidangCount > 0 && selectedKawasanCount > 0 && ", "}
-              {selectedKawasanCount > 0 && `${selectedKawasanCount} kawasan`})
-            </>
-          )}
+          {!isEmptyArray(selectedItems) &&
+            `(${[
+              selectedBidangCount > 0 && `${selectedBidangCount} bidang`,
+              selectedKawasanCount > 0 && `${selectedKawasanCount} kawasan`,
+            ]
+              .filter(Boolean)
+              .join(", ")})`}
         </Button>
       </HStack>
     </VStack>

@@ -17,7 +17,7 @@ import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.que
 import {
   DatabaseIcon,
   LandPlotIcon,
-  LayersIcon,
+  Layers2Icon,
   ReceiptTextIcon,
 } from "lucide-react";
 
@@ -64,7 +64,7 @@ const MitraHomeCartStats = () => {
   const cols = isSmContainer ? 2 : 4;
   const STATS: MitraHomeCartStatConfig[] = [
     {
-      icon: LayersIcon,
+      icon: Layers2Icon,
       label: "Total Bidang",
       value: totalField,
       suffix: "bidang",

@@ -7,6 +7,7 @@ import type {
 
 export type ButtonProps = ChakraButtonProps & {
   primary?: boolean;
+  lineClamp?: ChakraButtonProps["lineClamp"];
 };
 
 export type IconButtonProps = ChakraIconButtonProps &
