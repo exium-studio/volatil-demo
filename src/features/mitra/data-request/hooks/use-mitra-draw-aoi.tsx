@@ -1,10 +1,8 @@
 // src/features/mitra/data-request/hooks/use-mitra-draw-aoi.tsx
 
-
+import { useWfsClip } from "@/design-system/components/map/hooks/use-wfs-clip";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
-
-import { useFetchIgtByAoi } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-
+import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import type GeoJSON from "geojson";
 import { useCallback, useMemo } from "react";
 
@@ -13,57 +11,70 @@ const MIN_PURCHASE_COUNT = 1;
 export const useMitraDrawAoi = () => {
   // Stores
   const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();
+  const clippedFeatures = useWfsClipStore((state) => state.clippedFeatures);
+  const wfsStatus = useWfsClipStore((state) => state.status);
+  const wfsError = useWfsClipStore((state) => state.error);
+  const setClippingPolygon = useWfsClipStore(
+    (state) => state.setClippingPolygon,
+  );
+  const resetWfsClipStore = useWfsClipStore((state) => state.reset);
 
-  // Mutations
-  const fetchIgtMutation = useFetchIgtByAoi();
-
+  // Hooks
+  const { run: runWfsClip, cancel: cancelWfsClip } = useWfsClip();
 
   // Derived Values
   const hasStartedDrawing = isDrawing || points.length > 0;
   const hasFinishedDraw = !isDrawing && points.length >= 3;
 
-  const igtItems = useMemo(
-    () => fetchIgtMutation.data ?? [],
-    [fetchIgtMutation.data],
+  const wfsFeatures = useMemo(
+    () => clippedFeatures?.features ?? [],
+    [clippedFeatures],
   );
-  const hasEnoughItems = igtItems.length >= MIN_PURCHASE_COUNT;
+
+  const hasEnoughItems = wfsFeatures.length >= MIN_PURCHASE_COUNT;
 
   // Handlers
   const handleResetDraw = useCallback(() => {
-    fetchIgtMutation.reset();
     cancelDraw();
-  }, [cancelDraw, fetchIgtMutation]);
+    cancelWfsClip();
+    resetWfsClipStore();
+  }, [cancelDraw, cancelWfsClip, resetWfsClipStore]);
 
   const handleConfirmAndFetch = useCallback(async () => {
     if (!hasFinishedDraw) return;
 
-    const polygon: GeoJSON.Polygon = {
-      type: "Polygon",
-      coordinates: [
-        [...points.map((p) => [p.lng, p.lat]), [points[0].lng, points[0].lat]],
-      ],
+    const polygonFeature: GeoJSON.Feature<GeoJSON.Polygon> = {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            ...points.map((p) => [p.lng, p.lat]),
+            [points[0].lng, points[0].lat],
+          ],
+        ],
+      },
     };
 
-    await fetchIgtMutation.mutateAsync(polygon);
-  }, [fetchIgtMutation, hasFinishedDraw, points]);
-
-
+    setClippingPolygon(polygonFeature);
+    await runWfsClip(polygonFeature);
+  }, [hasFinishedDraw, points, runWfsClip, setClippingPolygon]);
 
   return {
     isDrawing,
     startDraw: () => start("polygon"),
-    cancelDraw,
+    cancelDraw: handleResetDraw,
     hasStartedDrawing,
     hasFinishedDraw,
-    isLoading: fetchIgtMutation.isPending,
-    isDone: fetchIgtMutation.isSuccess,
-    isError: fetchIgtMutation.isError,
-    error: fetchIgtMutation.error,
+    isLoading: wfsStatus === "fetching" || wfsStatus === "clipping",
+    isDone: wfsStatus === "done",
+    isError: wfsStatus === "error",
+    error: wfsError,
     hasEnoughItems,
-    igtItems,
+    wfsFeatures,
     handleResetDraw,
     handleConfirmAndFetch,
-
   };
 };
 

@@ -1,7 +1,9 @@
 // src/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
@@ -11,6 +13,8 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
   PADDING_MD,
@@ -20,21 +24,24 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { MitraIgtDataListTable } from "@/features/mitra/data-request/components/mitra.data-request.igt-data-list-table";
+import {
+  WFS_BIDANG_ATTRIBUTE_LABELS,
+  WFS_BIDANG_ATTRIBUTES,
+} from "@/features/mitra/data-request/constants/mitra.data-request.constant";
 import {
   useAddToCartAll,
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import type {
-  DrawAoiDataListProps,
   DrawAoiGuideAlertProps,
+  DrawAoiWfsDataListProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
-import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { t } from "@/shared/libs/i18n";
 import { IconPolygonOff } from "@tabler/icons-react";
-import { CheckIcon, InfoIcon, PencilIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import type GeoJSON from "geojson";
+import { CheckIcon, InfoIcon, MapPinIcon, PencilIcon, XIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
   // Hooks
@@ -49,7 +56,7 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
     isLoading,
     isDone,
     hasEnoughItems,
-    igtItems,
+    wfsFeatures,
     handleResetDraw,
     handleConfirmAndFetch,
   } = useMitraDrawAoi();
@@ -146,7 +153,7 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
       {isError && (
         <VStack gap={SPACING_SM} p={PADDING_MD}>
           <P color={"fg.error"}>
-            {(error as Error)?.message ?? "Terjadi kesalahan"}
+            {error ?? "Terjadi kesalahan"}
           </P>
           <Button variant={"outline"} onClick={handleResetDraw}>
             {"Coba lagi"}
@@ -155,7 +162,7 @@ export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
       )}
 
       {isDone && hasEnoughItems && (
-        <DataList igtItems={igtItems} onResetDraw={handleResetDraw} />
+        <DataList wfsFeatures={wfsFeatures} onResetDraw={handleResetDraw} />
       )}
     </Tabs.Content>
   );
@@ -174,7 +181,7 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
   // Stores
   const { theme } = useThemeStore();
 
-  // Utils
+  // Handlers / Utils
   const getAlertBg = () => {
     if (isLoading) return "bg.info";
     if (isDrawing) return "bg.warning";
@@ -224,20 +231,94 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
   );
 };
 
-const DataList = (props: DrawAoiDataListProps) => {
+const DataList = (props: DrawAoiWfsDataListProps) => {
   // Props
-  const { igtItems, onResetDraw } = props;
+  const { wfsFeatures, onResetDraw } = props;
+
   // Stores
   const { theme } = useThemeStore();
+  const map = useMapInstanceStore((state) => state.map);
 
   // Hooks (Mutations)
   const addToCartSelectedMutation = useAddToCartSelected();
   const addToCartAllMutation = useAddToCartAll();
 
   // States
-  const [selectedItems, setSelectedItems] = useState<
-    FormattedListItem<IgtDataItem>[]
-  >([]);
+  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
+
+  // Derived Values — DataList Configuration
+  const dataList = useMemo(
+    () => ({
+      headers: WFS_BIDANG_ATTRIBUTES.map((key) => ({
+        th: WFS_BIDANG_ATTRIBUTE_LABELS[key],
+        sortable: key === "id" || key === "kodewilaya",
+      })),
+
+      items: wfsFeatures.map((feature) => {
+        const featureId = String(feature.properties?.id ?? feature.id ?? "");
+        return {
+          id: featureId,
+          data: feature as unknown as Record<string, unknown>,
+          columns: WFS_BIDANG_ATTRIBUTES.map((key) => {
+            const val = feature.properties?.[key];
+            return {
+              value: val ?? "-",
+              td: <P fontSize={"sm"}>{String(val ?? "-")}</P>,
+              align: "start" as const,
+            };
+          }),
+        };
+      }),
+
+      itemActions: [
+        (item: FormattedListItem) => {
+          const feat = item.data as unknown as GeoJSON.Feature | undefined;
+          return (
+            <Menu.Item
+              key={"fly-to"}
+              value={"fly-to"}
+              onClick={() => {
+                if (!feat?.geometry || !map) return;
+                const geom = feat.geometry;
+                let lng = 0;
+                let lat = 0;
+
+                if (geom.type === "Point") {
+                  [lng, lat] = geom.coordinates as [number, number];
+                } else if (
+                  geom.type === "Polygon" &&
+                  geom.coordinates[0]?.length > 0
+                ) {
+                  const ring = geom.coordinates[0];
+                  const sumLng = ring.reduce((acc: number, c: number[]) => acc + c[0], 0);
+                  const sumLat = ring.reduce((acc: number, c: number[]) => acc + c[1], 0);
+                  lng = sumLng / ring.length;
+                  lat = sumLat / ring.length;
+                } else if (
+                  geom.type === "MultiPolygon" &&
+                  geom.coordinates[0]?.[0]?.length > 0
+                ) {
+                  const ring = geom.coordinates[0][0];
+                  const sumLng = ring.reduce((acc: number, c: number[]) => acc + c[0], 0);
+                  const sumLat = ring.reduce((acc: number, c: number[]) => acc + c[1], 0);
+                  lng = sumLng / ring.length;
+                  lat = sumLat / ring.length;
+                }
+
+                if (lng && lat) {
+                  map.flyTo({ center: [lng, lat], zoom: 16 });
+                }
+              }}
+            >
+              <AppIcon icon={MapPinIcon} />
+              {"Lihat di Peta"}
+            </Menu.Item>
+          );
+        },
+      ] as DataListItemActionsGenerator[],
+    }),
+    [wfsFeatures, map],
+  );
 
   return (
     <>
@@ -274,30 +355,29 @@ const DataList = (props: DrawAoiDataListProps) => {
       <Separator borderColor={"bg.canvas"} />
 
       <VStack flex={1} gap={PADDING_SM} overflowY={"auto"} bg={"bg.canvas"}>
-        <MitraIgtDataListTable
-          igtItems={igtItems}
-          withNumbering={true}
-          fixedItemHeight={false}
+        <DataListTable.Root
+          headers={dataList.headers}
+          items={dataList.items}
+          itemActions={dataList.itemActions}
           canBatchSelect
           pb={0}
           roundedTop={0}
           roundedBottom={theme.radii.container}
           shadow={"none"}
           onSelectedItemChange={({ selectedItems: sel }) => {
-            setSelectedItems(sel as FormattedListItem<IgtDataItem>[]);
+            setSelectedItems(sel as FormattedListItem[]);
           }}
-        />
+        >
+          <DataListTable.Header />
+          <DataListTable.Body />
+        </DataListTable.Root>
 
         <MitraDataRequestAddToCartButtons
           selectedItems={selectedItems}
-          allItems={igtItems}
-          totalBidangCount={
-            igtItems.filter((item) => item.basis === "bidang").length
-          }
-          totalKawasanCount={
-            igtItems.filter((item) => item.basis === "kawasan").length
-          }
-          totalCount={igtItems.length}
+          allItems={wfsFeatures}
+          totalBidangCount={wfsFeatures.length}
+          totalKawasanCount={0}
+          totalCount={wfsFeatures.length}
           onAddAllBidangClick={() => {
             addToCartAllMutation.mutate({
               source: "draw_aoi",

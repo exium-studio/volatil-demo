@@ -2,7 +2,9 @@
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import { Button } from "@/design-system/components/button/ui/button";
+import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
@@ -12,11 +14,17 @@ import { FileInputTrigger } from "@/design-system/components/input/ui/file-input
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { WFS_LAYER_NAME } from "@/design-system/components/map/constants/map.config";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
+import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import {
   MODAL_SEARCH_PARAM_KEY,
   usePopModal,
 } from "@/design-system/components/overlay/hooks/use-pop-modal";
+import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
   PADDING_MD,
@@ -26,7 +34,10 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { MitraIgtDataListTable } from "@/features/mitra/data-request/components/mitra.data-request.igt-data-list-table";
+import {
+  WFS_BIDANG_ATTRIBUTE_LABELS,
+  WFS_BIDANG_ATTRIBUTES,
+} from "@/features/mitra/data-request/constants/mitra.data-request.constant";
 import {
   MitraDataRequestUploadAoiContext,
   useMitraDataRequestUploadAoiContext,
@@ -34,10 +45,7 @@ import {
 import {
   useAddToCartAll,
   useAddToCartSelected,
-  useFetchIgtByUploadedAoi,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-
-import type { IgtDataResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import type { UploadAoiFileListTriggerProps } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
@@ -45,10 +53,9 @@ import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
-import { FilesIcon, PlusIcon } from "lucide-react";
+import type GeoJSON from "geojson";
+import { FilesIcon, MapPinIcon, PlusIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-
-
 
 export const MitraDataRequestUploadAoiTabsContent = (
   props: TabsContentProps,
@@ -58,6 +65,11 @@ export const MitraDataRequestUploadAoiTabsContent = (
     selectedItems: [] as FormattedListItem[],
     uploadedFiles: [] as File[],
   });
+  const [wfsFeatures, setWfsFeatures] = useState<GeoJSON.Feature[]>([]);
+  const setClippedFeatures = useWfsClipStore(
+    (state) => state.setClippedFeatures,
+  );
+  const resetWfsClipStore = useWfsClipStore((state) => state.reset);
 
   // Search Params / Hooks
   const search = useSearch({ strict: false }) as Record<
@@ -66,31 +78,90 @@ export const MitraDataRequestUploadAoiTabsContent = (
   >;
   const isAoiFileModalOpen = search[MODAL_SEARCH_PARAM_KEY] === "aoi-file-list";
 
-  const uploadAoiMutation = useFetchIgtByUploadedAoi();
   const addToCartSelectedMutation = useAddToCartSelected();
   const addToCartAllMutation = useAddToCartAll();
 
+  // Handlers / Effects
   useEffect(() => {
-    if (!isEmptyArray(dataListState.uploadedFiles)) {
-      void uploadAoiMutation.mutateAsync(dataListState.uploadedFiles[0]);
-    } else {
-      uploadAoiMutation.reset();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataListState.uploadedFiles]);
+    let isSubscribed = true;
+
+    const readAndFetchWfs = async () => {
+      await Promise.resolve();
+
+      if (!isSubscribed) return;
+
+      if (isEmptyArray(dataListState.uploadedFiles)) {
+        setWfsFeatures([]);
+        resetWfsClipStore();
+        return;
+      }
+
+      const file = dataListState.uploadedFiles[0];
+
+      try {
+        let cqlFilter: string | undefined;
+
+        // Attempt to parse text if file is JSON/GeoJSON
+        if (
+          file.type.includes("json") ||
+          file.name.endsWith(".geojson") ||
+          file.name.endsWith(".json")
+        ) {
+          const text = await file.text();
+          const parsed = JSON.parse(text) as GeoJSON.GeoJsonObject;
+
+          if (parsed.type === "FeatureCollection") {
+            const fc = parsed as GeoJSON.FeatureCollection;
+            const firstGeom = fc.features[0]?.geometry;
+            if (firstGeom?.type === "Polygon") {
+              const ring = firstGeom.coordinates[0];
+              const wktCoords = ring.map((c) => `${c[0]} ${c[1]}`).join(", ");
+              cqlFilter = `INTERSECTS(geom, POLYGON((${wktCoords})))`;
+            }
+          } else if (parsed.type === "Feature") {
+            const feat = parsed as GeoJSON.Feature;
+            if (feat.geometry?.type === "Polygon") {
+              const ring = feat.geometry.coordinates[0];
+              const wktCoords = ring.map((c) => `${c[0]} ${c[1]}`).join(", ");
+              cqlFilter = `INTERSECTS(geom, POLYGON((${wktCoords})))`;
+            }
+          }
+        }
+
+        const result = await fetchWfs({
+          typeName: WFS_LAYER_NAME,
+          cqlFilter,
+        });
+
+        if (isSubscribed) {
+          setWfsFeatures(result.features ?? []);
+          setClippedFeatures(result);
+        }
+      } catch (error) {
+        console.error("Failed to process uploaded file or fetch WFS:", error);
+        if (isSubscribed) {
+          setWfsFeatures([]);
+          resetWfsClipStore();
+          toast.error("Gagal memproses file AOI atau mengambil data WFS");
+        }
+      }
+    };
+
+    void readAndFetchWfs();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [dataListState.uploadedFiles, setClippedFeatures, resetWfsClipStore]);
 
   // Derived Values
-  const data = (
-    !isEmptyArray(dataListState.uploadedFiles) ? uploadAoiMutation.data : null
-  ) as IgtDataResponse | null;
-
   const contextValue = useMemo(
     () => ({
-      igtData: data,
+      igtData: null,
       dataListState,
       setDataListState,
     }),
-    [data, dataListState],
+    [dataListState],
   );
 
   useFirstMountEffect(
@@ -114,7 +185,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
         p={0}
         {...props}
       >
-        {!data && (
+        {isEmptyArray(dataListState.uploadedFiles) && (
           <NoDataState
             description={
               "Upload file AOI untuk melihat data IGT yang tersedia di area tersebut"
@@ -124,7 +195,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
           </NoDataState>
         )}
 
-        {data && (
+        {!isEmptyArray(dataListState.uploadedFiles) && (
           <>
             <VStack
               wrap={"wrap"}
@@ -146,7 +217,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
                   <FileListTrigger>
                     <Button variant={"outline"}>
                       <AppIcon icon={FilesIcon} />
-                      File AOI anda ({dataListState.uploadedFiles.length})
+                      {`File AOI anda (${dataListState.uploadedFiles.length})`}
                     </Button>
                   </FileListTrigger>
 
@@ -163,14 +234,14 @@ export const MitraDataRequestUploadAoiTabsContent = (
               overflowY={"auto"}
               bg={"bg.canvas"}
             >
-              <DataList />
+              <DataList wfsFeatures={wfsFeatures} />
 
               <MitraDataRequestAddToCartButtons
                 selectedItems={dataListState.selectedItems}
-                allItems={data?.items ?? []}
-                totalBidangCount={data?.meta?.totalBidang}
-                totalKawasanCount={data?.meta?.totalKawasan}
-                totalCount={data?.meta?.total}
+                allItems={wfsFeatures}
+                totalBidangCount={wfsFeatures.length}
+                totalKawasanCount={0}
+                totalCount={wfsFeatures.length}
                 onAddSelectedClick={() => {
                   const selectedIds = dataListState.selectedItems.map((item) =>
                     String(item.id),
@@ -301,18 +372,113 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
   );
 };
 
-const DataList = () => {
+type UploadAoiWfsDataListProps = {
+  wfsFeatures: GeoJSON.Feature[];
+};
+
+const DataList = (props: UploadAoiWfsDataListProps) => {
+  // Props
+  const { wfsFeatures } = props;
+
   // Stores
   const { theme } = useThemeStore();
+  const map = useMapInstanceStore((state) => state.map);
 
   // Contexts
-  const { igtData, setDataListState } = useMitraDataRequestUploadAoiContext();
+  const { setDataListState } = useMitraDataRequestUploadAoiContext();
+
+  // Derived Values — DataList Configuration
+  const dataList = useMemo(
+    () => ({
+      headers: WFS_BIDANG_ATTRIBUTES.map((key) => ({
+        th: WFS_BIDANG_ATTRIBUTE_LABELS[key],
+        sortable: key === "id" || key === "kodewilaya",
+      })),
+
+      items: wfsFeatures.map((feature) => {
+        const featureId = String(feature.properties?.id ?? feature.id ?? "");
+        return {
+          id: featureId,
+          data: feature as unknown as Record<string, unknown>,
+          columns: WFS_BIDANG_ATTRIBUTES.map((key) => {
+            const val = feature.properties?.[key];
+            return {
+              value: val ?? "-",
+              td: <P fontSize={"sm"}>{String(val ?? "-")}</P>,
+              align: "start" as const,
+            };
+          }),
+        };
+      }),
+
+      itemActions: [
+        (item: FormattedListItem) => {
+          const feat = item.data as unknown as GeoJSON.Feature | undefined;
+          return (
+            <Menu.Item
+              key={"fly-to"}
+              value={"fly-to"}
+              onClick={() => {
+                if (!feat?.geometry || !map) return;
+                const geom = feat.geometry;
+                let lng = 0;
+                let lat = 0;
+
+                if (geom.type === "Point") {
+                  [lng, lat] = geom.coordinates as [number, number];
+                } else if (
+                  geom.type === "Polygon" &&
+                  geom.coordinates[0]?.length > 0
+                ) {
+                  const ring = geom.coordinates[0];
+                  const sumLng = ring.reduce(
+                    (acc: number, c: number[]) => acc + c[0],
+                    0,
+                  );
+                  const sumLat = ring.reduce(
+                    (acc: number, c: number[]) => acc + c[1],
+                    0,
+                  );
+                  lng = sumLng / ring.length;
+                  lat = sumLat / ring.length;
+                } else if (
+                  geom.type === "MultiPolygon" &&
+                  geom.coordinates[0]?.[0]?.length > 0
+                ) {
+                  const ring = geom.coordinates[0][0];
+                  const sumLng = ring.reduce(
+                    (acc: number, c: number[]) => acc + c[0],
+                    0,
+                  );
+                  const sumLat = ring.reduce(
+                    (acc: number, c: number[]) => acc + c[1],
+                    0,
+                  );
+                  lng = sumLng / ring.length;
+                  lat = sumLat / ring.length;
+                }
+
+                if (lng && lat) {
+                  map.flyTo({ center: [lng, lat], zoom: 16 });
+                }
+              }}
+            >
+              <AppIcon icon={MapPinIcon} />
+              {"Lihat di Peta"}
+            </Menu.Item>
+          );
+        },
+      ] as DataListItemActionsGenerator[],
+    }),
+    [wfsFeatures, map],
+  );
 
   return (
     <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"}>
-      <MitraIgtDataListTable
-        igtItems={igtData?.items ?? []}
-        withNumbering={false}
+      <DataListTable.Root
+        headers={dataList.headers}
+        items={dataList.items}
+        itemActions={dataList.itemActions}
         canBatchSelect
         pb={0}
         roundedTop={0}
@@ -322,7 +488,10 @@ const DataList = () => {
         }}
         rounded={0}
         shadow={"none"}
-      />
+      >
+        <DataListTable.Header />
+        <DataListTable.Body />
+      </DataListTable.Root>
     </VStack>
   );
 };

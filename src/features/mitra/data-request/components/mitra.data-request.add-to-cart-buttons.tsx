@@ -28,7 +28,7 @@ import { useMemo } from "react";
 
 export type MitraDataRequestAddToCartButtonsProps = StackProps & {
   selectedItems?: FormattedListItem[];
-  allItems?: MitraDataRequestIgtDataItem[];
+  allItems?: MitraDataRequestIgtDataItem[] | unknown[];
   totalBidangCount?: number;
   totalKawasanCount?: number;
   totalCount?: number;
@@ -59,11 +59,17 @@ export const MitraDataRequestAddToCartButtons = (
 
   // Derived — basis breakdown fallback from all result items
   const calculatedBidang = useMemo(
-    () => allItems.filter((item) => item.basis === "bidang").length,
+    () =>
+      (allItems as MitraDataRequestIgtDataItem[]).filter(
+        (item) => item?.basis === "bidang",
+      ).length,
     [allItems],
   );
   const calculatedKawasan = useMemo(
-    () => allItems.filter((item) => item.basis === "kawasan").length,
+    () =>
+      (allItems as MitraDataRequestIgtDataItem[]).filter(
+        (item) => item?.basis === "kawasan",
+      ).length,
     [allItems],
   );
 

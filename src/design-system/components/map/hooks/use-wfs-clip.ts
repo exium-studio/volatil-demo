@@ -4,6 +4,7 @@ import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { WFS_LAYER_NAME } from "@/design-system/components/map/constants/map.config";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
+import { toast } from "@/design-system/components/toast";
 import type GeoJSON from "geojson";
 import { useCallback, useRef } from "react";
 
@@ -51,6 +52,7 @@ export function useWfsClip() {
           err instanceof Error ? err.message : "Unknown error during WFS clip";
         setError(message);
         setStatus("error");
+        toast.error(message);
       }
     },
     [setRawWfsFeatures, setClippedFeatures, setStatus, setError],
