@@ -14,15 +14,9 @@ const ROAD_COLORS = {
 
 const BUILDING_FILL = "#252629";
 const BUILDING_OUTLINE = "#1f2022";
-
-// Layers that use fill-pattern sprites — fill-color and fill-opacity are both
-// disabled when fill-pattern is active. Hiding them via layout visibility is
-// the only reliable way to suppress the pattern rendering entirely.
-const HIDDEN_PATTERN_LAYERS = [
-  "landcover_wood",
-  "landuse_track",
-  "landuse_pitch",
-];
+const PARK_SOLID_FILL = "#1a211d";
+const PARK_SOLID_OUTLINE = "#1a211d";
+const LANDUSE_SOLID_FILL = "#1b1c1e";
 
 export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
   const setIfExists = (
@@ -38,6 +32,42 @@ export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
     }
   };
 
+  const setSolidFill = (
+    layerId: string,
+    color: string,
+    outlineColor?: string,
+  ) => {
+    if (!map.getLayer(layerId)) return;
+    try {
+      // Clear fill-pattern so solid fill-color takes effect instead of pattern sprite
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (map.setPaintProperty as any)(layerId, "fill-pattern", null);
+      map.setLayoutProperty(layerId, "visibility", "visible");
+      map.setPaintProperty(layerId, "fill-color", color);
+      if (outlineColor) {
+        map.setPaintProperty(layerId, "fill-outline-color", outlineColor);
+      }
+    } catch {
+      // layer exists but property type doesn't match — skip silently
+    }
+  };
+
+  // 1. Remove fill-pattern from ALL fill layers globally so no white striped patterns render anywhere
+  map.getStyle().layers.forEach((layer) => {
+    if (layer.type === "fill") {
+      try {
+        const pattern = map.getPaintProperty(layer.id, "fill-pattern");
+        if (pattern) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (map.setPaintProperty as any)(layer.id, "fill-pattern", null);
+        }
+      } catch {
+        // Skip layers without fill-pattern property
+      }
+    }
+  });
+
+  // Boundaries
   setIfExists("boundary_2", "line-color", "#4e4e4eff");
   setIfExists("boundary_3", "line-color", "#4e4e4eff");
   setIfExists("boundary_disputed", "line-color", "#4e4e4eff");
@@ -226,8 +256,7 @@ export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
   );
 
   // Buildings
-  setIfExists("building", "fill-color", BUILDING_FILL);
-  setIfExists("building", "fill-outline-color", BUILDING_OUTLINE);
+  setSolidFill("building", BUILDING_FILL, BUILDING_OUTLINE);
   setIfExists("building-3d", "fill-extrusion-color", BUILDING_FILL);
   setIfExists("building-3d", "fill-extrusion-floor-color", BUILDING_FILL);
 
@@ -251,42 +280,34 @@ export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
     "#191a1a",
   ]);
 
-  // Landcover & Landuse
-  setIfExists("landcover_grass", "fill-color", "#1e2320");
-  setIfExists("landcover_grass", "fill-outline-color", "#1e2320");
-  setIfExists("landcover_sand", "fill-color", "#242218");
-  setIfExists("landcover_sand", "fill-outline-color", "#242218");
+  // Landcover & Landuse (Solid Dark Fills without Pattern Sprites)
+  setSolidFill("landcover_grass", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
+  setSolidFill("landcover_wood", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
+  setSolidFill("landcover_scrub", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
+  setSolidFill("landcover_crop", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
+  setSolidFill("landcover_sand", "#222018", "#222018");
+  setSolidFill("landcover_ice", "#1e2124", "#1e2124");
+  setSolidFill("landcover_wetland", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
 
-  setIfExists("park", "fill-color", "#1c2420");
-  setIfExists("park", "fill-outline-color", "#1c2420");
-  setIfExists("park_outline", "line-color", "#1c2420");
-  setIfExists("landuse_residential", "fill-color", "#1e1f21");
-  setIfExists("landuse_cemetery", "fill-color", "#1c2420");
-  setIfExists("landuse_school", "fill-color", "#1c2122");
-  setIfExists("landuse_hospital", "fill-color", "#241e1e");
+  setSolidFill("park", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
+  setSolidFill("park_outline", PARK_SOLID_OUTLINE);
+  setSolidFill("landuse_park", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
+  setSolidFill("landuse_track", "#1e2022", "#1e2022");
+  setSolidFill("landuse_pitch", "#1d201e", "#1d201e");
+  setSolidFill("landuse_pedestrian", LANDUSE_SOLID_FILL, LANDUSE_SOLID_FILL);
+  setSolidFill("pedestrian", LANDUSE_SOLID_FILL, LANDUSE_SOLID_FILL);
 
-  // Ice / glacier (causes the white circle at poles)
-  setIfExists("landcover_ice", "fill-color", "#1e2124");
-  setIfExists("landcover_ice", "fill-outline-color", "#1e2124");
-
-  // Wetland — has fill-pattern, must unset pattern before fill-color takes effect
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (map.setPaintProperty as any)("landcover_wetland", "fill-pattern", null);
-  setIfExists("landcover_wetland", "fill-color", "#1e2320");
-  setIfExists("landcover_wetland", "fill-outline-color", "#1e2320");
+  setSolidFill("landuse_residential", LANDUSE_SOLID_FILL);
+  setSolidFill("landuse_commercial", "#202124");
+  setSolidFill("landuse_industrial", "#1f2022");
+  setSolidFill("landuse_cemetery", PARK_SOLID_FILL);
+  setSolidFill("landuse_school", "#1c2122");
+  setSolidFill("landuse_hospital", "#241e1e");
 
   // Aeroway (airport apron/runway fill)
   setIfExists("aeroway_fill", "fill-color", "#242528");
   setIfExists("aeroway_runway", "line-color", "#2c2d30");
   setIfExists("aeroway_taxiway", "line-color", "#242528");
-
-  // Pattern-sprite layers (forest/track/pitch) — fill-color and fill-opacity
-  // are both disabled when fill-pattern is active. Hide via layout visibility
-  // instead; the dark background shows through cleanly.
-  HIDDEN_PATTERN_LAYERS.forEach((id) => {
-    if (!map.getLayer(id)) return;
-    map.setLayoutProperty(id, "visibility", "none");
-  });
 
   // Water
   setIfExists("water", "fill-color", "#262626");
