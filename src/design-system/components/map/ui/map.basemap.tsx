@@ -91,13 +91,6 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
      * Applies globe projection + paint/light/terrain overrides for the
      * current basemap style key. Called on every style.load (initial load
      * AND style switches).
-     *
-     * For style switches: fires MAP_STYLE_READY_EVENT here because
-     * useMapLayers is already mounted and its listener is registered.
-     *
-     * For initial load: MAP_STYLE_READY_EVENT fired here is missed by
-     * useMapLayers (setMap not called yet → listener not registered).
-     * The post-commit useEffect([map]) below covers the initial load case.
      */
     const applyGlobe = () => {
       instance.setProjection({ type: "globe" });
@@ -134,21 +127,32 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
         instance.setTerrain(null);
       }
 
-      // Signal that basemap + globe + paint overrides are settled.
-      // For style switches this is received by useMapLayers immediately.
-      // For the initial load this fires before setMap() → useMapLayers
-      // misses it. The post-commit useEffect([map]) in this component
-      // fires a second MAP_STYLE_READY_EVENT after React commits, ensuring
-      // useMapLayers always receives at least one event.
+      // Step 2: Handle 3D vs 2D building visibility state according to is3D setting
+      const is3DActive = useMapBaseMapStore.getState().is3D;
+      if (instance.getLayer("building-3d")) {
+        instance.setLayoutProperty(
+          "building-3d",
+          "visibility",
+          is3DActive ? "visible" : "none",
+        );
+      }
+      if (instance.getLayer("building")) {
+        if (is3DActive) {
+          instance.setLayoutProperty("building", "visibility", "none");
+        } else {
+          instance.setLayerZoomRange("building", 13, 24);
+          instance.setLayoutProperty("building", "visibility", "visible");
+        }
+      }
+
+      // Signal that basemap + globe + paint overrides + 3D buildings are settled.
       instance.fire(MAP_EVENTS_MAP.styleReady);
     };
 
-    // style.load fires for both the initial load and every subsequent
-    // setStyle() call — covers all basemap switches.
+    // style.load fires for both the initial load and every subsequent setStyle() call with different URL
     instance.on("style.load", applyGlobe);
 
     // once("load") only commits the map instance to React state.
-    // applyGlobe is NOT called here; style.load already ran it.
     instance.once("load", () => {
       setMap(instance);
       useMapInstanceStore.getState().setMap(instance);
@@ -165,26 +169,13 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
 
   /**
    * Post-commit MAP_STYLE_READY_EVENT for the initial mount.
-   *
-   * By the time this effect runs, React has committed the map state update,
-   * so useMapLayers (which depends on [map]) has already mounted and
-   * registered its MAP_STYLE_READY_EVENT listener. Firing the event here
-   * guarantees useMapLayers always receives the initial ready signal,
-   * even when the style.load → applyGlobe → fire sequence happened before
-   * setMap() was called.
-   *
-   * For style switches, applyGlobe fires the event directly and this effect
-   * does not re-run (map reference is stable), so there's no double-fire.
    */
   useEffect(() => {
     if (!map) return;
 
-    // Style may still be loading in rare edge cases — only fire if ready.
     if (map.isStyleLoaded()) {
       map.fire(MAP_EVENTS_MAP.styleReady);
     }
-    // If style is not yet loaded, the on("style.load") → applyGlobe path
-    // will fire the event once the style finishes loading.
   }, [map]);
 
   // Change base layer style effect
@@ -207,6 +198,60 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
 
     const forceReload = isSameStyle && (!isSameKey || !isSameMode);
     map.setStyle(currentStyle, { diff: !forceReload });
+
+    // When switching between variants sharing the same style URL (e.g. Liberty color / plain-light / plain-dark),
+    // MapLibre's setStyle does not trigger style.load. We MUST trigger style settlement only when style is fully loaded.
+    if (isSameStyle) {
+      const runStyleSettlement = () => {
+        if (!map.isStyleLoaded()) return;
+
+        const activeKey = activeStyleKey;
+        const currentMode = colorMode;
+
+        if (activeKey === "color") {
+          applyBasemapColorStyleOverride(map);
+        } else if (
+          activeKey === "plain-light" ||
+          activeKey === "plain-dark" ||
+          activeKey === "plain-adaptive"
+        ) {
+          let overrideMode: "light" | "dark" = currentMode;
+          if (activeKey === "plain-light") overrideMode = "light";
+          if (activeKey === "plain-dark") overrideMode = "dark";
+
+          if (overrideMode === "light") {
+            applyBasemapPlainLightStyleOverride(map);
+          } else {
+            applyBasemapPlainDarkStyleOverride(map);
+          }
+        }
+
+        const is3DActive = useMapBaseMapStore.getState().is3D;
+        if (map.getLayer("building-3d")) {
+          map.setLayoutProperty(
+            "building-3d",
+            "visibility",
+            is3DActive ? "visible" : "none",
+          );
+        }
+        if (map.getLayer("building")) {
+          if (is3DActive) {
+            map.setLayoutProperty("building", "visibility", "none");
+          } else {
+            map.setLayerZoomRange("building", 13, 24);
+            map.setLayoutProperty("building", "visibility", "visible");
+          }
+        }
+
+        map.fire(MAP_EVENTS_MAP.styleReady);
+      };
+
+      if (map.isStyleLoaded()) {
+        runStyleSettlement();
+      } else {
+        map.once("styledata", runStyleSettlement);
+      }
+    }
   }, [map, currentStyle, activeStyleKey, colorMode]);
 
   return (

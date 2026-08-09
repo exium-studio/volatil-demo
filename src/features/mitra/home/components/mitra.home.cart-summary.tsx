@@ -23,7 +23,7 @@ import {
 
 export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
   return (
-    <Container.Root flex={"1 1 300px"} withContext={true} {...props}>
+    <Container.Root withContext={true} {...props}>
       <Container.Body gap={4} pt={PADDING_MD}>
         <MitraHomeCartSummaryHeader />
 

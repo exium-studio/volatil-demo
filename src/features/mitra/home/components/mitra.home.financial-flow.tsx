@@ -45,7 +45,7 @@ export const MitraHomeFinancialFlow = (props: MitraHomeFinancialFlowProps) => {
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   return (
-    <Container.Root flex={"1 1 500px"} withContext={true} {...props}>
+    <Container.Root withContext={true} {...props}>
       <Container.Body gap={8} pt={PADDING_MD}>
         <MitraHomeFinancialFlowHeader
           period={period}
