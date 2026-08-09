@@ -112,6 +112,7 @@ export const MitraDataRequestAddToCartButtons = (
             variant={"outline"}
             flex={1}
             minW={0}
+            disabled={bidangCount + kawasanCount === 0}
             onClick={onAddAllBothClick}
           >
             <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
@@ -130,19 +131,25 @@ export const MitraDataRequestAddToCartButtons = (
                 aria-label={"Pilih opsi tambah semua"}
                 roundedLeft={0}
                 flexShrink={0}
+                disabled={bidangCount + kawasanCount === 0}
               >
                 <AppIcon icon={ChevronDownIcon} />
               </IconButton>
             </Menu.Trigger>
 
             <Menu.Content>
-              <Menu.Item value={"add-all-bidang"} onClick={onAddAllBidangClick}>
+              <Menu.Item
+                value={"add-all-bidang"}
+                disabled={bidangCount === 0}
+                onClick={onAddAllBidangClick}
+              >
                 <AppIcon icon={Layers2Icon} />
                 {"Tambah semua bidang"} ({bidangCount})
               </Menu.Item>
 
               <Menu.Item
                 value={"add-all-kawasan"}
+                disabled={kawasanCount === 0}
                 onClick={onAddAllKawasanClick}
               >
                 <AppIcon icon={LandPlotIcon} />

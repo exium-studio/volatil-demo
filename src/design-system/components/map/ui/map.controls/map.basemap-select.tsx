@@ -75,6 +75,7 @@ export const MapBasemapSelect = () => {
               {isActiveStylePlainAdaptive && (
                 <AppIcon
                   icon={plainAdaptiveProps[colorMode].icon}
+                  size={"sm"}
                   pos={"absolute"}
                   left={1}
                   bottom={1}
@@ -134,7 +135,7 @@ export const MapBasemapSelect = () => {
                     {isPlainAdaptive && (
                       <AppIcon
                         icon={plainAdaptiveProps[colorMode].icon}
-                        size={"2xl"}
+                        size={"lg"}
                         pos={"absolute"}
                         left={1}
                         bottom={1}
