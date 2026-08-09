@@ -319,7 +319,7 @@ const DialogContent = (props: DialogContentProps) => {
             animation: clickOriginAnimation
               ? "scale-down-to-click-origin"
               : "scale-down",
-            animationDuration: "slow",
+            animationDuration: clickOriginAnimation ? "slow" : "moderate",
           }}
           {...restProps}
         />

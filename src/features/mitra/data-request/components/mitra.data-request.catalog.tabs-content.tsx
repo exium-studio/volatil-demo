@@ -19,7 +19,7 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { FilterWfsIgtTrigger } from "@/features/mitra/data-request/components/filter-wfs-igt-trigger";
+import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter-trigger";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { MitraIgtDataListTable } from "@/features/mitra/data-request/components/mitra.data-request.igt-data-list-table";
 import {
@@ -58,11 +58,11 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
           <HStack gap={SPACING_SM}>
             <SearchInput placeholder={t["action.search"]()} />
 
-            <FilterWfsIgtTrigger>
+            <WfsIgtFilterTrigger>
               <IconButton variant={"outline"}>
                 <AppIcon icon={SlidersHorizontalIcon} />
               </IconButton>
-            </FilterWfsIgtTrigger>
+            </WfsIgtFilterTrigger>
           </HStack>
         </HStack>
       </VStack>

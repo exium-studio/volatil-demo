@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-export type FilterWfsIgtTriggerProps = {
+export type WfsIgtFilterTriggerProps = {
   children: React.ReactNode;
   value?: Record<string, string | undefined>;
   defaultValue?: Record<string, string | undefined>;
