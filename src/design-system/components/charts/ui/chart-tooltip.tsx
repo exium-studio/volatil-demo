@@ -4,9 +4,10 @@ import type {
   ChartTooltipContentProps,
   ChartTooltipProps,
 } from "@/design-system/components/charts/types/chart-tooltip.type.type";
-import { Box } from "@/design-system/components/layout/ui/box";
+import { Circle } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { Tooltip } from "recharts";
 
 export const ChartTooltip = (props: ChartTooltipProps) => {
@@ -33,17 +34,18 @@ export const ChartTooltipContent = (props: ChartTooltipContentProps) => {
       </P>
 
       {payload.map((entry) => (
-        <HStack key={String(entry.name)} gap={2}>
-          <Box
+        <HStack key={String(entry.name)} align={"center"} gap={2}>
+          <Circle
             w={2}
             h={2}
-            rounded={"full"}
+            mt={"2px"}
             bg={String(entry.color)}
             flexShrink={0}
           />
 
           <P>
-            {String(entry.name)}: {String(entry.value)}
+            {String(entry.name)}:{" "}
+            {entry.value ? formatNumber(Number(entry.value)) : "-"}
           </P>
         </HStack>
       ))}

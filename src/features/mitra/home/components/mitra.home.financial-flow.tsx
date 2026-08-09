@@ -107,11 +107,13 @@ const MitraHomeFinancialFlowChartContent = (
   // Derived Values / Hooks
   const chart = useChart({
     data: financialFlow,
-    series: [{ name: "sale", color: `${theme.colorPalette}.solid` }],
+    series: [
+      { name: "sale", label: "Sale", color: `${theme.colorPalette}.solid` },
+    ],
   });
 
   return (
-    <Chart.Root maxH={"240px"} chart={chart} px={PADDING_LG}>
+    <Chart.Root maxH={"256px"} chart={chart} px={PADDING_LG}>
       <ResponsiveContainer width={"100%"} height={240}>
         <AreaChart data={chart.data}>
           <ChartTooltip
@@ -149,6 +151,7 @@ const MitraHomeFinancialFlowChartContent = (
             axisLine={false}
             dataKey={"label"}
             stroke={chart.color("border")}
+            tickMargin={10}
           />
 
           <YAxis
@@ -169,6 +172,7 @@ const MitraHomeFinancialFlowChartContent = (
               type={"linear"}
               isAnimationActive={false}
               dataKey={chart.key(item.name)}
+              name={String(item.label ?? "Sale")}
               stroke={chart.color(item.color)}
               strokeWidth={2}
               fill={`url(#gradient-${item.name})`}
