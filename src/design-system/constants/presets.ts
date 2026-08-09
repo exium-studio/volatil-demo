@@ -1,6 +1,6 @@
 // src/design-system/constants/presets.ts
 
-export const ROUNDED_PRESETS = [
+export const ROUNDED_PRESETS_LIST = [
   { label: "None", component: "0px", container: "0px" },
   { label: "XS", component: "2px", container: "4px" },
   { label: "Sm", component: "4px", container: "6px" },
@@ -9,5 +9,4 @@ export const ROUNDED_PRESETS = [
   { label: "XL", component: "12px", container: "16px" },
   { label: "2XL", component: "18px", container: "24px" },
   { label: "3XL", component: "24px", container: "32px" },
-  // { label: "4XL", component: "32px", container: "38px" },
 ];

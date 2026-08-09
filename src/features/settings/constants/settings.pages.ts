@@ -5,7 +5,7 @@ import { ProfileSettingsPage } from "@/features/settings/pages/profile/profile.s
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
 import type { ComponentType } from "react";
 
-export const SETTINGS_PAGES = {
+export const SETTINGS_PAGES_MAP = {
   profile: ProfileSettingsPage,
   account: ProfileSettingsPage,
   privacy: ProfileSettingsPage,

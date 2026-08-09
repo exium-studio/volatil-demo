@@ -1,7 +1,7 @@
 // src/design-system/stores/use-theme-store.ts
 
-import { COLOR_PALETTES } from "@/design-system/constants/colors";
-import { ROUNDED_PRESETS } from "@/design-system/constants/presets";
+import { COLOR_PALETTES_LIST } from "@/design-system/constants/colors";
+import { ROUNDED_PRESETS_LIST } from "@/design-system/constants/presets";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -21,10 +21,10 @@ type ThemeStore = {
 };
 
 export const DEFAULT: ThemeStore = {
-  colorPalette: COLOR_PALETTES[21].palette,
-  primaryColor: `${COLOR_PALETTES[0].palette}.solid`,
-  primaryColorHex: COLOR_PALETTES[0].primaryHex,
-  radii: ROUNDED_PRESETS[4],
+  colorPalette: COLOR_PALETTES_LIST[21].palette,
+  primaryColor: `${COLOR_PALETTES_LIST[0].palette}.solid`,
+  primaryColorHex: COLOR_PALETTES_LIST[0].primaryHex,
+  radii: ROUNDED_PRESETS_LIST[4],
   ambienceColor: false,
 };
 

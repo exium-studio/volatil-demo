@@ -25,7 +25,7 @@ import {
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import {
-  WFS_BIDANG_ATTRIBUTE_LABELS,
+  WFS_BIDANG_ATTRIBUTE_MAP,
   WFS_BIDANG_ATTRIBUTES,
 } from "@/features/mitra/data-request/constants/mitra.data-request.constant";
 import {
@@ -250,7 +250,7 @@ const DataList = (props: DrawAoiWfsDataListProps) => {
   const dataList = useMemo(
     () => ({
       headers: WFS_BIDANG_ATTRIBUTES.map((key) => ({
-        th: WFS_BIDANG_ATTRIBUTE_LABELS[key],
+        th: WFS_BIDANG_ATTRIBUTE_MAP[key],
         sortable: key === "id" || key === "kodewilaya",
       })),
 

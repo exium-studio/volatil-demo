@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
 import type GeoJSON from "geojson";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
-import { MAP_STYLE_READY_EVENT } from "@/design-system/components/map/constants/map.config";
+import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 
 const WFS_CLIP_RESULT_SOURCE_ID = "wfs-clip-result-source";
 const WFS_CLIP_RESULT_FILL_LAYER_ID = "wfs-clip-result-fill";
@@ -130,10 +130,10 @@ export function useWfsClipResultLayer(map: maplibregl.Map | null): void {
     if (map.isStyleLoaded()) {
       ensureLayers();
     }
-    map.on(MAP_STYLE_READY_EVENT as string, ensureLayers);
+    map.on(MAP_EVENTS_MAP.styleReady as string, ensureLayers);
 
     return () => {
-      map.off(MAP_STYLE_READY_EVENT as string, ensureLayers);
+      map.off(MAP_EVENTS_MAP.styleReady as string, ensureLayers);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(map as any).style) return;
       [

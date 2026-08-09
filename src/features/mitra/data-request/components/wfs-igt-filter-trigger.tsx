@@ -11,7 +11,7 @@ import {
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
-import { WFS_IGT_FILTER_FIELDS } from "@/features/mitra/data-request/constants/wfs-igt-filter.config";
+import { WFS_IGT_FILTER_FIELDS_LIST } from "@/features/mitra/data-request/constants/wfs-igt-filter.config";
 import {
   useFilterOptionsKabupaten,
   useFilterOptionsKecamatan,
@@ -83,7 +83,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
   // Derived Values — Map dynamic options per field key
   const optionsMap = useMemo<Record<string, FocusSelectOption[]>>(
     () => ({
-      statbid: WFS_IGT_FILTER_FIELDS[0]?.options ?? [],
+      statbid: WFS_IGT_FILTER_FIELDS_LIST[0]?.options ?? [],
       tema: temaData?.data ?? [],
       provinsi: provinsiData?.data ?? [],
       kabupaten: kabupatenData?.data ?? [],
@@ -133,7 +133,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
 
         <Modal.Body gap={SPACING_MD}>
           <VStack gap={SPACING_MD} w={"full"}>
-            {WFS_IGT_FILTER_FIELDS.map((fieldConfig) => (
+            {WFS_IGT_FILTER_FIELDS_LIST.map((fieldConfig) => (
               <FocusSelectInput
                 key={fieldConfig.key}
                 modalKey={fieldConfig.key}

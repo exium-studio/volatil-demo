@@ -3,7 +3,7 @@
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
 import type { NavGroup } from "@/shared/types/nav.type";
 
-export const SETTINGS_NAV_GROUPS: NavGroup<SettingNavKey>[] = [
+export const SETTINGS_NAV_GROUPS_LIST: NavGroup<SettingNavKey>[] = [
   {
     titleKey: "settings.group.account.title",
     items: [

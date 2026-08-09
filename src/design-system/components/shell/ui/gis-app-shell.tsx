@@ -10,7 +10,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
-import { DEFAULT_MAP_LAYERS } from "@/design-system/components/map/constants/map.config";
+import { DEFAULT_MAP_LAYERS_LIST } from "@/design-system/components/map/constants/map.config";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { Map } from "@/design-system/components/map/ui/map";
@@ -21,23 +21,23 @@ import { getNavKeyFromPathname } from "@/design-system/components/navigation/uti
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
-import { APP } from "@/design-system/constants/_meta";
+import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { HEADER_H, SPACING_SM } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import {
-  ADMIN_APP_NAV_GROUPS,
-  ADMIN_APP_OTHER_NAV_GROUPS,
-  APP_NAV_GROUPS,
-  APP_OTHER_NAV_GROUPS,
-} from "@/shared/constants/app.nav-groups.";
+  ADMIN_APP_NAV_GROUPS_LIST,
+  ADMIN_APP_OTHER_NAV_GROUPS_LIST,
+  APP_NAV_GROUPS_LIST,
+  APP_OTHER_NAV_GROUPS_LIST,
+} from "@/shared/constants/app.nav-groups";
 import { ADMIN_APP_NAVS_MAP, APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
-import type { NavGroup, NavItem } from "@/shared/types/nav.type";
 import type { User } from "@/shared/types/common-response.type";
+import type { NavGroup, NavItem } from "@/shared/types/nav.type";
 import { getStorage } from "@/shared/utils/client/client.storage";
 import { Box } from "@chakra-ui/react";
 import {
@@ -152,7 +152,7 @@ const SidebarHeader = () => {
             color={`${theme.colorPalette}.fg`}
             lineHeight={1.2}
           >
-            {APP.title}
+            {APP_CONFIG.title}
           </ClampedP>
         </HStack>
       </NavLink>
@@ -165,7 +165,7 @@ const SidebarHeader = () => {
         color={"fg.subtle"}
         lineHeight={1}
       >
-        v{APP.version}
+        v{APP_CONFIG.version}
       </ClampedP>
     </HStack>
   );
@@ -187,7 +187,8 @@ const SidebarBody = () => {
   const navsMap = (role === "internal"
     ? ADMIN_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
-  const navGroups = role === "internal" ? ADMIN_APP_NAV_GROUPS : APP_NAV_GROUPS;
+  const navGroups =
+    role === "internal" ? ADMIN_APP_NAV_GROUPS_LIST : APP_NAV_GROUPS_LIST;
   const activeKey = getNavKeyFromPathname(navsMap, pathname);
 
   return (
@@ -222,7 +223,9 @@ const SidebarFooter = () => {
     ? ADMIN_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
   const otherNavGroups: NavGroup<AdminAppNavKey | AppNavKey>[] =
-    role === "internal" ? ADMIN_APP_OTHER_NAV_GROUPS : APP_OTHER_NAV_GROUPS;
+    role === "internal"
+      ? ADMIN_APP_OTHER_NAV_GROUPS_LIST
+      : APP_OTHER_NAV_GROUPS_LIST;
 
   return (
     <VStack gap={1} p={3}>
@@ -322,10 +325,8 @@ const Content = () => {
   // Build layer config array using DEFAULT_MAP_LAYERS
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
-      DEFAULT_MAP_LAYERS.map((layer) =>
-        layer.type === "wms-raster"
-          ? { ...layer, visible: wmsVisible }
-          : layer,
+      DEFAULT_MAP_LAYERS_LIST.map((layer) =>
+        layer.type === "wms-raster" ? { ...layer, visible: wmsVisible } : layer,
       ),
     [wmsVisible],
   );

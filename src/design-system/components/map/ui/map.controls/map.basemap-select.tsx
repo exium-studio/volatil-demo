@@ -7,7 +7,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
 import {
   MAP_BASEMAP_MAP,
-  MAP_BASEMAP_OPTIONS,
+  MAP_BASEMAP_OPTIONS_LIST,
   getBasemapOption,
 } from "@/design-system/components/map/constants/map.basemap-options";
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
@@ -101,7 +101,7 @@ export const MapBasemapSelect = () => {
             gridTemplateColumns={"repeat(auto-fill, minmax(100px, 1fr))"}
             gapY={4}
           >
-            {MAP_BASEMAP_OPTIONS.map((styleKey) => {
+            {MAP_BASEMAP_OPTIONS_LIST.map((styleKey) => {
               const isSelected = activeStyleKey === styleKey;
               const item = getBasemapOption(styleKey);
               const isPlainAdaptive = styleKey === "plain-adaptive";

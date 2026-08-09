@@ -11,7 +11,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { HEADER_H } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { SettingsSearchButton } from "@/features/settings/components/settings.search";
-import { SETTINGS_NAV_GROUPS } from "@/features/settings/constants/settings.nav-groups";
+import { SETTINGS_NAV_GROUPS_LIST } from "@/features/settings/constants/settings.nav-groups";
 import { SETTINGS_NAVS_MAP } from "@/features/settings/constants/settings.navs";
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
 import { t } from "@/shared/libs/i18n";
@@ -82,7 +82,7 @@ export const SettingsSidebarBody = () => {
 
   return (
     <VNavs<SettingNavKey>
-      groups={SETTINGS_NAV_GROUPS}
+      groups={SETTINGS_NAV_GROUPS_LIST}
       navs={SETTINGS_NAVS_MAP}
       activeKey={activeSettingNavKey}
       expanded={!isSmallViewport}

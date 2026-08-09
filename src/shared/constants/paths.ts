@@ -1,3 +1,5 @@
 // src/shared/constants/paths.ts
 
-export const IMAGES_PATH = "/assets/images";
+export const PATH_CONFIG = {
+  images: "/assets/images",
+} as const;

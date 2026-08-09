@@ -1,6 +1,6 @@
 // src/design-system/constants/_meta.ts
 
-export const APP = {
+export const APP_CONFIG = {
   title: "Volatil",
   description: "",
   poweredBy: "Volatil",
@@ -9,4 +9,4 @@ export const APP = {
   titleTemplate: "%s | Volatil",
   version: "1.0.0",
   lastUpdated: "2025-09-13",
-};
+} as const;

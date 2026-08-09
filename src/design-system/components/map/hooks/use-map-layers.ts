@@ -5,9 +5,8 @@ import type maplibregl from "maplibre-gl";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import {
   DEFAULT_MAP_SERVER_ENDPOINT,
-  DEFAULT_RASTER_TILE_SIZE,
-  MAP_LAYERS_READY_EVENT,
-  MAP_STYLE_READY_EVENT,
+  MAP_CONFIG,
+  MAP_EVENTS_MAP,
   WFS_LAYER_RENDER_TYPE_MAP,
   WMS_LAYER_NAME,
 } from "@/design-system/components/map/constants/map.config";
@@ -31,8 +30,8 @@ const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
     format: layer.format ?? "image/png",
     transparent: layer.transparent !== false ? "true" : "false",
     srs: layer.srs ?? "EPSG:3857",
-    width: String(layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE),
-    height: String(layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE),
+    width: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
+    height: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
   });
   return `${baseUrl}?${params.toString()}&bbox={bbox-epsg-3857}`;
 };
@@ -134,7 +133,7 @@ export const useMapLayers = (
           safeAddSource(layer.id, {
             type: "raster",
             tiles: [tileUrl],
-            tileSize: layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE,
+            tileSize: layer.tileSize ?? MAP_CONFIG.raster.tileSize,
           });
           safeAddLayer(
             {
@@ -174,7 +173,7 @@ export const useMapLayers = (
           safeAddSource(layer.id, {
             type: "raster",
             tiles: [layer.tileUrl],
-            tileSize: layer.tileSize ?? DEFAULT_RASTER_TILE_SIZE,
+            tileSize: layer.tileSize ?? MAP_CONFIG.raster.tileSize,
           });
           safeAddLayer(
             {
@@ -251,22 +250,22 @@ export const useMapLayers = (
 
       // Signal useMapDraw to (re)add draw layers on top
       if (seq === setupSeq && !controller.signal.aborted) {
-        map.fire(MAP_LAYERS_READY_EVENT);
+        map.fire(MAP_EVENTS_MAP.layersReady);
       }
     };
 
-    // Listen for MAP_STYLE_READY_EVENT (fired by basemap after applyGlobe settles)
+    // Listen for MAP_EVENTS_MAP.styleReady (fired by basemap after applyGlobe settles)
     // Pass setupLayers directly — same reference used in map.off for correct cleanup
-    map.on(MAP_STYLE_READY_EVENT as string, setupLayers);
+    map.on(MAP_EVENTS_MAP.styleReady as string, setupLayers);
 
     // Also run immediately for initial mount
-    // (basemap may have already fired MAP_STYLE_READY_EVENT before useMapLayers mounted)
+    // (basemap may have already fired MAP_EVENTS_MAP.styleReady before useMapLayers mounted)
     void setupLayers();
 
     return () => {
       controller.abort();
       // Correct cleanup: same reference as map.on — listener is fully removed
-      map.off(MAP_STYLE_READY_EVENT as string, setupLayers);
+      map.off(MAP_EVENTS_MAP.styleReady as string, setupLayers);
       removeLayers(layersRef.current);
     };
   }, [map]);

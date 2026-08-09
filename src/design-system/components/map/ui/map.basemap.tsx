@@ -6,9 +6,8 @@ import {
   OPENFREEMAP_LIBERTY_STYLE_URL,
 } from "@/design-system/components/map/constants/map.basemap-options";
 import {
-  DEFAULT_MAP_CENTER,
-  DEFAULT_MAP_ZOOM,
-  MAP_STYLE_READY_EVENT,
+  MAP_CONFIG,
+  MAP_EVENTS_MAP,
 } from "@/design-system/components/map/constants/map.config";
 import { useMapResizeObserver } from "@/design-system/components/map/hooks/use-map-resize-observer";
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
@@ -74,8 +73,8 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
     const instance = new maplibregl.Map({
       container: containerRef.current,
       style: currentStyle,
-      center: DEFAULT_MAP_CENTER,
-      zoom: DEFAULT_MAP_ZOOM,
+      center: MAP_CONFIG.viewport.center,
+      zoom: MAP_CONFIG.viewport.zoom,
       dragRotate: true,
       touchZoomRotate: true,
       pitchWithRotate: true,
@@ -141,7 +140,7 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
       // misses it. The post-commit useEffect([map]) in this component
       // fires a second MAP_STYLE_READY_EVENT after React commits, ensuring
       // useMapLayers always receives at least one event.
-      instance.fire(MAP_STYLE_READY_EVENT);
+      instance.fire(MAP_EVENTS_MAP.styleReady);
     };
 
     // style.load fires for both the initial load and every subsequent
@@ -182,7 +181,7 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
 
     // Style may still be loading in rare edge cases — only fire if ready.
     if (map.isStyleLoaded()) {
-      map.fire(MAP_STYLE_READY_EVENT);
+      map.fire(MAP_EVENTS_MAP.styleReady);
     }
     // If style is not yet loaded, the on("style.load") → applyGlobe path
     // will fire the event once the style finishes loading.

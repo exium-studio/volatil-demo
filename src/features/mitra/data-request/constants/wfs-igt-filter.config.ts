@@ -12,7 +12,7 @@ export type WfsIgtFilterField = {
   options?: WfsIgtFilterOption[];
 };
 
-export const WFS_IGT_FILTER_FIELDS: WfsIgtFilterField[] = [
+export const WFS_IGT_FILTER_FIELDS_LIST: WfsIgtFilterField[] = [
   {
     key: "statbid",
     label: "Basis",

@@ -9,8 +9,8 @@ import {
   toPolygonFeature,
 } from "@/design-system/components/map/utils/geometry";
 import {
-  DRAW_CLOSE_HIT_RADIUS_PX,
-  MAP_LAYERS_READY_EVENT,
+  MAP_CONFIG,
+  MAP_EVENTS_MAP,
 } from "@/design-system/components/map/constants/map.config";
 
 const DRAW_SOURCE_ID = "map-draw-source";
@@ -127,7 +127,13 @@ export const useMapDraw = (
         const firstPx = map.project([first.lng, first.lat]);
         const clickPx = map.project([clickPoint.lng, clickPoint.lat]);
 
-        if (isNearFirstPoint(clickPx, firstPx, DRAW_CLOSE_HIT_RADIUS_PX)) {
+        if (
+          isNearFirstPoint(
+            clickPx,
+            firstPx,
+            MAP_CONFIG.draw.closeHitRadiusPx,
+          )
+        ) {
           finalize();
           return;
         }
@@ -212,21 +218,18 @@ export const useMapDraw = (
     return true;
   }, [map]);
 
-  // Set up the preview source/layers once per map instance.
-  // Listens to MAP_LAYERS_READY_EVENT so draw layers are always added AFTER
-  // config-driven layers (wms-raster, wfs-*), guaranteeing top-most ordering.
+  // Sync draw layers setup with map-layers-ready event
   useEffect(() => {
     if (!map) return;
 
     const onLayersReady = () => {
-      const isReady = ensureLayersExist();
-      if (!isReady) return;
-
-      const source = map.getSource(DRAW_SOURCE_ID) as
-        | maplibregl.GeoJSONSource
-        | undefined;
-      if (source) {
-        source.setData(
+      // Re-initialize layers whenever the map layer stack is ready
+      ensureLayersExist();
+      if (pointsRef.current.length > 0) {
+        const source = map.getSource(
+          DRAW_SOURCE_ID,
+        ) as maplibregl.GeoJSONSource | null;
+        source?.setData(
           buildSourceData(pointsRef.current, isDrawingRef.current),
         );
       }
@@ -235,10 +238,10 @@ export const useMapDraw = (
     if (map.isStyleLoaded()) {
       onLayersReady();
     }
-    map.on(MAP_LAYERS_READY_EVENT as string, onLayersReady);
+    map.on(MAP_EVENTS_MAP.layersReady as string, onLayersReady);
 
     return () => {
-      map.off(MAP_LAYERS_READY_EVENT as string, onLayersReady);
+      map.off(MAP_EVENTS_MAP.layersReady as string, onLayersReady);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(map as any).style) return;
       [DRAW_VERTEX_LAYER_ID, DRAW_LINE_LAYER_ID, DRAW_FILL_LAYER_ID].forEach(

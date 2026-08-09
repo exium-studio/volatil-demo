@@ -16,7 +16,7 @@ import {
 } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { SettingsSearchButton } from "@/features/settings/components/settings.search";
-import { SETTINGS_PAGES } from "@/features/settings/constants/settings.pages";
+import { SETTINGS_PAGES_MAP } from "@/features/settings/constants/settings.pages";
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
@@ -167,7 +167,7 @@ export const SettingsActivePageBody = (props: StackProps) => {
 
   // Derived Values
   const ActiveSettingPageContent = activeSettingNavKey
-    ? SETTINGS_PAGES[activeSettingNavKey]
+    ? SETTINGS_PAGES_MAP[activeSettingNavKey]
     : null;
 
   // Handle key changes

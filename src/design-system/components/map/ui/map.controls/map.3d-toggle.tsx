@@ -2,7 +2,7 @@
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import { MAP_STYLE_READY_EVENT } from "@/design-system/components/map/constants/map.config";
+import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
@@ -19,23 +19,75 @@ export const Map3DToggle = (props: StackProps) => {
   // Map Instance
   const map = useMapInstanceStore((state) => state.map);
 
-  // Sync building-3d layer visibility on map style load or ready
   const syncBuildingLayer = useCallback(() => {
     if (!map) return;
 
-    if (map.getLayer("building-3d")) {
-      map.setLayoutProperty(
-        "building-3d",
-        "visibility",
-        is3D ? "visible" : "none",
-      );
+    // Remove layer and source first
+    if (map.getLayer("3d-buildings")) {
+      map.removeLayer("3d-buildings");
     }
 
-    if (map.getLayer("building")) {
-      map.setLayoutProperty(
-        "building",
-        "visibility",
-        is3D ? "none" : "visible",
+    if (is3D) {
+      const layers = map.getStyle()?.layers;
+      let labelLayerId: string | undefined;
+
+      if (layers) {
+        for (let i = 0; i < layers.length; i++) {
+          if (
+            layers[i].type === "symbol" &&
+            (layers[i].layout as Record<string, unknown> | undefined)?.[
+              "text-field"
+            ]
+          ) {
+            labelLayerId = layers[i].id;
+            break;
+          }
+        }
+      }
+
+      map.addLayer(
+        {
+          id: "3d-buildings",
+          source: "openmaptiles",
+          "source-layer": "building",
+          type: "fill-extrusion",
+          minzoom: 13,
+          paint: {
+            "fill-extrusion-color": [
+              "interpolate",
+              ["linear"],
+              ["get", "render_height"],
+              0,
+              "#e0e0e0",
+              20,
+              "#c0c0c0",
+              50,
+              "#a0a0a0",
+              100,
+              "#808080",
+            ],
+            "fill-extrusion-height": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              13,
+              0,
+              14.5,
+              ["get", "render_height"],
+            ],
+            "fill-extrusion-base": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              13,
+              0,
+              14.5,
+              ["get", "render_min_height"],
+            ],
+            "fill-extrusion-opacity": 0.8,
+          },
+        },
+        labelLayerId,
       );
     }
   }, [map, is3D]);
@@ -46,11 +98,11 @@ export const Map3DToggle = (props: StackProps) => {
     syncBuildingLayer();
 
     map.on("style.load", syncBuildingLayer);
-    map.on(MAP_STYLE_READY_EVENT, syncBuildingLayer);
+    map.on(MAP_EVENTS_MAP.styleReady, syncBuildingLayer);
 
     return () => {
       map.off("style.load", syncBuildingLayer);
-      map.off(MAP_STYLE_READY_EVENT, syncBuildingLayer);
+      map.off(MAP_EVENTS_MAP.styleReady, syncBuildingLayer);
     };
   }, [map, syncBuildingLayer]);
 

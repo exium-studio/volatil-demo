@@ -1,6 +1,6 @@
 // src/design-system/constants/colors.ts
 
-export const COLOR_PALETTES = [
+export const COLOR_PALETTES_LIST = [
   { palette: "neutral", label: "Neutral", primaryHex: "#717171" },
   { palette: "grey", label: "Grey", primaryHex: "#717171" },
 
@@ -44,7 +44,7 @@ export const COLOR_PALETTES = [
   { palette: "pink", label: "Pink", primaryHex: "#ec4899" },
 ];
 
-export const COLORS: string[] = [
+export const COLORS_LIST: string[] = [
   "#63B3ED",
   "#3182CE",
   "#5A67D8",
@@ -60,7 +60,7 @@ export const COLORS: string[] = [
   "#E53E3E",
 ];
 
-export const LEGEND_COLOR_OPTIONS = [
+export const LEGEND_COLOR_OPTIONS_LIST = [
   {
     label: "Set2",
     colors: [

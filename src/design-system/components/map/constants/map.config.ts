@@ -8,34 +8,39 @@ import type {
 } from "@/design-system/components/map/types/map.type";
 
 // ---------------------------------------------------------------------------
-// Map defaults
+// Grouped Module Setting (_CONFIG)
 // ---------------------------------------------------------------------------
 
-/** Monumen Nasional (Monas), Jakarta — default map center and zoom level on first load. */
-export const DEFAULT_MAP_CENTER: [number, number] = [106.8272, -6.1754];
-export const DEFAULT_MAP_ZOOM = 16;
+export const MAP_CONFIG = {
+  viewport: {
+    center: [106.8272, -6.1754] as [number, number],
+    zoom: 16,
+  },
+  basemap: {
+    styleUrl: "https://tiles.openfreemap.org/styles/liberty",
+  },
+  raster: {
+    tileSize: 256,
+  },
+  draw: {
+    closeHitRadiusPx: 12,
+  },
+} as const;
 
 // ---------------------------------------------------------------------------
-// Basemap
+// Event Names Dictionary (_EVENTS_MAP)
 // ---------------------------------------------------------------------------
 
-export const MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
+export const MAP_EVENTS_MAP = {
+  styleReady: "map-style-ready",
+  layersReady: "map-layers-ready",
+} as const;
 
 // ---------------------------------------------------------------------------
-// Custom events
+// Map Server Endpoints List (_LIST)
 // ---------------------------------------------------------------------------
 
-/** Custom event fired by BaseMap after basemap style + globe + paint overrides are settled. */
-export const MAP_STYLE_READY_EVENT = "map-style-ready";
-
-/** Custom event fired by useMapLayers after all config-driven layers have been added. */
-export const MAP_LAYERS_READY_EVENT = "map-layers-ready";
-
-// ---------------------------------------------------------------------------
-// Map Server Endpoints (Scalable Array Config)
-// ---------------------------------------------------------------------------
-
-export const MAP_SERVER_ENDPOINTS: MapServerEndpoint[] = [
+export const MAP_SERVER_ENDPOINTS_LIST: MapServerEndpoint[] = [
   {
     id: "igt-geoserver",
     name: "GeoServer IGT Workspace",
@@ -58,20 +63,16 @@ export const MAP_SERVER_ENDPOINTS: MapServerEndpoint[] = [
   },
 ];
 
-export const DEFAULT_MAP_SERVER_ENDPOINT = MAP_SERVER_ENDPOINTS[0];
+export const DEFAULT_MAP_SERVER_ENDPOINT = MAP_SERVER_ENDPOINTS_LIST[0];
 
 // ---------------------------------------------------------------------------
-// WMS Defaults (Legacy compatibility)
+// WMS & WFS Defaults (Legacy compatibility)
 // ---------------------------------------------------------------------------
 
 export const WMS_BASE_URL = DEFAULT_MAP_SERVER_ENDPOINT.wmsUrl;
 export const WMS_VERSION = DEFAULT_MAP_SERVER_ENDPOINT.wmsVersion ?? "1.1.1";
 export const WMS_SRS = "EPSG:3857";
 export const WMS_LAYER_NAME = "igt:CONTOH_BIDANG_TANAH";
-
-// ---------------------------------------------------------------------------
-// WFS Defaults (Legacy compatibility)
-// ---------------------------------------------------------------------------
 
 export const WFS_BASE_URL = DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl;
 export const WFS_VERSION = DEFAULT_MAP_SERVER_ENDPOINT.wfsVersion ?? "1.0.0";
@@ -81,10 +82,10 @@ export const WFS_SRS_NAME = DEFAULT_MAP_SERVER_ENDPOINT.srsName ?? "EPSG:4326";
 export const WFS_LAYER_NAME = "igt:CONTOH_BIDANG_TANAH";
 
 // ---------------------------------------------------------------------------
-// Default Map Layers Array (Scalable Preset Array)
+// Default Map Layers List (_LIST)
 // ---------------------------------------------------------------------------
 
-export const DEFAULT_MAP_LAYERS: MapLayerConfig[] = [
+export const DEFAULT_MAP_LAYERS_LIST: MapLayerConfig[] = [
   {
     id: "igt-bidang-tanah-wms-raster",
     type: "wms-raster",
@@ -118,7 +119,7 @@ export const DEFAULT_MAP_LAYERS: MapLayerConfig[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Layer render type map
+// Layer Render Type Map (_MAP)
 // ---------------------------------------------------------------------------
 
 /** Maps our semantic WFS layer type to the actual MapLibre render layer type. */
@@ -131,12 +132,3 @@ export const WFS_LAYER_RENDER_TYPE_MAP: Record<
   "wfs-circle": "circle",
   "wfs-symbol": "symbol",
 };
-
-// ---------------------------------------------------------------------------
-// Misc
-// ---------------------------------------------------------------------------
-
-export const DEFAULT_RASTER_TILE_SIZE = 256;
-
-/** Pixel radius used to detect a click near the first vertex, to close a polygon. */
-export const DRAW_CLOSE_HIT_RADIUS_PX = 12;

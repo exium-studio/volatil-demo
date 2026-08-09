@@ -4,7 +4,7 @@ import type {
   BasemapOption,
   BasemapKey,
 } from "@/design-system/components/map/types/map.basemap-select.type";
-import { IMAGES_PATH } from "@/shared/constants/paths";
+import { PATH_CONFIG } from "@/shared/constants/paths";
 import type maplibregl from "maplibre-gl";
 
 export const OPENFREEMAP_LIBERTY_STYLE_URL =
@@ -98,7 +98,7 @@ const TOPO_STYLE: maplibregl.StyleSpecification = {
 
 export const MAP_BASEMAP_MAP = {
   "plain-light": {
-    thumbnail: `${IMAGES_PATH}/base_map_styles/plain_light.png`,
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/plain_light.png`,
     label: "Plain Light",
     description: "Gaya terang polos 3D berbasis Liberty",
     attributions: [
@@ -113,7 +113,7 @@ export const MAP_BASEMAP_MAP = {
   },
 
   "plain-dark": {
-    thumbnail: `${IMAGES_PATH}/base_map_styles/plain_dark.png`,
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/plain_dark.png`,
     label: "Plain Dark",
     description: "Gaya gelap polos 3D berbasis Liberty",
     attributions: [
@@ -128,7 +128,7 @@ export const MAP_BASEMAP_MAP = {
   },
 
   "plain-adaptive": {
-    thumbnail: `${IMAGES_PATH}/base_map_styles/plain_adaptive.png`,
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/plain_adaptive.png`,
     label: "Plain Adaptive",
     description: "Polos adaptif 3D mengikuti tema aplikasi (Terang/Gelap)",
     attributions: [
@@ -143,7 +143,7 @@ export const MAP_BASEMAP_MAP = {
   },
 
   color: {
-    thumbnail: `${IMAGES_PATH}/base_map_styles/colorful.png`,
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/colorful.png`,
     label: "Color",
     description: "Gaya peta penuh warna OpenFreeMap Liberty",
     attributions: [
@@ -158,7 +158,7 @@ export const MAP_BASEMAP_MAP = {
   },
 
   satellite: {
-    thumbnail: `${IMAGES_PATH}/base_map_styles/satellite.png`,
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/satellite.png`,
     label: "Satellite",
     description: "Citra satelit Esri World Imagery",
     attributions: [
@@ -173,7 +173,7 @@ export const MAP_BASEMAP_MAP = {
   },
 
   topo: {
-    thumbnail: `${IMAGES_PATH}/base_map_styles/topo.png`,
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/topo.png`,
     label: "Topo",
     description: "Peta topografi 3D dengan kontur ketinggian",
     attributions: [
@@ -189,7 +189,9 @@ export const MAP_BASEMAP_MAP = {
   },
 } as const satisfies Record<BasemapKey, BasemapOption>;
 
-export const MAP_BASEMAP_OPTIONS = Object.keys(MAP_BASEMAP_MAP) as BasemapKey[];
+export const MAP_BASEMAP_OPTIONS_LIST = Object.keys(
+  MAP_BASEMAP_MAP,
+) as BasemapKey[];
 
 // -----------------------------------------------------------------
 
