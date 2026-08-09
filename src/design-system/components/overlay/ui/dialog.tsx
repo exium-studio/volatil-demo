@@ -24,7 +24,10 @@ import {
   unregisterFullscreenAnimator,
 } from "@/design-system/components/overlay/utils/fullscreen-animation-registry";
 import { Portal } from "@/design-system/components/utilities/ui/portal";
-import { MODAL_BASE_ZINDEX } from "@/design-system/constants/styles";
+import {
+  DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION,
+  MODAL_BASE_ZINDEX,
+} from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { back } from "@/shared/utils/client/navigation";
@@ -74,7 +77,7 @@ const DialogRoot = (props: DialogRootProps) => {
     opened = false,
     open,
     close,
-    clickOriginAnimation = true,
+    clickOriginAnimation = DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION,
     size = "xs",
     ...restProps
   } = props;

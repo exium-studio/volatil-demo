@@ -17,6 +17,7 @@ import type {
 } from "@/design-system/components/overlay/types/modal.type";
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Drawer } from "@/design-system/components/overlay/ui/drawer";
+import { DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { type DrawerRootProps } from "@chakra-ui/react";
 import {
@@ -61,7 +62,7 @@ const ModalRoot = (props: ModalRootProps) => {
     open,
     close,
     size = "xs",
-    dialogClickOriginAnimation = true,
+    dialogClickOriginAnimation = DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION,
     drawerPlacement = "bottom",
     drawerSwipeToDismiss = true,
     ...restProps

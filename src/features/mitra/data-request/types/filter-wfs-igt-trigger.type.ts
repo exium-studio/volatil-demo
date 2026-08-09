@@ -4,8 +4,11 @@ import type React from "react";
 
 export type FilterWfsIgtTriggerProps = {
   children: React.ReactNode;
-  onApply: (filters: Record<string, string | undefined>) => void;
+  value?: Record<string, string | undefined>;
+  defaultValue?: Record<string, string | undefined>;
   defaultValues?: Record<string, string | undefined>;
+  onFilterChange?: (filters: Record<string, string | undefined>) => void;
+  onApply?: (filters: Record<string, string | undefined>) => void;
 };
 
 export type FocusSelectOption = {

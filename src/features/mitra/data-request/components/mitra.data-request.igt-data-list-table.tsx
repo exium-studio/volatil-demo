@@ -44,7 +44,7 @@ export const MitraIgtDataListTable = (props: MitraIgtDataListTableProps) => {
           columns: [
             {
               value: item.id,
-              td: <P fontSize={"sm"}>{item.id}</P>,
+              td: <P>{item.id}</P>,
               align: "start" as const,
             },
             {

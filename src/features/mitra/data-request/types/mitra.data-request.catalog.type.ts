@@ -3,3 +3,7 @@
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 
 export type MitraDataRequestCatalogTabsContentProps = TabsContentProps;
+
+export type CatalogDataListProps = {
+  activeFilters?: Record<string, string | undefined>;
+};

@@ -36,8 +36,10 @@ export const PADDING_MD = "16px";
 export const PADDING_LG = "22px";
 export const PADDING_XL = "28px";
 
-// Effect
+// Effect & Animations
+export const DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION = false;
 export const BACKDROP_FILTER_BLUR = "blur(2px)";
+export const MODAL_ANIMATION_DURATION_MS = 300;
 
 // Data Table
 export const TABLE_ACTIONS_CELL_W = "56px";

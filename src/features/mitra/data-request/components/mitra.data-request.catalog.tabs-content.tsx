@@ -27,16 +27,12 @@ import {
   useAddToCartSelected,
   useIgtCatalog,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import type { CatalogDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 
 export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
-  // States
-  const [activeFilters, setActiveFilters] = useState<
-    Record<string, string | undefined>
-  >({});
-
   return (
     <Tabs.Content
       display={"flex"}
@@ -62,10 +58,7 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
           <HStack gap={SPACING_SM}>
             <SearchInput placeholder={t["action.search"]()} />
 
-            <FilterWfsIgtTrigger
-              defaultValues={activeFilters}
-              onApply={(filters) => setActiveFilters(filters)}
-            >
+            <FilterWfsIgtTrigger>
               <IconButton variant={"outline"}>
                 <AppIcon icon={SlidersHorizontalIcon} />
               </IconButton>
@@ -76,13 +69,9 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <MitraDataRequestCatalogDataList activeFilters={activeFilters} />
+      <MitraDataRequestCatalogDataList />
     </Tabs.Content>
   );
-};
-
-type CatalogDataListProps = {
-  activeFilters?: Record<string, string | undefined>;
 };
 
 const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {

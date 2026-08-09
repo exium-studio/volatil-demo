@@ -10,6 +10,7 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
+  MODAL_ANIMATION_DURATION_MS,
   PADDING_MD,
   PADDING_SM,
   SPACING_MD,
@@ -34,7 +35,25 @@ import { useEffect, useMemo, useState } from "react";
 
 export const FilterWfsIgtTrigger = (props: FilterWfsIgtTriggerProps) => {
   // Props
-  const { children, onApply, defaultValues = {} } = props;
+  const {
+    children,
+    value: controlledValue,
+    defaultValue,
+    defaultValues,
+    onFilterChange,
+    onApply,
+  } = props;
+
+  // Uncontrolled applied state (internal)
+  const [internalAppliedFilters, setInternalAppliedFilters] = useState<
+    Record<string, string | undefined>
+  >(defaultValue ?? defaultValues ?? {});
+
+  // Determine current applied filters (controlled vs uncontrolled)
+  const isControlled = controlledValue !== undefined;
+  const currentAppliedFilters = isControlled
+    ? controlledValue
+    : internalAppliedFilters;
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -47,27 +66,28 @@ export const FilterWfsIgtTrigger = (props: FilterWfsIgtTriggerProps) => {
   const { data: kabupatenData } = useFilterOptionsKabupaten();
   const { data: kecamatanData } = useFilterOptionsKecamatan();
 
-  // States
-  const [localFilters, setLocalFilters] =
-    useState<Record<string, string | undefined>>(defaultValues);
+  // Local draft state inside modal (editing before click "Terapkan Filter")
+  const [localDraftFilters, setLocalDraftFilters] = useState<
+    Record<string, string | undefined>
+  >(currentAppliedFilters);
 
-  // Synchronize local state with defaultValues when modal opens
+  // Synchronize local draft state with applied filters ONLY after modal animation finishes
   useEffect(() => {
     let isCancelled = false;
 
-    const syncDefaultValues = async () => {
-      await Promise.resolve();
-      if (!isCancelled && isOpen) {
-        setLocalFilters(defaultValues);
-      }
-    };
+    if (!isOpen) return;
 
-    void syncDefaultValues();
+    const timerId = setTimeout(() => {
+      if (!isCancelled) {
+        setLocalDraftFilters(currentAppliedFilters);
+      }
+    }, MODAL_ANIMATION_DURATION_MS);
 
     return () => {
       isCancelled = true;
+      clearTimeout(timerId);
     };
-  }, [isOpen, defaultValues]);
+  }, [isOpen, currentAppliedFilters]);
 
   // Derived Values — Map dynamic options per field key
   const optionsMap = useMemo<Record<string, FocusSelectOption[]>>(
@@ -83,18 +103,22 @@ export const FilterWfsIgtTrigger = (props: FilterWfsIgtTriggerProps) => {
 
   // Handlers
   const handleSelectChange = (key: string, value: string) => {
-    setLocalFilters((prev) => ({
+    setLocalDraftFilters((prev) => ({
       ...prev,
       [key]: value,
     }));
   };
 
   const handleReset = () => {
-    setLocalFilters({});
+    setLocalDraftFilters({});
   };
 
   const handleApply = () => {
-    onApply(localFilters);
+    if (!isControlled) {
+      setInternalAppliedFilters(localDraftFilters);
+    }
+    onFilterChange?.(localDraftFilters);
+    onApply?.(localDraftFilters);
     close();
   };
 
@@ -125,7 +149,7 @@ export const FilterWfsIgtTrigger = (props: FilterWfsIgtTriggerProps) => {
                 label={fieldConfig.label}
                 placeholder={fieldConfig.placeholder}
                 options={optionsMap[fieldConfig.key] ?? []}
-                value={localFilters[fieldConfig.key]}
+                value={localDraftFilters[fieldConfig.key]}
                 onChange={(val) => handleSelectChange(fieldConfig.key, val)}
                 parentModalKey={modalKey}
               />
@@ -299,6 +323,7 @@ const FocusSelectField = (props: FocusSelectFieldProps) => {
                       >
                         {opt.label}
                       </P>
+
                       {isSelected && (
                         <AppIcon
                           icon={CheckIcon}
