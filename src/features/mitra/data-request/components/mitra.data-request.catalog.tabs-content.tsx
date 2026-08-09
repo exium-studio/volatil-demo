@@ -114,7 +114,7 @@ const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {
       position={"relative"}
     >
       {isLoading ? (
-        <Skeleton />
+        <Skeleton p={PADDING_MD} />
       ) : (
         <>
           <VStack overflowY={"auto"} w={"full"} position={"relative"}>
