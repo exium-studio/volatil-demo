@@ -6,6 +6,7 @@ import {
 } from "@/design-system/components/button/ui/button";
 import type { DataListBatchActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -27,7 +28,7 @@ import type {
   MitraCartTableProps,
 } from "@/features/cart/types/cart.type";
 import { t } from "@/shared/libs/i18n";
-import { MapPinIcon, SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
+import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
 import { useMemo } from "react";
 
 const MAX_VISIBLE_THEMES = 2;
@@ -42,7 +43,6 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
     onSelectedItemChange,
     onClearCart,
     onRemoveItems,
-    onOpenBboxModal,
     searchValue = "",
     onSearchChange,
     isLoading = false,
@@ -192,14 +192,17 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
           </HStack>
 
           <HStack gap={SPACING_SM}>
-            <Button onClick={onOpenBboxModal}>
-              <AppIcon icon={MapPinIcon} />
-              {"Cek Lokasi Area"}
-            </Button>
-
-            <IconButton colorPalette={"red"} onClick={onClearCart}>
-              <AppIcon icon={Trash2Icon} />
-            </IconButton>
+            <ConfirmationTrigger
+              title={"Kosongkan Keranjang"}
+              description={"Apakah Anda yakin ingin mengosongkan seluruh item di keranjang?"}
+              confirmLabel={"Kosongkan"}
+              onConfirm={onClearCart}
+              modalKey={"clearCartConfirmationModal"}
+            >
+              <IconButton colorPalette={"red"}>
+                <AppIcon icon={Trash2Icon} />
+              </IconButton>
+            </ConfirmationTrigger>
           </HStack>
         </HStack>
       </VStack>

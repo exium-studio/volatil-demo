@@ -45,12 +45,6 @@ export type CartResponse = PaginatedResponse<CartItem> & {
   config: CartConfig;
 };
 
-export type CartBboxData = {
-  bbox: [number, number, number, number];
-  areaName?: string;
-  totalPolygonCount?: number;
-};
-
 export type AddToCartPayload = {
   id: string;
   basis: CartItemBasis;
@@ -72,7 +66,6 @@ export type MitraCartTableProps = StackProps & {
   }) => void;
   onClearCart?: () => void;
   onRemoveItems?: (itemIds: string[]) => void;
-  onOpenBboxModal?: () => void;
   searchValue?: string;
   onSearchChange?: (val: string) => void;
   isLoading?: boolean;
@@ -82,11 +75,4 @@ export type MitraCartTableProps = StackProps & {
 export type MitraCartFlexContainerProps = {
   isSmContainer: boolean;
   children: ReactNode;
-};
-
-export type MitraCartLocationModalProps = {
-  modalKey: string;
-  isOpen: boolean;
-  open?: () => void;
-  close?: () => void;
 };

@@ -562,9 +562,9 @@ export const DatePickerTrigger = memo(function DatePickerTrigger(
       <Modal.Content>
         <Modal.Header>
           <VStack gap={1} mx={"auto"}>
-            <P fontWeight={"semibold"} textAlign={"center"}>
+            <Modal.Title fontWeight={"semibold"}>
               Select Date
-            </P>
+            </Modal.Title>
 
             {/* TODO: make the subtitle dynamic based on props */}
             {datePickerSubtitle && (

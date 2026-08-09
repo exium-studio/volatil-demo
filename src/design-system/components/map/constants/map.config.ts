@@ -13,7 +13,8 @@ import type {
 
 export const MAP_CONFIG = {
   viewport: {
-    center: [106.8272, -6.1754] as [number, number],
+    // center: [106.8272, -6.1754] as [number, number], // Monumen Nasional (Monas), Jakarta
+    center: [115.1597, -8.6626] as [number, number], // Kerobokan Kelod, Kuta Utara, Badung, Bali (igt:CONTOH_BIDANG_TANAH)
     zoom: 16,
   },
   basemap: {

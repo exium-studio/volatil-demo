@@ -13,10 +13,12 @@ import type {
   ModalFooterProps,
   ModalHeaderProps,
   ModalRootProps,
+  ModalTitleProps,
   ModalTriggerProps,
 } from "@/design-system/components/overlay/types/modal.type";
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Drawer } from "@/design-system/components/overlay/ui/drawer";
+import { P } from "@/design-system/components/typography/ui/p";
 import { DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { type DrawerRootProps } from "@chakra-ui/react";
@@ -221,6 +223,13 @@ const ModalFooter = (props: ModalFooterProps) => {
   return <Dialog.Footer {...props} />;
 };
 
+const ModalTitle = (props: ModalTitleProps) => {
+  // Props
+  const { ...restProps } = props;
+
+  return <P fontWeight={"medium"} textAlign={"center"} {...restProps} />;
+};
+
 export const Modal = {
   Trigger: ModalTrigger,
   Root: ModalRoot,
@@ -230,6 +239,7 @@ export const Modal = {
   CloseTrigger: ModalCloseTrigger,
   CloseButton: ModalCloseButton,
   Header: ModalHeader,
+  Title: ModalTitle,
   Body: ModalBody,
   Footer: ModalFooter,
 };

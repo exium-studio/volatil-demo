@@ -8,12 +8,10 @@ import {
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { PADDING_SM } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
-import { MitraCartLocationModal } from "@/features/cart/components/mitra.cart.location-modal";
 import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
 import {
   useCartQuery,
@@ -39,11 +37,6 @@ const MitraCartContent = () => {
   // States
   const [searchValue, setSearchValue] = useState("");
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
-
-  // Hooks (Modal)
-  const locationModal = usePopModal({
-    modalKey: "mitraCartLocationModal",
-  });
 
   // Hooks (Queries & Mutations)
   const { cartData, isLoading, isFetching } = useCartQuery(searchValue);
@@ -98,7 +91,6 @@ const MitraCartContent = () => {
             }
             onClearCart={() => clearCartMutation.mutate()}
             onRemoveItems={(ids) => removeItemsMutation.mutate(ids)}
-            onOpenBboxModal={locationModal.open}
             searchValue={searchValue}
             onSearchChange={setSearchValue}
             isLoading={isLoading}
@@ -132,13 +124,6 @@ const MitraCartContent = () => {
           />
         </Container.Body>
       </HStack>
-
-      <MitraCartLocationModal
-        modalKey={locationModal.modalKey}
-        isOpen={locationModal.isOpen}
-        open={locationModal.open}
-        close={locationModal.close}
-      />
     </PanelContentContainer>
   );
 };

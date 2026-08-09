@@ -781,14 +781,9 @@ const OModal = () => {
 
       <Modal.Content>
         <Modal.Header>
-          <P
-            w={"full"}
-            fontSize={"xl"}
-            fontWeight={"semibold"}
-            textAlign={"center"}
-          >
+          <Modal.Title w={"full"} fontSize={"xl"} fontWeight={"semibold"}>
             Header
-          </P>
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>

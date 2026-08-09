@@ -5,9 +5,7 @@ import {
   IconButton,
 } from "@/design-system/components/button/ui/button";
 import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import {
@@ -16,6 +14,7 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import type { MitraDataRequestAddToCartButtonsProps } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -25,18 +24,6 @@ import {
   ShoppingCartIcon,
 } from "lucide-react";
 import { useMemo } from "react";
-
-export type MitraDataRequestAddToCartButtonsProps = StackProps & {
-  selectedItems?: FormattedListItem[];
-  allItems?: MitraDataRequestIgtDataItem[] | unknown[];
-  totalBidangCount?: number;
-  totalKawasanCount?: number;
-  totalCount?: number;
-  onAddAllBidangClick?: () => void;
-  onAddAllKawasanClick?: () => void;
-  onAddAllBothClick?: () => void;
-  onAddSelectedClick?: () => void;
-};
 
 export const MitraDataRequestAddToCartButtons = (
   props: MitraDataRequestAddToCartButtonsProps,

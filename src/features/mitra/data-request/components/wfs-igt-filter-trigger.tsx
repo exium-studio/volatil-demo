@@ -5,7 +5,6 @@ import { FocusSelectInput } from "@/design-system/components/input/ui/focus-sele
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { P } from "@/design-system/components/typography/ui/p";
 import {
   MODAL_ANIMATION_DURATION_MS,
   SPACING_MD,
@@ -125,9 +124,9 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
 
       <Modal.Content>
         <Modal.Header>
-          <P textAlign={"center"} fontWeight={"semibold"}>
+          <Modal.Title fontWeight={"semibold"}>
             {"Filter Data IGT-PR"}
-          </P>
+          </Modal.Title>
           <Modal.CloseButton />
         </Modal.Header>
 

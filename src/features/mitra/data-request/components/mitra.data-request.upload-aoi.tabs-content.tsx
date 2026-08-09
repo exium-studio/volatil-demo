@@ -46,7 +46,10 @@ import {
   useAddToCartAll,
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-import type { UploadAoiFileListTriggerProps } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
+import type {
+  UploadAoiFileListTriggerProps,
+  UploadAoiWfsDataListProps,
+} from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
@@ -326,7 +329,10 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
 
       <Modal.Content>
         <Modal.Header>
-          <P textAlign={"center"}>{"File AOI Anda"}</P>
+          <Modal.Title fontSize={"lg"}>
+            {"File AOI Anda"}
+          </Modal.Title>
+
           <Modal.CloseButton />
         </Modal.Header>
 
@@ -370,10 +376,6 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
       </Modal.Content>
     </Modal.Root>
   );
-};
-
-type UploadAoiWfsDataListProps = {
-  wfsFeatures: GeoJSON.Feature[];
 };
 
 const DataList = (props: UploadAoiWfsDataListProps) => {

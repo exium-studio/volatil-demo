@@ -37,9 +37,10 @@ const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
 };
 
 /**
- * Returns the layer ID to insert custom layers before:
- * 1. The first draw layer (if drawing active), so custom layers are below draw geometries.
- * 2. The first symbol/label layer in the basemap style, so custom layers render above basemap landuse/buildings.
+ * Returns the layer ID to insert custom data layers (WMS/WFS) before:
+ * 1. The first draw layer (if draw layer exists), so WMS/WFS layers render below draw/AOI geometries.
+ * 2. The first symbol/label layer that appears AFTER basemap buildings (both 2D "building" and 3D "building-3d"),
+ *    so WMS/WFS layers strictly render ABOVE all basemap layers (landuse, water, roads, 2D/3D buildings).
  */
 const getCustomLayerBeforeId = (map: maplibregl.Map): string | undefined => {
   if (map.getLayer(DRAW_FILL_LAYER_ID)) {
@@ -47,6 +48,18 @@ const getCustomLayerBeforeId = (map: maplibregl.Map): string | undefined => {
   }
   const styleLayers = map.getStyle()?.layers;
   if (styleLayers) {
+    const building3dIdx = styleLayers.findIndex((l) => l.id === "building-3d");
+    const buildingIdx = styleLayers.findIndex((l) => l.id === "building");
+    const maxBuildingIdx = Math.max(building3dIdx, buildingIdx);
+
+    if (maxBuildingIdx !== -1) {
+      for (let i = maxBuildingIdx + 1; i < styleLayers.length; i++) {
+        if (styleLayers[i].type === "symbol") {
+          return styleLayers[i].id;
+        }
+      }
+    }
+
     const firstSymbol = styleLayers.find((l) => l.type === "symbol");
     if (firstSymbol) return firstSymbol.id;
   }

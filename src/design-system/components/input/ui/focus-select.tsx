@@ -159,11 +159,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
       >
         <Modal.Content>
           <Modal.Header>
-            <P textAlign={"center"} fontWeight={"semibold"}>
+            <Modal.Title fontWeight={"semibold"}>
               {label
                 ? `${t["action.select"]()} ${label}`
                 : t["common.select_option"]()}
-            </P>
+            </Modal.Title>
             <Modal.CloseButton />
           </Modal.Header>
 

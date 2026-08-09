@@ -3,11 +3,10 @@
 import {
   checkout,
   clearCart,
-  getCartBbox,
   getCartData,
   removeFromCart,
 } from "@/features/cart/services/cart.api";
-import type { CartBboxData, CartResponse } from "@/features/cart/types/cart.type";
+import type { CartResponse } from "@/features/cart/types/cart.type";
 import { dummyMitraCartData } from "@/shared/constants/dummy-data/dummy-cart-data";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,13 +21,6 @@ export const useCartQuery = (searchValue?: string) => {
     ...query,
     cartData: query.data ?? dummyMitraCartData,
   };
-};
-
-export const useCartBboxQuery = () => {
-  return useQuery<CartBboxData>({
-    queryKey: queryKeys.mitra.cart.bbox(),
-    queryFn: ({ signal }) => getCartBbox(signal),
-  });
 };
 
 export const useCheckoutCart = () => {
