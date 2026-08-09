@@ -295,7 +295,7 @@ const AddFileButton = (props: ButtonProps) => {
     >
       <Button primary pl={3} {...props}>
         <AppIcon icon={PlusIcon} />
-        {"Tambah File"}
+        {"Tambah file .shp"}
       </Button>
     </FileInputTrigger>
   );
