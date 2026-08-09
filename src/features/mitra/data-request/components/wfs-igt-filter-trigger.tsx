@@ -118,7 +118,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
       opened={isOpen}
       open={open}
       close={close}
-      size={"md"}
+      size={"sm"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 

@@ -400,6 +400,7 @@ export const DateInput = memo(
           ref={ref}
           value={committedValue || ""}
         />
+
         <HStack
           justify={"space-between"}
           gap={1}

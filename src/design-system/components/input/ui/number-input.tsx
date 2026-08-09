@@ -63,6 +63,7 @@ export const NumberInput = (props: NumberInputProps) => {
       />
       <ChakraNumberInput.Input
         placeholder={placeholder}
+        fontSize={"md"}
         rounded={theme.radii.component}
       />
       <ChakraNumberInput.Control>
@@ -133,6 +134,7 @@ export const SteppedNumberInput = (props: SteppedNumberInputProps) => {
           minW={"calc(24px + 3ch)"}
           rounded={theme.radii.component}
           textAlign={"center"}
+          fontSize={"md"}
         />
 
         <ChakraNumberInput.IncrementTrigger asChild>

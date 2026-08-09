@@ -1,9 +1,6 @@
 // src/design-system/components/input/ui/focus-select.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -106,13 +103,13 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     <Button
       variant={variant}
       size={size}
-      w={w}
-      justifyContent={"space-between"}
       alignItems={"center"}
+      justifyContent={"space-between"}
+      w={w}
+      px={3}
       disabled={disabled}
-      onClick={disabled ? undefined : open}
       fontWeight={"normal"}
-      px={PADDING_MD}
+      onClick={disabled ? undefined : open}
       {...restProps}
     >
       <HStack gap={SPACING_SM} flex={1} minW={0} justify={"start"}>
@@ -125,17 +122,18 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
       </HStack>
 
       <HStack gap={SPACING_SM} align={"center"}>
-        {clearable && currentValue && !disabled && (
-          <IconButton
-            variant={"ghost"}
-            size={"xs"}
-            aria-label={t["action.clear"]()}
+        {clearable && currentValue && !disabled ? (
+          <AppIcon
+            icon={XIcon}
+            size={"sm"}
+            strokeWidth={2}
+            cursor={"pointer"}
+            _hover={{ color: "fg.default" }}
             onClick={handleClear}
-          >
-            <AppIcon icon={XIcon} size={"sm"} />
-          </IconButton>
+          />
+        ) : (
+          <AppIcon icon={ChevronDownIcon} mr={"-2px"} />
         )}
-        <AppIcon icon={ChevronDownIcon} size={"sm"} color={"fg.subtle"} />
       </HStack>
     </Button>
   );
@@ -155,7 +153,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         opened={isOpen}
         open={open}
         close={close}
-        size={"sm"}
       >
         <Modal.Content>
           <Modal.Header>
@@ -177,11 +174,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               />
             </VStack>
 
-            <VScrollContainer
-              w={"full"}
-              // h={"280px"}
-              p={PADDING_MD}
-            >
+            <VScrollContainer w={"full"} p={PADDING_MD} pt={SPACING_SM}>
               <VStack gap={1} w={"full"}>
                 {filteredOptions.length === 0 && (
                   <P textAlign={"center"} color={"fg.subtle"} py={PADDING_MD}>
@@ -211,6 +204,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                           <P fontWeight={isSelected ? "semibold" : "normal"}>
                             {opt.label}
                           </P>
+
                           {opt.description && (
                             <P fontSize={"xs"} color={"fg.subtle"}>
                               {opt.description}
@@ -222,7 +216,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                       {isSelected && (
                         <AppIcon
                           icon={CheckIcon}
-                          size={"sm"}
                           color={`${theme.colorPalette}.solid`}
                         />
                       )}
