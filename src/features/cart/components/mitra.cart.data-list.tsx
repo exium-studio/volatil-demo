@@ -216,28 +216,26 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton />
+          <Skeleton p={PADDING_MD} />
         ) : (
-          <>
-            <Box w={"full"} position={"relative"} overflowY={"auto"}>
-              <DataListTable.Root
-                headers={dataList.headers}
-                items={dataList.items}
-                batchActions={dataList.batchActions}
-                withNumbering={false}
-                canBatchSelect={true}
-                selectedItems={selectedItems}
-                onSelectedItemChange={onSelectedItemChange}
-                rounded={0}
-                shadow={"none"}
-              >
-                <DataListTable.Header />
-                <DataListTable.Body />
-              </DataListTable.Root>
+          <Box w={"full"} position={"relative"} overflowY={"auto"}>
+            <DataListTable.Root
+              headers={dataList.headers}
+              items={dataList.items}
+              batchActions={dataList.batchActions}
+              withNumbering={false}
+              canBatchSelect={true}
+              selectedItems={selectedItems}
+              onSelectedItemChange={onSelectedItemChange}
+              rounded={0}
+              shadow={"none"}
+            >
+              <DataListTable.Header />
+              <DataListTable.Body />
+            </DataListTable.Root>
 
-              <TopBarLoader isFetching={isFetching} />
-            </Box>
-          </>
+            <TopBarLoader isFetching={isFetching} />
+          </Box>
         )}
       </VStack>
     </VStack>

@@ -78,7 +78,7 @@ const MitraCartContent = () => {
       >
         {/* DataList Container */}
         <Container.Body
-          flex={isSmContainer ? undefined : 2}
+          flex={isSmContainer ? 1 : 2}
           minH={isSmContainer ? undefined : 0}
           overflowY={isSmContainer ? undefined : "auto"}
         >

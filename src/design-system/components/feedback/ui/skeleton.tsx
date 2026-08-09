@@ -7,6 +7,7 @@ import type {
   SkeletonProps,
   SkeletonTextProps,
 } from "@/design-system/components/feedback/types/skeleton.type";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import {
   Skeleton as ChakraSkeleton,
@@ -19,17 +20,18 @@ export const Skeleton = (props: SkeletonProps) => {
   const { theme } = useThemeStore();
 
   return (
-    <ChakraSkeleton
-      rounded={theme.radii.component}
-      variant={"shine"}
-      w={"full"}
-      h={"full"}
-      css={{
-        "--start-color": "transparent",
-        "--end-color": "colors.bg.subtle",
-      }}
-      {...props}
-    />
+    <Center w={"full"} h={"full"} bg={"bg.body"} {...props}>
+      <ChakraSkeleton
+        rounded={theme.radii.component}
+        variant={"shine"}
+        w={"full"}
+        h={"full"}
+        css={{
+          "--start-color": "transparent",
+          "--end-color": "colors.bg.subtle",
+        }}
+      />
+    </Center>
   );
 };
 
