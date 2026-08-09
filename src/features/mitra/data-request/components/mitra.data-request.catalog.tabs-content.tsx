@@ -6,13 +6,12 @@ import { DataListFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { Loader } from "@/design-system/components/feedback/ui/loader";
 import {
   PADDING_MD,
   PADDING_SM,
@@ -20,6 +19,7 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { FilterWfsIgtTrigger } from "@/features/mitra/data-request/components/filter-wfs-igt-trigger";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { MitraIgtDataListTable } from "@/features/mitra/data-request/components/mitra.data-request.igt-data-list-table";
 import {
@@ -27,12 +27,16 @@ import {
   useAddToCartSelected,
   useIgtCatalog,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 
 export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
+  // States
+  const [activeFilters, setActiveFilters] = useState<
+    Record<string, string | undefined>
+  >({});
+
   return (
     <Tabs.Content
       display={"flex"}
@@ -58,21 +62,33 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
           <HStack gap={SPACING_SM}>
             <SearchInput placeholder={t["action.search"]()} />
 
-            <IconButton variant={"outline"}>
-              <AppIcon icon={SlidersHorizontalIcon} />
-            </IconButton>
+            <FilterWfsIgtTrigger
+              defaultValues={activeFilters}
+              onApply={(filters) => setActiveFilters(filters)}
+            >
+              <IconButton variant={"outline"}>
+                <AppIcon icon={SlidersHorizontalIcon} />
+              </IconButton>
+            </FilterWfsIgtTrigger>
           </HStack>
         </HStack>
       </VStack>
 
       <Separator borderColor={"bg.canvas"} />
 
-      <MitraDataRequestCatalogDataList />
+      <MitraDataRequestCatalogDataList activeFilters={activeFilters} />
     </Tabs.Content>
   );
 };
 
-const MitraDataRequestCatalogDataList = () => {
+type CatalogDataListProps = {
+  activeFilters?: Record<string, string | undefined>;
+};
+
+const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {
+  // Props
+  const { activeFilters } = props;
+
   // Stores
   const { theme } = useThemeStore();
 
@@ -96,6 +112,7 @@ const MitraDataRequestCatalogDataList = () => {
   } = useIgtCatalog({
     page: dataListState.page,
     perPage: dataListState.perPage,
+    search: activeFilters?.search,
   });
 
   return (
@@ -137,19 +154,7 @@ const MitraDataRequestCatalogDataList = () => {
               roundedBottom={theme.radii.container}
             />
 
-            {isFetching && (
-              <Box
-                position={"absolute"}
-                inset={0}
-                bg={"bg.canvas/50"}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                zIndex={10}
-              >
-                <Loader size={"md"} />
-              </Box>
-            )}
+            <TopBarLoader isFetching={isFetching} />
           </VStack>
 
           <MitraDataRequestAddToCartButtons

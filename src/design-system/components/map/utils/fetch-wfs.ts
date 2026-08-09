@@ -50,4 +50,3 @@ export const fetchWfs = async ({
 
   return res.json() as Promise<GeoJSON.FeatureCollection>;
 };
-
