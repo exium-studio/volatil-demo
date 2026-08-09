@@ -94,29 +94,29 @@ export const DEFAULT_MAP_LAYERS_LIST: MapLayerConfig[] = [
     layers: WMS_LAYER_NAME,
     visible: true,
   },
-  {
-    id: "igt-bidang-tanah-wfs-fill",
-    type: "wfs-fill",
-    wfsUrl: DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl,
-    wfsTypeName: WFS_LAYER_NAME,
-    paint: {
-      "fill-color": "#f59e0b",
-      "fill-opacity": 0.15,
-    },
-    visible: true,
-  },
-  {
-    id: "igt-bidang-tanah-wfs-line",
-    type: "wfs-line",
-    wfsUrl: DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl,
-    wfsTypeName: WFS_LAYER_NAME,
-    paint: {
-      "line-color": "#f59e0b",
-      "line-width": 1,
-      "line-opacity": 0.8,
-    },
-    visible: true,
-  },
+  // {
+  //   id: "igt-bidang-tanah-wfs-fill",
+  //   type: "wfs-fill",
+  //   wfsUrl: DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl,
+  //   wfsTypeName: WFS_LAYER_NAME,
+  //   paint: {
+  //     "fill-color": "#f59e0b",
+  //     "fill-opacity": 0.15,
+  //   },
+  //   visible: true,
+  // },
+  // {
+  //   id: "igt-bidang-tanah-wfs-line",
+  //   type: "wfs-line",
+  //   wfsUrl: DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl,
+  //   wfsTypeName: WFS_LAYER_NAME,
+  //   paint: {
+  //     "line-color": "#f59e0b",
+  //     "line-width": 1,
+  //     "line-opacity": 0.8,
+  //   },
+  //   visible: true,
+  // },
 ];
 
 // ---------------------------------------------------------------------------
