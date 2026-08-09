@@ -1,3 +1,5 @@
+// src/features/cart/types/cart.type.ts
+
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type {

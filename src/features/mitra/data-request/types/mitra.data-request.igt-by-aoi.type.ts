@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type.ts
+
 import type { IgtThemeItem } from "@/shared/types/common-response.type";
 
 export type MitraDataRequestIgtBasis = "bidang" | "kawasan";

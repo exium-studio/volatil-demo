@@ -1,3 +1,5 @@
+// src/shared/constants/dummy-data/dummy-cart-data.ts
+
 import type { CartItem, CartResponse } from "@/features/cart/types/cart.type";
 
 export const dummyMitraCartItems: CartItem[] = [

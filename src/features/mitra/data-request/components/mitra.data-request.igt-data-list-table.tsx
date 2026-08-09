@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/components/mitra.data-request.igt-data-list-table.tsx
+
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

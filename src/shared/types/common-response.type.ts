@@ -1,4 +1,4 @@
-// src/shared/types/response.type.ts
+// src/shared/types/common-response.type.ts
 
 // Common
 export type ApiResponse<T> = {
