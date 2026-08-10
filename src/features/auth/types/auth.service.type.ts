@@ -3,7 +3,7 @@
 import type { Role } from "@/shared/types/auth.type";
 import type { ApiResponse, User } from "@/shared/types/common-response.type";
 
-export type LoginPayload = {
+export type SigninPayload = {
   email: string;
   password: string;
   role: Role;

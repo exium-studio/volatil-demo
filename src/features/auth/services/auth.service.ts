@@ -2,7 +2,7 @@
 
 import type {
   AuthResponse,
-  LoginPayload,
+  SigninPayload,
 } from "@/features/auth/types/auth.service.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type {
@@ -16,7 +16,7 @@ import {
 } from "@/shared/utils/client/client.storage";
 
 export const authService = {
-  login: async (payload: LoginPayload): Promise<User> => {
+  login: async (payload: SigninPayload): Promise<User> => {
     try {
       const response = await apiClient.post<AuthResponse<User>>(
         "/auth/login",

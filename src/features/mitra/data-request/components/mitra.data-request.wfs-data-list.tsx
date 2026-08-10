@@ -158,7 +158,6 @@ export const WfsIgtDataList = memo((props: WfsIgtDataListProps) => {
             selectedItems: selectedItems as FormattedListItem[],
           });
         }}
-        pb={0}
         roundedTop={0}
         roundedBottom={hasPagination ? 0 : theme.radii.container}
         shadow={"none"}

@@ -9,12 +9,15 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { Box } from "@/design-system/components/layout/ui/box";
+import {
+  AbsoluteCenter,
+  Center,
+} from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -141,20 +144,6 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
               isVisible={false}
             />
           </>
-        )}
-
-        {isLoading && (
-          <Box
-            display={"flex"}
-            flex={1}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <HStack align={"center"} gap={SPACING_SM}>
-              <Loader />
-              <P>{"Mengambil data IGT di area AOI Anda..."}</P>
-            </HStack>
-          </Box>
         )}
 
         {isError && (
@@ -340,7 +329,16 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton p={PADDING_MD} />
+          <Center flex={1} pos={"relative"}>
+            <Skeleton p={PADDING_MD} />
+
+            <AbsoluteCenter>
+              <HStack align={"center"} gap={SPACING_SM}>
+                <Loader />
+                <P>{"Mengambil data IGT di area AOI Anda..."}</P>
+              </HStack>
+            </AbsoluteCenter>
+          </Center>
         ) : (
           <>
             <TopBarLoader isFetching={isFetching} />
