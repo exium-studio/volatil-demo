@@ -71,6 +71,8 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       virtualized = true,
       fixedItemHeight = true,
       renderTdCell,
+      page,
+      pageSize,
       ...restProps
     } = props;
 
@@ -122,6 +124,8 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       () => ({
         headers,
         items,
+        page,
+        pageSize,
         initialSortColumnIndex,
         initialSortOrder,
         batchActions,
@@ -147,6 +151,8 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       [
         headers,
         items,
+        page,
+        pageSize,
         initialSortColumnIndex,
         initialSortOrder,
         batchActions,
@@ -335,7 +341,8 @@ const DataListTableRow = ({
   dataIndex,
   styleProps,
 }: DataListTableRowProps) => {
-  const { renderTdCell } = useDataListTableContext();
+  // Contexts
+  const { page, pageSize, renderTdCell } = useDataListTableContext();
 
   return (
     <Box
@@ -368,9 +375,9 @@ const DataListTableRow = ({
         </Center>
       )}
 
-      {withNumbering && (
+      {withNumbering && page && pageSize && (
         <DataListTableCell {...bodyCellStyles}>
-          <P>{index + 1}</P>
+          <P>{index + 1 + (page - 1) * pageSize}</P>
         </DataListTableCell>
       )}
 

@@ -13,6 +13,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import {
   PADDING_MD,
+  PADDING_SM,
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
@@ -144,6 +145,7 @@ const CatalogDataList = (props: CatalogDataListProps) => {
   return (
     <VStack
       flex={1}
+      gap={PADDING_SM}
       overflowY={"auto"}
       bg={"bg.canvas"}
       w={"full"}
@@ -153,6 +155,8 @@ const CatalogDataList = (props: CatalogDataListProps) => {
         <Skeleton p={PADDING_MD} />
       ) : (
         <>
+          <TopBarLoader isFetching={isFetching} />
+
           <WfsDataList
             wfsFeatures={features}
             page={page}
@@ -165,8 +169,6 @@ const CatalogDataList = (props: CatalogDataListProps) => {
             }
             roundedBottom={theme.radii.container}
           />
-
-          <TopBarLoader isFetching={isFetching} />
 
           <MitraDataRequestAddToCartButtons
             selectedItems={selectedItems}

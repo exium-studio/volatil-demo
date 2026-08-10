@@ -36,10 +36,7 @@ const getGeometryCentroid = (
     return [lng, lat];
   }
 
-  if (
-    geom.type === "MultiPolygon" &&
-    geom.coordinates[0]?.[0]?.length > 0
-  ) {
+  if (geom.type === "MultiPolygon" && geom.coordinates[0]?.[0]?.length > 0) {
     const ring = geom.coordinates[0][0];
     const lng =
       ring.reduce((acc: number, c: number[]) => acc + c[0], 0) / ring.length;
@@ -51,9 +48,19 @@ const getGeometryCentroid = (
   return null;
 };
 
+/** Formats a property key string into a readable column title if not present in map. */
+const formatColumnHeader = (key: string): string => {
+  if (key in WFS_BIDANG_ATTRIBUTE_MAP) {
+    return WFS_BIDANG_ATTRIBUTE_MAP[
+      key as keyof typeof WFS_BIDANG_ATTRIBUTE_MAP
+    ];
+  }
+  return key.charAt(0).toUpperCase() + key.slice(1);
+};
+
 /**
  * Shared WFS data list component used across Tab Catalog, Tab Draw AOI, and Tab Upload AOI.
- * Renders a table of WFS bidang features with a "Lihat di Peta" item action and optional pagination footer.
+ * Renders a dynamic table of WFS features based on feature properties, with "Lihat di Peta" item action and optional pagination footer.
  */
 export const WfsDataList = memo((props: WfsDataListProps) => {
   // Props
@@ -72,22 +79,31 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
   const { theme } = useThemeStore();
   const map = useMapInstanceStore((state) => state.map);
 
+  // Derived Values — Dynamic Attribute Keys
+  const attributeKeys = useMemo(() => {
+    if (wfsFeatures.length > 0 && wfsFeatures[0].properties) {
+      const keys = Object.keys(wfsFeatures[0].properties);
+      if (keys.length > 0) return keys;
+    }
+    return WFS_BIDANG_ATTRIBUTES;
+  }, [wfsFeatures]);
+
   // Derived Values — DataList Configuration
   const dataList = useMemo(
     () => ({
-      headers: WFS_BIDANG_ATTRIBUTES.map((key) => ({
-        th: WFS_BIDANG_ATTRIBUTE_MAP[key],
-        sortable: key === "id" || key === "kodewilaya",
+      headers: attributeKeys.map((key) => ({
+        th: formatColumnHeader(key),
+        sortable: key === "id" || key === "kodewilaya" || key === "gid",
       })),
 
       items: wfsFeatures.map((feature) => {
         const featureId = String(
-          feature.properties?.id ?? feature.id ?? "",
+          feature.properties?.id ?? feature.properties?.gid ?? feature.id ?? "",
         );
         return {
           id: featureId,
           data: feature as unknown as Record<string, unknown>,
-          columns: WFS_BIDANG_ATTRIBUTES.map((key) => ({
+          columns: attributeKeys.map((key) => ({
             value: feature.properties?.[key] ?? "-",
             align: "start" as const,
           })),
@@ -116,26 +132,36 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
         },
       ] as DataListItemActionsGenerator[],
     }),
-    [wfsFeatures, map],
+    [wfsFeatures, attributeKeys, map],
   );
 
   const hasPagination =
     page != null && pageSize != null && totalFeatures != null;
 
   return (
-    <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} w={"full"} {...restProps}>
+    <VStack
+      flex={1}
+      overflowY={"auto"}
+      bg={"bg.canvas"}
+      w={"full"}
+      {...restProps}
+    >
       <DataListTable.Root
         headers={dataList.headers}
         items={dataList.items}
         itemActions={dataList.itemActions}
         canBatchSelect
+        page={page}
+        pageSize={pageSize}
+        onSelectedItemChange={({ selectedItems }) => {
+          onSelectedItemChange?.({
+            selectedItems: selectedItems as FormattedListItem[],
+          });
+        }}
         pb={0}
         roundedTop={0}
         roundedBottom={hasPagination ? 0 : theme.radii.container}
         shadow={"none"}
-        onSelectedItemChange={({ selectedItems }) => {
-          onSelectedItemChange?.({ selectedItems: selectedItems as FormattedListItem[] });
-        }}
       >
         <DataListTable.Header />
         <DataListTable.Body />

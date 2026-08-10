@@ -16,6 +16,8 @@ import { createContext, useContext } from "react";
 export type DataListTableContextValue = {
   headers: FormattedTableHeader[];
   items: FormattedListItem[];
+  page?: number;
+  pageSize?: number;
   initialSortColumnIndex?: number;
   initialSortOrder?: "asc" | "desc";
   batchActions?: DataListBatchActionsGenerator[];

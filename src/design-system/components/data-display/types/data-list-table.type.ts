@@ -16,6 +16,8 @@ export type DataListTableRootProps = Omit<StackProps, "page"> & {
   children: ReactNode;
   headers: FormattedTableHeader[];
   items: FormattedListItem[];
+  page?: number;
+  pageSize?: number;
   initialSortColumnIndex?: number;
   initialSortOrder?: "asc" | "desc";
   canBatchSelect?: boolean;
