@@ -3,12 +3,12 @@
 import type GeoJSON from "geojson";
 
 /**
- * Converts a GeoJSON Polygon feature to a WKT POLYGON string.
+ * Converts a GeoJSON Polygon feature to a WKT POLYGON string for GeoServer CQL INTERSECTS queries.
  *
- * Output uses lon/lat coordinate order, which is correct when the WFS request
- * specifies `srsName=EPSG:4326` (axis order = lon, lat — matching GeoJSON).
+ * GeoServer WFS 1.1+ / 2.0+ with EPSG:4326 strictly expects latitude longitude order
+ * in CQL spatial functions: `POLYGON((lat lon, lat lon, ...))`
  *
- * Example output: `POLYGON((106.8 -6.2, 106.9 -6.2, 106.9 -6.3, 106.8 -6.3, 106.8 -6.2))`
+ * Example output: `POLYGON((-8.66 115.15, -8.66 115.17, -8.68 115.17, -8.68 115.15, -8.66 115.15))`
  */
 export const geojsonPolygonToWkt = (
   polygon: GeoJSON.Feature<GeoJSON.Polygon>,
@@ -16,7 +16,7 @@ export const geojsonPolygonToWkt = (
   const rings = polygon.geometry.coordinates
     .map(
       (ring) =>
-        `(${ring.map((coord) => `${coord[0]} ${coord[1]}`).join(", ")})`,
+        `(${ring.map((coord) => `${coord[1]} ${coord[0]}`).join(", ")})`,
     )
     .join(", ");
 

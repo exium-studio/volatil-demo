@@ -1,65 +1,74 @@
 // src/features/mitra/data-request/hooks/use-mitra-draw-aoi.tsx
 
-import { useWfsClip } from "@/design-system/components/map/hooks/use-wfs-clip";
+import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
+import { useWfsClip } from "@/design-system/components/map/hooks/use-wfs-clip";
 import type GeoJSON from "geojson";
-import { useCallback, useMemo } from "react";
-
-const MIN_PURCHASE_COUNT = 1;
+import { useCallback, useMemo, useState } from "react";
 
 export const useMitraDrawAoi = () => {
   // Stores
   const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();
-  const clippedFeatures = useWfsClipStore((state) => state.clippedFeatures);
   const wfsStatus = useWfsClipStore((state) => state.status);
   const wfsError = useWfsClipStore((state) => state.error);
-  const setClippingPolygon = useWfsClipStore(
-    (state) => state.setClippingPolygon,
-  );
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
 
   // Hooks
   const { run: runWfsClip, cancel: cancelWfsClip } = useWfsClip();
 
+  // States
+  const [confirmedPolygon, setConfirmedPolygon] =
+    useState<GeoJSON.Feature<GeoJSON.Polygon> | null>(null);
+
   // Derived Values
   const hasStartedDrawing = isDrawing || points.length > 0;
   const hasFinishedDraw = !isDrawing && points.length >= 3;
 
-  const wfsFeatures = useMemo(
-    () => clippedFeatures?.features ?? [],
-    [clippedFeatures],
-  );
+  /**
+   * CQL INTERSECTS filter built from the confirmed drawn polygon.
+   * undefined until user confirms the draw.
+   */
+  const aoiCqlFilter = useMemo(() => {
+    if (!confirmedPolygon) return undefined;
+    const wkt = geojsonPolygonToWkt(confirmedPolygon);
+    return `INTERSECTS(geom, ${wkt})`;
+  }, [confirmedPolygon]);
 
-  const hasEnoughItems = wfsFeatures.length >= MIN_PURCHASE_COUNT;
+  const isDone = confirmedPolygon !== null;
 
   // Handlers
   const handleResetDraw = useCallback(() => {
     cancelDraw();
     cancelWfsClip();
     resetWfsClipStore();
+    setConfirmedPolygon(null);
   }, [cancelDraw, cancelWfsClip, resetWfsClipStore]);
 
-  const handleConfirmAndFetch = useCallback(async (typeName: string) => {
-    if (!hasFinishedDraw) return;
+  const handleConfirmAndFetch = useCallback(
+    async (typeName: string) => {
+      if (!hasFinishedDraw) return;
 
-    const polygonFeature: GeoJSON.Feature<GeoJSON.Polygon> = {
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            ...points.map((p) => [p.lng, p.lat]),
-            [points[0].lng, points[0].lat],
+      const polygonFeature: GeoJSON.Feature<GeoJSON.Polygon> = {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              ...points.map((p) => [p.lng, p.lat]),
+              [points[0].lng, points[0].lat],
+            ],
           ],
-        ],
-      },
-    };
+        },
+      };
 
-    setClippingPolygon(polygonFeature);
-    await runWfsClip(polygonFeature, typeName);
-  }, [hasFinishedDraw, points, runWfsClip, setClippingPolygon]);
+      setConfirmedPolygon(polygonFeature);
+      // Run WFS clip for map layer visualization
+      void runWfsClip(polygonFeature, typeName);
+    },
+    [hasFinishedDraw, points, runWfsClip],
+  );
 
   return {
     isDrawing,
@@ -68,11 +77,10 @@ export const useMitraDrawAoi = () => {
     hasStartedDrawing,
     hasFinishedDraw,
     isLoading: wfsStatus === "fetching" || wfsStatus === "clipping",
-    isDone: wfsStatus === "done",
+    isDone,
     isError: wfsStatus === "error",
     error: wfsError,
-    hasEnoughItems,
-    wfsFeatures,
+    aoiCqlFilter,
     handleResetDraw,
     handleConfirmAndFetch,
   };

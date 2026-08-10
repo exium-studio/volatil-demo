@@ -2,7 +2,6 @@
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
@@ -14,25 +13,35 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import {
   PADDING_MD,
-  PADDING_SM,
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { MitraIgtDataListTable } from "@/features/mitra/data-request/components/mitra.data-request.igt-data-list-table";
+import { WfsDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
+import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
+import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import {
   useAddToCartAll,
   useAddToCartSelected,
-  useIgtCatalog,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-import type { CatalogDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
-import { t } from "@/shared/libs/i18n";
+import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
+import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 
 export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
+  // States
+  const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
+  const [dataListState, setDataListState] = useState({
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    page: 1,
+    selectedItems: [] as FormattedListItem[],
+  });
+
+  // Derived Values
+  const cqlFilter = buildWfsCqlFilter(appliedFilters);
+
   return (
     <Tabs.Content
       display={"flex"}
@@ -56,33 +65,64 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
           gap={SPACING_SM}
         >
           <HStack gap={SPACING_SM}>
-            <SearchInput placeholder={t["action.search"]()} />
+            <SearchInput placeholder={"Cari..."} />
 
-            <MitraDataRequestCatalogFilterButton />
+            <WfsIgtFilterTrigger
+              onApply={(filters) => {
+                setAppliedFilters(filters);
+                setDataListState((prev) => ({ ...prev, page: 1 }));
+              }}
+            >
+              <IconButton variant={"outline"}>
+                <AppIcon icon={SlidersHorizontalIcon} />
+              </IconButton>
+            </WfsIgtFilterTrigger>
           </HStack>
         </HStack>
       </VStack>
 
       <Separator borderColor={"bg.canvas"} />
 
-      <MitraDataRequestCatalogDataList />
+      <CatalogDataList
+        page={dataListState.page}
+        pageSize={dataListState.pageSize}
+        cqlFilter={cqlFilter}
+        selectedItems={dataListState.selectedItems}
+        onPageChange={(page) => setDataListState((prev) => ({ ...prev, page }))}
+        onPageSizeChange={(pageSize) =>
+          setDataListState((prev) => ({ ...prev, pageSize, page: 1 }))
+        }
+        onSelectedItemChange={(selectedItems) =>
+          setDataListState((prev) => ({ ...prev, selectedItems }))
+        }
+      />
     </Tabs.Content>
   );
 };
 
-const MitraDataRequestCatalogFilterButton = () => {
-  return (
-    <WfsIgtFilterTrigger>
-      <IconButton variant={"outline"}>
-        <AppIcon icon={SlidersHorizontalIcon} />
-      </IconButton>
-    </WfsIgtFilterTrigger>
-  );
+// -------------------------------------------------------------------------------------
+
+type CatalogDataListProps = {
+  page: number;
+  pageSize: number;
+  cqlFilter?: string;
+  selectedItems: FormattedListItem[];
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+  onSelectedItemChange: (selectedItems: FormattedListItem[]) => void;
 };
 
-const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {
+const CatalogDataList = (props: CatalogDataListProps) => {
   // Props
-  const { activeFilters } = props;
+  const {
+    page,
+    pageSize,
+    cqlFilter,
+    selectedItems,
+    onPageChange,
+    onPageSizeChange,
+    onSelectedItemChange,
+  } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -91,29 +131,19 @@ const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {
   const addToCartSelectedMutation = useAddToCartSelected();
   const addToCartAllMutation = useAddToCartAll();
 
-  // States
-  const [dataListState, setDataListState] = useState({
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
-    page: 1,
-    selectedItems: [] as FormattedListItem[],
-  });
-
   // Queries
   const {
-    items: rawItems,
-    meta,
+    features,
+    totalFeatures,
+    bidangCount,
+    kawasanCount,
     isLoading,
     isFetching,
-  } = useIgtCatalog({
-    page: dataListState.page,
-    pageSize: dataListState.pageSize,
-    search: activeFilters?.search,
-  });
+  } = useIgtWfsCatalog({ page, pageSize, cqlFilter });
 
   return (
     <VStack
       flex={1}
-      gap={PADDING_SM}
       overflowY={"auto"}
       bg={"bg.canvas"}
       w={"full"}
@@ -123,45 +153,29 @@ const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {
         <Skeleton p={PADDING_MD} />
       ) : (
         <>
-          <VStack overflowY={"auto"} w={"full"} position={"relative"}>
-            <MitraIgtDataListTable
-              igtItems={rawItems}
-              withNumbering={false}
-              canBatchSelect={true}
-              roundedTop={0}
-              onSelectedItemChange={({ selectedItems }) => {
-                console.log("selectedItems", selectedItems);
-                setDataListState((prev) => ({ ...prev, selectedItems }));
-              }}
-              rounded={0}
-              shadow={"none"}
-            />
+          <WfsDataList
+            wfsFeatures={features}
+            page={page}
+            pageSize={pageSize}
+            totalFeatures={totalFeatures}
+            setPage={onPageChange}
+            setPageSize={onPageSizeChange}
+            onSelectedItemChange={({ selectedItems: sel }) =>
+              onSelectedItemChange(sel)
+            }
+            roundedBottom={theme.radii.container}
+          />
 
-            <DataListFooter
-              pageSize={dataListState.pageSize}
-              setPageSize={(pageSize) =>
-                setDataListState((prev) => ({ ...prev, pageSize }))
-              }
-              page={dataListState.page}
-              setPage={(page) =>
-                setDataListState((prev) => ({ ...prev, page }))
-              }
-              roundedBottom={theme.radii.container}
-            />
-
-            <TopBarLoader isFetching={isFetching} />
-          </VStack>
+          <TopBarLoader isFetching={isFetching} />
 
           <MitraDataRequestAddToCartButtons
-            selectedItems={dataListState.selectedItems}
-            allItems={rawItems}
-            totalBidangCount={meta?.totalBidang}
-            totalKawasanCount={meta?.totalKawasan}
-            totalCount={meta?.total}
+            selectedItems={selectedItems}
+            allItems={features}
+            totalBidangCount={bidangCount}
+            totalKawasanCount={kawasanCount}
+            totalCount={totalFeatures}
             onAddSelectedClick={() => {
-              const selectedIds = dataListState.selectedItems.map((item) =>
-                String(item.id),
-              );
+              const selectedIds = selectedItems.map((item) => String(item.id));
               addToCartSelectedMutation.mutate({ itemIds: selectedIds });
             }}
             onAddAllBidangClick={() => {

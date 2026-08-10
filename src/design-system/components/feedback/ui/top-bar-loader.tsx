@@ -68,7 +68,7 @@ export const TopBarLoader = (props: TopBarLoaderProps) => {
       top={0}
       left={0}
       right={0}
-      h={"2px"}
+      h={"4px"}
       zIndex={9999}
       pointerEvents={"none"}
       bg={"transparent"}
