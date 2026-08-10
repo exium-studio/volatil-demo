@@ -4,7 +4,7 @@ import type { LayerSpecification } from "maplibre-gl";
 import type { WfsLayerConfig } from "@/design-system/components/map/types/map.type";
 
 // ---------------------------------------------------------------------------
-// Grouped Module Setting (_CONFIG)
+// Grouped Module Setting
 // ---------------------------------------------------------------------------
 
 export const MAP_CONFIG = {
