@@ -48,16 +48,16 @@ export type DataListBatchActionBarProps = Omit<
 export type DataListFooterProps = Omit<StackProps, "page"> & {
   currentDataLength?: number;
   totalData?: number;
-  perPage: number;
-  setPerPage?: (perPage: number) => void;
+  pageSize: number;
+  setPageSize?: (pageSize: number) => void;
   page: number;
   setPage?: (page: number) => void;
   totalPage?: number;
 };
 
-export type DataListPerPageProps = SelectProps & {
-  perPage: number;
-  setPerPage?: (perPage: number) => void;
+export type DataListPageSizeProps = SelectProps & {
+  pageSize: number;
+  setPageSize?: (pageSize: number) => void;
   options?: number[];
 };
 

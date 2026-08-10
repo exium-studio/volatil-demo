@@ -20,7 +20,7 @@ export type PaginatedResponse<T> = {
   items: T[];
   meta: {
     page: number;
-    perPage: number;
+    pageSize: number;
     total: number; // grand total items
     totalPages: number;
     totalBidang?: number;
@@ -30,7 +30,7 @@ export type PaginatedResponse<T> = {
 
 export type PaginatedParams = {
   page?: number;
-  perPage?: number;
+  pageSize?: number;
   search?: string;
 };
 

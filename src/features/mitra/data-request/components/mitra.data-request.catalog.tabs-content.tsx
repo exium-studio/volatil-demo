@@ -3,7 +3,7 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DEFAULT_PER_PAGE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-per-page";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
@@ -93,7 +93,7 @@ const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {
 
   // States
   const [dataListState, setDataListState] = useState({
-    perPage: DEFAULT_PER_PAGE_OPTIONS[0],
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     page: 1,
     selectedItems: [] as FormattedListItem[],
   });
@@ -106,7 +106,7 @@ const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {
     isFetching,
   } = useIgtCatalog({
     page: dataListState.page,
-    perPage: dataListState.perPage,
+    pageSize: dataListState.pageSize,
     search: activeFilters?.search,
   });
 
@@ -138,9 +138,9 @@ const MitraDataRequestCatalogDataList = (props: CatalogDataListProps) => {
             />
 
             <DataListFooter
-              perPage={dataListState.perPage}
-              setPerPage={(perPage) =>
-                setDataListState((prev) => ({ ...prev, perPage }))
+              pageSize={dataListState.pageSize}
+              setPageSize={(pageSize) =>
+                setDataListState((prev) => ({ ...prev, pageSize }))
               }
               page={dataListState.page}
               setPage={(page) =>

@@ -19,7 +19,7 @@ import type GeoJSON from "geojson";
 
 export type MitraDataRequestGetCatalogParams = {
   page?: number;
-  perPage?: number;
+  pageSize?: number;
   search?: string;
 };
 
@@ -34,7 +34,7 @@ export async function getIgtCatalog(
     >("/mitra/data-request/catalog", {
       params: {
         page: params?.page,
-        perPage: params?.perPage,
+        pageSize: params?.pageSize,
         search: params?.search,
       },
       signal,

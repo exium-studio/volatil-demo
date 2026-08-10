@@ -1655,7 +1655,7 @@ export const DataDisplay = () => {
   };
 
   // States
-  const [perPage, setPerPage] = useState<number>(20);
+  const [pageSize, setPageSize] = useState<number>(20);
   const [page, setPage] = useState<number>(1);
 
   return (
@@ -1713,8 +1713,8 @@ export const DataDisplay = () => {
             </DataListTable.Root>
 
             <DataListFooter
-              perPage={perPage}
-              setPerPage={setPerPage}
+              pageSize={pageSize}
+              setPageSize={setPageSize}
               page={page}
               setPage={setPage}
               currentDataLength={dataList.items.length}

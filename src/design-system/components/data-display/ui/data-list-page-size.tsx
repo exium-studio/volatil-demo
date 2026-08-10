@@ -1,17 +1,17 @@
-// src/design-system/components/data-display/ui/data-list-per-page.tsx
+// src/design-system/components/data-display/ui/data-list-page-size.tsx
 
-import type { DataListPerPageProps } from "@/design-system/components/data-display/types/data-list.type";
+import type { DataListPageSizeProps } from "@/design-system/components/data-display/types/data-list.type";
 import Select from "@/design-system/components/input/ui/select";
 import { Span } from "@/design-system/components/typography/ui/span";
 
-export const DEFAULT_PER_PAGE_OPTIONS = [20, 40, 60, 100];
+export const DEFAULT_PAGE_SIZE_OPTIONS = [20, 40, 60, 100];
 
-export const DataListPerPage = (props: DataListPerPageProps) => {
+export const DataListPageSize = (props: DataListPageSizeProps) => {
   // Props
   const {
-    perPage,
-    setPerPage,
-    options = DEFAULT_PER_PAGE_OPTIONS,
+    pageSize,
+    setPageSize,
+    options = DEFAULT_PAGE_SIZE_OPTIONS,
     ...restProps
   } = props;
 
@@ -24,10 +24,10 @@ export const DataListPerPage = (props: DataListPerPageProps) => {
 
   return (
     <Select
-      value={String(perPage)}
+      value={String(pageSize)}
       selectOptions={selectOptions}
       onValueChange={(val) => {
-        setPerPage?.(parseInt(val, 10));
+        setPageSize?.(parseInt(val, 10));
       }}
       suffixLabel={<Span ml={1}>{"/page"}</Span>}
       variant={"ghost"}

@@ -149,7 +149,7 @@ export const dummyMitraCartData: CartResponse = {
   items: dummyMitraCartItems,
   meta: {
     page: 1,
-    perPage: 20,
+    pageSize: 20,
     total: 15,
     totalPages: 1,
     totalBidang: 8,

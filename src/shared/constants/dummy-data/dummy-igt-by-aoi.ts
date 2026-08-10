@@ -40,7 +40,7 @@ export const dummyIgtData: MitraDataRequestIgtDataResponse = {
   items: DUMMY_IGT_ITEMS,
   meta: {
     page: 1,
-    perPage: 10,
+    pageSize: 10,
     total: 5,
     totalPages: 1,
     totalBidang: 3,

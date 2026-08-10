@@ -5,7 +5,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataListPagination } from "./data-list-pagination";
-import { DataListPerPage } from "./data-list-per-page";
+import { DataListPageSize } from "./data-list-page-size";
 import { PADDING_MD } from "@/design-system/constants/styles";
 
 const formatDataLengthText = (
@@ -22,8 +22,8 @@ export const DataListFooter = (props: DataListFooterProps) => {
   const {
     currentDataLength,
     totalData,
-    perPage,
-    setPerPage,
+    pageSize,
+    setPageSize,
     page,
     setPage,
     totalPage,
@@ -56,9 +56,9 @@ export const DataListFooter = (props: DataListFooterProps) => {
         w={"full"}
       >
         <HStack align="start">
-          <DataListPerPage
-            perPage={perPage}
-            setPerPage={setPerPage}
+          <DataListPageSize
+            pageSize={pageSize}
+            setPageSize={setPageSize}
             size={"xs"}
           />
         </HStack>
