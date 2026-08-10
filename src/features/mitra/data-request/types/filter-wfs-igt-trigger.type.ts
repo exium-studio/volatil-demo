@@ -14,6 +14,7 @@ export type WfsIgtFilterValues = Record<
 >;
 
 export type WfsIgtFilterSelectProps = {
+  modalKey?: string;
   value?: string;
   defaultValue?: string;
   onValueChange?: (
@@ -21,7 +22,6 @@ export type WfsIgtFilterSelectProps = {
     value: string,
   ) => void;
   disabled?: boolean;
-  parentModalKey?: string;
 };
 
 export type WfsIgtFilterTriggerProps = {

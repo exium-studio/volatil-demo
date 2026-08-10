@@ -1,7 +1,6 @@
-// src/features/mitra/data-request/components/wfs-igt-filter-kabupaten-select.tsx
+// src/features/mitra/data-request/components/wfs-igt-filter.kabupaten-select.tsx
 
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
-import { WFS_IGT_FILTER_CONFIG } from "@/features/mitra/data-request/constants/wfs-igt-filter.config";
 import { useFilterOptionsKabupaten } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import type {
   WfsIgtFilterOptionDetail,
@@ -18,11 +17,11 @@ export const WfsIgtFilterKabupatenSelect = (
 ) => {
   // Props
   const {
+    modalKey,
     value: controlledValue,
     defaultValue = "",
     onValueChange,
     disabled = false,
-    parentModalKey,
     provinsiId,
   } = props;
 
@@ -32,7 +31,6 @@ export const WfsIgtFilterKabupatenSelect = (
   // Derived Values
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
-  const config = WFS_IGT_FILTER_CONFIG.kabupaten;
 
   // Hooks (TanStack Query)
   const { data: kabupatenResponse, isFetching } = useFilterOptionsKabupaten(
@@ -55,10 +53,9 @@ export const WfsIgtFilterKabupatenSelect = (
 
   return (
     <FocusSelectInput
-      modalKey={config.key}
-      parentModalKey={parentModalKey}
-      label={config.label}
-      placeholder={config.placeholder}
+      modalKey={modalKey}
+      label={"Kota / Kabupaten"}
+      placeholder={"Pilih Kota / Kabupaten"}
       options={kabupatenResponse?.data ?? []}
       value={currentValue}
       onValueChange={handleValueChange}

@@ -22,6 +22,5 @@ export type FocusSelectInputProps = Omit<
   defaultValue?: string;
   onValueChange?: (value: string, option?: FocusSelectOption) => void;
   clearable?: boolean;
-  parentModalKey?: string;
   isFetching?: boolean;
 };

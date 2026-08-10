@@ -38,7 +38,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     onValueChange,
     disabled = false,
     clearable = true,
-    parentModalKey,
     isFetching = false,
     size = "md",
     variant = "outline",
@@ -58,16 +57,12 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   const currentValue = isControlled ? controlledValue : internalValue;
   const isSearchable = options.length > MIN_SEARCHABLE_OPTIONS_COUNT;
 
-  const generatedKey = useMemo(
+  const resolvedModalKey = useMemo(
     () =>
       modalKeyProp ??
       `focus-select-${label ? label.toLowerCase().replace(/\s+/g, "-") : "option"}`,
     [modalKeyProp, label],
   );
-
-  const resolvedModalKey = parentModalKey
-    ? `${parentModalKey}.${generatedKey}`
-    : generatedKey;
 
   // Hooks
   const { isOpen, open, close } = usePopModal({

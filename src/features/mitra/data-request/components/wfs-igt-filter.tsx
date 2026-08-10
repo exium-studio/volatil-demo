@@ -115,7 +115,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
         <Modal.Body gap={SPACING_MD}>
           <VStack gap={SPACING_MD} w={"full"}>
             <WfsIgtFilterBasisSelect
-              parentModalKey={modalKey}
+              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.BASIS}`}
               value={localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.BASIS]?.value}
               onValueChange={(details) =>
                 handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.BASIS, details)
@@ -123,7 +123,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
             />
 
             <WfsIgtFilterTemaSelect
-              parentModalKey={modalKey}
+              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.TEMA}`}
               value={localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.TEMA]?.value}
               onValueChange={(details) =>
                 handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.TEMA, details)
@@ -131,7 +131,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
             />
 
             <WfsIgtFilterProvinsiSelect
-              parentModalKey={modalKey}
+              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.PROVINSI}`}
               value={localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
               onValueChange={(details) =>
                 handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.PROVINSI, details)
@@ -139,7 +139,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
             />
 
             <WfsIgtFilterKabupatenSelect
-              parentModalKey={modalKey}
+              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.KABUPATEN}`}
               provinsiId={
                 localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.PROVINSI]?.value
               }
@@ -152,7 +152,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
             />
 
             <WfsIgtFilterKecamatanSelect
-              parentModalKey={modalKey}
+              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.KECAMATAN}`}
               kabupatenId={
                 localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
               }
