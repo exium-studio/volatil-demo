@@ -14,7 +14,6 @@ import { FileInputTrigger } from "@/design-system/components/input/ui/file-input
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { WFS_LAYER_NAME } from "@/design-system/components/map/constants/map.config";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
@@ -131,7 +130,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
         }
 
         const result = await fetchWfs({
-          typeName: WFS_LAYER_NAME,
+          typeName: "igt:CONTOH_BIDANG_TANAH",
           cqlFilter,
         });
 

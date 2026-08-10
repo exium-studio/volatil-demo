@@ -125,7 +125,9 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
                   <Button
                     primary
                     pl={3}
-                    onClick={() => void handleConfirmAndFetch()}
+                    onClick={() =>
+                      void handleConfirmAndFetch("igt:CONTOH_BIDANG_TANAH")
+                    }
                   >
                     <AppIcon icon={CheckIcon} />
                     {"Konfirmasi & clip"}

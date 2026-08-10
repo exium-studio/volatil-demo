@@ -66,19 +66,12 @@ export const MAP_SERVER_ENDPOINTS_LIST: MapServerEndpoint[] = [
 
 export const DEFAULT_MAP_SERVER_ENDPOINT = MAP_SERVER_ENDPOINTS_LIST[0];
 
-export const WMS_LAYER_NAME = "igt:CONTOH_BIDANG_TANAH";
-export const WFS_LAYER_NAME = "igt:CONTOH_BIDANG_TANAH";
-
-// ---------------------------------------------------------------------------
-// Default Map Layers List (_LIST)
-// ---------------------------------------------------------------------------
-
 export const DEFAULT_MAP_LAYERS_LIST: MapLayerConfig[] = [
   {
     id: "igt-bidang-tanah-wms-raster",
     type: "wms-raster",
     wmsUrl: DEFAULT_MAP_SERVER_ENDPOINT.wmsUrl,
-    layers: WMS_LAYER_NAME,
+    layers: "igt:CONTOH_BIDANG_TANAH",
     visible: true,
   },
   // {

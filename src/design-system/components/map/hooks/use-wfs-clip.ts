@@ -1,7 +1,6 @@
 // src/design-system/components/map/hooks/use-wfs-clip.ts
 
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
-import { WFS_LAYER_NAME } from "@/design-system/components/map/constants/map.config";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { toast } from "@/design-system/components/toast";
@@ -15,7 +14,7 @@ export function useWfsClip() {
   const abortRef = useRef<AbortController | null>(null);
 
   const run = useCallback(
-    async (polygon: GeoJSON.Feature<GeoJSON.Polygon>) => {
+    async (polygon: GeoJSON.Feature<GeoJSON.Polygon>, typeName: string) => {
       if (!polygon) return;
 
       // Cancel any in-flight request before starting a new one.
@@ -35,7 +34,7 @@ export function useWfsClip() {
         const cqlFilter = `INTERSECTS(geom, ${wkt})`;
 
         const result = await fetchWfs({
-          typeName: WFS_LAYER_NAME,
+          typeName,
           cqlFilter,
           signal: controller.signal,
         });

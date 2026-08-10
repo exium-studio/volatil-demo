@@ -1,7 +1,6 @@
 // src/features/mitra/data-request/services/mitra.data-request.api.ts
 
 import { addToCart as cartApiAddToCart } from "@/features/cart/services/cart.api";
-import { WFS_LAYER_NAME } from "@/design-system/components/map/constants/map.config";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type {
   MitraDataRequestAddAllPayload,
@@ -87,10 +86,11 @@ export async function getIgtByUploadedAoi(
 
 export async function getIgtGeometryById(
   id: string,
+  layerName = "igt:CONTOH_BIDANG_TANAH",
 ): Promise<GeoJSON.FeatureCollection> {
   console.log("getIgtGeometryById id:", id);
   return fetchWfs({
-    typeName: WFS_LAYER_NAME,
+    typeName: layerName,
     cqlFilter: `id='${id}'`,
   });
 }

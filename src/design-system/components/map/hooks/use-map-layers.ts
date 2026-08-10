@@ -8,7 +8,6 @@ import {
   MAP_CONFIG,
   MAP_EVENTS_MAP,
   WFS_LAYER_RENDER_TYPE_MAP,
-  WMS_LAYER_NAME,
 } from "@/design-system/components/map/constants/map.config";
 import type {
   MapLayerConfig,
@@ -21,7 +20,7 @@ const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
   if (layer.tileUrl) return layer.tileUrl;
 
   const baseUrl = layer.wmsUrl ?? DEFAULT_MAP_SERVER_ENDPOINT.wmsUrl;
-  const layerName = layer.layers ?? WMS_LAYER_NAME;
+  const layerName = layer.layers ?? "igt:CONTOH_BIDANG_TANAH";
   const params = new URLSearchParams({
     service: "WMS",
     version: layer.version ?? DEFAULT_MAP_SERVER_ENDPOINT.wmsVersion ?? "1.1.1",
