@@ -18,7 +18,7 @@ import { FileInputTrigger } from "@/design-system/components/input/ui/file-input
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useWfsClip } from "@/design-system/components/map/hooks/use-wfs-clip";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { parseShpFile } from "@/design-system/components/map/utils/parse-shp-file";
@@ -42,11 +42,13 @@ import {
   useMitraDataRequestUploadAoiContext,
 } from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
+import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
 import {
   useAddToCartAll,
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
+import type { AoiLayer } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import type { UploadAoiFileListTriggerProps } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
@@ -57,9 +59,11 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
 import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
-/** Parses an uploaded GeoJSON/JSON file and returns a CQL INTERSECTS filter string, or null. */
+// -------------------------------------------------------------------------------------
+
+/** Parses a GeoJSON/JSON file and returns a Polygon Feature, or null. */
 const parseGeoJsonFile = async (
   file: File,
 ): Promise<GeoJSON.Feature<GeoJSON.Polygon> | null> => {
@@ -93,19 +97,18 @@ const parseGeoJsonFile = async (
 export const MitraDataRequestUploadAoiTabsContent = (
   props: TabsContentProps,
 ) => {
-  // Hooks
-  const { run: runWfsClip } = useWfsClip();
+  // Stores
+  const map = useMapInstanceStore((state) => state.map);
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
 
   // States
-  const [dataListState, setDataListState] = useState({
-    selectedItems: [] as FormattedListItem[],
-    uploadedFiles: [] as File[],
-  });
-  const [aoiCqlFilter, setAoiCqlFilter] = useState<string | null>(null);
+  const [aoiLayers, setAoiLayers] = useState<AoiLayer[]>([]);
   const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
 
-  // Search Params / Hooks
+  // Hooks
+  useMitraUploadAoi(map, aoiLayers);
+
+  // Search Params
   const search = useSearch({ strict: false }) as Record<
     string,
     string | undefined
@@ -115,98 +118,137 @@ export const MitraDataRequestUploadAoiTabsContent = (
   const addToCartSelectedMutation = useAddToCartSelected();
   const addToCartAllMutation = useAddToCartAll();
 
-  // Handlers / Effects — parse uploaded file → derive CQL filter
-  useEffect(() => {
-    let isSubscribed = true;
+  // Handler — parse a single file, update aoiLayers with status
+  const processFile = useCallback(async (file: File) => {
+    const id = crypto.randomUUID();
 
-    const processFile = async () => {
-      if (isEmptyArray(dataListState.uploadedFiles)) {
-        setAoiCqlFilter(null);
-        resetWfsClipStore();
-        return;
-      }
+    // Validate extension
+    const isShp = file.name.endsWith(".shp");
+    const isGeoJson =
+      file.name.endsWith(".geojson") || file.name.endsWith(".json");
 
-      const file = dataListState.uploadedFiles[0];
+    if (!isShp && !isGeoJson) {
+      toast.error(
+        `"${file.name}": format tidak didukung (.shp/.geojson/.json)`,
+      );
+      return;
+    }
 
-      // Validasi ekstensi
-      const isShp = file.name.endsWith(".shp");
-      const isGeoJson =
-        file.name.endsWith(".geojson") || file.name.endsWith(".json");
+    // Validate size (10 MB)
+    const MAX_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      toast.error(`"${file.name}": ukuran file maksimal 10MB`);
+      return;
+    }
 
-      if (!isShp && !isGeoJson) {
-        toast.error("File harus berformat .shp, .geojson, atau .json");
-        setDataListState((prev) => ({ ...prev, uploadedFiles: [] }));
-        return;
-      }
-
-      // Validasi ukuran (10MB)
-      const MAX_SIZE = 10 * 1024 * 1024;
-      if (file.size > MAX_SIZE) {
-        toast.error("Ukuran file maksimal 10MB");
-        setDataListState((prev) => ({ ...prev, uploadedFiles: [] }));
-        return;
-      }
-
-      try {
-        let unionPolygon: GeoJSON.Feature<GeoJSON.Polygon> | null = null;
-
-        if (isShp) {
-          const fc = await parseShpFile(file);
-          if (!isSubscribed) return;
-          unionPolygon = unionGeoJsonPolygons(fc);
-        } else {
-          unionPolygon = await parseGeoJsonFile(file);
-        }
-
-        if (!isSubscribed) return;
-
-        if (!unionPolygon) {
-          toast.error("Tidak ada polygon yang ditemukan dalam file");
-          return;
-        }
-
-        const wkt = geojsonPolygonToWkt(unionPolygon);
-        const cqlFilter = `INTERSECTS(geom, ${wkt})`;
-
-        if (isSubscribed) {
-          setAoiCqlFilter(cqlFilter);
-          void runWfsClip(unionPolygon, "igt:CONTOH_BIDANG_TANAH");
-        }
-      } catch (error) {
-        console.error("Failed to parse AOI file:", error);
-        if (isSubscribed) {
-          setAoiCqlFilter(null);
-          toast.error("Gagal memproses file");
-        }
-      }
+    // Optimistically add layer in "parsing" state
+    const placeholder: AoiLayer = {
+      id,
+      fileName: file.name,
+      fileSize: file.size,
+      // Placeholder polygon — will be replaced on success
+      polygon: {
+        type: "Feature",
+        properties: {},
+        geometry: { type: "Polygon", coordinates: [] },
+      },
+      status: "parsing",
     };
+    setAoiLayers((prev) => [...prev, placeholder]);
 
-    void processFile();
+    try {
+      let polygon: GeoJSON.Feature<GeoJSON.Polygon> | null = null;
 
-    return () => {
-      isSubscribed = false;
-    };
-  }, [dataListState.uploadedFiles, resetWfsClipStore, runWfsClip]);
+      if (isShp) {
+        const fc = await parseShpFile(file);
+        polygon = unionGeoJsonPolygons(fc);
+      } else {
+        polygon = await parseGeoJsonFile(file);
+      }
 
-  // Derived Values
-  const contextValue = useMemo(
-    () => ({
-      igtData: null,
-      dataListState,
-      setDataListState,
-    }),
-    [dataListState],
+      if (!polygon) {
+        toast.error(`"${file.name}": tidak ada polygon yang ditemukan`);
+        setAoiLayers((prev) => prev.filter((l) => l.id !== id));
+        return;
+      }
+
+      setAoiLayers((prev) =>
+        prev.map((l) =>
+          l.id === id ? { ...l, polygon, status: "done" as const } : l,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to parse AOI file:", error);
+      toast.error(`"${file.name}": gagal memproses file`);
+      setAoiLayers((prev) =>
+        prev.map((l) =>
+          l.id === id
+            ? {
+                ...l,
+                status: "error" as const,
+                errorMessage:
+                  error instanceof Error ? error.message : "Unknown error",
+              }
+            : l,
+        ),
+      );
+    }
+  }, []);
+
+  // Handler — receive new files from file input (multi-file)
+  const handleFilesAdded = useCallback(
+    (files: File[]) => {
+      if (isEmptyArray(files)) return;
+      files.forEach((file) => void processFile(file));
+    },
+    [processFile],
   );
+
+  // Handler — delete a single AoiLayer
+  const handleDeleteLayer = useCallback(
+    (id: string) => {
+      setAoiLayers((prev) => {
+        const remaining = prev.filter((l) => l.id !== id);
+        if (isEmptyArray(remaining)) resetWfsClipStore();
+        return remaining;
+      });
+    },
+    [resetWfsClipStore],
+  );
+
+  // Handler — clear all
+  const handleClearAll = useCallback(() => {
+    setAoiLayers([]);
+    resetWfsClipStore();
+  }, [resetWfsClipStore]);
+
+  // Derived Values — CQL INTERSECTS OR from all "done" layers
+  const aoiCqlFilter = useMemo(() => {
+    const doneLayers = aoiLayers.filter((l) => l.status === "done");
+    if (isEmptyArray(doneLayers)) return null;
+
+    const clauses = doneLayers.map(
+      (l) => `INTERSECTS(geom, ${geojsonPolygonToWkt(l.polygon)})`,
+    );
+    return clauses.length === 1 ? clauses[0] : `(${clauses.join(" OR ")})`;
+  }, [aoiLayers]);
+
+  const contextValue = useMemo(
+    () => ({ aoiLayers, setAoiLayers }),
+    [aoiLayers],
+  );
+
+  const hasLayers = !isEmptyArray(aoiLayers);
 
   useFirstMountEffect(
     {
       onUpdate: () => {
-        if (isAoiFileModalOpen && isEmptyArray(dataListState.uploadedFiles)) {
+        if (isAoiFileModalOpen && !hasLayers) {
           back();
         }
       },
     },
-    [isAoiFileModalOpen, dataListState.uploadedFiles],
+    [isAoiFileModalOpen, hasLayers],
   );
 
   return (
@@ -219,17 +261,17 @@ export const MitraDataRequestUploadAoiTabsContent = (
         p={0}
         {...props}
       >
-        {isEmptyArray(dataListState.uploadedFiles) && (
+        {!hasLayers && (
           <NoDataState
             description={
               "Upload file AOI untuk melihat data IGT yang tersedia di area tersebut"
             }
           >
-            <AddFileButton />
+            <AddFileButton onFilesAdded={handleFilesAdded} />
           </NoDataState>
         )}
 
-        {!isEmptyArray(dataListState.uploadedFiles) && (
+        {hasLayers && (
           <>
             <VStack
               wrap={"wrap"}
@@ -258,14 +300,21 @@ export const MitraDataRequestUploadAoiTabsContent = (
                 </HStack>
 
                 <HStack align={"center"} gap={SPACING_SM}>
-                  <FileListTrigger>
+                  <FileListTrigger
+                    onFilesAdded={handleFilesAdded}
+                    onDeleteLayer={handleDeleteLayer}
+                    onClearAll={handleClearAll}
+                  >
                     <Button variant={"outline"}>
                       <AppIcon icon={FilesIcon} />
-                      {`File AOI anda (${dataListState.uploadedFiles.length})`}
+                      {`File AOI anda (${aoiLayers.length})`}
                     </Button>
                   </FileListTrigger>
 
-                  <AddFileButton variant={"outline"} />
+                  <AddFileButton
+                    onFilesAdded={handleFilesAdded}
+                    variant={"outline"}
+                  />
                 </HStack>
               </HStack>
             </VStack>
@@ -306,29 +355,29 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
 // -------------------------------------------------------------------------------------
 
-const AddFileButton = (props: ButtonProps) => {
-  // Contexts
-  const { dataListState, setDataListState } =
-    useMitraDataRequestUploadAoiContext();
+type AddFileButtonProps = ButtonProps & {
+  onFilesAdded: (files: File[]) => void;
+};
+
+const AddFileButton = (props: AddFileButtonProps) => {
+  // Props
+  const { onFilesAdded, ...buttonProps } = props;
 
   return (
     <FileInputTrigger
       fileInputProps={{
         accept: [".shp", ".geojson", ".json"],
-        maxFiles: 1,
+        maxFiles: 10,
         maxFileSize: 10 * 1024 * 1024,
-        value: dataListState.uploadedFiles,
+        value: [],
         onFileChange: ({ acceptedFiles }) => {
-          setDataListState((prev) => ({
-            ...prev,
-            uploadedFiles: acceptedFiles,
-          }));
+          onFilesAdded(acceptedFiles);
         },
       }}
     >
-      <Button primary pl={3} {...props}>
+      <Button primary pl={3} {...buttonProps}>
         <AppIcon icon={PlusIcon} />
-        {"Tambah file .shp"}
+        {"Tambah file AOI"}
       </Button>
     </FileInputTrigger>
   );
@@ -336,13 +385,18 @@ const AddFileButton = (props: ButtonProps) => {
 
 // -------------------------------------------------------------------------------------
 
-const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
+type FileListTriggerProps = UploadAoiFileListTriggerProps & {
+  onFilesAdded: (files: File[]) => void;
+  onDeleteLayer: (id: string) => void;
+  onClearAll: () => void;
+};
+
+const FileListTrigger = (props: FileListTriggerProps) => {
   // Props
-  const { children } = props;
+  const { children, onFilesAdded, onDeleteLayer, onClearAll } = props;
 
   // Contexts
-  const { dataListState, setDataListState } =
-    useMitraDataRequestUploadAoiContext();
+  const { aoiLayers } = useMitraDataRequestUploadAoiContext();
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -367,39 +421,38 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
         </Modal.Header>
 
         <Modal.Body gap={SPACING_SM}>
-          {isEmptyArray(dataListState.uploadedFiles) && <NoDataState />}
+          {isEmptyArray(aoiLayers) && <NoDataState />}
 
-          {dataListState.uploadedFiles.map((file, index) => (
+          {aoiLayers.map((layer) => (
             <FileItem
-              key={index}
-              name={file.name}
-              mimeType={file.type}
-              sizeLabel={formatByte(file.size)}
-              onDelete={() => {
-                setDataListState((prev) => ({
-                  ...prev,
-                  uploadedFiles: prev.uploadedFiles.filter(
-                    (_, i) => i !== index,
-                  ),
-                }));
-              }}
+              key={layer.id}
+              name={
+                layer.status === "parsing"
+                  ? `${layer.fileName} (memproses...)`
+                  : layer.status === "error"
+                    ? `${layer.fileName} (gagal)`
+                    : layer.fileName
+              }
+              mimeType={""}
+              sizeLabel={formatByte(layer.fileSize)}
+              onDelete={
+                layer.status === "parsing"
+                  ? undefined
+                  : () => onDeleteLayer(layer.id)
+              }
+              opacity={layer.status === "error" ? 0.6 : 1}
             />
           ))}
         </Modal.Body>
 
-        <Modal.Footer>
-          <Button
+        <Modal.Footer gap={SPACING_SM}>
+          <AddFileButton
             flex={1}
-            _hover={{
-              color: "fg.error",
-            }}
-            onClick={() => {
-              setDataListState((prev) => ({
-                ...prev,
-                uploadedFiles: [],
-              }));
-            }}
-          >
+            onFilesAdded={onFilesAdded}
+            variant={"outline"}
+          />
+
+          <Button flex={1} _hover={{ color: "fg.error" }} onClick={onClearAll}>
             {"Hapus semua"}
           </Button>
         </Modal.Footer>
