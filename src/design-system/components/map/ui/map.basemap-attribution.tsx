@@ -19,7 +19,11 @@ export const MapAttribution = () => {
 
   return (
     <MapOverlayContainer>
-      <Popover.Root>
+      <Popover.Root
+        positioning={{
+          offset: { crossAxis: -80 },
+        }}
+      >
         <Popover.Trigger>
           <IconButton aria-label={"Map attribution"} size={"sm"}>
             <AppIcon icon={InfoIcon} />

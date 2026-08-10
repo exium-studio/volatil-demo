@@ -174,6 +174,7 @@ export const WfsIgtDataList = memo((props: WfsIgtDataListProps) => {
           setPageSize={setPageSize}
           currentDataLength={wfsFeatures.length}
           totalData={totalFeatures}
+          totalPage={totalFeatures / pageSize}
           roundedBottom={theme.radii.container}
         />
       )}
