@@ -7,14 +7,11 @@ import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { DataListPagination } from "./data-list-pagination";
 import { DataListPageSize } from "./data-list-page-size";
 import { PADDING_MD } from "@/design-system/constants/styles";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 
-const formatDataLengthText = (
-  currentDataLength?: number,
-  totalData?: number,
-) => {
-  const current = currentDataLength != null ? String(currentDataLength) : "?";
-  const total = totalData != null ? String(totalData) : "?";
-  return `${current} / ${total} items`;
+const formatDataLengthText = (_?: number, totalData?: number) => {
+  // const current = currentDataLength != null ? String(currentDataLength) : "?";
+  return `Total ${totalData ? formatNumber(totalData) : "?"}`;
 };
 
 export const DataListFooter = (props: DataListFooterProps) => {

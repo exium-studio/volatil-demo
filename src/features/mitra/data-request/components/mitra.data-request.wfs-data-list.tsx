@@ -13,7 +13,7 @@ import {
   WFS_BIDANG_ATTRIBUTE_MAP,
   WFS_BIDANG_ATTRIBUTES,
 } from "@/features/mitra/data-request/constants/mitra.data-request.constant";
-import type { WfsDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.wfs-data-list.type";
+import type { WfsIgtDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.wfs-data-list.type";
 import { MapPinIcon } from "lucide-react";
 import { memo, useMemo } from "react";
 import type GeoJSON from "geojson";
@@ -62,7 +62,7 @@ const formatColumnHeader = (key: string): string => {
  * Shared WFS data list component used across Tab Catalog, Tab Draw AOI, and Tab Upload AOI.
  * Renders a dynamic table of WFS features based on feature properties, with "Lihat di Peta" item action and optional pagination footer.
  */
-export const WfsDataList = memo((props: WfsDataListProps) => {
+export const WfsIgtDataList = memo((props: WfsIgtDataListProps) => {
   // Props
   const {
     wfsFeatures,

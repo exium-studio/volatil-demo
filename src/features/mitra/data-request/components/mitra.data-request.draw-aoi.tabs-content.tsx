@@ -26,7 +26,7 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { WfsDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
+import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
 import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import {
@@ -345,7 +345,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
           <>
             <TopBarLoader isFetching={isFetching} />
 
-            <WfsDataList
+            <WfsIgtDataList
               wfsFeatures={features}
               page={pageState.page}
               pageSize={pageState.pageSize}

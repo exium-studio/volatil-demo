@@ -10,7 +10,10 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
-import { DUMMY_MAP_LAYERS, getMapLayers } from "@/design-system/components/map/services/map-layers.api";
+import {
+  DUMMY_MAP_LAYERS,
+  getMapLayers,
+} from "@/design-system/components/map/services/map-layers.api";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { Map } from "@/design-system/components/map/ui/map";
@@ -101,7 +104,7 @@ const Sidebar = () => {
       zIndex={10}
       w={expanded ? "300px" : `calc(40px + 24px)`}
       h={"full"}
-      transition={"200ms"}
+      // transition={"200ms"}
       // transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
     >
       <VStack
@@ -365,6 +368,7 @@ const Content = () => {
       </VStack>
     </Splitter.Panel>
   );
+
   const mapPanel = (
     <Splitter.Panel key={"map"} id={"map"}>
       <Box
@@ -391,6 +395,7 @@ const Content = () => {
       </Box>
     </Splitter.Panel>
   );
+
   const resizeTrigger = (
     <Splitter.ResizeTrigger
       key={"trigger"}

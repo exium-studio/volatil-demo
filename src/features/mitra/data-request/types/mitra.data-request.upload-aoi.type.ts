@@ -7,11 +7,11 @@ export type UploadAoiFileListTriggerProps = {
   children: ReactNode;
 };
 
-export type UploadAoiWfsDataListProps = {
+export type UploadAoiWfsIgtDataListProps = {
   wfsFeatures: GeoJSON.Feature[];
 };
 
 export type MitraDataRequestUploadAoiFileListTriggerProps =
   UploadAoiFileListTriggerProps;
-export type MitraDataRequestUploadAoiWfsDataListProps =
-  UploadAoiWfsDataListProps;
+export type MitraDataRequestUploadAoiWfsIgtDataListProps =
+  UploadAoiWfsIgtDataListProps;

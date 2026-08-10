@@ -16,11 +16,12 @@ export type DrawAoiDataListProps = {
   onResetDraw: () => void;
 };
 
-export type DrawAoiWfsDataListProps = {
+export type DrawAoiWfsIgtDataListProps = {
   wfsFeatures: GeoJSON.Feature[];
   onResetDraw: () => void;
 };
 
 export type MitraDataRequestDrawAoiGuideAlertProps = DrawAoiGuideAlertProps;
 export type MitraDataRequestDrawAoiDataListProps = DrawAoiDataListProps;
-export type MitraDataRequestDrawAoiWfsDataListProps = DrawAoiWfsDataListProps;
+export type MitraDataRequestDrawAoiWfsIgtDataListProps =
+  DrawAoiWfsIgtDataListProps;

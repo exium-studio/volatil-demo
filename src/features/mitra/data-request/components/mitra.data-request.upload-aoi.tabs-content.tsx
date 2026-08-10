@@ -31,7 +31,7 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { WfsDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
+import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
 import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
 import {
   MitraDataRequestUploadAoiContext,
@@ -434,7 +434,7 @@ const UploadAoiDataList = memo((props: UploadAoiDataListProps) => {
         <>
           <TopBarLoader isFetching={isFetching} />
 
-          <WfsDataList
+          <WfsIgtDataList
             wfsFeatures={features}
             page={pageState.page}
             pageSize={pageState.pageSize}
