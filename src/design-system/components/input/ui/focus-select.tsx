@@ -1,6 +1,7 @@
 // src/design-system/components/input/ui/focus-select.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { FocusSelectInputProps } from "@/design-system/components/input/types/focus-select.type";
@@ -23,6 +24,7 @@ import type React from "react";
 import { useMemo, useState } from "react";
 
 const MIN_SEARCHABLE_OPTIONS_COUNT = 8;
+const SKELETON_LIST_COUNT = 5;
 
 export function FocusSelectInput(props: FocusSelectInputProps) {
   // Props
@@ -37,6 +39,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     disabled = false,
     clearable = true,
     parentModalKey,
+    isFetching = false,
     size = "md",
     variant = "outline",
     w = "full",
@@ -91,7 +94,8 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     if (!isControlled) {
       setInternalValue(val);
     }
-    onValueChange?.(val);
+    const selectedOpt = options.find((opt) => opt.value === val);
+    onValueChange?.(val, selectedOpt);
     close();
   };
 
@@ -100,7 +104,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     if (!isControlled) {
       setInternalValue("");
     }
-    onValueChange?.("");
+    onValueChange?.("", undefined);
   };
 
   const selectTriggerNode = (
@@ -169,7 +173,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           </Modal.Header>
 
           <Modal.Body p={0}>
-            {isSearchable && (
+            {isSearchable && !isFetching && (
               <VStack w={"full"} px={PADDING_MD} pt={"2px"} mb={SPACING_SM}>
                 <SearchInput
                   placeholder={t["action.search"]()}
@@ -182,59 +186,75 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
             <VScrollContainer w={"full"} px={PADDING_MD} pb={PADDING_MD}>
               <VStack gap={1} w={"full"}>
-                {filteredOptions.length === 0 && (
-                  <NoResultState query={searchQuery || "..."} />
-                )}
+                {isFetching ? (
+                  Array.from({ length: SKELETON_LIST_COUNT }).map(
+                    (_, index) => (
+                      <Skeleton
+                        key={`skeleton-${index + 1}`}
+                        w={"full"}
+                        h={"40px"}
+                      />
+                    ),
+                  )
+                ) : (
+                  <>
+                    {filteredOptions.length === 0 && (
+                      <NoResultState query={searchQuery || "..."} />
+                    )}
 
-                {filteredOptions.map((opt) => {
-                  const isSelected = opt.value === currentValue;
-                  return (
-                    <Button
-                      key={opt.value}
-                      variant={isSelected ? "subtle" : "ghost"}
-                      w={"full"}
-                      h={"auto"}
-                      py={PADDING_SM}
-                      px={3}
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                      fontWeight={"normal"}
-                      onClick={() => handleOptionSelect(opt.value)}
-                    >
-                      <HStack
-                        gap={SPACING_SM}
-                        align={"center"}
-                        flex={1}
-                        minW={0}
-                        justify={"start"}
-                      >
-                        {opt.icon && <AppIcon icon={opt.icon} size={"sm"} />}
-                        <VStack align={"start"} gap={0} minW={0} flex={1}>
-                          <P
-                            fontWeight={isSelected ? "semibold" : "normal"}
-                            truncate
+                    {filteredOptions.map((opt) => {
+                      const isSelected = opt.value === currentValue;
+                      return (
+                        <Button
+                          key={opt.value}
+                          variant={isSelected ? "subtle" : "ghost"}
+                          w={"full"}
+                          h={"auto"}
+                          py={PADDING_SM}
+                          px={3}
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                          fontWeight={"normal"}
+                          onClick={() => handleOptionSelect(opt.value)}
+                        >
+                          <HStack
+                            gap={SPACING_SM}
+                            align={"center"}
+                            flex={1}
+                            minW={0}
+                            justify={"start"}
                           >
-                            {opt.label}
-                          </P>
+                            {opt.icon && (
+                              <AppIcon icon={opt.icon} size={"sm"} />
+                            )}
+                            <VStack align={"start"} gap={0} minW={0} flex={1}>
+                              <P
+                                fontWeight={isSelected ? "semibold" : "normal"}
+                                truncate
+                              >
+                                {opt.label}
+                              </P>
 
-                          {opt.description && (
-                            <P fontSize={"xs"} color={"fg.subtle"} truncate>
-                              {opt.description}
-                            </P>
+                              {opt.description && (
+                                <P fontSize={"xs"} color={"fg.subtle"} truncate>
+                                  {opt.description}
+                                </P>
+                              )}
+                            </VStack>
+                          </HStack>
+
+                          {isSelected && (
+                            <AppIcon
+                              icon={CheckIcon}
+                              color={`${theme.colorPalette}.solid`}
+                              mr={"-2px"}
+                            />
                           )}
-                        </VStack>
-                      </HStack>
-
-                      {isSelected && (
-                        <AppIcon
-                          icon={CheckIcon}
-                          color={`${theme.colorPalette}.solid`}
-                          mr={"-2px"}
-                        />
-                      )}
-                    </Button>
-                  );
-                })}
+                        </Button>
+                      );
+                    })}
+                  </>
+                )}
               </VStack>
             </VScrollContainer>
           </Modal.Body>

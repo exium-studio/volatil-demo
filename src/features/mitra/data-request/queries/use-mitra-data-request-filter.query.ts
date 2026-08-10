@@ -1,6 +1,7 @@
 // src/features/mitra/data-request/queries/use-mitra-data-request-filter.query.ts
 
 import {
+  getFilterOptionsBasis,
   getFilterOptionsKabupaten,
   getFilterOptionsKecamatan,
   getFilterOptionsProvinsi,
@@ -11,6 +12,13 @@ import type {
   FilterKecamatanParams,
 } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 import { useQuery } from "@tanstack/react-query";
+
+export const useFilterOptionsBasis = () => {
+  return useQuery({
+    queryKey: ["filter-options-basis"],
+    queryFn: getFilterOptionsBasis,
+  });
+};
 
 export const useFilterOptionsTema = () => {
   return useQuery({

@@ -2,26 +2,33 @@
 
 import type React from "react";
 
+export type WfsIgtFilterOptionDetail = {
+  value: string;
+  label: string;
+  description?: string;
+};
+
+export type WfsIgtFilterValues = Record<
+  string,
+  WfsIgtFilterOptionDetail | null
+>;
+
+export type WfsIgtFilterSelectProps = {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (
+    details: WfsIgtFilterOptionDetail | null,
+    value: string,
+  ) => void;
+  disabled?: boolean;
+  parentModalKey?: string;
+};
+
 export type WfsIgtFilterTriggerProps = {
   children: React.ReactNode;
-  value?: Record<string, string | undefined>;
-  defaultValue?: Record<string, string | undefined>;
-  defaultValues?: Record<string, string | undefined>;
-  onFilterChange?: (filters: Record<string, string | undefined>) => void;
-  onApply?: (filters: Record<string, string | undefined>) => void;
-};
-
-export type FocusSelectOption = {
-  label: string;
-  value: string;
-};
-
-export type FocusSelectFieldProps = {
-  fieldKey: string;
-  label: string;
-  placeholder: string;
-  options: FocusSelectOption[];
-  value?: string;
-  onChange: (value: string) => void;
-  parentModalKey?: string;
+  value?: WfsIgtFilterValues;
+  defaultValue?: WfsIgtFilterValues;
+  defaultValues?: WfsIgtFilterValues;
+  onFilterChange?: (filters: WfsIgtFilterValues) => void;
+  onApply?: (filters: WfsIgtFilterValues) => void;
 };

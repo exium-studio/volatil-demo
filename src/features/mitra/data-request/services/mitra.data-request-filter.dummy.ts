@@ -2,6 +2,11 @@
 
 import type { FilterOptionItem } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 
+export const DUMMY_FILTER_OPTIONS_BASIS: FilterOptionItem[] = [
+  { label: "Bidang", value: "bidang" },
+  { label: "Kawasan", value: "kawasan" },
+];
+
 export const DUMMY_FILTER_OPTIONS_TEMA: FilterOptionItem[] = [
   { label: "Batas Wilayah", value: "Batas Wilayah" },
   { label: "Kawasan Hutan", value: "Kawasan Hutan" },

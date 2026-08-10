@@ -19,7 +19,7 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
-import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter-trigger";
+import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { MitraIgtDataListTable } from "@/features/mitra/data-request/components/mitra.data-request.igt-data-list-table";
 import {

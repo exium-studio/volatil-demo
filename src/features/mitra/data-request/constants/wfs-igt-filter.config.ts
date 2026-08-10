@@ -1,45 +1,40 @@
 // src/features/mitra/data-request/constants/wfs-igt-filter.config.ts
 
-export type WfsIgtFilterOption = {
-  label: string;
-  value: string;
-};
+export const WFS_IGT_FILTER_KEYS_MAP = {
+  BASIS: "basis",
+  TEMA: "tema",
+  PROVINSI: "provinsi",
+  KABUPATEN: "kabupaten",
+  KECAMATAN: "kecamatan",
+} as const;
 
-export type WfsIgtFilterField = {
-  key: string; // WFS attribute key
-  label: string; // UI label
-  placeholder: string;
-  options?: WfsIgtFilterOption[];
-};
+export type WfsIgtFilterKey =
+  (typeof WFS_IGT_FILTER_KEYS_MAP)[keyof typeof WFS_IGT_FILTER_KEYS_MAP];
 
-export const WFS_IGT_FILTER_FIELDS_LIST: WfsIgtFilterField[] = [
-  {
-    key: "statbid",
-    label: "Basis",
-    placeholder: "Pilih Basis",
-    options: [
-      { label: "Bidang", value: "bidang" },
-      { label: "Kawasan", value: "kawasan" },
-    ],
+export const WFS_IGT_FILTER_CONFIG = {
+  [WFS_IGT_FILTER_KEYS_MAP.BASIS]: {
+    key: WFS_IGT_FILTER_KEYS_MAP.BASIS,
+    label: "Basis IGT",
+    placeholder: "Pilih Basis IGT",
   },
-  {
-    key: "tema",
+  [WFS_IGT_FILTER_KEYS_MAP.TEMA]: {
+    key: WFS_IGT_FILTER_KEYS_MAP.TEMA,
     label: "Tema IGT",
     placeholder: "Pilih Tema IGT",
   },
-  {
-    key: "provinsi",
+  [WFS_IGT_FILTER_KEYS_MAP.PROVINSI]: {
+    key: WFS_IGT_FILTER_KEYS_MAP.PROVINSI,
     label: "Provinsi",
     placeholder: "Pilih Provinsi",
   },
-  {
-    key: "kabupaten",
+  [WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]: {
+    key: WFS_IGT_FILTER_KEYS_MAP.KABUPATEN,
     label: "Kota / Kabupaten",
     placeholder: "Pilih Kota / Kabupaten",
   },
-  {
-    key: "kecamatan",
+  [WFS_IGT_FILTER_KEYS_MAP.KECAMATAN]: {
+    key: WFS_IGT_FILTER_KEYS_MAP.KECAMATAN,
     label: "Kecamatan",
     placeholder: "Pilih Kecamatan",
   },
-];
+} as const;
