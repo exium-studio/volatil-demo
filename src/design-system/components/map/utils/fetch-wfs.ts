@@ -1,3 +1,5 @@
+// src/design-system/components/map/utils/fetch-wfs.ts
+
 import type GeoJSON from "geojson";
 
 export type WfsBbox = [number, number, number, number];

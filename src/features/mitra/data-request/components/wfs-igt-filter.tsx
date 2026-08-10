@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/components/wfs-igt-filter-trigger.tsx
+// src/features/mitra/data-request/components/wfs-igt-filter.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
