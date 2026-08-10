@@ -1,6 +1,9 @@
 // src/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content.tsx
 
-import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
@@ -17,6 +20,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
   PADDING_MD,
+  PADDING_SM,
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
@@ -281,6 +285,8 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
     cqlFilter: combinedCqlFilter,
   });
 
+  // const isLoading = true;
+
   return (
     <>
       <VStack
@@ -326,11 +332,19 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} position={"relative"}>
+      <VStack
+        flex={1}
+        gap={PADDING_SM}
+        overflowY={"auto"}
+        bg={"bg.canvas"}
+        position={"relative"}
+      >
         {isLoading ? (
           <Skeleton p={PADDING_MD} />
         ) : (
           <>
+            <TopBarLoader isFetching={isFetching} />
+
             <WfsDataList
               wfsFeatures={features}
               page={pageState.page}
@@ -344,8 +358,6 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
                 setPageState((prev) => ({ ...prev, selectedItems }))
               }
             />
-
-            <TopBarLoader isFetching={isFetching} />
 
             <MitraDataRequestAddToCartButtons
               selectedItems={pageState.selectedItems}

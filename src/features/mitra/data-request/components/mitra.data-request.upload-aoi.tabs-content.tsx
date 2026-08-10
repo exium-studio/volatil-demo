@@ -1,7 +1,10 @@
 // src/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content.tsx
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
-import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import { FileItem } from "@/design-system/components/data-display/ui/file-item";
@@ -23,6 +26,7 @@ import {
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import {
   PADDING_MD,
+  PADDING_SM,
   SPACING_MD,
   SPACING_SM,
 } from "@/design-system/constants/styles";
@@ -417,11 +421,19 @@ const UploadAoiDataList = memo((props: UploadAoiDataListProps) => {
   });
 
   return (
-    <VStack flex={1} overflowY={"auto"} bg={"bg.canvas"} position={"relative"}>
+    <VStack
+      flex={1}
+      gap={PADDING_SM}
+      overflowY={"auto"}
+      bg={"bg.canvas"}
+      position={"relative"}
+    >
       {isLoading ? (
         <Skeleton p={PADDING_MD} />
       ) : (
         <>
+          <TopBarLoader isFetching={isFetching} />
+
           <WfsDataList
             wfsFeatures={features}
             page={pageState.page}
@@ -435,8 +447,6 @@ const UploadAoiDataList = memo((props: UploadAoiDataListProps) => {
               setPageState((prev) => ({ ...prev, selectedItems }))
             }
           />
-
-          <TopBarLoader isFetching={isFetching} />
 
           <MitraDataRequestAddToCartButtons
             selectedItems={pageState.selectedItems}
