@@ -26,6 +26,11 @@ export type DataListTableRootProps = Omit<StackProps, "page"> & {
   withNumbering?: boolean;
   virtualized?: boolean;
   fixedItemHeight?: boolean;
+  renderTdCell?: (
+    column: FormattedTableColumn,
+    item: FormattedListItem,
+    columnIndex: number,
+  ) => ReactNode;
 };
 
 export type DataListTableHeaderProps = StackProps & {};
@@ -62,7 +67,8 @@ export type FormattedTableHeader = {
 };
 
 export type FormattedTableColumn = {
-  td: ReactNode;
+  key?: string;
+  td?: ReactNode;
   value: unknown;
   align?: "start" | "center" | "end";
   dataType?: DataListTableColumnDataType;

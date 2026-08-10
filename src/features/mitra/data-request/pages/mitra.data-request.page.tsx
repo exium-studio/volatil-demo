@@ -14,7 +14,7 @@ import { MitraDataRequestUploadAoiTabsContent } from "@/features/mitra/data-requ
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const REQUEST_METHOD_MAP = {
   catalog: {
@@ -50,6 +50,13 @@ export const MitraDataRequestPage = () => {
   // Hooks
   const { queryValue: tab, setQueryValue: setTab } = useSearchParam("tab");
 
+  // States
+  // Track which tabs have been visited to mount them lazily,
+  // but keep them alive in the DOM once mounted.
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(
+    new Set([tab ?? "catalog"]),
+  );
+
   // Set to default tab if query is not satisfied
   useEffect(() => {
     if (!tab || !Object.keys(REQUEST_METHOD_MAP).includes(tab)) {
@@ -73,6 +80,11 @@ export const MitraDataRequestPage = () => {
             overflowY={"auto"}
             onValueChange={(details) => {
               setTab(details.value);
+              setVisitedTabs((prev) => {
+                const next = new Set(prev);
+                next.add(details.value);
+                return next;
+              });
             }}
           >
             <Tabs.List borderColor={"bg.canvas"}>
@@ -95,6 +107,10 @@ export const MitraDataRequestPage = () => {
             <>
               {REQUEST_METHOD_OPTIONS.map((method) => {
                 const TabsContent = method.content;
+                const isVisited = visitedTabs.has(method.value);
+
+                if (!isVisited) return null;
+
                 return <TabsContent key={method.value} value={method.value} />;
               })}
             </>

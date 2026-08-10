@@ -25,7 +25,6 @@ import {
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
-import { P } from "@/design-system/components/typography/ui/p";
 import {
   PADDING_MD,
   PADDING_SM,
@@ -58,7 +57,7 @@ import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
 import type GeoJSON from "geojson";
 import { FilesIcon, MapPinIcon, PlusIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 export const MitraDataRequestUploadAoiTabsContent = (
   props: TabsContentProps,
@@ -329,9 +328,7 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
 
       <Modal.Content>
         <Modal.Header>
-          <Modal.Title fontSize={"lg"}>
-            {"File AOI Anda"}
-          </Modal.Title>
+          <Modal.Title fontSize={"lg"}>{"File AOI Anda"}</Modal.Title>
 
           <Modal.CloseButton />
         </Modal.Header>
@@ -378,7 +375,7 @@ const FileListTrigger = (props: UploadAoiFileListTriggerProps) => {
   );
 };
 
-const DataList = (props: UploadAoiWfsDataListProps) => {
+const DataList = memo((props: UploadAoiWfsDataListProps) => {
   // Props
   const { wfsFeatures } = props;
 
@@ -406,7 +403,6 @@ const DataList = (props: UploadAoiWfsDataListProps) => {
             const val = feature.properties?.[key];
             return {
               value: val ?? "-",
-              td: <P fontSize={"sm"}>{String(val ?? "-")}</P>,
               align: "start" as const,
             };
           }),
@@ -496,4 +492,4 @@ const DataList = (props: UploadAoiWfsDataListProps) => {
       </DataListTable.Root>
     </VStack>
   );
-};
+});

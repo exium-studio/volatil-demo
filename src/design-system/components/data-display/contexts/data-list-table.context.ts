@@ -4,6 +4,7 @@ import type {
   DataListTableSortConfig,
   FormattedListItem,
   FormattedTableHeader,
+  FormattedTableColumn,
 } from "@/design-system/components/data-display/types/data-list-table.type";
 import type {
   DataListBatchActionsGenerator,
@@ -35,6 +36,11 @@ export type DataListTableContextValue = {
   selectAllItems: (isChecked: boolean) => void;
   clearSelectedItems: () => void;
   canBatchSelect: boolean;
+  renderTdCell?: (
+    column: FormattedTableColumn,
+    item: FormattedListItem,
+    columnIndex: number,
+  ) => React.ReactNode;
 };
 
 export const DataListTableContext =

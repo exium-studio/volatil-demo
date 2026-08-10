@@ -100,7 +100,8 @@ const Sidebar = () => {
       zIndex={10}
       w={expanded ? "300px" : `calc(40px + 24px)`}
       h={"full"}
-      transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
+      transition={"200ms"}
+      // transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
     >
       <VStack
         overflowY={"auto"}

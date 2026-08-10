@@ -70,6 +70,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       onSelectedItemChange,
       virtualized = true,
       fixedItemHeight = true,
+      renderTdCell,
       ...restProps
     } = props;
 
@@ -141,6 +142,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
         selectAllItems,
         clearSelectedItems,
         canBatchSelect: !isEmptyArray(batchActions) || canBatchSelect,
+        renderTdCell,
       }),
       [
         headers,
@@ -165,6 +167,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
         selectAllItems,
         clearSelectedItems,
         canBatchSelect,
+        renderTdCell,
       ],
     );
 
@@ -332,6 +335,8 @@ const DataListTableRow = ({
   dataIndex,
   styleProps,
 }: DataListTableRowProps) => {
+  const { renderTdCell } = useDataListTableContext();
+
   return (
     <Box
       ref={measureRef}
@@ -383,7 +388,9 @@ const DataListTableRow = ({
           {...bodyCellStyles}
           {...col?.bodyCellProps}
         >
-          {col.td}
+          {renderTdCell
+            ? renderTdCell(col, item, colIndex)
+            : (col.td ?? <P fontSize={"sm"}>{String(col.value ?? "-")}</P>)}
         </HStack>
       ))}
 

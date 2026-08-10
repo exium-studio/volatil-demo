@@ -40,133 +40,139 @@ import type {
 import { t } from "@/shared/libs/i18n";
 import { IconPolygonOff } from "@tabler/icons-react";
 import type GeoJSON from "geojson";
-import { CheckIcon, InfoIcon, MapPinIcon, PencilIcon, XIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  CheckIcon,
+  InfoIcon,
+  MapPinIcon,
+  PencilIcon,
+  XIcon,
+} from "lucide-react";
+import { memo, useMemo, useState } from "react";
 
-export const MitraDataRequestDrawAoiTabsContent = (props: TabsContentProps) => {
-  // Hooks
-  const {
-    isDrawing,
-    startDraw,
-    cancelDraw,
-    hasStartedDrawing,
-    hasFinishedDraw,
-    isError,
-    error,
-    isLoading,
-    isDone,
-    hasEnoughItems,
-    wfsFeatures,
-    handleResetDraw,
-    handleConfirmAndFetch,
-  } = useMitraDrawAoi();
+export const MitraDataRequestDrawAoiTabsContent = memo(
+  (props: TabsContentProps) => {
+    // Hooks
+    const {
+      isDrawing,
+      startDraw,
+      cancelDraw,
+      hasStartedDrawing,
+      hasFinishedDraw,
+      isError,
+      error,
+      isLoading,
+      isDone,
+      hasEnoughItems,
+      wfsFeatures,
+      handleResetDraw,
+      handleConfirmAndFetch,
+    } = useMitraDrawAoi();
 
-  return (
-    <Tabs.Content
-      display={"flex"}
-      flex={1}
-      flexDir={"column"}
-      overflowY={"auto"}
-      p={0}
-      {...props}
-    >
-      {!isDone && !isLoading && (
-        <>
-          <GuideAlert
-            isLoading={isLoading}
-            isDrawing={isDrawing}
-            hasFinishedDraw={hasFinishedDraw}
-            isVisible={hasStartedDrawing}
-          />
+    return (
+      <Tabs.Content
+        display={"flex"}
+        flex={1}
+        flexDir={"column"}
+        overflowY={"auto"}
+        p={0}
+        {...props}
+      >
+        {!isDone && !isLoading && (
+          <>
+            <GuideAlert
+              isLoading={isLoading}
+              isDrawing={isDrawing}
+              hasFinishedDraw={hasFinishedDraw}
+              isVisible={hasStartedDrawing}
+            />
 
-          <NoDataState
-            description={
-              "Tentukan area spesifik pada peta untuk mengambil data IGT."
-            }
-          >
-            {!hasStartedDrawing && (
-              <Button primary pl={3} onClick={startDraw}>
-                <AppIcon icon={PencilIcon} />
-                {"Mulai gambar"}
-              </Button>
-            )}
+            <NoDataState
+              description={
+                "Tentukan area spesifik pada peta untuk mengambil data IGT."
+              }
+            >
+              {!hasStartedDrawing && (
+                <Button primary pl={3} onClick={startDraw}>
+                  <AppIcon icon={PencilIcon} />
+                  {"Mulai gambar"}
+                </Button>
+              )}
 
-            {isDrawing && (
-              <Button
-                variant={"outline"}
-                colorPalette={"red"}
-                pl={3}
-                onClick={cancelDraw}
-              >
-                <AppIcon icon={XIcon} />
-                {"Batal gambar"}
-              </Button>
-            )}
-
-            {hasFinishedDraw && (
-              <HStack gap={SPACING_SM}>
+              {isDrawing && (
                 <Button
                   variant={"outline"}
                   colorPalette={"red"}
                   pl={3}
-                  onClick={handleResetDraw}
+                  onClick={cancelDraw}
                 >
-                  <AppIcon icon={IconPolygonOff} />
-                  {"Hapus gambar"}
+                  <AppIcon icon={XIcon} />
+                  {"Batal gambar"}
                 </Button>
+              )}
 
-                <Button
-                  primary
-                  pl={3}
-                  onClick={() => void handleConfirmAndFetch()}
-                >
-                  <AppIcon icon={CheckIcon} />
-                  {"Konfirmasi & clip"}
-                </Button>
-              </HStack>
-            )}
-          </NoDataState>
+              {hasFinishedDraw && (
+                <HStack gap={SPACING_SM}>
+                  <Button
+                    variant={"outline"}
+                    colorPalette={"red"}
+                    pl={3}
+                    onClick={handleResetDraw}
+                  >
+                    <AppIcon icon={IconPolygonOff} />
+                    {"Hapus gambar"}
+                  </Button>
 
-          <GuideAlert
-            isLoading={isLoading}
-            isDrawing={isDrawing}
-            hasFinishedDraw={hasFinishedDraw}
-            isVisible={false}
-          />
-        </>
-      )}
+                  <Button
+                    primary
+                    pl={3}
+                    onClick={() => void handleConfirmAndFetch()}
+                  >
+                    <AppIcon icon={CheckIcon} />
+                    {"Konfirmasi & clip"}
+                  </Button>
+                </HStack>
+              )}
+            </NoDataState>
 
-      {isLoading && (
-        <Box
-          display={"flex"}
-          flex={1}
-          alignItems={"center"}
-          justifyContent={"center"}
-        >
-          <HStack align={"center"} gap={SPACING_SM}>
-            <Loader />
-            <P>{"Mengambil data IGT di area AOI Anda..."}</P>
-          </HStack>
-        </Box>
-      )}
+            <GuideAlert
+              isLoading={isLoading}
+              isDrawing={isDrawing}
+              hasFinishedDraw={hasFinishedDraw}
+              isVisible={false}
+            />
+          </>
+        )}
 
-      {isError && (
-        <VStack gap={SPACING_SM} p={PADDING_MD}>
-          <P color={"fg.error"}>
-            {error ?? "Terjadi kesalahan"}
-          </P>
-          <Button variant={"outline"} onClick={handleResetDraw}>
-            {"Coba lagi"}
-          </Button>
-        </VStack>
-      )}
+        {isLoading && (
+          <Box
+            display={"flex"}
+            flex={1}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <HStack align={"center"} gap={SPACING_SM}>
+              <Loader />
+              <P>{"Mengambil data IGT di area AOI Anda..."}</P>
+            </HStack>
+          </Box>
+        )}
 
-      {isDone && hasEnoughItems && (
-        <DataList wfsFeatures={wfsFeatures} onResetDraw={handleResetDraw} />
-      )}
-    </Tabs.Content>
-  );
-};
+        {isError && (
+          <VStack gap={SPACING_SM} p={PADDING_MD}>
+            <P color={"fg.error"}>{error ?? "Terjadi kesalahan"}</P>
+            <Button variant={"outline"} onClick={handleResetDraw}>
+              {"Coba lagi"}
+            </Button>
+          </VStack>
+        )}
+
+        {isDone && hasEnoughItems && (
+          <DataList wfsFeatures={wfsFeatures} onResetDraw={handleResetDraw} />
+        )}
+      </Tabs.Content>
+    );
+  },
+);
 
 const GuideAlert = (props: DrawAoiGuideAlertProps) => {
   // Props
@@ -231,7 +237,7 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
   );
 };
 
-const DataList = (props: DrawAoiWfsDataListProps) => {
+const DataList = memo((props: DrawAoiWfsDataListProps) => {
   // Props
   const { wfsFeatures, onResetDraw } = props;
 
@@ -261,9 +267,9 @@ const DataList = (props: DrawAoiWfsDataListProps) => {
           data: feature as unknown as Record<string, unknown>,
           columns: WFS_BIDANG_ATTRIBUTES.map((key) => {
             const val = feature.properties?.[key];
+
             return {
               value: val ?? "-",
-              td: <P fontSize={"sm"}>{String(val ?? "-")}</P>,
               align: "start" as const,
             };
           }),
@@ -290,8 +296,14 @@ const DataList = (props: DrawAoiWfsDataListProps) => {
                   geom.coordinates[0]?.length > 0
                 ) {
                   const ring = geom.coordinates[0];
-                  const sumLng = ring.reduce((acc: number, c: number[]) => acc + c[0], 0);
-                  const sumLat = ring.reduce((acc: number, c: number[]) => acc + c[1], 0);
+                  const sumLng = ring.reduce(
+                    (acc: number, c: number[]) => acc + c[0],
+                    0,
+                  );
+                  const sumLat = ring.reduce(
+                    (acc: number, c: number[]) => acc + c[1],
+                    0,
+                  );
                   lng = sumLng / ring.length;
                   lat = sumLat / ring.length;
                 } else if (
@@ -299,8 +311,14 @@ const DataList = (props: DrawAoiWfsDataListProps) => {
                   geom.coordinates[0]?.[0]?.length > 0
                 ) {
                   const ring = geom.coordinates[0][0];
-                  const sumLng = ring.reduce((acc: number, c: number[]) => acc + c[0], 0);
-                  const sumLat = ring.reduce((acc: number, c: number[]) => acc + c[1], 0);
+                  const sumLng = ring.reduce(
+                    (acc: number, c: number[]) => acc + c[0],
+                    0,
+                  );
+                  const sumLat = ring.reduce(
+                    (acc: number, c: number[]) => acc + c[1],
+                    0,
+                  );
                   lng = sumLng / ring.length;
                   lat = sumLat / ring.length;
                 }
@@ -405,4 +423,4 @@ const DataList = (props: DrawAoiWfsDataListProps) => {
       </VStack>
     </>
   );
-};
+});
