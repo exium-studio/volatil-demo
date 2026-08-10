@@ -1,29 +1,28 @@
 // src/design-system/components/map/hooks/use-map-layers.ts
 
-import { useEffect, useRef } from "react";
-import type maplibregl from "maplibre-gl";
-import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import {
-  DEFAULT_MAP_SERVER_ENDPOINT,
   MAP_CONFIG,
   MAP_EVENTS_MAP,
-  WFS_LAYER_RENDER_TYPE_MAP,
 } from "@/design-system/components/map/constants/map.config";
+import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import type {
   MapLayerConfig,
   WmsRasterLayerConfig,
 } from "@/design-system/components/map/types/map.type";
-import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+
+import type maplibregl from "maplibre-gl";
+import { useEffect, useRef } from "react";
 
 /** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
   if (layer.tileUrl) return layer.tileUrl;
 
-  const baseUrl = layer.wmsUrl ?? DEFAULT_MAP_SERVER_ENDPOINT.wmsUrl;
+  const baseUrl =
+    layer.wmsUrl ?? "https://igtpr.atrbpn.go.id/geoserver/igt/wms";
   const layerName = layer.layers ?? "igt:CONTOH_BIDANG_TANAH";
   const params = new URLSearchParams({
     service: "WMS",
-    version: layer.version ?? DEFAULT_MAP_SERVER_ENDPOINT.wmsVersion ?? "1.1.1",
+    version: layer.version ?? "1.1.1",
     request: "GetMap",
     layers: layerName,
     format: layer.format ?? "image/png",
@@ -86,20 +85,6 @@ export const useMapLayers = (
 
     const controller = new AbortController();
 
-    const wfsCache = new Map<string, GeoJSON.FeatureCollection>();
-
-    const getWfsData = async (typeName: string, wfsUrl?: string) => {
-      const cacheKey = `${wfsUrl ?? ""}:${typeName}`;
-      const cached = wfsCache.get(cacheKey);
-      if (cached) return cached;
-      const data = await fetchWfs({
-        typeName,
-        wfsUrl,
-        signal: controller.signal,
-      });
-      wfsCache.set(cacheKey, data);
-      return data;
-    };
 
     const safeAddSource = (
       id: string,
@@ -163,21 +148,7 @@ export const useMapLayers = (
         case "wfs-line":
         case "wfs-circle":
         case "wfs-symbol": {
-          const data = await getWfsData(layer.wfsTypeName, layer.wfsUrl);
-
-          if (controller.signal.aborted) return;
-
-          safeAddSource(layer.id, { type: "geojson", data });
-          safeAddLayer(
-            {
-              id: layer.id,
-              type: WFS_LAYER_RENDER_TYPE_MAP[layer.type],
-              source: layer.id,
-              paint: layer.paint,
-              layout: { ...layer.layout, visibility },
-            } as maplibregl.LayerSpecification,
-            beforeId,
-          );
+          // Visual WFS rendering is disabled. Only WMS is rendered visually, WFS is query-only.
           break;
         }
 

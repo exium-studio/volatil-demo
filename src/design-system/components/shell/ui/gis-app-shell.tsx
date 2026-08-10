@@ -10,7 +10,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
-import { DEFAULT_MAP_LAYERS_LIST } from "@/design-system/components/map/constants/map.config";
+import { getMapLayers } from "@/design-system/components/map/services/map-layers.api";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { Map } from "@/design-system/components/map/ui/map";
@@ -47,6 +47,7 @@ import {
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { UserIcon } from "lucide-react";
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 // -------------------------------------------------------------------------------------
 
@@ -323,13 +324,19 @@ const Content = () => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
 
-  // Build layer config array using DEFAULT_MAP_LAYERS
+  // Derived Values — Build layer config from fetched layer list
+  const { data: fetchedLayers } = useQuery({
+    queryKey: ["map-layers"],
+    queryFn: () => getMapLayers(),
+    staleTime: Infinity,
+  });
+
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
-      DEFAULT_MAP_LAYERS_LIST.map((layer) =>
+      (fetchedLayers ?? []).map((layer) =>
         layer.type === "wms-raster" ? { ...layer, visible: wmsVisible } : layer,
       ),
-    [wmsVisible],
+    [fetchedLayers, wmsVisible],
   );
 
   // Derived Values

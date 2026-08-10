@@ -1,7 +1,6 @@
 // src/design-system/components/map/services/map-layers.api.ts
 
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
-import { DEFAULT_MAP_SERVER_ENDPOINT } from "@/design-system/components/map/constants/map.config";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 
@@ -9,7 +8,7 @@ const DUMMY_MAP_LAYERS: MapLayerConfig[] = [
   {
     id: "igt-bidang-tanah-wms-raster",
     type: "wms-raster",
-    wmsUrl: DEFAULT_MAP_SERVER_ENDPOINT.wmsUrl,
+    wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/igt/wms",
     layers: "igt:CONTOH_BIDANG_TANAH",
     visible: true,
   },

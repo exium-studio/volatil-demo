@@ -1,9 +1,4 @@
-// src/design-system/components/map/utils/fetch-wfs.ts
-
 import type GeoJSON from "geojson";
-import {
-  DEFAULT_MAP_SERVER_ENDPOINT,
-} from "@/design-system/components/map/constants/map.config";
 
 export type WfsBbox = [number, number, number, number];
 
@@ -25,12 +20,12 @@ export const fetchWfs = async ({
   wfsUrl,
   bbox,
   cqlFilter,
-  version = DEFAULT_MAP_SERVER_ENDPOINT.wfsVersion ?? "1.0.0",
-  outputFormat = DEFAULT_MAP_SERVER_ENDPOINT.outputFormat ?? "application/json",
-  srsName = DEFAULT_MAP_SERVER_ENDPOINT.srsName ?? "EPSG:4326",
+  version = "1.0.0",
+  outputFormat = "application/json",
+  srsName = "EPSG:4326",
   signal,
 }: FetchWfsParams): Promise<GeoJSON.FeatureCollection> => {
-  const baseUrl = wfsUrl ?? DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl;
+  const baseUrl = wfsUrl ?? "https://igtpr.atrbpn.go.id/geoserver/igt/ows";
   const url = new URL(baseUrl);
   url.searchParams.set("service", "WFS");
   url.searchParams.set("version", version);
