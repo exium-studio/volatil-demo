@@ -10,7 +10,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
-import { getMapLayers } from "@/design-system/components/map/services/map-layers.api";
+import { DUMMY_MAP_LAYERS, getMapLayers } from "@/design-system/components/map/services/map-layers.api";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { Map } from "@/design-system/components/map/ui/map";
@@ -328,6 +328,7 @@ const Content = () => {
   const { data: fetchedLayers } = useQuery({
     queryKey: ["map-layers"],
     queryFn: () => getMapLayers(),
+    initialData: DUMMY_MAP_LAYERS,
     staleTime: Infinity,
   });
 
