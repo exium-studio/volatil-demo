@@ -361,7 +361,7 @@ type AddFileButtonProps = ButtonProps & {
 
 const AddFileButton = (props: AddFileButtonProps) => {
   // Props
-  const { onFilesAdded, ...buttonProps } = props;
+  const { onFilesAdded, ...restProps } = props;
 
   return (
     <FileInputTrigger
@@ -374,8 +374,9 @@ const AddFileButton = (props: AddFileButtonProps) => {
           onFilesAdded(acceptedFiles);
         },
       }}
+      flex={1}
     >
-      <Button primary pl={3} {...buttonProps}>
+      <Button primary w={"full"} pl={3} {...restProps}>
         <AppIcon icon={PlusIcon} />
         {"Tambah file AOI"}
       </Button>
@@ -446,15 +447,20 @@ const FileListTrigger = (props: FileListTriggerProps) => {
         </Modal.Body>
 
         <Modal.Footer gap={SPACING_SM}>
+          <Button
+            flex={1}
+            variant={"outline"}
+            colorPalette={"red"}
+            onClick={onClearAll}
+          >
+            {"Hapus semua"}
+          </Button>
+
           <AddFileButton
             flex={1}
             onFilesAdded={onFilesAdded}
             variant={"outline"}
           />
-
-          <Button flex={1} _hover={{ color: "fg.error" }} onClick={onClearAll}>
-            {"Hapus semua"}
-          </Button>
         </Modal.Footer>
       </Modal.Content>
     </Modal.Root>
