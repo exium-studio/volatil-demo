@@ -33,7 +33,10 @@ const MapShell = ({
  * High-level Map component — composes BaseMap (basemap engine) and an
  * internal shell that wires up layers, drawing, and overlay controls.
  */
-export const Map = ({ layers, styleUrl, onDrawFinish, children }: MapProps) => {
+export const Map = (props: MapProps) => {
+  // Props
+  const { layers, styleUrl, onDrawFinish, children } = props;
+
   return (
     <BaseMap styleUrl={styleUrl}>
       <MapShell layers={layers} onDrawFinish={onDrawFinish}>

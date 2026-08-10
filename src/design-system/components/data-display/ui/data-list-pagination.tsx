@@ -14,7 +14,7 @@ export const DataListPagination = (props: DataListPaginationProps) => {
 
   // Derived Values
   const canGoPrev = page > 1;
-  const canGoNext = totalPage ? page < totalPage : true;
+  const canGoNext = totalPage ? page < totalPage : false;
 
   return (
     <HStack align="center" gap={2}>

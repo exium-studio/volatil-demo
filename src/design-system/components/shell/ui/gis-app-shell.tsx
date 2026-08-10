@@ -389,7 +389,7 @@ const Content = () => {
         <Map
           layers={mapLayers}
           onDrawFinish={(feature, originalPoints) => {
-            console.log({ feature, originalPoints });
+            console.log("draw finished", { feature, originalPoints });
           }}
         />
       </Box>

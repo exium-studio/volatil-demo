@@ -128,11 +128,7 @@ export const useMapDraw = (
         const clickPx = map.project([clickPoint.lng, clickPoint.lat]);
 
         if (
-          isNearFirstPoint(
-            clickPx,
-            firstPx,
-            MAP_CONFIG.draw.closeHitRadiusPx,
-          )
+          isNearFirstPoint(clickPx, firstPx, MAP_CONFIG.draw.closeHitRadiusPx)
         ) {
           finalize();
           return;

@@ -10,20 +10,24 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { FileInputTrigger } from "@/design-system/components/input/ui/file-input";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { toast } from "@/design-system/components/toast";
+import { useWfsClip } from "@/design-system/components/map/hooks/use-wfs-clip";
+import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
+import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
+import { parseShpFile } from "@/design-system/components/map/utils/parse-shp-file";
 import {
   MODAL_SEARCH_PARAM_KEY,
   usePopModal,
 } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { toast } from "@/design-system/components/toast";
 import {
   PADDING_MD,
   PADDING_SM,
@@ -45,48 +49,43 @@ import {
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import type { UploadAoiFileListTriggerProps } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
+import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
-import type GeoJSON from "geojson";
 import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
 
 /** Parses an uploaded GeoJSON/JSON file and returns a CQL INTERSECTS filter string, or null. */
-const parseFileToCqlFilter = async (file: File): Promise<string | null> => {
-  if (
-    !file.type.includes("json") &&
-    !file.name.endsWith(".geojson") &&
-    !file.name.endsWith(".json")
-  ) {
-    return null;
-  }
-
+const parseGeoJsonFile = async (
+  file: File,
+): Promise<GeoJSON.Feature<GeoJSON.Polygon> | null> => {
   const text = await file.text();
   const parsed = JSON.parse(text) as GeoJSON.GeoJsonObject;
 
-  let ring: number[][] | undefined;
-
   if (parsed.type === "FeatureCollection") {
-    const fc = parsed as GeoJSON.FeatureCollection;
-    const firstGeom = fc.features[0]?.geometry;
-    if (firstGeom?.type === "Polygon") {
-      ring = firstGeom.coordinates[0];
-    }
-  } else if (parsed.type === "Feature") {
+    return unionGeoJsonPolygons(parsed as GeoJSON.FeatureCollection);
+  }
+
+  if (parsed.type === "Feature") {
     const feat = parsed as GeoJSON.Feature;
     if (feat.geometry?.type === "Polygon") {
-      ring = feat.geometry.coordinates[0];
+      return feat as GeoJSON.Feature<GeoJSON.Polygon>;
     }
   }
 
-  if (!ring) return null;
+  if (parsed.type === "Polygon") {
+    return {
+      type: "Feature",
+      properties: {},
+      geometry: parsed as GeoJSON.Polygon,
+    };
+  }
 
-  const wktCoords = ring.map((c) => `${c[0]} ${c[1]}`).join(", ");
-  return `INTERSECTS(geom, POLYGON((${wktCoords})))`;
+  return null;
 };
 
 // -------------------------------------------------------------------------------------
@@ -94,6 +93,10 @@ const parseFileToCqlFilter = async (file: File): Promise<string | null> => {
 export const MitraDataRequestUploadAoiTabsContent = (
   props: TabsContentProps,
 ) => {
+  // Hooks
+  const { run: runWfsClip } = useWfsClip();
+  const resetWfsClipStore = useWfsClipStore((state) => state.reset);
+
   // States
   const [dataListState, setDataListState] = useState({
     selectedItems: [] as FormattedListItem[],
@@ -117,28 +120,63 @@ export const MitraDataRequestUploadAoiTabsContent = (
     let isSubscribed = true;
 
     const processFile = async () => {
-      await Promise.resolve();
-
-      if (!isSubscribed) return;
-
       if (isEmptyArray(dataListState.uploadedFiles)) {
         setAoiCqlFilter(null);
+        resetWfsClipStore();
         return;
       }
 
       const file = dataListState.uploadedFiles[0];
 
+      // Validasi ekstensi
+      const isShp = file.name.endsWith(".shp");
+      const isGeoJson =
+        file.name.endsWith(".geojson") || file.name.endsWith(".json");
+
+      if (!isShp && !isGeoJson) {
+        toast.error("File harus berformat .shp, .geojson, atau .json");
+        setDataListState((prev) => ({ ...prev, uploadedFiles: [] }));
+        return;
+      }
+
+      // Validasi ukuran (10MB)
+      const MAX_SIZE = 10 * 1024 * 1024;
+      if (file.size > MAX_SIZE) {
+        toast.error("Ukuran file maksimal 10MB");
+        setDataListState((prev) => ({ ...prev, uploadedFiles: [] }));
+        return;
+      }
+
       try {
-        const cqlFilter = await parseFileToCqlFilter(file);
+        let unionPolygon: GeoJSON.Feature<GeoJSON.Polygon> | null = null;
+
+        if (isShp) {
+          const fc = await parseShpFile(file);
+          if (!isSubscribed) return;
+          unionPolygon = unionGeoJsonPolygons(fc);
+        } else {
+          unionPolygon = await parseGeoJsonFile(file);
+        }
+
+        if (!isSubscribed) return;
+
+        if (!unionPolygon) {
+          toast.error("Tidak ada polygon yang ditemukan dalam file");
+          return;
+        }
+
+        const wkt = geojsonPolygonToWkt(unionPolygon);
+        const cqlFilter = `INTERSECTS(geom, ${wkt})`;
 
         if (isSubscribed) {
           setAoiCqlFilter(cqlFilter);
+          void runWfsClip(unionPolygon, "igt:CONTOH_BIDANG_TANAH");
         }
       } catch (error) {
         console.error("Failed to parse AOI file:", error);
         if (isSubscribed) {
           setAoiCqlFilter(null);
-          toast.error("Gagal memproses file AOI");
+          toast.error("Gagal memproses file");
         }
       }
     };
@@ -148,7 +186,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
     return () => {
       isSubscribed = false;
     };
-  }, [dataListState.uploadedFiles]);
+  }, [dataListState.uploadedFiles, resetWfsClipStore, runWfsClip]);
 
   // Derived Values
   const contextValue = useMemo(
@@ -276,7 +314,9 @@ const AddFileButton = (props: ButtonProps) => {
   return (
     <FileInputTrigger
       fileInputProps={{
+        accept: [".shp", ".geojson", ".json"],
         maxFiles: 1,
+        maxFileSize: 10 * 1024 * 1024,
         value: dataListState.uploadedFiles,
         onFileChange: ({ acceptedFiles }) => {
           setDataListState((prev) => ({
