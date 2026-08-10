@@ -195,19 +195,24 @@ function annotateHistoryOnClose(
 // Public API
 // ---------------------------------------------------------------------------
 
-function resolveDuration(duration: ToastOptions["duration"]): number | null {
-  if (duration === undefined) return getToastConfig().defaultDuration;
-  return duration; // explicit `null` (persistent) or explicit number both pass through
+function resolveDuration(
+  duration: ToastOptions["duration"],
+  variant: ToastVariant = "info",
+): number | null {
+  if (duration !== undefined) return duration;
+  if (variant === "loading") return null;
+  return getToastConfig().defaultDuration;
 }
 
 function buildRecord(options: ToastOptions, id: string): ToastRecord {
-  const duration = resolveDuration(options.duration);
+  const variant = options.variant ?? "info";
+  const duration = resolveDuration(options.duration, variant);
   const now = Date.now();
   return {
     ...options,
     id,
     group: options.group ?? DEFAULT_TOAST_GROUP,
-    variant: options.variant ?? "info",
+    variant,
     duration,
     status: "entering",
     createdAt: now,
@@ -285,13 +290,21 @@ function update(id: string, patch: UpdateToastOptions): void {
   const existing = useToastVisibleStore.getState().find(id);
   if (!existing) return;
 
+  const nextVariant =
+    patch.variant !== undefined ? patch.variant : existing.variant;
   const duration =
-    patch.duration !== undefined ? patch.duration : existing.duration;
+    patch.duration !== undefined
+      ? patch.duration
+      : patch.variant !== undefined && patch.variant !== existing.variant
+        ? resolveDuration(undefined, nextVariant)
+        : existing.duration;
+
   const nextRecord: ToastRecord = {
     ...existing,
     ...patch,
     id: existing.id,
     group: existing.group,
+    variant: nextVariant,
     duration,
     remainingDuration: duration,
     updatedAt: Date.now(),

@@ -58,11 +58,7 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
           <HStack gap={SPACING_SM}>
             <SearchInput placeholder={t["action.search"]()} />
 
-            <WfsIgtFilterTrigger>
-              <IconButton variant={"outline"}>
-                <AppIcon icon={SlidersHorizontalIcon} />
-              </IconButton>
-            </WfsIgtFilterTrigger>
+            <MitraDataRequestCatalogFilterButton />
           </HStack>
         </HStack>
       </VStack>
@@ -71,6 +67,16 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
 
       <MitraDataRequestCatalogDataList />
     </Tabs.Content>
+  );
+};
+
+const MitraDataRequestCatalogFilterButton = () => {
+  return (
+    <WfsIgtFilterTrigger>
+      <IconButton variant={"outline"}>
+        <AppIcon icon={SlidersHorizontalIcon} />
+      </IconButton>
+    </WfsIgtFilterTrigger>
   );
 };
 
