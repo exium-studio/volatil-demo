@@ -3,11 +3,11 @@
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { MitraDataRequestIgtBasis } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 
-export type InternalHomeDataListProps = StackProps;
+export type InternalHomeIgtDataListProps = StackProps;
 
 export type InternalHomeSyncStatus = "connected" | "disconnected" | "syncing";
 
-export type InternalHomeDataListItem = Record<string, unknown> & {
+export type InternalHomeIgtDataListItem = Record<string, unknown> & {
   id: string;
   layerFileName: string;
   syncStatus: InternalHomeSyncStatus;

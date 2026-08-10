@@ -1,6 +1,6 @@
 // src/shared/constants/dummy-data/dummy-internal-home-data.ts
 
-import type { InternalHomeDataListItem } from "@/features/internal/home/types/internal.home.data-list.type";
+import type { InternalHomeIgtDataListItem } from "@/features/internal/home/types/internal.home.data-list.type";
 import type { InternalHomeDataSummaryResponse } from "@/features/internal/home/types/internal.home.data-summary.type";
 import type { ServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
@@ -62,7 +62,7 @@ export const dummyInternalOrderSummary = {
   totalRevenue: 990000000,
 };
 
-export const dummyInternalDataList: InternalHomeDataListItem[] = [
+export const dummyInternalDataList: InternalHomeIgtDataListItem[] = [
   {
     id: "data-1",
     layerFileName: "layerdataigtpr.zip",

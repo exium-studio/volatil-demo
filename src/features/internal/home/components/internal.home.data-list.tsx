@@ -25,8 +25,8 @@ import {
   SPACING_SM,
 } from "@/design-system/constants/styles";
 import type {
-  InternalHomeDataListItem,
-  InternalHomeDataListProps,
+  InternalHomeIgtDataListItem,
+  InternalHomeIgtDataListProps,
   SyncStatus,
 } from "@/features/internal/home/types/internal.home.data-list.type";
 import type { IgtBasis } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
@@ -52,21 +52,23 @@ const IGT_BASIS_MAP: Record<IgtBasis, { label: string; color: string }> = {
   kawasan: { label: "IGT Berbasis Kawasan", color: "orange" },
 };
 
-export const InternalHomeDataList = (props: InternalHomeDataListProps) => {
+export const InternalHomeIgtDataList = (
+  props: InternalHomeIgtDataListProps,
+) => {
   return (
     <Container.Root flex={"1 1 100%"} withContext={true} {...props}>
       <Container.Body pb={PADDING_MD}>
-        <InternalHomeDataListHeader />
+        <InternalHomeIgtDataListHeader />
 
         <Separator borderColor={"bg.canvas"} />
 
-        <InternalHomeDataListTableContent />
+        <InternalHomeIgtDataListTableContent />
       </Container.Body>
     </Container.Root>
   );
 };
 
-const InternalHomeDataListHeader = () => {
+const InternalHomeIgtDataListHeader = () => {
   return (
     <HStack
       wrap={"wrap"}
@@ -105,7 +107,7 @@ const InternalHomeDataListHeader = () => {
   );
 };
 
-const InternalHomeDataListTableContent = () => {
+const InternalHomeIgtDataListTableContent = () => {
   // Queries / Data
   const { dataList, isLoading, isFetching } = useInternalHomeData();
 
@@ -123,7 +125,7 @@ const InternalHomeDataListTableContent = () => {
   );
 
   const items = useMemo<FormattedListItem[]>(() => {
-    return dataList.map((item: InternalHomeDataListItem) => ({
+    return dataList.map((item: InternalHomeIgtDataListItem) => ({
       id: item.id,
       data: item,
       columns: [
@@ -197,7 +199,7 @@ const InternalHomeDataListTableContent = () => {
   return (
     <VStack bg={"bg.canvas"} w={"full"} position={"relative"}>
       {isLoading ? (
-        <Skeleton />
+        <Skeleton h={"280px"} w={"full"} />
       ) : (
         <>
           <Box w={"full"} position={"relative"}>

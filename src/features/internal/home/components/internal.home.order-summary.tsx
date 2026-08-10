@@ -98,6 +98,7 @@ const InternalHomeOrderStats = (props: { period: HomePeriod }) => {
 
   // Queries / Data
   const { orderSummary } = useInternalHomeData(period);
+
   const { activeOrders, completedOrders, igtRequests, totalRevenue } =
     orderSummary;
 
