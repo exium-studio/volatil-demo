@@ -1,10 +1,7 @@
 // src/features/mitra/data-request/utils/fetch-wfs-filtered.ts
 
 import {
-  WFS_BASE_URL,
-  WFS_OUTPUT_FORMAT,
-  WFS_SRS_NAME,
-  WFS_VERSION,
+  DEFAULT_MAP_SERVER_ENDPOINT,
 } from "@/design-system/components/map/constants/map.config";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type GeoJSON from "geojson";
@@ -36,13 +33,13 @@ export const fetchWfsFiltered = async (
 
   // If pagination (startIndex/count) is provided, construct URL directly to pass pagination params
   if (startIndex !== undefined || count !== undefined) {
-    const url = new URL(WFS_BASE_URL);
+    const url = new URL(DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl);
     url.searchParams.set("service", "WFS");
-    url.searchParams.set("version", WFS_VERSION);
+    url.searchParams.set("version", DEFAULT_MAP_SERVER_ENDPOINT.wfsVersion ?? "1.0.0");
     url.searchParams.set("request", "GetFeature");
     url.searchParams.set("typeName", typeName);
-    url.searchParams.set("outputFormat", WFS_OUTPUT_FORMAT);
-    url.searchParams.set("srsName", WFS_SRS_NAME);
+    url.searchParams.set("outputFormat", DEFAULT_MAP_SERVER_ENDPOINT.outputFormat ?? "application/json");
+    url.searchParams.set("srsName", DEFAULT_MAP_SERVER_ENDPOINT.srsName ?? "EPSG:4326");
 
     if (cqlFilter) {
       url.searchParams.set("CQL_FILTER", cqlFilter);

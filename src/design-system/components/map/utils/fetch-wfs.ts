@@ -3,9 +3,6 @@
 import type GeoJSON from "geojson";
 import {
   DEFAULT_MAP_SERVER_ENDPOINT,
-  WFS_OUTPUT_FORMAT,
-  WFS_SRS_NAME,
-  WFS_VERSION,
 } from "@/design-system/components/map/constants/map.config";
 
 export type WfsBbox = [number, number, number, number];
@@ -28,9 +25,9 @@ export const fetchWfs = async ({
   wfsUrl,
   bbox,
   cqlFilter,
-  version = WFS_VERSION,
-  outputFormat = WFS_OUTPUT_FORMAT,
-  srsName = WFS_SRS_NAME,
+  version = DEFAULT_MAP_SERVER_ENDPOINT.wfsVersion ?? "1.0.0",
+  outputFormat = DEFAULT_MAP_SERVER_ENDPOINT.outputFormat ?? "application/json",
+  srsName = DEFAULT_MAP_SERVER_ENDPOINT.srsName ?? "EPSG:4326",
   signal,
 }: FetchWfsParams): Promise<GeoJSON.FeatureCollection> => {
   const baseUrl = wfsUrl ?? DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl;

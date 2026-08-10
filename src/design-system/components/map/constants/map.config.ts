@@ -66,20 +66,7 @@ export const MAP_SERVER_ENDPOINTS_LIST: MapServerEndpoint[] = [
 
 export const DEFAULT_MAP_SERVER_ENDPOINT = MAP_SERVER_ENDPOINTS_LIST[0];
 
-// ---------------------------------------------------------------------------
-// WMS & WFS Defaults (Legacy compatibility)
-// ---------------------------------------------------------------------------
-
-export const WMS_BASE_URL = DEFAULT_MAP_SERVER_ENDPOINT.wmsUrl;
-export const WMS_VERSION = DEFAULT_MAP_SERVER_ENDPOINT.wmsVersion ?? "1.1.1";
-export const WMS_SRS = "EPSG:3857";
 export const WMS_LAYER_NAME = "igt:CONTOH_BIDANG_TANAH";
-
-export const WFS_BASE_URL = DEFAULT_MAP_SERVER_ENDPOINT.wfsUrl;
-export const WFS_VERSION = DEFAULT_MAP_SERVER_ENDPOINT.wfsVersion ?? "1.0.0";
-export const WFS_OUTPUT_FORMAT =
-  DEFAULT_MAP_SERVER_ENDPOINT.outputFormat ?? "application/json";
-export const WFS_SRS_NAME = DEFAULT_MAP_SERVER_ENDPOINT.srsName ?? "EPSG:4326";
 export const WFS_LAYER_NAME = "igt:CONTOH_BIDANG_TANAH";
 
 // ---------------------------------------------------------------------------
