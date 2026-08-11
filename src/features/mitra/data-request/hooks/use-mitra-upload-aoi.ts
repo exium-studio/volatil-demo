@@ -1,8 +1,8 @@
-// src/features/mitra/data-request/hooks/use-mitra-upload-aoi-layers.ts
+// src/features/mitra/data-request/hooks/use-mitra-upload-aoi.ts
 
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
-import type { AoiLayer } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
+import type { MitraDataRequestUploadAoiLayer } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import type maplibregl from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
@@ -67,7 +67,7 @@ const safeAddLayer = (
   }
 };
 
-/** Removes source + fill + line layers for a given AoiLayer id. */
+/** Removes source + fill + line layers for a given MitraDataRequestUploadAoiLayer id. */
 const removeAoiLayer = (map: maplibregl.Map, id: string) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!(map as any).style) return;
@@ -81,10 +81,10 @@ const removeAoiLayer = (map: maplibregl.Map, id: string) => {
   if (map.getSource(sourceId)) map.removeSource(sourceId);
 };
 
-/** Adds or updates source + fill + line layer pair for a single AoiLayer. */
+/** Adds or updates source + fill + line layer pair for a single MitraDataRequestUploadAoiLayer. */
 const addAoiLayer = (
   map: maplibregl.Map,
-  aoi: AoiLayer,
+  aoi: MitraDataRequestUploadAoiLayer,
   beforeId: string | undefined,
 ) => {
   const sourceId = `${UPLOAD_AOI_SOURCE_PREFIX}${aoi.id}`;
@@ -124,13 +124,13 @@ const addAoiLayer = (
 
 /**
  * Manages MapLibre fill & line layers for uploaded AOI polygons (orange, distinct from draw).
- * - Reactively renders layers as AoiLayer items complete parsing ("done").
- * - Cleanly removes layers when AoiLayer items are deleted.
+ * - Reactively renders layers as MitraDataRequestUploadAoiLayer items complete parsing ("done").
+ * - Cleanly removes layers when MitraDataRequestUploadAoiLayer items are deleted.
  * - Survives map style reload via MAP_EVENTS_MAP.styleReady.
  */
 export const useMitraUploadAoi = (
   map: maplibregl.Map | null,
-  aoiLayers: AoiLayer[],
+  aoiLayers: MitraDataRequestUploadAoiLayer[],
 ) => {
   const aoiLayersRef = useRef(aoiLayers);
   useEffect(() => {
@@ -213,3 +213,4 @@ export const useMitraUploadAoi = (
 };
 
 export const useUploadAoi = useMitraUploadAoi;
+

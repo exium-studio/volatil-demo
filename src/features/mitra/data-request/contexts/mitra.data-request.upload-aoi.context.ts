@@ -1,6 +1,6 @@
 // src/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context.ts
 
-import type { AoiLayer } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
+import type { MitraDataRequestUploadAoiLayer } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import {
   createContext,
   useContext,
@@ -9,8 +9,8 @@ import {
 } from "react";
 
 export type MitraDataRequestUploadAoiContextValue = {
-  aoiLayers: AoiLayer[];
-  setAoiLayers: Dispatch<SetStateAction<AoiLayer[]>>;
+  aoiLayers: MitraDataRequestUploadAoiLayer[];
+  setAoiLayers: Dispatch<SetStateAction<MitraDataRequestUploadAoiLayer[]>>;
 };
 
 export const MitraDataRequestUploadAoiContext =
@@ -27,3 +27,4 @@ export function useMitraDataRequestUploadAoiContext() {
 
   return context;
 }
+

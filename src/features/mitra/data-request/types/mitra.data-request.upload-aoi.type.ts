@@ -2,9 +2,13 @@
 
 import type { ReactNode } from "react";
 import type GeoJSON from "geojson";
+import type { ButtonProps } from "@/design-system/components/button/types/button.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
+import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 
 /** Single uploaded AOI file with its parsed GeoJSON polygon — source of truth. */
-export type AoiLayer = {
+export type MitraDataRequestUploadAoiLayer = {
   id: string;
   fileName: string;
   fileSize: number;
@@ -14,15 +18,50 @@ export type AoiLayer = {
   errorMessage?: string;
 };
 
+export type AoiLayer = MitraDataRequestUploadAoiLayer;
+
+export type MitraDataRequestUploadAoiTabsContentProps = TabsContentProps;
+
+export type MitraDataRequestUploadAoiAddFileButtonProps = ButtonProps & {
+  isIconButton?: boolean;
+  onFilesAdded: (files: File[]) => void;
+};
+
+export type MitraDataRequestUploadAoiFileListTriggerProps = {
+  children: ReactNode;
+  onFilesAdded: (files: File[]) => void;
+  onDeleteLayer: (id: string) => void;
+  onClearAll: () => void;
+};
+
+export type MitraDataRequestUploadAoiDataListProps = {
+  aoiCqlFilter: string | null;
+  appliedFilters: WfsIgtFilterValues;
+  onAddToCartSelected: (selectedIds: string[]) => void;
+  onAddAllBidang: () => void;
+  onAddAllKawasan: () => void;
+  onAddAllBoth: () => void;
+};
+
+export type MitraDataRequestUploadAoiPageState = {
+  page: number;
+  pageSize: number;
+  selectedItems: FormattedListItem[];
+};
+
+// Backward-compatibility aliases
+export type AddFileButtonProps = MitraDataRequestUploadAoiAddFileButtonProps;
+export type FileListTriggerProps =
+  MitraDataRequestUploadAoiFileListTriggerProps;
+export type UploadAoiDataListProps = MitraDataRequestUploadAoiDataListProps;
 export type UploadAoiFileListTriggerProps = {
   children: ReactNode;
 };
-
 export type UploadAoiWfsIgtDataListProps = {
   wfsFeatures: GeoJSON.Feature[];
 };
-
-export type MitraDataRequestUploadAoiFileListTriggerProps =
+export type MitraDataRequestUploadAoiFileListTriggerPropsAlias =
   UploadAoiFileListTriggerProps;
-export type MitraDataRequestUploadAoiWfsIgtDataListProps =
+export type MitraDataRequestUploadAoiWfsIgtDataListPropsAlias =
   UploadAoiWfsIgtDataListProps;
+
