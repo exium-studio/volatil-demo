@@ -20,7 +20,7 @@ import {
   useRemoveFromCart,
 } from "@/features/cart/hooks/use-mitra-cart";
 import type { CartItem } from "@/features/cart/types/cart.type";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export const MitraCartPage = () => {
   return (
@@ -44,15 +44,9 @@ const MitraCartContent = () => {
   const clearCartMutation = useClearCart(() => setSelectedItems([]));
   const removeItemsMutation = useRemoveFromCart(() => setSelectedItems([]));
 
-  // Derived Values
-  const selectedCartItems: CartItem[] = useMemo(() => {
-    return (selectedItems ?? [])
-      .map((si) => si.data as CartItem)
-      .filter(Boolean);
-  }, [selectedItems]);
-
+  // Handlers
   const handleCheckout = () => {
-    const ids = selectedCartItems.map((item) => item.id);
+    const ids = cartData.items.map((item) => item.id);
     checkoutMutation.mutate(ids);
   };
 
@@ -118,7 +112,6 @@ const MitraCartContent = () => {
           <MitraCartOrderSummary
             summary={cartData.summary}
             config={cartData.config}
-            selectedItems={selectedCartItems}
             onCheckout={handleCheckout}
             isCheckoutPending={checkoutMutation.isPending}
           />

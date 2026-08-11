@@ -10,7 +10,6 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { MitraCartOrderSummaryProps } from "@/features/cart/types/cart.type";
-import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatCurrency,
   formatDecimal,
@@ -21,8 +20,8 @@ import { useMemo } from "react";
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
   const {
+    summary,
     config,
-    selectedItems = [],
     onCheckout,
     isCheckoutPending = false,
     ...restProps
@@ -31,72 +30,22 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Stores
   const { theme } = useThemeStore();
 
-  // Derived — Selected totals
-  const selectedBidangCount = useMemo(
-    () => selectedItems.filter((item) => item.basis === "bidang").length,
-    [selectedItems],
-  );
+  // Derived Values
+  const totalBidang = summary.totalBidang ?? 0;
+  const totalKawasanHa = summary.totalKawasanHa ?? 0;
+  const hasCartItems = totalBidang > 0 || totalKawasanHa > 0;
 
-  const selectedKawasanHa = useMemo(
-    () =>
-      selectedItems
-        .filter((item) => item.basis === "kawasan")
-        .reduce((sum, item) => sum + (item.areaInHa ?? 1), 0),
-    [selectedItems],
-  );
-
-  const selectedSubtotal = useMemo(
-    () =>
-      selectedItems.reduce((sum, item) => {
-        const price =
-          item.basis === "bidang"
-            ? config.pricePerBidang
-            : (item.areaInHa ?? 1) * config.pricePerKawasanHa;
-        return sum + price;
-      }, 0),
-    [selectedItems, config.pricePerBidang, config.pricePerKawasanHa],
-  );
-
-  const selectedServiceFee = useMemo(
-    () => Math.round(selectedSubtotal * (config.serviceFeeRate ?? 0.1)),
-    [selectedSubtotal, config.serviceFeeRate],
-  );
-
-  const selectedTax = useMemo(
-    () =>
-      Math.round(
-        (selectedSubtotal + selectedServiceFee) * (config.taxRate ?? 0.11),
-      ),
-    [selectedSubtotal, selectedServiceFee, config.taxRate],
-  );
-
-  const selectedGrandTotal = useMemo(
-    () => selectedSubtotal + selectedServiceFee + selectedTax,
-    [selectedSubtotal, selectedServiceFee, selectedTax],
-  );
-
-  const hasSelectedItems = !isEmptyArray(selectedItems);
-
-  const isBidangMinimumNotMet =
-    selectedBidangCount > 0 && selectedBidangCount < config.minimumBidangCount;
-  const isKawasanMinimumNotMet =
-    selectedKawasanHa > 0 && selectedKawasanHa < config.minimumKawasanHa;
+  const isBidangMinimumNotMet = totalBidang < config.minimumBidangCount;
+  const isKawasanMinimumNotMet = totalKawasanHa < config.minimumKawasanHa;
   const isMinimumNotMet =
-    !hasSelectedItems || isBidangMinimumNotMet || isKawasanMinimumNotMet;
+    !hasCartItems || isBidangMinimumNotMet || isKawasanMinimumNotMet;
 
   const isCheckoutDisabled = isMinimumNotMet || isCheckoutPending;
 
-  const displayTotalBidang = selectedBidangCount;
-  const displayTotalKawasanHa = selectedKawasanHa;
-  const displaySubtotal = selectedSubtotal;
-  const displayServiceFee = selectedServiceFee;
-  const displayTax = selectedTax;
-  const displayGrandTotal = selectedGrandTotal;
-
   // Derived — Warning Message
   const warningMessage = useMemo(() => {
-    if (!hasSelectedItems) {
-      return "Pilih item di keranjang terlebih dahulu untuk konfirmasi pembelian";
+    if (!hasCartItems) {
+      return "Keranjang belanja Anda masih kosong";
     }
     if (isBidangMinimumNotMet && isKawasanMinimumNotMet) {
       return "Jumlah bidang dan kawasan (ha) belum memenuhi batas minimum pembelian";
@@ -108,7 +57,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       return "Jumlah kawasan (ha) belum memenuhi batas minimum pembelian";
     }
     return null;
-  }, [hasSelectedItems, isBidangMinimumNotMet, isKawasanMinimumNotMet]);
+  }, [hasCartItems, isBidangMinimumNotMet, isKawasanMinimumNotMet]);
 
   return (
     <VStack
@@ -136,7 +85,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         <Progress.Root
           value={Math.min(
             100,
-            (selectedBidangCount / config.minimumBidangCount) * 100,
+            (totalBidang / config.minimumBidangCount) * 100,
           )}
           colorPalette={"blue"}
           size={"sm"}
@@ -150,7 +99,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           <P color={"fg.muted"}>{"Bidang"}</P>
           <P fontWeight={"medium"}>
             <strong style={{ fontWeight: 600 }}>
-              <TNum>{formatDecimal(selectedBidangCount)}</TNum>
+              <TNum>{formatDecimal(totalBidang)}</TNum>
             </strong>
             {" / "}
             <TNum>{formatDecimal(config.minimumBidangCount)}</TNum>
@@ -164,7 +113,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         <Progress.Root
           value={Math.min(
             100,
-            (selectedKawasanHa / config.minimumKawasanHa) * 100,
+            (totalKawasanHa / config.minimumKawasanHa) * 100,
           )}
           colorPalette={"orange"}
           size={"sm"}
@@ -179,7 +128,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
           <P fontWeight={"medium"}>
             <strong style={{ fontWeight: 600 }}>
-              <TNum>{formatDecimal(selectedKawasanHa)}</TNum>
+              <TNum>{formatDecimal(totalKawasanHa)}</TNum>
             </strong>
             {" / "}
             <TNum>{formatDecimal(config.minimumKawasanHa)}</TNum>
@@ -201,14 +150,14 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Total Bidang"}</P>
           <P fontWeight={"medium"}>
-            <TNum>{formatDecimal(displayTotalBidang)}</TNum> {"bidang"}
+            <TNum>{formatDecimal(totalBidang)}</TNum> {"bidang"}
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Total Kawasan"}</P>
           <P fontWeight={"medium"}>
-            <TNum>{formatDecimal(displayTotalKawasanHa)}</TNum> {"ha"}
+            <TNum>{formatDecimal(totalKawasanHa)}</TNum> {"ha"}
           </P>
         </HStack>
 
@@ -223,22 +172,22 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Total Harga"}</P>
           <P fontWeight={"medium"}>
-            <TNum>{formatCurrency(displaySubtotal)}</TNum>
+            <TNum>{formatCurrency(summary.subtotal)}</TNum>
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Biaya Layanan"}</P>
           <P fontWeight={"medium"}>
-            <TNum>{formatCurrency(displayServiceFee)}</TNum>
+            <TNum>{formatCurrency(summary.serviceFee)}</TNum>
           </P>
         </HStack>
 
-        {displayTax > 0 && (
+        {summary.tax > 0 && (
           <HStack justify={"space-between"}>
             <P color={"fg.muted"}>{"Pajak"}</P>
             <P fontWeight={"medium"}>
-              <TNum>{formatCurrency(displayTax)}</TNum>
+              <TNum>{formatCurrency(summary.tax)}</TNum>
             </P>
           </HStack>
         )}
@@ -256,7 +205,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
             {"Sub Total"}
           </P>
           <P fontSize={"lg"} fontWeight={"bold"}>
-            <TNum>{formatCurrency(displayGrandTotal)}</TNum>
+            <TNum>{formatCurrency(summary.grandTotal)}</TNum>
           </P>
         </HStack>
       </VStack>

@@ -53,7 +53,6 @@ export type AddToCartPayload = {
 export type MitraCartOrderSummaryProps = StackProps & {
   summary: CartSummary;
   config: CartConfig;
-  selectedItems: CartItem[];
   onCheckout?: () => void;
   isCheckoutPending?: boolean;
 };
