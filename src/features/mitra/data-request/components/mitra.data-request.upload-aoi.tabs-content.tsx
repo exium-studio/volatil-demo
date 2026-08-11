@@ -62,7 +62,12 @@ import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
-import { FilesIcon, PlusIcon, SlidersHorizontalIcon } from "lucide-react";
+import {
+  FilesIcon,
+  PlusIcon,
+  SlidersHorizontalIcon,
+  TrashIcon,
+} from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 // -------------------------------------------------------------------------------------
@@ -131,13 +136,13 @@ export const MitraDataRequestUploadAoiTabsContent = (
     const id = crypto.randomUUID();
 
     // Validate extension
-    const isShp = file.name.endsWith(".shp");
+    const isShpOrZip = file.name.endsWith(".shp") || file.name.endsWith(".zip");
     const isGeoJson =
       file.name.endsWith(".geojson") || file.name.endsWith(".json");
 
-    if (!isShp && !isGeoJson) {
+    if (!isShpOrZip && !isGeoJson) {
       toast.error(
-        `"${file.name}": format tidak didukung (.shp/.geojson/.json)`,
+        `"${file.name}": format tidak didukung (.zip/.shp/.geojson/.json)`,
       );
       return;
     }
@@ -167,7 +172,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
     try {
       let polygon: GeoJSON.Feature<GeoJSON.Polygon> | null = null;
 
-      if (isShp) {
+      if (isShpOrZip) {
         const fc = await parseShpFile(file);
         polygon = unionGeoJsonPolygons(fc);
       } else {
@@ -324,6 +329,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
                   </MitraDataRequestUploadAoiFileListTrigger>
 
                   <MitraDataRequestUploadAoiAddFileButton
+                    isIconButton
                     onFilesAdded={handleFilesAdded}
                     variant={"outline"}
                   />
@@ -384,7 +390,14 @@ const MitraDataRequestUploadAoiAddFileButton = (
   return (
     <FileInputTrigger
       fileInputProps={{
-        accept: [".shp", ".geojson", ".json"],
+        accept: [
+          ".zip",
+          ".shp",
+          ".geojson",
+          ".json",
+          "application/zip",
+          "application/x-zip-compressed",
+        ],
         maxFiles: 10,
         maxFileSize: 10 * 1024 * 1024,
         value: [],
@@ -468,6 +481,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
             colorPalette={"red"}
             onClick={onClearAll}
           >
+            <AppIcon icon={TrashIcon} />
             {"Hapus semua"}
           </Button>
 
