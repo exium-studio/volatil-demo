@@ -13,7 +13,6 @@ import { VISUALLY_HIDDEN_INPUT_STYLE } from "@/design-system/constants/css-prese
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { dispatchNativeInputEvent } from "@/shared/utils/dom/dispatch-native-input-event";
 import { mergeRefs } from "@/shared/utils/react/merge-refs";
-import { cssCalc } from "@/shared/utils/style/css-calc";
 import { NumberInput as ChakraNumberInput } from "@chakra-ui/react";
 import { MinusIcon, PlusIcon } from "lucide-react";
 
@@ -68,10 +67,10 @@ export const NumberInput = (props: NumberInputProps) => {
       />
       <ChakraNumberInput.Control>
         <ChakraNumberInput.IncrementTrigger
-          roundedTopRight={cssCalc(`${theme.radii.component} - 1px`)}
+          roundedTopRight={`calc(${theme.radii.component} - 1px)`}
         />
         <ChakraNumberInput.DecrementTrigger
-          roundedBottomRight={cssCalc(`${theme.radii.component} - 1px`)}
+          roundedBottomRight={`calc(${theme.radii.component} - 1px)`}
         />
       </ChakraNumberInput.Control>
     </ChakraNumberInput.Root>

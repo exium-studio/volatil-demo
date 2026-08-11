@@ -297,126 +297,86 @@ const FileInputInner = (props: FileinputInnerProps) => {
           )}
 
           {resolvedVariant === "dropzone" && (
-            <VStack
-              pos={"relative"}
+            <FileUpload.Dropzone
               w={"full"}
+              minH={"220px"}
+              p={4}
+              bg={"bg.body"}
+              border={"2px dashed"}
+              borderColor={dragging ? "transparent" : "border"}
+              outline={dragging ? "2px dashed currentColor" : "none"}
+              outlineOffset={"2px"}
+              rounded={theme.radii.component}
+              cursor={"pointer"}
               flex={isDropzoneFlex ? (dropzoneProps?.flex ?? 1) : undefined}
               h={isDropzoneFlex ? (dropzoneProps?.h ?? "full") : undefined}
+              _hover={{
+                bg: "bg.subtle",
+              }}
+              {...dropzoneProps}
             >
-              <FileUpload.Dropzone
-                w={"full"}
-                minH={"220px"}
-                p={4}
-                bg={"bg.body"}
-                border={"2px dashed"}
-                borderColor={dragging ? "transparent" : "border.muted"}
-                rounded={theme.radii.component}
-                cursor={"pointer"}
-                _hover={{
-                  bg: "bg.subtle",
-                }}
-                {...dropzoneProps}
+              <FileUpload.DropzoneContent
+                gap={4}
+                mt={1}
+                transform={dragging ? "translateY(25%)" : ""}
+                transition={"200ms"}
               >
-                <FileUpload.DropzoneContent
-                  gap={4}
-                  mt={1}
-                  transform={dragging ? "translateY(25%)" : ""}
-                  transition={"200ms"}
-                >
-                  <VStack>
+                <VStack>
+                  <AppIcon
+                    icon={dragging ? ArrowDownIcon : UploadIcon}
+                    size={"lg"}
+                    color={"fg.muted"}
+                    mb={-2}
+                    animation={dragging ? "bounce" : ""}
+                  />
+                  {dragging && (
                     <AppIcon
-                      icon={dragging ? ArrowDownIcon : UploadIcon}
+                      icon={DotIcon}
                       size={"lg"}
                       color={"fg.muted"}
-                      mb={-2}
-                      animation={dragging ? "bounce" : ""}
+                      mb={-4}
                     />
-                    {dragging && (
-                      <AppIcon
-                        icon={DotIcon}
-                        size={"lg"}
-                        color={"fg.muted"}
-                        mb={-4}
-                      />
-                    )}
-                  </VStack>
+                  )}
+                </VStack>
 
-                  <VStack gap={1} maxW={"360px"}>
-                    <P textAlign={"center"}>
-                      {dragging ? t["common.drop_it_here"]() : dropzoneText}
-                    </P>
+                <VStack gap={1} maxW={"360px"}>
+                  <P textAlign={"center"}>
+                    {dragging ? t["common.drop_it_here"]() : dropzoneText}
+                  </P>
 
-                    <P
-                      fontSize={"sm"}
-                      textAlign={"center"}
-                      color={"fg.subtle"}
-                      opacity={dragging ? 0 : 1}
-                      transition={"200ms"}
-                    >
-                      {accept?.map((a: string) => a).join(", ")}
-                      {` max ${maxFiles} files `}
-                      {maxFileSize && (
-                        <>
-                          (<FormatByte value={maxFileSize} />)
-                        </>
-                      )}
-                    </P>
-                  </VStack>
-
-                  <Button
-                    variant={
-                      dropzoneButtonProps?.primary
-                        ? undefined
-                        : (dropzoneButtonProps?.variant ?? "outline")
-                    }
-                    size={"sm"}
+                  <P
+                    fontSize={"sm"}
+                    textAlign={"center"}
+                    color={"fg.subtle"}
                     opacity={dragging ? 0 : 1}
                     transition={"200ms"}
-                    onClick={openFilePicker}
-                    {...dropzoneButtonProps}
                   >
-                    {dropzoneButtonProps?.children ??
-                      t["common.browse_files"]()}
-                  </Button>
-                </FileUpload.DropzoneContent>
-              </FileUpload.Dropzone>
+                    {accept?.map((a: string) => a).join(", ")}
+                    {` max ${maxFiles} files `}
+                    {maxFileSize && (
+                      <>
+                        (<FormatByte value={maxFileSize} />)
+                      </>
+                    )}
+                  </P>
+                </VStack>
 
-              {dragging && (
-                <svg
-                  width={"100%"}
-                  height={"100%"}
-                  preserveAspectRatio={"none"}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    overflow: "visible",
-                    pointerEvents: "none",
-                  }}
+                <Button
+                  variant={
+                    dropzoneButtonProps?.primary
+                      ? undefined
+                      : (dropzoneButtonProps?.variant ?? "outline")
+                  }
+                  size={"sm"}
+                  opacity={dragging ? 0 : 1}
+                  transition={"200ms"}
+                  onClick={openFilePicker}
+                  {...dropzoneButtonProps}
                 >
-                  <rect
-                    x={1}
-                    y={1}
-                    width={"calc(100% - 2px)"}
-                    height={"calc(100% - 2px)"}
-                    rx={theme.radii.component}
-                    fill={"none"}
-                    stroke={"currentColor"}
-                    strokeWidth={1.5}
-                    strokeDasharray={"6 4"}
-                    style={{
-                      animation: "marching-ants 0.6s linear infinite",
-                      vectorEffect: "non-scaling-stroke",
-                    }}
-                  />
-                </svg>
-              )}
-
-              <style>{`
-                @keyframes marching-ants {
-                  to { stroke-dashoffset: -10; }
-                }
-              `}</style>
-            </VStack>
+                  {dropzoneButtonProps?.children ?? t["common.browse_files"]()}
+                </Button>
+              </FileUpload.DropzoneContent>
+            </FileUpload.Dropzone>
           )}
         </VStack>
       ) : (

@@ -411,14 +411,6 @@ const MitraDataRequestUploadAoiAddFileButton = (
   // Props
   const { isIconButton, onFilesAdded, ...restProps } = props;
 
-  // Render
-  if (isIconButton)
-    return (
-      <IconButton primary {...restProps}>
-        <AppIcon icon={PlusIcon} />
-      </IconButton>
-    );
-
   return (
     <FileInputTrigger
       fileInputProps={{
@@ -439,10 +431,18 @@ const MitraDataRequestUploadAoiAddFileButton = (
       }}
       flex={1}
     >
-      <Button primary w={"full"} pl={3} {...restProps}>
-        <AppIcon icon={PlusIcon} />
-        {"Tambah file AOI"}
-      </Button>
+      {isIconButton && (
+        <IconButton primary {...restProps}>
+          <AppIcon icon={PlusIcon} />
+        </IconButton>
+      )}
+
+      {!isIconButton && (
+        <Button primary w={"full"} pl={3} {...restProps}>
+          <AppIcon icon={PlusIcon} />
+          {"Tambah file AOI"}
+        </Button>
+      )}
     </FileInputTrigger>
   );
 };
