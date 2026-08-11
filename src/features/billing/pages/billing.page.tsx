@@ -36,9 +36,9 @@ const PAYMENT_METHODS_MAP = {
     title: "ATM",
     content: (
       <List.Root as={"ol"}>
-        <List.Item>Pilih menu Pebayaran</List.Item>
-        <List.Item>MPN/Pennerimaan Negara/Pajak-PNBP</List.Item>
-        <List.Item>Masukkan Kode Billing</List.Item>
+        <List.Item>1. Pilih menu Pebayaran</List.Item>
+        <List.Item>2. MPN/Pennerimaan Negara/Pajak-PNBP</List.Item>
+        <List.Item>3. Masukkan Kode Billing</List.Item>
       </List.Root>
     ),
   },
@@ -46,9 +46,9 @@ const PAYMENT_METHODS_MAP = {
     title: "Mobile / Internet Banking",
     content: (
       <List.Root as={"ol"}>
-        <List.Item>Login m-banking / i-banking</List.Item>
-        <List.Item>Menu MPN / Penerimaan Negara</List.Item>
-        <List.Item>Masukkan Kode Billing</List.Item>
+        <List.Item>1. Login m-banking / i-banking</List.Item>
+        <List.Item>2. Menu MPN / Penerimaan Negara</List.Item>
+        <List.Item>3. Masukkan Kode Billing</List.Item>
       </List.Root>
     ),
   },
@@ -56,9 +56,9 @@ const PAYMENT_METHODS_MAP = {
     title: "Mobile / Internet Banking",
     content: (
       <List.Root as={"ol"}>
-        <List.Item>Buka mpn.kemenkeu.go.id</List.Item>
-        <List.Item>input Kode Billing</List.Item>
-        <List.Item>Bayar via QRIS (khusus nominal ≤ Rp 10 juta)</List.Item>
+        <List.Item>1. Buka mpn.kemenkeu.go.id</List.Item>
+        <List.Item>2. input Kode Billing</List.Item>
+        <List.Item>3. Bayar via QRIS (khusus nominal ≤ Rp 10 juta)</List.Item>
       </List.Root>
     ),
   },
@@ -144,7 +144,7 @@ export const BillingPage = () => {
                       <Accordion.ItemIndicator />
                     </Accordion.ItemTrigger>
 
-                    <Accordion.ItemContent color={"fg.muted"}>
+                    <Accordion.ItemContent color={"fg.subtle"}>
                       {method.content}
                     </Accordion.ItemContent>
                   </Accordion.Item>
