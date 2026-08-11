@@ -16,7 +16,7 @@ import type {
 } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type GeoJSON from "geojson";
 
 export const useIgtCatalog = (params?: MitraDataRequestGetCatalogParams) => {
@@ -70,6 +70,7 @@ export const useFetchIgtByUploadedAoi = () => {
 };
 
 export const useAddToCartSelected = () => {
+  const queryClient = useQueryClient();
   const toast = mutationToastHandlers("add-to-cart-selected", {
     loadingMessage: {
       title: "Menambahkan item terpilih ke keranjang...",
@@ -83,12 +84,18 @@ export const useAddToCartSelected = () => {
     mutationFn: (payload: MitraDataRequestAddSelectedPayload) =>
       addToCartSelected(payload),
     onMutate: toast.onLoading,
-    onSuccess: toast.onSuccess,
+    onSuccess: () => {
+      toast.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.cart.all,
+      });
+    },
     onError: toast.onError,
   });
 };
 
 export const useAddToCartAll = () => {
+  const queryClient = useQueryClient();
   const toast = mutationToastHandlers("add-to-cart-all", {
     loadingMessage: {
       title: "Menambahkan seluruh item ke keranjang...",
@@ -102,7 +109,12 @@ export const useAddToCartAll = () => {
     mutationFn: (payload: MitraDataRequestAddAllPayload) =>
       addToCartAll(payload),
     onMutate: toast.onLoading,
-    onSuccess: toast.onSuccess,
+    onSuccess: () => {
+      toast.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.cart.all,
+      });
+    },
     onError: toast.onError,
   });
 };

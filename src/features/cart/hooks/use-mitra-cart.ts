@@ -3,23 +3,56 @@
 import {
   checkout,
   clearCart,
-  getCartData,
+  getCartItems,
+  getCartSummary,
   removeFromCart,
 } from "@/features/cart/services/cart.api";
-import type { CartResponse } from "@/features/cart/types/cart.type";
-import { dummyMitraCartData } from "@/shared/constants/dummy-data/dummy-cart-data";
+import type {
+  CartItemsResponse,
+  CartSummaryResponse,
+} from "@/features/cart/types/cart.type";
+import {
+  dummyCartSummaryResponse,
+  dummyMitraCartData,
+} from "@/shared/constants/dummy-data/dummy-cart-data";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const useCartQuery = (searchValue?: string) => {
-  const query = useQuery<CartResponse>({
-    queryKey: queryKeys.mitra.cart.data(searchValue),
-    queryFn: ({ signal }) => getCartData({ search: searchValue }, signal),
+export type CartItemsQueryParams = {
+  page: number;
+  pageSize: number;
+  search?: string;
+};
+
+export const useCartItemsQuery = (params: CartItemsQueryParams) => {
+  const query = useQuery<CartItemsResponse>({
+    queryKey: queryKeys.mitra.cart.items(params),
+    queryFn: ({ signal }) => getCartItems(params, signal),
+    placeholderData: (previousData) => previousData,
   });
 
   return {
     ...query,
-    cartData: query.data ?? dummyMitraCartData,
+    cartItemsData: query.data ?? {
+      items: [],
+      meta: {
+        ...dummyMitraCartData.meta,
+        page: params.page,
+        pageSize: params.pageSize,
+      },
+    },
+  };
+};
+
+export const useCartSummaryQuery = () => {
+  const query = useQuery<CartSummaryResponse>({
+    queryKey: queryKeys.mitra.cart.summary(),
+    queryFn: ({ signal }) => getCartSummary(signal),
+  });
+
+  return {
+    ...query,
+    cartSummaryData: query.data ?? dummyCartSummaryResponse,
   };
 };
 
@@ -27,7 +60,7 @@ export const useCheckoutCart = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (itemIds: string[]) => checkout(itemIds),
+    mutationFn: () => checkout(),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,

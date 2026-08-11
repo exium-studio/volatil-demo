@@ -11,8 +11,12 @@ export const queryKeys = {
     },
     cart: {
       all: ["mitra", "cart"] as const,
-      data: (search?: string) =>
-        [...queryKeys.mitra.cart.all, "data", search] as const,
+      summary: () => [...queryKeys.mitra.cart.all, "summary"] as const,
+      items: (params: {
+        page: number;
+        pageSize: number;
+        search?: string;
+      }) => [...queryKeys.mitra.cart.all, "items", params] as const,
     },
     dataRequest: {
       all: ["mitra", "data-request"] as const,

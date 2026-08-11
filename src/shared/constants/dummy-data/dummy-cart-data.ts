@@ -1,6 +1,10 @@
 // src/shared/constants/dummy-data/dummy-cart-data.ts
 
-import type { CartItem, CartResponse } from "@/features/cart/types/cart.type";
+import type {
+  CartItem,
+  CartResponse,
+  CartSummaryResponse,
+} from "@/features/cart/types/cart.type";
 
 export const dummyMitraCartItems: CartItem[] = [
   {
@@ -149,9 +153,9 @@ export const dummyMitraCartData: CartResponse = {
   items: dummyMitraCartItems,
   meta: {
     page: 1,
-    pageSize: 20,
+    pageSize: 10,
     total: 15,
-    totalPages: 1,
+    totalPages: 2,
     totalBidang: 8,
     totalKawasan: 7,
   },
@@ -174,4 +178,9 @@ export const dummyMitraCartData: CartResponse = {
     serviceFeeRate: 0.1,
     taxRate: 0.11,
   },
+};
+
+export const dummyCartSummaryResponse: CartSummaryResponse = {
+  summary: dummyMitraCartData.summary,
+  config: dummyMitraCartData.config,
 };

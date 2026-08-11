@@ -1,6 +1,5 @@
 // src/features/cart/pages/mitra.cart.page.tsx
 
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import {
   Container,
   useContainerContext,
@@ -14,13 +13,9 @@ import { PADDING_SM } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
 import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
 import {
-  useCartQuery,
+  useCartSummaryQuery,
   useCheckoutCart,
-  useClearCart,
-  useRemoveFromCart,
 } from "@/features/cart/hooks/use-mitra-cart";
-import type { CartItem } from "@/features/cart/types/cart.type";
-import { useState } from "react";
 
 export const MitraCartPage = () => {
   return (
@@ -34,20 +29,13 @@ const MitraCartContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // States
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
-
   // Hooks (Queries & Mutations)
-  const { cartData, isLoading, isFetching } = useCartQuery(searchValue);
+  const { cartSummaryData } = useCartSummaryQuery();
   const checkoutMutation = useCheckoutCart();
-  const clearCartMutation = useClearCart(() => setSelectedItems([]));
-  const removeItemsMutation = useRemoveFromCart(() => setSelectedItems([]));
 
   // Handlers
   const handleCheckout = () => {
-    const ids = cartData.items.map((item) => item.id);
-    checkoutMutation.mutate(ids);
+    checkoutMutation.mutate();
   };
 
   return (
@@ -77,19 +65,7 @@ const MitraCartContent = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <MitraCartDataList
-            cartItems={cartData.items}
-            selectedItems={selectedItems as FormattedListItem<CartItem>[]}
-            onSelectedItemChange={({ selectedItems: sel }) =>
-              setSelectedItems(sel)
-            }
-            onClearCart={() => clearCartMutation.mutate()}
-            onRemoveItems={(ids) => removeItemsMutation.mutate(ids)}
-            searchValue={searchValue}
-            onSearchChange={setSearchValue}
-            isLoading={isLoading}
-            isFetching={isFetching}
-          />
+          <MitraCartDataList />
         </Container.Body>
 
         {/* Summary Container */}
@@ -110,8 +86,8 @@ const MitraCartContent = () => {
           <Separator borderColor={"bg.canvas"} />
 
           <MitraCartOrderSummary
-            summary={cartData.summary}
-            config={cartData.config}
+            summary={cartSummaryData.summary}
+            config={cartSummaryData.config}
             onCheckout={handleCheckout}
             isCheckoutPending={checkoutMutation.isPending}
           />

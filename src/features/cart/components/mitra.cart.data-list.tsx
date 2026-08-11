@@ -4,7 +4,10 @@ import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { DataListBatchActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
+import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
@@ -15,6 +18,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { useContainerContext } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
@@ -27,9 +31,14 @@ import type {
   CartItem,
   MitraCartTableProps,
 } from "@/features/cart/types/cart.type";
+import {
+  useCartItemsQuery,
+  useClearCart,
+  useRemoveFromCart,
+} from "@/features/cart/hooks/use-mitra-cart";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 
 const MAX_VISIBLE_THEMES = 2;
@@ -38,21 +47,44 @@ const BASIS_KAWASAN_COLOR = "orange" as const;
 
 export const MitraCartDataList = (props: MitraCartTableProps) => {
   // Props
-  const {
-    cartItems = [],
-    selectedItems,
-    onSelectedItemChange,
-    onClearCart,
-    onRemoveItems,
-    searchValue = "",
-    onSearchChange,
-    isLoading = false,
-    isFetching = false,
-    ...restProps
-  } = props;
+  const { ...restProps } = props;
 
   // Contexts
   const { isSmContainer } = useContainerContext();
+
+  // States
+  const [dataListState, setDataListState] = useState({
+    search: "",
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+  });
+  const [selectedItems, setSelectedItems] = useState<
+    FormattedListItem<CartItem>[]
+  >([]);
+
+  // Hooks (Queries & Mutations)
+  const { cartItemsData, isLoading, isFetching } = useCartItemsQuery({
+    ...dataListState,
+    search: dataListState.search || undefined,
+  });
+  const clearCartMutation = useClearCart(() => setSelectedItems([]));
+  const removeItemsMutation = useRemoveFromCart(() => setSelectedItems([]));
+
+  // Derived Values
+  const cartItems = cartItemsData.items;
+
+  // Handlers
+  const updateDataListState = (
+    nextState: Partial<typeof dataListState>,
+    resetPage = false,
+  ) => {
+    setDataListState((prev) => ({
+      ...prev,
+      ...nextState,
+      page: resetPage ? 1 : (nextState.page ?? prev.page),
+    }));
+    setSelectedItems([]);
+  };
 
   // Derived Values
   const dataList = useMemo(
@@ -143,7 +175,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
             key={"remove-selected"}
             colorPalette={"red"}
             onClick={() => {
-              onRemoveItems?.(selectedItemIds);
+              removeItemsMutation.mutate(selectedItemIds);
               clearSelectedItems();
             }}
           >
@@ -153,7 +185,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
         ),
       ] as DataListBatchActionsGenerator[],
     }),
-    [cartItems, onRemoveItems],
+    [cartItems, removeItemsMutation],
   );
 
   return (
@@ -182,8 +214,10 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
         >
           <HStack gap={SPACING_SM}>
             <SearchInput
-              value={searchValue}
-              onChange={(e) => onSearchChange?.(e.target.value)}
+              value={dataListState.search}
+              onChange={(e) =>
+                updateDataListState({ search: e.target.value }, true)
+              }
               placeholder={t["action.search"]()}
             />
 
@@ -193,20 +227,27 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
           </HStack>
 
           <HStack gap={SPACING_SM}>
-            <ConfirmationTrigger
-              icon={IconShoppingCartOff}
-              title={"Kosongkan Keranjang"}
-              description={
-                "Apakah Anda yakin ingin mengosongkan seluruh item di keranjang?"
-              }
-              confirmLabel={"Kosongkan"}
-              onConfirm={onClearCart}
-              modalKey={"clearCartConfirmationModal"}
-            >
-              <IconButton colorPalette={"red"}>
-                <AppIcon icon={Trash2Icon} />
-              </IconButton>
-            </ConfirmationTrigger>
+            <Tooltip content={"Kosongkan keranjang"}>
+              <Box display={"inline-flex"}>
+                <ConfirmationTrigger
+                  icon={IconShoppingCartOff}
+                  title={"Kosongkan Keranjang"}
+                  description={
+                    "Apakah Anda yakin ingin mengosongkan seluruh item di keranjang?"
+                  }
+                  confirmLabel={"Kosongkan"}
+                  onConfirm={() => clearCartMutation.mutate()}
+                  modalKey={"clearCartConfirmationModal"}
+                >
+                  <IconButton
+                    aria-label={"Kosongkan keranjang"}
+                    colorPalette={"red"}
+                  >
+                    <AppIcon icon={Trash2Icon} />
+                  </IconButton>
+                </ConfirmationTrigger>
+              </Box>
+            </Tooltip>
           </HStack>
         </HStack>
       </VStack>
@@ -233,7 +274,13 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
               withNumbering={false}
               canBatchSelect={true}
               selectedItems={selectedItems}
-              onSelectedItemChange={onSelectedItemChange}
+              onSelectedItemChange={({ selectedItems: nextSelectedItems }) =>
+                setSelectedItems(
+                  nextSelectedItems as FormattedListItem<CartItem>[],
+                )
+              }
+              page={dataListState.page}
+              pageSize={dataListState.pageSize}
               rounded={0}
               pb={0}
               shadow={"none"}
@@ -243,6 +290,20 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
             </DataListTable.Root>
 
             <TopBarLoader isFetching={isFetching} />
+
+            <DataListFooter
+              page={dataListState.page}
+              pageSize={dataListState.pageSize}
+              setPage={(page) => updateDataListState({ page })}
+              setPageSize={(pageSize) =>
+                updateDataListState({ pageSize }, true)
+              }
+              currentDataLength={cartItems.length}
+              totalData={cartItemsData.meta.total}
+              totalPage={cartItemsData.meta.totalPages}
+              roundedBottom={0}
+              shadow={"none"}
+            />
           </Box>
         )}
       </VStack>

@@ -1,6 +1,5 @@
 // src/features/cart/types/cart.type.ts
 
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type {
   IgtThemeItem,
@@ -40,10 +39,15 @@ export type CartConfig = {
   taxRate?: number;
 };
 
-export type CartResponse = PaginatedResponse<CartItem> & {
+export type CartItemsResponse = PaginatedResponse<CartItem>;
+
+export type CartSummaryResponse = {
   summary: CartSummary;
   config: CartConfig;
 };
+
+// Kept for backward-compat with dummy data
+export type CartResponse = CartItemsResponse & CartSummaryResponse;
 
 export type AddToCartPayload = {
   id: string;
@@ -57,19 +61,7 @@ export type MitraCartOrderSummaryProps = StackProps & {
   isCheckoutPending?: boolean;
 };
 
-export type MitraCartTableProps = StackProps & {
-  cartItems: CartItem[];
-  selectedItems?: FormattedListItem<CartItem>[];
-  onSelectedItemChange?: (payload: {
-    selectedItems: FormattedListItem[];
-  }) => void;
-  onClearCart?: () => void;
-  onRemoveItems?: (itemIds: string[]) => void;
-  searchValue?: string;
-  onSearchChange?: (val: string) => void;
-  isLoading?: boolean;
-  isFetching?: boolean;
-};
+export type MitraCartTableProps = StackProps;
 
 export type MitraCartFlexContainerProps = {
   isSmContainer: boolean;

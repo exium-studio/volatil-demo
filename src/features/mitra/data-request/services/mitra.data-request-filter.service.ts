@@ -13,23 +13,26 @@ import type {
   FilterOptionsResponse,
 } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 
-export const getFilterOptionsBasis = async (): Promise<FilterOptionsResponse> => {
-  return {
-    data: DUMMY_FILTER_OPTIONS_BASIS,
+export const getFilterOptionsBasis =
+  async (): Promise<FilterOptionsResponse> => {
+    return {
+      data: DUMMY_FILTER_OPTIONS_BASIS,
+    };
   };
-};
 
-export const getFilterOptionsTema = async (): Promise<FilterOptionsResponse> => {
-  return {
-    data: DUMMY_FILTER_OPTIONS_TEMA,
+export const getFilterOptionsTema =
+  async (): Promise<FilterOptionsResponse> => {
+    return {
+      data: DUMMY_FILTER_OPTIONS_TEMA,
+    };
   };
-};
 
-export const getFilterOptionsProvinsi = async (): Promise<FilterOptionsResponse> => {
-  return {
-    data: DUMMY_FILTER_OPTIONS_PROVINSI,
+export const getFilterOptionsProvinsi =
+  async (): Promise<FilterOptionsResponse> => {
+    return {
+      data: DUMMY_FILTER_OPTIONS_PROVINSI,
+    };
   };
-};
 
 export const getFilterOptionsKabupaten = async (
   _params?: FilterKabupatenParams,

@@ -1,45 +1,61 @@
 // src/features/cart/services/cart.api.ts
 
+import { getPaginatedCartItems } from "@/features/cart/services/cart.service";
 import type {
   AddToCartPayload,
-  CartResponse,
+  CartItemsResponse,
+  CartSummaryResponse,
 } from "@/features/cart/types/cart.type";
-import { dummyMitraCartData } from "@/shared/constants/dummy-data/dummy-cart-data";
+import {
+  dummyCartSummaryResponse,
+  dummyMitraCartItems,
+} from "@/shared/constants/dummy-data/dummy-cart-data";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type {
   ApiResponse,
   PaginatedParams,
 } from "@/shared/types/common-response.type";
 
-// TODO: replace with real API call
-export async function getCartData(
+// TODO: replace fallback with real API data when the endpoint is available
+export async function getCartItems(
   params?: PaginatedParams,
   signal?: AbortSignal,
-): Promise<CartResponse> {
-  console.log("getCartData params:", params);
+): Promise<CartItemsResponse> {
   try {
-    const response = await apiClient.get<ApiResponse<CartResponse>>(
-      "/mitra/cart",
+    const response = await apiClient.get<ApiResponse<CartItemsResponse>>(
+      "/mitra/cart/items",
       {
         params,
         signal,
       },
     );
-    return response.data ?? dummyMitraCartData;
+    return response.data ?? getPaginatedCartItems(dummyMitraCartItems, params);
   } catch (error) {
-    console.warn("getCartData API error, falling back to dummy data:", error);
-    return dummyMitraCartData;
+    console.warn("getCartItems API error, falling back to dummy data:", error);
+    return getPaginatedCartItems(dummyMitraCartItems, params);
+  }
+}
+
+// TODO: replace fallback with real API data when the endpoint is available
+export async function getCartSummary(
+  signal?: AbortSignal,
+): Promise<CartSummaryResponse> {
+  try {
+    const response = await apiClient.get<ApiResponse<CartSummaryResponse>>(
+      "/mitra/cart/summary",
+      { signal },
+    );
+    return response.data ?? dummyCartSummaryResponse;
+  } catch (error) {
+    console.warn("getCartSummary API error, falling back to dummy data:", error);
+    return dummyCartSummaryResponse;
   }
 }
 
 // TODO: replace with real API call
-export async function checkout(
-  itemIds: string[],
-  signal?: AbortSignal,
-): Promise<void> {
-  console.log("checkout itemIds:", itemIds);
+export async function checkout(signal?: AbortSignal): Promise<void> {
   try {
-    await apiClient.post("/mitra/cart/checkout", { itemIds }, { signal });
+    await apiClient.post("/mitra/cart/checkout", {}, { signal });
   } catch (error) {
     console.warn("checkout API error, fallback silent:", error);
   }
