@@ -1,9 +1,6 @@
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -20,7 +17,6 @@ import {
 } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
-import { CopyIcon } from "lucide-react";
 
 const PAYMENT_METHODS_MAP = {
   teller: {
@@ -102,16 +98,14 @@ export const BillingPage = () => {
 
               <HStack align={"center"} gap={SPACING_SM}>
                 <P
-                  fontSize={"xl"}
+                  fontSize={"lg"}
                   fontWeight={"semibold"}
                   color={`${theme.colorPalette}.fg`}
                 >
                   <TNum>{billingCode}</TNum>
                 </P>
 
-                <IconButton>
-                  <AppIcon icon={CopyIcon} />
-                </IconButton>
+                <ClipboardButton value={billingCode} size={"xs"} />
               </HStack>
             </VStack>
 
