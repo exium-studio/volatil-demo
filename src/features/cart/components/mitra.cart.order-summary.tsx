@@ -6,6 +6,7 @@ import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
@@ -19,13 +20,7 @@ import { useMemo } from "react";
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
-  const {
-    summary,
-    config,
-    onCheckout,
-    isCheckoutPending = false,
-    ...restProps
-  } = props;
+  const { summary, config, ...restProps } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -40,7 +35,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   const isMinimumNotMet =
     !hasCartItems || isBidangMinimumNotMet || isKawasanMinimumNotMet;
 
-  const isCheckoutDisabled = isMinimumNotMet || isCheckoutPending;
+  const isCheckoutDisabled = isMinimumNotMet;
 
   // Derived — Warning Message
   const warningMessage = useMemo(() => {
@@ -83,10 +78,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       {/* Progress - Bidang */}
       <VStack gap={2} align={"stretch"} mt={2}>
         <Progress.Root
-          value={Math.min(
-            100,
-            (totalBidang / config.minimumBidangCount) * 100,
-          )}
+          value={Math.min(100, (totalBidang / config.minimumBidangCount) * 100)}
           colorPalette={"blue"}
           size={"sm"}
         >
@@ -211,16 +203,11 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       </VStack>
 
       {/* Beli Sekarang Button */}
-      <Button
-        primary={true}
-        w={"full"}
-        disabled={isCheckoutDisabled}
-        loading={isCheckoutPending}
-        onClick={onCheckout}
-        mt={2}
-      >
-        {"Bayar"}
-      </Button>
+      <NavLink to={"/mitra/billing"}>
+        <Button primary={true} w={"full"} disabled={isCheckoutDisabled} mt={2}>
+          {"Bayar sekarang"}
+        </Button>
+      </NavLink>
     </VStack>
   );
 };

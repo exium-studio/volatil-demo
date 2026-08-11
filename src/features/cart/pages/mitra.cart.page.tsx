@@ -12,10 +12,7 @@ import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { PADDING_SM } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
 import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
-import {
-  useCartSummaryQuery,
-  useCheckoutCart,
-} from "@/features/cart/hooks/use-mitra-cart";
+import { useCartSummaryQuery } from "@/features/cart/hooks/use-mitra-cart";
 
 export const MitraCartPage = () => {
   return (
@@ -31,12 +28,6 @@ const MitraCartContent = () => {
 
   // Hooks (Queries & Mutations)
   const { cartSummaryData } = useCartSummaryQuery();
-  const checkoutMutation = useCheckoutCart();
-
-  // Handlers
-  const handleCheckout = () => {
-    checkoutMutation.mutate();
-  };
 
   return (
     <PanelContentContainer
@@ -88,8 +79,6 @@ const MitraCartContent = () => {
           <MitraCartOrderSummary
             summary={cartSummaryData.summary}
             config={cartSummaryData.config}
-            onCheckout={handleCheckout}
-            isCheckoutPending={checkoutMutation.isPending}
           />
         </Container.Body>
       </HStack>

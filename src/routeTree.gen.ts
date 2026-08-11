@@ -20,6 +20,7 @@ import { Route as AppMitraMyDataRouteImport } from './routes/_app/mitra/my-data'
 import { Route as AppMitraHomeRouteImport } from './routes/_app/mitra/home'
 import { Route as AppMitraDataRequestRouteImport } from './routes/_app/mitra/data-request'
 import { Route as AppMitraCartRouteImport } from './routes/_app/mitra/cart'
+import { Route as AppMitraBillingRouteImport } from './routes/_app/mitra/billing'
 import { Route as AppInternalWelcomeRouteImport } from './routes/_app/internal/welcome'
 import { Route as AppInternalUserManagementRouteImport } from './routes/_app/internal/user-management'
 import { Route as AppInternalSupportTicketRouteImport } from './routes/_app/internal/support-ticket'
@@ -82,6 +83,11 @@ const AppMitraCartRoute = AppMitraCartRouteImport.update({
   path: '/mitra/cart',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppMitraBillingRoute = AppMitraBillingRouteImport.update({
+  id: '/mitra/billing',
+  path: '/mitra/billing',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppInternalWelcomeRoute = AppInternalWelcomeRouteImport.update({
   id: '/internal/welcome',
   path: '/internal/welcome',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/internal/support-ticket': typeof AppInternalSupportTicketRoute
   '/internal/user-management': typeof AppInternalUserManagementRoute
   '/internal/welcome': typeof AppInternalWelcomeRoute
+  '/mitra/billing': typeof AppMitraBillingRoute
   '/mitra/cart': typeof AppMitraCartRoute
   '/mitra/data-request': typeof AppMitraDataRequestRoute
   '/mitra/home': typeof AppMitraHomeRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/internal/support-ticket': typeof AppInternalSupportTicketRoute
   '/internal/user-management': typeof AppInternalUserManagementRoute
   '/internal/welcome': typeof AppInternalWelcomeRoute
+  '/mitra/billing': typeof AppMitraBillingRoute
   '/mitra/cart': typeof AppMitraCartRoute
   '/mitra/data-request': typeof AppMitraDataRequestRoute
   '/mitra/home': typeof AppMitraHomeRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/_app/internal/support-ticket': typeof AppInternalSupportTicketRoute
   '/_app/internal/user-management': typeof AppInternalUserManagementRoute
   '/_app/internal/welcome': typeof AppInternalWelcomeRoute
+  '/_app/mitra/billing': typeof AppMitraBillingRoute
   '/_app/mitra/cart': typeof AppMitraCartRoute
   '/_app/mitra/data-request': typeof AppMitraDataRequestRoute
   '/_app/mitra/home': typeof AppMitraHomeRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/internal/support-ticket'
     | '/internal/user-management'
     | '/internal/welcome'
+    | '/mitra/billing'
     | '/mitra/cart'
     | '/mitra/data-request'
     | '/mitra/home'
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/internal/support-ticket'
     | '/internal/user-management'
     | '/internal/welcome'
+    | '/mitra/billing'
     | '/mitra/cart'
     | '/mitra/data-request'
     | '/mitra/home'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/_app/internal/support-ticket'
     | '/_app/internal/user-management'
     | '/_app/internal/welcome'
+    | '/_app/mitra/billing'
     | '/_app/mitra/cart'
     | '/_app/mitra/data-request'
     | '/_app/mitra/home'
@@ -327,6 +339,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMitraCartRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/mitra/billing': {
+      id: '/_app/mitra/billing'
+      path: '/mitra/billing'
+      fullPath: '/mitra/billing'
+      preLoaderRoute: typeof AppMitraBillingRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/internal/welcome': {
       id: '/_app/internal/welcome'
       path: '/internal/welcome'
@@ -387,6 +406,7 @@ interface AppRouteRouteChildren {
   AppInternalSupportTicketRoute: typeof AppInternalSupportTicketRoute
   AppInternalUserManagementRoute: typeof AppInternalUserManagementRoute
   AppInternalWelcomeRoute: typeof AppInternalWelcomeRoute
+  AppMitraBillingRoute: typeof AppMitraBillingRoute
   AppMitraCartRoute: typeof AppMitraCartRoute
   AppMitraDataRequestRoute: typeof AppMitraDataRequestRoute
   AppMitraHomeRoute: typeof AppMitraHomeRoute
@@ -405,6 +425,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppInternalSupportTicketRoute: AppInternalSupportTicketRoute,
   AppInternalUserManagementRoute: AppInternalUserManagementRoute,
   AppInternalWelcomeRoute: AppInternalWelcomeRoute,
+  AppMitraBillingRoute: AppMitraBillingRoute,
   AppMitraCartRoute: AppMitraCartRoute,
   AppMitraDataRequestRoute: AppMitraDataRequestRoute,
   AppMitraHomeRoute: AppMitraHomeRoute,
