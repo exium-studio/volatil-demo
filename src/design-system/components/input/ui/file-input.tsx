@@ -83,6 +83,8 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
       existingFiles = [],
       onToggleDeleteExisting,
       value,
+      dropzoneProps,
+      dropzoneButtonProps,
       ...restProps
     } = props;
 
@@ -155,6 +157,8 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
           acceptedFilesRef={acceptedFilesRef}
           filesToRestoreRef={filesToRestoreRef}
           value={value}
+          dropzoneProps={dropzoneProps}
+          dropzoneButtonProps={dropzoneButtonProps}
         />
       </FileUpload.Root>
     );
@@ -177,6 +181,8 @@ const FileInputInner = (props: FileinputInnerProps) => {
     acceptedFilesRef,
     filesToRestoreRef,
     value,
+    dropzoneProps,
+    dropzoneButtonProps,
   } = props;
 
   // Stores
@@ -198,6 +204,14 @@ const FileInputInner = (props: FileinputInnerProps) => {
   const isSlotFull =
     effectiveMaxFiles <= 0 || acceptedFiles.length >= effectiveMaxFiles;
   const showInputComponent = !isSlotFull;
+  const isDropzoneFlex =
+    resolvedVariant === "dropzone" &&
+    (Boolean(dropzoneProps?.flex) || Boolean(dropzoneProps?.h));
+
+  const dropzoneText =
+    label && label !== t["common.upload_files"]()
+      ? label
+      : t["common.chose_or_drag_to_upload"]();
 
   // Handlers
   function handleToggleDeleteExisting(id: string) {
@@ -239,7 +253,12 @@ const FileInputInner = (props: FileinputInnerProps) => {
   }, [value, acceptedFiles, setFiles]);
 
   return (
-    <VStack gap={2} w={"full"}>
+    <VStack
+      gap={2}
+      w={"full"}
+      flex={isDropzoneFlex ? (dropzoneProps?.flex ?? 1) : undefined}
+      h={isDropzoneFlex ? (dropzoneProps?.h ?? "full") : undefined}
+    >
       {/* Existing file list */}
       {!isEmptyArray(existingFiles) && (
         <VStack gap={2}>
@@ -259,7 +278,11 @@ const FileInputInner = (props: FileinputInnerProps) => {
 
       {/* Input component */}
       {showInputComponent ? (
-        <VStack w={"full"}>
+        <VStack
+          w={"full"}
+          flex={isDropzoneFlex ? (dropzoneProps?.flex ?? 1) : undefined}
+          h={isDropzoneFlex ? (dropzoneProps?.h ?? "full") : undefined}
+        >
           {resolvedVariant === "button" && (
             <FileUpload.Trigger asChild>
               <Button
@@ -275,7 +298,12 @@ const FileInputInner = (props: FileinputInnerProps) => {
           )}
 
           {resolvedVariant === "dropzone" && (
-            <VStack pos={"relative"} w={"full"}>
+            <VStack
+              pos={"relative"}
+              w={"full"}
+              flex={isDropzoneFlex ? (dropzoneProps?.flex ?? 1) : undefined}
+              h={isDropzoneFlex ? (dropzoneProps?.h ?? "full") : undefined}
+            >
               <FileUpload.Dropzone
                 w={"full"}
                 minH={"220px"}
@@ -288,6 +316,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
                 _hover={{
                   bg: "bg.subtle",
                 }}
+                {...dropzoneProps}
               >
                 <FileUpload.DropzoneContent
                   gap={4}
@@ -313,11 +342,9 @@ const FileInputInner = (props: FileinputInnerProps) => {
                     )}
                   </VStack>
 
-                  <VStack gap={1}>
-                    <P>
-                      {dragging
-                        ? t["common.drop_it_here"]()
-                        : t["common.chose_or_drag_to_upload"]()}
+                  <VStack gap={1} maxW={"360px"}>
+                    <P textAlign={"center"}>
+                      {dragging ? t["common.drop_it_here"]() : dropzoneText}
                     </P>
 
                     <P
@@ -338,14 +365,20 @@ const FileInputInner = (props: FileinputInnerProps) => {
                   </VStack>
 
                   <Button
-                    variant={"outline"}
+                    variant={
+                      dropzoneButtonProps?.primary
+                        ? undefined
+                        : (dropzoneButtonProps?.variant ?? "outline")
+                    }
                     size={"sm"}
                     rounded={cssCalc(`${theme.radii.component} - 4px`)}
                     opacity={dragging ? 0 : 1}
                     transition={"200ms"}
                     onClick={openFilePicker}
+                    {...dropzoneButtonProps}
                   >
-                    {t["common.browse_files"]()}
+                    {dropzoneButtonProps?.children ??
+                      t["common.browse_files"]()}
                   </Button>
                 </FileUpload.DropzoneContent>
               </FileUpload.Dropzone>

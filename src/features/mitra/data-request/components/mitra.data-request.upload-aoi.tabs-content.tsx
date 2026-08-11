@@ -12,8 +12,12 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { FileInputTrigger } from "@/design-system/components/input/ui/file-input";
+import {
+  FileInput,
+  FileInputTrigger,
+} from "@/design-system/components/input/ui/file-input";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
@@ -277,15 +281,43 @@ export const MitraDataRequestUploadAoiTabsContent = (
         {...restProps}
       >
         {!hasLayers && (
-          <NoDataState
-            description={
-              "Upload file AOI untuk melihat data IGT yang tersedia di area tersebut"
-            }
-          >
-            <MitraDataRequestUploadAoiAddFileButton
-              onFilesAdded={handleFilesAdded}
+          <Box flex={1} p={PADDING_MD} display={"flex"} flexDir={"column"}>
+            <FileInput
+              variant={"dropzone"}
+              label={
+                "Upload file AOI untuk melihat data IGT yang tersedia di area tersebut"
+              }
+              accept={[
+                ".zip",
+                ".shp",
+                ".geojson",
+                ".json",
+                "application/zip",
+                "application/x-zip-compressed",
+              ]}
+              maxFiles={10}
+              maxFileSize={10 * 1024 * 1024}
+              onFileChange={({ acceptedFiles }) => {
+                handleFilesAdded(acceptedFiles);
+              }}
+              dropzoneProps={{
+                flex: 1,
+                h: "full",
+                minH: "0",
+              }}
+              dropzoneButtonProps={{
+                primary: true,
+                children: (
+                  <>
+                    <AppIcon icon={PlusIcon} />
+                    {"Upload AOI"}
+                  </>
+                ),
+              }}
+              flex={1}
+              h={"full"}
             />
-          </NoDataState>
+          </Box>
         )}
 
         {hasLayers && (
