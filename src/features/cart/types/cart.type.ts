@@ -46,6 +46,10 @@ export type CartSummaryResponse = {
   config: CartConfig;
 };
 
+export type CheckoutResponse = {
+  billingCode: string;
+};
+
 // Kept for backward-compat with dummy data
 export type CartResponse = CartItemsResponse & CartSummaryResponse;
 

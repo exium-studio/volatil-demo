@@ -5,6 +5,7 @@ import type {
   AddToCartPayload,
   CartItemsResponse,
   CartSummaryResponse,
+  CheckoutResponse,
 } from "@/features/cart/types/cart.type";
 import {
   dummyCartSummaryResponse,
@@ -52,13 +53,16 @@ export async function getCartSummary(
   }
 }
 
-// TODO: replace with real API call
-export async function checkout(signal?: AbortSignal): Promise<void> {
-  try {
-    await apiClient.post("/mitra/cart/checkout", {}, { signal });
-  } catch (error) {
-    console.warn("checkout API error, fallback silent:", error);
-  }
+export async function checkout(
+  signal?: AbortSignal,
+): Promise<CheckoutResponse> {
+  const response = await apiClient.post<ApiResponse<CheckoutResponse>>(
+    "/mitra/cart/checkout",
+    {},
+    { signal },
+  );
+
+  return response.data;
 }
 
 // TODO: replace with real API call

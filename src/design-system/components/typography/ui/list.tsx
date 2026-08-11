@@ -8,19 +8,15 @@ import type {
   ListRootProps,
 } from "@/design-system/components/typography/types/list.type";
 
-export const ListRoot = forwardRef<HTMLUListElement, ListRootProps>(
-  (props, ref) => {
-    return <ChakraList.Root ref={ref} {...props} />;
-  },
-);
+const ListRoot = forwardRef<HTMLUListElement, ListRootProps>((props, ref) => {
+  return <ChakraList.Root ref={ref} {...props} />;
+});
 
-export const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
-  (props, ref) => {
-    return <ChakraList.Item ref={ref} {...props} />;
-  },
-);
+const ListItem = forwardRef<HTMLLIElement, ListItemProps>((props, ref) => {
+  return <ChakraList.Item ref={ref} {...props} />;
+});
 
-export const ListIndicator = forwardRef<HTMLSpanElement, ListIndicatorProps>(
+const ListIndicator = forwardRef<HTMLSpanElement, ListIndicatorProps>(
   (props, ref) => {
     return <ChakraList.Indicator ref={ref} {...props} />;
   },

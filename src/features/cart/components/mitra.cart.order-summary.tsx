@@ -6,16 +6,17 @@ import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useCheckoutCart } from "@/features/cart/hooks/use-mitra-cart";
 import type { MitraCartOrderSummaryProps } from "@/features/cart/types/cart.type";
 import {
   formatCurrency,
   formatDecimal,
 } from "@/shared/utils/formatter/number.formatter";
 import { TriangleAlertIcon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
@@ -24,6 +25,22 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
   // Stores
   const { theme } = useThemeStore();
+
+  // Hooks
+  const navigate = useNavigate();
+  const checkoutMutation = useCheckoutCart();
+
+  // Handlers
+  const handleCheckout = () => {
+    checkoutMutation.mutate(undefined, {
+      onSuccess: ({ billingCode }) => {
+        navigate({
+          to: "/mitra/billing/$billingCode",
+          params: { billingCode },
+        });
+      },
+    });
+  };
 
   // Derived Values
   const totalBidang = summary.totalBidang ?? 0;
@@ -35,7 +52,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   const isMinimumNotMet =
     !hasCartItems || isBidangMinimumNotMet || isKawasanMinimumNotMet;
 
-  const isCheckoutDisabled = isMinimumNotMet;
+  const isCheckoutDisabled = isMinimumNotMet || checkoutMutation.isPending;
 
   // Derived — Warning Message
   const warningMessage = useMemo(() => {
@@ -203,11 +220,16 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       </VStack>
 
       {/* Beli Sekarang Button */}
-      <NavLink to={"/mitra/billing"}>
-        <Button primary={true} w={"full"} disabled={isCheckoutDisabled} mt={2}>
-          {"Bayar sekarang"}
-        </Button>
-      </NavLink>
+      <Button
+        primary={true}
+        w={"full"}
+        disabled={isCheckoutDisabled}
+        loading={checkoutMutation.isPending}
+        onClick={handleCheckout}
+        mt={2}
+      >
+        {"Bayar sekarang"}
+      </Button>
     </VStack>
   );
 };

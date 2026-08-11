@@ -21,7 +21,9 @@ const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
 
 const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
   (props, ref) => {
-    return <ChakraAccordion.Item ref={ref} {...props} />;
+    return (
+      <ChakraAccordion.Item ref={ref} borderColor={"bg.canvas"} {...props} />
+    );
   },
 );
 
@@ -29,7 +31,9 @@ const AccordionItemTrigger = forwardRef<
   HTMLButtonElement,
   AccordionItemTriggerProps
 >((props, ref) => {
-  return <ChakraAccordion.ItemTrigger ref={ref} {...props} />;
+  return (
+    <ChakraAccordion.ItemTrigger ref={ref} cursor={"pointer"} {...props} />
+  );
 });
 
 const AccordionItemContent = forwardRef<

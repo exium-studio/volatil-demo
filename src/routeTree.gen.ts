@@ -20,7 +20,6 @@ import { Route as AppMitraMyDataRouteImport } from './routes/_app/mitra/my-data'
 import { Route as AppMitraHomeRouteImport } from './routes/_app/mitra/home'
 import { Route as AppMitraDataRequestRouteImport } from './routes/_app/mitra/data-request'
 import { Route as AppMitraCartRouteImport } from './routes/_app/mitra/cart'
-import { Route as AppMitraBillingRouteImport } from './routes/_app/mitra/billing'
 import { Route as AppInternalWelcomeRouteImport } from './routes/_app/internal/welcome'
 import { Route as AppInternalUserManagementRouteImport } from './routes/_app/internal/user-management'
 import { Route as AppInternalSupportTicketRouteImport } from './routes/_app/internal/support-ticket'
@@ -28,6 +27,7 @@ import { Route as AppInternalOrderStatisticRouteImport } from './routes/_app/int
 import { Route as AppInternalNotificationRouteImport } from './routes/_app/internal/notification'
 import { Route as AppInternalHomeRouteImport } from './routes/_app/internal/home'
 import { Route as AppInternalDataManagementRouteImport } from './routes/_app/internal/data-management'
+import { Route as AppMitraBillingBillingCodeRouteImport } from './routes/_app/mitra/billing.$billingCode'
 
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
@@ -83,11 +83,6 @@ const AppMitraCartRoute = AppMitraCartRouteImport.update({
   path: '/mitra/cart',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AppMitraBillingRoute = AppMitraBillingRouteImport.update({
-  id: '/mitra/billing',
-  path: '/mitra/billing',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppInternalWelcomeRoute = AppInternalWelcomeRouteImport.update({
   id: '/internal/welcome',
   path: '/internal/welcome',
@@ -127,6 +122,12 @@ const AppInternalDataManagementRoute =
     path: '/internal/data-management',
     getParentRoute: () => AppRouteRoute,
   } as any)
+const AppMitraBillingBillingCodeRoute =
+  AppMitraBillingBillingCodeRouteImport.update({
+    id: '/mitra/billing/$billingCode',
+    path: '/mitra/billing/$billingCode',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -138,7 +139,6 @@ export interface FileRoutesByFullPath {
   '/internal/support-ticket': typeof AppInternalSupportTicketRoute
   '/internal/user-management': typeof AppInternalUserManagementRoute
   '/internal/welcome': typeof AppInternalWelcomeRoute
-  '/mitra/billing': typeof AppMitraBillingRoute
   '/mitra/cart': typeof AppMitraCartRoute
   '/mitra/data-request': typeof AppMitraDataRequestRoute
   '/mitra/home': typeof AppMitraHomeRoute
@@ -147,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/mitra/purchase-history': typeof AppMitraPurchaseHistoryRoute
   '/mitra/support-ticket': typeof AppMitraSupportTicketRoute
   '/mitra/welcome': typeof AppMitraWelcomeRoute
+  '/mitra/billing/$billingCode': typeof AppMitraBillingBillingCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -158,7 +159,6 @@ export interface FileRoutesByTo {
   '/internal/support-ticket': typeof AppInternalSupportTicketRoute
   '/internal/user-management': typeof AppInternalUserManagementRoute
   '/internal/welcome': typeof AppInternalWelcomeRoute
-  '/mitra/billing': typeof AppMitraBillingRoute
   '/mitra/cart': typeof AppMitraCartRoute
   '/mitra/data-request': typeof AppMitraDataRequestRoute
   '/mitra/home': typeof AppMitraHomeRoute
@@ -167,6 +167,7 @@ export interface FileRoutesByTo {
   '/mitra/purchase-history': typeof AppMitraPurchaseHistoryRoute
   '/mitra/support-ticket': typeof AppMitraSupportTicketRoute
   '/mitra/welcome': typeof AppMitraWelcomeRoute
+  '/mitra/billing/$billingCode': typeof AppMitraBillingBillingCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -180,7 +181,6 @@ export interface FileRoutesById {
   '/_app/internal/support-ticket': typeof AppInternalSupportTicketRoute
   '/_app/internal/user-management': typeof AppInternalUserManagementRoute
   '/_app/internal/welcome': typeof AppInternalWelcomeRoute
-  '/_app/mitra/billing': typeof AppMitraBillingRoute
   '/_app/mitra/cart': typeof AppMitraCartRoute
   '/_app/mitra/data-request': typeof AppMitraDataRequestRoute
   '/_app/mitra/home': typeof AppMitraHomeRoute
@@ -189,6 +189,7 @@ export interface FileRoutesById {
   '/_app/mitra/purchase-history': typeof AppMitraPurchaseHistoryRoute
   '/_app/mitra/support-ticket': typeof AppMitraSupportTicketRoute
   '/_app/mitra/welcome': typeof AppMitraWelcomeRoute
+  '/_app/mitra/billing/$billingCode': typeof AppMitraBillingBillingCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -202,7 +203,6 @@ export interface FileRouteTypes {
     | '/internal/support-ticket'
     | '/internal/user-management'
     | '/internal/welcome'
-    | '/mitra/billing'
     | '/mitra/cart'
     | '/mitra/data-request'
     | '/mitra/home'
@@ -211,6 +211,7 @@ export interface FileRouteTypes {
     | '/mitra/purchase-history'
     | '/mitra/support-ticket'
     | '/mitra/welcome'
+    | '/mitra/billing/$billingCode'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -222,7 +223,6 @@ export interface FileRouteTypes {
     | '/internal/support-ticket'
     | '/internal/user-management'
     | '/internal/welcome'
-    | '/mitra/billing'
     | '/mitra/cart'
     | '/mitra/data-request'
     | '/mitra/home'
@@ -231,6 +231,7 @@ export interface FileRouteTypes {
     | '/mitra/purchase-history'
     | '/mitra/support-ticket'
     | '/mitra/welcome'
+    | '/mitra/billing/$billingCode'
   id:
     | '__root__'
     | '/'
@@ -243,7 +244,6 @@ export interface FileRouteTypes {
     | '/_app/internal/support-ticket'
     | '/_app/internal/user-management'
     | '/_app/internal/welcome'
-    | '/_app/mitra/billing'
     | '/_app/mitra/cart'
     | '/_app/mitra/data-request'
     | '/_app/mitra/home'
@@ -252,6 +252,7 @@ export interface FileRouteTypes {
     | '/_app/mitra/purchase-history'
     | '/_app/mitra/support-ticket'
     | '/_app/mitra/welcome'
+    | '/_app/mitra/billing/$billingCode'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -339,13 +340,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMitraCartRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/_app/mitra/billing': {
-      id: '/_app/mitra/billing'
-      path: '/mitra/billing'
-      fullPath: '/mitra/billing'
-      preLoaderRoute: typeof AppMitraBillingRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/_app/internal/welcome': {
       id: '/_app/internal/welcome'
       path: '/internal/welcome'
@@ -395,6 +389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInternalDataManagementRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/mitra/billing/$billingCode': {
+      id: '/_app/mitra/billing/$billingCode'
+      path: '/mitra/billing/$billingCode'
+      fullPath: '/mitra/billing/$billingCode'
+      preLoaderRoute: typeof AppMitraBillingBillingCodeRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
@@ -406,7 +407,6 @@ interface AppRouteRouteChildren {
   AppInternalSupportTicketRoute: typeof AppInternalSupportTicketRoute
   AppInternalUserManagementRoute: typeof AppInternalUserManagementRoute
   AppInternalWelcomeRoute: typeof AppInternalWelcomeRoute
-  AppMitraBillingRoute: typeof AppMitraBillingRoute
   AppMitraCartRoute: typeof AppMitraCartRoute
   AppMitraDataRequestRoute: typeof AppMitraDataRequestRoute
   AppMitraHomeRoute: typeof AppMitraHomeRoute
@@ -415,6 +415,7 @@ interface AppRouteRouteChildren {
   AppMitraPurchaseHistoryRoute: typeof AppMitraPurchaseHistoryRoute
   AppMitraSupportTicketRoute: typeof AppMitraSupportTicketRoute
   AppMitraWelcomeRoute: typeof AppMitraWelcomeRoute
+  AppMitraBillingBillingCodeRoute: typeof AppMitraBillingBillingCodeRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
@@ -425,7 +426,6 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppInternalSupportTicketRoute: AppInternalSupportTicketRoute,
   AppInternalUserManagementRoute: AppInternalUserManagementRoute,
   AppInternalWelcomeRoute: AppInternalWelcomeRoute,
-  AppMitraBillingRoute: AppMitraBillingRoute,
   AppMitraCartRoute: AppMitraCartRoute,
   AppMitraDataRequestRoute: AppMitraDataRequestRoute,
   AppMitraHomeRoute: AppMitraHomeRoute,
@@ -434,6 +434,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppMitraPurchaseHistoryRoute: AppMitraPurchaseHistoryRoute,
   AppMitraSupportTicketRoute: AppMitraSupportTicketRoute,
   AppMitraWelcomeRoute: AppMitraWelcomeRoute,
+  AppMitraBillingBillingCodeRoute: AppMitraBillingBillingCodeRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

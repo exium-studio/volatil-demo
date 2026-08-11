@@ -38,14 +38,9 @@ export function useContainerContext() {
 // ---------------------------------------------------------------------------
 
 const ContainerRoot = forwardRef<HTMLDivElement, ContainerRootProps>(
-  (props, ref) => {
+  function ContainerRoot(props, ref) {
     // Props
-    const {
-      children,
-      withContext = false,
-      className = "",
-      ...restProps
-    } = props;
+    const { children, withContext = false, ...restProps } = props;
 
     // Refs
     const containerRef = useRef<HTMLDivElement>(null);
@@ -66,7 +61,6 @@ const ContainerRoot = forwardRef<HTMLDivElement, ContainerRootProps>(
     const content = (
       <VStack
         ref={mergeRef}
-        className={`${scrollY ? "scrollY" : ""} ${className}`}
         w={"full"}
         borderColor={"border.subtle"}
         {...restProps}
@@ -116,10 +110,6 @@ const ContainerBody = (props: ContainerBodyProps) => {
     </VStack>
   );
 };
-
-ContainerRoot.displayName = "ContainerRoot";
-ContainerHeader.displayName = "ContainerHeader";
-ContainerBody.displayName = "ContainerBody";
 
 export const Container = {
   Root: ContainerRoot,
