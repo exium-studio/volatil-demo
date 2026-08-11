@@ -27,7 +27,6 @@ import { useObjectUrl } from "@/shared/hooks/use-object-url";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatFileSize, isImageFile } from "@/shared/utils/data/file";
-import { cssCalc } from "@/shared/utils/style/css-calc";
 import {
   FileUpload,
   FormatByte,
@@ -371,7 +370,6 @@ const FileInputInner = (props: FileinputInnerProps) => {
                         : (dropzoneButtonProps?.variant ?? "outline")
                     }
                     size={"sm"}
-                    rounded={cssCalc(`${theme.radii.component} - 4px`)}
                     opacity={dragging ? 0 : 1}
                     transition={"200ms"}
                     onClick={openFilePicker}
