@@ -58,6 +58,20 @@ export type AddToCartPayload = {
   basis: CartItemBasis;
 };
 
+export type AddSelectedToCartPayload = {
+  featureId: string;
+};
+
+export type AddAllToCartByAoiPayload = {
+  geometry: unknown;
+  basis?: CartItemBasis[];
+};
+
+export type AddAllToCartByFilterPayload = {
+  filter: unknown;
+  basis?: CartItemBasis[];
+};
+
 export type MitraCartOrderSummaryProps = StackProps & {
   summary: CartSummary;
   config: CartConfig;
