@@ -1,7 +1,7 @@
 // src/design-system/components/input/ui/slider.tsx
 
 import type { SliderProps } from "@/design-system/components/input/types/slider.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Slider as ChakraSlider } from "@chakra-ui/react";
 import * as React from "react";
 

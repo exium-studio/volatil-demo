@@ -22,7 +22,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { toast } from "@/design-system/components/toast";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useObjectUrl } from "@/shared/hooks/use-object-url";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";

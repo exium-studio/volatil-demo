@@ -9,7 +9,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import type {
   MitraHomeFinancialFlowChartContentProps,

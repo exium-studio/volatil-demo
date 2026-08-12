@@ -27,9 +27,9 @@ import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
-import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
-import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useSidebarStore } from "@/design-system/stores/sidebar-store";
+import { useSplitterStore } from "@/design-system/stores/splitter-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   INTERNAL_APP_NAV_GROUPS_LIST,
   INTERNAL_APP_OTHER_NAV_GROUPS_LIST,

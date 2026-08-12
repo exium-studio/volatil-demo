@@ -7,7 +7,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { PADDING } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
   StatGridDescriptionProps,
   StatGridHeaderProps,

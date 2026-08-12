@@ -7,7 +7,7 @@ import type {
   AlertRootProps,
   AlertTitleProps,
 } from "@/design-system/components/feedback/types/alert.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Alert as ChakraAlert } from "@chakra-ui/react";
 
 export const AlertRoot = (props: AlertRootProps) => {

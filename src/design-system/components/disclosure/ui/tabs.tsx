@@ -12,7 +12,7 @@ import type {
   TabsContentGroupProps,
   TabsIndicatorProps,
 } from "@/design-system/components/disclosure/type/tabs.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>((props, ref) => {
   // Stores

@@ -4,7 +4,7 @@
 
 import type { InputProps } from "@/design-system/components/input/types/input.type";
 import { SIZES } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Input as ChakraInput } from "@chakra-ui/react";
 import { forwardRef } from "react";
 

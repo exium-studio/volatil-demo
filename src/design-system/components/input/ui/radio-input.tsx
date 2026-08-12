@@ -2,7 +2,7 @@
 
 import type { RadioInputProps } from "@/design-system/components/input/types/radio-input.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { RadioGroup as ChakraRadioGroup } from "@chakra-ui/react";
 import * as React from "react";
 

@@ -6,7 +6,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { PageContainer } from "@/design-system/components/layout/ui/page-container";
 import { P, PSerif } from "@/design-system/components/typography/ui/p";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   InternalSignin,
   MitraSignin,

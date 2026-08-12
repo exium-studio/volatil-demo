@@ -7,7 +7,7 @@ import type {
   SegmentGroupItemTextProps,
   SegmentGroupRootProps,
 } from "@/design-system/components/input/types/segment-group.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { SegmentGroup as ChakraSegmentGroup } from "@chakra-ui/react";
 import { forwardRef } from "react";
 

@@ -14,7 +14,7 @@ import type {
 } from "@/design-system/components/overlay/types/drawer.type";
 import { Portal } from "@/design-system/components/utilities/ui/portal";
 import { MODAL } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { back } from "@/shared/utils/client/navigation";
 import { Drawer as ChakraDrawer } from "@chakra-ui/react";

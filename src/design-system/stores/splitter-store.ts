@@ -1,4 +1,4 @@
-// src/design-system/stores/use-splitter-store.ts
+// src/design-system/stores/splitter-store.ts
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

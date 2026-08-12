@@ -9,7 +9,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Image } from "@/design-system/components/media/ui/image";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { PATH_CONFIG } from "@/shared/constants/paths";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 

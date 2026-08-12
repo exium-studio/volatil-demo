@@ -8,7 +8,7 @@ import type {
   PProps,
   TNumProps,
 } from "@/design-system/components/typography/types/p.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 export const P = forwardRef<HTMLParagraphElement, PProps>(
   function P(props, ref) {

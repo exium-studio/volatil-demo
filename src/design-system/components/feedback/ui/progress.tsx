@@ -14,7 +14,7 @@ import type {
   ProgressCircleValueTextProps,
   ProgressCircleLabelProps,
 } from "@/design-system/components/feedback/types/progress.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 export const ProgressRoot = (props: ProgressRootProps) => {
   // Stores

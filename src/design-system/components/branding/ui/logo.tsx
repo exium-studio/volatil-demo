@@ -2,7 +2,7 @@
 
 import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { LogoProps } from "@/design-system/components/branding/types/logo.type";
 import { Center } from "@chakra-ui/react";
 import { useMemo } from "react";

@@ -9,7 +9,7 @@ import type {
   RadioCardInputLabelProps,
   RadioCardInputRootProps,
 } from "@/design-system/components/input/types/radio-card-input.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { RadioCard as ChakraRadioCard } from "@chakra-ui/react";
 import * as React from "react";
 

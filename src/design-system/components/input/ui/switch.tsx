@@ -1,7 +1,7 @@
 // src/design-system/components/input/ui/switch.tsx
 
 import type { SwitchProps } from "@/design-system/components/input/types/switch.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Switch as ChakraSwitch } from "@chakra-ui/react";
 import * as React from "react";
 

@@ -4,7 +4,7 @@ import type { BrandWatermarkProps } from "@/design-system/components/branding/ty
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { P } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 // ---------------------------------------------------------------------------
 

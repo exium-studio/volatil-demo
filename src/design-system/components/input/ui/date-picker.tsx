@@ -43,7 +43,7 @@ import { Grid } from "@/design-system/components/layout/ui/grid";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { ChevronLeftIcon, ChevronRightIcon, GlobeIcon } from "lucide-react";
 
 // -------------------------------------------------------------------------------------

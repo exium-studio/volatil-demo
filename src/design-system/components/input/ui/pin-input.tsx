@@ -1,7 +1,7 @@
 // src/design-system/components/input/ui/pin-input.tsx
 
 import type { PinInputProps } from "@/design-system/components/input/types/pin-input.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { PinInput as ChakraPinInput } from "@chakra-ui/react";
 import * as React from "react";
 

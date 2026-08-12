@@ -6,7 +6,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { useGeolocation } from "@/design-system/components/map/hooks/use-map-geolocation";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   IconCurrentLocation,
   IconCurrentLocationFilled,

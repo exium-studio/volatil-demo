@@ -18,7 +18,7 @@ import { findActivePath } from "@/design-system/components/navigation/utils/v-na
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";

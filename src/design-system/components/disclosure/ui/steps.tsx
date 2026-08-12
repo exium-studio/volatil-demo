@@ -20,7 +20,7 @@ import type {
   StepsNumberProps,
   StepsStatusProps,
 } from "@/design-system/components/disclosure/type/steps.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 const StepsRoot = forwardRef<HTMLDivElement, StepsRootProps>((props, ref) => {
   // Stores

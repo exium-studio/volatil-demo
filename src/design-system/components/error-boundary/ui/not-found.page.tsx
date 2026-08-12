@@ -5,7 +5,7 @@ import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
 import { PageContainer } from "@/design-system/components/layout/ui/page-container";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import { IconMoodPuzzled } from "@tabler/icons-react";

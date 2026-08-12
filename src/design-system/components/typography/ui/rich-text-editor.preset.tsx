@@ -7,7 +7,7 @@ import {
   Control,
   RichTextEditor,
 } from "@/design-system/components/typography/ui/rich-text-editor";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import Highlight from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";

@@ -35,7 +35,7 @@ import type {
   DatePickerHeaderProps,
   DatePickerYearTableProps,
 } from "@/design-system/components/input/types/chakra-date-picker.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 const DatePickerRoot = ({ ...props }: DatePickerRootProps) => {
   return <ChakraDatePicker.Root {...props} />;

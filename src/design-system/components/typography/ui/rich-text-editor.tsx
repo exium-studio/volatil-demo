@@ -17,7 +17,7 @@ import {
   RichTextEditorContext,
   useRichTextEditorContext,
 } from "./rich-text-editor.context";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 const proseMirrorBaseCss = defineStyle({
   display: "flex",

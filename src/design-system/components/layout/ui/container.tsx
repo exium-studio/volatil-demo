@@ -9,7 +9,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useRefDimension } from "@/design-system/hooks/use-ref-dimenssion";
 import { useMergedRefs } from "@/design-system/hooks/use-merge-refs";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { createContext, forwardRef, useContext, useMemo, useRef } from "react";
 
 export type ContainerContextValue = {

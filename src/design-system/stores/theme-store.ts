@@ -1,4 +1,4 @@
-// src/design-system/stores/use-theme-store.ts
+// src/design-system/stores/theme-store.ts
 
 import { COLOR_PALETTES_LIST } from "@/design-system/constants/colors";
 import { ROUNDED_PRESETS_LIST } from "@/design-system/constants/presets";
@@ -24,7 +24,7 @@ export const DEFAULT: ThemeStore = {
   colorPalette: COLOR_PALETTES_LIST[21].palette,
   primaryColor: `${COLOR_PALETTES_LIST[0].palette}.solid`,
   primaryColorHex: COLOR_PALETTES_LIST[0].primaryHex,
-  radii: ROUNDED_PRESETS_LIST[4],
+  radii: ROUNDED_PRESETS_LIST[5],
   ambienceColor: false,
 };
 

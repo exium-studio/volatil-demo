@@ -10,7 +10,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
 import type { ToastStackProps } from "@/design-system/components/toast/types/toast.types";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { Box } from "@chakra-ui/react";

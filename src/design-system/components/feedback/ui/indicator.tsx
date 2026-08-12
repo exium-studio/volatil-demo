@@ -7,7 +7,7 @@ import type {
 } from "@/design-system/components/feedback/types/indicator.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Circle } from "@/design-system/components/layout/ui/box";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { CheckIcon } from "lucide-react";
 
 export const DotIndicator = (props: DotIndicatorProps) => {

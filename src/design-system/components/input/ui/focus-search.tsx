@@ -16,7 +16,7 @@ import { Kbd } from "@/design-system/components/typography/ui/kbd";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useSearchInput } from "@/design-system/hooks/use-search-input";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
   SearchIndex,
   SearchIndexItem,

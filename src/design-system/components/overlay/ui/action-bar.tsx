@@ -7,7 +7,7 @@ import type {
   ActionBarRootProps,
   ActionBarSeparatorProps,
 } from "@/design-system/components/overlay/types/action-bar.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { ActionBar as ChakraActioBar } from "@chakra-ui/react";
 
 const ActionBarRoot = (props: ActionBarRootProps) => {

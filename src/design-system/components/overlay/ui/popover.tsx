@@ -17,7 +17,7 @@ import type {
   PopoverTriggerProps,
 } from "@/design-system/components/overlay/types/popover.type";
 import { Portal } from "@/design-system/components/utilities/ui/portal";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Popover as ChakraPopover } from "@chakra-ui/react";
 import { forwardRef } from "react";
 

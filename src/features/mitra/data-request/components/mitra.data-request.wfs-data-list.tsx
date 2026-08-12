@@ -8,7 +8,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   WFS_BIDANG_ATTRIBUTE_MAP,
   WFS_BIDANG_ATTRIBUTES,

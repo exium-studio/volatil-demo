@@ -15,7 +15,7 @@ import type { MapSearchResultItem } from "@/design-system/components/map/types/m
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { Box, Presence } from "@chakra-ui/react";

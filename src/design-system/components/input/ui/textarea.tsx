@@ -1,7 +1,7 @@
 // src/design-system/components/input/ui/textarea.tsx
 
 import type { TextareaProps } from "@/design-system/components/input/types/textarea.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Textarea as ChakraTextarea } from "@chakra-ui/react";
 import * as React from "react";
 

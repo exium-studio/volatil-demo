@@ -7,7 +7,7 @@ import type {
   IconButtonProps,
 } from "@/design-system/components/button/types/button.type";
 import { SIZES } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   Button as ChakraButton,
   IconButton as ChakraIconButton,

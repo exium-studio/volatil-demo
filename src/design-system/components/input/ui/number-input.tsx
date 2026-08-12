@@ -10,7 +10,7 @@ import type {
 } from "@/design-system/components/input/types/number-input.type";
 import { Group } from "@/design-system/components/layout/ui/group";
 import { VISUALLY_HIDDEN_INPUT_STYLE } from "@/design-system/constants/css-preset";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { dispatchNativeInputEvent } from "@/shared/utils/dom/dispatch-native-input-event";
 import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import { NumberInput as ChakraNumberInput } from "@chakra-ui/react";

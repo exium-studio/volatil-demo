@@ -8,7 +8,7 @@ import type {
   SkeletonTextProps,
 } from "@/design-system/components/feedback/types/skeleton.type";
 import { Center } from "@/design-system/components/layout/ui/center";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   Skeleton as ChakraSkeleton,
   SkeletonCircle as ChakraSkeletonCircle,

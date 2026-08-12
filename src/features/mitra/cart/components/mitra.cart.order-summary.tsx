@@ -8,7 +8,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCart } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type { MitraCartOrderSummaryProps } from "@/features/mitra/cart/types/cart.type";
 import {

@@ -14,7 +14,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { List } from "@/design-system/components/typography/ui/list";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -66,7 +66,7 @@ const BillingPageBillingCode = () => {
             onClick={() => {
               focusAlert("payment-success", () => (
                 <FocusAlertItem
-                  variant={"info"}
+                  variant={"success"}
                   title={"Transaksi berhasil!"}
                   description={
                     "Data yang Anda bayar sudah disimpan pada akun Anda!"

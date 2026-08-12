@@ -9,7 +9,7 @@ import type {
   MenuTriggerProps,
 } from "@/design-system/components/overlay/types/menu.type";
 import { Portal } from "@/design-system/components/utilities/ui/portal";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Menu as ChakraMenu } from "@chakra-ui/react";
 
 const MenuRoot = (props: MenuRootProps) => {

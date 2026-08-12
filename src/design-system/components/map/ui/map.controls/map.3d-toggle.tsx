@@ -7,7 +7,7 @@ import { useMapInstanceStore } from "@/design-system/components/map/stores/map.i
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCallback, useEffect } from "react";
 
 export const Map3DToggle = (props: StackProps) => {

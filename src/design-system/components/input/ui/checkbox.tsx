@@ -1,7 +1,7 @@
 // src/design-system/components/input/ui/checkbox.tsx
 
 import type { CheckboxProps } from "@/design-system/components/input/types/checkbox.type";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Checkbox as ChakraCheckbox } from "@chakra-ui/react";
 
 export const Checkbox = (props: CheckboxProps) => {

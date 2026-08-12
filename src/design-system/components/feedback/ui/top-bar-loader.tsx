@@ -2,7 +2,7 @@
 
 import type { TopBarLoaderProps } from "@/design-system/components/feedback/types/top-bar-loader.type";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { useThemeStore } from "@/design-system/stores/use-theme-store";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useEffect, useRef } from "react";
 
 export const TopBarLoader = (props: TopBarLoaderProps) => {
