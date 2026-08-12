@@ -21,7 +21,7 @@ export const APP_OTHER_NAV_GROUPS_LIST: NavGroup<AppNavKey>[] = [
   },
 ];
 
-export const ADMIN_APP_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
+export const INTERNAL_APP_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
   {
     items: [
       { key: "home" },
@@ -33,7 +33,7 @@ export const ADMIN_APP_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
   },
 ];
 
-export const ADMIN_APP_OTHER_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
+export const INTERNAL_APP_OTHER_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
   {
     items: [{ key: "notification" }],
   },

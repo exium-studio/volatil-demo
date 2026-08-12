@@ -52,7 +52,7 @@ export const APP_NAVS_MAP = {
 } as const satisfies Record<string, NavItem>;
 
 // Admin
-export const ADMIN_APP_NAVS_MAP = {
+export const INTERNAL_APP_NAVS_MAP = {
   home: {
     icon: HouseIcon,
     titleKey: "app.navs.home",

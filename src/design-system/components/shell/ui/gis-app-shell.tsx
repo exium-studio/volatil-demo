@@ -31,12 +31,15 @@ import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import {
-  ADMIN_APP_NAV_GROUPS_LIST,
-  ADMIN_APP_OTHER_NAV_GROUPS_LIST,
+  INTERNAL_APP_NAV_GROUPS_LIST,
+  INTERNAL_APP_OTHER_NAV_GROUPS_LIST,
   APP_NAV_GROUPS_LIST,
   APP_OTHER_NAV_GROUPS_LIST,
 } from "@/shared/constants/app.nav-groups";
-import { ADMIN_APP_NAVS_MAP, APP_NAVS_MAP } from "@/shared/constants/app.navs";
+import {
+  INTERNAL_APP_NAVS_MAP,
+  APP_NAVS_MAP,
+} from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
 import type { User } from "@/shared/types/common-response.type";
@@ -190,10 +193,10 @@ const SidebarBody = () => {
   const userData = getUserData();
   const role = userData?.role ?? "mitra";
   const navsMap = (role === "internal"
-    ? ADMIN_APP_NAVS_MAP
+    ? INTERNAL_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
   const navGroups =
-    role === "internal" ? ADMIN_APP_NAV_GROUPS_LIST : APP_NAV_GROUPS_LIST;
+    role === "internal" ? INTERNAL_APP_NAV_GROUPS_LIST : APP_NAV_GROUPS_LIST;
   const activeKey = getNavKeyFromPathname(navsMap, pathname);
 
   return (
@@ -225,11 +228,11 @@ const SidebarFooter = () => {
   const userData = getUserData();
   const role = userData?.role ?? "mitra";
   const navsMap = (role === "internal"
-    ? ADMIN_APP_NAVS_MAP
+    ? INTERNAL_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
   const otherNavGroups: NavGroup<AdminAppNavKey | AppNavKey>[] =
     role === "internal"
-      ? ADMIN_APP_OTHER_NAV_GROUPS_LIST
+      ? INTERNAL_APP_OTHER_NAV_GROUPS_LIST
       : APP_OTHER_NAV_GROUPS_LIST;
 
   return (

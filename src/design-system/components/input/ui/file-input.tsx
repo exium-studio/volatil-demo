@@ -367,7 +367,6 @@ const FileInputInner = (props: FileinputInnerProps) => {
                       ? undefined
                       : (dropzoneButtonProps?.variant ?? "outline")
                   }
-                  size={"sm"}
                   opacity={dragging ? 0 : 1}
                   transition={"200ms"}
                   onClick={openFilePicker}
