@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/ui/clipboard-button.tsx
+
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import {
   Button,

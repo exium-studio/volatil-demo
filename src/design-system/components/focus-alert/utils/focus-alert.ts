@@ -1,3 +1,5 @@
+// src/design-system/components/focus-alert/utils/focus-alert.ts
+
 import { useFocusAlerterStore } from "@/design-system/components/focus-alert/stores/focus-alert.store";
 import type { FocusAlertRenderFn } from "@/design-system/components/focus-alert/types/focus-alert.type";
 

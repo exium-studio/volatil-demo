@@ -1,3 +1,5 @@
+// src/design-system/components/focus-alert/types/focus-alert.type.ts
+
 import type { ReactNode, ComponentType } from "react";
 
 export type FocusAlertRenderFn = () => ReactNode;

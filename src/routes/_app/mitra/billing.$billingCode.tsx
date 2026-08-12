@@ -1,3 +1,5 @@
+// src/routes/_app/mitra/billing.$billingCode.tsx
+
 import { BillingPage } from "@/features/mitra/billing/pages/billing.page";
 import { createFileRoute } from "@tanstack/react-router";
 

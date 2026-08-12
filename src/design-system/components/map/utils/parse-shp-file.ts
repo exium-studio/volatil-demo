@@ -1,3 +1,5 @@
+// src/design-system/components/map/utils/parse-shp-file.ts
+
 import ShpWorker from "@/design-system/components/map/workers/shp.worker.ts?worker";
 import type GeoJSON from "geojson";
 
