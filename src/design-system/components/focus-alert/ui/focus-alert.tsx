@@ -161,13 +161,13 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
         >
           <Circle pos={"relative"} my={SPACING.lg}>
             {/* Circle 3 */}
-            <Circle
+            {/* <Circle
               pos={"absolute"}
               p={transition ? `${CIRCLE_P[2]}px` : 0}
               bg={"colorPalette.solid/25"}
               transition={`padding 250ms ${OVERSHOOT_EASE}`}
               transitionDelay={`${TRANSITION_DELAY_STEP_MS * 2}ms`}
-            />
+            /> */}
 
             {/* Circle 2 */}
             <Circle
