@@ -17,7 +17,6 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
-import { CheckIcon } from "lucide-react";
 
 export const BillingPage = () => {
   return (
@@ -67,8 +66,7 @@ const BillingPageBillingCode = () => {
             onClick={() => {
               focusAlert("payment-success", () => (
                 <FocusAlertItem
-                  colorPalette={"green"}
-                  icon={CheckIcon}
+                  variant={"info"}
                   title={"Transaksi berhasil!"}
                   description={
                     "Data yang Anda bayar sudah disimpan pada akun Anda!"

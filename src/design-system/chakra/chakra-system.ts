@@ -1591,8 +1591,8 @@ export const chakraConfig = defineConfig({
           },
           solid: {
             value: {
-              base: "{colors.green.500}",
-              _dark: "{colors.green.600}",
+              base: "{colors.green.600} !important",
+              _dark: "{colors.green.600} !important",
             },
           },
           focusRing: {

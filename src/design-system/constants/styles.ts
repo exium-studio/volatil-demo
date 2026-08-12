@@ -35,6 +35,7 @@ export const SPACING = {
   md: "12px",
   lg: "24px",
   xl: "32px",
+  "2xl": "32px",
 } as const;
 
 export const PADDING = {

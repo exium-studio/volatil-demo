@@ -296,8 +296,6 @@ const DialogContent = (props: DialogContentProps) => {
           pos={"relative"}
           bg={"bg.body"}
           rounded={isFullscreen ? 0 : theme.radii.container}
-          border={"1px solid"}
-          borderColor={"border.subtle"}
           shadow={"md"}
           onAnimationStart={() => {
             if (!contentRef.current) return;

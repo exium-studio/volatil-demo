@@ -1,13 +1,19 @@
 // src/design-system/components/focus-alert/types/focus-alert.type.ts
 
-import type { ReactNode, ComponentType } from "react";
+import type { ReactNode } from "react";
 
 export type FocusAlertRenderFn = () => ReactNode;
 
+export type FocusAlertVariant =
+  | "success"
+  | "error"
+  | "warning"
+  | "info"
+  | "question";
+
 export type FocusAlertItemProps = {
   modalKey?: string;
-  colorPalette?: string;
-  icon?: ComponentType;
+  variant?: FocusAlertVariant;
   title?: string;
   description?: string;
   onDone?: () => void;
@@ -19,8 +25,7 @@ export type FocusAlertTriggerProps = FocusAlertItemProps & {
 };
 
 export type FocusAlertContentProps = {
-  colorPalette: string;
-  icon: ComponentType;
+  variant?: FocusAlertVariant;
   title?: string;
   description?: string;
   transition: boolean;
