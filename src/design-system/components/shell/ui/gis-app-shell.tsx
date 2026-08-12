@@ -25,7 +25,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
-import { HEADER_H, SPACING_SM } from "@/design-system/constants/styles";
+import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useSidebarStore } from "@/design-system/stores/use-sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/use-splitter-store";
@@ -143,12 +143,12 @@ const SidebarHeader = () => {
     <HStack
       align={"center"}
       justify={"space-between"}
-      h={HEADER_H}
+      h={DIMENSIONS.headerH}
       p={4}
       w={"full"}
     >
       <NavLink to={"/"}>
-        <HStack align={"center"} gap={SPACING_SM}>
+        <HStack align={"center"} gap={SPACING.sm}>
           <AtrLogo boxSize={"24px"} ml={1} />
 
           <ClampedP

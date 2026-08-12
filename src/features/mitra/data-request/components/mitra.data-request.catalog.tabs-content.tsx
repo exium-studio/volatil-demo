@@ -11,12 +11,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import {
-  PADDING_MD,
-  PADDING_SM,
-  SPACING_MD,
-  SPACING_SM,
-} from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
@@ -55,17 +50,17 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
       <VStack
         wrap={"wrap"}
         justify={"space-between"}
-        gap={SPACING_MD}
-        p={PADDING_MD}
+        gap={SPACING.md}
+        p={PADDING.md}
       >
         {/* Header - Actions */}
         <HStack
           wrap={"wrap"}
           align={"center"}
           justify={"space-between"}
-          gap={SPACING_SM}
+          gap={SPACING.sm}
         >
-          <HStack gap={SPACING_SM}>
+          <HStack gap={SPACING.sm}>
             <SearchInput placeholder={"Cari..."} />
 
             <WfsIgtFilterTrigger
@@ -145,14 +140,14 @@ const CatalogDataList = (props: CatalogDataListProps) => {
   return (
     <VStack
       flex={1}
-      gap={PADDING_SM}
+      gap={PADDING.sm}
       overflowY={"auto"}
       bg={"bg.canvas"}
       w={"full"}
       position={"relative"}
     >
       {isLoading ? (
-        <Skeleton p={PADDING_MD} />
+        <Skeleton p={PADDING.md} />
       ) : (
         <>
           <TopBarLoader isFetching={isFetching} />

@@ -22,11 +22,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
-import {
-  TABLE_ACTIONS_CELL_W,
-  TABLE_ROW_GAP,
-  TABLE_ROW_H,
-} from "@/design-system/constants/styles";
+import { TABLE } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { tintAlpha } from "@/shared/utils/style/color";
@@ -181,17 +177,17 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
       const cols: string[] = [];
 
       if (canBatchSelect || !isEmptyArray(batchActions)) {
-        cols.push(TABLE_ACTIONS_CELL_W);
+        cols.push(TABLE.actionsCellW);
       }
 
       if (withNumbering) {
-        cols.push(TABLE_ACTIONS_CELL_W);
+        cols.push(TABLE.actionsCellW);
       }
 
       headers.forEach(() => cols.push("auto"));
 
       if (!isEmptyArray(itemActions)) {
-        cols.push(TABLE_ACTIONS_CELL_W);
+        cols.push(TABLE.actionsCellW);
       }
 
       return cols.join(" ");
@@ -203,7 +199,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
           className={"table-container"}
           ref={setTableContainerRef}
           overflow={"auto"}
-          pb={TABLE_ROW_GAP}
+          pb={TABLE.rowGap}
           roundedTop={theme.radii.container}
           shadow={"sm"}
           {...restProps}
@@ -212,7 +208,7 @@ const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
             role={"table"}
             gridTemplateColumns={gridCols}
             w={headers.length > 1 ? "full" : "fit"}
-            rowGap={TABLE_ROW_GAP}
+            rowGap={TABLE.rowGap}
           >
             {children}
           </Grid>
@@ -254,7 +250,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       gridTemplateColumns={"subgrid"}
       gridColumn={"1 / -1"}
       overflow={"clip"}
-      h={TABLE_ROW_H}
+      h={TABLE.rowH}
       pos={"sticky"}
       top={0}
       left={0}
@@ -353,7 +349,7 @@ const DataListTableRow = ({
       gridTemplateColumns={"subgrid"}
       gridColumn={"1 / -1"}
       overflow={"clip"}
-      minH={TABLE_ROW_H}
+      minH={TABLE.rowH}
       bg={"bg.body"}
       shadow={isItemSelected ? "md" : "none"}
       {...styleProps}
@@ -440,8 +436,8 @@ const DataListTableBody = () => {
     tableContainerEl,
   } = useDataListTableContext();
 
-  const rowHeight = useMemo(() => parseInt(TABLE_ROW_H, 10), []);
-  const rowGap = useMemo(() => parseInt(TABLE_ROW_GAP, 10), []);
+  const rowHeight = useMemo(() => parseInt(TABLE.rowH, 10), []);
+  const rowGap = useMemo(() => parseInt(TABLE.rowGap, 10), []);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({

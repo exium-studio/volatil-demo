@@ -3,8 +3,7 @@
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PageContainerProps } from "@/design-system/components/layout/types/page-container.type";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { HEADER_H } from "@/design-system/constants/styles";
-
+import { DIMENSIONS } from "@/design-system/constants/styles";
 export const PageContainer = (props: PageContainerProps) => {
   return (
     <VStack minH={"100dvh"} overflowY={"auto"} pos={"relative"} {...props} />
@@ -20,7 +19,7 @@ export const PanelContentContainer = (props: StackProps) => {
     <VStack
       flex={1}
       pos={"relative"}
-      h={`calc(100% - ${HEADER_H})`}
+      h={`calc(100% - ${DIMENSIONS.headerH})`}
       {...props}
     />
   );

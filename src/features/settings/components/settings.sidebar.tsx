@@ -8,7 +8,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { P } from "@/design-system/components/typography/ui/p";
-import { HEADER_H } from "@/design-system/constants/styles";
+import { DIMENSIONS } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { SettingsSearchButton } from "@/features/settings/components/settings.search";
 import { SETTINGS_NAV_GROUPS_LIST } from "@/features/settings/constants/settings.nav-groups";
@@ -46,7 +46,7 @@ export const SettingsSidebarHeader = () => {
       className={"settings-menu__header"}
       align={"center"}
       justify={"space-between"}
-      h={HEADER_H}
+      h={DIMENSIONS.headerH}
       p={2}
     >
       <HStack>

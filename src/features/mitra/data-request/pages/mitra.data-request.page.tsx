@@ -6,7 +6,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
-import { HEADER_H, PADDING_SM } from "@/design-system/constants/styles";
+import { DIMENSIONS, PADDING } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { MitraDataRequestCatalogTabsContent } from "@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content";
 import { MitraDataRequestDrawAoiTabsContent } from "@/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content";
@@ -65,7 +65,7 @@ export const MitraDataRequestPage = () => {
   }, [tab, setTab]);
 
   return (
-    <PanelContentContainer overflowY={"auto"} gap={PADDING_SM} p={PADDING_SM}>
+    <PanelContentContainer overflowY={"auto"} gap={PADDING.sm} p={PADDING.sm}>
       <Container.Root flex={1} overflowY={"auto"}>
         <Container.Body flex={1} overflowY={"auto"}>
           <AppNavTitle navsMap={APP_NAVS_MAP} />
@@ -95,7 +95,7 @@ export const MitraDataRequestPage = () => {
                     value={method.value}
                     flex={1}
                     justifyContent={"center"}
-                    h={HEADER_H}
+                    h={DIMENSIONS.headerH}
                   >
                     <AppIcon icon={method.icon} />
                     {method.label}

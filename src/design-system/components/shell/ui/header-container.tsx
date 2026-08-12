@@ -2,8 +2,7 @@
 
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import { HEADER_H, PADDING_MD } from "@/design-system/constants/styles";
-
+import { DIMENSIONS, PADDING } from "@/design-system/constants/styles";
 export const HeaderContainer = (props: StackProps) => {
   // Props
   const { children, ...restProps } = props;
@@ -12,9 +11,9 @@ export const HeaderContainer = (props: StackProps) => {
     <HStack
       align={"center"}
       justify={"space-between"}
-      minH={HEADER_H}
-      maxH={HEADER_H}
-      px={PADDING_MD}
+      minH={DIMENSIONS.headerH}
+      maxH={DIMENSIONS.headerH}
+      px={PADDING.md}
       {...restProps}
     >
       {children}

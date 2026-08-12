@@ -11,7 +11,7 @@ import {
   DIALOG_OFFSET_X_VAR,
   DIALOG_OFFSET_Y_VAR,
 } from "@/design-system/components/overlay/stores/dialog-animation-store";
-import { SM_SCREEN_BREAKPOINT } from "@/design-system/constants/styles";
+import { DIMENSIONS } from "@/design-system/constants/styles";
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
 export const chakraConfig = defineConfig({
@@ -36,7 +36,7 @@ export const chakraConfig = defineConfig({
   theme: {
     breakpoints: {
       sm: "320px",
-      md: SM_SCREEN_BREAKPOINT,
+      md: DIMENSIONS.smScreenBreakpoint,
       lg: "960px",
       xl: "1200px",
     },

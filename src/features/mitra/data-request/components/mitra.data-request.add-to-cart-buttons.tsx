@@ -8,11 +8,7 @@ import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
-import {
-  PADDING_MD,
-  SPACING_MD,
-  SPACING_SM,
-} from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { MitraDataRequestAddToCartButtonsProps } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
@@ -85,8 +81,8 @@ export const MitraDataRequestAddToCartButtons = (
 
   return (
     <VStack
-      gap={SPACING_MD}
-      p={PADDING_MD}
+      gap={SPACING.md}
+      p={PADDING.md}
       rounded={theme.radii.container}
       bg={"bg.body"}
       {...restProps}
@@ -95,7 +91,7 @@ export const MitraDataRequestAddToCartButtons = (
         wrap={"wrap"}
         align={"center"}
         justify={"space-between"}
-        gap={SPACING_SM}
+        gap={SPACING.sm}
         w={"full"}
       >
         {/* Add all — ButtonGroup with main button on left and menu trigger on right */}

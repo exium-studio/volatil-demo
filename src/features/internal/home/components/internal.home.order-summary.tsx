@@ -9,7 +9,7 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING_MD, SPACING_MD } from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import type {
   InternalHomeOrderStatConfig,
   InternalHomeOrderSummaryHeaderProps,
@@ -41,7 +41,7 @@ export const InternalHomeOrderSummary = (
 
   return (
     <Container.Root flex={1} withContext={true} {...props}>
-      <Container.Body gap={4} pt={PADDING_MD}>
+      <Container.Body gap={4} pt={PADDING.md}>
         <InternalHomeOrderSummaryHeader
           period={period}
           onPeriodChange={setPeriod}
@@ -68,8 +68,8 @@ const InternalHomeOrderSummaryHeader = (
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING_MD}
-      px={PADDING_MD}
+      gap={SPACING.md}
+      px={PADDING.md}
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>

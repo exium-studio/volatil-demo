@@ -19,11 +19,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
-import {
-  PADDING_MD,
-  SPACING_MD,
-  SPACING_SM,
-} from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import type {
   InternalHomeIgtDataListItem,
   InternalHomeIgtDataListProps,
@@ -57,7 +53,7 @@ export const InternalHomeIgtDataList = (
 ) => {
   return (
     <Container.Root flex={"1 1 100%"} withContext={true} {...props}>
-      <Container.Body pb={PADDING_MD}>
+      <Container.Body pb={PADDING.md}>
         <InternalHomeIgtDataListHeader />
 
         <Separator borderColor={"bg.canvas"} />
@@ -74,8 +70,8 @@ const InternalHomeIgtDataListHeader = () => {
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING_MD}
-      p={PADDING_MD}
+      gap={SPACING.md}
+      p={PADDING.md}
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
@@ -86,7 +82,7 @@ const InternalHomeIgtDataListHeader = () => {
         </P>
       </VStack>
 
-      <HStack wrap={"wrap"} align={"center"} gap={SPACING_SM}>
+      <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
         <SearchInput placeholder={t["action.search"]()} maxW={"220px"} />
 
         <Button variant={"outline"} px={3}>

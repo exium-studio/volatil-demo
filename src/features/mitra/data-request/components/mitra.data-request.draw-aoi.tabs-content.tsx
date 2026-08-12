@@ -21,12 +21,7 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
-import {
-  PADDING_MD,
-  PADDING_SM,
-  SPACING_MD,
-  SPACING_SM,
-} from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
@@ -112,7 +107,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
               )}
 
               {hasFinishedDraw && (
-                <HStack gap={SPACING_SM}>
+                <HStack gap={SPACING.sm}>
                   <Button
                     variant={"outline"}
                     colorPalette={"red"}
@@ -147,7 +142,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
         )}
 
         {isError && (
-          <VStack gap={SPACING_SM} p={PADDING_MD}>
+          <VStack gap={SPACING.sm} p={PADDING.md}>
             <P color={"fg.error"}>{error ?? "Terjadi kesalahan"}</P>
             <Button variant={"outline"} onClick={handleResetDraw}>
               {"Coba lagi"}
@@ -209,8 +204,8 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
     <VStack
       wrap={"wrap"}
       justify={"space-between"}
-      gap={SPACING_MD}
-      p={PADDING_MD}
+      gap={SPACING.md}
+      p={PADDING.md}
       pb={0}
       visibility={isVisible ? "visible" : "hidden"}
       pointerEvents={isVisible ? "auto" : "none"}
@@ -218,8 +213,8 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
     >
       <HStack
         align={"center"}
-        gap={SPACING_MD}
-        p={PADDING_MD}
+        gap={SPACING.md}
+        p={PADDING.md}
         bg={getAlertBg()}
         rounded={theme.radii.container}
         color={getAlertColor()}
@@ -281,16 +276,16 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
       <VStack
         wrap={"wrap"}
         justify={"space-between"}
-        gap={SPACING_MD}
-        p={PADDING_MD}
+        gap={SPACING.md}
+        p={PADDING.md}
       >
         <HStack
           wrap={"wrap"}
           align={"center"}
           justify={"space-between"}
-          gap={SPACING_SM}
+          gap={SPACING.sm}
         >
-          <HStack gap={SPACING_SM}>
+          <HStack gap={SPACING.sm}>
             <SearchInput placeholder={t["action.search"]()} />
 
             <WfsIgtFilterTrigger
@@ -305,7 +300,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
             </WfsIgtFilterTrigger>
           </HStack>
 
-          <HStack gap={SPACING_SM} align={"center"}>
+          <HStack gap={SPACING.sm} align={"center"}>
             <Button
               variant={"outline"}
               colorPalette={"red"}
@@ -323,17 +318,17 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
 
       <VStack
         flex={1}
-        gap={PADDING_SM}
+        gap={PADDING.sm}
         overflowY={"auto"}
         bg={"bg.canvas"}
         position={"relative"}
       >
         {isLoading ? (
           <Center flex={1} pos={"relative"}>
-            <Skeleton p={PADDING_MD} />
+            <Skeleton p={PADDING.md} />
 
             <AbsoluteCenter>
-              <HStack align={"center"} gap={SPACING_SM}>
+              <HStack align={"center"} gap={SPACING.sm}>
                 <Loader />
                 <P>{"Mengambil data IGT di area AOI Anda..."}</P>
               </HStack>

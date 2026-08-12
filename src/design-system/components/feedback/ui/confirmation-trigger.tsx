@@ -8,7 +8,7 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING_LG, SPACING_MD } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { t } from "@/shared/libs/i18n";
 import type { ComponentType, MouseEvent, ReactElement } from "react";
 import { cloneElement, isValidElement } from "react";
@@ -88,7 +88,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
     }
 
     return (
-      <Center mb={SPACING_MD}>
+      <Center mb={SPACING.md}>
         <AppIcon
           icon={icon as ComponentType}
           size={"3xl"}
@@ -114,7 +114,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
             <Modal.CloseButton />
           </Modal.Header>
 
-          <Modal.Body gap={SPACING_MD}>
+          <Modal.Body gap={SPACING.md}>
             {renderIcon()}
 
             <P fontSize={"lg"} textAlign={"center"}>
@@ -124,7 +124,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
             <P
               maxW={"300px"}
               mx={"auto"}
-              mb={SPACING_LG}
+              mb={SPACING.lg}
               color={"fg.subtle"}
               textAlign={"center"}
             >

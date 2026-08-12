@@ -6,11 +6,7 @@ import type {
   ContainerRootProps,
 } from "@/design-system/components/layout/types/container.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import {
-  HEADER_H,
-  SM_SCREEN_BREAKPOINT,
-  SPACING_MD,
-} from "@/design-system/constants/styles";
+import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useRefDimension } from "@/design-system/hooks/use-ref-dimenssion";
 import { useMergedRefs } from "@/design-system/hooks/use-merge-refs";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
@@ -51,7 +47,7 @@ const ContainerRoot = forwardRef<HTMLDivElement, ContainerRootProps>(
 
     // Derived Values
     const isValidDimension = dimension.width > 0 && dimension.height > 0;
-    const isSmContainer = dimension.width < parseInt(SM_SCREEN_BREAKPOINT);
+    const isSmContainer = dimension.width < parseInt(DIMENSIONS.smScreenBreakpoint);
 
     const contextValue = useMemo(
       () => ({ dimension, isValidDimension, isSmContainer }),
@@ -84,7 +80,7 @@ const ContainerHeader = (props: ContainerHeaderProps) => {
   const { children, ...restProps } = props;
 
   return (
-    <HStack w={"full"} minH={HEADER_H} px={SPACING_MD} {...restProps}>
+    <HStack w={"full"} minH={DIMENSIONS.headerH} px={SPACING.md} {...restProps}>
       {children}
     </HStack>
   );

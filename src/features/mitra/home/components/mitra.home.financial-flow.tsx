@@ -8,11 +8,7 @@ import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-g
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
-import {
-  PADDING_LG,
-  PADDING_MD,
-  SPACING_MD,
-} from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import type {
@@ -46,7 +42,7 @@ export const MitraHomeFinancialFlow = (props: MitraHomeFinancialFlowProps) => {
 
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body gap={8} pt={PADDING_MD}>
+      <Container.Body gap={8} pt={PADDING.md}>
         <MitraHomeFinancialFlowHeader
           period={period}
           onPeriodChange={setPeriod}
@@ -71,8 +67,8 @@ const MitraHomeFinancialFlowHeader = (
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING_MD}
-      px={PADDING_MD}
+      gap={SPACING.md}
+      px={PADDING.md}
     >
       <VStack gap={1}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
@@ -113,7 +109,7 @@ const MitraHomeFinancialFlowChartContent = (
   });
 
   return (
-    <Chart.Root maxH={"256px"} chart={chart} px={PADDING_LG}>
+    <Chart.Root maxH={"256px"} chart={chart} px={PADDING.lg}>
       <ResponsiveContainer width={"100%"} height={240}>
         <AreaChart data={chart.data}>
           <ChartTooltip

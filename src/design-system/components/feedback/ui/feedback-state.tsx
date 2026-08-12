@@ -4,8 +4,7 @@ import type { FeedbackStateProps } from "@/design-system/components/feedback/typ
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
-import { FEEDBACK_CONTAINER_MIN_H } from "@/design-system/constants/styles";
-
+import { DIMENSIONS } from "@/design-system/constants/styles";
 const FeedbackState = (props: FeedbackStateProps) => {
   // Props
   const { icon, iconProps, title, description, children, ...restProps } = props;
@@ -19,7 +18,7 @@ const FeedbackState = (props: FeedbackStateProps) => {
       align={"center"}
       justify={"center"}
       gap={4}
-      minH={FEEDBACK_CONTAINER_MIN_H}
+      minH={DIMENSIONS.feedbackContainerMinH}
       p={4}
       m={"auto"}
       {...restProps}

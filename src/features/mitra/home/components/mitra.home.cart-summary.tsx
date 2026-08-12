@@ -8,7 +8,7 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING_MD } from "@/design-system/constants/styles";
+import { PADDING } from "@/design-system/constants/styles";
 import type {
   MitraHomeCartStatConfig,
   MitraHomeCartSummaryProps,
@@ -24,7 +24,7 @@ import {
 export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body gap={4} pt={PADDING_MD}>
+      <Container.Body gap={4} pt={PADDING.md}>
         <MitraHomeCartSummaryHeader />
 
         <VStack flex={1}>
@@ -39,7 +39,7 @@ export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
 
 const MitraHomeCartSummaryHeader = () => {
   return (
-    <HStack align={"center"} justify={"space-between"} px={PADDING_MD}>
+    <HStack align={"center"} justify={"space-between"} px={PADDING.md}>
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ringkasan Keranjang Pembelian"}

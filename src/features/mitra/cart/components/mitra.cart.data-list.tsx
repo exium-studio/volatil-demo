@@ -25,12 +25,12 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import type {
   CartItem,
   MitraCartTableProps,
-} from "@/features/cart/types/cart.type";
+} from "@/features/mitra/cart/types/cart.type";
 import {
   useCartItemsQuery,
   useClearCart,
   useRemoveFromCart,
-} from "@/features/cart/hooks/use-mitra-cart";
+} from "@/features/mitra/cart/hooks/use-mitra-cart";
 import { t } from "@/shared/libs/i18n";
 import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState } from "react";

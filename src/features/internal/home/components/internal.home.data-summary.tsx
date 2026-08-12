@@ -9,11 +9,7 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import {
-  PADDING_MD,
-  SPACING_MD,
-  SPACING_XS,
-} from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import type {
   DataSummaryStatusConfig,
   InternalHomeDataSummaryChartsProps,
@@ -41,7 +37,7 @@ export const InternalHomeDataSummary = (
 
   return (
     <Container.Root flex={"1 1 550px"} withContext={true} {...props}>
-      <Container.Body gap={4} py={PADDING_MD}>
+      <Container.Body gap={4} py={PADDING.md}>
         <InternalHomeDataSummaryHeader
           period={period}
           onPeriodChange={setPeriod}
@@ -64,8 +60,8 @@ const InternalHomeDataSummaryHeader = (
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING_MD}
-      px={PADDING_MD}
+      gap={SPACING.md}
+      px={PADDING.md}
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
@@ -130,12 +126,12 @@ const InternalHomeDataSummaryCharts = (
   const { dataSummary } = useInternalHomeData(period);
 
   return (
-    <SimpleGrid columns={1} gap={PADDING_MD} px={PADDING_MD}>
+    <SimpleGrid columns={1} gap={PADDING.md} px={PADDING.md}>
       {/* IGT Berbasis Bidang */}
-      <VStack align={"start"} gap={SPACING_MD}>
+      <VStack align={"start"} gap={SPACING.md}>
         <P color={"fg.muted"}>{"IGT Berbasis Bidang"}</P>
 
-        <HStack gap={SPACING_XS} w={"full"}>
+        <HStack gap={SPACING.xs} w={"full"}>
           {FIELD_STATUSES.map((config) => {
             const value = dataSummary.field[config.key];
 
@@ -172,10 +168,10 @@ const InternalHomeDataSummaryCharts = (
       </VStack>
 
       {/* IGT Berbasis Kawasan */}
-      <VStack align={"start"} gap={SPACING_MD}>
+      <VStack align={"start"} gap={SPACING.md}>
         <P color={"fg.muted"}>{"IGT Berbasis Kawasan"}</P>
 
-        <HStack gap={SPACING_XS} w={"full"}>
+        <HStack gap={SPACING.xs} w={"full"}>
           {AREA_STATUSES.map((config) => {
             const value = dataSummary.area[config.key];
             return (

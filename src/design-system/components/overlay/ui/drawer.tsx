@@ -13,7 +13,7 @@ import type {
   DrawerRootProps,
 } from "@/design-system/components/overlay/types/drawer.type";
 import { Portal } from "@/design-system/components/utilities/ui/portal";
-import { MODAL_BASE_ZINDEX } from "@/design-system/constants/styles";
+import { MODAL } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { back } from "@/shared/utils/client/navigation";
@@ -262,7 +262,7 @@ const DrawerContent = (props: DrawerContentProps) => {
   };
 
   // Derived Values
-  const zIndex = MODAL_BASE_ZINDEX + modalKey.split(".").length;
+  const zIndex = MODAL.baseZIndex + modalKey.split(".").length;
 
   // Handlers
   function handleTouchStart(event: TouchEvent<HTMLDivElement>) {

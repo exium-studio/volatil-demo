@@ -24,10 +24,7 @@ import {
   unregisterFullscreenAnimator,
 } from "@/design-system/components/overlay/utils/fullscreen-animation-registry";
 import { Portal } from "@/design-system/components/utilities/ui/portal";
-import {
-  DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION,
-  MODAL_BASE_ZINDEX,
-} from "@/design-system/constants/styles";
+import { MODAL } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { back } from "@/shared/utils/client/navigation";
@@ -77,7 +74,7 @@ const DialogRoot = (props: DialogRootProps) => {
     opened = false,
     open,
     close,
-    clickOriginAnimation = DEFAULT_DIALOG_CLICK_ORIGIN_ANIMATION,
+    clickOriginAnimation = MODAL.defaultDialogClickOriginAnimation,
     size = "xs",
     ...restProps
   } = props;
@@ -235,7 +232,7 @@ const DialogContent = (props: DialogContentProps) => {
 
   // Derived Values
   const isFullscreen = fullscreen || size === "full";
-  const zIndex = MODAL_BASE_ZINDEX + modalKey.split(".").length;
+  const zIndex = MODAL.baseZIndex + modalKey.split(".").length;
 
   useLayoutEffect(() => {
     let currentAnimation: Animation | null = null;

@@ -4,11 +4,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import {
-  MODAL_ANIMATION_DURATION_MS,
-  SPACING_MD,
-  SPACING_SM,
-} from "@/design-system/constants/styles";
+import { MODAL, SPACING } from "@/design-system/constants/styles";
 import { WfsIgtFilterBasisSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.basis-select";
 import { WfsIgtFilterKabupatenSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.kabupaten-select";
 import { WfsIgtFilterKecamatanSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.kecamatan-select";
@@ -62,7 +58,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
       if (!isCancelled) {
         setLocalDraftFilters(currentAppliedFilters);
       }
-    }, MODAL_ANIMATION_DURATION_MS);
+    }, MODAL.animationDurationMs);
 
     return () => {
       isCancelled = true;
@@ -112,8 +108,8 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
           <Modal.CloseButton />
         </Modal.Header>
 
-        <Modal.Body gap={SPACING_MD}>
-          <VStack gap={SPACING_MD} w={"full"}>
+        <Modal.Body gap={SPACING.md}>
+          <VStack gap={SPACING.md} w={"full"}>
             <WfsIgtFilterBasisSelect
               modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.BASIS}`}
               value={localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.BASIS]?.value}
@@ -166,7 +162,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
           </VStack>
         </Modal.Body>
 
-        <Modal.Footer gap={SPACING_SM}>
+        <Modal.Footer gap={SPACING.sm}>
           <Button variant={"outline"} flex={1} onClick={handleReset}>
             {"Reset"}
           </Button>

@@ -30,12 +30,7 @@ import {
 } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
-import {
-  PADDING_MD,
-  PADDING_SM,
-  SPACING_MD,
-  SPACING_SM,
-} from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
 import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
@@ -281,7 +276,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
         {...restProps}
       >
         {!hasLayers && (
-          <Box flex={1} p={PADDING_MD} display={"flex"} flexDir={"column"}>
+          <Box flex={1} p={PADDING.md} display={"flex"} flexDir={"column"}>
             <FileInput
               variant={"dropzone"}
               label={
@@ -325,16 +320,16 @@ export const MitraDataRequestUploadAoiTabsContent = (
             <VStack
               wrap={"wrap"}
               justify={"space-between"}
-              gap={SPACING_MD}
-              p={PADDING_MD}
+              gap={SPACING.md}
+              p={PADDING.md}
             >
               <HStack
                 wrap={"wrap"}
                 align={"center"}
                 justify={"space-between"}
-                gap={SPACING_SM}
+                gap={SPACING.sm}
               >
-                <HStack gap={SPACING_SM}>
+                <HStack gap={SPACING.sm}>
                   <SearchInput placeholder={t["action.search"]()} />
 
                   <WfsIgtFilterTrigger
@@ -348,7 +343,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
                   </WfsIgtFilterTrigger>
                 </HStack>
 
-                <HStack align={"center"} gap={SPACING_SM}>
+                <HStack align={"center"} gap={SPACING.sm}>
                   <MitraDataRequestUploadAoiFileListTrigger
                     onFilesAdded={handleFilesAdded}
                     onDeleteLayer={handleDeleteLayer}
@@ -481,7 +476,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
           <Modal.CloseButton />
         </Modal.Header>
 
-        <Modal.Body gap={SPACING_SM}>
+        <Modal.Body gap={SPACING.sm}>
           {isEmptyArray(aoiLayers) && <NoDataState />}
 
           {aoiLayers.map((layer) => (
@@ -506,7 +501,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
           ))}
         </Modal.Body>
 
-        <Modal.Footer gap={SPACING_SM}>
+        <Modal.Footer gap={SPACING.sm}>
           <Button
             flex={1}
             variant={"outline"}
@@ -577,13 +572,13 @@ const MitraDataRequestUploadAoiDataList = memo(
     return (
       <VStack
         flex={1}
-        gap={PADDING_SM}
+        gap={PADDING.sm}
         overflowY={"auto"}
         bg={"bg.canvas"}
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton p={PADDING_MD} />
+          <Skeleton p={PADDING.md} />
         ) : (
           <>
             <TopBarLoader isFetching={isFetching} />

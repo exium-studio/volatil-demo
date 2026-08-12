@@ -10,9 +10,9 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { PADDING } from "@/design-system/constants/styles";
-import { MitraCartDataList } from "@/features/cart/components/mitra.cart.data-list";
-import { MitraCartOrderSummary } from "@/features/cart/components/mitra.cart.order-summary";
-import { useCartSummaryQuery } from "@/features/cart/hooks/use-mitra-cart";
+import { MitraCartDataList } from "@/features/mitra/cart/components/mitra.cart.data-list";
+import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
+import { useCartSummaryQuery } from "@/features/mitra/cart/hooks/use-mitra-cart";
 
 export const MitraCartPage = () => {
   return (

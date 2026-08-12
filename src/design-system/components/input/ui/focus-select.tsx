@@ -12,11 +12,7 @@ import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-co
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import {
-  PADDING_MD,
-  PADDING_SM,
-  SPACING_SM,
-} from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { t } from "@/shared/libs/i18n";
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
@@ -115,7 +111,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
       onClick={disabled ? undefined : open}
       {...restProps}
     >
-      <HStack gap={SPACING_SM} flex={1} minW={0} justify={"start"}>
+      <HStack gap={SPACING.sm} flex={1} minW={0} justify={"start"}>
         {selectedOption?.icon && (
           <AppIcon icon={selectedOption.icon} size={"sm"} />
         )}
@@ -124,7 +120,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         </P>
       </HStack>
 
-      <HStack gap={SPACING_SM} align={"center"}>
+      <HStack gap={SPACING.sm} align={"center"}>
         {clearable && currentValue && !disabled ? (
           <AppIcon
             icon={XIcon}
@@ -169,7 +165,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
           <Modal.Body p={0}>
             {isSearchable && !isFetching && (
-              <VStack w={"full"} px={PADDING_MD} pt={"2px"} mb={SPACING_SM}>
+              <VStack w={"full"} px={PADDING.md} pt={"2px"} mb={SPACING.sm}>
                 <SearchInput
                   placeholder={t["action.search"]()}
                   onValueChange={setSearchQuery}
@@ -179,7 +175,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               </VStack>
             )}
 
-            <VScrollContainer w={"full"} px={PADDING_MD} pb={PADDING_MD}>
+            <VScrollContainer w={"full"} px={PADDING.md} pb={PADDING.md}>
               <VStack gap={1} w={"full"}>
                 {isFetching ? (
                   Array.from({ length: SKELETON_LIST_COUNT }).map(
@@ -205,7 +201,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                           variant={isSelected ? "subtle" : "ghost"}
                           w={"full"}
                           h={"auto"}
-                          py={PADDING_SM}
+                          py={PADDING.sm}
                           px={3}
                           justifyContent={"space-between"}
                           alignItems={"center"}
@@ -213,7 +209,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                           onClick={() => handleOptionSelect(opt.value)}
                         >
                           <HStack
-                            gap={SPACING_SM}
+                            gap={SPACING.sm}
                             align={"center"}
                             flex={1}
                             minW={0}
