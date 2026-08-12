@@ -7,7 +7,13 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { IconQuestionMark } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
+
+const CIRCLE_P = [32, 42, 48];
+const TRANSITION_DELAY_STEP_MS = 80;
+const OVERSHOOT_EASE = "cubic-bezier(0.34, 1.56, 0.64, 1)";
 
 export const FocusAlert = (props: FocusAlertTriggerProps) => {
   // Props
@@ -25,8 +31,25 @@ export const FocusAlert = (props: FocusAlertTriggerProps) => {
     modalKey: modalKeyProp,
   });
 
-  // Derived Values
-  const baseColor = `${colorPalette}.solid`;
+  // States
+  const [transition, setTransition] = useState<boolean>(false);
+
+  useFirstMountEffect(
+    {
+      onUpdate: () => {
+        if (isOpen) setTransition(false);
+      },
+    },
+    [isOpen],
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        setTransition(true);
+      }, 200);
+    }
+  }, [isOpen]);
 
   return (
     <Modal.Root modalKey={modalKey} opened={isOpen} open={open} close={close}>
@@ -38,21 +61,43 @@ export const FocusAlert = (props: FocusAlertTriggerProps) => {
             colorPalette={colorPalette}
             align={"center"}
             justify={"center"}
-            gap={SPACING.lg}
-            minH={"200px"}
+            gap={SPACING.xl}
             py={PADDING.md}
           >
             {icon && (
-              <Circle bg={`${baseColor}/25`} p={5}>
-                <Circle bg={`${baseColor}`} p={5} transition={"200ms"}>
-                  <Circle bg={"bg.body"} p={5} transition={"200ms"}>
-                    <AppIcon
-                      icon={icon}
-                      size={"3xl"}
-                      color={`colorPalette.solid`}
-                    />
-                  </Circle>
-                </Circle>
+              <Circle pos={"relative"} my={SPACING.lg}>
+                {/* Circle 3 */}
+                <Circle
+                  pos={"absolute"}
+                  p={transition ? `${CIRCLE_P[2]}px` : 0}
+                  bg={"colorPalette.solid/25"}
+                  transition={`padding 250ms ${OVERSHOOT_EASE}`}
+                  transitionDelay={`${TRANSITION_DELAY_STEP_MS * 2}ms`}
+                />
+
+                {/* Circle 2 */}
+                <Circle
+                  pos={"absolute"}
+                  p={transition ? `${CIRCLE_P[1]}px` : 0}
+                  bg={"colorPalette.solid/50"}
+                  transition={`padding 250ms ${OVERSHOOT_EASE}`}
+                  transitionDelay={`${TRANSITION_DELAY_STEP_MS * 1}ms`}
+                />
+
+                {/* Circle 1 */}
+                <Circle
+                  pos={"absolute"}
+                  p={transition ? `${CIRCLE_P[0]}px` : 0}
+                  bg={"colorPalette.solid"}
+                  transition={`padding 250ms ${OVERSHOOT_EASE}`}
+                />
+
+                <AppIcon
+                  icon={icon}
+                  size={"3xl"}
+                  color={"colorPalette.contrast"}
+                  zIndex={2}
+                />
               </Circle>
             )}
 

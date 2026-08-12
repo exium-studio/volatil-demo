@@ -1,6 +1,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
+import { FocusAlert } from "@/design-system/components/feedback/ui/focus-alert";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -12,6 +13,7 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
+import { CheckIcon } from "lucide-react";
 
 const PAYMENT_METHODS_MAP = {
   teller: {
@@ -82,19 +84,18 @@ export const BillingPage = () => {
     <PanelContentContainer gap={PADDING.sm} p={PADDING.sm}>
       <Container.Root>
         <Container.Body>
-          <HStack
-            wrap={"wrap"}
-            align={"center"}
-            justify={"space-between"}
-            gap={SPACING.md}
-            p={PADDING.md}
-          >
-            <VStack gap={1}>
-              <P>Kode Billing </P>
+          <VStack gap={SPACING.md} p={PADDING.md}>
+            <Heading>Kode Billing</Heading>
 
+            <HStack
+              wrap={"wrap"}
+              align={"center"}
+              gap={SPACING.md}
+              justify={"space-between"}
+            >
               <HStack align={"center"} gap={SPACING.sm}>
                 <P
-                  fontSize={"lg"}
+                  fontSize={"2xl"}
                   fontWeight={"semibold"}
                   color={`${theme.colorPalette}.fg`}
                 >
@@ -103,10 +104,20 @@ export const BillingPage = () => {
 
                 <ClipboardButton value={billingCode} size={"xs"} />
               </HStack>
-            </VStack>
 
-            <Button primary>Cek status pembayaran</Button>
-          </HStack>
+              <FocusAlert
+                modalKey={"trx-success"}
+                colorPalette={"green"}
+                icon={CheckIcon}
+                title={"Transaksi Berhasil"}
+                description={
+                  "Data yang Anda bayar sudah disimpan pada akun Anda!"
+                }
+              >
+                <Button primary>Cek status pembayaran</Button>
+              </FocusAlert>
+            </HStack>
+          </VStack>
         </Container.Body>
       </Container.Root>
 

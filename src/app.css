@@ -4,6 +4,10 @@
     border: 1px solid red !important;
 }
 
+.debug2{
+    border: 1px solid blue !important;
+}
+
 [data-modal-purging="true"] *,
 [data-modal-purging="true"] *::before,
 [data-modal-purging="true"] *::after {
