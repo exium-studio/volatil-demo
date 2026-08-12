@@ -1,6 +1,6 @@
 // src/features/mitra/data-request/services/mitra.data-request.api.ts
 
-import { addToCart as cartApiAddToCart } from "@/features/cart/services/cart.api";
+import { addToCart as cartApiAddToCart } from "@/features/mitra/cart/services/cart.api";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type {
   MitraDataRequestAddAllPayload,

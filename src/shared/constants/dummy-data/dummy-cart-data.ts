@@ -4,7 +4,7 @@ import type {
   CartItem,
   CartResponse,
   CartSummaryResponse,
-} from "@/features/cart/types/cart.type";
+} from "@/features/mitra/cart/types/cart.type";
 
 export const dummyMitraCartItems: CartItem[] = [
   {
