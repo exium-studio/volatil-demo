@@ -4,11 +4,12 @@ import "@/app.css";
 import { ChakraSystemProvider } from "@/design-system/chakra/providers/chakra-system.provider";
 import { ColorModeProvider } from "@/design-system/chakra/providers/color-mode-provider";
 import { NotFoundPage } from "@/design-system/components/error-boundary/ui/not-found.page";
+import { FocusAlerter } from "@/design-system/components/focus-alert/ui/focus-alerter";
 import { Toaster } from "@/design-system/components/toast";
+import { LocaleProvider as ChakraLocaleProvider } from "@/design-system/components/utilities/ui/chakra-locale-provider";
 import { DebugMenu } from "@/design-system/components/utilities/ui/debug-menu";
 import { OfflineAlert } from "@/design-system/components/utilities/ui/offline-alert";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
-import { LocaleProvider as ChakraLocaleProvider } from "@/design-system/components/utilities/ui/chakra-locale-provider";
 import { LocaleProvider } from "@/shared/libs/i18n/locale-provider";
 import { queryClient } from "@/shared/libs/tanstack-query/query.client";
 import { globalSearchParamsSchema } from "@/shared/schemas/root.search-params-schema";
@@ -43,6 +44,7 @@ function RootComponent() {
 
               <>
                 <Toaster />
+                <FocusAlerter />
                 <OfflineAlert />
                 <DebugMenu />
               </>
