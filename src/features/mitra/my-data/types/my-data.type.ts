@@ -3,7 +3,6 @@ import type { PaginatedResponse } from "@/shared/types/common-response.type";
 
 export type MyDataStatus = "active" | "expired";
 export type MyDataTransactionStatus = "pending" | "settled" | "failed";
-export type MyDataWfsFilter = "available" | "unavailable";
 
 export type MyDataItem = {
   id: string;
@@ -26,7 +25,11 @@ export type MyDataQueryParams = {
   page: number;
   pageSize: number;
   search?: string;
-  wfs?: MyDataWfsFilter;
+  basis?: string;
+  tema?: string;
+  provinsi?: string;
+  kabupaten?: string;
+  kecamatan?: string;
   status: MyDataStatus;
 };
 

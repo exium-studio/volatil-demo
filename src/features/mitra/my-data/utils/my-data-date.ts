@@ -37,20 +37,3 @@ export const getPreferredUserTimezone = (): string => {
 
   return Intl.DateTimeFormat().resolvedOptions().timeZone || DEFAULT_TIMEZONE;
 };
-
-export const formatRemainingTime = (
-  expiresAt: string,
-  now: Date = new Date(),
-): string => {
-  const expiration = new Date(expiresAt);
-  const difference = expiration.getTime() - now.getTime();
-  if (Number.isNaN(expiration.getTime()) || difference <= 0) return "Kedaluwarsa";
-
-  const totalHours = Math.ceil(difference / (1000 * 60 * 60));
-  const days = Math.floor(totalHours / 24);
-  const hours = totalHours % 24;
-
-  if (days === 0) return `${hours} jam`;
-  if (hours === 0) return `${days} hari`;
-  return `${days} hari ${hours} jam`;
-};

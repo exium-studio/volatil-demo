@@ -24,13 +24,13 @@ const items = [
   item({ id: "DATA-3", name: "Layer Lama", status: "expired" }),
 ];
 
-test("searches and applies active and WFS filters before pagination", () => {
+test("searches and applies active and WFS IGT filters before pagination", () => {
   const result = getPaginatedMyData(items, {
     page: 1,
     pageSize: 10,
     search: "bali",
     status: "active",
-    wfs: "unavailable",
+    basis: "kawasan",
   });
 
   assert.deepEqual(result.items.map(({ id }) => id), ["DATA-2"]);

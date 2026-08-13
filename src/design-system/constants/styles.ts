@@ -14,7 +14,7 @@ export const MODAL = {
   baseZIndex: 1400,
   controlContainerSpacingR: 1.5,
   animationDurationMs: 300,
-  defaultDialogClickOriginAnimation: false,
+  defaultDialogClickOriginAnimation: true,
 } as const;
 
 export const SIZES = {

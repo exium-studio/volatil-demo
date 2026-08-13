@@ -1,10 +1,12 @@
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-list-table.type";
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -14,30 +16,25 @@ import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
+import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraMyDataListProps,
   MyDataStatus,
   MyDataTransactionStatus,
-  MyDataWfsFilter,
 } from "@/features/mitra/my-data/types/my-data.type";
 import {
-  formatRemainingTime,
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/features/mitra/my-data/utils/my-data-date";
 import { t } from "@/shared/libs/i18n";
-import { ExternalLinkIcon } from "lucide-react";
+import { ExternalLinkIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const STATUS_OPTIONS = [
   { label: "Aktif", value: "active" },
   { label: "Kedaluwarsa", value: "expired" },
-];
-
-const WFS_OPTIONS = [
-  { label: "WFS Tersedia", value: "available" },
-  { label: "WFS Tidak Tersedia", value: "unavailable" },
 ];
 
 const TRANSACTION_STATUS: Record<
@@ -54,7 +51,6 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
     search: string;
     page: number;
     pageSize: number;
-    wfs?: MyDataWfsFilter;
     status: MyDataStatus;
   }>({
     search: "",
@@ -62,10 +58,16 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     status: "active",
   });
+  const [wfsFilters, setWfsFilters] = useState<WfsIgtFilterValues>({});
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const { myData, isLoading, isFetching } = useMitraMyDataQuery({
     ...state,
     search: state.search || undefined,
+    basis: wfsFilters.basis?.value,
+    tema: wfsFilters.tema?.value,
+    provinsi: wfsFilters.provinsi?.value,
+    kabupaten: wfsFilters.kabupaten?.value,
+    kecamatan: wfsFilters.kecamatan?.value,
   });
 
   const updateState = (nextState: Partial<typeof state>, resetPage = false) =>
@@ -77,15 +79,15 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
 
   const headers = useMemo<FormattedTableHeader[]>(
     () => [
-      { th: "Data IGT-PR", sortable: true },
-      { th: "Basis IGT-PR", sortable: true, align: "center" },
-      { th: "Purchased By", sortable: true },
-      { th: "Trx Date", sortable: true },
-      { th: "Trx Settled", sortable: true },
+      { th: "ID Bidang", sortable: true },
+      { th: "Basis Spasial", sortable: true, align: "center" },
+      { th: "Dibeli Oleh", sortable: true },
+      { th: "Tanggal Transaksi", sortable: true },
+      { th: "Transaksi Diselesaikan", sortable: true },
       { th: "Status Transaksi", sortable: true, align: "center" },
-      { th: "Link API WMS" },
-      { th: "Sisa Waktu Expired", sortable: true },
-      { th: "Expired Date", sortable: true },
+      { th: "Tautan API WMS" },
+      { th: "Sisa Masa Aktif", sortable: true },
+      { th: "Tanggal Kedaluwarsa", sortable: true },
     ],
     [],
   );
@@ -97,19 +99,21 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
         data: item,
         columns: [
           {
-            value: item.name,
+            value: item.id,
             td: (
-              <VStack align={"start"} gap={0} minW={"180px"}>
-                <P fontSize={"sm"} fontWeight={"medium"}>{item.name}</P>
-                <P fontSize={"xs"} color={"fg.subtle"}>{item.id}</P>
-              </VStack>
+              <P fontSize={"sm"} fontWeight={"medium"}>
+                {item.id}
+              </P>
             ),
             align: "start" as const,
           },
           {
             value: item.basis,
             td: (
-              <Badge colorPalette={item.basis === "bidang" ? "blue" : "orange"} variant={"subtle"}>
+              <Badge
+                colorPalette={item.basis === "bidang" ? "blue" : "orange"}
+                variant={"subtle"}
+              >
                 {item.basis}
               </Badge>
             ),
@@ -120,25 +124,41 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
             td: (
               <VStack align={"start"} gap={0} minW={"160px"}>
                 <P fontSize={"sm"}>{item.purchasedBy.name}</P>
-                <P fontSize={"xs"} color={"fg.subtle"}>{item.purchasedBy.email}</P>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {item.purchasedBy.email}
+                </P>
               </VStack>
             ),
             align: "start" as const,
           },
           {
             value: item.transactionDate,
-            td: <P fontSize={"sm"} whiteSpace={"nowrap"}>{formatUtcDateTime(item.transactionDate, preferredTimezone)}</P>,
+            td: (
+              <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                {formatUtcDateTime(item.transactionDate, preferredTimezone)}
+              </P>
+            ),
             align: "start" as const,
           },
           {
             value: item.transactionSettledAt ?? "",
-            td: <P fontSize={"sm"} whiteSpace={"nowrap"}>{formatUtcDateTime(item.transactionSettledAt, preferredTimezone)}</P>,
+            td: (
+              <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                {formatUtcDateTime(
+                  item.transactionSettledAt,
+                  preferredTimezone,
+                )}
+              </P>
+            ),
             align: "start" as const,
           },
           {
             value: item.transactionStatus,
             td: (
-              <Badge colorPalette={TRANSACTION_STATUS[item.transactionStatus].color} variant={"subtle"}>
+              <Badge
+                colorPalette={TRANSACTION_STATUS[item.transactionStatus].color}
+                variant={"subtle"}
+              >
                 {TRANSACTION_STATUS[item.transactionStatus].label}
               </Badge>
             ),
@@ -147,21 +167,37 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
           {
             value: item.wfsUrl ?? "",
             td: item.wfsUrl ? (
-              <ExternalLink href={item.wfsUrl} display={"inline-flex"} alignItems={"center"} gap={1} maxW={"220px"}>
-                <P fontSize={"sm"} truncate>{item.wfsUrl}</P>
+              <ExternalLink
+                href={item.wfsUrl}
+                display={"inline-flex"}
+                alignItems={"center"}
+                gap={1}
+                maxW={"220px"}
+              >
+                <P fontSize={"sm"} truncate>
+                  {item.wfsUrl}
+                </P>
                 <AppIcon icon={ExternalLinkIcon} size={"xs"} flexShrink={0} />
               </ExternalLink>
-            ) : <P fontSize={"sm"} color={"fg.subtle"}>-</P>,
+            ) : (
+              <P fontSize={"sm"} color={"fg.subtle"}>
+                -
+              </P>
+            ),
             align: "start" as const,
           },
           {
             value: item.expiresAt,
-            td: <P fontSize={"sm"} whiteSpace={"nowrap"}>{formatRemainingTime(item.expiresAt)}</P>,
+            td: <Countdown finishedAt={item.expiresAt} fontSize={"sm"} />,
             align: "start" as const,
           },
           {
             value: item.expiresAt,
-            td: <P fontSize={"sm"} whiteSpace={"nowrap"}>{formatUtcDateTime(item.expiresAt, preferredTimezone)}</P>,
+            td: (
+              <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                {formatUtcDateTime(item.expiresAt, preferredTimezone)}
+              </P>
+            ),
             align: "start" as const,
           },
         ],
@@ -171,28 +207,35 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
 
   return (
     <VStack flex={1} overflowY={"auto"} {...props}>
-      <HStack wrap={"wrap"} justify={"space-between"} gap={SPACING.sm} p={PADDING.md} w={"full"}>
+      <HStack wrap={"wrap"} gap={SPACING.sm} p={PADDING.md} w={"full"}>
         <SearchInput
           value={state.search}
-          onChange={(event) => updateState({ search: event.target.value }, true)}
+          onChange={(event) =>
+            updateState({ search: event.target.value }, true)
+          }
           placeholder={t["action.search"]()}
           maxW={"260px"}
         />
         <HStack wrap={"wrap"} gap={SPACING.sm}>
-          <FocusSelectInput
-            modalKey={"my-data-wfs-filter"}
-            placeholder={"Filter WFS"}
-            options={WFS_OPTIONS}
-            value={state.wfs ?? ""}
-            onValueChange={(value) => updateState({ wfs: (value || undefined) as MyDataWfsFilter | undefined }, true)}
-            w={"210px"}
-          />
+          <WfsIgtFilterTrigger
+            value={wfsFilters}
+            onApply={(filters) => {
+              setWfsFilters(filters);
+              updateState({}, true);
+            }}
+          >
+            <IconButton variant={"outline"} aria-label={"Filter WFS IGT"}>
+              <AppIcon icon={SlidersHorizontalIcon} />
+            </IconButton>
+          </WfsIgtFilterTrigger>
           <FocusSelectInput
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
             options={STATUS_OPTIONS}
             value={state.status}
-            onValueChange={(value) => updateState({ status: value as MyDataStatus }, true)}
+            onValueChange={(value) =>
+              updateState({ status: value as MyDataStatus }, true)
+            }
             clearable={false}
             w={"180px"}
           />
@@ -200,7 +243,14 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
       </HStack>
 
       <Separator borderColor={"bg.canvas"} />
-      <VStack flex={1} gap={PADDING.sm} overflowY={"auto"} bg={"bg.canvas"} w={"full"} position={"relative"}>
+      <VStack
+        flex={1}
+        gap={PADDING.sm}
+        overflowY={"auto"}
+        bg={"bg.canvas"}
+        w={"full"}
+        position={"relative"}
+      >
         {isLoading ? (
           <Skeleton p={PADDING.md} />
         ) : (

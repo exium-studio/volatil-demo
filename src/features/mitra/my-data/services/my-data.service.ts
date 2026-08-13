@@ -22,9 +22,7 @@ export const getPaginatedMyData = (
   const search = params.search?.trim().toLocaleLowerCase();
   const filteredItems = items.filter((item) => {
     const matchesStatus = item.status === params.status;
-    const matchesWfs =
-      !params.wfs ||
-      (params.wfs === "available" ? Boolean(item.wfsUrl) : !item.wfsUrl);
+    const matchesWfs = !params.basis || item.basis === params.basis;
     const matchesQuery = !search || matchesSearch(item, search);
     return matchesStatus && matchesWfs && matchesQuery;
   });
