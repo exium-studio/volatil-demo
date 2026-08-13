@@ -35,17 +35,23 @@ export const getFilterOptionsProvinsi =
   };
 
 export const getFilterOptionsKabupaten = async (
-  _params?: FilterKabupatenParams,
+  params?: FilterKabupatenParams,
 ): Promise<FilterOptionsResponse> => {
-  return {
-    data: DUMMY_FILTER_OPTIONS_KABUPATEN,
-  };
+  // Simulate scoped fetch — in production this passes provinsiId to the API
+  const all = DUMMY_FILTER_OPTIONS_KABUPATEN;
+  const filtered = params?.provinsiId
+    ? all.filter((_, i) => i % 3 === (params.provinsiId!.length % 3))
+    : all;
+  return { data: filtered };
 };
 
 export const getFilterOptionsKecamatan = async (
-  _params?: FilterKecamatanParams,
+  params?: FilterKecamatanParams,
 ): Promise<FilterOptionsResponse> => {
-  return {
-    data: DUMMY_FILTER_OPTIONS_KECAMATAN,
-  };
+  // Simulate scoped fetch — in production this passes kabupatenId to the API
+  const all = DUMMY_FILTER_OPTIONS_KECAMATAN;
+  const filtered = params?.kabupatenId
+    ? all.filter((_, i) => i % 4 === (params.kabupatenId!.length % 4))
+    : all;
+  return { data: filtered };
 };

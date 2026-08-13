@@ -10,6 +10,7 @@ export type FetchWfsCatalogParams = {
   page: number;
   pageSize: number;
   cqlFilter?: string;
+  search?: string;
   signal?: AbortSignal;
 };
 
@@ -28,9 +29,30 @@ export const fetchWfsCatalog = async ({
   page,
   pageSize,
   cqlFilter,
+  search,
   signal,
 }: FetchWfsCatalogParams): Promise<FetchWfsCatalogResult> => {
   const startIndex = (page - 1) * pageSize;
+
+  // Build search CQL: STRLIKE on searchable text attributes (case-insensitive)
+  const searchCql =
+    search && search.trim().length > 0
+      ? [
+          "nib",
+          "tipehak",
+          "statbid",
+          "kabupaten",
+          "kecamatan",
+          "kelurahan",
+          "kodewilaya",
+        ]
+          .map((attr) => `STRLIKE(${attr},'%${search.trim()}%','i')`)
+          .join(" OR ")
+      : undefined;
+
+  const mergedCqlFilter = [cqlFilter, searchCql ? `(${searchCql})` : undefined]
+    .filter(Boolean)
+    .join(" AND ") || undefined;
 
   try {
     // Fetch current page of actual features using WFS 2.0.0
@@ -39,7 +61,7 @@ export const fetchWfsCatalog = async ({
       version: "2.0.0",
       maxFeatures: pageSize,
       startIndex,
-      cqlFilter,
+      cqlFilter: mergedCqlFilter,
       signal,
     });
 

@@ -12,6 +12,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
@@ -21,6 +22,7 @@ import {
   useAddToCartAll,
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import type { CatalogDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { SlidersHorizontalIcon } from "lucide-react";
@@ -29,6 +31,7 @@ import { useState } from "react";
 export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
   // States
   const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
+  const [searchRaw, setSearchRaw] = useState<string>("");
   const [dataListState, setDataListState] = useState({
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     page: 1,
@@ -36,6 +39,8 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
   });
 
   // Derived Values
+  const debouncedSearch = useDebouncedValue(searchRaw);
+
   const cqlFilter = buildWfsCqlFilter(appliedFilters);
 
   return (
@@ -61,7 +66,14 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
           gap={SPACING.sm}
         >
           <HStack gap={SPACING.sm}>
-            <SearchInput placeholder={"Cari..."} />
+            <SearchInput
+              placeholder={"Cari..."}
+              value={searchRaw}
+              onValueChange={(val) => {
+                setSearchRaw(val);
+                setDataListState((prev) => ({ ...prev, page: 1 }));
+              }}
+            />
 
             <WfsIgtFilterTrigger
               onApply={(filters) => {
@@ -83,6 +95,7 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
         page={dataListState.page}
         pageSize={dataListState.pageSize}
         cqlFilter={cqlFilter}
+        search={debouncedSearch}
         selectedItems={dataListState.selectedItems}
         onPageChange={(page) => setDataListState((prev) => ({ ...prev, page }))}
         onPageSizeChange={(pageSize) =>
@@ -98,22 +111,13 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
 
 // -------------------------------------------------------------------------------------
 
-type CatalogDataListProps = {
-  page: number;
-  pageSize: number;
-  cqlFilter?: string;
-  selectedItems: FormattedListItem[];
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (pageSize: number) => void;
-  onSelectedItemChange: (selectedItems: FormattedListItem[]) => void;
-};
-
 const CatalogDataList = (props: CatalogDataListProps) => {
   // Props
   const {
     page,
     pageSize,
     cqlFilter,
+    search,
     selectedItems,
     onPageChange,
     onPageSizeChange,
@@ -135,7 +139,7 @@ const CatalogDataList = (props: CatalogDataListProps) => {
     kawasanCount,
     isLoading,
     isFetching,
-  } = useIgtWfsCatalog({ page, pageSize, cqlFilter });
+  } = useIgtWfsCatalog({ page, pageSize, cqlFilter, search });
 
   return (
     <VStack

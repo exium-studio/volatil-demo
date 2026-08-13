@@ -68,10 +68,19 @@ export async function checkout(
       {},
       { signal },
     );
-    return response.data ?? { billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}` };
+    return (
+      response.data ?? {
+        billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}`,
+      }
+    );
   } catch (error) {
-    console.warn("checkout API error, falling back to dummy billing code:", error);
-    return { billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}` };
+    console.warn(
+      "checkout API error, falling back to dummy billing code:",
+      error,
+    );
+    return {
+      billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}`,
+    };
   }
 }
 
@@ -130,7 +139,11 @@ export async function addAllToCartByAoi(
   const { geometry, basis = ["bidang", "kawasan"] } = payload;
   console.log("addAllToCartByAoi payload:", { geometry, basis });
   try {
-    await apiClient.post("/mitra/cart/add-all-aoi", { geometry, basis }, { signal });
+    await apiClient.post(
+      "/mitra/cart/add-all-aoi",
+      { geometry, basis },
+      { signal },
+    );
   } catch (error) {
     console.warn("addAllToCartByAoi API error, fallback silent:", error);
   }
@@ -143,7 +156,11 @@ export async function addAllToCartByFilter(
   const { filter, basis = ["bidang", "kawasan"] } = payload;
   console.log("addAllToCartByFilter payload:", { filter, basis });
   try {
-    await apiClient.post("/mitra/cart/add-all-filter", { filter, basis }, { signal });
+    await apiClient.post(
+      "/mitra/cart/add-all-filter",
+      { filter, basis },
+      { signal },
+    );
   } catch (error) {
     console.warn("addAllToCartByFilter API error, fallback silent:", error);
   }

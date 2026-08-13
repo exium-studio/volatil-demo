@@ -38,6 +38,7 @@ export const useFilterOptionsKabupaten = (params?: FilterKabupatenParams) => {
   return useQuery({
     queryKey: ["filter-options-kabupaten", params],
     queryFn: () => getFilterOptionsKabupaten(params),
+    enabled: !!params?.provinsiId,
   });
 };
 
@@ -45,5 +46,6 @@ export const useFilterOptionsKecamatan = (params?: FilterKecamatanParams) => {
   return useQuery({
     queryKey: ["filter-options-kecamatan", params],
     queryFn: () => getFilterOptionsKecamatan(params),
+    enabled: !!params?.kabupatenId,
   });
 };

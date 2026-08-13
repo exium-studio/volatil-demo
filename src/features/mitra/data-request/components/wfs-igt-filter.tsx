@@ -71,10 +71,22 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
     key: string,
     details: WfsIgtFilterOptionDetail | null,
   ) => {
-    setLocalDraftFilters((prev) => ({
-      ...prev,
-      [key]: details,
-    }));
+    setLocalDraftFilters((prev) => {
+      const next = { ...prev, [key]: details };
+
+      // Cascading: provinsi changed → reset kabupaten and kecamatan
+      if (key === WFS_IGT_FILTER_KEYS_MAP.PROVINSI) {
+        next[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN] = null;
+        next[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
+      }
+
+      // Cascading: kabupaten changed → reset kecamatan
+      if (key === WFS_IGT_FILTER_KEYS_MAP.KABUPATEN) {
+        next[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
+      }
+
+      return next;
+    });
   };
 
   const handleReset = () => {
@@ -140,7 +152,11 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
                 localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.PROVINSI]?.value
               }
               value={
-                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
+                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]?.value ??
+                ""
+              }
+              disabled={
+                !localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.PROVINSI]?.value
               }
               onValueChange={(details) =>
                 handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.KABUPATEN, details)
@@ -153,7 +169,11 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
                 localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
               }
               value={
-                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
+                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ??
+                ""
+              }
+              disabled={
+                !localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
               }
               onValueChange={(details) =>
                 handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.KECAMATAN, details)
