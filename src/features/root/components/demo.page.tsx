@@ -1218,7 +1218,7 @@ export const Disclosure = () => {
 };
 
 export const Feedback = () => {
-  export const FACE_EMOJI_VARIANTS: FaceEmojiVariant[] = [
+  const FACE_EMOJI_VARIANTS: FaceEmojiVariant[] = [
     "happy",
     "sad",
     "worried",
@@ -1328,7 +1328,7 @@ export const Feedback = () => {
           <P fontWeight={"semibold"}>{"Face Emojis"}</P>
           <VStack gap={4} w={"full"} align={"center"}>
             <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={8}>
-              {faceEmojiVariants.map((variant) => {
+              {FACE_EMOJI_VARIANTS.map((variant) => {
                 return (
                   <VStack gap={1} key={variant}>
                     <FaceEmoji
