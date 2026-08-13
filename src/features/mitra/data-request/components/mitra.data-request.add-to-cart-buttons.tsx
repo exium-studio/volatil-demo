@@ -13,6 +13,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { MitraDataRequestAddToCartButtonsProps } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import {
   ChevronDownIcon,
   LandPlotIcon,
@@ -112,7 +113,8 @@ export const MitraDataRequestAddToCartButtons = (
             onClick={onAddAllBothClick}
           >
             <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
-            {"Tambah semua"} ({bidangCount} bidang, {kawasanCount} kawasan)
+            {"Tambah semua"} ({formatNumber(bidangCount)} bidang,{" "}
+            {formatNumber(kawasanCount)} kawasan)
           </Button>
 
           <Menu.Root
@@ -140,7 +142,7 @@ export const MitraDataRequestAddToCartButtons = (
                 onClick={onAddAllBidangClick}
               >
                 <AppIcon icon={Layers2Icon} />
-                {"Tambah semua bidang"} ({bidangCount})
+                {"Tambah semua bidang"} ({formatNumber(bidangCount)})
               </Menu.Item>
 
               <Menu.Item
@@ -149,7 +151,7 @@ export const MitraDataRequestAddToCartButtons = (
                 onClick={onAddAllKawasanClick}
               >
                 <AppIcon icon={LandPlotIcon} />
-                {"Tambah semua kawasan"} ({kawasanCount})
+                {"Tambah semua kawasan"} ({formatNumber(kawasanCount)})
               </Menu.Item>
             </Menu.Content>
           </Menu.Root>
@@ -169,8 +171,10 @@ export const MitraDataRequestAddToCartButtons = (
           {"Tambah yang dipilih"}{" "}
           {!isEmptyArray(selectedItems) &&
             `(${[
-              selectedBidangCount > 0 && `${selectedBidangCount} bidang`,
-              selectedKawasanCount > 0 && `${selectedKawasanCount} kawasan`,
+              selectedBidangCount > 0 &&
+                `${formatNumber(selectedBidangCount)} bidang`,
+              selectedKawasanCount > 0 &&
+                `${formatNumber(selectedKawasanCount)} kawasan`,
             ]
               .filter(Boolean)
               .join(", ")})`}

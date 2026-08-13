@@ -513,7 +513,6 @@ const MitraDataRequestUploadAoiFileListTrigger = (
           </Button>
 
           <MitraDataRequestUploadAoiAddFileButton
-            flex={1}
             onFilesAdded={onFilesAdded}
             variant={"outline"}
           />
