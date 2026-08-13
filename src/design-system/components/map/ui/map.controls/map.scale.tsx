@@ -4,6 +4,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { P } from "@/design-system/components/typography/ui/p";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
@@ -50,8 +51,8 @@ export const MapScale = (props: StackProps) => {
       const width = roundMeters / metersPerPixel;
       const label =
         roundMeters >= 1000
-          ? `${(roundMeters / 1000).toFixed(0)} km`
-          : `${roundMeters.toFixed(0)} m`;
+          ? `${formatNumber(roundMeters / 1000)} km`
+          : `${formatNumber(roundMeters)} m`;
 
       setScaleData({ width, label });
     }
@@ -69,8 +70,14 @@ export const MapScale = (props: StackProps) => {
   if (scaleData.width === 0) return null;
 
   return (
-    <VStack gap={1} align={"center"} justify={"center"} w={"full"} {...props}>
-      <P fontSize={"2xs"} fontWeight={"bold"} color={"fg.muted"} lineHeight={1}>
+    <VStack gap={1} align={"start"} justify={"center"} w={"80px"} {...props}>
+      <P
+        fontSize={"2xs"}
+        fontWeight={"bold"}
+        color={"fg.muted"}
+        lineHeight={1}
+        textAlign={"center"}
+      >
         {scaleData.label}
       </P>
 
