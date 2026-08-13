@@ -9,10 +9,6 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import {
-  WFS_BIDANG_ATTRIBUTE_MAP,
-  WFS_BIDANG_ATTRIBUTES,
-} from "@/features/mitra/data-request/constants/mitra.data-request.constant";
 import type { WfsIgtDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.wfs-data-list.type";
 import { MapPinIcon } from "lucide-react";
 import { memo, useMemo } from "react";
@@ -48,16 +44,6 @@ const getGeometryCentroid = (
   return null;
 };
 
-/** Formats a property key string into a readable column title if not present in map. */
-const formatColumnHeader = (key: string): string => {
-  if (key in WFS_BIDANG_ATTRIBUTE_MAP) {
-    return WFS_BIDANG_ATTRIBUTE_MAP[
-      key as keyof typeof WFS_BIDANG_ATTRIBUTE_MAP
-    ];
-  }
-  return key.charAt(0).toUpperCase() + key.slice(1);
-};
-
 /**
  * Shared WFS data list component used across Tab Catalog, Tab Draw AOI, and Tab Upload AOI.
  * Renders a dynamic table of WFS features based on feature properties, with "Lihat di Peta" item action and optional pagination footer.
@@ -83,16 +69,28 @@ export const WfsIgtDataList = memo((props: WfsIgtDataListProps) => {
   const attributeKeys = useMemo(() => {
     if (wfsFeatures.length > 0 && wfsFeatures[0].properties) {
       const keys = Object.keys(wfsFeatures[0].properties);
-      if (keys.length > 0) return keys;
+      if (keys.length > 0) {
+        return keys.filter((key) => key !== "geom" && key !== "geometry");
+      }
     }
-    return WFS_BIDANG_ATTRIBUTES;
+    return [
+      "id",
+      "kodewilaya",
+      "kabupaten",
+      "kecamatan",
+      "kelurahan",
+      "tipehak",
+      "nib",
+      "luastertul",
+      "statbid",
+    ];
   }, [wfsFeatures]);
 
   // Derived Values — DataList Configuration
   const dataList = useMemo(
     () => ({
       headers: attributeKeys.map((key) => ({
-        th: formatColumnHeader(key),
+        th: key,
         sortable: key === "id" || key === "kodewilaya" || key === "gid",
       })),
 

@@ -1,10 +1,112 @@
 // src/features/mitra/data-request/services/fetch-wfs-catalog.ts
 
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
-import { WFS_BIDANG_ATTRIBUTES } from "@/features/mitra/data-request/constants/mitra.data-request.constant";
 import type GeoJSON from "geojson";
 
 const DEFAULT_WFS_TYPE_NAME = "igt:CONTOH_BIDANG_TANAH";
+
+const cachedAttributes: Record<string, string[]> = {};
+const cachedStringAttributes: Record<string, string[]> = {};
+
+/**
+ * Fetches all properties keys dynamically from the first feature of a WFS type.
+ */
+export const getWfsAttributes = async (
+  typeName: string,
+  signal?: AbortSignal,
+): Promise<string[]> => {
+  if (cachedAttributes[typeName]) {
+    return cachedAttributes[typeName];
+  }
+  try {
+    const res = await fetchWfs({
+      typeName,
+      version: "2.0.0",
+      maxFeatures: 1,
+      signal,
+    });
+    const firstFeature = res.features?.[0];
+    if (firstFeature?.properties) {
+      const keys = Object.keys(firstFeature.properties);
+      if (keys.length > 0) {
+        cachedAttributes[typeName] = keys;
+        return keys;
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch WFS attributes dynamically:", error);
+  }
+  return [
+    "id",
+    "kodewilaya",
+    "kabupaten",
+    "kecamatan",
+    "kelurahan",
+    "tipehak",
+    "nib",
+    "luastertul",
+    "statbid",
+  ];
+};
+
+type WfsSchemaProperty = {
+  name: string;
+  type: string;
+  localType?: string;
+};
+
+/**
+ * Fetches WFS attributes of string type dynamically from GeoServer DescribeFeatureType response.
+ * This is used to build case-insensitive search queries on text-only fields to prevent SQL type errors.
+ */
+export const getWfsStringAttributes = async (
+  typeName: string,
+  signal?: AbortSignal,
+): Promise<string[]> => {
+  if (cachedStringAttributes[typeName]) {
+    return cachedStringAttributes[typeName];
+  }
+
+  try {
+    const url = new URL("https://igtpr.atrbpn.go.id/geoserver/igt/ows");
+    url.searchParams.set("service", "WFS");
+    url.searchParams.set("version", "2.0.0");
+    url.searchParams.set("request", "DescribeFeatureType");
+    url.searchParams.set("typeName", typeName);
+    url.searchParams.set("outputFormat", "application/json");
+
+    const res = await fetch(url.toString(), { signal });
+    if (res.ok) {
+      const schema = await res.json();
+      const properties: WfsSchemaProperty[] =
+        schema.featureTypes?.[0]?.properties ?? [];
+      const stringKeys = properties
+        .filter(
+          (prop) =>
+            prop.type === "xsd:string" || prop.localType === "string",
+        )
+        .map((prop) => prop.name);
+
+      if (stringKeys.length > 0) {
+        cachedStringAttributes[typeName] = stringKeys;
+        return stringKeys;
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch DescribeFeatureType schema:", error);
+  }
+
+  return [
+    "id",
+    "kodewilaya",
+    "kabupaten",
+    "kecamatan",
+    "kelurahan",
+    "tipehak",
+    "nib",
+    "statbid",
+  ];
+};
 
 export type FetchWfsCatalogParams = {
   typeName?: string;
@@ -35,14 +137,15 @@ export const fetchWfsCatalog = async ({
 }: FetchWfsCatalogParams): Promise<FetchWfsCatalogResult> => {
   const startIndex = (page - 1) * pageSize;
 
-  // Build search CQL using WFS attribute keys; strToLowerCase for case-insensitive LIKE (GeoServer CQL)
+  const stringAttributes = await getWfsStringAttributes(typeName, signal);
+
+  // Build search CQL using only double-quoted WFS string attributes and ILIKE
   const trimmedSearch = search?.trim();
   const searchCql =
-    trimmedSearch && trimmedSearch.length > 0
-      ? WFS_BIDANG_ATTRIBUTES.map(
-          (attr) =>
-            `strToLowerCase(${attr}) LIKE '%${trimmedSearch.toLowerCase()}%'`,
-        ).join(" OR ")
+    trimmedSearch && trimmedSearch.length > 0 && stringAttributes.length > 0
+      ? stringAttributes
+          .map((attr) => `"${attr}" ILIKE '%${trimmedSearch}%'`)
+          .join(" OR ")
       : undefined;
 
   const mergedCqlFilter =

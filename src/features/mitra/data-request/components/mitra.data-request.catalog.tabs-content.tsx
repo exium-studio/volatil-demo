@@ -6,12 +6,12 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -23,9 +23,10 @@ import {
   useAddToCartAll,
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-import type { CatalogDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
+import type { CatalogDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -153,13 +154,16 @@ const CatalogDataList = (props: CatalogDataListProps) => {
     >
       {isLoading ? (
         <Skeleton p={PADDING.md} />
-      ) : features.length === 0 ? (
-        <VStack flex={1} align={"center"} justify={"center"} gap={3} py={12}>
-          <P fontSize={"sm"} color={"fg.muted"} textAlign={"center"}>
-            {search
-              ? `Tidak ada data untuk pencarian "${search}"`
-              : "Tidak ada data tersedia"}
-          </P>
+      ) : isEmptyArray(features) ? (
+        <VStack
+          flex={1}
+          align={"center"}
+          justify={"center"}
+          gap={3}
+          py={12}
+          bg={"bg.body"}
+        >
+          <NoResultState />
         </VStack>
       ) : (
         <>
