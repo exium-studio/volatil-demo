@@ -1,16 +1,6 @@
 // src/features/mitra/data-request/services/mitra.data-request.api.ts
 
-import {
-  addSelectedToCart as cartApiAddSelectedToCart,
-  addAllToCartByAoi as cartApiAddAllToCartByAoi,
-  addAllToCartByFilter as cartApiAddAllToCartByFilter,
-} from "@/features/mitra/cart/services/cart.api";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
-import type {
-  MitraDataRequestAddAllPayload,
-  MitraDataRequestAddSelectedPayload,
-  MitraDataRequestAddToCartResponse,
-} from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import type { MitraDataRequestIgtDataResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import {
@@ -97,65 +87,4 @@ export async function getIgtGeometryById(
     typeName: layerName,
     cqlFilter: `id='${id}'`,
   });
-}
-
-export async function addToCartSelected(
-  payload: MitraDataRequestAddSelectedPayload,
-  signal?: AbortSignal,
-): Promise<MitraDataRequestAddToCartResponse> {
-  console.log("addToCartSelected payload:", payload);
-  try {
-    for (const id of payload.itemIds) {
-      await cartApiAddSelectedToCart({ featureId: id }, signal);
-    }
-    return {
-      success: true,
-      addedCount: payload.itemIds.length,
-      message: "Berhasil menambahkan item ke keranjang",
-    };
-  } catch (error) {
-    console.warn(
-      "addToCartSelected API error, returning fallback response:",
-      error,
-    );
-    return {
-      success: true,
-      addedCount: payload.itemIds.length,
-      message: "Berhasil menambahkan item ke keranjang",
-    };
-  }
-}
-
-export async function addToCartAll(
-  payload: MitraDataRequestAddAllPayload,
-  signal?: AbortSignal,
-): Promise<MitraDataRequestAddToCartResponse> {
-  console.log("addToCartAll payload:", payload);
-  try {
-    const basis: ("bidang" | "kawasan")[] =
-      payload.targetBasis === "bidang"
-        ? ["bidang"]
-        : payload.targetBasis === "kawasan"
-          ? ["kawasan"]
-          : ["bidang", "kawasan"];
-
-    if (payload.source === "catalog") {
-      await cartApiAddAllToCartByFilter({ filter: { search: payload.search }, basis }, signal);
-    } else {
-      await cartApiAddAllToCartByAoi({ geometry: payload.geometry, basis }, signal);
-    }
-
-    return {
-      success: true,
-      addedCount: 10,
-      message: "Berhasil menambahkan semua item ke keranjang",
-    };
-  } catch (error) {
-    console.warn("addToCartAll API error, returning fallback response:", error);
-    return {
-      success: true,
-      addedCount: 10,
-      message: "Berhasil menambahkan semua item ke keranjang",
-    };
-  }
 }

@@ -6,7 +6,7 @@ export function setStorage(
   type: "local" | "session" = "local",
   expireInMs?: number,
 ): void {
-  if (window.document === undefined) return;
+  if (typeof window === "undefined") return;
   const storage = type === "local" ? localStorage : sessionStorage;
   const payload = {
     value,
@@ -19,7 +19,7 @@ export function getStorage(
   key: string,
   type: "local" | "session" = "local",
 ): string | null {
-  if (window.document === undefined) return null;
+  if (typeof window === "undefined") return null;
   const storage = type === "local" ? localStorage : sessionStorage;
   const raw = storage.getItem(key);
   if (!raw) return null;
@@ -40,18 +40,7 @@ export function removeStorage(
   key: string,
   type: "local" | "session" = "local",
 ): void {
-  if (window.document === undefined) return;
+  if (typeof window === "undefined") return;
   const storage = type === "local" ? localStorage : sessionStorage;
   storage.removeItem(key);
-}
-
-export function doCall(phoneNumber: string) {
-  const sanitizedPhone = phoneNumber.trim().replace(/[^0-9+]/g, "");
-  const testLink = document.createElement("a");
-  testLink.href = `tel:${sanitizedPhone}`;
-  if (testLink.protocol === "tel:") {
-    window.location.href = testLink.href;
-  } else {
-    alert("This device does not support phone calls.");
-  }
 }

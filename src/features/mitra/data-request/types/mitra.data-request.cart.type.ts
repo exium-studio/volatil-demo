@@ -14,6 +14,7 @@ export type MitraDataRequestAddToCartSource =
 
 export type MitraDataRequestAddSelectedPayload = {
   itemIds: string[];
+  features?: GeoJSON.Feature[];
 };
 
 export type MitraDataRequestAddAllPayload = {

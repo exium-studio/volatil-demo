@@ -52,6 +52,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               maxW={"full"}
               overflow={"hidden"}
               display={"inline-block"}
+              verticalAlign={"middle"}
+              lineHeight={"normal"}
             >
               {combinedText}
             </Span>,
@@ -81,7 +83,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         variant={variant || (primary ? "solid" : "ghost")}
         colorPalette={primary ? theme.colorPalette : colorPalette || "neutral"}
         gap={2}
-        pb={"2px"}
         rounded={theme.radii.component}
         fontSize={"md"}
         fontWeight={"normal"}

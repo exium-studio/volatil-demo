@@ -1,5 +1,6 @@
-// src/features/mitra/cart/pages/mitra.cart.page.tsx
-
+import { Button } from "@/design-system/components/button/ui/button";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
   Container,
   useContainerContext,
@@ -12,7 +13,11 @@ import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { PADDING } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/mitra/cart/components/mitra.cart.data-list";
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
-import { useCartSummaryQuery } from "@/features/mitra/cart/hooks/use-mitra-cart";
+import {
+  useCartSummaryQuery,
+  useClearCart,
+} from "@/features/mitra/cart/hooks/use-mitra-cart";
+import { Trash2Icon } from "lucide-react";
 
 export const MitraCartPage = () => {
   return (
@@ -28,6 +33,10 @@ const MitraCartContent = () => {
 
   // Hooks (Queries & Mutations)
   const { cartSummaryData } = useCartSummaryQuery();
+  const clearCartMutation = useClearCart();
+
+  const totalBidang = cartSummaryData.summary.totalBidang ?? 0;
+  const hasCartItems = totalBidang > 0;
 
   return (
     <PanelContentContainer
@@ -52,6 +61,23 @@ const MitraCartContent = () => {
             <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
               {"Keranjang"}
             </ClampedP>
+
+            {hasCartItems && (
+              <ConfirmationTrigger
+                title={"Kosongkan keranjang?"}
+                description={
+                  "Semua item akan dihapus dari keranjang belanja Anda."
+                }
+                confirmLabel={"Kosongkan"}
+                colorPalette={"red"}
+                onConfirm={() => clearCartMutation.mutate()}
+              >
+                <Button colorPalette={"red"} size={"xs"}>
+                  <AppIcon icon={Trash2Icon} />
+                  {"Kosongkan"}
+                </Button>
+              </ConfirmationTrigger>
+            )}
           </HeaderContainer>
 
           <Separator borderColor={"bg.canvas"} />

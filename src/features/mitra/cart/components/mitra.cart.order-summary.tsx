@@ -86,7 +86,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           colorPalette={"orange"}
           variant={"subtle"}
         >
-          <AppIcon icon={TriangleAlertIcon} mt={1} />
+          <AppIcon icon={TriangleAlertIcon} />
 
           <Alert.Title>{warningMessage}</Alert.Title>
         </Alert.Root>
@@ -181,25 +181,9 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Total Harga"}</P>
           <P fontWeight={"medium"}>
-            <TNum>{formatCurrency(summary.subtotal)}</TNum>
+            <TNum>{formatCurrency(summary.grandTotal)}</TNum>
           </P>
         </HStack>
-
-        <HStack justify={"space-between"}>
-          <P color={"fg.muted"}>{"Biaya Layanan"}</P>
-          <P fontWeight={"medium"}>
-            <TNum>{formatCurrency(summary.serviceFee)}</TNum>
-          </P>
-        </HStack>
-
-        {summary.tax > 0 && (
-          <HStack justify={"space-between"}>
-            <P color={"fg.muted"}>{"Pajak"}</P>
-            <P fontWeight={"medium"}>
-              <TNum>{formatCurrency(summary.tax)}</TNum>
-            </P>
-          </HStack>
-        )}
 
         <Separator
           variant={"dashed"}

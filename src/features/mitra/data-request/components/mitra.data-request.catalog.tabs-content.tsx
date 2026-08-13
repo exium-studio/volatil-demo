@@ -190,25 +190,16 @@ const CatalogDataList = (props: CatalogDataListProps) => {
             totalCount={totalFeatures}
             onAddSelectedClick={() => {
               const selectedIds = selectedItems.map((item) => String(item.id));
-              addToCartSelectedMutation.mutate({ itemIds: selectedIds });
+              addToCartSelectedMutation.mutate(selectedIds);
             }}
             onAddAllBidangClick={() => {
-              addToCartAllMutation.mutate({
-                source: "catalog",
-                targetBasis: "bidang",
-              });
+              addToCartAllMutation.mutate({ cqlFilter });
             }}
             onAddAllKawasanClick={() => {
-              addToCartAllMutation.mutate({
-                source: "catalog",
-                targetBasis: "kawasan",
-              });
+              addToCartAllMutation.mutate({ cqlFilter });
             }}
             onAddAllBothClick={() => {
-              addToCartAllMutation.mutate({
-                source: "catalog",
-                targetBasis: "all",
-              });
+              addToCartAllMutation.mutate({ cqlFilter });
             }}
             mt={"auto"}
           />

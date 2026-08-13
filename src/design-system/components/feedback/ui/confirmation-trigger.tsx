@@ -89,7 +89,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
         opened={popModal.isOpen}
         open={popModal.open}
         close={popModal.close}
-        size={"sm"}
+        size={"xs"}
       >
         <Modal.Content>
           <Modal.Header>
@@ -110,7 +110,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                 </P>
 
                 <P
-                  maxW={"300px"}
+                  maxW={"240px"}
                   mx={"auto"}
                   mb={SPACING.lg}
                   color={"fg.subtle"}

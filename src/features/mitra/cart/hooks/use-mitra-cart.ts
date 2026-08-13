@@ -3,56 +3,62 @@
 import {
   checkout,
   clearCart,
-  getCartItems,
-  getCartSummary,
   removeFromCart,
+  getCartWfsPage,
+  getCartSummaryLocal,
+  addSelectedToCart,
+  addAllToCartFromWfs,
 } from "@/features/mitra/cart/services/cart.api";
-import type {
-  CartItemsResponse,
-  CartSummaryResponse,
-} from "@/features/mitra/cart/types/cart.type";
-import {
-  dummyCartSummaryResponse,
-  dummyMitraCartData,
-} from "@/shared/constants/dummy-data/dummy-cart-data";
+import type { CartSummaryResponse } from "@/features/mitra/cart/types/cart.type";
+import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type CartItemsQueryParams = {
   page: number;
   pageSize: number;
-  search?: string;
+  typeName?: string;
+};
+
+const EMPTY_CART_SUMMARY: CartSummaryResponse = {
+  summary: {
+    totalBidang: 0,
+    totalBidangPrice: 0,
+    totalKawasan: 0,
+    totalKawasanHa: 0,
+    totalKawasanPrice: 0,
+    grandTotal: 0,
+  },
+  config: CART_CONFIG,
+  totalIds: 0,
 };
 
 export const useCartItemsQuery = (params: CartItemsQueryParams) => {
-  const query = useQuery<CartItemsResponse>({
+  const query = useQuery({
     queryKey: queryKeys.mitra.cart.items(params),
-    queryFn: ({ signal }) => getCartItems(params, signal),
+    queryFn: ({ signal }) => getCartWfsPage({ ...params, signal }),
     placeholderData: (previousData) => previousData,
   });
 
   return {
     ...query,
-    cartItemsData: query.data ?? {
-      items: [],
-      meta: {
-        ...dummyMitraCartData.meta,
-        page: params.page,
-        pageSize: params.pageSize,
-      },
-    },
+    features: query.data?.features ?? [],
+    total: query.data?.total ?? 0,
+    totalPages: query.data?.totalPages ?? 0,
+    pageIds: query.data?.pageIds ?? [],
   };
 };
 
 export const useCartSummaryQuery = () => {
   const query = useQuery<CartSummaryResponse>({
     queryKey: queryKeys.mitra.cart.summary(),
-    queryFn: ({ signal }) => getCartSummary(signal),
+    // Summary is purely local — no network call needed
+    queryFn: () => Promise.resolve(getCartSummaryLocal()),
   });
 
   return {
     ...query,
-    cartSummaryData: query.data ?? dummyCartSummaryResponse,
+    cartSummaryData: query.data ?? EMPTY_CART_SUMMARY,
   };
 };
 
@@ -90,6 +96,35 @@ export const useRemoveFromCart = (onSuccessCallback?: () => void) => {
     mutationFn: (itemIds: string[]) => removeFromCart(itemIds),
     onSuccess: () => {
       onSuccessCallback?.();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.cart.all,
+      });
+    },
+  });
+};
+
+export const useAddSelectedToCart = (onSuccessCallback?: () => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (featureIds: string[]) => addSelectedToCart(featureIds),
+    onSuccess: () => {
+      onSuccessCallback?.();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.cart.all,
+      });
+    },
+  });
+};
+
+export const useAddAllToCartFromWfs = (onSuccessCallback?: (count: number) => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { typeName?: string; cqlFilter?: string }) =>
+      addAllToCartFromWfs(params),
+    onSuccess: (count) => {
+      onSuccessCallback?.(count);
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });

@@ -359,28 +359,19 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
               totalKawasanCount={kawasanCount}
               totalCount={totalFeatures}
               onAddAllBidangClick={() => {
-                addToCartAllMutation.mutate({
-                  source: "draw_aoi",
-                  targetBasis: "bidang",
-                });
+                addToCartAllMutation.mutate({ cqlFilter: combinedCqlFilter });
               }}
               onAddAllKawasanClick={() => {
-                addToCartAllMutation.mutate({
-                  source: "draw_aoi",
-                  targetBasis: "kawasan",
-                });
+                addToCartAllMutation.mutate({ cqlFilter: combinedCqlFilter });
               }}
               onAddAllBothClick={() => {
-                addToCartAllMutation.mutate({
-                  source: "draw_aoi",
-                  targetBasis: "all",
-                });
+                addToCartAllMutation.mutate({ cqlFilter: combinedCqlFilter });
               }}
               onAddSelectedClick={() => {
                 const selectedIds = pageState.selectedItems.map((item) =>
                   String(item.id),
                 );
-                addToCartSelectedMutation.mutate({ itemIds: selectedIds });
+                addToCartSelectedMutation.mutate(selectedIds);
               }}
               mt={"auto"}
             />

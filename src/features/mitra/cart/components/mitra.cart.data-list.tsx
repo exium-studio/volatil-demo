@@ -1,171 +1,137 @@
 // src/features/mitra/cart/components/mitra.cart.data-list.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
+import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import type { DataListBatchActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
-import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { useContainerContext } from "@/design-system/components/layout/ui/container";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
-import type {
-  CartItem,
-  MitraCartTableProps,
-} from "@/features/mitra/cart/types/cart.type";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { Menu } from "@/design-system/components/overlay/ui/menu";
+import { PADDING } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/theme-store";
+import type { MitraCartTableProps } from "@/features/mitra/cart/types/cart.type";
 import {
   useCartItemsQuery,
-  useClearCart,
   useRemoveFromCart,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
-import { t } from "@/shared/libs/i18n";
-import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
+import { MapPinIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { IconShoppingCartOff } from "@tabler/icons-react";
+import type GeoJSON from "geojson";
 
-const MAX_VISIBLE_THEMES = 2;
-const BASIS_BIDANG_COLOR = "blue" as const;
-const BASIS_KAWASAN_COLOR = "orange" as const;
+/** Derives [lng, lat] centroid from a GeoJSON geometry, or null if unsupported. */
+const getGeometryCentroid = (
+  geom: GeoJSON.Geometry,
+): [number, number] | null => {
+  if (geom.type === "Point") {
+    const [lng, lat] = geom.coordinates as [number, number];
+    return [lng, lat];
+  }
+
+  if (geom.type === "Polygon" && geom.coordinates[0]?.length > 0) {
+    const ring = geom.coordinates[0];
+    const lng =
+      ring.reduce((acc: number, c: number[]) => acc + c[0], 0) / ring.length;
+    const lat =
+      ring.reduce((acc: number, c: number[]) => acc + c[1], 0) / ring.length;
+    return [lng, lat];
+  }
+
+  if (geom.type === "MultiPolygon" && geom.coordinates[0]?.[0]?.length > 0) {
+    const ring = geom.coordinates[0][0];
+    const lng =
+      ring.reduce((acc: number, c: number[]) => acc + c[0], 0) / ring.length;
+    const lat =
+      ring.reduce((acc: number, c: number[]) => acc + c[1], 0) / ring.length;
+    return [lng, lat];
+  }
+
+  return null;
+};
 
 export const MitraCartDataList = (props: MitraCartTableProps) => {
   // Props
   const { ...restProps } = props;
 
-  // Contexts
-  const { isSmContainer } = useContainerContext();
+  // Stores
+  const map = useMapInstanceStore((state) => state.map);
+  const { theme } = useThemeStore();
 
   // States
-  const [dataListState, setDataListState] = useState({
-    search: "",
+  const [pageState, setPageState] = useState({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
   });
-  const [selectedItems, setSelectedItems] = useState<
-    FormattedListItem<CartItem>[]
-  >([]);
+  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
 
-  // Hooks (Queries & Mutations)
-  const { cartItemsData, isLoading, isFetching } = useCartItemsQuery({
-    ...dataListState,
-    search: dataListState.search || undefined,
-  });
-  const clearCartMutation = useClearCart(() => setSelectedItems([]));
-  const removeItemsMutation = useRemoveFromCart(() => setSelectedItems([]));
+  // Queries
+  const { features, total, totalPages, isLoading, isFetching } =
+    useCartItemsQuery({
+      page: pageState.page,
+      pageSize: pageState.pageSize,
+    });
 
-  // Derived Values
-  const cartItems = cartItemsData.items;
-
-  // Handlers
-  const updateDataListState = (
-    nextState: Partial<typeof dataListState>,
-    resetPage = false,
-  ) => {
-    setDataListState((prev) => ({
-      ...prev,
-      ...nextState,
-      page: resetPage ? 1 : (nextState.page ?? prev.page),
-    }));
+  // Mutations
+  const removeItemsMutation = useRemoveFromCart(() => {
     setSelectedItems([]);
-  };
+  });
 
-  // Derived Values
+  // Derived Values — Dynamic Attribute Keys from WFS features
+  const attributeKeys = useMemo(() => {
+    if (features.length > 0 && features[0]?.properties) {
+      const keys = Object.keys(features[0].properties);
+      if (keys.length > 0) {
+        return keys.filter((key) => key !== "geom" && key !== "geometry");
+      }
+    }
+    return [
+      "id",
+      "kodewilaya",
+      "kabupaten",
+      "kecamatan",
+      "kelurahan",
+      "nib",
+      "luastertul",
+    ];
+  }, [features]);
+
+  // Derived Values — DataList Configuration
   const dataList = useMemo(
     () => ({
-      headers: [
-        { th: "ID Bidang", sortable: true },
-        { th: "Tema IGT-PR" },
-        { th: "Basis IGT-PR", sortable: true },
-        { th: "Deskripsi", headerCellProps: { minW: "200px" } },
-      ],
+      headers: attributeKeys.map((key) => ({
+        th: key,
+        sortable: key === "id" || key === "gid" || key === "kodewilaya",
+      })),
 
-      items: cartItems.map((item: CartItem) => {
-        const visibleThemes = item.themes.slice(0, MAX_VISIBLE_THEMES);
-        const remainingCount = item.themes.length - MAX_VISIBLE_THEMES;
-
+      items: features.map((feature) => {
+        const featureId = String(
+          feature.properties?.id ?? feature.properties?.gid ?? feature.id ?? "",
+        );
         return {
-          id: String(item.id),
-          data: item,
-          columns: [
-            {
-              value: item.id,
-              td: (
-                <P fontSize={"sm"} fontWeight={"medium"}>
-                  {item.name || item.id}
-                </P>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.themes.map((th) => th.name).join(", "),
-              td: (
-                <HStack wrap={"wrap"} gap={1}>
-                  {visibleThemes.map((themeItem) => (
-                    <Badge
-                      key={themeItem.name}
-                      colorPalette={"neutral"}
-                      variant={"subtle"}
-                    >
-                      {themeItem.name}
-                    </Badge>
-                  ))}
-                  {remainingCount > 0 && (
-                    <Badge colorPalette={"neutral"} variant={"outline"}>
-                      +{remainingCount} lainnya
-                    </Badge>
-                  )}
-                </HStack>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.basis,
-              td: (
-                <Badge
-                  colorPalette={
-                    item.basis === "bidang"
-                      ? BASIS_BIDANG_COLOR
-                      : BASIS_KAWASAN_COLOR
-                  }
-                  variant={"subtle"}
-                >
-                  {item.basis}
-                </Badge>
-              ),
-              align: "center" as const,
-            },
-            {
-              value: item.description ?? "",
-              td: (
-                <P
-                  fontSize={"sm"}
-                  color={"fg.subtle"}
-                  maxW={"280px"}
-                  whiteSpace={"wrap"}
-                >
-                  {item.description ?? "-"}
-                </P>
-              ),
-              align: "start" as const,
-            },
-          ],
+          id: featureId,
+          data: feature as unknown as Record<string, unknown>,
+          columns: attributeKeys.map((key) => ({
+            value: feature.properties?.[key] ?? "-",
+            align: "start" as const,
+          })),
         };
       }),
 
       batchActions: [
-        ({ selectedItemIds, clearSelectedItems }) => (
+        ({
+          selectedItemIds,
+          clearSelectedItems,
+        }: {
+          selectedItemIds: string[];
+          clearSelectedItems: () => void;
+        }) => (
           <Button
             key={"remove-selected"}
             colorPalette={"red"}
@@ -178,130 +144,98 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
             {"Hapus"}
           </Button>
         ),
-      ] as DataListBatchActionsGenerator[],
+      ],
+
+      itemActions: [
+        (item: FormattedListItem) => {
+          const feat = item.data as unknown as GeoJSON.Feature | undefined;
+          return (
+            <Menu.Item
+              key={"fly-to"}
+              value={"fly-to"}
+              onClick={() => {
+                if (!feat?.geometry || !map) return;
+                const centroid = getGeometryCentroid(feat.geometry);
+                if (centroid) {
+                  map.flyTo({ center: centroid, zoom: 16 });
+                }
+              }}
+            >
+              <AppIcon icon={MapPinIcon} />
+              {"Lihat di Peta"}
+            </Menu.Item>
+          );
+        },
+      ] as DataListItemActionsGenerator[],
     }),
-    [cartItems, removeItemsMutation],
+    [features, attributeKeys, removeItemsMutation, map],
   );
 
   return (
     <VStack
       flex={1}
       overflowY={"auto"}
-      borderRight={isSmContainer ? "none" : "1px solid"}
-      borderTop={isSmContainer ? "1px solid" : "none"}
-      borderColor={"bg.canvas"}
+      gap={0}
+      align={"stretch"}
       {...restProps}
     >
-      {/* Header Actions */}
-      <VStack
-        wrap={"wrap"}
-        justify={"space-between"}
-        gap={SPACING.md}
-        p={PADDING.md}
-        w={"full"}
-      >
-        <HStack
-          wrap={"wrap"}
-          align={"center"}
-          justify={"space-between"}
-          gap={SPACING.sm}
+      {isLoading ? (
+        <Skeleton p={PADDING.md} />
+      ) : features.length === 0 ? (
+        <Box
+          flex={1}
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
           w={"full"}
+          py={PADDING.md}
+          bg={"bg.body"}
         >
-          <HStack gap={SPACING.sm}>
-            <SearchInput
-              value={dataListState.search}
-              onChange={(e) =>
-                updateDataListState({ search: e.target.value }, true)
-              }
-              placeholder={t["action.search"]()}
-            />
+          <NoDataState
+            icon={IconShoppingCartOff}
+            title={"Keranjang kosong"}
+            description={"Tambahkan data IGT dari halaman Permohonan Data"}
+          />
+        </Box>
+      ) : (
+        <Box w={"full"} position={"relative"} overflowY={"auto"}>
+          <DataListTable.Root
+            headers={dataList.headers}
+            items={dataList.items}
+            batchActions={dataList.batchActions}
+            itemActions={dataList.itemActions}
+            withNumbering={false}
+            canBatchSelect={true}
+            selectedItems={selectedItems}
+            onSelectedItemChange={({ selectedItems: next }) => {
+              setSelectedItems(next as FormattedListItem[]);
+            }}
+            page={pageState.page}
+            pageSize={pageState.pageSize}
+            rounded={0}
+            pb={0}
+            shadow={"none"}
+          >
+            <DataListTable.Header />
+            <DataListTable.Body />
+          </DataListTable.Root>
 
-            <IconButton variant={"outline"}>
-              <AppIcon icon={SlidersHorizontalIcon} />
-            </IconButton>
-          </HStack>
+          <TopBarLoader isFetching={isFetching} />
 
-          <HStack gap={SPACING.sm}>
-            <Tooltip content={"Kosongkan keranjang"}>
-              <Box display={"inline-flex"}>
-                <ConfirmationTrigger
-                  icon={IconShoppingCartOff}
-                  title={"Kosongkan Keranjang?"}
-                  description={
-                    "Apakah Anda yakin ingin mengosongkan seluruh item di keranjang?"
-                  }
-                  confirmLabel={"Kosongkan"}
-                  onConfirm={() => clearCartMutation.mutate()}
-                  modalKey={"clearCartConfirmationModal"}
-                >
-                  <IconButton
-                    aria-label={"Kosongkan keranjang"}
-                    colorPalette={"red"}
-                  >
-                    <AppIcon icon={Trash2Icon} />
-                  </IconButton>
-                </ConfirmationTrigger>
-              </Box>
-            </Tooltip>
-          </HStack>
-        </HStack>
-      </VStack>
-
-      <Separator borderColor={"bg.canvas"} />
-
-      {/* Table Component */}
-      <VStack
-        flex={1}
-        gap={PADDING.sm}
-        overflowY={"auto"}
-        bg={"bg.canvas"}
-        w={"full"}
-        position={"relative"}
-      >
-        {isLoading ? (
-          <Skeleton p={PADDING.md} />
-        ) : (
-          <Box w={"full"} position={"relative"} overflowY={"auto"}>
-            <DataListTable.Root
-              headers={dataList.headers}
-              items={dataList.items}
-              batchActions={dataList.batchActions}
-              withNumbering={false}
-              canBatchSelect={true}
-              selectedItems={selectedItems}
-              onSelectedItemChange={({ selectedItems: nextSelectedItems }) =>
-                setSelectedItems(
-                  nextSelectedItems as FormattedListItem<CartItem>[],
-                )
-              }
-              page={dataListState.page}
-              pageSize={dataListState.pageSize}
-              rounded={0}
-              pb={0}
-              shadow={"none"}
-            >
-              <DataListTable.Header />
-              <DataListTable.Body />
-            </DataListTable.Root>
-
-            <TopBarLoader isFetching={isFetching} />
-
-            <DataListFooter
-              page={dataListState.page}
-              pageSize={dataListState.pageSize}
-              setPage={(page) => updateDataListState({ page })}
-              setPageSize={(pageSize) =>
-                updateDataListState({ pageSize }, true)
-              }
-              currentDataLength={cartItems.length}
-              totalData={cartItemsData.meta.total}
-              totalPage={cartItemsData.meta.totalPages}
-              roundedBottom={0}
-              shadow={"none"}
-            />
-          </Box>
-        )}
-      </VStack>
+          <DataListFooter
+            page={pageState.page}
+            pageSize={pageState.pageSize}
+            currentDataLength={features.length}
+            totalData={total}
+            totalPage={totalPages}
+            setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
+            setPageSize={(pageSize) =>
+              setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
+            }
+            roundedBottom={theme.radii.container}
+          />
+        </Box>
+      )}
     </VStack>
   );
 };

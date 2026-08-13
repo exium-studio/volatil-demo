@@ -1,167 +1,175 @@
 // src/features/mitra/cart/services/cart.api.ts
 
-import { getPaginatedCartItems } from "@/features/mitra/cart/services/cart.service";
+import {
+  getLocalCartIds,
+  addIdsToCart,
+  removeIdsFromCart,
+  clearCartIds,
+  calculateCartSummary,
+  getPaginatedIds,
+} from "@/features/mitra/cart/services/cart.service";
+import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import { fetchWfsCatalog } from "@/features/mitra/data-request/services/fetch-wfs-catalog";
 import type {
-  AddToCartPayload,
-  CartItemsResponse,
   CartSummaryResponse,
   CheckoutResponse,
-  AddSelectedToCartPayload,
-  AddAllToCartByAoiPayload,
-  AddAllToCartByFilterPayload,
 } from "@/features/mitra/cart/types/cart.type";
-import {
-  dummyCartSummaryResponse,
-  dummyMitraCartItems,
-} from "@/shared/constants/dummy-data/dummy-cart-data";
+import type { FetchWfsCatalogResult } from "@/features/mitra/data-request/services/fetch-wfs-catalog";
 import { apiClient } from "@/shared/libs/api-client/api-client";
-import type {
-  ApiResponse,
-  PaginatedParams,
-} from "@/shared/types/common-response.type";
+import type { ApiResponse } from "@/shared/types/common-response.type";
+import type GeoJSON from "geojson";
 
-// TODO: replace fallback with real API data when the endpoint is available
-export async function getCartItems(
-  params?: PaginatedParams,
+const DEFAULT_WFS_TYPE_NAME = "igt:CONTOH_BIDANG_TANAH";
+const WFS_ID_FIELD = "gid";
+
+// -------------------------------------------------------------------------------------
+// GET
+
+/** Returns paginated WFS features for IDs currently stored in cart localStorage. */
+export async function getCartWfsPage(params: {
+  page: number;
+  pageSize: number;
+  typeName?: string;
+  signal?: AbortSignal;
+}): Promise<
+  FetchWfsCatalogResult & {
+    pageIds: string[];
+    total: number;
+    totalPages: number;
+  }
+> {
+  const { page, pageSize, typeName = DEFAULT_WFS_TYPE_NAME, signal } = params;
+  const ids = getLocalCartIds();
+
+  const { pageIds, total, totalPages } = getPaginatedIds(ids, page, pageSize);
+
+  if (pageIds.length === 0) {
+    return {
+      features: [],
+      totalFeatures: 0,
+      bidangCount: 0,
+      kawasanCount: 0,
+      pageIds,
+      total,
+      totalPages,
+    };
+  }
+
+  // Build CQL: "gid" IN ('id1','id2',...)
+  const idList = pageIds.map((id) => `'${id}'`).join(",");
+  const cqlFilter = `"${WFS_ID_FIELD}" IN (${idList})`;
+
+  const result = await fetchWfsCatalog({
+    typeName,
+    page: 1,
+    pageSize,
+    cqlFilter,
+    signal,
+  });
+
+  return {
+    ...result,
+    // Override totalFeatures to reflect the full cart size, not just this page
+    totalFeatures: total,
+    pageIds,
+    total,
+    totalPages,
+  };
+}
+
+/** Returns the cart summary calculated from stored IDs. No API call needed. */
+export function getCartSummaryLocal(): CartSummaryResponse {
+  return calculateCartSummary(getLocalCartIds());
+}
+
+// -------------------------------------------------------------------------------------
+// MUTATIONS — write-first to localStorage, fire-and-forget to API
+
+/** Add specific feature IDs to cart. */
+export async function addSelectedToCart(
+  featureIds: string[],
   signal?: AbortSignal,
-): Promise<CartItemsResponse> {
+): Promise<void> {
+  addIdsToCart(featureIds);
   try {
-    const response = await apiClient.get<ApiResponse<CartItemsResponse>>(
-      "/mitra/cart/items",
-      {
-        params,
-        signal,
-      },
+    await apiClient.post(
+      "/mitra/cart/add-selected",
+      { featureIds },
+      { signal },
     );
-    return response.data ?? getPaginatedCartItems(dummyMitraCartItems, params);
-  } catch (error) {
-    console.warn("getCartItems API error, falling back to dummy data:", error);
-    return getPaginatedCartItems(dummyMitraCartItems, params);
+  } catch {
+    // No backend yet — localStorage already updated above
   }
 }
 
-// TODO: replace fallback with real API data when the endpoint is available
-export async function getCartSummary(
-  signal?: AbortSignal,
-): Promise<CartSummaryResponse> {
+/**
+ * Add ALL features matching the given WFS params to cart.
+ * Fetches all feature IDs from WFS (no pagination limit) and stores them.
+ */
+export async function addAllToCartFromWfs(params: {
+  typeName?: string;
+  cqlFilter?: string;
+  signal?: AbortSignal;
+}): Promise<number> {
+  const { typeName = DEFAULT_WFS_TYPE_NAME, cqlFilter, signal } = params;
+
+  const result = await fetchWfs({
+    typeName,
+    version: "2.0.0",
+    cqlFilter,
+    resultType: "results",
+    signal,
+  });
+
+  const features: GeoJSON.Feature[] = result.features ?? [];
+  const ids = features
+    .map((f) => {
+      const gid = f.properties?.[WFS_ID_FIELD] ?? f.id;
+      return gid != null ? String(gid) : null;
+    })
+    .filter((id): id is string => id !== null);
+
+  addIdsToCart(ids);
+  return ids.length;
+}
+
+export async function removeFromCart(
+  itemIds: string[],
+  _signal?: AbortSignal,
+): Promise<void> {
+  removeIdsFromCart(itemIds);
   try {
-    const response = await apiClient.get<ApiResponse<CartSummaryResponse>>(
-      "/mitra/cart/summary",
-      { signal },
-    );
-    return response.data ?? dummyCartSummaryResponse;
-  } catch (error) {
-    console.warn(
-      "getCartSummary API error, falling back to dummy data:",
-      error,
-    );
-    return dummyCartSummaryResponse;
+    await apiClient.post("/mitra/cart/remove", { itemIds });
+  } catch {
+    // No backend yet
+  }
+}
+
+export async function clearCart(_signal?: AbortSignal): Promise<void> {
+  clearCartIds();
+  try {
+    await apiClient.post("/mitra/cart/clear", {});
+  } catch {
+    // No backend yet
   }
 }
 
 export async function checkout(
-  signal?: AbortSignal,
+  _signal?: AbortSignal,
 ): Promise<CheckoutResponse> {
   try {
     const response = await apiClient.post<ApiResponse<CheckoutResponse>>(
       "/mitra/cart/checkout",
       {},
-      { signal },
     );
     return (
       response.data ?? {
         billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}`,
       }
     );
-  } catch (error) {
-    console.warn(
-      "checkout API error, falling back to dummy billing code:",
-      error,
-    );
+  } catch {
     return {
       billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}`,
     };
-  }
-}
-
-// TODO: replace with real API call
-export async function removeFromCart(
-  itemIds: string[],
-  signal?: AbortSignal,
-): Promise<void> {
-  console.log("removeFromCart itemIds:", itemIds);
-  try {
-    await apiClient.post("/mitra/cart/remove", { itemIds }, { signal });
-  } catch (error) {
-    console.warn("removeFromCart API error, fallback silent:", error);
-  }
-}
-
-// TODO: replace with real API call
-export async function clearCart(signal?: AbortSignal): Promise<void> {
-  console.log("clearCart");
-  try {
-    await apiClient.post("/mitra/cart/clear", {}, { signal });
-  } catch (error) {
-    console.warn("clearCart API error, fallback silent:", error);
-  }
-}
-
-// TODO: replace with real API call
-export async function addToCart(
-  items: AddToCartPayload[],
-  signal?: AbortSignal,
-): Promise<void> {
-  console.log("addToCart items:", items);
-  try {
-    await apiClient.post("/mitra/cart/add", { items }, { signal });
-  } catch (error) {
-    console.warn("addToCart API error, fallback silent:", error);
-  }
-}
-
-export async function addSelectedToCart(
-  payload: AddSelectedToCartPayload,
-  signal?: AbortSignal,
-): Promise<void> {
-  console.log("addSelectedToCart payload:", payload);
-  try {
-    await apiClient.post("/mitra/cart/add-selected", payload, { signal });
-  } catch (error) {
-    console.warn("addSelectedToCart API error, fallback silent:", error);
-  }
-}
-
-export async function addAllToCartByAoi(
-  payload: AddAllToCartByAoiPayload,
-  signal?: AbortSignal,
-): Promise<void> {
-  const { geometry, basis = ["bidang", "kawasan"] } = payload;
-  console.log("addAllToCartByAoi payload:", { geometry, basis });
-  try {
-    await apiClient.post(
-      "/mitra/cart/add-all-aoi",
-      { geometry, basis },
-      { signal },
-    );
-  } catch (error) {
-    console.warn("addAllToCartByAoi API error, fallback silent:", error);
-  }
-}
-
-export async function addAllToCartByFilter(
-  payload: AddAllToCartByFilterPayload,
-  signal?: AbortSignal,
-): Promise<void> {
-  const { filter, basis = ["bidang", "kawasan"] } = payload;
-  console.log("addAllToCartByFilter payload:", { filter, basis });
-  try {
-    await apiClient.post(
-      "/mitra/cart/add-all-filter",
-      { filter, basis },
-      { signal },
-    );
-  } catch (error) {
-    console.warn("addAllToCartByFilter API error, fallback silent:", error);
   }
 }

@@ -2,18 +2,16 @@
 
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import {
-  addToCartAll,
-  addToCartSelected,
+  addAllToCartFromWfs,
+  addSelectedToCart,
+} from "@/features/mitra/cart/services/cart.api";
+import {
   getIgtByAoi,
   getIgtByUploadedAoi,
   getIgtCatalog,
   getIgtGeometryById,
   type MitraDataRequestGetCatalogParams,
 } from "@/features/mitra/data-request/services/mitra.data-request.api";
-import type {
-  MitraDataRequestAddAllPayload,
-  MitraDataRequestAddSelectedPayload,
-} from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -69,6 +67,7 @@ export const useFetchIgtByUploadedAoi = () => {
   });
 };
 
+/** Add selected WFS features to cart (by their IDs). */
 export const useAddToCartSelected = () => {
   const queryClient = useQueryClient();
   const toast = mutationToastHandlers("add-to-cart-selected", {
@@ -81,8 +80,7 @@ export const useAddToCartSelected = () => {
   });
 
   return useMutation({
-    mutationFn: (payload: MitraDataRequestAddSelectedPayload) =>
-      addToCartSelected(payload),
+    mutationFn: (featureIds: string[]) => addSelectedToCart(featureIds),
     onMutate: toast.onLoading,
     onSuccess: () => {
       toast.onSuccess();
@@ -94,11 +92,15 @@ export const useAddToCartSelected = () => {
   });
 };
 
+/**
+ * Add ALL WFS features matching the given filter/AOI to cart.
+ * Fetches all matching feature IDs from WFS (no pagination limit), stores them.
+ */
 export const useAddToCartAll = () => {
   const queryClient = useQueryClient();
   const toast = mutationToastHandlers("add-to-cart-all", {
     loadingMessage: {
-      title: "Menambahkan seluruh item ke keranjang...",
+      title: "Mengambil & menambahkan seluruh item ke keranjang...",
     },
     successMessage: {
       title: "Berhasil menambahkan seluruh item ke keranjang",
@@ -106,8 +108,8 @@ export const useAddToCartAll = () => {
   });
 
   return useMutation({
-    mutationFn: (payload: MitraDataRequestAddAllPayload) =>
-      addToCartAll(payload),
+    mutationFn: (params: { cqlFilter?: string; typeName?: string }) =>
+      addAllToCartFromWfs(params),
     onMutate: toast.onLoading,
     onSuccess: () => {
       toast.onSuccess();

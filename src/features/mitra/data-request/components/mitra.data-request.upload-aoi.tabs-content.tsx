@@ -370,25 +370,16 @@ export const MitraDataRequestUploadAoiTabsContent = (
               aoiCqlFilter={aoiCqlFilter}
               appliedFilters={appliedFilters}
               onAddToCartSelected={(selectedIds) =>
-                addToCartSelectedMutation.mutate({ itemIds: selectedIds })
+                addToCartSelectedMutation.mutate(selectedIds)
               }
               onAddAllBidang={() =>
-                addToCartAllMutation.mutate({
-                  source: "upload_aoi",
-                  targetBasis: "bidang",
-                })
+                addToCartAllMutation.mutate({ cqlFilter: aoiCqlFilter ?? undefined })
               }
               onAddAllKawasan={() =>
-                addToCartAllMutation.mutate({
-                  source: "upload_aoi",
-                  targetBasis: "kawasan",
-                })
+                addToCartAllMutation.mutate({ cqlFilter: aoiCqlFilter ?? undefined })
               }
               onAddAllBoth={() =>
-                addToCartAllMutation.mutate({
-                  source: "upload_aoi",
-                  targetBasis: "all",
-                })
+                addToCartAllMutation.mutate({ cqlFilter: aoiCqlFilter ?? undefined })
               }
             />
           </>
@@ -602,7 +593,7 @@ const MitraDataRequestUploadAoiDataList = memo(
               totalBidangCount={bidangCount}
               totalKawasanCount={kawasanCount}
               totalCount={totalFeatures}
-              onAddSelectedClick={() => {
+                onAddSelectedClick={() => {
                 const selectedIds = pageState.selectedItems.map((item) =>
                   String(item.id),
                 );
