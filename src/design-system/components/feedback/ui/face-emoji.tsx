@@ -21,6 +21,7 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
     variant = "info",
     transition = true,
     colorPalette: colorPaletteProp,
+    size = "md",
     ...restProps
   } = props;
 
@@ -210,55 +211,78 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
     }
   };
 
+  const baseWidth = 220;
+  const baseHeight = 160;
+
+  const SIZES_MAP = {
+    sm: { w: 56, h: 40 },
+    md: { w: 88, h: 64 },
+    lg: { w: 140, h: 102 },
+    xl: { w: 220, h: 160 },
+  };
+
+  const selectedSize = SIZES_MAP[size] || SIZES_MAP.md;
+  const scale = selectedSize.w / baseWidth;
+
   return (
     <Box
       pos={"relative"}
-      w={"220px"}
-      h={"160px"}
+      w={`${selectedSize.w}px`}
+      h={`${selectedSize.h}px`}
       overflow={"hidden"}
       {...restProps}
     >
       <Box
         pos={"absolute"}
-        bottom={transition ? "0px" : "-160px"}
+        top={0}
         left={0}
-        w={"220px"}
-        h={"160px"}
-        transition={`300ms ${OVERSHOOT_EASE}`}
+        w={`${baseWidth}px`}
+        h={`${baseHeight}px`}
+        transform={`scale(${scale})`}
+        transformOrigin={"top left"}
       >
-        <svg
-          viewBox="0 0 220 160"
-          width="220"
-          height="160"
-          style={{ position: "absolute", top: 0, left: 0 }}
+        <Box
+          pos={"absolute"}
+          bottom={transition ? "0px" : "-160px"}
+          left={0}
+          w={`${baseWidth}px`}
+          h={`${baseHeight}px`}
+          transition={`300ms ${OVERSHOOT_EASE}`}
         >
-          <path d={resolvedVariant.bodyPath} fill={resolvedSkinColor} />
-        </svg>
+          <svg
+            viewBox="0 0 220 160"
+            width="220"
+            height="160"
+            style={{ position: "absolute", top: 0, left: 0 }}
+          >
+            <path d={resolvedVariant.bodyPath} fill={resolvedSkinColor} />
+          </svg>
 
-        <VStack
-          pos={"relative"}
-          zIndex={1}
-          align={"center"}
-          w={"full"}
-          h={"full"}
-        >
-          <style>{`
-            @keyframes blink {
-              0%, 90%, 100% { transform: scaleY(1); }
-              95% { transform: scaleY(0.1); }
-            }
-            @keyframes blinkWarning {
-              0%, 90%, 100% { transform: scaleY(1); }
-              95% { transform: scaleY(0.15); }
-            }
-            @keyframes floatMouth {
-              0%, 100% { transform: translateY(0) scale(1); }
-              50% { transform: translateY(1.5px) scale(0.96); }
-            }
-          `}</style>
+          <VStack
+            pos={"relative"}
+            zIndex={1}
+            align={"center"}
+            w={"full"}
+            h={"full"}
+          >
+            <style>{`
+              @keyframes blink {
+                0%, 90%, 100% { transform: scaleY(1); }
+                95% { transform: scaleY(0.1); }
+              }
+              @keyframes blinkWarning {
+                0%, 90%, 100% { transform: scaleY(1); }
+                95% { transform: scaleY(0.15); }
+              }
+              @keyframes floatMouth {
+                0%, 100% { transform: translateY(0) scale(1); }
+                50% { transform: translateY(1.5px) scale(0.96); }
+              }
+            `}</style>
 
-          {renderFaceEmoji()}
-        </VStack>
+            {renderFaceEmoji()}
+          </VStack>
+        </Box>
       </Box>
     </Box>
   );

@@ -2,7 +2,6 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
-import { useFocusAlerterStore } from "@/design-system/components/focus-alert/stores/focus-alert.store";
 import type {
   FocusAlertContentProps,
   FocusAlertItemProps,
@@ -16,12 +15,6 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
-import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
-import { useEffect, useRef } from "react";
-
-// Animation constants
-const TRANSITION_DELAY_STEP_MS = 80;
-const EXIT_DURATION_MS = 250 + TRANSITION_DELAY_STEP_MS * 2;
 
 export const FocusAlertItem = (props: FocusAlertItemProps) => {
   // Props
@@ -37,36 +30,11 @@ export const FocusAlertItem = (props: FocusAlertItemProps) => {
   const ctx = useFocusAlertContext();
   const modalKey = modalKeyProp ?? ctx?.modalKey ?? "";
 
-  // Stores — stable reference, aman dipakai di effect deps
-  const removeAlert = useFocusAlerterStore((s) => s.close);
-
   // Hooks
   const { isOpen, open, close } = usePopModal({ modalKey });
 
-  // Refs
-  const prevIsOpen = useRef(isOpen);
-
   // Derived Values
   const transition = useAlertAnimation(isOpen);
-
-  useFirstMountEffect(
-    {
-      onFirstMount: () => {
-        if (!isOpen) open();
-      },
-    },
-    [],
-  );
-
-  // Remove dari store setelah exit animation selesai
-  useEffect(() => {
-    if (prevIsOpen.current && !isOpen) {
-      const t = setTimeout(() => removeAlert(modalKey), EXIT_DURATION_MS);
-      prevIsOpen.current = isOpen;
-      return () => clearTimeout(t);
-    }
-    prevIsOpen.current = isOpen;
-  }, [isOpen, modalKey, removeAlert]);
 
   return (
     <Modal.Root
@@ -148,7 +116,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
       <Modal.Body>
         <VStack align={"center"} justify={"center"} gap={SPACING.xl}>
           <VStack gap={"40px"} align={"center"} w={"full"}>
-            <FaceEmoji variant={variant} transition={transition} />
+            <FaceEmoji variant={variant} transition={transition} size={"lg"} />
 
             <VStack gap={SPACING.md} zIndex={2}>
               <P

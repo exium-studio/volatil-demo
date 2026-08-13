@@ -9,8 +9,11 @@ export type FaceEmojiVariant =
   | "info"
   | "question";
 
+export type FaceEmojiSize = "sm" | "md" | "lg" | "xl";
+
 export type FaceEmojiProps = BoxProps & {
   variant?: FaceEmojiVariant;
   transition?: boolean;
   colorPalette?: string;
+  size?: FaceEmojiSize;
 };

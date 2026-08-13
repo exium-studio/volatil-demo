@@ -98,7 +98,11 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
 
           <Modal.Body gap={SPACING.md}>
             <VStack align={"center"} gap={"40px"}>
-              <FaceEmoji variant={"question"} transition={transition} />
+              <FaceEmoji
+                variant={"question"}
+                transition={transition}
+                size={"lg"}
+              />
 
               <VStack gap={SPACING.md}>
                 <P fontSize={"lg"} textAlign={"center"}>

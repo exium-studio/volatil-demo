@@ -1300,30 +1300,69 @@ export const Feedback = () => {
           </VStack>
         </HStack>
 
-        <VStack gap={4} w={"full"} borderTop={"1px solid"} borderColor={"border.subtle"} pt={4}>
+        <VStack
+          gap={6}
+          w={"full"}
+          borderTop={"1px solid"}
+          borderColor={"border.subtle"}
+          pt={4}
+        >
           <P fontWeight={"semibold"}>{"Face Emojis"}</P>
-          <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={12}>
-            <VStack gap={1}>
-              <FaceEmoji variant={"info"} transition={true} />
-              <P fontSize={"xs"} color={"fg.muted"}>{"Info"}</P>
-            </VStack>
-            <VStack gap={1}>
-              <FaceEmoji variant={"success"} transition={true} />
-              <P fontSize={"xs"} color={"fg.muted"}>{"Success"}</P>
-            </VStack>
-            <VStack gap={1}>
-              <FaceEmoji variant={"error"} transition={true} />
-              <P fontSize={"xs"} color={"fg.muted"}>{"Error"}</P>
-            </VStack>
-            <VStack gap={1}>
-              <FaceEmoji variant={"warning"} transition={true} />
-              <P fontSize={"xs"} color={"fg.muted"}>{"Warning"}</P>
-            </VStack>
-            <VStack gap={1}>
-              <FaceEmoji variant={"question"} transition={true} />
-              <P fontSize={"xs"} color={"fg.muted"}>{"Question"}</P>
-            </VStack>
-          </HStack>
+          <VStack gap={4} w={"full"} align={"center"}>
+            <HStack wrap={"wrap"} align={"end"} justify={"center"} gap={8}>
+              <VStack gap={1}>
+                <FaceEmoji variant={"info"} size={"sm"} transition={true} />
+                <P fontSize={"2xs"} color={"fg.muted"}>
+                  {"sm (56px)"}
+                </P>
+              </VStack>
+              <VStack gap={1}>
+                <FaceEmoji variant={"info"} size={"md"} transition={true} />
+                <P fontSize={"2xs"} color={"fg.muted"}>
+                  {"md (default, 88px)"}
+                </P>
+              </VStack>
+              <VStack gap={1}>
+                <FaceEmoji variant={"info"} size={"lg"} transition={true} />
+                <P fontSize={"2xs"} color={"fg.muted"}>
+                  {"lg (140px)"}
+                </P>
+              </VStack>
+              <VStack gap={1}>
+                <FaceEmoji variant={"info"} size={"xl"} transition={true} />
+                <P fontSize={"2xs"} color={"fg.muted"}>
+                  {"xl (220px)"}
+                </P>
+              </VStack>
+            </HStack>
+
+            <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={8}>
+              <VStack gap={1}>
+                <FaceEmoji variant={"success"} size={"md"} transition={true} />
+                <P fontSize={"2xs"} color={"fg.muted"}>
+                  {"Success"}
+                </P>
+              </VStack>
+              <VStack gap={1}>
+                <FaceEmoji variant={"error"} size={"md"} transition={true} />
+                <P fontSize={"2xs"} color={"fg.muted"}>
+                  {"Error"}
+                </P>
+              </VStack>
+              <VStack gap={1}>
+                <FaceEmoji variant={"warning"} size={"md"} transition={true} />
+                <P fontSize={"2xs"} color={"fg.muted"}>
+                  {"Warning"}
+                </P>
+              </VStack>
+              <VStack gap={1}>
+                <FaceEmoji variant={"question"} size={"md"} transition={true} />
+                <P fontSize={"2xs"} color={"fg.muted"}>
+                  {"Question"}
+                </P>
+              </VStack>
+            </HStack>
+          </VStack>
         </VStack>
       </Container.Body>
     </Container.Root>
