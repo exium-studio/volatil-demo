@@ -67,7 +67,7 @@ const BillingPageBillingCode = () => {
               focusAlert("payment-success", () => (
                 <FocusAlertItem
                   variant={"success"}
-                  title={"Transaksi berhasil!"}
+                  title={"Transaksi Berhasil!"}
                   description={
                     "Data yang Anda bayar sudah disimpan pada akun Anda!"
                   }

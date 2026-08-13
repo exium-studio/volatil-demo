@@ -4,6 +4,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Map3DToggle } from "@/design-system/components/map/ui/map.controls/map.3d-toggle";
 import { MapBasemapSelect } from "@/design-system/components/map/ui/map.controls/map.basemap-select";
+import { MapScale } from "@/design-system/components/map/ui/map.controls/map.scale";
 import { MapCompass } from "@/design-system/components/map/ui/map.controls/map.compass";
 import { MapLocate } from "@/design-system/components/map/ui/map.controls/map.locate";
 import { MapZoom } from "@/design-system/components/map/ui/map.controls/map.zoom";
@@ -19,7 +20,10 @@ export const MapControls = (props: StackProps) => {
       p={4}
       {...props}
     >
-      <MapBasemapSelect />
+      <HStack align={"end"} gap={3}>
+        <MapBasemapSelect />
+        <MapScale mb={1} />
+      </HStack>
 
       <HStack gap={2}>
         <Map3DToggle />
