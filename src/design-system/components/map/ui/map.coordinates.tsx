@@ -71,8 +71,6 @@ export const MapCoordinates = () => {
           <TNum>{coords.lat}°</TNum>
         </P>
 
-        <Box w={"1px"} h={"10px"} bg={"border.emphasized"} />
-
         <P
           fontSize={"2xs"}
           fontWeight={"bold"}
