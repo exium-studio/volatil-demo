@@ -205,7 +205,12 @@ export const MapSearch = () => {
     isLoading || (hasDebouncedQuery && debouncedQuery !== lastFetchedQuery);
 
   return (
-    <VStack gap={2} w={"300px"} pointerEvents={"auto"} position={"relative"}>
+    <VStack
+      gap={2}
+      w={"300px"}
+      pointerEvents={isOpened ? "auto" : "none"}
+      position={"relative"}
+    >
       {/* Search Input Container */}
       <MapOverlayContainer
         overflow={"clip"}

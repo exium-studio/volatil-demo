@@ -326,7 +326,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
                     icon={dragging ? ArrowDownIcon : UploadIcon}
                     size={"lg"}
                     color={"fg.muted"}
-                    mb={-2}
+                    mb={dragging ? -2 : 0}
                     animation={dragging ? "bounce" : ""}
                   />
                   {dragging && (
