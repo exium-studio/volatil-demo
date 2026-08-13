@@ -1,6 +1,7 @@
 // src/features/mitra/data-request/services/fetch-wfs-catalog.ts
 
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import { WFS_BIDANG_ATTRIBUTES } from "@/features/mitra/data-request/constants/mitra.data-request.constant";
 import type GeoJSON from "geojson";
 
 const DEFAULT_WFS_TYPE_NAME = "igt:CONTOH_BIDANG_TANAH";
@@ -34,25 +35,20 @@ export const fetchWfsCatalog = async ({
 }: FetchWfsCatalogParams): Promise<FetchWfsCatalogResult> => {
   const startIndex = (page - 1) * pageSize;
 
-  // Build search CQL: STRLIKE on searchable text attributes (case-insensitive)
+  // Build search CQL using WFS attribute keys; strToLowerCase for case-insensitive LIKE (GeoServer CQL)
+  const trimmedSearch = search?.trim();
   const searchCql =
-    search && search.trim().length > 0
-      ? [
-          "nib",
-          "tipehak",
-          "statbid",
-          "kabupaten",
-          "kecamatan",
-          "kelurahan",
-          "kodewilaya",
-        ]
-          .map((attr) => `STRLIKE(${attr},'%${search.trim()}%','i')`)
-          .join(" OR ")
+    trimmedSearch && trimmedSearch.length > 0
+      ? WFS_BIDANG_ATTRIBUTES.map(
+          (attr) =>
+            `strToLowerCase(${attr}) LIKE '%${trimmedSearch.toLowerCase()}%'`,
+        ).join(" OR ")
       : undefined;
 
-  const mergedCqlFilter = [cqlFilter, searchCql ? `(${searchCql})` : undefined]
-    .filter(Boolean)
-    .join(" AND ") || undefined;
+  const mergedCqlFilter =
+    [cqlFilter, searchCql ? `(${searchCql})` : undefined]
+      .filter(Boolean)
+      .join(" AND ") || undefined;
 
   try {
     // Fetch current page of actual features using WFS 2.0.0

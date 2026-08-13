@@ -3,11 +3,20 @@
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 
 export type FaceEmojiVariant =
-  | "success"
-  | "error"
-  | "warning"
-  | "info"
-  | "question";
+  | "happy"
+  | "sad"
+  | "worried"
+  | "neutral"
+  | "confused"
+  | "sleepy"
+  | "shocked"
+  | "laughing"
+  | "love"
+  | "dizzy"
+  | "winking"
+  | "crying"
+  | "searching"
+  | "sleeping";
 
 export type FaceEmojiSize = "sm" | "md" | "lg" | "xl";
 

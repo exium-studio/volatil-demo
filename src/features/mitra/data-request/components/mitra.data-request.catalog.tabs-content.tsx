@@ -11,6 +11,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -152,6 +153,14 @@ const CatalogDataList = (props: CatalogDataListProps) => {
     >
       {isLoading ? (
         <Skeleton p={PADDING.md} />
+      ) : features.length === 0 ? (
+        <VStack flex={1} align={"center"} justify={"center"} gap={3} py={12}>
+          <P fontSize={"sm"} color={"fg.muted"} textAlign={"center"}>
+            {search
+              ? `Tidak ada data untuk pencarian "${search}"`
+              : "Tidak ada data tersedia"}
+          </P>
+        </VStack>
       ) : (
         <>
           <TopBarLoader isFetching={isFetching} />

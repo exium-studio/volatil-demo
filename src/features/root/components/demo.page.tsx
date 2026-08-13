@@ -1218,7 +1218,22 @@ export const Disclosure = () => {
 };
 
 export const Feedback = () => {
-  const faceEmojiVariants = ["success"];
+  export const FACE_EMOJI_VARIANTS: FaceEmojiVariant[] = [
+    "happy",
+    "sad",
+    "worried",
+    "neutral",
+    "confused",
+    "sleepy",
+    "shocked",
+    "laughing",
+    "love",
+    "dizzy",
+    "winking",
+    "crying",
+    "searching",
+    "sleeping",
+  ];
 
   return (
     <Container.Root w={"full"} px={SPACING.md}>
@@ -1315,7 +1330,7 @@ export const Feedback = () => {
             <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={8}>
               {faceEmojiVariants.map((variant) => {
                 return (
-                  <VStack gap={1}>
+                  <VStack gap={1} key={variant}>
                     <FaceEmoji
                       variant={variant as FaceEmojiVariant}
                       size={"lg"}

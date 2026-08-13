@@ -2,6 +2,7 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
+import { useAlertAnimation } from "@/design-system/components/feedback/hooks/use-alert-animation";
 import type {
   FocusAlertContentProps,
   FocusAlertItemProps,
@@ -9,7 +10,6 @@ import type {
   FocusAlertVariant,
 } from "@/design-system/components/focus-alert/types/focus-alert.type";
 import { useFocusAlertContext } from "@/design-system/components/focus-alert/ui/focus-alert-key-context";
-import { useAlertAnimation } from "@/design-system/components/feedback/hooks/use-alert-animation";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
@@ -20,7 +20,7 @@ export const FocusAlertItem = (props: FocusAlertItemProps) => {
   // Props
   const {
     modalKey: modalKeyProp,
-    variant = "info",
+    variant = "neutral",
     title,
     description,
     onDone,
@@ -61,7 +61,7 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
   const {
     children,
     modalKey: modalKeyProp,
-    variant = "info",
+    variant = "neutral",
     title,
     description,
   } = props;
@@ -100,16 +100,25 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   const { variant, title, description, transition, close, onDone } = props;
 
   // Constants
-  const VARIANTS_MAP = {
-    info: { colorPalette: "neutral" },
-    success: { colorPalette: "green" },
-    error: { colorPalette: "red" },
-    warning: { colorPalette: "orange" },
-    question: { colorPalette: "blue" },
-  } as Record<FocusAlertVariant, { colorPalette: string }>;
+  const VARIANTS_MAP: Record<FocusAlertVariant, { colorPalette: string }> = {
+    happy: { colorPalette: "green" },
+    sad: { colorPalette: "red" },
+    worried: { colorPalette: "orange" },
+    neutral: { colorPalette: "neutral" },
+    confused: { colorPalette: "neutral" },
+    sleepy: { colorPalette: "neutral" },
+    shocked: { colorPalette: "red" },
+    laughing: { colorPalette: "green" },
+    love: { colorPalette: "pink" },
+    dizzy: { colorPalette: "red" },
+    winking: { colorPalette: "green" },
+    crying: { colorPalette: "blue" },
+    searching: { colorPalette: "neutral" },
+    sleeping: { colorPalette: "neutral" },
+  };
 
   // Resolved Values
-  const resolvedVariant = VARIANTS_MAP[variant ?? "info"];
+  const resolvedVariant = VARIANTS_MAP[variant ?? "neutral"];
 
   return (
     <Modal.Content>

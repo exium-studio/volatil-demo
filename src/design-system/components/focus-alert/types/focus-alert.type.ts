@@ -1,15 +1,11 @@
 // src/design-system/components/focus-alert/types/focus-alert.type.ts
 
+import type { FaceEmojiVariant } from "@/design-system/components/feedback/types/face-emoji.type";
 import type { ReactNode } from "react";
 
 export type FocusAlertRenderFn = () => ReactNode;
 
-export type FocusAlertVariant =
-  | "success"
-  | "error"
-  | "warning"
-  | "info"
-  | "question";
+export type FocusAlertVariant = FaceEmojiVariant;
 
 export type FocusAlertItemProps = {
   modalKey?: string;
