@@ -1,6 +1,7 @@
 // src/design-system/components/focus-alert/ui/focus-alert.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { useFocusAlerterStore } from "@/design-system/components/focus-alert/stores/focus-alert.store";
 import type {
   FocusAlertContentProps,
@@ -9,12 +10,11 @@ import type {
   FocusAlertVariant,
 } from "@/design-system/components/focus-alert/types/focus-alert.type";
 import { useFocusAlertContext } from "@/design-system/components/focus-alert/ui/focus-alert-key-context";
-import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { useEffect, useRef, useState } from "react";
 
@@ -156,12 +156,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   return (
     <Modal.Content>
       <Modal.Body>
-        <VStack
-          align={"center"}
-          justify={"center"}
-          gap={SPACING.xl}
-          py={PADDING.md}
-        >
+        <VStack align={"center"} justify={"center"} gap={SPACING.xl}>
           <VStack gap={"40px"} align={"center"} w={"full"}>
             <FaceEmoji variant={variant} transition={transition} />
 
@@ -181,6 +176,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
                 color={"fg.subtle"}
                 maxW={"240px"}
                 mx={"auto"}
+                mb={6}
               >
                 {description}
               </P>
