@@ -10,7 +10,7 @@ export type FaceEmojiVariant =
   | "confused"
   | "sleepy"
   | "shocked"
-  | "laughing"
+  | "celebrate"
   | "love"
   | "dizzy"
   | "winking"

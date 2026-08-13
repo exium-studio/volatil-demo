@@ -1226,7 +1226,7 @@ export const Feedback = () => {
     "confused",
     "sleepy",
     "shocked",
-    "laughing",
+    "celebrate",
     "love",
     "dizzy",
     "winking",

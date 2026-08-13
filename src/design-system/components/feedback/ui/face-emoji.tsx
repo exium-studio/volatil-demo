@@ -8,6 +8,7 @@ import type {
 import { Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { Box } from "@chakra-ui/react";
@@ -22,11 +23,13 @@ const OVERSHOOT_EASE = "cubic-bezier(0.34, 1.56, 0.64, 1)";
 const RoundEyes = ({
   color,
   size = "32px",
+  mt = "36px",
 }: {
   color: string;
   size?: string;
+  mt?: string;
 }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"36px"}>
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <Circle
       w={size}
       h={size}
@@ -44,8 +47,8 @@ const RoundEyes = ({
   </HStack>
 );
 
-const SquareEyes = ({ color }: { color: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"36px"}>
+const SquareEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <Box
       w={"28px"}
       h={"28px"}
@@ -65,8 +68,8 @@ const SquareEyes = ({ color }: { color: string }) => (
   </HStack>
 );
 
-const BrowEyes = ({ color }: { color: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"36px"}>
+const BrowEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <Box
       w={"36px"}
       h={"16px"}
@@ -86,8 +89,30 @@ const BrowEyes = ({ color }: { color: string }) => (
   </HStack>
 );
 
-const FlatEyes = ({ color }: { color: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"44px"}>
+// Heavy-lidded eyes — thicker than FlatEyes, for sad/tired
+const HeavyEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+    <Box
+      w={"34px"}
+      h={"12px"}
+      bg={color}
+      rounded={"full"}
+      animation={"blinkSlow 6s infinite"}
+      transformOrigin={"center"}
+    />
+    <Box
+      w={"34px"}
+      h={"12px"}
+      bg={color}
+      rounded={"full"}
+      animation={"blinkSlow 6s infinite"}
+      transformOrigin={"center"}
+    />
+  </HStack>
+);
+
+const FlatEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <Box
       w={"36px"}
       h={"6px"}
@@ -107,8 +132,8 @@ const FlatEyes = ({ color }: { color: string }) => (
   </HStack>
 );
 
-const BigEyes = ({ color }: { color: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"32px"}>
+const BigEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <Circle
       w={"40px"}
       h={"40px"}
@@ -127,63 +152,63 @@ const BigEyes = ({ color }: { color: string }) => (
 );
 
 const ArcEye = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 32 20" width="32" height="20">
+  <svg viewBox={"0 0 32 20"} width={"32"} height={"20"}>
     <path
-      d="M 4 16 Q 16 -2 28 16"
-      fill="none"
+      d={"M 4 16 Q 16 -2 28 16"}
+      fill={"none"}
       stroke={color}
-      strokeWidth="6"
-      strokeLinecap="round"
+      strokeWidth={"6"}
+      strokeLinecap={"round"}
     />
   </svg>
 );
 
-const LaughEyes = ({ color }: { color: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"40px"}>
+const CelebEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <ArcEye color={color} />
     <ArcEye color={color} />
   </HStack>
 );
 
 const HeartEye = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 32 30" width="32" height="30">
-    <path d="M 16 27 C -6 12 4 -4 16 8 C 28 -4 38 12 16 27 Z" fill={color} />
+  <svg viewBox={"0 0 32 30"} width={"32"} height={"30"}>
+    <path d={"M 16 27 C -6 12 4 -4 16 8 C 28 -4 38 12 16 27 Z"} fill={color} />
   </svg>
 );
 
-const HeartEyes = ({ color }: { color: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"36px"}>
+const HeartEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <HeartEye color={color} />
     <HeartEye color={color} />
   </HStack>
 );
 
 const CrossEye = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 28 28" width="28" height="28">
+  <svg viewBox={"0 0 28 28"} width={"28"} height={"28"}>
     <path
-      d="M 4 4 L 24 24"
+      d={"M 4 4 L 24 24"}
       stroke={color}
-      strokeWidth="6"
-      strokeLinecap="round"
+      strokeWidth={"6"}
+      strokeLinecap={"round"}
     />
     <path
-      d="M 24 4 L 4 24"
+      d={"M 24 4 L 4 24"}
       stroke={color}
-      strokeWidth="6"
-      strokeLinecap="round"
+      strokeWidth={"6"}
+      strokeLinecap={"round"}
     />
   </svg>
 );
 
-const CrossEyes = ({ color }: { color: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"38px"}>
+const CrossEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <CrossEye color={color} />
     <CrossEye color={color} />
   </HStack>
 );
 
-const WinkEyes = ({ color }: { color: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={"38px"}>
+const WinkEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
+  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
     <ArcEye color={color} />
     <Circle
       w={"32px"}
@@ -196,118 +221,196 @@ const WinkEyes = ({ color }: { color: string }) => (
 );
 
 // ---------------------------------------------------------------------------
-// Reusable mouth shapes
+// Reusable mouth shapes — all SVG centered
 // ---------------------------------------------------------------------------
 
-const LipArc = ({
-  color,
-  direction = "up",
-  strokeWidth = "7",
-}: {
-  color: string;
-  direction?: "up" | "down";
-  strokeWidth?: string;
-}) => (
-  <Center mt={"-24px"}>
-    <svg viewBox="0 0 40 40" width="40" height="40">
+const SmileMouth = ({ color }: { color: string }) => (
+  <Center>
+    <svg viewBox={"0 0 80 40"} width={"80"} height={"40"}>
       <path
-        d={
-          direction === "up"
-            ? "M 32 18 A 12 12 0 0 1 8 18"
-            : "M 32 26 A 12 12 0 0 0 8 26"
-        }
-        fill="none"
+        d={"M 20 10 A 20 20 0 0 0 60 10"}
+        fill={"none"}
         stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
+        strokeWidth={"7"}
+        strokeLinecap={"round"}
       />
     </svg>
   </Center>
 );
 
-const FlatMouth = ({ color, w = "36px" }: { color: string; w?: string }) => (
-  <Box
-    w={w}
-    h={"10px"}
-    bg={color}
-    rounded={"sm"}
-    mt={"12px"}
-    animation={"floatMouth 3s ease-in-out infinite"}
-  />
+const FrownMouth = ({ color }: { color: string }) => (
+  <Center>
+    <svg viewBox={"0 0 80 40"} width={"80"} height={"40"}>
+      <path
+        d={"M 20 28 A 20 20 0 0 1 60 28"}
+        fill={"none"}
+        stroke={color}
+        strokeWidth={"7"}
+        strokeLinecap={"round"}
+      />
+    </svg>
+  </Center>
+);
+
+const FlatMouth = ({ color }: { color: string }) => (
+  <Center>
+    <svg viewBox={"0 0 80 20"} width={"80"} height={"20"}>
+      <line
+        x1={"22"}
+        y1={"10"}
+        x2={"58"}
+        y2={"10"}
+        stroke={color}
+        strokeWidth={"8"}
+        strokeLinecap={"round"}
+      />
+    </svg>
+  </Center>
 );
 
 const OMouth = ({ color, size = "16px" }: { color: string; size?: string }) => (
-  <Circle
-    w={size}
-    h={size}
-    bg={color}
-    mt={"10px"}
-    animation={"floatMouth 3s ease-in-out infinite"}
-  />
+  <Center>
+    <Circle
+      w={size}
+      h={size}
+      bg={color}
+      animation={"floatMouth 3s ease-in-out infinite"}
+    />
+  </Center>
 );
 
-const WideMouth = ({ color }: { color: string }) => (
-  <Center mt={"4px"}>
-    <svg viewBox="0 0 44 30" width="44" height="30">
-      <path d="M 4 4 Q 22 34 40 4 Q 22 20 4 4 Z" fill={color} />
+const BigSmileMouth = ({ color }: { color: string }) => (
+  <Center>
+    <svg viewBox={"0 0 80 44"} width={"80"} height={"44"}>
+      <path
+        d={"M 18 8 Q 40 44 62 8"}
+        fill={color}
+        stroke={color}
+        strokeWidth={"2"}
+        strokeLinecap={"round"}
+        strokeLinejoin={"round"}
+      />
     </svg>
   </Center>
 );
 
 const WavyMouth = ({ color }: { color: string }) => (
-  <Center mt={"8px"}>
-    <svg viewBox="0 0 44 16" width="44" height="16">
+  <Center>
+    <svg viewBox={"0 0 80 24"} width={"80"} height={"24"}>
       <path
-        d="M 4 8 Q 10 2 16 8 T 28 8 T 40 8"
-        fill="none"
+        d={"M 12 12 Q 22 4 32 12 T 52 12 T 68 12"}
+        fill={"none"}
         stroke={color}
-        strokeWidth="5"
-        strokeLinecap="round"
+        strokeWidth={"6"}
+        strokeLinecap={"round"}
       />
     </svg>
   </Center>
 );
 
 const SmirkMouth = ({ color }: { color: string }) => (
-  <Center mt={"6px"}>
-    <svg viewBox="0 0 40 20" width="40" height="20">
+  <Center>
+    <svg viewBox={"0 0 80 24"} width={"80"} height={"24"}>
       <path
-        d="M 6 8 Q 22 6 34 -2"
-        fill="none"
+        d={"M 18 16 Q 40 14 62 4"}
+        fill={"none"}
         stroke={color}
-        strokeWidth="7"
-        strokeLinecap="round"
+        strokeWidth={"7"}
+        strokeLinecap={"round"}
       />
     </svg>
   </Center>
 );
 
 // ---------------------------------------------------------------------------
-// Decorations
+// Decorations — floating elements above the body
 // ---------------------------------------------------------------------------
 
 const TearDrop = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 14 20" width="14" height="20">
-    <path d="M 7 0 C 12 8 12 14 7 18 C 2 14 2 8 7 0 Z" fill={color} />
+  <svg viewBox={"0 0 14 20"} width={"14"} height={"20"}>
+    <path d={"M 7 0 C 12 8 12 14 7 18 C 2 14 2 8 7 0 Z"} fill={color} />
   </svg>
 );
 
+const ActiveTears = ({ color }: { color: string }) => (
+  <>
+    <Box pos={"absolute"} top={"30px"} left={"50px"}>
+      <TearDrop color={color} />
+    </Box>
+    <Box pos={"absolute"} top={"30px"} right={"50px"}>
+      <TearDrop color={color} />
+    </Box>
+  </>
+);
+
+// Floating Zzz — sleeping
 const ZzzMark = ({ color }: { color: string }) => (
-  <Box
+  <P
+    fontSize={"2xl"}
+    fontWeight={"bold"}
     pos={"absolute"}
     top={"4px"}
     right={"16px"}
     color={color}
-    fontWeight={"bold"}
-    fontSize={"14px"}
     animation={"floatMouth 3s ease-in-out infinite"}
   >
     Z z
-  </Box>
+  </P>
+);
+
+// Floating ? — confused
+const QuestionMark = ({ color }: { color: string }) => (
+  <P
+    fontSize={"4xl"}
+    fontWeight={"bold"}
+    pos={"absolute"}
+    top={"2px"}
+    right={"18px"}
+    color={color}
+    animation={"floatMouth 2.8s ease-in-out infinite"}
+  >
+    ?
+  </P>
+);
+
+// Floating ! — shocked
+const ExclamMark = ({ color }: { color: string }) => (
+  <P
+    fontSize={"4xl"}
+    fontWeight={"bold"}
+    pos={"absolute"}
+    top={"2px"}
+    right={"20px"}
+    color={color}
+    animation={"floatMouth 2s ease-in-out infinite"}
+  >
+    !
+  </P>
 );
 
 // ---------------------------------------------------------------------------
-// Variant config — deklaratif, expression-based
+// Single base body — same width (220px), same height (160px), flat bottom
+// Only the top curve differs per variant
+// ---------------------------------------------------------------------------
+
+// Round dome — default friendly shape
+const BODY_DOME =
+  "M 10,160 L 210,160 C 215,100 200,28 110,22 C 20,28 5,100 10,160 Z";
+
+// Flat top — neutral boxy
+const BODY_FLAT_TOP =
+  "M 10,160 L 210,160 C 212,140 212,40 190,32 L 30,32 C 8,40 8,140 10,160 Z";
+
+// Asymmetric — right side rises higher than left (original confused shape)
+const BODY_ASYM =
+  "M 10,160 L 210,160 C 200,70 170,-5 130,20 C 90,45 20,25 10,160 Z";
+
+// Pillow — very wide low arc, barely rises
+const BODY_PILLOW =
+  "M 5,160 L 215,160 C 220,110 200,52 110,46 C 20,52 0,110 5,160 Z";
+
+// ---------------------------------------------------------------------------
+// Variant config
 // ---------------------------------------------------------------------------
 
 const VARIANTS_MAP: Record<
@@ -318,150 +421,162 @@ const VARIANTS_MAP: Record<
     renderFace: (color: string) => ReactNode;
   }
 > = {
+  // Dome — happy
   happy: {
     colorPalette: "green",
-    bodyPath: "M 10,160 C 10,20 210,20 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
       <>
-        <RoundEyes color={c} />
-        <LipArc color={c} direction="up" />
+        <RoundEyes color={c} mt={"36px"} />
+        <SmileMouth color={c} />
       </>
     ),
   },
+  // Dome — sad, heavy-lidded + frown, no tears
   sad: {
     colorPalette: "red",
-    bodyPath: "M 10,160 C 25,100 80,15 110,15 C 140,15 195,100 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
       <>
-        <RoundEyes color={c} />
-        <LipArc color={c} direction="down" />
+        <HeavyEyes color={c} mt={"36px"} />
+        <FrownMouth color={c} />
       </>
     ),
   },
+  // Dome — worried, brow eyes + flat mouth
   worried: {
     colorPalette: "orange",
-    bodyPath: "M 10,160 C 25,100 80,15 110,15 C 140,15 195,100 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
       <>
-        <BrowEyes color={c} />
-        <FlatMouth color={c} w={"40px"} />
+        <BrowEyes color={c} mt={"36px"} />
+        <FlatMouth color={c} />
       </>
     ),
   },
+  // Flat top — neutral, square eyes
   neutral: {
     colorPalette: "neutral",
-    bodyPath: "M 10,160 C 10,60 30,30 80,30 L 140,30 C 190,30 210,60 210,160 Z",
+    bodyPath: BODY_FLAT_TOP,
     renderFace: (c) => (
       <>
-        <SquareEyes color={c} />
-        <FlatMouth color={c} w={"36px"} />
+        <SquareEyes color={c} mt={"42px"} />
+        <FlatMouth color={c} />
       </>
     ),
   },
+  // Asym — confused, floating ?
   confused: {
     colorPalette: "neutral",
-    bodyPath: "M 10,160 C 20,25 90,45 130,20 C 170,-5 200,70 210,160 Z",
+    bodyPath: BODY_ASYM,
     renderFace: (c) => (
-      <>
-        <BrowEyes color={c} />
-        <LipArc color={c} direction="down" />
-      </>
+      <Box pos={"relative"} w={"full"}>
+        <QuestionMark color={c} />
+        <BrowEyes color={c} mt={"40px"} />
+        <WavyMouth color={c} />
+      </Box>
     ),
   },
+  // Pillow — sleepy, flat eyes + tiny O
   sleepy: {
     colorPalette: "neutral",
-    bodyPath: "M 10,160 C 10,60 30,30 80,30 L 140,30 C 190,30 210,60 210,160 Z",
+    bodyPath: BODY_PILLOW,
     renderFace: (c) => (
       <>
-        <FlatEyes color={c} />
+        <FlatEyes color={c} mt={"50px"} />
         <OMouth color={c} size={"12px"} />
       </>
     ),
   },
+  // Dome — shocked, big eyes + big O + floating !
   shocked: {
     colorPalette: "red",
-    bodyPath: "M 10,160 C 25,100 80,15 110,15 C 140,15 195,100 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
-      <>
-        <BigEyes color={c} />
-        <OMouth color={c} size={"18px"} />
-      </>
+      <Box pos={"relative"} w={"full"}>
+        <ExclamMark color={c} />
+        <BigEyes color={c} mt={"36px"} />
+        <OMouth color={c} size={"20px"} />
+      </Box>
     ),
   },
-  laughing: {
+  // Dome — celebrate, arc eyes + big filled smile
+  celebrate: {
     colorPalette: "green",
-    bodyPath: "M 10,160 C 10,20 210,20 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
       <>
-        <LaughEyes color={c} />
-        <WideMouth color={c} />
+        <CelebEyes color={c} mt={"36px"} />
+        <BigSmileMouth color={c} />
       </>
     ),
   },
+  // Dome — love, heart eyes + smile
   love: {
     colorPalette: "pink",
-    bodyPath: "M 10,160 C 10,20 210,20 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
       <>
-        <HeartEyes color={c} />
-        <LipArc color={c} direction="up" strokeWidth="6" />
+        <HeartEyes color={c} mt={"36px"} />
+        <SmileMouth color={c} />
       </>
     ),
   },
+  // Asym — dizzy, cross eyes + wavy mouth (reuses confused body for wobbly feel)
   dizzy: {
     colorPalette: "red",
-    bodyPath: "M 10,160 C 25,100 80,15 110,15 C 140,15 195,100 210,160 Z",
+    bodyPath: BODY_ASYM,
     renderFace: (c) => (
       <>
-        <CrossEyes color={c} />
+        <CrossEyes color={c} mt={"38px"} />
         <WavyMouth color={c} />
       </>
     ),
   },
+  // Dome — winking, arc + round eye + smirk
   winking: {
     colorPalette: "green",
-    bodyPath: "M 10,160 C 10,20 210,20 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
       <>
-        <WinkEyes color={c} />
+        <WinkEyes color={c} mt={"36px"} />
         <SmirkMouth color={c} />
       </>
     ),
   },
+  // Dome — crying, round eyes + active tears just below eyes + frown
   crying: {
     colorPalette: "blue",
-    bodyPath: "M 10,160 C 25,100 80,15 110,15 C 140,15 195,100 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
-      <Box pos={"relative"}>
-        <RoundEyes color={c} />
-        <Box pos={"absolute"} top={"64px"} left={"70px"}>
-          <TearDrop color={c} />
-        </Box>
-        <Box pos={"absolute"} top={"64px"} right={"70px"}>
-          <TearDrop color={c} />
-        </Box>
-        <LipArc color={c} direction="down" />
+      <Box pos={"relative"} w={"full"} h={"full"}>
+        <RoundEyes color={c} mt={"36px"} />
+        {/* Tears: top=64px overlaps 4px below eye bottom (36+32=68 → 68-4=64) */}
+        <ActiveTears color={c} />
+        <FrownMouth color={c} />
       </Box>
     ),
   },
+  // Dome — searching, big eyes + tiny O
   searching: {
     colorPalette: "neutral",
-    bodyPath: "M 10,160 C 20,25 90,45 130,20 C 170,-5 200,70 210,160 Z",
+    bodyPath: BODY_DOME,
     renderFace: (c) => (
       <>
-        <BigEyes color={c} />
-        <OMouth color={c} size={"14px"} />
+        <SquareEyes color={c} mt={"32px"} />
+        <SmirkMouth color={c} />
       </>
     ),
   },
+  // Pillow — sleeping, Zzz + flat eyes + flat mouth
   sleeping: {
     colorPalette: "neutral",
-    bodyPath: "M 10,160 C 10,60 30,30 80,30 L 140,30 C 190,30 210,60 210,160 Z",
+    bodyPath: BODY_PILLOW,
     renderFace: (c) => (
       <Box pos={"relative"} w={"full"}>
         <ZzzMark color={c} />
-        <FlatEyes color={c} />
-        <FlatMouth color={c} w={"28px"} />
+        <FlatEyes color={c} mt={"55px"} />
+        <FlatMouth color={c} />
       </Box>
     ),
   },
@@ -531,9 +646,9 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
           transition={`300ms ${OVERSHOOT_EASE}`}
         >
           <svg
-            viewBox="0 0 220 160"
-            width="220"
-            height="160"
+            viewBox={"0 0 220 160"}
+            width={"220"}
+            height={"160"}
             style={{ position: "absolute", top: 0, left: 0 }}
           >
             <path d={resolvedVariant.bodyPath} fill={resolvedSkinColor} />

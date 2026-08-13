@@ -108,7 +108,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
     confused: { colorPalette: "neutral" },
     sleepy: { colorPalette: "neutral" },
     shocked: { colorPalette: "red" },
-    laughing: { colorPalette: "green" },
+    celebrate: { colorPalette: "green" },
     love: { colorPalette: "pink" },
     dizzy: { colorPalette: "red" },
     winking: { colorPalette: "green" },
