@@ -124,8 +124,13 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
     <Modal.Content>
       <Modal.Body>
         <VStack align={"center"} justify={"center"} gap={SPACING.xl}>
-          <VStack gap={"40px"} align={"center"} w={"full"}>
-            <FaceEmoji variant={variant} transition={transition} size={"lg"} />
+          <VStack align={"center"} gap={SPACING.lg} w={"full"}>
+            <FaceEmoji
+              variant={variant}
+              transition={transition}
+              size={"lg"}
+              my={"20px"}
+            />
 
             <VStack gap={SPACING.md} zIndex={2}>
               <P
@@ -140,7 +145,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
               <P
                 fontSize={"sm"}
                 textAlign={"center"}
-                color={"fg.subtle"}
+                color={"fg.muted"}
                 maxW={"240px"}
                 mx={"auto"}
                 mb={6}

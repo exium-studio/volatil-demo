@@ -1,0 +1,24 @@
+import { Container } from "@/design-system/components/layout/ui/container";
+import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { PADDING } from "@/design-system/constants/styles";
+import { MitraMyDataList } from "@/features/mitra/my-data/components/mitra.my-data-list";
+
+export const MitraMyDataPage = () => (
+  <Container.Root flex={1} minH={0} withContext={true}>
+    <PanelContentContainer gap={PADDING.sm} p={PADDING.sm}>
+      <Container.Body flex={1} minH={0} overflowY={"auto"}>
+        <HeaderContainer>
+          <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
+            {"My Data"}
+          </ClampedP>
+        </HeaderContainer>
+
+        <Separator borderColor={"bg.canvas"} />
+        <MitraMyDataList />
+      </Container.Body>
+    </PanelContentContainer>
+  </Container.Root>
+);
