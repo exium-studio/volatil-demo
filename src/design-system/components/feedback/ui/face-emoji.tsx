@@ -19,7 +19,7 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
   // Props
   const {
     variant = "info",
-    transition = false,
+    transition = true,
     colorPalette: colorPaletteProp,
     ...restProps
   } = props;
@@ -28,7 +28,8 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
   const VARIANTS_MAP = {
     info: {
       colorPalette: "neutral",
-      bodyPath: "M 10,160 C 20,40 80,10 130,25 C 180,40 200,90 210,160 Z",
+      bodyPath:
+        "M 10,160 C 10,60 30,30 80,30 L 140,30 C 190,30 210,60 210,160 Z",
     },
     success: {
       colorPalette: "green",
@@ -40,8 +41,7 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
     },
     warning: {
       colorPalette: "orange",
-      bodyPath:
-        "M 10,160 C 10,60 30,30 80,30 L 140,30 C 190,30 210,60 210,160 Z",
+      bodyPath: "M 10,160 C 25,100 80,15 110,15 C 140,15 195,100 210,160 Z",
     },
     question: {
       colorPalette: "neutral",
@@ -180,26 +180,28 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
         return (
           <>
             <HStack justify={"center"} gap={SPACING.lg} mt={"36px"}>
-              <Circle
-                w={"32px"}
-                h={"32px"}
+              <Box
+                w={"28px"}
+                h={"28px"}
                 bg={faceColor}
+                rounded={"md"}
                 animation={"blink 4s infinite"}
                 transformOrigin={"center"}
               />
-              <Circle
-                w={"32px"}
-                h={"32px"}
+              <Box
+                w={"28px"}
+                h={"28px"}
                 bg={faceColor}
+                rounded={"md"}
                 animation={"blink 4s infinite"}
                 transformOrigin={"center"}
               />
             </HStack>
             <Box
               w={"36px"}
-              h={"8px"}
+              h={"10px"}
               bg={faceColor}
-              rounded={"full"}
+              rounded={"sm"}
               mt={"12px"}
               animation={"floatMouth 3s ease-in-out infinite"}
             />

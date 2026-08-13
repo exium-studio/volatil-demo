@@ -20,6 +20,7 @@ import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Steps } from "@/design-system/components/disclosure/ui/steps";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { DotIndicator } from "@/design-system/components/feedback/ui/indicator";
 import {
   Progress,
@@ -1298,6 +1299,32 @@ export const Feedback = () => {
             <Skeleton w={"full"} h={"100px"} />
           </VStack>
         </HStack>
+
+        <VStack gap={4} w={"full"} borderTop={"1px solid"} borderColor={"border.subtle"} pt={4}>
+          <P fontWeight={"semibold"}>{"Face Emojis"}</P>
+          <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={12}>
+            <VStack gap={1}>
+              <FaceEmoji variant={"info"} transition={true} />
+              <P fontSize={"xs"} color={"fg.muted"}>{"Info"}</P>
+            </VStack>
+            <VStack gap={1}>
+              <FaceEmoji variant={"success"} transition={true} />
+              <P fontSize={"xs"} color={"fg.muted"}>{"Success"}</P>
+            </VStack>
+            <VStack gap={1}>
+              <FaceEmoji variant={"error"} transition={true} />
+              <P fontSize={"xs"} color={"fg.muted"}>{"Error"}</P>
+            </VStack>
+            <VStack gap={1}>
+              <FaceEmoji variant={"warning"} transition={true} />
+              <P fontSize={"xs"} color={"fg.muted"}>{"Warning"}</P>
+            </VStack>
+            <VStack gap={1}>
+              <FaceEmoji variant={"question"} transition={true} />
+              <P fontSize={"xs"} color={"fg.muted"}>{"Question"}</P>
+            </VStack>
+          </HStack>
+        </VStack>
       </Container.Body>
     </Container.Root>
   );
