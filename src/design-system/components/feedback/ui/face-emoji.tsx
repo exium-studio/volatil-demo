@@ -21,6 +21,7 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
     variant = "info",
     transition = false,
     colorPalette: colorPaletteProp,
+    ...restProps
   } = props;
 
   // Constants
@@ -208,7 +209,13 @@ export const FaceEmoji = (props: FaceEmojiProps) => {
   };
 
   return (
-    <Box pos={"relative"} w={"220px"} h={"160px"} overflow={"hidden"}>
+    <Box
+      pos={"relative"}
+      w={"220px"}
+      h={"160px"}
+      overflow={"hidden"}
+      {...restProps}
+    >
       <Box
         pos={"absolute"}
         bottom={transition ? "0px" : "-160px"}

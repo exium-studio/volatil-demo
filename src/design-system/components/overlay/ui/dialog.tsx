@@ -51,6 +51,7 @@ export type DialogContextValue = {
   setFullscreen: Dispatch<SetStateAction<boolean>>;
   clickOriginAnimation: boolean;
   size: ChakraDialog.RootProps["size"];
+  closeOnInteractOutside?: boolean;
 };
 
 export const DialogContext = createContext<DialogContextValue | null>(null);
@@ -76,6 +77,7 @@ const DialogRoot = (props: DialogRootProps) => {
     close,
     clickOriginAnimation = MODAL.defaultDialogClickOriginAnimation,
     size = "xs",
+    closeOnInteractOutside = true,
     ...restProps
   } = props;
 
@@ -123,6 +125,7 @@ const DialogRoot = (props: DialogRootProps) => {
       fullscreen,
       setFullscreen,
       size,
+      closeOnInteractOutside,
     }),
     [
       modalKey,
@@ -133,6 +136,7 @@ const DialogRoot = (props: DialogRootProps) => {
       fullscreen,
       setFullscreen,
       size,
+      closeOnInteractOutside,
     ],
   );
 
@@ -197,12 +201,13 @@ const DialogBackdrop = (props: ChakraDialog.BackdropProps) => {
   const { onClick, ...restProps } = props;
 
   // Contexts
-  const { close, setFullscreen } = useDialogContext();
+  const { close, setFullscreen, closeOnInteractOutside } = useDialogContext();
 
   return (
     <ChakraDialog.Backdrop
       pointerEvents={"auto"}
       onClick={(event) => {
+        if (!closeOnInteractOutside) return;
         if (close) {
           close();
         } else {

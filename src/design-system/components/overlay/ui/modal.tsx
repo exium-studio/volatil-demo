@@ -39,6 +39,7 @@ export type ModalContextValue = {
   fullscreen: boolean;
   setFullscreen: Dispatch<SetStateAction<boolean>>;
   isSmallViewport: boolean;
+  closeOnInteractOutside?: boolean;
 };
 
 export const ModalContext = createContext<ModalContextValue | null>(null);
@@ -67,6 +68,7 @@ const ModalRoot = (props: ModalRootProps) => {
     dialogClickOriginAnimation = MODAL.defaultDialogClickOriginAnimation,
     drawerPlacement = "bottom",
     drawerSwipeToDismiss = true,
+    closeOnInteractOutside = true,
     ...restProps
   } = props;
 
@@ -85,8 +87,18 @@ const ModalRoot = (props: ModalRootProps) => {
       fullscreen,
       setFullscreen,
       isSmallViewport,
+      closeOnInteractOutside,
     }),
-    [modalKey, opened, open, close, fullscreen, setFullscreen, isSmallViewport],
+    [
+      modalKey,
+      opened,
+      open,
+      close,
+      fullscreen,
+      setFullscreen,
+      isSmallViewport,
+      closeOnInteractOutside,
+    ],
   );
   return (
     <ModalContext.Provider value={contextValue}>
@@ -98,6 +110,7 @@ const ModalRoot = (props: ModalRootProps) => {
           close={close}
           size={size as DrawerRootProps["size"]}
           swipeToDismiss={drawerSwipeToDismiss}
+          closeOnInteractOutside={closeOnInteractOutside}
           {...restProps}
           placement={drawerPlacement}
         >
@@ -111,6 +124,7 @@ const ModalRoot = (props: ModalRootProps) => {
           close={close}
           clickOriginAnimation={dialogClickOriginAnimation}
           size={size as DialogRootProps["size"]}
+          closeOnInteractOutside={closeOnInteractOutside}
           {...restProps}
         >
           {children}

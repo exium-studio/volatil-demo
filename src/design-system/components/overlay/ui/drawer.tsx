@@ -43,6 +43,7 @@ type DrawerContextValue = {
   swipeToDismiss: boolean;
   placement: ChakraDrawer.RootProps["placement"];
   size: ChakraDrawer.RootProps["size"];
+  closeOnInteractOutside?: boolean;
 };
 
 const DrawerContext = createContext<DrawerContextValue | null>(null);
@@ -87,6 +88,7 @@ const DrawerRoot = (props: DrawerRootProps) => {
     swipeToDismiss = true,
     placement = "bottom",
     size = "sm",
+    closeOnInteractOutside = true,
     ...restProps
   } = props;
 
@@ -136,6 +138,7 @@ const DrawerRoot = (props: DrawerRootProps) => {
       swipeToDismiss,
       placement,
       size,
+      closeOnInteractOutside,
     }),
 
     [
@@ -148,6 +151,7 @@ const DrawerRoot = (props: DrawerRootProps) => {
       swipeToDismiss,
       placement,
       size,
+      closeOnInteractOutside,
     ],
   );
 
@@ -202,12 +206,13 @@ const DrawerBackdrop = (props: ChakraDrawer.BackdropProps) => {
   const { onClick, ...restProps } = props;
 
   // Contexts
-  const { close } = useDrawerContext();
+  const { close, closeOnInteractOutside } = useDrawerContext();
 
   return (
     <ChakraDrawer.Backdrop
       pointerEvents={"auto"}
       onClick={(event) => {
+        if (!closeOnInteractOutside) return;
         if (close) {
           close();
         } else {

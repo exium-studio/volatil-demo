@@ -1,5 +1,7 @@
 // src/design-system/components/feedback/types/face-emoji.type.ts
 
+import type { BoxProps } from "@/design-system/components/layout/types/box.type";
+
 export type FaceEmojiVariant =
   | "success"
   | "error"
@@ -7,7 +9,7 @@ export type FaceEmojiVariant =
   | "info"
   | "question";
 
-export type FaceEmojiProps = {
+export type FaceEmojiProps = BoxProps & {
   variant?: FaceEmojiVariant;
   transition?: boolean;
   colorPalette?: string;

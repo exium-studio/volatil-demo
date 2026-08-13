@@ -2,22 +2,22 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmationTriggerProps } from "@/design-system/components/feedback/types/confirmation-trigger.type";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { Center } from "@/design-system/components/layout/ui/center";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
+import { useAlertAnimation } from "@/design-system/hooks/use-alert-animation";
 import { t } from "@/shared/libs/i18n";
-import type { ComponentType, MouseEvent, ReactElement } from "react";
+import type { MouseEvent, ReactElement } from "react";
 import { cloneElement, isValidElement } from "react";
 
 export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
   // Props
   const {
     children,
-    icon,
     title,
     desc,
     description,
@@ -33,6 +33,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
   const popModal = usePopModal({
     modalKey,
   });
+  const transition = useAlertAnimation(popModal.isOpen);
 
   // Resolved Values
   const resolvedTitle = title ?? t["action.confirm"]();
@@ -79,25 +80,6 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
     );
   };
 
-  // Render Icon Element
-  const renderIcon = () => {
-    if (!icon) return null;
-
-    if (isValidElement(icon)) {
-      return icon;
-    }
-
-    return (
-      <Center mb={SPACING.md}>
-        <AppIcon
-          icon={icon as ComponentType}
-          size={"3xl"}
-          color={"fg.subtle"}
-        />
-      </Center>
-    );
-  };
-
   return (
     <>
       {renderTrigger()}
@@ -115,21 +97,25 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
           </Modal.Header>
 
           <Modal.Body gap={SPACING.md}>
-            {renderIcon()}
+            <VStack align={"center"} gap={"40px"}>
+              <FaceEmoji variant={"question"} transition={transition} />
 
-            <P fontSize={"lg"} textAlign={"center"}>
-              {resolvedTitle}
-            </P>
+              <VStack gap={SPACING.md}>
+                <P fontSize={"lg"} textAlign={"center"}>
+                  {resolvedTitle}
+                </P>
 
-            <P
-              maxW={"300px"}
-              mx={"auto"}
-              mb={SPACING.lg}
-              color={"fg.subtle"}
-              textAlign={"center"}
-            >
-              {resolvedDesc}
-            </P>
+                <P
+                  maxW={"300px"}
+                  mx={"auto"}
+                  mb={SPACING.lg}
+                  color={"fg.subtle"}
+                  textAlign={"center"}
+                >
+                  {resolvedDesc}
+                </P>
+              </VStack>
+            </VStack>
           </Modal.Body>
 
           <Modal.Footer>

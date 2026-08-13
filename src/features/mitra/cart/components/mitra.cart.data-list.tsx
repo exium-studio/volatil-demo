@@ -226,7 +226,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
               <Box display={"inline-flex"}>
                 <ConfirmationTrigger
                   icon={IconShoppingCartOff}
-                  title={"Kosongkan Keranjang"}
+                  title={"Kosongkan Keranjang?"}
                   description={
                     "Apakah Anda yakin ingin mengosongkan seluruh item di keranjang?"
                   }

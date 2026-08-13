@@ -10,40 +10,18 @@ import type {
   FocusAlertVariant,
 } from "@/design-system/components/focus-alert/types/focus-alert.type";
 import { useFocusAlertContext } from "@/design-system/components/focus-alert/ui/focus-alert-key-context";
+import { useAlertAnimation } from "@/design-system/components/feedback/hooks/use-alert-animation";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 // Animation constants
 const TRANSITION_DELAY_STEP_MS = 80;
 const EXIT_DURATION_MS = 250 + TRANSITION_DELAY_STEP_MS * 2;
-
-// Hooks
-const useAlertAnimation = (isOpen: boolean) => {
-  const [transition, setTransition] = useState(false);
-
-  useFirstMountEffect(
-    {
-      onUpdate: () => {
-        if (isOpen) setTransition(false);
-      },
-    },
-    [isOpen],
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      const t = setTimeout(() => setTransition(true), 200);
-      return () => clearTimeout(t);
-    }
-  }, [isOpen]);
-
-  return transition;
-};
 
 export const FocusAlertItem = (props: FocusAlertItemProps) => {
   // Props
@@ -91,7 +69,13 @@ export const FocusAlertItem = (props: FocusAlertItemProps) => {
   }, [isOpen, modalKey, removeAlert]);
 
   return (
-    <Modal.Root modalKey={modalKey} opened={isOpen} open={open} close={close}>
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      closeOnInteractOutside={false}
+    >
       <FocusAlertContent
         variant={variant}
         title={title}
@@ -123,7 +107,13 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
   const transition = useAlertAnimation(isOpen);
 
   return (
-    <Modal.Root modalKey={modalKey} opened={isOpen} open={open} close={close}>
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      closeOnInteractOutside={false}
+    >
       <Modal.Trigger>{children}</Modal.Trigger>
 
       <FocusAlertContent
