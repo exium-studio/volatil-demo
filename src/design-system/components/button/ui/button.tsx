@@ -41,21 +41,22 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       const flushTextGroup = () => {
         if (currentTextGroup.length > 0) {
           const combinedText = currentTextGroup.join("");
+          const clampVal = lineClamp != null ? Number(lineClamp) : 1;
+
           result.push(
             <Span
               key={`button-text-group-${result.length}`}
-              lineClamp={
-                lineClamp && Number(lineClamp) > 0 ? lineClamp : undefined
-              }
-              truncate={lineClamp === 1}
+              lineClamp={clampVal > 0 ? clampVal : undefined}
+              truncate={clampVal === 1}
               minW={0}
               maxW={"full"}
               overflow={"hidden"}
               display={"inline-block"}
               verticalAlign={"middle"}
-              lineHeight={"normal"}
-              whiteSpace={lineClamp === 1 ? "nowrap" : "normal"}
-              textOverflow={lineClamp === 1 ? "ellipsis" : undefined}
+              lineHeight={"1.2em"}
+              maxH={clampVal > 0 ? `${clampVal * 1.2}em` : undefined}
+              whiteSpace={clampVal === 1 ? "nowrap" : "normal"}
+              textOverflow={clampVal === 1 ? "ellipsis" : undefined}
             >
               {combinedText}
             </Span>,
@@ -91,6 +92,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         userSelect={"none"}
         minW={minW}
         maxW={maxW}
+        overflow={"hidden"}
         {...restProps}
       >
         {formattedChildren}
