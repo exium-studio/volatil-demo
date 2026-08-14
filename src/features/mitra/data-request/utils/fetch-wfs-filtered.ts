@@ -12,6 +12,7 @@ const FALLBACK_ENDPOINT = {
 
 export type WfsFilterParams = {
   typeName: string;
+  wfsUrl?: string;
   filters?: Record<string, string | undefined>;
   startIndex?: number;
   count?: number;
@@ -26,7 +27,7 @@ export const fetchWfsFiltered = async (
   params: WfsFilterParams,
 ): Promise<GeoJSON.FeatureCollection> => {
   // Params
-  const { typeName, filters = {}, startIndex, count, signal } = params;
+  const { typeName, wfsUrl, filters = {}, startIndex, count, signal } = params;
 
   // Build CQL filter conditions skipping key with undefined or empty string values
   const conditions = Object.entries(filters)
@@ -37,7 +38,8 @@ export const fetchWfsFiltered = async (
 
   // If pagination (startIndex/count) is provided, construct URL directly to pass pagination params
   if (startIndex !== undefined || count !== undefined) {
-    const url = new URL(FALLBACK_ENDPOINT.wfsUrl);
+    const baseUrl = wfsUrl ?? FALLBACK_ENDPOINT.wfsUrl;
+    const url = new URL(baseUrl);
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", FALLBACK_ENDPOINT.wfsVersion ?? "1.0.0");
     url.searchParams.set("request", "GetFeature");
@@ -64,6 +66,7 @@ export const fetchWfsFiltered = async (
 
   return fetchWfs({
     typeName,
+    wfsUrl,
     cqlFilter,
     signal,
   });

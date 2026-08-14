@@ -89,9 +89,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         userSelect={"none"}
         minW={minW}
         maxW={maxW}
-        _active={{
-          transform: "scale(0.98)",
-        }}
         {...restProps}
       >
         {formattedChildren}
@@ -117,9 +114,6 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         rounded={theme.radii.component}
         fontWeight={"normal"}
         userSelect={"none"}
-        _active={{
-          transform: "scale(0.98)",
-        }}
         {...restProps}
       />
     );

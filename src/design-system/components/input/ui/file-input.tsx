@@ -324,16 +324,17 @@ const FileInputInner = (props: FileinputInnerProps) => {
                 <VStack>
                   <AppIcon
                     icon={dragging ? ArrowDownIcon : UploadIcon}
-                    size={"lg"}
-                    color={"fg.muted"}
+                    size={"5xl"}
+                    color={"fg.subtle"}
                     mb={dragging ? -2 : 0}
                     animation={dragging ? "bounce" : ""}
                   />
+
                   {dragging && (
                     <AppIcon
                       icon={DotIcon}
-                      size={"lg"}
-                      color={"fg.muted"}
+                      size={"5xl"}
+                      color={"fg.subtle"}
                       mb={-4}
                     />
                   )}

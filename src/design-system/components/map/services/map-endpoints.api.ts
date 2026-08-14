@@ -18,8 +18,8 @@ const DUMMY_MAP_SERVER_ENDPOINTS: MapServerEndpoint[] = [
   {
     id: "testing-geoserver",
     name: "GeoServer Testing Workspace",
-    wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wfs",
-    wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+    wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/igt/ows",
+    wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/igt/wms",
     wfsVersion: "1.0.0",
     wmsVersion: "1.1.1",
     outputFormat: "application/json",

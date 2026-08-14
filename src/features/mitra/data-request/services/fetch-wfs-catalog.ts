@@ -61,14 +61,17 @@ type WfsSchemaProperty = {
  */
 export const getWfsStringAttributes = async (
   typeName: string,
+  wfsUrl?: string,
   signal?: AbortSignal,
 ): Promise<string[]> => {
-  if (cachedStringAttributes[typeName]) {
-    return cachedStringAttributes[typeName];
+  const cacheKey = `${wfsUrl ?? "default"}:${typeName}`;
+  if (cachedStringAttributes[cacheKey]) {
+    return cachedStringAttributes[cacheKey];
   }
 
   try {
-    const url = new URL("https://igtpr.atrbpn.go.id/geoserver/igt/ows");
+    const baseUrl = wfsUrl ?? "https://igtpr.atrbpn.go.id/geoserver/igt/ows";
+    const url = new URL(baseUrl);
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", "2.0.0");
     url.searchParams.set("request", "DescribeFeatureType");
@@ -82,13 +85,12 @@ export const getWfsStringAttributes = async (
         schema.featureTypes?.[0]?.properties ?? [];
       const stringKeys = properties
         .filter(
-          (prop) =>
-            prop.type === "xsd:string" || prop.localType === "string",
+          (prop) => prop.type === "xsd:string" || prop.localType === "string",
         )
         .map((prop) => prop.name);
 
       if (stringKeys.length > 0) {
-        cachedStringAttributes[typeName] = stringKeys;
+        cachedStringAttributes[cacheKey] = stringKeys;
         return stringKeys;
       }
     }
@@ -110,6 +112,7 @@ export const getWfsStringAttributes = async (
 
 export type FetchWfsCatalogParams = {
   typeName?: string;
+  wfsUrl?: string;
   page: number;
   pageSize: number;
   cqlFilter?: string;
@@ -129,6 +132,7 @@ export type FetchWfsCatalogResult = {
  */
 export const fetchWfsCatalog = async ({
   typeName = DEFAULT_WFS_TYPE_NAME,
+  wfsUrl,
   page,
   pageSize,
   cqlFilter,
@@ -137,7 +141,11 @@ export const fetchWfsCatalog = async ({
 }: FetchWfsCatalogParams): Promise<FetchWfsCatalogResult> => {
   const startIndex = (page - 1) * pageSize;
 
-  const stringAttributes = await getWfsStringAttributes(typeName, signal);
+  const stringAttributes = await getWfsStringAttributes(
+    typeName,
+    wfsUrl,
+    signal,
+  );
 
   // Build search CQL using only double-quoted WFS string attributes and ILIKE
   const trimmedSearch = search?.trim();
@@ -157,6 +165,7 @@ export const fetchWfsCatalog = async ({
     // Fetch current page of actual features using WFS 2.0.0
     const pageResult = await fetchWfs({
       typeName,
+      wfsUrl,
       version: "2.0.0",
       maxFeatures: pageSize,
       startIndex,
