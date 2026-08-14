@@ -2,7 +2,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_app/mitra/purchase-history")({
+export const Route = createFileRoute("/_private/mitra/purchase-history")({
   component: RouteComponent,
 });
 

@@ -3,7 +3,7 @@
 import { MitraMyDataPage } from "@/features/mitra/my-data/pages/mitra.my-data.page";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_app/mitra/my-data")({
+export const Route = createFileRoute("/_private/mitra/my-data")({
   component: RouteComponent,
 });
 

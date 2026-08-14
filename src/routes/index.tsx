@@ -1,6 +1,6 @@
 // src/routes/index.tsx
 
-import { SigninPage } from "@/features/auth/pages/signin.page";
+import { MitraSigninPage } from "@/features/auth/pages/mitra.signin.page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -8,5 +8,5 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
-  return <SigninPage />;
+  return <MitraSigninPage />;
 }

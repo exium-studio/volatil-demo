@@ -2,7 +2,7 @@
 
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_app/internal/support-ticket")({
+export const Route = createFileRoute("/_private/internal/support-ticket")({
   component: RouteComponent,
 });
 
