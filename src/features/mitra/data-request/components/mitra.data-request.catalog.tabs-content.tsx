@@ -162,7 +162,7 @@ const CatalogDataList = (props: CatalogDataListProps) => {
       position={"relative"}
     >
       {isLoading ? (
-        <Skeleton p={PADDING.md} />
+        <Skeleton p={PADDING.md} rounded={0} />
       ) : isEmptyArray(features) ? (
         <VStack
           flex={1}
@@ -172,7 +172,7 @@ const CatalogDataList = (props: CatalogDataListProps) => {
           py={12}
           bg={"bg.body"}
         >
-          <NoResultState />
+          <NoResultState query={search} />
         </VStack>
       ) : (
         <>

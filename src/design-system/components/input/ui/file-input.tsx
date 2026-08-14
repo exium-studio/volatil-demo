@@ -52,6 +52,7 @@ import {
   type MouseEvent,
   type ReactElement,
 } from "react";
+import { SPACING } from "@/design-system/constants/styles";
 
 export const FileInputTrigger = ({
   children,
@@ -381,7 +382,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
                   )}
                 </VStack>
 
-                <VStack gap={1} maxW={"360px"}>
+                <VStack gap={SPACING.md} maxW={"360px"}>
                   <P textAlign={"center"}>
                     {dragging ? t["common.drop_it_here"]() : dropzoneText}
                   </P>
