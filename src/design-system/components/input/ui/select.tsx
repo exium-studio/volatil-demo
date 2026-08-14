@@ -107,6 +107,14 @@ export default function SelectInput(props: SelectProps) {
             rounded={theme?.radii.container}
             border={"1px solid {colors.border.subtle}"}
             shadow={"sm"}
+            _open={{
+              animation: "scale-up-overshoot",
+              animationDuration: "slow",
+            }}
+            _closed={{
+              animation: "scale-down",
+              animationDuration: "moderate",
+            }}
           >
             {collection.items.map((item) => (
               <ChakraSelect.Item

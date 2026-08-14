@@ -76,6 +76,14 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
             borderColor={"border.subtle"}
             rounded={theme.radii.container}
             shadow={"soft"}
+            _open={{
+              animation: "scale-up-overshoot",
+              animationDuration: "slow",
+            }}
+            _closed={{
+              animation: "scale-down",
+              animationDuration: "moderate",
+            }}
             {...restProps}
           />
         </ChakraPopover.Positioner>
