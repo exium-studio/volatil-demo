@@ -99,7 +99,6 @@ const CatalogDataList = () => {
       position={"relative"}
     >
       {/* Action Header — Search, Filter (rendered inside datalist) */}
-
       <HStack
         wrap={"wrap"}
         align={"center"}
