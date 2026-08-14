@@ -264,6 +264,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
                 />
 
                 <WfsIgtFilterTrigger
+                  modalKey="mitra-cart-filter-modal"
                   onApply={(filters) => {
                     setAppliedFilters(filters);
                     setPageState((prev) => ({ ...prev, page: 1 }));

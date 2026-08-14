@@ -308,6 +308,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
             />
 
             <WfsIgtFilterTrigger
+              modalKey="mitra-data-request-draw-aoi-filter-modal"
               onApply={(filters) => {
                 setAppliedFilters(filters);
                 setPageState((prev) => ({ ...prev, page: 1 }));

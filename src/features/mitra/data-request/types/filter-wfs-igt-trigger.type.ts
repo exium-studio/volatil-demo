@@ -26,6 +26,7 @@ export type WfsIgtFilterSelectProps = {
 
 export type WfsIgtFilterTriggerProps = {
   children: React.ReactNode;
+  modalKey?: string;
   value?: WfsIgtFilterValues;
   defaultValue?: WfsIgtFilterValues;
   defaultValues?: WfsIgtFilterValues;

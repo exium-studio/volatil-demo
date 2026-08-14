@@ -119,6 +119,7 @@ const CatalogDataList = () => {
           />
 
           <WfsIgtFilterTrigger
+            modalKey="mitra-data-request-catalog-filter-modal"
             onApply={(filters) => {
               setAppliedFilters(filters);
               setPageState((prev) => ({ ...prev, page: 1 }));

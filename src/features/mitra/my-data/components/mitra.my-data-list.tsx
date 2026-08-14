@@ -218,6 +218,7 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
         />
         <HStack wrap={"wrap"} gap={SPACING.sm}>
           <WfsIgtFilterTrigger
+            modalKey="mitra-my-data-filter-modal"
             value={wfsFilters}
             onApply={(filters) => {
               setWfsFilters(filters);

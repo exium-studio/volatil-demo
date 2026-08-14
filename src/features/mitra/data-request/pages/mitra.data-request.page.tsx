@@ -128,6 +128,7 @@ export const MitraDataRequestPage = () => {
                     placeholder={"Pilih Layer Spasial"}
                     size={"xs"}
                     width={"220px"}
+                    variant={"ghost"}
                   />
                 </HStack>
               )

@@ -27,6 +27,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
     defaultValues,
     onFilterChange,
     onApply,
+    modalKey: customModalKey,
   } = props;
 
   // Uncontrolled applied state (internal)
@@ -41,7 +42,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: "wfs-igt-filter-modal",
+    modalKey: customModalKey ?? "wfs-igt-filter-modal",
   });
 
   // Local draft state inside modal (editing before click "Terapkan Filter")

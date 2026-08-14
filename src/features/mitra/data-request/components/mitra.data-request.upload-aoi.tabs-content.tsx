@@ -576,6 +576,7 @@ const MitraDataRequestUploadAoiDataList = memo(
               />
 
               <WfsIgtFilterTrigger
+                modalKey="mitra-data-request-upload-aoi-filter-modal"
                 onApply={(filters) => {
                   setAppliedFilters(filters);
                   setPageState((prev) => ({ ...prev, page: 1 }));
