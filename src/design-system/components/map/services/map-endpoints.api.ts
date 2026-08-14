@@ -27,14 +27,22 @@ const DUMMY_MAP_SERVER_ENDPOINTS: MapServerEndpoint[] = [
   },
 ];
 
-export async function getMapServerEndpoints(signal?: AbortSignal): Promise<MapServerEndpoint[]> {
+export async function getMapServerEndpoints(
+  signal?: AbortSignal,
+): Promise<MapServerEndpoint[]> {
   try {
-    const response = await apiClient.get<ApiResponse<MapServerEndpoint[]>>("/map/endpoints", {
-      signal,
-    });
+    const response = await apiClient.get<ApiResponse<MapServerEndpoint[]>>(
+      "/map/endpoints",
+      {
+        signal,
+      },
+    );
     return response.data ?? DUMMY_MAP_SERVER_ENDPOINTS;
   } catch (error) {
-    console.warn("getMapServerEndpoints API error, falling back to dummy data:", error);
+    console.warn(
+      "getMapServerEndpoints API error, falling back to dummy data:",
+      error,
+    );
     return DUMMY_MAP_SERVER_ENDPOINTS;
   }
 }
