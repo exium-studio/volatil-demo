@@ -58,7 +58,7 @@ export const MitraDataRequestPage = () => {
   const { queryValue: tab, setQueryValue: setTab } = useSearchParam("tab");
 
   // Stores
-  const { selectedLayer, setSelectedLayer } = useIgtLayerStore();
+  const { selectedIgtLayer, setSelectedIgtLayer } = useIgtLayerStore();
 
   // Queries
   const { data: layersData, isLoading: isLoadingLayers } = useQuery({
@@ -74,10 +74,10 @@ export const MitraDataRequestPage = () => {
 
   // Set first layer as default when loaded
   useEffect(() => {
-    if (layersData?.wfs && layersData.wfs.length > 0 && !selectedLayer) {
-      setSelectedLayer(layersData.wfs[0]);
+    if (layersData?.wfs && layersData.wfs.length > 0 && !selectedIgtLayer) {
+      setSelectedIgtLayer(layersData.wfs[0]);
     }
-  }, [layersData, selectedLayer, setSelectedLayer]);
+  }, [layersData, selectedIgtLayer, setSelectedIgtLayer]);
 
   // Set to default tab if query is not satisfied
   useEffect(() => {
@@ -100,7 +100,7 @@ export const MitraDataRequestPage = () => {
   const handleLayerChange = (layerId: string) => {
     const layer = layersData?.wfs.find((l) => l.id === layerId);
     if (layer) {
-      setSelectedLayer(layer);
+      setSelectedIgtLayer(layer);
     }
   };
 
@@ -108,21 +108,26 @@ export const MitraDataRequestPage = () => {
     <PanelContentContainer overflowY={"auto"} gap={PADDING.sm} p={PADDING.sm}>
       <Container.Root flex={1} overflowY={"auto"}>
         <Container.Body flex={1} overflowY={"auto"}>
-          <HStack justify={"space-between"} align={"center"} pr={PADDING.md}>
+          <HStack
+            wrap={"wrap"}
+            justify={"space-between"}
+            align={"center"}
+            pr={3}
+          >
             <AppNavTitle navsMap={APP_NAVS_MAP} />
 
             {isLoadingLayers ? (
               <Skeleton width={"220px"} height={"32px"} />
             ) : (
-              selectedLayer && (
+              selectedIgtLayer && (
                 <HStack gap={SPACING.xs} align={"center"}>
                   <SelectInput
-                    value={selectedLayer.id}
+                    value={selectedIgtLayer.id}
                     onValueChange={handleLayerChange}
                     selectOptions={selectOptions}
                     placeholder={"Pilih Layer Spasial"}
-                    fontSize={"sm"}
-                    width={"260px"}
+                    size={"xs"}
+                    width={"220px"}
                   />
                 </HStack>
               )
@@ -131,8 +136,8 @@ export const MitraDataRequestPage = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          {!selectedLayer ? (
-            <Skeleton flex={1} m={PADDING.md} />
+          {!selectedIgtLayer ? (
+            <Skeleton flex={1} p={PADDING.md} />
           ) : (
             <Tabs.Root
               value={tab}
@@ -173,7 +178,9 @@ export const MitraDataRequestPage = () => {
 
                   if (!isVisited) return null;
 
-                  return <TabsContent key={method.value} value={method.value} />;
+                  return (
+                    <TabsContent key={method.value} value={method.value} />
+                  );
                 })}
               </>
             </Tabs.Root>

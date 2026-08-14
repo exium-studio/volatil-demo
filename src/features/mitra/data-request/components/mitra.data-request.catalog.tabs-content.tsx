@@ -129,7 +129,7 @@ const CatalogDataList = (props: CatalogDataListProps) => {
 
   // Stores
   const { theme } = useThemeStore();
-  const { selectedLayer } = useIgtLayerStore();
+  const { selectedIgtLayer } = useIgtLayerStore();
 
   // Hooks (Mutations)
   const addToCartSelectedMutation = useAddToCartSelected();
@@ -148,8 +148,8 @@ const CatalogDataList = (props: CatalogDataListProps) => {
     pageSize,
     cqlFilter,
     search,
-    typeName: selectedLayer?.wfsTypeName ?? "",
-    wfsUrl: selectedLayer?.wfsUrl ?? "",
+    typeName: selectedIgtLayer?.wfsTypeName ?? "",
+    wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
   });
 
   return (
@@ -202,27 +202,27 @@ const CatalogDataList = (props: CatalogDataListProps) => {
               addToCartSelectedMutation.mutate(selectedIds);
             }}
             onAddAllBidangClick={() => {
-              if (!selectedLayer) return;
+              if (!selectedIgtLayer) return;
               addToCartAllMutation.mutate({
                 cqlFilter,
-                typeName: selectedLayer.wfsTypeName,
-                wfsUrl: selectedLayer.wfsUrl ?? "",
+                typeName: selectedIgtLayer.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
               });
             }}
             onAddAllKawasanClick={() => {
-              if (!selectedLayer) return;
+              if (!selectedIgtLayer) return;
               addToCartAllMutation.mutate({
                 cqlFilter,
-                typeName: selectedLayer.wfsTypeName,
-                wfsUrl: selectedLayer.wfsUrl ?? "",
+                typeName: selectedIgtLayer.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
               });
             }}
             onAddAllBothClick={() => {
-              if (!selectedLayer) return;
+              if (!selectedIgtLayer) return;
               addToCartAllMutation.mutate({
                 cqlFilter,
-                typeName: selectedLayer.wfsTypeName,
-                wfsUrl: selectedLayer.wfsUrl ?? "",
+                typeName: selectedIgtLayer.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
               });
             }}
             mt={"auto"}

@@ -4,11 +4,11 @@ import { create } from "zustand";
 import type { WfsLayerConfig } from "@/design-system/components/map/types/map.type";
 
 interface IgtLayerState {
-  selectedLayer: WfsLayerConfig | null;
-  setSelectedLayer: (layer: WfsLayerConfig | null) => void;
+  selectedIgtLayer: WfsLayerConfig | null;
+  setSelectedIgtLayer: (layer: WfsLayerConfig | null) => void;
 }
 
 export const useIgtLayerStore = create<IgtLayerState>((set) => ({
-  selectedLayer: null,
-  setSelectedLayer: (selectedLayer) => set({ selectedLayer }),
+  selectedIgtLayer: null,
+  setSelectedIgtLayer: (selectedIgtLayer) => set({ selectedIgtLayer }),
 }));

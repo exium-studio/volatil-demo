@@ -66,7 +66,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
   // Stores
   const map = useMapInstanceStore((state) => state.map);
   const { theme } = useThemeStore();
-  const { selectedLayer, setSelectedLayer } = useIgtLayerStore();
+  const { selectedIgtLayer, setSelectedIgtLayer } = useIgtLayerStore();
 
   // Queries
   const { data: layersData } = useQuery({
@@ -77,10 +77,10 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
 
   // Set default selected layer if not set
   useEffect(() => {
-    if (layersData?.wfs && layersData.wfs.length > 0 && !selectedLayer) {
-      setSelectedLayer(layersData.wfs[0]);
+    if (layersData?.wfs && layersData.wfs.length > 0 && !selectedIgtLayer) {
+      setSelectedIgtLayer(layersData.wfs[0]);
     }
-  }, [layersData, selectedLayer, setSelectedLayer]);
+  }, [layersData, selectedIgtLayer, setSelectedIgtLayer]);
 
   // States
   const [pageState, setPageState] = useState({
@@ -94,8 +94,8 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
     useCartItemsQuery({
       page: pageState.page,
       pageSize: pageState.pageSize,
-      typeName: selectedLayer?.wfsTypeName ?? "",
-      wfsUrl: selectedLayer?.wfsUrl ?? "",
+      typeName: selectedIgtLayer?.wfsTypeName ?? "",
+      wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
     });
 
   // Mutations

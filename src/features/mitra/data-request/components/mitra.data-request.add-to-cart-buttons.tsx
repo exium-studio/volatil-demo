@@ -95,6 +95,30 @@ export const MitraDataRequestAddToCartButtons = (
         gap={SPACING.sm}
         w={"full"}
       >
+        {/* Add selected */}
+        <Button
+          primary
+          variant={"outline"}
+          flex={"1 1 300px"}
+          w={"full"}
+          maxW={"full"}
+          minW={0}
+          disabled={isEmptyArray(selectedItems)}
+          onClick={onAddSelectedClick}
+        >
+          <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
+          {"Tambah yang dipilih"}{" "}
+          {!isEmptyArray(selectedItems) &&
+            `(${[
+              selectedBidangCount > 0 &&
+                `${formatNumber(selectedBidangCount)} bidang`,
+              selectedKawasanCount > 0 &&
+                `${formatNumber(selectedKawasanCount)} kawasan`,
+            ]
+              .filter(Boolean)
+              .join(", ")})`}
+        </Button>
+
         {/* Add all — ButtonGroup with main button on left and menu trigger on right */}
         <ButtonGroup
           variant={"outline"}
@@ -106,7 +130,6 @@ export const MitraDataRequestAddToCartButtons = (
         >
           <Button
             primary
-            variant={"outline"}
             flex={1}
             minW={0}
             disabled={bidangCount + kawasanCount === 0}
@@ -125,7 +148,6 @@ export const MitraDataRequestAddToCartButtons = (
             <Menu.Trigger>
               <IconButton
                 primary
-                variant={"outline"}
                 aria-label={"Pilih opsi tambah semua"}
                 roundedLeft={0}
                 flexShrink={0}
@@ -156,29 +178,6 @@ export const MitraDataRequestAddToCartButtons = (
             </Menu.Content>
           </Menu.Root>
         </ButtonGroup>
-
-        {/* Add selected */}
-        <Button
-          primary
-          flex={"1 1 300px"}
-          w={"full"}
-          maxW={"full"}
-          minW={0}
-          disabled={isEmptyArray(selectedItems)}
-          onClick={onAddSelectedClick}
-        >
-          <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
-          {"Tambah yang dipilih"}{" "}
-          {!isEmptyArray(selectedItems) &&
-            `(${[
-              selectedBidangCount > 0 &&
-                `${formatNumber(selectedBidangCount)} bidang`,
-              selectedKawasanCount > 0 &&
-                `${formatNumber(selectedKawasanCount)} kawasan`,
-            ]
-              .filter(Boolean)
-              .join(", ")})`}
-        </Button>
       </HStack>
     </VStack>
   );

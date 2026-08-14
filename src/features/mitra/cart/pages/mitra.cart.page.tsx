@@ -57,7 +57,7 @@ const MitraCartContent = () => {
           minH={isSmContainer ? undefined : 0}
           overflowY={isSmContainer ? undefined : "auto"}
         >
-          <HeaderContainer>
+          <HeaderContainer pr={3}>
             <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
               {"Keranjang"}
             </ClampedP>

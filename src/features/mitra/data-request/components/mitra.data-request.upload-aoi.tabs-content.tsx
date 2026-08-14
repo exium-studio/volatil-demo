@@ -112,7 +112,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
   // Stores
   const map = useMapInstanceStore((state) => state.map);
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
-  const { selectedLayer } = useIgtLayerStore();
+  const { selectedIgtLayer } = useIgtLayerStore();
 
   // States
   const [aoiLayers, setAoiLayers] = useState<MitraDataRequestUploadAoiLayer[]>(
@@ -375,27 +375,27 @@ export const MitraDataRequestUploadAoiTabsContent = (
                 addToCartSelectedMutation.mutate(selectedIds)
               }
               onAddAllBidang={() => {
-                if (!selectedLayer) return;
+                if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter ?? undefined,
-                  typeName: selectedLayer.wfsTypeName,
-                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });
               }}
               onAddAllKawasan={() => {
-                if (!selectedLayer) return;
+                if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter ?? undefined,
-                  typeName: selectedLayer.wfsTypeName,
-                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });
               }}
               onAddAllBoth={() => {
-                if (!selectedLayer) return;
+                if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter ?? undefined,
-                  typeName: selectedLayer.wfsTypeName,
-                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });
               }}
             />
@@ -562,7 +562,7 @@ const MitraDataRequestUploadAoiDataList = memo(
     }, [aoiCqlFilter, appliedFilters]);
 
     // Stores
-    const { selectedLayer } = useIgtLayerStore();
+    const { selectedIgtLayer } = useIgtLayerStore();
 
     // Queries — server-side WFS pagination
     const {
@@ -576,8 +576,8 @@ const MitraDataRequestUploadAoiDataList = memo(
       page: pageState.page,
       pageSize: pageState.pageSize,
       cqlFilter: combinedCqlFilter,
-      typeName: selectedLayer?.wfsTypeName ?? "",
-      wfsUrl: selectedLayer?.wfsUrl ?? "",
+      typeName: selectedIgtLayer?.wfsTypeName ?? "",
+      wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
     });
 
     // Render

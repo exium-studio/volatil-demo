@@ -20,7 +20,14 @@ export const Skeleton = (props: SkeletonProps) => {
   const { theme } = useThemeStore();
 
   return (
-    <Center w={"full"} h={"full"} bg={"bg.body"} overflow={"clip"} {...props}>
+    <Center
+      w={"full"}
+      h={"full"}
+      bg={"bg.body"}
+      rounded={theme.radii.container}
+      overflow={"clip"}
+      {...props}
+    >
       <ChakraSkeleton
         variant={"shine"}
         w={"full"}

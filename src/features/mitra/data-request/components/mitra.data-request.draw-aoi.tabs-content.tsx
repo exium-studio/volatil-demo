@@ -239,7 +239,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
   const { aoiCqlFilter, onResetDraw } = props;
 
   // Stores
-  const { selectedLayer } = useIgtLayerStore();
+  const { selectedIgtLayer } = useIgtLayerStore();
 
   // Hooks (Mutations)
   const addToCartSelectedMutation = useAddToCartSelected();
@@ -271,8 +271,8 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
     page: pageState.page,
     pageSize: pageState.pageSize,
     cqlFilter: combinedCqlFilter,
-    typeName: selectedLayer?.wfsTypeName ?? "",
-    wfsUrl: selectedLayer?.wfsUrl ?? "",
+    typeName: selectedIgtLayer?.wfsTypeName ?? "",
+    wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
   });
 
   // const isLoading = true;
@@ -365,27 +365,27 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
               totalKawasanCount={kawasanCount}
               totalCount={totalFeatures}
               onAddAllBidangClick={() => {
-                if (!selectedLayer) return;
+                if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: combinedCqlFilter,
-                  typeName: selectedLayer.wfsTypeName,
-                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });
               }}
               onAddAllKawasanClick={() => {
-                if (!selectedLayer) return;
+                if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: combinedCqlFilter,
-                  typeName: selectedLayer.wfsTypeName,
-                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });
               }}
               onAddAllBothClick={() => {
-                if (!selectedLayer) return;
+                if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: combinedCqlFilter,
-                  typeName: selectedLayer.wfsTypeName,
-                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });
               }}
               onAddSelectedClick={() => {
