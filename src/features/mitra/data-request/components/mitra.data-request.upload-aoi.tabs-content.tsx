@@ -44,6 +44,7 @@ import {
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
+import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import type {
   MitraDataRequestUploadAoiAddFileButtonProps,
@@ -111,6 +112,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
   // Stores
   const map = useMapInstanceStore((state) => state.map);
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
+  const { selectedLayer } = useIgtLayerStore();
 
   // States
   const [aoiLayers, setAoiLayers] = useState<MitraDataRequestUploadAoiLayer[]>(
@@ -372,21 +374,30 @@ export const MitraDataRequestUploadAoiTabsContent = (
               onAddToCartSelected={(selectedIds) =>
                 addToCartSelectedMutation.mutate(selectedIds)
               }
-              onAddAllBidang={() =>
+              onAddAllBidang={() => {
+                if (!selectedLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter ?? undefined,
-                })
-              }
-              onAddAllKawasan={() =>
+                  typeName: selectedLayer.wfsTypeName,
+                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                });
+              }}
+              onAddAllKawasan={() => {
+                if (!selectedLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter ?? undefined,
-                })
-              }
-              onAddAllBoth={() =>
+                  typeName: selectedLayer.wfsTypeName,
+                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                });
+              }}
+              onAddAllBoth={() => {
+                if (!selectedLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter ?? undefined,
-                })
-              }
+                  typeName: selectedLayer.wfsTypeName,
+                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                });
+              }}
             />
           </>
         )}
@@ -421,15 +432,12 @@ const MitraDataRequestUploadAoiAddFileButton = (
           onFilesAdded(acceptedFiles);
         },
       }}
-      flex={1}
     >
-      {isIconButton && (
+      {isIconButton ? (
         <IconButton primary {...restProps}>
           <AppIcon icon={PlusIcon} />
         </IconButton>
-      )}
-
-      {!isIconButton && (
+      ) : (
         <Button primary w={"full"} pl={3} {...restProps}>
           <AppIcon icon={PlusIcon} />
           {"Tambah file AOI"}
@@ -501,6 +509,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
         <Modal.Footer gap={SPACING.sm}>
           <Button
             flex={1}
+            w={"full"}
             variant={"outline"}
             colorPalette={"red"}
             onClick={onClearAll}
@@ -510,6 +519,8 @@ const MitraDataRequestUploadAoiFileListTrigger = (
           </Button>
 
           <MitraDataRequestUploadAoiAddFileButton
+            flex={1}
+            w={"full"}
             onFilesAdded={onFilesAdded}
             variant={"outline"}
           />
@@ -550,6 +561,9 @@ const MitraDataRequestUploadAoiDataList = memo(
       return aoiCqlFilter ?? filterCql ?? undefined;
     }, [aoiCqlFilter, appliedFilters]);
 
+    // Stores
+    const { selectedLayer } = useIgtLayerStore();
+
     // Queries — server-side WFS pagination
     const {
       features,
@@ -562,6 +576,8 @@ const MitraDataRequestUploadAoiDataList = memo(
       page: pageState.page,
       pageSize: pageState.pageSize,
       cqlFilter: combinedCqlFilter,
+      typeName: selectedLayer?.wfsTypeName ?? "",
+      wfsUrl: selectedLayer?.wfsUrl ?? "",
     });
 
     // Render

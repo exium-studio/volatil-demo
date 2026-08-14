@@ -26,6 +26,7 @@ import {
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import type { CatalogDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
+import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useState } from "react";
@@ -128,6 +129,7 @@ const CatalogDataList = (props: CatalogDataListProps) => {
 
   // Stores
   const { theme } = useThemeStore();
+  const { selectedLayer } = useIgtLayerStore();
 
   // Hooks (Mutations)
   const addToCartSelectedMutation = useAddToCartSelected();
@@ -141,7 +143,14 @@ const CatalogDataList = (props: CatalogDataListProps) => {
     kawasanCount,
     isLoading,
     isFetching,
-  } = useIgtWfsCatalog({ page, pageSize, cqlFilter, search });
+  } = useIgtWfsCatalog({
+    page,
+    pageSize,
+    cqlFilter,
+    search,
+    typeName: selectedLayer?.wfsTypeName ?? "",
+    wfsUrl: selectedLayer?.wfsUrl ?? "",
+  });
 
   return (
     <VStack
@@ -193,13 +202,28 @@ const CatalogDataList = (props: CatalogDataListProps) => {
               addToCartSelectedMutation.mutate(selectedIds);
             }}
             onAddAllBidangClick={() => {
-              addToCartAllMutation.mutate({ cqlFilter });
+              if (!selectedLayer) return;
+              addToCartAllMutation.mutate({
+                cqlFilter,
+                typeName: selectedLayer.wfsTypeName,
+                wfsUrl: selectedLayer.wfsUrl ?? "",
+              });
             }}
             onAddAllKawasanClick={() => {
-              addToCartAllMutation.mutate({ cqlFilter });
+              if (!selectedLayer) return;
+              addToCartAllMutation.mutate({
+                cqlFilter,
+                typeName: selectedLayer.wfsTypeName,
+                wfsUrl: selectedLayer.wfsUrl ?? "",
+              });
             }}
             onAddAllBothClick={() => {
-              addToCartAllMutation.mutate({ cqlFilter });
+              if (!selectedLayer) return;
+              addToCartAllMutation.mutate({
+                cqlFilter,
+                typeName: selectedLayer.wfsTypeName,
+                wfsUrl: selectedLayer.wfsUrl ?? "",
+              });
             }}
             mt={"auto"}
           />

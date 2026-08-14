@@ -67,3 +67,8 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
   format?: string;
   transparent?: boolean;
 };
+
+export type IgtLayersResponse = {
+  wfs: WfsLayerConfig[];
+  wms: WmsRasterLayerConfig[];
+};

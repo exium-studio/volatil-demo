@@ -17,7 +17,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export type CartItemsQueryParams = {
   page: number;
   pageSize: number;
-  typeName?: string;
+  typeName: string;
+  wfsUrl: string;
 };
 
 const EMPTY_CART_SUMMARY: CartSummaryResponse = {
@@ -121,7 +122,7 @@ export const useAddAllToCartFromWfs = (onSuccessCallback?: (count: number) => vo
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: { typeName?: string; cqlFilter?: string }) =>
+    mutationFn: (params: { typeName: string; wfsUrl: string; cqlFilter?: string }) =>
       addAllToCartFromWfs(params),
     onSuccess: (count) => {
       onSuccessCallback?.(count);

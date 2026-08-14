@@ -21,8 +21,11 @@ import {
   useCartItemsQuery,
   useRemoveFromCart,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
+import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { getIgtLayers } from "@/design-system/components/map/services/map-layers.api";
+import { useQuery } from "@tanstack/react-query";
 import { MapPinIcon, Trash2Icon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 import type GeoJSON from "geojson";
 
@@ -63,6 +66,21 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
   // Stores
   const map = useMapInstanceStore((state) => state.map);
   const { theme } = useThemeStore();
+  const { selectedLayer, setSelectedLayer } = useIgtLayerStore();
+
+  // Queries
+  const { data: layersData } = useQuery({
+    queryKey: ["igt-layers-list"],
+    queryFn: () => getIgtLayers(),
+    staleTime: Infinity,
+  });
+
+  // Set default selected layer if not set
+  useEffect(() => {
+    if (layersData?.wfs && layersData.wfs.length > 0 && !selectedLayer) {
+      setSelectedLayer(layersData.wfs[0]);
+    }
+  }, [layersData, selectedLayer, setSelectedLayer]);
 
   // States
   const [pageState, setPageState] = useState({
@@ -76,6 +94,8 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
     useCartItemsQuery({
       page: pageState.page,
       pageSize: pageState.pageSize,
+      typeName: selectedLayer?.wfsTypeName ?? "",
+      wfsUrl: selectedLayer?.wfsUrl ?? "",
     });
 
   // Mutations

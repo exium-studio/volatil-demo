@@ -41,7 +41,17 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactElement,
+} from "react";
 
 export const FileInputTrigger = ({
   children,
@@ -49,6 +59,37 @@ export const FileInputTrigger = ({
   ...restProps
 }: FileInputTriggerProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleTriggerClick = useCallback(() => {
+    inputRef.current?.click();
+  }, []);
+
+  if (isValidElement(children)) {
+    const child = children as ReactElement<{
+      onClick?: (e: MouseEvent<HTMLElement>) => void;
+    }>;
+    return (
+      <>
+        <FileInput
+          ref={inputRef}
+          variant={"button"}
+          label={"Tambah file"}
+          display={"none"}
+          w={"fit"}
+          {...fileInputProps}
+        />
+
+        {/* eslint-disable-next-line react-hooks/refs */}
+        {cloneElement(child, {
+          onClick: (e: MouseEvent<HTMLElement>) => {
+            child.props.onClick?.(e);
+            handleTriggerClick();
+          },
+          ...(restProps as Record<string, unknown>),
+        })}
+      </>
+    );
+  }
 
   return (
     <>
@@ -61,7 +102,7 @@ export const FileInputTrigger = ({
         {...fileInputProps}
       />
 
-      <Box w={"fit"} onClick={() => inputRef.current?.click()} {...restProps}>
+      <Box onClick={handleTriggerClick} {...restProps}>
         {children}
       </Box>
     </>
@@ -324,7 +365,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
                 <VStack>
                   <AppIcon
                     icon={dragging ? ArrowDownIcon : UploadIcon}
-                    size={"5xl"}
+                    size={"xl"}
                     color={"fg.subtle"}
                     mb={dragging ? -2 : 0}
                     animation={dragging ? "bounce" : ""}

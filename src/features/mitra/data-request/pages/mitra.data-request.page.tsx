@@ -6,7 +6,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
-import { DIMENSIONS, PADDING } from "@/design-system/constants/styles";
+import { DIMENSIONS, PADDING, SPACING } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { MitraDataRequestCatalogTabsContent } from "@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content";
 import { MitraDataRequestDrawAoiTabsContent } from "@/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content";
@@ -14,7 +14,13 @@ import { MitraDataRequestUploadAoiTabsContent } from "@/features/mitra/data-requ
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getIgtLayers } from "@/design-system/components/map/services/map-layers.api";
+import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import SelectInput from "@/design-system/components/input/ui/select";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 
 const REQUEST_METHOD_MAP = {
   catalog: {
@@ -33,6 +39,7 @@ const REQUEST_METHOD_MAP = {
     content: MitraDataRequestDrawAoiTabsContent,
   },
 };
+
 const REQUEST_METHOD_OPTIONS = (
   Object.keys(REQUEST_METHOD_MAP) as Array<keyof typeof REQUEST_METHOD_MAP>
 ).map((methodKey) => {
@@ -50,12 +57,27 @@ export const MitraDataRequestPage = () => {
   // Hooks
   const { queryValue: tab, setQueryValue: setTab } = useSearchParam("tab");
 
+  // Stores
+  const { selectedLayer, setSelectedLayer } = useIgtLayerStore();
+
+  // Queries
+  const { data: layersData, isLoading: isLoadingLayers } = useQuery({
+    queryKey: ["igt-layers-list"],
+    queryFn: () => getIgtLayers(),
+    staleTime: Infinity,
+  });
+
   // States
-  // Track which tabs have been visited to mount them lazily,
-  // but keep them alive in the DOM once mounted.
   const [visitedTabs, setVisitedTabs] = useState<Set<string>>(
     new Set([tab ?? "catalog"]),
   );
+
+  // Set first layer as default when loaded
+  useEffect(() => {
+    if (layersData?.wfs && layersData.wfs.length > 0 && !selectedLayer) {
+      setSelectedLayer(layersData.wfs[0]);
+    }
+  }, [layersData, selectedLayer, setSelectedLayer]);
 
   // Set to default tab if query is not satisfied
   useEffect(() => {
@@ -64,57 +86,98 @@ export const MitraDataRequestPage = () => {
     }
   }, [tab, setTab]);
 
+  // Derived Values — Dropdown options for selecting active WFS layer
+  const selectOptions = useMemo(() => {
+    return (layersData?.wfs ?? []).map((layer) => {
+      const displayLabel = layer.wfsTypeName.split(":")[1] || layer.wfsTypeName;
+      return {
+        value: layer.id,
+        label: displayLabel.replace(/_/g, " "),
+      };
+    });
+  }, [layersData]);
+
+  const handleLayerChange = (layerId: string) => {
+    const layer = layersData?.wfs.find((l) => l.id === layerId);
+    if (layer) {
+      setSelectedLayer(layer);
+    }
+  };
+
   return (
     <PanelContentContainer overflowY={"auto"} gap={PADDING.sm} p={PADDING.sm}>
       <Container.Root flex={1} overflowY={"auto"}>
         <Container.Body flex={1} overflowY={"auto"}>
-          <AppNavTitle navsMap={APP_NAVS_MAP} />
+          <HStack justify={"space-between"} align={"center"} pr={PADDING.md}>
+            <AppNavTitle navsMap={APP_NAVS_MAP} />
+
+            {isLoadingLayers ? (
+              <Skeleton width={"220px"} height={"32px"} />
+            ) : (
+              selectedLayer && (
+                <HStack gap={SPACING.xs} align={"center"}>
+                  <SelectInput
+                    value={selectedLayer.id}
+                    onValueChange={handleLayerChange}
+                    selectOptions={selectOptions}
+                    placeholder={"Pilih Layer Spasial"}
+                    fontSize={"sm"}
+                    width={"260px"}
+                  />
+                </HStack>
+              )
+            )}
+          </HStack>
 
           <Separator borderColor={"bg.canvas"} />
 
-          <Tabs.Root
-            value={tab}
-            flex={1}
-            display={"flex"}
-            flexDir={"column"}
-            overflowY={"auto"}
-            onValueChange={(details) => {
-              setTab(details.value);
-              setVisitedTabs((prev) => {
-                const next = new Set(prev);
-                next.add(details.value);
-                return next;
-              });
-            }}
-          >
-            <Tabs.List borderColor={"bg.canvas"}>
-              {REQUEST_METHOD_OPTIONS.map((method) => {
-                return (
-                  <Tabs.Trigger
-                    key={method.value}
-                    value={method.value}
-                    flex={1}
-                    justifyContent={"center"}
-                    h={DIMENSIONS.headerH}
-                  >
-                    <AppIcon icon={method.icon} />
-                    {method.label}
-                  </Tabs.Trigger>
-                );
-              })}
-            </Tabs.List>
+          {!selectedLayer ? (
+            <Skeleton flex={1} m={PADDING.md} />
+          ) : (
+            <Tabs.Root
+              value={tab}
+              flex={1}
+              display={"flex"}
+              flexDir={"column"}
+              overflowY={"auto"}
+              onValueChange={(details) => {
+                setTab(details.value);
+                setVisitedTabs((prev) => {
+                  const next = new Set(prev);
+                  next.add(details.value);
+                  return next;
+                });
+              }}
+            >
+              <Tabs.List borderColor={"bg.canvas"}>
+                {REQUEST_METHOD_OPTIONS.map((method) => {
+                  return (
+                    <Tabs.Trigger
+                      key={method.value}
+                      value={method.value}
+                      flex={1}
+                      justifyContent={"center"}
+                      h={DIMENSIONS.headerH}
+                    >
+                      <AppIcon icon={method.icon} />
+                      {method.label}
+                    </Tabs.Trigger>
+                  );
+                })}
+              </Tabs.List>
 
-            <>
-              {REQUEST_METHOD_OPTIONS.map((method) => {
-                const TabsContent = method.content;
-                const isVisited = visitedTabs.has(method.value);
+              <>
+                {REQUEST_METHOD_OPTIONS.map((method) => {
+                  const TabsContent = method.content;
+                  const isVisited = visitedTabs.has(method.value);
 
-                if (!isVisited) return null;
+                  if (!isVisited) return null;
 
-                return <TabsContent key={method.value} value={method.value} />;
-              })}
-            </>
-          </Tabs.Root>
+                  return <TabsContent key={method.value} value={method.value} />;
+                })}
+              </>
+            </Tabs.Root>
+          )}
         </Container.Body>
       </Container.Root>
     </PanelContentContainer>

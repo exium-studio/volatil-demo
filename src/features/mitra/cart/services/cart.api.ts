@@ -20,6 +20,7 @@ import type { ApiResponse } from "@/shared/types/common-response.type";
 import type GeoJSON from "geojson";
 
 const DEFAULT_WFS_TYPE_NAME = "igt:CONTOH_BIDANG_TANAH";
+const DEFAULT_WFS_URL = "https://igtpr.atrbpn.go.id/geoserver/igt/ows";
 const WFS_ID_FIELD = "gid";
 
 // -------------------------------------------------------------------------------------
@@ -30,6 +31,7 @@ export async function getCartWfsPage(params: {
   page: number;
   pageSize: number;
   typeName?: string;
+  wfsUrl?: string;
   signal?: AbortSignal;
 }): Promise<
   FetchWfsCatalogResult & {
@@ -38,7 +40,13 @@ export async function getCartWfsPage(params: {
     totalPages: number;
   }
 > {
-  const { page, pageSize, typeName = DEFAULT_WFS_TYPE_NAME, signal } = params;
+  const {
+    page,
+    pageSize,
+    typeName = DEFAULT_WFS_TYPE_NAME,
+    wfsUrl = DEFAULT_WFS_URL,
+    signal,
+  } = params;
   const ids = getLocalCartIds();
 
   const { pageIds, total, totalPages } = getPaginatedIds(ids, page, pageSize);
@@ -55,12 +63,13 @@ export async function getCartWfsPage(params: {
     };
   }
 
-  // Build CQL: "gid" IN ('id1','id2',...)
+  // Build CQL: "gid" IN ('id1','id2',...) or "id" IN (...)
   const idList = pageIds.map((id) => `'${id}'`).join(",");
   const cqlFilter = `"${WFS_ID_FIELD}" IN (${idList})`;
 
   const result = await fetchWfsCatalog({
     typeName,
+    wfsUrl,
     page: 1,
     pageSize,
     cqlFilter,
@@ -108,13 +117,20 @@ export async function addSelectedToCart(
  */
 export async function addAllToCartFromWfs(params: {
   typeName?: string;
+  wfsUrl?: string;
   cqlFilter?: string;
   signal?: AbortSignal;
 }): Promise<number> {
-  const { typeName = DEFAULT_WFS_TYPE_NAME, cqlFilter, signal } = params;
+  const {
+    typeName = DEFAULT_WFS_TYPE_NAME,
+    wfsUrl = DEFAULT_WFS_URL,
+    cqlFilter,
+    signal,
+  } = params;
 
   const result = await fetchWfs({
     typeName,
+    wfsUrl,
     version: "2.0.0",
     cqlFilter,
     resultType: "results",
@@ -124,8 +140,8 @@ export async function addAllToCartFromWfs(params: {
   const features: GeoJSON.Feature[] = result.features ?? [];
   const ids = features
     .map((f) => {
-      const gid = f.properties?.[WFS_ID_FIELD] ?? f.id;
-      return gid != null ? String(gid) : null;
+      const idVal = f.properties?.id ?? f.properties?.[WFS_ID_FIELD] ?? f.id;
+      return idVal != null ? String(idVal) : null;
     })
     .filter((id): id is string => id !== null);
 

@@ -12,7 +12,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
 import {
   DUMMY_MAP_LAYERS,
-  getMapLayers,
+  getIgtLayers,
 } from "@/design-system/components/map/services/map-layers.api";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
@@ -333,16 +333,17 @@ const Content = () => {
   // Derived Values — Build layer config from fetched layer list
   const { data: fetchedLayers } = useQuery({
     queryKey: ["map-layers"],
-    queryFn: () => getMapLayers(),
+    queryFn: () => getIgtLayers(),
     initialData: DUMMY_MAP_LAYERS,
     staleTime: Infinity,
   });
 
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
-      (fetchedLayers ?? []).map((layer) =>
-        layer.type === "wms-raster" ? { ...layer, visible: wmsVisible } : layer,
-      ),
+      (fetchedLayers?.wms ?? []).map((layer) => ({
+        ...layer,
+        visible: wmsVisible,
+      })),
     [fetchedLayers, wmsVisible],
   );
 

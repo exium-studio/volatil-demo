@@ -3,24 +3,28 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type GeoJSON from "geojson";
 
-const DEFAULT_WFS_TYPE_NAME = "igt:CONTOH_BIDANG_TANAH";
-
 const cachedAttributes: Record<string, string[]> = {};
 const cachedStringAttributes: Record<string, string[]> = {};
+
+const DEFAULT_WFS_TYPE_NAME = "igt:CONTOH_BIDANG_TANAH";
+const DEFAULT_WFS_URL = "https://igtpr.atrbpn.go.id/geoserver/igt/ows";
 
 /**
  * Fetches all properties keys dynamically from the first feature of a WFS type.
  */
 export const getWfsAttributes = async (
-  typeName: string,
+  typeName: string = DEFAULT_WFS_TYPE_NAME,
+  wfsUrl: string = DEFAULT_WFS_URL,
   signal?: AbortSignal,
 ): Promise<string[]> => {
-  if (cachedAttributes[typeName]) {
-    return cachedAttributes[typeName];
+  const cacheKey = `${wfsUrl}:${typeName}`;
+  if (cachedAttributes[cacheKey]) {
+    return cachedAttributes[cacheKey];
   }
   try {
     const res = await fetchWfs({
       typeName,
+      wfsUrl,
       version: "2.0.0",
       maxFeatures: 1,
       signal,
@@ -29,7 +33,7 @@ export const getWfsAttributes = async (
     if (firstFeature?.properties) {
       const keys = Object.keys(firstFeature.properties);
       if (keys.length > 0) {
-        cachedAttributes[typeName] = keys;
+        cachedAttributes[cacheKey] = keys;
         return keys;
       }
     }
@@ -60,18 +64,17 @@ type WfsSchemaProperty = {
  * This is used to build case-insensitive search queries on text-only fields to prevent SQL type errors.
  */
 export const getWfsStringAttributes = async (
-  typeName: string,
-  wfsUrl?: string,
+  typeName: string = DEFAULT_WFS_TYPE_NAME,
+  wfsUrl: string = DEFAULT_WFS_URL,
   signal?: AbortSignal,
 ): Promise<string[]> => {
-  const cacheKey = `${wfsUrl ?? "default"}:${typeName}`;
+  const cacheKey = `${wfsUrl}:${typeName}`;
   if (cachedStringAttributes[cacheKey]) {
     return cachedStringAttributes[cacheKey];
   }
 
   try {
-    const baseUrl = wfsUrl ?? "https://igtpr.atrbpn.go.id/geoserver/igt/ows";
-    const url = new URL(baseUrl);
+    const url = new URL(wfsUrl);
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", "2.0.0");
     url.searchParams.set("request", "DescribeFeatureType");
@@ -85,7 +88,8 @@ export const getWfsStringAttributes = async (
         schema.featureTypes?.[0]?.properties ?? [];
       const stringKeys = properties
         .filter(
-          (prop) => prop.type === "xsd:string" || prop.localType === "string",
+          (prop) =>
+            prop.type === "xsd:string" || prop.localType === "string",
         )
         .map((prop) => prop.name);
 
@@ -132,7 +136,7 @@ export type FetchWfsCatalogResult = {
  */
 export const fetchWfsCatalog = async ({
   typeName = DEFAULT_WFS_TYPE_NAME,
-  wfsUrl,
+  wfsUrl = DEFAULT_WFS_URL,
   page,
   pageSize,
   cqlFilter,

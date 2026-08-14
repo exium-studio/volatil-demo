@@ -28,7 +28,8 @@ const FeedbackState = (props: FeedbackStateProps) => {
           icon={icon}
           strokeWidth={1.5}
           color={"fg.subtle"}
-          size={"5xl"}
+          // size={"5xl"}
+          size={"xl"}
           {...iconProps}
         />
       )}

@@ -53,6 +53,17 @@ export const chakraConfig = defineConfig({
         },
       },
 
+      "scale-up-from-click-origin": {
+        "0%": {
+          transform: `translate(var(${DIALOG_OFFSET_X_VAR}), var(${DIALOG_OFFSET_Y_VAR})) scale(0)`,
+          opacity: 0,
+        },
+        "100%": {
+          transform: "translate(0, 0) scale(1)",
+          opacity: 1,
+        },
+      },
+
       "scale-up-overshoot": {
         "0%": {
           transform: "scale(0.85)",

@@ -7,10 +7,11 @@ import type { FileUpload } from "@chakra-ui/react";
 import type { ReactNode, RefObject } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
-export type FileInputTriggerProps = BoxProps & {
-  children: ReactNode;
-  fileInputProps?: FileInputProps;
-};
+export type FileInputTriggerProps = BoxProps &
+  Record<string, unknown> & {
+    children: ReactNode;
+    fileInputProps?: FileInputProps;
+  };
 
 export type FileInputProps = Omit<FileUpload.RootProps, "accept"> &
   FileInputOwnProps;

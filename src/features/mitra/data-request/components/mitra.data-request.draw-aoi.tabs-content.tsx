@@ -35,6 +35,7 @@ import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-d
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import type { DrawAoiGuideAlertProps } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
+import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { t } from "@/shared/libs/i18n";
 import { IconPolygonOff } from "@tabler/icons-react";
 import {
@@ -237,6 +238,9 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
   // Props
   const { aoiCqlFilter, onResetDraw } = props;
 
+  // Stores
+  const { selectedLayer } = useIgtLayerStore();
+
   // Hooks (Mutations)
   const addToCartSelectedMutation = useAddToCartSelected();
   const addToCartAllMutation = useAddToCartAll();
@@ -267,6 +271,8 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
     page: pageState.page,
     pageSize: pageState.pageSize,
     cqlFilter: combinedCqlFilter,
+    typeName: selectedLayer?.wfsTypeName ?? "",
+    wfsUrl: selectedLayer?.wfsUrl ?? "",
   });
 
   // const isLoading = true;
@@ -359,13 +365,28 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
               totalKawasanCount={kawasanCount}
               totalCount={totalFeatures}
               onAddAllBidangClick={() => {
-                addToCartAllMutation.mutate({ cqlFilter: combinedCqlFilter });
+                if (!selectedLayer) return;
+                addToCartAllMutation.mutate({
+                  cqlFilter: combinedCqlFilter,
+                  typeName: selectedLayer.wfsTypeName,
+                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                });
               }}
               onAddAllKawasanClick={() => {
-                addToCartAllMutation.mutate({ cqlFilter: combinedCqlFilter });
+                if (!selectedLayer) return;
+                addToCartAllMutation.mutate({
+                  cqlFilter: combinedCqlFilter,
+                  typeName: selectedLayer.wfsTypeName,
+                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                });
               }}
               onAddAllBothClick={() => {
-                addToCartAllMutation.mutate({ cqlFilter: combinedCqlFilter });
+                if (!selectedLayer) return;
+                addToCartAllMutation.mutate({
+                  cqlFilter: combinedCqlFilter,
+                  typeName: selectedLayer.wfsTypeName,
+                  wfsUrl: selectedLayer.wfsUrl ?? "",
+                });
               }}
               onAddSelectedClick={() => {
                 const selectedIds = pageState.selectedItems.map((item) =>
