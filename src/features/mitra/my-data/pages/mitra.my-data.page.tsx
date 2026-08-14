@@ -12,7 +12,7 @@ export const MitraMyDataPage = () => (
       <Container.Body flex={1} minH={0} overflowY={"auto"}>
         <HeaderContainer>
           <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
-            {"My Data"}
+            {"Data Saya"}
           </ClampedP>
         </HeaderContainer>
 
