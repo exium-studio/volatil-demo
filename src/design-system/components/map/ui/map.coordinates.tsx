@@ -65,7 +65,7 @@ export const MapCoordinates = () => {
         <P
           fontSize={"2xs"}
           fontWeight={"bold"}
-          color={"fg.muted"}
+          color={"neutral.500"}
           letterSpacing={"wider"}
         >
           <TNum>{coords.lat}°</TNum>
@@ -74,7 +74,7 @@ export const MapCoordinates = () => {
         <P
           fontSize={"2xs"}
           fontWeight={"bold"}
-          color={"fg.muted"}
+          color={"neutral.500"}
           letterSpacing={"wider"}
         >
           <TNum>{coords.lon}°</TNum>

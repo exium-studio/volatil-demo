@@ -74,7 +74,7 @@ export const MapScale = (props: StackProps) => {
       <P
         fontSize={"2xs"}
         fontWeight={"bold"}
-        color={"fg.muted"}
+        color={"neutral.500"}
         lineHeight={1}
         textAlign={"center"}
       >
@@ -87,7 +87,7 @@ export const MapScale = (props: StackProps) => {
         borderLeft={"2px solid"}
         borderRight={"2px solid"}
         borderBottom={"2px solid"}
-        borderColor={"fg.muted"}
+        borderColor={"neutral.500"}
         transition={"width 200ms ease"}
       />
     </VStack>
