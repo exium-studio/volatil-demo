@@ -72,7 +72,7 @@ export default function SelectInput(props: SelectProps) {
             minW={0}
           >
             <HStack w={"full"} minW={0} justify={"space-between"}>
-              <HStack flex={1} minW={0} gap={2}>
+              <HStack flex={1} minW={0}>
                 <ChakraSelect.ValueText
                   placeholder={placeholder}
                   minH={"20px"}
@@ -82,7 +82,6 @@ export default function SelectInput(props: SelectProps) {
                   textOverflow={"ellipsis"}
                   display={"inline-block"}
                   minW={0}
-                  flex={1}
                   fontSize={props?.fontSize}
                 />
 
