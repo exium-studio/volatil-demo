@@ -4,11 +4,12 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { SelectProps } from "@/design-system/components/input/types/select.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   Select as ChakraSelect,
-  Portal,
   createListCollection,
+  Portal,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "lucide-react";
 
@@ -68,20 +69,25 @@ export default function SelectInput(props: SelectProps) {
           <ChakraSelect.Trigger
             rounded={theme.radii.component}
             cursor={"pointer"}
+            minW={0}
           >
-            <HStack w={"full"}>
-              <ChakraSelect.ValueText
-                fontSize={props?.fontSize}
-                placeholder={placeholder}
-                minH={"20px"}
+            <HStack w={"full"} minW={0} justify={"space-between"}>
+              <HStack>
+                <ChakraSelect.ValueText
+                  placeholder={placeholder}
+                  minH={"20px"}
+                />
+
+                <P>{suffixLabel}</P>
+              </HStack>
+
+              <AppIcon
+                icon={ChevronDownIcon}
+                color={props?.color}
+                mr={"-2px"}
               />
-              {suffixLabel}
             </HStack>
           </ChakraSelect.Trigger>
-
-          <ChakraSelect.IndicatorGroup>
-            <AppIcon icon={ChevronDownIcon} color={props?.color} mr={"-2px"} />
-          </ChakraSelect.IndicatorGroup>
         </ChakraSelect.Control>
       </Tooltip>
 

@@ -63,7 +63,10 @@ const CatalogDataList = () => {
 
   // Derived Values
   const debouncedSearch = useDebouncedValue(searchRaw);
-  const cqlFilter = useMemo(() => buildWfsCqlFilter(appliedFilters), [appliedFilters]);
+  const cqlFilter = useMemo(
+    () => buildWfsCqlFilter(appliedFilters),
+    [appliedFilters],
+  );
 
   // Hooks (Mutations)
   const addToCartSelectedMutation = useAddToCartSelected();
@@ -96,38 +99,38 @@ const CatalogDataList = () => {
       position={"relative"}
     >
       {/* Action Header — Search, Filter (rendered inside datalist) */}
-      <VStack
+
+      <HStack
         wrap={"wrap"}
+        align={"center"}
         justify={"space-between"}
-        gap={SPACING.md}
+        gap={SPACING.sm}
+        w={"full"}
         p={PADDING.md}
         bg={"bg.body"}
-        w={"full"}
       >
-        <HStack wrap={"wrap"} align={"center"} justify={"space-between"} gap={SPACING.sm} w={"full"}>
-          <HStack gap={SPACING.sm}>
-            <SearchInput
-              placeholder={"Cari..."}
-              value={searchRaw}
-              onValueChange={(val) => {
-                setSearchRaw(val);
-                setPageState((prev) => ({ ...prev, page: 1 }));
-              }}
-            />
+        <HStack gap={SPACING.sm}>
+          <SearchInput
+            placeholder={"Cari..."}
+            value={searchRaw}
+            onValueChange={(val) => {
+              setSearchRaw(val);
+              setPageState((prev) => ({ ...prev, page: 1 }));
+            }}
+          />
 
-            <WfsIgtFilterTrigger
-              onApply={(filters) => {
-                setAppliedFilters(filters);
-                setPageState((prev) => ({ ...prev, page: 1 }));
-              }}
-            >
-              <IconButton variant={"outline"}>
-                <AppIcon icon={SlidersHorizontalIcon} />
-              </IconButton>
-            </WfsIgtFilterTrigger>
-          </HStack>
+          <WfsIgtFilterTrigger
+            onApply={(filters) => {
+              setAppliedFilters(filters);
+              setPageState((prev) => ({ ...prev, page: 1 }));
+            }}
+          >
+            <IconButton variant={"outline"}>
+              <AppIcon icon={SlidersHorizontalIcon} />
+            </IconButton>
+          </WfsIgtFilterTrigger>
         </HStack>
-      </VStack>
+      </HStack>
 
       <Separator borderColor={"bg.canvas"} />
 
@@ -146,7 +149,7 @@ const CatalogDataList = () => {
           <NoResultState query={debouncedSearch} />
         </VStack>
       ) : (
-        <>
+        <VStack gap={SPACING.sm} overflowY={"auto"}>
           <TopBarLoader isFetching={isFetching} />
 
           <WfsIgtDataList
@@ -200,7 +203,7 @@ const CatalogDataList = () => {
             }}
             mt={"auto"}
           />
-        </>
+        </VStack>
       )}
     </VStack>
   );
