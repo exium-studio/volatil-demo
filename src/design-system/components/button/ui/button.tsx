@@ -54,6 +54,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               display={"inline-block"}
               verticalAlign={"middle"}
               lineHeight={"normal"}
+              whiteSpace={lineClamp === 1 ? "nowrap" : "normal"}
+              textOverflow={lineClamp === 1 ? "ellipsis" : undefined}
             >
               {combinedText}
             </Span>,

@@ -5,7 +5,6 @@ import type GeoJSON from "geojson";
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
-import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 
 /** Single uploaded AOI file with its parsed GeoJSON polygon — source of truth. */
 export type MitraDataRequestUploadAoiLayer = {
@@ -35,8 +34,11 @@ export type MitraDataRequestUploadAoiFileListTriggerProps = {
 };
 
 export type MitraDataRequestUploadAoiDataListProps = {
-  aoiCqlFilter: string | null;
-  appliedFilters: WfsIgtFilterValues;
+  aoiCqlFilter: string;
+  aoiLayers: MitraDataRequestUploadAoiLayer[];
+  onFilesAdded: (files: File[]) => void;
+  onDeleteLayer: (id: string) => void;
+  onClearAll: () => void;
   onAddToCartSelected: (selectedIds: string[]) => void;
   onAddAllBidang: () => void;
   onAddAllKawasan: () => void;

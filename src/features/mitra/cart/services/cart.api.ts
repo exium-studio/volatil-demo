@@ -6,7 +6,6 @@ import {
   removeIdsFromCart,
   clearCartIds,
   calculateCartSummary,
-  getPaginatedIds,
 } from "@/features/mitra/cart/services/cart.service";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { fetchWfsCatalog } from "@/features/mitra/data-request/services/fetch-wfs-catalog";
@@ -30,8 +29,10 @@ const WFS_ID_FIELD = "gid";
 export async function getCartWfsPage(params: {
   page: number;
   pageSize: number;
-  typeName?: string;
-  wfsUrl?: string;
+  typeName: string;
+  wfsUrl: string;
+  search?: string;
+  cqlFilter?: string;
   signal?: AbortSignal;
 }): Promise<
   FetchWfsCatalogResult & {
@@ -40,49 +41,44 @@ export async function getCartWfsPage(params: {
     totalPages: number;
   }
 > {
-  const {
-    page,
-    pageSize,
-    typeName = DEFAULT_WFS_TYPE_NAME,
-    wfsUrl = DEFAULT_WFS_URL,
-    signal,
-  } = params;
+  const { page, pageSize, typeName, wfsUrl, search, cqlFilter, signal } = params;
   const ids = getLocalCartIds();
 
-  const { pageIds, total, totalPages } = getPaginatedIds(ids, page, pageSize);
-
-  if (pageIds.length === 0) {
+  if (ids.length === 0) {
     return {
       features: [],
       totalFeatures: 0,
       bidangCount: 0,
       kawasanCount: 0,
-      pageIds,
-      total,
-      totalPages,
+      pageIds: [],
+      total: 0,
+      totalPages: 0,
     };
   }
 
   // Build CQL: "gid" IN ('id1','id2',...) or "id" IN (...)
-  const idList = pageIds.map((id) => `'${id}'`).join(",");
-  const cqlFilter = `"${WFS_ID_FIELD}" IN (${idList})`;
+  const idList = ids.map((id) => `'${id}'`).join(",");
+  const baseFilter = `"${WFS_ID_FIELD}" IN (${idList})`;
+  const mergedCqlFilter =
+    [baseFilter, cqlFilter].filter(Boolean).join(" AND ") || undefined;
 
   const result = await fetchWfsCatalog({
     typeName,
     wfsUrl,
-    page: 1,
+    page,
     pageSize,
-    cqlFilter,
+    cqlFilter: mergedCqlFilter,
+    search,
     signal,
   });
 
+  const total = result.totalFeatures;
+
   return {
     ...result,
-    // Override totalFeatures to reflect the full cart size, not just this page
-    totalFeatures: total,
-    pageIds,
+    pageIds: [],
     total,
-    totalPages,
+    totalPages: Math.ceil(total / pageSize),
   };
 }
 

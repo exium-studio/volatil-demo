@@ -228,6 +228,7 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
               <AppIcon icon={SlidersHorizontalIcon} />
             </IconButton>
           </WfsIgtFilterTrigger>
+
           <FocusSelectInput
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
@@ -243,6 +244,7 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
       </HStack>
 
       <Separator borderColor={"bg.canvas"} />
+
       <VStack
         flex={1}
         gap={PADDING.sm}
@@ -252,7 +254,7 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton p={PADDING.md} />
+          <Skeleton p={PADDING.md} rounded={0} />
         ) : (
           <Box w={"full"} position={"relative"} overflowY={"auto"}>
             <DataListTable.Root

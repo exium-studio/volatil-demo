@@ -24,28 +24,13 @@ import {
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
-import type { CatalogDataListProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { SlidersHorizontalIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
-  // States
-  const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
-  const [searchRaw, setSearchRaw] = useState<string>("");
-  const [dataListState, setDataListState] = useState({
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
-    page: 1,
-    selectedItems: [] as FormattedListItem[],
-  });
-
-  // Derived Values
-  const debouncedSearch = useDebouncedValue(searchRaw);
-
-  const cqlFilter = buildWfsCqlFilter(appliedFilters);
-
   return (
     <Tabs.Content
       display={"flex"}
@@ -55,81 +40,30 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
       p={0}
       {...props}
     >
-      <VStack
-        wrap={"wrap"}
-        justify={"space-between"}
-        gap={SPACING.md}
-        p={PADDING.md}
-      >
-        {/* Header - Actions */}
-        <HStack
-          wrap={"wrap"}
-          align={"center"}
-          justify={"space-between"}
-          gap={SPACING.sm}
-        >
-          <HStack gap={SPACING.sm}>
-            <SearchInput
-              placeholder={"Cari..."}
-              value={searchRaw}
-              onValueChange={(val) => {
-                setSearchRaw(val);
-                setDataListState((prev) => ({ ...prev, page: 1 }));
-              }}
-            />
-
-            <WfsIgtFilterTrigger
-              onApply={(filters) => {
-                setAppliedFilters(filters);
-                setDataListState((prev) => ({ ...prev, page: 1 }));
-              }}
-            >
-              <IconButton variant={"outline"}>
-                <AppIcon icon={SlidersHorizontalIcon} />
-              </IconButton>
-            </WfsIgtFilterTrigger>
-          </HStack>
-        </HStack>
-      </VStack>
-
-      <Separator borderColor={"bg.canvas"} />
-
-      <CatalogDataList
-        page={dataListState.page}
-        pageSize={dataListState.pageSize}
-        cqlFilter={cqlFilter}
-        search={debouncedSearch}
-        selectedItems={dataListState.selectedItems}
-        onPageChange={(page) => setDataListState((prev) => ({ ...prev, page }))}
-        onPageSizeChange={(pageSize) =>
-          setDataListState((prev) => ({ ...prev, pageSize, page: 1 }))
-        }
-        onSelectedItemChange={(selectedItems) =>
-          setDataListState((prev) => ({ ...prev, selectedItems }))
-        }
-      />
+      <CatalogDataList />
     </Tabs.Content>
   );
 };
 
 // -------------------------------------------------------------------------------------
 
-const CatalogDataList = (props: CatalogDataListProps) => {
-  // Props
-  const {
-    page,
-    pageSize,
-    cqlFilter,
-    search,
-    selectedItems,
-    onPageChange,
-    onPageSizeChange,
-    onSelectedItemChange,
-  } = props;
-
+const CatalogDataList = () => {
   // Stores
   const { theme } = useThemeStore();
   const { selectedIgtLayer } = useIgtLayerStore();
+
+  // States
+  const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
+  const [searchRaw, setSearchRaw] = useState<string>("");
+  const [pageState, setPageState] = useState({
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    page: 1,
+  });
+  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
+
+  // Derived Values
+  const debouncedSearch = useDebouncedValue(searchRaw);
+  const cqlFilter = useMemo(() => buildWfsCqlFilter(appliedFilters), [appliedFilters]);
 
   // Hooks (Mutations)
   const addToCartSelectedMutation = useAddToCartSelected();
@@ -144,10 +78,10 @@ const CatalogDataList = (props: CatalogDataListProps) => {
     isLoading,
     isFetching,
   } = useIgtWfsCatalog({
-    page,
-    pageSize,
+    page: pageState.page,
+    pageSize: pageState.pageSize,
     cqlFilter,
-    search,
+    search: debouncedSearch,
     typeName: selectedIgtLayer?.wfsTypeName ?? "",
     wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
   });
@@ -155,12 +89,48 @@ const CatalogDataList = (props: CatalogDataListProps) => {
   return (
     <VStack
       flex={1}
-      gap={PADDING.sm}
+      gap={0}
       overflowY={"auto"}
       bg={"bg.canvas"}
       w={"full"}
       position={"relative"}
     >
+      {/* Action Header — Search, Filter (rendered inside datalist) */}
+      <VStack
+        wrap={"wrap"}
+        justify={"space-between"}
+        gap={SPACING.md}
+        p={PADDING.md}
+        bg={"bg.body"}
+        w={"full"}
+      >
+        <HStack wrap={"wrap"} align={"center"} justify={"space-between"} gap={SPACING.sm} w={"full"}>
+          <HStack gap={SPACING.sm}>
+            <SearchInput
+              placeholder={"Cari..."}
+              value={searchRaw}
+              onValueChange={(val) => {
+                setSearchRaw(val);
+                setPageState((prev) => ({ ...prev, page: 1 }));
+              }}
+            />
+
+            <WfsIgtFilterTrigger
+              onApply={(filters) => {
+                setAppliedFilters(filters);
+                setPageState((prev) => ({ ...prev, page: 1 }));
+              }}
+            >
+              <IconButton variant={"outline"}>
+                <AppIcon icon={SlidersHorizontalIcon} />
+              </IconButton>
+            </WfsIgtFilterTrigger>
+          </HStack>
+        </HStack>
+      </VStack>
+
+      <Separator borderColor={"bg.canvas"} />
+
       {isLoading ? (
         <Skeleton p={PADDING.md} rounded={0} />
       ) : isEmptyArray(features) ? (
@@ -171,8 +141,9 @@ const CatalogDataList = (props: CatalogDataListProps) => {
           gap={3}
           py={12}
           bg={"bg.body"}
+          w={"full"}
         >
-          <NoResultState query={search} />
+          <NoResultState query={debouncedSearch} />
         </VStack>
       ) : (
         <>
@@ -180,13 +151,15 @@ const CatalogDataList = (props: CatalogDataListProps) => {
 
           <WfsIgtDataList
             wfsFeatures={features}
-            page={page}
-            pageSize={pageSize}
+            page={pageState.page}
+            pageSize={pageState.pageSize}
             totalFeatures={totalFeatures}
-            setPage={onPageChange}
-            setPageSize={onPageSizeChange}
+            setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
+            setPageSize={(pageSize) =>
+              setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
+            }
             onSelectedItemChange={({ selectedItems: sel }) =>
-              onSelectedItemChange(sel)
+              setSelectedItems(sel as FormattedListItem[])
             }
             roundedBottom={theme.radii.container}
           />

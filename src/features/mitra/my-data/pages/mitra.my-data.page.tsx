@@ -17,6 +17,7 @@ export const MitraMyDataPage = () => (
         </HeaderContainer>
 
         <Separator borderColor={"bg.canvas"} />
+
         <MitraMyDataList />
       </Container.Body>
     </PanelContentContainer>

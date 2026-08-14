@@ -19,6 +19,8 @@ export type CartItemsQueryParams = {
   pageSize: number;
   typeName: string;
   wfsUrl: string;
+  search?: string;
+  cqlFilter?: string;
 };
 
 const EMPTY_CART_SUMMARY: CartSummaryResponse = {

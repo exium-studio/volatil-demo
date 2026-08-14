@@ -36,6 +36,7 @@ import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/fil
 import type { DrawAoiGuideAlertProps } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { t } from "@/shared/libs/i18n";
 import { IconPolygonOff } from "@tabler/icons-react";
 import {
@@ -247,11 +248,15 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
 
   // States
   const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
+  const [searchRaw, setSearchRaw] = useState<string>("");
   const [pageState, setPageState] = useState({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     selectedItems: [] as FormattedListItem[],
   });
+
+  // Derived Values
+  const debouncedSearch = useDebouncedValue(searchRaw);
 
   // Derived Values — Combine AOI INTERSECTS filter with 5-field filter
   const combinedCqlFilter = useMemo(() => {
@@ -271,6 +276,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
     page: pageState.page,
     pageSize: pageState.pageSize,
     cqlFilter: combinedCqlFilter,
+    search: debouncedSearch,
     typeName: selectedIgtLayer?.wfsTypeName ?? "",
     wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
   });
@@ -292,7 +298,14 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
           gap={SPACING.sm}
         >
           <HStack gap={SPACING.sm}>
-            <SearchInput placeholder={t["action.search"]()} />
+            <SearchInput
+              placeholder={t["action.search"]()}
+              value={searchRaw}
+              onValueChange={(val) => {
+                setSearchRaw(val);
+                setPageState((prev) => ({ ...prev, page: 1 }));
+              }}
+            />
 
             <WfsIgtFilterTrigger
               onApply={(filters) => {

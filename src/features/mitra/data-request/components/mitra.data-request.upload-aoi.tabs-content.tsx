@@ -58,10 +58,10 @@ import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
-import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
+import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import {
   FilesIcon,
   PlusIcon,
@@ -118,7 +118,6 @@ export const MitraDataRequestUploadAoiTabsContent = (
   const [aoiLayers, setAoiLayers] = useState<MitraDataRequestUploadAoiLayer[]>(
     [],
   );
-  const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
 
   // Hooks
   useMitraUploadAoi(map, aoiLayers);
@@ -255,11 +254,12 @@ export const MitraDataRequestUploadAoiTabsContent = (
   const hasLayers = !isEmptyArray(aoiLayers);
 
   // Effects
+  const { close } = usePopModal({ modalKey: "aoi-file-list" });
   useFirstMountEffect(
     {
       onUpdate: () => {
         if (isAoiFileModalOpen && !hasLayers) {
-          back();
+          close();
         }
       },
     },
@@ -317,89 +317,41 @@ export const MitraDataRequestUploadAoiTabsContent = (
           </Box>
         )}
 
-        {hasLayers && (
-          <>
-            <VStack
-              wrap={"wrap"}
-              justify={"space-between"}
-              gap={SPACING.md}
-              p={PADDING.md}
-            >
-              <HStack
-                wrap={"wrap"}
-                align={"center"}
-                justify={"space-between"}
-                gap={SPACING.sm}
-              >
-                <HStack gap={SPACING.sm}>
-                  <SearchInput placeholder={t["action.search"]()} />
-
-                  <WfsIgtFilterTrigger
-                    onApply={(filters) => {
-                      setAppliedFilters(filters);
-                    }}
-                  >
-                    <IconButton variant={"outline"}>
-                      <AppIcon icon={SlidersHorizontalIcon} />
-                    </IconButton>
-                  </WfsIgtFilterTrigger>
-                </HStack>
-
-                <HStack align={"center"} gap={SPACING.sm}>
-                  <MitraDataRequestUploadAoiFileListTrigger
-                    onFilesAdded={handleFilesAdded}
-                    onDeleteLayer={handleDeleteLayer}
-                    onClearAll={handleClearAll}
-                  >
-                    <Button variant={"outline"}>
-                      <AppIcon icon={FilesIcon} />
-                      {`File AOI anda (${aoiLayers.length})`}
-                    </Button>
-                  </MitraDataRequestUploadAoiFileListTrigger>
-
-                  <MitraDataRequestUploadAoiAddFileButton
-                    isIconButton
-                    onFilesAdded={handleFilesAdded}
-                    variant={"outline"}
-                  />
-                </HStack>
-              </HStack>
-            </VStack>
-
-            <Separator borderColor={"bg.canvas"} />
-
-            <MitraDataRequestUploadAoiDataList
-              aoiCqlFilter={aoiCqlFilter}
-              appliedFilters={appliedFilters}
-              onAddToCartSelected={(selectedIds) =>
-                addToCartSelectedMutation.mutate(selectedIds)
-              }
-              onAddAllBidang={() => {
-                if (!selectedIgtLayer) return;
-                addToCartAllMutation.mutate({
-                  cqlFilter: aoiCqlFilter ?? undefined,
-                  typeName: selectedIgtLayer.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
-                });
-              }}
-              onAddAllKawasan={() => {
-                if (!selectedIgtLayer) return;
-                addToCartAllMutation.mutate({
-                  cqlFilter: aoiCqlFilter ?? undefined,
-                  typeName: selectedIgtLayer.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
-                });
-              }}
-              onAddAllBoth={() => {
-                if (!selectedIgtLayer) return;
-                addToCartAllMutation.mutate({
-                  cqlFilter: aoiCqlFilter ?? undefined,
-                  typeName: selectedIgtLayer.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
-                });
-              }}
-            />
-          </>
+        {hasLayers && aoiCqlFilter && (
+          <MitraDataRequestUploadAoiDataList
+            aoiCqlFilter={aoiCqlFilter}
+            aoiLayers={aoiLayers}
+            onFilesAdded={handleFilesAdded}
+            onDeleteLayer={handleDeleteLayer}
+            onClearAll={handleClearAll}
+            onAddToCartSelected={(selectedIds) =>
+              addToCartSelectedMutation.mutate(selectedIds)
+            }
+            onAddAllBidang={() => {
+              if (!selectedIgtLayer) return;
+              addToCartAllMutation.mutate({
+                cqlFilter: aoiCqlFilter,
+                typeName: selectedIgtLayer.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+              });
+            }}
+            onAddAllKawasan={() => {
+              if (!selectedIgtLayer) return;
+              addToCartAllMutation.mutate({
+                cqlFilter: aoiCqlFilter,
+                typeName: selectedIgtLayer.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+              });
+            }}
+            onAddAllBoth={() => {
+              if (!selectedIgtLayer) return;
+              addToCartAllMutation.mutate({
+                cqlFilter: aoiCqlFilter,
+                typeName: selectedIgtLayer.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+              });
+            }}
+          />
         )}
       </Tabs.Content>
     </MitraDataRequestUploadAoiContext.Provider>
@@ -537,7 +489,10 @@ const MitraDataRequestUploadAoiDataList = memo(
     // Props
     const {
       aoiCqlFilter,
-      appliedFilters,
+      aoiLayers,
+      onFilesAdded,
+      onDeleteLayer,
+      onClearAll,
       onAddToCartSelected,
       onAddAllBidang,
       onAddAllKawasan,
@@ -545,6 +500,8 @@ const MitraDataRequestUploadAoiDataList = memo(
     } = props;
 
     // States
+    const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
+    const [searchRaw, setSearchRaw] = useState<string>("");
     const [pageState, setPageState] =
       useState<MitraDataRequestUploadAoiPageState>({
         page: 1,
@@ -552,7 +509,8 @@ const MitraDataRequestUploadAoiDataList = memo(
         selectedItems: [] as FormattedListItem[],
       });
 
-    // Derived Values — Combine Upload AOI INTERSECTS filter with 5-field filter
+    // Derived Values
+    const debouncedSearch = useDebouncedValue(searchRaw);
     const combinedCqlFilter = useMemo(() => {
       const filterCql = buildWfsCqlFilter(appliedFilters);
       if (aoiCqlFilter && filterCql) {
@@ -576,6 +534,7 @@ const MitraDataRequestUploadAoiDataList = memo(
       page: pageState.page,
       pageSize: pageState.pageSize,
       cqlFilter: combinedCqlFilter,
+      search: debouncedSearch,
       typeName: selectedIgtLayer?.wfsTypeName ?? "",
       wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
     });
@@ -584,11 +543,73 @@ const MitraDataRequestUploadAoiDataList = memo(
     return (
       <VStack
         flex={1}
-        gap={PADDING.sm}
+        gap={0}
         overflowY={"auto"}
         bg={"bg.canvas"}
         position={"relative"}
+        w={"full"}
       >
+        {/* Action Header — Search, Filter & Files (rendered inside datalist) */}
+        <VStack
+          wrap={"wrap"}
+          justify={"space-between"}
+          gap={SPACING.md}
+          p={PADDING.md}
+          bg={"bg.body"}
+          w={"full"}
+        >
+          <HStack
+            wrap={"wrap"}
+            align={"center"}
+            justify={"space-between"}
+            gap={SPACING.sm}
+            w={"full"}
+          >
+            <HStack gap={SPACING.sm}>
+              <SearchInput
+                placeholder={t["action.search"]()}
+                value={searchRaw}
+                onValueChange={(val) => {
+                  setSearchRaw(val);
+                  setPageState((prev) => ({ ...prev, page: 1 }));
+                }}
+              />
+
+              <WfsIgtFilterTrigger
+                onApply={(filters) => {
+                  setAppliedFilters(filters);
+                  setPageState((prev) => ({ ...prev, page: 1 }));
+                }}
+              >
+                <IconButton variant={"outline"}>
+                  <AppIcon icon={SlidersHorizontalIcon} />
+                </IconButton>
+              </WfsIgtFilterTrigger>
+            </HStack>
+
+            <HStack align={"center"} gap={SPACING.sm}>
+              <MitraDataRequestUploadAoiFileListTrigger
+                onFilesAdded={onFilesAdded}
+                onDeleteLayer={onDeleteLayer}
+                onClearAll={onClearAll}
+              >
+                <Button variant={"outline"}>
+                  <AppIcon icon={FilesIcon} />
+                  {`File AOI anda (${aoiLayers.length})`}
+                </Button>
+              </MitraDataRequestUploadAoiFileListTrigger>
+
+              <MitraDataRequestUploadAoiAddFileButton
+                isIconButton
+                onFilesAdded={onFilesAdded}
+                variant={"outline"}
+              />
+            </HStack>
+          </HStack>
+        </VStack>
+
+        <Separator borderColor={"bg.canvas"} />
+
         {isLoading ? (
           <Skeleton p={PADDING.md} />
         ) : (

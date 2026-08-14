@@ -1,22 +1,16 @@
 // src/design-system/components/toast/ui/toast.stack.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Button } from "@/design-system/components/button/ui/button";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
+import { toastTimerControls } from "@/design-system/components/toast/core/toast.manager";
 import type { ToastStackProps } from "@/design-system/components/toast/types/toast.types";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { Box } from "@chakra-ui/react";
-import { Minimize2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { toastTimerControls } from "@/design-system/components/toast/core/toast.manager";
 
 export function ToastStack<TItem>({
   groupLabel,
@@ -97,7 +91,7 @@ export function ToastStack<TItem>({
         justifyContent={"space-between"}
         align={"center"}
         h={"26px"}
-        px={3}
+        // px={3}
         mt={expanded ? 0 : "-26px"}
         visibility={expanded ? "visible" : "hidden"}
         opacity={expanded ? 1 : 0}
@@ -126,7 +120,7 @@ export function ToastStack<TItem>({
             </Button>
           )}
 
-          <Tooltip content={t["action.show_less"]()}>
+          {/* <Tooltip content={t["action.show_less"]()}>
             <IconButton
               size={"2xs"}
               variant={"subtle"}
@@ -138,7 +132,7 @@ export function ToastStack<TItem>({
             >
               <AppIcon icon={Minimize2Icon} size={"xs"} />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
         </Box>
       </HStack>
 
