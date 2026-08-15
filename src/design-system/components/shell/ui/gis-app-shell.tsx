@@ -18,7 +18,7 @@ import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
-import { Map } from "@/design-system/components/map/ui/map";
+import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
@@ -386,9 +386,18 @@ const Content = () => {
     </Splitter.Panel>
   );
 
-  // Transparent spacer — gives the map visual breathing room on the right
+  // Right Splitter panel — holds MapShell (MapOverlay controls, layer management, draw toolbar)
   const spacerPanel = (
-    <Splitter.Panel key={"spacer"} id={"spacer"} pointerEvents={"none"} />
+    <Splitter.Panel key={"spacer"} id={"spacer"}>
+      <Box pos={"relative"} boxSize={"full"}>
+        <MapShell
+          layers={mapLayers}
+          onDrawFinish={(feature, originalPoints) => {
+            console.log("draw finished", { feature, originalPoints });
+          }}
+        />
+      </Box>
+    </Splitter.Panel>
   );
 
   const resizeTrigger = (
@@ -403,7 +412,7 @@ const Content = () => {
 
   return (
     <>
-      {/* Full-viewport basemap — sits behind everything */}
+      {/* Full-viewport basemap tile layer — sits behind everything */}
       <Box
         pos={"fixed"}
         top={0}
@@ -412,12 +421,7 @@ const Content = () => {
         bottom={0}
         zIndex={0}
       >
-        <Map
-          layers={mapLayers}
-          onDrawFinish={(feature, originalPoints) => {
-            console.log("draw finished", { feature, originalPoints });
-          }}
-        />
+        <BaseMap />
       </Box>
 
       {/* Splitter — content panel + transparent spacer (no map inside) */}

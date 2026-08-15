@@ -11,7 +11,7 @@ import { MapOverlay } from "@/design-system/components/map/ui/map.overlay";
  * Shell rendered inside BaseMap — reads the map instance from Zustand store
  * and orchestrates all feature-level concerns.
  */
-const MapShell = ({
+export const MapShell = ({
   layers,
   onDrawFinish,
   children,
@@ -28,6 +28,8 @@ const MapShell = ({
     </>
   );
 };
+
+export { BaseMap };
 
 /**
  * High-level Map component — composes BaseMap (basemap engine) and an
