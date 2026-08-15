@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/utils/countdown.utils.ts
+
 export type CountdownParts = {
   days: number;
   hours: number;

@@ -1,4 +1,4 @@
-// src/routes/_app/mitra/purchase-history.tsx
+// src/routes/_private/mitra/purchase-history.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
 

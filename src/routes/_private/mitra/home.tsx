@@ -1,4 +1,4 @@
-// src/routes/_app/mitra/home.tsx
+// src/routes/_private/mitra/home.tsx
 
 import { MitraHomePage } from "@/features/mitra/home/pages/mitra.home.page";
 import { createFileRoute } from "@tanstack/react-router";

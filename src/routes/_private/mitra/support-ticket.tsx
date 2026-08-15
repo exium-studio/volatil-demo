@@ -1,4 +1,4 @@
-// src/routes/_app/mitra/support-ticket.tsx
+// src/routes/_private/mitra/support-ticket.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
 

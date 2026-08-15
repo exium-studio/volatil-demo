@@ -1,4 +1,4 @@
-// src/routes/_app/internal/notification.tsx
+// src/routes/_private/internal/notification.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
 

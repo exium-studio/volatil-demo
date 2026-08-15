@@ -2,8 +2,8 @@
 
 import type { DataListTableRootProps } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
-import type { ReactNode } from "react";
 import type { PaginatedResponse } from "@/shared/types/common-response.type";
+import type { ReactNode } from "react";
 
 export type MitraDataRequestIgtDataResponse =
   PaginatedResponse<MitraDataRequestIgtDataItem>;

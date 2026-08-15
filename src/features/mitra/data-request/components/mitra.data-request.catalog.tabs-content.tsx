@@ -162,7 +162,7 @@ const CatalogDataList = () => {
               setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
             }
             onSelectedItemChange={({ selectedItems: sel }) =>
-              setSelectedItems(sel as FormattedListItem[])
+              setSelectedItems(sel)
             }
             roundedBottom={theme.radii.container}
           />

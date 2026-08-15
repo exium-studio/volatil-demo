@@ -1,4 +1,4 @@
-// src/routes/_app/route.tsx
+// src/routes/_private/route.tsx
 
 import { GisAppShell } from "@/design-system/components/shell/ui/gis-app-shell";
 import { createFileRoute } from "@tanstack/react-router";

@@ -52,11 +52,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               maxW={"full"}
               overflow={"hidden"}
               display={"inline-block"}
-              verticalAlign={"middle"}
-              lineHeight={"1.2em"}
-              maxH={clampVal > 0 ? `${clampVal * 1.2}em` : undefined}
+              lineHeight={"normal"}
               whiteSpace={clampVal === 1 ? "nowrap" : "normal"}
               textOverflow={clampVal === 1 ? "ellipsis" : undefined}
+              py={"1px"}
             >
               {combinedText}
             </Span>,

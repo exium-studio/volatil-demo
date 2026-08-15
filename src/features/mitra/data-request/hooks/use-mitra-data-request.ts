@@ -14,6 +14,7 @@ import {
 } from "@/features/mitra/data-request/services/mitra.data-request.service";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type GeoJSON from "geojson";
 
@@ -130,21 +131,7 @@ export const useFlyToIgtGeometry = () => {
       const feature = fc.features[0];
       if (!feature?.geometry || !map) return;
 
-      const geom = feature.geometry;
-      let lng = 0;
-      let lat = 0;
-
-      if (geom.type === "Point") {
-        [lng, lat] = geom.coordinates as [number, number];
-      } else if (geom.type === "Polygon" && geom.coordinates[0]?.length > 0) {
-        const ring = geom.coordinates[0];
-        const sumLng = ring.reduce((acc: number, c: number[]) => acc + c[0], 0);
-        const sumLat = ring.reduce((acc: number, c: number[]) => acc + c[1], 0);
-        lng = sumLng / ring.length;
-        lat = sumLat / ring.length;
-      }
-
-      map.flyTo({ center: [lng, lat], zoom: 16 });
+      highlightFeatureOnMap(map, feature);
     },
   });
 };

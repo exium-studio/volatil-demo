@@ -1,4 +1,4 @@
-// src/routes/_app/internal/home.tsx
+// src/routes/_private/internal/home.tsx
 
 import { InternalHomePage } from "@/features/internal/home/pages/internal.home.page";
 import { createFileRoute } from "@tanstack/react-router";

@@ -63,22 +63,48 @@ export const MitraDataRequestAddToCartButtons = (
   // Derived — selected items basis breakdown
   const selectedBidangCount = useMemo(
     () =>
-      (selectedItems ?? []).filter(
-        (item) =>
-          (item.data as unknown as MitraDataRequestIgtDataItem).basis ===
-          "bidang",
-      ).length,
+      (selectedItems ?? []).filter((item) => {
+        const data = item.data as Record<string, unknown> | undefined;
+        // Check IgtDataItem basis or GeoJSON feature properties
+        const basis =
+          data?.basis ??
+          (data?.properties as Record<string, unknown> | undefined)?.basis;
+        return basis === "bidang";
+      }).length,
     [selectedItems],
   );
+
   const selectedKawasanCount = useMemo(
     () =>
-      (selectedItems ?? []).filter(
-        (item) =>
-          (item.data as unknown as MitraDataRequestIgtDataItem).basis ===
-          "kawasan",
-      ).length,
+      (selectedItems ?? []).filter((item) => {
+        const data = item.data as Record<string, unknown> | undefined;
+        const basis =
+          data?.basis ??
+          (data?.properties as Record<string, unknown> | undefined)?.basis;
+        return basis === "kawasan";
+      }).length,
     [selectedItems],
   );
+
+  const selectedTotalCount = selectedItems?.length ?? 0;
+
+  // Selected label: if basis counts exist show "X bidang, Y kawasan", otherwise show "X item" or "X bidang"
+  const selectedCountLabel = useMemo(() => {
+    if (selectedTotalCount === 0) return "";
+
+    if (selectedBidangCount > 0 || selectedKawasanCount > 0) {
+      const parts = [
+        selectedBidangCount > 0 &&
+          `${formatNumber(selectedBidangCount)} bidang`,
+        selectedKawasanCount > 0 &&
+          `${formatNumber(selectedKawasanCount)} kawasan`,
+      ].filter(Boolean);
+      return `(${parts.join(", ")})`;
+    }
+
+    // Default: for WFS features without explicit basis property, treat as bidang or count
+    return `(${formatNumber(selectedTotalCount)} bidang)`;
+  }, [selectedTotalCount, selectedBidangCount, selectedKawasanCount]);
 
   return (
     <VStack
@@ -108,15 +134,7 @@ export const MitraDataRequestAddToCartButtons = (
         >
           <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
           {"Tambah yang dipilih"}{" "}
-          {!isEmptyArray(selectedItems) &&
-            `(${[
-              selectedBidangCount > 0 &&
-                `${formatNumber(selectedBidangCount)} bidang`,
-              selectedKawasanCount > 0 &&
-                `${formatNumber(selectedKawasanCount)} kawasan`,
-            ]
-              .filter(Boolean)
-              .join(", ")})`}
+          {!isEmptyArray(selectedItems) && selectedCountLabel}
         </Button>
 
         {/* Add all — ButtonGroup with main button on left and menu trigger on right */}

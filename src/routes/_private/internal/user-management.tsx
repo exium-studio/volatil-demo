@@ -1,4 +1,4 @@
-// src/routes/_app/internal/user-management.tsx
+// src/routes/_private/internal/user-management.tsx
 
 import { createFileRoute } from '@tanstack/react-router'
 

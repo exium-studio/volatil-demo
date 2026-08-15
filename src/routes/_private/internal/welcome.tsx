@@ -1,4 +1,4 @@
-// src/routes/_app/internal/welcome.tsx
+// src/routes/_private/internal/welcome.tsx
 
 import { WelcomeState } from "@/design-system/components/feedback/ui/state.welcome";
 import { createFileRoute } from "@tanstack/react-router";
