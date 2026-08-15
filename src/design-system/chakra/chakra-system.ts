@@ -66,27 +66,25 @@ export const chakraConfig = defineConfig({
 
       "scale-up-overshoot": {
         "0%": {
-          transform: "scale(0.9)",
+          transform: "scale(0.85)",
           opacity: 0,
         },
-        "75%": {
-          transform: "scale(1.025)",
+        "50%": {
+          transform: "scale(1.015)",
           opacity: 1,
         },
         "100%": {
           transform: "scale(1)",
-          opacity: 1,
         },
       },
 
       "scale-up-overshoot-from-click-origin": {
         "0%": {
-          transform: `translate(var(${DIALOG_OFFSET_X_VAR}), var(${DIALOG_OFFSET_Y_VAR})) scale(0.15)`,
+          transform: `translate(var(${DIALOG_OFFSET_X_VAR}), var(${DIALOG_OFFSET_Y_VAR})) scale(0)`,
           opacity: 0,
         },
-        "75%": {
-          transform: "translate(0, 0) scale(1.03)",
-          opacity: 1,
+        "50%": {
+          transform: "translate(0, 0) scale(1.015)",
         },
         "100%": {
           transform: "translate(0, 0) scale(1)",
@@ -712,20 +710,16 @@ export const chakraConfig = defineConfig({
       // Motion preset
       animations: {
         "scale-up-overshoot-from-click-origin": {
-          value:
-            "scale-up-overshoot-from-click-origin cubic-bezier(0.16, 1.08, 0.3, 1)",
+          value: "scale-up-overshoot-from-click-origin",
         },
         "scale-up": {
-          value: "scale-up cubic-bezier(0.16, 1, 0.3, 1)",
+          value: "scale-up cubic-bezier(0.4, 0, 0.2, 1)",
         },
         "scale-up-overshoot": {
-          value: "scale-up-overshoot cubic-bezier(0.16, 1.08, 0.3, 1)",
+          value: "scale-up-overshoot cubic-bezier(0.4, 0, 0.2, 1)",
         },
         "scale-down": {
           value: "scale-down cubic-bezier(0.4, 0, 0.2, 1)",
-        },
-        "scale-down-to-click-origin": {
-          value: "scale-down-to-click-origin cubic-bezier(0.4, 0, 0.2, 1)",
         },
         "shrink-x": {
           value: "shrink-x",
