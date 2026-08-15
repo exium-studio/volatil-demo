@@ -12,6 +12,8 @@ import {
   setStorage,
 } from "@/shared/utils/client/client.storage";
 
+import { getUserSession } from "@/shared/utils/user/user-session.utils";
+
 export const authService = {
   login: async (payload: SigninPayload, signal?: AbortSignal): Promise<User> => {
     try {
@@ -63,5 +65,14 @@ export const authService = {
   logout: (): void => {
     localStorage.removeItem("auth_token");
     removeStorage("user");
+  },
+
+  getCurrentUser: (): User | null => {
+    return getUserSession();
+  },
+
+  getToken: (): string | null => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("auth_token");
   },
 };

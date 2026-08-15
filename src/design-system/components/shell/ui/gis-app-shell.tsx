@@ -31,29 +31,28 @@ import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
-  INTERNAL_APP_NAV_GROUPS_LIST,
-  INTERNAL_APP_OTHER_NAV_GROUPS_LIST,
   APP_NAV_GROUPS_LIST,
   APP_OTHER_NAV_GROUPS_LIST,
+  INTERNAL_APP_NAV_GROUPS_LIST,
+  INTERNAL_APP_OTHER_NAV_GROUPS_LIST,
 } from "@/shared/constants/app.nav-groups";
 import {
-  INTERNAL_APP_NAVS_MAP,
   APP_NAVS_MAP,
+  INTERNAL_APP_NAVS_MAP,
 } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
-import type { User } from "@/shared/types/common-response.type";
 import type { NavGroup, NavItem } from "@/shared/types/nav.type";
-import { getStorage } from "@/shared/utils/client/client.storage";
+import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { Box } from "@chakra-ui/react";
 import {
   IconChevronCompactLeft,
   IconChevronCompactRight,
 } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { UserIcon } from "lucide-react";
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 // -------------------------------------------------------------------------------------
 
@@ -61,16 +60,6 @@ const DEFAULT_SIDEBAR_EXPANDED = true;
 const SIDE_BAR_KEY = "gis-app";
 const DEFAULT_SPLITTER_SIZE = [50, 50];
 const SPLITTER_KEY = "gis-app";
-
-const getUserData = (): User | null => {
-  const raw = getStorage("user");
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as User;
-  } catch {
-    return null;
-  }
-};
 
 export const GisAppShell = (props: GisAppShellProps) => {
   // Props
@@ -190,7 +179,7 @@ const SidebarBody = () => {
   const navigate = useNavigate();
 
   // Derived Values
-  const userData = getUserData();
+  const userData = getUserSession();
   const role = userData?.role ?? "mitra";
   const navsMap = (role === "internal"
     ? INTERNAL_APP_NAVS_MAP
@@ -225,7 +214,7 @@ const SidebarFooter = () => {
   );
 
   // Derived Values
-  const userData = getUserData();
+  const userData = getUserSession();
   const role = userData?.role ?? "mitra";
   const navsMap = (role === "internal"
     ? INTERNAL_APP_NAVS_MAP
