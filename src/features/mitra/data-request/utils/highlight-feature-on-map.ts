@@ -44,6 +44,46 @@ export const getGeometryCentroid = (
   return null;
 };
 
+/** Derives bounding box [minLng, minLat, maxLng, maxLat] from geometry. */
+export const getGeometryBounds = (
+  geom: GeoJSON.Geometry,
+): [number, number, number, number] | null => {
+  const coords: [number, number][] = [];
+
+  if (geom.type === "Point") {
+    const [lng, lat] = geom.coordinates as [number, number];
+    return [lng, lat, lng, lat];
+  }
+
+  if (geom.type === "Polygon") {
+    geom.coordinates.forEach((ring) => {
+      ring.forEach((c) => coords.push([c[0], c[1]]));
+    });
+  } else if (geom.type === "MultiPolygon") {
+    geom.coordinates.forEach((poly) => {
+      poly.forEach((ring) => {
+        ring.forEach((c) => coords.push([c[0], c[1]]));
+      });
+    });
+  }
+
+  if (coords.length === 0) return null;
+
+  let minLng = Infinity;
+  let minLat = Infinity;
+  let maxLng = -Infinity;
+  let maxLat = -Infinity;
+
+  coords.forEach(([lng, lat]) => {
+    if (lng < minLng) minLng = lng;
+    if (lat < minLat) minLat = lat;
+    if (lng > maxLng) maxLng = lng;
+    if (lat > maxLat) maxLat = lat;
+  });
+
+  return [minLng, minLat, maxLng, maxLat];
+};
+
 /** Removes the highlight layer and source from the map. */
 export const removeFeatureHighlightFromMap = (map: maplibregl.Map) => {
   if (highlightTimer) {
@@ -70,7 +110,7 @@ export const removeFeatureHighlightFromMap = (map: maplibregl.Map) => {
 
 /**
  * Creates or updates a highlight layer with the given GeoJSON feature/geometry,
- * flies the map camera to its centroid, and automatically removes the highlight after 5 seconds.
+ * flies or zooms the map camera directly into the feature, and automatically removes the highlight after 5 seconds.
  */
 export const highlightFeatureOnMap = (
   map: maplibregl.Map,
@@ -83,7 +123,7 @@ export const highlightFeatureOnMap = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!(map as any).style || !map.isStyleLoaded()) return;
 
-  const { zoom = 16, timeoutMs = HIGHLIGHT_TIMEOUT_MS } = options ?? {};
+  const { zoom = 18, timeoutMs = HIGHLIGHT_TIMEOUT_MS } = options ?? {};
 
   const feature: GeoJSON.Feature =
     geometryOrFeature.type === "Feature"
@@ -129,7 +169,7 @@ export const highlightFeatureOnMap = (
         source: HIGHLIGHT_SOURCE_ID,
         paint: {
           "fill-color": HIGHLIGHT_COLOR,
-          "fill-opacity": 0.4,
+          "fill-opacity": 0.45,
         },
       } as maplibregl.LayerSpecification,
       beforeId,
@@ -144,8 +184,8 @@ export const highlightFeatureOnMap = (
         source: HIGHLIGHT_SOURCE_ID,
         paint: {
           "line-color": HIGHLIGHT_COLOR,
-          "line-width": 3,
-          "line-opacity": 0.9,
+          "line-width": 3.5,
+          "line-opacity": 1,
         },
       } as maplibregl.LayerSpecification,
       beforeId,
@@ -160,9 +200,9 @@ export const highlightFeatureOnMap = (
         source: HIGHLIGHT_SOURCE_ID,
         filter: ["==", "$type", "Point"],
         paint: {
-          "circle-radius": 8,
+          "circle-radius": 9,
           "circle-color": HIGHLIGHT_COLOR,
-          "circle-stroke-width": 2,
+          "circle-stroke-width": 2.5,
           "circle-stroke-color": "#ffffff",
         },
       } as maplibregl.LayerSpecification,
@@ -170,10 +210,29 @@ export const highlightFeatureOnMap = (
     );
   }
 
-  // 4. Fly camera to centroid
-  const centroid = getGeometryCentroid(feature.geometry);
-  if (centroid) {
-    map.flyTo({ center: centroid, zoom });
+  // 4. Zoom / fit camera to feature
+  const bounds = getGeometryBounds(feature.geometry);
+  if (
+    bounds &&
+    (feature.geometry.type === "Polygon" ||
+      feature.geometry.type === "MultiPolygon")
+  ) {
+    map.fitBounds(
+      [
+        [bounds[0], bounds[1]],
+        [bounds[2], bounds[3]],
+      ],
+      {
+        padding: 80,
+        maxZoom: zoom,
+        duration: 1200,
+      },
+    );
+  } else {
+    const centroid = getGeometryCentroid(feature.geometry);
+    if (centroid) {
+      map.flyTo({ center: centroid, zoom, duration: 1200 });
+    }
   }
 
   // 5. Auto cleanup after timeout
