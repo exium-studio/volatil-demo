@@ -313,7 +313,7 @@ const DialogContent = (props: DialogContentProps) => {
             animation: clickOriginAnimation
               ? "scale-up-overshoot-from-click-origin"
               : "scale-up-overshoot",
-            animationDuration: "slower",
+            animationDuration: "slowest",
           }}
           _closed={{
             animation: clickOriginAnimation
