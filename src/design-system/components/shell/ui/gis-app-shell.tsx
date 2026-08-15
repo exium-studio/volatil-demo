@@ -14,6 +14,8 @@ import {
   DUMMY_MAP_LAYERS,
   getIgtLayers,
 } from "@/design-system/components/map/services/map-layers.api";
+import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-view-padding";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { Map } from "@/design-system/components/map/ui/map";
@@ -52,11 +54,11 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { UserIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 // -------------------------------------------------------------------------------------
 
-const DEFAULT_SIDEBAR_EXPANDED = true;
+const DEFAULT_SIDEBAR_EXPANDED = false;
 const SIDE_BAR_KEY = "gis-app";
 const DEFAULT_SPLITTER_SIZE = [50, 50];
 const SPLITTER_KEY = "gis-app";
@@ -308,13 +310,23 @@ const SidebarToggleButton = (props: IconButtonProps) => {
 
 // -------------------------------------------------------------------------------------
 
+const SIDEBAR_COLLAPSED_W = 64; // calc(40px + 24px) — matches Sidebar collapsed width
+const SIDEBAR_EXPANDED_W = 300; // matches Sidebar expanded width
+
 const Content = () => {
+  // Refs
+  const contentPanelRef = useRef<HTMLDivElement | null>(null);
+
   // Stores
   const splitterSize = useSplitterStore(
     (s) => s.sizesByKey[SPLITTER_KEY] ?? DEFAULT_SPLITTER_SIZE,
   );
   const setSplitterSize = useSplitterStore((s) => s.setSize);
   const wmsVisible = useMapLayerStore((s) => s.wmsVisible);
+  const sidebarExpanded = useSidebarStore(
+    (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
+  );
+  const map = useMapInstanceStore((state) => state.map);
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
@@ -337,12 +349,21 @@ const Content = () => {
   );
 
   // Derived Values
+  const sidebarPx = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
+
   const panels = [
-    { id: "map", minSize: isSmallViewport ? 5 : 5 },
-    { id: "content", minSize: isSmallViewport ? 5 : 5 },
+    { id: "content", minSize: 5 },
+    { id: "spacer", minSize: 5 },
   ];
 
-  // Components
+  // Sync map padding — ResizeObserver inside hook handles splitter drag,
+  // sidebar toggle triggers a smooth animated transition
+  useMapViewPadding(map, {
+    contentPanelRef,
+    sidebarPx,
+    isVertical: isSmallViewport,
+  });
+
   const contentPanel = (
     <Splitter.Panel
       key={"content"}
@@ -351,33 +372,45 @@ const Content = () => {
       overflow={"auto"}
     >
       <VStack
+        ref={contentPanelRef}
         flex={1}
         overflow={"auto"}
         minW={[0, null, "360px"]}
         w={"full"}
         minH={"300px"}
+        bg={"bg.canvas"}
+        shadow={"md"}
       >
         <Outlet />
       </VStack>
     </Splitter.Panel>
   );
 
-  const mapPanel = (
-    <Splitter.Panel key={"map"} id={"map"}>
+  // Transparent spacer — gives the map visual breathing room on the right
+  const spacerPanel = (
+    <Splitter.Panel key={"spacer"} id={"spacer"} pointerEvents={"none"} />
+  );
+
+  const resizeTrigger = (
+    <Splitter.ResizeTrigger
+      key={"trigger"}
+      id={isSmallViewport ? "spacer:content" : "content:spacer"}
+      onDoubleClick={() => {
+        setSplitterSize(SPLITTER_KEY, DEFAULT_SPLITTER_SIZE);
+      }}
+    />
+  );
+
+  return (
+    <>
+      {/* Full-viewport basemap — sits behind everything */}
       <Box
-        pos={"relative"}
-        minW={[0, null, "360px"]}
-        boxSize={"full"}
-        bgImage={[
-          "radial-gradient(1px 1px at 25px 35px, #fff 50%, transparent)",
-          "radial-gradient(1.5px 1.5px at 60px 120px, rgba(255, 255, 255, 0.6) 50%, transparent)",
-          "radial-gradient(1px 1px at 150px 75px, #fff 50%, transparent)",
-          "radial-gradient(2px 2px at 280px 220px, rgba(255, 255, 255, 0.4) 50%, transparent)",
-          "radial-gradient(circle at 50% 50%, #1d1d1d 0%, #181818 60%, #151515 100%)",
-        ].join(", ")}
-        bgSize={"200px 200px, 250px 250px, 300px 300px, 350px 350px, 100% 100%"}
-        borderLeft={!isSmallViewport ? "1px solid" : undefined}
-        borderColor={"border"}
+        pos={"fixed"}
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        zIndex={0}
       >
         <Map
           layers={mapLayers}
@@ -386,31 +419,23 @@ const Content = () => {
           }}
         />
       </Box>
-    </Splitter.Panel>
-  );
 
-  const resizeTrigger = (
-    <Splitter.ResizeTrigger
-      key={"trigger"}
-      id={isSmallViewport ? "map:content" : "content:map"}
-      onDoubleClick={() => {
-        setSplitterSize(SPLITTER_KEY, DEFAULT_SPLITTER_SIZE);
-      }}
-    />
-  );
-
-  return (
-    <Splitter.Root
-      panels={panels}
-      size={splitterSize}
-      onResize={(details) => {
-        setSplitterSize(SPLITTER_KEY, details.size);
-      }}
-      orientation={isSmallViewport ? "vertical" : "horizontal"}
-    >
-      {isSmallViewport
-        ? [mapPanel, resizeTrigger, contentPanel]
-        : [contentPanel, resizeTrigger, mapPanel]}
-    </Splitter.Root>
+      {/* Splitter — content panel + transparent spacer (no map inside) */}
+      <Splitter.Root
+        flex={1}
+        panels={panels}
+        size={splitterSize}
+        onResize={(details) => {
+          setSplitterSize(SPLITTER_KEY, details.size);
+        }}
+        orientation={isSmallViewport ? "vertical" : "horizontal"}
+        pos={"relative"}
+        zIndex={1}
+      >
+        {isSmallViewport
+          ? [spacerPanel, resizeTrigger, contentPanel]
+          : [contentPanel, resizeTrigger, spacerPanel]}
+      </Splitter.Root>
+    </>
   );
 };
