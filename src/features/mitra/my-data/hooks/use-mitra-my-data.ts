@@ -1,4 +1,4 @@
-import { getMyData } from "@/features/mitra/my-data/services/my-data.api";
+import { getMyData } from "@/features/mitra/my-data/services/mitra.my-data.service";
 import type {
   MyDataQueryParams,
   MyDataResponse,

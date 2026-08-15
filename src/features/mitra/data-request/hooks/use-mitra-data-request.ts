@@ -4,14 +4,14 @@ import { useMapInstanceStore } from "@/design-system/components/map/stores/map.i
 import {
   addAllToCartFromWfs,
   addSelectedToCart,
-} from "@/features/mitra/cart/services/cart.api";
+} from "@/features/mitra/cart/services/mitra.cart.service";
 import {
   getIgtByAoi,
   getIgtByUploadedAoi,
   getIgtCatalog,
   getIgtGeometryById,
   type MitraDataRequestGetCatalogParams,
-} from "@/features/mitra/data-request/services/mitra.data-request.api";
+} from "@/features/mitra/data-request/services/mitra.data-request.service";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

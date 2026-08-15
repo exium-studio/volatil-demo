@@ -55,7 +55,7 @@ export default function SelectInput(props: SelectProps) {
 
       <Tooltip
         content={
-          <HStack w={"200%"}>
+          <HStack>
             <ChakraSelect.ValueText
               fontSize={"sm"}
               placeholder={placeholder}

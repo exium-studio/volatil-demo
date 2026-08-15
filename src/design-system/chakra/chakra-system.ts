@@ -324,17 +324,17 @@ export const chakraConfig = defineConfig({
         },
 
         orange: {
-          50: { value: "#fef8e7" },
-          100: { value: "#fdf0c4" },
-          200: { value: "#fce49a" },
-          300: { value: "#f8ce61" },
-          400: { value: "#f5b832" },
-          500: { value: "#f3a20b" },
-          600: { value: "#d18a09" },
-          700: { value: "#a86e07" },
-          800: { value: "#7a5005" },
-          900: { value: "#4d3203" },
-          950: { value: "#2e1e02" },
+          50: { value: "#fff4ed" },
+          100: { value: "#ffe6d5" },
+          200: { value: "#ffc9a3" },
+          300: { value: "#ff9d5c" },
+          400: { value: "#fd7f28" },
+          500: { value: "#f97316" },
+          600: { value: "#e2600d" },
+          700: { value: "#bc4a0e" },
+          800: { value: "#953b12" },
+          900: { value: "#793212" },
+          950: { value: "#411806" },
         },
 
         gold: {
@@ -781,6 +781,15 @@ export const chakraConfig = defineConfig({
             },
           },
         },
+
+        // fg: {
+        //   DEFAULT: {
+        //     value: {
+        //       base: "red",
+        //       _dark: "red",
+        //     },
+        //   },
+        // },
 
         border: {
           DEFAULT: {

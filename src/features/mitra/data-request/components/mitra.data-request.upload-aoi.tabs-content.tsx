@@ -500,7 +500,9 @@ const MitraDataRequestUploadAoiDataList = memo(
     } = props;
 
     // States
-    const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
+    const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>(
+      {},
+    );
     const [searchRaw, setSearchRaw] = useState<string>("");
     const [pageState, setPageState] =
       useState<MitraDataRequestUploadAoiPageState>({

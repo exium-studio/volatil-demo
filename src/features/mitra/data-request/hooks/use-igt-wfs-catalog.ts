@@ -3,7 +3,7 @@
 import {
   fetchWfsCatalog,
   type FetchWfsCatalogParams,
-} from "@/features/mitra/data-request/services/fetch-wfs-catalog";
+} from "@/features/mitra/data-request/api/mitra.data-request-wfs.api";
 import { useQuery } from "@tanstack/react-query";
 
 type UseIgtWfsCatalogParams = Omit<FetchWfsCatalogParams, "signal">;

@@ -1,7 +1,7 @@
 // src/features/mitra/home/hooks/use-mitra-home.query.ts
 
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { getMitraHomeData } from "@/features/mitra/home/services/mitra.home.api";
+import { getMitraHomeData } from "@/features/mitra/home/services/mitra.home.service";
 import { dummyMitraHomeData } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";

@@ -9,8 +9,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/theme-store";
-import { DatabaseIcon, Layers2Icon, LandPlotIcon } from "lucide-react";
+import { DatabaseIcon, LandPlotIcon, Layers2Icon } from "lucide-react";
 
 export const MitraHomeDataAvailability = () => {
   return (
@@ -35,6 +34,7 @@ const MitraHomeDataAvailabilityHeader = () => {
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ketersediaan Data Spasial IGT"}
         </P>
+
         <P fontSize={"sm"} color={"fg.subtle"}>
           {
             "Jumlah informasi peta IGT terintegrasi yang tersedia di sistem saat ini."
@@ -49,9 +49,6 @@ const MitraHomeDataAvailabilityStats = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Stores
-  const { theme } = useThemeStore();
-
   // Constants
   const cols = isSmContainer ? 1 : 3;
   const STATS = [
@@ -61,7 +58,7 @@ const MitraHomeDataAvailabilityStats = () => {
       value: 30,
       suffix: "layer",
       description: "Total seluruh dataset IGT terintegrasi",
-      color: `${theme.colorPalette}.fg`,
+      color: `fg`,
     },
     {
       icon: Layers2Icon,
@@ -87,7 +84,8 @@ const MitraHomeDataAvailabilityStats = () => {
         return (
           <StatGrid.Item key={stat.label} index={index} columns={cols}>
             <StatGrid.Header>
-              <StatGrid.Label>{stat.label}</StatGrid.Label>
+              <StatGrid.Label color={stat.color}>{stat.label}</StatGrid.Label>
+
               <StatGrid.Icon icon={stat.icon} color={stat.color} />
             </StatGrid.Header>
 
@@ -95,6 +93,7 @@ const MitraHomeDataAvailabilityStats = () => {
               value={stat.value}
               suffix={stat.suffix}
               color={stat.color}
+              fontWeight={"bold"}
             />
 
             <StatGrid.Description mt={1}>

@@ -16,28 +16,28 @@ import { useQuery } from "@tanstack/react-query";
 export const useFilterOptionsBasis = () => {
   return useQuery({
     queryKey: ["filter-options-basis"],
-    queryFn: getFilterOptionsBasis,
+    queryFn: ({ signal }) => getFilterOptionsBasis(signal),
   });
 };
 
 export const useFilterOptionsTema = () => {
   return useQuery({
     queryKey: ["filter-options-tema"],
-    queryFn: getFilterOptionsTema,
+    queryFn: ({ signal }) => getFilterOptionsTema(signal),
   });
 };
 
 export const useFilterOptionsProvinsi = () => {
   return useQuery({
     queryKey: ["filter-options-provinsi"],
-    queryFn: getFilterOptionsProvinsi,
+    queryFn: ({ signal }) => getFilterOptionsProvinsi(signal),
   });
 };
 
 export const useFilterOptionsKabupaten = (params?: FilterKabupatenParams) => {
   return useQuery({
     queryKey: ["filter-options-kabupaten", params],
-    queryFn: () => getFilterOptionsKabupaten(params),
+    queryFn: ({ signal }) => getFilterOptionsKabupaten(params, signal),
     enabled: !!params?.provinsiId,
   });
 };
@@ -45,7 +45,7 @@ export const useFilterOptionsKabupaten = (params?: FilterKabupatenParams) => {
 export const useFilterOptionsKecamatan = (params?: FilterKecamatanParams) => {
   return useQuery({
     queryKey: ["filter-options-kecamatan", params],
-    queryFn: () => getFilterOptionsKecamatan(params),
+    queryFn: ({ signal }) => getFilterOptionsKecamatan(params, signal),
     enabled: !!params?.kabupatenId,
   });
 };

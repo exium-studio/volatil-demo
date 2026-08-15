@@ -33,7 +33,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
 import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { getLocalCartIds } from "@/features/mitra/cart/services/cart.service";
+import { getLocalCartIds } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import { MapPinIcon, SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";

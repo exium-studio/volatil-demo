@@ -1,7 +1,7 @@
 // src/features/internal/home/hooks/use-internal-home.query.ts
 
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { getInternalHomeData } from "@/features/internal/home/services/internal.home.api";
+import { getInternalHomeData } from "@/features/internal/home/services/internal.home.service";
 import {
   dummyInternalDataList,
   dummyInternalDataSummary,

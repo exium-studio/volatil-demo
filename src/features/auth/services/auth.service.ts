@@ -1,10 +1,7 @@
 // src/features/auth/services/auth.service.ts
 
-import type {
-  AuthResponse,
-  SigninPayload,
-} from "@/features/auth/types/auth.service.type";
-import { apiClient } from "@/shared/libs/api-client/api-client";
+import { postLoginApi } from "@/features/auth/api/auth.api";
+import type { SigninPayload } from "@/features/auth/types/auth.service.type";
 import type {
   InternalUser,
   MitraUser,
@@ -16,12 +13,9 @@ import {
 } from "@/shared/utils/client/client.storage";
 
 export const authService = {
-  login: async (payload: SigninPayload): Promise<User> => {
+  login: async (payload: SigninPayload, signal?: AbortSignal): Promise<User> => {
     try {
-      const response = await apiClient.post<AuthResponse<User>>(
-        "/auth/login",
-        payload,
-      );
+      const response = await postLoginApi(payload, signal);
 
       if (response.data.token) {
         localStorage.setItem("auth_token", response.data.token);

@@ -1,57 +1,46 @@
 // src/features/mitra/data-request/services/mitra.data-request-filter.service.ts
 
 import {
-  DUMMY_FILTER_OPTIONS_BASIS,
-  DUMMY_FILTER_OPTIONS_KABUPATEN,
-  DUMMY_FILTER_OPTIONS_KECAMATAN,
-  DUMMY_FILTER_OPTIONS_PROVINSI,
-  DUMMY_FILTER_OPTIONS_TEMA,
-} from "@/features/mitra/data-request/services/mitra.data-request-filter.dummy";
+  fetchFilterOptionsBasisApi,
+  fetchFilterOptionsKabupatenApi,
+  fetchFilterOptionsKecamatanApi,
+  fetchFilterOptionsProvinsiApi,
+  fetchFilterOptionsTemaApi,
+} from "@/features/mitra/data-request/api/mitra.data-request-filter.api";
 import type {
   FilterKabupatenParams,
   FilterKecamatanParams,
   FilterOptionsResponse,
 } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 
-export const getFilterOptionsBasis =
-  async (): Promise<FilterOptionsResponse> => {
-    return {
-      data: DUMMY_FILTER_OPTIONS_BASIS,
-    };
-  };
+export const getFilterOptionsBasis = async (
+  signal?: AbortSignal,
+): Promise<FilterOptionsResponse> => {
+  return fetchFilterOptionsBasisApi(signal);
+};
 
-export const getFilterOptionsTema =
-  async (): Promise<FilterOptionsResponse> => {
-    return {
-      data: DUMMY_FILTER_OPTIONS_TEMA,
-    };
-  };
+export const getFilterOptionsTema = async (
+  signal?: AbortSignal,
+): Promise<FilterOptionsResponse> => {
+  return fetchFilterOptionsTemaApi(signal);
+};
 
-export const getFilterOptionsProvinsi =
-  async (): Promise<FilterOptionsResponse> => {
-    return {
-      data: DUMMY_FILTER_OPTIONS_PROVINSI,
-    };
-  };
+export const getFilterOptionsProvinsi = async (
+  signal?: AbortSignal,
+): Promise<FilterOptionsResponse> => {
+  return fetchFilterOptionsProvinsiApi(signal);
+};
 
 export const getFilterOptionsKabupaten = async (
   params?: FilterKabupatenParams,
+  signal?: AbortSignal,
 ): Promise<FilterOptionsResponse> => {
-  // Simulate scoped fetch — in production this passes provinsiId to the API
-  const all = DUMMY_FILTER_OPTIONS_KABUPATEN;
-  const filtered = params?.provinsiId
-    ? all.filter((_, i) => i % 3 === (params.provinsiId!.length % 3))
-    : all;
-  return { data: filtered };
+  return fetchFilterOptionsKabupatenApi(params, signal);
 };
 
 export const getFilterOptionsKecamatan = async (
   params?: FilterKecamatanParams,
+  signal?: AbortSignal,
 ): Promise<FilterOptionsResponse> => {
-  // Simulate scoped fetch — in production this passes kabupatenId to the API
-  const all = DUMMY_FILTER_OPTIONS_KECAMATAN;
-  const filtered = params?.kabupatenId
-    ? all.filter((_, i) => i % 4 === (params.kabupatenId!.length % 4))
-    : all;
-  return { data: filtered };
+  return fetchFilterOptionsKecamatanApi(params, signal);
 };
