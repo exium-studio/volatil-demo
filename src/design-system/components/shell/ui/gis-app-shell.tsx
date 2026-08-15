@@ -98,7 +98,7 @@ const Sidebar = () => {
       zIndex={10}
       w={expanded ? "300px" : `calc(40px + 24px)`}
       h={"full"}
-      // transition={"200ms"}
+      transition={"200ms"}
       // transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
     >
       <VStack
@@ -413,14 +413,7 @@ const Content = () => {
   return (
     <>
       {/* Full-viewport basemap tile layer — sits behind everything */}
-      <Box
-        pos={"fixed"}
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        zIndex={0}
-      >
+      <Box pos={"fixed"} top={0} left={0} right={0} bottom={0} zIndex={0}>
         <BaseMap />
       </Box>
 

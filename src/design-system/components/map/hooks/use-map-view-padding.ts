@@ -62,7 +62,7 @@ export const useMapViewPadding = (
 
     const observer = new ResizeObserver(() => {
       const panelPx = options.isVertical ? el.clientHeight : el.clientWidth;
-      applyPadding(options.sidebarPx, panelPx, options.isVertical, 150);
+      applyPadding(options.sidebarPx, panelPx, options.isVertical, 500);
     });
 
     observer.observe(el);
