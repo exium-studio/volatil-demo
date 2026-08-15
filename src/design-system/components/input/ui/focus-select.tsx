@@ -38,13 +38,15 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     size = "md",
     variant = "outline",
     w = "full",
+    trigger,
+    children,
     ...restProps
   } = props;
 
   // Stores
   const { theme } = useThemeStore();
 
-  // States (Uncontrolled support)
+  // States (Uncontrolled & Controlled support)
   const [internalValue, setInternalValue] = useState<string>(defaultValue);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -98,70 +100,97 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     onValueChange?.("", undefined);
   };
 
-  const selectTriggerNode = (
-    <Button
-      variant={variant}
-      size={size}
-      alignItems={"center"}
-      justifyContent={"space-between"}
-      w={w}
-      px={3}
-      disabled={disabled}
-      fontWeight={"normal"}
-      onClick={disabled ? undefined : open}
-      {...restProps}
-    >
-      <HStack gap={SPACING.sm} flex={1} minW={0} justify={"start"}>
-        {selectedOption?.icon && (
-          <AppIcon icon={selectedOption.icon} size={"sm"} />
-        )}
-        <P color={selectedOption ? "fg.default" : "fg.subtle"} truncate>
-          {selectedOption?.label ?? placeholder}
-        </P>
-      </HStack>
+  // Trigger Node (custom render prop, custom ReactNode, or default Button)
+  const customTrigger = trigger ?? children;
 
-      <HStack gap={SPACING.sm} align={"center"}>
-        {clearable && currentValue && !disabled ? (
-          <AppIcon
-            icon={XIcon}
-            size={"sm"}
-            strokeWidth={2}
-            cursor={"pointer"}
-            _hover={{ color: "fg.default" }}
-            onClick={handleClear}
-          />
-        ) : (
-          <AppIcon icon={ChevronDownIcon} mr={"-2px"} />
-        )}
-      </HStack>
-    </Button>
+  const renderTrigger = () => {
+    if (typeof customTrigger === "function") {
+      return customTrigger({
+        selectedOption,
+        value: currentValue,
+        placeholder,
+        disabled,
+        clearable,
+        isOpen,
+        open,
+        close,
+        handleClear,
+      });
+    }
+
+    if (customTrigger) {
+      return customTrigger;
+    }
+
+    return (
+      <Button
+        variant={variant}
+        size={size}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        w={w}
+        px={3}
+        disabled={disabled}
+        fontWeight={"normal"}
+        {...restProps}
+      >
+        <HStack gap={SPACING.sm} flex={1} minW={0} justify={"start"}>
+          {selectedOption?.icon && (
+            <AppIcon icon={selectedOption.icon} size={"sm"} />
+          )}
+          <P color={selectedOption ? "fg.default" : "fg.subtle"} truncate>
+            {selectedOption?.label ?? placeholder}
+          </P>
+        </HStack>
+
+        <HStack gap={SPACING.sm} align={"center"}>
+          {clearable && currentValue && !disabled ? (
+            <AppIcon
+              icon={XIcon}
+              size={"sm"}
+              strokeWidth={2}
+              cursor={"pointer"}
+              _hover={{ color: "fg.default" }}
+              onClick={handleClear}
+            />
+          ) : (
+            <AppIcon icon={ChevronDownIcon} mr={"-2px"} />
+          )}
+        </HStack>
+      </Button>
+    );
+  };
+
+  const triggerContent = (
+    <Modal.Trigger asChild disabled={disabled}>
+      {renderTrigger()}
+    </Modal.Trigger>
   );
 
   return (
-    <>
+    <Modal.Root
+      modalKey={resolvedModalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+    >
       {label ? (
         <Field label={label} w={w}>
-          {selectTriggerNode}
+          {triggerContent}
         </Field>
       ) : (
-        selectTriggerNode
+        triggerContent
       )}
 
-      <Modal.Root
-        modalKey={resolvedModalKey}
-        opened={isOpen}
-        open={open}
-        close={close}
-      >
-        <Modal.Content>
-          <Modal.Header>
-            <Modal.Title fontWeight={"semibold"}>
-              {label
-                ? `${t["action.select"]()} ${label}`
-                : t["common.select_option"]()}
-            </Modal.Title>
-            <Modal.CloseButton />
-          </Modal.Header>
+      <Modal.Content>
+        <Modal.Header>
+          <Modal.Title fontWeight={"semibold"}>
+            {label
+              ? `${t["action.select"]()} ${label}`
+              : t["common.select_option"]()}
+          </Modal.Title>
+          <Modal.CloseButton />
+        </Modal.Header>
 
           <Modal.Body p={0}>
             {isSearchable && !isFetching && (
@@ -251,6 +280,5 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>
-    </>
   );
 }

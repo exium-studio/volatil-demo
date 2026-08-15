@@ -10,9 +10,21 @@ export type FocusSelectOption = {
   icon?: React.ComponentType;
 };
 
+export type FocusSelectTriggerRenderParams = {
+  selectedOption?: FocusSelectOption;
+  value: string;
+  placeholder: string;
+  disabled?: boolean;
+  clearable?: boolean;
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+  handleClear: (e: React.MouseEvent) => void;
+};
+
 export type FocusSelectInputProps = Omit<
   ButtonProps,
-  "onChange" | "value" | "defaultValue"
+  "onChange" | "value" | "defaultValue" | "children"
 > & {
   modalKey?: string;
   label?: string;
@@ -23,4 +35,11 @@ export type FocusSelectInputProps = Omit<
   onValueChange?: (value: string, option?: FocusSelectOption) => void;
   clearable?: boolean;
   isFetching?: boolean;
+  /** Optional custom trigger node or render function receiving trigger state */
+  trigger?:
+    | React.ReactNode
+    | ((params: FocusSelectTriggerRenderParams) => React.ReactNode);
+  children?:
+    | React.ReactNode
+    | ((params: FocusSelectTriggerRenderParams) => React.ReactNode);
 };

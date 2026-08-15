@@ -109,8 +109,11 @@ export const useAddToCartAll = () => {
   });
 
   return useMutation({
-    mutationFn: (params: { typeName: string; wfsUrl: string; cqlFilter?: string }) =>
-      addAllToCartFromWfs(params),
+    mutationFn: (params: {
+      typeName: string;
+      wfsUrl: string;
+      cqlFilter?: string;
+    }) => addAllToCartFromWfs(params),
     onMutate: toast.onLoading,
     onSuccess: () => {
       toast.onSuccess();
