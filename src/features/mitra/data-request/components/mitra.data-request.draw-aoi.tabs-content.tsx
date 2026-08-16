@@ -21,7 +21,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { MitraDataRequestIgtLayerCardList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-card-list";
+import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import {
@@ -303,7 +303,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <MitraDataRequestIgtLayerCardList
+        <MitraDataRequestIgtLayerList
           cqlFilter={aoiCqlFilter}
           onSelectIgtLayer={(layer) => {
             setSelectedIgtLayer(layer);

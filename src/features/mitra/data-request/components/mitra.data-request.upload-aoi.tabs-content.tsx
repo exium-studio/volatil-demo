@@ -31,7 +31,7 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { MitraDataRequestIgtLayerCardList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-card-list";
+import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
 import {
   MitraDataRequestUploadAoiContext,
@@ -565,7 +565,7 @@ const MitraDataRequestUploadAoiDataList = memo(
 
           <Separator borderColor={"bg.canvas"} />
 
-          <MitraDataRequestIgtLayerCardList
+          <MitraDataRequestIgtLayerList
             cqlFilter={aoiCqlFilter}
             onSelectIgtLayer={(layer) => {
               setSelectedIgtLayer(layer);

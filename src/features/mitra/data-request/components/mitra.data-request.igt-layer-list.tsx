@@ -38,7 +38,7 @@ import {
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
-export const MitraDataRequestIgtLayerCardList = memo(
+export const MitraDataRequestIgtLayerList = memo(
   (props: MitraDataRequestIgtLayerCardListProps) => {
     // Props
     const { cqlFilter: baseCqlFilter, onSelectIgtLayer, onApplyFilter } = props;
@@ -136,34 +136,40 @@ export const MitraDataRequestIgtLayerCardList = memo(
 
         <Separator borderColor={"bg.canvas"} />
 
-        {isLoadingLayers ? (
-          <VStack p={PADDING.md} gap={1}>
-            <Skeleton height={"120px"} rounded={theme.radii.container} />
-            <Skeleton height={"120px"} rounded={theme.radii.container} />
-            <Skeleton height={"120px"} rounded={theme.radii.container} />
-          </VStack>
-        ) : (
-          <VStack
-            flex={1}
-            gap={1}
-            overflowY={"auto"}
-            roundedBottom={theme.radii.container}
-          >
-            {filteredLayers.map((layer, index) => {
-              const isLastIndex = index === filteredLayers.length - 1;
+        <VStack
+          flex={1}
+          gap={1}
+          overflowY={"auto"}
+          roundedBottom={theme.radii.container}
+        >
+          {isLoadingLayers ? (
+            <>
+              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
+              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
+              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
+              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
+              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
+              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
+              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
+            </>
+          ) : (
+            <>
+              {filteredLayers.map((layer, index) => {
+                const isLastIndex = index === filteredLayers.length - 1;
 
-              return (
-                <IgtLayerCardItem
-                  key={layer.id}
-                  layer={layer}
-                  cqlFilter={combinedCqlFilter}
-                  onSelectIgtLayer={onSelectIgtLayer}
-                  roundedBottom={isLastIndex ? theme.radii.container : 0}
-                />
-              );
-            })}
-          </VStack>
-        )}
+                return (
+                  <IgtLayerCardItem
+                    key={layer.id}
+                    layer={layer}
+                    cqlFilter={combinedCqlFilter}
+                    onSelectIgtLayer={onSelectIgtLayer}
+                    roundedBottom={isLastIndex ? theme.radii.container : 0}
+                  />
+                );
+              })}
+            </>
+          )}
+        </VStack>
       </VStack>
     );
   },
@@ -214,8 +220,8 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
         bg={"bg.body"}
         {...restProps}
       >
-        {/* Top Header Row */}
         <HStack
+          flex={"1 0 300px"}
           align={"start"}
           gap={SPACING.md}
           p={PADDING.md}
@@ -261,7 +267,13 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
         </HStack>
 
         {/* Action Row */}
-        <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm} p={PADDING.md}>
+        <HStack
+          flex={"0 0 auto"}
+          wrap={"wrap"}
+          align={"center"}
+          gap={SPACING.sm}
+          p={PADDING.md}
+        >
           <Button variant={"outline"} onClick={() => onSelectIgtLayer(layer)}>
             <AppIcon icon={EyeIcon} />
             {"Lihat detail"}
@@ -279,7 +291,7 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
             }
           >
             <AppIcon icon={IconShoppingCartPlus} />
-            {"Tambah ke keranjang"}
+            {"Tambah IGT"}
           </Button>
         </HStack>
       </HStack>

@@ -14,7 +14,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
-import { MitraDataRequestIgtLayerCardList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-card-list";
+import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import {
@@ -41,7 +41,7 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
       {...props}
     >
       {!selectedIgtLayer ? (
-        <MitraDataRequestIgtLayerCardList
+        <MitraDataRequestIgtLayerList
           onSelectIgtLayer={(layer) => {
             setSelectedIgtLayer(layer);
             setLayerId(layer.id);
