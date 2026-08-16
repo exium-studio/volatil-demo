@@ -28,10 +28,11 @@ export const MapOverlay = (_: MapOverlayProps) => {
         w={"full"}
         gap={4}
         p={4}
+        pointerEvents={"none"}
       >
         <MapSearch />
 
-        <HStack align={"start"} gap={2}>
+        <HStack align={"start"} gap={2} pointerEvents={"none"}>
           <MapAttribution />
         </HStack>
       </HStack>

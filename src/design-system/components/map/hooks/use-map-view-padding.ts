@@ -55,7 +55,7 @@ export const useMapViewPadding = (
     map.easeTo({ padding, duration });
   };
 
-  // ResizeObserver: fires on every splitter drag tick — duration 0, real-time
+  // ResizeObserver: fires on every splitter drag tick
   useEffect(() => {
     const el = options.contentPanelRef.current;
     if (!map || !el) return;

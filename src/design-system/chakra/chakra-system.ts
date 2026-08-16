@@ -782,15 +782,6 @@ export const chakraConfig = defineConfig({
           },
         },
 
-        // fg: {
-        //   DEFAULT: {
-        //     value: {
-        //       base: "red",
-        //       _dark: "red",
-        //     },
-        //   },
-        // },
-
         border: {
           DEFAULT: {
             value: {

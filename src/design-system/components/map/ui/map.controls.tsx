@@ -19,14 +19,15 @@ export const MapControls = (props: StackProps) => {
       gap={SPACING.md}
       w={"full"}
       p={4}
+      pointerEvents={"none"}
       {...props}
     >
-      <HStack align={"end"} gap={SPACING.md}>
+      <HStack align={"end"} gap={SPACING.md} pointerEvents={"none"}>
         <MapBasemapSelect />
         <MapScale mb={1} />
       </HStack>
 
-      <HStack gap={SPACING.sm}>
+      <HStack gap={SPACING.sm} pointerEvents={"none"}>
         <Map3DToggle />
         <MapZoom />
         <MapLocate />
