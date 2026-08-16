@@ -84,7 +84,9 @@ const MitraHomeDataAvailabilityStats = () => {
         return (
           <StatGrid.Item key={stat.label} index={index} columns={cols}>
             <StatGrid.Header>
-              <StatGrid.Label color={stat.color}>{stat.label}</StatGrid.Label>
+              <StatGrid.Label fontWeight={"semibold"} color={stat.color}>
+                {stat.label}
+              </StatGrid.Label>
 
               <StatGrid.Icon icon={stat.icon} color={stat.color} />
             </StatGrid.Header>

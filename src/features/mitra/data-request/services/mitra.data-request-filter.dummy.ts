@@ -53,3 +53,14 @@ export const DUMMY_FILTER_OPTIONS_KECAMATAN: FilterOptionItem[] = [
   { label: "Coblong", value: "Coblong" },
   { label: "Sumur Bandung", value: "Sumur Bandung" },
 ];
+
+export const DUMMY_FILTER_OPTIONS_KELURAHAN: FilterOptionItem[] = [
+  { label: "Kelurahan Gambir", value: "Kelurahan Gambir" },
+  { label: "Kelurahan Kebon Kelapa", value: "Kelurahan Kebon Kelapa" },
+  { label: "Kelurahan Petojo Selatan", value: "Kelurahan Petojo Selatan" },
+  { label: "Kelurahan Duri Pulo", value: "Kelurahan Duri Pulo" },
+  { label: "Kelurahan Cikini", value: "Kelurahan Cikini" },
+  { label: "Kelurahan Gondangdia", value: "Kelurahan Gondangdia" },
+  { label: "Kelurahan Pegangsaan", value: "Kelurahan Pegangsaan" },
+  { label: "Kelurahan Rawasari", value: "Kelurahan Rawasari" },
+];

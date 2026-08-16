@@ -1,15 +1,15 @@
-// src/features/mitra/data-request/queries/use-mitra-data-request-filter.query.ts
-
 import {
   getFilterOptionsBasis,
   getFilterOptionsKabupaten,
   getFilterOptionsKecamatan,
+  getFilterOptionsKelurahan,
   getFilterOptionsProvinsi,
   getFilterOptionsTema,
 } from "@/features/mitra/data-request/services/mitra.data-request-filter.service";
 import type {
   FilterKabupatenParams,
   FilterKecamatanParams,
+  FilterKelurahanParams,
 } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 import { useQuery } from "@tanstack/react-query";
 
@@ -47,5 +47,13 @@ export const useFilterOptionsKecamatan = (params?: FilterKecamatanParams) => {
     queryKey: ["filter-options-kecamatan", params],
     queryFn: ({ signal }) => getFilterOptionsKecamatan(params, signal),
     enabled: !!params?.kabupatenId,
+  });
+};
+
+export const useFilterOptionsKelurahan = (params?: FilterKelurahanParams) => {
+  return useQuery({
+    queryKey: ["filter-options-kelurahan", params],
+    queryFn: ({ signal }) => getFilterOptionsKelurahan(params, signal),
+    enabled: !!params?.kecamatanId,
   });
 };

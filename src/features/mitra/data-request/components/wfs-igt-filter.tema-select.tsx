@@ -52,6 +52,7 @@ export const WfsIgtFilterTemaSelect = (props: WfsIgtFilterSelectProps) => {
       onValueChange={handleValueChange}
       disabled={disabled}
       isFetching={isFetching}
+      customOption={true}
     />
   );
 };

@@ -35,6 +35,8 @@ export type FocusSelectInputProps = Omit<
   onValueChange?: (value: string, option?: FocusSelectOption) => void;
   clearable?: boolean;
   isFetching?: boolean;
+  /** When true, typing in the search input dynamically creates a custom option at the top of the list. Defaults to false. */
+  customOption?: boolean;
   /** Optional custom trigger node or render function receiving trigger state */
   trigger?:
     | React.ReactNode

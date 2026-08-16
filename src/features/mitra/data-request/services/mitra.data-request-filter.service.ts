@@ -1,15 +1,15 @@
-// src/features/mitra/data-request/services/mitra.data-request-filter.service.ts
-
 import {
   fetchFilterOptionsBasisApi,
   fetchFilterOptionsKabupatenApi,
   fetchFilterOptionsKecamatanApi,
+  fetchFilterOptionsKelurahanApi,
   fetchFilterOptionsProvinsiApi,
   fetchFilterOptionsTemaApi,
 } from "@/features/mitra/data-request/api/mitra.data-request-filter.api";
 import type {
   FilterKabupatenParams,
   FilterKecamatanParams,
+  FilterKelurahanParams,
   FilterOptionsResponse,
 } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 
@@ -43,4 +43,11 @@ export const getFilterOptionsKecamatan = async (
   signal?: AbortSignal,
 ): Promise<FilterOptionsResponse> => {
   return fetchFilterOptionsKecamatanApi(params, signal);
+};
+
+export const getFilterOptionsKelurahan = async (
+  params?: FilterKelurahanParams,
+  signal?: AbortSignal,
+): Promise<FilterOptionsResponse> => {
+  return fetchFilterOptionsKelurahanApi(params, signal);
 };

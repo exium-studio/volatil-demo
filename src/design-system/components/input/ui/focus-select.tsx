@@ -4,22 +4,25 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { FocusSelectInputProps } from "@/design-system/components/input/types/focus-select.type";
+import type {
+  FocusSelectInputProps,
+  FocusSelectOption,
+} from "@/design-system/components/input/types/focus-select.type";
 import { Field } from "@/design-system/components/input/ui/field";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
-import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
 
-const MIN_SEARCHABLE_OPTIONS_COUNT = 8;
 const SKELETON_LIST_COUNT = 5;
 
 export function FocusSelectInput(props: FocusSelectInputProps) {
@@ -35,6 +38,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     disabled = false,
     clearable = true,
     isFetching = false,
+    customOption = false,
     size = "md",
     variant = "outline",
     w = "full",
@@ -53,7 +57,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   // Derived Values
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
-  const isSearchable = options.length > MIN_SEARCHABLE_OPTIONS_COUNT;
 
   const resolvedModalKey = useMemo(
     () =>
@@ -67,40 +70,53 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     modalKey: resolvedModalKey,
   });
 
-  const selectedOption = useMemo(
-    () => options.find((opt) => opt.value === currentValue),
-    [options, currentValue],
-  );
+  const filteredOptions = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return options;
+    return options.filter(
+      (opt) =>
+        opt.label.toLowerCase().includes(query) ||
+        opt.description?.toLowerCase().includes(query),
+    );
+  }, [options, searchQuery]);
 
-  const filteredOptions = useMemo(
-    () =>
-      options.filter(
-        (opt) =>
-          opt.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          opt.description?.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    [options, searchQuery],
-  );
+  const selectedOption = useMemo(() => {
+    const found = options.find((opt) => opt.value === currentValue);
+    if (found) return found;
+    if (currentValue) {
+      return { label: currentValue, value: currentValue };
+    }
+    return undefined;
+  }, [options, currentValue]);
 
   // Handlers
-  const handleOptionSelect = (val: string) => {
+  const handleOptionSelect = (
+    val: string,
+    optionDetail?: FocusSelectOption,
+  ) => {
     if (!isControlled) {
       setInternalValue(val);
     }
-    const selectedOpt = options.find((opt) => opt.value === val);
+    const selectedOpt = optionDetail ??
+      filteredOptions.find((opt) => opt.value === val) ?? {
+        label: val,
+        value: val,
+      };
     onValueChange?.(val, selectedOpt);
     close();
   };
 
   const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
     if (!isControlled) {
       setInternalValue("");
     }
     onValueChange?.("", undefined);
   };
 
-  // Trigger Node (custom render prop, custom ReactNode, or default Button)
+  // Trigger Node
   const customTrigger = trigger ?? children;
 
   const renderTrigger = () => {
@@ -167,6 +183,9 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     </Modal.Trigger>
   );
 
+  const isCustomValueSelected =
+    Boolean(currentValue) && !options.some((opt) => opt.value === currentValue);
+
   return (
     <Modal.Root
       modalKey={resolvedModalKey}
@@ -189,96 +208,137 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               ? `${t["action.select"]()} ${label}`
               : t["common.select_option"]()}
           </Modal.Title>
+
           <Modal.CloseButton />
         </Modal.Header>
 
-          <Modal.Body p={0}>
-            {isSearchable && !isFetching && (
-              <VStack w={"full"} px={PADDING.md} pt={"2px"} mb={SPACING.sm}>
-                <SearchInput
-                  placeholder={t["action.search"]()}
-                  onValueChange={setSearchQuery}
-                  w={"full"}
-                  autoFocus={true}
-                />
+        <Modal.Body p={0}>
+          {/* Always render SearchInput when not fetching */}
+          {!isFetching && (
+            <VStack w={"full"} px={PADDING.md} pt={"2px"} mb={SPACING.sm}>
+              <SearchInput
+                placeholder={t["action.search"]()}
+                onValueChange={setSearchQuery}
+                w={"full"}
+                autoFocus={true}
+              />
+            </VStack>
+          )}
+
+          {/* Always render Custom Option at top if customOption prop is true */}
+          {customOption && !isFetching && (
+            <VStack w={"full"} px={PADDING.md} mb={SPACING.sm}>
+              <Button
+                variant={
+                  isCustomValueSelected && currentValue === searchQuery.trim()
+                    ? "subtle"
+                    : "outline"
+                }
+                w={"full"}
+                py={PADDING.sm}
+                px={3}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                onClick={() => {
+                  if (searchQuery.trim()) {
+                    handleOptionSelect(searchQuery.trim(), {
+                      label: searchQuery.trim(),
+                      value: searchQuery.trim(),
+                      description: "Opsi kustom",
+                    });
+                  }
+                }}
+                disabled={!searchQuery.trim()}
+              >
+                <HStack gap={SPACING.sm} align={"center"} flex={1} minW={0}>
+                  <AppIcon icon={PlusIcon} size={"sm"} />
+                  <P fontWeight={"semibold"} truncate>
+                    {searchQuery.trim()
+                      ? searchQuery.trim()
+                      : "Ketik di atas untuk input kustom..."}
+                  </P>
+                </HStack>
+                <Badge>Opsi Kustom</Badge>
+              </Button>
+            </VStack>
+          )}
+
+          {/* Clean options list container */}
+          <VScrollContainer
+            w={"full"}
+            maxH={"300px"}
+            px={PADDING.md}
+            pb={PADDING.md}
+          >
+            {isFetching ? (
+              <VStack gap={SPACING.sm} w={"full"}>
+                {Array.from({ length: SKELETON_LIST_COUNT }).map((_, index) => (
+                  <Skeleton
+                    key={`skeleton-${index + 1}`}
+                    w={"full"}
+                    h={"40px"}
+                  />
+                ))}
+              </VStack>
+            ) : filteredOptions.length === 0 ? (
+              <NoResultState query={searchQuery || "..."} />
+            ) : (
+              <VStack gap={1} w={"full"}>
+                {filteredOptions.map((opt) => {
+                  const isSelected = opt.value === currentValue;
+
+                  return (
+                    <Button
+                      key={opt.value}
+                      variant={isSelected ? "subtle" : "ghost"}
+                      w={"full"}
+                      h={"auto"}
+                      py={PADDING.sm}
+                      px={3}
+                      justifyContent={"space-between"}
+                      alignItems={"center"}
+                      fontWeight={"normal"}
+                      onClick={() => handleOptionSelect(opt.value, opt)}
+                    >
+                      <HStack
+                        gap={SPACING.sm}
+                        align={"center"}
+                        flex={1}
+                        minW={0}
+                        justify={"start"}
+                      >
+                        {opt.icon && <AppIcon icon={opt.icon} size={"sm"} />}
+                        <VStack align={"start"} gap={0} minW={0} flex={1}>
+                          <P
+                            fontWeight={isSelected ? "semibold" : "normal"}
+                            truncate
+                          >
+                            {opt.label}
+                          </P>
+
+                          {opt.description && (
+                            <P fontSize={"xs"} color={"fg.subtle"} truncate>
+                              {opt.description}
+                            </P>
+                          )}
+                        </VStack>
+                      </HStack>
+
+                      {isSelected && (
+                        <AppIcon
+                          icon={CheckIcon}
+                          color={`${theme.colorPalette}.solid`}
+                          mr={"-2px"}
+                        />
+                      )}
+                    </Button>
+                  );
+                })}
               </VStack>
             )}
-
-            <VScrollContainer w={"full"} px={PADDING.md} pb={PADDING.md}>
-              <VStack gap={1} w={"full"}>
-                {isFetching ? (
-                  Array.from({ length: SKELETON_LIST_COUNT }).map(
-                    (_, index) => (
-                      <Skeleton
-                        key={`skeleton-${index + 1}`}
-                        w={"full"}
-                        h={"40px"}
-                      />
-                    ),
-                  )
-                ) : (
-                  <>
-                    {filteredOptions.length === 0 && (
-                      <NoResultState query={searchQuery || "..."} />
-                    )}
-
-                    {filteredOptions.map((opt) => {
-                      const isSelected = opt.value === currentValue;
-                      return (
-                        <Button
-                          key={opt.value}
-                          variant={isSelected ? "subtle" : "ghost"}
-                          w={"full"}
-                          h={"auto"}
-                          py={PADDING.sm}
-                          px={3}
-                          justifyContent={"space-between"}
-                          alignItems={"center"}
-                          fontWeight={"normal"}
-                          onClick={() => handleOptionSelect(opt.value)}
-                        >
-                          <HStack
-                            gap={SPACING.sm}
-                            align={"center"}
-                            flex={1}
-                            minW={0}
-                            justify={"start"}
-                          >
-                            {opt.icon && (
-                              <AppIcon icon={opt.icon} size={"sm"} />
-                            )}
-                            <VStack align={"start"} gap={0} minW={0} flex={1}>
-                              <P
-                                fontWeight={isSelected ? "semibold" : "normal"}
-                                truncate
-                              >
-                                {opt.label}
-                              </P>
-
-                              {opt.description && (
-                                <P fontSize={"xs"} color={"fg.subtle"} truncate>
-                                  {opt.description}
-                                </P>
-                              )}
-                            </VStack>
-                          </HStack>
-
-                          {isSelected && (
-                            <AppIcon
-                              icon={CheckIcon}
-                              color={`${theme.colorPalette}.solid`}
-                              mr={"-2px"}
-                            />
-                          )}
-                        </Button>
-                      );
-                    })}
-                  </>
-                )}
-              </VStack>
-            </VScrollContainer>
-          </Modal.Body>
-        </Modal.Content>
-      </Modal.Root>
+          </VScrollContainer>
+        </Modal.Body>
+      </Modal.Content>
+    </Modal.Root>
   );
 }

@@ -14,9 +14,19 @@ import {
   ChevronRight,
   ChevronUp,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
-export const VScrollContainer = (props: VScrollContainerProps) => {
+export const VScrollContainer = forwardRef<
+  HTMLDivElement,
+  VScrollContainerProps
+>((props, ref) => {
   // Props
   const {
     children,
@@ -29,6 +39,7 @@ export const VScrollContainer = (props: VScrollContainerProps) => {
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
 
   // States
   const [scrollTop, setScrollTop] = useState<number>(0);
@@ -137,7 +148,7 @@ export const VScrollContainer = (props: VScrollContainerProps) => {
       </VStack>
     </Box>
   );
-};
+});
 
 export const HScrollContainer = (props: HScrollContainerProps) => {
   // Props

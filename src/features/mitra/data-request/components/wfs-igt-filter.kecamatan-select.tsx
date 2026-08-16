@@ -45,9 +45,8 @@ export const WfsIgtFilterKecamatanSelect = (
     if (!isControlled) {
       setInternalValue(val);
     }
-    const details = option
-      ? { value: option.value, label: option.label }
-      : null;
+    const details =
+      val && option ? { value: option.value, label: option.label } : null;
     onValueChange?.(details, val);
   };
 
@@ -61,6 +60,7 @@ export const WfsIgtFilterKecamatanSelect = (
       onValueChange={handleValueChange}
       disabled={disabled}
       isFetching={isFetching}
+      customOption={true}
     />
   );
 };

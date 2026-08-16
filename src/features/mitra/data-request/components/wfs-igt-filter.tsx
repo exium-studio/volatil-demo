@@ -1,13 +1,16 @@
 // src/features/mitra/data-request/components/wfs-igt-filter.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Box } from "@/design-system/components/layout/ui/box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { MODAL, SPACING } from "@/design-system/constants/styles";
 import { WfsIgtFilterBasisSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.basis-select";
 import { WfsIgtFilterKabupatenSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.kabupaten-select";
 import { WfsIgtFilterKecamatanSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.kecamatan-select";
+import { WfsIgtFilterKelurahanSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.kelurahan-select";
 import { WfsIgtFilterProvinsiSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.provinsi-select";
 import { WfsIgtFilterTemaSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.tema-select";
 import { WFS_IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/wfs-igt-filter.config";
@@ -16,7 +19,7 @@ import type {
   WfsIgtFilterTriggerProps,
   WfsIgtFilterValues,
 } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
   // Props
@@ -39,6 +42,13 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
   const currentAppliedFilters = isControlled
     ? controlledValue
     : internalAppliedFilters;
+
+  // Derived Values
+  const activeFilterCount = useMemo(() => {
+    return Object.values(currentAppliedFilters).filter(
+      (val) => val !== null && val !== undefined && Boolean(val.value),
+    ).length;
+  }, [currentAppliedFilters]);
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -75,15 +85,22 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
     setLocalDraftFilters((prev) => {
       const next = { ...prev, [key]: details };
 
-      // Cascading: provinsi changed → reset kabupaten and kecamatan
+      // Cascading: provinsi changed → reset kabupaten, kecamatan, and kelurahan
       if (key === WFS_IGT_FILTER_KEYS_MAP.PROVINSI) {
         next[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN] = null;
         next[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
+        next[WFS_IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
       }
 
-      // Cascading: kabupaten changed → reset kecamatan
+      // Cascading: kabupaten changed → reset kecamatan and kelurahan
       if (key === WFS_IGT_FILTER_KEYS_MAP.KABUPATEN) {
         next[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
+        next[WFS_IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
+      }
+
+      // Cascading: kecamatan changed → reset kelurahan
+      if (key === WFS_IGT_FILTER_KEYS_MAP.KECAMATAN) {
+        next[WFS_IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
       }
 
       return next;
@@ -111,13 +128,28 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
       close={close}
       size={"sm"}
     >
-      <Modal.Trigger>{children}</Modal.Trigger>
+      <Box pos={"relative"} display={"inline-block"}>
+        <Modal.Trigger>{children}</Modal.Trigger>
+        {activeFilterCount > 0 && (
+          <CountBadge
+            count={activeFilterCount}
+            isFloating={true}
+            colorPalette={"blue"}
+          />
+        )}
+      </Box>
 
       <Modal.Content>
         <Modal.Header>
-          <Modal.Title fontWeight={"semibold"}>
-            {"Filter Data IGT-PR"}
-          </Modal.Title>
+          <HStack gap={2} align={"center"}>
+            <Modal.Title fontWeight={"semibold"}>
+              {"Filter Data IGT-PR"}
+            </Modal.Title>
+
+            {activeFilterCount > 0 && (
+              <CountBadge count={activeFilterCount} colorPalette={"blue"} />
+            )}
+          </HStack>
           <Modal.CloseButton />
         </Modal.Header>
 
@@ -178,6 +210,23 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
               }
               onValueChange={(details) =>
                 handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.KECAMATAN, details)
+              }
+            />
+
+            <WfsIgtFilterKelurahanSelect
+              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.KELURAHAN}`}
+              kecamatanId={
+                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
+              }
+              value={
+                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ??
+                ""
+              }
+              disabled={
+                !localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
+              }
+              onValueChange={(details) =>
+                handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.KELURAHAN, details)
               }
             />
           </VStack>

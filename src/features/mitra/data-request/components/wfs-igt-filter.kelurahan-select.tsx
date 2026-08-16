@@ -1,14 +1,20 @@
-// src/features/mitra/data-request/components/wfs-igt-filter.basis-select.tsx
+// src/features/mitra/data-request/components/wfs-igt-filter.kelurahan-select.tsx
 
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
-import { useFilterOptionsBasis } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
+import { useFilterOptionsKelurahan } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import type {
   WfsIgtFilterOptionDetail,
   WfsIgtFilterSelectProps,
 } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import { useState } from "react";
 
-export const WfsIgtFilterBasisSelect = (props: WfsIgtFilterSelectProps) => {
+export type WfsIgtFilterKelurahanSelectProps = WfsIgtFilterSelectProps & {
+  kecamatanId?: string;
+};
+
+export const WfsIgtFilterKelurahanSelect = (
+  props: WfsIgtFilterKelurahanSelectProps,
+) => {
   // Props
   const {
     modalKey,
@@ -16,6 +22,7 @@ export const WfsIgtFilterBasisSelect = (props: WfsIgtFilterSelectProps) => {
     defaultValue = "",
     onValueChange,
     disabled = false,
+    kecamatanId,
   } = props;
 
   // States (Uncontrolled support)
@@ -26,7 +33,9 @@ export const WfsIgtFilterBasisSelect = (props: WfsIgtFilterSelectProps) => {
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Hooks (TanStack Query)
-  const { data: basisResponse, isFetching } = useFilterOptionsBasis();
+  const { data: kelurahanResponse, isFetching } = useFilterOptionsKelurahan(
+    kecamatanId ? { kecamatanId } : undefined,
+  );
 
   // Handlers
   const handleValueChange = (
@@ -36,18 +45,17 @@ export const WfsIgtFilterBasisSelect = (props: WfsIgtFilterSelectProps) => {
     if (!isControlled) {
       setInternalValue(val);
     }
-    const details = option
-      ? { value: option.value, label: option.label }
-      : null;
+    const details =
+      val && option ? { value: option.value, label: option.label } : null;
     onValueChange?.(details, val);
   };
 
   return (
     <FocusSelectInput
       modalKey={modalKey}
-      label={"Basis IGT"}
-      placeholder={"Pilih Basis IGT"}
-      options={basisResponse?.data ?? []}
+      label={"Kelurahan / Desa"}
+      placeholder={"Pilih Kelurahan / Desa"}
+      options={kelurahanResponse?.data ?? []}
       value={currentValue}
       onValueChange={handleValueChange}
       disabled={disabled}

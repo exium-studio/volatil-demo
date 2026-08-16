@@ -13,12 +13,14 @@ export const buildWfsCqlFilter = (
   const clauses: string[] = [];
 
   const addEqClause = (fieldName: string) => {
-    // Skip 'basis' for layer 'igt:CONTOH_BIDANG_TANAH' as GeoServer throws IllegalPropertyException
+    // Skip 'basis' as it's not a GeoServer layer property
     if (fieldName === WFS_IGT_FILTER_KEYS_MAP.BASIS) return;
 
     const detail = filters[fieldName];
     if (detail?.value) {
-      clauses.push(`${fieldName}='${detail.value}'`);
+      const safeValue = detail.value.replace(/'/g, "''");
+      // Use ILIKE for case-insensitive attribute & value matching in GeoServer ECQL
+      clauses.push(`${fieldName} ILIKE '${safeValue}'`);
     }
   };
 
@@ -27,6 +29,7 @@ export const buildWfsCqlFilter = (
   addEqClause(WFS_IGT_FILTER_KEYS_MAP.PROVINSI);
   addEqClause(WFS_IGT_FILTER_KEYS_MAP.KABUPATEN);
   addEqClause(WFS_IGT_FILTER_KEYS_MAP.KECAMATAN);
+  addEqClause(WFS_IGT_FILTER_KEYS_MAP.KELURAHAN);
 
   return clauses.length > 0 ? clauses.join(" AND ") : undefined;
 };

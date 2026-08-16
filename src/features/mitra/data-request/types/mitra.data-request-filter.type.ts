@@ -16,3 +16,7 @@ export type FilterKabupatenParams = {
 export type FilterKecamatanParams = {
   kabupatenId?: string;
 };
+
+export type FilterKelurahanParams = {
+  kecamatanId?: string;
+};
