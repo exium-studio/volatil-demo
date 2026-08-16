@@ -46,8 +46,8 @@ export const useMitraDrawAoi = () => {
   }, [cancelDraw, cancelWfsClip, resetWfsClipStore]);
 
   const handleConfirmAndFetch = useCallback(
-    async (typeName: string) => {
-      if (!hasFinishedDraw) return;
+    async (typeName: string, wfsUrl: string) => {
+      if (!hasFinishedDraw || !typeName || !wfsUrl) return;
 
       const polygonFeature: GeoJSON.Feature<GeoJSON.Polygon> = {
         type: "Feature",
@@ -65,7 +65,7 @@ export const useMitraDrawAoi = () => {
 
       setConfirmedPolygon(polygonFeature);
       // Run WFS clip for map layer visualization
-      void runWfsClip(polygonFeature, typeName);
+      void runWfsClip(polygonFeature, typeName, wfsUrl);
     },
     [hasFinishedDraw, points, runWfsClip],
   );

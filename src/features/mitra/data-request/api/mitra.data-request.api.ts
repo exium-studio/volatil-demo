@@ -57,11 +57,13 @@ export async function fetchIgtByUploadedAoiApi(
 
 export async function fetchIgtGeometryByIdApi(
   id: string,
-  layerName = "igt:CONTOH_BIDANG_TANAH",
+  layerName: string,
+  wfsUrl: string,
   signal?: AbortSignal,
 ): Promise<GeoJSON.FeatureCollection> {
   return fetchWfs({
     typeName: layerName,
+    wfsUrl,
     cqlFilter: `id='${id}'`,
     signal,
   });

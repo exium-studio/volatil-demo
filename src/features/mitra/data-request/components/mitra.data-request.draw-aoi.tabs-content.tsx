@@ -50,6 +50,9 @@ import { memo, useMemo, useState } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
   (props: TabsContentProps) => {
+    // Stores
+    const { selectedIgtLayer } = useIgtLayerStore();
+
     // Hooks
     const {
       isDrawing,
@@ -123,9 +126,13 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
                   <Button
                     primary
                     pl={3}
-                    onClick={() =>
-                      void handleConfirmAndFetch("igt:CONTOH_BIDANG_TANAH")
-                    }
+                    onClick={() => {
+                      if (!selectedIgtLayer) return;
+                      void handleConfirmAndFetch(
+                        selectedIgtLayer.wfsTypeName,
+                        selectedIgtLayer.wfsUrl ?? "",
+                      );
+                    }}
                   >
                     <AppIcon icon={CheckIcon} />
                     {"Konfirmasi & clip"}

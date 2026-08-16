@@ -8,8 +8,6 @@ import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import type GeoJSON from "geojson";
 
-import { getMapServerEndpoints } from "@/design-system/components/map/services/map-endpoints.api";
-
 const WFS_ID_FIELD = "gid";
 
 export type { FetchWfsCatalogResult };
@@ -29,7 +27,7 @@ export async function fetchCartWfsPageApi(params: {
   page: number;
   pageSize: number;
   typeName: string;
-  wfsUrl?: string;
+  wfsUrl: string;
   search?: string;
   cqlFilter?: string;
   signal?: AbortSignal;
@@ -43,13 +41,7 @@ export async function fetchCartWfsPageApi(params: {
   const { ids, page, pageSize, typeName, wfsUrl, search, cqlFilter, signal } =
     params;
 
-  let targetWfsUrl = wfsUrl;
-  if (!targetWfsUrl) {
-    const endpoints = await getMapServerEndpoints(signal);
-    targetWfsUrl = endpoints[0]?.wfsUrl ?? "";
-  }
-
-  if (ids.length === 0) {
+  if (ids.length === 0 || !typeName || !wfsUrl) {
     return {
       features: [],
       totalFeatures: 0,
@@ -69,7 +61,7 @@ export async function fetchCartWfsPageApi(params: {
 
   const result = await fetchWfsCatalog({
     typeName,
-    wfsUrl: targetWfsUrl,
+    wfsUrl,
     page,
     pageSize,
     search,
@@ -97,23 +89,18 @@ export async function postAddSelectedToCartApi(
 
 /** Add ALL features matching the given WFS params to cart via WFS. */
 export async function fetchAllFeatureIdsFromWfsApi(params: {
-  typeName?: string;
-  wfsUrl?: string;
+  typeName: string;
+  wfsUrl: string;
   cqlFilter?: string;
   signal?: AbortSignal;
 }): Promise<string[]> {
-  const { typeName, cqlFilter, signal } = params;
-  let targetWfsUrl = params.wfsUrl;
-  if (!targetWfsUrl) {
-    const endpoints = await getMapServerEndpoints(signal);
-    targetWfsUrl = endpoints[0]?.wfsUrl ?? "";
-  }
+  const { typeName, wfsUrl, cqlFilter, signal } = params;
 
-  if (!typeName || !targetWfsUrl) return [];
+  if (!typeName || !wfsUrl) return [];
 
   const result = await fetchWfs({
     typeName,
-    wfsUrl: targetWfsUrl,
+    wfsUrl,
     version: "2.0.0",
     cqlFilter,
     resultType: "results",

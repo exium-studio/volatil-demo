@@ -70,8 +70,9 @@ export async function getIgtByUploadedAoi(
 
 export async function getIgtGeometryById(
   id: string,
-  layerName = "igt:CONTOH_BIDANG_TANAH",
+  layerName: string,
+  wfsUrl: string,
   signal?: AbortSignal,
 ): Promise<GeoJSON.FeatureCollection> {
-  return fetchIgtGeometryByIdApi(id, layerName, signal);
+  return fetchIgtGeometryByIdApi(id, layerName, wfsUrl, signal);
 }

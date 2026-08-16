@@ -6,14 +6,6 @@ import type GeoJSON from "geojson";
 const cachedAttributes: Record<string, string[]> = {};
 const cachedStringAttributes: Record<string, string[]> = {};
 
-import { getMapServerEndpoints } from "@/design-system/components/map/services/map-endpoints.api";
-
-async function resolveWfsUrl(providedUrl?: string, signal?: AbortSignal): Promise<string> {
-  if (providedUrl) return providedUrl;
-  const endpoints = await getMapServerEndpoints(signal);
-  return endpoints[0]?.wfsUrl ?? "";
-}
-
 /**
  * Fetches all properties keys dynamically from the first feature of a WFS type.
  */
@@ -22,9 +14,8 @@ export const getWfsAttributes = async (
   wfsUrl?: string,
   signal?: AbortSignal,
 ): Promise<string[]> => {
-  if (!typeName) return [];
-  const targetWfsUrl = await resolveWfsUrl(wfsUrl, signal);
-  const cacheKey = `${targetWfsUrl}:${typeName}`;
+  if (!typeName || !wfsUrl) return [];
+  const cacheKey = `${wfsUrl}:${typeName}`;
   if (cachedAttributes[cacheKey]) {
     return cachedAttributes[cacheKey];
   }
@@ -75,15 +66,14 @@ export const getWfsStringAttributes = async (
   wfsUrl?: string,
   signal?: AbortSignal,
 ): Promise<string[]> => {
-  if (!typeName) return [];
-  const targetWfsUrl = await resolveWfsUrl(wfsUrl, signal);
-  const cacheKey = `${targetWfsUrl}:${typeName}`;
+  if (!typeName || !wfsUrl) return [];
+  const cacheKey = `${wfsUrl}:${typeName}`;
   if (cachedStringAttributes[cacheKey]) {
     return cachedStringAttributes[cacheKey];
   }
 
   try {
-    const url = new URL(targetWfsUrl);
+    const url = new URL(wfsUrl);
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", "2.0.0");
     url.searchParams.set("request", "DescribeFeatureType");
@@ -152,7 +142,7 @@ export const fetchWfsCatalog = async ({
   search,
   signal,
 }: FetchWfsCatalogParams): Promise<FetchWfsCatalogResult> => {
-  if (!typeName) {
+  if (!typeName || !wfsUrl) {
     return {
       features: [],
       totalFeatures: 0,
@@ -161,12 +151,11 @@ export const fetchWfsCatalog = async ({
     };
   }
 
-  const targetWfsUrl = await resolveWfsUrl(wfsUrl, signal);
   const startIndex = (page - 1) * pageSize;
 
   const stringAttributes = await getWfsStringAttributes(
     typeName,
-    targetWfsUrl,
+    wfsUrl,
     signal,
   );
 
@@ -188,7 +177,7 @@ export const fetchWfsCatalog = async ({
     // Fetch current page of actual features using WFS 2.0.0
     const pageResult = await fetchWfs({
       typeName,
-      wfsUrl: targetWfsUrl,
+      wfsUrl,
       version: "2.0.0",
       maxFeatures: pageSize,
       startIndex,

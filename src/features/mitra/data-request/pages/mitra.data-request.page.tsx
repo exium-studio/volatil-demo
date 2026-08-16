@@ -13,7 +13,7 @@ import { MitraDataRequestDrawAoiTabsContent } from "@/features/mitra/data-reques
 import { MitraDataRequestUploadAoiTabsContent } from "@/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
-import { FolderArchiveIcon, ListIcon } from "lucide-react";
+import { ArrowLeftIcon, FolderArchiveIcon, ListIcon } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getIgtLayers } from "@/design-system/components/map/services/map-layers.api";
@@ -21,6 +21,7 @@ import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer
 import SelectInput from "@/design-system/components/input/ui/select";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { IconButton } from "@/design-system/components/button/ui/button";
 
 const REQUEST_METHOD_MAP = {
   catalog: {
@@ -114,7 +115,13 @@ export const MitraDataRequestPage = () => {
             align={"center"}
             pr={3}
           >
-            <AppNavTitle navsMap={APP_NAVS_MAP} />
+            <HStack align={"center"} gap={SPACING.sm} px={PADDING.sm}>
+              <IconButton>
+                <AppIcon icon={ArrowLeftIcon} />
+              </IconButton>
+
+              <AppNavTitle navsMap={APP_NAVS_MAP} px={0} />
+            </HStack>
 
             {isLoadingLayers ? (
               <Skeleton width={"220px"} height={"32px"} />

@@ -14,8 +14,12 @@ export function useWfsClip() {
   const abortRef = useRef<AbortController | null>(null);
 
   const run = useCallback(
-    async (polygon: GeoJSON.Feature<GeoJSON.Polygon>, typeName: string) => {
-      if (!polygon) return;
+    async (
+      polygon: GeoJSON.Feature<GeoJSON.Polygon>,
+      typeName: string,
+      wfsUrl: string,
+    ) => {
+      if (!polygon || !typeName || !wfsUrl) return;
 
       // Cancel any in-flight request before starting a new one.
       abortRef.current?.abort();
@@ -35,6 +39,7 @@ export function useWfsClip() {
 
         const result = await fetchWfs({
           typeName,
+          wfsUrl,
           cqlFilter,
           signal: controller.signal,
         });

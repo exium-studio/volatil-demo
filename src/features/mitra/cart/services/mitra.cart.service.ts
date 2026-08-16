@@ -151,12 +151,18 @@ export async function addSelectedToCart(
 }
 
 export async function addAllToCartFromWfs(params: {
-  typeName?: string;
-  wfsUrl?: string;
+  typeName: string;
+  wfsUrl: string;
   cqlFilter?: string;
   signal?: AbortSignal;
 }): Promise<number> {
-  const ids = await fetchAllFeatureIdsFromWfsApi(params);
+  if (!params.typeName || !params.wfsUrl) return 0;
+  const ids = await fetchAllFeatureIdsFromWfsApi({
+    typeName: params.typeName,
+    wfsUrl: params.wfsUrl,
+    cqlFilter: params.cqlFilter,
+    signal: params.signal,
+  });
   addIdsToCart(ids);
   return ids.length;
 }

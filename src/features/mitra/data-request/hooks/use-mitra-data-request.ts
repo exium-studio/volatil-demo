@@ -129,8 +129,16 @@ export const useFlyToIgtGeometry = () => {
   const map = useMapInstanceStore((state) => state.map);
 
   return useMutation({
-    mutationFn: async (id: string) => {
-      const fc = await getIgtGeometryById(id);
+    mutationFn: async (params: {
+      id: string;
+      layerName: string;
+      wfsUrl: string;
+    }) => {
+      const fc = await getIgtGeometryById(
+        params.id,
+        params.layerName,
+        params.wfsUrl,
+      );
       const feature = fc.features[0];
       if (!feature?.geometry || !map) return;
 

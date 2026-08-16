@@ -20,7 +20,7 @@ export type GeoServerFeatureCollection = GeoJSON.FeatureCollection & {
 
 export type FetchWfsParams = {
   typeName: string;
-  wfsUrl?: string;
+  wfsUrl: string;
   bbox?: WfsBbox;
   /** GeoServer CQL filter expression, e.g. `INTERSECTS(geom, POLYGON(...))`. */
   cqlFilter?: string;
@@ -56,7 +56,9 @@ const buildWfsUrl = (
   includeStartIndex = true,
 ) => {
   if (!wfsUrl) {
-    throw new Error("wfsUrl parameter is required for fetchWfs and cannot be empty.");
+    throw new Error(
+      "wfsUrl parameter is required for fetchWfs and cannot be empty.",
+    );
   }
   const baseUrl = wfsUrl;
   const url = new URL(baseUrl);
