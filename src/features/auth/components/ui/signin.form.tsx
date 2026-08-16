@@ -65,7 +65,7 @@ export const MitraSignin = (props: StackProps) => {
 
         <VStack align={"center"} gap={1}>
           <P fontSize={"2xl"} fontWeight={"semibold"} textAlign={"center"}>
-            {"Selamat Datang Admin 👋🏻"}
+            {"Selamat Datang Mitra 👋🏻"}
           </P>
 
           <P color={"fg.muted"} textAlign={"center"}>

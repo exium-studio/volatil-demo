@@ -85,7 +85,6 @@ export const useMapLayers = (
 
     const controller = new AbortController();
 
-
     const safeAddSource = (
       id: string,
       sourceSpec: maplibregl.SourceSpecification,
