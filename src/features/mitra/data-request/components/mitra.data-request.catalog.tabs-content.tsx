@@ -94,14 +94,15 @@ const CatalogDataList = () => {
     page: pageState.page,
     pageSize: pageState.pageSize,
     cqlFilter,
-    typeName: selectedIgtLayer?.wfsTypeName ?? "",
-    wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
+    typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
+    wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
   });
 
   const layerDisplayName =
+    selectedIgtLayer?.title ||
     selectedIgtLayer?.id.split(":")[1] ||
-    selectedIgtLayer?.wfsTypeName.split(":")[1] ||
-    selectedIgtLayer?.wfsTypeName ||
+    selectedIgtLayer?.wfs.wfsTypeName.split(":")[1] ||
+    selectedIgtLayer?.wfs.wfsTypeName ||
     "";
 
   // Handlers
@@ -181,7 +182,7 @@ const CatalogDataList = () => {
           p={PADDING.md}
           bg={"bg.body"}
         >
-          <NoResultState query={selectedIgtLayer?.wfsTypeName || ""} />
+          <NoResultState query={selectedIgtLayer?.wfs.wfsTypeName || ""} />
         </VStack>
       ) : (
         <VStack
@@ -223,8 +224,8 @@ const CatalogDataList = () => {
               if (!selectedIgtLayer) return;
               addToCartAllMutation.mutate({
                 cqlFilter,
-                typeName: selectedIgtLayer.wfsTypeName,
-                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+                typeName: selectedIgtLayer.wfs.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
               });
             }}
           />

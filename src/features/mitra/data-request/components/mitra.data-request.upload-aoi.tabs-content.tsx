@@ -324,24 +324,24 @@ export const MitraDataRequestUploadAoiTabsContent = (
               if (!selectedIgtLayer) return;
               addToCartAllMutation.mutate({
                 cqlFilter: aoiCqlFilter,
-                typeName: selectedIgtLayer.wfsTypeName,
-                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+                typeName: selectedIgtLayer.wfs.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
               });
             }}
             onAddAllKawasan={() => {
               if (!selectedIgtLayer) return;
               addToCartAllMutation.mutate({
                 cqlFilter: aoiCqlFilter,
-                typeName: selectedIgtLayer.wfsTypeName,
-                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+                typeName: selectedIgtLayer.wfs.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
               });
             }}
             onAddAllBoth={() => {
               if (!selectedIgtLayer) return;
               addToCartAllMutation.mutate({
                 cqlFilter: aoiCqlFilter,
-                typeName: selectedIgtLayer.wfsTypeName,
-                wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+                typeName: selectedIgtLayer.wfs.wfsTypeName,
+                wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
               });
             }}
           />
@@ -516,8 +516,8 @@ const MitraDataRequestUploadAoiDataList = memo(
       page: pageState.page,
       pageSize: pageState.pageSize,
       cqlFilter: aoiCqlFilter,
-      typeName: selectedIgtLayer?.wfsTypeName ?? "",
-      wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
+      typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
+      wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
     });
 
     if (!selectedIgtLayer) {
@@ -579,9 +579,10 @@ const MitraDataRequestUploadAoiDataList = memo(
     }
 
     const layerDisplayName =
+      selectedIgtLayer.title ||
       selectedIgtLayer.id.split(":")[1] ||
-      selectedIgtLayer.wfsTypeName.split(":")[1] ||
-      selectedIgtLayer.wfsTypeName;
+      selectedIgtLayer.wfs.wfsTypeName.split(":")[1] ||
+      selectedIgtLayer.wfs.wfsTypeName;
 
     // Render Detail Data View
     return (

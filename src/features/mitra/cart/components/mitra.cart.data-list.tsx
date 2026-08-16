@@ -49,8 +49,12 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
 
   // Set default selected layer if not set
   useEffect(() => {
-    if (layersData?.wfs && layersData.wfs.length > 0 && !selectedIgtLayer) {
-      setSelectedIgtLayer(layersData.wfs[0]);
+    if (
+      layersData?.layers &&
+      layersData.layers.length > 0 &&
+      !selectedIgtLayer
+    ) {
+      setSelectedIgtLayer(layersData.layers[0]);
     }
   }, [layersData, selectedIgtLayer, setSelectedIgtLayer]);
 
@@ -80,8 +84,8 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
     pageSize: pageState.pageSize,
     cqlFilter,
     search: debouncedSearch,
-    typeName: selectedIgtLayer?.wfsTypeName ?? "",
-    wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
+    typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
+    wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
   });
 
   // Mutations

@@ -17,7 +17,10 @@ import {
 import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-view-padding";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
-import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
+import {
+  getWmsRasterConfigFromIgtLayer,
+  type MapLayerConfig,
+} from "@/design-system/components/map/types/map.type";
 import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
@@ -343,13 +346,9 @@ const Content = () => {
 
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
-      (fetchedLayers?.wms ?? []).map((layer) => {
-        const baseLayerId = layer.layers ?? layer.id.replace(/-wms$/, "");
-        const isEnabled = enabledLayerIds[baseLayerId] !== false;
-        return {
-          ...layer,
-          visible: wmsVisible && isEnabled,
-        };
+      (fetchedLayers?.layers ?? []).map((layer) => {
+        const isEnabled = enabledLayerIds[layer.id] !== false;
+        return getWmsRasterConfigFromIgtLayer(layer, wmsVisible && isEnabled);
       }),
     [fetchedLayers, wmsVisible, enabledLayerIds],
   );

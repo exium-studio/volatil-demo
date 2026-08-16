@@ -116,8 +116,8 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
                     pl={3}
                     onClick={() => {
                       void handleConfirmAndFetch(
-                        selectedIgtLayer?.wfsTypeName,
-                        selectedIgtLayer?.wfsUrl,
+                        selectedIgtLayer?.wfs.wfsTypeName,
+                        selectedIgtLayer?.wfs.wfsUrl,
                       );
                     }}
                   >
@@ -262,8 +262,8 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
     page: pageState.page,
     pageSize: pageState.pageSize,
     cqlFilter: aoiCqlFilter,
-    typeName: selectedIgtLayer?.wfsTypeName ?? "",
-    wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
+    typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
+    wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
   });
 
   if (!selectedIgtLayer) {
@@ -315,9 +315,10 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
   }
 
   const layerDisplayName =
+    selectedIgtLayer.title ||
     selectedIgtLayer.id.split(":")[1] ||
-    selectedIgtLayer.wfsTypeName.split(":")[1] ||
-    selectedIgtLayer.wfsTypeName;
+    selectedIgtLayer.wfs.wfsTypeName.split(":")[1] ||
+    selectedIgtLayer.wfs.wfsTypeName;
 
   return (
     <>
@@ -387,24 +388,24 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
                 if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter,
-                  typeName: selectedIgtLayer.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfs.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
                 });
               }}
               onAddAllKawasanClick={() => {
                 if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter,
-                  typeName: selectedIgtLayer.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfs.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
                 });
               }}
               onAddAllBothClick={() => {
                 if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
                   cqlFilter: aoiCqlFilter,
-                  typeName: selectedIgtLayer.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfsUrl ?? "",
+                  typeName: selectedIgtLayer.wfs.wfsTypeName,
+                  wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
                 });
               }}
               onAddSelectedClick={() => {

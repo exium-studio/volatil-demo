@@ -73,7 +73,56 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
   styles?: string;
 };
 
-export type IgtLayersResponse = {
-  wfs: WfsLayerConfig[];
-  wms: WmsRasterLayerConfig[];
+/** WFS-specific query configuration for an IGT layer */
+export type IgtLayerWfsConfig = {
+  wfsTypeName: string;
+  wfsUrl?: string;
+  type?: "wfs-fill" | "wfs-line" | "wfs-circle" | "wfs-symbol";
+  version?: string;
+  srsName?: string;
 };
+
+/** WMS-specific tile rendering configuration for an IGT layer */
+export type IgtLayerWmsConfig = {
+  layers: string;
+  wmsUrl?: string;
+  tileSize?: number;
+  format?: string;
+  transparent?: boolean;
+  styles?: string;
+  version?: string;
+  srs?: string;
+};
+
+/** Centralized IGT Layer Item containing metadata, WFS query config, and WMS render config */
+export type IgtLayerItem = {
+  id: string;
+  title?: string;
+  spatialBasis: "bidang" | "kawasan";
+  bbox?: [number, number, number, number];
+  visible?: boolean;
+  wfs: IgtLayerWfsConfig;
+  wms: IgtLayerWmsConfig;
+};
+
+export type IgtLayersResponse = {
+  layers: IgtLayerItem[];
+};
+
+/** Helper converter to build WmsRasterLayerConfig for map rendering from an IgtLayerItem */
+export const getWmsRasterConfigFromIgtLayer = (
+  igtLayer: IgtLayerItem,
+  visible = true,
+): WmsRasterLayerConfig => ({
+  id: igtLayer.id,
+  type: "wms-raster",
+  spatialBasis: igtLayer.spatialBasis,
+  bbox: igtLayer.bbox,
+  visible,
+  wmsUrl: igtLayer.wms.wmsUrl,
+  layers: igtLayer.wms.layers,
+  tileSize: igtLayer.wms.tileSize,
+  format: igtLayer.wms.format,
+  transparent: igtLayer.wms.transparent,
+  styles: igtLayer.wms.styles,
+});

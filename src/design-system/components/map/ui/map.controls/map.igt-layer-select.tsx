@@ -5,6 +5,7 @@ import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { getIgtLayers } from "@/design-system/components/map/services/map-layers.api";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
@@ -16,6 +17,7 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 
 import { ClickDelegateContainer } from "@/design-system/components/utilities/ui/click-delegate-container";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { useQuery } from "@tanstack/react-query";
 import { Layers2Icon, LayersIcon, TreesIcon } from "lucide-react";
@@ -23,6 +25,7 @@ import { memo, useMemo } from "react";
 
 export const MapIgtLayerSelect = memo(() => {
   // Stores
+  const { theme } = useThemeStore();
   const { enabledLayerIds, toggleLayerId } = useIgtLayerStore();
 
   // Queries — list of all active IGT layers
@@ -33,7 +36,7 @@ export const MapIgtLayerSelect = memo(() => {
   });
 
   // Derived Values
-  const activeLayers = useMemo(() => layersData?.wfs ?? [], [layersData]);
+  const activeLayers = useMemo(() => layersData?.layers ?? [], [layersData]);
 
   const enabledCount = useMemo(() => {
     return activeLayers.filter((l) => enabledLayerIds[l.id] !== false).length;
@@ -95,12 +98,14 @@ export const MapIgtLayerSelect = memo(() => {
               {activeLayers.map((layer) => {
                 const isEnabled = enabledLayerIds[layer.id] ?? true;
                 const displayName =
+                  layer.title ||
                   layer.id.split(":")[1] ||
-                  layer.wfsTypeName.split(":")[1] ||
-                  layer.wfsTypeName;
+                  layer.wfs.wfsTypeName;
 
                 const isBidang = layer.spatialBasis === "bidang";
-                const LayerIcon = isBidang ? TreesIcon : Layers2Icon;
+                const LayerIcon = isBidang ? Layers2Icon : TreesIcon;
+                const iconColor = isBidang ? "blue.fg" : "orange.fg";
+                const iconBg = isBidang ? "blue.subtle" : "orange.subtle";
 
                 return (
                   <ClickDelegateContainer
@@ -114,21 +119,22 @@ export const MapIgtLayerSelect = memo(() => {
                     _hover={{ bg: "bg.subtle" }}
                   >
                     <HStack gap={SPACING.md} align={"center"} flex={1}>
-                      <AppIcon
-                        icon={LayerIcon}
-                        color={isEnabled ? "fg.emphasized" : "fg.muted"}
-                      />
+                      <Center
+                        p={PADDING.sm}
+                        bg={isEnabled ? iconBg : "bg.muted"}
+                        rounded={theme.radii.component}
+                      >
+                        <AppIcon
+                          icon={LayerIcon}
+                          color={isEnabled ? iconColor : "fg.muted"}
+                        />
+                      </Center>
 
                       <VStack flex={1} align={"start"}>
-                        <ClampedP
-                          fontSize={"sm"}
-                          color={isEnabled ? "fg.emphasized" : "fg.muted"}
-                        >
-                          {displayName.replace(/_/g, " ")}
-                        </ClampedP>
+                        <ClampedP>{displayName.replace(/_/g, " ")}</ClampedP>
 
-                        <ClampedP fontSize={"xs"} color={"fg.muted"}>
-                          {layer.wfsTypeName}
+                        <ClampedP fontSize={"sm"} color={"fg.muted"}>
+                          {layer.wfs.wfsTypeName}
                         </ClampedP>
                       </VStack>
                     </HStack>

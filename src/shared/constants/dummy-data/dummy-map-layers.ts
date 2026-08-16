@@ -3,56 +3,54 @@
 import type { IgtLayersResponse } from "@/design-system/components/map/types/map.type";
 
 export const DUMMY_MAP_LAYERS: IgtLayersResponse = {
-  wfs: [
+  layers: [
     {
       id: "testing_workspace:TEST_RTRW_BADUNG",
-      type: "wfs-fill",
+      title: "RTRW Badung",
       spatialBasis: "kawasan",
-      wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
-      wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+      bbox: [115.083839, -8.850038, 115.251388, -8.23944],
       visible: true,
+      wfs: {
+        wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
+        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+        type: "wfs-fill",
+      },
+      wms: {
+        layers: "testing_workspace:TEST_RTRW_BADUNG",
+        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+      },
     },
     {
       id: "testing_workspace:TEST_ZNT_BADUNG",
-      type: "wfs-fill",
+      title: "ZNT Badung",
       spatialBasis: "kawasan",
-      wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
-      wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+      bbox: [115.083839, -8.850038, 115.251388, -8.23944],
       visible: true,
+      wfs: {
+        wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
+        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+        type: "wfs-fill",
+      },
+      wms: {
+        layers: "testing_workspace:TEST_ZNT_BADUNG",
+        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+      },
     },
     {
       id: "testing_workspace:TEST_BIDANG_TANAH",
-      type: "wfs-line",
+      title: "Bidang Tanah",
       spatialBasis: "bidang",
-      wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
-      wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+      bbox: [115.083839, -8.850038, 115.251388, -8.23944],
       visible: true,
-    },
-  ],
-  wms: [
-    {
-      id: "testing_workspace:TEST_RTRW_BADUNG-wms",
-      type: "wms-raster",
-      spatialBasis: "kawasan",
-      wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
-      layers: "testing_workspace:TEST_RTRW_BADUNG",
-      visible: true,
-    },
-    {
-      id: "testing_workspace:TEST_ZNT_BADUNG-wms",
-      type: "wms-raster",
-      spatialBasis: "kawasan",
-      wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
-      layers: "testing_workspace:TEST_ZNT_BADUNG",
-      visible: true,
-    },
-    {
-      id: "testing_workspace:TEST_BIDANG_TANAH-wms",
-      type: "wms-raster",
-      spatialBasis: "bidang",
-      wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
-      layers: "testing_workspace:TEST_BIDANG_TANAH",
-      visible: true,
+      wfs: {
+        wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
+        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+        type: "wfs-line",
+      },
+      wms: {
+        layers: "testing_workspace:TEST_BIDANG_TANAH",
+        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+      },
     },
   ],
 };

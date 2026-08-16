@@ -13,7 +13,10 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { getIgtLayers } from "@/design-system/components/map/services/map-layers.api";
-import type { WfsLayerConfig } from "@/design-system/components/map/types/map.type";
+
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
@@ -30,15 +33,13 @@ import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  EyeIcon,
   Layers2Icon,
+  LocateFixedIcon,
   SlidersHorizontalIcon,
+  TablePropertiesIcon,
   TreesIcon,
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
-
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { LocateFixedIcon } from "lucide-react";
 
 export const MitraDataRequestIgtLayerList = memo(
   (props: MitraDataRequestIgtLayerCardListProps) => {
@@ -73,7 +74,7 @@ export const MitraDataRequestIgtLayerList = memo(
       staleTime: Infinity,
     });
 
-    const activeLayers = useMemo(() => layersData?.wfs ?? [], [layersData]);
+    const activeLayers = useMemo(() => layersData?.layers ?? [], [layersData]);
 
     // Only show layers that are toggled on via MapIgtLayerSelect
     const enabledLayers = useMemo(() => {
@@ -86,7 +87,8 @@ export const MitraDataRequestIgtLayerList = memo(
       return enabledLayers.filter(
         (l) =>
           l.id.toLowerCase().includes(lower) ||
-          l.wfsTypeName.toLowerCase().includes(lower),
+          l.wfs.wfsTypeName.toLowerCase().includes(lower) ||
+          l.title?.toLowerCase().includes(lower),
       );
     }, [enabledLayers, debouncedSearch]);
 
@@ -182,9 +184,9 @@ export const MitraDataRequestIgtLayerList = memo(
 // -------------------------------------------------------------------------------------
 
 type IgtLayerCardItemProps = StackProps & {
-  layer: WfsLayerConfig;
+  layer: IgtLayerItem;
   cqlFilter?: string;
-  onSelectIgtLayer: (layer: WfsLayerConfig) => void;
+  onSelectIgtLayer: (layer: IgtLayerItem) => void;
 };
 
 const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
@@ -195,7 +197,7 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
   const { theme } = useThemeStore();
 
   // Handlers
-  const handleFlyToLayer = (l: WfsLayerConfig) => {
+  const handleFlyToLayer = (l: IgtLayerItem) => {
     const map = useMapInstanceStore.getState().map;
     if (!map) return;
 
@@ -221,14 +223,15 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
     page: 1,
     pageSize: 1,
     cqlFilter,
-    typeName: layer.wfsTypeName,
-    wfsUrl: layer.wfsUrl ?? "",
+    typeName: layer.wfs.wfsTypeName,
+    wfsUrl: layer.wfs.wfsUrl ?? "",
   });
 
   const layerDisplayName =
+    layer.title ||
     layer.id.split(":")[1] ||
-    layer.wfsTypeName.split(":")[1] ||
-    layer.wfsTypeName;
+    layer.wfs.wfsTypeName.split(":")[1] ||
+    layer.wfs.wfsTypeName;
 
   const isBidang = layer.spatialBasis === "bidang";
   const layerIcon = isBidang ? Layers2Icon : TreesIcon;
@@ -266,7 +269,7 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
               </P>
 
               <P fontSize={"xs"} color={"fg.muted"}>
-                {layer.wfsTypeName}
+                {layer.wfs.wfsTypeName}
               </P>
             </VStack>
 
@@ -297,19 +300,25 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
           gap={SPACING.sm}
           p={PADDING.md}
         >
-          <IconButton
-            variant={"outline"}
-            aria-label={"Terbang ke layer"}
-            title={"Terbang ke layer"}
-            onClick={() => handleFlyToLayer(layer)}
-          >
-            <AppIcon icon={LocateFixedIcon} />
-          </IconButton>
+          <Tooltip content={"Terbang ke layer"}>
+            <IconButton
+              variant={"outline"}
+              aria-label={"Terbang ke layer"}
+              onClick={() => handleFlyToLayer(layer)}
+            >
+              <AppIcon icon={LocateFixedIcon} />
+            </IconButton>
+          </Tooltip>
 
-          <Button variant={"outline"} onClick={() => onSelectIgtLayer(layer)}>
-            <AppIcon icon={EyeIcon} />
-            {"Lihat detail"}
-          </Button>
+          <Tooltip content={"Lihat detail tabel atribut"}>
+            <IconButton
+              variant={"outline"}
+              aria-label={"Lihat detail"}
+              onClick={() => onSelectIgtLayer(layer)}
+            >
+              <AppIcon icon={TablePropertiesIcon} />
+            </IconButton>
+          </Tooltip>
 
           <Button
             primary
@@ -317,8 +326,8 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
             onClick={() =>
               addToCartAllMutation.mutate({
                 cqlFilter,
-                typeName: layer.wfsTypeName,
-                wfsUrl: layer.wfsUrl ?? "",
+                typeName: layer.wfs.wfsTypeName,
+                wfsUrl: layer.wfs.wfsUrl ?? "",
               })
             }
           >

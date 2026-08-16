@@ -82,9 +82,9 @@ export const MitraDataRequestPage = () => {
 
   // Sync layerId from URL search params to store
   useEffect(() => {
-    if (layersData?.wfs) {
+    if (layersData?.layers) {
       if (layerIdQuery) {
-        const foundLayer = layersData.wfs.find((l) => l.id === layerIdQuery);
+        const foundLayer = layersData.layers.find((l) => l.id === layerIdQuery);
         if (foundLayer && selectedIgtLayer?.id !== foundLayer.id) {
           setSelectedIgtLayer(foundLayer);
         }
