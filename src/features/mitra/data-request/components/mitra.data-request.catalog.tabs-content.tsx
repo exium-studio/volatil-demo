@@ -12,7 +12,6 @@ import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loa
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
@@ -27,6 +26,7 @@ import {
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { LocateFixedIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useState } from "react";
@@ -108,23 +108,7 @@ const CatalogDataList = () => {
   // Handlers
   const handleFlyToLayer = () => {
     if (!selectedIgtLayer) return;
-    const map = useMapInstanceStore.getState().map;
-    if (!map) return;
-
-    const bbox = (selectedIgtLayer.bbox as [number, number, number, number] | undefined) ?? [
-      115.083839, -8.850038, 115.251388, -8.23944,
-    ];
-    map.fitBounds(
-      [
-        [bbox[0], bbox[1]],
-        [bbox[2], bbox[3]],
-      ],
-      {
-        padding: 80,
-        maxZoom: 16,
-        duration: 1500,
-      },
-    );
+    void flyToIgtLayer(selectedIgtLayer, { cqlFilter });
   };
 
   return (

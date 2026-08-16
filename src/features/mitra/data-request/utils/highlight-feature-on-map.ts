@@ -50,22 +50,25 @@ export const getGeometryBounds = (
 ): [number, number, number, number] | null => {
   const coords: [number, number][] = [];
 
-  if (geom.type === "Point") {
-    const [lng, lat] = geom.coordinates as [number, number];
-    return [lng, lat, lng, lat];
-  }
+  const processCoords = (c: unknown) => {
+    if (!Array.isArray(c)) return;
+    if (typeof c[0] === "number" && typeof c[1] === "number") {
+      let lng = c[0];
+      let lat = c[1];
+      if (Math.abs(lng) <= 90 && Math.abs(lat) > 90) {
+        const temp = lng;
+        lng = lat;
+        lat = temp;
+      }
+      if (!isNaN(lng) && !isNaN(lat) && Math.abs(lat) <= 90) {
+        coords.push([lng, lat]);
+      }
+    } else {
+      c.forEach(processCoords);
+    }
+  };
 
-  if (geom.type === "Polygon") {
-    geom.coordinates.forEach((ring) => {
-      ring.forEach((c) => coords.push([c[0], c[1]]));
-    });
-  } else if (geom.type === "MultiPolygon") {
-    geom.coordinates.forEach((poly) => {
-      poly.forEach((ring) => {
-        ring.forEach((c) => coords.push([c[0], c[1]]));
-      });
-    });
-  }
+  processCoords((geom as unknown as { coordinates?: unknown }).coordinates);
 
   if (coords.length === 0) return null;
 
@@ -82,6 +85,38 @@ export const getGeometryBounds = (
   });
 
   return [minLng, minLat, maxLng, maxLat];
+};
+
+/** Calculates overall bounding box from a FeatureCollection. */
+export const getFeatureCollectionBounds = (
+  fc: GeoJSON.FeatureCollection,
+): [number, number, number, number] | null => {
+  let minLng = Infinity;
+  let minLat = Infinity;
+  let maxLng = -Infinity;
+  let maxLat = -Infinity;
+
+  fc.features.forEach((feat) => {
+    if (!feat.geometry) return;
+    const b = getGeometryBounds(feat.geometry);
+    if (b) {
+      if (b[0] < minLng) minLng = b[0];
+      if (b[1] < minLat) minLat = b[1];
+      if (b[2] > maxLng) maxLng = b[2];
+      if (b[3] > maxLat) maxLat = b[3];
+    }
+  });
+
+  if (
+    minLng !== Infinity &&
+    minLat !== Infinity &&
+    maxLng !== -Infinity &&
+    maxLat !== -Infinity
+  ) {
+    return [minLng, minLat, maxLng, maxLat];
+  }
+
+  return null;
 };
 
 /** Removes the highlight layer and source from the map. */
@@ -109,12 +144,15 @@ export const removeFeatureHighlightFromMap = (map: maplibregl.Map) => {
 };
 
 /**
- * Creates or updates a highlight layer with the given GeoJSON feature/geometry,
+ * Creates or updates a highlight layer with the given GeoJSON geometry, feature, or FeatureCollection,
  * flies or zooms the map camera directly into the feature, and automatically removes the highlight after 5 seconds.
  */
 export const highlightFeatureOnMap = (
   map: maplibregl.Map,
-  geometryOrFeature: GeoJSON.Geometry | GeoJSON.Feature,
+  geometryOrFeatureOrCollection:
+    | GeoJSON.Geometry
+    | GeoJSON.Feature
+    | GeoJSON.FeatureCollection,
   options?: {
     zoom?: number;
     timeoutMs?: number;
@@ -123,18 +161,17 @@ export const highlightFeatureOnMap = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!(map as any).style || !map.isStyleLoaded()) return;
 
-  const { zoom = 18, timeoutMs = HIGHLIGHT_TIMEOUT_MS } = options ?? {};
+  const { zoom = 16, timeoutMs = HIGHLIGHT_TIMEOUT_MS } = options ?? {};
 
-  const feature: GeoJSON.Feature =
-    geometryOrFeature.type === "Feature"
-      ? (geometryOrFeature as GeoJSON.Feature)
+  const geojson: GeoJSON.GeoJSON =
+    geometryOrFeatureOrCollection.type === "FeatureCollection" ||
+    geometryOrFeatureOrCollection.type === "Feature"
+      ? (geometryOrFeatureOrCollection as GeoJSON.GeoJSON)
       : {
           type: "Feature",
           properties: {},
-          geometry: geometryOrFeature as GeoJSON.Geometry,
+          geometry: geometryOrFeatureOrCollection as GeoJSON.Geometry,
         };
-
-  if (!feature.geometry) return;
 
   // 1. Clear previous timer
   if (highlightTimer) {
@@ -148,11 +185,11 @@ export const highlightFeatureOnMap = (
     | undefined;
 
   if (existingSource) {
-    existingSource.setData(feature);
+    existingSource.setData(geojson);
   } else {
     map.addSource(HIGHLIGHT_SOURCE_ID, {
       type: "geojson",
-      data: feature,
+      data: geojson,
     });
   }
 
@@ -210,13 +247,15 @@ export const highlightFeatureOnMap = (
     );
   }
 
-  // 4. Zoom / fit camera to feature
-  const bounds = getGeometryBounds(feature.geometry);
-  if (
-    bounds &&
-    (feature.geometry.type === "Polygon" ||
-      feature.geometry.type === "MultiPolygon")
-  ) {
+  // 4. Calculate bounds & fit camera
+  let bounds: [number, number, number, number] | null = null;
+  if (geojson.type === "FeatureCollection") {
+    bounds = getFeatureCollectionBounds(geojson as GeoJSON.FeatureCollection);
+  } else if (geojson.type === "Feature") {
+    bounds = getGeometryBounds((geojson as GeoJSON.Feature).geometry);
+  }
+
+  if (bounds) {
     map.fitBounds(
       [
         [bounds[0], bounds[1]],
@@ -228,8 +267,13 @@ export const highlightFeatureOnMap = (
         duration: 1200,
       },
     );
-  } else {
-    const centroid = getGeometryCentroid(feature.geometry);
+  } else if (
+    geojson.type === "Feature" &&
+    (geojson as GeoJSON.Feature).geometry
+  ) {
+    const centroid = getGeometryCentroid(
+      (geojson as GeoJSON.Feature).geometry,
+    );
     if (centroid) {
       map.flyTo({ center: centroid, zoom, duration: 1200 });
     }

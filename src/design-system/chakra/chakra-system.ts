@@ -126,31 +126,31 @@ export const chakraConfig = defineConfig({
 
     tokens: {
       colors: {
-        canvasLight: { value: "#f2f2f2" },
-        canvasDark: { value: "#151515" },
+        canvasLight: { value: "#f1f3f5" },
+        canvasDark: { value: "#141619" },
 
         bodyLight: { value: "#ffffff" },
         bodyDark: { value: "#1a1a1a" },
 
-        an0: { value: "#757b800f" },
-        an1: { value: "#757b801f" },
-        an2: { value: "#757b802f" },
-        an3: { value: "#757b803f" },
-        an4: { value: "#757b804f" },
-        placeholder: { value: "#96969691" },
+        an0: { value: "#6b72800f" },
+        an1: { value: "#6b72801f" },
+        an2: { value: "#6b72802f" },
+        an3: { value: "#6b72803f" },
+        an4: { value: "#6b72804f" },
+        placeholder: { value: "#9ca3af91" },
 
         neutral: {
-          50: { value: "#f8f8fa" },
-          100: { value: "#f5f5f6" },
-          200: { value: "#ececec" },
-          300: { value: "#dbdbdd" },
-          400: { value: "#a5a5ad" },
-          500: { value: "#6e6e76" },
-          600: { value: "#66615c" },
-          700: { value: "#3d3f3f" },
-          800: { value: "#2e2f2f" },
-          900: { value: "#292929" },
-          950: { value: "#252525" },
+          50: { value: "#f7f8fa" },
+          100: { value: "#f3f4f6" },
+          200: { value: "#e5e7eb" },
+          300: { value: "#d1d5db" },
+          400: { value: "#9ca3af" },
+          500: { value: "#6b7280" },
+          600: { value: "#4b5563" },
+          700: { value: "#374151" },
+          800: { value: "#1f2937" },
+          900: { value: "#111827" },
+          950: { value: "#0b0f17" },
         },
 
         // gray: {

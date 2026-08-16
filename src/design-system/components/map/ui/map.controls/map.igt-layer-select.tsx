@@ -103,9 +103,8 @@ export const MapIgtLayerSelect = memo(() => {
                   layer.wfs.wfsTypeName;
 
                 const isBidang = layer.spatialBasis === "bidang";
+                const colorPalette = isBidang ? "blue" : "orange";
                 const LayerIcon = isBidang ? Layers2Icon : TreesIcon;
-                const iconColor = isBidang ? "blue.fg" : "orange.fg";
-                const iconBg = isBidang ? "blue.subtle" : "orange.subtle";
 
                 return (
                   <ClickDelegateContainer
@@ -114,6 +113,7 @@ export const MapIgtLayerSelect = memo(() => {
                     justify={"space-between"}
                     gap={SPACING.lg}
                     p={2}
+                    colorPalette={colorPalette}
                     rounded={"md"}
                     onDelegateClick={() => toggleLayerId(layer.id)}
                     _hover={{ bg: "bg.subtle" }}
@@ -121,19 +121,24 @@ export const MapIgtLayerSelect = memo(() => {
                     <HStack gap={SPACING.md} align={"center"} flex={1}>
                       <Center
                         p={PADDING.sm}
-                        bg={isEnabled ? iconBg : "bg.muted"}
+                        bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
                         rounded={theme.radii.component}
                       >
                         <AppIcon
                           icon={LayerIcon}
-                          color={isEnabled ? iconColor : "fg.muted"}
+                          color={isEnabled ? `${colorPalette}.fg` : "fg.subtle"}
                         />
                       </Center>
 
                       <VStack flex={1} align={"start"}>
-                        <ClampedP>{displayName.replace(/_/g, " ")}</ClampedP>
+                        <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
+                          {displayName.replace(/_/g, " ")}
+                        </ClampedP>
 
-                        <ClampedP fontSize={"sm"} color={"fg.muted"}>
+                        <ClampedP
+                          fontSize={"sm"}
+                          color={isEnabled ? `fg.muted` : "fg.subtle"}
+                        >
                           {layer.wfs.wfsTypeName}
                         </ClampedP>
                       </VStack>

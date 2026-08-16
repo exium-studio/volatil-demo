@@ -14,7 +14,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { getIgtLayers } from "@/design-system/components/map/services/map-layers.api";
 
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -28,13 +27,13 @@ import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-d
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
 import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-card-list.type";
+import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { t } from "@/shared/libs/i18n";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { IconShoppingCartPlus } from "@tabler/icons-react";
+import { IconCurrentLocation, IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Layers2Icon,
-  LocateFixedIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
   TreesIcon,
@@ -198,21 +197,7 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
 
   // Handlers
   const handleFlyToLayer = (l: IgtLayerItem) => {
-    const map = useMapInstanceStore.getState().map;
-    if (!map) return;
-
-    const bbox = l.bbox ?? [115.083839, -8.850038, 115.251388, -8.23944];
-    map.fitBounds(
-      [
-        [bbox[0], bbox[1]],
-        [bbox[2], bbox[3]],
-      ],
-      {
-        padding: 80,
-        maxZoom: 16,
-        duration: 1500,
-      },
-    );
+    void flyToIgtLayer(l, { cqlFilter });
   };
 
   // Hooks (Mutations)
@@ -300,20 +285,20 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
           gap={SPACING.sm}
           p={PADDING.md}
         >
-          <Tooltip content={"Terbang ke layer"}>
+          <Tooltip content={"Lihat ke layer IGT di peta"}>
             <IconButton
               variant={"outline"}
-              aria-label={"Terbang ke layer"}
+              aria-label={"Lihat ke layer IGT di peta"}
               onClick={() => handleFlyToLayer(layer)}
             >
-              <AppIcon icon={LocateFixedIcon} />
+              <AppIcon icon={IconCurrentLocation} />
             </IconButton>
           </Tooltip>
 
           <Tooltip content={"Lihat detail tabel atribut"}>
             <IconButton
               variant={"outline"}
-              aria-label={"Lihat detail"}
+              aria-label={"Lihat detail IGT"}
               onClick={() => onSelectIgtLayer(layer)}
             >
               <AppIcon icon={TablePropertiesIcon} />
