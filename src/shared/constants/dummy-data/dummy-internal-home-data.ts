@@ -4,7 +4,7 @@ import type { InternalHomeIgtDataListItem } from "@/features/internal/home/types
 import type { InternalHomeDataSummaryResponse } from "@/features/internal/home/types/internal.home.data-summary.type";
 import type { ServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { LandPlotIcon, Layers2Icon } from "lucide-react";
+import { TreesIcon, Layers2Icon } from "lucide-react";
 
 export const dummyInternalDataSummary: Record<
   HomePeriod,
@@ -46,7 +46,7 @@ export const dummyInternalServiceRates: ServiceRateItem[] = [
   {
     id: "rate-kawasan",
     title: "IGT Berbasis Kawasan",
-    icon: LandPlotIcon,
+    icon: TreesIcon,
     price: 20000,
     unit: "Ha",
     minPurchase: 1000,

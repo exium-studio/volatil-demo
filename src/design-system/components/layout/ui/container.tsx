@@ -7,8 +7,8 @@ import type {
 } from "@/design-system/components/layout/types/container.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
-import { useRefDimension } from "@/design-system/hooks/use-ref-dimenssion";
 import { useMergedRefs } from "@/design-system/hooks/use-merge-refs";
+import { useRefDimension } from "@/design-system/hooks/use-ref-dimenssion";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { createContext, forwardRef, useContext, useMemo, useRef } from "react";
 

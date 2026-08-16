@@ -19,6 +19,7 @@ import { useMapInstanceStore } from "@/design-system/components/map/stores/map.i
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
+import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
@@ -338,13 +339,19 @@ const Content = () => {
     staleTime: Infinity,
   });
 
+  const { enabledLayerIds } = useIgtLayerStore();
+
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
-      (fetchedLayers?.wms ?? []).map((layer) => ({
-        ...layer,
-        visible: wmsVisible,
-      })),
-    [fetchedLayers, wmsVisible],
+      (fetchedLayers?.wms ?? []).map((layer) => {
+        const baseLayerId = layer.layers ?? layer.id.replace(/-wms$/, "");
+        const isEnabled = enabledLayerIds[baseLayerId] !== false;
+        return {
+          ...layer,
+          visible: wmsVisible && isEnabled,
+        };
+      }),
+    [fetchedLayers, wmsVisible, enabledLayerIds],
   );
 
   // Derived Values

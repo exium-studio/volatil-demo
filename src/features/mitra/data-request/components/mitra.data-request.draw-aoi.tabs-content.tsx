@@ -1,9 +1,7 @@
 // src/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { BackButton } from "@/design-system/components/button/ui/back-button";
+import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
@@ -13,7 +11,6 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import {
   AbsoluteCenter,
   Center,
@@ -24,29 +21,20 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
+import { MitraDataRequestIgtLayerCardList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-card-list";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
-import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import {
   useAddToCartAll,
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
-import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import type { DrawAoiGuideAlertProps } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
-import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { t } from "@/shared/libs/i18n";
 import { IconPolygonOff } from "@tabler/icons-react";
-import {
-  CheckIcon,
-  InfoIcon,
-  PencilIcon,
-  SlidersHorizontalIcon,
-  XIcon,
-} from "lucide-react";
-import { memo, useMemo, useState } from "react";
+import { CheckIcon, InfoIcon, PencilIcon, XIcon } from "lucide-react";
+import { memo, useState } from "react";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
   (props: TabsContentProps) => {
@@ -127,10 +115,9 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
                     primary
                     pl={3}
                     onClick={() => {
-                      if (!selectedIgtLayer) return;
                       void handleConfirmAndFetch(
-                        selectedIgtLayer.wfsTypeName,
-                        selectedIgtLayer.wfsUrl ?? "",
+                        selectedIgtLayer?.wfsTypeName,
+                        selectedIgtLayer?.wfsUrl,
                       );
                     }}
                   >
@@ -247,29 +234,21 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
   const { aoiCqlFilter, onResetDraw } = props;
 
   // Stores
-  const { selectedIgtLayer } = useIgtLayerStore();
+  const { selectedIgtLayer, setSelectedIgtLayer } = useIgtLayerStore();
+
+  // Hooks
+  const { setQueryValue: setLayerId } = useSearchParam("layerId");
 
   // Hooks (Mutations)
   const addToCartSelectedMutation = useAddToCartSelected();
   const addToCartAllMutation = useAddToCartAll();
 
   // States
-  const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
-  const [searchRaw, setSearchRaw] = useState<string>("");
   const [pageState, setPageState] = useState({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     selectedItems: [] as FormattedListItem[],
   });
-
-  // Derived Values
-  const debouncedSearch = useDebouncedValue(searchRaw);
-
-  // Derived Values — Combine AOI INTERSECTS filter with 5-field filter
-  const combinedCqlFilter = useMemo(() => {
-    const filterCql = buildWfsCqlFilter(appliedFilters);
-    return filterCql ? `${aoiCqlFilter} AND ${filterCql}` : aoiCqlFilter;
-  }, [aoiCqlFilter, appliedFilters]);
 
   // Queries — server-side WFS pagination
   const {
@@ -282,52 +261,34 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
   } = useIgtWfsCatalog({
     page: pageState.page,
     pageSize: pageState.pageSize,
-    cqlFilter: combinedCqlFilter,
-    search: debouncedSearch,
+    cqlFilter: aoiCqlFilter,
     typeName: selectedIgtLayer?.wfsTypeName ?? "",
     wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
   });
 
-  // const isLoading = true;
-
-  return (
-    <>
+  if (!selectedIgtLayer) {
+    return (
       <VStack
-        wrap={"wrap"}
-        justify={"space-between"}
-        gap={SPACING.md}
-        p={PADDING.md}
+        flex={1}
+        gap={0}
+        overflowY={"auto"}
+        bg={"bg.canvas"}
+        position={"relative"}
+        w={"full"}
       >
-        <HStack
+        <VStack
           wrap={"wrap"}
-          align={"center"}
           justify={"space-between"}
           gap={SPACING.sm}
+          p={PADDING.md}
+          bg={"bg.body"}
+          w={"full"}
         >
-          <HStack gap={SPACING.sm}>
-            <SearchInput
-              placeholder={t["action.search"]()}
-              value={searchRaw}
-              onValueChange={(val) => {
-                setSearchRaw(val);
-                setPageState((prev) => ({ ...prev, page: 1 }));
-              }}
-            />
+          <HStack justify={"space-between"} align={"center"} w={"full"}>
+            <P fontWeight={"semibold"} fontSize={"md"}>
+              {"Hasil Query Spasial Draw AOI"}
+            </P>
 
-            <WfsIgtFilterTrigger
-              modalKey="mitra-data-request-draw-aoi-filter-modal"
-              onApply={(filters) => {
-                setAppliedFilters(filters);
-                setPageState((prev) => ({ ...prev, page: 1 }));
-              }}
-            >
-              <IconButton variant={"outline"}>
-                <AppIcon icon={SlidersHorizontalIcon} />
-              </IconButton>
-            </WfsIgtFilterTrigger>
-          </HStack>
-
-          <HStack gap={SPACING.sm} align={"center"}>
             <Button
               variant={"outline"}
               colorPalette={"red"}
@@ -337,6 +298,43 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
               <AppIcon icon={IconPolygonOff} />
               {"Hapus gambar"}
             </Button>
+          </HStack>
+        </VStack>
+
+        <Separator borderColor={"bg.canvas"} />
+
+        <MitraDataRequestIgtLayerCardList
+          cqlFilter={aoiCqlFilter}
+          onSelectIgtLayer={(layer) => {
+            setSelectedIgtLayer(layer);
+            setLayerId(layer.id);
+          }}
+        />
+      </VStack>
+    );
+  }
+
+  const layerDisplayName =
+    selectedIgtLayer.id.split(":")[1] ||
+    selectedIgtLayer.wfsTypeName.split(":")[1] ||
+    selectedIgtLayer.wfsTypeName;
+
+  return (
+    <>
+      <VStack
+        wrap={"wrap"}
+        justify={"space-between"}
+        gap={SPACING.sm}
+        p={PADDING.md}
+        bg={"bg.body"}
+      >
+        <HStack justify={"space-between"} align={"center"} w={"full"}>
+          <HStack gap={SPACING.sm} align={"center"}>
+            <BackButton />
+
+            <P fontWeight={"medium"} fontSize={"md"}>
+              {`Detail Attribute: ${layerDisplayName.replace(/_/g, " ")}`}
+            </P>
           </HStack>
         </HStack>
       </VStack>
@@ -388,7 +386,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
               onAddAllBidangClick={() => {
                 if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
-                  cqlFilter: combinedCqlFilter,
+                  cqlFilter: aoiCqlFilter,
                   typeName: selectedIgtLayer.wfsTypeName,
                   wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });
@@ -396,7 +394,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
               onAddAllKawasanClick={() => {
                 if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
-                  cqlFilter: combinedCqlFilter,
+                  cqlFilter: aoiCqlFilter,
                   typeName: selectedIgtLayer.wfsTypeName,
                   wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });
@@ -404,7 +402,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
               onAddAllBothClick={() => {
                 if (!selectedIgtLayer) return;
                 addToCartAllMutation.mutate({
-                  cqlFilter: combinedCqlFilter,
+                  cqlFilter: aoiCqlFilter,
                   typeName: selectedIgtLayer.wfsTypeName,
                   wfsUrl: selectedIgtLayer.wfsUrl ?? "",
                 });

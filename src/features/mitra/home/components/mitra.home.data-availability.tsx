@@ -9,7 +9,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING } from "@/design-system/constants/styles";
-import { DatabaseIcon, LandPlotIcon, Layers2Icon } from "lucide-react";
+import { DatabaseIcon, TreesIcon, Layers2Icon } from "lucide-react";
 
 export const MitraHomeDataAvailability = () => {
   return (
@@ -69,7 +69,7 @@ const MitraHomeDataAvailabilityStats = () => {
       color: "blue.fg",
     },
     {
-      icon: LandPlotIcon,
+      icon: TreesIcon,
       label: "IGT Berbasis Kawasan",
       value: 20,
       suffix: "layer",
@@ -93,7 +93,7 @@ const MitraHomeDataAvailabilityStats = () => {
               value={stat.value}
               suffix={stat.suffix}
               color={stat.color}
-              fontWeight={"bold"}
+              fontWeight={"semibold"}
             />
 
             <StatGrid.Description mt={1}>

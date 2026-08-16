@@ -4,6 +4,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import type { PageContainerProps } from "@/design-system/components/layout/types/page-container.type";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { DIMENSIONS } from "@/design-system/constants/styles";
+
 export const PageContainer = (props: PageContainerProps) => {
   return (
     <VStack minH={"100dvh"} overflowY={"auto"} pos={"relative"} {...props} />

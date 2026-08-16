@@ -16,7 +16,7 @@ import type {
 import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import {
   DatabaseIcon,
-  LandPlotIcon,
+  TreesIcon,
   Layers2Icon,
   ReceiptTextIcon,
 } from "lucide-react";
@@ -71,7 +71,7 @@ const MitraHomeCartStats = () => {
       color: "blue.fg",
     },
     {
-      icon: LandPlotIcon,
+      icon: TreesIcon,
       label: "Total Kawasan",
       value: totalArea,
       suffix: "ha",

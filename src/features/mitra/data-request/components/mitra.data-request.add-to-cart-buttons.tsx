@@ -16,7 +16,7 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import {
   ChevronDownIcon,
-  LandPlotIcon,
+  TreesIcon,
   Layers2Icon,
   ShoppingCartIcon,
 } from "lucide-react";
@@ -190,7 +190,7 @@ export const MitraDataRequestAddToCartButtons = (
                 disabled={kawasanCount === 0}
                 onClick={onAddAllKawasanClick}
               >
-                <AppIcon icon={LandPlotIcon} />
+                <AppIcon icon={TreesIcon} />
                 {"Tambah semua kawasan"} ({formatNumber(kawasanCount)})
               </Menu.Item>
             </Menu.Content>

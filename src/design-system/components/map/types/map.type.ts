@@ -28,6 +28,8 @@ export type MapLayerConfig =
 
 export type BaseLayerConfig = {
   id: string;
+  /** Spatial basis of this IGT layer ("bidang" or "kawasan"). */
+  spatialBasis?: "bidang" | "kawasan";
   /** When false the layer is added but hidden (layout visibility "none"). Defaults to true. */
   visible?: boolean;
   paint?: Record<string, unknown>;
@@ -66,6 +68,7 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
   version?: string;
   format?: string;
   transparent?: boolean;
+  styles?: string;
 };
 
 export type IgtLayersResponse = {

@@ -1,6 +1,7 @@
 // src/design-system/components/map/utils/fetch-wfs.ts
 
 import type GeoJSON from "geojson";
+import { getGisAuthHeader } from "@/design-system/components/map/utils/gis-auth-header";
 
 export type WfsBbox = [number, number, number, number];
 
@@ -127,9 +128,15 @@ export const fetchWfs = async (
   params: FetchWfsParams,
 ): Promise<GeoServerFeatureCollection> => {
   const { version = "2.0.0", signal, startIndex = 0, maxFeatures } = params;
+  const authHeader = getGisAuthHeader();
 
   let url = buildWfsUrl(params, true);
-  let res = await fetch(url.toString(), { signal });
+  let res = await fetch(url.toString(), {
+    signal,
+    headers: {
+      Authorization: authHeader,
+    },
+  });
 
   // If server throws 400 Bad Request due to GeoServer startIndex NullPointerException bug, retry without startIndex
   if (!res.ok && res.status === 400 && startIndex > 0) {
@@ -137,7 +144,12 @@ export const fetchWfs = async (
       "GeoServer rejected startIndex with 400 NPE. Falling back to fetching without startIndex.",
     );
     url = buildWfsUrl({ ...params, maxFeatures: undefined }, false);
-    res = await fetch(url.toString(), { signal });
+    res = await fetch(url.toString(), {
+      signal,
+      headers: {
+        Authorization: authHeader,
+      },
+    });
   }
 
   if (!res.ok) {

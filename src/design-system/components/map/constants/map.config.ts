@@ -10,8 +10,8 @@ import type { WfsLayerConfig } from "@/design-system/components/map/types/map.ty
 export const MAP_CONFIG = {
   viewport: {
     // center: [106.8272, -6.1754] as [number, number], // Monumen Nasional (Monas), Jakarta
-    center: [115.1597, -8.6626] as [number, number], // Kerobokan Kelod, Kuta Utara, Badung, Bali (igt:CONTOH_BIDANG_TANAH)
-    zoom: 13,
+    center: [115.1597, -8.6626] as [number, number],
+    zoom: 10,
   },
   basemap: {
     styleUrl: "https://tiles.openfreemap.org/styles/liberty",

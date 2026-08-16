@@ -53,9 +53,7 @@ export const MitraHomeDataSummary = (props: MitraHomeDataSummaryProps) => {
   );
 };
 
-const MitraHomeDataSummaryHeader = (
-  props: MitraHomeDataSummaryHeaderProps,
-) => {
+const MitraHomeDataSummaryHeader = (props: MitraHomeDataSummaryHeaderProps) => {
   // Props
   const { period, onPeriodChange } = props;
 
@@ -71,6 +69,7 @@ const MitraHomeDataSummaryHeader = (
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ringkasan Data Anda"}
         </P>
+
         <P fontSize={"sm"} color={"fg.subtle"}>
           {"Ringkasan informasi status data IGT Anda."}
         </P>
@@ -133,9 +132,7 @@ const AREA_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
 ];
 
-const MitraHomeDataSummaryCharts = (
-  props: MitraHomeDataSummaryChartsProps,
-) => {
+const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
   // Props
   const { period } = props;
 
@@ -233,9 +230,7 @@ const ProgressBar = (props: ProgressRootProps) => {
   );
 };
 
-const MitraHomeDataSummaryLegend = (
-  props: MitraHomeDataSummaryLegendProps,
-) => {
+const MitraHomeDataSummaryLegend = (props: MitraHomeDataSummaryLegendProps) => {
   // Props
   const { legendColor, label, value, ...restProps } = props;
 
@@ -246,7 +241,7 @@ const MitraHomeDataSummaryLegend = (
       <Box>
         <P color={"fg.muted"}>{label}</P>
 
-        <P fontSize={"2xl"} fontWeight={"medium"}>
+        <P fontSize={"2xl"} fontWeight={"semibold"}>
           <FormatNumber value={value} />
         </P>
       </Box>

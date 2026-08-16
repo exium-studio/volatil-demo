@@ -24,7 +24,7 @@ export function useSearchParam<ValueType extends string = string>(
     : undefined;
 
   const setQueryValue = useCallback(
-    (next: ValueType | undefined) => {
+    (next: ValueType | undefined, options?: { replace?: boolean }) => {
       navigate({
         to: ".",
         search: (prev) => {
@@ -36,7 +36,7 @@ export function useSearchParam<ValueType extends string = string>(
           }
           return updated;
         },
-        replace: true,
+        replace: options?.replace ?? false,
       });
     },
     [queryKey, navigate],

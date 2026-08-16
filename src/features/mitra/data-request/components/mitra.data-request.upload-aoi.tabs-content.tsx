@@ -1,5 +1,4 @@
-// src/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content.tsx
-
+import { BackButton } from "@/design-system/components/button/ui/back-button";
 import {
   Button,
   IconButton,
@@ -16,10 +15,10 @@ import {
   FileInput,
   FileInputTrigger,
 } from "@/design-system/components/input/ui/file-input";
-import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
@@ -32,8 +31,8 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
+import { MitraDataRequestIgtLayerCardList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-card-list";
 import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
-import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
 import {
   MitraDataRequestUploadAoiContext,
   useMitraDataRequestUploadAoiContext,
@@ -45,7 +44,6 @@ import {
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
 import type {
   MitraDataRequestUploadAoiAddFileButtonProps,
   MitraDataRequestUploadAoiDataListProps,
@@ -54,20 +52,13 @@ import type {
   MitraDataRequestUploadAoiPageState,
   MitraDataRequestUploadAoiTabsContentProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
-import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
-import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
-import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import {
-  FilesIcon,
-  PlusIcon,
-  SlidersHorizontalIcon,
-  TrashIcon,
-} from "lucide-react";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
+import { FilesIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 // -------------------------------------------------------------------------------------
@@ -500,10 +491,6 @@ const MitraDataRequestUploadAoiDataList = memo(
     } = props;
 
     // States
-    const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>(
-      {},
-    );
-    const [searchRaw, setSearchRaw] = useState<string>("");
     const [pageState, setPageState] =
       useState<MitraDataRequestUploadAoiPageState>({
         page: 1,
@@ -511,18 +498,9 @@ const MitraDataRequestUploadAoiDataList = memo(
         selectedItems: [] as FormattedListItem[],
       });
 
-    // Derived Values
-    const debouncedSearch = useDebouncedValue(searchRaw);
-    const combinedCqlFilter = useMemo(() => {
-      const filterCql = buildWfsCqlFilter(appliedFilters);
-      if (aoiCqlFilter && filterCql) {
-        return `${aoiCqlFilter} AND ${filterCql}`;
-      }
-      return aoiCqlFilter ?? filterCql ?? undefined;
-    }, [aoiCqlFilter, appliedFilters]);
-
     // Stores
-    const { selectedIgtLayer } = useIgtLayerStore();
+    const { selectedIgtLayer, setSelectedIgtLayer } = useIgtLayerStore();
+    const { setQueryValue: setLayerId } = useSearchParam("layerId");
 
     // Queries — server-side WFS pagination
     const {
@@ -535,13 +513,75 @@ const MitraDataRequestUploadAoiDataList = memo(
     } = useIgtWfsCatalog({
       page: pageState.page,
       pageSize: pageState.pageSize,
-      cqlFilter: combinedCqlFilter,
-      search: debouncedSearch,
+      cqlFilter: aoiCqlFilter,
       typeName: selectedIgtLayer?.wfsTypeName ?? "",
       wfsUrl: selectedIgtLayer?.wfsUrl ?? "",
     });
 
-    // Render
+    if (!selectedIgtLayer) {
+      return (
+        <VStack
+          flex={1}
+          gap={0}
+          overflowY={"auto"}
+          // bg={"bg.canvas"}
+          position={"relative"}
+          w={"full"}
+        >
+          {/* Header Action Bar — AOI File Management */}
+          <VStack
+            wrap={"wrap"}
+            justify={"space-between"}
+            gap={SPACING.sm}
+            p={PADDING.md}
+            bg={"bg.body"}
+            w={"full"}
+          >
+            <HStack justify={"space-between"} align={"center"} w={"full"}>
+              <P fontWeight={"semibold"} fontSize={"md"}>
+                {`Hasil Query Spasial AOI (${aoiLayers.length} File Upload)`}
+              </P>
+
+              <HStack align={"center"} gap={SPACING.sm}>
+                <MitraDataRequestUploadAoiFileListTrigger
+                  onFilesAdded={onFilesAdded}
+                  onDeleteLayer={onDeleteLayer}
+                  onClearAll={onClearAll}
+                >
+                  <Button variant={"outline"}>
+                    <AppIcon icon={FilesIcon} />
+                    {`File AOI anda (${aoiLayers.length})`}
+                  </Button>
+                </MitraDataRequestUploadAoiFileListTrigger>
+
+                <MitraDataRequestUploadAoiAddFileButton
+                  isIconButton
+                  onFilesAdded={onFilesAdded}
+                  variant={"outline"}
+                />
+              </HStack>
+            </HStack>
+          </VStack>
+
+          <Separator borderColor={"bg.canvas"} />
+
+          <MitraDataRequestIgtLayerCardList
+            cqlFilter={aoiCqlFilter}
+            onSelectIgtLayer={(layer) => {
+              setSelectedIgtLayer(layer);
+              setLayerId(layer.id);
+            }}
+          />
+        </VStack>
+      );
+    }
+
+    const layerDisplayName =
+      selectedIgtLayer.id.split(":")[1] ||
+      selectedIgtLayer.wfsTypeName.split(":")[1] ||
+      selectedIgtLayer.wfsTypeName;
+
+    // Render Detail Data View
     return (
       <VStack
         flex={1}
@@ -551,62 +591,22 @@ const MitraDataRequestUploadAoiDataList = memo(
         position={"relative"}
         w={"full"}
       >
-        {/* Action Header — Search, Filter & Files (rendered inside datalist) */}
+        {/* Action Header — Back button & Layer Name */}
         <VStack
           wrap={"wrap"}
           justify={"space-between"}
-          gap={SPACING.md}
+          gap={SPACING.sm}
           p={PADDING.md}
           bg={"bg.body"}
           w={"full"}
         >
-          <HStack
-            wrap={"wrap"}
-            align={"center"}
-            justify={"space-between"}
-            gap={SPACING.sm}
-            w={"full"}
-          >
-            <HStack gap={SPACING.sm}>
-              <SearchInput
-                placeholder={t["action.search"]()}
-                value={searchRaw}
-                onValueChange={(val) => {
-                  setSearchRaw(val);
-                  setPageState((prev) => ({ ...prev, page: 1 }));
-                }}
-              />
+          <HStack justify={"space-between"} align={"center"} w={"full"}>
+            <HStack gap={SPACING.sm} align={"center"}>
+              <BackButton />
 
-              <WfsIgtFilterTrigger
-                modalKey="mitra-data-request-upload-aoi-filter-modal"
-                onApply={(filters) => {
-                  setAppliedFilters(filters);
-                  setPageState((prev) => ({ ...prev, page: 1 }));
-                }}
-              >
-                <IconButton variant={"outline"}>
-                  <AppIcon icon={SlidersHorizontalIcon} />
-                </IconButton>
-              </WfsIgtFilterTrigger>
-            </HStack>
-
-            <HStack align={"center"} gap={SPACING.sm}>
-              <MitraDataRequestUploadAoiFileListTrigger
-                onFilesAdded={onFilesAdded}
-                onDeleteLayer={onDeleteLayer}
-                onClearAll={onClearAll}
-              >
-                <Button variant={"outline"}>
-                  <AppIcon icon={FilesIcon} />
-                  {`File AOI anda (${aoiLayers.length})`}
-                </Button>
-              </MitraDataRequestUploadAoiFileListTrigger>
-
-              <MitraDataRequestUploadAoiAddFileButton
-                isIconButton
-                onFilesAdded={onFilesAdded}
-                variant={"outline"}
-              />
+              <P fontWeight={"medium"} fontSize={"md"}>
+                {`Detail Attribute: ${layerDisplayName.replace(/_/g, " ")}`}
+              </P>
             </HStack>
           </HStack>
         </VStack>

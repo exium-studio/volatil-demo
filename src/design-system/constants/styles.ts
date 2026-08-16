@@ -45,8 +45,8 @@ export const PADDING = {
   xl: "28px",
 } as const;
 
-export const ANIMATION = {
-  backdropFilterBlur: "blur(2px)",
+export const BACKDROP_FILTER = {
+  blur: "blur(10px)",
 } as const;
 
 export const TABLE = {
