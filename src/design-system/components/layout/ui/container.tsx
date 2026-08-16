@@ -47,7 +47,8 @@ const ContainerRoot = forwardRef<HTMLDivElement, ContainerRootProps>(
 
     // Derived Values
     const isValidDimension = dimension.width > 0 && dimension.height > 0;
-    const isSmContainer = dimension.width < parseInt(DIMENSIONS.smScreenBreakpoint);
+    const isSmContainer =
+      dimension.width < parseInt(DIMENSIONS.smScreenBreakpoint);
 
     const contextValue = useMemo(
       () => ({ dimension, isValidDimension, isSmContainer }),

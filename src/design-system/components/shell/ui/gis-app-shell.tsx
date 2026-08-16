@@ -309,8 +309,8 @@ const SidebarToggleButton = (props: IconButtonProps) => {
 
 // -------------------------------------------------------------------------------------
 
-const SIDEBAR_COLLAPSED_W = 64; // calc(40px + 24px) — matches Sidebar collapsed width
-const SIDEBAR_EXPANDED_W = 300; // matches Sidebar expanded width
+const SIDEBAR_COLLAPSED_W = 64;
+const SIDEBAR_EXPANDED_W = 300;
 
 const Content = () => {
   // Refs
