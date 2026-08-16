@@ -19,14 +19,16 @@ export async function getIgtLayers(
     );
     return response.data ?? DUMMY_MAP_LAYERS;
   } catch (error) {
-    console.warn("getIgtLayers API error, trying fallback endpoint /map/layers:", error);
+    console.warn(
+      "getIgtLayers API error, trying fallback endpoint /map/layers:",
+      error,
+    );
     try {
-      const fallbackResponse = await apiClient.get<ApiResponse<IgtLayersResponse>>(
-        "/map/layers",
-        {
-          signal,
-        },
-      );
+      const fallbackResponse = await apiClient.get<
+        ApiResponse<IgtLayersResponse>
+      >("/map/layers", {
+        signal,
+      });
       return fallbackResponse.data ?? DUMMY_MAP_LAYERS;
     } catch {
       return DUMMY_MAP_LAYERS;

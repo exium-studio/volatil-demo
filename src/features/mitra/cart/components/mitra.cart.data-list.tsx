@@ -23,10 +23,10 @@ import {
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import { getLocalCartIds } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { MitraCartTableProps } from "@/features/mitra/cart/types/cart.type";
-import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
+import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
-import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
+import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { WfsDataList } from "@/features/mitra/shared/components/wfs-data-list";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
@@ -61,12 +61,12 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
   });
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
   const [searchRaw, setSearchRaw] = useState<string>("");
-  const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>({});
+  const [appliedFilters, setAppliedFilters] = useState<IgtFilterValues>({});
 
   // Derived Values
   const debouncedSearch = useDebouncedValue(searchRaw);
   const cqlFilter = useMemo(
-    () => buildWfsCqlFilter(appliedFilters),
+    () => buildIgtCqlFilter(appliedFilters),
     [appliedFilters],
   );
 
@@ -161,9 +161,9 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
                   }}
                 />
 
-                <WfsIgtFilterTrigger
+                <IgtFilterTrigger
                   modalKey="mitra-cart-filter-modal"
-                  onApply={(filters) => {
+                  onApply={(filters: IgtFilterValues) => {
                     setAppliedFilters(filters);
                     setPageState((prev) => ({ ...prev, page: 1 }));
                   }}
@@ -171,7 +171,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
                   <IconButton variant={"outline"}>
                     <AppIcon icon={SlidersHorizontalIcon} />
                   </IconButton>
-                </WfsIgtFilterTrigger>
+                </IgtFilterTrigger>
               </HStack>
             </HStack>
           </VStack>

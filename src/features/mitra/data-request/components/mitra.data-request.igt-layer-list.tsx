@@ -19,13 +19,12 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
+import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
+import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
 import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-card-list.type";
-import { buildWfsCqlFilter } from "@/features/mitra/data-request/utils/build-wfs-cql-filter";
 import { t } from "@/shared/libs/i18n";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconShoppingCartPlus } from "@tabler/icons-react";
@@ -38,6 +37,9 @@ import {
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { LocateFixedIcon } from "lucide-react";
+
 export const MitraDataRequestIgtLayerList = memo(
   (props: MitraDataRequestIgtLayerCardListProps) => {
     // Props
@@ -45,23 +47,24 @@ export const MitraDataRequestIgtLayerList = memo(
 
     // Stores
     const { theme } = useThemeStore();
-    const { enabledLayerIds } = useIgtLayerStore();
+    const {
+      enabledLayerIds,
+      appliedWfsFilters,
+      setAppliedWfsFilters,
+      cqlFilter: storeCqlFilter,
+    } = useIgtLayerStore();
 
     // States
-    const [appliedFilters, setAppliedFilters] = useState<WfsIgtFilterValues>(
-      {},
-    );
     const [searchRaw, setSearchRaw] = useState<string>("");
 
     // Derived Values
     const debouncedSearch = useDebouncedValue(searchRaw);
     const combinedCqlFilter = useMemo(() => {
-      const filterCql = buildWfsCqlFilter(appliedFilters);
-      if (baseCqlFilter && filterCql) {
-        return `${baseCqlFilter} AND ${filterCql}`;
+      if (baseCqlFilter && storeCqlFilter) {
+        return `${baseCqlFilter} AND ${storeCqlFilter}`;
       }
-      return baseCqlFilter ?? filterCql ?? undefined;
-    }, [baseCqlFilter, appliedFilters]);
+      return baseCqlFilter ?? storeCqlFilter ?? undefined;
+    }, [baseCqlFilter, storeCqlFilter]);
 
     // Queries — list of all active IGT layers
     const { data: layersData, isLoading: isLoadingLayers } = useQuery({
@@ -88,8 +91,8 @@ export const MitraDataRequestIgtLayerList = memo(
     }, [enabledLayers, debouncedSearch]);
 
     // Handlers
-    const handleApplyFilters = (filters: WfsIgtFilterValues) => {
-      setAppliedFilters(filters);
+    const handleApplyFilters = (filters: IgtFilterValues) => {
+      setAppliedWfsFilters(filters);
       onApplyFilter?.(filters);
     };
 
@@ -119,14 +122,15 @@ export const MitraDataRequestIgtLayerList = memo(
               onValueChange={(val) => setSearchRaw(val)}
             />
 
-            <WfsIgtFilterTrigger
+            <IgtFilterTrigger
               modalKey={"mitra-data-request-igt-card-filter-modal"}
+              value={appliedWfsFilters}
               onApply={handleApplyFilters}
             >
               <IconButton variant={"outline"}>
                 <AppIcon icon={SlidersHorizontalIcon} />
               </IconButton>
-            </WfsIgtFilterTrigger>
+            </IgtFilterTrigger>
           </HStack>
 
           <P fontSize={"sm"} color={"fg.muted"}>
@@ -189,6 +193,25 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
 
   // Stores
   const { theme } = useThemeStore();
+
+  // Handlers
+  const handleFlyToLayer = (l: WfsLayerConfig) => {
+    const map = useMapInstanceStore.getState().map;
+    if (!map) return;
+
+    const bbox = l.bbox ?? [115.083839, -8.850038, 115.251388, -8.23944];
+    map.fitBounds(
+      [
+        [bbox[0], bbox[1]],
+        [bbox[2], bbox[3]],
+      ],
+      {
+        padding: 80,
+        maxZoom: 16,
+        duration: 1500,
+      },
+    );
+  };
 
   // Hooks (Mutations)
   const addToCartAllMutation = useAddToCartAll();
@@ -274,6 +297,15 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
           gap={SPACING.sm}
           p={PADDING.md}
         >
+          <IconButton
+            variant={"outline"}
+            aria-label={"Terbang ke layer"}
+            title={"Terbang ke layer"}
+            onClick={() => handleFlyToLayer(layer)}
+          >
+            <AppIcon icon={LocateFixedIcon} />
+          </IconButton>
+
           <Button variant={"outline"} onClick={() => onSelectIgtLayer(layer)}>
             <AppIcon icon={EyeIcon} />
             {"Lihat detail"}

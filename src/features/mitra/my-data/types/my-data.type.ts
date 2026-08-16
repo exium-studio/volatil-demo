@@ -32,6 +32,7 @@ export type MyDataQueryParams = {
   provinsi?: string;
   kabupaten?: string;
   kecamatan?: string;
+  kelurahan?: string;
   status: MyDataStatus;
 };
 

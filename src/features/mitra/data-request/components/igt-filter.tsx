@@ -1,27 +1,28 @@
-// src/features/mitra/data-request/components/wfs-igt-filter.tsx
+// src/features/mitra/data-request/components/igt-filter.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { MODAL, SPACING } from "@/design-system/constants/styles";
-import { WfsIgtFilterBasisSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.basis-select";
-import { WfsIgtFilterKabupatenSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.kabupaten-select";
-import { WfsIgtFilterKecamatanSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.kecamatan-select";
-import { WfsIgtFilterKelurahanSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.kelurahan-select";
-import { WfsIgtFilterProvinsiSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.provinsi-select";
-import { WfsIgtFilterTemaSelect } from "@/features/mitra/data-request/components/wfs-igt-filter.tema-select";
-import { WFS_IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/wfs-igt-filter.config";
+import { IgtFilterBasisSelect } from "@/features/mitra/data-request/components/igt-filter.basis-select";
+import { IgtFilterKabupatenSelect } from "@/features/mitra/data-request/components/igt-filter.kabupaten-select";
+import { IgtFilterKecamatanSelect } from "@/features/mitra/data-request/components/igt-filter.kecamatan-select";
+import { IgtFilterKelurahanSelect } from "@/features/mitra/data-request/components/igt-filter.kelurahan-select";
+import { IgtFilterProvinsiSelect } from "@/features/mitra/data-request/components/igt-filter.provinsi-select";
+import { IgtFilterTemaSelect } from "@/features/mitra/data-request/components/igt-filter.tema-select";
+import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt-filter.config";
 import type {
-  WfsIgtFilterOptionDetail,
-  WfsIgtFilterTriggerProps,
-  WfsIgtFilterValues,
-} from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
+  IgtFilterOptionDetail,
+  IgtFilterTriggerProps,
+  IgtFilterValues,
+} from "@/features/mitra/data-request/types/filter-igt-trigger.type";
 import { useEffect, useMemo, useState } from "react";
 
-export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
+export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
   // Props
   const {
     children,
@@ -35,7 +36,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
 
   // Uncontrolled applied state (internal)
   const [internalAppliedFilters, setInternalAppliedFilters] =
-    useState<WfsIgtFilterValues>(defaultValue ?? defaultValues ?? {});
+    useState<IgtFilterValues>(defaultValue ?? defaultValues ?? {});
 
   // Determine current applied filters (controlled vs uncontrolled)
   const isControlled = controlledValue !== undefined;
@@ -52,12 +53,12 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: customModalKey ?? "wfs-igt-filter-modal",
+    modalKey: customModalKey ?? "igt-filter-modal",
   });
 
   // Local draft state inside modal (editing before click "Terapkan Filter")
   const [localDraftFilters, setLocalDraftFilters] =
-    useState<WfsIgtFilterValues>(currentAppliedFilters);
+    useState<IgtFilterValues>(currentAppliedFilters);
 
   // Synchronize local draft state with applied filters ONLY after modal animation finishes
   useEffect(() => {
@@ -80,27 +81,27 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
   // Handlers
   const handleFieldChange = (
     key: string,
-    details: WfsIgtFilterOptionDetail | null,
+    details: IgtFilterOptionDetail | null,
   ) => {
     setLocalDraftFilters((prev) => {
       const next = { ...prev, [key]: details };
 
       // Cascading: provinsi changed → reset kabupaten, kecamatan, and kelurahan
-      if (key === WFS_IGT_FILTER_KEYS_MAP.PROVINSI) {
-        next[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN] = null;
-        next[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
-        next[WFS_IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
+      if (key === IGT_FILTER_KEYS_MAP.PROVINSI) {
+        next[IGT_FILTER_KEYS_MAP.KABUPATEN] = null;
+        next[IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
+        next[IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
       }
 
       // Cascading: kabupaten changed → reset kecamatan and kelurahan
-      if (key === WFS_IGT_FILTER_KEYS_MAP.KABUPATEN) {
-        next[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
-        next[WFS_IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
+      if (key === IGT_FILTER_KEYS_MAP.KABUPATEN) {
+        next[IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
+        next[IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
       }
 
       // Cascading: kecamatan changed → reset kelurahan
-      if (key === WFS_IGT_FILTER_KEYS_MAP.KECAMATAN) {
-        next[WFS_IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
+      if (key === IGT_FILTER_KEYS_MAP.KECAMATAN) {
+        next[IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
       }
 
       return next;
@@ -143,7 +144,7 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
         <Modal.Header>
           <HStack gap={2} align={"center"}>
             <Modal.Title fontWeight={"semibold"}>
-              {"Filter Data IGT-PR"}
+              {"Filter Data IGT"}
             </Modal.Title>
 
             {activeFilterCount > 0 && (
@@ -154,79 +155,89 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
         </Modal.Header>
 
         <Modal.Body gap={SPACING.md}>
+          {/* Info Alert at the top of modal body */}
+          <Alert.Root status={"info"} colorPalette={"blue"} w={"full"}>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title fontWeight={"semibold"}>
+                {"Informasi Filter IGT"}
+              </Alert.Title>
+              <Alert.Description fontSize={"xs"}>
+                {
+                  "Filter yang diterapkan akan berlaku secara menyeluruh pada katalog layer IGT, tabel atribut, dan tampilan peta."
+                }
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+
           <VStack gap={SPACING.md} w={"full"}>
-            <WfsIgtFilterBasisSelect
-              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.BASIS}`}
-              value={localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.BASIS]?.value}
+            <IgtFilterBasisSelect
+              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.BASIS}`}
+              value={localDraftFilters[IGT_FILTER_KEYS_MAP.BASIS]?.value}
               onValueChange={(details) =>
-                handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.BASIS, details)
+                handleFieldChange(IGT_FILTER_KEYS_MAP.BASIS, details)
               }
             />
 
-            <WfsIgtFilterTemaSelect
-              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.TEMA}`}
-              value={localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.TEMA]?.value}
+            <IgtFilterTemaSelect
+              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.TEMA}`}
+              value={localDraftFilters[IGT_FILTER_KEYS_MAP.TEMA]?.value}
               onValueChange={(details) =>
-                handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.TEMA, details)
+                handleFieldChange(IGT_FILTER_KEYS_MAP.TEMA, details)
               }
             />
 
-            <WfsIgtFilterProvinsiSelect
-              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.PROVINSI}`}
-              value={localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
+            <IgtFilterProvinsiSelect
+              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.PROVINSI}`}
+              value={localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
               onValueChange={(details) =>
-                handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.PROVINSI, details)
+                handleFieldChange(IGT_FILTER_KEYS_MAP.PROVINSI, details)
               }
             />
 
-            <WfsIgtFilterKabupatenSelect
-              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.KABUPATEN}`}
+            <IgtFilterKabupatenSelect
+              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KABUPATEN}`}
               provinsiId={
-                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.PROVINSI]?.value
+                localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value
               }
               value={
-                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]?.value ??
-                ""
+                localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value ?? ""
               }
-              disabled={
-                !localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.PROVINSI]?.value
-              }
+              disabled={!localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
               onValueChange={(details) =>
-                handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.KABUPATEN, details)
+                handleFieldChange(IGT_FILTER_KEYS_MAP.KABUPATEN, details)
               }
             />
 
-            <WfsIgtFilterKecamatanSelect
-              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.KECAMATAN}`}
+            <IgtFilterKecamatanSelect
+              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KECAMATAN}`}
               kabupatenId={
-                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
+                localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
               }
               value={
-                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ??
-                ""
+                localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ?? ""
               }
               disabled={
-                !localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
+                !localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
               }
               onValueChange={(details) =>
-                handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.KECAMATAN, details)
+                handleFieldChange(IGT_FILTER_KEYS_MAP.KECAMATAN, details)
               }
             />
 
-            <WfsIgtFilterKelurahanSelect
-              modalKey={`${modalKey}.${WFS_IGT_FILTER_KEYS_MAP.KELURAHAN}`}
+            <IgtFilterKelurahanSelect
+              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KELURAHAN}`}
               kecamatanId={
-                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
+                localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
               }
               value={
-                localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ??
-                ""
+                localDraftFilters[IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ?? ""
               }
               disabled={
-                !localDraftFilters[WFS_IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
+                !localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
               }
               onValueChange={(details) =>
-                handleFieldChange(WFS_IGT_FILTER_KEYS_MAP.KELURAHAN, details)
+                handleFieldChange(IGT_FILTER_KEYS_MAP.KELURAHAN, details)
               }
             />
           </VStack>
@@ -245,3 +256,6 @@ export const WfsIgtFilterTrigger = (props: WfsIgtFilterTriggerProps) => {
     </Modal.Root>
   );
 };
+
+// Aliases for compatibility
+export const WfsIgtFilterTrigger = IgtFilterTrigger;

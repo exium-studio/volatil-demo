@@ -13,14 +13,19 @@ import type {
 import type maplibregl from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
+import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+
 /** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
-const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
+const resolveWmsTileUrl = (
+  layer: WmsRasterLayerConfig,
+  cqlFilter?: string,
+): string => {
   if (layer.tileUrl) return layer.tileUrl;
 
   if (!layer.wmsUrl) return "";
   const baseUrl = layer.wmsUrl;
   const layerName = layer.layers ?? "";
-  const params = new URLSearchParams({
+  const queryParams: Record<string, string> = {
     service: "WMS",
     version: layer.version ?? "1.1.1",
     request: "GetMap",
@@ -31,7 +36,13 @@ const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
     srs: layer.srs ?? "EPSG:3857",
     width: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
     height: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
-  });
+  };
+
+  if (cqlFilter) {
+    queryParams.CQL_FILTER = cqlFilter;
+  }
+
+  const params = new URLSearchParams(queryParams);
   return `${baseUrl}?${params.toString()}&bbox={bbox-epsg-3857}`;
 };
 
@@ -74,12 +85,17 @@ export const useMapLayers = (
   map: maplibregl.Map | null,
   layers: MapLayerConfig[],
 ) => {
+  const cqlFilter = useIgtLayerStore((state) => state.cqlFilter);
+
   // Use a ref so the map-style-ready handler always reads the latest layer configs
   // without needing to re-register the event listener every time layers change.
   const layersRef = useRef(layers);
+  const cqlFilterRef = useRef(cqlFilter);
+
   useEffect(() => {
     layersRef.current = layers;
-  }, [layers]);
+    cqlFilterRef.current = cqlFilter;
+  }, [layers, cqlFilter]);
 
   useEffect(() => {
     if (!map) return;
@@ -126,7 +142,7 @@ export const useMapLayers = (
 
       switch (layer.type) {
         case "wms-raster": {
-          const tileUrl = resolveWmsTileUrl(layer);
+          const tileUrl = resolveWmsTileUrl(layer, cqlFilterRef.current);
           safeAddSource(layer.id, {
             type: "raster",
             tiles: [tileUrl],
@@ -201,26 +217,14 @@ export const useMapLayers = (
 
     let setupSeq = 0;
 
-    /**
-     * Adds all config layers from scratch in absolute order:
-     *   basemap (already present) → wms-raster → wfs-* → draw layers (added by useMapDraw)
-     *
-     * Removes own data layers first, then re-adds sequentially, then fires
-     * MAP_LAYERS_READY_EVENT so useMapDraw knows to (re)add draw layers on top.
-     *
-     * This function is passed directly to both map.on and map.off so the
-     * listener reference is stable and map.off() correctly removes it.
-     */
     const setupLayers = async () => {
       const seq = ++setupSeq;
 
-      // Remove own data layers first (idempotent — safe if already wiped by style.load)
+      // Remove own data layers first
       removeLayers(layersRef.current);
 
       const configs = layersRef.current;
 
-      // Add layers in array order (bottom to top): wms-raster first, then wfs-*.
-      // The consumer controls ordering via the config array.
       for (const layer of configs) {
         if (seq !== setupSeq || controller.signal.aborted) return;
 
@@ -237,32 +241,37 @@ export const useMapLayers = (
       }
     };
 
-    // Listen for MAP_EVENTS_MAP.styleReady (fired by basemap after applyGlobe settles)
-    // Pass setupLayers directly — same reference used in map.off for correct cleanup
     map.on(MAP_EVENTS_MAP.styleReady as string, setupLayers);
-
-    // Also run immediately for initial mount
-    // (basemap may have already fired MAP_EVENTS_MAP.styleReady before useMapLayers mounted)
     void setupLayers();
 
     return () => {
       controller.abort();
-      // Correct cleanup: same reference as map.on — listener is fully removed
       map.off(MAP_EVENTS_MAP.styleReady as string, setupLayers);
       removeLayers(layersRef.current);
     };
   }, [map]);
 
-  // Respond to layer config changes (e.g. visibility toggle) without full teardown/rebuild.
+  // Respond to layer config & cqlFilter changes dynamically
   useEffect(() => {
     if (!map) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(map as any).style || !map.isStyleLoaded()) return;
 
     layers.forEach((layer) => {
-      if (!map.getLayer(layer.id)) return;
+      if (layer.type === "wms-raster") {
+        const newTileUrl = resolveWmsTileUrl(layer, cqlFilter);
+        const source = map.getSource(
+          layer.id,
+        ) as maplibregl.RasterTileSource | undefined;
 
-      map.setLayoutProperty(layer.id, "visibility", resolveVisibility(layer));
+        if (source && typeof source.setTiles === "function") {
+          source.setTiles([newTileUrl]);
+        }
+      }
+
+      if (map.getLayer(layer.id)) {
+        map.setLayoutProperty(layer.id, "visibility", resolveVisibility(layer));
+      }
     });
-  }, [map, layers]);
+  }, [map, layers, cqlFilter]);
 };

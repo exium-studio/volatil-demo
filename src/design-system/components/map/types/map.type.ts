@@ -30,6 +30,8 @@ export type BaseLayerConfig = {
   id: string;
   /** Spatial basis of this IGT layer ("bidang" or "kawasan"). */
   spatialBasis?: "bidang" | "kawasan";
+  /** Bounding box of the layer [minLon, minLat, maxLon, maxLat]. */
+  bbox?: [number, number, number, number];
   /** When false the layer is added but hidden (layout visibility "none"). Defaults to true. */
   visible?: boolean;
   paint?: Record<string, unknown>;

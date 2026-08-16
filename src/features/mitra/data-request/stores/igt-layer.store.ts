@@ -2,6 +2,8 @@
 
 import { create } from "zustand";
 import type { WfsLayerConfig } from "@/design-system/components/map/types/map.type";
+import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 
 export type IgtLayerState = {
   selectedIgtLayer: WfsLayerConfig | null;
@@ -9,6 +11,9 @@ export type IgtLayerState = {
   enabledLayerIds: Record<string, boolean>;
   toggleLayerId: (layerId: string) => void;
   setLayerEnabled: (layerId: string, enabled: boolean) => void;
+  appliedWfsFilters: IgtFilterValues;
+  cqlFilter: string | undefined;
+  setAppliedWfsFilters: (filters: IgtFilterValues) => void;
 };
 
 export const useIgtLayerStore = create<IgtLayerState>((set) => ({
@@ -32,4 +37,11 @@ export const useIgtLayerStore = create<IgtLayerState>((set) => ({
         [layerId]: enabled,
       },
     })),
+  appliedWfsFilters: {},
+  cqlFilter: undefined,
+  setAppliedWfsFilters: (appliedWfsFilters) =>
+    set({
+      appliedWfsFilters,
+      cqlFilter: buildIgtCqlFilter(appliedWfsFilters),
+    }),
 }));

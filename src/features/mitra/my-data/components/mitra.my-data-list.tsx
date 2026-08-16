@@ -18,8 +18,8 @@ import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { WfsIgtFilterTrigger } from "@/features/mitra/data-request/components/wfs-igt-filter";
-import type { WfsIgtFilterValues } from "@/features/mitra/data-request/types/filter-wfs-igt-trigger.type";
+import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
+import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraMyDataListProps,
@@ -48,7 +48,7 @@ const TRANSACTION_STATUS: Record<
   failed: { label: "Gagal", color: "red" },
 };
 
-export const MitraMyDataList = (props: MitraMyDataListProps) => {
+export const MitraMyDataList = (_props: MitraMyDataListProps) => {
   const [state, setState] = useState<{
     search: string;
     page: number;
@@ -60,7 +60,7 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     status: "active",
   });
-  const [wfsFilters, setWfsFilters] = useState<WfsIgtFilterValues>({});
+  const [wfsFilters, setWfsFilters] = useState<IgtFilterValues>({});
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const { myData, isLoading, isFetching } = useMitraMyDataQuery({
     ...state,
@@ -70,14 +70,19 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
     provinsi: wfsFilters.provinsi?.value,
     kabupaten: wfsFilters.kabupaten?.value,
     kecamatan: wfsFilters.kecamatan?.value,
+    kelurahan: wfsFilters.kelurahan?.value,
   });
 
-  const updateState = (nextState: Partial<typeof state>, resetPage = false) =>
-    setState((previousState) => ({
-      ...previousState,
-      ...nextState,
-      page: resetPage ? 1 : (nextState.page ?? previousState.page),
+  const updateState = (
+    next: Partial<typeof state>,
+    resetPage = false,
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      ...next,
+      page: resetPage ? 1 : (next.page ?? prev.page),
     }));
+  };
 
   const headers = useMemo<FormattedTableHeader[]>(
     () => [
@@ -208,29 +213,27 @@ export const MitraMyDataList = (props: MitraMyDataListProps) => {
   );
 
   return (
-    <VStack flex={1} overflowY={"auto"} {...props}>
-      <HStack wrap={"wrap"} gap={SPACING.sm} p={PADDING.md} w={"full"}>
+    <VStack gap={SPACING.md} w={"full"}>
+      <HStack wrap={"wrap"} align={"center"} justify={"space-between"} gap={SPACING.sm} w={"full"}>
         <SearchInput
           value={state.search}
-          onChange={(event) =>
-            updateState({ search: event.target.value }, true)
-          }
+          onValueChange={(val) => updateState({ search: val }, true)}
           placeholder={t["action.search"]()}
           maxW={"260px"}
         />
         <HStack wrap={"wrap"} gap={SPACING.sm}>
-          <WfsIgtFilterTrigger
+          <IgtFilterTrigger
             modalKey="mitra-my-data-filter-modal"
             value={wfsFilters}
-            onApply={(filters) => {
+            onApply={(filters: IgtFilterValues) => {
               setWfsFilters(filters);
               updateState({}, true);
             }}
           >
-            <IconButton variant={"outline"} aria-label={"Filter WFS IGT"}>
+            <IconButton variant={"outline"} aria-label={"Filter IGT"}>
               <AppIcon icon={SlidersHorizontalIcon} />
             </IconButton>
-          </WfsIgtFilterTrigger>
+          </IgtFilterTrigger>
 
           <FocusSelectInput
             modalKey={"my-data-status-filter"}

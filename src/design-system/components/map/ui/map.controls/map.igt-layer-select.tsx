@@ -1,6 +1,7 @@
 // src/design-system/components/map/ui/map.controls/map.igt-layer-select.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -11,9 +12,10 @@ import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 
 import { ClickDelegateContainer } from "@/design-system/components/utilities/ui/click-delegate-container";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { useQuery } from "@tanstack/react-query";
 import { Layers2Icon, LayersIcon, TreesIcon } from "lucide-react";
@@ -78,9 +80,16 @@ export const MapIgtLayerSelect = memo(() => {
 
         <Popover.Body p={2}>
           {isLoading ? (
-            <P fontSize={"xs"} color={"fg.muted"} p={2}>
-              {"Memuat layer..."}
-            </P>
+            <HStack
+              align={"center"}
+              justify={"center"}
+              gap={SPACING.md}
+              p={PADDING.md}
+            >
+              <Loader />
+
+              <P color={"fg.muted"}>{"Memuat layer..."}</P>
+            </HStack>
           ) : (
             <VStack gap={1} align={"stretch"}>
               {activeLayers.map((layer) => {
@@ -90,36 +99,37 @@ export const MapIgtLayerSelect = memo(() => {
                   layer.wfsTypeName.split(":")[1] ||
                   layer.wfsTypeName;
 
-                const isKawasan = layer.spatialBasis === "kawasan";
-                const LayerIcon = isKawasan ? TreesIcon : Layers2Icon;
+                const isBidang = layer.spatialBasis === "bidang";
+                const LayerIcon = isBidang ? TreesIcon : Layers2Icon;
 
                 return (
                   <ClickDelegateContainer
                     key={layer.id}
+                    align={"center"}
+                    justify={"space-between"}
+                    gap={SPACING.lg}
                     p={2}
                     rounded={"md"}
-                    justify={"space-between"}
-                    align={"center"}
-                    _hover={{ bg: "bg.subtle" }}
                     onDelegateClick={() => toggleLayerId(layer.id)}
+                    _hover={{ bg: "bg.subtle" }}
                   >
-                    <HStack gap={2} align={"center"} flex={1}>
+                    <HStack gap={SPACING.md} align={"center"} flex={1}>
                       <AppIcon
                         icon={LayerIcon}
-                        boxSize={4}
                         color={isEnabled ? "fg.emphasized" : "fg.muted"}
                       />
 
-                      <VStack gap={0} align={"start"} flex={1}>
-                        <P
-                          fontSize={"xs"}
+                      <VStack flex={1} align={"start"}>
+                        <ClampedP
+                          fontSize={"sm"}
                           color={isEnabled ? "fg.emphasized" : "fg.muted"}
                         >
                           {displayName.replace(/_/g, " ")}
-                        </P>
-                        <P fontSize={"2xs"} color={"fg.muted"}>
+                        </ClampedP>
+
+                        <ClampedP fontSize={"xs"} color={"fg.muted"}>
                           {layer.wfsTypeName}
-                        </P>
+                        </ClampedP>
                       </VStack>
                     </HStack>
 
