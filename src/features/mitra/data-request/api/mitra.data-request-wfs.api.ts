@@ -6,18 +6,25 @@ import type GeoJSON from "geojson";
 const cachedAttributes: Record<string, string[]> = {};
 const cachedStringAttributes: Record<string, string[]> = {};
 
-const DEFAULT_WFS_TYPE_NAME = "igt:CONTOH_BIDANG_TANAH";
-const DEFAULT_WFS_URL = "https://igtpr.atrbpn.go.id/geoserver/igt/ows";
+import { getMapServerEndpoints } from "@/design-system/components/map/services/map-endpoints.api";
+
+async function resolveWfsUrl(providedUrl?: string, signal?: AbortSignal): Promise<string> {
+  if (providedUrl) return providedUrl;
+  const endpoints = await getMapServerEndpoints(signal);
+  return endpoints[0]?.wfsUrl ?? "";
+}
 
 /**
  * Fetches all properties keys dynamically from the first feature of a WFS type.
  */
 export const getWfsAttributes = async (
-  typeName: string = DEFAULT_WFS_TYPE_NAME,
-  wfsUrl: string = DEFAULT_WFS_URL,
+  typeName?: string,
+  wfsUrl?: string,
   signal?: AbortSignal,
 ): Promise<string[]> => {
-  const cacheKey = `${wfsUrl}:${typeName}`;
+  if (!typeName) return [];
+  const targetWfsUrl = await resolveWfsUrl(wfsUrl, signal);
+  const cacheKey = `${targetWfsUrl}:${typeName}`;
   if (cachedAttributes[cacheKey]) {
     return cachedAttributes[cacheKey];
   }
@@ -64,17 +71,19 @@ type WfsSchemaProperty = {
  * This is used to build case-insensitive search queries on text-only fields to prevent SQL type errors.
  */
 export const getWfsStringAttributes = async (
-  typeName: string = DEFAULT_WFS_TYPE_NAME,
-  wfsUrl: string = DEFAULT_WFS_URL,
+  typeName?: string,
+  wfsUrl?: string,
   signal?: AbortSignal,
 ): Promise<string[]> => {
-  const cacheKey = `${wfsUrl}:${typeName}`;
+  if (!typeName) return [];
+  const targetWfsUrl = await resolveWfsUrl(wfsUrl, signal);
+  const cacheKey = `${targetWfsUrl}:${typeName}`;
   if (cachedStringAttributes[cacheKey]) {
     return cachedStringAttributes[cacheKey];
   }
 
   try {
-    const url = new URL(wfsUrl);
+    const url = new URL(targetWfsUrl);
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", "2.0.0");
     url.searchParams.set("request", "DescribeFeatureType");
@@ -135,19 +144,29 @@ export type FetchWfsCatalogResult = {
  * Fetches a paginated page of IGT features from WFS v2.0.0.
  */
 export const fetchWfsCatalog = async ({
-  typeName = DEFAULT_WFS_TYPE_NAME,
-  wfsUrl = DEFAULT_WFS_URL,
+  typeName,
+  wfsUrl,
   page,
   pageSize,
   cqlFilter,
   search,
   signal,
 }: FetchWfsCatalogParams): Promise<FetchWfsCatalogResult> => {
+  if (!typeName) {
+    return {
+      features: [],
+      totalFeatures: 0,
+      bidangCount: 0,
+      kawasanCount: 0,
+    };
+  }
+
+  const targetWfsUrl = await resolveWfsUrl(wfsUrl, signal);
   const startIndex = (page - 1) * pageSize;
 
   const stringAttributes = await getWfsStringAttributes(
     typeName,
-    wfsUrl,
+    targetWfsUrl,
     signal,
   );
 
@@ -169,7 +188,7 @@ export const fetchWfsCatalog = async ({
     // Fetch current page of actual features using WFS 2.0.0
     const pageResult = await fetchWfs({
       typeName,
-      wfsUrl,
+      wfsUrl: targetWfsUrl,
       version: "2.0.0",
       maxFeatures: pageSize,
       startIndex,

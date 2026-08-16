@@ -40,7 +40,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = names.map((name, index) => {
     wfsUrl:
       index % 3 === 0
         ? null
-        : `https://igtpr.atrbpn.go.id/geoserver/igt/ows?service=WFS&typeName=${index + 1}`,
+        : `/geoserver/igt/ows?service=WFS&typeName=${index + 1}`,
     expiresAt: expiresAt.toISOString(),
     status: isExpired ? "expired" : "active",
   };

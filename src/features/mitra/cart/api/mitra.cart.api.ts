@@ -8,11 +8,20 @@ import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import type GeoJSON from "geojson";
 
-const DEFAULT_WFS_TYPE_NAME = "igt:CONTOH_BIDANG_TANAH";
-const DEFAULT_WFS_URL = "https://igtpr.atrbpn.go.id/geoserver/igt/ows";
+import { getMapServerEndpoints } from "@/design-system/components/map/services/map-endpoints.api";
+
 const WFS_ID_FIELD = "gid";
 
 export type { FetchWfsCatalogResult };
+
+function getPaginatedIds(ids: string[], page: number, pageSize: number) {
+  const total = ids.length;
+  const totalPages = Math.ceil(total / pageSize);
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageIds = ids.slice(start, end);
+  return { pageIds, total, totalPages };
+}
 
 /** Returns paginated WFS features for IDs passed into the function */
 export async function fetchCartWfsPageApi(params: {
@@ -20,7 +29,7 @@ export async function fetchCartWfsPageApi(params: {
   page: number;
   pageSize: number;
   typeName: string;
-  wfsUrl: string;
+  wfsUrl?: string;
   search?: string;
   cqlFilter?: string;
   signal?: AbortSignal;
@@ -34,6 +43,12 @@ export async function fetchCartWfsPageApi(params: {
   const { ids, page, pageSize, typeName, wfsUrl, search, cqlFilter, signal } =
     params;
 
+  let targetWfsUrl = wfsUrl;
+  if (!targetWfsUrl) {
+    const endpoints = await getMapServerEndpoints(signal);
+    targetWfsUrl = endpoints[0]?.wfsUrl ?? "";
+  }
+
   if (ids.length === 0) {
     return {
       features: [],
@@ -46,7 +61,7 @@ export async function fetchCartWfsPageApi(params: {
     };
   }
 
-  // Build CQL: "gid" IN ('id1','id2',...) or "id" IN (...)
+  // Build CQL: "gid" IN ('id1','id2',...)
   const idList = ids.map((id) => `'${id}'`).join(",");
   const baseFilter = `"${WFS_ID_FIELD}" IN (${idList})`;
   const mergedCqlFilter =
@@ -54,21 +69,21 @@ export async function fetchCartWfsPageApi(params: {
 
   const result = await fetchWfsCatalog({
     typeName,
-    wfsUrl,
+    wfsUrl: targetWfsUrl,
     page,
     pageSize,
-    cqlFilter: mergedCqlFilter,
     search,
+    cqlFilter: mergedCqlFilter,
     signal,
   });
 
-  const total = result.totalFeatures;
+  const { pageIds, total, totalPages } = getPaginatedIds(ids, page, pageSize);
 
   return {
     ...result,
-    pageIds: [],
+    pageIds,
     total,
-    totalPages: Math.ceil(total / pageSize),
+    totalPages,
   };
 }
 
@@ -87,16 +102,18 @@ export async function fetchAllFeatureIdsFromWfsApi(params: {
   cqlFilter?: string;
   signal?: AbortSignal;
 }): Promise<string[]> {
-  const {
-    typeName = DEFAULT_WFS_TYPE_NAME,
-    wfsUrl = DEFAULT_WFS_URL,
-    cqlFilter,
-    signal,
-  } = params;
+  const { typeName, cqlFilter, signal } = params;
+  let targetWfsUrl = params.wfsUrl;
+  if (!targetWfsUrl) {
+    const endpoints = await getMapServerEndpoints(signal);
+    targetWfsUrl = endpoints[0]?.wfsUrl ?? "";
+  }
+
+  if (!typeName || !targetWfsUrl) return [];
 
   const result = await fetchWfs({
     typeName,
-    wfsUrl,
+    wfsUrl: targetWfsUrl,
     version: "2.0.0",
     cqlFilter,
     resultType: "results",

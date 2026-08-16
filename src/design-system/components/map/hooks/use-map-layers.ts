@@ -17,9 +17,9 @@ import { useEffect, useRef } from "react";
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
   if (layer.tileUrl) return layer.tileUrl;
 
-  const baseUrl =
-    layer.wmsUrl ?? "https://igtpr.atrbpn.go.id/geoserver/igt/wms";
-  const layerName = layer.layers ?? "igt:CONTOH_BIDANG_TANAH";
+  if (!layer.wmsUrl) return "";
+  const baseUrl = layer.wmsUrl;
+  const layerName = layer.layers ?? "";
   const params = new URLSearchParams({
     service: "WMS",
     version: layer.version ?? "1.1.1",

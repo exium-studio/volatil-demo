@@ -41,12 +41,10 @@ export type FetchWfsParams = {
 
 // -------------------------------------------------------------------------------------
 
-const DEFAULT_WFS_URL = "https://igtpr.atrbpn.go.id/geoserver/igt/ows";
-
 const buildWfsUrl = (
   {
     typeName,
-    wfsUrl = DEFAULT_WFS_URL,
+    wfsUrl,
     bbox,
     cqlFilter,
     version = "2.0.0",
@@ -57,6 +55,9 @@ const buildWfsUrl = (
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
+  if (!wfsUrl) {
+    throw new Error("wfsUrl parameter is required for fetchWfs and cannot be empty.");
+  }
   const baseUrl = wfsUrl;
   const url = new URL(baseUrl);
 
