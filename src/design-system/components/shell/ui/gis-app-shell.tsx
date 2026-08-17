@@ -239,7 +239,7 @@ const SidebarFooter = () => {
 
                 return (
                   <NavLink key={item.key} to={nav.pathname}>
-                    <NavButton>
+                    <NavButton w={"full"}>
                       <AppIcon icon={nav.icon} />
                       {expanded && t[nav.titleKey]()}
                     </NavButton>
