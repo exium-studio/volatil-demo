@@ -541,7 +541,7 @@ const MitraDataRequestUploadAoiDataList = memo(
           >
             <HStack justify={"space-between"} align={"center"} w={"full"}>
               <P fontWeight={"semibold"} fontSize={"md"}>
-                {`Hasil Query Spasial AOI (${aoiLayers.length} File Upload)`}
+                {`Hasil query spasial AOI`}
               </P>
 
               <HStack align={"center"} gap={SPACING.sm}>

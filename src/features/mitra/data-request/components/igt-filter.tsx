@@ -154,7 +154,6 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
         </Modal.Header>
 
         <Modal.Body gap={SPACING.md}>
-          {/* Info Alert at the top of modal body */}
           <Alert.Root status={"info"} colorPalette={"blue"} w={"full"}>
             <Alert.Indicator />
             <Alert.Content>
