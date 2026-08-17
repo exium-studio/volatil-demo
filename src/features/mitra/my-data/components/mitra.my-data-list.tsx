@@ -32,7 +32,7 @@ import {
 } from "@/features/mitra/my-data/utils/my-data-date";
 import { t } from "@/shared/libs/i18n";
 import { ExternalLinkIcon, SlidersHorizontalIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 
 const STATUS_OPTIONS = [
   { label: "Aktif", value: "active" },
@@ -49,6 +49,10 @@ const TRANSACTION_STATUS: Record<
 };
 
 export const MitraMyDataList = (_props: MitraMyDataListProps) => {
+  // Transitions
+  const [_isPending, startTransition] = useTransition();
+
+  // States
   const [state, setState] = useState<{
     search: string;
     page: number;
@@ -217,7 +221,11 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
       <HStack wrap={"wrap"} align={"center"} justify={"space-between"} gap={SPACING.sm} w={"full"}>
         <SearchInput
           value={state.search}
-          onValueChange={(val) => updateState({ search: val }, true)}
+          onValueChange={(val) =>
+            startTransition(() => {
+              updateState({ search: val }, true);
+            })
+          }
           placeholder={t["action.search"]()}
           maxW={"260px"}
         />
@@ -226,8 +234,10 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
             modalKey="mitra-my-data-filter-modal"
             value={wfsFilters}
             onApply={(filters: IgtFilterValues) => {
-              setWfsFilters(filters);
-              updateState({}, true);
+              startTransition(() => {
+                setWfsFilters(filters);
+                updateState({}, true);
+              });
             }}
           >
             <IconButton variant={"outline"} aria-label={"Filter IGT"}>
@@ -241,7 +251,9 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
             options={STATUS_OPTIONS}
             value={state.status}
             onValueChange={(value) =>
-              updateState({ status: value as MyDataStatus }, true)
+              startTransition(() => {
+                updateState({ status: value as MyDataStatus }, true);
+              })
             }
             clearable={false}
             w={"180px"}

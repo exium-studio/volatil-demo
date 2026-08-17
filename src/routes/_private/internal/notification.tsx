@@ -1,5 +1,6 @@
 // src/routes/_private/internal/notification.tsx
 
+import { NotificationPage } from "@/features/notification/pages/notification.page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private/internal/notification")({
@@ -7,5 +8,5 @@ export const Route = createFileRoute("/_private/internal/notification")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/_app/admin/notification"!</div>;
+  return <NotificationPage />;
 }
