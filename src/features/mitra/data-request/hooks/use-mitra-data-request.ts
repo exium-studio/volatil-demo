@@ -28,7 +28,7 @@ export const useIgtCatalog = (params?: MitraDataRequestGetCatalogParams) => {
     ...query,
     igtData: query.data,
     items: query.data?.items ?? [],
-    meta: query.data?.meta,
+    pagination: query.data?.pagination,
   };
 };
 

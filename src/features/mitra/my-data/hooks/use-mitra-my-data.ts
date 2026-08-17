@@ -5,6 +5,7 @@ import type {
   MyDataQueryParams,
   MyDataResponse,
 } from "@/features/mitra/my-data/types/my-data.type";
+import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { useQuery } from "@tanstack/react-query";
 
 export const useMitraMyDataQuery = (params: MyDataQueryParams) => {
@@ -18,12 +19,7 @@ export const useMitraMyDataQuery = (params: MyDataQueryParams) => {
     ...query,
     myData: query.data ?? {
       items: [],
-      meta: {
-        page: params.page,
-        pageSize: params.pageSize,
-        total: 0,
-        totalPages: 0,
-      },
+      pagination: createPaginationMeta(params.page, params.pageSize, 0),
     },
   };
 };

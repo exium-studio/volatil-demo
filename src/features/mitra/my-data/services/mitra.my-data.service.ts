@@ -7,6 +7,7 @@ import type {
   MyDataResponse,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { dummyMitraMyDataItems } from "@/shared/constants/dummy-data/dummy-my-data";
+import { createPaginationMeta } from "@/shared/types/common-response.type";
 
 const matchesSearch = (item: MyDataItem, search: string) =>
   [
@@ -34,12 +35,11 @@ export const getPaginatedMyData = (
 
   return {
     items: filteredItems.slice(startIndex, startIndex + params.pageSize),
-    meta: {
-      page: params.page,
-      pageSize: params.pageSize,
-      total: filteredItems.length,
-      totalPages: Math.ceil(filteredItems.length / params.pageSize),
-    },
+    pagination: createPaginationMeta(
+      params.page,
+      params.pageSize,
+      filteredItems.length,
+    ),
   };
 };
 

@@ -2,6 +2,7 @@
 
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import type { MitraDataRequestIgtDataResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
+import { createPaginationMeta } from "@/shared/types/common-response.type";
 
 export const DUMMY_IGT_ITEMS: MitraDataRequestIgtDataItem[] = [
   {
@@ -38,12 +39,5 @@ export const DUMMY_IGT_ITEMS: MitraDataRequestIgtDataItem[] = [
 
 export const dummyIgtData: MitraDataRequestIgtDataResponse = {
   items: DUMMY_IGT_ITEMS,
-  meta: {
-    page: 1,
-    pageSize: 10,
-    total: 5,
-    totalPages: 1,
-    totalBidang: 3,
-    totalKawasan: 2,
-  },
+  pagination: createPaginationMeta(1, 10, 5),
 };

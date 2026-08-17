@@ -16,15 +16,33 @@ export type ApiErrorResponse = {
   timestamp: string;
 };
 
+export type PaginationMeta = {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  itemsPerPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
+
 export type PaginatedResponse<T> = {
   items: T[];
-  meta: {
-    page: number;
-    pageSize: number;
-    total: number; // grand total items
-    totalPages: number;
-    totalBidang?: number;
-    totalKawasan?: number;
+  pagination: PaginationMeta;
+};
+
+export const createPaginationMeta = (
+  currentPage: number,
+  itemsPerPage: number,
+  totalItems: number,
+): PaginationMeta => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+  return {
+    totalItems,
+    totalPages,
+    currentPage,
+    itemsPerPage,
+    hasNextPage: currentPage < totalPages,
+    hasPrevPage: currentPage > 1,
   };
 };
 

@@ -283,8 +283,8 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
               setPage={(page) => updateState({ page })}
               setPageSize={(pageSize) => updateState({ pageSize }, true)}
               currentDataLength={myData.items.length}
-              totalData={myData.meta.total}
-              totalPage={myData.meta.totalPages}
+              totalData={myData.pagination.totalItems}
+              totalPage={myData.pagination.totalPages}
               roundedBottom={0}
               shadow={"none"}
             />
