@@ -17,7 +17,7 @@ import {
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 
 export type MitraDataRequestDetailAttributeViewProps = {
   layer: IgtLayerItem | null;
@@ -61,6 +61,16 @@ export const MitraDataRequestDetailAttributeView = memo(
     // Stores
     const { theme } = useThemeStore();
 
+    // Deferred Table Mounting State
+    const [isTableReady, setIsTableReady] = useState(false);
+
+    useEffect(() => {
+      const raf = requestAnimationFrame(() => {
+        setIsTableReady(true);
+      });
+      return () => cancelAnimationFrame(raf);
+    }, []);
+
     // Hooks (Mutations)
     const addToCartSelectedMutation = useAddToCartSelected();
     const addToCartAllMutation = useAddToCartAll();
@@ -80,8 +90,10 @@ export const MitraDataRequestDetailAttributeView = memo(
           showActions={showActions}
         />
 
-        {isLoading || (isFetching && isEmptyArray(features)) ? (
-          <Skeleton h={"full"} w={"full"} flex={1} rounded={0} />
+        {!isTableReady ||
+        isLoading ||
+        (isFetching && isEmptyArray(features)) ? (
+          <Skeleton h={"full"} w={"full"} flex={1} rounded={0} p={PADDING.md} />
         ) : isEmptyArray(features) ? (
           <VStack
             flex={1}

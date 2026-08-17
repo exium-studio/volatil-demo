@@ -13,7 +13,7 @@ import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect } from "react";
 
 const MitraDataRequestCatalogTabsContent = lazy(() =>
   import("@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content").then(
@@ -69,11 +69,6 @@ export const MitraDataRequestPage = () => {
   const { queryValue: tab, setQueryValue: setTab } = useSearchParam("tab");
   const { setQueryValue: setLayerId } = useSearchParam("layerId");
 
-  // States
-  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(
-    new Set([tab ?? "catalog"]),
-  );
-
   // Set to default tab if query is not satisfied
   useEffect(() => {
     if (!tab || !Object.keys(REQUEST_METHOD_MAP).includes(tab)) {
@@ -105,11 +100,6 @@ export const MitraDataRequestPage = () => {
             onValueChange={(details) => {
               setTab(details.value);
               setLayerId(undefined);
-              setVisitedTabs((prev) => {
-                const next = new Set(prev);
-                next.add(details.value);
-                return next;
-              });
             }}
           >
             <Tabs.List borderColor={"bg.canvas"}>
@@ -134,9 +124,9 @@ export const MitraDataRequestPage = () => {
             >
               {REQUEST_METHOD_OPTIONS.map((method) => {
                 const TabsContent = method.content;
-                const isVisited = visitedTabs.has(method.value);
+                const isActive = tab === method.value;
 
-                if (!isVisited) return null;
+                if (!isActive) return null;
 
                 return (
                   <TabsContent

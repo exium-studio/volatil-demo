@@ -36,6 +36,7 @@ import {
 import { EllipsisIcon } from "lucide-react";
 import {
   forwardRef,
+  memo,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -309,7 +310,13 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       ))}
 
       {!isEmptyArray(itemActions) && (
-        <DataListTableCell pos={"sticky"} top={0} right={0} zIndex={11} bg={"bg.panel"} />
+        <DataListTableCell
+          pos={"sticky"}
+          top={0}
+          right={0}
+          zIndex={11}
+          bg={"bg.panel"}
+        />
       )}
     </Box>
   );
@@ -329,99 +336,105 @@ interface DataListTableRowProps {
   styleProps?: StackProps;
 }
 
-const DataListTableRow = ({
-  item,
-  index,
-  isItemSelected,
-  canBatchSelect,
-  withNumbering,
-  itemActions = [],
-  toggleItemSelection,
-  bodyCellStyles,
-  measureRef,
-  dataIndex,
-  styleProps,
-}: DataListTableRowProps) => {
-  // Contexts
-  const { page, pageSize, renderTdCell } = useDataListTableContext();
+const DataListTableRow = memo(
+  ({
+    item,
+    index,
+    isItemSelected,
+    canBatchSelect,
+    withNumbering,
+    itemActions = [],
+    toggleItemSelection,
+    bodyCellStyles,
+    measureRef,
+    dataIndex,
+    styleProps,
+  }: DataListTableRowProps) => {
+    // Contexts
+    const { page, pageSize, renderTdCell } = useDataListTableContext();
 
-  return (
-    <Box
-      ref={measureRef}
-      data-index={dataIndex}
-      role={"row"}
-      display={"grid"}
-      gridTemplateColumns={"subgrid"}
-      gridColumn={"1 / -1"}
-      overflow={"clip"}
-      minH={TABLE.rowH}
-      bg={"bg.body"}
-      shadow={isItemSelected ? "md" : "none"}
-      {...styleProps}
-    >
-      {canBatchSelect && (
-        <Center
-          pos={"sticky"}
-          left={0}
-          bg={"bg.body"}
-          cursor={"pointer"}
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleItemSelection(item);
-          }}
-        >
-          <Center w={"full"} h={"full"} px={"10px"} {...bodyCellStyles}>
-            <Checkbox size={"sm"} checked={isItemSelected} variant={"subtle"} />
-          </Center>
-        </Center>
-      )}
-
-      {withNumbering && page && pageSize && (
-        <DataListTableCell {...bodyCellStyles}>
-          <P>{index + 1 + (page - 1) * pageSize}</P>
-        </DataListTableCell>
-      )}
-
-      {item.columns.map((col, colIndex) => (
-        <HStack
-          key={colIndex}
-          align={"center"}
-          justify={col.align}
-          w={"full"}
-          h={"full"}
-          px={4}
-          py={2}
-          opacity={item.dim || col.dim ? 0.5 : 1}
-          whiteSpace={"nowrap"}
-          {...bodyCellStyles}
-          {...col?.bodyCellProps}
-        >
-          {renderTdCell
-            ? renderTdCell(col, item, colIndex)
-            : (col.td ?? <P fontSize={"sm"}>{String(col.value ?? "-")}</P>)}
-        </HStack>
-      ))}
-
-      {!isEmptyArray(itemActions) && (
-        <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
+    return (
+      <Box
+        ref={measureRef}
+        data-index={dataIndex}
+        role={"row"}
+        display={"grid"}
+        gridTemplateColumns={"subgrid"}
+        gridColumn={"1 / -1"}
+        overflow={"clip"}
+        minH={TABLE.rowH}
+        bg={"bg.body"}
+        shadow={isItemSelected ? "md" : "none"}
+        {...styleProps}
+      >
+        {canBatchSelect && (
           <Center
+            pos={"sticky"}
+            left={0}
+            bg={"bg.body"}
+            cursor={"pointer"}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleItemSelection(item);
+            }}
+          >
+            <Center w={"full"} h={"full"} px={"10px"} {...bodyCellStyles}>
+              <Checkbox
+                size={"sm"}
+                checked={isItemSelected}
+                variant={"subtle"}
+              />
+            </Center>
+          </Center>
+        )}
+
+        {withNumbering && page && pageSize && (
+          <DataListTableCell {...bodyCellStyles}>
+            <P>{index + 1 + (page - 1) * pageSize}</P>
+          </DataListTableCell>
+        )}
+
+        {item.columns.map((col, colIndex) => (
+          <HStack
+            key={colIndex}
+            align={"center"}
+            justify={col.align}
             w={"full"}
             h={"full"}
-            px={"10px"}
+            px={4}
+            py={2}
+            opacity={item.dim || col.dim ? 0.5 : 1}
+            whiteSpace={"nowrap"}
             {...bodyCellStyles}
-            onClick={(e) => e.stopPropagation()}
+            {...col?.bodyCellProps}
           >
-            <DataListItemActionsTrigger itemActions={itemActions} item={item}>
-              <IconButton variant={"ghost"} size={"xs"}>
-                <AppIcon icon={EllipsisIcon} />
-              </IconButton>
-            </DataListItemActionsTrigger>
+            {renderTdCell
+              ? renderTdCell(col, item, colIndex)
+              : (col.td ?? <P fontSize={"sm"}>{String(col.value ?? "-")}</P>)}
+          </HStack>
+        ))}
+
+        {!isEmptyArray(itemActions) && (
+          <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
+            <Center
+              w={"full"}
+              h={"full"}
+              px={"10px"}
+              {...bodyCellStyles}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <DataListItemActionsTrigger itemActions={itemActions} item={item}>
+                <IconButton variant={"ghost"} size={"xs"}>
+                  <AppIcon icon={EllipsisIcon} />
+                </IconButton>
+              </DataListItemActionsTrigger>
+            </Center>
           </Center>
-        </Center>
-      )}
-    </Box>
-  );
-};
+        )}
+      </Box>
+    );
+  },
+);
 
 const DataListTableBody = () => {
   // Stores

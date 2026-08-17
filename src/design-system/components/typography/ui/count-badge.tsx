@@ -3,6 +3,7 @@
 import { Float } from "@/design-system/components/layout/ui/float";
 import type { CountBadgeProps } from "@/design-system/components/typography/types/count-badge.type";
 import { Badge } from "@/design-system/components/typography/ui/badge";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useMemo } from "react";
 
 export const CountBadge = (props: CountBadgeProps) => {
@@ -17,6 +18,9 @@ export const CountBadge = (props: CountBadgeProps) => {
     ...restProps
   } = props;
 
+  // Stores
+  const { theme } = useThemeStore();
+
   // Derived Values
   const formattedCount = useMemo(() => {
     if (count > max) {
@@ -27,7 +31,7 @@ export const CountBadge = (props: CountBadgeProps) => {
 
   const badgeContent = (
     <Badge
-      colorPalette={colorPalette}
+      colorPalette={colorPalette ?? theme.colorPalette}
       size={size}
       rounded={"full"}
       px={1.5}

@@ -146,9 +146,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
           <HStack gap={SPACING.md} align={"center"}>
             <Modal.Title>Filter Data IGT</Modal.Title>
 
-            {activeFilterCount > 0 && (
-              <CountBadge count={activeFilterCount} colorPalette={"blue"} />
-            )}
+            {activeFilterCount > 0 && <CountBadge count={activeFilterCount} />}
           </HStack>
           <Modal.CloseButton />
         </Modal.Header>
