@@ -128,7 +128,7 @@ export const SupportTicketPage = () => {
               p={PADDING.md}
             >
               <SearchInput
-                placeholder={"Cari sesuatu... ⌘K"}
+                placeholder={"Cari..."}
                 value={rawSearch}
                 onValueChange={handleSearchChange}
                 maxW={"280px"}

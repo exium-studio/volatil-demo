@@ -11,13 +11,13 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { TicketItem } from "@/features/mitra/support-ticket/types/support-ticket.type";
 import {
-  CheckCircle2Icon,
   ChevronDownIcon,
   ChevronUpIcon,
   ClockIcon,
   FileIcon,
   ImageIcon,
   UserIcon,
+  VerifiedIcon,
 } from "lucide-react";
 import { memo, useState } from "react";
 
@@ -73,7 +73,7 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
           <P fontWeight={"semibold"}>{ticket.user?.name ?? ""}</P>
 
           {ticket.status === "in_progress" && (
-            <AppIcon icon={ClockIcon} size={"xs"} color={"amber.500"} />
+            <AppIcon icon={ClockIcon} color={"blue.fg"} />
           )}
         </HStack>
 
@@ -103,12 +103,11 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
                       key={att.fileName || String(idx)}
                       variant={"outline"}
                       colorPalette={"gray"}
-                      p={1.5}
+                      p={PADDING.sm}
                     >
                       <AppIcon
                         icon={isImage ? ImageIcon : FileIcon}
-                        size={"xs"}
-                        mr={1}
+                        size={"sm"}
                       />
                       {att.originalName || att.fileName}
                     </Badge>
@@ -171,11 +170,7 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
                         {resp.admin?.name ?? "Internal Admin"}
                       </P>
 
-                      <AppIcon
-                        icon={CheckCircle2Icon}
-                        size={"xs"}
-                        color={"green.500"}
-                      />
+                      <AppIcon icon={VerifiedIcon} color={"green.500"} />
                     </HStack>
 
                     <P color={"fg.muted"}>{formatDate(resp.createdAt)}</P>

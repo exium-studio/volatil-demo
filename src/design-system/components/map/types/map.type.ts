@@ -34,6 +34,8 @@ export type BaseLayerConfig = {
   bbox?: [number, number, number, number];
   /** When false the layer is added but hidden (layout visibility "none"). Defaults to true. */
   visible?: boolean;
+  /** Opacity of the layer (0 to 1). Defaults to 1. */
+  opacity?: number;
   paint?: Record<string, unknown>;
   layout?: Record<string, unknown>;
 };
@@ -113,12 +115,14 @@ export type IgtLayersResponse = {
 export const getWmsRasterConfigFromIgtLayer = (
   igtLayer: IgtLayerItem,
   visible = true,
+  opacity = 1,
 ): WmsRasterLayerConfig => ({
   id: igtLayer.id,
   type: "wms-raster",
   spatialBasis: igtLayer.spatialBasis,
   bbox: igtLayer.bbox,
   visible,
+  opacity,
   wmsUrl: igtLayer.wms.wmsUrl,
   layers: igtLayer.wms.layers,
   tileSize: igtLayer.wms.tileSize,

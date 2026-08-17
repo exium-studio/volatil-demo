@@ -70,13 +70,15 @@ const getCustomLayerBeforeId = (map: maplibregl.Map): string | undefined => {
 const resolveVisibility = (layer: MapLayerConfig): "visible" | "none" =>
   layer.visible === false ? "none" : "visible";
 
+/** Resolves the paint opacity value from the layer config. */
+const resolveOpacity = (layer: MapLayerConfig): number => layer.opacity ?? 1;
+
 /** Adds/removes a list of config-driven layers (WMS raster, WFS, raster tile, vector tile) on the given map instance. */
 export const useMapLayers = (
   map: maplibregl.Map | null,
   layers: MapLayerConfig[],
   cqlFilter?: string,
 ) => {
-  // Always keep refs synchronously up-to-date with latest props
   const layersRef = useRef(layers);
   const cqlFilterRef = useRef(cqlFilter);
 
@@ -127,6 +129,7 @@ export const useMapLayers = (
     const addLayer = async (layer: MapLayerConfig) => {
       const beforeId = getCustomLayerBeforeId(map);
       const visibility = resolveVisibility(layer);
+      const opacity = resolveOpacity(layer);
 
       switch (layer.type) {
         case "wms-raster": {
@@ -142,6 +145,7 @@ export const useMapLayers = (
               type: "raster",
               source: layer.id,
               layout: { visibility },
+              paint: { "raster-opacity": opacity, ...(layer.paint ?? {}) },
             },
             beforeId,
           );
@@ -167,6 +171,7 @@ export const useMapLayers = (
               type: "raster",
               source: layer.id,
               layout: { visibility },
+              paint: { "raster-opacity": opacity, ...(layer.paint ?? {}) },
             },
             beforeId,
           );
@@ -181,7 +186,7 @@ export const useMapLayers = (
               type: "fill",
               source: layer.id,
               "source-layer": layer.sourceLayer,
-              paint: layer.paint,
+              paint: { "fill-opacity": opacity, ...(layer.paint ?? {}) },
               layout: { ...layer.layout, visibility },
             } as maplibregl.LayerSpecification,
             beforeId,
@@ -262,6 +267,19 @@ export const useMapLayers = (
         );
         if (currentVisibility !== targetVisibility) {
           map.setLayoutProperty(layer.id, "visibility", targetVisibility);
+        }
+
+        const targetOpacity = resolveOpacity(layer);
+        const opacityPropName =
+          layer.type === "wms-raster" || layer.type === "raster-tile"
+            ? "raster-opacity"
+            : layer.type === "vector-tile"
+              ? "fill-opacity"
+              : "raster-opacity";
+
+        const currentOpacity = map.getPaintProperty(layer.id, opacityPropName);
+        if (currentOpacity !== targetOpacity) {
+          map.setPaintProperty(layer.id, opacityPropName, targetOpacity);
         }
       }
     });

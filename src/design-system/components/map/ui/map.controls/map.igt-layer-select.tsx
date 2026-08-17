@@ -1,31 +1,40 @@
 // src/design-system/components/map/ui/map.controls/map.igt-layer-select.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
+import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Slider } from "@/design-system/components/input/ui/slider";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useQuery } from "@tanstack/react-query";
-import { Layers2Icon, LayersIcon, TreesIcon } from "lucide-react";
-import { memo, useMemo } from "react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Layers2Icon,
+  LayersIcon,
+  SlidersIcon,
+  TreesIcon,
+} from "lucide-react";
+import { memo, useMemo, useState } from "react";
 
 export const MapIgtLayerSelect = memo(() => {
   // Stores
-  const { theme } = useThemeStore();
-  const { enabledLayerIds, toggleLayerId } = useIgtLayerStore();
+  const { enabledLayerIds, layerOpacities, toggleLayerId, setLayerOpacity } =
+    useMapLayerStore();
 
   // Queries — list of all active IGT layers
   const { data: layersData, isLoading } = useQuery({
@@ -60,13 +69,13 @@ export const MapIgtLayerSelect = memo(() => {
               <IconButton size={"xs"}>
                 <AppIcon icon={LayersIcon} boxSize={5} />
               </IconButton>
-              <CountBadge count={enabledCount} floating />
+              <CountBadge count={enabledCount} floating={true} />
             </Box>
           </Tooltip>
         </MapOverlayContainer>
       </Popover.Trigger>
 
-      <Popover.Content width={"300px"}>
+      <Popover.Content width={"320px"}>
         <Popover.Header
           p={3}
           borderBottom={"1px solid"}
@@ -93,59 +102,20 @@ export const MapIgtLayerSelect = memo(() => {
               <P color={"fg.muted"}>{"Memuat layer..."}</P>
             </HStack>
           ) : (
-            <VStack gap={1} align={"stretch"}>
+            <VStack gap={2} align={"stretch"}>
               {activeLayers.map((layer) => {
                 const isEnabled = enabledLayerIds[layer.id] ?? true;
-                const displayName =
-                  layer.title ||
-                  layer.id.split(":")[1] ||
-                  layer.wfs.wfsTypeName;
-
-                const isBidang = layer.spatialBasis === "bidang";
-                const colorPalette = isBidang ? "blue" : "orange";
-                const LayerIcon = isBidang ? Layers2Icon : TreesIcon;
+                const opacity = layerOpacities[layer.id] ?? 1;
 
                 return (
-                  <HStack
+                  <MapIgtLayerItem
                     key={layer.id}
-                    align={"center"}
-                    justify={"space-between"}
-                    gap={SPACING.lg}
-                    p={2}
-                    colorPalette={colorPalette}
-                    rounded={"md"}
-                    cursor={"pointer"}
-                    onClick={() => toggleLayerId(layer.id)}
-                    _hover={{ bg: "bg.subtle" }}
-                  >
-                    <HStack gap={SPACING.md} align={"center"} flex={1}>
-                      <Center
-                        p={PADDING.sm}
-                        bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
-                        rounded={theme.radii.component}
-                      >
-                        <AppIcon
-                          icon={LayerIcon}
-                          color={isEnabled ? `${colorPalette}.fg` : "fg.subtle"}
-                        />
-                      </Center>
-
-                      <VStack flex={1} align={"start"}>
-                        <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
-                          {displayName.replace(/_/g, " ")}
-                        </ClampedP>
-
-                        <ClampedP
-                          fontSize={"sm"}
-                          color={isEnabled ? `fg.muted` : "fg.subtle"}
-                        >
-                          {layer.wfs.wfsTypeName}
-                        </ClampedP>
-                      </VStack>
-                    </HStack>
-
-                    <Switch checked={isEnabled} pointerEvents={"none"} />
-                  </HStack>
+                    layer={layer}
+                    isEnabled={isEnabled}
+                    opacity={opacity}
+                    onToggle={toggleLayerId}
+                    onOpacityChange={setLayerOpacity}
+                  />
                 );
               })}
             </VStack>
@@ -153,5 +123,131 @@ export const MapIgtLayerSelect = memo(() => {
         </Popover.Body>
       </Popover.Content>
     </Popover.Root>
+  );
+});
+
+type MapIgtLayerItemProps = {
+  layer: IgtLayerItem;
+  isEnabled: boolean;
+  opacity: number;
+  onToggle: (id: string) => void;
+  onOpacityChange: (id: string, opacity: number) => void;
+};
+
+const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
+  // Props
+  const { layer, isEnabled, opacity, onToggle, onOpacityChange } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
+
+  // States
+  const [isOpacityOpen, setIsOpacityOpen] = useState<boolean>(false);
+
+  // Derived Values
+  const displayName =
+    layer.title || layer.id.split(":")[1] || layer.wfs.wfsTypeName;
+  const isBidang = layer.spatialBasis === "bidang";
+  const colorPalette = isBidang ? "blue" : "orange";
+  const LayerIcon = isBidang ? Layers2Icon : TreesIcon;
+
+  return (
+    <VStack gap={1} align={"stretch"} w={"full"}>
+      <HStack
+        align={"center"}
+        justify={"space-between"}
+        gap={SPACING.md}
+        p={2}
+        colorPalette={colorPalette}
+        rounded={"md"}
+        cursor={"pointer"}
+        onClick={() => onToggle(layer.id)}
+        _hover={{ bg: "bg.subtle" }}
+      >
+        <HStack gap={SPACING.md} align={"center"} flex={1}>
+          <Center
+            p={PADDING.sm}
+            bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
+            rounded={theme.radii.component}
+          >
+            <AppIcon
+              icon={LayerIcon}
+              color={isEnabled ? `${colorPalette}.fg` : "fg.subtle"}
+            />
+          </Center>
+
+          <VStack flex={1} align={"start"}>
+            <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
+              {displayName.replace(/_/g, " ")}
+            </ClampedP>
+
+            <ClampedP
+              fontSize={"sm"}
+              color={isEnabled ? `fg.muted` : "fg.subtle"}
+            >
+              {layer.wfs.wfsTypeName}
+            </ClampedP>
+          </VStack>
+        </HStack>
+
+        <HStack gap={1} align={"center"}>
+          <Tooltip content={"Atur Opasitas"}>
+            <IconButton
+              size={"xs"}
+              variant={"ghost"}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpacityOpen((prev) => !prev);
+              }}
+            >
+              <AppIcon
+                icon={
+                  isOpacityOpen
+                    ? ChevronUpIcon
+                    : isEnabled
+                      ? SlidersIcon
+                      : ChevronDownIcon
+                }
+              />
+            </IconButton>
+          </Tooltip>
+
+          <Switch checked={isEnabled} pointerEvents={"none"} />
+        </HStack>
+      </HStack>
+
+      <Collapsible.Root opened={isOpacityOpen}>
+        <Collapsible.Content>
+          <VStack
+            gap={2}
+            p={3}
+            bg={"bg.subtle"}
+            rounded={theme.radii.component}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <HStack justify={"space-between"} w={"full"}>
+              <P fontSize={"sm"} color={"fg.subtle"}>
+                Opasitas Layer
+              </P>
+
+              <P fontSize={"sm"} fontWeight={"bold"} color={"fg.muted"}>
+                {`${Math.round(opacity * 100)}%`}
+              </P>
+            </HStack>
+
+            <Slider
+              value={[Math.round(opacity * 100)]}
+              min={0}
+              max={100}
+              step={1}
+              showValue={false}
+              onValueChange={(details) =>
+                onOpacityChange(layer.id, details.value[0] / 100)
+              }
+            />
+          </VStack>
+        </Collapsible.Content>
+      </Collapsible.Root>
+    </VStack>
   );
 });
