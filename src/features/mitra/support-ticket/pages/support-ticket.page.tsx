@@ -11,7 +11,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { CreateSupportTicketModal } from "@/features/mitra/support-ticket/components/support-ticket.create-modal";
+import { CreateSupportTicketTrigger } from "@/features/mitra/support-ticket/components/support-ticket.create";
 import { SupportTicketItem } from "@/features/mitra/support-ticket/components/support-ticket.item";
 import { SupportTicketSummary } from "@/features/mitra/support-ticket/components/support-ticket.summary";
 import {
@@ -149,14 +149,14 @@ export const SupportTicketPage = () => {
                 maxW={"280px"}
               />
 
-              <CreateSupportTicketModal
+              <CreateSupportTicketTrigger
                 onSubmitTicket={handleCreateTicketSubmit}
               >
                 <Button primary={true}>
                   <AppIcon icon={PlusIcon} />
                   {"Buat Laporan"}
                 </Button>
-              </CreateSupportTicketModal>
+              </CreateSupportTicketTrigger>
             </HStack>
 
             <Separator borderColor={"bg.canvas"} />

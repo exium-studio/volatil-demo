@@ -9,11 +9,11 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
-import type { CreateSupportTicketModalProps } from "@/features/mitra/support-ticket/types/support-ticket.type";
+import type { CreateSupportTicketTriggerProps } from "@/features/mitra/support-ticket/types/support-ticket.type";
 import { useState } from "react";
 
-export const CreateSupportTicketModal = (
-  props: CreateSupportTicketModalProps,
+export const CreateSupportTicketTrigger = (
+  props: CreateSupportTicketTriggerProps,
 ) => {
   // Props
   const { children, modalKey: customModalKey, onSubmitTicket } = props;
@@ -116,4 +116,4 @@ export const CreateSupportTicketModal = (
   );
 };
 
-export const CreateTicketModal = CreateSupportTicketModal;
+export const CreateTicketModal = CreateSupportTicketTrigger;
