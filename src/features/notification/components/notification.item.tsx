@@ -1,12 +1,12 @@
 // src/features/notification/components/notification.item.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
-import { PADDING } from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import type { NotificationItem } from "@/features/notification/types/notification.type";
 import {
   AlertCircleIcon,
@@ -93,7 +93,7 @@ export const NotificationItemCard = memo((props: NotificationItemCardProps) => {
         shadow: "xs",
       }}
     >
-      <HStack align={"start"} gap={PADDING.sm} w={"full"}>
+      <HStack align={"center"} gap={PADDING.sm} w={"full"}>
         {/* Variant Icon */}
         <Box
           p={2}
@@ -108,16 +108,23 @@ export const NotificationItemCard = memo((props: NotificationItemCardProps) => {
         </Box>
 
         {/* Content Details */}
-        <VStack flex={1} align={"start"} gap={1}>
-          <HStack justify={"space-between"} w={"full"} wrap={"wrap"}>
-            <HStack gap={2}>
+        <HStack
+          flex={1}
+          align={"center"}
+          justify={"space-between"}
+          gap={SPACING.md}
+        >
+          <VStack flex={1} align={"start"} gap={1}>
+            <HStack wrap={"wrap"} gap={SPACING.sm} w={"full"}>
               {/* Source Tag Badge */}
               <Badge
                 size={"xs"}
                 colorPalette={item.sourceType === "toast" ? "purple" : "blue"}
                 variant={"subtle"}
               >
-                {item.sourceType === "toast" ? "Toast Notification" : "System Inbox"}
+                {item.sourceType === "toast"
+                  ? "Toast Notification"
+                  : "System Inbox"}
               </Badge>
 
               {item.category && (
@@ -127,40 +134,40 @@ export const NotificationItemCard = memo((props: NotificationItemCardProps) => {
               )}
             </HStack>
 
-            <ClampedP fontSize={"xs"} color={"fg.muted"}>
-              {formattedTime}
+            <ClampedP
+              fontWeight={item.read ? "medium" : "semibold"}
+              color={"fg.default"}
+              fontSize={"sm"}
+            >
+              {item.title}
             </ClampedP>
-          </HStack>
 
-          <ClampedP
-            fontWeight={item.read ? "medium" : "semibold"}
-            color={"fg.default"}
-            fontSize={"sm"}
-          >
-            {item.title}
+            {item.description && (
+              <ClampedP fontSize={"xs"} color={"fg.muted"} maxLines={2}>
+                {item.description}
+              </ClampedP>
+            )}
+          </VStack>
+
+          <ClampedP fontSize={"xs"} color={"fg.muted"}>
+            {formattedTime}
           </ClampedP>
-
-          {item.description && (
-            <ClampedP fontSize={"xs"} color={"fg.muted"} maxLines={2}>
-              {item.description}
-            </ClampedP>
-          )}
-        </VStack>
+        </HStack>
 
         {/* Action Buttons */}
-        <HStack gap={1} align={"center"}>
+        <HStack align={"center"} gap={1}>
           {!item.read && (
-            <Button
+            <IconButton
               size={"xs"}
               variant={"ghost"}
               onClick={() => onMarkRead(item.id, item.sourceType)}
               title={"Tandai dibaca"}
             >
               <AppIcon icon={CheckIcon} />
-            </Button>
+            </IconButton>
           )}
 
-          <Button
+          <IconButton
             size={"xs"}
             variant={"ghost"}
             colorPalette={"red"}
@@ -168,7 +175,7 @@ export const NotificationItemCard = memo((props: NotificationItemCardProps) => {
             title={"Hapus notifikasi"}
           >
             <AppIcon icon={Trash2Icon} />
-          </Button>
+          </IconButton>
         </HStack>
       </HStack>
     </Box>

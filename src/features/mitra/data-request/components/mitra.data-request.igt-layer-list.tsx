@@ -15,6 +15,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -193,10 +194,11 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
 
   // Stores
   const { theme } = useThemeStore();
+  const { map } = useMapInstanceStore();
 
   // Handlers
   const handleFlyToLayer = (l: IgtLayerItem) => {
-    void flyToIgtLayer(l, { cqlFilter });
+    void flyToIgtLayer(map, l, { cqlFilter });
   };
 
   // Hooks (Mutations)

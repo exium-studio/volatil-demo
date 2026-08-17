@@ -13,11 +13,10 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
-import { PADDING } from "@/design-system/constants/styles";
+import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { NotificationItemCard } from "@/features/notification/components/notification.item";
 import { useNotifications } from "@/features/notification/hooks/use-notifications";
 import type { NotificationFilterType } from "@/features/notification/types/notification.type";
-import { useState, useTransition } from "react";
 import {
   BellIcon,
   CheckCheckIcon,
@@ -26,6 +25,7 @@ import {
   MessageSquareIcon,
   Trash2Icon,
 } from "lucide-react";
+import { useState, useTransition } from "react";
 
 export const NotificationPage = () => {
   // Transitions & States
@@ -92,6 +92,7 @@ export const NotificationPage = () => {
           <HeaderContainer pr={3}>
             <HStack gap={2} align={"center"}>
               <AppIcon icon={BellIcon} />
+
               <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
                 {"Riwayat Notifikasi"}
               </ClampedP>
@@ -103,9 +104,9 @@ export const NotificationPage = () => {
               )}
             </HStack>
 
-            <HStack gap={2}>
+            <HStack gap={SPACING.xs}>
               {unreadCount > 0 && (
-                <Button size={"xs"} variant={"outline"} onClick={markAllRead}>
+                <Button onClick={markAllRead}>
                   <AppIcon icon={CheckCheckIcon} />
                   {"Tandai Semua Dibaca"}
                 </Button>
@@ -121,7 +122,7 @@ export const NotificationPage = () => {
                   colorPalette={"red"}
                   onConfirm={clearAllHistory}
                 >
-                  <Button colorPalette={"red"} size={"xs"}>
+                  <Button colorPalette={"red"}>
                     <AppIcon icon={Trash2Icon} />
                     {"Bersihkan Riwayat"}
                   </Button>
@@ -134,16 +135,16 @@ export const NotificationPage = () => {
 
           {/* Controls Section: Tabs & Search Filter */}
           <VStack gap={PADDING.sm} align={"stretch"} p={PADDING.sm}>
-            <HStack wrap={"wrap"} justify={"space-between"} gap={PADDING.sm}>
+            <VStack gap={PADDING.sm}>
               {/* Category Filter Tabs */}
-              <HStack gap={1} wrap={"wrap"}>
+              <HStack flex={1} gap={1} wrap={"wrap"}>
                 {filterTabs.map((tab) => {
                   const isActive = filter === tab.key;
 
                   return (
                     <Button
                       key={tab.key}
-                      size={"sm"}
+                      flex={1}
                       variant={isActive ? "solid" : "ghost"}
                       colorPalette={isActive ? "blue" : "gray"}
                       onClick={() => {
@@ -154,6 +155,7 @@ export const NotificationPage = () => {
                     >
                       <AppIcon icon={tab.icon} />
                       {tab.label}
+
                       <Badge
                         size={"xs"}
                         variant={isActive ? "solid" : "subtle"}
@@ -169,8 +171,14 @@ export const NotificationPage = () => {
 
               {/* Unread Toggle & Search */}
               <HStack gap={2}>
+                <SearchInput
+                  placeholder={"Cari notifikasi..."}
+                  value={localSearch}
+                  onValueChange={handleSearchValueChange}
+                  maxW={"260px"}
+                />
+
                 <Button
-                  size={"sm"}
                   variant={unreadOnly ? "solid" : "outline"}
                   colorPalette={unreadOnly ? "amber" : "gray"}
                   onClick={() => {
@@ -182,15 +190,8 @@ export const NotificationPage = () => {
                   <AppIcon icon={FilterIcon} />
                   {"Belum Dibaca"}
                 </Button>
-
-                <SearchInput
-                  placeholder={"Cari notifikasi..."}
-                  value={localSearch}
-                  onValueChange={handleSearchValueChange}
-                  maxW={"260px"}
-                />
               </HStack>
-            </HStack>
+            </VStack>
 
             {/* List Content */}
             {!hasNotifications && (

@@ -7,6 +7,8 @@ export type NotificationSourceType = "toast" | "system";
 
 export type NotificationItem = {
   id: string;
+  toastId: string;
+  version: number;
   sourceType: NotificationSourceType;
   variant: ToastVariant;
   title: string;
@@ -18,10 +20,8 @@ export type NotificationItem = {
   icon?: ReactNode;
 };
 
-export type NotificationFilterType = "all" | "toast" | "system";
-
-export type NotificationQueryParams = {
-  filter?: NotificationFilterType;
-  search?: string;
-  unreadOnly?: boolean;
+export type NotificationStackGroup = {
+  toastId: string;
+  latest: NotificationItem;
+  entries: NotificationItem[];
 };
