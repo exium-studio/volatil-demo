@@ -6,6 +6,8 @@ import type { NotificationItem } from "@/features/notification/types/notificatio
 export const DUMMY_SYSTEM_NOTIFICATIONS: NotificationItem[] = [
   {
     id: "sys-notif-1",
+    toastId: "sys-notif-1",
+    version: 1,
     sourceType: "system",
     variant: "info",
     title: "Permohonan Data IGT Disetujui",
@@ -17,6 +19,8 @@ export const DUMMY_SYSTEM_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: "sys-notif-2",
+    toastId: "sys-notif-2",
+    version: 1,
     sourceType: "system",
     variant: "success",
     title: "Kuota Pengunduhan Diperbarui",
@@ -28,6 +32,8 @@ export const DUMMY_SYSTEM_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: "sys-notif-3",
+    toastId: "sys-notif-3",
+    version: 1,
     sourceType: "system",
     variant: "warning",
     title: "Pembaruan Layanan GeoServer",
@@ -61,6 +67,8 @@ export const mapToastHistoryToNotificationItem = (
 
   return {
     id: entry.historyEntryId,
+    toastId: entry.toastId,
+    version: entry.version,
     sourceType: "toast",
     variant: entry.variant,
     title: titleString,
