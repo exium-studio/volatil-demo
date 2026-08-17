@@ -1,47 +1,64 @@
 // src/features/mitra/support-ticket/types/support-ticket.type.ts
 
-export type TicketStatus = "active" | "resolved" | "pending";
+export type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
 
 export type TicketAttachment = {
-  id: string;
+  originalName: string;
   fileName: string;
-  fileType: "image" | "video" | "document";
-  url?: string;
+  mimeType: string;
+  size: number;
+  url: string;
 };
 
-export type TicketReply = {
-  id: string;
-  authorName: string;
-  authorRole: "admin" | "user";
-  isVerified?: boolean;
-  avatarUrl?: string;
+export type TicketUser = {
+  id: number;
+  name: string;
+  email: string;
+  role: "mitra" | "internal";
+};
+
+export type TicketResponse = {
+  id: number;
+  ticketId: number;
+  adminId: number;
+  message: string;
+  attachments: TicketAttachment[];
   createdAt: string;
-  content: string;
+  admin: TicketUser;
 };
 
 export type TicketItem = {
-  id: string;
-  authorName: string;
-  isCurrentUser?: boolean;
-  avatarUrl?: string;
-  createdAt: string;
-  status: TicketStatus;
+  id: number;
+  userId: number;
   title: string;
   description: string;
-  attachments?: TicketAttachment[];
-  upvotesCount: number;
-  isUpvoted?: boolean;
-  replies?: TicketReply[];
+  status: TicketStatus;
+  attachments: TicketAttachment[];
+  createdAt: string;
+  updatedAt: string;
+  user: TicketUser;
+  responses: TicketResponse[];
 };
 
-export type TicketSummaryMetrics = {
-  activeCount: number;
-  resolvedCount: number;
-  totalCount: number;
+export type TicketStatistics = {
+  totalTickets: number;
+  activeTickets: number;
+  resolvedTickets: number;
+  breakdown: {
+    open: number;
+    inProgress: number;
+    closed: number;
+  };
 };
 
-export type TicketFilterParams = {
-  tab: "all" | "mine";
+export type TicketQueryParams = {
+  scope?: "all" | "my";
+  status?: "active" | "history" | TicketStatus;
   search?: string;
-  range?: "1H" | "1M" | "1B" | "1T" | "all";
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "ASC" | "DESC";
 };

@@ -16,11 +16,13 @@ import { SupportTicketItem } from "@/features/mitra/support-ticket/components/su
 import { SupportTicketSummary } from "@/features/mitra/support-ticket/components/support-ticket.summary";
 import {
   DUMMY_TICKETS,
-  DUMMY_TICKET_METRICS,
+  DUMMY_TICKET_STATISTICS,
 } from "@/features/mitra/support-ticket/constants/dummy-tickets";
-import type { TicketItem } from "@/features/mitra/support-ticket/types/support-ticket.type";
+import type {
+  TicketItem,
+  TicketStatistics,
+} from "@/features/mitra/support-ticket/types/support-ticket.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
-import { isEmptyArray } from "@/shared/utils/data/array";
 import { InboxIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
@@ -37,29 +39,42 @@ export const SupportTicketPage = () => {
   const [search, setSearch] = useState<string>("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
 
-  // Derived Values: User Tickets Filtered by Search
-  const userTickets = useMemo(() => {
+  // Derived Values: Filtered Tickets
+  const filteredTickets = useMemo(() => {
     return tickets.filter((t) => {
       const lowerSearch = search.trim().toLowerCase();
       return (
         !lowerSearch ||
         t.title.toLowerCase().includes(lowerSearch) ||
         t.description.toLowerCase().includes(lowerSearch) ||
-        t.authorName.toLowerCase().includes(lowerSearch)
+        t.user?.name?.toLowerCase().includes(lowerSearch)
       );
     });
   }, [tickets, search]);
 
-  // Derived Values: Summary Metrics
-  const metrics = useMemo(() => {
+  // Derived Values: Statistics matching GET /api/tickets/statistics schema
+  const statistics = useMemo<TicketStatistics>(() => {
     const activeCount = tickets.filter(
-      (t) => t.status === "active" || t.status === "pending",
+      (t) => t.status === "open" || t.status === "in_progress",
     ).length;
     const resolvedCount = tickets.filter((t) => t.status === "resolved").length;
+    const openCount = tickets.filter((t) => t.status === "open").length;
+    const inProgressCount = tickets.filter(
+      (t) => t.status === "in_progress",
+    ).length;
+    const closedCount = tickets.filter(
+      (t) => t.status === "closed" || t.status === "resolved",
+    ).length;
+
     return {
-      activeCount: activeCount || DUMMY_TICKET_METRICS.activeCount,
-      resolvedCount: resolvedCount || DUMMY_TICKET_METRICS.resolvedCount,
-      totalCount: tickets.length || DUMMY_TICKET_METRICS.totalCount,
+      totalTickets: tickets.length || DUMMY_TICKET_STATISTICS.totalTickets,
+      activeTickets: activeCount || DUMMY_TICKET_STATISTICS.activeTickets,
+      resolvedTickets: resolvedCount || DUMMY_TICKET_STATISTICS.resolvedTickets,
+      breakdown: {
+        open: openCount,
+        inProgress: inProgressCount,
+        closed: closedCount,
+      },
     };
   }, [tickets]);
 
@@ -71,20 +86,24 @@ export const SupportTicketPage = () => {
     });
   };
 
-  const handleCreateTicketSubmit = (
-    newTicketData: Omit<
-      TicketItem,
-      "id" | "createdAt" | "status" | "upvotesCount"
-    >,
-  ) => {
+  const handleCreateTicketSubmit = (title: string, description: string) => {
+    const nowIso = new Date().toISOString();
     const newTicket: TicketItem = {
-      ...newTicketData,
-      id: `ticket-${Date.now()}`,
-      createdAt: "Hari ini",
-      status: "active",
-      upvotesCount: 0,
-      isUpvoted: false,
-      replies: [],
+      id: Date.now(),
+      userId: 1,
+      title,
+      description,
+      status: "open",
+      attachments: [],
+      createdAt: nowIso,
+      updatedAt: nowIso,
+      user: {
+        id: 1,
+        name: "Mitra User Demo",
+        email: "mitra@demo.com",
+        role: "mitra",
+      },
+      responses: [],
     };
     setTickets((prev) => [newTicket, ...prev]);
   };
@@ -93,22 +112,22 @@ export const SupportTicketPage = () => {
     <PanelContentContainer overflowY={"auto"} gap={PADDING.sm} p={PADDING.sm}>
       <Container.Root flex={1} overflowY={"auto"} withContext={true}>
         <Container.Body flex={1} overflowY={"auto"}>
-          {/* Header Container with Wording Greeting */}
+          {/* Header Title */}
           <AppNavTitle navsMap={APP_NAVS_MAP} />
 
           <Separator borderColor={"bg.canvas"} />
 
-          <VStack align={"stretch"} overflowY={"auto"}>
-            <SupportTicketSummary metrics={metrics} />
+          {/* Summary Section */}
+          <VStack overflowY={"auto"}>
+            <SupportTicketSummary statistics={statistics} />
 
             <Separator borderColor={"bg.canvas"} />
 
-            {/* Action Bar (Search & Create Ticket Button) */}
+            {/* Action Bar */}
             <HStack
               justify={"space-between"}
               align={"center"}
               gap={SPACING.sm}
-              w={"full"}
               p={PADDING.md}
             >
               <SearchInput
@@ -129,24 +148,27 @@ export const SupportTicketPage = () => {
 
             <Separator borderColor={"bg.canvas"} />
 
-            {/* User Ticket List */}
-            {isEmptyArray(userTickets) && (
+            {/* Ticket Stream */}
+            {filteredTickets.length === 0 ? (
               <NoDataState
                 icon={InboxIcon}
                 title={"Belum Ada Laporan"}
                 description={
                   search
                     ? "Tidak ditemukan laporan sesuai kata kunci pencarian Anda."
-                    : "Belum ada laporan yang Anda ajukan."
+                    : "Belum ada laporan yang diajukan."
                 }
               />
-            )}
-
-            {!isEmptyArray(userTickets) && (
-              <VStack gap={SPACING.xs} overflowY={"auto"} bg={"bg.canvas"}>
-                {userTickets.map((ticket, index) => {
-                  const isLastIndex = index === userTickets.length - 1;
-
+            ) : (
+              <VStack
+                gap={PADDING.sm}
+                align={"stretch"}
+                overflowY={"auto"}
+                w={"full"}
+                bg={"bg.canvas"}
+              >
+                {filteredTickets.map((ticket, index) => {
+                  const isLastIndex = index === filteredTickets.length - 1;
                   return (
                     <SupportTicketItem
                       key={ticket.id}
@@ -161,7 +183,7 @@ export const SupportTicketPage = () => {
         </Container.Body>
       </Container.Root>
 
-      {/* Modal Dialog to Create New Ticket */}
+      {/* Create Ticket Modal */}
       <CreateTicketModal
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}

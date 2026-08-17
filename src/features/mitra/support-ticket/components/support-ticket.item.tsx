@@ -18,12 +18,26 @@ import {
   FileIcon,
   ImageIcon,
   UserIcon,
-  VideoIcon,
 } from "lucide-react";
 import { memo, useState } from "react";
 
 export type SupportTicketItemProps = StackProps & {
   ticket: TicketItem;
+};
+
+const formatDate = (isoString: string) => {
+  if (!isoString) return "";
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return isoString;
+    return d.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return isoString;
+  }
 };
 
 export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
@@ -37,7 +51,7 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
   const [isRepliesExpanded, setIsRepliesExpanded] = useState<boolean>(true);
 
   // Derived Values
-  const hasReplies = ticket.replies && ticket.replies.length > 0;
+  const hasReplies = ticket.responses && ticket.responses.length > 0;
 
   return (
     <VStack
@@ -64,14 +78,14 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
             <AppIcon icon={UserIcon} size={"sm"} />
           </Box>
 
-          <P fontWeight={"semibold"}>{ticket.authorName}</P>
+          <P fontWeight={"semibold"}>{ticket.user?.name ?? ""}</P>
 
-          {ticket.status === "pending" && (
+          {ticket.status === "in_progress" && (
             <AppIcon icon={ClockIcon} size={"xs"} color={"amber.500"} />
           )}
         </HStack>
 
-        <P color={"fg.muted"}>{ticket.createdAt}</P>
+        <P color={"fg.muted"}>{formatDate(ticket.createdAt)}</P>
       </HStack>
 
       {/* Title & Body Description */}
@@ -85,23 +99,18 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
       {/* Attachments */}
       {ticket.attachments && ticket.attachments.length > 0 && (
         <HStack gap={2} wrap={"wrap"}>
-          {ticket.attachments.map((att) => {
-            const IconComp =
-              att.fileType === "image"
-                ? ImageIcon
-                : att.fileType === "video"
-                  ? VideoIcon
-                  : FileIcon;
+          {ticket.attachments.map((att, idx) => {
+            const isImage = att.mimeType?.startsWith("image/");
 
             return (
               <Badge
-                key={att.id}
+                key={att.fileName || String(idx)}
                 variant={"outline"}
                 colorPalette={"gray"}
                 p={1.5}
               >
-                <AppIcon icon={IconComp} size={"xs"} mr={1} />
-                {att.fileName}
+                <AppIcon icon={isImage ? ImageIcon : FileIcon} size={"xs"} mr={1} />
+                {att.originalName || att.fileName}
               </Badge>
             );
           })}
@@ -128,10 +137,10 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
       {/* Admin Reply Section */}
       {hasReplies && isRepliesExpanded && (
         <VStack gap={2} align={"stretch"} pt={2}>
-          {ticket.replies?.map((reply) => {
+          {ticket.responses?.map((resp) => {
             return (
               <Box
-                key={reply.id}
+                key={resp.id}
                 p={PADDING.sm}
                 bg={"bg.subtle"}
                 rounded={theme.radii.component}
@@ -151,21 +160,19 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
                         <AppIcon icon={UserIcon} size={"xs"} />
                       </Box>
 
-                      <P fontWeight={"bold"}>{reply.authorName}</P>
+                      <P fontWeight={"bold"}>{resp.admin?.name ?? "Internal Admin"}</P>
 
-                      {reply.isVerified && (
-                        <AppIcon
-                          icon={CheckCircle2Icon}
-                          size={"xs"}
-                          color={"green.500"}
-                        />
-                      )}
+                      <AppIcon
+                        icon={CheckCircle2Icon}
+                        size={"xs"}
+                        color={"green.500"}
+                      />
                     </HStack>
 
-                    <P color={"fg.muted"}>{reply.createdAt}</P>
+                    <P color={"fg.muted"}>{formatDate(resp.createdAt)}</P>
                   </HStack>
 
-                  <P color={"fg.default"}>{reply.content}</P>
+                  <P color={"fg.default"}>{resp.message}</P>
                 </VStack>
               </Box>
             );

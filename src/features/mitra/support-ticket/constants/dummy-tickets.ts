@@ -2,83 +2,131 @@
 
 import type {
   TicketItem,
-  TicketSummaryMetrics,
+  TicketStatistics,
 } from "@/features/mitra/support-ticket/types/support-ticket.type";
 
-export const DUMMY_TICKET_METRICS: TicketSummaryMetrics = {
-  activeCount: 12,
-  resolvedCount: 8,
-  totalCount: 20,
+export const DUMMY_TICKET_STATISTICS: TicketStatistics = {
+  totalTickets: 12,
+  activeTickets: 5,
+  resolvedTickets: 7,
+  breakdown: {
+    open: 3,
+    inProgress: 2,
+    closed: 7,
+  },
 };
 
 export const DUMMY_TICKETS: TicketItem[] = [
   {
-    id: "ticket-1",
-    authorName: "Pemerintah Semarang",
-    isCurrentUser: true,
-    createdAt: "30 Juni 2026",
-    status: "active",
-    title: "Pembayaran Gagal, Saldo Terpotong!",
-    description:
-      "Saya sudah membayar lunas mengenai data yang saya bayar, akan tetapi bidangnya tetap belum berhasil dibayar! Bagaimana solusi terbaiknya?",
+    id: 1,
+    userId: 1,
+    title: "Kendala Sinyal di Titik Pos A",
+    description: "Terjadi penurunan kualitas sinyal sejak pagi hari...",
+    status: "in_progress",
     attachments: [
-      { id: "att-1", fileName: "Screenshoot1.png", fileType: "image" },
-      { id: "att-2", fileName: "Videoshoot1.mp4", fileType: "video" },
-    ],
-    upvotesCount: 5,
-    isUpvoted: true,
-    replies: [
       {
-        id: "reply-1",
-        authorName: "Kementerian ATR/BPN",
-        authorRole: "admin",
-        isVerified: true,
-        createdAt: "30 Juni 2026",
-        content:
-          "Mohon maaf atas tidak kenyamanan tersebut! Kami akan segera melakukan pembenahan. Mohon tunggu sebentar!",
+        originalName: "foto-kondisi.jpg",
+        fileName: "1723871234567-foto-kondisi.jpg",
+        mimeType: "image/jpeg",
+        size: 245120,
+        url: "https://volatil-be.exium.web.id/uploads/1723871234567-foto-kondisi.jpg",
+      },
+    ],
+    createdAt: "2026-08-17T05:20:00.000Z",
+    updatedAt: "2026-08-17T05:30:00.000Z",
+    user: {
+      id: 1,
+      name: "Mitra User Demo",
+      email: "mitra@demo.com",
+      role: "mitra",
+    },
+    responses: [
+      {
+        id: 1,
+        ticketId: 1,
+        adminId: 2,
+        message: "Laporan telah kami terima dan tim teknis sedang menuju lokasi.",
+        attachments: [
+          {
+            originalName: "surat-tugas.pdf",
+            fileName: "1723871999999-surat-tugas.pdf",
+            mimeType: "application/pdf",
+            size: 102400,
+            url: "https://volatil-be.exium.web.id/uploads/1723871999999-surat-tugas.pdf",
+          },
+        ],
+        createdAt: "2026-08-17T05:30:00.000Z",
+        admin: {
+          id: 2,
+          name: "Internal Admin Demo",
+          email: "internal@demo.com",
+          role: "internal",
+        },
       },
     ],
   },
   {
-    id: "ticket-2",
-    authorName: "Pemerintah Bandung",
-    isCurrentUser: false,
-    createdAt: "30 Juni 2026",
-    status: "pending",
-    title: "Pembayaran Berhasil, Saldo Tidak Terpotong!",
-    description:
-      "Saya sudah membayar lunas mengenai data yang saya bayar, akan tetapi saldo saya tidak terpotong sama sekali! Bagaimana solusi terbaiknya?",
+    id: 2,
+    userId: 1,
+    title: "Laporan Kerusakan Perangkat",
+    description: "Perangkat sensor mati total setelah pemadaman listrik...",
+    status: "open",
     attachments: [
-      { id: "att-3", fileName: "Screenshoot1.png", fileType: "image" },
-      { id: "att-4", fileName: "Videoshoot1.mp4", fileType: "video" },
+      {
+        originalName: "foto1.jpg",
+        fileName: "1723872222222-foto1.jpg",
+        mimeType: "image/jpeg",
+        size: 312000,
+        url: "https://volatil-be.exium.web.id/uploads/1723872222222-foto1.jpg",
+      },
     ],
-    upvotesCount: 5,
-    isUpvoted: false,
-    replies: [],
+    createdAt: "2026-08-17T05:35:00.000Z",
+    updatedAt: "2026-08-17T05:35:00.000Z",
+    user: {
+      id: 1,
+      name: "Mitra User Demo",
+      email: "mitra@demo.com",
+      role: "mitra",
+    },
+    responses: [],
   },
   {
-    id: "ticket-3",
-    authorName: "Pemerintah Sleman",
-    isCurrentUser: false,
-    createdAt: "28 Juni 2026",
+    id: 3,
+    userId: 1,
+    title: "Permohonan Pengajuan Ulang Akses Layer WFS",
+    description: "Layer WFS ZNT Kabupaten Badung mengalami kegagalan autentikasi token.",
     status: "resolved",
-    title: "Kueri Layer RTRW Terlalu Lambat Saat Dimuat",
-    description:
-      "Saat memuat layer WFS RTRW Kabupaten Sleman, respon GeoServer memerlukan waktu sekitar 10 detik. Apakah ada optimasi batas bbox?",
-    attachments: [
-      { id: "att-5", fileName: "GeoServer_Log.png", fileType: "image" },
-    ],
-    upvotesCount: 12,
-    isUpvoted: false,
-    replies: [
+    attachments: [],
+    createdAt: "2026-08-16T10:15:00.000Z",
+    updatedAt: "2026-08-16T11:00:00.000Z",
+    user: {
+      id: 1,
+      name: "Mitra User Demo",
+      email: "mitra@demo.com",
+      role: "mitra",
+    },
+    responses: [
       {
-        id: "reply-2",
-        authorName: "Kementerian ATR/BPN",
-        authorRole: "admin",
-        isVerified: true,
-        createdAt: "29 Juni 2026",
-        content:
-          "Halo Pemerintah Sleman, kami telah melakukan pengindeksan ulang spasial PostGIS pada layer RTRW Sleman. Silakan dicoba kembali!",
+        id: 2,
+        ticketId: 3,
+        adminId: 2,
+        message: "Perangkat telah diganti dengan unit baru dan berfungsi normal kembali.",
+        attachments: [
+          {
+            originalName: "berita-acara.pdf",
+            fileName: "1723873333333-berita-acara.pdf",
+            mimeType: "application/pdf",
+            size: 512000,
+            url: "https://volatil-be.exium.web.id/uploads/1723873333333-berita-acara.pdf",
+          },
+        ],
+        createdAt: "2026-08-16T11:00:00.000Z",
+        admin: {
+          id: 2,
+          name: "Internal Admin Demo",
+          email: "internal@demo.com",
+          role: "internal",
+        },
       },
     ],
   },

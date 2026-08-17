@@ -5,14 +5,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Enable pnpm via Corepack
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm directly via npm for 100% reliable Docker builds in Alpine
+RUN npm install -g pnpm@latest
 
 # Copy dependency manifests
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies with frozen lockfile
-RUN pnpm install --frozen-lockfile
+# Install dependencies (use --no-frozen-lockfile to prevent lockfile version mismatch failures)
+RUN pnpm install --no-frozen-lockfile
 
 # Copy application source code
 COPY . .

@@ -7,15 +7,12 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
-import type { TicketItem } from "@/features/mitra/support-ticket/types/support-ticket.type";
 import { useState } from "react";
 
 export type CreateTicketModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmitTicket: (
-    newTicket: Omit<TicketItem, "id" | "createdAt" | "status" | "upvotesCount">,
-  ) => void;
+  onSubmitTicket: (title: string, description: string) => void;
 };
 
 export const CreateTicketModal = (props: CreateTicketModalProps) => {
@@ -44,13 +41,7 @@ export const CreateTicketModal = (props: CreateTicketModalProps) => {
       return;
     }
 
-    onSubmitTicket({
-      authorName: "Pemerintah Semarang",
-      isCurrentUser: true,
-      title: title.trim(),
-      description: description.trim(),
-      attachments: [],
-    });
+    onSubmitTicket(title.trim(), description.trim());
 
     setTitle("");
     setDescription("");
@@ -77,7 +68,7 @@ export const CreateTicketModal = (props: CreateTicketModalProps) => {
             <VStack gap={4} align={"stretch"}>
               <Field label={"Judul Laporan"} required>
                 <Input
-                  placeholder={"Contoh: Pembayaran Gagal, Saldo Terpotong!"}
+                  placeholder={"Contoh: Kendala Sinyal di Titik Pos A"}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />

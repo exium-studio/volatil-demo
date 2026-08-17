@@ -1,4 +1,4 @@
-// src/features/mitra/support-ticket/components/support-ticket.summary-item.tsx
+// src/features/mitra/support-ticket/components/support-ticket.summary.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -6,17 +6,17 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import type { TicketSummaryMetrics } from "@/features/mitra/support-ticket/types/support-ticket.type";
+import type { TicketStatistics } from "@/features/mitra/support-ticket/types/support-ticket.type";
 import { CheckCircle2Icon, ClockIcon, FileTextIcon } from "lucide-react";
 import { memo } from "react";
 
 export type SupportTicketSummaryProps = {
-  metrics: TicketSummaryMetrics;
+  statistics: TicketStatistics;
 };
 
 export const SupportTicketSummary = memo((props: SupportTicketSummaryProps) => {
   // Props
-  const { metrics } = props;
+  const { statistics } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -26,7 +26,7 @@ export const SupportTicketSummary = memo((props: SupportTicketSummaryProps) => {
     {
       id: "active",
       label: "Laporan Aktif",
-      count: metrics.activeCount,
+      count: statistics.activeTickets,
       unit: "Laporan",
       icon: ClockIcon,
       colorPalette: "blue",
@@ -34,7 +34,7 @@ export const SupportTicketSummary = memo((props: SupportTicketSummaryProps) => {
     {
       id: "resolved",
       label: "Laporan Selesai",
-      count: metrics.resolvedCount,
+      count: statistics.resolvedTickets,
       unit: "Laporan",
       icon: CheckCircle2Icon,
       colorPalette: "green",
@@ -42,7 +42,7 @@ export const SupportTicketSummary = memo((props: SupportTicketSummaryProps) => {
     {
       id: "total",
       label: "Total Laporan",
-      count: metrics.totalCount,
+      count: statistics.totalTickets,
       unit: "Laporan",
       icon: FileTextIcon,
       colorPalette: "gray",
