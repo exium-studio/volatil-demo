@@ -49,10 +49,20 @@ export const CreateSupportTicketTrigger = (
     close();
   };
 
-  const handleFormSubmit = (values: CreateSupportTicketFormValues) => {
-    onSubmitTicket?.(values.title.trim(), values.description.trim(), values.files);
-    handleClose();
-    toast.success("Laporan berhasil dibuat!");
+  const handleFormSubmit = async (values: CreateSupportTicketFormValues) => {
+    try {
+      await onSubmitTicket?.(
+        values.title.trim(),
+        values.description.trim(),
+        values.files,
+      );
+      handleClose();
+      toast.success("Laporan berhasil dibuat!");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Gagal membuat laporan";
+      toast.error(message);
+    }
   };
 
   return (
@@ -113,7 +123,14 @@ export const CreateSupportTicketTrigger = (
                   control={control}
                   render={({ field }) => (
                     <FileInput
-                      accept={[".jpg", ".jpeg", ".png", ".pdf", ".docx", ".xlsx"]}
+                      accept={[
+                        ".jpg",
+                        ".jpeg",
+                        ".png",
+                        ".pdf",
+                        ".docx",
+                        ".xlsx",
+                      ]}
                       maxFiles={10}
                       maxFileSize={15 * 1024 * 1024}
                       value={field.value}
@@ -144,5 +161,3 @@ export const CreateSupportTicketTrigger = (
     </Modal.Root>
   );
 };
-
-export const CreateTicketModal = CreateSupportTicketTrigger;

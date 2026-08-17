@@ -14,18 +14,15 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { CreateSupportTicketTrigger } from "@/features/mitra/support-ticket/components/support-ticket.create";
 import { SupportTicketItem } from "@/features/mitra/support-ticket/components/support-ticket.item";
 import { SupportTicketSummary } from "@/features/mitra/support-ticket/components/support-ticket.summary";
-import {
-  DUMMY_TICKETS,
-  DUMMY_TICKET_STATISTICS,
-} from "@/features/mitra/support-ticket/constants/dummy-tickets";
+import { DUMMY_TICKET_STATISTICS } from "@/features/mitra/support-ticket/constants/dummy-tickets";
+import { supportTicketService } from "@/features/mitra/support-ticket/services/support-ticket.service";
 import type {
-  TicketAttachment,
   TicketItem,
   TicketStatistics,
 } from "@/features/mitra/support-ticket/types/support-ticket.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { InboxIcon, PlusIcon } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 export const SupportTicketPage = () => {
   // Stores
@@ -35,9 +32,39 @@ export const SupportTicketPage = () => {
   const [_isPending, startTransition] = useTransition();
 
   // States
-  const [tickets, setTickets] = useState<TicketItem[]>(DUMMY_TICKETS);
+  const [tickets, setTickets] = useState<TicketItem[]>([]);
+  const [statistics, setStatistics] = useState<TicketStatistics>(
+    DUMMY_TICKET_STATISTICS,
+  );
   const [rawSearch, setRawSearch] = useState<string>("");
   const [search, setSearch] = useState<string>("");
+
+  // Effects: Fetch initial tickets & statistics from service
+  useEffect(() => {
+    let isCancelled = false;
+
+    const fetchData = async () => {
+      try {
+        const [ticketsRes, statsRes] = await Promise.all([
+          supportTicketService.getTickets(),
+          supportTicketService.getStatistics(),
+        ]);
+
+        if (!isCancelled) {
+          setTickets(ticketsRes.data);
+          setStatistics(statsRes);
+        }
+      } catch (error) {
+        console.warn("Failed to fetch tickets from service:", error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   // Derived Values: Filtered Tickets
   const filteredTickets = useMemo(() => {
@@ -52,32 +79,6 @@ export const SupportTicketPage = () => {
     });
   }, [tickets, search]);
 
-  // Derived Values: Statistics matching GET /api/tickets/statistics schema
-  const statistics = useMemo<TicketStatistics>(() => {
-    const activeCount = tickets.filter(
-      (t) => t.status === "open" || t.status === "in_progress",
-    ).length;
-    const resolvedCount = tickets.filter((t) => t.status === "resolved").length;
-    const openCount = tickets.filter((t) => t.status === "open").length;
-    const inProgressCount = tickets.filter(
-      (t) => t.status === "in_progress",
-    ).length;
-    const closedCount = tickets.filter(
-      (t) => t.status === "closed" || t.status === "resolved",
-    ).length;
-
-    return {
-      totalTickets: tickets.length || DUMMY_TICKET_STATISTICS.totalTickets,
-      activeTickets: activeCount || DUMMY_TICKET_STATISTICS.activeTickets,
-      resolvedTickets: resolvedCount || DUMMY_TICKET_STATISTICS.resolvedTickets,
-      breakdown: {
-        open: openCount,
-        inProgress: inProgressCount,
-        closed: closedCount,
-      },
-    };
-  }, [tickets]);
-
   // Handlers
   const handleSearchChange = (val: string) => {
     setRawSearch(val);
@@ -86,38 +87,22 @@ export const SupportTicketPage = () => {
     });
   };
 
-  const handleCreateTicketSubmit = (
+  const handleCreateTicketSubmit = async (
     title: string,
     description: string,
     files?: File[],
   ) => {
-    const nowIso = new Date().toISOString();
-    const attachments: TicketAttachment[] = (files ?? []).map((file, idx) => ({
-      originalName: file.name,
-      fileName: `${Date.now()}-${idx}-${file.name}`,
-      mimeType: file.type,
-      size: file.size,
-      url: URL.createObjectURL(file),
-    }));
-
-    const newTicket: TicketItem = {
-      id: Date.now(),
-      userId: 1,
+    const createdTicket = await supportTicketService.createTicket({
       title,
       description,
-      status: "open",
-      attachments,
-      createdAt: nowIso,
-      updatedAt: nowIso,
-      user: {
-        id: 1,
-        name: "Mitra User Demo",
-        email: "mitra@demo.com",
-        role: "mitra",
-      },
-      responses: [],
-    };
-    setTickets((prev) => [newTicket, ...prev]);
+      files,
+    });
+
+    setTickets((prev) => [createdTicket, ...prev]);
+
+    // Refresh statistics
+    const updatedStats = await supportTicketService.getStatistics();
+    setStatistics(updatedStats);
   };
 
   return (

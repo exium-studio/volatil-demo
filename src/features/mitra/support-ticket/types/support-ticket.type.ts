@@ -63,8 +63,68 @@ export type TicketQueryParams = {
   sortOrder?: "ASC" | "DESC";
 };
 
+export type TicketPagination = {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  itemsPerPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
+
+export type TicketListApiResponse = {
+  success: boolean;
+  data: TicketItem[];
+  pagination: TicketPagination;
+};
+
+export type TicketStatisticsApiResponse = {
+  success: boolean;
+  data: TicketStatistics;
+};
+
+export type TicketDetailApiResponse = {
+  success: boolean;
+  data: TicketItem;
+};
+
+export type CreateTicketPayload = {
+  title: string;
+  description: string;
+  files?: File[];
+};
+
+export type CreateTicketApiResponse = {
+  success: boolean;
+  message?: string;
+  data: TicketItem;
+};
+
+export type ReplyTicketPayload = {
+  message: string;
+  status?: TicketStatus;
+  files?: File[];
+};
+
+export type ReplyTicketApiResponse = {
+  success: boolean;
+  message?: string;
+  data: {
+    response: TicketResponse;
+    ticket: TicketItem;
+  };
+};
+
 export type CreateSupportTicketTriggerProps = {
   children: React.ReactNode;
   modalKey?: string;
-  onSubmitTicket?: (title: string, description: string, files?: File[]) => void;
+  onSubmitTicket?: (
+    title: string,
+    description: string,
+    files?: File[],
+  ) => Promise<void> | void;
+  isLoading?: boolean;
 };
+
+export type CreateSupportTicketModalProps = CreateSupportTicketTriggerProps;
+
