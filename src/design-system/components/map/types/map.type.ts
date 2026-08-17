@@ -115,7 +115,7 @@ export type IgtLayersResponse = {
 export const getWmsRasterConfigFromIgtLayer = (
   igtLayer: IgtLayerItem,
   visible = true,
-  opacity = 1,
+  opacity = 0.5,
 ): WmsRasterLayerConfig => ({
   id: igtLayer.id,
   type: "wms-raster",

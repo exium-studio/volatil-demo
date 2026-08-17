@@ -27,7 +27,6 @@ import {
   ChevronUpIcon,
   Layers2Icon,
   LayersIcon,
-  SlidersIcon,
   TreesIcon,
 } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
@@ -106,7 +105,7 @@ export const MapIgtLayerSelect = memo(() => {
             <VStack gap={2} align={"stretch"}>
               {activeLayers.map((layer) => {
                 const isEnabled = enabledLayerIds[layer.id] ?? true;
-                const opacity = layerOpacities[layer.id] ?? 1;
+                const opacity = layerOpacities[layer.id] ?? 0.5;
 
                 return (
                   <MapIgtLayerItem
@@ -207,6 +206,8 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
         </HStack>
 
         <HStack gap={1} align={"center"}>
+          <Switch checked={isEnabled} pointerEvents={"none"} />
+
           <Tooltip content={"Atur Opasitas"}>
             <IconButton
               size={"xs"}
@@ -216,19 +217,9 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
                 setIsOpacityOpen((prev) => !prev);
               }}
             >
-              <AppIcon
-                icon={
-                  isOpacityOpen
-                    ? ChevronUpIcon
-                    : isEnabled
-                      ? SlidersIcon
-                      : ChevronDownIcon
-                }
-              />
+              <AppIcon icon={isOpacityOpen ? ChevronUpIcon : ChevronDownIcon} />
             </IconButton>
           </Tooltip>
-
-          <Switch checked={isEnabled} pointerEvents={"none"} />
         </HStack>
       </HStack>
 
