@@ -5,6 +5,7 @@ import { IconShoppingCart } from "@tabler/icons-react";
 import {
   BellIcon,
   DatabaseIcon,
+  HeadsetIcon,
   HelpCircleIcon,
   HistoryIcon,
   HouseIcon,
@@ -45,7 +46,7 @@ export const APP_NAVS_MAP = {
     pathname: "/mitra/notification",
   },
   help: {
-    icon: HelpCircleIcon,
+    icon: HeadsetIcon,
     titleKey: "app.navs.help",
     pathname: "/mitra/help-center",
   },

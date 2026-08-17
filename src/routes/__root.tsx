@@ -7,7 +7,6 @@ import { NotFoundPage } from "@/design-system/components/error-boundary/ui/not-f
 import { FocusAlerter } from "@/design-system/components/focus-alert/ui/focus-alerter";
 import { Toaster } from "@/design-system/components/toast";
 import { LocaleProvider as ChakraLocaleProvider } from "@/design-system/components/utilities/ui/chakra-locale-provider";
-import { DebugMenu } from "@/design-system/components/utilities/ui/debug-menu";
 import { OfflineAlert } from "@/design-system/components/utilities/ui/offline-alert";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { LocaleProvider } from "@/shared/libs/i18n/locale-provider";
@@ -46,7 +45,7 @@ function RootComponent() {
                 <Toaster />
                 <FocusAlerter />
                 <OfflineAlert />
-                <DebugMenu />
+                {/* <DebugMenu /> */}
               </>
             </ChakraLocaleProvider>
           </LocaleProvider>

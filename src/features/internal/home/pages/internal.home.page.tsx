@@ -1,7 +1,5 @@
-// src/features/internal/home/pages/internal.home.page.tsx
-
-import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { PADDING } from "@/design-system/constants/styles";
@@ -37,23 +35,7 @@ export const InternalHomePage = () => {
       p={PADDING.sm}
       position={"relative"}
     >
-      <Progress.Root
-        value={null}
-        size={"xs"}
-        w={"full"}
-        position={"absolute"}
-        top={0}
-        left={0}
-        right={0}
-        zIndex={10}
-        opacity={isFetching ? 1 : 0}
-        pointerEvents={"none"}
-        transition={"opacity 200ms ease"}
-      >
-        <Progress.Track>
-          <Progress.Range />
-        </Progress.Track>
-      </Progress.Root>
+      <TopBarLoader isFetching={isFetching} />
 
       <HStack wrap={"wrap"} gap={PADDING.sm}>
         <InternalHomeDataSummary />
