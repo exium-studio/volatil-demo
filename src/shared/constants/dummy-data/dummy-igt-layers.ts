@@ -12,12 +12,12 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       visible: true,
       wfs: {
         wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
-        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/ows",
+        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
         type: "wfs-fill",
       },
       wms: {
         layers: "testing_workspace:TEST_RTRW_BADUNG",
-        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/wms",
+        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
       },
     },
     {
@@ -28,12 +28,12 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       visible: true,
       wfs: {
         wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
-        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/ows",
+        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
         type: "wfs-fill",
       },
       wms: {
         layers: "testing_workspace:TEST_ZNT_BADUNG",
-        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/wms",
+        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
       },
     },
     {
@@ -44,12 +44,12 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       visible: true,
       wfs: {
         wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
-        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/ows",
+        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
         type: "wfs-line",
       },
       wms: {
         layers: "testing_workspace:TEST_BIDANG_TANAH",
-        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/wms",
+        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
       },
     },
   ],
