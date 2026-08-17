@@ -146,11 +146,11 @@ export const chakraConfig = defineConfig({
           300: { value: "#d1d5db" },
           400: { value: "#9ca3af" },
           500: { value: "#6b7280" },
-          600: { value: "#4b5563" },
-          700: { value: "#374151" },
-          800: { value: "#1f2937" },
-          900: { value: "#111827" },
-          950: { value: "#0b0f17" },
+          600: { value: "#525252" },
+          700: { value: "#404040" },
+          800: { value: "#363636" },
+          900: { value: "#2b2b2b" },
+          950: { value: "#222222" },
         },
 
         // gray: {
@@ -860,54 +860,54 @@ export const chakraConfig = defineConfig({
           },
         },
 
-        // slight blue tint gray
+        // slight blue tint gray (light mode only, neutral for dark mode)
         grey: {
           contrast: {
             value: {
               base: "{colors.grey.50}",
-              _dark: "{colors.grey.100}",
+              _dark: "{colors.neutral.100}",
             },
           },
           fg: {
             value: {
               base: "{colors.grey.600}",
-              _dark: "{colors.grey.200}",
+              _dark: "{colors.neutral.200}",
             },
           },
           subtle: {
             value: {
               base: "{colors.grey.50}",
-              _dark: "{colors.grey.950}",
+              _dark: "{colors.neutral.950}",
             },
           },
           muted: {
             value: {
               base: "{colors.grey.100}",
-              _dark: "{colors.grey.900}",
+              _dark: "{colors.neutral.900}",
             },
           },
           emphasized: {
             value: {
               base: "{colors.grey.200}",
-              _dark: "{colors.grey.800}",
+              _dark: "{colors.neutral.800}",
             },
           },
           solid: {
             value: {
               base: "{colors.grey.500}",
-              _dark: "{colors.grey.700}",
+              _dark: "{colors.neutral.700}",
             },
           },
           focusRing: {
             value: {
               base: "{colors.grey.500}",
-              _dark: "{colors.grey.700}",
+              _dark: "{colors.neutral.700}",
             },
           },
           border: {
             value: {
               base: "{colors.grey.200}",
-              _dark: "{colors.grey.800}",
+              _dark: "{colors.neutral.800}",
             },
           },
         },
