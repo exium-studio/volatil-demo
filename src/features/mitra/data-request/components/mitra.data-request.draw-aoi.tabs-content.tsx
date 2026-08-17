@@ -286,7 +286,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
         >
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <P fontWeight={"semibold"} fontSize={"md"}>
-              {"Hasil Query Spasial Draw AOI"}
+              {"Hasil query spasial gambar AOI"}
             </P>
 
             <Button
