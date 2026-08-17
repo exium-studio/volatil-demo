@@ -4,6 +4,7 @@ import type { FormattedListItem } from "@/design-system/components/data-display/
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -37,6 +38,7 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
     canBatchSelect = true,
     batchActions,
     extraItemActions = [],
+    isLoading = false,
     isFetching = false,
     ...restProps
   } = props;
@@ -114,16 +116,21 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
   const hasPagination =
     page != null && pageSize != null && totalFeatures != null;
 
+  if (isLoading || (isFetching && wfsFeatures.length === 0)) {
+    return <Skeleton h={"full"} w={"full"} flex={1} rounded={0} />;
+  }
+
   return (
     <VStack
       flex={1}
-      overflowY={"auto"}
+      overflow={"hidden"}
       bg={"bg.canvas"}
       w={"full"}
+      h={"full"}
       position={"relative"}
       {...restProps}
     >
-      <Box w={"full"} position={"relative"} overflowY={"auto"} flex={1}>
+      <Box w={"full"} h={"full"} position={"relative"} overflow={"hidden"} flex={1}>
         <DataListTable.Root
           headers={dataList.headers}
           items={dataList.items}

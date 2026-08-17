@@ -8,12 +8,14 @@ import { useQuery } from "@tanstack/react-query";
 
 type UseIgtWfsCatalogParams = Omit<FetchWfsCatalogParams, "signal">;
 
-/** TanStack Query wrapper for paginated WFS catalog fetch with parallel bidang/kawasan hit counts. */
+/** TanStack Query wrapper for paginated WFS catalog fetch with parallel bidang/kawasan hit counts and in-memory caching. */
 export const useIgtWfsCatalog = (params: UseIgtWfsCatalogParams) => {
   const query = useQuery({
     queryKey: ["igt-wfs-catalog", params],
     queryFn: ({ signal }) => fetchWfsCatalog({ ...params, signal }),
     placeholderData: (prev) => prev,
+    staleTime: 10 * 60 * 1000, // 10 minutes memory cache
+    gcTime: 30 * 60 * 1000, // 30 minutes garbage collection time
   });
 
   return {

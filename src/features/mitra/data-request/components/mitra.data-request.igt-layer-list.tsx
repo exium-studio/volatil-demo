@@ -43,7 +43,12 @@ import { memo, useMemo, useState } from "react";
 export const MitraDataRequestIgtLayerList = memo(
   (props: MitraDataRequestIgtLayerCardListProps) => {
     // Props
-    const { cqlFilter: baseCqlFilter, onSelectIgtLayer, onApplyFilter } = props;
+    const {
+      cqlFilter: baseCqlFilter,
+      onSelectIgtLayer,
+      onApplyFilter,
+      showFilter = true,
+    } = props;
 
     // Stores
     const { theme } = useThemeStore();
@@ -86,7 +91,7 @@ export const MitraDataRequestIgtLayerList = memo(
       return enabledLayers.filter(
         (l) =>
           l.id.toLowerCase().includes(lower) ||
-          l.wfs.wfsTypeName.toLowerCase().includes(lower) ||
+          l.wfs?.wfsTypeName?.toLowerCase().includes(lower) ||
           l.title?.toLowerCase().includes(lower),
       );
     }, [enabledLayers, debouncedSearch]);
@@ -123,15 +128,17 @@ export const MitraDataRequestIgtLayerList = memo(
               onValueChange={(val) => setSearchRaw(val)}
             />
 
-            <IgtFilterTrigger
-              modalKey={"mitra-data-request-igt-card-filter-modal"}
-              value={appliedWfsFilters}
-              onApply={handleApplyFilters}
-            >
-              <IconButton variant={"outline"}>
-                <AppIcon icon={SlidersHorizontalIcon} />
-              </IconButton>
-            </IgtFilterTrigger>
+            {showFilter && (
+              <IgtFilterTrigger
+                modalKey={"mitra-data-request-igt-card-filter-modal"}
+                value={appliedWfsFilters}
+                onApply={handleApplyFilters}
+              >
+                <IconButton variant={"outline"}>
+                  <AppIcon icon={SlidersHorizontalIcon} />
+                </IconButton>
+              </IgtFilterTrigger>
+            )}
           </HStack>
 
           <P fontSize={"sm"} color={"fg.muted"}>
@@ -203,20 +210,23 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
   // Hooks (Mutations)
   const addToCartAllMutation = useAddToCartAll();
 
+  const isWfs = Boolean(layer.wfs?.wfsTypeName);
+
   // Queries — WFS Feature Count for this specific IGT Layer
   const { totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
     page: 1,
     pageSize: 1,
-    cqlFilter,
-    typeName: layer.wfs.wfsTypeName,
-    wfsUrl: layer.wfs.wfsUrl ?? "",
+    cqlFilter: isWfs ? cqlFilter : undefined,
+    typeName: isWfs ? layer.wfs.wfsTypeName : "",
+    wfsUrl: isWfs ? (layer.wfs.wfsUrl ?? "") : "",
   });
 
   const layerDisplayName =
     layer.title ||
     layer.id.split(":")[1] ||
-    layer.wfs.wfsTypeName.split(":")[1] ||
-    layer.wfs.wfsTypeName;
+    layer.wfs?.wfsTypeName?.split(":")[1] ||
+    layer.wfs?.wfsTypeName ||
+    layer.id;
 
   const isBidang = layer.spatialBasis === "bidang";
   const layerIcon = isBidang ? Layers2Icon : TreesIcon;

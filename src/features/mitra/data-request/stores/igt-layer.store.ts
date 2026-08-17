@@ -2,13 +2,10 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 
 export type IgtLayerState = {
-  selectedIgtLayer: IgtLayerItem | null;
-  setSelectedIgtLayer: (layer: IgtLayerItem | null) => void;
   enabledLayerIds: Record<string, boolean>;
   toggleLayerId: (layerId: string) => void;
   setLayerEnabled: (layerId: string, enabled: boolean) => void;
@@ -20,8 +17,6 @@ export type IgtLayerState = {
 export const useIgtLayerStore = create<IgtLayerState>()(
   persist(
     (set) => ({
-      selectedIgtLayer: null,
-      setSelectedIgtLayer: (selectedIgtLayer) => set({ selectedIgtLayer }),
       enabledLayerIds: {},
       toggleLayerId: (layerId) =>
         set((state) => {

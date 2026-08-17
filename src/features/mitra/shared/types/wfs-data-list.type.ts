@@ -26,6 +26,7 @@ export type WfsDataListProps = StackProps & {
     }) => ReactNode
   >;
   extraItemActions?: DataListItemActionsGenerator[];
+  isLoading?: boolean;
   isFetching?: boolean;
 };
 

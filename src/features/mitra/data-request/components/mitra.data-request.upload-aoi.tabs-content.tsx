@@ -1,6 +1,3 @@
-// src/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content.tsx
-
-import { BackButton } from "@/design-system/components/button/ui/back-button";
 import {
   Button,
   IconButton,
@@ -9,9 +6,7 @@ import type { FormattedListItem } from "@/design-system/components/data-display/
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
   FileInput,
@@ -32,23 +27,22 @@ import {
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
+import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
-import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
 import {
   MitraDataRequestUploadAoiContext,
   useMitraDataRequestUploadAoiContext,
 } from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
+import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import {
   useAddToCartAll,
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
-import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type {
   MitraDataRequestUploadAoiAddFileButtonProps,
-  MitraDataRequestUploadAoiDataListProps,
+  MitraDataRequestUploadAoiAttributeListProps,
   MitraDataRequestUploadAoiFileListTriggerProps,
   MitraDataRequestUploadAoiLayer,
   MitraDataRequestUploadAoiPageState,
@@ -59,7 +53,6 @@ import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
-import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { FilesIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
@@ -105,7 +98,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
   // Stores
   const map = useMapInstanceStore((state) => state.map);
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
-  const { selectedIgtLayer } = useIgtLayerStore();
+  const { selectedIgtLayer } = useSelectedIgtLayer();
 
   // States
   const [aoiLayers, setAoiLayers] = useState<MitraDataRequestUploadAoiLayer[]>(
@@ -311,7 +304,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
         )}
 
         {hasLayers && aoiCqlFilter && (
-          <MitraDataRequestUploadAoiDataList
+          <MitraDataRequestUploadAoiAttributeList
             aoiCqlFilter={aoiCqlFilter}
             aoiLayers={aoiLayers}
             onFilesAdded={handleFilesAdded}
@@ -477,20 +470,11 @@ const MitraDataRequestUploadAoiFileListTrigger = (
 
 // -------------------------------------------------------------------------------------
 
-const MitraDataRequestUploadAoiDataList = memo(
-  (props: MitraDataRequestUploadAoiDataListProps) => {
+const MitraDataRequestUploadAoiAttributeList = memo(
+  (props: MitraDataRequestUploadAoiAttributeListProps) => {
     // Props
-    const {
-      aoiCqlFilter,
-      aoiLayers,
-      onFilesAdded,
-      onDeleteLayer,
-      onClearAll,
-      onAddToCartSelected,
-      onAddAllBidang,
-      onAddAllKawasan,
-      onAddAllBoth,
-    } = props;
+    const { aoiCqlFilter, aoiLayers, onFilesAdded, onDeleteLayer, onClearAll } =
+      props;
 
     // States
     const [pageState, setPageState] =
@@ -500,9 +484,8 @@ const MitraDataRequestUploadAoiDataList = memo(
         selectedItems: [] as FormattedListItem[],
       });
 
-    // Stores
-    const { selectedIgtLayer, setSelectedIgtLayer } = useIgtLayerStore();
-    const { setQueryValue: setLayerId } = useSearchParam("layerId");
+    // Hooks
+    const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
 
     // Queries — server-side WFS pagination
     const {
@@ -520,7 +503,7 @@ const MitraDataRequestUploadAoiDataList = memo(
       wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
     });
 
-    if (!selectedIgtLayer) {
+    if (!selectedIgtLayer || !layerId) {
       return (
         <VStack
           flex={1}
@@ -569,92 +552,38 @@ const MitraDataRequestUploadAoiDataList = memo(
 
           <MitraDataRequestIgtLayerList
             cqlFilter={aoiCqlFilter}
+            showFilter={false}
             onSelectIgtLayer={(layer) => {
-              setSelectedIgtLayer(layer);
-              setLayerId(layer.id);
+              selectLayer(layer.id);
             }}
           />
         </VStack>
       );
     }
 
-    const layerDisplayName =
-      selectedIgtLayer.title ||
-      selectedIgtLayer.id.split(":")[1] ||
-      selectedIgtLayer.wfs.wfsTypeName.split(":")[1] ||
-      selectedIgtLayer.wfs.wfsTypeName;
-
     // Render Detail Data View
     return (
-      <VStack
-        flex={1}
-        gap={0}
-        overflowY={"auto"}
-        bg={"bg.canvas"}
-        position={"relative"}
-        w={"full"}
-      >
-        {/* Action Header — Back button & Layer Name */}
-        <VStack
-          wrap={"wrap"}
-          justify={"space-between"}
-          gap={SPACING.sm}
-          p={PADDING.md}
-          bg={"bg.body"}
-          w={"full"}
-        >
-          <HStack justify={"space-between"} align={"center"} w={"full"}>
-            <HStack gap={SPACING.sm} align={"center"}>
-              <BackButton />
-
-              <P fontWeight={"medium"} fontSize={"md"}>
-                {`Detail Attribute: ${layerDisplayName.replace(/_/g, " ")}`}
-              </P>
-            </HStack>
-          </HStack>
-        </VStack>
-
-        <Separator borderColor={"bg.canvas"} />
-
-        {isLoading ? (
-          <Skeleton p={PADDING.md} />
-        ) : (
-          <>
-            <TopBarLoader isFetching={isFetching} />
-
-            <WfsIgtDataList
-              wfsFeatures={features}
-              page={pageState.page}
-              pageSize={pageState.pageSize}
-              totalFeatures={totalFeatures}
-              setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-              setPageSize={(pageSize) =>
-                setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-              }
-              onSelectedItemChange={({ selectedItems }) =>
-                setPageState((prev) => ({ ...prev, selectedItems }))
-              }
-            />
-
-            <MitraDataRequestAddToCartButtons
-              selectedItems={pageState.selectedItems}
-              allItems={features}
-              totalBidangCount={bidangCount}
-              totalKawasanCount={kawasanCount}
-              totalCount={totalFeatures}
-              onAddSelectedClick={() => {
-                const selectedIds = pageState.selectedItems.map((item) =>
-                  String(item.id),
-                );
-                onAddToCartSelected(selectedIds);
-              }}
-              onAddAllBidangClick={onAddAllBidang}
-              onAddAllKawasanClick={onAddAllKawasan}
-              onAddAllBothClick={onAddAllBoth}
-            />
-          </>
-        )}
-      </VStack>
+      <MitraDataRequestDetailAttributeView
+        layer={selectedIgtLayer}
+        cqlFilter={aoiCqlFilter}
+        features={features}
+        totalFeatures={totalFeatures}
+        bidangCount={bidangCount}
+        kawasanCount={kawasanCount}
+        isLoading={isLoading}
+        isFetching={isFetching}
+        page={pageState.page}
+        pageSize={pageState.pageSize}
+        setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
+        setPageSize={(pageSize) =>
+          setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
+        }
+        selectedItems={pageState.selectedItems}
+        setSelectedItems={(items) =>
+          setPageState((prev) => ({ ...prev, selectedItems: items }))
+        }
+        showActions={false}
+      />
     );
   },
 );

@@ -1,45 +1,29 @@
-// src/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content.tsx
-
-import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import {
-  AbsoluteCenter,
-  Center,
-} from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
+import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
-import { WfsIgtDataList } from "@/features/mitra/data-request/components/mitra.data-request.wfs-data-list";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
-import {
-  useAddToCartAll,
-  useAddToCartSelected,
-} from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
+import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import type { DrawAoiGuideAlertProps } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
-import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { IconPolygonOff } from "@tabler/icons-react";
 import { CheckIcon, InfoIcon, PencilIcon, XIcon } from "lucide-react";
 import { memo, useState } from "react";
-import { useSearchParam } from "@/design-system/hooks/use-search-param";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
   (props: TabsContentProps) => {
-    // Stores
-    const { selectedIgtLayer } = useIgtLayerStore();
+    // Hooks
+    const { selectedIgtLayer } = useSelectedIgtLayer();
 
     // Hooks
     const {
@@ -147,7 +131,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
         )}
 
         {isDone && aoiCqlFilter && (
-          <DrawAoiDataList
+          <DrawAoiAttributeList
             aoiCqlFilter={aoiCqlFilter}
             onResetDraw={handleResetDraw}
           />
@@ -224,24 +208,17 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
 
 // -------------------------------------------------------------------------------------
 
-type DrawAoiDataListProps = {
+type DrawAoiAttributeListProps = {
   aoiCqlFilter: string;
   onResetDraw: () => void;
 };
 
-const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
+const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
   // Props
   const { aoiCqlFilter, onResetDraw } = props;
 
-  // Stores
-  const { selectedIgtLayer, setSelectedIgtLayer } = useIgtLayerStore();
-
   // Hooks
-  const { setQueryValue: setLayerId } = useSearchParam("layerId");
-
-  // Hooks (Mutations)
-  const addToCartSelectedMutation = useAddToCartSelected();
-  const addToCartAllMutation = useAddToCartAll();
+  const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
 
   // States
   const [pageState, setPageState] = useState({
@@ -266,7 +243,7 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
     wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
   });
 
-  if (!selectedIgtLayer) {
+  if (!selectedIgtLayer || !layerId) {
     return (
       <VStack
         flex={1}
@@ -305,120 +282,36 @@ const DrawAoiDataList = memo((props: DrawAoiDataListProps) => {
 
         <MitraDataRequestIgtLayerList
           cqlFilter={aoiCqlFilter}
+          showFilter={false}
           onSelectIgtLayer={(layer) => {
-            setSelectedIgtLayer(layer);
-            setLayerId(layer.id);
+            selectLayer(layer.id);
           }}
         />
       </VStack>
     );
   }
 
-  const layerDisplayName =
-    selectedIgtLayer.title ||
-    selectedIgtLayer.id.split(":")[1] ||
-    selectedIgtLayer.wfs.wfsTypeName.split(":")[1] ||
-    selectedIgtLayer.wfs.wfsTypeName;
-
   return (
-    <>
-      <VStack
-        wrap={"wrap"}
-        justify={"space-between"}
-        gap={SPACING.sm}
-        p={PADDING.md}
-        bg={"bg.body"}
-      >
-        <HStack justify={"space-between"} align={"center"} w={"full"}>
-          <HStack gap={SPACING.sm} align={"center"}>
-            <BackButton />
-
-            <P fontWeight={"medium"} fontSize={"md"}>
-              {`Detail Attribute: ${layerDisplayName.replace(/_/g, " ")}`}
-            </P>
-          </HStack>
-        </HStack>
-      </VStack>
-
-      <Separator borderColor={"bg.canvas"} />
-
-      <VStack
-        flex={1}
-        gap={PADDING.sm}
-        overflowY={"auto"}
-        bg={"bg.canvas"}
-        position={"relative"}
-      >
-        {isLoading ? (
-          <Center flex={1} pos={"relative"}>
-            <Skeleton p={PADDING.md} />
-
-            <AbsoluteCenter>
-              <HStack align={"center"} gap={SPACING.sm}>
-                <Loader />
-                <P>{"Mengambil data IGT di area AOI Anda..."}</P>
-              </HStack>
-            </AbsoluteCenter>
-          </Center>
-        ) : (
-          <>
-            <TopBarLoader isFetching={isFetching} />
-
-            <WfsIgtDataList
-              wfsFeatures={features}
-              page={pageState.page}
-              pageSize={pageState.pageSize}
-              totalFeatures={totalFeatures}
-              setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-              setPageSize={(pageSize) =>
-                setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-              }
-              onSelectedItemChange={({ selectedItems }) =>
-                setPageState((prev) => ({ ...prev, selectedItems }))
-              }
-            />
-
-            <MitraDataRequestAddToCartButtons
-              selectedItems={pageState.selectedItems}
-              allItems={features}
-              totalBidangCount={bidangCount}
-              totalKawasanCount={kawasanCount}
-              totalCount={totalFeatures}
-              onAddAllBidangClick={() => {
-                if (!selectedIgtLayer) return;
-                addToCartAllMutation.mutate({
-                  cqlFilter: aoiCqlFilter,
-                  typeName: selectedIgtLayer.wfs.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
-                });
-              }}
-              onAddAllKawasanClick={() => {
-                if (!selectedIgtLayer) return;
-                addToCartAllMutation.mutate({
-                  cqlFilter: aoiCqlFilter,
-                  typeName: selectedIgtLayer.wfs.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
-                });
-              }}
-              onAddAllBothClick={() => {
-                if (!selectedIgtLayer) return;
-                addToCartAllMutation.mutate({
-                  cqlFilter: aoiCqlFilter,
-                  typeName: selectedIgtLayer.wfs.wfsTypeName,
-                  wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
-                });
-              }}
-              onAddSelectedClick={() => {
-                const selectedIds = pageState.selectedItems.map((item) =>
-                  String(item.id),
-                );
-                addToCartSelectedMutation.mutate(selectedIds);
-              }}
-              mt={"auto"}
-            />
-          </>
-        )}
-      </VStack>
-    </>
+    <MitraDataRequestDetailAttributeView
+      layer={selectedIgtLayer}
+      cqlFilter={aoiCqlFilter}
+      features={features}
+      totalFeatures={totalFeatures}
+      bidangCount={bidangCount}
+      kawasanCount={kawasanCount}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      page={pageState.page}
+      pageSize={pageState.pageSize}
+      setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
+      setPageSize={(pageSize) =>
+        setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
+      }
+      selectedItems={pageState.selectedItems}
+      setSelectedItems={(items) =>
+        setPageState((prev) => ({ ...prev, selectedItems: items }))
+      }
+      showActions={false}
+    />
   );
 });

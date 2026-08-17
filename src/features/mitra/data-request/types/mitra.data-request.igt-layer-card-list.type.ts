@@ -7,4 +7,5 @@ export type MitraDataRequestIgtLayerCardListProps = {
   cqlFilter?: string;
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
   onApplyFilter?: (filters: IgtFilterValues) => void;
+  showFilter?: boolean;
 };

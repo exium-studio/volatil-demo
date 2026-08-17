@@ -24,21 +24,17 @@ import {
 import { getLocalCartIds } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { MitraCartTableProps } from "@/features/mitra/cart/types/cart.type";
 import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
-import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { WfsDataList } from "@/features/mitra/shared/components/wfs-data-list";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 export const MitraCartDataList = (props: MitraCartTableProps) => {
   // Props
   const { ...restProps } = props;
-
-  // Stores
-  const { selectedIgtLayer, setSelectedIgtLayer } = useIgtLayerStore();
 
   // Queries (Get layers dynamically)
   const { data: layersData } = useQuery({
@@ -47,16 +43,11 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
     staleTime: Infinity,
   });
 
-  // Set default selected layer if not set
-  useEffect(() => {
-    if (
-      layersData?.layers &&
-      layersData.layers.length > 0 &&
-      !selectedIgtLayer
-    ) {
-      setSelectedIgtLayer(layersData.layers[0]);
-    }
-  }, [layersData, selectedIgtLayer, setSelectedIgtLayer]);
+  // Derived Values
+  const selectedIgtLayer = useMemo(
+    () => layersData?.layers[0] ?? null,
+    [layersData],
+  );
 
   // States
   const [pageState, setPageState] = useState({

@@ -51,11 +51,15 @@ export type MitraDataRequestUploadAoiPageState = {
   selectedItems: FormattedListItem[];
 };
 
+export type MitraDataRequestUploadAoiAttributeListProps = MitraDataRequestUploadAoiDataListProps;
+export type UploadAoiAttributeListProps = MitraDataRequestUploadAoiDataListProps;
+
 // Backward-compatibility aliases
 export type AddFileButtonProps = MitraDataRequestUploadAoiAddFileButtonProps;
 export type FileListTriggerProps =
   MitraDataRequestUploadAoiFileListTriggerProps;
 export type UploadAoiDataListProps = MitraDataRequestUploadAoiDataListProps;
+export type UploadAoiAttributeListPropsAlias = UploadAoiAttributeListProps;
 export type UploadAoiFileListTriggerProps = {
   children: ReactNode;
 };
