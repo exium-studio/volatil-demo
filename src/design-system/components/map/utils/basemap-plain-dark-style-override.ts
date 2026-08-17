@@ -14,8 +14,7 @@ const ROAD_COLORS = {
 
 const BUILDING_FILL = "#252629";
 const BUILDING_OUTLINE = "#1f2022";
-const PARK_SOLID_FILL = "#1a211d";
-const PARK_SOLID_OUTLINE = "#1a211d";
+const GREENERY_FILL = "#161a17";
 const LANDUSE_SOLID_FILL = "#1b1c1e";
 
 export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
@@ -44,9 +43,12 @@ export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
       (map.setPaintProperty as any)(layerId, "fill-pattern", null);
       map.setLayoutProperty(layerId, "visibility", "visible");
       map.setPaintProperty(layerId, "fill-color", color);
-      if (outlineColor) {
-        map.setPaintProperty(layerId, "fill-outline-color", outlineColor);
-      }
+      // Remove outline contrast by matching fill color or setting outlineColor
+      map.setPaintProperty(
+        layerId,
+        "fill-outline-color",
+        outlineColor ?? color,
+      );
     } catch {
       // layer exists but property type doesn't match — skip silently
     }
@@ -281,26 +283,28 @@ export function applyBasemapPlainDarkStyleOverride(map: maplibregl.Map) {
   ]);
 
   // Landcover & Landuse (Solid Dark Fills without Pattern Sprites)
-  setSolidFill("landcover_grass", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
-  setSolidFill("landcover_wood", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
-  setSolidFill("landcover_scrub", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
-  setSolidFill("landcover_crop", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
-  setSolidFill("landcover_sand", "#222018", "#222018");
-  setSolidFill("landcover_ice", "#1e2124", "#1e2124");
-  setSolidFill("landcover_wetland", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
+  setSolidFill("landcover_grass", GREENERY_FILL);
+  setSolidFill("landcover_wood", GREENERY_FILL);
+  setSolidFill("landcover_scrub", GREENERY_FILL);
+  setSolidFill("landcover_crop", GREENERY_FILL);
+  setSolidFill("landcover_sand", "#222018");
+  setSolidFill("landcover_ice", "#1e2124");
+  setSolidFill("landcover_wetland", GREENERY_FILL);
 
-  setSolidFill("park", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
-  setSolidFill("park_outline", PARK_SOLID_OUTLINE);
-  setSolidFill("landuse_park", PARK_SOLID_FILL, PARK_SOLID_OUTLINE);
-  setSolidFill("landuse_track", "#1e2022", "#1e2022");
-  setSolidFill("landuse_pitch", "#1d201e", "#1d201e");
-  setSolidFill("landuse_pedestrian", LANDUSE_SOLID_FILL, LANDUSE_SOLID_FILL);
-  setSolidFill("pedestrian", LANDUSE_SOLID_FILL, LANDUSE_SOLID_FILL);
+  setSolidFill("park", GREENERY_FILL);
+  if (map.getLayer("park_outline")) {
+    map.setLayoutProperty("park_outline", "visibility", "none");
+  }
+  setSolidFill("landuse_park", GREENERY_FILL);
+  setSolidFill("landuse_track", "#1e2022");
+  setSolidFill("landuse_pitch", "#1d201e");
+  setSolidFill("landuse_pedestrian", LANDUSE_SOLID_FILL);
+  setSolidFill("pedestrian", LANDUSE_SOLID_FILL);
 
   setSolidFill("landuse_residential", LANDUSE_SOLID_FILL);
   setSolidFill("landuse_commercial", "#202124");
   setSolidFill("landuse_industrial", "#1f2022");
-  setSolidFill("landuse_cemetery", PARK_SOLID_FILL);
+  setSolidFill("landuse_cemetery", GREENERY_FILL);
   setSolidFill("landuse_school", "#1c2122");
   setSolidFill("landuse_hospital", "#241e1e");
 

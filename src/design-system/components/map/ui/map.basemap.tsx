@@ -121,7 +121,7 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
     const applyGlobe = () => {
       instance.setProjection({ type: "globe" });
       instance.setSky({
-        "sky-color": "#020617",
+        "sky-color": "#151515",
         "horizon-color": "#0f172a",
         "fog-color": "#1e293b",
         "fog-ground-blend": 0.5,
