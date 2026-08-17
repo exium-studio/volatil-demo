@@ -66,9 +66,10 @@ export const fetchFilterOptionsTemaApi = async (
 export const fetchFilterOptionsProvinsiApi = async (
   signal?: AbortSignal,
 ): Promise<FilterOptionsResponse> => {
-  const provinces = await fetchWilayahJson<
-    Array<{ id: string; name: string }>
-  >("provinces.json", signal);
+  const provinces = await fetchWilayahJson<Array<{ id: string; name: string }>>(
+    "provinces.json",
+    signal,
+  );
   cachedProvinces = provinces;
 
   const data: FilterOptionItem[] = provinces.map((p) => ({
