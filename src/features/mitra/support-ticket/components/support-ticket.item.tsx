@@ -80,7 +80,7 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
         <P color={"fg.muted"}>{formatDate(ticket.createdAt)}</P>
       </HStack>
 
-      {/* Title & Body Description */}
+      {/* Title, Description, Attachments */}
       <VStack align={"start"} gap={SPACING.lg} pl={"44px"}>
         <VStack gap={SPACING.sm}>
           <P fontWeight={"bold"} color={"fg.default"}>
@@ -90,50 +90,51 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
           <P color={"fg.muted"}>{ticket.description}</P>
         </VStack>
 
-        <HStack wrap={"wrap"}>
-          {/* Attachments */}
-          {ticket.attachments && ticket.attachments.length > 0 && (
-            <HStack gap={2} wrap={"wrap"}>
-              {ticket.attachments.map((att, idx) => {
-                const isImage = att.mimeType?.startsWith("image/");
+        <HStack w={"full"} justify={"space-between"} gap={SPACING.md}>
+          <HStack wrap={"wrap"}>
+            {/* Attachments */}
+            {ticket.attachments && ticket.attachments.length > 0 && (
+              <HStack gap={2} wrap={"wrap"}>
+                {ticket.attachments.map((att, idx) => {
+                  const isImage = att.mimeType?.startsWith("image/");
 
-                return (
-                  <Badge
-                    key={att.fileName || String(idx)}
-                    variant={"outline"}
-                    colorPalette={"gray"}
-                    p={1.5}
-                  >
-                    <AppIcon
-                      icon={isImage ? ImageIcon : FileIcon}
-                      size={"xs"}
-                      mr={1}
-                    />
-                    {att.originalName || att.fileName}
-                  </Badge>
-                );
-              })}
+                  return (
+                    <Badge
+                      key={att.fileName || String(idx)}
+                      variant={"outline"}
+                      colorPalette={"gray"}
+                      p={1.5}
+                    >
+                      <AppIcon
+                        icon={isImage ? ImageIcon : FileIcon}
+                        size={"xs"}
+                        mr={1}
+                      />
+                      {att.originalName || att.fileName}
+                    </Badge>
+                  );
+                })}
+              </HStack>
+            )}
+          </HStack>
+
+          {/* Reply Toggle Actions */}
+          {hasReplies && (
+            <HStack justify={"end"} align={"center"} w={"full"} pt={1}>
+              <Button
+                size={"xs"}
+                colorPalette={theme.colorPalette}
+                onClick={() => setIsRepliesExpanded(!isRepliesExpanded)}
+              >
+                {isRepliesExpanded ? "Sembunyikan Balasan" : "Lihat Balasan"}
+                <AppIcon
+                  icon={isRepliesExpanded ? ChevronUpIcon : ChevronDownIcon}
+                />
+              </Button>
             </HStack>
           )}
         </HStack>
       </VStack>
-
-      {/* Reply Toggle Actions */}
-      {hasReplies && (
-        <HStack justify={"end"} align={"center"} w={"full"} pt={1}>
-          <Button
-            size={"xs"}
-            variant={"ghost"}
-            colorPalette={theme.colorPalette}
-            onClick={() => setIsRepliesExpanded(!isRepliesExpanded)}
-          >
-            {isRepliesExpanded ? "Sembunyikan Balasan" : "Lihat Balasan"}
-            <AppIcon
-              icon={isRepliesExpanded ? ChevronUpIcon : ChevronDownIcon}
-            />
-          </Button>
-        </HStack>
-      )}
 
       {/* Admin Reply Section */}
       {hasReplies && isRepliesExpanded && (

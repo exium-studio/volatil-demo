@@ -13,12 +13,13 @@ import { MapOverlay } from "@/design-system/components/map/ui/map.overlay";
  */
 export const MapShell = ({
   layers,
+  cqlFilter,
   onDrawFinish,
   children,
-}: Omit<MapProps, "styleUrl">) => {
+}: Omit<MapProps, "styleUrl"> & { cqlFilter?: string }) => {
   const map = useMapInstanceStore((state) => state.map);
 
-  useMapLayers(map, layers);
+  useMapLayers(map, layers, cqlFilter);
   useMapDraw(map, onDrawFinish);
 
   return (

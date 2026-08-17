@@ -343,7 +343,7 @@ const Content = () => {
     staleTime: Infinity,
   });
 
-  const { enabledLayerIds } = useIgtLayerStore();
+  const { enabledLayerIds, cqlFilter } = useIgtLayerStore();
 
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
@@ -399,6 +399,7 @@ const Content = () => {
       <Box pos={"relative"} boxSize={"full"} pointerEvents={"none"}>
         <MapShell
           layers={mapLayers}
+          cqlFilter={cqlFilter}
           onDrawFinish={(feature, originalPoints) => {
             console.log("draw finished", { feature, originalPoints });
           }}

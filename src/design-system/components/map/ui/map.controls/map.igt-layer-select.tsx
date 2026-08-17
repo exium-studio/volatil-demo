@@ -15,7 +15,6 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 
-import { ClickDelegateContainer } from "@/design-system/components/utilities/ui/click-delegate-container";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
@@ -107,7 +106,7 @@ export const MapIgtLayerSelect = memo(() => {
                 const LayerIcon = isBidang ? Layers2Icon : TreesIcon;
 
                 return (
-                  <ClickDelegateContainer
+                  <HStack
                     key={layer.id}
                     align={"center"}
                     justify={"space-between"}
@@ -115,7 +114,8 @@ export const MapIgtLayerSelect = memo(() => {
                     p={2}
                     colorPalette={colorPalette}
                     rounded={"md"}
-                    onDelegateClick={() => toggleLayerId(layer.id)}
+                    cursor={"pointer"}
+                    onClick={() => toggleLayerId(layer.id)}
                     _hover={{ bg: "bg.subtle" }}
                   >
                     <HStack gap={SPACING.md} align={"center"} flex={1}>
@@ -145,7 +145,7 @@ export const MapIgtLayerSelect = memo(() => {
                     </HStack>
 
                     <Switch checked={isEnabled} pointerEvents={"none"} />
-                  </ClickDelegateContainer>
+                  </HStack>
                 );
               })}
             </VStack>

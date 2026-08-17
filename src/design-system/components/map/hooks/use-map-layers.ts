@@ -13,8 +13,6 @@ import type {
 import type maplibregl from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
-import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-
 /** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
   if (layer.tileUrl) return layer.tileUrl;
@@ -34,7 +32,6 @@ const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
     width: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
     height: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
   };
-  // Note: WMS raster map layers are never filtered with CQL_FILTER per requirement
   const params = new URLSearchParams(queryParams);
   return `${baseUrl}?${params.toString()}&bbox={bbox-epsg-3857}`;
 };
@@ -77,11 +74,9 @@ const resolveVisibility = (layer: MapLayerConfig): "visible" | "none" =>
 export const useMapLayers = (
   map: maplibregl.Map | null,
   layers: MapLayerConfig[],
+  cqlFilter?: string,
 ) => {
-  const cqlFilter = useIgtLayerStore((state) => state.cqlFilter);
-
-  // Use a ref so the map-style-ready handler always reads the latest layer configs
-  // without needing to re-register the event listener every time layers change.
+  // Always keep refs synchronously up-to-date with latest props
   const layersRef = useRef(layers);
   const cqlFilterRef = useRef(cqlFilter);
 
@@ -157,7 +152,6 @@ export const useMapLayers = (
         case "wfs-line":
         case "wfs-circle":
         case "wfs-symbol": {
-          // Visual WFS rendering is disabled. Only WMS is rendered visually, WFS is query-only.
           break;
         }
 
@@ -197,7 +191,6 @@ export const useMapLayers = (
       }
     };
 
-    /** Remove all previously-added config layers (safe to call when none exist). */
     const removeLayers = (configs: MapLayerConfig[]) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(map as any).style) return;
@@ -212,15 +205,11 @@ export const useMapLayers = (
 
     const setupLayers = async () => {
       const seq = ++setupSeq;
-
-      // Remove own data layers first
       removeLayers(layersRef.current);
 
       const configs = layersRef.current;
-
       for (const layer of configs) {
         if (seq !== setupSeq || controller.signal.aborted) return;
-
         try {
           await addLayer(layer);
         } catch (error: unknown) {
@@ -228,7 +217,6 @@ export const useMapLayers = (
         }
       }
 
-      // Signal useMapDraw to (re)add draw layers on top
       if (seq === setupSeq && !controller.signal.aborted) {
         map.fire(MAP_EVENTS_MAP.layersReady);
       }
@@ -248,7 +236,7 @@ export const useMapLayers = (
   useEffect(() => {
     if (!map) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(map as any).style || !map.isStyleLoaded()) return;
+    if (!(map as any).style) return;
 
     layers.forEach((layer) => {
       if (layer.type === "wms-raster") {
@@ -258,12 +246,23 @@ export const useMapLayers = (
         ) as maplibregl.RasterTileSource | undefined;
 
         if (source && typeof source.setTiles === "function") {
-          source.setTiles([newTileUrl]);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const currentTiles = (source as any).tiles;
+          if (!currentTiles || currentTiles[0] !== newTileUrl) {
+            source.setTiles([newTileUrl]);
+          }
         }
       }
 
       if (map.getLayer(layer.id)) {
-        map.setLayoutProperty(layer.id, "visibility", resolveVisibility(layer));
+        const targetVisibility = resolveVisibility(layer);
+        const currentVisibility = map.getLayoutProperty(
+          layer.id,
+          "visibility",
+        );
+        if (currentVisibility !== targetVisibility) {
+          map.setLayoutProperty(layer.id, "visibility", targetVisibility);
+        }
       }
     });
   }, [map, layers, cqlFilter]);
