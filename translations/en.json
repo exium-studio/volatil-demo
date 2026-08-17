@@ -11,7 +11,7 @@
       "purchase_history": "Purchase History",
 
       "notification": "Notification",
-      "help": "Support Tickets",
+      "help": "Help Center",
       "profile": "Profile"
     },
     "admin_navs": {
@@ -19,7 +19,7 @@
       "user_management": "User Management",
       "data_management": "Data Management",
       "order_statistic": "Order Statistic",
-      "help": "Help Center",
+      "help": "Support Tickets",
       "notification": "Notification",
       "profile": "Profile"
     }

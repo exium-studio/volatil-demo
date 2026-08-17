@@ -11,7 +11,7 @@
       "purchase_history": "Riwayat Pembelian",
 
       "notification": "Notifikasi",
-      "help": "Tiket Laporan",
+      "help": "Pusat Bantuan",
       "profile": "Profil"
     },
     "admin_navs": {
@@ -19,7 +19,7 @@
       "user_management": "Manajemen Pengguna",
       "data_management": "Manajemen Data",
       "order_statistic": "Statistik Pesanan",
-      "help": "Pusat Bantuan",
+      "help": "Tiket Laporan",
       "profile": "Profil"
     }
   },

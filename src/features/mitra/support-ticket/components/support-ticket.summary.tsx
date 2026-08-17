@@ -49,7 +49,7 @@ export const SupportTicketSummary = memo((props: SupportTicketSummaryProps) => {
     <HStack wrap={"wrap"} gap={SPACING.md} w={"full"} p={PADDING.md}>
       {summaryItems.map((item) => {
         return (
-          <Box key={item.id} flex={"1 1 200px"} bg={"bg.body"}>
+          <Box key={item.id} flex={"1 1 250px"} bg={"bg.body"}>
             <HStack align={"center"} gap={SPACING.sm} w={"full"}>
               <HStack gap={2} align={"center"}>
                 <Circle
