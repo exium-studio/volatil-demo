@@ -117,6 +117,7 @@ export const MitraDataRequestDetailAttributeView = memo(
             />
 
             <MitraDataRequestAddToCartButtons
+              spatialBasis={layer?.spatialBasis}
               selectedItems={selectedItems}
               allItems={features}
               totalBidangCount={bidangCount}

@@ -27,6 +27,7 @@ export const MitraDataRequestAddToCartButtons = (
 ) => {
   // Props
   const {
+    spatialBasis,
     onAddAllBidangClick,
     onAddAllKawasanClick,
     onAddAllBothClick,
@@ -35,6 +36,7 @@ export const MitraDataRequestAddToCartButtons = (
     allItems = [],
     totalBidangCount: totalBidangCountProp,
     totalKawasanCount: totalKawasanCountProp,
+    totalCount,
     ...restProps
   } = props;
 
@@ -59,13 +61,25 @@ export const MitraDataRequestAddToCartButtons = (
 
   const bidangCount = totalBidangCountProp ?? calculatedBidang;
   const kawasanCount = totalKawasanCountProp ?? calculatedKawasan;
+  const totalItemCount = totalCount ?? (bidangCount + kawasanCount);
+
+  // Derived — calculate total 'luas' attribute in Hektar (Ha) if spatialBasis is kawasan
+  const selectedKawasanLuasTotal = useMemo(() => {
+    if (spatialBasis !== "kawasan") return 0;
+    return (selectedItems ?? []).reduce((acc, item) => {
+      const data = item.data as Record<string, unknown> | undefined;
+      const props = (data?.properties ?? data ?? {}) as Record<string, unknown>;
+      const key = Object.keys(props).find((k) => k.toLowerCase() === "luas");
+      const val = key ? Number(props[key]) : NaN;
+      return acc + (isNaN(val) ? 0 : val);
+    }, 0);
+  }, [selectedItems, spatialBasis]);
 
   // Derived — selected items basis breakdown
   const selectedBidangCount = useMemo(
     () =>
       (selectedItems ?? []).filter((item) => {
         const data = item.data as Record<string, unknown> | undefined;
-        // Check IgtDataItem basis or GeoJSON feature properties
         const basis =
           data?.basis ??
           (data?.properties as Record<string, unknown> | undefined)?.basis;
@@ -88,9 +102,13 @@ export const MitraDataRequestAddToCartButtons = (
 
   const selectedTotalCount = selectedItems?.length ?? 0;
 
-  // Selected label: if basis counts exist show "X bidang, Y kawasan", otherwise show "X item" or "X bidang"
+  // Selected label: if kawasan with luas, show Ha, otherwise count
   const selectedCountLabel = useMemo(() => {
     if (selectedTotalCount === 0) return "";
+
+    if (spatialBasis === "kawasan" && selectedKawasanLuasTotal > 0) {
+      return `(${formatNumber(selectedKawasanLuasTotal)} Ha)`;
+    }
 
     if (selectedBidangCount > 0 || selectedKawasanCount > 0) {
       const parts = [
@@ -102,9 +120,18 @@ export const MitraDataRequestAddToCartButtons = (
       return `(${parts.join(", ")})`;
     }
 
-    // Default: for WFS features without explicit basis property, treat as bidang or count
+    if (spatialBasis === "kawasan") {
+      return `(${formatNumber(selectedTotalCount)} kawasan)`;
+    }
+
     return `(${formatNumber(selectedTotalCount)} bidang)`;
-  }, [selectedTotalCount, selectedBidangCount, selectedKawasanCount]);
+  }, [
+    selectedTotalCount,
+    spatialBasis,
+    selectedKawasanLuasTotal,
+    selectedBidangCount,
+    selectedKawasanCount,
+  ]);
 
   return (
     <VStack
@@ -150,12 +177,16 @@ export const MitraDataRequestAddToCartButtons = (
             primary
             flex={1}
             minW={0}
-            disabled={bidangCount + kawasanCount === 0}
+            disabled={totalItemCount === 0}
             onClick={onAddAllBothClick}
           >
             <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
-            {"Tambah semua"} ({formatNumber(bidangCount)} bidang,{" "}
-            {formatNumber(kawasanCount)} kawasan)
+            {"Tambah semua"}{" "}
+            {spatialBasis === "kawasan"
+              ? `(${formatNumber(totalItemCount)} kawasan)`
+              : bidangCount > 0 || kawasanCount > 0
+                ? `(${formatNumber(bidangCount)} bidang, ${formatNumber(kawasanCount)} kawasan)`
+                : `(${formatNumber(totalItemCount)} item)`}
           </Button>
 
           <Menu.Root
@@ -169,7 +200,7 @@ export const MitraDataRequestAddToCartButtons = (
                 aria-label={"Pilih opsi tambah semua"}
                 roundedLeft={0}
                 flexShrink={0}
-                disabled={bidangCount + kawasanCount === 0}
+                disabled={totalItemCount === 0}
               >
                 <AppIcon icon={ChevronDownIcon} />
               </IconButton>

@@ -32,6 +32,7 @@ export type MitraDataRequestAddToCartResponse = {
 };
 
 export type MitraDataRequestAddToCartButtonsProps = StackProps & {
+  spatialBasis?: "bidang" | "kawasan";
   selectedItems?: FormattedListItem[];
   allItems?: MitraDataRequestIgtDataItem[] | unknown[];
   totalBidangCount?: number;

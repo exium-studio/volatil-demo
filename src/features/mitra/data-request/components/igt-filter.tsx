@@ -161,7 +161,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
 
               <Alert.Description>
                 {
-                  "Filter yang diterapkan akan berlaku secara menyeluruh pada katalog layer IGT, tabel atribut, dan tampilan peta."
+                  "Filter yang diterapkan akan berlaku secara menyeluruh pada katalog layer IGT dan tabel atribut."
                 }
               </Alert.Description>
             </Alert.Content>

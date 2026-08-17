@@ -40,6 +40,18 @@ export type FetchWfsParams = {
   signal?: AbortSignal;
 };
 
+/** Normalizes a WFS URL endpoint by replacing `/wms` path suffix with `/wfs` */
+export const normalizeWfsEndpointUrl = (urlStr: string): string => {
+  if (!urlStr) return urlStr;
+  let normalized = urlStr;
+  if (normalized.endsWith("/wms")) {
+    normalized = normalized.replace(/\/wms$/, "/wfs");
+  } else if (normalized.includes("/wms?")) {
+    normalized = normalized.replace("/wms?", "/wfs?");
+  }
+  return normalized;
+};
+
 // -------------------------------------------------------------------------------------
 
 const buildWfsUrl = (
@@ -61,7 +73,7 @@ const buildWfsUrl = (
       "wfsUrl parameter is required for fetchWfs and cannot be empty.",
     );
   }
-  const baseUrl = wfsUrl;
+  const baseUrl = normalizeWfsEndpointUrl(wfsUrl);
   const url = new URL(baseUrl);
 
   url.searchParams.set("service", "WFS");
@@ -153,8 +165,15 @@ export const fetchWfs = async (
   }
 
   if (!res.ok) {
+    const errorText = await res.text().catch(() => "");
+    console.error(
+      `WFS request failed [${res.status}] for "${params.typeName}". Response:`,
+      errorText,
+    );
     throw new Error(
-      `WFS request failed for "${params.typeName}": ${res.status}`,
+      `WFS request failed for "${params.typeName}": ${res.status}${
+        errorText ? ` - ${errorText.slice(0, 150)}` : ""
+      }`,
     );
   }
 

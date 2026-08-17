@@ -16,10 +16,7 @@ import { useEffect, useRef } from "react";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 
 /** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
-const resolveWmsTileUrl = (
-  layer: WmsRasterLayerConfig,
-  cqlFilter?: string,
-): string => {
+const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
   if (layer.tileUrl) return layer.tileUrl;
 
   if (!layer.wmsUrl) return "";
@@ -37,11 +34,7 @@ const resolveWmsTileUrl = (
     width: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
     height: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
   };
-
-  if (cqlFilter) {
-    queryParams.CQL_FILTER = cqlFilter;
-  }
-
+  // Note: WMS raster map layers are never filtered with CQL_FILTER per requirement
   const params = new URLSearchParams(queryParams);
   return `${baseUrl}?${params.toString()}&bbox={bbox-epsg-3857}`;
 };
@@ -142,7 +135,7 @@ export const useMapLayers = (
 
       switch (layer.type) {
         case "wms-raster": {
-          const tileUrl = resolveWmsTileUrl(layer, cqlFilterRef.current);
+          const tileUrl = resolveWmsTileUrl(layer);
           safeAddSource(layer.id, {
             type: "raster",
             tiles: [tileUrl],
@@ -259,7 +252,7 @@ export const useMapLayers = (
 
     layers.forEach((layer) => {
       if (layer.type === "wms-raster") {
-        const newTileUrl = resolveWmsTileUrl(layer, cqlFilter);
+        const newTileUrl = resolveWmsTileUrl(layer);
         const source = map.getSource(
           layer.id,
         ) as maplibregl.RasterTileSource | undefined;
