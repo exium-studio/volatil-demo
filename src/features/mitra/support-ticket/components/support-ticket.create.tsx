@@ -9,8 +9,13 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
+import {
+  createSupportTicketSchema,
+  type CreateSupportTicketFormValues,
+  zodResolver,
+} from "@/features/mitra/support-ticket/schemas/support-ticket.schema";
 import type { CreateSupportTicketTriggerProps } from "@/features/mitra/support-ticket/types/support-ticket.type";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 export const CreateSupportTicketTrigger = (
   props: CreateSupportTicketTriggerProps,
@@ -23,28 +28,29 @@ export const CreateSupportTicketTrigger = (
     modalKey: customModalKey ?? "createSupportTicketModal",
   });
 
-  // States
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [files, setFiles] = useState<File[]>([]);
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateSupportTicketFormValues>({
+    resolver: zodResolver(createSupportTicketSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      files: [],
+    },
+  });
 
   // Handlers
   const handleClose = () => {
-    setTitle("");
-    setDescription("");
-    setFiles([]);
+    reset();
     close();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !description.trim()) {
-      toast.error("Judul dan deskripsi laporan wajib diisi");
-      return;
-    }
-
-    onSubmitTicket?.(title.trim(), description.trim(), files);
-
+  const handleFormSubmit = (values: CreateSupportTicketFormValues) => {
+    onSubmitTicket?.(values.title.trim(), values.description.trim(), values.files);
     handleClose();
     toast.success("Laporan berhasil dibuat!");
   };
@@ -67,35 +73,53 @@ export const CreateSupportTicketTrigger = (
           <Modal.CloseButton />
         </Modal.Header>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
           <Modal.Body>
             <VStack gap={4} align={"stretch"}>
-              <Field label={"Judul Laporan"} required={true}>
+              <Field
+                label={"Judul Laporan"}
+                required={true}
+                invalid={Boolean(errors.title)}
+                errorText={errors.title?.message}
+              >
                 <Input
                   placeholder={"Contoh: Kendala Sinyal di Titik Pos A"}
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  {...register("title")}
                 />
               </Field>
 
-              <Field label={"Deskripsi Kendala"} required={true}>
+              <Field
+                label={"Deskripsi Kendala"}
+                required={true}
+                invalid={Boolean(errors.description)}
+                errorText={errors.description?.message}
+              >
                 <Textarea
                   placeholder={
                     "Jelaskan secara rinci kendala yang Anda alami..."
                   }
-                  value={description}
                   rows={4}
-                  onChange={(e) => setDescription(e.target.value)}
+                  {...register("description")}
                 />
               </Field>
 
-              <Field label={"Lampiran Dokumen/Foto (Opsional)"}>
-                <FileInput
-                  accept={[".jpg", ".jpeg", ".png", ".pdf", ".docx", ".xlsx"]}
-                  maxFiles={10}
-                  maxFileSize={15 * 1024 * 1024}
-                  value={files}
-                  onFileAccept={(details) => setFiles(details.files)}
+              <Field
+                label={"Lampiran Dokumen/Foto (Opsional)"}
+                invalid={Boolean(errors.files)}
+                errorText={errors.files?.message}
+              >
+                <Controller
+                  name={"files"}
+                  control={control}
+                  render={({ field }) => (
+                    <FileInput
+                      accept={[".jpg", ".jpeg", ".png", ".pdf", ".docx", ".xlsx"]}
+                      maxFiles={10}
+                      maxFileSize={15 * 1024 * 1024}
+                      value={field.value}
+                      onFileAccept={(details) => field.onChange(details.files)}
+                    />
+                  )}
                 />
               </Field>
             </VStack>
@@ -106,7 +130,12 @@ export const CreateSupportTicketTrigger = (
               {"Batal"}
             </Button>
 
-            <Button flex={1} type={"submit"} primary={true}>
+            <Button
+              flex={1}
+              type={"submit"}
+              primary={true}
+              loading={isSubmitting}
+            >
               {"Kirim Laporan"}
             </Button>
           </Modal.Footer>

@@ -81,37 +81,42 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
       </HStack>
 
       {/* Title & Body Description */}
-      <VStack align={"start"} gap={1}>
-        <P fontWeight={"bold"} color={"fg.default"}>
-          {ticket.title}
-        </P>
-        <P color={"fg.muted"}>{ticket.description}</P>
-      </VStack>
+      <VStack align={"start"} gap={SPACING.lg} pl={"44px"}>
+        <VStack gap={SPACING.sm}>
+          <P fontWeight={"bold"} color={"fg.default"}>
+            {ticket.title}
+          </P>
 
-      {/* Attachments */}
-      {ticket.attachments && ticket.attachments.length > 0 && (
-        <HStack gap={2} wrap={"wrap"}>
-          {ticket.attachments.map((att, idx) => {
-            const isImage = att.mimeType?.startsWith("image/");
+          <P color={"fg.muted"}>{ticket.description}</P>
+        </VStack>
 
-            return (
-              <Badge
-                key={att.fileName || String(idx)}
-                variant={"outline"}
-                colorPalette={"gray"}
-                p={1.5}
-              >
-                <AppIcon
-                  icon={isImage ? ImageIcon : FileIcon}
-                  size={"xs"}
-                  mr={1}
-                />
-                {att.originalName || att.fileName}
-              </Badge>
-            );
-          })}
+        <HStack wrap={"wrap"}>
+          {/* Attachments */}
+          {ticket.attachments && ticket.attachments.length > 0 && (
+            <HStack gap={2} wrap={"wrap"}>
+              {ticket.attachments.map((att, idx) => {
+                const isImage = att.mimeType?.startsWith("image/");
+
+                return (
+                  <Badge
+                    key={att.fileName || String(idx)}
+                    variant={"outline"}
+                    colorPalette={"gray"}
+                    p={1.5}
+                  >
+                    <AppIcon
+                      icon={isImage ? ImageIcon : FileIcon}
+                      size={"xs"}
+                      mr={1}
+                    />
+                    {att.originalName || att.fileName}
+                  </Badge>
+                );
+              })}
+            </HStack>
+          )}
         </HStack>
-      )}
+      </VStack>
 
       {/* Reply Toggle Actions */}
       {hasReplies && (
@@ -142,8 +147,13 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
                 rounded={theme.radii.component}
               >
                 <VStack align={"stretch"} gap={2}>
-                  <HStack justify={"space-between"} align={"center"} w={"full"}>
-                    <HStack gap={2} align={"center"}>
+                  <HStack
+                    align={"center"}
+                    justify={"space-between"}
+                    gap={SPACING.md}
+                    w={"full"}
+                  >
+                    <HStack gap={SPACING.md} align={"center"}>
                       <Box
                         p={1.5}
                         rounded={"full"}
@@ -170,7 +180,9 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
                     <P color={"fg.muted"}>{formatDate(resp.createdAt)}</P>
                   </HStack>
 
-                  <P color={"fg.default"}>{resp.message}</P>
+                  <VStack pl={"44px"}>
+                    <P color={"fg.default"}>{resp.message}</P>
+                  </VStack>
                 </VStack>
               </Box>
             );
