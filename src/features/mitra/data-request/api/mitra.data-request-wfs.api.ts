@@ -234,6 +234,13 @@ export const fetchWfsCatalog = async ({
       kawasanCount,
     };
   } catch (error) {
+    if (
+      signal?.aborted ||
+      (error instanceof DOMException && error.name === "AbortError") ||
+      (error instanceof Error && error.name === "AbortError")
+    ) {
+      throw error;
+    }
     console.error(`fetchWfsCatalog failed:`, error);
     return {
       features: [],

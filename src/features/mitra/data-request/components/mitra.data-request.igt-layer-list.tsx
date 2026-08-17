@@ -23,9 +23,10 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useIgtFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
 import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-card-list.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
@@ -53,12 +54,12 @@ export const MitraDataRequestIgtLayerList = memo(
 
     // Stores
     const { theme } = useThemeStore();
-    const {
-      enabledLayerIds,
-      appliedWfsFilters,
-      setAppliedWfsFilters,
-      cqlFilter: storeCqlFilter,
-    } = useIgtLayerStore();
+    const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
+    const appliedWfsFilters = useIgtFilterStore((s) => s.appliedWfsFilters);
+    const setAppliedWfsFilters = useIgtFilterStore(
+      (s) => s.setAppliedWfsFilters,
+    );
+    const storeCqlFilter = useIgtFilterStore((s) => s.cqlFilter);
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
