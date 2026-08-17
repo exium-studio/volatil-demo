@@ -99,7 +99,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
       {...restProps}
     >
       {/* If cart is completely empty, show NoDataState immediately */}
-      {!hasLocalIds ? (
+      {!hasLocalIds && (
         <Box
           flex={1}
           display={"flex"}
@@ -115,37 +115,47 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
             description={"Tambahkan data IGT dari halaman Permohonan Data"}
           />
         </Box>
-      ) : isLoading ? (
-        <Skeleton flex={1} w={"full"} h={"full"} rounded={0} p={PADDING.md} />
-      ) : features.length === 0 ? (
-        <Box
-          flex={1}
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          w={"full"}
-          py={PADDING.md}
-          bg={"bg.body"}
-        >
-          <NoResultState />
-        </Box>
-      ) : (
-        <WfsDataList
-          wfsFeatures={features}
-          page={pageState.page}
-          pageSize={pageState.pageSize}
-          totalFeatures={total}
-          setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-          setPageSize={(pageSize) =>
-            setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-          }
-          selectedItems={selectedItems}
-          onSelectedItemChange={({ selectedItems: next }) => {
-            setSelectedItems(next);
-          }}
-          batchActions={batchActions}
-          isFetching={isFetching}
-        />
+      )}
+
+      {hasLocalIds && (
+        <>
+          {isLoading && (
+            <Skeleton flex={1} w={"full"} h={"full"} rounded={0} p={PADDING.md} />
+          )}
+
+          {!isLoading && features.length === 0 && (
+            <Box
+              flex={1}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              w={"full"}
+              py={PADDING.md}
+              bg={"bg.body"}
+            >
+              <NoResultState />
+            </Box>
+          )}
+
+          {!isLoading && features.length > 0 && (
+            <WfsDataList
+              wfsFeatures={features}
+              page={pageState.page}
+              pageSize={pageState.pageSize}
+              totalFeatures={total}
+              setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
+              setPageSize={(pageSize) =>
+                setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
+              }
+              selectedItems={selectedItems}
+              onSelectedItemChange={({ selectedItems: next }) => {
+                setSelectedItems(next);
+              }}
+              batchActions={batchActions}
+              isFetching={isFetching}
+            />
+          )}
+        </>
       )}
     </VStack>
   );

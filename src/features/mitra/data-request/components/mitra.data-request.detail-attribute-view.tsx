@@ -65,6 +65,12 @@ export const MitraDataRequestDetailAttributeView = memo(
     const addToCartSelectedMutation = useAddToCartSelected();
     const addToCartAllMutation = useAddToCartAll();
 
+    // Derived States
+    const isInitialLoading =
+      isLoading || (isFetching && isEmptyArray(features));
+    const hasNoFeatures = !isInitialLoading && isEmptyArray(features);
+    const hasFeatures = !isInitialLoading && !isEmptyArray(features);
+
     return (
       <VStack
         flex={1}
@@ -80,9 +86,11 @@ export const MitraDataRequestDetailAttributeView = memo(
           showActions={showActions}
         />
 
-        {isLoading || (isFetching && isEmptyArray(features)) ? (
+        {isInitialLoading && (
           <Skeleton h={"full"} w={"full"} flex={1} rounded={0} p={PADDING.md} />
-        ) : isEmptyArray(features) ? (
+        )}
+
+        {hasNoFeatures && (
           <VStack
             flex={1}
             align={"center"}
@@ -92,7 +100,9 @@ export const MitraDataRequestDetailAttributeView = memo(
           >
             <NoResultState query={layer?.wfs?.wfsTypeName || ""} />
           </VStack>
-        ) : (
+        )}
+
+        {hasFeatures && (
           <VStack
             flex={1}
             gap={PADDING.sm}
