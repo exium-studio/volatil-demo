@@ -267,9 +267,13 @@ const IgtLayerItem = memo((props: IgtLayerItemProps) => {
                 <P fontSize={"sm"} color={"fg.muted"}>
                   {"Total Fitur Ketersediaan:"}
                 </P>
-                <P fontSize={"sm"} fontWeight={"bold"}>
-                  {formatNumber(totalFeatures)}
-                </P>
+                {isLoading ? (
+                  <Skeleton h={"16px"} w={"40px"} rounded={"sm"} />
+                ) : (
+                  <P fontSize={"sm"} fontWeight={"bold"}>
+                    {formatNumber(totalFeatures)}
+                  </P>
+                )}
               </HStack>
 
               {isBidang ? (

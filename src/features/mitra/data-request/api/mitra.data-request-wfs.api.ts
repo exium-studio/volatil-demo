@@ -101,8 +101,7 @@ export const getWfsStringAttributes = async (
         schema.featureTypes?.[0]?.properties ?? [];
       const stringKeys = properties
         .filter(
-          (prop) =>
-            prop.type === "xsd:string" || prop.localType === "string",
+          (prop) => prop.type === "xsd:string" || prop.localType === "string",
         )
         .map((prop) => prop.name);
 
