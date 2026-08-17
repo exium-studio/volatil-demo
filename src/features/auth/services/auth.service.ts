@@ -1,6 +1,4 @@
-// src/features/auth/services/auth.service.ts
-
-import { postLoginApi } from "@/features/auth/api/auth.api";
+import { postLoginApi, postLogoutApi } from "@/features/auth/api/auth.api";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
 import type {
   InternalUser,
@@ -62,9 +60,15 @@ export const authService = {
     }
   },
 
-  logout: (): void => {
-    localStorage.removeItem("auth_token");
-    removeStorage("user");
+  logout: async (signal?: AbortSignal): Promise<void> => {
+    try {
+      await postLogoutApi(signal);
+    } catch {
+      // Ignore network / offline error during logout
+    } finally {
+      localStorage.removeItem("auth_token");
+      removeStorage("user");
+    }
   },
 
   getCurrentUser: (): User | null => {

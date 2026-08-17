@@ -19,11 +19,11 @@ import {
 } from "@/design-system/components/map/types/map.type";
 import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
-import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
+import { UserProfilePopover } from "@/features/auth/components/ui/user-profile-popover";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
@@ -55,7 +55,6 @@ import {
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { UserIcon } from "lucide-react";
 import { useMemo, useRef } from "react";
 
 // -------------------------------------------------------------------------------------
@@ -248,14 +247,7 @@ const SidebarFooter = () => {
         }}
       />
 
-      <NavButton
-        aria-label={t["app.navs.profile"]()}
-        variant={"ghost"}
-        w={expanded ? "full" : undefined}
-      >
-        <AppIcon icon={UserIcon} />
-        {expanded && t["app.navs.profile"]()}
-      </NavButton>
+      <UserProfilePopover expanded={expanded} />
     </VStack>
   );
 };

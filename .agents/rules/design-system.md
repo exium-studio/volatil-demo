@@ -35,6 +35,10 @@ const { theme } = useThemeStore();
 
 ### Imports: `@/design-system/components/typography/ui/*`
 
+#### Typography Size Rule (WAJIB)
+- **Default Font Size**: Wajib gunakan ukuran `md` (default komponen) untuk teks biasa. JANGAN tulis `fontSize={"md"}` karena itu sudah default.
+- **Dilarang Over-Styling `sm`/`xs`**: Gak perlu pakai `fontSize={"sm"}` atau `fontSize={"xs"}` untuk hal biasa. Ukuran `sm` hanya jika benar-benar diperlukan untuk hierarki tertentu, dan `xs` sangat jarang dipakai.
+
 #### `P` (Paragraph / Text)
 
 - **Props**: Menerima seluruh Chakra `TextProps`.
@@ -43,7 +47,7 @@ const { theme } = useThemeStore();
 ```tsx
 import { P } from "@/design-system/components/typography/ui/p";
 
-<P fontSize={"sm"} color={"fg.subtle"} fontWeight={"medium"}>
+<P color={"fg.subtle"} fontWeight={"medium"}>
   {"Teks Contoh"}
 </P>;
 ```

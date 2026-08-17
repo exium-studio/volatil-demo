@@ -103,10 +103,8 @@ export const InternalUserManagementDataList = () => {
             value: user.name,
             td: (
               <VStack align={"start"} gap={0} minW={"180px"}>
-                <P fontSize={"sm"} fontWeight={"medium"}>
-                  {user.name}
-                </P>
-                <P fontSize={"xs"} color={"fg.subtle"}>
+                <P fontWeight={"medium"}>{user.name}</P>
+                <P fontSize={"sm"} color={"fg.subtle"}>
                   {user.email}
                 </P>
               </VStack>
@@ -127,11 +125,7 @@ export const InternalUserManagementDataList = () => {
           },
           {
             value: user.agencyOrCompany,
-            td: (
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {user.agencyOrCompany}
-              </P>
-            ),
+            td: <P color={"fg.muted"}>{user.agencyOrCompany}</P>,
             align: "start",
           },
           {
@@ -148,17 +142,13 @@ export const InternalUserManagementDataList = () => {
           },
           {
             value: user.phoneNumber ?? "-",
-            td: (
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {user.phoneNumber ?? "-"}
-              </P>
-            ),
+            td: <P color={"fg.muted"}>{user.phoneNumber ?? "-"}</P>,
             align: "start",
           },
           {
             value: user.lastLoginAt ?? "",
             td: (
-              <P fontSize={"sm"} whiteSpace={"nowrap"} color={"fg.muted"}>
+              <P whiteSpace={"nowrap"} color={"fg.muted"}>
                 {formatUtcDateTime(user.lastLoginAt, preferredTimezone)}
               </P>
             ),
