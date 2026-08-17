@@ -22,6 +22,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
     cancelLabel,
     colorPalette,
     modalKey = "confirmationModal",
+    confirmButtonProps,
     onConfirm,
     onCancel,
   } = props;
@@ -103,6 +104,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
               variant={"solid"}
               colorPalette={colorPalette}
               onClick={handleConfirm}
+              {...confirmButtonProps}
             >
               {resolvedConfirmLabel}
             </Button>

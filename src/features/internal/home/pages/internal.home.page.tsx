@@ -1,3 +1,5 @@
+// src/features/internal/home/pages/internal.home.page.tsx
+
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";

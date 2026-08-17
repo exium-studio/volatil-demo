@@ -1,3 +1,5 @@
+// src/features/auth/services/auth.service.ts
+
 import { postLoginApi, postLogoutApi } from "@/features/auth/api/auth.api";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
 import type {

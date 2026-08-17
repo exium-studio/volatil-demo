@@ -1,3 +1,5 @@
+// src/routes/_private/internal/user-management.tsx
+
 import { createFileRoute } from '@tanstack/react-router'
 import { InternalUserManagementPage } from '@/features/internal/user-management/pages/internal.user-management.page'
 
