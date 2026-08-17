@@ -122,8 +122,8 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
       instance.setProjection({ type: "globe" });
       instance.setSky({
         "sky-color": "#151515",
-        "horizon-color": "#0f172a",
-        "fog-color": "#1e293b",
+        "horizon-color": "#181818",
+        "fog-color": "#202020",
         "fog-ground-blend": 0.5,
         "horizon-fog-blend": 0.8,
         "sky-horizon-blend": 0.8,
@@ -294,7 +294,7 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
       position={"relative"}
       width={"100%"}
       height={"100%"}
-      bg={"#020617"}
+      bg={"#151515"}
       backgroundImage={STARRY_NIGHT_BG}
       backgroundRepeat={"repeat"}
       backgroundSize={"500px 300px"}

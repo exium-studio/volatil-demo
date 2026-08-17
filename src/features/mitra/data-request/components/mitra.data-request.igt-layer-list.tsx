@@ -163,7 +163,7 @@ export const MitraDataRequestIgtLayerList = memo(
                 const isLastIndex = index === filteredLayers.length - 1;
 
                 return (
-                  <IgtLayerCardItem
+                  <IgtLayerItem
                     key={layer.id}
                     layer={layer}
                     cqlFilter={combinedCqlFilter}
@@ -182,13 +182,13 @@ export const MitraDataRequestIgtLayerList = memo(
 
 // -------------------------------------------------------------------------------------
 
-type IgtLayerCardItemProps = StackProps & {
+type IgtLayerItemProps = StackProps & {
   layer: IgtLayerItem;
   cqlFilter?: string;
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
 };
 
-const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
+const IgtLayerItem = memo((props: IgtLayerItemProps) => {
   // Props
   const { layer, cqlFilter, onSelectIgtLayer, ...restProps } = props;
 
@@ -257,7 +257,7 @@ const IgtLayerCardItem = memo((props: IgtLayerCardItemProps) => {
                 {layerDisplayName.replace(/_/g, " ")}
               </P>
 
-              <P fontSize={"xs"} color={"fg.muted"}>
+              <P fontSize={"sm"} color={"fg.muted"}>
                 {layer.wfs.wfsTypeName}
               </P>
             </VStack>
