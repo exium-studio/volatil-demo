@@ -1,11 +1,11 @@
-// src/features/mitra/support-ticket/constants/dummy-tickets.ts
+// src/features/mitra/help-center/constants/dummy-help-center.ts
 
 import type {
-  TicketItem,
-  TicketStatistics,
-} from "@/features/mitra/support-ticket/types/support-ticket.type";
+  HelpCenterItem,
+  HelpCenterStatistics,
+} from "@/features/mitra/help-center/types/help-center.type";
 
-export const DUMMY_TICKET_STATISTICS: TicketStatistics = {
+export const DUMMY_HELP_CENTER_STATISTICS: HelpCenterStatistics = {
   totalTickets: 12,
   activeTickets: 5,
   resolvedTickets: 7,
@@ -16,7 +16,7 @@ export const DUMMY_TICKET_STATISTICS: TicketStatistics = {
   },
 };
 
-export const DUMMY_TICKETS: TicketItem[] = [
+export const DUMMY_HELP_CENTER_TICKETS: HelpCenterItem[] = [
   {
     id: 1,
     userId: 1,

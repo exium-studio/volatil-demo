@@ -47,7 +47,7 @@ export const APP_NAVS_MAP = {
   help: {
     icon: HelpCircleIcon,
     titleKey: "app.navs.help",
-    pathname: "/mitra/support-ticket",
+    pathname: "/mitra/help-center",
   },
 } as const satisfies Record<string, NavItem>;
 
@@ -76,7 +76,7 @@ export const INTERNAL_APP_NAVS_MAP = {
   help: {
     icon: HelpCircleIcon,
     titleKey: "app.admin_navs.help",
-    pathname: "/internal/support-ticket",
+    pathname: "/internal/help-center",
   },
   notification: {
     icon: BellIcon,

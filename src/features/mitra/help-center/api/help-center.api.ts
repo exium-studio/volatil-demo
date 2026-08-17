@@ -1,30 +1,30 @@
-// src/features/mitra/support-ticket/api/support-ticket.api.ts
+// src/features/mitra/help-center/api/help-center.api.ts
 
 import {
-  DUMMY_TICKETS,
-  DUMMY_TICKET_STATISTICS,
-} from "@/features/mitra/support-ticket/constants/dummy-tickets";
+  DUMMY_HELP_CENTER_STATISTICS,
+  DUMMY_HELP_CENTER_TICKETS,
+} from "@/features/mitra/help-center/constants/dummy-help-center";
 import type {
-  CreateTicketApiResponse,
-  CreateTicketPayload,
-  ReplyTicketApiResponse,
-  ReplyTicketPayload,
-  TicketAttachment,
-  TicketDetailApiResponse,
-  TicketItem,
-  TicketListApiResponse,
-  TicketQueryParams,
-  TicketResponse,
-  TicketStatisticsApiResponse,
-} from "@/features/mitra/support-ticket/types/support-ticket.type";
+  CreateHelpCenterApiResponse,
+  CreateHelpCenterPayload,
+  HelpCenterAttachment,
+  HelpCenterDetailApiResponse,
+  HelpCenterItem,
+  HelpCenterListApiResponse,
+  HelpCenterQueryParams,
+  HelpCenterResponse,
+  HelpCenterStatisticsApiResponse,
+  ReplyHelpCenterApiResponse,
+  ReplyHelpCenterPayload,
+} from "@/features/mitra/help-center/types/help-center.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 
-export const getTicketStatisticsApi = async (
+export const getHelpCenterStatisticsApi = async (
   scope?: "my" | "all",
   signal?: AbortSignal,
-): Promise<TicketStatisticsApiResponse> => {
+): Promise<HelpCenterStatisticsApiResponse> => {
   try {
-    return await apiClient.get<TicketStatisticsApiResponse>(
+    return await apiClient.get<HelpCenterStatisticsApiResponse>(
       "/tickets/statistics",
       {
         params: scope ? { scope } : undefined,
@@ -34,29 +34,29 @@ export const getTicketStatisticsApi = async (
   } catch {
     return {
       success: true,
-      data: DUMMY_TICKET_STATISTICS,
+      data: DUMMY_HELP_CENTER_STATISTICS,
     };
   }
 };
 
-export const getTicketsApi = async (
-  params?: TicketQueryParams,
+export const getHelpCenterTicketsApi = async (
+  params?: HelpCenterQueryParams,
   signal?: AbortSignal,
-): Promise<TicketListApiResponse> => {
+): Promise<HelpCenterListApiResponse> => {
   try {
-    return await apiClient.get<TicketListApiResponse>("/tickets", {
+    return await apiClient.get<HelpCenterListApiResponse>("/tickets", {
       params: params as Record<string, string | number | boolean | undefined>,
       signal,
     });
   } catch {
     const search = params?.search?.trim().toLowerCase();
     const filtered = search
-      ? DUMMY_TICKETS.filter(
+      ? DUMMY_HELP_CENTER_TICKETS.filter(
           (t) =>
             t.title.toLowerCase().includes(search) ||
             t.description.toLowerCase().includes(search),
         )
-      : DUMMY_TICKETS;
+      : DUMMY_HELP_CENTER_TICKETS;
 
     return {
       success: true,
@@ -73,16 +73,18 @@ export const getTicketsApi = async (
   }
 };
 
-export const getTicketByIdApi = async (
+export const getHelpCenterTicketByIdApi = async (
   id: number,
   signal?: AbortSignal,
-): Promise<TicketDetailApiResponse> => {
+): Promise<HelpCenterDetailApiResponse> => {
   try {
-    return await apiClient.get<TicketDetailApiResponse>(`/tickets/${id}`, {
+    return await apiClient.get<HelpCenterDetailApiResponse>(`/tickets/${id}`, {
       signal,
     });
   } catch {
-    const found = DUMMY_TICKETS.find((t) => t.id === id) ?? DUMMY_TICKETS[0];
+    const found =
+      DUMMY_HELP_CENTER_TICKETS.find((t) => t.id === id) ??
+      DUMMY_HELP_CENTER_TICKETS[0];
     return {
       success: true,
       data: found,
@@ -90,10 +92,10 @@ export const getTicketByIdApi = async (
   }
 };
 
-export const postCreateTicketApi = async (
-  payload: CreateTicketPayload,
+export const postCreateHelpCenterTicketApi = async (
+  payload: CreateHelpCenterPayload,
   signal?: AbortSignal,
-): Promise<CreateTicketApiResponse> => {
+): Promise<CreateHelpCenterApiResponse> => {
   try {
     const formData = new FormData();
     formData.append("title", payload.title);
@@ -105,14 +107,14 @@ export const postCreateTicketApi = async (
       });
     }
 
-    return await apiClient.post<CreateTicketApiResponse>(
+    return await apiClient.post<CreateHelpCenterApiResponse>(
       "/tickets",
       formData,
       { signal },
     );
   } catch {
     const nowIso = new Date().toISOString();
-    const mockAttachments: TicketAttachment[] = (payload.files ?? []).map(
+    const mockAttachments: HelpCenterAttachment[] = (payload.files ?? []).map(
       (file, index) => ({
         originalName: file.name,
         fileName: `${Date.now()}-${index}-${file.name}`,
@@ -122,7 +124,7 @@ export const postCreateTicketApi = async (
       }),
     );
 
-    const mockCreatedTicket: TicketItem = {
+    const mockCreatedTicket: HelpCenterItem = {
       id: Date.now(),
       userId: 1,
       title: payload.title,
@@ -148,11 +150,11 @@ export const postCreateTicketApi = async (
   }
 };
 
-export const postReplyTicketApi = async (
+export const postReplyHelpCenterTicketApi = async (
   id: number,
-  payload: ReplyTicketPayload,
+  payload: ReplyHelpCenterPayload,
   signal?: AbortSignal,
-): Promise<ReplyTicketApiResponse> => {
+): Promise<ReplyHelpCenterApiResponse> => {
   try {
     const formData = new FormData();
     formData.append("message", payload.message);
@@ -167,14 +169,14 @@ export const postReplyTicketApi = async (
       });
     }
 
-    return await apiClient.post<ReplyTicketApiResponse>(
+    return await apiClient.post<ReplyHelpCenterApiResponse>(
       `/tickets/${id}/reply`,
       formData,
       { signal },
     );
   } catch {
     const nowIso = new Date().toISOString();
-    const mockReply: TicketResponse = {
+    const mockReply: HelpCenterResponse = {
       id: Date.now(),
       ticketId: id,
       adminId: 2,
@@ -190,8 +192,9 @@ export const postReplyTicketApi = async (
     };
 
     const targetTicket =
-      DUMMY_TICKETS.find((t) => t.id === id) ?? DUMMY_TICKETS[0];
-    const updatedTicket: TicketItem = {
+      DUMMY_HELP_CENTER_TICKETS.find((t) => t.id === id) ??
+      DUMMY_HELP_CENTER_TICKETS[0];
+    const updatedTicket: HelpCenterItem = {
       ...targetTicket,
       status: payload.status ?? targetTicket.status,
       updatedAt: nowIso,

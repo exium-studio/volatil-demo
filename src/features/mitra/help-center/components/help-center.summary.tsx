@@ -1,19 +1,19 @@
-// src/features/mitra/support-ticket/components/support-ticket.summary.tsx
+// src/features/mitra/help-center/components/help-center.summary.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Box, Circle } from "@/design-system/components/layout/ui/box";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import type { TicketStatistics } from "@/features/mitra/support-ticket/types/support-ticket.type";
+import type { HelpCenterStatistics } from "@/features/mitra/help-center/types/help-center.type";
 import { CheckCircle2Icon, ClockIcon, FileTextIcon } from "lucide-react";
 import { memo } from "react";
 
-export type SupportTicketSummaryProps = {
-  statistics: TicketStatistics;
+export type HelpCenterSummaryProps = {
+  statistics: HelpCenterStatistics;
 };
 
-export const SupportTicketSummary = memo((props: SupportTicketSummaryProps) => {
+export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
   // Props
   const { statistics } = props;
 
@@ -46,19 +46,23 @@ export const SupportTicketSummary = memo((props: SupportTicketSummaryProps) => {
   ];
 
   return (
-    <HStack wrap={"wrap"} gap={SPACING.md} w={"full"} p={PADDING.md}>
+    <HStack wrap={"wrap"} gap={SPACING.xs} w={"full"} p={PADDING.md}>
       {summaryItems.map((item) => {
         return (
-          <Box key={item.id} flex={"1 1 250px"} bg={"bg.body"}>
+          <Box key={item.id} flex={"1 1 200px"} bg={"bg.body"}>
             <HStack align={"center"} gap={SPACING.sm} w={"full"}>
               <HStack gap={2} align={"center"}>
-                <Circle
+                <Box
                   p={1.5}
+                  rounded={"full"}
                   bg={`${item.colorPalette}.subtle`}
                   color={`${item.colorPalette}.fg`}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
                 >
-                  <AppIcon icon={item.icon} />
-                </Circle>
+                  <AppIcon icon={item.icon} size={"xs"} />
+                </Box>
 
                 <P fontWeight={"medium"} color={"fg.muted"}>
                   {item.label}:

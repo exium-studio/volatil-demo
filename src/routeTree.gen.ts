@@ -14,19 +14,19 @@ import { Route as PrivateRouteRouteImport } from './routes/_private/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PublicAdminRouteImport } from './routes/_public/admin'
 import { Route as PrivateMitraWelcomeRouteImport } from './routes/_private/mitra/welcome'
-import { Route as PrivateMitraSupportTicketRouteImport } from './routes/_private/mitra/support-ticket'
 import { Route as PrivateMitraPurchaseHistoryRouteImport } from './routes/_private/mitra/purchase-history'
 import { Route as PrivateMitraNotificationRouteImport } from './routes/_private/mitra/notification'
 import { Route as PrivateMitraMyDataRouteImport } from './routes/_private/mitra/my-data'
 import { Route as PrivateMitraHomeRouteImport } from './routes/_private/mitra/home'
+import { Route as PrivateMitraHelpCenterRouteImport } from './routes/_private/mitra/help-center'
 import { Route as PrivateMitraDataRequestRouteImport } from './routes/_private/mitra/data-request'
 import { Route as PrivateMitraCartRouteImport } from './routes/_private/mitra/cart'
 import { Route as PrivateInternalWelcomeRouteImport } from './routes/_private/internal/welcome'
 import { Route as PrivateInternalUserManagementRouteImport } from './routes/_private/internal/user-management'
-import { Route as PrivateInternalSupportTicketRouteImport } from './routes/_private/internal/support-ticket'
 import { Route as PrivateInternalOrderStatisticRouteImport } from './routes/_private/internal/order-statistic'
 import { Route as PrivateInternalNotificationRouteImport } from './routes/_private/internal/notification'
 import { Route as PrivateInternalHomeRouteImport } from './routes/_private/internal/home'
+import { Route as PrivateInternalHelpCenterRouteImport } from './routes/_private/internal/help-center'
 import { Route as PrivateInternalDataManagementRouteImport } from './routes/_private/internal/data-management'
 import { Route as PrivateMitraBillingBillingCodeRouteImport } from './routes/_private/mitra/billing.$billingCode'
 
@@ -54,12 +54,6 @@ const PrivateMitraWelcomeRoute = PrivateMitraWelcomeRouteImport.update({
   path: '/mitra/welcome',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
-const PrivateMitraSupportTicketRoute =
-  PrivateMitraSupportTicketRouteImport.update({
-    id: '/mitra/support-ticket',
-    path: '/mitra/support-ticket',
-    getParentRoute: () => PrivateRouteRoute,
-  } as any)
 const PrivateMitraPurchaseHistoryRoute =
   PrivateMitraPurchaseHistoryRouteImport.update({
     id: '/mitra/purchase-history',
@@ -80,6 +74,11 @@ const PrivateMitraMyDataRoute = PrivateMitraMyDataRouteImport.update({
 const PrivateMitraHomeRoute = PrivateMitraHomeRouteImport.update({
   id: '/mitra/home',
   path: '/mitra/home',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
+const PrivateMitraHelpCenterRoute = PrivateMitraHelpCenterRouteImport.update({
+  id: '/mitra/help-center',
+  path: '/mitra/help-center',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
 const PrivateMitraDataRequestRoute = PrivateMitraDataRequestRouteImport.update({
@@ -103,12 +102,6 @@ const PrivateInternalUserManagementRoute =
     path: '/internal/user-management',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
-const PrivateInternalSupportTicketRoute =
-  PrivateInternalSupportTicketRouteImport.update({
-    id: '/internal/support-ticket',
-    path: '/internal/support-ticket',
-    getParentRoute: () => PrivateRouteRoute,
-  } as any)
 const PrivateInternalOrderStatisticRoute =
   PrivateInternalOrderStatisticRouteImport.update({
     id: '/internal/order-statistic',
@@ -126,6 +119,12 @@ const PrivateInternalHomeRoute = PrivateInternalHomeRouteImport.update({
   path: '/internal/home',
   getParentRoute: () => PrivateRouteRoute,
 } as any)
+const PrivateInternalHelpCenterRoute =
+  PrivateInternalHelpCenterRouteImport.update({
+    id: '/internal/help-center',
+    path: '/internal/help-center',
+    getParentRoute: () => PrivateRouteRoute,
+  } as any)
 const PrivateInternalDataManagementRoute =
   PrivateInternalDataManagementRouteImport.update({
     id: '/internal/data-management',
@@ -144,19 +143,19 @@ export interface FileRoutesByFullPath {
   '/demo': typeof DemoRoute
   '/admin': typeof PublicAdminRoute
   '/internal/data-management': typeof PrivateInternalDataManagementRoute
+  '/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/internal/home': typeof PrivateInternalHomeRoute
   '/internal/notification': typeof PrivateInternalNotificationRoute
   '/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
-  '/internal/support-ticket': typeof PrivateInternalSupportTicketRoute
   '/internal/user-management': typeof PrivateInternalUserManagementRoute
   '/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/mitra/cart': typeof PrivateMitraCartRoute
   '/mitra/data-request': typeof PrivateMitraDataRequestRoute
+  '/mitra/help-center': typeof PrivateMitraHelpCenterRoute
   '/mitra/home': typeof PrivateMitraHomeRoute
   '/mitra/my-data': typeof PrivateMitraMyDataRoute
   '/mitra/notification': typeof PrivateMitraNotificationRoute
   '/mitra/purchase-history': typeof PrivateMitraPurchaseHistoryRoute
-  '/mitra/support-ticket': typeof PrivateMitraSupportTicketRoute
   '/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
 }
@@ -165,19 +164,19 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/admin': typeof PublicAdminRoute
   '/internal/data-management': typeof PrivateInternalDataManagementRoute
+  '/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/internal/home': typeof PrivateInternalHomeRoute
   '/internal/notification': typeof PrivateInternalNotificationRoute
   '/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
-  '/internal/support-ticket': typeof PrivateInternalSupportTicketRoute
   '/internal/user-management': typeof PrivateInternalUserManagementRoute
   '/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/mitra/cart': typeof PrivateMitraCartRoute
   '/mitra/data-request': typeof PrivateMitraDataRequestRoute
+  '/mitra/help-center': typeof PrivateMitraHelpCenterRoute
   '/mitra/home': typeof PrivateMitraHomeRoute
   '/mitra/my-data': typeof PrivateMitraMyDataRoute
   '/mitra/notification': typeof PrivateMitraNotificationRoute
   '/mitra/purchase-history': typeof PrivateMitraPurchaseHistoryRoute
-  '/mitra/support-ticket': typeof PrivateMitraSupportTicketRoute
   '/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
 }
@@ -188,19 +187,19 @@ export interface FileRoutesById {
   '/demo': typeof DemoRoute
   '/_public/admin': typeof PublicAdminRoute
   '/_private/internal/data-management': typeof PrivateInternalDataManagementRoute
+  '/_private/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/_private/internal/home': typeof PrivateInternalHomeRoute
   '/_private/internal/notification': typeof PrivateInternalNotificationRoute
   '/_private/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
-  '/_private/internal/support-ticket': typeof PrivateInternalSupportTicketRoute
   '/_private/internal/user-management': typeof PrivateInternalUserManagementRoute
   '/_private/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/_private/mitra/cart': typeof PrivateMitraCartRoute
   '/_private/mitra/data-request': typeof PrivateMitraDataRequestRoute
+  '/_private/mitra/help-center': typeof PrivateMitraHelpCenterRoute
   '/_private/mitra/home': typeof PrivateMitraHomeRoute
   '/_private/mitra/my-data': typeof PrivateMitraMyDataRoute
   '/_private/mitra/notification': typeof PrivateMitraNotificationRoute
   '/_private/mitra/purchase-history': typeof PrivateMitraPurchaseHistoryRoute
-  '/_private/mitra/support-ticket': typeof PrivateMitraSupportTicketRoute
   '/_private/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/_private/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
 }
@@ -211,19 +210,19 @@ export interface FileRouteTypes {
     | '/demo'
     | '/admin'
     | '/internal/data-management'
+    | '/internal/help-center'
     | '/internal/home'
     | '/internal/notification'
     | '/internal/order-statistic'
-    | '/internal/support-ticket'
     | '/internal/user-management'
     | '/internal/welcome'
     | '/mitra/cart'
     | '/mitra/data-request'
+    | '/mitra/help-center'
     | '/mitra/home'
     | '/mitra/my-data'
     | '/mitra/notification'
     | '/mitra/purchase-history'
-    | '/mitra/support-ticket'
     | '/mitra/welcome'
     | '/mitra/billing/$billingCode'
   fileRoutesByTo: FileRoutesByTo
@@ -232,19 +231,19 @@ export interface FileRouteTypes {
     | '/demo'
     | '/admin'
     | '/internal/data-management'
+    | '/internal/help-center'
     | '/internal/home'
     | '/internal/notification'
     | '/internal/order-statistic'
-    | '/internal/support-ticket'
     | '/internal/user-management'
     | '/internal/welcome'
     | '/mitra/cart'
     | '/mitra/data-request'
+    | '/mitra/help-center'
     | '/mitra/home'
     | '/mitra/my-data'
     | '/mitra/notification'
     | '/mitra/purchase-history'
-    | '/mitra/support-ticket'
     | '/mitra/welcome'
     | '/mitra/billing/$billingCode'
   id:
@@ -254,19 +253,19 @@ export interface FileRouteTypes {
     | '/demo'
     | '/_public/admin'
     | '/_private/internal/data-management'
+    | '/_private/internal/help-center'
     | '/_private/internal/home'
     | '/_private/internal/notification'
     | '/_private/internal/order-statistic'
-    | '/_private/internal/support-ticket'
     | '/_private/internal/user-management'
     | '/_private/internal/welcome'
     | '/_private/mitra/cart'
     | '/_private/mitra/data-request'
+    | '/_private/mitra/help-center'
     | '/_private/mitra/home'
     | '/_private/mitra/my-data'
     | '/_private/mitra/notification'
     | '/_private/mitra/purchase-history'
-    | '/_private/mitra/support-ticket'
     | '/_private/mitra/welcome'
     | '/_private/mitra/billing/$billingCode'
   fileRoutesById: FileRoutesById
@@ -315,13 +314,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateMitraWelcomeRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
-    '/_private/mitra/support-ticket': {
-      id: '/_private/mitra/support-ticket'
-      path: '/mitra/support-ticket'
-      fullPath: '/mitra/support-ticket'
-      preLoaderRoute: typeof PrivateMitraSupportTicketRouteImport
-      parentRoute: typeof PrivateRouteRoute
-    }
     '/_private/mitra/purchase-history': {
       id: '/_private/mitra/purchase-history'
       path: '/mitra/purchase-history'
@@ -348,6 +340,13 @@ declare module '@tanstack/react-router' {
       path: '/mitra/home'
       fullPath: '/mitra/home'
       preLoaderRoute: typeof PrivateMitraHomeRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/mitra/help-center': {
+      id: '/_private/mitra/help-center'
+      path: '/mitra/help-center'
+      fullPath: '/mitra/help-center'
+      preLoaderRoute: typeof PrivateMitraHelpCenterRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
     '/_private/mitra/data-request': {
@@ -378,13 +377,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInternalUserManagementRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
-    '/_private/internal/support-ticket': {
-      id: '/_private/internal/support-ticket'
-      path: '/internal/support-ticket'
-      fullPath: '/internal/support-ticket'
-      preLoaderRoute: typeof PrivateInternalSupportTicketRouteImport
-      parentRoute: typeof PrivateRouteRoute
-    }
     '/_private/internal/order-statistic': {
       id: '/_private/internal/order-statistic'
       path: '/internal/order-statistic'
@@ -406,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInternalHomeRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/internal/help-center': {
+      id: '/_private/internal/help-center'
+      path: '/internal/help-center'
+      fullPath: '/internal/help-center'
+      preLoaderRoute: typeof PrivateInternalHelpCenterRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
     '/_private/internal/data-management': {
       id: '/_private/internal/data-management'
       path: '/internal/data-management'
@@ -425,38 +424,38 @@ declare module '@tanstack/react-router' {
 
 interface PrivateRouteRouteChildren {
   PrivateInternalDataManagementRoute: typeof PrivateInternalDataManagementRoute
+  PrivateInternalHelpCenterRoute: typeof PrivateInternalHelpCenterRoute
   PrivateInternalHomeRoute: typeof PrivateInternalHomeRoute
   PrivateInternalNotificationRoute: typeof PrivateInternalNotificationRoute
   PrivateInternalOrderStatisticRoute: typeof PrivateInternalOrderStatisticRoute
-  PrivateInternalSupportTicketRoute: typeof PrivateInternalSupportTicketRoute
   PrivateInternalUserManagementRoute: typeof PrivateInternalUserManagementRoute
   PrivateInternalWelcomeRoute: typeof PrivateInternalWelcomeRoute
   PrivateMitraCartRoute: typeof PrivateMitraCartRoute
   PrivateMitraDataRequestRoute: typeof PrivateMitraDataRequestRoute
+  PrivateMitraHelpCenterRoute: typeof PrivateMitraHelpCenterRoute
   PrivateMitraHomeRoute: typeof PrivateMitraHomeRoute
   PrivateMitraMyDataRoute: typeof PrivateMitraMyDataRoute
   PrivateMitraNotificationRoute: typeof PrivateMitraNotificationRoute
   PrivateMitraPurchaseHistoryRoute: typeof PrivateMitraPurchaseHistoryRoute
-  PrivateMitraSupportTicketRoute: typeof PrivateMitraSupportTicketRoute
   PrivateMitraWelcomeRoute: typeof PrivateMitraWelcomeRoute
   PrivateMitraBillingBillingCodeRoute: typeof PrivateMitraBillingBillingCodeRoute
 }
 
 const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateInternalDataManagementRoute: PrivateInternalDataManagementRoute,
+  PrivateInternalHelpCenterRoute: PrivateInternalHelpCenterRoute,
   PrivateInternalHomeRoute: PrivateInternalHomeRoute,
   PrivateInternalNotificationRoute: PrivateInternalNotificationRoute,
   PrivateInternalOrderStatisticRoute: PrivateInternalOrderStatisticRoute,
-  PrivateInternalSupportTicketRoute: PrivateInternalSupportTicketRoute,
   PrivateInternalUserManagementRoute: PrivateInternalUserManagementRoute,
   PrivateInternalWelcomeRoute: PrivateInternalWelcomeRoute,
   PrivateMitraCartRoute: PrivateMitraCartRoute,
   PrivateMitraDataRequestRoute: PrivateMitraDataRequestRoute,
+  PrivateMitraHelpCenterRoute: PrivateMitraHelpCenterRoute,
   PrivateMitraHomeRoute: PrivateMitraHomeRoute,
   PrivateMitraMyDataRoute: PrivateMitraMyDataRoute,
   PrivateMitraNotificationRoute: PrivateMitraNotificationRoute,
   PrivateMitraPurchaseHistoryRoute: PrivateMitraPurchaseHistoryRoute,
-  PrivateMitraSupportTicketRoute: PrivateMitraSupportTicketRoute,
   PrivateMitraWelcomeRoute: PrivateMitraWelcomeRoute,
   PrivateMitraBillingBillingCodeRoute: PrivateMitraBillingBillingCodeRoute,
 }

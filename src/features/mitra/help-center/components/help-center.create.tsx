@@ -1,4 +1,4 @@
-// src/features/mitra/support-ticket/components/support-ticket.create.tsx
+// src/features/mitra/help-center/components/help-center.create.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -10,22 +10,22 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
 import {
-  createSupportTicketSchema,
-  type CreateSupportTicketFormValues,
+  createHelpCenterSchema,
+  type CreateHelpCenterFormValues,
   zodResolver,
-} from "@/features/mitra/support-ticket/schemas/support-ticket.schema";
-import type { CreateSupportTicketTriggerProps } from "@/features/mitra/support-ticket/types/support-ticket.type";
+} from "@/features/mitra/help-center/schemas/help-center.schema";
+import type { CreateHelpCenterTriggerProps } from "@/features/mitra/help-center/types/help-center.type";
 import { Controller, useForm } from "react-hook-form";
 
-export const CreateSupportTicketTrigger = (
-  props: CreateSupportTicketTriggerProps,
+export const CreateHelpCenterTrigger = (
+  props: CreateHelpCenterTriggerProps,
 ) => {
   // Props
   const { children, modalKey: customModalKey, onSubmitTicket } = props;
 
   // Stores & Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: customModalKey ?? "createSupportTicketModal",
+    modalKey: customModalKey ?? "createHelpCenterModal",
   });
 
   const {
@@ -34,8 +34,8 @@ export const CreateSupportTicketTrigger = (
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CreateSupportTicketFormValues>({
-    resolver: zodResolver(createSupportTicketSchema),
+  } = useForm<CreateHelpCenterFormValues>({
+    resolver: zodResolver(createHelpCenterSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -49,7 +49,7 @@ export const CreateSupportTicketTrigger = (
     close();
   };
 
-  const handleFormSubmit = async (values: CreateSupportTicketFormValues) => {
+  const handleFormSubmit = async (values: CreateHelpCenterFormValues) => {
     try {
       await onSubmitTicket?.(
         values.title.trim(),

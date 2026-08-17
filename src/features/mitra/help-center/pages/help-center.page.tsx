@@ -1,4 +1,4 @@
-// src/features/mitra/support-ticket/pages/support-ticket.page.tsx
+// src/features/mitra/help-center/pages/help-center.page.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -11,20 +11,20 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { CreateSupportTicketTrigger } from "@/features/mitra/support-ticket/components/support-ticket.create";
-import { SupportTicketItem } from "@/features/mitra/support-ticket/components/support-ticket.item";
-import { SupportTicketSummary } from "@/features/mitra/support-ticket/components/support-ticket.summary";
-import { DUMMY_TICKET_STATISTICS } from "@/features/mitra/support-ticket/constants/dummy-tickets";
-import { supportTicketService } from "@/features/mitra/support-ticket/services/support-ticket.service";
+import { CreateHelpCenterTrigger } from "@/features/mitra/help-center/components/help-center.create";
+import { HelpCenterItem } from "@/features/mitra/help-center/components/help-center.item";
+import { HelpCenterSummary } from "@/features/mitra/help-center/components/help-center.summary";
+import { DUMMY_HELP_CENTER_STATISTICS } from "@/features/mitra/help-center/constants/dummy-help-center";
+import { helpCenterService } from "@/features/mitra/help-center/services/help-center.service";
 import type {
-  TicketItem,
-  TicketStatistics,
-} from "@/features/mitra/support-ticket/types/support-ticket.type";
+  HelpCenterItem as HelpCenterItemType,
+  HelpCenterStatistics,
+} from "@/features/mitra/help-center/types/help-center.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { InboxIcon, PlusIcon } from "lucide-react";
 import { useEffect, useMemo, useState, useTransition } from "react";
 
-export const SupportTicketPage = () => {
+export const HelpCenterPage = () => {
   // Stores
   const { theme } = useThemeStore();
 
@@ -32,9 +32,9 @@ export const SupportTicketPage = () => {
   const [_isPending, startTransition] = useTransition();
 
   // States
-  const [tickets, setTickets] = useState<TicketItem[]>([]);
-  const [statistics, setStatistics] = useState<TicketStatistics>(
-    DUMMY_TICKET_STATISTICS,
+  const [tickets, setTickets] = useState<HelpCenterItemType[]>([]);
+  const [statistics, setStatistics] = useState<HelpCenterStatistics>(
+    DUMMY_HELP_CENTER_STATISTICS,
   );
   const [rawSearch, setRawSearch] = useState<string>("");
   const [search, setSearch] = useState<string>("");
@@ -46,8 +46,8 @@ export const SupportTicketPage = () => {
     const fetchData = async () => {
       try {
         const [ticketsRes, statsRes] = await Promise.all([
-          supportTicketService.getTickets(),
-          supportTicketService.getStatistics(),
+          helpCenterService.getTickets(),
+          helpCenterService.getStatistics(),
         ]);
 
         if (!isCancelled) {
@@ -92,7 +92,7 @@ export const SupportTicketPage = () => {
     description: string,
     files?: File[],
   ) => {
-    const createdTicket = await supportTicketService.createTicket({
+    const createdTicket = await helpCenterService.createTicket({
       title,
       description,
       files,
@@ -101,7 +101,7 @@ export const SupportTicketPage = () => {
     setTickets((prev) => [createdTicket, ...prev]);
 
     // Refresh statistics
-    const updatedStats = await supportTicketService.getStatistics();
+    const updatedStats = await helpCenterService.getStatistics();
     setStatistics(updatedStats);
   };
 
@@ -116,7 +116,7 @@ export const SupportTicketPage = () => {
 
           {/* Summary Section */}
           <VStack overflowY={"auto"}>
-            <SupportTicketSummary statistics={statistics} />
+            <HelpCenterSummary statistics={statistics} />
 
             <Separator borderColor={"bg.canvas"} />
 
@@ -134,14 +134,14 @@ export const SupportTicketPage = () => {
                 maxW={"280px"}
               />
 
-              <CreateSupportTicketTrigger
+              <CreateHelpCenterTrigger
                 onSubmitTicket={handleCreateTicketSubmit}
               >
                 <Button primary={true}>
                   <AppIcon icon={PlusIcon} />
                   {"Buat Laporan"}
                 </Button>
-              </CreateSupportTicketTrigger>
+              </CreateHelpCenterTrigger>
             </HStack>
 
             <Separator borderColor={"bg.canvas"} />
@@ -168,7 +168,7 @@ export const SupportTicketPage = () => {
                 {filteredTickets.map((ticket, index) => {
                   const isLastIndex = index === filteredTickets.length - 1;
                   return (
-                    <SupportTicketItem
+                    <HelpCenterItem
                       key={ticket.id}
                       ticket={ticket}
                       roundedBottom={isLastIndex ? theme.radii.container : 0}

@@ -1,17 +1,17 @@
-// src/features/mitra/support-ticket/schemas/support-ticket.schema.ts
+// src/features/mitra/help-center/schemas/help-center.schema.ts
 
 import type { FieldErrors } from "react-hook-form";
 import { z } from "zod";
 
-export const createSupportTicketSchema = () =>
+export const createHelpCenterSchema = () =>
   z.object({
     title: z.string().trim().min(1, "Judul laporan wajib diisi"),
     description: z.string().trim().min(1, "Deskripsi kendala wajib diisi"),
     files: z.array(z.custom<File>()).default([]),
   });
 
-export type CreateSupportTicketFormValues = z.infer<
-  ReturnType<typeof createSupportTicketSchema>
+export type CreateHelpCenterFormValues = z.infer<
+  ReturnType<typeof createHelpCenterSchema>
 >;
 
 export const zodResolver = <T extends z.ZodTypeAny>(getSchema: () => T) => {

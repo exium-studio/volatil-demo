@@ -1,4 +1,4 @@
-// src/features/mitra/support-ticket/components/support-ticket.item.tsx
+// src/features/mitra/help-center/components/help-center.item.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -9,7 +9,7 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import type { TicketItem } from "@/features/mitra/support-ticket/types/support-ticket.type";
+import type { HelpCenterItem as HelpCenterItemType } from "@/features/mitra/help-center/types/help-center.type";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 import { memo, useState } from "react";
 
-export type SupportTicketItemProps = StackProps & {
-  ticket: TicketItem;
+export type HelpCenterItemProps = StackProps & {
+  ticket: HelpCenterItemType;
 };
 
 const formatDate = (isoString: string) => {
@@ -40,7 +40,7 @@ const formatDate = (isoString: string) => {
   }
 };
 
-export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
+export const HelpCenterItem = memo((props: HelpCenterItemProps) => {
   // Props
   const { ticket, ...restProps } = props;
 
