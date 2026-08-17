@@ -1,13 +1,15 @@
 // src/features/notification/hooks/use-notifications.ts
 
+import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
 import { useToastHistory } from "@/design-system/components/toast/hooks/use-toast-history";
+import type { ToastRecord } from "@/design-system/components/toast/types/toast.types";
 import {
   DUMMY_SYSTEM_NOTIFICATIONS,
   mapToastHistoryToNotificationItem,
 } from "@/features/notification/services/notification.service";
 import type {
+  NotificationCategoryGroup,
   NotificationItem,
-  NotificationStackGroup,
 } from "@/features/notification/types/notification.type";
 import { useMemo, useState } from "react";
 
@@ -16,12 +18,11 @@ export const useNotifications = () => {
   const {
     all: toastHistoryEntries,
     deleteOne,
+    deleteMany,
     clear,
-    markRead,
-    markAllRead,
   } = useToastHistory();
 
-  // Local State for System Inbox Read/Delete Management
+  // Local State for System Inbox Management
   const [systemNotifications, setSystemNotifications] = useState<
     NotificationItem[]
   >(DUMMY_SYSTEM_NOTIFICATIONS);
@@ -32,82 +33,69 @@ export const useNotifications = () => {
     [toastHistoryEntries],
   );
 
-  // Derived Values: Group into Notification Stacks (Grouped by toastId)
-  const notificationStacks = useMemo<NotificationStackGroup[]>(() => {
+  // Derived Values: Group into Categories (e.g. Default, Permohonan Data)
+  const categoryGroups = useMemo<NotificationCategoryGroup[]>(() => {
     const combined = [...toastItems, ...systemNotifications];
     const groupedMap = new Map<string, NotificationItem[]>();
 
     for (const item of combined) {
-      const groupKey = item.toastId || item.id;
-      const list = groupedMap.get(groupKey) ?? [];
+      const category = item.category || DEFAULT_TOAST_GROUP;
+      const list = groupedMap.get(category) ?? [];
       list.push(item);
-      groupedMap.set(groupKey, list);
+      groupedMap.set(category, list);
     }
 
-    const stacks: NotificationStackGroup[] = [];
+    const groups: NotificationCategoryGroup[] = [];
 
-    groupedMap.forEach((entries, toastId) => {
-      // Sort entries inside stack by timestamp descending (latest update state on top)
-      const sortedEntries = [...entries].sort(
-        (a, b) => b.timestamp - a.timestamp,
-      );
-      const latest = sortedEntries[0];
-      stacks.push({
-        toastId,
-        latest,
-        entries: sortedEntries,
+    groupedMap.forEach((items, groupName) => {
+      // Sort items within group by timestamp descending
+      const sorted = [...items].sort((a, b) => b.timestamp - a.timestamp);
+
+      // Convert items to ToastRecord for standard ToastStack + ToastItem reuse
+      const records: ToastRecord[] = sorted.map((item) => ({
+        id: item.id,
+        group: groupName,
+        variant: item.variant,
+        title: item.title,
+        description: item.description,
+        status: "visible",
+        createdAt: item.timestamp,
+        updatedAt: item.timestamp,
+        duration: null,
+        remainingDuration: null,
+        paused: false,
+        isDeletedFromHistory: false,
+      }));
+
+      groups.push({
+        groupName,
+        records,
       });
     });
 
-    // Sort stacks by latest timestamp descending
-    return stacks.sort((a, b) => b.latest.timestamp - a.latest.timestamp);
+    // Sort groups so group with newest notification comes first
+    return groups.sort((a, b) => {
+      const aTime = a.records[0]?.createdAt ?? 0;
+      const bTime = b.records[0]?.createdAt ?? 0;
+      return bTime - aTime;
+    });
   }, [toastItems, systemNotifications]);
 
-  // Derived Values: Stats
-  const unreadCount = useMemo(() => {
-    return notificationStacks.filter((stack) => stack.entries.some((e) => !e.read)).length;
-  }, [notificationStacks]);
+  const totalNotifications = useMemo(() => {
+    return categoryGroups.reduce((acc, g) => acc + g.records.length, 0);
+  }, [categoryGroups]);
 
   // Handlers
-  const handleMarkStackRead = (toastId: string) => {
-    const stack = notificationStacks.find((s) => s.toastId === toastId);
-    if (!stack) return;
-
-    stack.entries.forEach((item) => {
-      if (item.sourceType === "toast") {
-        markRead(item.id);
-      }
-    });
-
-    setSystemNotifications((prev) =>
-      prev.map((item) =>
-        item.toastId === toastId || item.id === toastId
-          ? { ...item, read: true }
-          : item,
-      ),
-    );
+  const handleDeleteNotification = (id: string) => {
+    deleteOne(id);
+    setSystemNotifications((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleDeleteStack = (toastId: string) => {
-    const stack = notificationStacks.find((s) => s.toastId === toastId);
-    if (!stack) return;
-
-    stack.entries.forEach((item) => {
-      if (item.sourceType === "toast") {
-        deleteOne(item.id);
-      }
-    });
-
-    setSystemNotifications((prev) =>
-      prev.filter((item) => item.toastId !== toastId && item.id !== toastId),
-    );
-  };
-
-  const handleMarkAllRead = () => {
-    markAllRead();
-    setSystemNotifications((prev) =>
-      prev.map((item) => ({ ...item, read: true })),
-    );
+  const handleDeleteGroup = (groupRecords: ToastRecord[]) => {
+    const ids = groupRecords.map((r) => r.id);
+    deleteMany(ids);
+    const idSet = new Set(ids);
+    setSystemNotifications((prev) => prev.filter((item) => !idSet.has(item.id)));
   };
 
   const handleClearAllHistory = () => {
@@ -116,12 +104,11 @@ export const useNotifications = () => {
   };
 
   return {
-    notificationStacks,
-    totalStacks: notificationStacks.length,
-    unreadCount,
-    markStackRead: handleMarkStackRead,
-    deleteStack: handleDeleteStack,
-    markAllRead: handleMarkAllRead,
+    categoryGroups,
+    totalNotifications,
+    deleteNotification: handleDeleteNotification,
+    deleteGroup: handleDeleteGroup,
     clearAllHistory: handleClearAllHistory,
   };
 };
+

@@ -1,6 +1,9 @@
 // src/features/notification/types/notification.type.ts
 
-import type { ToastVariant } from "@/design-system/components/toast/types/toast.types";
+import type {
+  ToastRecord,
+  ToastVariant,
+} from "@/design-system/components/toast/types/toast.types";
 import type { ReactNode } from "react";
 
 export type NotificationSourceType = "toast" | "system";
@@ -20,8 +23,8 @@ export type NotificationItem = {
   icon?: ReactNode;
 };
 
-export type NotificationStackGroup = {
-  toastId: string;
-  latest: NotificationItem;
-  entries: NotificationItem[];
+export type NotificationCategoryGroup = {
+  groupName: string;
+  records: ToastRecord[];
 };
+

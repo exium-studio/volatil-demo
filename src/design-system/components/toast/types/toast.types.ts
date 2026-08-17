@@ -46,6 +46,7 @@ export type ToastRenderItemParams<TItem> = {
   item: TItem;
   index: number;
   stackExpanded?: boolean;
+  setStackExpanded?: (expanded: boolean) => void;
 };
 
 export type ToastStackProps<TItem> = {

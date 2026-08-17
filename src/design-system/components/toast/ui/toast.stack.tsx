@@ -103,7 +103,20 @@ export function ToastStack<TItem>({
             : groupLabel}
         </P>
 
-        <Box display={"flex"} gap={2}>
+        <Box display={"flex"} gap={1}>
+          <Button
+            size={"2xs"}
+            fontSize={"sm"}
+            variant={"subtle"}
+            rounded={"full"}
+            onClick={(event) => {
+              event.stopPropagation();
+              setExpanded(false);
+            }}
+          >
+            {"Tutup"}
+          </Button>
+
           {onCloseAll && (
             <Button
               size={"2xs"}
@@ -119,20 +132,6 @@ export function ToastStack<TItem>({
               {t["action.clear"]()}
             </Button>
           )}
-
-          {/* <Tooltip content={t["action.show_less"]()}>
-            <IconButton
-              size={"2xs"}
-              variant={"subtle"}
-              rounded={"full"}
-              onClick={(event) => {
-                event.stopPropagation();
-                setExpanded(false);
-              }}
-            >
-              <AppIcon icon={Minimize2Icon} size={"xs"} />
-            </IconButton>
-          </Tooltip> */}
         </Box>
       </HStack>
 
@@ -153,6 +152,7 @@ export function ToastStack<TItem>({
           });
 
           const hasVisibleItems = nonLeavingCount > 0;
+          const isCollapsed = !expanded;
 
           return items.map((item, index) => {
             const visualIndex = visualIndexes[index];
@@ -162,7 +162,11 @@ export function ToastStack<TItem>({
             const isRelative =
               (!hasVisibleItems && index === 0) || visualIndex === 0;
             const isFirstVisual = visualIndex === 0;
-            const isCollapsed = !expanded;
+
+            // When collapsed, skip rendering items beyond maxVisible + 1 to prevent DOM bloat & lag
+            if (isCollapsed && !isStackedVisible && !isRelative) {
+              return null;
+            }
 
             return (
               <Box
@@ -197,15 +201,17 @@ export function ToastStack<TItem>({
                     : "scale(1)"
                 }
                 transition={
-                  "transform 300ms ease, margin-top 300ms ease, opacity 300ms ease, grid-template-rows 300ms ease"
+                  "transform 250ms cubic-bezier(0.2, 0, 0, 1), margin-top 250ms cubic-bezier(0.2, 0, 0, 1), opacity 250ms ease"
                 }
                 pointerEvents={expanded || isFirstVisual ? "auto" : "none"}
+                willChange={isCollapsed ? "transform, opacity" : undefined}
               >
                 <Box w={"full"} minW={0} minH={"0px"} overflow={"visible"}>
                   {renderItem({
                     item,
                     index,
                     stackExpanded: expanded,
+                    setStackExpanded: setExpanded,
                   })}
                 </Box>
               </Box>

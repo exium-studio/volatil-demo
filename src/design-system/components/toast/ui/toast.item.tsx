@@ -17,6 +17,7 @@ import {
 } from "@/design-system/components/toast/core/toast.manager";
 import type {
   ToastItemProps,
+  ToastRecord,
   ToastVariantMap,
 } from "@/design-system/components/toast/types/toast.types";
 import { ToastIcon } from "@/design-system/components/toast/ui/toast.icon";
@@ -33,7 +34,7 @@ import {
   InfoIcon,
   XCircleIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 export const TOAST_VARIANT_MAP: ToastVariantMap = {
   success: {
@@ -68,9 +69,22 @@ export const TOAST_VARIANT_MAP: ToastVariantMap = {
   },
 };
 
-export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
+export const ToastItem = memo(function ToastItem(
+  props: ToastItemProps & {
+    stackExpanded?: boolean;
+    onRequestExpand?: () => void;
+    onClose?: (record: ToastRecord) => void;
+  },
+) {
   // Props
-  const { record, index, stackExpanded, ...restProps } = props;
+  const {
+    record,
+    index,
+    stackExpanded,
+    onRequestExpand,
+    onClose,
+    ...restProps
+  } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -207,8 +221,13 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
                   size={"2xs"}
                   rounded={"full"}
                   onClick={(event) => {
-                    if (stackExpanded) event.stopPropagation();
-                    setToastItemExpanded((prev) => !prev);
+                    event.stopPropagation();
+                    if (!stackExpanded) {
+                      onRequestExpand?.();
+                      setToastItemExpanded(true);
+                    } else {
+                      setToastItemExpanded((prev) => !prev);
+                    }
                   }}
                 >
                   <AppIcon
@@ -230,7 +249,11 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
                 boxSize={3.5}
                 onClick={(event: React.MouseEvent) => {
                   event.stopPropagation();
-                  toast.close(record.id);
+                  if (onClose) {
+                    onClose(record);
+                  } else {
+                    toast.close(record.id);
+                  }
                 }}
               />
             </HStack>
@@ -295,4 +318,4 @@ export function ToastItem(props: ToastItemProps & { stackExpanded?: boolean }) {
       {showProgressBar && <ToastProgressBar record={record} />}
     </VStack>
   );
-}
+});
