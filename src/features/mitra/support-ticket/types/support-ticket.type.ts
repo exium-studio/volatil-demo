@@ -62,3 +62,14 @@ export type TicketQueryParams = {
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
 };
+
+export type CreateSupportTicketModalProps = {
+  children: React.ReactNode;
+  modalKey?: string;
+  onSubmitTicket?: (
+    title: string,
+    description: string,
+    files?: File[],
+  ) => void;
+};
+

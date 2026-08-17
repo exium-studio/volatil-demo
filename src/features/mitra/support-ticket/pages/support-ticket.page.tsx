@@ -11,7 +11,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { CreateTicketModal } from "@/features/mitra/support-ticket/components/support-ticket.create-modal";
+import { CreateSupportTicketModal } from "@/features/mitra/support-ticket/components/support-ticket.create-modal";
 import { SupportTicketItem } from "@/features/mitra/support-ticket/components/support-ticket.item";
 import { SupportTicketSummary } from "@/features/mitra/support-ticket/components/support-ticket.summary";
 import {
@@ -19,6 +19,7 @@ import {
   DUMMY_TICKET_STATISTICS,
 } from "@/features/mitra/support-ticket/constants/dummy-tickets";
 import type {
+  TicketAttachment,
   TicketItem,
   TicketStatistics,
 } from "@/features/mitra/support-ticket/types/support-ticket.type";
@@ -37,7 +38,6 @@ export const SupportTicketPage = () => {
   const [tickets, setTickets] = useState<TicketItem[]>(DUMMY_TICKETS);
   const [rawSearch, setRawSearch] = useState<string>("");
   const [search, setSearch] = useState<string>("");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
 
   // Derived Values: Filtered Tickets
   const filteredTickets = useMemo(() => {
@@ -86,15 +86,27 @@ export const SupportTicketPage = () => {
     });
   };
 
-  const handleCreateTicketSubmit = (title: string, description: string) => {
+  const handleCreateTicketSubmit = (
+    title: string,
+    description: string,
+    files?: File[],
+  ) => {
     const nowIso = new Date().toISOString();
+    const attachments: TicketAttachment[] = (files ?? []).map((file, idx) => ({
+      originalName: file.name,
+      fileName: `${Date.now()}-${idx}-${file.name}`,
+      mimeType: file.type,
+      size: file.size,
+      url: URL.createObjectURL(file),
+    }));
+
     const newTicket: TicketItem = {
       id: Date.now(),
       userId: 1,
       title,
       description,
       status: "open",
-      attachments: [],
+      attachments,
       createdAt: nowIso,
       updatedAt: nowIso,
       user: {
@@ -137,10 +149,14 @@ export const SupportTicketPage = () => {
                 maxW={"280px"}
               />
 
-              <Button primary>
-                <AppIcon icon={PlusIcon} />
-                {"Buat Laporan"}
-              </Button>
+              <CreateSupportTicketModal
+                onSubmitTicket={handleCreateTicketSubmit}
+              >
+                <Button primary={true}>
+                  <AppIcon icon={PlusIcon} />
+                  {"Buat Laporan"}
+                </Button>
+              </CreateSupportTicketModal>
             </HStack>
 
             <Separator borderColor={"bg.canvas"} />
@@ -179,13 +195,6 @@ export const SupportTicketPage = () => {
           </VStack>
         </Container.Body>
       </Container.Root>
-
-      {/* Create Ticket Modal */}
-      <CreateTicketModal
-        open={isCreateModalOpen}
-        onOpenChange={setIsCreateModalOpen}
-        onSubmitTicket={handleCreateTicketSubmit}
-      />
     </PanelContentContainer>
   );
 };

@@ -217,6 +217,10 @@ const SidebarFooter = () => {
     (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
 
+  // Hooks
+  const pathname = useLocation().pathname;
+  const navigate = useNavigate();
+
   // Derived Values
   const userData = getUserSession();
   const role = userData?.role ?? "mitra";
@@ -227,34 +231,32 @@ const SidebarFooter = () => {
     role === "internal"
       ? INTERNAL_APP_OTHER_NAV_GROUPS_LIST
       : APP_OTHER_NAV_GROUPS_LIST;
+  const activeKey = getNavKeyFromPathname(navsMap, pathname);
 
   return (
     <VStack gap={1} p={3}>
-      <VStack gap={1}>
-        {otherNavGroups.map((navGroup, index) => {
-          return (
-            <VStack key={navGroup.titleKey ?? index}>
-              {navGroup.items.map((item) => {
-                const nav = navsMap[item.key];
+      <VNavs
+        showTopBorderOnScroll={false}
+        groups={otherNavGroups}
+        navs={navsMap}
+        activeKey={activeKey}
+        expanded={expanded}
+        onNavClick={(key) => {
+          navigate({
+            to: navsMap[key].pathname,
+            resetScroll: false,
+          });
+        }}
+      />
 
-                return (
-                  <NavLink key={item.key} to={nav.pathname}>
-                    <NavButton w={"full"}>
-                      <AppIcon icon={nav.icon} />
-                      {expanded && t[nav.titleKey]()}
-                    </NavButton>
-                  </NavLink>
-                );
-              })}
-            </VStack>
-          );
-        })}
-
-        <NavButton>
-          <AppIcon icon={UserIcon} />
-          {expanded && t["app.navs.profile"]()}
-        </NavButton>
-      </VStack>
+      <NavButton
+        aria-label={t["app.navs.profile"]()}
+        variant={"ghost"}
+        w={expanded ? "full" : undefined}
+      >
+        <AppIcon icon={UserIcon} />
+        {expanded && t["app.navs.profile"]()}
+      </NavButton>
     </VStack>
   );
 };

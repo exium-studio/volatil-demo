@@ -3,7 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import { Box } from "@/design-system/components/layout/ui/box";
+import { Box, Circle } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -66,17 +66,9 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
       {/* Author Header */}
       <HStack justify={"space-between"} align={"center"} w={"full"}>
         <HStack gap={2} align={"center"}>
-          <Box
-            p={2}
-            rounded={theme.radii.component}
-            bg={"bg.subtle"}
-            color={"fg.muted"}
-            display={"flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <AppIcon icon={UserIcon} size={"sm"} />
-          </Box>
+          <Circle p={2} bg={"bg.subtle"} color={"fg.muted"}>
+            <AppIcon icon={UserIcon} />
+          </Circle>
 
           <P fontWeight={"semibold"}>{ticket.user?.name ?? ""}</P>
 
@@ -109,7 +101,11 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
                 colorPalette={"gray"}
                 p={1.5}
               >
-                <AppIcon icon={isImage ? ImageIcon : FileIcon} size={"xs"} mr={1} />
+                <AppIcon
+                  icon={isImage ? ImageIcon : FileIcon}
+                  size={"xs"}
+                  mr={1}
+                />
                 {att.originalName || att.fileName}
               </Badge>
             );
@@ -141,7 +137,7 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
             return (
               <Box
                 key={resp.id}
-                p={PADDING.sm}
+                p={PADDING.md}
                 bg={"bg.subtle"}
                 rounded={theme.radii.component}
               >
@@ -157,10 +153,12 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
                         alignItems={"center"}
                         justifyContent={"center"}
                       >
-                        <AppIcon icon={UserIcon} size={"xs"} />
+                        <AppIcon icon={UserIcon} />
                       </Box>
 
-                      <P fontWeight={"bold"}>{resp.admin?.name ?? "Internal Admin"}</P>
+                      <P fontWeight={"bold"}>
+                        {resp.admin?.name ?? "Internal Admin"}
+                      </P>
 
                       <AppIcon
                         icon={CheckCircle2Icon}

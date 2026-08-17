@@ -27,9 +27,9 @@ import { useObjectUrl } from "@/shared/hooks/use-object-url";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatFileSize, isImageFile } from "@/shared/utils/data/file";
+import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import {
   FileUpload,
-  FormatByte,
   useFieldContext,
   useFileUploadContext,
 } from "@chakra-ui/react";
@@ -394,11 +394,13 @@ const FileInputInner = (props: FileinputInnerProps) => {
                     opacity={dragging ? 0 : 1}
                     transition={"200ms"}
                   >
-                    {accept?.map((a: string) => a).join(", ")}
-                    {` max ${maxFiles} files `}
+                    {accept && accept.length > 0 && (
+                      <>{accept.map((a: string) => a.replace(".", "").toUpperCase()).join(", ")} • </>
+                    )}
+                    {`Maks. ${maxFiles} file `}
                     {maxFileSize && (
                       <>
-                        (<FormatByte value={maxFileSize} />)
+                        ({formatByte(maxFileSize)})
                       </>
                     )}
                   </P>
