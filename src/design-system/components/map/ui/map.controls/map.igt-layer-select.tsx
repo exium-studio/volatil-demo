@@ -18,6 +18,7 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useQuery } from "@tanstack/react-query";
@@ -29,7 +30,7 @@ import {
   SlidersIcon,
   TreesIcon,
 } from "lucide-react";
-import { memo, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 export const MapIgtLayerSelect = memo(() => {
   // Stores
@@ -143,6 +144,21 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
 
   // States
   const [isOpacityOpen, setIsOpacityOpen] = useState<boolean>(false);
+  const [localOpacity, setLocalOpacity] = useState<number>(opacity);
+
+  // Sync local opacity state with prop opacity if updated externally
+  useEffect(() => {
+    setLocalOpacity(opacity);
+  }, [opacity]);
+
+  // Debounce opacity state updates to MapLibre store for performance
+  const debouncedOpacity = useDebouncedValue(localOpacity, 80);
+
+  useEffect(() => {
+    if (debouncedOpacity !== opacity) {
+      onOpacityChange(layer.id, debouncedOpacity);
+    }
+  }, [debouncedOpacity, opacity, onOpacityChange, layer.id]);
 
   // Derived Values
   const displayName =
@@ -223,26 +239,27 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
             p={3}
             bg={"bg.subtle"}
             rounded={theme.radii.component}
+            border={"1px solid"}
+            borderColor={"border.subtle"}
             onClick={(e) => e.stopPropagation()}
           >
             <HStack justify={"space-between"} w={"full"}>
-              <P fontSize={"sm"} color={"fg.subtle"}>
-                Opasitas Layer
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {"Opasitas Layer"}
               </P>
-
-              <P fontSize={"sm"} fontWeight={"bold"} color={"fg.muted"}>
-                {`${Math.round(opacity * 100)}%`}
+              <P fontSize={"xs"} fontWeight={"bold"} color={"fg.muted"}>
+                {`${Math.round(localOpacity * 100)}%`}
               </P>
             </HStack>
 
             <Slider
-              value={[Math.round(opacity * 100)]}
+              value={[Math.round(localOpacity * 100)]}
               min={0}
               max={100}
               step={1}
               showValue={false}
               onValueChange={(details) =>
-                onOpacityChange(layer.id, details.value[0] / 100)
+                setLocalOpacity(details.value[0] / 100)
               }
             />
           </VStack>

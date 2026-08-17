@@ -343,15 +343,20 @@ const Content = () => {
     staleTime: Infinity,
   });
 
-  const { enabledLayerIds, cqlFilter } = useIgtLayerStore();
+  const { enabledLayerIds, layerOpacities, cqlFilter } = useIgtLayerStore();
 
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
       (fetchedLayers?.layers ?? []).map((layer: IgtLayerItem) => {
         const isEnabled = enabledLayerIds[layer.id] !== false;
-        return getWmsRasterConfigFromIgtLayer(layer, wmsVisible && isEnabled);
+        const opacity = layerOpacities[layer.id] ?? 1;
+        return getWmsRasterConfigFromIgtLayer(
+          layer,
+          wmsVisible && isEnabled,
+          opacity,
+        );
       }),
-    [fetchedLayers, wmsVisible, enabledLayerIds],
+    [fetchedLayers, wmsVisible, enabledLayerIds, layerOpacities],
   );
 
   // Derived Values
