@@ -12,7 +12,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { getIgtLayers } from "@/design-system/components/map/services/map-layers.api";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";

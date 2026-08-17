@@ -1,35 +1,26 @@
 // src/features/mitra/cart/components/mitra.cart.data-list.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
+import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Separator } from "@/design-system/components/layout/ui/separator";
-import { getIgtLayers } from "@/design-system/components/map/services/map-layers.api";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { PADDING } from "@/design-system/constants/styles";
 import {
   useCartItemsQuery,
   useRemoveFromCart,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import { getLocalCartIds } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { MitraCartTableProps } from "@/features/mitra/cart/types/cart.type";
-import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
-import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
-import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { WfsDataList } from "@/features/mitra/shared/components/wfs-data-list";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { SlidersHorizontalIcon, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export const MitraCartDataList = (props: MitraCartTableProps) => {
@@ -55,15 +46,6 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
   });
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
-  const [searchRaw, setSearchRaw] = useState<string>("");
-  const [appliedFilters, setAppliedFilters] = useState<IgtFilterValues>({});
-
-  // Derived Values
-  const debouncedSearch = useDebouncedValue(searchRaw);
-  const cqlFilter = useMemo(
-    () => buildIgtCqlFilter(appliedFilters),
-    [appliedFilters],
-  );
 
   // Check if cart has local IDs
   const localCartIds = getLocalCartIds();
@@ -73,8 +55,6 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
   const { features, total, isLoading, isFetching } = useCartItemsQuery({
     page: pageState.page,
     pageSize: pageState.pageSize,
-    cqlFilter,
-    search: debouncedSearch,
     typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
     wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
   });
@@ -135,77 +115,37 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
             description={"Tambahkan data IGT dari halaman Permohonan Data"}
           />
         </Box>
+      ) : isLoading ? (
+        <Skeleton flex={1} w={"full"} h={"full"} rounded={0} p={PADDING.md} />
+      ) : features.length === 0 ? (
+        <Box
+          flex={1}
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={"full"}
+          py={PADDING.md}
+          bg={"bg.body"}
+        >
+          <NoResultState />
+        </Box>
       ) : (
-        <>
-          {/* Action Header — Search, Filter (rendered inside datalist) */}
-          <VStack
-            wrap={"wrap"}
-            justify={"space-between"}
-            gap={SPACING.md}
-            p={PADDING.md}
-            bg={"bg.body"}
-          >
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
-              <HStack gap={SPACING.sm}>
-                <SearchInput
-                  placeholder={"Cari..."}
-                  value={searchRaw}
-                  onValueChange={(val) => {
-                    setSearchRaw(val);
-                    setPageState((prev) => ({ ...prev, page: 1 }));
-                  }}
-                />
-
-                <IgtFilterTrigger
-                  modalKey="mitra-cart-filter-modal"
-                  onApply={(filters: IgtFilterValues) => {
-                    setAppliedFilters(filters);
-                    setPageState((prev) => ({ ...prev, page: 1 }));
-                  }}
-                >
-                  <IconButton variant={"outline"}>
-                    <AppIcon icon={SlidersHorizontalIcon} />
-                  </IconButton>
-                </IgtFilterTrigger>
-              </HStack>
-            </HStack>
-          </VStack>
-
-          <Separator borderColor={"bg.canvas"} />
-
-          {isLoading ? (
-            <Skeleton p={PADDING.md} />
-          ) : features.length === 0 ? (
-            <Box
-              flex={1}
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              w={"full"}
-              py={PADDING.md}
-              bg={"bg.body"}
-            >
-              <NoResultState />
-            </Box>
-          ) : (
-            <WfsDataList
-              wfsFeatures={features}
-              page={pageState.page}
-              pageSize={pageState.pageSize}
-              totalFeatures={total}
-              setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-              setPageSize={(pageSize) =>
-                setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-              }
-              selectedItems={selectedItems}
-              onSelectedItemChange={({ selectedItems: next }) => {
-                setSelectedItems(next);
-              }}
-              batchActions={batchActions}
-              isFetching={isFetching}
-            />
-          )}
-        </>
+        <WfsDataList
+          wfsFeatures={features}
+          page={pageState.page}
+          pageSize={pageState.pageSize}
+          totalFeatures={total}
+          setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
+          setPageSize={(pageSize) =>
+            setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
+          }
+          selectedItems={selectedItems}
+          onSelectedItemChange={({ selectedItems: next }) => {
+            setSelectedItems(next);
+          }}
+          batchActions={batchActions}
+          isFetching={isFetching}
+        />
       )}
     </VStack>
   );

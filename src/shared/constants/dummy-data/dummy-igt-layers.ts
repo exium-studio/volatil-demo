@@ -2,7 +2,7 @@
 
 import type { IgtLayersResponse } from "@/design-system/components/map/types/map.type";
 
-export const DUMMY_MAP_LAYERS: IgtLayersResponse = {
+export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
   layers: [
     {
       id: "testing_workspace:TEST_RTRW_BADUNG",

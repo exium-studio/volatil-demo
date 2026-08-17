@@ -10,15 +10,14 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
-import {
-  DUMMY_MAP_LAYERS,
-  getIgtLayers,
-} from "@/design-system/components/map/services/map-layers.api";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { DUMMY_IGT_LAYERS } from "@/shared/constants/dummy-data/dummy-igt-layers";
 import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-view-padding";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import {
   getWmsRasterConfigFromIgtLayer,
+  type IgtLayerItem,
   type MapLayerConfig,
 } from "@/design-system/components/map/types/map.type";
 import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
@@ -338,7 +337,7 @@ const Content = () => {
   const { data: fetchedLayers } = useQuery({
     queryKey: ["map-layers"],
     queryFn: () => getIgtLayers(),
-    initialData: DUMMY_MAP_LAYERS,
+    initialData: DUMMY_IGT_LAYERS,
     staleTime: Infinity,
   });
 
@@ -346,7 +345,7 @@ const Content = () => {
 
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
-      (fetchedLayers?.layers ?? []).map((layer) => {
+      (fetchedLayers?.layers ?? []).map((layer: IgtLayerItem) => {
         const isEnabled = enabledLayerIds[layer.id] !== false;
         return getWmsRasterConfigFromIgtLayer(layer, wmsVisible && isEnabled);
       }),
