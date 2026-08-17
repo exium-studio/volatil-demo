@@ -98,10 +98,10 @@ export const SupportTicketPage = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <VStack align={"stretch"}>
+          <VStack align={"stretch"} overflowY={"auto"}>
             <SupportTicketSummary metrics={metrics} />
 
-            <Separator borderColor={"bg.canvas"} my={1} />
+            <Separator borderColor={"bg.canvas"} />
 
             {/* Action Bar (Search & Create Ticket Button) */}
             <HStack
@@ -109,6 +109,7 @@ export const SupportTicketPage = () => {
               align={"center"}
               gap={SPACING.sm}
               w={"full"}
+              p={PADDING.md}
             >
               <SearchInput
                 placeholder={"Cari sesuatu... ⌘K"}
@@ -126,6 +127,8 @@ export const SupportTicketPage = () => {
               </Button>
             </HStack>
 
+            <Separator borderColor={"bg.canvas"} />
+
             {/* User Ticket List */}
             {isEmptyArray(userTickets) && (
               <NoDataState
@@ -140,10 +143,18 @@ export const SupportTicketPage = () => {
             )}
 
             {!isEmptyArray(userTickets) && (
-              <VStack gap={PADDING.sm} bg={"bg.canvas"}>
-                {userTickets.map((ticket) => (
-                  <SupportTicketItem key={ticket.id} ticket={ticket} />
-                ))}
+              <VStack gap={SPACING.xs} overflowY={"auto"} bg={"bg.canvas"}>
+                {userTickets.map((ticket, index) => {
+                  const isLastIndex = index === userTickets.length - 1;
+
+                  return (
+                    <SupportTicketItem
+                      key={ticket.id}
+                      ticket={ticket}
+                      roundedBottom={isLastIndex ? theme.radii.container : 0}
+                    />
+                  );
+                })}
               </VStack>
             )}
           </VStack>

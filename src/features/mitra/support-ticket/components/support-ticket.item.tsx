@@ -2,6 +2,7 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -21,13 +22,13 @@ import {
 } from "lucide-react";
 import { memo, useState } from "react";
 
-export type SupportTicketItemProps = {
+export type SupportTicketItemProps = StackProps & {
   ticket: TicketItem;
 };
 
 export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
   // Props
-  const { ticket } = props;
+  const { ticket, ...restProps } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -43,10 +44,10 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
       w={"full"}
       p={PADDING.md}
       bg={"bg.body"}
-      rounded={theme.radii.container}
       transition={"all 0.2s ease"}
       align={"stretch"}
       gap={SPACING.sm}
+      {...restProps}
     >
       {/* Author Header */}
       <HStack justify={"space-between"} align={"center"} w={"full"}>
@@ -64,12 +65,6 @@ export const SupportTicketItem = memo((props: SupportTicketItemProps) => {
           </Box>
 
           <P fontWeight={"semibold"}>{ticket.authorName}</P>
-
-          {ticket.isCurrentUser && (
-            <Badge colorPalette={theme.colorPalette} variant={"subtle"} size={"xs"}>
-              {"Anda"}
-            </Badge>
-          )}
 
           {ticket.status === "pending" && (
             <AppIcon icon={ClockIcon} size={"xs"} color={"amber.500"} />
