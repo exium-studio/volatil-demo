@@ -4,7 +4,6 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
