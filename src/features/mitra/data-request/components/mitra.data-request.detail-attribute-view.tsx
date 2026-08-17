@@ -95,7 +95,7 @@ export const MitraDataRequestDetailAttributeView = memo(
         ) : (
           <VStack
             flex={1}
-            gap={1}
+            gap={PADDING.sm}
             overflow={"hidden"}
             h={"full"}
             w={"full"}

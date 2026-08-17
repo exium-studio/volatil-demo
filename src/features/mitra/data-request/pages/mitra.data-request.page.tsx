@@ -16,21 +16,21 @@ import { FolderArchiveIcon, ListIcon } from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
 
 const MitraDataRequestCatalogTabsContent = lazy(() =>
-  import(
-    "@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content"
-  ).then((m) => ({ default: m.MitraDataRequestCatalogTabsContent })),
+  import("@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content").then(
+    (m) => ({ default: m.MitraDataRequestCatalogTabsContent }),
+  ),
 );
 
 const MitraDataRequestUploadAoiTabsContent = lazy(() =>
-  import(
-    "@/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content"
-  ).then((m) => ({ default: m.MitraDataRequestUploadAoiTabsContent })),
+  import("@/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content").then(
+    (m) => ({ default: m.MitraDataRequestUploadAoiTabsContent }),
+  ),
 );
 
 const MitraDataRequestDrawAoiTabsContent = lazy(() =>
-  import(
-    "@/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content"
-  ).then((m) => ({ default: m.MitraDataRequestDrawAoiTabsContent })),
+  import("@/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content").then(
+    (m) => ({ default: m.MitraDataRequestDrawAoiTabsContent }),
+  ),
 );
 
 const REQUEST_METHOD_MAP = {
@@ -129,7 +129,9 @@ export const MitraDataRequestPage = () => {
               })}
             </Tabs.List>
 
-            <Suspense fallback={<Skeleton h={"full"} w={"full"} flex={1} rounded={0} />}>
+            <Suspense
+              fallback={<Skeleton h={"full"} w={"full"} flex={1} rounded={0} />}
+            >
               {REQUEST_METHOD_OPTIONS.map((method) => {
                 const TabsContent = method.content;
                 const isVisited = visitedTabs.has(method.value);
