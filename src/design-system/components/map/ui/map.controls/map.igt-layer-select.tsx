@@ -61,7 +61,7 @@ export const MapIgtLayerSelect = memo(() => {
               <IconButton size={"xs"}>
                 <AppIcon icon={LayersIcon} boxSize={5} />
               </IconButton>
-              <CountBadge count={enabledCount} isFloating />
+              <CountBadge count={enabledCount} floating />
             </Box>
           </Tooltip>
         </MapOverlayContainer>

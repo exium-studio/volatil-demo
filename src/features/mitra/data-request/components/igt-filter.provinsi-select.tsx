@@ -37,10 +37,7 @@ export const IgtFilterProvinsiSelect = (props: IgtFilterSelectProps) => {
   }));
 
   // Handlers
-  const handleValueChange = (
-    val: string,
-    option?: IgtFilterOptionDetail,
-  ) => {
+  const handleValueChange = (val: string, option?: IgtFilterOptionDetail) => {
     if (!isControlled) {
       setInternalValue(val);
     }

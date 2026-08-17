@@ -10,9 +10,9 @@ export const CountBadge = (props: CountBadgeProps) => {
   const {
     count,
     max = 99,
-    isFloating = false,
+    floating = false,
     floatProps,
-    colorPalette = "blue",
+    colorPalette,
     size = "xs",
     ...restProps
   } = props;
@@ -40,7 +40,7 @@ export const CountBadge = (props: CountBadgeProps) => {
     </Badge>
   );
 
-  if (isFloating) {
+  if (floating) {
     return (
       <Float placement={"top-end"} {...floatProps}>
         {badgeContent}

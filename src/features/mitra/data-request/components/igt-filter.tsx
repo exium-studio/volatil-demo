@@ -57,8 +57,9 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
   });
 
   // Local draft state inside modal (editing before click "Terapkan Filter")
-  const [localDraftFilters, setLocalDraftFilters] =
-    useState<IgtFilterValues>(currentAppliedFilters);
+  const [localDraftFilters, setLocalDraftFilters] = useState<IgtFilterValues>(
+    currentAppliedFilters,
+  );
 
   // Synchronize local draft state with applied filters ONLY after modal animation finishes
   useEffect(() => {
@@ -133,8 +134,8 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
         <Modal.Trigger>{children}</Modal.Trigger>
         {activeFilterCount > 0 && (
           <CountBadge
+            floating
             count={activeFilterCount}
-            isFloating={true}
             colorPalette={"blue"}
           />
         )}
@@ -142,10 +143,8 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
 
       <Modal.Content>
         <Modal.Header>
-          <HStack gap={2} align={"center"}>
-            <Modal.Title fontWeight={"semibold"}>
-              {"Filter Data IGT"}
-            </Modal.Title>
+          <HStack gap={SPACING.md} align={"center"}>
+            <Modal.Title>Filter Data IGT</Modal.Title>
 
             {activeFilterCount > 0 && (
               <CountBadge count={activeFilterCount} colorPalette={"blue"} />
@@ -159,10 +158,11 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
           <Alert.Root status={"info"} colorPalette={"blue"} w={"full"}>
             <Alert.Indicator />
             <Alert.Content>
-              <Alert.Title fontWeight={"semibold"}>
+              <Alert.Title fontWeight={"bold"}>
                 {"Informasi Filter IGT"}
               </Alert.Title>
-              <Alert.Description fontSize={"xs"}>
+
+              <Alert.Description>
                 {
                   "Filter yang diterapkan akan berlaku secara menyeluruh pada katalog layer IGT, tabel atribut, dan tampilan peta."
                 }

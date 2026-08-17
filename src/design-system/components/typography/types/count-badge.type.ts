@@ -9,7 +9,7 @@ export type CountBadgeProps = BadgeProps & {
   /** Maximum displayable count before showing "+" suffix. Defaults to 99. */
   max?: number;
   /** Whether to wrap the badge inside the <Float> component for floating positioning. Defaults to false. */
-  isFloating?: boolean;
-  /** Props forwarded to the <Float> wrapper component when isFloating is true. */
+  floating?: boolean;
+  /** Props forwarded to the <Float> wrapper component when floating is true. */
   floatProps?: FloatProps;
 };
