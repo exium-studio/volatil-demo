@@ -13,7 +13,7 @@ import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useTransition } from "react";
 
 const MitraDataRequestCatalogTabsContent = lazy(() =>
   import("@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content").then(
@@ -66,6 +66,7 @@ const REQUEST_METHOD_OPTIONS = (
 
 export const MitraDataRequestPage = () => {
   // Hooks
+  const [_isPending, startTransition] = useTransition();
   const { queryValue: tab, setQueryValue: setTab } = useSearchParam("tab");
   const { setQueryValue: setLayerId } = useSearchParam("layerId");
 
@@ -98,8 +99,10 @@ export const MitraDataRequestPage = () => {
             flexDir={"column"}
             overflowY={"auto"}
             onValueChange={(details) => {
-              setTab(details.value);
-              setLayerId(undefined);
+              startTransition(() => {
+                setTab(details.value);
+                setLayerId(undefined);
+              });
             }}
           >
             <Tabs.List borderColor={"bg.canvas"}>

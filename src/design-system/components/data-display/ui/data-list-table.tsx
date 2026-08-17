@@ -330,7 +330,6 @@ interface DataListTableRowProps {
   withNumbering: boolean;
   itemActions?: DataListItemActionsGenerator[];
   toggleItemSelection: (item: FormattedListItem) => void;
-  bodyCellStyles: { bg: string };
   measureRef?: (element: Element | null) => void;
   dataIndex?: number;
   styleProps?: StackProps;
@@ -345,13 +344,17 @@ const DataListTableRow = memo(
     withNumbering,
     itemActions = [],
     toggleItemSelection,
-    bodyCellStyles,
     measureRef,
     dataIndex,
     styleProps,
   }: DataListTableRowProps) => {
-    // Contexts
+    // Contexts & Stores
     const { page, pageSize, renderTdCell } = useDataListTableContext();
+    const { theme } = useThemeStore();
+
+    const cellBg = isItemSelected
+      ? tintAlpha(`${theme.colorPalette}.subtle`, 40)
+      : "bg.body";
 
     return (
       <Box
@@ -378,7 +381,7 @@ const DataListTableRow = memo(
               toggleItemSelection(item);
             }}
           >
-            <Center w={"full"} h={"full"} px={"10px"} {...bodyCellStyles}>
+            <Center w={"full"} h={"full"} px={"10px"} bg={cellBg}>
               <Checkbox
                 size={"sm"}
                 checked={isItemSelected}
@@ -389,7 +392,7 @@ const DataListTableRow = memo(
         )}
 
         {withNumbering && page && pageSize && (
-          <DataListTableCell {...bodyCellStyles}>
+          <DataListTableCell bg={cellBg}>
             <P>{index + 1 + (page - 1) * pageSize}</P>
           </DataListTableCell>
         )}
@@ -405,7 +408,7 @@ const DataListTableRow = memo(
             py={2}
             opacity={item.dim || col.dim ? 0.5 : 1}
             whiteSpace={"nowrap"}
-            {...bodyCellStyles}
+            bg={cellBg}
             {...col?.bodyCellProps}
           >
             {renderTdCell
@@ -420,7 +423,7 @@ const DataListTableRow = memo(
               w={"full"}
               h={"full"}
               px={"10px"}
-              {...bodyCellStyles}
+              bg={cellBg}
               onClick={(e) => e.stopPropagation()}
             >
               <DataListItemActionsTrigger itemActions={itemActions} item={item}>
@@ -437,9 +440,6 @@ const DataListTableRow = memo(
 );
 
 const DataListTableBody = () => {
-  // Stores
-  const { theme } = useThemeStore();
-
   // Hooks
   const {
     canBatchSelect,
@@ -474,11 +474,6 @@ const DataListTableBody = () => {
       <>
         {sortedItems.map((item, index) => {
           const isItemSelected = selectedItemIds.includes(item.id);
-          const bodyCellStyles = {
-            bg: isItemSelected
-              ? tintAlpha(`${theme.colorPalette}.subtle`, 40)
-              : "bg.body",
-          };
 
           return (
             <DataListTableRow
@@ -490,7 +485,6 @@ const DataListTableBody = () => {
               withNumbering={Boolean(withNumbering)}
               itemActions={itemActions}
               toggleItemSelection={toggleItemSelection}
-              bodyCellStyles={bodyCellStyles}
             />
           );
         })}
@@ -515,11 +509,6 @@ const DataListTableBody = () => {
         const item = sortedItems[virtualRow.index];
         const index = virtualRow.index;
         const isItemSelected = selectedItemIds.includes(item.id);
-        const bodyCellStyles = {
-          bg: isItemSelected
-            ? tintAlpha(`${theme.colorPalette}.subtle`, 40)
-            : "bg.body",
-        };
 
         return (
           <DataListTableRow
@@ -531,7 +520,6 @@ const DataListTableBody = () => {
             withNumbering={Boolean(withNumbering)}
             itemActions={itemActions}
             toggleItemSelection={toggleItemSelection}
-            bodyCellStyles={bodyCellStyles}
             measureRef={
               fixedItemHeight ? undefined : virtualizer.measureElement
             }

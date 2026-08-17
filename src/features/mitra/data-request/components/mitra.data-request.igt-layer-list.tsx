@@ -155,15 +155,7 @@ export const MitraDataRequestIgtLayerList = memo(
           roundedBottom={theme.radii.container}
         >
           {isLoadingLayers ? (
-            <>
-              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
-              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
-              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
-              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
-              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
-              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
-              <Skeleton flexShrink={0} h={"103px"} rounded={0} />
-            </>
+            <Skeleton flex={1} p={PADDING.md} rounded={0} />
           ) : (
             <>
               {filteredLayers.map((layer, index) => {
