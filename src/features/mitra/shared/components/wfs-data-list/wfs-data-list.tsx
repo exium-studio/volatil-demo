@@ -14,8 +14,8 @@ import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import type { WfsDataListProps } from "@/features/mitra/shared/types/wfs-data-list.type";
+import { IconCurrentLocation } from "@tabler/icons-react";
 import type GeoJSON from "geojson";
-import { EyeIcon } from "lucide-react";
 import { memo, useMemo } from "react";
 
 /**
@@ -102,7 +102,7 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
                 highlightFeatureOnMap(map, feat);
               }}
             >
-              <AppIcon icon={EyeIcon} />
+              <AppIcon icon={IconCurrentLocation} />
               {"Lihat di Peta"}
             </Menu.Item>
           );
@@ -130,7 +130,13 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
       position={"relative"}
       {...restProps}
     >
-      <Box w={"full"} h={"full"} position={"relative"} overflow={"hidden"} flex={1}>
+      <Box
+        w={"full"}
+        h={"full"}
+        position={"relative"}
+        overflow={"hidden"}
+        flex={1}
+      >
         <DataListTable.Root
           headers={dataList.headers}
           items={dataList.items}

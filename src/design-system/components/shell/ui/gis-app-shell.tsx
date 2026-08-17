@@ -1,7 +1,6 @@
 // src/design-system/components/shell/ui/gis-app-shell.tsx
 
 import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
-
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -10,8 +9,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
-import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import { DUMMY_IGT_LAYERS } from "@/shared/constants/dummy-data/dummy-igt-layers";
 import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-view-padding";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
@@ -21,7 +18,6 @@ import {
   type MapLayerConfig,
 } from "@/design-system/components/map/types/map.type";
 import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
-import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
@@ -35,6 +31,8 @@ import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport"
 import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import {
   APP_NAV_GROUPS_LIST,
   APP_OTHER_NAV_GROUPS_LIST,
@@ -45,6 +43,7 @@ import {
   APP_NAVS_MAP,
   INTERNAL_APP_NAVS_MAP,
 } from "@/shared/constants/app.navs";
+import { DUMMY_IGT_LAYERS } from "@/shared/constants/dummy-data/dummy-igt-layers";
 import { t } from "@/shared/libs/i18n";
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
 import type { NavGroup, NavItem } from "@/shared/types/nav.type";

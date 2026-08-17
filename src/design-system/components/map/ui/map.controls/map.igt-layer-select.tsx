@@ -239,15 +239,14 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
             p={3}
             bg={"bg.subtle"}
             rounded={theme.radii.component}
-            border={"1px solid"}
-            borderColor={"border.subtle"}
             onClick={(e) => e.stopPropagation()}
           >
             <HStack justify={"space-between"} w={"full"}>
-              <P fontSize={"xs"} color={"fg.subtle"}>
+              <P fontSize={"sm"} color={"fg.muted"}>
                 {"Opasitas Layer"}
               </P>
-              <P fontSize={"xs"} fontWeight={"bold"} color={"fg.muted"}>
+
+              <P fontSize={"sm"} fontWeight={"bold"} color={"fg.muted"}>
                 {`${Math.round(localOpacity * 100)}%`}
               </P>
             </HStack>

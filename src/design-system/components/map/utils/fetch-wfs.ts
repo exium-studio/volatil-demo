@@ -45,9 +45,13 @@ export const normalizeWfsEndpointUrl = (urlStr: string): string => {
   if (!urlStr) return urlStr;
   let normalized = urlStr;
   if (normalized.endsWith("/wms")) {
-    normalized = normalized.replace(/\/wms$/, "/wfs");
+    normalized = normalized.replace(/\/wms$/, "/ows");
   } else if (normalized.includes("/wms?")) {
-    normalized = normalized.replace("/wms?", "/wfs?");
+    normalized = normalized.replace("/wms?", "/ows?");
+  } else if (normalized.endsWith("/wfs")) {
+    normalized = normalized.replace(/\/wfs$/, "/ows");
+  } else if (normalized.includes("/wfs?")) {
+    normalized = normalized.replace("/wfs?", "/ows?");
   }
   return normalized;
 };
