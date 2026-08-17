@@ -170,9 +170,7 @@ export const ToastItem = memo(function ToastItem(
                 mr={record.description ? 0 : 1}
                 fontWeight={"medium"}
                 color={TOAST_VARIANT_MAP[record.variant].color}
-                whiteSpace={stackExpanded ? "normal" : "nowrap"}
-                overflow={stackExpanded ? undefined : "hidden"}
-                textOverflow={stackExpanded ? undefined : "ellipsis"}
+                lineClamp={hasExpandableContent ? 1 : undefined}
               >
                 {record.title}
               </P>
