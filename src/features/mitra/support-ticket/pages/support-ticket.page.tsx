@@ -137,10 +137,7 @@ export const SupportTicketPage = () => {
                 maxW={"280px"}
               />
 
-              <Button
-                colorPalette={theme.colorPalette}
-                onClick={() => setIsCreateModalOpen(true)}
-              >
+              <Button primary>
                 <AppIcon icon={PlusIcon} />
                 {"Buat Laporan"}
               </Button>
