@@ -13,7 +13,6 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       wfs: {
         wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
         wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
-        type: "wfs-fill",
       },
       wms: {
         layers: "testing_workspace:TEST_RTRW_BADUNG",
@@ -29,7 +28,6 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       wfs: {
         wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
         wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
-        type: "wfs-fill",
       },
       wms: {
         layers: "testing_workspace:TEST_ZNT_BADUNG",
@@ -45,7 +43,6 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       wfs: {
         wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
         wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
-        type: "wfs-line",
       },
       wms: {
         layers: "testing_workspace:TEST_BIDANG_TANAH",
