@@ -35,6 +35,20 @@ import { useEffect, useRef, useState } from "react";
  *
  * All feature-level hooks (useMapLayers, useMapDraw) live in MapShell, not here.
  */
+const STARRY_NIGHT_BG =
+  "radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)), " +
+  "radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.8) 75%, rgba(0,0,0,0)), " +
+  "radial-gradient(1px 1px at 50px 160px, #ffffff, rgba(0,0,0,0)), " +
+  "radial-gradient(1.5px 1.5px at 90px 40px, #ffffff, rgba(0,0,0,0)), " +
+  "radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.7) 50%, rgba(0,0,0,0)), " +
+  "radial-gradient(1.5px 1.5px at 160px 120px, #ffffff, rgba(0,0,0,0)), " +
+  "radial-gradient(1px 1px at 210px 190px, rgba(255,255,255,0.9), rgba(0,0,0,0)), " +
+  "radial-gradient(1.5px 1.5px at 260px 40px, #ffffff, rgba(0,0,0,0)), " +
+  "radial-gradient(1px 1px at 310px 140px, rgba(255,255,255,0.8), rgba(0,0,0,0)), " +
+  "radial-gradient(1px 1px at 370px 220px, #ffffff, rgba(0,0,0,0)), " +
+  "radial-gradient(1.5px 1.5px at 420px 90px, rgba(255,255,255,0.9), rgba(0,0,0,0)), " +
+  "radial-gradient(1px 1px at 470px 170px, #ffffff, rgba(0,0,0,0))";
+
 export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -106,6 +120,15 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
      */
     const applyGlobe = () => {
       instance.setProjection({ type: "globe" });
+      instance.setSky({
+        "sky-color": "#020617",
+        "horizon-color": "#0f172a",
+        "fog-color": "#1e293b",
+        "fog-ground-blend": 0.5,
+        "horizon-fog-blend": 0.8,
+        "sky-horizon-blend": 0.8,
+        "atmosphere-blend": 0.8,
+      });
 
       const activeKey = activeStyleKeyRef.current;
       const currentMode = colorModeRef.current;
@@ -267,7 +290,15 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
   }, [map, currentStyle, activeStyleKey, colorMode]);
 
   return (
-    <Box position={"relative"} width={"100%"} height={"100%"}>
+    <Box
+      position={"relative"}
+      width={"100%"}
+      height={"100%"}
+      bg={"#020617"}
+      backgroundImage={STARRY_NIGHT_BG}
+      backgroundRepeat={"repeat"}
+      backgroundSize={"500px 300px"}
+    >
       <Box
         ref={containerRef}
         width={"100%"}
