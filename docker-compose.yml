@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  volatil-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: volatil-frontend
+    ports:
+      - "3002:3002"
+    restart: always
