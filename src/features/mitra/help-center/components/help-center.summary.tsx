@@ -25,7 +25,7 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
       count: statistics.activeTickets,
       unit: "Laporan",
       icon: ClockIcon,
-      colorPalette: "blue",
+      colorPalette: "orange",
     },
     {
       id: "resolved",
@@ -41,15 +41,15 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
       count: statistics.totalTickets,
       unit: "Laporan",
       icon: FileTextIcon,
-      colorPalette: "gray",
+      colorPalette: "blue",
     },
   ];
 
   return (
-    <HStack wrap={"wrap"} gap={SPACING.xs} w={"full"} p={PADDING.md}>
+    <HStack wrap={"wrap"} gap={SPACING.md} w={"full"} p={PADDING.md}>
       {summaryItems.map((item) => {
         return (
-          <Box key={item.id} flex={"1 1 200px"} bg={"bg.body"}>
+          <Box key={item.id} flex={"1 1 240px"} bg={"bg.body"}>
             <HStack align={"center"} gap={SPACING.sm} w={"full"}>
               <HStack gap={2} align={"center"}>
                 <Box
