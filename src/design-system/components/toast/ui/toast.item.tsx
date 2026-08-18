@@ -22,7 +22,7 @@ import type {
 } from "@/design-system/components/toast/types/toast.types";
 import { ToastIcon } from "@/design-system/components/toast/ui/toast.icon";
 import { ToastProgressBar } from "@/design-system/components/toast/ui/toast.progress-bar";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -164,16 +164,16 @@ export const ToastItem = memo(function ToastItem(
           <HStack align={"start"} gap={2} w={"full"} minW={0}>
             {/* Title */}
             {record.title && (
-              <P
+              <ClampedP
                 flex={"0 1 auto"}
                 minW={0}
                 mr={record.description ? 0 : 1}
                 fontWeight={"medium"}
                 color={TOAST_VARIANT_MAP[record.variant].color}
-                lineClamp={hasExpandableContent ? 1 : undefined}
+                lineClamp={stackExpanded || toastItemExpanded ? undefined : 1}
               >
                 {record.title}
-              </P>
+              </ClampedP>
             )}
 
             {/* Description */}
