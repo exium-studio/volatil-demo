@@ -50,7 +50,7 @@ export const WfsFeaturesDataList = memo((props: WfsFeaturesDataListProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsReady(true);
-    }, 100);
+    }, 50);
 
     return () => {
       clearTimeout(timer);
