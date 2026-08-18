@@ -177,13 +177,14 @@ export const HelpCenterDetailPage = () => {
 
       {/* Original Issue Content Container */}
       <Container.Root withContext={true}>
-        <Container.Body p={0}>
+        <Container.Body>
           <VStack>
             <HStack justify={"space-between"} align={"center"} p={PADDING.md}>
               <HStack gap={SPACING.sm} align={"center"}>
                 <Circle p={2} bg={"bg.muted"} color={"fg.muted"}>
                   <AppIcon icon={UserIcon} />
                 </Circle>
+
                 <VStack align={"start"}>
                   <P fontWeight={"semibold"}>{reporterName}</P>
                   <P fontSize={"xs"} color={"fg.subtle"}>
