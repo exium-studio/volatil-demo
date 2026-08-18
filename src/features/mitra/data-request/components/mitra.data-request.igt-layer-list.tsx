@@ -262,7 +262,12 @@ export const MitraDataRequestIgtLayerList = memo(
     }, [filteredLayers, map, combinedCqlFilter, onSelectIgtLayer]);
 
     return (
-      <VStack overflowY={"auto"} position={"relative"} bg={"bg.canvas"}>
+      <VStack
+        position={"relative"}
+        overflowY={"auto"}
+        w={"full"}
+        bg={"bg.canvas"}
+      >
         {/* Header Action Bar */}
         <HStack
           wrap={"wrap"}
