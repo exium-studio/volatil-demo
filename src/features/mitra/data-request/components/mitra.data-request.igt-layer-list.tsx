@@ -1,38 +1,34 @@
 // src/features/mitra/data-request/components/mitra.data-request.igt-layer-list.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { IconButton } from "@/design-system/components/button/ui/button";
+import type {
+  FormattedListItem,
+  FormattedTableHeader,
+} from "@/design-system/components/data-display/types/data-list-table.type";
+import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
-import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useIgtFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
-import type {
-  IgtLayerItemProps,
-  MitraDataRequestIgtLayerCardListProps,
-} from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-list.type";
+import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-list.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { t } from "@/shared/libs/i18n";
-import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconCurrentLocation, IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -55,6 +51,7 @@ export const MitraDataRequestIgtLayerList = memo(
 
     // Stores
     const { theme } = useThemeStore();
+    const { map } = useMapInstanceStore();
     const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
     const appliedWfsFilters = useIgtFilterStore((s) => s.appliedWfsFilters);
     const setAppliedWfsFilters = useIgtFilterStore(
@@ -64,6 +61,9 @@ export const MitraDataRequestIgtLayerList = memo(
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
+
+    // Mutations
+    const addToCartAllMutation = useAddToCartAll();
 
     // Derived Values
     const debouncedSearch = useDebouncedValue(searchRaw);
@@ -105,13 +105,174 @@ export const MitraDataRequestIgtLayerList = memo(
       onApplyFilter?.(filters);
     };
 
+    // Derived Values - DataList headers, items, itemActions
+    const dataList = useMemo(() => {
+      const headers: FormattedTableHeader[] = [
+        { th: "Layer IGT", sortable: true, align: "start" },
+        { th: "Tipe", sortable: true, align: "center" },
+        { th: "WFS TypeName", sortable: true, align: "start" },
+      ];
+
+      const items: FormattedListItem[] = filteredLayers.map(
+        (layer: IgtLayerItem) => {
+          const isBidang = layer.spatialBasis === "bidang";
+          const layerDisplayName =
+            layer.title ||
+            layer.id.split(":")[1] ||
+            layer.wfs?.wfsTypeName?.split(":")[1] ||
+            layer.wfs?.wfsTypeName ||
+            layer.id;
+          const formattedTitle = layerDisplayName.replace(/_/g, " ");
+
+          return {
+            id: layer.id,
+            data: layer,
+            columns: [
+              {
+                value: formattedTitle,
+                td: (
+                  <HStack
+                    gap={SPACING.sm}
+                    align={"center"}
+                    minW={"240px"}
+                    colorPalette={isBidang ? "blue" : "orange"}
+                  >
+                    <Center
+                      p={1.5}
+                      bg={"colorPalette.subtle"}
+                      rounded={theme.radii.component}
+                      color={"fg.emphasized"}
+                    >
+                      <AppIcon
+                        icon={isBidang ? Layers2Icon : TreesIcon}
+                        size={"sm"}
+                        color={"colorPalette.fg"}
+                      />
+                    </Center>
+                    <VStack align={"start"}>
+                      <P fontWeight={"medium"} color={"fg.default"}>
+                        {formattedTitle}
+                      </P>
+                    </VStack>
+                  </HStack>
+                ),
+                align: "start",
+              },
+              {
+                value: layer.spatialBasis,
+                td: isBidang ? (
+                  <Badge colorPalette={"blue"} variant={"subtle"}>
+                    {"Bidang"}
+                  </Badge>
+                ) : (
+                  <Badge colorPalette={"orange"} variant={"subtle"}>
+                    {"Kawasan"}
+                  </Badge>
+                ),
+                align: "center",
+              },
+              {
+                value: layer.spatialBasis,
+                td: isBidang ? (
+                  <Badge colorPalette={"blue"} variant={"subtle"}>
+                    {"Bidang"}
+                  </Badge>
+                ) : (
+                  <Badge colorPalette={"orange"} variant={"subtle"}>
+                    {"Kawasan"}
+                  </Badge>
+                ),
+                align: "center",
+              },
+              {
+                value: layer.wfs?.wfsTypeName ?? "-",
+                td: (
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {layer.wfs?.wfsTypeName ?? "-"}
+                  </P>
+                ),
+                align: "start",
+              },
+            ],
+          };
+        },
+      );
+
+      const itemActions = [
+        (item: FormattedListItem) => {
+          const layer = item.data as IgtLayerItem;
+
+          return (
+            <Menu.Item
+              key={`fly-to-${layer.id}`}
+              value={`fly-to-${layer.id}`}
+              onClick={() => {
+                void flyToIgtLayer(map, layer, {
+                  cqlFilter: combinedCqlFilter,
+                });
+              }}
+            >
+              <AppIcon icon={IconCurrentLocation} />
+              {"Lihat di Peta"}
+            </Menu.Item>
+          );
+        },
+        (item: FormattedListItem) => {
+          const layer = item.data as IgtLayerItem;
+
+          return (
+            <Menu.Item
+              key={`detail-${layer.id}`}
+              value={`detail-${layer.id}`}
+              onClick={() => onSelectIgtLayer(layer)}
+            >
+              <AppIcon icon={TablePropertiesIcon} />
+              {"Detail Atribut"}
+            </Menu.Item>
+          );
+        },
+        (item: FormattedListItem) => {
+          const layer = item.data as IgtLayerItem;
+
+          return (
+            <Menu.Item
+              key={`add-cart-${layer.id}`}
+              value={`add-cart-${layer.id}`}
+              onClick={() => {
+                addToCartAllMutation.mutate({
+                  cqlFilter: combinedCqlFilter,
+                  typeName: layer.wfs.wfsTypeName,
+                  wfsUrl: layer.wfs.wfsUrl ?? "",
+                });
+              }}
+            >
+              <AppIcon icon={IconShoppingCartPlus} />
+              {"Tambah Seluruh IGT ke Keranjang"}
+            </Menu.Item>
+          );
+        },
+      ];
+
+      return {
+        headers,
+        items,
+        batchActions: [],
+        itemActions,
+      };
+    }, [
+      filteredLayers,
+      theme,
+      map,
+      combinedCqlFilter,
+      onSelectIgtLayer,
+      addToCartAllMutation,
+    ]);
+
     return (
       <VStack
         flex={1}
-        gap={0}
         overflowY={"auto"}
         bg={"bg.canvas"}
-        w={"full"}
         position={"relative"}
       >
         {/* Header Action Bar */}
@@ -151,179 +312,26 @@ export const MitraDataRequestIgtLayerList = memo(
 
         <Separator borderColor={"bg.canvas"} />
 
-        <VStack
-          flex={1}
-          gap={1}
-          overflowY={"auto"}
-          roundedBottom={theme.radii.container}
-        >
+        {/* DataList Table */}
+        <VStack flex={1} bg={"bg.body"}>
           {isLoadingLayers ? (
             <Skeleton flex={1} p={PADDING.md} rounded={0} />
           ) : (
-            <>
-              {filteredLayers.map((layer, index) => {
-                const isLastIndex = index === filteredLayers.length - 1;
-
-                return (
-                  <IgtLayerItem
-                    key={layer.id}
-                    layer={layer}
-                    cqlFilter={combinedCqlFilter}
-                    onSelectIgtLayer={onSelectIgtLayer}
-                    roundedBottom={isLastIndex ? theme.radii.container : 0}
-                  />
-                );
-              })}
-            </>
+            <DataListTable.Root
+              headers={dataList.headers}
+              items={dataList.items}
+              itemActions={dataList.itemActions}
+              virtualized={true}
+              withNumbering={true}
+              roundedTop={0}
+              shadow={"none"}
+            >
+              <DataListTable.Header />
+              <DataListTable.Body />
+            </DataListTable.Root>
           )}
         </VStack>
       </VStack>
     );
   },
 );
-
-const IgtLayerItem = memo((props: IgtLayerItemProps) => {
-  // Props
-  const { layer, cqlFilter, onSelectIgtLayer, ...restProps } = props;
-
-  // Stores
-  const { theme } = useThemeStore();
-  const { map } = useMapInstanceStore();
-
-  // Handlers
-  const handleFlyToLayer = (l: IgtLayerItem) => {
-    void flyToIgtLayer(map, l, { cqlFilter });
-  };
-
-  // Hooks (Mutations)
-  const addToCartAllMutation = useAddToCartAll();
-
-  const isWfs = Boolean(layer.wfs?.wfsTypeName);
-
-  // Queries — WFS Feature Count for this specific IGT Layer
-  const { totalFeatures, totalLuas, isLoading } = useIgtWfsCatalog({
-    page: 1,
-    pageSize: 1,
-    cqlFilter: isWfs ? cqlFilter : undefined,
-    typeName: isWfs ? layer.wfs.wfsTypeName : "",
-    wfsUrl: isWfs ? (layer.wfs.wfsUrl ?? "") : "",
-  });
-
-  const layerDisplayName =
-    layer.title ||
-    layer.id.split(":")[1] ||
-    layer.wfs?.wfsTypeName?.split(":")[1] ||
-    layer.wfs?.wfsTypeName ||
-    layer.id;
-
-  const isBidang = layer.spatialBasis === "bidang";
-  const layerIcon = isBidang ? Layers2Icon : TreesIcon;
-
-  return (
-    <HStack
-      wrap={"wrap"}
-      justify={"space-between"}
-      bg={"bg.body"}
-      {...restProps}
-    >
-      <HStack
-        flex={"1 0 300px"}
-        align={"start"}
-        gap={SPACING.md}
-        p={PADDING.md}
-        colorPalette={isBidang ? "blue" : "orange"}
-      >
-        <Center
-          p={2}
-          bg={"colorPalette.subtle"}
-          rounded={theme.radii.component}
-          color={"fg.emphasized"}
-        >
-          <AppIcon icon={layerIcon} color={"colorPalette.fg"} />
-        </Center>
-
-        <VStack align={"start"} gap={SPACING.md}>
-          <VStack>
-            <P fontWeight={"semibold"} fontSize={"md"}>
-              {layerDisplayName.replace(/_/g, " ")}
-            </P>
-
-            <P fontSize={"sm"} color={"fg.muted"}>
-              {layer.wfs.wfsTypeName}
-            </P>
-          </VStack>
-
-          <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
-            <HStack gap={SPACING.xs} align={"center"}>
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {"Total Fitur Ketersediaan:"}
-              </P>
-
-              {isLoading ? (
-                <Skeleton h={"16px"} w={"40px"} rounded={"sm"} />
-              ) : (
-                <P fontSize={"sm"} fontWeight={"bold"}>
-                  {isBidang
-                    ? formatNumber(totalFeatures)
-                    : totalLuas > 0
-                      ? `${formatNumber(totalLuas)} Ha`
-                      : "? Ha"}
-                </P>
-              )}
-            </HStack>
-
-            {isBidang ? (
-              <Badge colorPalette={"blue"}>{`Bidang`}</Badge>
-            ) : (
-              <Badge colorPalette={"orange"}>{`Kawasan`}</Badge>
-            )}
-          </HStack>
-        </VStack>
-      </HStack>
-
-      {/* Action Row */}
-      <HStack
-        flex={"0 0 auto"}
-        wrap={"wrap"}
-        align={"center"}
-        gap={SPACING.sm}
-        p={PADDING.md}
-      >
-        <Tooltip content={"Lihat ke layer IGT di peta"}>
-          <IconButton
-            variant={"outline"}
-            aria-label={"Lihat ke layer IGT di peta"}
-            onClick={() => handleFlyToLayer(layer)}
-          >
-            <AppIcon icon={IconCurrentLocation} />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip content={"Lihat detail tabel atribut"}>
-          <IconButton
-            variant={"outline"}
-            aria-label={"Lihat detail IGT"}
-            onClick={() => onSelectIgtLayer(layer)}
-          >
-            <AppIcon icon={TablePropertiesIcon} />
-          </IconButton>
-        </Tooltip>
-
-        <Button
-          primary
-          disabled={isLoading || totalFeatures === 0}
-          onClick={() =>
-            addToCartAllMutation.mutate({
-              cqlFilter,
-              typeName: layer.wfs.wfsTypeName,
-              wfsUrl: layer.wfs.wfsUrl ?? "",
-            })
-          }
-        >
-          <AppIcon icon={IconShoppingCartPlus} />
-          {"Tambah IGT"}
-        </Button>
-      </HStack>
-    </HStack>
-  );
-});
