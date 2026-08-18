@@ -12,6 +12,7 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { PADDING } from "@/design-system/constants/styles";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import type {
@@ -19,7 +20,7 @@ import type {
   WfsFeaturesDataListProps,
 } from "@/features/mitra/shared/types/wfs-data-list.type";
 import { IconCurrentLocation } from "@tabler/icons-react";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 
 export const WfsFeaturesDataList = memo((props: WfsFeaturesDataListProps) => {
   // Props
@@ -43,19 +44,8 @@ export const WfsFeaturesDataList = memo((props: WfsFeaturesDataListProps) => {
   // Stores
   const { theme } = useThemeStore();
 
-  // States
-  const [isReady, setIsReady] = useState<boolean>(false);
-
-  // Effects — 100ms timeout delay before allowing heavy table content to mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 50);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  // Hooks — Delay heavy table mounting to allow initial skeleton render
+  const isReady = useMountTimeout(50);
 
   // Derived Values — Dynamic Attribute Keys from WFS features
   const attributeKeys = useMemo(() => {
