@@ -320,8 +320,10 @@ export const HelpCenterDataList = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Table & Footer Content */}
-        <VStack bg={"bg.canvas"} w={"full"} position={"relative"}>
-          {isLoading && <Skeleton h={"280px"} w={"full"} />}
+        <VStack position={"relative"} w={"full"} bg={"bg.canvas"}>
+          {isLoading && (
+            <Skeleton w={"full"} h={"300px"} p={PADDING.md} roundedTop={0} />
+          )}
 
           {!isLoading && isEmptyArray(tickets) && (
             <Box py={PADDING.xl} w={"full"} bg={"bg.body"}>
