@@ -40,6 +40,10 @@ export const queryKeys = {
       all: ["internal", "user-management"] as const,
       data: (params?: Record<string, unknown>) =>
         [...queryKeys.internal.userManagement.all, "data", params] as const,
+      statistics: () =>
+        [...queryKeys.internal.userManagement.all, "statistics"] as const,
+      detail: (id: string | number) =>
+        [...queryKeys.internal.userManagement.all, "detail", id] as const,
     },
   },
 };

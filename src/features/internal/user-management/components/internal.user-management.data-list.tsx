@@ -4,18 +4,26 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
+import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { useUserManagementQuery } from "@/features/internal/user-management/hooks/use-user-management.query";
+import {
+  useUpdateUserStatus,
+  useUserManagementUsersQuery,
+} from "@/features/internal/user-management/hooks/use-user-management.query";
 import type {
   UserManagementItem,
   UserStatus,
@@ -26,15 +34,8 @@ import {
 } from "@/features/mitra/my-data/utils/my-data-date";
 import { t } from "@/shared/libs/i18n";
 import type { UserRole } from "@/shared/types/common-response.type";
+import { CheckCircleIcon, ShieldAlertIcon } from "lucide-react";
 import { startTransition, useMemo, useState } from "react";
-
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
-
-import { Menu } from "@/design-system/components/overlay/ui/menu";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { CheckCircleIcon, KeyRoundIcon, ShieldAlertIcon } from "lucide-react";
 
 const STATUS_MAP: Record<UserStatus, { label: string; color: string }> = {
   active: { label: "Aktif", color: "green" },
@@ -70,20 +71,19 @@ export const InternalUserManagementDataList = () => {
 
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
-  // Queries
-  const { users, total, isLoading, isFetching } = useUserManagementQuery({
-    search: search.trim() || undefined,
-    page,
-    pageSize,
-    status:
-      selectedStatus === "all" ? undefined : (selectedStatus as UserStatus),
-    role: selectedRole === "all" ? undefined : (selectedRole as UserRole),
-  });
+  // Mutations
+  const updateStatusMutation = useUpdateUserStatus();
 
-  const totalPage = useMemo(
-    () => Math.max(1, Math.ceil(total / pageSize)),
-    [total, pageSize],
-  );
+  // Queries
+  const { users, total, totalPages, isLoading, isFetching } =
+    useUserManagementUsersQuery({
+      search: search.trim() || undefined,
+      page,
+      pageSize,
+      status:
+        selectedStatus === "all" ? undefined : (selectedStatus as UserStatus),
+      role: selectedRole === "all" ? undefined : (selectedRole as UserRole),
+    });
 
   // Derived Values - Headers, Items, BatchActions, ItemActions in 1 useMemo
   const dataList = useMemo(() => {
@@ -92,7 +92,6 @@ export const InternalUserManagementDataList = () => {
       { th: "Role", sortable: true, align: "center" },
       { th: "Instansi / Perusahaan", sortable: true, align: "start" },
       { th: "Status", sortable: true, align: "center" },
-      { th: "No. Telepon", sortable: false, align: "start" },
       { th: "Terakhir Masuk", sortable: true, align: "start" },
     ];
 
@@ -143,11 +142,6 @@ export const InternalUserManagementDataList = () => {
             align: "center",
           },
           {
-            value: user.phoneNumber ?? "-",
-            td: <P color={"fg.muted"}>{user.phoneNumber ?? "-"}</P>,
-            align: "start",
-          },
-          {
             value: user.lastLoginAt ?? "",
             td: (
               <P whiteSpace={"nowrap"} color={"fg.muted"}>
@@ -172,7 +166,10 @@ export const InternalUserManagementDataList = () => {
                 value={"suspend"}
                 color={"red.fg"}
                 onClick={() => {
-                  console.log("Suspend user", user.id);
+                  updateStatusMutation.mutate({
+                    id: user.id,
+                    status: "inactive",
+                  });
                 }}
               >
                 <AppIcon icon={ShieldAlertIcon} />
@@ -183,23 +180,16 @@ export const InternalUserManagementDataList = () => {
                 value={"activate"}
                 color={"green.fg"}
                 onClick={() => {
-                  console.log("Activate user", user.id);
+                  updateStatusMutation.mutate({
+                    id: user.id,
+                    status: "active",
+                  });
                 }}
               >
                 <AppIcon icon={CheckCircleIcon} />
                 {"Aktifkan Pengguna"}
               </Menu.Item>
             )}
-
-            <Menu.Item
-              value={"reset-password"}
-              onClick={() => {
-                console.log("Reset password", user.id);
-              }}
-            >
-              <AppIcon icon={KeyRoundIcon} />
-              {"Reset Kata Sandi"}
-            </Menu.Item>
           </>
         );
       },
@@ -211,7 +201,7 @@ export const InternalUserManagementDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [users, preferredTimezone]);
+  }, [users, preferredTimezone, updateStatusMutation]);
 
   return (
     <Container.Root withContext={true}>
@@ -309,7 +299,7 @@ export const InternalUserManagementDataList = () => {
                 }}
                 currentDataLength={users.length}
                 totalData={total}
-                totalPage={totalPage}
+                totalPage={totalPages}
                 roundedBottom={0}
                 shadow={"none"}
               />

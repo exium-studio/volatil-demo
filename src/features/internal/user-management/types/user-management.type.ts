@@ -7,8 +7,11 @@ import type {
   UserRole,
 } from "@/shared/types/common-response.type";
 
+export type { UserRole };
+
 export type UserStatus = "active" | "inactive";
 
+/** Normalized UI User Item */
 export type UserManagementItem = {
   id: string;
   name: string;
@@ -32,14 +35,9 @@ export type UserManagementRoleStats = {
 };
 
 export type UserManagementStatsResponse = {
+  totalUsers: number;
   statusStats: UserManagementStatusStats;
   roleStats: UserManagementRoleStats;
-};
-
-export type UserManagementDataResponse = {
-  stats: Record<MitraHomePeriod, UserManagementStatsResponse>;
-  users: UserManagementItem[];
-  total: number;
 };
 
 export type UserManagementQueryParams = PaginatedParams & {
@@ -79,4 +77,9 @@ export type UserManagementStatsLegendProps = StackProps & {
   legendColor: string;
   label: string;
   value: number;
+};
+
+export type UpdateUserStatusPayload = {
+  id: string | number;
+  status: UserStatus;
 };

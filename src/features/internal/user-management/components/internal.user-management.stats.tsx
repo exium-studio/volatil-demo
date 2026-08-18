@@ -1,7 +1,6 @@
 // src/features/internal/user-management/components/internal.user-management.stats.tsx
 
 import { Progress } from "@/design-system/components/feedback/ui/progress";
-import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -10,44 +9,25 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { useUserManagementStatsQuery } from "@/features/internal/user-management/hooks/use-user-management.query";
 import type {
-  UserManagementStatsChartsProps,
-  UserManagementStatsHeaderProps,
   UserManagementStatsLegendProps,
   UserManagementStatsRoleConfig,
   UserManagementStatsStatusConfig,
 } from "@/features/internal/user-management/types/user-management.type";
-import { useUserManagementQuery } from "@/features/internal/user-management/hooks/use-user-management.query";
-import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { useState } from "react";
-
-const PERIOD_OPTIONS = [
-  { value: "1d", label: "1H" },
-  { value: "1w", label: "1M" },
-  { value: "1m", label: "1B" },
-  { value: "1y", label: "1T" },
-  { value: "all", label: "Semua", flex: 1 },
-];
 
 export const InternalUserManagementStats = () => {
-  // States
-  const [period, setPeriod] = useState<MitraHomePeriod>("all");
-
   return (
     <Container.Root withContext={true}>
       <Container.Body gap={4} py={PADDING.md}>
-        <UserManagementStatsHeader period={period} onPeriodChange={setPeriod} />
-
-        <UserManagementStatsCharts period={period} />
+        <UserManagementStatsHeader />
+        <UserManagementStatsCharts />
       </Container.Body>
     </Container.Root>
   );
 };
 
-const UserManagementStatsHeader = (props: UserManagementStatsHeaderProps) => {
-  // Props
-  const { period, onPeriodChange } = props;
-
+const UserManagementStatsHeader = () => {
   return (
     <HStack
       wrap={"wrap"}
@@ -65,12 +45,6 @@ const UserManagementStatsHeader = (props: UserManagementStatsHeaderProps) => {
           {"Ringkasan status dan tipe peran pengguna sistem."}
         </P>
       </VStack>
-
-      <SegmentGroupInput
-        value={period}
-        onValueChange={(e) => onPeriodChange(e.value as MitraHomePeriod)}
-        options={PERIOD_OPTIONS}
-      />
     </HStack>
   );
 };
@@ -109,12 +83,9 @@ const ROLE_CONFIGS: UserManagementStatsRoleConfig[] = [
   },
 ];
 
-const UserManagementStatsCharts = (props: UserManagementStatsChartsProps) => {
-  // Props
-  const { period } = props;
-
+const UserManagementStatsCharts = () => {
   // Queries
-  const { stats } = useUserManagementQuery({ period });
+  const { stats } = useUserManagementStatsQuery();
 
   return (
     <SimpleGrid columns={[1, 1, 2]} gap={PADDING.md} px={PADDING.md}>
@@ -131,7 +102,7 @@ const UserManagementStatsCharts = (props: UserManagementStatsChartsProps) => {
                 key={config.key}
                 value={100}
                 size={"xl"}
-                flex={value}
+                flex={value || 0.001}
                 striped={config.striped}
                 colorPalette={config.colorPalette}
               >
@@ -171,7 +142,7 @@ const UserManagementStatsCharts = (props: UserManagementStatsChartsProps) => {
                 key={config.key}
                 value={100}
                 size={"xl"}
-                flex={value}
+                flex={value || 0.001}
                 striped={config.striped}
                 colorPalette={config.colorPalette}
               >

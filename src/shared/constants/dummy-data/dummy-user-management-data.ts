@@ -11,22 +11,27 @@ export const dummyUserManagementStats: Record<
   UserManagementStatsResponse
 > = {
   "1d": {
+    totalUsers: 152,
     statusStats: { active: 140, inactive: 12 },
     roleStats: { internal: 42, mitra: 110 },
   },
   "1w": {
+    totalUsers: 415,
     statusStats: { active: 380, inactive: 35 },
     roleStats: { internal: 95, mitra: 320 },
   },
   "1m": {
+    totalUsers: 928,
     statusStats: { active: 850, inactive: 78 },
     roleStats: { internal: 180, mitra: 748 },
   },
   "1y": {
+    totalUsers: 1980,
     statusStats: { active: 1820, inactive: 160 },
     roleStats: { internal: 340, mitra: 1640 },
   },
   all: {
+    totalUsers: 2660,
     statusStats: { active: 2450, inactive: 210 },
     roleStats: { internal: 450, mitra: 2210 },
   },

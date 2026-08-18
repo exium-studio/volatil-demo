@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # 📖 API Documentation - Backend Volatil
 
 Dokumentasi resmi untuk seluruh endpoint REST API pada **Backend Volatil (IGTPR 2026)**.  
@@ -6,12 +10,14 @@ File ini menjadi acuan utama dan **wajib diperbarui setiap kali ada penambahan a
 ---
 
 ## 🌐 Base URL
+
 - **Production / Staging**: `https://volatil-be.exium.web.id`
 - **Local Development**: `http://localhost:3001`
 
 ---
 
 ## 🔐 Standar Autentikasi (Bearer Token)
+
 Sebagian besar endpoint yang dilindungi memerlukan token JWT yang dikirimkan melalui **Header HTTP**:
 
 ```http
@@ -19,14 +25,16 @@ Authorization: Bearer <your_access_token>
 ```
 
 ### Role Pengguna:
+
 1. **`internal`** (Administrator): Memiliki akses penuh ke seluruh fitur dan endpoint admin.
 2. **`mitra`** (User / Partner): Memiliki akses ke fitur operasional mitra.
 
 ### Akun Demo untuk Development / Testing:
-| Role | Email | Password |
-| :--- | :--- | :--- |
-| **MITRA** *(User)* | `mitra@demo.com` | `mitra123` |
-| **INTERNAL** *(Admin)* | `internal@demo.com` | `internal123` |
+
+| Role                   | Email               | Password      |
+| :--------------------- | :------------------ | :------------ |
+| **MITRA** _(User)_     | `mitra@demo.com`    | `mitra123`    |
+| **INTERNAL** _(Admin)_ | `internal@demo.com` | `internal123` |
 
 ---
 
@@ -35,9 +43,12 @@ Authorization: Bearer <your_access_token>
 ### 1. Sistem & Health Check
 
 #### `GET /`
+
 Mengecek status root backend.
+
 - **Auth**: Tidak perlu
 - **Response `200 OK`**:
+
 ```json
 {
   "message": "Express.js backend with PostgreSQL/PostGIS is running!"
@@ -45,9 +56,12 @@ Mengecek status root backend.
 ```
 
 #### `GET /health`
+
 Liveness/readiness probe untuk monitoring container.
+
 - **Auth**: Tidak perlu
 - **Response `200 OK`**:
+
 ```json
 {
   "status": "OK",
@@ -56,9 +70,12 @@ Liveness/readiness probe untuk monitoring container.
 ```
 
 #### `GET /check-db`
+
 Mengecek konektivitas database PostgreSQL dan status modul PostGIS.
+
 - **Auth**: Tidak perlu
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -79,16 +96,21 @@ Mengecek konektivitas database PostgreSQL dan status modul PostGIS.
 ### 2. Autentikasi & Akun (`/auth`)
 
 #### `POST /auth/login`
+
 Login menggunakan email dan password untuk mendapatkan Bearer Access Token.
+
 - **Auth**: Tidak perlu
 - **Request Body**:
+
 ```json
 {
   "email": "internal@demo.com",
   "password": "internal123"
 }
 ```
+
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -105,7 +127,9 @@ Login menggunakan email dan password untuk mendapatkan Bearer Access Token.
   }
 }
 ```
+
 - **Response `401 Unauthorized`**:
+
 ```json
 {
   "success": false,
@@ -116,10 +140,13 @@ Login menggunakan email dan password untuk mendapatkan Bearer Access Token.
 ---
 
 #### `GET /auth/me`
+
 Mendapatkan data profil user yang sedang login.
+
 - **Auth**: `Bearer Token` (Semua Role)
 - **Headers**: `Authorization: Bearer <token>`
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -138,9 +165,12 @@ Mendapatkan data profil user yang sedang login.
 ### 3. Role-Protected Dashboard Areas
 
 #### `GET /admin/dashboard`
+
 Area khusus role internal/administrator.
+
 - **Auth**: `Bearer Token` (**Hanya Role `internal`**)
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -148,7 +178,9 @@ Area khusus role internal/administrator.
   "user": { ... }
 }
 ```
+
 - **Response `403 Forbidden`** (Jika diakses oleh role `mitra`):
+
 ```json
 {
   "success": false,
@@ -159,9 +191,12 @@ Area khusus role internal/administrator.
 ---
 
 #### `GET /mitra/dashboard`
+
 Area khusus role mitra (juga dapat diakses oleh internal).
+
 - **Auth**: `Bearer Token` (**Role `mitra` & `internal`**)
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -175,9 +210,12 @@ Area khusus role mitra (juga dapat diakses oleh internal).
 ### 4. Spasial / GIS (`/locations`)
 
 #### `GET /locations`
+
 Mengambil semua data titik lokasi geografis.
+
 - **Auth**: Tidak perlu
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -199,12 +237,15 @@ Mengambil semua data titik lokasi geografis.
 ---
 
 #### `POST /locations`
+
 Menambahkan data koordinat titik lokasi baru.
+
 - **Auth**: `Bearer Token` (Semua Role terotentikasi)
 - **Headers**:
   - `Authorization: Bearer <token>`
   - `Content-Type: application/json`
 - **Request Body**:
+
 ```json
 {
   "name": "Kantor Pusat",
@@ -212,7 +253,9 @@ Menambahkan data koordinat titik lokasi baru.
   "longitude": 106.8456
 }
 ```
+
 - **Response `201 Created`**:
+
 ```json
 {
   "success": true,
@@ -234,12 +277,15 @@ Menambahkan data koordinat titik lokasi baru.
 ### 5. Modul Tiket & Laporan (`/api/tickets`)
 
 #### `GET /api/tickets/statistics`
+
 Mengambil data statistik laporan untuk widget dashboard (Laporan Aktif, Selesai, Total, dan Rincian Status).
+
 - **Auth**: `Bearer Token` (Semua Role)
 - **Headers**: `Authorization: Bearer <token>`
 - **Query Parameters**:
   - `scope` (opsional): `my` (khusus laporan user) atau `all` (default untuk admin)
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -259,7 +305,9 @@ Mengambil data statistik laporan untuk widget dashboard (Laporan Aktif, Selesai,
 ---
 
 #### `GET /api/tickets`
+
 Mengambil daftar laporan dengan berbagai filter, pencarian teks, dan pagination.
+
 - **Auth**: `Bearer Token` (Semua Role)
 - **Headers**: `Authorization: Bearer <token>`
 - **Query Parameters**:
@@ -275,6 +323,7 @@ Mengambil daftar laporan dengan berbagai filter, pencarian teks, dan pagination.
   - `GET /api/tickets?page=1&itemPerPage=5`
   - `GET /api/tickets?status=active&search=jaringan&startDate=2026-08-01&page=2&itemPerPage=15`
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -319,10 +368,13 @@ Mengambil daftar laporan dengan berbagai filter, pencarian teks, dan pagination.
 ---
 
 #### `GET /api/tickets/:id`
+
 Mendapatkan detail 1 laporan lengkap beserta riwayat lampiran dan balasan admin.
+
 - **Auth**: `Bearer Token` (Role `internal` atau pemilik tiket `mitra`)
 - **Headers**: `Authorization: Bearer <token>`
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -372,16 +424,19 @@ Mendapatkan detail 1 laporan lengkap beserta riwayat lampiran dan balasan admin.
 ---
 
 #### `POST /api/tickets`
+
 Membuat laporan tiket baru dengan Judul, Deskripsi, dan Multiple Upload File/Foto (maks 10 file per kiriman).
+
 - **Auth**: `Bearer Token` (Semua Role terotentikasi, umumnya `mitra`)
 - **Headers**:
   - `Authorization: Bearer <token>`
   - `Content-Type: multipart/form-data`
 - **Form-Data Fields**:
-  - `title` *(text, required)*: Judul laporan
-  - `description` *(text, required)*: Rincian deskripsi masalah
-  - `files` *(file array, optional)*: Multiple file foto/dokumen (JPG, PNG, PDF, DOCX, XLSX, max 15MB/file)
+  - `title` _(text, required)_: Judul laporan
+  - `description` _(text, required)_: Rincian deskripsi masalah
+  - `files` _(file array, optional)_: Multiple file foto/dokumen (JPG, PNG, PDF, DOCX, XLSX, max 15MB/file)
 - **Response `201 Created`**:
+
 ```json
 {
   "success": true,
@@ -410,16 +465,19 @@ Membuat laporan tiket baru dengan Judul, Deskripsi, dan Multiple Upload File/Fot
 ---
 
 #### `POST /api/tickets/:id/reply`
+
 Memberikan balasan laporan dari Administrator (Internal) beserta lampiran dokumen pendukung dan opsi update status.
+
 - **Auth**: `Bearer Token` (**Khusus Role `internal`**)
 - **Headers**:
   - `Authorization: Bearer <token>`
   - `Content-Type: multipart/form-data`
 - **Form-Data Fields**:
-  - `message` *(text, required)*: Teks balasan admin
-  - `status` *(text, optional)*: Update status tiket (`in_progress`, `resolved`, `closed`)
-  - `files` *(file array, optional)*: Multiple dokumen pendukung balasan (max 10 file)
+  - `message` _(text, required)_: Teks balasan admin
+  - `status` _(text, optional)_: Update status tiket (`in_progress`, `resolved`, `closed`)
+  - `files` _(file array, optional)_: Multiple dokumen pendukung balasan (max 10 file)
 - **Response `201 Created`**:
+
 ```json
 {
   "success": true,
@@ -449,7 +507,9 @@ Memberikan balasan laporan dari Administrator (Internal) beserta lampiran dokume
   }
 }
 ```
+
 - **Response `403 Forbidden`** (Jika diakses non-admin):
+
 ```json
 {
   "success": false,
@@ -459,13 +519,16 @@ Memberikan balasan laporan dari Administrator (Internal) beserta lampiran dokume
 
 ---
 
-### 6. Modul Manage User & Data (`/api/admin/users`) — *Khusus Admin (Internal)*
+### 6. Modul Manage User & Data (`/api/internal/user-management`) — _Khusus Admin (Internal)_
 
-#### `GET /api/admin/users/statistics`
+#### `GET /api/internal/user-management/statistics`
+
 Mengambil ringkasan statistik pengguna sistem (Pengguna Aktif, Pengguna Non Aktif, Total Pengguna, dan rincian per role).
+
 - **Auth**: `Bearer Token` (**Khusus Role `internal`**)
 - **Headers**: `Authorization: Bearer <token>`
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -483,8 +546,10 @@ Mengambil ringkasan statistik pengguna sistem (Pengguna Aktif, Pengguna Non Akti
 
 ---
 
-#### `GET /api/admin/users`
+#### `GET /api/internal/user-management`
+
 Mengambil daftar seluruh pengguna dengan pencarian, filter status & role, serta pagination.
+
 - **Auth**: `Bearer Token` (**Khusus Role `internal`**)
 - **Headers**: `Authorization: Bearer <token>`
 - **Query Parameters**:
@@ -496,9 +561,10 @@ Mengambil daftar seluruh pengguna dengan pencarian, filter status & role, serta 
   - `sortBy` (opsional, default: `createdAt`): Kolom sorting.
   - `sortOrder` (opsional, default: `DESC`): Urutan sorting (`DESC` untuk latest / terbaru).
 - **Contoh Request**:
-  - `GET /api/admin/users?page=1&itemPerPage=10`
-  - `GET /api/admin/users?status=active&role=mitra&search=nusantara`
+  - `GET /api/internal/user-management?page=1&itemPerPage=10`
+  - `GET /api/internal/user-management?status=active&role=mitra&search=nusantara`
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -540,11 +606,14 @@ Mengambil daftar seluruh pengguna dengan pencarian, filter status & role, serta 
 
 ---
 
-#### `GET /api/admin/users/:id`
+#### `GET /api/internal/user-management/:id`
+
 Melihat detail lengkap satu akun pengguna.
+
 - **Auth**: `Bearer Token` (**Khusus Role `internal`**)
 - **Headers**: `Authorization: Bearer <token>`
 - **Response `200 OK` (Contoh Akun Mitra / User)**:
+
 ```json
 {
   "success": true,
@@ -565,7 +634,9 @@ Melihat detail lengkap satu akun pengguna.
   }
 }
 ```
+
 - **Response `200 OK` (Contoh Akun Admin Internal)**:
+
 ```json
 {
   "success": true,
@@ -585,20 +656,26 @@ Melihat detail lengkap satu akun pengguna.
 
 ---
 
-#### `PATCH /api/admin/users/:id/status`
+#### `PATCH /api/internal/user-management/:id/status`
+
 Menonaktifkan (`inactive`) atau mengaktifkan kembali (`active`) akun pengguna.
+
 - **Auth**: `Bearer Token` (**Khusus Role `internal`**)
 - **Headers**:
   - `Authorization: Bearer <token>`
   - `Content-Type: application/json`
-- **Request Body** *(opsional)*:
+- **Request Body** _(opsional)_:
+
 ```json
 {
   "status": "inactive"
 }
 ```
-*(Jika body kosong, status akan otomatis di-toggle).*
+
+_(Jika body kosong, status akan otomatis di-toggle)._
+
 - **Response `200 OK`**:
+
 ```json
 {
   "success": true,
@@ -618,7 +695,9 @@ Menonaktifkan (`inactive`) atau mengaktifkan kembali (`active`) akun pengguna.
 ---
 
 ## 📌 Panduan Menambahkan Endpoint Baru
+
 Setiap pengembang yang menambahkan route/endpoint baru wajib mencatatnya pada file ini dengan format:
+
 1. **Method & Path** (contoh: `POST /api/v1/resource`)
 2. **Deskripsi singkat**
 3. **Persyaratan Autentikasi & Role yang diizinkan**
