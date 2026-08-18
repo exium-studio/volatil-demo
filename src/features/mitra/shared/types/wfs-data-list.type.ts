@@ -6,8 +6,19 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import type GeoJSON from "geojson";
 import type { ReactNode } from "react";
 
-export type WfsDataListProps = StackProps & {
-  /** Current page of WFS features to display (server-paged by parent via maxFeatures+startIndex). */
+export type WfsFeaturesDataListContentProps = {
+  wfsFeatures: GeoJSON.Feature[];
+  attributeKeys: string[];
+  canBatchSelect?: boolean;
+  batchActions?: WfsFeaturesDataListProps["batchActions"];
+  extraItemActions?: WfsFeaturesDataListProps["extraItemActions"];
+  page?: number;
+  pageSize?: number;
+  selectedItems?: FormattedListItem[];
+  onSelectedItemChange?: WfsFeaturesDataListProps["onSelectedItemChange"];
+};
+
+export type WfsFeaturesDataListProps = StackProps & {
   wfsFeatures: GeoJSON.Feature[];
   page?: number;
   pageSize?: number;
