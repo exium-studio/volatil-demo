@@ -72,7 +72,13 @@ export const SpatialFeaturesDataList = memo(
 
     if (!isReady || isLoading || (isFetching && wfsFeatures.length === 0)) {
       return (
-        <Skeleton h={"full"} w={"full"} flex={1} rounded={0} p={PADDING.md} />
+        <Skeleton
+          h={"full"}
+          w={"full"}
+          flex={1}
+          roundedTop={0}
+          p={PADDING.md}
+        />
       );
     }
 
