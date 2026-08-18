@@ -174,15 +174,21 @@ const SpatialFeaturesDataListContent = memo(
 
         itemActions: [
           (item: FormattedListItem) => {
-            const feat = item.data as unknown as GeoJSON.Feature | undefined;
+            const feat = item.data as unknown as
+              | GeoJSON.Feature
+              | Record<string, unknown>
+              | undefined;
             return (
               <Menu.Item
                 key={`fly-to-${item.id}`}
                 value={`fly-to-${item.id}`}
                 onClick={() => {
                   const currentMap = map ?? useMapInstanceStore.getState().map;
-                  if (!feat?.geometry || !currentMap) return;
-                  highlightFeatureOnMap(currentMap, feat);
+                  if (!currentMap || !feat) return;
+                  highlightFeatureOnMap(
+                    currentMap,
+                    feat as unknown as GeoJSON.Feature,
+                  );
                 }}
               >
                 <AppIcon icon={IconCurrentLocation} />

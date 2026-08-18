@@ -1,6 +1,10 @@
 // src/features/mitra/data-request/utils/highlight-feature-on-map.ts
 
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import {
+  fitBoundsSafe,
+  flyToSafe,
+} from "@/design-system/components/map/utils/map-camera";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 
@@ -162,14 +166,36 @@ export const highlightFeatureOnMap = (
 
   const { zoom = 16, timeoutMs = HIGHLIGHT_TIMEOUT_MS } = options ?? {};
 
+  const rawFeat = geometryOrFeatureOrCollection as unknown as Record<
+    string,
+    unknown
+  >;
+  const rawGeom =
+    (rawFeat.geometry as GeoJSON.Geometry | undefined) ??
+    (rawFeat.geom as GeoJSON.Geometry | undefined) ??
+    (
+      rawFeat.properties as
+        | { geom?: GeoJSON.Geometry; the_geom?: GeoJSON.Geometry }
+        | undefined
+    )?.geom ??
+    (
+      rawFeat.properties as
+        | { geom?: GeoJSON.Geometry; the_geom?: GeoJSON.Geometry }
+        | undefined
+    )?.the_geom ??
+    (geometryOrFeatureOrCollection.type !== "Feature" &&
+    geometryOrFeatureOrCollection.type !== "FeatureCollection"
+      ? (geometryOrFeatureOrCollection as GeoJSON.Geometry)
+      : undefined);
+
   const geojson: GeoJSON.GeoJSON =
-    geometryOrFeatureOrCollection.type === "FeatureCollection" ||
-    geometryOrFeatureOrCollection.type === "Feature"
-      ? (geometryOrFeatureOrCollection as GeoJSON.GeoJSON)
+    geometryOrFeatureOrCollection.type === "FeatureCollection"
+      ? (geometryOrFeatureOrCollection as GeoJSON.FeatureCollection)
       : {
           type: "Feature",
-          properties: {},
-          geometry: geometryOrFeatureOrCollection as GeoJSON.Geometry,
+          properties: (rawFeat.properties as GeoJSON.GeoJsonProperties) ?? {},
+          geometry: (rawGeom ??
+            (rawFeat.geometry as GeoJSON.Geometry)) as GeoJSON.Geometry,
         };
 
   // 1. Clear previous timer
@@ -250,7 +276,7 @@ export const highlightFeatureOnMap = (
     console.warn("Failed to set highlight layers on map:", err);
   }
 
-  // 4. Calculate bounds & fit camera
+  // 4. Calculate bounds & fit camera safely (stops ongoing animation first)
   let bounds: [number, number, number, number] | null = null;
   if (geojson.type === "FeatureCollection") {
     bounds = getFeatureCollectionBounds(geojson as GeoJSON.FeatureCollection);
@@ -259,33 +285,18 @@ export const highlightFeatureOnMap = (
   }
 
   if (bounds) {
-    const isPointBbox = bounds[0] === bounds[2] && bounds[1] === bounds[3];
-    if (isPointBbox) {
-      map.flyTo({
-        center: [bounds[0], bounds[1]],
-        zoom,
-        duration: 1200,
-      });
-    } else {
-      map.fitBounds(
-        [
-          [bounds[0], bounds[1]],
-          [bounds[2], bounds[3]],
-        ],
-        {
-          padding: 80,
-          maxZoom: zoom,
-          duration: 1200,
-        },
-      );
-    }
+    fitBoundsSafe(map, bounds, {
+      padding: 80,
+      maxZoom: zoom,
+      duration: 1200,
+    });
   } else if (
     geojson.type === "Feature" &&
     (geojson as GeoJSON.Feature).geometry
   ) {
     const centroid = getGeometryCentroid((geojson as GeoJSON.Feature).geometry);
     if (centroid) {
-      map.flyTo({ center: centroid, zoom, duration: 1200 });
+      flyToSafe(map, { center: centroid, zoom, duration: 1200 });
     }
   }
 

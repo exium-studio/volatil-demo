@@ -64,10 +64,10 @@ export const MitraDataRequestDetailAttributeHeader = memo(
 
             {showActions && (
               <HStack gap={SPACING.sm} align={"center"}>
-                <Tooltip content={"Terbang ke layer IGT"}>
+                <Tooltip content={"Lihat layer IGT di peta"}>
                   <IconButton
                     variant={"outline"}
-                    aria-label={"Terbang ke layer IGT"}
+                    aria-label={"Lihat layer IGT di peta"}
                     onClick={handleFlyToLayer}
                   >
                     <AppIcon icon={IconCurrentLocation} />
