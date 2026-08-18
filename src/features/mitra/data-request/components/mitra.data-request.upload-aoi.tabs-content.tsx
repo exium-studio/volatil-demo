@@ -518,7 +518,7 @@ const MitraDataRequestUploadAoiAttributeList = memo(
           flex={1}
           gap={0}
           overflowY={"auto"}
-          // bg={"bg.canvas"}
+          bg={"bg.canvas"}
           position={"relative"}
           w={"full"}
         >
