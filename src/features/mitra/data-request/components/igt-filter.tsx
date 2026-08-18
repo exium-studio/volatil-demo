@@ -8,13 +8,12 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { MODAL, SPACING } from "@/design-system/constants/styles";
-import { IgtFilterBasisSelect } from "@/features/mitra/data-request/components/igt-filter.basis-select";
+// import { IgtFilterBasisSelect } from "@/features/mitra/data-request/components/igt-filter.basis-select";
 import { IgtFilterKabupatenSelect } from "@/features/mitra/data-request/components/igt-filter.kabupaten-select";
 import { IgtFilterKecamatanSelect } from "@/features/mitra/data-request/components/igt-filter.kecamatan-select";
 import { IgtFilterKelurahanSelect } from "@/features/mitra/data-request/components/igt-filter.kelurahan-select";
 import { IgtFilterProvinsiSelect } from "@/features/mitra/data-request/components/igt-filter.provinsi-select";
-import { IgtFilterTemaSelect } from "@/features/mitra/data-request/components/igt-filter.tema-select";
-import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt-filter.config";
+import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
 import type {
   IgtFilterOptionDetail,
   IgtFilterTriggerProps,
@@ -168,6 +167,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
           </Alert.Root>
 
           <VStack gap={SPACING.md} w={"full"}>
+            {/* Temporarily hidden: Basis IGT & Tema IGT
             <IgtFilterBasisSelect
               modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.BASIS}`}
               value={localDraftFilters[IGT_FILTER_KEYS_MAP.BASIS]?.value}
@@ -183,6 +183,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
                 handleFieldChange(IGT_FILTER_KEYS_MAP.TEMA, details)
               }
             />
+            */}
 
             <IgtFilterProvinsiSelect
               modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.PROVINSI}`}

@@ -208,7 +208,7 @@ const IgtLayerItem = memo((props: IgtLayerItemProps) => {
   const isWfs = Boolean(layer.wfs?.wfsTypeName);
 
   // Queries — WFS Feature Count for this specific IGT Layer
-  const { totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
+  const { totalFeatures, totalLuas, isLoading, isFetching } = useIgtWfsCatalog({
     page: 1,
     pageSize: 1,
     cqlFilter: isWfs ? cqlFilter : undefined,
@@ -272,7 +272,11 @@ const IgtLayerItem = memo((props: IgtLayerItemProps) => {
                   <Skeleton h={"16px"} w={"40px"} rounded={"sm"} />
                 ) : (
                   <P fontSize={"sm"} fontWeight={"bold"}>
-                    {formatNumber(totalFeatures)}
+                    {isBidang
+                      ? formatNumber(totalFeatures)
+                      : totalLuas > 0
+                        ? `${formatNumber(totalLuas)} Ha`
+                        : "? Ha"}
                   </P>
                 )}
               </HStack>

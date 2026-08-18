@@ -61,7 +61,7 @@ export const MitraDataRequestAddToCartButtons = (
 
   const bidangCount = totalBidangCountProp ?? calculatedBidang;
   const kawasanCount = totalKawasanCountProp ?? calculatedKawasan;
-  const totalItemCount = totalCount ?? (bidangCount + kawasanCount);
+  const totalItemCount = totalCount ?? bidangCount + kawasanCount;
 
   // Derived — calculate total 'luas' attribute in Hektar (Ha) if spatialBasis is kawasan
   const selectedKawasanLuasTotal = useMemo(() => {
@@ -74,6 +74,18 @@ export const MitraDataRequestAddToCartButtons = (
       return acc + (isNaN(val) ? 0 : val);
     }, 0);
   }, [selectedItems, spatialBasis]);
+
+  // Derived — calculate total 'luas' attribute in Hektar (Ha) for all items if spatialBasis is kawasan
+  const allKawasanLuasTotal = useMemo<number>(() => {
+    if (spatialBasis !== "kawasan") return 0;
+    return (allItems ?? []).reduce<number>((acc, item) => {
+      const data = item as Record<string, unknown> | undefined;
+      const props = (data?.properties ?? data ?? {}) as Record<string, unknown>;
+      const key = Object.keys(props).find((k) => k.toLowerCase() === "luas");
+      const val = key ? Number(props[key]) : NaN;
+      return acc + (isNaN(val) ? 0 : val);
+    }, 0);
+  }, [allItems, spatialBasis]);
 
   // Derived — selected items basis breakdown
   const selectedBidangCount = useMemo(
@@ -133,6 +145,28 @@ export const MitraDataRequestAddToCartButtons = (
     selectedKawasanCount,
   ]);
 
+  // All label: if kawasan with luas, show Ha, otherwise count
+  const allCountLabel = useMemo(() => {
+    if (spatialBasis === "kawasan") {
+      if (allKawasanLuasTotal > 0) {
+        return `(${formatNumber(allKawasanLuasTotal)} Ha)`;
+      }
+      return `(${formatNumber(totalItemCount)} kawasan)`;
+    }
+
+    if (bidangCount > 0 || kawasanCount > 0) {
+      return `(${formatNumber(bidangCount)} bidang, ${formatNumber(kawasanCount)} kawasan)`;
+    }
+
+    return `(${formatNumber(totalItemCount)} item)`;
+  }, [
+    spatialBasis,
+    allKawasanLuasTotal,
+    totalItemCount,
+    bidangCount,
+    kawasanCount,
+  ]);
+
   return (
     <VStack
       gap={SPACING.md}
@@ -181,12 +215,7 @@ export const MitraDataRequestAddToCartButtons = (
             onClick={onAddAllBothClick}
           >
             <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
-            {"Tambah semua"}{" "}
-            {spatialBasis === "kawasan"
-              ? `(${formatNumber(totalItemCount)} kawasan)`
-              : bidangCount > 0 || kawasanCount > 0
-                ? `(${formatNumber(bidangCount)} bidang, ${formatNumber(kawasanCount)} kawasan)`
-                : `(${formatNumber(totalItemCount)} item)`}
+            {"Tambah semua"} {allCountLabel}
           </Button>
 
           <Menu.Root
@@ -222,7 +251,10 @@ export const MitraDataRequestAddToCartButtons = (
                 onClick={onAddAllKawasanClick}
               >
                 <AppIcon icon={TreesIcon} />
-                {"Tambah semua kawasan"} ({formatNumber(kawasanCount)})
+                {"Tambah semua kawasan"}{" "}
+                {allKawasanLuasTotal > 0
+                  ? `(${formatNumber(allKawasanLuasTotal)} Ha)`
+                  : `(${formatNumber(kawasanCount)})`}
               </Menu.Item>
             </Menu.Content>
           </Menu.Root>

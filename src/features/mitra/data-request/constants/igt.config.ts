@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/constants/igt-filter.config.ts
+// src/features/mitra/data-request/constants/igt.config.ts
 
 /**
  * Standard IGT Spatial Attribute Keys based on KUGI (Katalog Unsur Geografi Indonesia)
@@ -20,3 +20,19 @@ export type IgtFilterKey =
 // Aliases for compatibility
 export const WFS_IGT_FILTER_KEYS_MAP = IGT_FILTER_KEYS_MAP;
 export type WfsIgtFilterKey = IgtFilterKey;
+
+/**
+ * Standard candidate attribute keys for extracting area / luas (in Hectares or sqm) from IGT features.
+ */
+export const IGT_AREA_KEYS = [
+  "luas",
+  "luas_ha",
+  "luasha",
+  "luas_m2",
+  "luasm2",
+  "shape_area",
+  "st_area",
+  "area",
+] as const;
+
+export type IgtAreaKey = (typeof IGT_AREA_KEYS)[number];

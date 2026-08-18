@@ -1,6 +1,6 @@
 // src/features/mitra/data-request/utils/build-igt-cql-filter.ts
 
-import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt-filter.config";
+import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
 import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
 
 /**
@@ -70,14 +70,17 @@ export const buildIgtCqlFilter = (
 
     if (detail?.value) {
       const safeValue = detail.value.replace(/'/g, "''");
-      const actualFieldName = resolveAttributeKey(standardKey, sampleProperties);
+      const actualFieldName = resolveAttributeKey(
+        standardKey,
+        sampleProperties,
+      );
       // Use ILIKE '%value%' for case-insensitive & partial matching (e.g. "BALI" matches "Provinsi Bali")
       clauses.push(`${actualFieldName} ILIKE '%${safeValue}%'`);
     }
   };
 
-  addEqClause(IGT_FILTER_KEYS_MAP.BASIS);
-  addEqClause(IGT_FILTER_KEYS_MAP.TEMA);
+  // addEqClause(IGT_FILTER_KEYS_MAP.BASIS);
+  // addEqClause(IGT_FILTER_KEYS_MAP.TEMA);
   addEqClause(IGT_FILTER_KEYS_MAP.PROVINSI);
   addEqClause(IGT_FILTER_KEYS_MAP.KABUPATEN);
   addEqClause(IGT_FILTER_KEYS_MAP.KECAMATAN);

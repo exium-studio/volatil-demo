@@ -174,7 +174,7 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
         gap={SPACING.md}
         p={2}
         colorPalette={colorPalette}
-        rounded={"md"}
+        rounded={theme.radii.component}
         cursor={"pointer"}
         onClick={() => onToggle(layer.id)}
         _hover={{ bg: "bg.subtle" }}

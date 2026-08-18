@@ -5,6 +5,7 @@ import {
   fetchWfs,
   normalizeWfsEndpointUrl,
 } from "@/design-system/components/map/utils/fetch-wfs";
+import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
 import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import type GeoJSON from "geojson";
 
@@ -139,6 +140,7 @@ export type FetchWfsCatalogParams = {
 export type FetchWfsCatalogResult = {
   features: GeoJSON.Feature[];
   totalFeatures: number;
+  totalLuas: number;
   bidangCount: number;
   kawasanCount: number;
 };
@@ -159,6 +161,7 @@ export const fetchWfsCatalog = async ({
     return {
       features: [],
       totalFeatures: 0,
+      totalLuas: 0,
       bidangCount: 0,
       kawasanCount: 0,
     };
@@ -208,17 +211,29 @@ export const fetchWfsCatalog = async ({
     const features = pageResult.features ?? [];
     const totalFeatures = pageResult.totalFeatures ?? features.length;
 
-    // Count bidang vs kawasan from actual feature properties basis
+    // Count bidang vs kawasan and total luas from actual feature properties basis
     let bidangCount = 0;
     let kawasanCount = 0;
+    let totalLuas = 0;
 
     features.forEach((feat) => {
-      const basis = (feat.properties as Record<string, unknown> | undefined)
-        ?.basis;
+      const props =
+        (feat.properties as Record<string, unknown> | undefined) ?? {};
+      const basis = props.basis;
       if (basis === "kawasan") {
         kawasanCount += 1;
       } else {
         bidangCount += 1;
+      }
+
+      const luasKey = Object.keys(props).find((k) =>
+        (IGT_AREA_KEYS as readonly string[]).includes(k.toLowerCase()),
+      );
+      if (luasKey) {
+        const val = Number(props[luasKey]);
+        if (!isNaN(val)) {
+          totalLuas += val;
+        }
       }
     });
 
@@ -230,6 +245,7 @@ export const fetchWfsCatalog = async ({
     return {
       features,
       totalFeatures,
+      totalLuas,
       bidangCount,
       kawasanCount,
     };
@@ -245,6 +261,7 @@ export const fetchWfsCatalog = async ({
     return {
       features: [],
       totalFeatures: 0,
+      totalLuas: 0,
       bidangCount: 0,
       kawasanCount: 0,
     };

@@ -45,6 +45,7 @@ export async function fetchCartWfsPageApi(params: {
     return {
       features: [],
       totalFeatures: 0,
+      totalLuas: 0,
       bidangCount: 0,
       kawasanCount: 0,
       pageIds: [],

@@ -22,6 +22,7 @@ export const useIgtWfsCatalog = (params: UseIgtWfsCatalogParams) => {
     ...query,
     features: query.data?.features ?? [],
     totalFeatures: query.data?.totalFeatures ?? 0,
+    totalLuas: query.data?.totalLuas ?? 0,
     bidangCount: query.data?.bidangCount ?? 0,
     kawasanCount: query.data?.kawasanCount ?? 0,
   };
