@@ -7,14 +7,14 @@ import {
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -22,12 +22,14 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
-import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useIgtFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
-import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-card-list.type";
+import type {
+  IgtLayerItemProps,
+  MitraDataRequestIgtLayerCardListProps,
+} from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-list.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { t } from "@/shared/libs/i18n";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
@@ -180,14 +182,6 @@ export const MitraDataRequestIgtLayerList = memo(
   },
 );
 
-// -------------------------------------------------------------------------------------
-
-type IgtLayerItemProps = StackProps & {
-  layer: IgtLayerItem;
-  cqlFilter?: string;
-  onSelectIgtLayer: (layer: IgtLayerItem) => void;
-};
-
 const IgtLayerItem = memo((props: IgtLayerItemProps) => {
   // Props
   const { layer, cqlFilter, onSelectIgtLayer, ...restProps } = props;
@@ -264,6 +258,7 @@ const IgtLayerItem = memo((props: IgtLayerItemProps) => {
               <P fontSize={"sm"} color={"fg.muted"}>
                 {"Total Fitur Ketersediaan:"}
               </P>
+
               {isLoading ? (
                 <Skeleton h={"16px"} w={"40px"} rounded={"sm"} />
               ) : (

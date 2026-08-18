@@ -57,7 +57,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Derived — Warning Message
   const warningMessage = useMemo(() => {
     if (!hasCartItems) {
-      return "Keranjang belanja Anda masih kosong";
+      return "Keranjang Anda kosong";
     }
     if (isBidangMinimumNotMet && isKawasanMinimumNotMet) {
       return "Jumlah bidang dan kawasan (ha) belum memenuhi batas minimum pembelian";
