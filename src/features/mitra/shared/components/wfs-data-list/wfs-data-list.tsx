@@ -119,6 +119,9 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
     dataList,
   });
 
+  console.log(deferredDataList);
+  console.log(isProcessing);
+
   const hasPagination =
     page != null && pageSize != null && totalFeatures != null;
 
@@ -165,7 +168,7 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
           <DataListTable.Body />
         </DataListTable.Root>
 
-        <TopBarLoader isFetching={isFetching || isProcessing} />
+        <TopBarLoader isFetching={isFetching} />
       </Box>
 
       {hasPagination && (

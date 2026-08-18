@@ -114,12 +114,15 @@ export const MitraDataRequestAddToCartButtons = (
 
   const selectedTotalCount = selectedItems?.length ?? 0;
 
-  // Selected label: if kawasan with luas, show Ha, otherwise count
+  // Selected label: if kawasan with luas, show Ha, otherwise count or ? Ha Kawasan
   const selectedCountLabel = useMemo(() => {
     if (selectedTotalCount === 0) return "";
 
-    if (spatialBasis === "kawasan" && selectedKawasanLuasTotal > 0) {
-      return `(${formatNumber(selectedKawasanLuasTotal)} Ha)`;
+    if (spatialBasis === "kawasan") {
+      if (selectedKawasanLuasTotal > 0) {
+        return `(${formatNumber(selectedKawasanLuasTotal)} Ha)`;
+      }
+      return `(? Ha Kawasan)`;
     }
 
     if (selectedBidangCount > 0 || selectedKawasanCount > 0) {
@@ -132,10 +135,6 @@ export const MitraDataRequestAddToCartButtons = (
       return `(${parts.join(", ")})`;
     }
 
-    if (spatialBasis === "kawasan") {
-      return `(${formatNumber(selectedTotalCount)} kawasan)`;
-    }
-
     return `(${formatNumber(selectedTotalCount)} bidang)`;
   }, [
     selectedTotalCount,
@@ -145,13 +144,13 @@ export const MitraDataRequestAddToCartButtons = (
     selectedKawasanCount,
   ]);
 
-  // All label: if kawasan with luas, show Ha, otherwise count
+  // All label: if kawasan with luas, show Ha, otherwise ? Ha Kawasan
   const allCountLabel = useMemo(() => {
     if (spatialBasis === "kawasan") {
       if (allKawasanLuasTotal > 0) {
         return `(${formatNumber(allKawasanLuasTotal)} Ha)`;
       }
-      return `(${formatNumber(totalItemCount)} kawasan)`;
+      return `(? Ha Kawasan)`;
     }
 
     if (bidangCount > 0 || kawasanCount > 0) {
@@ -254,7 +253,7 @@ export const MitraDataRequestAddToCartButtons = (
                 {"Tambah semua kawasan"}{" "}
                 {allKawasanLuasTotal > 0
                   ? `(${formatNumber(allKawasanLuasTotal)} Ha)`
-                  : `(${formatNumber(kawasanCount)})`}
+                  : `(? Ha Kawasan)`}
               </Menu.Item>
             </Menu.Content>
           </Menu.Root>

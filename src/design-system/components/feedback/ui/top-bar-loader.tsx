@@ -2,6 +2,7 @@
 
 import type { TopBarLoaderProps } from "@/design-system/components/feedback/types/top-bar-loader.type";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Portal } from "@/design-system/components/utilities/ui/portal";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useEffect, useRef } from "react";
 
@@ -58,31 +59,38 @@ export const TopBarLoader = (props: TopBarLoaderProps) => {
     return () => {
       clearInterval(intervalId);
       clearTimeout(hideTimeoutId);
+      if (containerEl) containerEl.style.opacity = "0";
+      if (barEl) {
+        barEl.style.transition = "none";
+        barEl.style.width = "0%";
+      }
     };
   }, [isFetching]);
 
   return (
-    <Box
-      ref={containerRef}
-      position={"fixed"}
-      top={0}
-      left={0}
-      right={0}
-      h={"4px"}
-      zIndex={9999}
-      pointerEvents={"none"}
-      bg={"transparent"}
-      w={"full"}
-      opacity={0}
-      transition={"opacity 200ms ease-out"}
-    >
+    <Portal>
       <Box
-        ref={barRef}
-        h={"full"}
-        w={"0%"}
-        bg={`${theme.colorPalette}.solid`}
-        boxShadow={`0 0 8px ${theme.colorPalette}.solid`}
-      />
-    </Box>
+        ref={containerRef}
+        position={"fixed"}
+        top={0}
+        left={0}
+        right={0}
+        h={"4px"}
+        zIndex={"max"}
+        pointerEvents={"none"}
+        bg={"transparent"}
+        w={"full"}
+        opacity={0}
+        transition={"opacity 200ms ease-out"}
+      >
+        <Box
+          ref={barRef}
+          h={"full"}
+          w={"0%"}
+          bg={`${theme.colorPalette}.solid`}
+          boxShadow={`0 0 8px ${theme.colorPalette}.solid`}
+        />
+      </Box>
+    </Portal>
   );
 };

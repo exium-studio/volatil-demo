@@ -3,7 +3,6 @@
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { PADDING } from "@/design-system/constants/styles";
@@ -111,11 +110,11 @@ export const MitraDataRequestDetailAttributeView = memo(
             w={"full"}
             roundedBottom={theme.radii.container}
           >
-            <TopBarLoader isFetching={isFetching} />
-
             <WfsIgtDataList
               wfsFeatures={features}
               totalFeatures={totalFeatures}
+              isLoading={isLoading}
+              isFetching={isFetching}
               page={page}
               pageSize={pageSize}
               setPage={setPage}

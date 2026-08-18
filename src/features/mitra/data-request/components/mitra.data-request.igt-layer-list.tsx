@@ -5,7 +5,6 @@ import {
   IconButton,
 } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
@@ -208,7 +207,7 @@ const IgtLayerItem = memo((props: IgtLayerItemProps) => {
   const isWfs = Boolean(layer.wfs?.wfsTypeName);
 
   // Queries — WFS Feature Count for this specific IGT Layer
-  const { totalFeatures, totalLuas, isLoading, isFetching } = useIgtWfsCatalog({
+  const { totalFeatures, totalLuas, isLoading } = useIgtWfsCatalog({
     page: 1,
     pageSize: 1,
     cqlFilter: isWfs ? cqlFilter : undefined,
@@ -227,113 +226,109 @@ const IgtLayerItem = memo((props: IgtLayerItemProps) => {
   const layerIcon = isBidang ? Layers2Icon : TreesIcon;
 
   return (
-    <>
-      <TopBarLoader isFetching={isFetching} />
-
+    <HStack
+      wrap={"wrap"}
+      justify={"space-between"}
+      bg={"bg.body"}
+      {...restProps}
+    >
       <HStack
-        wrap={"wrap"}
-        justify={"space-between"}
-        bg={"bg.body"}
-        {...restProps}
+        flex={"1 0 300px"}
+        align={"start"}
+        gap={SPACING.md}
+        p={PADDING.md}
+        colorPalette={isBidang ? "blue" : "orange"}
       >
-        <HStack
-          flex={"1 0 300px"}
-          align={"start"}
-          gap={SPACING.md}
-          p={PADDING.md}
-          colorPalette={isBidang ? "blue" : "orange"}
+        <Center
+          p={2}
+          bg={"colorPalette.subtle"}
+          rounded={theme.radii.component}
+          color={"fg.emphasized"}
         >
-          <Center
-            p={2}
-            bg={"colorPalette.subtle"}
-            rounded={theme.radii.component}
-            color={"fg.emphasized"}
-          >
-            <AppIcon icon={layerIcon} color={"colorPalette.fg"} />
-          </Center>
+          <AppIcon icon={layerIcon} color={"colorPalette.fg"} />
+        </Center>
 
-          <VStack align={"start"} gap={SPACING.md}>
-            <VStack>
-              <P fontWeight={"semibold"} fontSize={"md"}>
-                {layerDisplayName.replace(/_/g, " ")}
-              </P>
+        <VStack align={"start"} gap={SPACING.md}>
+          <VStack>
+            <P fontWeight={"semibold"} fontSize={"md"}>
+              {layerDisplayName.replace(/_/g, " ")}
+            </P>
 
+            <P fontSize={"sm"} color={"fg.muted"}>
+              {layer.wfs.wfsTypeName}
+            </P>
+          </VStack>
+
+          <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
+            <HStack gap={SPACING.xs} align={"center"}>
               <P fontSize={"sm"} color={"fg.muted"}>
-                {layer.wfs.wfsTypeName}
+                {"Total Fitur Ketersediaan:"}
               </P>
-            </VStack>
-
-            <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
-              <HStack gap={SPACING.xs} align={"center"}>
-                <P fontSize={"sm"} color={"fg.muted"}>
-                  {"Total Fitur Ketersediaan:"}
-                </P>
-                {isLoading ? (
-                  <Skeleton h={"16px"} w={"40px"} rounded={"sm"} />
-                ) : (
-                  <P fontSize={"sm"} fontWeight={"bold"}>
-                    {isBidang
-                      ? formatNumber(totalFeatures)
-                      : totalLuas > 0
-                        ? `${formatNumber(totalLuas)} Ha`
-                        : "? Ha"}
-                  </P>
-                )}
-              </HStack>
-
-              {isBidang ? (
-                <Badge colorPalette={"blue"}>{`Bidang`}</Badge>
+              {isLoading ? (
+                <Skeleton h={"16px"} w={"40px"} rounded={"sm"} />
               ) : (
-                <Badge colorPalette={"orange"}>{`Kawasan`}</Badge>
+                <P fontSize={"sm"} fontWeight={"bold"}>
+                  {isBidang
+                    ? formatNumber(totalFeatures)
+                    : totalLuas > 0
+                      ? `${formatNumber(totalLuas)} Ha`
+                      : "? Ha"}
+                </P>
               )}
             </HStack>
-          </VStack>
-        </HStack>
 
-        {/* Action Row */}
-        <HStack
-          flex={"0 0 auto"}
-          wrap={"wrap"}
-          align={"center"}
-          gap={SPACING.sm}
-          p={PADDING.md}
-        >
-          <Tooltip content={"Lihat ke layer IGT di peta"}>
-            <IconButton
-              variant={"outline"}
-              aria-label={"Lihat ke layer IGT di peta"}
-              onClick={() => handleFlyToLayer(layer)}
-            >
-              <AppIcon icon={IconCurrentLocation} />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip content={"Lihat detail tabel atribut"}>
-            <IconButton
-              variant={"outline"}
-              aria-label={"Lihat detail IGT"}
-              onClick={() => onSelectIgtLayer(layer)}
-            >
-              <AppIcon icon={TablePropertiesIcon} />
-            </IconButton>
-          </Tooltip>
-
-          <Button
-            primary
-            disabled={isLoading || totalFeatures === 0}
-            onClick={() =>
-              addToCartAllMutation.mutate({
-                cqlFilter,
-                typeName: layer.wfs.wfsTypeName,
-                wfsUrl: layer.wfs.wfsUrl ?? "",
-              })
-            }
-          >
-            <AppIcon icon={IconShoppingCartPlus} />
-            {"Tambah IGT"}
-          </Button>
-        </HStack>
+            {isBidang ? (
+              <Badge colorPalette={"blue"}>{`Bidang`}</Badge>
+            ) : (
+              <Badge colorPalette={"orange"}>{`Kawasan`}</Badge>
+            )}
+          </HStack>
+        </VStack>
       </HStack>
-    </>
+
+      {/* Action Row */}
+      <HStack
+        flex={"0 0 auto"}
+        wrap={"wrap"}
+        align={"center"}
+        gap={SPACING.sm}
+        p={PADDING.md}
+      >
+        <Tooltip content={"Lihat ke layer IGT di peta"}>
+          <IconButton
+            variant={"outline"}
+            aria-label={"Lihat ke layer IGT di peta"}
+            onClick={() => handleFlyToLayer(layer)}
+          >
+            <AppIcon icon={IconCurrentLocation} />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip content={"Lihat detail tabel atribut"}>
+          <IconButton
+            variant={"outline"}
+            aria-label={"Lihat detail IGT"}
+            onClick={() => onSelectIgtLayer(layer)}
+          >
+            <AppIcon icon={TablePropertiesIcon} />
+          </IconButton>
+        </Tooltip>
+
+        <Button
+          primary
+          disabled={isLoading || totalFeatures === 0}
+          onClick={() =>
+            addToCartAllMutation.mutate({
+              cqlFilter,
+              typeName: layer.wfs.wfsTypeName,
+              wfsUrl: layer.wfs.wfsUrl ?? "",
+            })
+          }
+        >
+          <AppIcon icon={IconShoppingCartPlus} />
+          {"Tambah IGT"}
+        </Button>
+      </HStack>
+    </HStack>
   );
 });

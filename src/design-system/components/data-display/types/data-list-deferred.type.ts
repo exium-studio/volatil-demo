@@ -18,6 +18,7 @@ export type DataListConfig<T = Record<string, unknown>> = {
 
 export type UseDeferredDataListOptions<T = Record<string, unknown>> = {
   dataList: DataListConfig<T>;
+  delayMs?: number;
 };
 
 export type UseDeferredDataListReturn<T = Record<string, unknown>> = {
