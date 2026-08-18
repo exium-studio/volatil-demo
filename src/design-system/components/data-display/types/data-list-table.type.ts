@@ -7,30 +7,56 @@ import type {
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ReactNode } from "react";
 
-export type DataListTableOnSelectedItemChange = (payload: {
-  selectedItems: FormattedListItem[];
-  selectedCurrentItem?: FormattedListItem;
+export type FixedLengthArray<
+  T,
+  N extends number,
+  R extends readonly T[] = [],
+> = number extends N
+  ? T[]
+  : R["length"] extends N
+    ? [...R]
+    : FixedLengthArray<T, N, readonly [T, ...R]>;
+
+export type FormattedListItem<
+  T = Record<string, unknown>,
+  N extends number = number,
+> = {
+  id: string; // must be real item data id from DB
+  data: T;
+  columns: FixedLengthArray<FormattedTableColumn, N>;
+  dim?: boolean;
+};
+
+export type DataListTableOnSelectedItemChange<
+  T = Record<string, unknown>,
+  N extends number = number,
+> = (payload: {
+  selectedItems: FormattedListItem<T, N>[];
+  selectedCurrentItem?: FormattedListItem<T, N>;
 }) => void;
 
-export type DataListTableRootProps = Omit<StackProps, "page"> & {
+export type DataListTableRootProps<
+  T = Record<string, unknown>,
+  N extends number = number,
+> = Omit<StackProps, "page"> & {
   children: ReactNode;
-  headers: FormattedTableHeader[];
-  items: FormattedListItem[];
+  headers: FixedLengthArray<FormattedTableHeader, N>;
+  items: FormattedListItem<T, N>[];
   page?: number;
   pageSize?: number;
   initialSortColumnIndex?: number;
   initialSortOrder?: "asc" | "desc";
   canBatchSelect?: boolean;
-  selectedItems?: FormattedListItem[];
-  onSelectedItemChange?: DataListTableOnSelectedItemChange;
+  selectedItems?: FormattedListItem<T, N>[];
+  onSelectedItemChange?: DataListTableOnSelectedItemChange<T, N>;
   batchActions?: DataListBatchActionsGenerator[];
-  itemActions?: DataListItemActionsGenerator[];
+  itemActions?: DataListItemActionsGenerator<T>[];
   withNumbering?: boolean;
   virtualized?: boolean;
   fixedItemHeight?: boolean;
   renderTdCell?: (
     column: FormattedTableColumn,
-    item: FormattedListItem,
+    item: FormattedListItem<T, N>,
     columnIndex: number,
   ) => ReactNode;
 };
@@ -78,9 +104,3 @@ export type FormattedTableColumn = {
   bodyCellProps?: StackProps;
 };
 
-export type FormattedListItem<T = Record<string, unknown>> = {
-  id: string; // must be real item data id from DB
-  data: T;
-  columns: FormattedTableColumn[];
-  dim?: boolean;
-};

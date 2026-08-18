@@ -83,9 +83,7 @@ export const HelpCenterItem = memo((props: HelpCenterItemProps) => {
       {/* Title, Description, Attachments */}
       <VStack align={"start"} gap={SPACING.lg} pl={"44px"}>
         <VStack gap={SPACING.sm}>
-          <P fontWeight={"bold"} color={"fg.default"}>
-            {ticket.title}
-          </P>
+          <P fontWeight={"bold"}>{ticket.title}</P>
 
           <P color={"fg.muted"}>{ticket.description}</P>
         </VStack>
@@ -177,7 +175,7 @@ export const HelpCenterItem = memo((props: HelpCenterItemProps) => {
                   </HStack>
 
                   <VStack pl={"44px"}>
-                    <P color={"fg.default"}>{resp.message}</P>
+                    <P>{resp.message}</P>
                   </VStack>
                 </VStack>
               </Box>

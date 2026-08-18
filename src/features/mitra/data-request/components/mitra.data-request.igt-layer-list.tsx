@@ -9,7 +9,6 @@ import { DataListTable } from "@/design-system/components/data-display/ui/data-l
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
@@ -20,7 +19,6 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
 import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
@@ -32,10 +30,8 @@ import { t } from "@/shared/libs/i18n";
 import { IconCurrentLocation, IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Layers2Icon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
-  TreesIcon,
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
@@ -50,7 +46,6 @@ export const MitraDataRequestIgtLayerList = memo(
     } = props;
 
     // Stores
-    const { theme } = useThemeStore();
     const { map } = useMapInstanceStore();
     const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
     const appliedWfsFilters = useIgtFilterStore((s) => s.appliedWfsFilters);
@@ -130,46 +125,8 @@ export const MitraDataRequestIgtLayerList = memo(
             columns: [
               {
                 value: formattedTitle,
-                td: (
-                  <HStack
-                    gap={SPACING.sm}
-                    align={"center"}
-                    minW={"240px"}
-                    colorPalette={isBidang ? "blue" : "orange"}
-                  >
-                    <Center
-                      p={1.5}
-                      bg={"colorPalette.subtle"}
-                      rounded={theme.radii.component}
-                      color={"fg.emphasized"}
-                    >
-                      <AppIcon
-                        icon={isBidang ? Layers2Icon : TreesIcon}
-                        size={"sm"}
-                        color={"colorPalette.fg"}
-                      />
-                    </Center>
-                    <VStack align={"start"}>
-                      <P fontWeight={"medium"} color={"fg.default"}>
-                        {formattedTitle}
-                      </P>
-                    </VStack>
-                  </HStack>
-                ),
+                td: <P>{formattedTitle}</P>,
                 align: "start",
-              },
-              {
-                value: layer.spatialBasis,
-                td: isBidang ? (
-                  <Badge colorPalette={"blue"} variant={"subtle"}>
-                    {"Bidang"}
-                  </Badge>
-                ) : (
-                  <Badge colorPalette={"orange"} variant={"subtle"}>
-                    {"Kawasan"}
-                  </Badge>
-                ),
-                align: "center",
               },
               {
                 value: layer.spatialBasis,
@@ -261,7 +218,6 @@ export const MitraDataRequestIgtLayerList = memo(
       };
     }, [
       filteredLayers,
-      theme,
       map,
       combinedCqlFilter,
       onSelectIgtLayer,

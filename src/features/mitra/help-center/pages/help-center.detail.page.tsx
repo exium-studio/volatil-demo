@@ -201,11 +201,7 @@ export const HelpCenterDetailPage = () => {
             <Separator borderColor={"bg.canvas"} />
 
             <VStack align={"start"} gap={SPACING.md} p={PADDING.md}>
-              <P
-                color={"fg.default"}
-                whiteSpace={"pre-wrap"}
-                lineHeight={"tall"}
-              >
+              <P whiteSpace={"pre-wrap"} lineHeight={"tall"}>
                 {ticket.description}
               </P>
 
@@ -411,11 +407,7 @@ export const HelpCenterDetailPage = () => {
                         </HStack>
 
                         <VStack pl={"36px"} align={"start"} gap={2}>
-                          <P
-                            color={"fg.default"}
-                            whiteSpace={"pre-wrap"}
-                            lineHeight={"tall"}
-                          >
+                          <P whiteSpace={"pre-wrap"} lineHeight={"tall"}>
                             {reply.message}
                           </P>
 

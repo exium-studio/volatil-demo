@@ -134,9 +134,7 @@ export const HelpCenterDataList = () => {
             value: ticket.title,
             td: (
               <VStack align={"start"} gap={0} minW={"220px"}>
-                <P fontWeight={"medium"} color={"fg.default"}>
-                  {ticket.title}
-                </P>
+                <P fontWeight={"medium"}>{ticket.title}</P>
                 <P
                   fontSize={"xs"}
                   color={"fg.subtle"}

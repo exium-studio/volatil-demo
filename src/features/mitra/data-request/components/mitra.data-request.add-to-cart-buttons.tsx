@@ -14,12 +14,8 @@ import type { MitraDataRequestAddToCartButtonsProps } from "@/features/mitra/dat
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import {
-  ChevronDownIcon,
-  TreesIcon,
-  Layers2Icon,
-  ShoppingCartIcon,
-} from "lucide-react";
+import { IconShoppingCart } from "@tabler/icons-react";
+import { ChevronDownIcon, Layers2Icon, TreesIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const MitraDataRequestAddToCartButtons = (
@@ -192,7 +188,7 @@ export const MitraDataRequestAddToCartButtons = (
           disabled={isEmptyArray(selectedItems)}
           onClick={onAddSelectedClick}
         >
-          <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
+          <AppIcon icon={IconShoppingCart} flexShrink={0} />
           {"Tambah yang dipilih"}{" "}
           {!isEmptyArray(selectedItems) && selectedCountLabel}
         </Button>
@@ -213,7 +209,7 @@ export const MitraDataRequestAddToCartButtons = (
             disabled={totalItemCount === 0}
             onClick={onAddAllBothClick}
           >
-            <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
+            <AppIcon icon={IconShoppingCart} flexShrink={0} />
             {"Tambah semua"} {allCountLabel}
           </Button>
 

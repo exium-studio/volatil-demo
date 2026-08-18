@@ -6,9 +6,12 @@ import { useDataListSelection } from "@/design-system/components/data-display/ho
 import { useDataListSort } from "@/design-system/components/data-display/hooks/use-data-list-sort";
 import type {
   DataListTableHeaderProps,
+  DataListTableOnSelectedItemChange,
   DataListTableRootProps,
   DataListTableSortIconProps,
   FormattedListItem,
+  FormattedTableColumn,
+  FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import {
@@ -50,186 +53,225 @@ import {
 
 // ---------------------------------------------------------------------------
 
-const DataListTableRoot = forwardRef<HTMLDivElement, DataListTableRootProps>(
-  (props, ref) => {
-    // Props
-    const {
-      children,
-      items,
-      headers,
-      batchActions = [],
-      itemActions = [],
-      initialSortColumnIndex,
-      initialSortOrder = "asc",
-      withNumbering = true,
-      canBatchSelect = false,
-      selectedItems: controlledSelectedItems,
-      onSelectedItemChange,
-      virtualized = true,
-      fixedItemHeight = true,
-      renderTdCell,
+const DataListTableRootInternal = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+  N extends number = number,
+>(
+  props: DataListTableRootProps<T, N> & {
+    ref?: React.ForwardedRef<HTMLDivElement>;
+  },
+) => {
+  // Props
+  const {
+    children,
+    items,
+    headers,
+    batchActions = [],
+    itemActions = [],
+    initialSortColumnIndex,
+    initialSortOrder = "asc",
+    withNumbering = true,
+    canBatchSelect = false,
+    selectedItems: controlledSelectedItems,
+    onSelectedItemChange,
+    virtualized = true,
+    fixedItemHeight = true,
+    renderTdCell,
+    page,
+    pageSize,
+    ref,
+    ...restProps
+  } = props;
+
+  // Refs & Container State
+  const [tableContainerEl, setTableContainerEl] =
+    useState<HTMLDivElement | null>(null);
+  const tableContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const setTableContainerRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      tableContainerRef.current = node;
+      setTableContainerEl(node);
+
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      }
+    },
+    [ref],
+  );
+
+  useImperativeHandle(ref, () => tableContainerRef.current as HTMLDivElement);
+
+  // Stores
+  const { theme } = useThemeStore();
+
+  const headersList = headers as unknown as FormattedTableHeader[];
+  const itemsList = items as unknown as FormattedListItem[];
+  const selectedItemsList = controlledSelectedItems as unknown as
+    | FormattedListItem[]
+    | undefined;
+  const onSelectedItemChangeHandler = onSelectedItemChange as unknown as
+    | DataListTableOnSelectedItemChange
+    | undefined;
+  const itemActionsList = itemActions as unknown as
+    | DataListItemActionsGenerator[]
+    | undefined;
+  const renderTdCellHandler = renderTdCell as unknown as
+    | ((
+        column: FormattedTableColumn,
+        item: FormattedListItem,
+        columnIndex: number,
+      ) => React.ReactNode)
+    | undefined;
+
+  // Hooks
+  const { sortConfig, toggleSort, sortedItems } = useDataListSort({
+    formattedItems: itemsList,
+    initialColumnIndex: initialSortColumnIndex,
+    initialDirection: initialSortOrder,
+  });
+  const {
+    isAllItemsSelected,
+    selectedItemIds,
+    selectedItems,
+    selectAllItems,
+    clearSelectedItems,
+    toggleItemSelection,
+  } = useDataListSelection(
+    itemsList,
+    selectedItemsList,
+    onSelectedItemChangeHandler,
+  );
+
+  // Resolved Values
+  const contextValue = useMemo<DataListTableContextValue>(
+    () => ({
+      headers: headersList,
+      items: itemsList,
       page,
       pageSize,
-      ...restProps
-    } = props;
+      initialSortColumnIndex,
+      initialSortOrder,
+      batchActions,
+      itemActions: itemActionsList,
+      withNumbering,
+      virtualized,
+      fixedItemHeight,
+      tableContainerRef,
+      tableContainerEl,
 
-    // Refs & Container State
-    const [tableContainerEl, setTableContainerEl] =
-      useState<HTMLDivElement | null>(null);
-    const tableContainerRef = useRef<HTMLDivElement | null>(null);
-
-    const setTableContainerRef = useCallback(
-      (node: HTMLDivElement | null) => {
-        tableContainerRef.current = node;
-        setTableContainerEl(node);
-
-        if (typeof ref === "function") {
-          ref(node);
-        } else if (ref) {
-          (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
-        }
-      },
-      [ref],
-    );
-
-    useImperativeHandle(ref, () => tableContainerRef.current as HTMLDivElement);
-
-    // Stores
-    const { theme } = useThemeStore();
-
-    // Hooks
-    const { sortConfig, toggleSort, sortedItems } = useDataListSort({
-      formattedItems: items,
-      initialColumnIndex: initialSortColumnIndex,
-      initialDirection: initialSortOrder,
-    });
-    const {
-      isAllItemsSelected,
+      sortConfig,
+      toggleSort,
+      sortedItems,
       selectedItemIds,
       selectedItems,
+      isAllItemsSelected,
+      toggleItemSelection,
       selectAllItems,
       clearSelectedItems,
+      canBatchSelect: !isEmptyArray(batchActions) || canBatchSelect,
+      renderTdCell: renderTdCellHandler,
+    }),
+    [
+      headersList,
+      itemsList,
+      page,
+      pageSize,
+      initialSortColumnIndex,
+      initialSortOrder,
+      batchActions,
+      itemActionsList,
+      withNumbering,
+      virtualized,
+      fixedItemHeight,
+      tableContainerRef,
+      tableContainerEl,
+      sortConfig,
+      toggleSort,
+      sortedItems,
+      selectedItemIds,
+      selectedItems,
+      isAllItemsSelected,
       toggleItemSelection,
-    } = useDataListSelection(
-      items,
-      controlledSelectedItems,
-      onSelectedItemChange,
-    );
+      selectAllItems,
+      clearSelectedItems,
+      canBatchSelect,
+      renderTdCellHandler,
+    ],
+  );
 
-    // Resolved Values
-    const contextValue = useMemo<DataListTableContextValue>(
-      () => ({
-        headers,
-        items,
-        page,
-        pageSize,
-        initialSortColumnIndex,
-        initialSortOrder,
-        batchActions,
-        itemActions,
-        withNumbering,
-        virtualized,
-        fixedItemHeight,
-        tableContainerRef,
-        tableContainerEl,
+  const gridCols = useMemo(() => {
+    const cols: string[] = [];
 
-        sortConfig,
-        toggleSort,
-        sortedItems,
-        selectedItemIds,
-        selectedItems,
-        isAllItemsSelected,
-        toggleItemSelection,
-        selectAllItems,
-        clearSelectedItems,
-        canBatchSelect: !isEmptyArray(batchActions) || canBatchSelect,
-        renderTdCell,
-      }),
-      [
-        headers,
-        items,
-        page,
-        pageSize,
-        initialSortColumnIndex,
-        initialSortOrder,
-        batchActions,
-        itemActions,
-        withNumbering,
-        virtualized,
-        fixedItemHeight,
-        tableContainerRef,
-        tableContainerEl,
+    if (canBatchSelect || !isEmptyArray(batchActions)) {
+      cols.push(TABLE.actionsCellW);
+    }
 
-        sortConfig,
-        toggleSort,
-        sortedItems,
-        selectedItemIds,
-        selectedItems,
-        isAllItemsSelected,
-        toggleItemSelection,
-        selectAllItems,
-        clearSelectedItems,
-        canBatchSelect,
-        renderTdCell,
-      ],
-    );
+    if (withNumbering) {
+      cols.push(TABLE.actionsCellW);
+    }
 
-    const gridCols = useMemo(() => {
-      const cols: string[] = [];
+    headersList.forEach(() => cols.push("auto"));
 
-      if (canBatchSelect || !isEmptyArray(batchActions)) {
-        cols.push(TABLE.actionsCellW);
-      }
+    if (!isEmptyArray(itemActionsList)) {
+      cols.push(TABLE.actionsCellW);
+    }
 
-      if (withNumbering) {
-        cols.push(TABLE.actionsCellW);
-      }
+    return cols.join(" ");
+  }, [
+    canBatchSelect,
+    batchActions,
+    headersList,
+    itemActionsList,
+    withNumbering,
+  ]);
 
-      headers.forEach(() => cols.push("auto"));
-
-      if (!isEmptyArray(itemActions)) {
-        cols.push(TABLE.actionsCellW);
-      }
-
-      return cols.join(" ");
-    }, [canBatchSelect, batchActions, headers, itemActions, withNumbering]);
-
-    return (
-      <DataListTableContext.Provider value={contextValue}>
-        <VStack
-          className={"table-container"}
-          ref={setTableContainerRef}
-          overflow={"auto"}
-          flex={1}
-          w={"full"}
-          maxH={"full"}
-          pb={TABLE.rowGap}
-          roundedTop={theme.radii.container}
-          shadow={"sm"}
-          {...restProps}
+  return (
+    <DataListTableContext.Provider value={contextValue}>
+      <VStack
+        className={"table-container"}
+        ref={setTableContainerRef}
+        overflow={"auto"}
+        flex={1}
+        w={"full"}
+        maxH={"full"}
+        pb={TABLE.rowGap}
+        roundedTop={theme.radii.container}
+        shadow={"sm"}
+        {...restProps}
+      >
+        <Grid
+          role={"table"}
+          gridTemplateColumns={gridCols}
+          w={headersList.length > 1 ? "full" : "fit"}
+          rowGap={TABLE.rowGap}
         >
-          <Grid
-            role={"table"}
-            gridTemplateColumns={gridCols}
-            w={headers.length > 1 ? "full" : "fit"}
-            rowGap={TABLE.rowGap}
-          >
-            {children}
-          </Grid>
-        </VStack>
+          {children}
+        </Grid>
+      </VStack>
 
-        {!isEmptyArray(batchActions) && (
-          <DataListBatchActionBar
-            selectedItemIds={selectedItemIds}
-            selectedItems={selectedItems}
-            clearSelectedItems={clearSelectedItems}
-            batchActions={batchActions}
-          />
-        )}
-      </DataListTableContext.Provider>
-    );
+      {!isEmptyArray(batchActions) && (
+        <DataListBatchActionBar
+          selectedItemIds={selectedItemIds}
+          selectedItems={selectedItems}
+          clearSelectedItems={clearSelectedItems}
+          batchActions={batchActions}
+        />
+      )}
+    </DataListTableContext.Provider>
+  );
+};
+
+const DataListTableRoot = forwardRef(DataListTableRootInternal) as <
+  T = Record<string, unknown>,
+  N extends number = number,
+>(
+  props: DataListTableRootProps<T, N> & {
+    ref?: React.ForwardedRef<HTMLDivElement>;
   },
-);
+) => React.ReactElement;
 
 const DataListTableHeader = (props: DataListTableHeaderProps) => {
   const {
@@ -391,9 +433,11 @@ const DataListTableRow = memo(
           </Center>
         )}
 
-        {withNumbering && page && pageSize && (
+        {withNumbering && (
           <DataListTableCell bg={cellBg}>
-            <P>{index + 1 + (page - 1) * pageSize}</P>
+            <P>
+              {page && pageSize ? index + 1 + (page - 1) * pageSize : index + 1}
+            </P>
           </DataListTableCell>
         )}
 
