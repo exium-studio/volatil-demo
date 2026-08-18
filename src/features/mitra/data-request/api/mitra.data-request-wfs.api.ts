@@ -43,19 +43,16 @@ export const getWfsDynamicAttributes = async (
       }
     }
   } catch (error) {
-    console.error("Failed to fetch WFS attributes dynamically:", error);
+    if (
+      signal?.aborted ||
+      (error instanceof DOMException && error.name === "AbortError") ||
+      (error instanceof Error && error.name === "AbortError")
+    ) {
+      return [];
+    }
+    console.warn("Failed to fetch WFS attributes dynamically:", error);
   }
-  return [
-    "id",
-    "kodewilaya",
-    "kabupaten",
-    "kecamatan",
-    "kelurahan",
-    "tipehak",
-    "nib",
-    "luastertul",
-    "statbid",
-  ];
+  return [];
 };
 
 type WfsSchemaProperty = {
@@ -112,19 +109,17 @@ export const getWfsStringAttributes = async (
       }
     }
   } catch (error) {
-    console.error("Failed to fetch DescribeFeatureType schema:", error);
+    if (
+      signal?.aborted ||
+      (error instanceof DOMException && error.name === "AbortError") ||
+      (error instanceof Error && error.name === "AbortError")
+    ) {
+      return [];
+    }
+    console.warn("Failed to fetch DescribeFeatureType schema:", error);
   }
 
-  return [
-    "id",
-    "kodewilaya",
-    "kabupaten",
-    "kecamatan",
-    "kelurahan",
-    "tipehak",
-    "nib",
-    "statbid",
-  ];
+  return [];
 };
 
 export type FetchWfsCatalogParams = {
