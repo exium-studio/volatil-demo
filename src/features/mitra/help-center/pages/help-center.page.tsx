@@ -21,6 +21,7 @@ import type {
   HelpCenterStatistics,
 } from "@/features/mitra/help-center/types/help-center.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { InboxIcon, PlusIcon } from "lucide-react";
 import { useEffect, useMemo, useState, useTransition } from "react";
 
@@ -115,7 +116,7 @@ export const HelpCenterPage = () => {
           <Separator borderColor={"bg.canvas"} />
 
           {/* Summary Section */}
-          <VStack overflowY={"auto"}>
+          <VStack flex={1} overflowY={"auto"}>
             <HelpCenterSummary statistics={statistics} />
 
             <Separator borderColor={"bg.canvas"} />
@@ -146,37 +147,41 @@ export const HelpCenterPage = () => {
 
             <Separator borderColor={"bg.canvas"} />
 
-            {/* Ticket Stream */}
-            {filteredTickets.length === 0 ? (
-              <NoDataState
-                icon={InboxIcon}
-                title={"Belum Ada Laporan"}
-                description={
-                  search
-                    ? "Tidak ditemukan laporan sesuai kata kunci pencarian Anda."
-                    : "Belum ada laporan yang diajukan."
-                }
-              />
-            ) : (
-              <VStack
-                gap={PADDING.sm}
-                align={"stretch"}
-                overflowY={"auto"}
-                w={"full"}
-                bg={"bg.canvas"}
-              >
-                {filteredTickets.map((ticket, index) => {
-                  const isLastIndex = index === filteredTickets.length - 1;
-                  return (
-                    <HelpCenterItem
-                      key={ticket.id}
-                      ticket={ticket}
-                      roundedBottom={isLastIndex ? theme.radii.container : 0}
-                    />
-                  );
-                })}
-              </VStack>
-            )}
+            <VStack flex={1}>
+              {/* Ticket Stream */}
+              {isEmptyArray(filteredTickets) && (
+                <NoDataState
+                  icon={InboxIcon}
+                  title={"Belum Ada Laporan"}
+                  description={
+                    search
+                      ? "Tidak ditemukan laporan sesuai kata kunci pencarian Anda."
+                      : "Belum ada laporan yang diajukan."
+                  }
+                />
+              )}
+
+              {!isEmptyArray(filteredTickets) && (
+                <VStack
+                  gap={PADDING.sm}
+                  align={"stretch"}
+                  overflowY={"auto"}
+                  w={"full"}
+                  bg={"bg.canvas"}
+                >
+                  {filteredTickets.map((ticket, index) => {
+                    const isLastIndex = index === filteredTickets.length - 1;
+                    return (
+                      <HelpCenterItem
+                        key={ticket.id}
+                        ticket={ticket}
+                        roundedBottom={isLastIndex ? theme.radii.container : 0}
+                      />
+                    );
+                  })}
+                </VStack>
+              )}
+            </VStack>
           </VStack>
         </Container.Body>
       </Container.Root>

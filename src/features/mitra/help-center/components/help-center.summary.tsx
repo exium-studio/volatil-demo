@@ -20,6 +20,14 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
   // Derived Summary Items
   const summaryItems = [
     {
+      id: "total",
+      label: "Total Laporan",
+      count: statistics.totalTickets,
+      unit: "Laporan",
+      icon: FileTextIcon,
+      colorPalette: "blue",
+    },
+    {
       id: "active",
       label: "Laporan Aktif",
       count: statistics.activeTickets,
@@ -34,14 +42,6 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
       unit: "Laporan",
       icon: CheckCircle2Icon,
       colorPalette: "green",
-    },
-    {
-      id: "total",
-      label: "Total Laporan",
-      count: statistics.totalTickets,
-      unit: "Laporan",
-      icon: FileTextIcon,
-      colorPalette: "blue",
     },
   ];
 

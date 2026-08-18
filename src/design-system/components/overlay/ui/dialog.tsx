@@ -147,7 +147,7 @@ const DialogRoot = (props: DialogRootProps) => {
         lazyMount
         unmountOnExit
         size={fullscreen ? "full" : size}
-        scrollBehavior={"inside"}
+        scrollBehavior={"outside"}
         {...restProps}
         placement={"center"}
         trapFocus={false}
