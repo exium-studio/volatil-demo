@@ -8,6 +8,7 @@ import type {
 } from "@/features/mitra/my-data/types/my-data.type";
 import { dummyMitraMyDataItems } from "@/shared/constants/dummy-data/dummy-my-data";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
+import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const matchesSearch = (item: MyDataItem, search: string) =>
   [
@@ -43,15 +44,28 @@ export const getPaginatedMyData = (
   };
 };
 
+const EMPTY_MY_DATA_RESPONSE: MyDataResponse = {
+  items: [],
+  pagination: createPaginationMeta(1, 10, 0),
+};
+
 export const getMyData = async (
   params: MyDataQueryParams,
   signal?: AbortSignal,
 ): Promise<MyDataResponse> => {
   try {
     const response = await fetchMyDataApi(params, signal);
-    return response.data ?? getPaginatedMyData(dummyMitraMyDataItems, params);
+    if (response.data) {
+      return response.data;
+    }
+    return isDummyDataEnabled()
+      ? getPaginatedMyData(dummyMitraMyDataItems, params)
+      : EMPTY_MY_DATA_RESPONSE;
   } catch (error) {
-    console.warn("getMyData API error, falling back to dummy data:", error);
-    return getPaginatedMyData(dummyMitraMyDataItems, params);
+    if (isDummyDataEnabled()) {
+      console.warn("getMyData API error, falling back to dummy data:", error);
+      return getPaginatedMyData(dummyMitraMyDataItems, params);
+    }
+    throw error;
   }
 };

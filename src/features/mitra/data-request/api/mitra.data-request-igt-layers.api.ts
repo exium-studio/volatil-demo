@@ -1,9 +1,12 @@
-// src/features/mitra/data-request/api/mitra.data-request-igt-layers.api.ts
-
 import type { IgtLayersResponse } from "@/design-system/components/map/types/map.type";
 import { DUMMY_IGT_LAYERS } from "@/shared/constants/dummy-data/dummy-igt-layers";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
+import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
+
+const EMPTY_LAYERS_RESPONSE: IgtLayersResponse = {
+  layers: [],
+};
 
 export async function getIgtLayers(
   signal?: AbortSignal,
@@ -15,7 +18,10 @@ export async function getIgtLayers(
         signal,
       },
     );
-    return response.data ?? DUMMY_IGT_LAYERS;
+    if (response.data) {
+      return response.data;
+    }
+    return isDummyDataEnabled() ? DUMMY_IGT_LAYERS : EMPTY_LAYERS_RESPONSE;
   } catch (error) {
     console.warn(
       "getIgtLayers API error, trying fallback endpoint /map/layers:",
@@ -27,9 +33,12 @@ export async function getIgtLayers(
       >("/map/layers", {
         signal,
       });
-      return fallbackResponse.data ?? DUMMY_IGT_LAYERS;
+      if (fallbackResponse.data) {
+        return fallbackResponse.data;
+      }
+      return isDummyDataEnabled() ? DUMMY_IGT_LAYERS : EMPTY_LAYERS_RESPONSE;
     } catch {
-      return DUMMY_IGT_LAYERS;
+      return isDummyDataEnabled() ? DUMMY_IGT_LAYERS : EMPTY_LAYERS_RESPONSE;
     }
   }
 }

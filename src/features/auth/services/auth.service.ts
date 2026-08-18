@@ -17,6 +17,8 @@ import {
 } from "@/shared/utils/client/client.storage";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
+import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
+
 export const authService = {
   login: async (
     payload: SigninPayload,
@@ -33,8 +35,11 @@ export const authService = {
       }
 
       return response.data.user;
-    } catch {
-      // Mock fallback for development environment when backend is offline
+    } catch (error) {
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+      // Mock fallback for development environment when backend is offline and dummy data is enabled
       const mockToken = `mock-token-${Date.now()}`;
       localStorage.setItem("auth_token", mockToken);
 

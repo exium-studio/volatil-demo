@@ -1,5 +1,3 @@
-// src/features/mitra/data-request/services/mitra.data-request.service.ts
-
 import {
   fetchIgtByAoiApi,
   fetchIgtByUploadedAoiApi,
@@ -16,9 +14,16 @@ import {
   DUMMY_IGT_ITEMS,
   dummyIgtData,
 } from "@/shared/constants/dummy-data/dummy-igt-by-aoi";
+import { createPaginationMeta } from "@/shared/types/common-response.type";
+import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 import type GeoJSON from "geojson";
 
 export type { MitraDataRequestGetCatalogParams };
+
+const EMPTY_CATALOG_RESPONSE: MitraDataRequestIgtDataResponse = {
+  items: [],
+  pagination: createPaginationMeta(1, 10, 0),
+};
 
 export async function getIgtCatalog(
   params?: MitraDataRequestGetCatalogParams,
@@ -26,10 +31,16 @@ export async function getIgtCatalog(
 ): Promise<MitraDataRequestIgtDataResponse> {
   try {
     const response = await fetchIgtCatalogApi(params, signal);
-    return response.data ?? dummyIgtData;
+    if (response.data) {
+      return response.data;
+    }
+    return isDummyDataEnabled() ? dummyIgtData : EMPTY_CATALOG_RESPONSE;
   } catch (error) {
-    console.warn("getIgtCatalog API error, falling back to dummy data:", error);
-    return dummyIgtData;
+    if (isDummyDataEnabled()) {
+      console.warn("getIgtCatalog API error, falling back to dummy data:", error);
+      return dummyIgtData;
+    }
+    throw error;
   }
 }
 
@@ -39,10 +50,16 @@ export async function getIgtByAoi(
 ): Promise<MitraDataRequestIgtDataItem[]> {
   try {
     const response = await fetchIgtByAoiApi(geometry, signal);
-    return response.data ?? DUMMY_IGT_ITEMS;
+    if (response.data) {
+      return response.data;
+    }
+    return isDummyDataEnabled() ? DUMMY_IGT_ITEMS : [];
   } catch (error) {
-    console.warn("getIgtByAoi API error, falling back to dummy data:", error);
-    return DUMMY_IGT_ITEMS;
+    if (isDummyDataEnabled()) {
+      console.warn("getIgtByAoi API error, falling back to dummy data:", error);
+      return DUMMY_IGT_ITEMS;
+    }
+    throw error;
   }
 }
 
@@ -58,13 +75,19 @@ export async function getIgtByUploadedAoi(
 ): Promise<MitraDataRequestIgtDataResponse> {
   try {
     const response = await fetchIgtByUploadedAoiApi(file, signal);
-    return response.data ?? dummyIgtData;
+    if (response.data) {
+      return response.data;
+    }
+    return isDummyDataEnabled() ? dummyIgtData : EMPTY_CATALOG_RESPONSE;
   } catch (error) {
-    console.warn(
-      "getIgtByUploadedAoi API error, falling back to dummy data:",
-      error,
-    );
-    return dummyIgtData;
+    if (isDummyDataEnabled()) {
+      console.warn(
+        "getIgtByUploadedAoi API error, falling back to dummy data:",
+        error,
+      );
+      return dummyIgtData;
+    }
+    throw error;
   }
 }
 
