@@ -133,7 +133,7 @@ export const UserProfilePopover = (props: UserProfilePopoverProps) => {
                 cancelLabel={"Batal"}
                 confirmButtonProps={{
                   colorPalette: "red",
-                  variant: "solid",
+                  variant: "outline",
                   loading: signoutMutation.isPending,
                 }}
                 onConfirm={() => signoutMutation.mutate()}
