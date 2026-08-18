@@ -1,6 +1,7 @@
-// src/features/mitra/data-request/components/mitra.data-request.igt-layer-list.tsx
-
-import { IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -32,6 +33,8 @@ import { IconCurrentLocation, IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { SlidersHorizontalIcon, TablePropertiesIcon } from "lucide-react";
 import { memo, useMemo, useState } from "react";
+import { useThemeStore } from "@/design-system/stores/theme-store";
+import { Box } from "@/design-system/components/layout/ui/box";
 
 const IgtLayerCountCell = memo(
   (props: { layer: IgtLayerItem; cqlFilter?: string }) => {
@@ -79,6 +82,7 @@ export const MitraDataRequestIgtLayerList = memo(
     } = props;
 
     // Stores
+    const { theme } = useThemeStore();
     const { map } = useMapInstanceStore();
     const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
     const appliedWfsFilters = useIgtFilterStore((s) => s.appliedWfsFilters);
@@ -89,9 +93,24 @@ export const MitraDataRequestIgtLayerList = memo(
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
+    const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
 
     // Mutations
     const addToCartAllMutation = useAddToCartAll();
+
+    // Handlers
+    const handleAddSelectedToCart = () => {
+      selectedItems.forEach((item) => {
+        const layer = item.data as IgtLayerItem;
+        if (layer?.wfs?.wfsTypeName) {
+          addToCartAllMutation.mutate({
+            cqlFilter: combinedCqlFilter,
+            typeName: layer.wfs.wfsTypeName,
+            wfsUrl: layer.wfs.wfsUrl ?? "",
+          });
+        }
+      });
+    };
 
     // Derived Values
     const debouncedSearch = useDebouncedValue(searchRaw);
@@ -232,26 +251,6 @@ export const MitraDataRequestIgtLayerList = memo(
             </Menu.Item>
           );
         },
-        (item: FormattedListItem) => {
-          const layer = item.data as IgtLayerItem;
-
-          return (
-            <Menu.Item
-              key={`add-cart-${layer.id}`}
-              value={`add-cart-${layer.id}`}
-              onClick={() => {
-                addToCartAllMutation.mutate({
-                  cqlFilter: combinedCqlFilter,
-                  typeName: layer.wfs.wfsTypeName,
-                  wfsUrl: layer.wfs.wfsUrl ?? "",
-                });
-              }}
-            >
-              <AppIcon icon={IconShoppingCartPlus} />
-              {"Tambah Seluruh IGT ke Keranjang"}
-            </Menu.Item>
-          );
-        },
       ];
 
       return {
@@ -260,16 +259,10 @@ export const MitraDataRequestIgtLayerList = memo(
         batchActions: [],
         itemActions,
       };
-    }, [
-      filteredLayers,
-      map,
-      combinedCqlFilter,
-      onSelectIgtLayer,
-      addToCartAllMutation,
-    ]);
+    }, [filteredLayers, map, combinedCqlFilter, onSelectIgtLayer]);
 
     return (
-      <VStack flex={1} overflowY={"auto"} position={"relative"}>
+      <VStack overflowY={"auto"} position={"relative"} bg={"bg.canvas"}>
         {/* Header Action Bar */}
         <HStack
           wrap={"wrap"}
@@ -308,7 +301,7 @@ export const MitraDataRequestIgtLayerList = memo(
         <Separator borderColor={"bg.canvas"} />
 
         {/* DataList Table */}
-        <VStack flex={1} bg={"bg.canvas"}>
+        <VStack bg={"bg.canvas"} overflow={"hidden"}>
           {isLoadingLayers ? (
             <Skeleton flex={1} p={PADDING.md} rounded={0} />
           ) : (
@@ -316,6 +309,11 @@ export const MitraDataRequestIgtLayerList = memo(
               headers={dataList.headers}
               items={dataList.items}
               itemActions={dataList.itemActions}
+              canBatchSelect={true}
+              selectedItems={selectedItems}
+              onSelectedItemChange={({ selectedItems: next }) =>
+                setSelectedItems(next as FormattedListItem[])
+              }
               virtualized={true}
               withNumbering={true}
               roundedTop={0}
@@ -325,7 +323,39 @@ export const MitraDataRequestIgtLayerList = memo(
               <DataListTable.Body />
             </DataListTable.Root>
           )}
+
+          <Box
+            w={"full"}
+            h={PADDING.md}
+            bg={"bg.body"}
+            roundedBottom={theme.radii.container}
+          />
         </VStack>
+
+        {/* Add to Cart Bar */}
+        <Box mt={"auto"}>
+          <HStack
+            align={"center"}
+            justify={"space-between"}
+            gap={SPACING.sm}
+            w={"full"}
+            p={PADDING.md}
+            mt={PADDING.sm}
+            rounded={theme.radii.container}
+            bg={"bg.body"}
+          >
+            <Button
+              primary
+              w={"full"}
+              disabled={selectedItems.length === 0}
+              onClick={handleAddSelectedToCart}
+            >
+              <AppIcon icon={IconShoppingCartPlus} />
+              {"Tambah yang dipilih"}
+              {selectedItems.length > 0 && ` (${selectedItems.length} IGT)`}
+            </Button>
+          </HStack>
+        </Box>
       </VStack>
     );
   },
