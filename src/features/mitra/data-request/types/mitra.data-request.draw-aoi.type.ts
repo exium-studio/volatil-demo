@@ -2,7 +2,6 @@
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
-import type GeoJSON from "geojson";
 
 export type DrawAoiGuideAlertProps = StackProps & {
   isLoading: boolean;
@@ -15,13 +14,3 @@ export type DrawAoiDataListProps = {
   igtItems: IgtDataItem[];
   onResetDraw: () => void;
 };
-
-export type DrawAoiWfsIgtDataListProps = {
-  wfsFeatures: GeoJSON.Feature[];
-  onResetDraw: () => void;
-};
-
-export type MitraDataRequestDrawAoiGuideAlertProps = DrawAoiGuideAlertProps;
-export type MitraDataRequestDrawAoiDataListProps = DrawAoiDataListProps;
-export type MitraDataRequestDrawAoiWfsIgtDataListProps =
-  DrawAoiWfsIgtDataListProps;

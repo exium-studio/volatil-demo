@@ -29,7 +29,3 @@ export type WfsDataListProps = StackProps & {
   isLoading?: boolean;
   isFetching?: boolean;
 };
-
-// Aliases for compatibility
-export type WfsIgtDataListProps = WfsDataListProps;
-export type MitraWfsDataListProps = WfsDataListProps;

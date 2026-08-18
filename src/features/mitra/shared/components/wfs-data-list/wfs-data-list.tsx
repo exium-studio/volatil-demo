@@ -2,7 +2,6 @@
 
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
-import { useDeferredDataList } from "@/design-system/components/data-display/hooks/use-deferred-data-list";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
@@ -17,57 +16,38 @@ import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highl
 import type { WfsDataListProps } from "@/features/mitra/shared/types/wfs-data-list.type";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import type GeoJSON from "geojson";
-import { memo, useMemo } from "react";
+import { memo, Suspense, useMemo } from "react";
 
-/**
- * Shared WFS data list component used across Mitra features:
- * - Data Request (Catalog, Draw AOI, Upload AOI)
- * - Cart (Item List)
- * Renders a dynamic table of WFS features based on feature properties, with "Lihat di Peta" item action and optional pagination footer.
- */
-export const WfsDataList = memo((props: WfsDataListProps) => {
+type WfsTableViewProps = {
+  wfsFeatures: GeoJSON.Feature[];
+  attributeKeys: string[];
+  canBatchSelect?: boolean;
+  batchActions?: WfsDataListProps["batchActions"];
+  extraItemActions?: WfsDataListProps["extraItemActions"];
+  page?: number;
+  pageSize?: number;
+  selectedItems?: FormattedListItem[];
+  onSelectedItemChange?: WfsDataListProps["onSelectedItemChange"];
+};
+
+const WfsTableView = memo((props: WfsTableViewProps) => {
   // Props
   const {
     wfsFeatures,
+    attributeKeys,
+    canBatchSelect,
+    batchActions,
+    extraItemActions,
     page,
     pageSize,
-    totalFeatures,
-    setPage,
-    setPageSize,
     selectedItems,
     onSelectedItemChange,
-    canBatchSelect = true,
-    batchActions,
-    extraItemActions = [],
-    isLoading = false,
-    isFetching = false,
-    ...restProps
   } = props;
 
   // Stores
-  const { theme } = useThemeStore();
   const map = useMapInstanceStore((state) => state.map);
 
-  // Derived Values — Dynamic Attribute Keys from WFS features
-  const attributeKeys = useMemo(() => {
-    if (wfsFeatures.length > 0 && wfsFeatures[0]?.properties) {
-      const keys = Object.keys(wfsFeatures[0].properties);
-      if (keys.length > 0) {
-        return keys.filter((key) => key !== "geom" && key !== "geometry");
-      }
-    }
-    return [
-      "id",
-      "kodewilaya",
-      "kabupaten",
-      "kecamatan",
-      "kelurahan",
-      "nib",
-      "luastertul",
-    ];
-  }, [wfsFeatures]);
-
-  // Derived Values — DataList Configuration
+  // Derived Values
   const dataList = useMemo(
     () => ({
       headers: attributeKeys.map((key) => ({
@@ -108,19 +88,77 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
             </Menu.Item>
           );
         },
-        ...extraItemActions,
+        ...(extraItemActions ?? []),
       ] as DataListItemActionsGenerator[],
     }),
     [wfsFeatures, attributeKeys, map, batchActions, extraItemActions],
   );
 
-  // Hooks — Non-blocking deferred transition
-  const { dataList: deferredDataList, isProcessing } = useDeferredDataList({
-    dataList,
-  });
+  return (
+    <DataListTable.Root
+      headers={dataList.headers}
+      items={dataList.items}
+      batchActions={dataList.batchActions}
+      itemActions={dataList.itemActions}
+      canBatchSelect={canBatchSelect}
+      page={page}
+      pageSize={pageSize}
+      selectedItems={selectedItems}
+      onSelectedItemChange={({ selectedItems: next }) => {
+        onSelectedItemChange?.({
+          selectedItems: next as FormattedListItem[],
+        });
+      }}
+      rounded={0}
+      pb={0}
+      shadow={"none"}
+    >
+      <DataListTable.Header />
+      <DataListTable.Body />
+    </DataListTable.Root>
+  );
+});
 
-  console.log(deferredDataList);
-  console.log(isProcessing);
+export const WfsDataList = memo((props: WfsDataListProps) => {
+  // Props
+  const {
+    wfsFeatures,
+    page,
+    pageSize,
+    totalFeatures,
+    setPage,
+    setPageSize,
+    selectedItems,
+    onSelectedItemChange,
+    canBatchSelect = true,
+    batchActions,
+    extraItemActions,
+    isLoading = false,
+    isFetching = false,
+    ...restProps
+  } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
+
+  // Derived Values — Dynamic Attribute Keys from WFS features
+  const attributeKeys = useMemo(() => {
+    if (wfsFeatures.length > 0 && wfsFeatures[0]?.properties) {
+      const keys = Object.keys(wfsFeatures[0].properties);
+      if (keys.length > 0) {
+        return keys.filter((key) => key !== "geom" && key !== "geometry");
+      }
+    }
+    return [
+      "id",
+      "kodewilaya",
+      "kabupaten",
+      "kecamatan",
+      "kelurahan",
+      "nib",
+      "luastertul",
+    ];
+  }, [wfsFeatures]);
 
   const hasPagination =
     page != null && pageSize != null && totalFeatures != null;
@@ -146,27 +184,21 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
         overflow={"hidden"}
         flex={1}
       >
-        <DataListTable.Root
-          headers={deferredDataList.headers}
-          items={deferredDataList.items}
-          batchActions={deferredDataList.batchActions}
-          itemActions={deferredDataList.itemActions}
-          canBatchSelect={canBatchSelect}
-          page={page}
-          pageSize={pageSize}
-          selectedItems={selectedItems}
-          onSelectedItemChange={({ selectedItems: next }) => {
-            onSelectedItemChange?.({
-              selectedItems: next as FormattedListItem[],
-            });
-          }}
-          rounded={0}
-          pb={0}
-          shadow={"none"}
+        <Suspense
+          fallback={<Skeleton h={"full"} w={"full"} flex={1} rounded={0} />}
         >
-          <DataListTable.Header />
-          <DataListTable.Body />
-        </DataListTable.Root>
+          <WfsTableView
+            wfsFeatures={wfsFeatures}
+            attributeKeys={attributeKeys}
+            canBatchSelect={canBatchSelect}
+            batchActions={batchActions}
+            extraItemActions={extraItemActions}
+            page={page}
+            pageSize={pageSize}
+            selectedItems={selectedItems}
+            onSelectedItemChange={onSelectedItemChange}
+          />
+        </Suspense>
 
         <TopBarLoader isFetching={isFetching} />
       </Box>
@@ -186,6 +218,3 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
     </VStack>
   );
 });
-
-export const WfsIgtDataList = WfsDataList;
-export const MitraWfsDataList = WfsDataList;
