@@ -3,7 +3,7 @@
 import { HelpCenterPage } from "@/features/mitra/help-center/pages/help-center.page";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_private/mitra/help-center")({
+export const Route = createFileRoute("/_private/mitra/help-center/")({
   component: RouteComponent,
 });
 

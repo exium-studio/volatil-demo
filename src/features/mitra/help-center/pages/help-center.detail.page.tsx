@@ -1,5 +1,6 @@
 // src/features/mitra/help-center/pages/help-center.detail.page.tsx
 
+import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
@@ -10,6 +11,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -28,11 +30,13 @@ import { useParams, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
   DownloadIcon,
+  ExternalLinkIcon,
   FileIcon,
   ImageIcon,
   MessageSquarePlusIcon,
   ShieldCheckIcon,
   UserIcon,
+  VideoIcon,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -57,8 +61,11 @@ export const HelpCenterDetailPage = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
-  const { data: ticket, isLoading, isFetching } =
-    useHelpCenterDetailQuery(ticketId ?? "");
+  const {
+    data: ticket,
+    isLoading,
+    isFetching,
+  } = useHelpCenterDetailQuery(ticketId ?? "");
 
   const statusConfig =
     ticket?.status && STATUS_CONFIG_MAP[ticket.status]
@@ -103,14 +110,10 @@ export const HelpCenterDetailPage = () => {
     );
   }
 
-  const reporterName =
-    ticket.reporter?.name ?? ticket.user?.name ?? "Pelapor";
+  const reporterName = ticket.reporter?.name ?? ticket.user?.name ?? "Pelapor";
   const reporterOrg =
-    ticket.reporter?.organizationName ??
-    ticket.user?.organizationName ??
-    "";
-  const reporterEmail =
-    ticket.reporter?.email ?? ticket.user?.email ?? "";
+    ticket.reporter?.organizationName ?? ticket.user?.organizationName ?? "";
+  const reporterEmail = ticket.reporter?.email ?? ticket.user?.email ?? "";
 
   return (
     <PanelContentContainer
@@ -132,23 +135,16 @@ export const HelpCenterDetailPage = () => {
             w={"full"}
           >
             <HStack gap={SPACING.md} align={"center"}>
-              <Button
-                variant={"subtle"}
-                size={"sm"}
-                onClick={() => router.history.back()}
-              >
-                <AppIcon icon={ArrowLeftIcon} />
-                {"Kembali"}
-              </Button>
+              <BackButton />
 
-              <VStack align={"start"} gap={0}>
+              <VStack align={"start"}>
                 <HStack gap={2} align={"center"}>
-                  <P fontSize={"xl"} fontWeight={"bold"} color={"fg.default"}>
-                    {ticket.title}
-                  </P>
+                  <Heading>{ticket.title}</Heading>
+
                   <Badge colorPalette={statusConfig.color} variant={"subtle"}>
                     {statusConfig.label}
                   </Badge>
+
                   {ticket.priority && (
                     <Badge variant={"outline"} colorPalette={"gray"}>
                       {`Prioritas: ${ticket.priority.toUpperCase()}`}
@@ -156,7 +152,7 @@ export const HelpCenterDetailPage = () => {
                   )}
                 </HStack>
 
-                <P fontSize={"xs"} color={"fg.subtle"}>
+                <P fontSize={"sm"} color={"fg.subtle"}>
                   {`ID Laporan: #${ticket.id} • Dibuat pada ${formatUtcDateTime(
                     ticket.createdAt,
                     preferredTimezone,
@@ -182,18 +178,13 @@ export const HelpCenterDetailPage = () => {
       {/* Original Issue Content Container */}
       <Container.Root withContext={true}>
         <Container.Body p={0}>
-          <VStack align={"stretch"} gap={0}>
-            <HStack
-              justify={"space-between"}
-              align={"center"}
-              p={PADDING.md}
-              bg={"bg.subtle"}
-            >
+          <VStack>
+            <HStack justify={"space-between"} align={"center"} p={PADDING.md}>
               <HStack gap={SPACING.sm} align={"center"}>
                 <Circle p={2} bg={"bg.muted"} color={"fg.muted"}>
                   <AppIcon icon={UserIcon} />
                 </Circle>
-                <VStack align={"start"} gap={0}>
+                <VStack align={"start"}>
                   <P fontWeight={"semibold"}>{reporterName}</P>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {[reporterEmail, reporterOrg].filter(Boolean).join(" • ")}
@@ -201,7 +192,7 @@ export const HelpCenterDetailPage = () => {
                 </VStack>
               </HStack>
 
-              <P fontSize={"xs"} color={"fg.subtle"}>
+              <P fontSize={"sm"} color={"fg.subtle"}>
                 {formatUtcDateTime(ticket.createdAt, preferredTimezone)}
               </P>
             </HStack>
@@ -209,7 +200,11 @@ export const HelpCenterDetailPage = () => {
             <Separator borderColor={"bg.canvas"} />
 
             <VStack align={"start"} gap={SPACING.md} p={PADDING.md}>
-              <P color={"fg.default"} whiteSpace={"pre-wrap"} lineHeight={"tall"}>
+              <P
+                color={"fg.default"}
+                whiteSpace={"pre-wrap"}
+                lineHeight={"tall"}
+              >
                 {ticket.description}
               </P>
 
@@ -232,43 +227,90 @@ export const HelpCenterDetailPage = () => {
                       const isImage =
                         att.mimeType?.startsWith("image/") ||
                         att.fileType?.startsWith("image/");
+                      const isVideo =
+                        att.mimeType?.startsWith("video/") ||
+                        att.fileType?.startsWith("video/");
 
                       return (
                         <Box
                           key={att.id || String(idx)}
+                          asChild={Boolean(fileUrl)}
                           p={PADDING.sm}
                           border={"1px solid"}
                           borderColor={"border.subtle"}
                           rounded={theme.radii.component}
                           bg={"bg.body"}
+                          cursor={fileUrl ? "pointer" : "default"}
+                          transition={"all 0.15s ease"}
+                          _hover={{
+                            bg: "bg.subtle",
+                            borderColor: "border.emphasized",
+                          }}
                         >
-                          <HStack gap={SPACING.sm} align={"center"}>
-                            <AppIcon
-                              icon={isImage ? ImageIcon : FileIcon}
-                              size={"sm"}
-                              color={"fg.muted"}
-                            />
-                            <P fontSize={"sm"} fontWeight={"medium"}>
-                              {fileName}
-                            </P>
-
-                            {fileUrl && (
-                              <Button
-                                asChild
-                                variant={"ghost"}
-                                size={"2xs"}
-                              >
-                                <a
-                                  href={fileUrl}
-                                  target={"_blank"}
-                                  rel={"noreferrer"}
-                                  download
+                          {fileUrl ? (
+                            <a
+                              href={fileUrl}
+                              target={"_blank"}
+                              rel={"noopener noreferrer"}
+                              download={
+                                !isImage && !isVideo ? fileName : undefined
+                              }
+                            >
+                              <HStack gap={SPACING.sm} align={"center"}>
+                                <AppIcon
+                                  icon={
+                                    isImage
+                                      ? ImageIcon
+                                      : isVideo
+                                        ? VideoIcon
+                                        : FileIcon
+                                  }
+                                  size={"sm"}
+                                  color={"fg.muted"}
+                                />
+                                <P
+                                  fontSize={"sm"}
+                                  fontWeight={"medium"}
+                                  maxW={"220px"}
+                                  lineClamp={1}
                                 >
-                                  <AppIcon icon={DownloadIcon} size={"xs"} />
-                                </a>
-                              </Button>
-                            )}
-                          </HStack>
+                                  {fileName}
+                                </P>
+
+                                <AppIcon
+                                  icon={
+                                    isImage || isVideo
+                                      ? ExternalLinkIcon
+                                      : DownloadIcon
+                                  }
+                                  size={"xs"}
+                                  color={"fg.subtle"}
+                                />
+                              </HStack>
+                            </a>
+                          ) : (
+                            <HStack gap={SPACING.sm} align={"center"}>
+                              <AppIcon
+                                icon={
+                                  isImage
+                                    ? ImageIcon
+                                    : isVideo
+                                      ? VideoIcon
+                                      : FileIcon
+                                }
+                                size={"sm"}
+                                color={"fg.muted"}
+                              />
+                              <P
+                                fontSize={"sm"}
+                                fontWeight={"medium"}
+                                maxW={"220px"}
+                                lineClamp={1}
+                              >
+                                {fileName}
+                              </P>
+                            </HStack>
+                          )}
                         </Box>
                       );
                     })}
@@ -282,8 +324,8 @@ export const HelpCenterDetailPage = () => {
 
       {/* Timeline of Replies */}
       <Container.Root withContext={true}>
-        <Container.Body p={0}>
-          <VStack align={"stretch"} gap={0}>
+        <Container.Body>
+          <VStack>
             <HStack p={PADDING.md} justify={"space-between"} align={"center"}>
               <P fontSize={"md"} fontWeight={"semibold"}>
                 {`Riwayat Tanggapan & Balasan (${replies.length})`}
@@ -295,11 +337,13 @@ export const HelpCenterDetailPage = () => {
             {replies.length === 0 ? (
               <Box p={PADDING.xl} textAlign={"center"}>
                 <P color={"fg.subtle"}>
-                  {"Belum ada balasan untuk laporan ini. Klik tombol 'Balas Laporan' di atas untuk memberikan tanggapan."}
+                  {
+                    "Belum ada balasan untuk laporan ini. Klik tombol 'Balas Laporan' di atas untuk memberikan tanggapan."
+                  }
                 </P>
               </Box>
             ) : (
-              <VStack align={"stretch"} gap={0} p={PADDING.md}>
+              <VStack p={PADDING.md}>
                 {replies.map((reply, idx) => {
                   const replyUserName =
                     reply.admin?.name ?? reply.user?.name ?? "Admin Internal";
@@ -318,7 +362,7 @@ export const HelpCenterDetailPage = () => {
                       borderColor={"border.subtle"}
                       mb={SPACING.sm}
                     >
-                      <VStack align={"stretch"} gap={SPACING.sm}>
+                      <VStack gap={SPACING.sm}>
                         <HStack
                           justify={"space-between"}
                           align={"center"}
@@ -382,35 +426,74 @@ export const HelpCenterDetailPage = () => {
                                   att.originalName ??
                                   `Lampiran-${attIdx + 1}`;
                                 const attUrl = att.fileUrl ?? att.url;
+                                const isImage =
+                                  att.mimeType?.startsWith("image/") ||
+                                  att.fileType?.startsWith("image/");
+                                const isVideo =
+                                  att.mimeType?.startsWith("video/") ||
+                                  att.fileType?.startsWith("video/");
 
                                 return (
                                   <Badge
                                     key={att.id || String(attIdx)}
+                                    asChild={Boolean(attUrl)}
                                     variant={"outline"}
                                     colorPalette={"gray"}
+                                    cursor={attUrl ? "pointer" : "default"}
+                                    _hover={
+                                      attUrl
+                                        ? {
+                                            bg: "bg.muted",
+                                          }
+                                        : undefined
+                                    }
                                   >
-                                    <AppIcon icon={FileIcon} size={"xs"} />
-                                    {attName}
-                                    {attUrl && (
-                                      <Button
-                                        asChild
-                                        variant={"ghost"}
-                                        size={"2xs"}
-                                        p={0}
-                                        ml={1}
+                                    {attUrl ? (
+                                      <a
+                                        href={attUrl}
+                                        target={"_blank"}
+                                        rel={"noopener noreferrer"}
+                                        download={
+                                          !isImage && !isVideo
+                                            ? attName
+                                            : undefined
+                                        }
                                       >
-                                        <a
-                                          href={attUrl}
-                                          target={"_blank"}
-                                          rel={"noreferrer"}
-                                          download
-                                        >
-                                          <AppIcon
-                                            icon={DownloadIcon}
-                                            size={"xs"}
-                                          />
-                                        </a>
-                                      </Button>
+                                        <AppIcon
+                                          icon={
+                                            isImage
+                                              ? ImageIcon
+                                              : isVideo
+                                                ? VideoIcon
+                                                : FileIcon
+                                          }
+                                          size={"xs"}
+                                        />
+                                        {attName}
+                                        <AppIcon
+                                          icon={
+                                            isImage || isVideo
+                                              ? ExternalLinkIcon
+                                              : DownloadIcon
+                                          }
+                                          size={"xs"}
+                                          color={"fg.subtle"}
+                                        />
+                                      </a>
+                                    ) : (
+                                      <>
+                                        <AppIcon
+                                          icon={
+                                            isImage
+                                              ? ImageIcon
+                                              : isVideo
+                                                ? VideoIcon
+                                                : FileIcon
+                                          }
+                                          size={"xs"}
+                                        />
+                                        {attName}
+                                      </>
                                     )}
                                   </Badge>
                                 );

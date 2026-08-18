@@ -72,7 +72,7 @@ export const HelpCenterModalReply = (props: HelpCenterModalReplyProps) => {
 
         <form onSubmit={handleSubmit}>
           <Modal.Body>
-            <VStack gap={4} align={"stretch"}>
+            <VStack gap={4}>
               <Field label={"Pesan Balasan"} required={true}>
                 <Textarea
                   placeholder={"Tuliskan pesan balasan atau tanggapan Anda..."}

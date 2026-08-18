@@ -312,7 +312,7 @@ export const HelpCenterDataList = () => {
           </HStack>
 
           <CreateHelpCenterTrigger>
-            <Button primary={true}>
+            <Button primary={true} pl={3}>
               <AppIcon icon={PlusIcon} />
               {"Buat Laporan"}
             </Button>
@@ -322,7 +322,7 @@ export const HelpCenterDataList = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Table & Footer Content */}
-        <VStack bg={"bg.canvas"} w={"full"} position={"relative"} gap={0}>
+        <VStack bg={"bg.canvas"} w={"full"} position={"relative"}>
           {isLoading && <Skeleton h={"280px"} w={"full"} />}
 
           {!isLoading && isEmptyArray(tickets) && (
