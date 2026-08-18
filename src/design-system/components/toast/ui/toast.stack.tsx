@@ -114,7 +114,7 @@ export function ToastStack<TItem>({
               setExpanded(false);
             }}
           >
-            {"Tutup"}
+            {t["action.close"]()}
           </Button>
 
           {onCloseAll && (

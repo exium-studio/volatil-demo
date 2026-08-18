@@ -16,6 +16,7 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { NotificationGroupStackCard } from "@/features/notification/components/notification.item";
 import { useNotifications } from "@/features/notification/hooks/use-notifications";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
+import { t } from "@/shared/libs/i18n";
 import { BellOffIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 
@@ -79,7 +80,7 @@ export const NotificationPage = () => {
                 >
                   <Button colorPalette={"red"}>
                     <AppIcon icon={Trash2Icon} />
-                    {"Bersihkan"}
+                    {t["action.clear_all"]()}
                   </Button>
                 </ConfirmationTrigger>
               )}

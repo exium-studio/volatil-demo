@@ -46,16 +46,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           result.push(
             <Span
               key={`button-text-group-${result.length}`}
-              lineClamp={clampVal > 0 ? clampVal : undefined}
-              truncate={clampVal === 1}
+              overflow={"hidden"}
               minW={0}
               maxW={"full"}
-              overflow={"hidden"}
+              py={"1px"}
               display={"inline-block"}
+              fontSize={restProps?.fontSize}
               lineHeight={"normal"}
+              lineClamp={clampVal > 0 ? clampVal : undefined}
+              truncate={clampVal === 1}
               whiteSpace={clampVal === 1 ? "nowrap" : "normal"}
               textOverflow={clampVal === 1 ? "ellipsis" : undefined}
-              py={"1px"}
             >
               {combinedText}
             </Span>,
@@ -76,14 +77,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       flushTextGroup();
 
       return result;
-    }, [children, lineClamp]);
+    }, [children, lineClamp, restProps?.fontSize]);
 
     return (
       <ChakraButton
         ref={ref}
         size={SIZES.mainButton}
         variant={variant || (primary ? "solid" : "ghost")}
-        colorPalette={colorPalette ?? (primary ? theme.colorPalette : "neutral")}
+        colorPalette={
+          colorPalette ?? (primary ? theme.colorPalette : "neutral")
+        }
         gap={2}
         rounded={theme.radii.component}
         fontSize={"md"}
@@ -113,7 +116,9 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         ref={ref}
         size={SIZES.mainButton}
         variant={variant || (primary ? "solid" : "ghost")}
-        colorPalette={colorPalette ?? (primary ? theme.colorPalette : "neutral")}
+        colorPalette={
+          colorPalette ?? (primary ? theme.colorPalette : "neutral")
+        }
         rounded={theme.radii.component}
         fontWeight={"normal"}
         userSelect={"none"}

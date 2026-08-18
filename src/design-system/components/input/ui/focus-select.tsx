@@ -15,7 +15,7 @@ import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-co
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
@@ -252,11 +252,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               >
                 <HStack gap={SPACING.sm} align={"center"} flex={1} minW={0}>
                   <AppIcon icon={PlusIcon} size={"sm"} />
-                  <P fontWeight={"semibold"} truncate>
+                  <ClampedP>
                     {searchQuery.trim()
                       ? searchQuery.trim()
                       : "Ketik di atas untuk input kustom..."}
-                  </P>
+                  </ClampedP>
                 </HStack>
                 <Badge>Opsi Kustom</Badge>
               </Button>
