@@ -19,7 +19,7 @@ import type {
   SpatialFeaturesDataListContentProps,
   SpatialFeaturesDataListProps,
 } from "@/features/shared/types/spatial-features-data-list.type";
-import { IconCurrentLocation } from "@tabler/icons-react";
+import { MapPinIcon } from "lucide-react";
 import { memo, useMemo } from "react";
 
 export const SpatialFeaturesDataList = memo(
@@ -197,7 +197,7 @@ const SpatialFeaturesDataListContent = memo(
                   );
                 }}
               >
-                <AppIcon icon={IconCurrentLocation} />
+                <AppIcon icon={MapPinIcon} />
                 {"Lihat di Peta"}
               </Menu.Item>
             );

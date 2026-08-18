@@ -29,9 +29,13 @@ import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger
 import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-list.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { t } from "@/shared/libs/i18n";
-import { IconCurrentLocation, IconShoppingCartPlus } from "@tabler/icons-react";
+import { IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { SlidersHorizontalIcon, TablePropertiesIcon } from "lucide-react";
+import {
+  MapPinIcon,
+  SlidersHorizontalIcon,
+  TablePropertiesIcon,
+} from "lucide-react";
 import { memo, useMemo, useState } from "react";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -232,7 +236,7 @@ export const MitraDataRequestIgtLayerList = memo(
                 });
               }}
             >
-              <AppIcon icon={IconCurrentLocation} />
+              <AppIcon icon={MapPinIcon} />
               {"Lihat di Peta"}
             </Menu.Item>
           );

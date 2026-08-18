@@ -12,7 +12,7 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
-import { IconCurrentLocation } from "@tabler/icons-react";
+import { MapPinIcon } from "lucide-react";
 import { memo } from "react";
 
 type MitraDataRequestDetailAttributeHeaderProps = {
@@ -70,7 +70,7 @@ export const MitraDataRequestDetailAttributeHeader = memo(
                     aria-label={"Lihat layer IGT di peta"}
                     onClick={handleFlyToLayer}
                   >
-                    <AppIcon icon={IconCurrentLocation} />
+                    <AppIcon icon={MapPinIcon} />
                   </IconButton>
                 </Tooltip>
               </HStack>
