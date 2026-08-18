@@ -2,6 +2,7 @@
 
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
+import { useDeferredDataList } from "@/design-system/components/data-display/hooks/use-deferred-data-list";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
@@ -113,6 +114,11 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
     [wfsFeatures, attributeKeys, map, batchActions, extraItemActions],
   );
 
+  // Hooks — Non-blocking deferred transition
+  const { dataList: deferredDataList, isProcessing } = useDeferredDataList({
+    dataList,
+  });
+
   const hasPagination =
     page != null && pageSize != null && totalFeatures != null;
 
@@ -138,10 +144,10 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
         flex={1}
       >
         <DataListTable.Root
-          headers={dataList.headers}
-          items={dataList.items}
-          batchActions={dataList.batchActions}
-          itemActions={dataList.itemActions}
+          headers={deferredDataList.headers}
+          items={deferredDataList.items}
+          batchActions={deferredDataList.batchActions}
+          itemActions={deferredDataList.itemActions}
           canBatchSelect={canBatchSelect}
           page={page}
           pageSize={pageSize}
@@ -159,7 +165,7 @@ export const WfsDataList = memo((props: WfsDataListProps) => {
           <DataListTable.Body />
         </DataListTable.Root>
 
-        <TopBarLoader isFetching={isFetching} />
+        <TopBarLoader isFetching={isFetching || isProcessing} />
       </Box>
 
       {hasPagination && (
