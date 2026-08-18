@@ -1,6 +1,6 @@
 // src/features/mitra/data-request/stores/igt-layer.store.ts
 
-import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { create } from "zustand";

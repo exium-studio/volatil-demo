@@ -1,7 +1,7 @@
 // src/features/mitra/data-request/utils/build-igt-cql-filter.ts
 
 import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
-import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 
 /**
  * Resolves a target attribute field key against sample properties in a case-insensitive manner.

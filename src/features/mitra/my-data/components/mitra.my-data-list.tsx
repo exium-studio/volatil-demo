@@ -17,8 +17,8 @@ import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
-import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+import { IgtFilterTrigger } from "@/features/shared/components/igt-filter";
+import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraMyDataListProps,
@@ -79,10 +79,7 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
     kelurahan: wfsFilters.kelurahan?.value,
   });
 
-  const updateState = (
-    next: Partial<typeof state>,
-    resetPage = false,
-  ) => {
+  const updateState = (next: Partial<typeof state>, resetPage = false) => {
     setState((prev) => ({
       ...prev,
       ...next,
@@ -220,7 +217,13 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
 
   return (
     <VStack gap={SPACING.md} w={"full"}>
-      <HStack wrap={"wrap"} align={"center"} justify={"space-between"} gap={SPACING.sm} w={"full"}>
+      <HStack
+        wrap={"wrap"}
+        align={"center"}
+        justify={"space-between"}
+        gap={SPACING.sm}
+        w={"full"}
+      >
         <SearchInput
           value={state.search}
           onValueChange={(val) =>

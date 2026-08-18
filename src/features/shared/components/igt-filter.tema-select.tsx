@@ -1,26 +1,19 @@
-// src/features/mitra/data-request/components/igt-filter.kecamatan-select.tsx
+// src/features/mitra/data-request/components/igt-filter.tema-select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type {
   IgtFilterOptionDetail,
   IgtFilterSelectProps,
-} from "@/features/mitra/data-request/types/filter-igt-trigger.type";
-import { useFilterOptionsKecamatan } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
+} from "@/features/shared/types/filter-igt-trigger.type";
+import { useFilterOptionsTema } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
 
-export type IgtFilterKecamatanSelectProps = IgtFilterSelectProps & {
-  kabupatenId?: string;
-};
-
-export const IgtFilterKecamatanSelect = (
-  props: IgtFilterKecamatanSelectProps,
-) => {
+export const IgtFilterTemaSelect = (props: IgtFilterSelectProps) => {
   // Props
   const {
     modalKey,
-    kabupatenId,
     value: controlledValue,
     defaultValue = "",
     onValueChange,
@@ -35,21 +28,16 @@ export const IgtFilterKecamatanSelect = (
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: kecamatanOptionsData, isLoading } = useFilterOptionsKecamatan({
-    kabupatenId,
-  });
-  const selectOptions: FocusSelectOption[] = (
-    kecamatanOptionsData?.data ?? []
-  ).map((item) => ({
-    label: item.label,
-    value: item.value,
-  }));
+  const { data: temaOptionsData, isLoading } = useFilterOptionsTema();
+  const selectOptions: FocusSelectOption[] = (temaOptionsData?.data ?? []).map(
+    (item) => ({
+      label: item.label,
+      value: item.value,
+    }),
+  );
 
   // Handlers
-  const handleValueChange = (
-    val: string,
-    option?: IgtFilterOptionDetail,
-  ) => {
+  const handleValueChange = (val: string, option?: IgtFilterOptionDetail) => {
     if (!isControlled) {
       setInternalValue(val);
     }
@@ -60,8 +48,8 @@ export const IgtFilterKecamatanSelect = (
 
   return (
     <FocusSelectInput
-      modalKey={modalKey ?? "igt-filter-kecamatan-select-modal"}
-      label={"Kecamatan"}
+      modalKey={modalKey ?? "igt-filter-tema-select-modal"}
+      label={"Tema IGT"}
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}
@@ -73,7 +61,7 @@ export const IgtFilterKecamatanSelect = (
             : undefined,
         )
       }
-      disabled={disabled || !kabupatenId}
+      disabled={disabled}
       isFetching={isLoading}
       customOption={true}
     />
@@ -81,5 +69,4 @@ export const IgtFilterKecamatanSelect = (
 };
 
 // Aliases for compatibility
-export type WfsIgtFilterKecamatanSelectProps = IgtFilterKecamatanSelectProps;
-export const WfsIgtFilterKecamatanSelect = IgtFilterKecamatanSelect;
+export const WfsIgtFilterTemaSelect = IgtFilterTemaSelect;

@@ -182,16 +182,35 @@ export const fetchWfs = async (
   }
 
   const text = await res.text();
+  const trimmedText = text.trim();
 
   if (
-    text.trim().startsWith("<?xml") ||
-    text.trim().startsWith("<ows:ExceptionReport")
+    trimmedText.startsWith("<ows:ExceptionReport") ||
+    trimmedText.includes("<ows:ExceptionText>")
   ) {
     const matchText = /<ows:ExceptionText>(.*?)<\/ows:ExceptionText>/s.exec(
       text,
     );
     const errorMsg = matchText?.[1]?.trim() ?? "WFS OGC Exception occurred";
     throw new Error(`WFS OGC Error (${version}): ${errorMsg}`);
+  }
+
+  // When resultType=hits, some GeoServer versions return XML FeatureCollection instead of JSON
+  if (trimmedText.startsWith("<?xml") || trimmedText.startsWith("<wfs:FeatureCollection")) {
+    const numberMatchedMatch = /numberMatched="(\d+)"/i.exec(text);
+    const numberOfFeaturesMatch = /numberOfFeatures="(\d+)"/i.exec(text);
+    const totalFeaturesMatch = /totalFeatures="(\d+)"/i.exec(text);
+    const count =
+      numberMatchedMatch?.[1] ??
+      numberOfFeaturesMatch?.[1] ??
+      totalFeaturesMatch?.[1] ??
+      "0";
+
+    return {
+      type: "FeatureCollection",
+      features: [],
+      totalFeatures: parseInt(count, 10),
+    };
   }
 
   const raw = JSON.parse(text) as RawGeoServerResponse;

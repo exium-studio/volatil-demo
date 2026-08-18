@@ -5,7 +5,7 @@ import { FocusSelectInput } from "@/design-system/components/input/ui/focus-sele
 import type {
   IgtFilterOptionDetail,
   IgtFilterSelectProps,
-} from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+} from "@/features/shared/types/filter-igt-trigger.type";
 import { useFilterOptionsBasis } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
@@ -37,10 +37,7 @@ export const IgtFilterBasisSelect = (props: IgtFilterSelectProps) => {
   );
 
   // Handlers
-  const handleValueChange = (
-    val: string,
-    option?: IgtFilterOptionDetail,
-  ) => {
+  const handleValueChange = (val: string, option?: IgtFilterOptionDetail) => {
     if (!isControlled) {
       setInternalValue(val);
     }

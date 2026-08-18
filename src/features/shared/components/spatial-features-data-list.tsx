@@ -18,7 +18,7 @@ import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highl
 import type {
   SpatialFeaturesDataListContentProps,
   SpatialFeaturesDataListProps,
-} from "@/features/mitra/shared/types/wfs-data-list.type";
+} from "@/features/shared/types/spatial-features-data-list.type";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { memo, useMemo } from "react";
 

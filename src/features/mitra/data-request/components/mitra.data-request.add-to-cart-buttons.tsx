@@ -12,6 +12,7 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { MitraDataRequestAddToCartButtonsProps } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
+import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconShoppingCart } from "@tabler/icons-react";
@@ -59,25 +60,35 @@ export const MitraDataRequestAddToCartButtons = (
   const kawasanCount = totalKawasanCountProp ?? calculatedKawasan;
   const totalItemCount = totalCount ?? bidangCount + kawasanCount;
 
-  // Derived — calculate total 'luas' attribute in Hektar (Ha) if spatialBasis is kawasan
+  // Derived — calculate total 'luas' in hectares (ha) using geometry or fallback to attribute
   const selectedKawasanLuasTotal = useMemo(() => {
     if (spatialBasis !== "kawasan") return 0;
     return (selectedItems ?? []).reduce((acc, item) => {
-      const data = item.data as Record<string, unknown> | undefined;
-      const props = (data?.properties ?? data ?? {}) as Record<string, unknown>;
-      const key = Object.keys(props).find((k) => k.toLowerCase() === "luas");
+      const data = item.data as GeoJSON.Feature | Record<string, unknown> | undefined;
+      // Try calculating directly from geometry using turf
+      if (data && "geometry" in data && data.geometry) {
+        const geomAreaHa = calculateFeatureAreaInHectares(data as GeoJSON.Feature);
+        if (geomAreaHa > 0) return acc + geomAreaHa;
+      }
+      const props = (data && "properties" in data ? data.properties : data ?? {}) as Record<string, unknown>;
+      const key = Object.keys(props).find((k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul");
       const val = key ? Number(props[key]) : NaN;
       return acc + (isNaN(val) ? 0 : val);
     }, 0);
   }, [selectedItems, spatialBasis]);
 
-  // Derived — calculate total 'luas' attribute in Hektar (Ha) for all items if spatialBasis is kawasan
+  // Derived — calculate total 'luas' in hectares (ha) for all items
   const allKawasanLuasTotal = useMemo<number>(() => {
     if (spatialBasis !== "kawasan") return 0;
     return (allItems ?? []).reduce<number>((acc, item) => {
-      const data = item as Record<string, unknown> | undefined;
-      const props = (data?.properties ?? data ?? {}) as Record<string, unknown>;
-      const key = Object.keys(props).find((k) => k.toLowerCase() === "luas");
+      const data = item as GeoJSON.Feature | Record<string, unknown> | undefined;
+      // Try calculating directly from geometry using turf
+      if (data && "geometry" in data && data.geometry) {
+        const geomAreaHa = calculateFeatureAreaInHectares(data as GeoJSON.Feature);
+        if (geomAreaHa > 0) return acc + geomAreaHa;
+      }
+      const props = (data && "properties" in data ? data.properties : data ?? {}) as Record<string, unknown>;
+      const key = Object.keys(props).find((k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul");
       const val = key ? Number(props[key]) : NaN;
       return acc + (isNaN(val) ? 0 : val);
     }, 0);
@@ -110,15 +121,15 @@ export const MitraDataRequestAddToCartButtons = (
 
   const selectedTotalCount = selectedItems?.length ?? 0;
 
-  // Selected label: if kawasan with luas, show Ha, otherwise count or ? Ha Kawasan
+  // Selected label: if kawasan with luas, show ha, otherwise count or ? ha kawasan
   const selectedCountLabel = useMemo(() => {
     if (selectedTotalCount === 0) return "";
 
     if (spatialBasis === "kawasan") {
       if (selectedKawasanLuasTotal > 0) {
-        return `(${formatNumber(selectedKawasanLuasTotal)} Ha)`;
+        return `(${formatNumber(selectedKawasanLuasTotal, { maximumFractionDigits: 2 })} ha)`;
       }
-      return `(? Ha Kawasan)`;
+      return `(? ha kawasan)`;
     }
 
     if (selectedBidangCount > 0 || selectedKawasanCount > 0) {
@@ -140,13 +151,13 @@ export const MitraDataRequestAddToCartButtons = (
     selectedKawasanCount,
   ]);
 
-  // All label: if kawasan with luas, show Ha, otherwise ? Ha Kawasan
+  // All label: if kawasan with luas, show ha, otherwise ? ha kawasan
   const allCountLabel = useMemo(() => {
     if (spatialBasis === "kawasan") {
       if (allKawasanLuasTotal > 0) {
-        return `(${formatNumber(allKawasanLuasTotal)} Ha)`;
+        return `(${formatNumber(allKawasanLuasTotal, { maximumFractionDigits: 2 })} ha)`;
       }
-      return `(? Ha Kawasan)`;
+      return `(? ha kawasan)`;
     }
 
     if (bidangCount > 0 || kawasanCount > 0) {
@@ -248,8 +259,8 @@ export const MitraDataRequestAddToCartButtons = (
                 <AppIcon icon={TreesIcon} />
                 {"Tambah semua kawasan"}{" "}
                 {allKawasanLuasTotal > 0
-                  ? `(${formatNumber(allKawasanLuasTotal)} Ha)`
-                  : `(? Ha Kawasan)`}
+                  ? `(${formatNumber(allKawasanLuasTotal, { maximumFractionDigits: 2 })} ha)`
+                  : `(? ha kawasan)`}
               </Menu.Item>
             </Menu.Content>
           </Menu.Root>

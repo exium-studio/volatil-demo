@@ -7,6 +7,7 @@ import {
 } from "@/design-system/components/map/utils/fetch-wfs";
 import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
 import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
+import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import type GeoJSON from "geojson";
 
 const cachedAttributes: Record<string, string[]> = {};
@@ -206,7 +207,7 @@ export const fetchWfsCatalog = async ({
     const features = pageResult.features ?? [];
     const totalFeatures = pageResult.totalFeatures ?? features.length;
 
-    // Count bidang vs kawasan and total luas from actual feature properties basis
+    // Count bidang vs kawasan and total luas from actual feature properties basis & geometry
     let bidangCount = 0;
     let kawasanCount = 0;
     let totalLuas = 0;
@@ -221,6 +222,16 @@ export const fetchWfsCatalog = async ({
         bidangCount += 1;
       }
 
+      // Calculate area directly from geometry in ha using turf
+      if (feat.geometry) {
+        const geomAreaHa = calculateFeatureAreaInHectares(feat);
+        if (geomAreaHa > 0) {
+          totalLuas += geomAreaHa;
+          return;
+        }
+      }
+
+      // Fallback to property key if geometry calculation returned 0
       const luasKey = Object.keys(props).find((k) =>
         (IGT_AREA_KEYS as readonly string[]).includes(k.toLowerCase()),
       );

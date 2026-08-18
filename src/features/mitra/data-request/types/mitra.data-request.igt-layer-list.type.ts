@@ -2,7 +2,7 @@
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 
 export type MitraDataRequestIgtLayerCardListProps = {
   cqlFilter?: string;

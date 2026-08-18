@@ -8,10 +8,7 @@ export type IgtFilterOptionDetail = {
   description?: string;
 };
 
-export type IgtFilterValues = Record<
-  string,
-  IgtFilterOptionDetail | null
->;
+export type IgtFilterValues = Record<string, IgtFilterOptionDetail | null>;
 
 export type IgtFilterSelectProps = {
   modalKey?: string;

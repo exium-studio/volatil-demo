@@ -20,20 +20,53 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import { IgtFilterTrigger } from "@/features/mitra/data-request/components/igt-filter";
+import { getLayerCountSummary } from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
+import { IgtFilterTrigger } from "@/features/shared/components/igt-filter";
 import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useIgtFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import type { IgtFilterValues } from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-list.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { t } from "@/shared/libs/i18n";
 import { IconCurrentLocation, IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  SlidersHorizontalIcon,
-  TablePropertiesIcon,
-} from "lucide-react";
+import { SlidersHorizontalIcon, TablePropertiesIcon } from "lucide-react";
 import { memo, useMemo, useState } from "react";
+
+const IgtLayerCountCell = memo(
+  (props: { layer: IgtLayerItem; cqlFilter?: string }) => {
+    const { layer, cqlFilter } = props;
+
+    const { data, isLoading } = useQuery({
+      queryKey: [
+        "igt-layer-count-summary",
+        layer.id,
+        layer.wfs?.wfsTypeName,
+        layer.spatialBasis,
+        cqlFilter,
+      ],
+      queryFn: ({ signal }) =>
+        getLayerCountSummary({
+          typeName: layer.wfs?.wfsTypeName ?? "",
+          wfsUrl: layer.wfs?.wfsUrl ?? "",
+          spatialBasis: layer.spatialBasis,
+          cqlFilter,
+          signal,
+        }),
+      staleTime: 5 * 60 * 1000,
+    });
+
+    if (isLoading) {
+      return <Skeleton h={"16px"} w={"64px"} />;
+    }
+
+    return (
+      <P fontSize={"sm"} fontWeight={"medium"} color={"fg.default"}>
+        {data?.label ?? "-"}
+      </P>
+    );
+  },
+);
 
 export const MitraDataRequestIgtLayerList = memo(
   (props: MitraDataRequestIgtLayerCardListProps) => {
@@ -104,7 +137,8 @@ export const MitraDataRequestIgtLayerList = memo(
     const dataList = useMemo(() => {
       const headers: FormattedTableHeader[] = [
         { th: "Layer IGT", sortable: true, align: "start" },
-        { th: "Tipe", sortable: true, align: "center" },
+        { th: "Basis IGT", sortable: true, align: "center" },
+        { th: "Jumlah / Luas", sortable: false, align: "start" },
         { th: "WFS TypeName", sortable: true, align: "start" },
       ];
 
@@ -140,6 +174,16 @@ export const MitraDataRequestIgtLayerList = memo(
                   </Badge>
                 ),
                 align: "center",
+              },
+              {
+                value: layer.spatialBasis,
+                td: (
+                  <IgtLayerCountCell
+                    layer={layer}
+                    cqlFilter={combinedCqlFilter}
+                  />
+                ),
+                align: "start",
               },
               {
                 value: layer.wfs?.wfsTypeName ?? "-",
@@ -225,12 +269,7 @@ export const MitraDataRequestIgtLayerList = memo(
     ]);
 
     return (
-      <VStack
-        flex={1}
-        overflowY={"auto"}
-        bg={"bg.canvas"}
-        position={"relative"}
-      >
+      <VStack flex={1} overflowY={"auto"} position={"relative"}>
         {/* Header Action Bar */}
         <HStack
           wrap={"wrap"}
@@ -269,7 +308,7 @@ export const MitraDataRequestIgtLayerList = memo(
         <Separator borderColor={"bg.canvas"} />
 
         {/* DataList Table */}
-        <VStack flex={1} bg={"bg.body"}>
+        <VStack flex={1} bg={"bg.canvas"}>
           {isLoadingLayers ? (
             <Skeleton flex={1} p={PADDING.md} rounded={0} />
           ) : (

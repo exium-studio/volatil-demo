@@ -9,16 +9,16 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { MODAL, SPACING } from "@/design-system/constants/styles";
 // import { IgtFilterBasisSelect } from "@/features/mitra/data-request/components/igt-filter.basis-select";
-import { IgtFilterKabupatenSelect } from "@/features/mitra/data-request/components/igt-filter.kabupaten-select";
-import { IgtFilterKecamatanSelect } from "@/features/mitra/data-request/components/igt-filter.kecamatan-select";
-import { IgtFilterKelurahanSelect } from "@/features/mitra/data-request/components/igt-filter.kelurahan-select";
-import { IgtFilterProvinsiSelect } from "@/features/mitra/data-request/components/igt-filter.provinsi-select";
+import { IgtFilterKabupatenSelect } from "@/features/shared/components/igt-filter.kabupaten-select";
+import { IgtFilterKecamatanSelect } from "@/features/shared/components/igt-filter.kecamatan-select";
+import { IgtFilterKelurahanSelect } from "@/features/shared/components/igt-filter.kelurahan-select";
+import { IgtFilterProvinsiSelect } from "@/features/shared/components/igt-filter.provinsi-select";
 import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
 import type {
   IgtFilterOptionDetail,
   IgtFilterTriggerProps,
   IgtFilterValues,
-} from "@/features/mitra/data-request/types/filter-igt-trigger.type";
+} from "@/features/shared/types/filter-igt-trigger.type";
 import { useEffect, useMemo, useState } from "react";
 
 export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
