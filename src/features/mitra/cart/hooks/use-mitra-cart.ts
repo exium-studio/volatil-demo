@@ -153,12 +153,17 @@ export const useAddSelectedToCart = (onSuccessCallback?: () => void) => {
   });
 };
 
-export const useAddAllToCartFromWfs = (onSuccessCallback?: (count: number) => void) => {
+export const useAddAllToCartFromWfs = (
+  onSuccessCallback?: (count: number) => void,
+) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: { typeName: string; wfsUrl: string; cqlFilter?: string }) =>
-      addAllToCartFromWfs(params),
+    mutationFn: (params: {
+      typeName: string;
+      wfsUrl: string;
+      cqlFilter?: string;
+    }) => addAllToCartFromWfs(params),
     onSuccess: (count) => {
       onSuccessCallback?.(count);
       void queryClient.invalidateQueries({

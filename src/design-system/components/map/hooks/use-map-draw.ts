@@ -107,7 +107,7 @@ export const useMapDraw = (
 
     onFinish?.(feature, pointsRef.current);
     finish();
-    toast.success("Area berhasil digambar");
+    toast.success("Area berhasil digambar", { group: "Permohonan Data" });
   };
 
   useEffect(() => {
