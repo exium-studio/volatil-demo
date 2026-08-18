@@ -13,6 +13,7 @@ export const useSigninMutation = () => {
 
   // Handlers
   const toastHandlers = mutationToastHandlers("auth-signin", {
+    group: "Autentikasi",
     loadingMessage: {
       title: "Memproses masuk...",
     },

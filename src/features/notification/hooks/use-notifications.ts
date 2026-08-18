@@ -3,15 +3,12 @@
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
 import { useToastHistory } from "@/design-system/components/toast/hooks/use-toast-history";
 import type { ToastRecord } from "@/design-system/components/toast/types/toast.types";
-import {
-  DUMMY_SYSTEM_NOTIFICATIONS,
-  mapToastHistoryToNotificationItem,
-} from "@/features/notification/services/notification.service";
+import { mapToastHistoryToNotificationItem } from "@/features/notification/services/notification.service";
 import type {
   NotificationCategoryGroup,
   NotificationItem,
 } from "@/features/notification/types/notification.type";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export const useNotifications = () => {
   // Hooks (Toast History Engine Store)
@@ -22,23 +19,17 @@ export const useNotifications = () => {
     clear,
   } = useToastHistory();
 
-  // Local State for System Inbox Management
-  const [systemNotifications, setSystemNotifications] = useState<
-    NotificationItem[]
-  >(DUMMY_SYSTEM_NOTIFICATIONS);
-
   // Derived Values: Convert Toast Entries to Notification Items
   const toastItems = useMemo<NotificationItem[]>(
     () => toastHistoryEntries.map(mapToastHistoryToNotificationItem),
     [toastHistoryEntries],
   );
 
-  // Derived Values: Group into Categories (e.g. Default, Permohonan Data)
+  // Derived Values: Group into Categories (e.g. Permohonan Data, Pusat Bantuan, Sistem)
   const categoryGroups = useMemo<NotificationCategoryGroup[]>(() => {
-    const combined = [...toastItems, ...systemNotifications];
     const groupedMap = new Map<string, NotificationItem[]>();
 
-    for (const item of combined) {
+    for (const item of toastItems) {
       const category = item.category || DEFAULT_TOAST_GROUP;
       const list = groupedMap.get(category) ?? [];
       list.push(item);
@@ -79,7 +70,7 @@ export const useNotifications = () => {
       const bTime = b.records[0]?.createdAt ?? 0;
       return bTime - aTime;
     });
-  }, [toastItems, systemNotifications]);
+  }, [toastItems]);
 
   const totalNotifications = useMemo(() => {
     return categoryGroups.reduce((acc, g) => acc + g.records.length, 0);
@@ -88,19 +79,15 @@ export const useNotifications = () => {
   // Handlers
   const handleDeleteNotification = (id: string) => {
     deleteOne(id);
-    setSystemNotifications((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleDeleteGroup = (groupRecords: ToastRecord[]) => {
     const ids = groupRecords.map((r) => r.id);
     deleteMany(ids);
-    const idSet = new Set(ids);
-    setSystemNotifications((prev) => prev.filter((item) => !idSet.has(item.id)));
   };
 
   const handleClearAllHistory = () => {
     clear();
-    setSystemNotifications([]);
   };
 
   return {
@@ -111,4 +98,3 @@ export const useNotifications = () => {
     clearAllHistory: handleClearAllHistory,
   };
 };
-

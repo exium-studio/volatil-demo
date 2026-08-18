@@ -2,7 +2,7 @@
 
 import type { ToastEngineConfig } from "@/design-system/components/toast/types/toast.types";
 
-export const DEFAULT_TOAST_GROUP = "Default";
+export const DEFAULT_TOAST_GROUP = "Sistem";
 
 const DEFAULT_TOAST_CONFIG: ToastEngineConfig = {
   defaultDuration: 5000,

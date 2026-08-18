@@ -12,6 +12,7 @@ export const useSignoutMutation = () => {
 
   // Handlers
   const toastHandlers = mutationToastHandlers("auth-signout", {
+    group: "Autentikasi",
     loadingMessage: {
       title: "Memproses keluar...",
     },

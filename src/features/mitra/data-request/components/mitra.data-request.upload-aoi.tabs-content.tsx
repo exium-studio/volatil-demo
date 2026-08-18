@@ -131,6 +131,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
     if (!isShpOrZip && !isGeoJson) {
       toast.error(
         `"${file.name}": format tidak didukung (.zip/.shp/.geojson/.json)`,
+        { group: "Permohonan Data" },
       );
       return;
     }
@@ -138,7 +139,9 @@ export const MitraDataRequestUploadAoiTabsContent = (
     // Validate size (10 MB)
     const MAX_SIZE = 10 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
-      toast.error(`"${file.name}": ukuran file maksimal 10MB`);
+      toast.error(`"${file.name}": ukuran file maksimal 10MB`, {
+        group: "Permohonan Data",
+      });
       return;
     }
 
@@ -168,7 +171,9 @@ export const MitraDataRequestUploadAoiTabsContent = (
       }
 
       if (!polygon) {
-        toast.error(`"${file.name}": tidak ada polygon yang ditemukan`);
+        toast.error(`"${file.name}": tidak ada polygon yang ditemukan`, {
+          group: "Permohonan Data",
+        });
         setAoiLayers((prev) => prev.filter((l) => l.id !== id));
         return;
       }
@@ -180,7 +185,9 @@ export const MitraDataRequestUploadAoiTabsContent = (
       );
     } catch (error) {
       console.error("Failed to parse AOI file:", error);
-      toast.error(`"${file.name}": gagal memproses file`);
+      toast.error(`"${file.name}": gagal memproses file`, {
+        group: "Permohonan Data",
+      });
       setAoiLayers((prev) =>
         prev.map((l) =>
           l.id === id

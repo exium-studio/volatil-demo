@@ -39,7 +39,9 @@ export const computeGeoJsonBbox = (
 
   for (const feat of featureCollection.features ?? []) {
     if (feat.geometry) {
-      traverse((feat.geometry as unknown as { coordinates: unknown }).coordinates);
+      traverse(
+        (feat.geometry as unknown as { coordinates: unknown }).coordinates,
+      );
     }
   }
 
@@ -101,10 +103,7 @@ export const flyToIgtLayer = async (
         maxFeatures: 100,
       });
 
-      if (
-        featureCollection.features &&
-        featureCollection.features.length > 0
-      ) {
+      if (featureCollection.features && featureCollection.features.length > 0) {
         highlightFeatureOnMap(map, featureCollection, {
           zoom: 15,
           timeoutMs: 5000,
@@ -112,7 +111,10 @@ export const flyToIgtLayer = async (
         return;
       }
     } catch (error) {
-      console.warn("WFS boundary fetch failed, falling back to layer bbox:", error);
+      console.warn(
+        "WFS boundary fetch failed, falling back to layer bbox:",
+        error,
+      );
     }
   }
 

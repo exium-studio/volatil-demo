@@ -8,6 +8,7 @@ export type ToastMessageConfig = {
 };
 
 export type MutationToastOptions = {
+  group?: string;
   loadingMessage?: ToastMessageConfig;
   successMessage?: ToastMessageConfig;
   errorMessage?: ToastMessageConfig;
@@ -17,19 +18,21 @@ export type MutationToastOptions = {
  * Mutation Toast Handler Helper
  *
  * Connects TanStack Query mutation lifecycle (onMutate, onSuccess, onError)
- * directly to the application's Toast Engine.
+ * directly to the application's Toast Engine with categorized groups.
  */
 export const mutationToastHandlers = (
   key: string,
   options: MutationToastOptions = {},
 ) => {
   const toastId = `mutation-toast-${key}`;
+  const group = options.group;
 
   return {
     onLoading: () => {
       if (options.loadingMessage) {
         toast.loading(options.loadingMessage.title, {
           id: toastId,
+          group,
           description: options.loadingMessage.description,
         });
       }
@@ -38,6 +41,7 @@ export const mutationToastHandlers = (
       if (options.successMessage) {
         toast.success(options.successMessage.title, {
           id: toastId,
+          group,
           description: options.successMessage.description,
         });
       } else {
@@ -49,6 +53,7 @@ export const mutationToastHandlers = (
         error instanceof Error ? error.message : "Terjadi kesalahan";
       toast.error(options.errorMessage?.title ?? message, {
         id: toastId,
+        group,
         description: options.errorMessage?.description,
       });
     },

@@ -60,6 +60,7 @@ export const useHelpCenterDetailQuery = (id: number | string) => {
 export const useCreateHelpCenterTicket = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("create-ticket", {
+    group: "Pusat Bantuan",
     loadingMessage: {
       title: "Mengirim laporan...",
     },
@@ -88,6 +89,7 @@ export const useCreateHelpCenterTicket = () => {
 export const useReplyHelpCenterTicket = (ticketId: number | string) => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers(`reply-ticket-${ticketId}`, {
+    group: "Pusat Bantuan",
     loadingMessage: {
       title: "Mengirim balasan...",
     },

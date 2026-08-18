@@ -70,6 +70,7 @@ export const useUserManagementDetailQuery = (id: string | number) => {
 export const useUpdateUserStatus = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("update-user-status", {
+    group: "Manajemen Pengguna",
     loadingMessage: {
       title: "Memperbarui status pengguna...",
     },

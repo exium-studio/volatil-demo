@@ -12,6 +12,7 @@ import {
 import type { CartSummaryResponse } from "@/features/mitra/cart/types/cart.type";
 import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type CartItemsQueryParams = {
@@ -67,28 +68,60 @@ export const useCartSummaryQuery = () => {
 
 export const useCheckoutCart = () => {
   const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("checkout-cart", {
+    group: "Permohonan Data",
+    loadingMessage: {
+      title: "Memproses pesanan...",
+    },
+    successMessage: {
+      title: "Pesanan berhasil dibuat!",
+      description: "Silakan selesaikan pembayaran sesuai kode billing Anda.",
+    },
+    errorMessage: {
+      title: "Gagal memproses pesanan",
+    },
+  });
 
   return useMutation({
     mutationFn: () => checkout(),
-    onSuccess: () => {
+    onMutate: toastHandlers.onLoading,
+    onSuccess: (data) => {
+      toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
+      return data;
     },
+    onError: toastHandlers.onError,
   });
 };
 
 export const useClearCart = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("clear-cart", {
+    group: "Permohonan Data",
+    loadingMessage: {
+      title: "Mengosongkan keranjang...",
+    },
+    successMessage: {
+      title: "Keranjang berhasil dikosongkan",
+    },
+    errorMessage: {
+      title: "Gagal mengosongkan keranjang",
+    },
+  });
 
   return useMutation({
     mutationFn: () => clearCart(),
+    onMutate: toastHandlers.onLoading,
     onSuccess: () => {
+      toastHandlers.onSuccess();
       onSuccessCallback?.();
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
     },
+    onError: toastHandlers.onError,
   });
 };
 

@@ -85,7 +85,7 @@ export const useAddToCartSelected = () => {
           ? `Menambahkan item "${featureIds[0]}" ke keranjang...`
           : `Menambahkan ${featureIds.length} item terpilih ke keranjang...`;
 
-      toast.loading(title, { id: toastId });
+      toast.loading(title, { id: toastId, group: "Permohonan Data" });
       return { toastId, featureIds };
     },
     onSuccess: (_, featureIds, context) => {
@@ -96,7 +96,7 @@ export const useAddToCartSelected = () => {
           ? `Item "${featureIds[0]}" berhasil ditambahkan ke keranjang`
           : `Berhasil menambahkan ${featureIds.length} item ke keranjang`;
 
-      toast.success(title, { id: toastId });
+      toast.success(title, { id: toastId, group: "Permohonan Data" });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
@@ -104,8 +104,10 @@ export const useAddToCartSelected = () => {
     onError: (error, _featureIds, context) => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
       const message =
-        error instanceof Error ? error.message : "Gagal menambahkan ke keranjang";
-      toast.error(message, { id: toastId });
+        error instanceof Error
+          ? error.message
+          : "Gagal menambahkan ke keranjang";
+      toast.error(message, { id: toastId, group: "Permohonan Data" });
     },
   });
 };
@@ -127,7 +129,7 @@ export const useAddToCartAll = () => {
       const toastId = `add-to-cart-${params.typeName}-${Date.now()}`;
       toast.loading(
         `Mengambil & menambahkan seluruh item ${params.typeName} ke keranjang...`,
-        { id: toastId },
+        { id: toastId, group: "Permohonan Data" },
       );
       return { toastId };
     },
@@ -135,7 +137,7 @@ export const useAddToCartAll = () => {
       const toastId = context?.toastId;
       toast.success(
         `Berhasil menambahkan seluruh item ${params.typeName} ke keranjang`,
-        { id: toastId },
+        { id: toastId, group: "Permohonan Data" },
       );
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
@@ -144,8 +146,10 @@ export const useAddToCartAll = () => {
     onError: (error, _params, context) => {
       const toastId = context?.toastId;
       const message =
-        error instanceof Error ? error.message : "Gagal menambahkan ke keranjang";
-      toast.error(message, { id: toastId });
+        error instanceof Error
+          ? error.message
+          : "Gagal menambahkan ke keranjang";
+      toast.error(message, { id: toastId, group: "Permohonan Data" });
     },
   });
 };
