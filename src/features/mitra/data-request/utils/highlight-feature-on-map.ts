@@ -53,14 +53,9 @@ export const getGeometryBounds = (
   const processCoords = (c: unknown) => {
     if (!Array.isArray(c)) return;
     if (typeof c[0] === "number" && typeof c[1] === "number") {
-      let lng = c[0];
-      let lat = c[1];
-      if (Math.abs(lng) <= 90 && Math.abs(lat) > 90) {
-        const temp = lng;
-        lng = lat;
-        lat = temp;
-      }
-      if (!isNaN(lng) && !isNaN(lat) && Math.abs(lat) <= 90) {
+      const lng = c[0];
+      const lat = c[1];
+      if (!isNaN(lng) && !isNaN(lat)) {
         coords.push([lng, lat]);
       }
     } else {
@@ -129,17 +124,21 @@ export const removeFeatureHighlightFromMap = (map: maplibregl.Map) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!(map as any).style) return;
 
-  if (map.getLayer(HIGHLIGHT_POINT_LAYER_ID)) {
-    map.removeLayer(HIGHLIGHT_POINT_LAYER_ID);
-  }
-  if (map.getLayer(HIGHLIGHT_LINE_LAYER_ID)) {
-    map.removeLayer(HIGHLIGHT_LINE_LAYER_ID);
-  }
-  if (map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) {
-    map.removeLayer(HIGHLIGHT_FILL_LAYER_ID);
-  }
-  if (map.getSource(HIGHLIGHT_SOURCE_ID)) {
-    map.removeSource(HIGHLIGHT_SOURCE_ID);
+  try {
+    if (map.getLayer(HIGHLIGHT_POINT_LAYER_ID)) {
+      map.removeLayer(HIGHLIGHT_POINT_LAYER_ID);
+    }
+    if (map.getLayer(HIGHLIGHT_LINE_LAYER_ID)) {
+      map.removeLayer(HIGHLIGHT_LINE_LAYER_ID);
+    }
+    if (map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) {
+      map.removeLayer(HIGHLIGHT_FILL_LAYER_ID);
+    }
+    if (map.getSource(HIGHLIGHT_SOURCE_ID)) {
+      map.removeSource(HIGHLIGHT_SOURCE_ID);
+    }
+  } catch (error) {
+    console.warn("Failed to remove highlight layers:", error);
   }
 };
 
@@ -159,7 +158,7 @@ export const highlightFeatureOnMap = (
   },
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!(map as any).style || !map.isStyleLoaded()) return;
+  if (!map || !(map as any).style || !map.isStyleLoaded()) return;
 
   const { zoom = 16, timeoutMs = HIGHLIGHT_TIMEOUT_MS } = options ?? {};
 
@@ -180,71 +179,75 @@ export const highlightFeatureOnMap = (
   }
 
   // 2. Add or update source
-  const existingSource = map.getSource(HIGHLIGHT_SOURCE_ID) as
-    | maplibregl.GeoJSONSource
-    | undefined;
+  try {
+    const existingSource = map.getSource(HIGHLIGHT_SOURCE_ID) as
+      | maplibregl.GeoJSONSource
+      | undefined;
 
-  if (existingSource) {
-    existingSource.setData(geojson);
-  } else {
-    map.addSource(HIGHLIGHT_SOURCE_ID, {
-      type: "geojson",
-      data: geojson,
-    });
-  }
+    if (existingSource) {
+      existingSource.setData(geojson);
+    } else {
+      map.addSource(HIGHLIGHT_SOURCE_ID, {
+        type: "geojson",
+        data: geojson,
+      });
+    }
 
-  // 3. Ensure layers are created before draw layer if present
-  const beforeId = map.getLayer(DRAW_FILL_LAYER_ID)
-    ? DRAW_FILL_LAYER_ID
-    : undefined;
+    // 3. Ensure layers are created before draw layer if present
+    const beforeId = map.getLayer(DRAW_FILL_LAYER_ID)
+      ? DRAW_FILL_LAYER_ID
+      : undefined;
 
-  if (!map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) {
-    map.addLayer(
-      {
-        id: HIGHLIGHT_FILL_LAYER_ID,
-        type: "fill",
-        source: HIGHLIGHT_SOURCE_ID,
-        paint: {
-          "fill-color": HIGHLIGHT_COLOR,
-          "fill-opacity": 0.45,
-        },
-      } as maplibregl.LayerSpecification,
-      beforeId,
-    );
-  }
+    if (!map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) {
+      map.addLayer(
+        {
+          id: HIGHLIGHT_FILL_LAYER_ID,
+          type: "fill",
+          source: HIGHLIGHT_SOURCE_ID,
+          paint: {
+            "fill-color": HIGHLIGHT_COLOR,
+            "fill-opacity": 0.45,
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    }
 
-  if (!map.getLayer(HIGHLIGHT_LINE_LAYER_ID)) {
-    map.addLayer(
-      {
-        id: HIGHLIGHT_LINE_LAYER_ID,
-        type: "line",
-        source: HIGHLIGHT_SOURCE_ID,
-        paint: {
-          "line-color": HIGHLIGHT_COLOR,
-          "line-width": 3.5,
-          "line-opacity": 1,
-        },
-      } as maplibregl.LayerSpecification,
-      beforeId,
-    );
-  }
+    if (!map.getLayer(HIGHLIGHT_LINE_LAYER_ID)) {
+      map.addLayer(
+        {
+          id: HIGHLIGHT_LINE_LAYER_ID,
+          type: "line",
+          source: HIGHLIGHT_SOURCE_ID,
+          paint: {
+            "line-color": HIGHLIGHT_COLOR,
+            "line-width": 3.5,
+            "line-opacity": 1,
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    }
 
-  if (!map.getLayer(HIGHLIGHT_POINT_LAYER_ID)) {
-    map.addLayer(
-      {
-        id: HIGHLIGHT_POINT_LAYER_ID,
-        type: "circle",
-        source: HIGHLIGHT_SOURCE_ID,
-        filter: ["==", "$type", "Point"],
-        paint: {
-          "circle-radius": 9,
-          "circle-color": HIGHLIGHT_COLOR,
-          "circle-stroke-width": 2.5,
-          "circle-stroke-color": "#ffffff",
-        },
-      } as maplibregl.LayerSpecification,
-      beforeId,
-    );
+    if (!map.getLayer(HIGHLIGHT_POINT_LAYER_ID)) {
+      map.addLayer(
+        {
+          id: HIGHLIGHT_POINT_LAYER_ID,
+          type: "circle",
+          source: HIGHLIGHT_SOURCE_ID,
+          filter: ["==", "$type", "Point"],
+          paint: {
+            "circle-radius": 9,
+            "circle-color": HIGHLIGHT_COLOR,
+            "circle-stroke-width": 2.5,
+            "circle-stroke-color": "#ffffff",
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    }
+  } catch (err) {
+    console.warn("Failed to set highlight layers on map:", err);
   }
 
   // 4. Calculate bounds & fit camera
@@ -256,24 +259,31 @@ export const highlightFeatureOnMap = (
   }
 
   if (bounds) {
-    map.fitBounds(
-      [
-        [bounds[0], bounds[1]],
-        [bounds[2], bounds[3]],
-      ],
-      {
-        padding: 80,
-        maxZoom: zoom,
+    const isPointBbox = bounds[0] === bounds[2] && bounds[1] === bounds[3];
+    if (isPointBbox) {
+      map.flyTo({
+        center: [bounds[0], bounds[1]],
+        zoom,
         duration: 1200,
-      },
-    );
+      });
+    } else {
+      map.fitBounds(
+        [
+          [bounds[0], bounds[1]],
+          [bounds[2], bounds[3]],
+        ],
+        {
+          padding: 80,
+          maxZoom: zoom,
+          duration: 1200,
+        },
+      );
+    }
   } else if (
     geojson.type === "Feature" &&
     (geojson as GeoJSON.Feature).geometry
   ) {
-    const centroid = getGeometryCentroid(
-      (geojson as GeoJSON.Feature).geometry,
-    );
+    const centroid = getGeometryCentroid((geojson as GeoJSON.Feature).geometry);
     if (centroid) {
       map.flyTo({ center: centroid, zoom, duration: 1200 });
     }

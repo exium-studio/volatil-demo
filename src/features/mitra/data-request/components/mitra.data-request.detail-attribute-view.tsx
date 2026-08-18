@@ -9,7 +9,7 @@ import { PADDING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
-import { WfsFeaturesDataList } from "@/features/mitra/shared/components/wfs-features-data-list";
+import { SpatialFeaturesDataList } from "@/features/mitra/shared/components/spatial-features-data-list";
 import {
   useAddToCartAll,
   useAddToCartSelected,
@@ -110,7 +110,7 @@ export const MitraDataRequestDetailAttributeView = memo(
             w={"full"}
             roundedBottom={theme.radii.container}
           >
-            <WfsFeaturesDataList
+            <SpatialFeaturesDataList
               wfsFeatures={features}
               totalFeatures={totalFeatures}
               isLoading={isLoading}

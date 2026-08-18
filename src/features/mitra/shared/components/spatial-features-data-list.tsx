@@ -16,117 +16,119 @@ import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import type {
-  WfsFeaturesDataListContentProps,
-  WfsFeaturesDataListProps,
+  SpatialFeaturesDataListContentProps,
+  SpatialFeaturesDataListProps,
 } from "@/features/mitra/shared/types/wfs-data-list.type";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { memo, useMemo } from "react";
 
-export const WfsFeaturesDataList = memo((props: WfsFeaturesDataListProps) => {
-  // Props
-  const {
-    wfsFeatures,
-    page,
-    pageSize,
-    totalFeatures,
-    setPage,
-    setPageSize,
-    selectedItems,
-    onSelectedItemChange,
-    canBatchSelect = true,
-    batchActions,
-    extraItemActions,
-    isLoading = false,
-    isFetching = false,
-    ...restProps
-  } = props;
+export const SpatialFeaturesDataList = memo(
+  (props: SpatialFeaturesDataListProps) => {
+    // Props
+    const {
+      wfsFeatures,
+      page,
+      pageSize,
+      totalFeatures,
+      setPage,
+      setPageSize,
+      selectedItems,
+      onSelectedItemChange,
+      canBatchSelect = true,
+      batchActions,
+      extraItemActions,
+      isLoading = false,
+      isFetching = false,
+      ...restProps
+    } = props;
 
-  // Stores
-  const { theme } = useThemeStore();
+    // Stores
+    const { theme } = useThemeStore();
 
-  // Hooks — Delay heavy table mounting to allow initial skeleton render
-  const isReady = useMountTimeout(50);
+    // Hooks — Delay heavy table mounting to allow initial skeleton render
+    const isReady = useMountTimeout(50);
 
-  // Derived Values — Dynamic Attribute Keys from WFS features
-  const attributeKeys = useMemo(() => {
-    if (wfsFeatures.length > 0 && wfsFeatures[0]?.properties) {
-      const keys = Object.keys(wfsFeatures[0].properties);
-      if (keys.length > 0) {
-        return keys.filter((key) => key !== "geom" && key !== "geometry");
+    // Derived Values — Dynamic Attribute Keys from WFS features
+    const attributeKeys = useMemo(() => {
+      if (wfsFeatures.length > 0 && wfsFeatures[0]?.properties) {
+        const keys = Object.keys(wfsFeatures[0].properties);
+        if (keys.length > 0) {
+          return keys.filter((key) => key !== "geom" && key !== "geometry");
+        }
       }
+      return [
+        "id",
+        "kodewilaya",
+        "kabupaten",
+        "kecamatan",
+        "kelurahan",
+        "nib",
+        "luastertul",
+      ];
+    }, [wfsFeatures]);
+
+    const hasPagination =
+      page != null && pageSize != null && totalFeatures != null;
+
+    if (!isReady || isLoading || (isFetching && wfsFeatures.length === 0)) {
+      return (
+        <Skeleton h={"full"} w={"full"} flex={1} rounded={0} p={PADDING.md} />
+      );
     }
-    return [
-      "id",
-      "kodewilaya",
-      "kabupaten",
-      "kecamatan",
-      "kelurahan",
-      "nib",
-      "luastertul",
-    ];
-  }, [wfsFeatures]);
 
-  const hasPagination =
-    page != null && pageSize != null && totalFeatures != null;
-
-  if (!isReady || isLoading || (isFetching && wfsFeatures.length === 0)) {
     return (
-      <Skeleton h={"full"} w={"full"} flex={1} rounded={0} p={PADDING.md} />
-    );
-  }
+      <>
+        <TopBarLoader isFetching={isFetching} />
 
-  return (
-    <>
-      <TopBarLoader isFetching={isFetching} />
-
-      <VStack
-        flex={1}
-        overflow={"hidden"}
-        bg={"bg.canvas"}
-        w={"full"}
-        h={"full"}
-        position={"relative"}
-        {...restProps}
-      >
-        <Box
+        <VStack
+          flex={1}
+          overflow={"hidden"}
+          bg={"bg.canvas"}
           w={"full"}
           h={"full"}
           position={"relative"}
-          overflow={"hidden"}
-          flex={1}
+          {...restProps}
         >
-          <WfsFeaturesDataListContent
-            wfsFeatures={wfsFeatures}
-            attributeKeys={attributeKeys}
-            canBatchSelect={canBatchSelect}
-            batchActions={batchActions}
-            extraItemActions={extraItemActions}
-            page={page}
-            pageSize={pageSize}
-            selectedItems={selectedItems}
-            onSelectedItemChange={onSelectedItemChange}
-          />
-        </Box>
+          <Box
+            w={"full"}
+            h={"full"}
+            position={"relative"}
+            overflow={"hidden"}
+            flex={1}
+          >
+            <SpatialFeaturesDataListContent
+              wfsFeatures={wfsFeatures}
+              attributeKeys={attributeKeys}
+              canBatchSelect={canBatchSelect}
+              batchActions={batchActions}
+              extraItemActions={extraItemActions}
+              page={page}
+              pageSize={pageSize}
+              selectedItems={selectedItems}
+              onSelectedItemChange={onSelectedItemChange}
+            />
+          </Box>
 
-        {hasPagination && (
-          <DataListFooter
-            page={page}
-            pageSize={pageSize}
-            currentDataLength={wfsFeatures.length}
-            totalData={totalFeatures}
-            totalPage={Math.ceil(totalFeatures / pageSize)}
-            setPage={setPage}
-            setPageSize={setPageSize}
-            roundedBottom={theme.radii.container}
-          />
-        )}
-      </VStack>
-    </>
-  );
-});
+          {hasPagination && (
+            <DataListFooter
+              page={page}
+              pageSize={pageSize}
+              currentDataLength={wfsFeatures.length}
+              totalData={totalFeatures}
+              totalPage={Math.ceil(totalFeatures / pageSize)}
+              setPage={setPage}
+              setPageSize={setPageSize}
+              roundedBottom={theme.radii.container}
+            />
+          )}
+        </VStack>
+      </>
+    );
+  },
+);
 
-const WfsFeaturesDataListContent = memo(
-  (props: WfsFeaturesDataListContentProps) => {
+const SpatialFeaturesDataListContent = memo(
+  (props: SpatialFeaturesDataListContentProps) => {
     // Props
     const {
       wfsFeatures,
@@ -175,11 +177,12 @@ const WfsFeaturesDataListContent = memo(
             const feat = item.data as unknown as GeoJSON.Feature | undefined;
             return (
               <Menu.Item
-                key={"fly-to"}
-                value={"fly-to"}
+                key={`fly-to-${item.id}`}
+                value={`fly-to-${item.id}`}
                 onClick={() => {
-                  if (!feat?.geometry || !map) return;
-                  highlightFeatureOnMap(map, feat);
+                  const currentMap = map ?? useMapInstanceStore.getState().map;
+                  if (!feat?.geometry || !currentMap) return;
+                  highlightFeatureOnMap(currentMap, feat);
                 }}
               >
                 <AppIcon icon={IconCurrentLocation} />
