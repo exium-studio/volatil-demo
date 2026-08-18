@@ -1,6 +1,10 @@
 // src/features/auth/services/auth.service.ts
 
-import { postLoginApi, postLogoutApi } from "@/features/auth/api/auth.api";
+import {
+  getAuthMeApi,
+  postLoginApi,
+  postLogoutApi,
+} from "@/features/auth/api/auth.api";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
 import type {
   InternalUser,
@@ -11,16 +15,18 @@ import {
   removeStorage,
   setStorage,
 } from "@/shared/utils/client/client.storage";
-
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
 export const authService = {
-  login: async (payload: SigninPayload, signal?: AbortSignal): Promise<User> => {
+  login: async (
+    payload: SigninPayload,
+    signal?: AbortSignal,
+  ): Promise<User> => {
     try {
       const response = await postLoginApi(payload, signal);
 
-      if (response.data.token) {
-        localStorage.setItem("auth_token", response.data.token);
+      if (response.data.accessToken) {
+        localStorage.setItem("auth_token", response.data.accessToken);
       }
       if (response.data.user) {
         setStorage("user", JSON.stringify(response.data.user));
@@ -32,33 +38,49 @@ export const authService = {
       const mockToken = `mock-token-${Date.now()}`;
       localStorage.setItem("auth_token", mockToken);
 
-      if (payload.role === "mitra") {
-        const dummyMitraUser: MitraUser = {
-          id: "mitra-123",
+      if (payload.role === "internal") {
+        const dummyInternalUser: InternalUser = {
+          id: "2",
           email: payload.email,
-          name: "Mitra Volatil",
-          role: "mitra",
-          companyName: "PT Volatil Sukses Makmur",
-          companyRegistrationNumber: "REG-987654321",
-          purchasedQuota: 100,
-          tier: "premium",
+          name: "Internal Admin Demo",
+          role: "internal",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
-        setStorage("user", JSON.stringify(dummyMitraUser));
-        return dummyMitraUser;
+        setStorage("user", JSON.stringify(dummyInternalUser));
+        return dummyInternalUser;
       }
 
-      const dummyInternalUser: InternalUser = {
-        id: "internal-123",
+      const dummyMitraUser: MitraUser = {
+        id: "1",
         email: payload.email,
-        name: "Internal Admin",
-        role: "internal",
+        name: "Mitra User Demo",
+        role: "mitra",
+        companyName: "PT Nusantara Citra Mandiri",
+        companyRegistrationNumber: "REG-987654321",
+        purchasedQuota: 100,
+        tier: "premium",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      setStorage("user", JSON.stringify(dummyInternalUser));
-      return dummyInternalUser;
+      setStorage("user", JSON.stringify(dummyMitraUser));
+      return dummyMitraUser;
+    }
+  },
+
+  verifyMe: async (signal?: AbortSignal): Promise<User | null> => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) return null;
+
+    try {
+      const response = await getAuthMeApi(signal);
+      if (response.data) {
+        setStorage("user", JSON.stringify(response.data));
+        return response.data;
+      }
+      return null;
+    } catch {
+      return getUserSession();
     }
   },
 

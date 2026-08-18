@@ -6,12 +6,15 @@ import type { ApiResponse, User } from "@/shared/types/common-response.type";
 export type SigninPayload = {
   email: string;
   password: string;
-  role: Role;
+  role?: Role;
 };
 
-export type AuthData<TUser = User> = {
-  token: string;
+export type AuthLoginData<TUser = User> = {
+  tokenType: "Bearer";
+  accessToken: string;
   user: TUser;
 };
 
-export type AuthResponse<TUser = User> = ApiResponse<AuthData<TUser>>;
+export type AuthLoginResponse<TUser = User> = ApiResponse<AuthLoginData<TUser>>;
+
+export type AuthMeResponse<TUser = User> = ApiResponse<TUser>;
