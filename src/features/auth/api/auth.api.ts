@@ -13,7 +13,7 @@ export const postLoginApi = async (
   signal?: AbortSignal,
 ): Promise<AuthLoginResponse<User>> => {
   return apiClient.post<AuthLoginResponse<User>>(
-    "/auth/login",
+    "/api/auth/login",
     {
       email: payload.email,
       password: payload.password,
@@ -25,11 +25,11 @@ export const postLoginApi = async (
 export const getAuthMeApi = async (
   signal?: AbortSignal,
 ): Promise<AuthMeResponse<User>> => {
-  return apiClient.get<AuthMeResponse<User>>("/auth/me", { signal });
+  return apiClient.get<AuthMeResponse<User>>("/api/auth/me", { signal });
 };
 
 export const postLogoutApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<null>> => {
-  return apiClient.post<ApiResponse<null>>("/auth/logout", {}, { signal });
+  return apiClient.post<ApiResponse<null>>("/api/auth/logout", {}, { signal });
 };
