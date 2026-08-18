@@ -5,24 +5,30 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { useHelpCenterStatisticsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type { HelpCenterStatistics } from "@/features/mitra/help-center/types/help-center.type";
 import { CheckCircle2Icon, ClockIcon, FileTextIcon } from "lucide-react";
 import { memo } from "react";
 
 export type HelpCenterSummaryProps = {
-  statistics: HelpCenterStatistics;
+  statistics?: HelpCenterStatistics;
+  scope?: "my" | "all";
 };
 
 export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
   // Props
-  const { statistics } = props;
+  const { statistics: propsStats, scope } = props;
+
+  // Queries
+  const { statistics: queryStats } = useHelpCenterStatisticsQuery(scope);
+  const stats = propsStats ?? queryStats;
 
   // Derived Summary Items
   const summaryItems = [
     {
       id: "total",
       label: "Total Laporan",
-      count: statistics.totalTickets,
+      count: stats.totalTickets,
       unit: "Laporan",
       icon: FileTextIcon,
       colorPalette: "blue",
@@ -30,7 +36,7 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
     {
       id: "active",
       label: "Laporan Aktif",
-      count: statistics.activeTickets,
+      count: stats.activeTickets,
       unit: "Laporan",
       icon: ClockIcon,
       colorPalette: "orange",
@@ -38,7 +44,7 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
     {
       id: "resolved",
       label: "Laporan Selesai",
-      count: statistics.resolvedTickets,
+      count: stats.resolvedTickets,
       unit: "Laporan",
       icon: CheckCircle2Icon,
       colorPalette: "green",

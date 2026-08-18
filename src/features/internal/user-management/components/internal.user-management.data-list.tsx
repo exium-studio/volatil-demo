@@ -10,7 +10,6 @@ import { DataListTable } from "@/design-system/components/data-display/ui/data-l
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -47,17 +46,8 @@ const ROLE_MAP: Record<UserRole, { label: string; color: string }> = {
   mitra: { label: "Mitra", color: "blue" },
 };
 
-const STATUS_OPTIONS = [
-  { value: "all", label: "Semua Status" },
-  { value: "active", label: "Aktif" },
-  { value: "inactive", label: "Tidak Aktif" },
-];
-
-const ROLE_OPTIONS = [
-  { value: "all", label: "Semua Role" },
-  { value: "internal", label: "Internal" },
-  { value: "mitra", label: "Mitra" },
-];
+import { RoleSelect } from "@/shared/components/select/ui/role-select";
+import { StatusSelect } from "@/shared/components/select/ui/status-select";
 
 export const InternalUserManagementDataList = () => {
   // States
@@ -236,28 +226,24 @@ export const InternalUserManagementDataList = () => {
               maxW={"220px"}
             />
 
-            <FocusSelectInput
+            <StatusSelect
               modalKey={"user-management-status-filter"}
-              placeholder={"Semua Status"}
-              options={STATUS_OPTIONS}
               value={selectedStatus}
               onValueChange={(val) =>
                 startTransition(() => {
-                  setSelectedStatus(val ?? "all");
+                  setSelectedStatus(val);
                   setPage(1);
                 })
               }
               w={"150px"}
             />
 
-            <FocusSelectInput
+            <RoleSelect
               modalKey={"user-management-role-filter"}
-              placeholder={"Semua Role"}
-              options={ROLE_OPTIONS}
               value={selectedRole}
               onValueChange={(val) =>
                 startTransition(() => {
-                  setSelectedRole(val ?? "all");
+                  setSelectedRole(val);
                   setPage(1);
                 })
               }

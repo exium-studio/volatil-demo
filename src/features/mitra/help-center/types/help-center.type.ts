@@ -2,14 +2,26 @@
 
 import type { ReactNode } from "react";
 
-export type HelpCenterStatus = "open" | "in_progress" | "resolved" | "closed";
+export type HelpCenterStatus =
+  | "submitted"
+  | "in_review"
+  | "in_progress"
+  | "resolved"
+  | "rejected";
 
 export type HelpCenterAttachment = {
-  originalName: string;
-  fileName: string;
-  mimeType: string;
-  size: number;
-  url: string;
+  id?: number;
+  originalName?: string;
+  originalFileName?: string;
+  fileName?: string;
+  storedFileName?: string;
+  mimeType?: string;
+  fileType?: string;
+  size?: number;
+  fileSize?: number;
+  url?: string;
+  fileUrl?: string;
+  createdAt?: string;
 };
 
 export type HelpCenterUser = {
@@ -17,40 +29,53 @@ export type HelpCenterUser = {
   name: string;
   email: string;
   role: "mitra" | "internal";
+  organizationName?: string | null;
 };
 
 export type HelpCenterResponse = {
   id: number;
-  ticketId: number;
-  adminId: number;
+  ticketId?: number;
+  adminId?: number;
+  userId?: number;
   message: string;
-  attachments: HelpCenterAttachment[];
+  attachments?: HelpCenterAttachment[];
   createdAt: string;
-  admin: HelpCenterUser;
+  admin?: HelpCenterUser;
+  user?: HelpCenterUser;
 };
 
 export type HelpCenterItem = {
   id: number;
-  userId: number;
+  userId?: number;
   title: string;
   description: string;
   status: HelpCenterStatus;
-  attachments: HelpCenterAttachment[];
+  priority?: "low" | "medium" | "high" | "urgent";
+  category?: string;
+  attachments?: HelpCenterAttachment[];
+  replies?: HelpCenterResponse[];
+  responses?: HelpCenterResponse[];
   createdAt: string;
   updatedAt: string;
-  user: HelpCenterUser;
-  responses: HelpCenterResponse[];
+  user?: HelpCenterUser;
+  reporter?: HelpCenterUser;
+  repliesCount?: number;
+  attachmentsCount?: number;
+};
+
+export type HelpCenterStatisticsBreakdown = {
+  submitted?: number;
+  inReview?: number;
+  inProgress?: number;
+  resolved?: number;
+  rejected?: number;
 };
 
 export type HelpCenterStatistics = {
   totalTickets: number;
   activeTickets: number;
   resolvedTickets: number;
-  breakdown: {
-    open: number;
-    inProgress: number;
-    closed: number;
-  };
+  breakdown?: HelpCenterStatisticsBreakdown;
 };
 
 export type HelpCenterQueryParams = {
@@ -60,7 +85,11 @@ export type HelpCenterQueryParams = {
   startDate?: string;
   endDate?: string;
   page?: number;
+  pageNumber?: number;
   limit?: number;
+  itemPerPage?: number;
+  itemsPerPage?: number;
+  perPage?: number;
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
 };
@@ -74,47 +103,18 @@ export type HelpCenterPagination = {
   hasPrevPage: boolean;
 };
 
-export type HelpCenterListApiResponse = {
-  success: boolean;
-  data: HelpCenterItem[];
-  pagination: HelpCenterPagination;
-};
-
-export type HelpCenterStatisticsApiResponse = {
-  success: boolean;
-  data: HelpCenterStatistics;
-};
-
-export type HelpCenterDetailApiResponse = {
-  success: boolean;
-  data: HelpCenterItem;
-};
-
 export type CreateHelpCenterPayload = {
   title: string;
   description: string;
+  priority?: "low" | "medium" | "high" | "urgent";
+  category?: string;
   files?: File[];
-};
-
-export type CreateHelpCenterApiResponse = {
-  success: boolean;
-  message?: string;
-  data: HelpCenterItem;
 };
 
 export type ReplyHelpCenterPayload = {
   message: string;
   status?: HelpCenterStatus;
   files?: File[];
-};
-
-export type ReplyHelpCenterApiResponse = {
-  success: boolean;
-  message?: string;
-  data: {
-    response: HelpCenterResponse;
-    ticket: HelpCenterItem;
-  };
 };
 
 export type CreateHelpCenterTriggerProps = {

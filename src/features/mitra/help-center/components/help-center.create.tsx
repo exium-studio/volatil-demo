@@ -8,7 +8,7 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { toast } from "@/design-system/components/toast";
+import { useCreateHelpCenterTicket } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import {
   createHelpCenterSchema,
   type CreateHelpCenterFormValues,
@@ -28,6 +28,7 @@ export const CreateHelpCenterTrigger = (
     modalKey: customModalKey ?? "createHelpCenterModal",
   });
 
+  // States
   const {
     register,
     control,
@@ -43,6 +44,9 @@ export const CreateHelpCenterTrigger = (
     },
   });
 
+  // Mutations
+  const createTicketMutation = useCreateHelpCenterTicket();
+
   // Handlers
   const handleClose = () => {
     reset();
@@ -51,17 +55,22 @@ export const CreateHelpCenterTrigger = (
 
   const handleFormSubmit = async (values: CreateHelpCenterFormValues) => {
     try {
-      await onSubmitTicket?.(
-        values.title.trim(),
-        values.description.trim(),
-        values.files,
-      );
+      if (onSubmitTicket) {
+        await onSubmitTicket(
+          values.title.trim(),
+          values.description.trim(),
+          values.files,
+        );
+      } else {
+        await createTicketMutation.mutateAsync({
+          title: values.title.trim(),
+          description: values.description.trim(),
+          files: values.files,
+        });
+      }
       handleClose();
-      toast.success("Laporan berhasil dibuat!");
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Gagal membuat laporan";
-      toast.error(message);
+    } catch {
+      // Toast handled by mutation
     }
   };
 

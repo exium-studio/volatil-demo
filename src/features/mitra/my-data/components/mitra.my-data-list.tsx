@@ -9,7 +9,6 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -34,7 +33,10 @@ import { t } from "@/shared/libs/i18n";
 import { ExternalLinkIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
-const STATUS_OPTIONS = [
+import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
+import { StatusSelect } from "@/shared/components/select/ui/status-select";
+
+const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Aktif", value: "active" },
   { label: "Kedaluwarsa", value: "expired" },
 ];
@@ -245,17 +247,16 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
             </IconButton>
           </IgtFilterTrigger>
 
-          <FocusSelectInput
+          <StatusSelect
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
-            options={STATUS_OPTIONS}
+            options={MY_DATA_STATUS_OPTIONS}
             value={state.status}
             onValueChange={(value) =>
               startTransition(() => {
                 updateState({ status: value as MyDataStatus }, true);
               })
             }
-            clearable={false}
             w={"180px"}
           />
         </HStack>

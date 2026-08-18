@@ -2,12 +2,14 @@
 
 import type {
   CreateHelpCenterApiResponse,
-  CreateHelpCenterPayload,
   HelpCenterDetailApiResponse,
   HelpCenterListApiResponse,
-  HelpCenterQueryParams,
   HelpCenterStatisticsApiResponse,
   ReplyHelpCenterApiResponse,
+} from "@/features/mitra/help-center/types/help-center.api.type";
+import type {
+  CreateHelpCenterPayload,
+  HelpCenterQueryParams,
   ReplyHelpCenterPayload,
 } from "@/features/mitra/help-center/types/help-center.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
@@ -36,7 +38,7 @@ export const getHelpCenterTicketsApi = async (
 };
 
 export const getHelpCenterTicketByIdApi = async (
-  id: number,
+  id: number | string,
   signal?: AbortSignal,
 ): Promise<HelpCenterDetailApiResponse> => {
   return apiClient.get<HelpCenterDetailApiResponse>(`/api/tickets/${id}`, {
@@ -52,6 +54,14 @@ export const postCreateHelpCenterTicketApi = async (
   formData.append("title", payload.title);
   formData.append("description", payload.description);
 
+  if (payload.priority) {
+    formData.append("priority", payload.priority);
+  }
+
+  if (payload.category) {
+    formData.append("category", payload.category);
+  }
+
   if (payload.files && payload.files.length > 0) {
     payload.files.forEach((file) => {
       formData.append("files", file);
@@ -64,7 +74,7 @@ export const postCreateHelpCenterTicketApi = async (
 };
 
 export const postReplyHelpCenterTicketApi = async (
-  id: number,
+  id: number | string,
   payload: ReplyHelpCenterPayload,
   signal?: AbortSignal,
 ): Promise<ReplyHelpCenterApiResponse> => {

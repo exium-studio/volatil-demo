@@ -29,6 +29,15 @@ export const queryKeys = {
       geometryById: (id: string) =>
         [...queryKeys.mitra.dataRequest.all, "geometry", id] as const,
     },
+    helpCenter: {
+      all: ["mitra", "help-center"] as const,
+      tickets: (params?: Record<string, unknown>) =>
+        [...queryKeys.mitra.helpCenter.all, "tickets", params] as const,
+      statistics: (scope?: string) =>
+        [...queryKeys.mitra.helpCenter.all, "statistics", scope] as const,
+      detail: (id: string | number) =>
+        [...queryKeys.mitra.helpCenter.all, "detail", id] as const,
+    },
   },
   internal: {
     home: {

@@ -7,19 +7,52 @@ import {
   postCreateHelpCenterTicketApi,
   postReplyHelpCenterTicketApi,
 } from "@/features/mitra/help-center/api/help-center.api";
-import {
-  DUMMY_HELP_CENTER_STATISTICS,
-  DUMMY_HELP_CENTER_TICKETS,
-} from "@/features/mitra/help-center/constants/dummy-help-center";
+import type {
+  CreateHelpCenterApiResponse,
+  HelpCenterListApiResponse,
+  ReplyHelpCenterApiResponse,
+} from "@/features/mitra/help-center/types/help-center.api.type";
 import type {
   CreateHelpCenterPayload,
-  HelpCenterAttachment,
   HelpCenterItem,
-  HelpCenterListApiResponse,
   HelpCenterQueryParams,
   HelpCenterStatistics,
+  HelpCenterStatus,
   ReplyHelpCenterPayload,
 } from "@/features/mitra/help-center/types/help-center.type";
+
+const EMPTY_STATISTICS: HelpCenterStatistics = {
+  totalTickets: 0,
+  activeTickets: 0,
+  resolvedTickets: 0,
+  breakdown: {
+    submitted: 0,
+    inReview: 0,
+    inProgress: 0,
+    resolved: 0,
+    rejected: 0,
+  },
+};
+
+const normalizeHelpCenterStatus = (
+  rawStatus: string | undefined,
+): HelpCenterStatus => {
+  switch (rawStatus) {
+    case "in_review":
+      return "in_review";
+    case "in_progress":
+      return "in_progress";
+    case "resolved":
+    case "closed":
+      return "resolved";
+    case "rejected":
+      return "rejected";
+    case "submitted":
+    case "open":
+    default:
+      return "submitted";
+  }
+};
 
 export const helpCenterService = {
   getStatistics: async (
@@ -28,9 +61,9 @@ export const helpCenterService = {
   ): Promise<HelpCenterStatistics> => {
     try {
       const response = await getHelpCenterStatisticsApi(scope, signal);
-      return response.data ?? DUMMY_HELP_CENTER_STATISTICS;
+      return response.data ?? EMPTY_STATISTICS;
     } catch {
-      return DUMMY_HELP_CENTER_STATISTICS;
+      return EMPTY_STATISTICS;
     }
   },
 
@@ -39,25 +72,25 @@ export const helpCenterService = {
     signal?: AbortSignal,
   ): Promise<HelpCenterListApiResponse> => {
     try {
-      return await getHelpCenterTicketsApi(params, signal);
-    } catch {
-      const search = params?.search?.trim().toLowerCase();
-      const filtered = search
-        ? DUMMY_HELP_CENTER_TICKETS.filter(
-            (t) =>
-              t.title.toLowerCase().includes(search) ||
-              t.description.toLowerCase().includes(search),
-          )
-        : DUMMY_HELP_CENTER_TICKETS;
+      const response = await getHelpCenterTicketsApi(params, signal);
+      const normalizedData = (response.data ?? []).map((ticket) => ({
+        ...ticket,
+        status: normalizeHelpCenterStatus(ticket.status),
+      }));
 
       return {
-        success: true,
-        data: filtered,
+        ...response,
+        data: normalizedData,
+      };
+    } catch {
+      return {
+        success: false,
+        data: [],
         pagination: {
-          totalItems: filtered.length,
+          totalItems: 0,
           totalPages: 1,
-          currentPage: 1,
-          itemsPerPage: 10,
+          currentPage: params?.page ?? 1,
+          itemsPerPage: params?.limit ?? 10,
           hasNextPage: false,
           hasPrevPage: false,
         },
@@ -66,95 +99,33 @@ export const helpCenterService = {
   },
 
   getTicketById: async (
-    id: number,
+    id: number | string,
     signal?: AbortSignal,
-  ): Promise<HelpCenterItem> => {
+  ): Promise<HelpCenterItem | null> => {
     try {
       const response = await getHelpCenterTicketByIdApi(id, signal);
-      return response.data;
+      if (!response.data) return null;
+      return {
+        ...response.data,
+        status: normalizeHelpCenterStatus(response.data.status),
+      };
     } catch {
-      const found =
-        DUMMY_HELP_CENTER_TICKETS.find((t) => t.id === id) ??
-        DUMMY_HELP_CENTER_TICKETS[0];
-      return found;
+      return null;
     }
   },
 
   createTicket: async (
     payload: CreateHelpCenterPayload,
     signal?: AbortSignal,
-  ): Promise<HelpCenterItem> => {
-    try {
-      const response = await postCreateHelpCenterTicketApi(payload, signal);
-      return response.data;
-    } catch {
-      const nowIso = new Date().toISOString();
-      const mockAttachments: HelpCenterAttachment[] = (payload.files ?? []).map(
-        (file, index) => ({
-          originalName: file.name,
-          fileName: `${Date.now()}-${index}-${file.name}`,
-          mimeType: file.type,
-          size: file.size,
-          url: URL.createObjectURL(file),
-        }),
-      );
-
-      const mockCreatedTicket: HelpCenterItem = {
-        id: Date.now(),
-        userId: 1,
-        title: payload.title,
-        description: payload.description,
-        status: "open",
-        attachments: mockAttachments,
-        createdAt: nowIso,
-        updatedAt: nowIso,
-        user: {
-          id: 1,
-          name: "Mitra User Demo",
-          email: "mitra@demo.com",
-          role: "mitra",
-        },
-        responses: [],
-      };
-
-      return mockCreatedTicket;
-    }
+  ): Promise<CreateHelpCenterApiResponse> => {
+    return postCreateHelpCenterTicketApi(payload, signal);
   },
 
   replyTicket: async (
-    id: number,
+    id: number | string,
     payload: ReplyHelpCenterPayload,
     signal?: AbortSignal,
-  ) => {
-    try {
-      const response = await postReplyHelpCenterTicketApi(id, payload, signal);
-      return response.data;
-    } catch {
-      const nowIso = new Date().toISOString();
-      const mockAttachments: HelpCenterAttachment[] = (payload.files ?? []).map(
-        (file, index) => ({
-          originalName: file.name,
-          fileName: `${Date.now()}-${index}-${file.name}`,
-          mimeType: file.type,
-          size: file.size,
-          url: URL.createObjectURL(file),
-        }),
-      );
-
-      return {
-        id: Date.now(),
-        ticketId: id,
-        userId: 1,
-        message: payload.message,
-        attachments: mockAttachments,
-        createdAt: nowIso,
-        user: {
-          id: 1,
-          name: "Mitra User Demo",
-          email: "mitra@demo.com",
-          role: "mitra",
-        },
-      };
-    }
+  ): Promise<ReplyHelpCenterApiResponse> => {
+    return postReplyHelpCenterTicketApi(id, payload, signal);
   },
 };

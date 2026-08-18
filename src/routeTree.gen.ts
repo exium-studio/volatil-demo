@@ -28,6 +28,7 @@ import { Route as PrivateInternalNotificationRouteImport } from './routes/_priva
 import { Route as PrivateInternalHomeRouteImport } from './routes/_private/internal/home'
 import { Route as PrivateInternalHelpCenterRouteImport } from './routes/_private/internal/help-center'
 import { Route as PrivateInternalDataManagementRouteImport } from './routes/_private/internal/data-management'
+import { Route as PrivateMitraHelpCenterTicketIdRouteImport } from './routes/_private/mitra/help-center.$ticketId'
 import { Route as PrivateMitraBillingBillingCodeRouteImport } from './routes/_private/mitra/billing.$billingCode'
 
 const DemoRoute = DemoRouteImport.update({
@@ -131,6 +132,12 @@ const PrivateInternalDataManagementRoute =
     path: '/internal/data-management',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
+const PrivateMitraHelpCenterTicketIdRoute =
+  PrivateMitraHelpCenterTicketIdRouteImport.update({
+    id: '/$ticketId',
+    path: '/$ticketId',
+    getParentRoute: () => PrivateMitraHelpCenterRoute,
+  } as any)
 const PrivateMitraBillingBillingCodeRoute =
   PrivateMitraBillingBillingCodeRouteImport.update({
     id: '/mitra/billing/$billingCode',
@@ -151,13 +158,14 @@ export interface FileRoutesByFullPath {
   '/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/mitra/cart': typeof PrivateMitraCartRoute
   '/mitra/data-request': typeof PrivateMitraDataRequestRoute
-  '/mitra/help-center': typeof PrivateMitraHelpCenterRoute
+  '/mitra/help-center': typeof PrivateMitraHelpCenterRouteWithChildren
   '/mitra/home': typeof PrivateMitraHomeRoute
   '/mitra/my-data': typeof PrivateMitraMyDataRoute
   '/mitra/notification': typeof PrivateMitraNotificationRoute
   '/mitra/purchase-history': typeof PrivateMitraPurchaseHistoryRoute
   '/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
+  '/mitra/help-center/$ticketId': typeof PrivateMitraHelpCenterTicketIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -172,13 +180,14 @@ export interface FileRoutesByTo {
   '/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/mitra/cart': typeof PrivateMitraCartRoute
   '/mitra/data-request': typeof PrivateMitraDataRequestRoute
-  '/mitra/help-center': typeof PrivateMitraHelpCenterRoute
+  '/mitra/help-center': typeof PrivateMitraHelpCenterRouteWithChildren
   '/mitra/home': typeof PrivateMitraHomeRoute
   '/mitra/my-data': typeof PrivateMitraMyDataRoute
   '/mitra/notification': typeof PrivateMitraNotificationRoute
   '/mitra/purchase-history': typeof PrivateMitraPurchaseHistoryRoute
   '/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
+  '/mitra/help-center/$ticketId': typeof PrivateMitraHelpCenterTicketIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -195,13 +204,14 @@ export interface FileRoutesById {
   '/_private/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/_private/mitra/cart': typeof PrivateMitraCartRoute
   '/_private/mitra/data-request': typeof PrivateMitraDataRequestRoute
-  '/_private/mitra/help-center': typeof PrivateMitraHelpCenterRoute
+  '/_private/mitra/help-center': typeof PrivateMitraHelpCenterRouteWithChildren
   '/_private/mitra/home': typeof PrivateMitraHomeRoute
   '/_private/mitra/my-data': typeof PrivateMitraMyDataRoute
   '/_private/mitra/notification': typeof PrivateMitraNotificationRoute
   '/_private/mitra/purchase-history': typeof PrivateMitraPurchaseHistoryRoute
   '/_private/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/_private/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
+  '/_private/mitra/help-center/$ticketId': typeof PrivateMitraHelpCenterTicketIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/mitra/purchase-history'
     | '/mitra/welcome'
     | '/mitra/billing/$billingCode'
+    | '/mitra/help-center/$ticketId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
     | '/mitra/purchase-history'
     | '/mitra/welcome'
     | '/mitra/billing/$billingCode'
+    | '/mitra/help-center/$ticketId'
   id:
     | '__root__'
     | '/'
@@ -268,6 +280,7 @@ export interface FileRouteTypes {
     | '/_private/mitra/purchase-history'
     | '/_private/mitra/welcome'
     | '/_private/mitra/billing/$billingCode'
+    | '/_private/mitra/help-center/$ticketId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -412,6 +425,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInternalDataManagementRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/mitra/help-center/$ticketId': {
+      id: '/_private/mitra/help-center/$ticketId'
+      path: '/$ticketId'
+      fullPath: '/mitra/help-center/$ticketId'
+      preLoaderRoute: typeof PrivateMitraHelpCenterTicketIdRouteImport
+      parentRoute: typeof PrivateMitraHelpCenterRoute
+    }
     '/_private/mitra/billing/$billingCode': {
       id: '/_private/mitra/billing/$billingCode'
       path: '/mitra/billing/$billingCode'
@@ -421,6 +441,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface PrivateMitraHelpCenterRouteChildren {
+  PrivateMitraHelpCenterTicketIdRoute: typeof PrivateMitraHelpCenterTicketIdRoute
+}
+
+const PrivateMitraHelpCenterRouteChildren: PrivateMitraHelpCenterRouteChildren =
+  {
+    PrivateMitraHelpCenterTicketIdRoute: PrivateMitraHelpCenterTicketIdRoute,
+  }
+
+const PrivateMitraHelpCenterRouteWithChildren =
+  PrivateMitraHelpCenterRoute._addFileChildren(
+    PrivateMitraHelpCenterRouteChildren,
+  )
 
 interface PrivateRouteRouteChildren {
   PrivateInternalDataManagementRoute: typeof PrivateInternalDataManagementRoute
@@ -432,7 +466,7 @@ interface PrivateRouteRouteChildren {
   PrivateInternalWelcomeRoute: typeof PrivateInternalWelcomeRoute
   PrivateMitraCartRoute: typeof PrivateMitraCartRoute
   PrivateMitraDataRequestRoute: typeof PrivateMitraDataRequestRoute
-  PrivateMitraHelpCenterRoute: typeof PrivateMitraHelpCenterRoute
+  PrivateMitraHelpCenterRoute: typeof PrivateMitraHelpCenterRouteWithChildren
   PrivateMitraHomeRoute: typeof PrivateMitraHomeRoute
   PrivateMitraMyDataRoute: typeof PrivateMitraMyDataRoute
   PrivateMitraNotificationRoute: typeof PrivateMitraNotificationRoute
@@ -451,7 +485,7 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateInternalWelcomeRoute: PrivateInternalWelcomeRoute,
   PrivateMitraCartRoute: PrivateMitraCartRoute,
   PrivateMitraDataRequestRoute: PrivateMitraDataRequestRoute,
-  PrivateMitraHelpCenterRoute: PrivateMitraHelpCenterRoute,
+  PrivateMitraHelpCenterRoute: PrivateMitraHelpCenterRouteWithChildren,
   PrivateMitraHomeRoute: PrivateMitraHomeRoute,
   PrivateMitraMyDataRoute: PrivateMitraMyDataRoute,
   PrivateMitraNotificationRoute: PrivateMitraNotificationRoute,
