@@ -30,10 +30,8 @@ export const InternalUserManagementPage = () => {
     >
       <TopBarLoader isFetching={isFetching} />
 
-      {/* Horizontal Bar Chart Statistics */}
       <InternalUserManagementStats />
 
-      {/* User Data List Table with Search & Filters */}
       <InternalUserManagementDataList />
     </PanelContentContainer>
   );

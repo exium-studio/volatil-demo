@@ -34,7 +34,7 @@ export const InternalUserManagementStats = () => {
   const [period, setPeriod] = useState<MitraHomePeriod>("all");
 
   return (
-    <Container.Root flex={"1 1 100%"} withContext={true}>
+    <Container.Root withContext={true}>
       <Container.Body gap={4} py={PADDING.md}>
         <UserManagementStatsHeader period={period} onPeriodChange={setPeriod} />
 

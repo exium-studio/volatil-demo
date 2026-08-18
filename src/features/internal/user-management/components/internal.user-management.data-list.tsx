@@ -43,7 +43,7 @@ const STATUS_MAP: Record<UserStatus, { label: string; color: string }> = {
 
 const ROLE_MAP: Record<UserRole, { label: string; color: string }> = {
   internal: { label: "Internal", color: "purple" },
-  mitra: { label: "Mitra", color: "orange" },
+  mitra: { label: "Mitra", color: "blue" },
 };
 
 const STATUS_OPTIONS = [
@@ -214,8 +214,8 @@ export const InternalUserManagementDataList = () => {
   }, [users, preferredTimezone]);
 
   return (
-    <Container.Root flex={"1 1 100%"} withContext={true}>
-      <Container.Body p={0} gap={0}>
+    <Container.Root withContext={true}>
+      <Container.Body overflow={"clip"}>
         {/* Header Actions */}
         <HStack
           wrap={"wrap"}

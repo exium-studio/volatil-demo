@@ -5,11 +5,10 @@
  * Defaults to testing_user:testing123 fallback for development testing.
  */
 
-// TODO: place cred to saver place
+// TODO: use proxy from BE instead
 export const getGisAuthHeader = (): string => {
-  const username =
-    import.meta.env.VITE_GIS_CREDENTIAL_USERNAME || "testing_user";
-  const password = import.meta.env.VITE_GIS_CREDENTIAL_PASSWORD || "testing123";
+  const username = import.meta.env.VITE_GIS_CREDENTIAL_USERNAME;
+  const password = import.meta.env.VITE_GIS_CREDENTIAL_PASSWORD;
 
   return `Basic ${btoa(`${username}:${password}`)}`;
 };
