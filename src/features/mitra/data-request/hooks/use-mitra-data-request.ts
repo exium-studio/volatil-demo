@@ -85,7 +85,7 @@ export const useAddToCartSelected = () => {
           ? `Menambahkan item "${featureIds[0]}" ke keranjang...`
           : `Menambahkan ${featureIds.length} item terpilih ke keranjang...`;
 
-      toast.loading(title, { id: toastId, group: "Permohonan Data" });
+      toast.loading(title, { id: toastId, group: "Keranjang" });
       return { toastId, featureIds };
     },
     onSuccess: (_, featureIds, context) => {
@@ -96,7 +96,7 @@ export const useAddToCartSelected = () => {
           ? `Item "${featureIds[0]}" berhasil ditambahkan ke keranjang`
           : `Berhasil menambahkan ${featureIds.length} item ke keranjang`;
 
-      toast.success(title, { id: toastId, group: "Permohonan Data" });
+      toast.success(title, { id: toastId, group: "Keranjang" });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
@@ -107,7 +107,7 @@ export const useAddToCartSelected = () => {
         error instanceof Error
           ? error.message
           : "Gagal menambahkan ke keranjang";
-      toast.error(message, { id: toastId, group: "Permohonan Data" });
+      toast.error(message, { id: toastId, group: "Keranjang" });
     },
   });
 };
@@ -129,7 +129,7 @@ export const useAddToCartAll = () => {
       const toastId = `add-to-cart-${params.typeName}-${Date.now()}`;
       toast.loading(
         `Mengambil & menambahkan seluruh item ${params.typeName} ke keranjang...`,
-        { id: toastId, group: "Permohonan Data" },
+        { id: toastId, group: "Keranjang" },
       );
       return { toastId };
     },
@@ -137,7 +137,7 @@ export const useAddToCartAll = () => {
       const toastId = context?.toastId;
       toast.success(
         `Berhasil menambahkan seluruh item ${params.typeName} ke keranjang`,
-        { id: toastId, group: "Permohonan Data" },
+        { id: toastId, group: "Keranjang" },
       );
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
@@ -149,7 +149,7 @@ export const useAddToCartAll = () => {
         error instanceof Error
           ? error.message
           : "Gagal menambahkan ke keranjang";
-      toast.error(message, { id: toastId, group: "Permohonan Data" });
+      toast.error(message, { id: toastId, group: "Keranjang" });
     },
   });
 };

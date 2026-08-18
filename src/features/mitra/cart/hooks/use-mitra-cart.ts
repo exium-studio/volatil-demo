@@ -69,7 +69,7 @@ export const useCartSummaryQuery = () => {
 export const useCheckoutCart = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("checkout-cart", {
-    group: "Permohonan Data",
+    group: "Keranjang",
     loadingMessage: {
       title: "Memproses pesanan...",
     },
@@ -99,7 +99,7 @@ export const useCheckoutCart = () => {
 export const useClearCart = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("clear-cart", {
-    group: "Permohonan Data",
+    group: "Keranjang",
     loadingMessage: {
       title: "Mengosongkan keranjang...",
     },
