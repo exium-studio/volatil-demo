@@ -267,6 +267,7 @@ export const MitraDataRequestIgtLayerList = memo(
 
     return (
       <VStack
+        flex={1}
         position={"relative"}
         overflowY={"auto"}
         w={"full"}

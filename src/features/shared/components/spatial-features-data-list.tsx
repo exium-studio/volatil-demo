@@ -7,7 +7,6 @@ import { DataListTable } from "@/design-system/components/data-display/ui/data-l
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
@@ -95,25 +94,17 @@ export const SpatialFeaturesDataList = memo(
           position={"relative"}
           {...restProps}
         >
-          <Box
-            w={"full"}
-            h={"full"}
-            position={"relative"}
-            overflow={"hidden"}
-            flex={1}
-          >
-            <SpatialFeaturesDataListContent
-              wfsFeatures={wfsFeatures}
-              attributeKeys={attributeKeys}
-              canBatchSelect={canBatchSelect}
-              batchActions={batchActions}
-              extraItemActions={extraItemActions}
-              page={page}
-              pageSize={pageSize}
-              selectedItems={selectedItems}
-              onSelectedItemChange={onSelectedItemChange}
-            />
-          </Box>
+          <SpatialFeaturesDataListContent
+            wfsFeatures={wfsFeatures}
+            attributeKeys={attributeKeys}
+            canBatchSelect={canBatchSelect}
+            batchActions={batchActions}
+            extraItemActions={extraItemActions}
+            page={page}
+            pageSize={pageSize}
+            selectedItems={selectedItems}
+            onSelectedItemChange={onSelectedItemChange}
+          />
 
           {hasPagination && (
             <DataListFooter
@@ -223,8 +214,8 @@ const SpatialFeaturesDataListContent = memo(
             selectedItems: next as FormattedListItem[],
           });
         }}
+        flex={"undefined"}
         rounded={0}
-        pb={0}
         shadow={"none"}
       >
         <DataListTable.Header />
