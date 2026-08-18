@@ -105,7 +105,7 @@ export const MapIgtLayerSelect = memo(() => {
             <VStack gap={2} align={"stretch"}>
               {activeLayers.map((layer) => {
                 const isEnabled = enabledLayerIds[layer.id] ?? true;
-                const opacity = layerOpacities[layer.id] ?? 0.5;
+                const opacity = layerOpacities[layer.id] ?? 1.0;
 
                 return (
                   <MapIgtLayerItem
