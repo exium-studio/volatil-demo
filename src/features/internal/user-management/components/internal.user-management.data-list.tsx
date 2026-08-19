@@ -257,7 +257,7 @@ export const InternalUserManagementDataList = () => {
         {/* Table & Footer Content */}
         <VStack bg={"bg.canvas"} w={"full"} position={"relative"} gap={0}>
           {isLoading ? (
-            <Skeleton h={"280px"} w={"full"} />
+            <Skeleton h={"280px"} w={"full"} p={PADDING.md} roundedTop={0} />
           ) : (
             <Box w={"full"} position={"relative"}>
               <DataListTable.Root
