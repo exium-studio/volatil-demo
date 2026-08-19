@@ -12,7 +12,10 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { MitraDataRequestAddToCartButtonsProps } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
-import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
+import {
+  calculateIntersectAreaInHectares,
+  extractAoiPolygonsFromCql,
+} from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconShoppingCart } from "@tabler/icons-react";
@@ -25,6 +28,7 @@ export const MitraDataRequestAddToCartButtons = (
   // Props
   const {
     spatialBasis,
+    cqlFilter,
     onAddAllBidangClick,
     onAddAllKawasanClick,
     onAddAllBothClick,
@@ -39,6 +43,11 @@ export const MitraDataRequestAddToCartButtons = (
 
   // Stores
   const { theme } = useThemeStore();
+
+  const aoiPolygon = useMemo(
+    () => extractAoiPolygonsFromCql(cqlFilter),
+    [cqlFilter],
+  );
 
   // Derived — basis breakdown fallback from all result items
   const calculatedBidang = useMemo(
@@ -64,35 +73,55 @@ export const MitraDataRequestAddToCartButtons = (
   const selectedKawasanLuasTotal = useMemo(() => {
     if (spatialBasis !== "kawasan") return 0;
     return (selectedItems ?? []).reduce((acc, item) => {
-      const data = item.data as GeoJSON.Feature | Record<string, unknown> | undefined;
-      // Try calculating directly from geometry using turf
+      const data = item.data as
+        | GeoJSON.Feature
+        | Record<string, unknown>
+        | undefined;
+      // Try calculating directly from geometry with intersection clipping
       if (data && "geometry" in data && data.geometry) {
-        const geomAreaHa = calculateFeatureAreaInHectares(data as GeoJSON.Feature);
+        const geomAreaHa = calculateIntersectAreaInHectares(
+          data as GeoJSON.Feature,
+          aoiPolygon,
+        );
         if (geomAreaHa > 0) return acc + geomAreaHa;
       }
-      const props = (data && "properties" in data ? data.properties : data ?? {}) as Record<string, unknown>;
-      const key = Object.keys(props).find((k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul");
+      const props = (data && "properties" in data
+        ? data.properties
+        : data ?? {}) as Record<string, unknown>;
+      const key = Object.keys(props).find(
+        (k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul",
+      );
       const val = key ? Number(props[key]) : NaN;
       return acc + (isNaN(val) ? 0 : val);
     }, 0);
-  }, [selectedItems, spatialBasis]);
+  }, [selectedItems, spatialBasis, aoiPolygon]);
 
   // Derived — calculate total 'luas' in hectares (ha) for all items
   const allKawasanLuasTotal = useMemo<number>(() => {
     if (spatialBasis !== "kawasan") return 0;
     return (allItems ?? []).reduce<number>((acc, item) => {
-      const data = item as GeoJSON.Feature | Record<string, unknown> | undefined;
-      // Try calculating directly from geometry using turf
+      const data = item as
+        | GeoJSON.Feature
+        | Record<string, unknown>
+        | undefined;
+      // Try calculating directly from geometry with intersection clipping
       if (data && "geometry" in data && data.geometry) {
-        const geomAreaHa = calculateFeatureAreaInHectares(data as GeoJSON.Feature);
+        const geomAreaHa = calculateIntersectAreaInHectares(
+          data as GeoJSON.Feature,
+          aoiPolygon,
+        );
         if (geomAreaHa > 0) return acc + geomAreaHa;
       }
-      const props = (data && "properties" in data ? data.properties : data ?? {}) as Record<string, unknown>;
-      const key = Object.keys(props).find((k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul");
+      const props = (data && "properties" in data
+        ? data.properties
+        : data ?? {}) as Record<string, unknown>;
+      const key = Object.keys(props).find(
+        (k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul",
+      );
       const val = key ? Number(props[key]) : NaN;
       return acc + (isNaN(val) ? 0 : val);
     }, 0);
-  }, [allItems, spatialBasis]);
+  }, [allItems, spatialBasis, aoiPolygon]);
 
   // Derived — selected items basis breakdown
   const selectedBidangCount = useMemo(

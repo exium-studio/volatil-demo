@@ -7,7 +7,10 @@ import {
 } from "@/design-system/components/map/utils/fetch-wfs";
 import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
 import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
-import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
+import {
+  calculateIntersectAreaInHectares,
+  extractAoiPolygonsFromCql,
+} from "@/features/mitra/data-request/utils/calculate-feature-area";
 import type GeoJSON from "geojson";
 
 const cachedAttributes: Record<string, string[]> = {};
@@ -211,6 +214,7 @@ export const fetchWfsCatalog = async ({
     let bidangCount = 0;
     let kawasanCount = 0;
     let totalLuas = 0;
+    const aoiPolygon = extractAoiPolygonsFromCql(mergedCqlFilter);
 
     features.forEach((feat) => {
       const props =
@@ -222,9 +226,9 @@ export const fetchWfsCatalog = async ({
         bidangCount += 1;
       }
 
-      // Calculate area directly from geometry in ha using turf
+      // Calculate area directly from geometry in ha using turf with intersection clipping
       if (feat.geometry) {
-        const geomAreaHa = calculateFeatureAreaInHectares(feat);
+        const geomAreaHa = calculateIntersectAreaInHectares(feat, aoiPolygon);
         if (geomAreaHa > 0) {
           totalLuas += geomAreaHa;
           return;

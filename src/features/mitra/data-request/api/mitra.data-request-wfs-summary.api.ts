@@ -3,7 +3,10 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
 import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
-import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
+import {
+  calculateIntersectAreaInHectares,
+  extractAoiPolygonsFromCql,
+} from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { getWfsDynamicAttributes } from "@/features/mitra/data-request/api/mitra.data-request-wfs.api";
 
 export type LayerCountSummary = {
@@ -109,11 +112,12 @@ export const getLayerCountSummary = async (params: {
     });
 
     const features = featuresResult.features ?? [];
+    const aoiPolygon = extractAoiPolygonsFromCql(mergedCqlFilter);
     let totalAreaHa = 0;
 
     features.forEach((feat) => {
       if (feat.geometry) {
-        const area = calculateFeatureAreaInHectares(feat);
+        const area = calculateIntersectAreaInHectares(feat, aoiPolygon);
         if (area > 0) {
           totalAreaHa += area;
           return;
