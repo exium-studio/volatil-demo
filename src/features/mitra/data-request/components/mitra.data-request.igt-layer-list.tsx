@@ -17,6 +17,7 @@ import { useMapInstanceStore } from "@/design-system/components/map/stores/map.i
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
@@ -161,7 +162,21 @@ export const MitraDataRequestIgtLayerList = memo(
         { th: "Layer IGT", sortable: true, align: "start" },
         { th: "Basis IGT", sortable: true, align: "center" },
         { th: "Jumlah / Luas", sortable: false, align: "start" },
-        // { th: "WFS TypeName", sortable: true, align: "start" },
+        {
+          th: "",
+          sortable: false,
+          align: "center",
+          headerCellProps: {
+            pos: "sticky",
+            right: "48px",
+            zIndex: 11,
+            w: "48px",
+            minW: "48px",
+            maxW: "48px",
+            px: 1,
+            justify: "center",
+          },
+        },
       ];
 
       const items: FormattedListItem[] = filteredLayers.map(
@@ -207,15 +222,45 @@ export const MitraDataRequestIgtLayerList = memo(
                 ),
                 align: "start",
               },
-              // {
-              //   value: layer.wfs?.wfsTypeName ?? "-",
-              //   td: (
-              //     <P fontSize={"sm"} color={"fg.subtle"}>
-              //       {layer.wfs?.wfsTypeName ?? "-"}
-              //     </P>
-              //   ),
-              //   align: "start",
-              // },
+              {
+                value: layer.id,
+                td: (
+                  <Tooltip content={"Masukkan ke keranjang"}>
+                    <IconButton
+                      size={"xs"}
+                      h={"32px"}
+                      primary
+                      variant={"outline"}
+                      aria-label={"Masukkan ke keranjang"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (layer?.wfs?.wfsTypeName) {
+                          addToCartAllMutation.mutate({
+                            cqlFilter: combinedCqlFilter,
+                            typeName: layer.wfs.wfsTypeName,
+                            wfsUrl: layer.wfs.wfsUrl ?? "",
+                          });
+                        }
+                      }}
+                    >
+                      <AppIcon icon={IconShoppingCartPlus} />
+                    </IconButton>
+                  </Tooltip>
+                ),
+                align: "center",
+                bodyCellProps: {
+                  pos: "sticky",
+                  right: "56px",
+                  zIndex: 2,
+                  w: "48px",
+                  minW: "48px",
+                  maxW: "48px",
+                  px: 1,
+                  justify: "center",
+                  ml: "auto",
+                  onClick: (e: React.MouseEvent) => e.stopPropagation(),
+                },
+              },
             ],
           };
         },
@@ -262,7 +307,13 @@ export const MitraDataRequestIgtLayerList = memo(
         batchActions: [],
         itemActions,
       };
-    }, [filteredLayers, map, combinedCqlFilter, onSelectIgtLayer]);
+    }, [
+      filteredLayers,
+      combinedCqlFilter,
+      addToCartAllMutation,
+      map,
+      onSelectIgtLayer,
+    ]);
 
     return (
       <VStack
@@ -311,9 +362,9 @@ export const MitraDataRequestIgtLayerList = memo(
 
         {/* DataList Table */}
         <VStack bg={"bg.canvas"} overflow={"hidden"}>
-          {isLoadingLayers ? (
-            <Skeleton flex={1} p={PADDING.md} rounded={0} />
-          ) : (
+          {isLoadingLayers && <Skeleton flex={1} p={PADDING.md} rounded={0} />}
+
+          {!isLoadingLayers && (
             <DataListTable.Root
               headers={dataList.headers}
               items={dataList.items}

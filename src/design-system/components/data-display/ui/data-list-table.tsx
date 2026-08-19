@@ -8,6 +8,7 @@ import type {
   DataListTableHeaderProps,
   DataListTableOnSelectedItemChange,
   DataListTableRootProps,
+  DataListTableRowProps,
   DataListTableSortIconProps,
   FormattedListItem,
   FormattedTableColumn,
@@ -364,19 +365,6 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
   );
 };
 
-interface DataListTableRowProps {
-  item: FormattedListItem;
-  index: number;
-  isItemSelected: boolean;
-  canBatchSelect: boolean;
-  withNumbering: boolean;
-  itemActions?: DataListItemActionsGenerator[];
-  toggleItemSelection: (item: FormattedListItem) => void;
-  measureRef?: (element: Element | null) => void;
-  dataIndex?: number;
-  styleProps?: StackProps;
-}
-
 const DataListTableRow = memo(
   ({
     item,
@@ -441,6 +429,7 @@ const DataListTableRow = memo(
           </DataListTableCell>
         )}
 
+        {/* Main columns */}
         {item.columns.map((col, colIndex) => (
           <HStack
             key={colIndex}
