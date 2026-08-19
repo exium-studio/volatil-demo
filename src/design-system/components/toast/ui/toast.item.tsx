@@ -38,22 +38,22 @@ import { memo, useState } from "react";
 
 export const TOAST_VARIANT_MAP: ToastVariantMap = {
   success: {
-    icon: <AppIcon icon={CheckCircle2Icon} />,
+    icon: <AppIcon icon={CheckCircle2Icon} size={"sm"} />,
     bg: "bg.success",
     color: "fg.success",
   },
   error: {
-    icon: <AppIcon icon={XCircleIcon} />,
+    icon: <AppIcon icon={XCircleIcon} size={"sm"} />,
     bg: "bg.error",
     color: "fg.error",
   },
   warning: {
-    icon: <AppIcon icon={AlertCircleIcon} />,
+    icon: <AppIcon icon={AlertCircleIcon} size={"sm"} />,
     bg: "bg.warning",
     color: "fg.warning",
   },
   info: {
-    icon: <AppIcon icon={InfoIcon} />,
+    icon: <AppIcon icon={InfoIcon} size={"sm"} />,
     bg: "bg.subtle",
     color: "fg",
   },

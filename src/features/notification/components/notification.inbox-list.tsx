@@ -133,35 +133,39 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
           color={item.isRead ? "fg.muted" : `${colorPalette}.fg`}
           flexShrink={0}
         >
-          <AppIcon icon={IconComponent} />
+          <AppIcon icon={IconComponent} size={"sm"} />
         </Circle>
 
-        <VStack align={"start"} gap={1} flex={1}>
-          <HStack gap={2} align={"center"}>
-            <P fontWeight={item.isRead ? "medium" : "bold"}>{item.title}</P>
+        <VStack gap={SPACING.sm}>
+          <HStack justify={"space-between"}>
+            <HStack gap={2} align={"center"}>
+              <P fontWeight={item.isRead ? "medium" : "bold"}>{item.title}</P>
 
-            {!item.isRead && (
-              <Box w={"6px"} h={"6px"} rounded={"full"} bg={"blue.500"} />
-            )}
+              {!item.isRead && (
+                <Box w={"6px"} h={"6px"} rounded={"full"} bg={"blue.500"} />
+              )}
 
-            <Badge
-              variant={"subtle"}
-              colorPalette={colorPalette}
-              textTransform={"capitalize"}
-            >
-              {item.category}
-            </Badge>
+              <Badge
+                variant={"subtle"}
+                colorPalette={colorPalette}
+                textTransform={"capitalize"}
+              >
+                {item.category}
+              </Badge>
+            </HStack>
+
+            <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
+              {formatUtcDateTime(item.createdAt, preferredTimezone)}
+            </P>
           </HStack>
 
-          <P color={"fg.muted"} fontSize={"sm"} lineHeight={"tall"}>
-            {item.message}
-          </P>
+          <VStack align={"start"} gap={1} flex={1}>
+            <P color={"fg.muted"} fontSize={"sm"} lineHeight={"tall"}>
+              {item.message}
+            </P>
+          </VStack>
         </VStack>
       </HStack>
-
-      <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
-        {formatUtcDateTime(item.createdAt, preferredTimezone)}
-      </P>
     </HStack>
   );
 });
