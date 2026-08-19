@@ -7,10 +7,9 @@ import type {
 } from "@/design-system/components/layout/types/container.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
-import { useMergedRefs } from "@/design-system/hooks/use-merge-refs";
 import { useRefDimension } from "@/design-system/hooks/use-ref-dimenssion";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { createContext, forwardRef, useContext, useMemo, useRef } from "react";
+import { createContext, Fragment, useContext, useMemo, useRef } from "react";
 
 export type ContainerContextValue = {
   dimension: {
@@ -33,48 +32,40 @@ export function useContainerContext() {
 
 // ---------------------------------------------------------------------------
 
-const ContainerRoot = forwardRef<HTMLDivElement, ContainerRootProps>(
-  function ContainerRoot(props, ref) {
-    // Props
-    const { children, withContext = false, ...restProps } = props;
+const ContainerRoot = (props: ContainerRootProps) => {
+  // Props
+  const { children, withContext = false, ...restProps } = props;
 
-    // Refs
-    const containerRef = useRef<HTMLDivElement>(null);
-    const mergeRef = useMergedRefs({ refs: [containerRef, ref] });
+  // Refs
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    // Hooks
-    const dimension = useRefDimension(containerRef);
+  // Hooks
+  const dimension = useRefDimension(containerRef);
 
-    // Derived Values
-    const isValidDimension = dimension.width > 0 && dimension.height > 0;
-    const isSmContainer =
-      dimension.width < parseInt(DIMENSIONS.smScreenBreakpoint);
+  // Derived Values
+  const isValidDimension = dimension.width > 0 && dimension.height > 0;
+  const isSmContainer =
+    dimension.width < parseInt(DIMENSIONS.smScreenBreakpoint);
 
-    const contextValue = useMemo(
-      () => ({ dimension, isValidDimension, isSmContainer }),
-      [dimension, isValidDimension, isSmContainer],
-    );
+  const contextValue = useMemo(
+    () => ({ dimension, isValidDimension, isSmContainer }),
+    [dimension, isValidDimension, isSmContainer],
+  );
 
-    const content = (
-      <VStack
-        ref={mergeRef}
-        w={"full"}
-        borderColor={"border.subtle"}
-        {...restProps}
-      >
-        {children}
-      </VStack>
-    );
+  const content = (
+    <Fragment w={"full"} {...restProps}>
+      {children}
+    </Fragment>
+  );
 
-    if (!withContext) return content;
+  if (!withContext) return content;
 
-    return (
-      <ContainerContext.Provider value={contextValue}>
-        {content}
-      </ContainerContext.Provider>
-    );
-  },
-);
+  return (
+    <ContainerContext.Provider value={contextValue}>
+      {content}
+    </ContainerContext.Provider>
+  );
+};
 
 const ContainerHeader = (props: ContainerHeaderProps) => {
   // Props
