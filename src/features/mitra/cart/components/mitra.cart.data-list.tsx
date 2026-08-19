@@ -17,7 +17,7 @@ import {
 import { getLocalCartIds } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { MitraCartTableProps } from "@/features/mitra/cart/types/cart.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import { SpatialFeaturesDataList } from "@/features/shared/components/spatial-features-data-list";
+import { SpatialFeaturesList } from "@/features/shared/components/spatial-features-list";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
@@ -144,7 +144,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
           )}
 
           {!isLoading && features.length > 0 && (
-            <SpatialFeaturesDataList
+            <SpatialFeaturesList
               wfsFeatures={features}
               page={pageState.page}
               pageSize={pageState.pageSize}

@@ -339,7 +339,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
           onClick={header.sortable ? () => toggleSort(index) : undefined}
           {...header?.headerCellProps}
         >
-          <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.subtle"}>
+          <P fontWeight={"semibold"} color={"fg.subtle"}>
             {header.th}
           </P>
 
@@ -440,7 +440,7 @@ const DataListTableRow = memo(
           >
             {renderTdCell
               ? renderTdCell(col, item, colIndex)
-              : (col.td ?? <P fontSize={"sm"}>{String(col.value ?? "-")}</P>)}
+              : (col.td ?? <P>{String(col.value ?? "-")}</P>)}
           </HStack>
         ))}
 

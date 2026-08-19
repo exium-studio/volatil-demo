@@ -6,19 +6,19 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import type GeoJSON from "geojson";
 import type { ReactNode } from "react";
 
-export type SpatialFeaturesDataListContentProps = {
+export type SpatialFeaturesListContentProps = {
   wfsFeatures: GeoJSON.Feature[];
   attributeKeys: string[];
   canBatchSelect?: boolean;
-  batchActions?: SpatialFeaturesDataListProps["batchActions"];
-  extraItemActions?: SpatialFeaturesDataListProps["extraItemActions"];
+  batchActions?: SpatialFeaturesListProps["batchActions"];
+  extraItemActions?: SpatialFeaturesListProps["extraItemActions"];
   page?: number;
   pageSize?: number;
   selectedItems?: FormattedListItem[];
-  onSelectedItemChange?: SpatialFeaturesDataListProps["onSelectedItemChange"];
+  onSelectedItemChange?: SpatialFeaturesListProps["onSelectedItemChange"];
 };
 
-export type SpatialFeaturesDataListProps = StackProps & {
+export type SpatialFeaturesListProps = StackProps & {
   wfsFeatures: GeoJSON.Feature[];
   page?: number;
   pageSize?: number;

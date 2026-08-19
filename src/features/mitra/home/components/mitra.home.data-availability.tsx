@@ -1,6 +1,8 @@
 // src/features/mitra/home/components/mitra.home.data-availability.tsx
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Circle } from "@/design-system/components/layout/ui/box";
 import {
   Container,
   useContainerContext,
@@ -9,7 +11,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING } from "@/design-system/constants/styles";
-import { DatabaseIcon, TreesIcon, Layers2Icon } from "lucide-react";
+import { DatabaseIcon, Layers2Icon, TreesIcon } from "lucide-react";
 
 export const MitraHomeDataAvailability = () => {
   return (
@@ -58,7 +60,7 @@ const MitraHomeDataAvailabilityStats = () => {
       value: 30,
       suffix: "layer",
       description: "Total seluruh dataset IGT terintegrasi",
-      color: `fg`,
+      colorPalette: "neutral",
     },
     {
       icon: Layers2Icon,
@@ -66,7 +68,7 @@ const MitraHomeDataAvailabilityStats = () => {
       value: 10,
       suffix: "layer",
       description: "Peta spasial berorientasi bidang tanah/persil",
-      color: "blue.fg",
+      colorPalette: "blue",
     },
     {
       icon: TreesIcon,
@@ -74,7 +76,7 @@ const MitraHomeDataAvailabilityStats = () => {
       value: 20,
       suffix: "layer",
       description: "Peta spasial penataan ruang & zonasi wilayah",
-      color: "orange.fg",
+      colorPalette: "orange",
     },
   ];
 
@@ -84,17 +86,22 @@ const MitraHomeDataAvailabilityStats = () => {
         return (
           <StatGrid.Item key={stat.label} index={index} columns={cols}>
             <StatGrid.Header>
-              <StatGrid.Label fontWeight={"semibold"} color={stat.color}>
+              <StatGrid.Label
+                fontWeight={"semibold"}
+                color={`${stat.colorPalette}.fg`}
+              >
                 {stat.label}
               </StatGrid.Label>
 
-              <StatGrid.Icon icon={stat.icon} color={stat.color} />
+              <Circle p={2} bg={`${stat.colorPalette}.subtle`}>
+                <AppIcon icon={stat.icon} color={`${stat.colorPalette}.fg`} />
+              </Circle>
             </StatGrid.Header>
 
             <StatGrid.Value
               value={stat.value}
               suffix={stat.suffix}
-              color={stat.color}
+              color={`${stat.colorPalette}.fg`}
               fontWeight={"semibold"}
             />
 
