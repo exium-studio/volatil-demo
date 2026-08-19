@@ -32,6 +32,7 @@ import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import {
   APP_NAV_GROUPS_LIST,
@@ -352,7 +353,9 @@ const Content = () => {
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
       (fetchedLayers?.layers ?? []).map((layer: IgtLayerItem) => {
-        const isEnabled = enabledLayerIds[layer.id] !== false;
+        const isEnabled =
+          enabledLayerIds[layer.id] ??
+          (layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
         const opacity = layerOpacities[layer.id] ?? 1.0;
         return getWmsRasterConfigFromIgtLayer(
           layer,

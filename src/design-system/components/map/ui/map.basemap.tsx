@@ -88,6 +88,8 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
     const instance = new maplibregl.Map({
       container: containerRef.current,
       style: currentStyle,
+      bounds: MAP_CONFIG.viewport.bounds,
+      fitBoundsOptions: { padding: 48 },
       center: MAP_CONFIG.viewport.center,
       zoom: MAP_CONFIG.viewport.zoom,
       dragRotate: true,

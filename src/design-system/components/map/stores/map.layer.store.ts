@@ -1,5 +1,6 @@
 // src/design-system/components/map/stores/map.layer.store.ts
 
+import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -19,11 +20,15 @@ export const useMapLayerStore = create<MapLayerState>()(
     (set) => ({
       wmsVisible: true,
       setWmsVisible: (wmsVisible) => set({ wmsVisible }),
-      enabledLayerIds: {},
+      enabledLayerIds: {
+        [DEFAULT_ACTIVE_IGT_LAYER_ID]: true,
+      },
       layerOpacities: {},
       toggleLayerId: (layerId) =>
         set((state) => {
-          const current = state.enabledLayerIds[layerId] ?? true;
+          const current =
+            state.enabledLayerIds[layerId] ??
+            (layerId === DEFAULT_ACTIVE_IGT_LAYER_ID);
           return {
             enabledLayerIds: {
               ...state.enabledLayerIds,

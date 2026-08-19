@@ -28,3 +28,14 @@ export const IGT_AREA_KEYS = [
 ] as const;
 
 export type IgtAreaKey = (typeof IGT_AREA_KEYS)[number];
+
+// ---------------------------------------------------------------------------
+// Default Active IGT Layer Config
+// ---------------------------------------------------------------------------
+
+export const DEFAULT_ACTIVE_IGT_LAYER_ID =
+  "testing_workspace:TEST_BIDANG_TANAH";
+
+export const DEFAULT_ACTIVE_IGT_BBOX: [number, number, number, number] = [
+  115.134102, -8.685009, 115.183136, -8.622203,
+];
