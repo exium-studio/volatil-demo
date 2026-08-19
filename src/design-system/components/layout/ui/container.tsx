@@ -9,7 +9,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useRefDimension } from "@/design-system/hooks/use-ref-dimenssion";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { createContext, Fragment, useContext, useMemo, useRef } from "react";
+import { createContext, useContext, useMemo, useRef } from "react";
 
 export type ContainerContextValue = {
   dimension: {
@@ -53,9 +53,9 @@ const ContainerRoot = (props: ContainerRootProps) => {
   );
 
   const content = (
-    <Fragment w={"full"} {...restProps}>
+    <VStack ref={containerRef} w={"full"} align={"stretch"} {...restProps}>
       {children}
-    </Fragment>
+    </VStack>
   );
 
   if (!withContext) return content;

@@ -2,6 +2,10 @@
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type { DataListTableContextValue } from "@/design-system/components/data-display/contexts/data-list-table.context";
+import {
+  DataListTableContext,
+  useDataListTableContext,
+} from "@/design-system/components/data-display/contexts/data-list-table.context";
 import { useDataListSelection } from "@/design-system/components/data-display/hooks/use-data-list-selection";
 import { useDataListSort } from "@/design-system/components/data-display/hooks/use-data-list-sort";
 import type {
@@ -31,12 +35,12 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { tintAlpha } from "@/shared/utils/style/color";
 import { Box, Center } from "@chakra-ui/react";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   IconCaretDownFilled,
   IconCaretUpFilled,
   IconListCheck,
 } from "@tabler/icons-react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { EllipsisIcon } from "lucide-react";
 import {
   forwardRef,
@@ -47,10 +51,6 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  DataListTableContext,
-  useDataListTableContext,
-} from "@/design-system/components/data-display/contexts/data-list-table.context";
 
 // ---------------------------------------------------------------------------
 
@@ -240,6 +240,7 @@ const DataListTableRootInternal = <
         maxH={"full"}
         pb={TABLE.rowGap}
         roundedTop={theme.radii.container}
+        bg={"bg.canvas"}
         shadow={"sm"}
         {...restProps}
       >

@@ -19,11 +19,11 @@ import {
 } from "@/design-system/components/map/types/map.type";
 import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
+import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
-import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
@@ -31,6 +31,7 @@ import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport"
 import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
@@ -57,9 +58,8 @@ import {
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useMemo, useRef } from "react";
-import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { UserIcon } from "lucide-react";
+import { useMemo, useRef } from "react";
 
 // -------------------------------------------------------------------------------------
 
@@ -100,7 +100,7 @@ const Sidebar = () => {
       className={"group"}
       pos={"relative"}
       zIndex={10}
-      w={expanded ? "300px" : `calc(40px + 24px)`}
+      w={expanded ? "240px" : `calc(40px + 24px)`}
       h={"full"}
       transition={"200ms"}
       // transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}

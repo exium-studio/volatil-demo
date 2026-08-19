@@ -92,7 +92,11 @@ export const MitraDataRequestIgtLayerList = memo(
     }, [baseCqlFilter, storeCqlFilter, showFilter]);
 
     // Queries — list of all active IGT layers
-    const { data: layersData, isLoading: isLoadingLayers } = useQuery({
+    const isLoadingLayers = false;
+    const {
+      data: layersData,
+      // isLoading: isLoadingLayers
+    } = useQuery({
       queryKey: ["igt-layers-list"],
       queryFn: () => getIgtLayers(),
       staleTime: Infinity,
@@ -322,7 +326,12 @@ export const MitraDataRequestIgtLayerList = memo(
         <Separator borderColor={"bg.canvas"} />
 
         {/* DataList Table */}
-        <VStack bg={"bg.canvas"} overflow={"hidden"}>
+        <VStack
+          flex={1}
+          bg={"bg.body"}
+          overflow={"clip"}
+          roundedBottom={theme.radii.container}
+        >
           {isLoadingLayers && <Skeleton flex={1} p={PADDING.md} rounded={0} />}
 
           {!isLoadingLayers && (
@@ -344,13 +353,6 @@ export const MitraDataRequestIgtLayerList = memo(
               <DataListTable.Body />
             </DataListTable.Root>
           )}
-
-          <Box
-            w={"full"}
-            h={PADDING.md}
-            bg={"bg.body"}
-            roundedBottom={theme.radii.container}
-          />
         </VStack>
 
         {/* Add to Cart Bar */}
