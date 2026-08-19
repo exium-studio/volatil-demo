@@ -11,6 +11,7 @@ Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, 
 4. [Pusat Bantuan (Help Center)](#4-pusat-bantuan-help-center)
 5. [My Data & User Management](#5-my-data--user-management)
 6. [Dashboard & Statistik](#6-dashboard--statistik)
+7. [Notifikasi & Inbox](#7-notifikasi--inbox)
 
 ---
 
@@ -355,3 +356,33 @@ type MitraTransactionListResponse = {
 ### 6.2 Internal Dashboard Overview
 - **Endpoint**: `GET /api/v1/internal/home/summary?period={1d|1w|1m|1y|all}`
 - **Response**: Statistik pengguna aktif, permohonan data masuk, volume transaksi, dan utilisasi resource server.
+
+---
+
+## 7. Notifikasi & Inbox
+
+Modul pesan inbox resmi dan sinkronisasi riwayat toast notification sistem.
+
+### 7.1 List Inbox Pesan
+- **Endpoint**: `GET /api/v1/inbox`
+- **Response**:
+```typescript
+type InboxListResponse = {
+  items: Array<{
+    id: string;
+    title: string;
+    message: string;
+    category: "transaksi" | "sistem" | "bantuan" | "akun";
+    isRead: boolean;
+    actionUrl?: string;
+    createdAt: string;
+  }>;
+  total: number;
+  unreadCount: number;
+};
+```
+
+### 7.2 Tandai Inbox Telah Dibaca
+- **Endpoint**: `PATCH /api/v1/inbox/{id}/read`
+- **Response**: `200 OK` / `void`
+

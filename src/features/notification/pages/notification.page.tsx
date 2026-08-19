@@ -1,6 +1,7 @@
 // src/features/notification/pages/notification.page.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -12,12 +13,15 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { DIMENSIONS, PADDING, SPACING } from "@/design-system/constants/styles";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
+import { NotificationInboxList } from "@/features/notification/components/notification.inbox-list";
 import { NotificationGroupStackCard } from "@/features/notification/components/notification.item";
+import { useInboxQuery } from "@/features/notification/hooks/use-inbox.query";
 import { useNotifications } from "@/features/notification/hooks/use-notifications";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
-import { BellOffIcon, Trash2Icon } from "lucide-react";
+import { BellIcon, BellOffIcon, InboxIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 
 export const NotificationPage = () => {
@@ -29,6 +33,13 @@ export const NotificationPage = () => {
     deleteGroup,
     clearAllHistory,
   } = useNotifications();
+
+  const { unreadCount } = useInboxQuery();
+  const [_isPendingTab, startTransitionTab] = useTransition();
+  const { queryValue: tabQuery, setQueryValue: setTab } = useSearchParam("tab");
+
+  // Derived active tab (default to "inbox")
+  const activeTab = tabQuery === "notifications" ? "notifications" : "inbox";
 
   // Transitions & Delayed rendering for smooth animation
   const [isPending, startTransition] = useTransition();
@@ -60,19 +71,25 @@ export const NotificationPage = () => {
             <HStack align={"center"}>
               <AppNavTitle navsMap={APP_NAVS_MAP} />
 
-              {totalNotifications > 0 && (
+              {activeTab === "notifications" && totalNotifications > 0 && (
                 <Badge colorPalette={"blue"} variant={"subtle"} size={"sm"}>
                   {`${totalNotifications} Notifikasi`}
+                </Badge>
+              )}
+
+              {activeTab === "inbox" && unreadCount > 0 && (
+                <Badge colorPalette={"blue"} variant={"subtle"} size={"sm"}>
+                  {`${unreadCount} Baru`}
                 </Badge>
               )}
             </HStack>
 
             <HStack gap={2}>
-              {totalNotifications > 0 && (
+              {activeTab === "notifications" && totalNotifications > 0 && (
                 <ConfirmationTrigger
                   title={"Hapus Semua Riwayat Notifikasi?"}
                   description={
-                    "Seluruh riwayat toast notification & inbox akan dibersihkan."
+                    "Seluruh riwayat toast notification akan dibersihkan."
                   }
                   confirmLabel={"Hapus Semua"}
                   colorPalette={"red"}
@@ -89,38 +106,104 @@ export const NotificationPage = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          {/* Grouped Stack Streams (Ubuntu-like layout) */}
-          <VStack flex={1} align={"stretch"} overflowY={"auto"}>
-            {!isReady || isPending ? (
-              <Center flex={1} py={12}>
-                <Loader />
-              </Center>
-            ) : !hasNotifications ? (
-              <NoDataState
-                icon={BellOffIcon}
-                title={"Tidak Ada Notifikasi"}
-                description={"Belum ada riwayat notifikasi baru."}
-              />
-            ) : (
+          {/* Tabs: Inbox (Default) & Notifikasi */}
+          <Tabs.Root
+            value={activeTab}
+            flex={1}
+            display={"flex"}
+            flexDir={"column"}
+            overflowY={"auto"}
+            onValueChange={(details) => {
+              startTransitionTab(() => {
+                setTab(details.value, { replace: true });
+              });
+            }}
+          >
+            <Tabs.List borderColor={"bg.canvas"}>
+              <Tabs.Trigger
+                value={"inbox"}
+                flex={1}
+                justifyContent={"center"}
+                h={DIMENSIONS.headerH}
+              >
+                <AppIcon icon={InboxIcon} />
+                {"Inbox"}
+                {unreadCount > 0 && (
+                  <Badge colorPalette={"blue"} ml={1}>
+                    {String(unreadCount)}
+                  </Badge>
+                )}
+              </Tabs.Trigger>
+
+              <Tabs.Trigger
+                value={"notifications"}
+                flex={1}
+                justifyContent={"center"}
+                h={DIMENSIONS.headerH}
+              >
+                <AppIcon icon={BellIcon} />
+                {"Notifikasi"}
+                {totalNotifications > 0 && (
+                  <Badge colorPalette={"gray"} ml={1}>
+                    {String(totalNotifications)}
+                  </Badge>
+                )}
+              </Tabs.Trigger>
+            </Tabs.List>
+
+            {/* Tab 1: Inbox Content */}
+            <Tabs.Content
+              value={"inbox"}
+              flex={1}
+              display={"flex"}
+              flexDir={"column"}
+              overflowY={"auto"}
+              p={PADDING.md}
+            >
+              <NotificationInboxList />
+            </Tabs.Content>
+
+            {/* Tab 2: Notifikasi Toast History Content */}
+            <Tabs.Content
+              value={"notifications"}
+              flex={1}
+              display={"flex"}
+              flexDir={"column"}
+              overflowY={"auto"}
+              p={0}
+            >
               <VStack
                 flex={1}
                 align={"stretch"}
                 gap={SPACING.lg}
                 p={PADDING.md}
+                overflowY={"auto"}
               >
-                {categoryGroups.map((group) => {
-                  return (
+                {!isReady || isPending ? (
+                  <Center flex={1} py={12}>
+                    <Loader />
+                  </Center>
+                ) : !hasNotifications ? (
+                  <NoDataState
+                    icon={BellOffIcon}
+                    title={"Belum Ada Riwayat Notifikasi"}
+                    description={
+                      "Seluruh notifikasi dan status proses dari sistem akan muncul di sini."
+                    }
+                  />
+                ) : (
+                  categoryGroups.map((group) => (
                     <NotificationGroupStackCard
                       key={group.groupName}
                       group={group}
                       onDeleteGroup={deleteGroup}
                       onDeleteNotification={deleteNotification}
                     />
-                  );
-                })}
+                  ))
+                )}
               </VStack>
-            )}
-          </VStack>
+            </Tabs.Content>
+          </Tabs.Root>
         </Container.Body>
       </Container.Root>
     </PanelContentContainer>

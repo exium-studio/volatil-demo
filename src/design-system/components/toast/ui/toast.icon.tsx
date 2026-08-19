@@ -1,6 +1,6 @@
 // src/design-system/components/toast/ui/toast.icon.tsx
 
-import { Center } from "@/design-system/components/layout/ui/center";
+import { Circle } from "@/design-system/components/layout/ui/box";
 import type { ToastIconProps } from "@/design-system/components/toast/types/toast.types";
 
 export function ToastIcon(props: ToastIconProps) {
@@ -11,7 +11,7 @@ export function ToastIcon(props: ToastIconProps) {
   if (!resolvedIcon) return null;
 
   return (
-    <Center
+    <Circle
       data-toast-icon={record.variant}
       w={"24px"}
       h={"24px"}
@@ -20,6 +20,6 @@ export function ToastIcon(props: ToastIconProps) {
       {...restProps}
     >
       {resolvedIcon}
-    </Center>
+    </Circle>
   );
 }

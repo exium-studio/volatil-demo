@@ -40,6 +40,10 @@ export const queryKeys = {
       transactions: () =>
         [...queryKeys.mitra.helpCenter.all, "transactions"] as const,
     },
+    notification: {
+      all: ["mitra", "notification"] as const,
+      inbox: () => [...queryKeys.mitra.notification.all, "inbox"] as const,
+    },
   },
   internal: {
     home: {
