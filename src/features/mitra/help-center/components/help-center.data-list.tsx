@@ -32,7 +32,7 @@ import type {
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
-} from "@/features/mitra/my-data/utils/my-data-date";
+} from "@/shared/utils/formatter/date.formatter";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";

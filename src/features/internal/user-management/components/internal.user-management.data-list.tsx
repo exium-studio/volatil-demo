@@ -30,7 +30,7 @@ import type {
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
-} from "@/features/mitra/my-data/utils/my-data-date";
+} from "@/shared/utils/formatter/date.formatter";
 import { t } from "@/shared/libs/i18n";
 import type { UserRole } from "@/shared/types/common-response.type";
 import { CheckCircleIcon, ShieldAlertIcon } from "lucide-react";

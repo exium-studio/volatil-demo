@@ -35,6 +35,7 @@ export const NotificationGroupStackCard = memo(
             record={item}
             index={index}
             stackExpanded={stackExpanded}
+            showTimestamp={true}
             onRequestExpand={() => setStackExpanded?.(true)}
             onClose={
               onDeleteNotification

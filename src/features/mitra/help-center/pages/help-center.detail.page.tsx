@@ -27,7 +27,7 @@ import type {
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
-} from "@/features/mitra/my-data/utils/my-data-date";
+} from "@/shared/utils/formatter/date.formatter";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useParams, useRouter } from "@tanstack/react-router";
 import {

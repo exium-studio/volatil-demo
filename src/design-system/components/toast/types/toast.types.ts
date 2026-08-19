@@ -64,6 +64,7 @@ export type ToastItemProps = StackProps & {
   record: ToastRecord;
   index: number;
   expanded?: boolean;
+  showTimestamp?: boolean;
 };
 
 export type ToastRenderer = (record: ToastRecord) => ReactNode;

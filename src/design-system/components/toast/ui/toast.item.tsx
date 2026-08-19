@@ -27,6 +27,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { tintDark } from "@/shared/utils/style/color";
+import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import {
   AlertCircleIcon,
   CheckCircle2Icon,
@@ -81,6 +82,7 @@ export const ToastItem = memo(function ToastItem(
     record,
     index,
     stackExpanded,
+    showTimestamp,
     onRequestExpand,
     onClose,
     ...restProps
@@ -196,8 +198,27 @@ export const ToastItem = memo(function ToastItem(
               </P>
             )}
 
+            {/* Timestamp */}
+            {showTimestamp && record.createdAt ? (
+              <P
+                fontSize={"sm"}
+                color={"fg.subtle"}
+                whiteSpace={"nowrap"}
+                ml={"auto"}
+                mr={1}
+                alignSelf={"center"}
+              >
+                {formatDateTime(record.createdAt)}
+              </P>
+            ) : null}
+
             {/* Actions */}
-            <HStack align={"center"} gap={1} ml={"auto"} flexShrink={0}>
+            <HStack
+              align={"center"}
+              gap={1}
+              ml={showTimestamp ? 0 : "auto"}
+              flexShrink={0}
+            >
               {record.quickAction && (
                 <Button
                   variant={"subtle"}
