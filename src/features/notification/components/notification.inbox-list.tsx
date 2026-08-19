@@ -102,7 +102,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       justify={"space-between"}
       p={PADDING.md}
       gap={SPACING.md}
-      bg={item.isRead ? "bg.panel" : "bg.subtle"}
+      bg={item.isRead ? "bg.body" : "bg.subtle"}
       borderWidth={"1px"}
       borderColor={item.isRead ? "border.subtle" : "border.default"}
       rounded={theme.radii.container}

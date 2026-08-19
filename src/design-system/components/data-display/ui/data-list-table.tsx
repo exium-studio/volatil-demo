@@ -302,12 +302,12 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       top={0}
       left={0}
       zIndex={10}
-      bg={"bg.panel"}
+      bg={"bg.body"}
       shadow={"sm"}
       {...props}
     >
       {canBatchSelect && (
-        <DataListTableCell pos={"sticky"} left={0} zIndex={11} bg={"bg.panel"}>
+        <DataListTableCell pos={"sticky"} left={0} zIndex={11}>
           <DataListBatchActionsTrigger
             batchActions={batchActions}
             selectedItemIds={selectedItemIds}
@@ -325,7 +325,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       )}
 
       {withNumbering && (
-        <DataListTableCell bg={"bg.panel"}>
+        <DataListTableCell>
           <P color={"fg.subtle"}>#</P>
         </DataListTableCell>
       )}
@@ -336,7 +336,6 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
           justify={header.align}
           cursor={header.sortable ? "pointer" : "auto"}
           onClick={header.sortable ? () => toggleSort(index) : undefined}
-          bg={"bg.panel"}
           {...header?.headerCellProps}
         >
           <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.subtle"}>
@@ -353,13 +352,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       ))}
 
       {!isEmptyArray(itemActions) && (
-        <DataListTableCell
-          pos={"sticky"}
-          top={0}
-          right={0}
-          zIndex={11}
-          bg={"bg.panel"}
-        />
+        <DataListTableCell pos={"sticky"} top={0} right={0} zIndex={11} />
       )}
     </Box>
   );
