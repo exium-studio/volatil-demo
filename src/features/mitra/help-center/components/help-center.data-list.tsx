@@ -103,6 +103,7 @@ export const HelpCenterDataList = () => {
       { th: "Status", sortable: true, align: "center" },
       { th: "Pelapor", sortable: true, align: "start" },
       { th: "Balasan Terakhir", sortable: false, align: "start" },
+      { th: "Transaksi Terkait", sortable: true, align: "start" },
       { th: "Lampiran", sortable: false, align: "center" },
       { th: "Waktu Dibuat", sortable: true, align: "start" },
     ];
@@ -122,6 +123,10 @@ export const HelpCenterDataList = () => {
         label: ticket.status,
         color: "gray",
       };
+
+      const hasTransaction = Boolean(
+        ticket.orderNumber || ticket.transactionId,
+      );
 
       return {
         id: String(ticket.id),
@@ -185,6 +190,18 @@ export const HelpCenterDataList = () => {
                 {"Belum ada balasan"}
               </P>
             ),
+          },
+          {
+            value: ticket.orderNumber ?? ticket.transactionId ?? "-",
+            td: (
+              <P
+                color={hasTransaction ? "fg.muted" : "fg.subtle"}
+                fontSize={"sm"}
+              >
+                {ticket.orderNumber ?? ticket.transactionId ?? "-"}
+              </P>
+            ),
+            align: hasTransaction ? "start" : "center",
           },
           {
             value: totalAttachments,

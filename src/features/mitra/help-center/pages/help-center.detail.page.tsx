@@ -147,10 +147,14 @@ export const HelpCenterDetailPage = () => {
                 </HStack>
 
                 <P fontSize={"sm"} color={"fg.subtle"}>
-                  {`ID Laporan: #${ticket.id} • Dibuat pada ${formatUtcDateTime(
-                    ticket.createdAt,
-                    preferredTimezone,
-                  )}`}
+                  {[
+                    `ID Laporan: #${ticket.id}`,
+                    ticket.orderNumber || ticket.transactionId
+                      ? `Transaksi: ${ticket.orderNumber ?? ticket.transactionId}`
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" • ")}
                 </P>
               </VStack>
             </HStack>
