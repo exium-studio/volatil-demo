@@ -10,6 +10,7 @@ import { DataListTable } from "@/design-system/components/data-display/ui/data-l
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
@@ -20,15 +21,15 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { getLayerCountSummary } from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
-import { IgtFilterTrigger } from "@/features/shared/components/igt-filter";
 import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useIgtFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-list.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
-import { t } from "@/shared/libs/i18n";
+import { IgtFilterTrigger } from "@/features/shared/components/igt-filter";
+import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 import { IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -37,8 +38,6 @@ import {
   TablePropertiesIcon,
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
-import { useThemeStore } from "@/design-system/stores/theme-store";
-import { Box } from "@/design-system/components/layout/ui/box";
 
 const IgtLayerCountCell = memo(
   (props: { layer: IgtLayerItem; cqlFilter?: string }) => {
@@ -162,7 +161,7 @@ export const MitraDataRequestIgtLayerList = memo(
         { th: "Layer IGT", sortable: true, align: "start" },
         { th: "Basis IGT", sortable: true, align: "center" },
         { th: "Jumlah / Luas", sortable: false, align: "start" },
-        { th: "WFS TypeName", sortable: true, align: "start" },
+        // { th: "WFS TypeName", sortable: true, align: "start" },
       ];
 
       const items: FormattedListItem[] = filteredLayers.map(
@@ -208,15 +207,15 @@ export const MitraDataRequestIgtLayerList = memo(
                 ),
                 align: "start",
               },
-              {
-                value: layer.wfs?.wfsTypeName ?? "-",
-                td: (
-                  <P fontSize={"sm"} color={"fg.subtle"}>
-                    {layer.wfs?.wfsTypeName ?? "-"}
-                  </P>
-                ),
-                align: "start",
-              },
+              // {
+              //   value: layer.wfs?.wfsTypeName ?? "-",
+              //   td: (
+              //     <P fontSize={"sm"} color={"fg.subtle"}>
+              //       {layer.wfs?.wfsTypeName ?? "-"}
+              //     </P>
+              //   ),
+              //   align: "start",
+              // },
             ],
           };
         },
@@ -285,7 +284,7 @@ export const MitraDataRequestIgtLayerList = memo(
         >
           <HStack gap={SPACING.sm}>
             <SearchInput
-              placeholder={t["action.search"]()}
+              placeholder={"Cari nama / layer IGT"}
               value={searchRaw}
               onValueChange={(val) => setSearchRaw(val)}
             />

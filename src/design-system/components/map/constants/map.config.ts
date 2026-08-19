@@ -11,7 +11,7 @@ export const MAP_CONFIG = {
   viewport: {
     // center: [106.8272, -6.1754] as [number, number], // Monumen Nasional (Monas), Jakarta
     center: [115.1597, -8.6626] as [number, number],
-    zoom: 10,
+    zoom: 14,
   },
   basemap: {
     styleUrl: "https://tiles.openfreemap.org/styles/liberty",

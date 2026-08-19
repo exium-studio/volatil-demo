@@ -14,3 +14,9 @@ export type DrawAoiDataListProps = {
   igtItems: IgtDataItem[];
   onResetDraw: () => void;
 };
+
+export type DrawAoiAttributeListProps = {
+  aoiCqlFilter: string;
+  confirmedPolygon?: GeoJSON.Feature<GeoJSON.Polygon> | null;
+  onResetDraw: () => void;
+};

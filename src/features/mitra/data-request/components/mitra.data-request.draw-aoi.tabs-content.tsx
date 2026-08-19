@@ -1,6 +1,9 @@
 // src/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
@@ -9,20 +12,29 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
-import type { DrawAoiGuideAlertProps } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
+import type {
+  DrawAoiAttributeListProps,
+  DrawAoiGuideAlertProps,
+} from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { IconPolygonOff } from "@tabler/icons-react";
-import { CheckIcon, InfoIcon, MapPinIcon, PencilIcon, XIcon } from "lucide-react";
-import type GeoJSON from "geojson";
+import {
+  CheckIcon,
+  InfoIcon,
+  MapPinIcon,
+  PencilIcon,
+  XIcon,
+} from "lucide-react";
 import { memo, useState } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
@@ -215,12 +227,6 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
 
 // -------------------------------------------------------------------------------------
 
-type DrawAoiAttributeListProps = {
-  aoiCqlFilter: string;
-  confirmedPolygon?: GeoJSON.Feature<GeoJSON.Polygon> | null;
-  onResetDraw: () => void;
-};
-
 const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
   // Props
   const { aoiCqlFilter, confirmedPolygon, onResetDraw } = props;
@@ -279,15 +285,16 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
 
             <HStack align={"center"} gap={SPACING.sm}>
               {confirmedPolygon && map && (
-                <Button
-                  variant={"outline"}
-                  onClick={() => {
-                    highlightFeatureOnMap(map, confirmedPolygon);
-                  }}
-                >
-                  <AppIcon icon={MapPinIcon} />
-                  {"Lihat di Peta"}
-                </Button>
+                <Tooltip content={"Lihat di Peta"}>
+                  <IconButton
+                    variant={"outline"}
+                    onClick={() => {
+                      highlightFeatureOnMap(map, confirmedPolygon);
+                    }}
+                  >
+                    <AppIcon icon={MapPinIcon} />
+                  </IconButton>
+                </Tooltip>
               )}
 
               <Button
