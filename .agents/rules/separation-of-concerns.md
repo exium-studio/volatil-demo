@@ -48,14 +48,19 @@ src/features/<feature-name>/
 
 ## 4. UI Trigger & Overlay Patterns
 
-1. **Gunakan `Modal.Trigger` / Overlay Triggers**:
+1. **Trigger Naming Convention & Pattern**:
+   - Komponen wrapper modal/overlay trigger **wajib berakhiran `Trigger`** (contoh: `CreateHelpCenterTrigger`, `HelpCenterModalReplyTrigger`, `HelpCenterModalResolveRejectTrigger`, `UserProfilePopoverTrigger`, `ConfirmationTrigger`).
+   - Trigger **wajib menggunakan prop `children`** (bukan prop `trigger`) sebagai elemen pemicu yang dibungkus `<Modal.Trigger asChild>{children}</Modal.Trigger>` atau `<Popover.Trigger asChild>{children}</Popover.Trigger>`.
+   - Prop type wajib berakhiran `TriggerProps` (contoh: `HelpCenterModalReplyTriggerProps`).
+
+2. **Gunakan `Modal.Trigger` / Overlay Triggers**:
    - Komponen input yang membuka overlay/modal (seperti `FocusSelectInput`, date picker modal, confirmation modal) **wajib** membungkus trigger dengan `<Modal.Trigger asChild>`.
    - Hal ini memastikan koordinat klik pengguna (`onPointerDown`) terekam sehingga animasi pembukaan meluncur akurat dari titik asal klik (*click origin*).
-2. **Controlled vs Uncontrolled Modularity**:
+3. **Controlled vs Uncontrolled Modularity**:
    - Komponen input interaktif wajib mendukung kedua mode:
      - **Controlled**: Mendengarkan prop `value` dan memanggil `onValueChange`.
      - **Uncontrolled**: Mengelola state internal mandiri dengan nilai awal dari `defaultValue`.
-   - Sediakan opsi **custom trigger** (via prop `trigger` atau `children` sebagai ReactNode atau render function) agar fleksibel bagi consumer.
+   - Sediakan opsi **custom trigger** (via prop `children` sebagai ReactNode atau render function) agar fleksibel bagi consumer.
 
 ---
 

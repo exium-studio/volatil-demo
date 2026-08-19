@@ -58,7 +58,6 @@ export type HelpCenterItem = {
   createdAt: string;
   updatedAt: string;
   user?: HelpCenterUser;
-  reporter?: HelpCenterUser;
   repliesCount?: number;
   attachmentsCount?: number;
 };

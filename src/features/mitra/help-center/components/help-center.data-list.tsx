@@ -12,6 +12,7 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -19,7 +20,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { CreateHelpCenterTrigger } from "@/features/mitra/help-center/components/help-center.create";
 import { useHelpCenterTicketsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
@@ -32,7 +33,6 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/features/mitra/my-data/utils/my-data-date";
-import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -46,13 +46,16 @@ import {
 } from "lucide-react";
 import { startTransition, useMemo, useState } from "react";
 
+import { Heading } from "@/design-system/components/typography/ui/heading";
+import { getUserSession } from "@/shared/utils/user/user-session.utils";
+
 const STATUS_CONFIG_MAP: Record<
   HelpCenterStatus,
   { label: string; color: string }
 > = {
-  submitted: { label: "Diajukan", color: "blue" },
-  in_review: { label: "Ditinjau", color: "yellow" },
-  in_progress: { label: "Diproses", color: "orange" },
+  submitted: { label: "Diajukan", color: "orange" },
+  in_review: { label: "Ditinjau", color: "blue" },
+  in_progress: { label: "Diproses", color: "blue" },
   resolved: { label: "Selesai", color: "green" },
   rejected: { label: "Ditolak", color: "red" },
 };
@@ -96,8 +99,9 @@ export const HelpCenterDataList = () => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Judul Laporan", sortable: true, align: "start" },
-      { th: "Pelapor", sortable: true, align: "start" },
+      { th: "Pesan", sortable: true, align: "start" },
       { th: "Status", sortable: true, align: "center" },
+      { th: "Pelapor", sortable: true, align: "start" },
       { th: "Balasan Terakhir", sortable: false, align: "start" },
       { th: "Lampiran", sortable: false, align: "center" },
       { th: "Waktu Dibuat", sortable: true, align: "start" },
@@ -119,47 +123,21 @@ export const HelpCenterDataList = () => {
         color: "gray",
       };
 
-      const reporterName =
-        ticket.reporter?.name ?? ticket.user?.name ?? "Pelapor";
-      const reporterOrg =
-        ticket.reporter?.organizationName ??
-        ticket.user?.organizationName ??
-        "";
-
       return {
         id: String(ticket.id),
         data: ticket,
         columns: [
           {
             value: ticket.title,
-            td: (
-              <VStack align={"start"} gap={0} minW={"220px"}>
-                <P fontWeight={"medium"}>{ticket.title}</P>
-                <P
-                  fontSize={"xs"}
-                  color={"fg.subtle"}
-                  lineClamp={1}
-                  maxW={"300px"}
-                >
-                  {ticket.description}
-                </P>
-              </VStack>
-            ),
-            align: "start",
+            td: <P fontWeight={"medium"}>{ticket.title}</P>,
           },
           {
-            value: reporterName,
+            value: ticket.title,
             td: (
-              <VStack align={"start"} gap={0} minW={"140px"}>
-                <P fontWeight={"normal"}>{reporterName}</P>
-                {reporterOrg && (
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {reporterOrg}
-                  </P>
-                )}
-              </VStack>
+              <ClampedP color={"fg.subtle"} w={"200px"}>
+                {ticket.description}
+              </ClampedP>
             ),
-            align: "start",
           },
           {
             value: ticket.status,
@@ -171,36 +149,42 @@ export const HelpCenterDataList = () => {
             align: "center",
           },
           {
+            value: ticket.user?.name,
+            td: (
+              <VStack align={"start"} gap={0} minW={"140px"}>
+                <P>{ticket.user?.name || "?"}</P>
+
+                <P fontSize={"sm"} color={"fg.subtle"}>
+                  {ticket.user?.email || "?"}
+                </P>
+              </VStack>
+            ),
+          },
+          {
             value: latestReply?.message ?? "-",
             td: latestReply ? (
               <VStack align={"start"} gap={0} minW={"200px"}>
                 <HStack gap={1} align={"center"}>
                   <AppIcon
                     icon={MessageSquareIcon}
-                    size={"xs"}
+                    size={"sm"}
                     color={"fg.subtle"}
                   />
-                  <P fontSize={"xs"} fontWeight={"medium"} color={"fg.subtle"}>
-                    {latestReply.admin?.name ??
-                      latestReply.user?.name ??
-                      "Admin Internal"}
+
+                  <P fontSize={"sm"} fontWeight={"medium"} color={"fg.subtle"}>
+                    {latestReply.admin?.name ?? latestReply.user?.name ?? "?"}
                   </P>
                 </HStack>
-                <P
-                  fontSize={"sm"}
-                  color={"fg.muted"}
-                  lineClamp={1}
-                  maxW={"260px"}
-                >
+
+                <ClampedP color={"fg.muted"} lineClamp={1} maxW={"260px"}>
                   {latestReply.message}
-                </P>
+                </ClampedP>
               </VStack>
             ) : (
               <P color={"fg.subtle"} fontSize={"sm"}>
                 {"Belum ada balasan"}
               </P>
             ),
-            align: "start",
           },
           {
             value: totalAttachments,
@@ -224,7 +208,6 @@ export const HelpCenterDataList = () => {
                 {formatUtcDateTime(ticket.createdAt, preferredTimezone)}
               </P>
             ),
-            align: "start",
           },
         ],
       };
@@ -260,14 +243,14 @@ export const HelpCenterDataList = () => {
     };
   }, [tickets, preferredTimezone, navigate]);
 
+  const currentUser = useMemo(() => getUserSession(), []);
+  const isInternalAdmin = currentUser?.role === "internal";
+
   return (
     <Container.Root withContext={true}>
-      <Container.Body overflow={"clip"}>
-        {/* Header Filter Actions */}
+      <Container.Body>
         <VStack align={"start"} gap={1} p={PADDING.md}>
-          <P fontSize={"lg"} fontWeight={"semibold"}>
-            {"Daftar Laporan"}
-          </P>
+          <Heading>{"Daftar Laporan Kendala"}</Heading>
 
           <P fontSize={"sm"} color={"fg.subtle"}>
             {"Pantau perkembangan status tiket kendala dan riwayat balasan."}
@@ -309,12 +292,14 @@ export const HelpCenterDataList = () => {
             />
           </HStack>
 
-          <CreateHelpCenterTrigger>
-            <Button primary={true} pl={3}>
-              <AppIcon icon={PlusIcon} />
-              {"Buat Laporan"}
-            </Button>
-          </CreateHelpCenterTrigger>
+          {!isInternalAdmin && (
+            <CreateHelpCenterTrigger>
+              <Button primary={true} pl={3}>
+                <AppIcon icon={PlusIcon} />
+                {"Buat Laporan"}
+              </Button>
+            </CreateHelpCenterTrigger>
+          )}
         </HStack>
 
         <Separator borderColor={"bg.canvas"} />
@@ -367,7 +352,6 @@ export const HelpCenterDataList = () => {
                 currentDataLength={tickets.length}
                 totalData={pagination.totalItems}
                 totalPage={pagination.totalPages}
-                roundedBottom={0}
                 shadow={"none"}
               />
             </Box>

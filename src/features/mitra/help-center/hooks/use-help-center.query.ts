@@ -111,7 +111,10 @@ export const useReplyHelpCenterTicket = (ticketId: number | string) => {
         queryKey: queryKeys.mitra.helpCenter.detail(ticketId),
       });
       void queryClient.invalidateQueries({
-        queryKey: queryKeys.mitra.helpCenter.tickets(),
+        queryKey: queryKeys.mitra.helpCenter.detail(String(ticketId)),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.helpCenter.all,
       });
     },
     onError: toastHandlers.onError,

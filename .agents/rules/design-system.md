@@ -55,6 +55,9 @@ import { P } from "@/design-system/components/typography/ui/p";
 #### `Badge`
 
 - **Props**: `BadgeProps` (`colorPalette`, `variant`: `"subtle"` | `"outline"` | `"solid"`)
+- **Aturan Ukuran Badge (WAJIB)**:
+  - DILARANG menggunakan `size={"xs"}` atau `size={"sm"}` pada `Badge`.
+  - Gunakan ukuran default dari `Badge` tanpa override size kecil.
 - **Penggunaan**:
 
 ```tsx

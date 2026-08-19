@@ -1,42 +1,49 @@
-// src/features/mitra/help-center/components/help-center.modal.reply.tsx
+// src/features/mitra/help-center/components/help-center.modal.resolve-reject.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";
-import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { P } from "@/design-system/components/typography/ui/p";
+import { SPACING } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useReplyHelpCenterTicket } from "@/features/mitra/help-center/hooks/use-help-center.query";
+import type { HelpCenterStatus } from "@/features/mitra/help-center/types/help-center.type";
 import type React from "react";
 import { useState } from "react";
 
-export type HelpCenterModalReplyTriggerProps = {
+export type HelpCenterModalResolveRejectTriggerProps = {
   ticketId: number | string;
+  actionType: "resolve" | "reject";
   children: React.ReactNode;
 };
 
-export const HelpCenterModalReplyTrigger = (
-  props: HelpCenterModalReplyTriggerProps,
+export const HelpCenterModalResolveRejectTrigger = (
+  props: HelpCenterModalResolveRejectTriggerProps,
 ) => {
   // Props
-  const { ticketId, children } = props;
+  const { ticketId, actionType, children } = props;
 
-  // Stores & Hooks
-  const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: `replyHelpCenterModal-${ticketId}`,
+  // Stores
+  const { theme } = useThemeStore();
+  const isResolve = actionType === "resolve";
+  const targetStatus: HelpCenterStatus = isResolve ? "resolved" : "rejected";
+  const modalKey = `${actionType}HelpCenterModal-${ticketId}`;
+
+  const { isOpen, open, close } = usePopModal({
+    modalKey,
   });
 
   const replyMutation = useReplyHelpCenterTicket(ticketId);
 
   // States
   const [message, setMessage] = useState<string>("");
-  const [files, setFiles] = useState<File[]>([]);
 
   // Handlers
   const handleClose = () => {
     setMessage("");
-    setFiles([]);
     close();
   };
 
@@ -46,7 +53,7 @@ export const HelpCenterModalReplyTrigger = (
 
     await replyMutation.mutateAsync({
       message: message.trim(),
-      files: files.length > 0 ? files : undefined,
+      status: targetStatus,
     });
 
     handleClose();
@@ -65,44 +72,34 @@ export const HelpCenterModalReplyTrigger = (
       <Modal.Content>
         <Modal.Header>
           <Modal.Title w={"full"} fontWeight={"semibold"}>
-            {"Kirim Balasan"}
+            {isResolve ? "Selesaikan Laporan" : "Tolak Laporan"}
           </Modal.Title>
 
-          <Modal.FullscreenButton />
           <Modal.CloseButton />
         </Modal.Header>
 
         <Modal.Body>
-          <form id={"reply-form"} onSubmit={handleSubmit}>
-            <VStack gap={4}>
-              <Field label={"Pesan Balasan"} required={true}>
+          <form id={`form-${modalKey}`} onSubmit={handleSubmit}>
+            <VStack gap={SPACING.md} align={"stretch"}>
+              <P fontSize={"sm"} color={"fg.muted"}>
+                {isResolve
+                  ? "Berikan catatan atau penjelasan mengenai penyelesaian kendala ini sebelum menandainya sebagai selesai."
+                  : "Berikan alasan penolakan laporan kendala ini agar pelapor memahami keputusannya."}
+              </P>
+
+              <Field
+                label={isResolve ? "Catatan Penyelesaian" : "Alasan Penolakan"}
+                required={true}
+              >
                 <Textarea
-                  placeholder={"Tuliskan pesan balasan atau tanggapan Anda..."}
+                  placeholder={
+                    isResolve
+                      ? "Contoh: Kendala data telah berhasil diperbaiki dan diverifikasi..."
+                      : "Contoh: Laporan tidak memenuhi kriteria / data tidak lengkap..."
+                  }
                   rows={4}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                />
-              </Field>
-
-              <Field label={"Lampiran Dokumen/Foto/Video (Opsional)"}>
-                <FileInput
-                  accept={[
-                    ".jpg",
-                    ".jpeg",
-                    ".png",
-                    ".pdf",
-                    ".docx",
-                    ".xlsx",
-                    ".mp4",
-                    ".mkv",
-                    ".mov",
-                    ".webm",
-                    ".avi",
-                  ]}
-                  maxFiles={5}
-                  maxFileSize={50 * 1024 * 1024}
-                  value={files}
-                  onFileAccept={(details) => setFiles(details.files)}
                 />
               </Field>
             </VStack>
@@ -117,12 +114,13 @@ export const HelpCenterModalReplyTrigger = (
           <Button
             flex={1}
             type={"submit"}
-            form={"reply-form"}
-            primary={true}
+            form={`form-${modalKey}`}
+            colorPalette={isResolve ? `${theme.colorPalette}` : "red"}
             loading={replyMutation.isPending}
             disabled={!message.trim()}
+            variant={isResolve ? "solid" : "outline"}
           >
-            {"Kirim Balasan"}
+            {isResolve ? "Selesaikan" : "Tolak Laporan"}
           </Button>
         </Modal.Footer>
       </Modal.Content>

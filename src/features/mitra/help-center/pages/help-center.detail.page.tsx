@@ -15,7 +15,9 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { HelpCenterModalReply } from "@/features/mitra/help-center/components/help-center.modal.reply";
+import { HelpCenterAttachmentItem } from "@/features/mitra/help-center/components/help-center.attachment-item";
+import { HelpCenterModalReplyTrigger } from "@/features/mitra/help-center/components/help-center.modal.reply";
+import { HelpCenterModalResolveRejectTrigger } from "@/features/mitra/help-center/components/help-center.modal.resolve-reject";
 import { useHelpCenterDetailQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type {
   HelpCenterAttachment,
@@ -26,17 +28,15 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/features/mitra/my-data/utils/my-data-date";
+import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useParams, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
-  DownloadIcon,
-  ExternalLinkIcon,
-  FileIcon,
-  ImageIcon,
+  CheckCircle2Icon,
   MessageSquarePlusIcon,
   ShieldCheckIcon,
   UserIcon,
-  VideoIcon,
+  XCircleIcon,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -44,9 +44,9 @@ const STATUS_CONFIG_MAP: Record<
   HelpCenterStatus,
   { label: string; color: string }
 > = {
-  submitted: { label: "Diajukan", color: "blue" },
-  in_review: { label: "Ditinjau", color: "yellow" },
-  in_progress: { label: "Diproses", color: "orange" },
+  submitted: { label: "Diajukan", color: "orange" },
+  in_review: { label: "Ditinjau", color: "blue" },
+  in_progress: { label: "Diproses", color: "blue" },
   resolved: { label: "Selesai", color: "green" },
   rejected: { label: "Ditolak", color: "red" },
 };
@@ -59,6 +59,8 @@ export const HelpCenterDetailPage = () => {
   // Stores
   const { theme } = useThemeStore();
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+  const currentUser = useMemo(() => getUserSession(), []);
+  const isInternalAdmin = currentUser?.role === "internal";
 
   // Queries
   const {
@@ -72,7 +74,7 @@ export const HelpCenterDetailPage = () => {
       ? STATUS_CONFIG_MAP[ticket.status]
       : {
           label: ticket?.status ?? "Diajukan",
-          color: "blue",
+          color: "orange",
         };
 
   const replies: HelpCenterResponse[] =
@@ -110,10 +112,8 @@ export const HelpCenterDetailPage = () => {
     );
   }
 
-  const reporterName = ticket.reporter?.name ?? ticket.user?.name ?? "Pelapor";
-  const reporterOrg =
-    ticket.reporter?.organizationName ?? ticket.user?.organizationName ?? "";
-  const reporterEmail = ticket.reporter?.email ?? ticket.user?.email ?? "";
+  const reporterName = ticket.user?.name ?? "?";
+  const reporterEmail = ticket.user?.email ?? "?";
 
   return (
     <PanelContentContainer
@@ -124,17 +124,11 @@ export const HelpCenterDetailPage = () => {
     >
       <TopBarLoader isFetching={isFetching} />
 
-      {/* Header Container */}
+      {/* Header container */}
       <Container.Root withContext={true}>
-        <Container.Body p={PADDING.md}>
-          <HStack
-            align={"center"}
-            justify={"space-between"}
-            wrap={"wrap"}
-            gap={SPACING.md}
-            w={"full"}
-          >
-            <HStack gap={SPACING.md} align={"center"}>
+        <Container.Body>
+          <VStack w={"full"}>
+            <HStack gap={SPACING.md} align={"center"} p={PADDING.md}>
               <BackButton />
 
               <VStack align={"start"}>
@@ -161,34 +155,63 @@ export const HelpCenterDetailPage = () => {
               </VStack>
             </HStack>
 
-            <HelpCenterModalReply
-              ticketId={ticket.id}
-              currentStatus={ticket.status}
-              trigger={
-                <Button primary={true}>
+            <Separator borderColor={"bg.canvas"} />
+
+            <HStack align={"center"} gap={2} p={PADDING.md}>
+              {isInternalAdmin && ticket.status !== "rejected" && (
+                <HelpCenterModalResolveRejectTrigger
+                  ticketId={ticket.id}
+                  actionType={"reject"}
+                >
+                  <Button colorPalette={"red"} variant={"outline"} flex={1}>
+                    <AppIcon icon={XCircleIcon} />
+                    {"Tolak Laporan"}
+                  </Button>
+                </HelpCenterModalResolveRejectTrigger>
+              )}
+
+              {isInternalAdmin && ticket.status !== "resolved" && (
+                <HelpCenterModalResolveRejectTrigger
+                  ticketId={ticket.id}
+                  actionType={"resolve"}
+                >
+                  <Button colorPalette={"green"} variant={"outline"} flex={1}>
+                    <AppIcon icon={CheckCircle2Icon} />
+                    {"Selesaikan Laporan"}
+                  </Button>
+                </HelpCenterModalResolveRejectTrigger>
+              )}
+
+              <HelpCenterModalReplyTrigger ticketId={ticket.id}>
+                <Button primary={true} flex={1}>
                   <AppIcon icon={MessageSquarePlusIcon} />
                   {"Balas Laporan"}
                 </Button>
-              }
-            />
-          </HStack>
+              </HelpCenterModalReplyTrigger>
+            </HStack>
+          </VStack>
         </Container.Body>
       </Container.Root>
 
-      {/* Original Issue Content Container */}
+      {/* Original issue content - from Mitra */}
       <Container.Root withContext={true}>
         <Container.Body>
           <VStack>
             <HStack justify={"space-between"} align={"center"} p={PADDING.md}>
-              <HStack gap={SPACING.sm} align={"center"}>
-                <Circle p={2} bg={"bg.muted"} color={"fg.muted"}>
+              <HStack gap={SPACING.md} align={"center"}>
+                <Circle
+                  aspectRatio={1}
+                  w={"40px"}
+                  bg={"bg.muted"}
+                  color={"fg.muted"}
+                >
                   <AppIcon icon={UserIcon} />
                 </Circle>
 
                 <VStack align={"start"}>
                   <P fontWeight={"semibold"}>{reporterName}</P>
                   <P fontSize={"xs"} color={"fg.subtle"}>
-                    {[reporterEmail, reporterOrg].filter(Boolean).join(" • ")}
+                    {[reporterEmail, reporterEmail].filter(Boolean).join(" • ")}
                   </P>
                 </VStack>
               </HStack>
@@ -208,109 +231,14 @@ export const HelpCenterDetailPage = () => {
               {/* Attachments Section */}
               {attachments.length > 0 && (
                 <VStack align={"start"} gap={2} w={"full"} pt={2}>
-                  <P fontSize={"xs"} fontWeight={"bold"} color={"fg.subtle"}>
-                    {`LAMPIRAN (${attachments.length})`}
-                  </P>
-
                   <HStack wrap={"wrap"} gap={2} w={"full"}>
-                    {attachments.map((att, idx) => {
-                      const fileName =
-                        att.originalFileName ??
-                        att.originalName ??
-                        att.storedFileName ??
-                        att.fileName ??
-                        `Lampiran-${idx + 1}`;
-                      const fileUrl = att.fileUrl ?? att.url;
-                      const isImage =
-                        att.mimeType?.startsWith("image/") ||
-                        att.fileType?.startsWith("image/");
-                      const isVideo =
-                        att.mimeType?.startsWith("video/") ||
-                        att.fileType?.startsWith("video/");
-
-                      return (
-                        <Box
-                          key={att.id || String(idx)}
-                          asChild={Boolean(fileUrl)}
-                          p={PADDING.sm}
-                          border={"1px solid"}
-                          borderColor={"border.subtle"}
-                          rounded={theme.radii.component}
-                          bg={"bg.body"}
-                          cursor={fileUrl ? "pointer" : "default"}
-                          transition={"all 0.15s ease"}
-                          _hover={{
-                            bg: "bg.subtle",
-                            borderColor: "border.emphasized",
-                          }}
-                        >
-                          {fileUrl ? (
-                            <a
-                              href={fileUrl}
-                              target={"_blank"}
-                              rel={"noopener noreferrer"}
-                              download={
-                                !isImage && !isVideo ? fileName : undefined
-                              }
-                            >
-                              <HStack gap={SPACING.sm} align={"center"}>
-                                <AppIcon
-                                  icon={
-                                    isImage
-                                      ? ImageIcon
-                                      : isVideo
-                                        ? VideoIcon
-                                        : FileIcon
-                                  }
-                                  size={"sm"}
-                                  color={"fg.muted"}
-                                />
-                                <P
-                                  fontSize={"sm"}
-                                  fontWeight={"medium"}
-                                  maxW={"220px"}
-                                  lineClamp={1}
-                                >
-                                  {fileName}
-                                </P>
-
-                                <AppIcon
-                                  icon={
-                                    isImage || isVideo
-                                      ? ExternalLinkIcon
-                                      : DownloadIcon
-                                  }
-                                  size={"xs"}
-                                  color={"fg.subtle"}
-                                />
-                              </HStack>
-                            </a>
-                          ) : (
-                            <HStack gap={SPACING.sm} align={"center"}>
-                              <AppIcon
-                                icon={
-                                  isImage
-                                    ? ImageIcon
-                                    : isVideo
-                                      ? VideoIcon
-                                      : FileIcon
-                                }
-                                size={"sm"}
-                                color={"fg.muted"}
-                              />
-                              <P
-                                fontSize={"sm"}
-                                fontWeight={"medium"}
-                                maxW={"220px"}
-                                lineClamp={1}
-                              >
-                                {fileName}
-                              </P>
-                            </HStack>
-                          )}
-                        </Box>
-                      );
-                    })}
+                    {attachments.map((att, idx) => (
+                      <HelpCenterAttachmentItem
+                        key={att.id || String(idx)}
+                        attachment={att}
+                        index={idx}
+                      />
+                    ))}
                   </HStack>
                 </VStack>
               )}
@@ -319,7 +247,7 @@ export const HelpCenterDetailPage = () => {
         </Container.Body>
       </Container.Root>
 
-      {/* Timeline of Replies */}
+      {/* Replies */}
       <Container.Root withContext={true}>
         <Container.Body>
           <VStack>
@@ -340,7 +268,7 @@ export const HelpCenterDetailPage = () => {
                 </P>
               </Box>
             ) : (
-              <VStack p={PADDING.md}>
+              <VStack gap={SPACING.xs} w={"full"} bg={"bg.canvas"}>
                 {replies.map((reply, idx) => {
                   const replyUserName =
                     reply.admin?.name ?? reply.user?.name ?? "Admin Internal";
@@ -348,16 +276,16 @@ export const HelpCenterDetailPage = () => {
                     reply.admin?.role ?? reply.user?.role ?? "internal";
                   const isInternal = replyUserRole === "internal";
                   const replyAttachments = reply.attachments ?? [];
+                  const isLast = idx === replies.length - 1;
 
                   return (
                     <Box
                       key={reply.id || String(idx)}
                       p={PADDING.md}
-                      bg={isInternal ? "bg.subtle" : "bg.body"}
-                      rounded={theme.radii.container}
-                      border={"1px solid"}
-                      borderColor={"border.subtle"}
-                      mb={SPACING.sm}
+                      bg={"bg.body"}
+                      roundedTop={0}
+                      roundedBottom={isLast ? theme.radii.container : 0}
+                      w={"full"}
                     >
                       <VStack gap={SPACING.sm}>
                         <HStack
@@ -368,37 +296,26 @@ export const HelpCenterDetailPage = () => {
                           <HStack gap={SPACING.sm} align={"center"}>
                             <Circle
                               p={1.5}
-                              bg={
-                                isInternal
-                                  ? `${theme.colorPalette}.subtle`
-                                  : "bg.muted"
-                              }
-                              color={
-                                isInternal
-                                  ? `${theme.colorPalette}.fg`
-                                  : "fg.muted"
-                              }
+                              bg={isInternal ? `purple.subtle` : "bg.muted"}
+                              color={isInternal ? `purple.fg` : "fg.muted"}
                             >
                               <AppIcon
                                 icon={isInternal ? ShieldCheckIcon : UserIcon}
-                                size={"xs"}
+                                size={"sm"}
                               />
                             </Circle>
 
-                            <P fontWeight={"bold"}>{replyUserName}</P>
+                            <P fontWeight={"medium"}>{replyUserName}</P>
 
-                            {isInternal && (
-                              <Badge
-                                colorPalette={theme.colorPalette}
-                                variant={"subtle"}
-                                size={"xs"}
-                              >
-                                {"Admin ATR/BPN"}
-                              </Badge>
-                            )}
+                            <Badge
+                              colorPalette={isInternal ? "purple" : "blue"}
+                              variant={"subtle"}
+                            >
+                              {isInternal ? "Admin Internal" : "Mitra"}
+                            </Badge>
                           </HStack>
 
-                          <P fontSize={"xs"} color={"fg.subtle"}>
+                          <P fontSize={"sm"} color={"fg.subtle"}>
                             {formatUtcDateTime(
                               reply.createdAt,
                               preferredTimezone,
@@ -406,91 +323,24 @@ export const HelpCenterDetailPage = () => {
                           </P>
                         </HStack>
 
-                        <VStack pl={"36px"} align={"start"} gap={2}>
-                          <P whiteSpace={"pre-wrap"} lineHeight={"tall"}>
+                        <VStack pl={"36px"} align={"start"} gap={2} w={"full"}>
+                          <P
+                            color={"fg.muted"}
+                            whiteSpace={"pre-wrap"}
+                            lineHeight={"tall"}
+                          >
                             {reply.message}
                           </P>
 
                           {replyAttachments.length > 0 && (
                             <HStack wrap={"wrap"} gap={2} pt={1}>
-                              {replyAttachments.map((att, attIdx) => {
-                                const attName =
-                                  att.originalFileName ??
-                                  att.originalName ??
-                                  `Lampiran-${attIdx + 1}`;
-                                const attUrl = att.fileUrl ?? att.url;
-                                const isImage =
-                                  att.mimeType?.startsWith("image/") ||
-                                  att.fileType?.startsWith("image/");
-                                const isVideo =
-                                  att.mimeType?.startsWith("video/") ||
-                                  att.fileType?.startsWith("video/");
-
-                                return (
-                                  <Badge
-                                    key={att.id || String(attIdx)}
-                                    asChild={Boolean(attUrl)}
-                                    variant={"outline"}
-                                    colorPalette={"gray"}
-                                    cursor={attUrl ? "pointer" : "default"}
-                                    _hover={
-                                      attUrl
-                                        ? {
-                                            bg: "bg.muted",
-                                          }
-                                        : undefined
-                                    }
-                                  >
-                                    {attUrl ? (
-                                      <a
-                                        href={attUrl}
-                                        target={"_blank"}
-                                        rel={"noopener noreferrer"}
-                                        download={
-                                          !isImage && !isVideo
-                                            ? attName
-                                            : undefined
-                                        }
-                                      >
-                                        <AppIcon
-                                          icon={
-                                            isImage
-                                              ? ImageIcon
-                                              : isVideo
-                                                ? VideoIcon
-                                                : FileIcon
-                                          }
-                                          size={"xs"}
-                                        />
-                                        {attName}
-                                        <AppIcon
-                                          icon={
-                                            isImage || isVideo
-                                              ? ExternalLinkIcon
-                                              : DownloadIcon
-                                          }
-                                          size={"xs"}
-                                          color={"fg.subtle"}
-                                        />
-                                      </a>
-                                    ) : (
-                                      <>
-                                        <AppIcon
-                                          icon={
-                                            isImage
-                                              ? ImageIcon
-                                              : isVideo
-                                                ? VideoIcon
-                                                : FileIcon
-                                          }
-                                          size={"xs"}
-                                        />
-                                        {attName}
-                                      </>
-                                    )}
-                                  </Badge>
-                                );
-                              })}
+                              {replyAttachments.map((att, attIdx) => (
+                                <HelpCenterAttachmentItem
+                                  key={att.id || String(attIdx)}
+                                  attachment={att}
+                                  index={attIdx}
+                                />
+                              ))}
                             </HStack>
                           )}
                         </VStack>

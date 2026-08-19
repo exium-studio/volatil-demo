@@ -271,11 +271,10 @@ Mengambil daftar laporan/tiket dengan filter dinamis dan pagination.
 "status": "in_progress",
 "priority": "high",
 "category": "Data Geospasial",
-"reporter": {
+"user": {
 "id": 1,
 "name": "Mitra User Demo",
 "email": "mitra@demo.com",
-"organizationName": "PT Nusantara Citra Mandiri",
 "role": "mitra"
 },
 "repliesCount": 2,

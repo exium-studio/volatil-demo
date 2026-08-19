@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 
-export type UserProfilePopoverProps = {
-  expanded?: boolean;
+export type UserProfilePopoverTriggerProps = {
   children?: ReactNode;
 };

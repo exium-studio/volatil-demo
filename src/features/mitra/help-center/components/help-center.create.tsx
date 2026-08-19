@@ -139,9 +139,14 @@ export const CreateHelpCenterTrigger = (
                         ".pdf",
                         ".docx",
                         ".xlsx",
+                        ".mp4",
+                        ".mkv",
+                        ".mov",
+                        ".webm",
+                        ".avi",
                       ]}
                       maxFiles={10}
-                      maxFileSize={15 * 1024 * 1024}
+                      maxFileSize={50 * 1024 * 1024}
                       value={field.value}
                       onFileAccept={(details) => field.onChange(details.files)}
                     />

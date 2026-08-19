@@ -23,7 +23,7 @@ import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
-import { UserProfilePopover } from "@/features/auth/components/ui/user-profile-popover";
+import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
@@ -57,6 +57,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useMemo, useRef } from "react";
+import { NavButton } from "@/design-system/components/navigation/ui/nav";
+import { UserIcon } from "lucide-react";
 
 // -------------------------------------------------------------------------------------
 
@@ -248,7 +250,17 @@ const SidebarFooter = () => {
         }}
       />
 
-      <UserProfilePopover expanded={expanded} />
+      <UserProfilePopoverTrigger>
+        <NavButton
+          aria-label={t["app.navs.profile"]()}
+          variant={"ghost"}
+          w={expanded ? "full" : undefined}
+        >
+          <AppIcon icon={UserIcon} color={"fg.muted"} />
+
+          {expanded && t["app.navs.profile"]()}
+        </NavButton>
+      </UserProfilePopoverTrigger>
     </VStack>
   );
 };

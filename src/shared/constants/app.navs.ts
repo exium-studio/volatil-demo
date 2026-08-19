@@ -6,7 +6,6 @@ import {
   BellIcon,
   DatabaseIcon,
   HeadsetIcon,
-  HelpCircleIcon,
   HistoryIcon,
   HouseIcon,
   ReceiptTextIcon,
@@ -75,7 +74,7 @@ export const INTERNAL_APP_NAVS_MAP = {
     pathname: "/internal/order-statistic",
   },
   help: {
-    icon: HelpCircleIcon,
+    icon: HeadsetIcon,
     titleKey: "app.admin_navs.help",
     pathname: "/internal/help-center",
   },

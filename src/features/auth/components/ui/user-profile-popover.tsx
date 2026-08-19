@@ -1,12 +1,12 @@
 // src/features/auth/components/ui/user-profile-popover.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Avatar } from "@/design-system/components/media/ui/avatar";
-import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -14,16 +14,16 @@ import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
-import type { UserProfilePopoverProps } from "@/features/auth/types/user-profile-popover.type";
-import { t } from "@/shared/libs/i18n";
+import type { UserProfilePopoverTriggerProps } from "@/features/auth/types/user-profile-popover.type";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
-import { LogOutIcon, MoonIcon, SunIcon, UserIcon } from "lucide-react";
+import { LogOutIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useMemo } from "react";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 
-export const UserProfilePopover = (props: UserProfilePopoverProps) => {
+export const UserProfilePopoverTrigger = (
+  props: UserProfilePopoverTriggerProps,
+) => {
   // Props
-  const { expanded = false } = props;
+  const { children } = props;
 
   // Stores & Hooks
   const { theme } = useThemeStore();
@@ -37,7 +37,7 @@ export const UserProfilePopover = (props: UserProfilePopoverProps) => {
   const displayName = user?.name ?? "";
   const displayEmail = user?.email ?? "";
   const displayRole = user?.role === "mitra" ? "Mitra" : "Internal";
-  const roleColor = user?.role === "mitra" ? "blue" : "purple";
+  const roleColorPalette = user?.role === "mitra" ? "blue" : "purple";
 
   return (
     <Popover.Root
@@ -46,16 +46,7 @@ export const UserProfilePopover = (props: UserProfilePopoverProps) => {
         gutter: 12,
       }}
     >
-      <Popover.Trigger>
-        <NavButton
-          aria-label={t["app.navs.profile"]()}
-          variant={"ghost"}
-          w={expanded ? "full" : undefined}
-        >
-          <AppIcon icon={UserIcon} />
-          {expanded && t["app.navs.profile"]()}
-        </NavButton>
-      </Popover.Trigger>
+      <Popover.Trigger>{children}</Popover.Trigger>
 
       <Popover.Content minW={"240px"} zIndex={"dropdown"}>
         <Popover.Body p={0}>
@@ -69,6 +60,16 @@ export const UserProfilePopover = (props: UserProfilePopoverProps) => {
               />
 
               <VStack align={"center"} gap={SPACING.xs}>
+                {user?.role && (
+                  <Badge
+                    colorPalette={roleColorPalette}
+                    variant={"subtle"}
+                    mb={SPACING.xs}
+                  >
+                    {displayRole}
+                  </Badge>
+                )}
+
                 <HStack
                   align={"center"}
                   justify={"center"}
@@ -78,16 +79,6 @@ export const UserProfilePopover = (props: UserProfilePopoverProps) => {
                   <ClampedP fontWeight={"semibold"} textAlign={"center"}>
                     {displayName}
                   </ClampedP>
-
-                  {user?.role && (
-                    <Badge
-                      colorPalette={roleColor}
-                      variant={"subtle"}
-                      size={"xs"}
-                    >
-                      {displayRole}
-                    </Badge>
-                  )}
                 </HStack>
 
                 {displayEmail && (
