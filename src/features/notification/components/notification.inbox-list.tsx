@@ -114,7 +114,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
           <AppIcon icon={IconComponent} size={"sm"} />
         </Circle>
 
-        <VStack gap={SPACING.sm}>
+        <VStack flex={1} gap={SPACING.sm}>
           <HStack justify={"space-between"}>
             <HStack gap={2} align={"center"}>
               <P fontWeight={item.isRead ? "medium" : "bold"}>{item.title}</P>
