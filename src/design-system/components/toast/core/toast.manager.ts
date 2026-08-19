@@ -148,6 +148,8 @@ function recordHistorySnapshot(
   record: ToastRecord,
   source: "create" | "update",
 ): void {
+  if (record.variant === "loading") return;
+
   useToastHistoryStore.getState().add({
     historyEntryId: generateId("hist"),
     toastId: record.id,
