@@ -119,11 +119,14 @@ export const MitraDataRequestIgtLayerList = memo(
     // Derived Values
     const debouncedSearch = useDebouncedValue(searchRaw);
     const combinedCqlFilter = useMemo(() => {
-      if (baseCqlFilter && storeCqlFilter) {
-        return `${baseCqlFilter} AND ${storeCqlFilter}`;
+      // Administrative filter from useIgtFilterStore is only applied when showFilter is true (Catalog tab)
+      const activeStoreCql = showFilter ? storeCqlFilter : undefined;
+
+      if (baseCqlFilter && activeStoreCql) {
+        return `${baseCqlFilter} AND ${activeStoreCql}`;
       }
-      return baseCqlFilter ?? storeCqlFilter ?? undefined;
-    }, [baseCqlFilter, storeCqlFilter]);
+      return baseCqlFilter ?? activeStoreCql ?? undefined;
+    }, [baseCqlFilter, storeCqlFilter, showFilter]);
 
     // Queries — list of all active IGT layers
     const { data: layersData, isLoading: isLoadingLayers } = useQuery({
