@@ -10,10 +10,7 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import {
-  useInboxQuery,
-  useMarkInboxAsRead,
-} from "@/features/notification/hooks/use-inbox.query";
+import { useInboxQuery } from "@/features/notification/hooks/use-inbox.query";
 import type {
   InboxCategory,
   InboxItem,
@@ -22,7 +19,6 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/features/mitra/my-data/utils/my-data-date";
-import { useNavigate } from "@tanstack/react-router";
 import {
   BellIcon,
   CreditCardIcon,
@@ -88,23 +84,11 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
 
   // Stores & Hooks
   const { theme } = useThemeStore();
-  const navigate = useNavigate();
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
-  const markAsReadMutation = useMarkInboxAsRead();
 
   // Derived Values
   const IconComponent = CATEGORY_ICON_MAP[item.category] ?? BellIcon;
   const colorPalette = CATEGORY_COLOR_MAP[item.category] ?? "blue";
-
-  // Handlers
-  const handleClick = () => {
-    if (!item.isRead) {
-      markAsReadMutation.mutate(item.id);
-    }
-    if (item.actionUrl) {
-      void navigate({ to: item.actionUrl });
-    }
-  };
 
   return (
     <HStack
@@ -116,12 +100,6 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       borderWidth={"1px"}
       borderColor={item.isRead ? "border.subtle" : "border.default"}
       rounded={theme.radii.container}
-      cursor={item.actionUrl ? "pointer" : "default"}
-      onClick={handleClick}
-      _hover={{
-        borderColor: "border.hover",
-      }}
-      transition={"all 0.15s ease"}
     >
       <HStack align={"start"} gap={SPACING.md} flex={1}>
         <Circle
