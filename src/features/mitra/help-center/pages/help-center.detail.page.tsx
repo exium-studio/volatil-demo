@@ -155,40 +155,48 @@ export const HelpCenterDetailPage = () => {
               </VStack>
             </HStack>
 
-            <Separator borderColor={"bg.canvas"} />
+            {ticket.status !== "resolved" && ticket.status !== "rejected" && (
+              <>
+                <Separator borderColor={"bg.canvas"} />
 
-            <HStack align={"center"} gap={2} p={PADDING.md}>
-              {isInternalAdmin && ticket.status !== "rejected" && (
-                <HelpCenterModalResolveRejectTrigger
-                  ticketId={ticket.id}
-                  actionType={"reject"}
-                >
-                  <Button colorPalette={"red"} variant={"outline"} flex={1}>
-                    <AppIcon icon={XCircleIcon} />
-                    {"Tolak Laporan"}
-                  </Button>
-                </HelpCenterModalResolveRejectTrigger>
-              )}
+                <HStack align={"center"} gap={2} p={PADDING.md}>
+                  {isInternalAdmin && (
+                    <HelpCenterModalResolveRejectTrigger
+                      ticketId={ticket.id}
+                      actionType={"reject"}
+                    >
+                      <Button colorPalette={"red"} variant={"outline"} flex={1}>
+                        <AppIcon icon={XCircleIcon} />
+                        {"Tolak Laporan"}
+                      </Button>
+                    </HelpCenterModalResolveRejectTrigger>
+                  )}
 
-              {isInternalAdmin && ticket.status !== "resolved" && (
-                <HelpCenterModalResolveRejectTrigger
-                  ticketId={ticket.id}
-                  actionType={"resolve"}
-                >
-                  <Button colorPalette={"green"} variant={"outline"} flex={1}>
-                    <AppIcon icon={CheckCircle2Icon} />
-                    {"Selesaikan Laporan"}
-                  </Button>
-                </HelpCenterModalResolveRejectTrigger>
-              )}
+                  {isInternalAdmin && (
+                    <HelpCenterModalResolveRejectTrigger
+                      ticketId={ticket.id}
+                      actionType={"resolve"}
+                    >
+                      <Button
+                        colorPalette={"green"}
+                        variant={"outline"}
+                        flex={1}
+                      >
+                        <AppIcon icon={CheckCircle2Icon} />
+                        {"Selesaikan Laporan"}
+                      </Button>
+                    </HelpCenterModalResolveRejectTrigger>
+                  )}
 
-              <HelpCenterModalReplyTrigger ticketId={ticket.id}>
-                <Button primary={true} flex={1}>
-                  <AppIcon icon={MessageSquarePlusIcon} />
-                  {"Balas Laporan"}
-                </Button>
-              </HelpCenterModalReplyTrigger>
-            </HStack>
+                  <HelpCenterModalReplyTrigger ticketId={ticket.id}>
+                    <Button primary={true} flex={1}>
+                      <AppIcon icon={MessageSquarePlusIcon} />
+                      {"Balas Laporan"}
+                    </Button>
+                  </HelpCenterModalReplyTrigger>
+                </HStack>
+              </>
+            )}
           </VStack>
         </Container.Body>
       </Container.Root>
