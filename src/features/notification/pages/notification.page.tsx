@@ -158,7 +158,7 @@ export const NotificationPage = () => {
               display={"flex"}
               flexDir={"column"}
               overflowY={"auto"}
-              p={PADDING.md}
+              p={0}
             >
               <NotificationInboxList />
             </Tabs.Content>

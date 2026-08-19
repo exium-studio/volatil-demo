@@ -66,7 +66,13 @@ export const NotificationInboxList = memo(() => {
   }
 
   return (
-    <VStack flex={1} align={"stretch"} gap={SPACING.sm} overflowY={"auto"}>
+    <VStack
+      flex={1}
+      align={"stretch"}
+      gap={SPACING.sm}
+      overflowY={"auto"}
+      p={PADDING.md}
+    >
       {items.map((item) => (
         <InboxCardItem key={item.id} item={item} />
       ))}
