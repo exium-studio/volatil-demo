@@ -354,8 +354,7 @@ const Content = () => {
     () =>
       (fetchedLayers?.layers ?? []).map((layer: IgtLayerItem) => {
         const isEnabled =
-          enabledLayerIds[layer.id] ??
-          (layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+          enabledLayerIds[layer.id] ?? layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
         const opacity = layerOpacities[layer.id] ?? 1.0;
         return getWmsRasterConfigFromIgtLayer(
           layer,
