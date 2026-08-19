@@ -49,7 +49,9 @@ export function extractAoiPolygonsFromCql(
 
     for (const match of polygonMatches) {
       // Extract numbers inside POLYGON((lat lon, ...))
-      const inner = match.replace(/POLYGON\s*\(\s*\(/i, "").replace(/\)\s*\)$/, "");
+      const inner = match
+        .replace(/POLYGON\s*\(\s*\(/i, "")
+        .replace(/\)\s*\)$/, "");
       const pairs = inner.split(",").map((p) => p.trim());
       const coords: number[][] = [];
 
@@ -135,7 +137,9 @@ export function calculateIntersectAreaInHectares(
 
     const intersection = turf.intersect(
       turf.featureCollection([
-        targetFeature as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+        targetFeature as GeoJSON.Feature<
+          GeoJSON.Polygon | GeoJSON.MultiPolygon
+        >,
         aoiPolygon,
       ]),
     );
