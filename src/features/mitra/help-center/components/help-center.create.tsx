@@ -8,6 +8,7 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { HelpCenterTransactionSelect } from "@/features/mitra/help-center/components/help-center.transaction-select";
 import { useCreateHelpCenterTicket } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import {
   createHelpCenterSchema,
@@ -33,6 +34,7 @@ export const CreateHelpCenterTrigger = (
     register,
     control,
     handleSubmit,
+    setValue,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<CreateHelpCenterFormValues>({
@@ -40,6 +42,8 @@ export const CreateHelpCenterTrigger = (
     defaultValues: {
       title: "",
       description: "",
+      transactionId: "",
+      orderNumber: "",
       files: [],
     },
   });
@@ -60,11 +64,15 @@ export const CreateHelpCenterTrigger = (
           values.title.trim(),
           values.description.trim(),
           values.files,
+          values.transactionId || undefined,
+          values.orderNumber || undefined,
         );
       } else {
         await createTicketMutation.mutateAsync({
           title: values.title.trim(),
           description: values.description.trim(),
+          transactionId: values.transactionId || undefined,
+          orderNumber: values.orderNumber || undefined,
           files: values.files,
         });
       }
@@ -119,6 +127,25 @@ export const CreateHelpCenterTrigger = (
                   }
                   rows={4}
                   {...register("description")}
+                />
+              </Field>
+
+              <Field
+                label={"Transaksi Terkait"}
+                invalid={Boolean(errors.transactionId)}
+                errorText={errors.transactionId?.message}
+              >
+                <HelpCenterTransactionSelect
+                  modalKey={`${modalKey}.selectTransaction`}
+                  onValueChange={(val, option) => {
+                    setValue("transactionId", val, { shouldValidate: true });
+                    if (option?.label) {
+                      const matchedOrderNo = option.label.split(" - ")[0];
+                      setValue("orderNumber", matchedOrderNo);
+                    } else {
+                      setValue("orderNumber", "");
+                    }
+                  }}
                 />
               </Field>
 

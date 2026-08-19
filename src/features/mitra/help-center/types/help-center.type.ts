@@ -58,6 +58,8 @@ export type HelpCenterItem = {
   createdAt: string;
   updatedAt: string;
   user?: HelpCenterUser;
+  transactionId?: string;
+  orderNumber?: string;
   repliesCount?: number;
   attachmentsCount?: number;
 };
@@ -105,6 +107,8 @@ export type HelpCenterPagination = {
 export type CreateHelpCenterPayload = {
   title: string;
   description: string;
+  transactionId?: string;
+  orderNumber?: string;
   priority?: "low" | "medium" | "high" | "urgent";
   category?: string;
   files?: File[];
@@ -123,6 +127,8 @@ export type CreateHelpCenterTriggerProps = {
     title: string,
     description: string,
     files?: File[],
+    transactionId?: string,
+    orderNumber?: string,
   ) => Promise<void> | void;
   isLoading?: boolean;
 };

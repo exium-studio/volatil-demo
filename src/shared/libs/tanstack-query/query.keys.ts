@@ -37,6 +37,8 @@ export const queryKeys = {
         [...queryKeys.mitra.helpCenter.all, "statistics", scope] as const,
       detail: (id: string | number) =>
         [...queryKeys.mitra.helpCenter.all, "detail", id] as const,
+      transactions: () =>
+        [...queryKeys.mitra.helpCenter.all, "transactions"] as const,
     },
   },
   internal: {
