@@ -14,7 +14,7 @@ export const HIGHLIGHT_LINE_LAYER_ID = "map-feature-highlight-line";
 export const HIGHLIGHT_POINT_LAYER_ID = "map-feature-highlight-point";
 
 const HIGHLIGHT_COLOR = "#00e5ff";
-const HIGHLIGHT_TIMEOUT_MS = 5000;
+const HIGHLIGHT_TIMEOUT_MS = 3000;
 
 let highlightTimer: ReturnType<typeof setTimeout> | null = null;
 
