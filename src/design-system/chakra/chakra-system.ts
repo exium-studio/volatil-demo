@@ -126,8 +126,8 @@ export const chakraConfig = defineConfig({
 
     tokens: {
       colors: {
-        canvasLight: { value: "#f4f4f6" },
-        canvasDark: { value: "#151515" },
+        canvasLight: { value: "#fafafb" },
+        canvasDark: { value: "#171717" },
 
         bodyLight: { value: "#ffffff" },
         bodyDark: { value: "#1a1a1a" },
@@ -141,7 +141,7 @@ export const chakraConfig = defineConfig({
 
         neutral: {
           50: { value: "#f7f8fa" },
-          100: { value: "#f3f4f6" },
+          100: { value: "#f0f1f3" },
           200: { value: "#e5e7eb" },
           300: { value: "#d1d5db" },
           400: { value: "#9ca3af" },
@@ -732,6 +732,12 @@ export const chakraConfig = defineConfig({
     semanticTokens: {
       colors: {
         bg: {
+          panel: {
+            value: {
+              base: "{colors.neutral.100} !important",
+              _dark: "{colors.bodyDark} !important",
+            },
+          },
           subtle: {
             value: {
               base: "{colors.neutral.50} !important",

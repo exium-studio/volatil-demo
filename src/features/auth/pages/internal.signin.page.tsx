@@ -1,6 +1,6 @@
 // src/features/auth/pages/internal.signin.page.tsx
 
-import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
+import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { PageContainer } from "@/design-system/components/layout/ui/page-container";
@@ -30,7 +30,7 @@ export const InternalSigninPage = () => {
 
         <VStack overflowY={"auto"} px={[0, null, 12]} py={12}>
           <HStack align={"center"} justify={"center"} gap={4} ml={-4}>
-            <AtrLogo />
+            <IgtLogo />
 
             <VStack>
               <P fontSize={"lg"} fontWeight={"semibold"}>

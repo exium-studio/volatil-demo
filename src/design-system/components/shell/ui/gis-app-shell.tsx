@@ -1,6 +1,6 @@
 // src/design-system/components/shell/ui/gis-app-shell.tsx
 
-import { AtrLogo } from "@/design-system/components/branding/ui/atr-logo";
+import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -110,7 +110,7 @@ const Sidebar = () => {
         overflowX={"clip"}
         h={"full"}
         py={2}
-        bg={"bg.body"}
+        bg={"bg.canvas"}
         borderRight={"1px solid"}
         borderColor={"bg.canvas"}
       >
@@ -147,7 +147,7 @@ const SidebarHeader = () => {
     >
       <NavLink to={"/"}>
         <HStack align={"center"} gap={SPACING.sm}>
-          <AtrLogo boxSize={"24px"} ml={1} />
+          <IgtLogo boxSize={"24px"} ml={1} />
 
           <ClampedP
             w={expanded ? "" : 0}

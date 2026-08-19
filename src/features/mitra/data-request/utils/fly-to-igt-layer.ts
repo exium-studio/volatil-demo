@@ -106,7 +106,6 @@ export const flyToIgtLayer = async (
       if (featureCollection.features && featureCollection.features.length > 0) {
         highlightFeatureOnMap(map, featureCollection, {
           zoom: 15,
-          timeoutMs: 5000,
         });
         return;
       }
@@ -156,6 +155,5 @@ export const flyToIgtLayer = async (
 
   highlightFeatureOnMap(map, bboxPolygonFeature, {
     zoom: 15,
-    timeoutMs: 5000,
   });
 };

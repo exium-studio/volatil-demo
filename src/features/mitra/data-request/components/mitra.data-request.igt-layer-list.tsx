@@ -39,41 +39,6 @@ import {
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
-const IgtLayerCountCell = memo(
-  (props: { layer: IgtLayerItem; cqlFilter?: string }) => {
-    const { layer, cqlFilter } = props;
-
-    const { data, isLoading } = useQuery({
-      queryKey: [
-        "igt-layer-count-summary",
-        layer.id,
-        layer.wfs?.wfsTypeName,
-        layer.spatialBasis,
-        cqlFilter,
-      ],
-      queryFn: ({ signal }) =>
-        getLayerCountSummary({
-          typeName: layer.wfs?.wfsTypeName ?? "",
-          wfsUrl: layer.wfs?.wfsUrl ?? "",
-          spatialBasis: layer.spatialBasis,
-          cqlFilter,
-          signal,
-        }),
-      staleTime: 5 * 60 * 1000,
-    });
-
-    if (isLoading) {
-      return <Skeleton h={"16px"} w={"64px"} />;
-    }
-
-    return (
-      <P fontSize={"sm"} fontWeight={"medium"} color={"fg.default"}>
-        {data?.label ?? "-"}
-      </P>
-    );
-  },
-);
-
 export const MitraDataRequestIgtLayerList = memo(
   (props: MitraDataRequestIgtLayerCardListProps) => {
     // Props
@@ -317,7 +282,7 @@ export const MitraDataRequestIgtLayerList = memo(
         position={"relative"}
         overflowY={"auto"}
         w={"full"}
-        bg={"bg.canvas"}
+        // bg={"bg.canvas"}
       >
         {/* Header Action Bar */}
         <HStack
@@ -413,6 +378,41 @@ export const MitraDataRequestIgtLayerList = memo(
           </HStack>
         </Box>
       </VStack>
+    );
+  },
+);
+
+const IgtLayerCountCell = memo(
+  (props: { layer: IgtLayerItem; cqlFilter?: string }) => {
+    const { layer, cqlFilter } = props;
+
+    const { data, isLoading } = useQuery({
+      queryKey: [
+        "igt-layer-count-summary",
+        layer.id,
+        layer.wfs?.wfsTypeName,
+        layer.spatialBasis,
+        cqlFilter,
+      ],
+      queryFn: ({ signal }) =>
+        getLayerCountSummary({
+          typeName: layer.wfs?.wfsTypeName ?? "",
+          wfsUrl: layer.wfs?.wfsUrl ?? "",
+          spatialBasis: layer.spatialBasis,
+          cqlFilter,
+          signal,
+        }),
+      staleTime: 5 * 60 * 1000,
+    });
+
+    if (isLoading) {
+      return <Skeleton h={"16px"} w={"64px"} />;
+    }
+
+    return (
+      <P fontSize={"sm"} fontWeight={"medium"} color={"fg.default"}>
+        {data?.label ?? "-"}
+      </P>
     );
   },
 );
