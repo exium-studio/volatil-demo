@@ -14,7 +14,6 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
@@ -88,7 +87,6 @@ export const MitraDataRequestIgtLayerList = memo(
     // Stores
     const { theme } = useThemeStore();
     const { map } = useMapInstanceStore();
-    const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
     const appliedWfsFilters = useIgtFilterStore((s) => s.appliedWfsFilters);
     const setAppliedWfsFilters = useIgtFilterStore(
       (s) => s.setAppliedWfsFilters,
@@ -137,21 +135,16 @@ export const MitraDataRequestIgtLayerList = memo(
 
     const activeLayers = useMemo(() => layersData?.layers ?? [], [layersData]);
 
-    // Only show layers that are toggled on via MapIgtLayerSelect
-    const enabledLayers = useMemo(() => {
-      return activeLayers.filter((l) => enabledLayerIds[l.id] !== false);
-    }, [activeLayers, enabledLayerIds]);
-
     const filteredLayers = useMemo(() => {
-      if (!debouncedSearch) return enabledLayers;
+      if (!debouncedSearch) return activeLayers;
       const lower = debouncedSearch.toLowerCase();
-      return enabledLayers.filter(
+      return activeLayers.filter(
         (l) =>
           l.id.toLowerCase().includes(lower) ||
           l.wfs?.wfsTypeName?.toLowerCase().includes(lower) ||
           l.title?.toLowerCase().includes(lower),
       );
-    }, [enabledLayers, debouncedSearch]);
+    }, [activeLayers, debouncedSearch]);
 
     // Handlers
     const handleApplyFilters = (filters: IgtFilterValues) => {
@@ -357,7 +350,7 @@ export const MitraDataRequestIgtLayerList = memo(
           </HStack>
 
           <P fontSize={"sm"} color={"fg.muted"}>
-            {`Menampilkan ${debouncedSearch ? filteredLayers.length : enabledLayers.length} dari ${activeLayers.length} Layer IGT`}
+            {`Menampilkan ${debouncedSearch ? filteredLayers.length : activeLayers.length} dari ${activeLayers.length} Layer IGT`}
           </P>
         </HStack>
 
