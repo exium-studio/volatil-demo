@@ -13,7 +13,7 @@ import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
-import { lazy, Suspense, useEffect, useTransition } from "react";
+import { lazy, Suspense, useTransition } from "react";
 
 const MitraDataRequestCatalogTabsContent = lazy(() =>
   import("@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content").then(
@@ -67,15 +67,14 @@ const REQUEST_METHOD_OPTIONS = (
 export const MitraDataRequestPage = () => {
   // Hooks
   const [_isPending, startTransition] = useTransition();
-  const { queryValue: tab, setQueryValue: setTab } = useSearchParam("tab");
+  const { queryValue: tabQuery, setQueryValue: setTab } = useSearchParam("tab");
   const { setQueryValue: setLayerId } = useSearchParam("layerId");
 
-  // Set to default tab if query is not satisfied
-  useEffect(() => {
-    if (!tab || !Object.keys(REQUEST_METHOD_MAP).includes(tab)) {
-      setTab("catalog");
-    }
-  }, [tab, setTab]);
+  // Derived active tab (default to catalog without forcing URL push in useEffect)
+  const activeTab =
+    tabQuery && Object.keys(REQUEST_METHOD_MAP).includes(tabQuery)
+      ? tabQuery
+      : "catalog";
 
   return (
     <PanelContentContainer overflowY={"auto"} gap={PADDING.sm} p={PADDING.sm}>
@@ -93,15 +92,15 @@ export const MitraDataRequestPage = () => {
           <Separator borderColor={"bg.canvas"} />
 
           <Tabs.Root
-            value={tab}
+            value={activeTab}
             flex={1}
             display={"flex"}
             flexDir={"column"}
             overflowY={"auto"}
             onValueChange={(details) => {
               startTransition(() => {
-                setTab(details.value);
-                setLayerId(undefined);
+                setTab(details.value, { replace: true });
+                setLayerId(undefined, { replace: true });
               });
             }}
           >
@@ -127,7 +126,7 @@ export const MitraDataRequestPage = () => {
             >
               {REQUEST_METHOD_OPTIONS.map((method) => {
                 const TabsContent = method.content;
-                const isActive = tab === method.value;
+                const isActive = activeTab === method.value;
 
                 if (!isActive) return null;
 
