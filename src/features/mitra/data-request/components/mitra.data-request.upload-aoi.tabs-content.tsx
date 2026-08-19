@@ -17,7 +17,6 @@ import {
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { P } from "@/design-system/components/typography/ui/p";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
@@ -27,7 +26,9 @@ import {
   usePopModal,
 } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
+import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
@@ -36,12 +37,12 @@ import {
   useMitraDataRequestUploadAoiContext,
 } from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
-import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import {
   useAddToCartAll,
   useAddToCartSelected,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
+import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import type {
   MitraDataRequestUploadAoiAddFileButtonProps,
   MitraDataRequestUploadAoiAttributeListProps,
@@ -50,12 +51,13 @@ import type {
   MitraDataRequestUploadAoiPageState,
   MitraDataRequestUploadAoiTabsContentProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
-import { FilesIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { FilesIcon, MapPinIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 // -------------------------------------------------------------------------------------
@@ -404,6 +406,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
 
   // Contexts
   const { aoiLayers } = useMitraDataRequestUploadAoiContext();
+  const map = useMapInstanceStore((state) => state.map);
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -432,24 +435,44 @@ const MitraDataRequestUploadAoiFileListTrigger = (
           {isEmptyArray(aoiLayers) && <NoDataState />}
 
           {aoiLayers.map((layer) => (
-            <FileItem
-              key={layer.id}
-              name={
-                layer.status === "parsing"
-                  ? `${layer.fileName} (memproses...)`
-                  : layer.status === "error"
-                    ? `${layer.fileName} (gagal)`
-                    : layer.fileName
-              }
-              mimeType={""}
-              sizeLabel={formatByte(layer.fileSize)}
-              onDelete={
-                layer.status === "parsing"
-                  ? undefined
-                  : () => onDeleteLayer(layer.id)
-              }
-              opacity={layer.status === "error" ? 0.6 : 1}
-            />
+            <HStack key={layer.id} w={"full"} gap={2} align={"center"}>
+              <FileItem
+                flex={1}
+                name={
+                  layer.status === "parsing"
+                    ? `${layer.fileName} (memproses...)`
+                    : layer.status === "error"
+                      ? `${layer.fileName} (gagal)`
+                      : layer.fileName
+                }
+                mimeType={""}
+                sizeLabel={formatByte(layer.fileSize)}
+                onDelete={
+                  layer.status === "parsing"
+                    ? undefined
+                    : () => onDeleteLayer(layer.id)
+                }
+                actionButtons={
+                  layer.status === "done" &&
+                  layer.polygon &&
+                  map && (
+                    <Tooltip content={"Lihat AOI di peta"}>
+                      <IconButton
+                        aria-label={"Lihat di Peta"}
+                        size={"xs"}
+                        onClick={() => {
+                          highlightFeatureOnMap(map, layer.polygon);
+                          close();
+                        }}
+                      >
+                        <AppIcon icon={MapPinIcon} />
+                      </IconButton>
+                    </Tooltip>
+                  )
+                }
+                opacity={layer.status === "error" ? 0.6 : 1}
+              />
+            </HStack>
           ))}
         </Modal.Body>
 

@@ -10,6 +10,7 @@ export type FileItemProps = StackProps & {
   previewUrl?: string;
   disabled?: boolean;
   onDelete?: () => void;
+  actionButtons?: React.ReactNode;
 };
 
 export type FileIconProps = AppIconProps & {

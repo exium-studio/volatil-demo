@@ -11,6 +11,7 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Image } from "@/design-system/components/media/ui/image";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { isImageFile } from "@/shared/utils/data/file";
@@ -26,6 +27,7 @@ export const FileItem = (props: FileItemProps) => {
     sizeLabel,
     disabled,
     onDelete,
+    actionButtons,
     ...restProps
   } = props;
 
@@ -66,19 +68,23 @@ export const FileItem = (props: FileItemProps) => {
         </P>
       </HStack>
 
-      {onDelete && (
-        <Tooltip content={t["common.remove_file"]()}>
-          <IconButton
-            size={"xs"}
-            h={"32px"}
-            disabled={disabled}
-            aria-label={t["common.remove_file"]()}
-            onClick={onDelete}
-          >
-            <AppIcon icon={XIcon} />
-          </IconButton>
-        </Tooltip>
-      )}
+      <HStack align={"center"} gap={SPACING.xs}>
+        {actionButtons}
+
+        {onDelete && (
+          <Tooltip content={t["common.remove_file"]()}>
+            <IconButton
+              size={"xs"}
+              h={"32px"}
+              disabled={disabled}
+              aria-label={t["common.remove_file"]()}
+              onClick={onDelete}
+            >
+              <AppIcon icon={XIcon} />
+            </IconButton>
+          </Tooltip>
+        )}
+      </HStack>
     </HStack>
   );
 };

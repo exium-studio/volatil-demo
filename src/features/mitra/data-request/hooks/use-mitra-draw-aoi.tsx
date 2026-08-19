@@ -90,6 +90,7 @@ export const useMitraDrawAoi = () => {
     isDone,
     isError: wfsStatus === "error",
     error: wfsError,
+    confirmedPolygon,
     aoiCqlFilter,
     handleResetDraw,
     handleConfirmAndFetch,

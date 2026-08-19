@@ -11,6 +11,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
@@ -18,8 +19,10 @@ import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wf
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import type { DrawAoiGuideAlertProps } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { IconPolygonOff } from "@tabler/icons-react";
-import { CheckIcon, InfoIcon, PencilIcon, XIcon } from "lucide-react";
+import { CheckIcon, InfoIcon, MapPinIcon, PencilIcon, XIcon } from "lucide-react";
+import type GeoJSON from "geojson";
 import { memo, useState } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
@@ -38,6 +41,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
       error,
       isLoading,
       isDone,
+      confirmedPolygon,
       aoiCqlFilter,
       handleResetDraw,
       handleConfirmAndFetch,
@@ -135,6 +139,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
         {isDone && aoiCqlFilter && (
           <DrawAoiAttributeList
             aoiCqlFilter={aoiCqlFilter}
+            confirmedPolygon={confirmedPolygon}
             onResetDraw={handleResetDraw}
           />
         )}
@@ -212,12 +217,16 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
 
 type DrawAoiAttributeListProps = {
   aoiCqlFilter: string;
+  confirmedPolygon?: GeoJSON.Feature<GeoJSON.Polygon> | null;
   onResetDraw: () => void;
 };
 
 const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
   // Props
-  const { aoiCqlFilter, onResetDraw } = props;
+  const { aoiCqlFilter, confirmedPolygon, onResetDraw } = props;
+
+  // Stores
+  const map = useMapInstanceStore((state) => state.map);
 
   // Hooks
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
@@ -268,15 +277,29 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
               {"Hasil query spasial gambar AOI"}
             </P>
 
-            <Button
-              variant={"outline"}
-              colorPalette={"red"}
-              pl={3}
-              onClick={onResetDraw}
-            >
-              <AppIcon icon={IconPolygonOff} />
-              {"Hapus gambar"}
-            </Button>
+            <HStack align={"center"} gap={SPACING.sm}>
+              {confirmedPolygon && map && (
+                <Button
+                  variant={"outline"}
+                  onClick={() => {
+                    highlightFeatureOnMap(map, confirmedPolygon);
+                  }}
+                >
+                  <AppIcon icon={MapPinIcon} />
+                  {"Lihat di Peta"}
+                </Button>
+              )}
+
+              <Button
+                variant={"outline"}
+                colorPalette={"red"}
+                pl={3}
+                onClick={onResetDraw}
+              >
+                <AppIcon icon={IconPolygonOff} />
+                {"Hapus gambar"}
+              </Button>
+            </HStack>
           </HStack>
         </VStack>
 
