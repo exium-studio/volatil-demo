@@ -28,3 +28,35 @@ export type NotificationCategoryGroup = {
   records: ToastRecord[];
 };
 
+export type NotificationTabValue = "inbox" | "notifications";
+
+export type NotificationHeaderProps = {
+  activeTab: NotificationTabValue;
+  totalNotifications: number;
+  unreadCount: number;
+};
+
+export type NotificationTabsProps = {
+  activeTab: NotificationTabValue;
+  unreadCount: number;
+  totalNotifications: number;
+  onTabChange: (value: NotificationTabValue) => void;
+  categoryGroups: NotificationCategoryGroup[];
+  hasNotifications: boolean;
+  isReady: boolean;
+  isPending: boolean;
+  onDeleteGroup: (records: ToastRecord[]) => void;
+  onDeleteNotification: (id: string) => void;
+  onClearAllHistory: () => void;
+};
+
+export type NotificationToastHistoryContentProps = {
+  categoryGroups: NotificationCategoryGroup[];
+  hasNotifications: boolean;
+  isReady: boolean;
+  isPending: boolean;
+  onDeleteGroup: (records: ToastRecord[]) => void;
+  onDeleteNotification: (id: string) => void;
+  onClearAllHistory: () => void;
+};
+

@@ -12,8 +12,18 @@ export type InboxItem = {
   createdAt: string;
 };
 
+export type InboxQueryParams = {
+  page?: number;
+  pageSize?: number;
+  category?: InboxCategory;
+  isRead?: boolean;
+  search?: string;
+};
+
 export type InboxListResponse = {
   items: InboxItem[];
   total: number;
   unreadCount: number;
+  page?: number;
+  pageSize?: number;
 };

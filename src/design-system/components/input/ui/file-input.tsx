@@ -395,14 +395,15 @@ const FileInputInner = (props: FileinputInnerProps) => {
                     transition={"200ms"}
                   >
                     {accept && accept.length > 0 && (
-                      <>{accept.map((a: string) => a.replace(".", "").toUpperCase()).join(", ")} • </>
-                    )}
-                    {`Maks. ${maxFiles} file `}
-                    {maxFileSize && (
                       <>
-                        ({formatByte(maxFileSize)})
+                        {accept
+                          .map((a: string) => a.replace(".", "").toUpperCase())
+                          .join(", ")}{" "}
+                        •{" "}
                       </>
                     )}
+                    {`Maks. ${maxFiles} file `}
+                    {maxFileSize && <>({formatByte(maxFileSize)})</>}
                   </P>
                 </VStack>
 

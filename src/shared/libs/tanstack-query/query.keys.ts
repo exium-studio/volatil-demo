@@ -43,6 +43,8 @@ export const queryKeys = {
     notification: {
       all: ["mitra", "notification"] as const,
       inbox: () => [...queryKeys.mitra.notification.all, "inbox"] as const,
+      inboxList: (params?: Record<string, unknown>) =>
+        [...queryKeys.mitra.notification.all, "inbox", "list", params] as const,
     },
   },
   internal: {
