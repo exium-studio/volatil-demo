@@ -107,8 +107,6 @@ export const NotificationInboxList = memo(() => {
           {unreadCount > 0 && (
             <Button
               size={"xs"}
-              variant={"subtle"}
-              colorPalette={"blue"}
               loading={markAllAsReadMutation.isPending}
               onClick={() => markAllAsReadMutation.mutate()}
             >
@@ -128,7 +126,6 @@ export const NotificationInboxList = memo(() => {
           >
             <Button
               size={"xs"}
-              variant={"subtle"}
               colorPalette={"red"}
               loading={clearAllInboxMutation.isPending}
             >

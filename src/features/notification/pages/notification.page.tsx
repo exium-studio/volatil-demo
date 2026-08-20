@@ -236,6 +236,42 @@ const NotificationToastHistoryContent = memo(
       onClearAllHistory,
     } = props;
 
+    if (!isReady || isPending) {
+      return (
+        <VStack
+          flex={1}
+          align={"stretch"}
+          gap={SPACING.md}
+          p={PADDING.md}
+          overflowY={"auto"}
+        >
+          <Center flex={1} py={12}>
+            <Loader />
+          </Center>
+        </VStack>
+      );
+    }
+
+    if (!hasNotifications) {
+      return (
+        <VStack
+          flex={1}
+          align={"stretch"}
+          gap={SPACING.md}
+          p={PADDING.md}
+          overflowY={"auto"}
+        >
+          <NoDataState
+            icon={BellOffIcon}
+            title={"Belum Ada Riwayat Notifikasi"}
+            description={
+              "Seluruh notifikasi dan status proses dari sistem akan muncul di sini."
+            }
+          />
+        </VStack>
+      );
+    }
+
     return (
       <VStack
         flex={1}
@@ -244,49 +280,31 @@ const NotificationToastHistoryContent = memo(
         p={PADDING.md}
         overflowY={"auto"}
       >
-        {!isReady || isPending ? (
-          <Center flex={1} py={12}>
-            <Loader />
-          </Center>
-        ) : !hasNotifications ? (
-          <NoDataState
-            icon={BellOffIcon}
-            title={"Belum Ada Riwayat Notifikasi"}
-            description={
-              "Seluruh notifikasi dan status proses dari sistem akan muncul di sini."
-            }
-          />
-        ) : (
-          <>
-            <HStack justify={"flex-end"} mb={SPACING.sm}>
-              <ConfirmationTrigger
-                title={"Hapus Semua Riwayat Notifikasi?"}
-                description={
-                  "Seluruh riwayat toast notification akan dibersihkan."
-                }
-                confirmLabel={"Hapus Semua"}
-                colorPalette={"red"}
-                onConfirm={onClearAllHistory}
-              >
-                <Button colorPalette={"red"} size={"xs"} variant={"subtle"}>
-                  <AppIcon icon={Trash2Icon} />
-                  {t["action.clear_all"]()}
-                </Button>
-              </ConfirmationTrigger>
-            </HStack>
+        <HStack justify={"flex-end"} mb={SPACING.sm}>
+          <ConfirmationTrigger
+            title={"Hapus Semua Riwayat Notifikasi?"}
+            description={"Seluruh riwayat toast notification akan dibersihkan."}
+            confirmLabel={"Hapus Semua"}
+            colorPalette={"red"}
+            onConfirm={onClearAllHistory}
+          >
+            <Button colorPalette={"red"} size={"xs"} variant={"subtle"}>
+              <AppIcon icon={Trash2Icon} />
+              {t["action.clear_all"]()}
+            </Button>
+          </ConfirmationTrigger>
+        </HStack>
 
-            <VStack align={"stretch"} gap={SPACING.lg}>
-              {categoryGroups.map((group) => (
-                <NotificationGroupStackCard
-                  key={group.groupName}
-                  group={group}
-                  onDeleteGroup={onDeleteGroup}
-                  onDeleteNotification={onDeleteNotification}
-                />
-              ))}
-            </VStack>
-          </>
-        )}
+        <VStack align={"stretch"} gap={SPACING.lg}>
+          {categoryGroups.map((group) => (
+            <NotificationGroupStackCard
+              key={group.groupName}
+              group={group}
+              onDeleteGroup={onDeleteGroup}
+              onDeleteNotification={onDeleteNotification}
+            />
+          ))}
+        </VStack>
       </VStack>
     );
   },

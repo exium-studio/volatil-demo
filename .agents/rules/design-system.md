@@ -28,6 +28,7 @@ const { theme } = useThemeStore();
 - **Import Alias**: Import di dalam `src/` WAJIB menggunakan alias `@/`.
 - **Komentar Section**: Wajib menambahkan komentar section di komponen (`// Contexts`, `// States`, `// Derived Values`, `// Hooks (Queries & Mutations)`, dll).
 - **Default Props**: DILARANG menuliskan prop yang nilainya sama dengan default komponen (misal: `VStack` default `align` adalah `stretch`, tidak perlu ditulis `align={"stretch"}`).
+- **Conditional Rendering (Eksplisit & Anti-Ternary)**: DILARANG menggunakan ternary operator (`condition ? <ComponentA /> : <ComponentB />`) untuk percabangan render view/state utama (seperti loading, empty/no data, error, atau multi-state render). WAJIB menggunakan early return eksplisit (`if (condition) return <... />;`) atau blok kondisi eksplisit. Nested conditional statements/returns diperbolehkan.
 
 ---
 
