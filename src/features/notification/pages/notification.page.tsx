@@ -1,14 +1,9 @@
 // src/features/notification/pages/notification.page.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
-import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
@@ -16,18 +11,16 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { DIMENSIONS, PADDING, SPACING } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { NotificationInboxList } from "@/features/notification/components/notification.inbox-list";
-import { NotificationGroupStackCard } from "@/features/notification/components/notification.item";
+import { NotificationToastHistoryList } from "@/features/notification/components/notification.toast-list";
 import { useInboxQuery } from "@/features/notification/hooks/use-inbox.query";
 import { useNotifications } from "@/features/notification/hooks/use-notifications";
 import type {
   NotificationHeaderProps,
   NotificationTabsProps,
   NotificationTabValue,
-  NotificationToastHistoryContentProps,
 } from "@/features/notification/types/notification.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
-import { t } from "@/shared/libs/i18n";
-import { BellIcon, BellOffIcon, InboxIcon, Trash2Icon } from "lucide-react";
+import { BellIcon, InboxIcon } from "lucide-react";
 import { memo, useCallback, useEffect, useState, useTransition } from "react";
 
 export const NotificationPage = () => {
@@ -209,7 +202,7 @@ const NotificationTabs = memo((props: NotificationTabsProps) => {
         overflowY={"auto"}
         p={0}
       >
-        <NotificationToastHistoryContent
+        <NotificationToastHistoryList
           categoryGroups={categoryGroups}
           hasNotifications={hasNotifications}
           isReady={isReady}
@@ -222,90 +215,3 @@ const NotificationTabs = memo((props: NotificationTabsProps) => {
     </Tabs.Root>
   );
 });
-
-const NotificationToastHistoryContent = memo(
-  (props: NotificationToastHistoryContentProps) => {
-    // Props
-    const {
-      categoryGroups,
-      hasNotifications,
-      isReady,
-      isPending,
-      onDeleteGroup,
-      onDeleteNotification,
-      onClearAllHistory,
-    } = props;
-
-    if (!isReady || isPending) {
-      return (
-        <VStack
-          flex={1}
-          align={"stretch"}
-          gap={SPACING.md}
-          p={PADDING.md}
-          overflowY={"auto"}
-        >
-          <Center flex={1} py={12}>
-            <Loader />
-          </Center>
-        </VStack>
-      );
-    }
-
-    if (!hasNotifications) {
-      return (
-        <VStack
-          flex={1}
-          align={"stretch"}
-          gap={SPACING.md}
-          p={PADDING.md}
-          overflowY={"auto"}
-        >
-          <NoDataState
-            icon={BellOffIcon}
-            title={"Belum Ada Riwayat Notifikasi"}
-            description={
-              "Seluruh notifikasi dan status proses dari sistem akan muncul di sini."
-            }
-          />
-        </VStack>
-      );
-    }
-
-    return (
-      <VStack
-        flex={1}
-        align={"stretch"}
-        gap={SPACING.md}
-        p={PADDING.md}
-        overflowY={"auto"}
-      >
-        <HStack justify={"flex-end"} mb={SPACING.sm}>
-          <ConfirmationTrigger
-            title={"Hapus Semua Riwayat Notifikasi?"}
-            description={"Seluruh riwayat toast notification akan dibersihkan."}
-            confirmLabel={"Hapus Semua"}
-            colorPalette={"red"}
-            onConfirm={onClearAllHistory}
-          >
-            <Button colorPalette={"red"} size={"xs"} variant={"subtle"}>
-              <AppIcon icon={Trash2Icon} />
-              {t["action.clear_all"]()}
-            </Button>
-          </ConfirmationTrigger>
-        </HStack>
-
-        <VStack align={"stretch"} gap={SPACING.lg}>
-          {categoryGroups.map((group) => (
-            <NotificationGroupStackCard
-              key={group.groupName}
-              group={group}
-              onDeleteGroup={onDeleteGroup}
-              onDeleteNotification={onDeleteNotification}
-            />
-          ))}
-        </VStack>
-      </VStack>
-    );
-  },
-);

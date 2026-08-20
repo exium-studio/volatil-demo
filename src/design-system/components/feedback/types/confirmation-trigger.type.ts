@@ -12,7 +12,7 @@ export type ConfirmationTriggerProps = {
   confirmLabel?: string;
   cancelLabel?: string;
   colorPalette?: string;
-  modalKey?: string;
+  modalKey: string;
   confirmButtonProps?: Partial<ButtonProps>;
   onConfirm?: () => void;
   onCancel?: () => void;

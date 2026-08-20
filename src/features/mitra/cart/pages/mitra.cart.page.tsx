@@ -66,6 +66,7 @@ const MitraCartContent = () => {
 
             {hasCartItems && (
               <ConfirmationTrigger
+                modalKey={"clear-mitra-cart-confirmation"}
                 title={"Kosongkan keranjang?"}
                 description={
                   "Semua item akan dihapus dari keranjang belanja Anda."
