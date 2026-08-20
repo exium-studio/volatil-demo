@@ -6,6 +6,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { useGeolocation } from "@/design-system/components/map/hooks/use-map-geolocation";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   IconCurrentLocation,
@@ -24,17 +25,22 @@ export const MapLocate = (props: StackProps) => {
 
   return (
     <MapOverlayContainer {...props}>
-      <IconButton
-        aria-label={isActive ? "Turn off my location" : "Show my location"}
-        size={"sm"}
-        loading={isLocating}
-        onClick={toggle}
-        color={isActive ? `${theme.colorPalette}.300` : undefined}
+      <Tooltip
+        content={isActive ? "Matikan Lokasi Saya" : "Lokasi Saya Saat Ini"}
+        positioning={{ placement: "top" }}
       >
-        <AppIcon
-          icon={isActive ? IconCurrentLocationFilled : IconCurrentLocation}
-        />
-      </IconButton>
+        <IconButton
+          aria-label={isActive ? "Turn off my location" : "Show my location"}
+          size={"sm"}
+          loading={isLocating}
+          onClick={toggle}
+          color={isActive ? `${theme.colorPalette}.300` : undefined}
+        >
+          <AppIcon
+            icon={isActive ? IconCurrentLocationFilled : IconCurrentLocation}
+          />
+        </IconButton>
+      </Tooltip>
     </MapOverlayContainer>
   );
 };

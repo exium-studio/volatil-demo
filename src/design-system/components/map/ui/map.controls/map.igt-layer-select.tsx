@@ -68,7 +68,7 @@ export const MapIgtLayerSelect = memo(() => {
         <MapOverlayContainer p={"2px"}>
           <Tooltip
             content={"Layer Spasial IGT"}
-            positioning={{ placement: "left" }}
+            positioning={{ placement: "bottom" }}
           >
             <Box position={"relative"}>
               <IconButton size={"xs"}>

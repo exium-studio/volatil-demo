@@ -6,6 +6,7 @@ import { ToggleTip } from "@/design-system/components/input/ui/toggle-tip";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { Navigation2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -34,7 +35,7 @@ export const MapCompass = (props: StackProps) => {
 
   return (
     <MapOverlayContainer {...props}>
-      <ToggleTip content={`${bearing}°`}>
+      <ToggleTip content={`Rotasi: ${bearing.toFixed(1)}°`} positioning={{ placement: "top" }}>
         <P
           w={"4ch"}
           mx={2}
@@ -46,14 +47,16 @@ export const MapCompass = (props: StackProps) => {
         </P>
       </ToggleTip>
 
-      <IconButton aria-label={"Reset north"} size={"sm"} onClick={resetNorth}>
-        <AppIcon
-          icon={Navigation2Icon}
-          fill={"red.400"}
-          stroke={"red.400"}
-          transform={`rotate(${-bearing}deg)`}
-        />
-      </IconButton>
+      <Tooltip content={"Reset Arah Utara"} positioning={{ placement: "top" }}>
+        <IconButton aria-label={"Reset north"} size={"sm"} onClick={resetNorth}>
+          <AppIcon
+            icon={Navigation2Icon}
+            fill={"red.400"}
+            stroke={"red.400"}
+            transform={`rotate(${-bearing}deg)`}
+          />
+        </IconButton>
+      </Tooltip>
     </MapOverlayContainer>
   );
 };

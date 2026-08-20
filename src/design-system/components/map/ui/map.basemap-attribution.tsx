@@ -7,6 +7,7 @@ import { getBasemapOption } from "@/design-system/components/map/constants/map.b
 import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.base-map.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { InfoIcon } from "lucide-react";
 
@@ -25,9 +26,11 @@ export const MapAttribution = () => {
         }}
       >
         <Popover.Trigger>
-          <IconButton aria-label={"Map attribution"} size={"sm"}>
-            <AppIcon icon={InfoIcon} />
-          </IconButton>
+          <Tooltip content={"Atribusi Peta"} positioning={{ placement: "bottom" }}>
+            <IconButton aria-label={"Map attribution"} size={"sm"}>
+              <AppIcon icon={InfoIcon} />
+            </IconButton>
+          </Tooltip>
         </Popover.Trigger>
 
         <Popover.Content w={"200px"}>

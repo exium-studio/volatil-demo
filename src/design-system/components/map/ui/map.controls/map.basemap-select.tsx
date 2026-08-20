@@ -57,7 +57,7 @@ export const MapBasemapSelect = () => {
         <MapOverlayContainer p={"2px"}>
           <Tooltip
             content={"Gaya Peta Base"}
-            positioning={{ placement: "left" }}
+            positioning={{ placement: "top" }}
           >
             <Center pos={"relative"} cursor={"pointer"}>
               <Image

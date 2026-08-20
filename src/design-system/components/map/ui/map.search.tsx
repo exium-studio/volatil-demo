@@ -13,6 +13,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { MapSearchResultItem } from "@/design-system/components/map/types/map.search.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -212,25 +213,31 @@ export const MapSearch = () => {
       position={"relative"}
     >
       {/* Search Input Container */}
-      <MapOverlayContainer
-        overflow={"clip"}
-        w={isOpened ? "full" : "36px"}
-        bg={"bg.body"}
-        transition={"200ms"}
+      <Tooltip
+        content={"Cari Lokasi"}
+        positioning={{ placement: "bottom" }}
+        disabled={isOpened}
       >
-        <SearchInput
-          value={inputValue}
-          onValueChange={setInputValue}
-          size={"sm"}
-          placeholder={t["common.search_location"]()}
-          w={"full"}
-          border={"none"}
-          outline={"none"}
-          bg={"transparent"}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
-      </MapOverlayContainer>
+        <MapOverlayContainer
+          overflow={"clip"}
+          w={isOpened ? "full" : "36px"}
+          bg={"bg.body"}
+          transition={"200ms"}
+        >
+          <SearchInput
+            value={inputValue}
+            onValueChange={setInputValue}
+            size={"sm"}
+            placeholder={t["common.search_location"]()}
+            w={"full"}
+            border={"none"}
+            outline={"none"}
+            bg={"transparent"}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+          />
+        </MapOverlayContainer>
+      </Tooltip>
 
       {/* Floating Results/Recents Container */}
       <Presence
