@@ -58,7 +58,9 @@ export const MapSearch = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [lastFetchedQuery, setLastFetchedQuery] = useState<string>("");
 
-  // Ref to hold blur timeout
+  // Refs
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Handle location selection (flying to coordinate and saving to recents)
@@ -113,6 +115,30 @@ export const MapSearch = () => {
       setIsFocused(false);
     }, 200);
   }
+
+  // Listen to pointerdown outside and window blur to ensure search closes
+  useEffect(() => {
+    function handlePointerDownOutside(event: PointerEvent | MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsFocused(false);
+      }
+    }
+
+    function handleWindowBlur() {
+      setIsFocused(false);
+    }
+
+    document.addEventListener("pointerdown", handlePointerDownOutside);
+    window.addEventListener("blur", handleWindowBlur);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDownOutside);
+      window.removeEventListener("blur", handleWindowBlur);
+    };
+  }, []);
 
   // Sync state if activeQuery changes externally (e.g. navigation)
   if (activeQuery !== prevActiveQuery) {
@@ -207,9 +233,10 @@ export const MapSearch = () => {
 
   return (
     <VStack
+      ref={containerRef}
       gap={2}
       w={"300px"}
-      pointerEvents={isOpened ? "auto" : "none"}
+      pointerEvents={"auto"}
       position={"relative"}
     >
       {/* Search Input Container */}
@@ -223,8 +250,23 @@ export const MapSearch = () => {
           w={isOpened ? "full" : "36px"}
           bg={"bg.body"}
           transition={"200ms"}
+          cursor={isOpened ? "text" : "pointer"}
+          onPointerDown={(e) => {
+            if (!isOpened) {
+              e.preventDefault();
+              setIsFocused(true);
+              setTimeout(() => {
+                inputRef.current?.focus();
+              }, 10);
+            }
+          }}
+          onClick={() => {
+            setIsFocused(true);
+            inputRef.current?.focus();
+          }}
         >
           <SearchInput
+            ref={inputRef}
             value={inputValue}
             onValueChange={setInputValue}
             size={"sm"}
