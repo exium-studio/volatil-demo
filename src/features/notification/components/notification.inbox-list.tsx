@@ -1,6 +1,9 @@
 // src/features/notification/components/notification.inbox-list.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -20,8 +23,8 @@ import {
   useMarkInboxAsRead,
 } from "@/features/notification/hooks/use-inbox.query";
 import type {
+  InboxCardItemProps,
   InboxCategory,
-  InboxItem,
 } from "@/features/notification/types/inbox.type";
 import { t } from "@/shared/libs/i18n";
 import {
@@ -37,6 +40,7 @@ import {
   InfoIcon,
   Trash2Icon,
   UserIcon,
+  XIcon,
 } from "lucide-react";
 import { memo, useMemo } from "react";
 
@@ -59,7 +63,7 @@ export const NotificationInboxList = memo(() => {
   const {
     items,
     isLoading,
-    total,
+    // total,
     unreadCount = 0,
     hasNextPage,
     isFetchingNextPage,
@@ -98,13 +102,7 @@ export const NotificationInboxList = memo(() => {
       p={PADDING.md}
     >
       {/* Inbox Actions Bar */}
-      <HStack justify={"space-between"} align={"center"} pb={1}>
-        <HStack gap={2}>
-          <P fontSize={"xs"} color={"fg.muted"}>
-            {`Menampilkan ${items.length} dari ${total} pesan`}
-          </P>
-        </HStack>
-
+      <HStack justify={"end"} align={"center"} mb={SPACING.sm}>
         <HStack gap={2}>
           {unreadCount > 0 && (
             <Button
@@ -171,12 +169,6 @@ export const NotificationInboxList = memo(() => {
   );
 });
 
-type InboxCardItemProps = {
-  item: InboxItem;
-  onMarkAsRead: (id: string) => void;
-  onDelete: (id: string) => void;
-};
-
 const InboxCardItem = memo((props: InboxCardItemProps) => {
   // Props
   const { item, onMarkAsRead, onDelete } = props;
@@ -193,11 +185,12 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
     <HStack
       align={"start"}
       justify={"space-between"}
-      p={PADDING.md}
+      p={PADDING.sm}
       gap={SPACING.md}
       bg={item.isRead ? "bg.body" : "bg.subtle"}
       borderWidth={"1px"}
-      borderColor={item.isRead ? "border.subtle" : "border.default"}
+      borderColor={"border.subtle"}
+      shadow={"sm"}
       rounded={theme.radii.container}
     >
       <HStack align={"start"} gap={SPACING.md} flex={1}>
@@ -231,8 +224,8 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
               </Badge>
             </HStack>
 
-            <HStack gap={2} align={"center"}>
-              <P fontSize={"xs"} color={"fg.subtle"} whiteSpace={"nowrap"}>
+            <HStack gap={SPACING.md} align={"center"}>
+              <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
                 {formatUtcDateTime(item.createdAt, preferredTimezone)}
               </P>
 
@@ -243,30 +236,29 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
                 colorPalette={"red"}
                 onConfirm={() => onDelete(item.id)}
               >
-                <Button
+                <IconButton
                   size={"2xs"}
-                  variant={"ghost"}
-                  colorPalette={"red"}
+                  variant={"subtle"}
                   aria-label={"Hapus pesan"}
+                  rounded={"full"}
                 >
-                  <AppIcon icon={Trash2Icon} size={"xs"} />
-                </Button>
+                  <AppIcon icon={XIcon} size={"sm"} />
+                </IconButton>
               </ConfirmationTrigger>
             </HStack>
           </HStack>
 
-          <VStack align={"start"} gap={1} flex={1}>
-            <P color={"fg.muted"} fontSize={"sm"} lineHeight={"tall"}>
+          <VStack align={"start"} gap={SPACING.sm} flex={1}>
+            <P color={"fg.muted"} lineHeight={"tall"}>
               {item.message}
             </P>
           </VStack>
 
           {!item.isRead && (
-            <HStack justify={"flex-end"} pt={1}>
+            <HStack justify={"flex-end"}>
               <Button
-                size={"2xs"}
+                size={"xs"}
                 variant={"ghost"}
-                colorPalette={"blue"}
                 onClick={() => onMarkAsRead(item.id)}
               >
                 <AppIcon icon={CheckCheckIcon} size={"xs"} />

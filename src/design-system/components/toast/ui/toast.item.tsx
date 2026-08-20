@@ -26,8 +26,11 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import {
+  formatUtcDateTime,
+  getPreferredUserTimezone,
+} from "@/shared/utils/formatter/date.formatter";
 import { tintDark } from "@/shared/utils/style/color";
-import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import {
   AlertCircleIcon,
   CheckCircle2Icon,
@@ -35,7 +38,7 @@ import {
   InfoIcon,
   XCircleIcon,
 } from "lucide-react";
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 
 export const TOAST_VARIANT_MAP: ToastVariantMap = {
   success: {
@@ -102,6 +105,7 @@ export const ToastItem = memo(function ToastItem(
   const hasExpandableContent = Boolean(
     record.description || (record.actions && !isEmptyArray(record.actions)),
   );
+  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Collapse item when stack is collapsed
   useFirstMountEffect(
@@ -132,7 +136,7 @@ export const ToastItem = memo(function ToastItem(
       border={"1px solid"}
       borderColor={"border.subtle"}
       rounded={theme.radii.container}
-      shadow={"md"}
+      shadow={"sm"}
       opacity={record.status === "visible" ? 1 : 0}
       tabIndex={0}
       cursor={!stackExpanded || hasExpandableContent ? "pointer" : "auto"}
@@ -208,7 +212,7 @@ export const ToastItem = memo(function ToastItem(
                 mr={1}
                 alignSelf={"center"}
               >
-                {formatDateTime(record.createdAt)}
+                {formatUtcDateTime(record.createdAt, preferredTimezone)}
               </P>
             ) : null}
 

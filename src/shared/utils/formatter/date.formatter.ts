@@ -74,4 +74,3 @@ export const formatUtcDateTime = (
     return createFormatter(DEFAULT_TIMEZONE).format(date);
   }
 };
-

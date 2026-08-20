@@ -39,8 +39,8 @@ export const SPACING = {
 } as const;
 
 export const PADDING = {
-  xs: "4px",
-  sm: "8px",
+  xs: "8px",
+  sm: "12px",
   md: "16px",
   lg: "22px",
   xl: "28px",

@@ -258,7 +258,7 @@ const NotificationToastHistoryContent = memo(
           />
         ) : (
           <>
-            <HStack justify={"flex-end"} pb={2}>
+            <HStack justify={"flex-end"} mb={SPACING.sm}>
               <ConfirmationTrigger
                 title={"Hapus Semua Riwayat Notifikasi?"}
                 description={

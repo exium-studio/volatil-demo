@@ -2,6 +2,12 @@
 
 export type InboxCategory = "transaksi" | "sistem" | "bantuan" | "akun";
 
+export type InboxCardItemProps = {
+  item: InboxItem;
+  onMarkAsRead: (id: string) => void;
+  onDelete: (id: string) => void;
+};
+
 export type InboxItem = {
   id: string;
   title: string;
