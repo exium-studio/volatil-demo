@@ -110,7 +110,7 @@ const Sidebar = () => {
         overflowX={"clip"}
         h={"full"}
         py={2}
-        bg={"bg.canvas"}
+        bg={"bg.body"}
         borderRight={"1px solid"}
         borderColor={"bg.canvas"}
       >
