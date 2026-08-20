@@ -15,13 +15,14 @@ import type { MapSearchResultItem } from "@/design-system/components/map/types/m
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { useClickOutside } from "@/design-system/hooks/use-click-outside";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { Box, Presence } from "@chakra-ui/react";
 import { Clock, MapPin, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const SEARCH_QUERY_KEY = "map-search";
 
@@ -32,13 +33,13 @@ export const MapSearch = () => {
   // Contexts
   const map = useMapInstanceStore((state) => state.map);
 
-  // hooks
+  // Hooks
   const { queryValue, setQueryValue } = useSearchParam(SEARCH_QUERY_KEY);
   const activeQuery = queryValue || "";
 
   // States
   const [inputValue, setInputValue] = useState<string>(activeQuery);
-  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [debouncedQuery, setDebouncedQuery] = useState<string>(activeQuery);
   const [prevActiveQuery, setPrevActiveQuery] = useState<string>(activeQuery);
 
@@ -61,11 +62,20 @@ export const MapSearch = () => {
   // Refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Handle location selection (flying to coordinate and saving to recents)
+  // Click outside to close dropdown
+  const handleClickOutside = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  useClickOutside(containerRef, handleClickOutside, { enabled: isOpen });
+
+  // Handle location selection (flying to coordinate, setting input value, saving to recents)
   function handleSelectLocation(item: MapSearchResultItem) {
     if (!map) return;
+
+    // Put selected location name into search input
+    setInputValue(item.display_name);
 
     // Fly to coordinates
     map.flyTo({
@@ -86,8 +96,8 @@ export const MapSearch = () => {
       console.error("Failed to save recent searches", e);
     }
 
-    // Blur search input and close lists
-    setIsFocused(false);
+    // Close dropdown
+    setIsOpen(false);
   }
 
   // Handle removing a recent search item
@@ -102,43 +112,10 @@ export const MapSearch = () => {
     }
   }
 
-  // Input Focus/Blur Handlers
+  // Input Focus/Click Handlers
   function handleFocus() {
-    if (blurTimeoutRef.current) {
-      clearTimeout(blurTimeoutRef.current);
-    }
-    setIsFocused(true);
+    setIsOpen(true);
   }
-  function handleBlur() {
-    // Small delay to allow click events inside the dropdown list to register first
-    blurTimeoutRef.current = setTimeout(() => {
-      setIsFocused(false);
-    }, 200);
-  }
-
-  // Listen to pointerdown outside and window blur to ensure search closes
-  useEffect(() => {
-    function handlePointerDownOutside(event: PointerEvent | MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsFocused(false);
-      }
-    }
-
-    function handleWindowBlur() {
-      setIsFocused(false);
-    }
-
-    document.addEventListener("pointerdown", handlePointerDownOutside);
-    window.addEventListener("blur", handleWindowBlur);
-
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDownOutside);
-      window.removeEventListener("blur", handleWindowBlur);
-    };
-  }, []);
 
   // Sync state if activeQuery changes externally (e.g. navigation)
   if (activeQuery !== prevActiveQuery) {
@@ -213,18 +190,9 @@ export const MapSearch = () => {
     };
   }, [debouncedQuery]);
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (blurTimeoutRef.current) {
-        clearTimeout(blurTimeoutRef.current);
-      }
-    };
-  }, []);
-
   // Derived Values
   const hasInput = !!inputValue.trim();
-  const isOpened = isFocused || hasInput;
+  const isOpened = isOpen || hasInput;
   const hasDebouncedQuery = !!debouncedQuery.trim();
   const showRecent = !hasDebouncedQuery;
   const showResults = hasDebouncedQuery;
@@ -249,19 +217,12 @@ export const MapSearch = () => {
           overflow={"clip"}
           w={isOpened ? "full" : "36px"}
           bg={"bg.body"}
-          transition={"200ms"}
+          transition={"width 200ms ease"}
           cursor={isOpened ? "text" : "pointer"}
-          onPointerDown={(e) => {
-            if (!isOpened) {
-              e.preventDefault();
-              setIsFocused(true);
-              setTimeout(() => {
-                inputRef.current?.focus();
-              }, 10);
-            }
-          }}
           onClick={() => {
-            setIsFocused(true);
+            if (!isOpen) {
+              setIsOpen(true);
+            }
             inputRef.current?.focus();
           }}
         >
@@ -276,14 +237,13 @@ export const MapSearch = () => {
             outline={"none"}
             bg={"transparent"}
             onFocus={handleFocus}
-            onBlur={handleBlur}
           />
         </MapOverlayContainer>
       </Tooltip>
 
       {/* Floating Results/Recents Container */}
       <Presence
-        present={isFocused}
+        present={isOpen}
         animationName={{ _open: "fade-in", _closed: "fade-out" }}
         animationDuration={"moderate"}
       >
