@@ -122,7 +122,15 @@ export const MitraDataRequestPage = () => {
             </Tabs.List>
 
             <Suspense
-              fallback={<Skeleton h={"full"} w={"full"} flex={1} rounded={0} />}
+              fallback={
+                <Skeleton
+                  h={"full"}
+                  w={"full"}
+                  flex={1}
+                  p={PADDING.md}
+                  rounded={0}
+                />
+              }
             >
               {REQUEST_METHOD_OPTIONS.map((method) => {
                 const TabsContent = method.content;
