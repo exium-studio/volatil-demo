@@ -11,7 +11,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import type {
   DataStatus,
@@ -56,7 +56,7 @@ export const MitraHomeLastTransaction = (
 ) => {
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body pb={PADDING.md}>
+      <Container.Body pb={SPACING.md}>
         <MitraHomeLastTransactionHeader />
 
         <Separator borderColor={"bg.canvas"} />
@@ -74,7 +74,7 @@ const MitraHomeLastTransactionHeader = () => {
       align={"center"}
       justify={"space-between"}
       gap={SPACING.md}
-      p={PADDING.md}
+      p={SPACING.md}
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>

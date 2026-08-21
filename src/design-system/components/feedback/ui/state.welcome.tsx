@@ -4,7 +4,7 @@ import type { WelcomeStateProps } from "@/design-system/components/feedback/type
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { t } from "@/shared/libs/i18n";
 
 export const WelcomeState = (props: WelcomeStateProps) => {
@@ -20,7 +20,7 @@ export const WelcomeState = (props: WelcomeStateProps) => {
       align={"center"}
       justify={"center"}
       gap={SPACING.xs}
-      p={PADDING.md}
+      p={SPACING.md}
       {...restProps}
     >
       <VStack align={"center"} gap={SPACING.xs}>

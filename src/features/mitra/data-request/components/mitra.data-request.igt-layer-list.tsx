@@ -19,7 +19,7 @@ import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
@@ -289,7 +289,7 @@ export const MitraDataRequestIgtLayerList = memo(
           justify={"space-between"}
           gap={SPACING.sm}
           w={"full"}
-          p={PADDING.md}
+          p={SPACING.md}
           bg={"bg.body"}
         >
           <HStack gap={SPACING.sm}>
@@ -326,7 +326,7 @@ export const MitraDataRequestIgtLayerList = memo(
           overflow={"clip"}
           roundedBottom={theme.radii.container}
         >
-          {isLoadingLayers && <Skeleton flex={1} p={PADDING.md} rounded={0} />}
+          {isLoadingLayers && <Skeleton flex={1} p={SPACING.md} rounded={0} />}
 
           {!isLoadingLayers && (
             <DataListTable.Root
@@ -356,8 +356,8 @@ export const MitraDataRequestIgtLayerList = memo(
             justify={"space-between"}
             gap={SPACING.sm}
             w={"full"}
-            p={PADDING.md}
-            mt={PADDING.sm}
+            p={SPACING.md}
+            mt={SPACING.sm}
             rounded={theme.radii.container}
             bg={"bg.body"}
           >

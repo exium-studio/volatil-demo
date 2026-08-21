@@ -10,7 +10,7 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -22,7 +22,7 @@ export const InternalHomeServiceRate = (
 ) => {
   return (
     <Container.Root flex={"1 1 350px"} withContext={true} {...props}>
-      <Container.Body gap={4} pt={PADDING.md}>
+      <Container.Body gap={4} pt={SPACING.md}>
         <InternalHomeServiceRateHeader />
 
         <VStack flex={1}>
@@ -42,7 +42,7 @@ const InternalHomeServiceRateHeader = () => {
       align={"center"}
       justify={"space-between"}
       gap={SPACING.md}
-      px={PADDING.md}
+      px={SPACING.md}
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
@@ -77,7 +77,7 @@ const InternalHomeServiceRateStats = () => {
           <StatGrid.Header>
             <StatGrid.Label>{rate.title}</StatGrid.Label>
 
-            <Circle bg={`${rate.colorPalette}.subtle`} p={PADDING.xs}>
+            <Circle bg={`${rate.colorPalette}.subtle`} p={SPACING.xs}>
               <AppIcon icon={rate.icon} color={`${rate.colorPalette}.fg`} />
             </Circle>
           </StatGrid.Header>

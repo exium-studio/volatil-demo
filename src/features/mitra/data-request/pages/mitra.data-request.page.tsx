@@ -8,7 +8,7 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
-import { DIMENSIONS, PADDING } from "@/design-system/constants/styles";
+import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
@@ -77,7 +77,7 @@ export const MitraDataRequestPage = () => {
       : "catalog";
 
   return (
-    <PanelContentContainer overflowY={"auto"} gap={PADDING.sm} p={PADDING.sm}>
+    <PanelContentContainer overflowY={"auto"} gap={SPACING.sm} p={SPACING.sm}>
       <Container.Root flex={1} overflowY={"auto"}>
         <Container.Body flex={1} overflowY={"auto"}>
           <HStack
@@ -127,7 +127,7 @@ export const MitraDataRequestPage = () => {
                   h={"full"}
                   w={"full"}
                   flex={1}
-                  p={PADDING.md}
+                  p={SPACING.md}
                   rounded={0}
                 />
               }

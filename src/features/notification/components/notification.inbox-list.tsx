@@ -13,7 +13,7 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   useClearAllInbox,
@@ -99,7 +99,7 @@ export const NotificationInboxList = memo(() => {
       align={"stretch"}
       gap={SPACING.md}
       overflowY={"auto"}
-      p={PADDING.md}
+      p={SPACING.md}
     >
       {/* Inbox Actions Bar */}
       <HStack justify={"end"} align={"center"} mb={SPACING.sm}>
@@ -183,7 +183,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
     <HStack
       align={"start"}
       justify={"space-between"}
-      p={PADDING.sm}
+      p={SPACING.sm}
       gap={SPACING.md}
       bg={item.isRead ? "bg.body" : "bg.subtle"}
       borderWidth={"1px"}

@@ -8,7 +8,7 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { DIMENSIONS, PADDING, SPACING } from "@/design-system/constants/styles";
+import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { NotificationInboxList } from "@/features/notification/components/notification.inbox-list";
 import { NotificationToastHistoryList } from "@/features/notification/components/notification.toast-list";
@@ -66,7 +66,7 @@ export const NotificationPage = () => {
   );
 
   return (
-    <PanelContentContainer overflowY={"auto"} gap={PADDING.sm} p={PADDING.sm}>
+    <PanelContentContainer overflowY={"auto"} gap={SPACING.sm} p={SPACING.sm}>
       <Container.Root flex={1} overflowY={"auto"} withContext={true}>
         <Container.Body flex={1} overflowY={"auto"}>
           <NotificationHeader

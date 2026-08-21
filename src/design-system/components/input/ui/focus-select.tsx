@@ -16,7 +16,7 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from "lucide-react";
@@ -215,7 +215,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         <Modal.Body p={0}>
           {/* Always render SearchInput when not fetching */}
           {!isFetching && (
-            <VStack w={"full"} px={PADDING.md} pt={"2px"} mb={SPACING.sm}>
+            <VStack w={"full"} px={SPACING.md} pt={"2px"} mb={SPACING.sm}>
               <SearchInput
                 placeholder={t["action.search"]()}
                 onValueChange={setSearchQuery}
@@ -227,7 +227,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
           {/* Always render Custom Option at top if customOption prop is true */}
           {customOption && !isFetching && (
-            <VStack w={"full"} px={PADDING.md} mb={SPACING.sm}>
+            <VStack w={"full"} px={SPACING.md} mb={SPACING.sm}>
               <Button
                 variant={
                   isCustomValueSelected && currentValue === searchQuery.trim()
@@ -235,7 +235,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                     : "outline"
                 }
                 w={"full"}
-                py={PADDING.sm}
+                py={SPACING.sm}
                 px={3}
                 justifyContent={"space-between"}
                 alignItems={"center"}
@@ -267,8 +267,8 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           <VScrollContainer
             w={"full"}
             maxH={"300px"}
-            px={PADDING.md}
-            pb={PADDING.md}
+            px={SPACING.md}
+            pb={SPACING.md}
           >
             {isFetching ? (
               <VStack gap={SPACING.sm} w={"full"}>
@@ -293,7 +293,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                       variant={isSelected ? "subtle" : "ghost"}
                       w={"full"}
                       h={"auto"}
-                      py={PADDING.sm}
+                      py={SPACING.sm}
                       px={3}
                       justifyContent={"space-between"}
                       alignItems={"center"}

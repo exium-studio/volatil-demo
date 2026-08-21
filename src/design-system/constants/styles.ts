@@ -30,20 +30,13 @@ export const ICONS = {
 } as const;
 
 export const SPACING = {
+  "2xs": "2px",
   xs: "4px",
   sm: "8px",
   md: "12px",
-  lg: "24px",
-  xl: "32px",
+  lg: "16px",
+  xl: "24px",
   "2xl": "32px",
-} as const;
-
-export const PADDING = {
-  xs: "8px",
-  sm: "12px",
-  md: "16px",
-  lg: "22px",
-  xl: "28px",
 } as const;
 
 export const BACKDROP_FILTER = {

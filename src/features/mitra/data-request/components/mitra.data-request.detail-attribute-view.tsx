@@ -5,7 +5,7 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import { PADDING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
@@ -86,7 +86,7 @@ export const MitraDataRequestDetailAttributeView = memo(
         />
 
         {isInitialLoading && (
-          <Skeleton h={"full"} w={"full"} flex={1} rounded={0} p={PADDING.md} />
+          <Skeleton h={"full"} w={"full"} flex={1} rounded={0} p={SPACING.md} />
         )}
 
         {hasNoFeatures && (
@@ -94,7 +94,7 @@ export const MitraDataRequestDetailAttributeView = memo(
             flex={1}
             align={"center"}
             justify={"center"}
-            p={PADDING.md}
+            p={SPACING.md}
             bg={"bg.body"}
           >
             <NoResultState query={layer?.wfs?.wfsTypeName || ""} />
@@ -104,7 +104,7 @@ export const MitraDataRequestDetailAttributeView = memo(
         {hasFeatures && (
           <VStack
             flex={1}
-            gap={PADDING.sm}
+            gap={SPACING.sm}
             overflow={"hidden"}
             h={"full"}
             w={"full"}

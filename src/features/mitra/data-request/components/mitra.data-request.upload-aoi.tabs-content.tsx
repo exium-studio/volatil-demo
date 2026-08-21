@@ -29,7 +29,7 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
 import {
@@ -279,7 +279,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
         {...restProps}
       >
         {!hasLayers && (
-          <Box flex={1} p={PADDING.md} display={"flex"} flexDir={"column"}>
+          <Box flex={1} p={SPACING.md} display={"flex"} flexDir={"column"}>
             <FileInput
               variant={"dropzone"}
               label={
@@ -554,7 +554,7 @@ const MitraDataRequestUploadAoiAttributeList = memo(
             wrap={"wrap"}
             justify={"space-between"}
             gap={SPACING.sm}
-            p={PADDING.md}
+            p={SPACING.md}
             bg={"bg.body"}
             w={"full"}
           >

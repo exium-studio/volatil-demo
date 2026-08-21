@@ -9,7 +9,7 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import type {
   DataSummaryStatusConfig,
   InternalHomeDataSummaryChartsProps,
@@ -37,7 +37,7 @@ export const InternalHomeDataSummary = (
 
   return (
     <Container.Root flex={"1 1 550px"} withContext={true} {...props}>
-      <Container.Body gap={4} py={PADDING.md}>
+      <Container.Body gap={4} py={SPACING.md}>
         <InternalHomeDataSummaryHeader
           period={period}
           onPeriodChange={setPeriod}
@@ -61,7 +61,7 @@ const InternalHomeDataSummaryHeader = (
       align={"center"}
       justify={"space-between"}
       gap={SPACING.md}
-      px={PADDING.md}
+      px={SPACING.md}
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
@@ -126,7 +126,7 @@ const InternalHomeDataSummaryCharts = (
   const { dataSummary } = useInternalHomeData(period);
 
   return (
-    <SimpleGrid columns={1} gap={PADDING.md} px={PADDING.md}>
+    <SimpleGrid columns={1} gap={SPACING.md} px={SPACING.md}>
       {/* IGT Berbasis Bidang */}
       <VStack align={"start"} gap={SPACING.md}>
         <P color={"fg.muted"}>{"IGT Berbasis Bidang"}</P>

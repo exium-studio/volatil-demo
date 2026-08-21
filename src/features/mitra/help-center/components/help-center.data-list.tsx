@@ -21,7 +21,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { CreateHelpCenterTrigger } from "@/features/mitra/help-center/components/help-center.create";
 import { useHelpCenterTicketsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type {
@@ -266,7 +266,7 @@ export const HelpCenterDataList = () => {
   return (
     <Container.Root withContext={true}>
       <Container.Body>
-        <VStack align={"start"} gap={1} p={PADDING.md}>
+        <VStack align={"start"} gap={1} p={SPACING.md}>
           <Heading>{"Daftar Laporan Kendala"}</Heading>
 
           <P fontSize={"sm"} color={"fg.subtle"}>
@@ -281,7 +281,7 @@ export const HelpCenterDataList = () => {
           align={"center"}
           justify={"space-between"}
           gap={SPACING.sm}
-          p={PADDING.md}
+          p={SPACING.md}
         >
           <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
             <SearchInput
@@ -324,11 +324,11 @@ export const HelpCenterDataList = () => {
         {/* Table & Footer Content */}
         <VStack position={"relative"} w={"full"} bg={"bg.canvas"}>
           {isLoading && (
-            <Skeleton w={"full"} h={"300px"} p={PADDING.md} roundedTop={0} />
+            <Skeleton w={"full"} h={"300px"} p={SPACING.md} roundedTop={0} />
           )}
 
           {!isLoading && isEmptyArray(tickets) && (
-            <Box py={PADDING.xl} w={"full"} bg={"bg.body"}>
+            <Box py={SPACING.xl} w={"full"} bg={"bg.body"}>
               <NoDataState
                 icon={InboxIcon}
                 title={"Belum Ada Laporan"}

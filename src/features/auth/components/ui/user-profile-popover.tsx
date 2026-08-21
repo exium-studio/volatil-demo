@@ -10,7 +10,7 @@ import { Avatar } from "@/design-system/components/media/ui/avatar";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
@@ -51,7 +51,7 @@ export const UserProfilePopoverTrigger = (
       <Popover.Content minW={"240px"} zIndex={"dropdown"}>
         <Popover.Body p={0}>
           <VStack>
-            <VStack gap={SPACING.md} align={"center"} p={PADDING.md}>
+            <VStack gap={SPACING.md} align={"center"} p={SPACING.md}>
               <Avatar
                 name={displayName || displayEmail || "User"}
                 size={"2xl"}
@@ -95,11 +95,11 @@ export const UserProfilePopoverTrigger = (
 
             <Separator />
 
-            <VStack gap={SPACING.xs} p={PADDING.sm}>
+            <VStack gap={SPACING.xs} p={SPACING.sm}>
               {/* Dark Mode Toggle */}
               <Button
                 justifyContent={"space-between"}
-                px={PADDING.sm}
+                px={SPACING.sm}
                 onClick={toggleColorMode}
               >
                 <HStack gap={SPACING.sm} align={"center"}>
@@ -133,7 +133,7 @@ export const UserProfilePopoverTrigger = (
                   colorPalette={"red"}
                   size={"sm"}
                   w={"full"}
-                  px={PADDING.sm}
+                  px={SPACING.sm}
                   loading={signoutMutation.isPending}
                   justifyContent={"start"}
                 >

@@ -4,7 +4,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useHelpCenterStatisticsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type { HelpCenterStatistics } from "@/features/mitra/help-center/types/help-center.type";
 import { CheckCircle2Icon, ClockIcon, FileTextIcon } from "lucide-react";
@@ -52,7 +52,7 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
   ];
 
   return (
-    <HStack wrap={"wrap"} gap={SPACING.md} w={"full"} p={PADDING.md}>
+    <HStack wrap={"wrap"} gap={SPACING.md} w={"full"} p={SPACING.md}>
       {summaryItems.map((item) => {
         return (
           <Box key={item.id} flex={"1 1 240px"} bg={"bg.body"}>

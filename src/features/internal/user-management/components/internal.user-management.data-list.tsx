@@ -18,7 +18,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import {
   useUpdateUserStatus,
   useUserManagementUsersQuery,
@@ -202,7 +202,7 @@ export const InternalUserManagementDataList = () => {
           align={"center"}
           justify={"space-between"}
           gap={SPACING.md}
-          p={PADDING.md}
+          p={SPACING.md}
         >
           <VStack gap={1} align={"start"}>
             <P fontSize={"lg"} fontWeight={"semibold"}>
@@ -257,7 +257,7 @@ export const InternalUserManagementDataList = () => {
         {/* Table & Footer Content */}
         <VStack bg={"bg.canvas"} w={"full"} position={"relative"} gap={0}>
           {isLoading ? (
-            <Skeleton h={"280px"} w={"full"} p={PADDING.md} roundedTop={0} />
+            <Skeleton h={"280px"} w={"full"} p={SPACING.md} roundedTop={0} />
           ) : (
             <Box w={"full"} position={"relative"}>
               <DataListTable.Root

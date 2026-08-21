@@ -8,7 +8,7 @@ import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { MitraDataRequestAddToCartButtonsProps } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
@@ -205,7 +205,7 @@ export const MitraDataRequestAddToCartButtons = (
   return (
     <VStack
       gap={SPACING.md}
-      p={PADDING.md}
+      p={SPACING.md}
       rounded={theme.radii.container}
       bg={"bg.body"}
       {...restProps}

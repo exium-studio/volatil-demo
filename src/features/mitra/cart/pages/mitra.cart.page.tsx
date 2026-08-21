@@ -12,7 +12,7 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
-import { PADDING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/mitra/cart/components/mitra.cart.data-list";
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
 import {
@@ -42,14 +42,14 @@ const MitraCartContent = () => {
 
   return (
     <PanelContentContainer
-      gap={PADDING.sm}
-      p={PADDING.sm}
+      gap={SPACING.sm}
+      p={SPACING.sm}
       overflowY={isSmContainer ? "auto" : undefined}
     >
       <HStack
         flex={1}
         flexDir={isSmContainer ? "column-reverse" : "row"}
-        gap={PADDING.sm}
+        gap={SPACING.sm}
         minH={isSmContainer ? undefined : 0}
         w={"full"}
       >

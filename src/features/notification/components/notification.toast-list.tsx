@@ -7,7 +7,7 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { NotificationGroupStackCard } from "@/features/notification/components/notification.item";
 import type { NotificationToastHistoryContentProps } from "@/features/notification/types/notification.type";
 import { t } from "@/shared/libs/i18n";
@@ -33,7 +33,7 @@ export const NotificationToastHistoryList = memo(
           flex={1}
           align={"stretch"}
           gap={SPACING.md}
-          p={PADDING.md}
+          p={SPACING.md}
           overflowY={"auto"}
         >
           <Center flex={1} py={12}>
@@ -49,7 +49,7 @@ export const NotificationToastHistoryList = memo(
           flex={1}
           align={"stretch"}
           gap={SPACING.md}
-          p={PADDING.md}
+          p={SPACING.md}
           overflowY={"auto"}
         >
           <NoDataState
@@ -68,7 +68,7 @@ export const NotificationToastHistoryList = memo(
         flex={1}
         align={"stretch"}
         gap={SPACING.md}
-        p={PADDING.md}
+        p={SPACING.md}
         overflowY={"auto"}
       >
         <HStack justify={"flex-end"} mb={SPACING.sm}>

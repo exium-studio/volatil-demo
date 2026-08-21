@@ -16,7 +16,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { IgtFilterTrigger } from "@/features/shared/components/igt-filter";
 import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
@@ -269,14 +269,14 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
 
       <VStack
         flex={1}
-        gap={PADDING.sm}
+        gap={SPACING.sm}
         overflowY={"auto"}
         bg={"bg.canvas"}
         w={"full"}
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton p={PADDING.md} rounded={0} />
+          <Skeleton p={SPACING.md} rounded={0} />
         ) : (
           <Box w={"full"} position={"relative"} overflowY={"auto"}>
             <DataListTable.Root

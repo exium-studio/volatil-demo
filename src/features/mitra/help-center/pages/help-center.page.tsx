@@ -5,13 +5,13 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { PADDING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { HelpCenterDataList } from "@/features/mitra/help-center/components/help-center.data-list";
 import { HelpCenterSummary } from "@/features/mitra/help-center/components/help-center.summary";
 
 export const HelpCenterPage = () => {
   return (
-    <PanelContentContainer overflowY={"auto"} gap={PADDING.sm} p={PADDING.sm}>
+    <PanelContentContainer overflowY={"auto"} gap={SPACING.sm} p={SPACING.sm}>
       <Container.Root withContext={true}>
         <Container.Body p={0}>
           <HeaderContainer>

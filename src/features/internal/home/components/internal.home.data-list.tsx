@@ -19,7 +19,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import type {
   InternalHomeIgtDataListItem,
   InternalHomeIgtDataListProps,
@@ -53,7 +53,7 @@ export const InternalHomeIgtDataList = (
 ) => {
   return (
     <Container.Root flex={"1 1 100%"} withContext={true} {...props}>
-      <Container.Body pb={PADDING.md}>
+      <Container.Body pb={SPACING.md}>
         <InternalHomeIgtDataListHeader />
 
         <Separator borderColor={"bg.canvas"} />
@@ -71,7 +71,7 @@ const InternalHomeIgtDataListHeader = () => {
       align={"center"}
       justify={"space-between"}
       gap={SPACING.md}
-      p={PADDING.md}
+      p={SPACING.md}
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>

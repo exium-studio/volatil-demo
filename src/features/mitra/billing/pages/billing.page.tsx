@@ -13,14 +13,14 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { List } from "@/design-system/components/typography/ui/list";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
 
 export const BillingPage = () => {
   return (
-    <PanelContentContainer gap={PADDING.sm} p={PADDING.sm}>
+    <PanelContentContainer gap={SPACING.sm} p={SPACING.sm}>
       <BillingPageBillingCode />
 
       <BillingPagePaymentMethods />
@@ -43,7 +43,7 @@ const BillingPageBillingCode = () => {
           align={"center"}
           justify={"space-between"}
           gap={SPACING.md}
-          p={PADDING.md}
+          p={SPACING.md}
         >
           <VStack gap={1}>
             <P>Kode Billing </P>
@@ -152,7 +152,7 @@ const BillingPagePaymentMethods = () => {
     <Container.Root>
       <Container.Body>
         <VStack>
-          <Box p={PADDING.md}>
+          <Box p={SPACING.md}>
             <Heading>Panduan Metode Pembayaran</Heading>
           </Box>
 
@@ -164,7 +164,7 @@ const BillingPagePaymentMethods = () => {
                 <Accordion.Item
                   key={method.key}
                   value={method.key}
-                  px={PADDING.md}
+                  px={SPACING.md}
                   py={2}
                 >
                   <Accordion.ItemTrigger>

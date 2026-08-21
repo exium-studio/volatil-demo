@@ -13,7 +13,7 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import type {
   HomePeriod,
   MitraHomeDataSummaryChartsProps,
@@ -39,7 +39,7 @@ export const MitraHomeDataSummary = (props: MitraHomeDataSummaryProps) => {
 
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body gap={4} py={PADDING.md}>
+      <Container.Body gap={4} py={SPACING.md}>
         <MitraHomeDataSummaryHeader
           period={period}
           onPeriodChange={setPeriod}
@@ -63,7 +63,7 @@ const MitraHomeDataSummaryHeader = (props: MitraHomeDataSummaryHeaderProps) => {
       align={"center"}
       justify={"space-between"}
       gap={SPACING.md}
-      px={PADDING.md}
+      px={SPACING.md}
     >
       <VStack gap={1}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
@@ -145,8 +145,8 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
   return (
     <SimpleGrid
       columns={isSmContainer ? 1 : 2}
-      gap={PADDING.md}
-      px={PADDING.md}
+      gap={SPACING.md}
+      px={SPACING.md}
     >
       {/* IGT Berbasis Bidang */}
       <VStack align={"start"} gap={SPACING.md}>

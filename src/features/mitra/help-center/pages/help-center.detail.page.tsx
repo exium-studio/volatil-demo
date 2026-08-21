@@ -13,7 +13,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { HelpCenterAttachmentItem } from "@/features/mitra/help-center/components/help-center.attachment-item";
 import { HelpCenterModalReplyTrigger } from "@/features/mitra/help-center/components/help-center.modal.reply";
@@ -83,7 +83,7 @@ export const HelpCenterDetailPage = () => {
 
   if (isLoading) {
     return (
-      <PanelContentContainer gap={PADDING.sm} p={PADDING.sm}>
+      <PanelContentContainer gap={SPACING.sm} p={SPACING.sm}>
         <Skeleton h={"80px"} w={"full"} />
         <Skeleton h={"260px"} w={"full"} />
         <Skeleton h={"300px"} w={"full"} />
@@ -93,9 +93,9 @@ export const HelpCenterDetailPage = () => {
 
   if (!ticket) {
     return (
-      <PanelContentContainer gap={PADDING.sm} p={PADDING.sm}>
+      <PanelContentContainer gap={SPACING.sm} p={SPACING.sm}>
         <Container.Root withContext={true}>
-          <Container.Body p={PADDING.lg} align={"center"}>
+          <Container.Body p={SPACING.lg} align={"center"}>
             <P fontSize={"lg"} fontWeight={"bold"} mb={2}>
               {"Laporan Tidak Ditemukan"}
             </P>
@@ -118,8 +118,8 @@ export const HelpCenterDetailPage = () => {
   return (
     <PanelContentContainer
       overflowY={"auto"}
-      gap={PADDING.sm}
-      p={PADDING.sm}
+      gap={SPACING.sm}
+      p={SPACING.sm}
       position={"relative"}
     >
       <TopBarLoader isFetching={isFetching} />
@@ -128,7 +128,7 @@ export const HelpCenterDetailPage = () => {
       <Container.Root withContext={true}>
         <Container.Body>
           <VStack w={"full"}>
-            <HStack gap={SPACING.md} align={"center"} p={PADDING.md}>
+            <HStack gap={SPACING.md} align={"center"} p={SPACING.md}>
               <BackButton />
 
               <VStack align={"start"}>
@@ -163,7 +163,7 @@ export const HelpCenterDetailPage = () => {
               <>
                 <Separator borderColor={"bg.canvas"} />
 
-                <HStack align={"center"} gap={2} p={PADDING.md}>
+                <HStack align={"center"} gap={2} p={SPACING.md}>
                   {isInternalAdmin && (
                     <HelpCenterModalResolveRejectTrigger
                       ticketId={ticket.id}
@@ -209,7 +209,7 @@ export const HelpCenterDetailPage = () => {
       <Container.Root withContext={true}>
         <Container.Body>
           <VStack>
-            <HStack justify={"space-between"} align={"center"} p={PADDING.md}>
+            <HStack justify={"space-between"} align={"center"} p={SPACING.md}>
               <HStack gap={SPACING.md} align={"center"}>
                 <Circle
                   aspectRatio={1}
@@ -235,7 +235,7 @@ export const HelpCenterDetailPage = () => {
 
             <Separator borderColor={"bg.canvas"} />
 
-            <VStack align={"start"} gap={SPACING.md} p={PADDING.md}>
+            <VStack align={"start"} gap={SPACING.md} p={SPACING.md}>
               <P whiteSpace={"pre-wrap"} lineHeight={"tall"}>
                 {ticket.description}
               </P>
@@ -263,7 +263,7 @@ export const HelpCenterDetailPage = () => {
       <Container.Root withContext={true}>
         <Container.Body>
           <VStack>
-            <HStack p={PADDING.md} justify={"space-between"} align={"center"}>
+            <HStack p={SPACING.md} justify={"space-between"} align={"center"}>
               <P fontSize={"md"} fontWeight={"semibold"}>
                 {`Riwayat Tanggapan & Balasan (${replies.length})`}
               </P>
@@ -272,7 +272,7 @@ export const HelpCenterDetailPage = () => {
             <Separator borderColor={"bg.canvas"} />
 
             {replies.length === 0 ? (
-              <Box p={PADDING.xl} textAlign={"center"}>
+              <Box p={SPACING.xl} textAlign={"center"}>
                 <P color={"fg.subtle"}>
                   {
                     "Belum ada balasan untuk laporan ini. Klik tombol 'Balas Laporan' di atas untuk memberikan tanggapan."
@@ -293,7 +293,7 @@ export const HelpCenterDetailPage = () => {
                   return (
                     <Box
                       key={reply.id || String(idx)}
-                      p={PADDING.md}
+                      p={SPACING.md}
                       bg={"bg.body"}
                       roundedTop={0}
                       roundedBottom={isLast ? theme.radii.container : 0}

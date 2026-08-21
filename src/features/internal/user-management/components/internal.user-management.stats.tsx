@@ -8,7 +8,7 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useUserManagementStatsQuery } from "@/features/internal/user-management/hooks/use-user-management.query";
 import type {
   UserManagementStatsLegendProps,
@@ -19,7 +19,7 @@ import type {
 export const InternalUserManagementStats = () => {
   return (
     <Container.Root withContext={true}>
-      <Container.Body gap={4} py={PADDING.md}>
+      <Container.Body gap={4} py={SPACING.md}>
         <UserManagementStatsHeader />
         <UserManagementStatsCharts />
       </Container.Body>
@@ -34,7 +34,7 @@ const UserManagementStatsHeader = () => {
       align={"center"}
       justify={"space-between"}
       gap={SPACING.md}
-      px={PADDING.md}
+      px={SPACING.md}
     >
       <VStack gap={1} align={"start"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
@@ -88,7 +88,7 @@ const UserManagementStatsCharts = () => {
   const { stats } = useUserManagementStatsQuery();
 
   return (
-    <SimpleGrid columns={[1, 1, 2]} gap={PADDING.md} px={PADDING.md}>
+    <SimpleGrid columns={[1, 1, 2]} gap={SPACING.md} px={SPACING.md}>
       {/* Kategori Status Aktif */}
       <VStack align={"start"} gap={SPACING.md}>
         <P color={"fg.muted"}>{"Kategori Status Pengguna"}</P>

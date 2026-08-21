@@ -6,7 +6,7 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { PADDING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
   StatGridDescriptionProps,
@@ -53,7 +53,7 @@ const StatGridItem = (props: StatGridItemProps) => {
       position={"relative"}
       gap={2}
       h={"full"}
-      p={PADDING.md}
+      p={SPACING.md}
       borderRight={isLastInRow ? undefined : "2px solid"}
       borderTop={isNotFirstRow ? "2px solid" : undefined}
       borderColor={"bg.canvas"}

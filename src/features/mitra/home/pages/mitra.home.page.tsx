@@ -3,7 +3,7 @@
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
-import { PADDING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { MitraHomeCartSummary } from "@/features/mitra/home/components/mitra.home.cart-summary";
 import { MitraHomeDataAvailability } from "@/features/mitra/home/components/mitra.home.data-availability";
 import { MitraHomeDataSummary } from "@/features/mitra/home/components/mitra.home.data-summary";
@@ -17,11 +17,11 @@ export const MitraHomePage = () => {
 
   if (isLoading) {
     return (
-      <PanelContentContainer h={"auto"} gap={PADDING.sm} p={PADDING.sm}>
+      <PanelContentContainer h={"auto"} gap={SPACING.sm} p={SPACING.sm}>
         <Skeleton h={"140px"} w={"full"} />
         <Skeleton h={"233px"} w={"full"} />
 
-        <HStack wrap={"wrap"} gap={PADDING.sm} w={"full"}>
+        <HStack wrap={"wrap"} gap={SPACING.sm} w={"full"}>
           <Skeleton h={"353px"} flex={"1 1 300px"} />
           <Skeleton h={"353px"} flex={"1 1 500px"} />
           <Skeleton h={"353px"} flex={"1 1 100%"} />
@@ -33,15 +33,15 @@ export const MitraHomePage = () => {
   return (
     <PanelContentContainer
       h={"auto"}
-      gap={PADDING.sm}
-      p={PADDING.sm}
+      gap={SPACING.sm}
+      p={SPACING.sm}
       position={"relative"}
     >
       <MitraHomeDataAvailability />
 
       <MitraHomeDataSummary />
 
-      <HStack wrap={"wrap"} gap={PADDING.sm}>
+      <HStack wrap={"wrap"} gap={SPACING.sm}>
         <MitraHomeCartSummary flex={"1 1 300px"} />
         <MitraHomeFinancialFlow flex={"1 1 500px"} />
         <MitraHomeLastTransaction flex={"1 1 100%"} />

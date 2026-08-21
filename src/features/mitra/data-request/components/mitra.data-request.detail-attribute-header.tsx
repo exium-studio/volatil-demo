@@ -8,7 +8,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
-import { PADDING, SPACING } from "@/design-system/constants/styles";
+import { SPACING } from "@/design-system/constants/styles";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
@@ -52,7 +52,7 @@ export const MitraDataRequestDetailAttributeHeader = memo(
 
     return (
       <VStack gap={0} w={"full"}>
-        <VStack gap={SPACING.sm} w={"full"} p={PADDING.md} bg={"bg.body"}>
+        <VStack gap={SPACING.sm} w={"full"} p={SPACING.md} bg={"bg.body"}>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={SPACING.sm} align={"center"}>
               <BackButton onClick={handleBackClick} />
