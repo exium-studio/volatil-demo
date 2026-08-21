@@ -15,6 +15,7 @@ import type { InternalHomeServiceRateProps } from "@/features/internal/home/type
 import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { EditIcon } from "lucide-react";
+import { Circle } from "@/design-system/components/layout/ui/box";
 
 export const InternalHomeServiceRate = (
   props: InternalHomeServiceRateProps,
@@ -75,10 +76,10 @@ const InternalHomeServiceRateStats = () => {
         <StatGrid.Item key={rate.id} index={index} columns={cols}>
           <StatGrid.Header>
             <StatGrid.Label>{rate.title}</StatGrid.Label>
-            <StatGrid.Icon
-              icon={rate.icon}
-              color={`${rate.colorPalette ?? "blue"}.fg`}
-            />
+
+            <Circle bg={`${rate.colorPalette}.subtle`} p={PADDING.xs}>
+              <AppIcon icon={rate.icon} color={`${rate.colorPalette}.fg`} />
+            </Circle>
           </StatGrid.Header>
 
           <StatGrid.Value
