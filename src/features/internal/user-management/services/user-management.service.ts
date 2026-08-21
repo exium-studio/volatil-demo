@@ -17,6 +17,7 @@ import type {
   UserManagementQueryParams,
   UserManagementStatsResponse,
 } from "@/features/internal/user-management/types/user-management.type";
+import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
 const EMPTY_STATS: UserManagementStatsResponse = {
   totalUsers: 0,
@@ -74,7 +75,7 @@ export const getAdminUsersList = async (
     users: rawUsers.map(normalizeAdminUserItem),
     total: pagination?.totalItems ?? rawUsers.length,
     totalPages: pagination?.totalPages ?? 1,
-    currentPage: pagination?.currentPage ?? (params?.page ?? 1),
+    currentPage: pagination?.currentPage ?? params?.page ?? 1,
   };
 };
 
@@ -103,6 +104,19 @@ export const updateAdminUserStatus = async (
   payload: UpdateUserStatusPayload,
   signal?: AbortSignal,
 ): Promise<UserManagementItem> => {
+  const currentUser = getUserSession();
+  if (
+    payload.status === "inactive" &&
+    currentUser &&
+    (String(currentUser.id) === String(payload.id) ||
+      (currentUser.email &&
+        currentUser.email.toLowerCase() === String(payload.id).toLowerCase()))
+  ) {
+    throw new Error(
+      "Anda tidak dapat menonaktifkan atau men-suspend akun Anda sendiri.",
+    );
+  }
+
   const response = await patchAdminUserStatusApi(payload, signal);
   if (response.data) {
     return normalizeAdminUserItem(response.data);

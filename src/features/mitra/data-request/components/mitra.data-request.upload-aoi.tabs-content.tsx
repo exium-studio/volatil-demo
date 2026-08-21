@@ -131,18 +131,19 @@ export const MitraDataRequestUploadAoiTabsContent = (
       file.name.endsWith(".geojson") || file.name.endsWith(".json");
 
     if (!isShpOrZip && !isGeoJson) {
-      toast.error(
-        `"${file.name}": format tidak didukung (.zip/.shp/.geojson/.json)`,
-        { group: "Permohonan Data" },
-      );
+      toast.error("Format file tidak didukung", {
+        group: "Permohonan Data",
+        description: `File "${file.name}" bukan berkas shapefile (.shp/.zip) atau GeoJSON (.geojson/.json).`,
+      });
       return;
     }
 
     // Validate size (10 MB)
     const MAX_SIZE = 10 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
-      toast.error(`"${file.name}": ukuran file maksimal 10MB`, {
+      toast.error("Ukuran file melebihi batas", {
         group: "Permohonan Data",
+        description: `File "${file.name}" melebihi ukuran maksimum 10MB.`,
       });
       return;
     }
@@ -173,8 +174,9 @@ export const MitraDataRequestUploadAoiTabsContent = (
       }
 
       if (!polygon) {
-        toast.error(`"${file.name}": tidak ada polygon yang ditemukan`, {
+        toast.error("Polygon tidak ditemukan", {
           group: "Permohonan Data",
+          description: `Tidak ditemukan geometri polygon yang valid di dalam file "${file.name}".`,
         });
         setAoiLayers((prev) => prev.filter((l) => l.id !== id));
         return;
@@ -187,8 +189,11 @@ export const MitraDataRequestUploadAoiTabsContent = (
       );
     } catch (error) {
       console.error("Failed to parse AOI file:", error);
-      toast.error(`"${file.name}": gagal memproses file`, {
+      const errorMsg =
+        error instanceof Error ? error.message : "Terjadi kesalahan saat membaca file";
+      toast.error("Gagal memproses file AOI", {
         group: "Permohonan Data",
+        description: `File "${file.name}": ${errorMsg}`,
       });
       setAoiLayers((prev) =>
         prev.map((l) =>
@@ -196,8 +201,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
             ? {
                 ...l,
                 status: "error" as const,
-                errorMessage:
-                  error instanceof Error ? error.message : "Unknown error",
+                errorMessage: errorMsg,
               }
             : l,
         ),

@@ -49,12 +49,20 @@ export const mutationToastHandlers = (
       }
     },
     onError: (error: unknown) => {
-      const message =
+      const errorMessageString =
         error instanceof Error ? error.message : "Terjadi kesalahan";
-      toast.error(options.errorMessage?.title ?? message, {
+      const title = options.errorMessage?.title ?? errorMessageString;
+      const description =
+        options.errorMessage?.description ??
+        (options.errorMessage?.title &&
+        errorMessageString !== options.errorMessage.title
+          ? errorMessageString
+          : undefined);
+
+      toast.error(title, {
         id: toastId,
         group,
-        description: options.errorMessage?.description,
+        description,
       });
     },
   };
