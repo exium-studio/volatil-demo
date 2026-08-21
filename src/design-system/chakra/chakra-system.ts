@@ -623,11 +623,23 @@ export const chakraConfig = defineConfig({
       spacing: {},
 
       fonts: {
-        heading: { value: "'Wix Madefor Text Variable', sans-serif" },
-        body: { value: "'Wix Madefor Text Variable', sans-serif" },
-        number: { value: "'Wix Madefor Text Variable', sans-serif" },
+        heading: {
+          value:
+            "'Plus Jakarta Sans Variable', 'Outfit Variable', 'Wix Madefor Text Variable', sans-serif",
+        },
+        body: {
+          value:
+            "'Plus Jakarta Sans Variable', 'Outfit Variable', 'Wix Madefor Text Variable', sans-serif",
+        },
+        number: {
+          value:
+            "'Plus Jakarta Sans Variable', 'Outfit Variable', 'Wix Madefor Text Variable', sans-serif",
+        },
 
         jakarta: { value: "'Plus Jakarta Sans Variable', sans-serif" },
+        outfit: { value: "'Outfit Variable', sans-serif" },
+        wix: { value: "'Wix Madefor Text Variable', sans-serif" },
+        sortsMillGoudy: { value: "'Sorts Mill Goudy', serif" },
       },
       fontSizes: {
         // xs: { value: "0.75rem" }, // 12px
