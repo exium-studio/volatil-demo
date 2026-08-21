@@ -66,7 +66,7 @@ export const NotificationPage = () => {
   );
 
   return (
-    <PanelContentContainer overflowY={"auto"} gap={SPACING.sm} p={SPACING.sm}>
+    <PanelContentContainer overflowY={"auto"}>
       <Container.Root flex={1} overflowY={"auto"} withContext={true}>
         <Container.Body flex={1} overflowY={"auto"}>
           <NotificationHeader

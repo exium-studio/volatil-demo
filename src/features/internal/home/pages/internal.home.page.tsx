@@ -17,7 +17,7 @@ export const InternalHomePage = () => {
 
   if (isLoading) {
     return (
-      <PanelContentContainer h={"auto"} gap={SPACING.sm} p={SPACING.sm}>
+      <PanelContentContainer h={"auto"}>
         <HStack wrap={"wrap"} gap={SPACING.sm} w={"full"}>
           <Skeleton h={"350px"} flex={"1 1 550px"} />
           <Skeleton h={"350px"} flex={"1 1 350px"} />
@@ -33,8 +33,6 @@ export const InternalHomePage = () => {
   return (
     <PanelContentContainer
       h={"auto"}
-      gap={SPACING.sm}
-      p={SPACING.sm}
       position={"relative"}
     >
       <TopBarLoader isFetching={isFetching} />

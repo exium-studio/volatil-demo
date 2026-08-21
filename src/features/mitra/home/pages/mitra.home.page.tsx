@@ -17,7 +17,7 @@ export const MitraHomePage = () => {
 
   if (isLoading) {
     return (
-      <PanelContentContainer h={"auto"} gap={SPACING.sm} p={SPACING.sm}>
+      <PanelContentContainer h={"auto"}>
         <Skeleton h={"140px"} w={"full"} />
         <Skeleton h={"233px"} w={"full"} />
 
@@ -33,8 +33,6 @@ export const MitraHomePage = () => {
   return (
     <PanelContentContainer
       h={"auto"}
-      gap={SPACING.sm}
-      p={SPACING.sm}
       position={"relative"}
     >
       <MitraHomeDataAvailability />

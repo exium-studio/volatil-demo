@@ -42,8 +42,6 @@ const MitraCartContent = () => {
 
   return (
     <PanelContentContainer
-      gap={SPACING.sm}
-      p={SPACING.sm}
       overflowY={isSmContainer ? "auto" : undefined}
     >
       <HStack

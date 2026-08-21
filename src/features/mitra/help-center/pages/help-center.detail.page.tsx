@@ -83,7 +83,7 @@ export const HelpCenterDetailPage = () => {
 
   if (isLoading) {
     return (
-      <PanelContentContainer gap={SPACING.sm} p={SPACING.sm}>
+      <PanelContentContainer>
         <Skeleton h={"80px"} w={"full"} />
         <Skeleton h={"260px"} w={"full"} />
         <Skeleton h={"300px"} w={"full"} />
@@ -93,7 +93,7 @@ export const HelpCenterDetailPage = () => {
 
   if (!ticket) {
     return (
-      <PanelContentContainer gap={SPACING.sm} p={SPACING.sm}>
+      <PanelContentContainer>
         <Container.Root withContext={true}>
           <Container.Body p={SPACING.lg} align={"center"}>
             <P fontSize={"lg"} fontWeight={"bold"} mb={2}>
@@ -118,8 +118,6 @@ export const HelpCenterDetailPage = () => {
   return (
     <PanelContentContainer
       overflowY={"auto"}
-      gap={SPACING.sm}
-      p={SPACING.sm}
       position={"relative"}
     >
       <TopBarLoader isFetching={isFetching} />

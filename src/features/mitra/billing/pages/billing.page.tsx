@@ -20,7 +20,7 @@ import { useNavigate } from "@tanstack/react-router";
 
 export const BillingPage = () => {
   return (
-    <PanelContentContainer gap={SPACING.sm} p={SPACING.sm}>
+    <PanelContentContainer>
       <BillingPageBillingCode />
 
       <BillingPagePaymentMethods />
