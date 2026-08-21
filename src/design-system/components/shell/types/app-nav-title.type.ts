@@ -4,5 +4,5 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import type { NavItem } from "@/shared/types/nav.type";
 
 export type AppNavTitleProps = StackProps & {
-  navsMap: Record<string, NavItem>;
+  navsMap?: Record<string, NavItem>;
 };

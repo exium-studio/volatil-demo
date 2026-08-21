@@ -19,7 +19,6 @@ import type {
   NotificationTabsProps,
   NotificationTabValue,
 } from "@/features/notification/types/notification.type";
-import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { BellIcon, InboxIcon } from "lucide-react";
 import { memo, useCallback, useEffect, useState, useTransition } from "react";
 
@@ -104,7 +103,7 @@ const NotificationHeader = memo((props: NotificationHeaderProps) => {
   return (
     <HStack align={"center"} justify={"space-between"} gap={SPACING.md} pr={2}>
       <HStack align={"center"}>
-        <AppNavTitle navsMap={APP_NAVS_MAP} />
+        <AppNavTitle />
 
         {activeTab === "notifications" && totalNotifications > 0 && (
           <Badge colorPalette={"blue"} variant={"subtle"} size={"sm"}>
