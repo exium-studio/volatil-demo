@@ -3,12 +3,13 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmationTriggerProps } from "@/design-system/components/feedback/types/confirmation-trigger.type";
 import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { useAlertAnimation } from "@/design-system/hooks/use-alert-animation";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 
 export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
@@ -26,6 +27,9 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
     onConfirm,
     onCancel,
   } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
 
   // Hooks (Modal)
   const popModal = usePopModal({
@@ -62,20 +66,27 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
       >
         <Modal.Trigger>{children}</Modal.Trigger>
 
-        <Modal.Content>
-          <Modal.Header>
-            <Modal.CloseButton />
-          </Modal.Header>
-
-          <Modal.Body gap={SPACING.md}>
+        <Modal.Content bg={"transparent"} shadow={"none"}>
+          <Modal.Body p={0}>
             <VStack align={"center"} gap={"40px"}>
               <FaceEmoji
                 variant={"confused"}
                 transition={transition}
                 size={"lg"}
+                mb={"-42px"}
               />
 
-              <VStack gap={SPACING.md}>
+              <VStack
+                gap={SPACING.md}
+                pos={"relative"}
+                w={"full"}
+                p={SPACING.xl}
+                bg={"bg.body"}
+                roundedTop={theme.radii.container}
+                shadow={"md"}
+              >
+                <Modal.CloseButton />
+
                 <P fontSize={"lg"} textAlign={"center"}>
                   {resolvedTitle}
                 </P>
@@ -83,7 +94,6 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                 <P
                   maxW={"240px"}
                   mx={"auto"}
-                  mb={SPACING.lg}
                   color={"fg.subtle"}
                   textAlign={"center"}
                 >
@@ -91,24 +101,30 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                 </P>
               </VStack>
             </VStack>
-          </Modal.Body>
 
-          <Modal.Footer>
-            <Button flex={1} variant={"outline"} onClick={handleCancel}>
-              {resolvedCancelLabel}
-            </Button>
-
-            <Button
-              flex={1}
-              primary
-              variant={"solid"}
-              colorPalette={colorPalette}
-              onClick={handleConfirm}
-              {...confirmButtonProps}
+            <HStack
+              gap={SPACING.sm}
+              p={SPACING.md}
+              bg={"bg.body"}
+              borderTop={"1px solid"}
+              borderColor={"border.subtle"}
             >
-              {resolvedConfirmLabel}
-            </Button>
-          </Modal.Footer>
+              <Button flex={1} variant={"outline"} onClick={handleCancel}>
+                {resolvedCancelLabel}
+              </Button>
+
+              <Button
+                flex={1}
+                primary
+                variant={"solid"}
+                colorPalette={colorPalette}
+                onClick={handleConfirm}
+                {...confirmButtonProps}
+              >
+                {resolvedConfirmLabel}
+              </Button>
+            </HStack>
+          </Modal.Body>
         </Modal.Content>
       </Modal.Root>
     </>

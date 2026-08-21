@@ -95,14 +95,14 @@ export const UserProfilePopoverTrigger = (
 
             <Separator />
 
-            <VStack gap={SPACING.xs} p={SPACING.sm}>
+            <VStack gap={SPACING.xs} p={SPACING.xs}>
               {/* Dark Mode Toggle */}
               <Button
                 justifyContent={"space-between"}
                 px={SPACING.sm}
                 onClick={toggleColorMode}
               >
-                <HStack gap={SPACING.sm} align={"center"}>
+                <HStack gap={SPACING.xs} align={"center"}>
                   <AppIcon
                     icon={isDarkMode ? MoonIcon : SunIcon}
                     color={"fg.muted"}
