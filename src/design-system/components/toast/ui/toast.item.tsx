@@ -188,7 +188,7 @@ export const ToastItem = memo(function ToastItem(
             )}
 
             {/* Description */}
-            {record.description && (
+            {record.description && !showTimestamp && (
               <P
                 flex={"0 1 auto"}
                 flexShrink={99}
