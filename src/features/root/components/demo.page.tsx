@@ -1050,9 +1050,11 @@ export const Disclosure = () => {
           </Breadcrumb.Root>
 
           <Carousel.Root
-            loop
+            loop={true}
             slideCount={images.length}
+            w={"350px"}
             maxW={"350px"}
+            flexShrink={0}
             gap={4}
             pos={"relative"}
           >

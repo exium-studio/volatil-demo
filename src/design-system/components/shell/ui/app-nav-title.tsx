@@ -30,12 +30,13 @@ export const AppNavTitle = (props: AppNavTitleProps) => {
       ? getNavKeyFromPathname(INTERNAL_APP_NAVS_MAP, pathname)
       : getNavKeyFromPathname(APP_NAVS_MAP, pathname));
 
-  const resolvedNavsMap =
+  const resolvedNavsMap: Record<string, NavItem> =
     navKey && navKey in effectiveNavsMap
-      ? effectiveNavsMap
-      : INTERNAL_APP_NAVS_MAP;
+      ? (effectiveNavsMap as Record<string, NavItem>)
+      : (INTERNAL_APP_NAVS_MAP as Record<string, NavItem>);
 
-  const navTitle = navKey ? t[resolvedNavsMap[navKey].titleKey]() : "";
+  const navItem = navKey ? resolvedNavsMap[navKey] : undefined;
+  const navTitle = navItem ? t[navItem.titleKey]() : "";
 
   return (
     <HeaderContainer {...restProps}>
