@@ -7,6 +7,8 @@ import {
   INTERNAL_APP_NAVS_MAP,
 } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
+import type { ParameterlessTranslationKey } from "@/shared/libs/i18n/translation.type";
+import type { NavItem } from "@/shared/types/nav.type";
 import { useLocation } from "@tanstack/react-router";
 
 export const AppNavTitle = (props: AppNavTitleProps) => {
@@ -36,7 +38,9 @@ export const AppNavTitle = (props: AppNavTitleProps) => {
       : (INTERNAL_APP_NAVS_MAP as Record<string, NavItem>);
 
   const navItem = navKey ? resolvedNavsMap[navKey] : undefined;
-  const navTitle = navItem ? t[navItem.titleKey]() : "";
+  const navTitle = navItem
+    ? (t[navItem.titleKey as ParameterlessTranslationKey] as () => string)()
+    : "";
 
   return (
     <HeaderContainer {...restProps}>
