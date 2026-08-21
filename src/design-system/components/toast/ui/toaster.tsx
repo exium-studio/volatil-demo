@@ -90,11 +90,12 @@ export function Toaster() {
             items={visibleToasts}
             getId={(record) => record.id}
             maxVisible={maxVisiblePerGroup}
-            renderItem={({ item, index, stackExpanded }) => (
+            renderItem={({ item, index, stackExpanded, setStackExpanded }) => (
               <ToastItem
                 record={item}
                 index={index}
                 stackExpanded={stackExpanded}
+                onRequestExpand={() => setStackExpanded?.(true)}
               />
             )}
             isItemLeaving={(record) => record.status === "leaving"}

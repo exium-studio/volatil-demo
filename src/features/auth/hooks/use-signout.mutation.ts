@@ -22,12 +22,20 @@ export const useSignoutMutation = () => {
   });
 
   return useMutation({
-    mutationFn: () => authService.logout(),
+    mutationFn: () => {
+      const currentUser = authService.getCurrentUser();
+      const role = currentUser?.role;
+      return authService.logout().then(() => ({ role }));
+    },
     onMutate: toastHandlers.onLoading,
-    onSuccess: () => {
+    onSuccess: ({ role }) => {
       toastHandlers.onSuccess();
       queryClient.clear();
-      navigate({ to: "/" });
+      if (role === "internal") {
+        navigate({ to: "/admin" });
+      } else {
+        navigate({ to: "/" });
+      }
     },
     onError: toastHandlers.onError,
   });

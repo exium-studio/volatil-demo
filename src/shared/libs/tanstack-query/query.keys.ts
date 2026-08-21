@@ -3,6 +3,10 @@
 import type GeoJSON from "geojson";
 
 export const queryKeys = {
+  auth: {
+    all: ["auth"] as const,
+    me: () => [...queryKeys.auth.all, "me"] as const,
+  },
   mitra: {
     home: {
       all: ["mitra", "home"] as const,

@@ -1,8 +1,10 @@
-// src/routes/_private/internal/order-statistic.tsx
-
+import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private/internal/order-statistic")({
+  beforeLoad: async () => {
+    await requireRoleGuard("internal");
+  },
   component: RouteComponent,
 });
 

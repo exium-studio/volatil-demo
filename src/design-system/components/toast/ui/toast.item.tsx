@@ -152,8 +152,13 @@ export const ToastItem = memo(function ToastItem(
         if (event.key === "Escape") toast.close(record.id);
       }}
       onClick={() => {
-        if (!stackExpanded || !hasExpandableContent) return;
-        setToastItemExpanded((prev) => !prev);
+        if (!hasExpandableContent) return;
+        if (!stackExpanded) {
+          onRequestExpand?.();
+          setToastItemExpanded(true);
+        } else {
+          setToastItemExpanded((prev) => !prev);
+        }
       }}
       {...restProps}
     >
