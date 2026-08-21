@@ -5,6 +5,7 @@ import {
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -70,14 +71,21 @@ const MitraHomeFinancialFlowHeader = (
       gap={SPACING.md}
       px={SPACING.md}
     >
-      <VStack gap={1}>
+      <HStack gap={SPACING.xs} align={"center"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Statistik Alur Keuangan"}
         </P>
-        <P fontSize={"sm"} color={"fg.subtle"}>
+
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {"Statistik alur keuangan pembelian data Anda"}
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
 
       <SegmentGroupInput
         value={period}

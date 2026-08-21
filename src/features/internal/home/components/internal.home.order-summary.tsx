@@ -2,6 +2,7 @@
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import {
   Container,
   useContainerContext,
@@ -71,14 +72,21 @@ const InternalHomeOrderSummaryHeader = (
       gap={SPACING.md}
       px={SPACING.md}
     >
-      <VStack gap={1} align={"start"}>
+      <HStack gap={SPACING.xs} align={"center"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ringkasan Pesanan"}
         </P>
-        <P fontSize={"sm"} color={"fg.subtle"}>
+
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {"Ringkasan pesanan dari pengguna pada sistem"}
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
 
       <SegmentGroupInput
         value={period}

@@ -3,6 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import {
   Container,
   useContainerContext,
@@ -44,14 +45,21 @@ const InternalHomeServiceRateHeader = () => {
       gap={SPACING.md}
       px={SPACING.md}
     >
-      <VStack gap={1} align={"start"}>
+      <HStack gap={SPACING.xs} align={"center"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Tarif Jasa Akses IGT-PR"}
         </P>
-        <P fontSize={"sm"} color={"fg.subtle"}>
+
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {"Pengaturan tarif bidang dan kawasan"}
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
 
       <Button primary variant={"solid"}>
         <AppIcon icon={EditIcon} />

@@ -1,6 +1,7 @@
 // src/features/mitra/home/components/mitra.home.cart-summary.tsx
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import {
   Container,
   useContainerContext,
@@ -40,14 +41,21 @@ export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
 const MitraHomeCartSummaryHeader = () => {
   return (
     <HStack align={"center"} justify={"space-between"} px={SPACING.md}>
-      <VStack gap={1} align={"start"}>
+      <HStack gap={SPACING.xs} align={"center"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ringkasan Keranjang Pembelian"}
         </P>
-        <P fontSize={"sm"} color={"fg.subtle"}>
+
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {"Ringkasan informasi keranjang pembelian data Anda."}
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
     </HStack>
   );
 };

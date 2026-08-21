@@ -3,6 +3,7 @@
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Circle } from "@/design-system/components/layout/ui/box";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import {
   Container,
   useContainerContext,
@@ -32,17 +33,23 @@ export const MitraHomeDataAvailability = () => {
 const MitraHomeDataAvailabilityHeader = () => {
   return (
     <HStack align={"center"} justify={"space-between"} px={SPACING.md}>
-      <VStack gap={1} align={"start"}>
+      <HStack gap={SPACING.xs} align={"center"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ketersediaan Data Spasial IGT"}
         </P>
 
-        <P fontSize={"sm"} color={"fg.subtle"}>
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {
             "Jumlah informasi peta IGT terintegrasi yang tersedia di sistem saat ini."
           }
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
     </HStack>
   );
 };

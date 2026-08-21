@@ -11,6 +11,7 @@ import type {
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -73,14 +74,21 @@ const InternalHomeIgtDataListHeader = () => {
       gap={SPACING.md}
       p={SPACING.md}
     >
-      <VStack gap={1} align={"start"}>
+      <HStack gap={SPACING.xs} align={"center"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Daftar Data"}
         </P>
-        <P fontSize={"sm"} color={"fg.subtle"}>
+
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {"Daftar keseluruhan data yang Anda kelola."}
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
 
       <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
         <SearchInput placeholder={t["action.search"]()} maxW={"220px"} />

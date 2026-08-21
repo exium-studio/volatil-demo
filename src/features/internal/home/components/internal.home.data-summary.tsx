@@ -2,6 +2,7 @@
 
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -63,15 +64,21 @@ const InternalHomeDataSummaryHeader = (
       gap={SPACING.md}
       px={SPACING.md}
     >
-      <VStack gap={1} align={"start"}>
+      <HStack gap={SPACING.xs} align={"center"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Ringkasan Data"}
         </P>
 
-        <P fontSize={"sm"} color={"fg.subtle"}>
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {"Ringkasan data layanan IGT yang Anda kelola."}
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
 
       <SegmentGroupInput
         value={period}

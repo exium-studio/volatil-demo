@@ -5,6 +5,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -76,14 +77,21 @@ const MitraHomeLastTransactionHeader = () => {
       gap={SPACING.md}
       p={SPACING.md}
     >
-      <VStack gap={1} align={"start"}>
+      <HStack gap={SPACING.xs} align={"center"}>
         <P fontSize={"lg"} fontWeight={"semibold"}>
           {"Transaksi Terakhir"}
         </P>
-        <P fontSize={"sm"} color={"fg.subtle"}>
+
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {"Daftar 5 transaksi terbaru dari akun Anda"}
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
     </HStack>
   );
 };
