@@ -1,13 +1,5 @@
 // src/design-system/components/data-display/ui/stat-grid.tsx
 
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
-import { P } from "@/design-system/components/typography/ui/p";
-import { Span } from "@/design-system/components/typography/ui/span";
-import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { SPACING } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
   StatGridDescriptionProps,
   StatGridHeaderProps,
@@ -17,6 +9,14 @@ import type {
   StatGridRootProps,
   StatGridValueProps,
 } from "@/design-system/components/data-display/types/stat-grid.type";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { Span } from "@/design-system/components/typography/ui/span";
+import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
+import { SPACING } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 const StatGridRoot = (props: StatGridRootProps) => {
   // Props
@@ -114,7 +114,7 @@ const StatGridValue = (props: StatGridValueProps) => {
   } = props;
 
   return (
-    <P
+    <ClampedP
       fontSize={"2xl"}
       fontWeight={"medium"}
       color={color}
@@ -148,7 +148,7 @@ const StatGridValue = (props: StatGridValueProps) => {
           {suffix}
         </Span>
       )}
-    </P>
+    </ClampedP>
   );
 };
 
