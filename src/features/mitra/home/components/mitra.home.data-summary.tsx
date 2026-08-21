@@ -83,6 +83,7 @@ const MitraHomeDataSummaryHeader = (props: MitraHomeDataSummaryHeaderProps) => {
       </HStack>
 
       <SegmentGroupInput
+        size={"xs"}
         value={period}
         onValueChange={(e) => onPeriodChange(e.value as HomePeriod)}
         options={PERIOD_OPTIONS}
