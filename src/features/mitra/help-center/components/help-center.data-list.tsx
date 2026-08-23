@@ -265,7 +265,7 @@ export const HelpCenterDataList = () => {
 
   return (
     <Container.Root withContext={true}>
-      <Container.Body>
+      <Container.Body overflowY={"auto"}>
         <VStack align={"start"} gap={1} p={SPACING.md}>
           <Heading>{"Daftar Laporan Kendala"}</Heading>
 
