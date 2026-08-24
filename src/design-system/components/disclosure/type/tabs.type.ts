@@ -11,6 +11,10 @@ import type {
 
 export type TabsRootProps = ChakraTabsRootProps & {};
 
+export type TabsContextValue = {
+  variant?: TabsRootProps["variant"];
+};
+
 export type TabsListProps = ChakraTabsListProps & {};
 
 export type TabsTriggerProps = ChakraTabsTriggerProps & {};

@@ -4,13 +4,10 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import {
-  Container,
-  useContainerContext,
-} from "@/design-system/components/layout/ui/container";
+import { Container, useContainerContext } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { P } from "@/design-system/components/typography/ui/p";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { SPACING } from "@/design-system/constants/styles";
 import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
@@ -46,9 +43,9 @@ const InternalHomeServiceRateHeader = () => {
       px={SPACING.md}
     >
       <HStack gap={SPACING.xs} align={"center"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
+        <Heading>
           {"Tarif Jasa Akses IGT-PR"}
-        </P>
+        </Heading>
 
         <InfoTip
           variant={"icon"}

@@ -17,6 +17,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import {
@@ -205,9 +206,9 @@ export const InternalUserManagementDataList = () => {
           p={SPACING.md}
         >
           <VStack gap={1} align={"start"}>
-            <P fontSize={"lg"} fontWeight={"semibold"}>
+            <Heading>
               {"Daftar Pengguna"}
-            </P>
+            </Heading>
             <P fontSize={"sm"} color={"fg.subtle"}>
               {"Kelola data akun pengguna internal dan mitra ATR/BPN."}
             </P>

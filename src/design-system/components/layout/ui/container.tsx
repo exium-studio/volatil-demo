@@ -91,7 +91,7 @@ const ContainerBody = (props: ContainerBodyProps) => {
       w={"full"}
       bg={"bg.body"}
       rounded={theme.radii.container}
-      shadow={"sm"}
+      // shadow={"sm"}
       {...restProps}
     >
       {children}

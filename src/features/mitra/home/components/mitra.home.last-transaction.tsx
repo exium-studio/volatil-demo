@@ -10,6 +10,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { SPACING } from "@/design-system/constants/styles";
@@ -78,9 +79,9 @@ const MitraHomeLastTransactionHeader = () => {
       p={SPACING.md}
     >
       <HStack gap={SPACING.xs} align={"center"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
+        <Heading>
           {"Transaksi Terakhir"}
-        </P>
+        </Heading>
 
         <InfoTip
           variant={"icon"}

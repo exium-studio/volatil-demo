@@ -7,12 +7,7 @@ import { forwardRef } from "react";
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
   (props, ref) => {
     return (
-      <ChakraHeading
-        ref={ref}
-        fontSize={"lg"}
-        fontWeight={"semibold"}
-        {...props}
-      />
+      <ChakraHeading ref={ref} fontSize={"lg"} fontWeight={"bold"} {...props} />
     );
   },
 );

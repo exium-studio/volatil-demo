@@ -116,7 +116,7 @@ const StatGridValue = (props: StatGridValueProps) => {
   return (
     <ClampedP
       fontSize={"2xl"}
-      fontWeight={"medium"}
+      fontWeight={"bold"}
       color={color}
       mt={"auto"}
       {...restProps}

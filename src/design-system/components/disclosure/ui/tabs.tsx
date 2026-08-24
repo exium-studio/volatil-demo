@@ -2,23 +2,46 @@
 
 "use client";
 
-import { forwardRef } from "react";
-import { Tabs as ChakraTabs } from "@chakra-ui/react";
 import type {
-  TabsRootProps,
-  TabsListProps,
-  TabsTriggerProps,
-  TabsContentProps,
   TabsContentGroupProps,
+  TabsContentProps,
+  TabsContextValue,
   TabsIndicatorProps,
+  TabsListProps,
+  TabsRootProps,
+  TabsTriggerProps,
 } from "@/design-system/components/disclosure/type/tabs.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { Tabs as ChakraTabs } from "@chakra-ui/react";
+import { createContext, forwardRef, useContext, useMemo } from "react";
+
+const TabsContext = createContext<TabsContextValue | null>(null);
+
+export function useTabsContext() {
+  return useContext(TabsContext);
+}
 
 const TabsRoot = forwardRef<HTMLDivElement, TabsRootProps>((props, ref) => {
+  // Props
+  const { variant, children, ...restProps } = props;
+
   // Stores
   const { theme } = useThemeStore();
+
+  // Derived Values
+  const contextValue = useMemo(() => ({ variant }), [variant]);
+
   return (
-    <ChakraTabs.Root ref={ref} colorPalette={theme.colorPalette} {...props} />
+    <TabsContext.Provider value={contextValue}>
+      <ChakraTabs.Root
+        ref={ref}
+        variant={variant}
+        colorPalette={theme.colorPalette}
+        {...restProps}
+      >
+        {children}
+      </ChakraTabs.Root>
+    </TabsContext.Provider>
   );
 });
 
@@ -28,7 +51,26 @@ const TabsList = forwardRef<HTMLDivElement, TabsListProps>((props, ref) => {
 
 const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
   (props, ref) => {
-    return <ChakraTabs.Trigger ref={ref} fontSize={"md"} {...props} />;
+    // Props
+    const { ...restProps } = props;
+
+    // Contexts
+    const tabsContext = useTabsContext();
+
+    // Stores
+    const { theme } = useThemeStore();
+
+    // Derived Values
+    const isOutlineVariant = tabsContext?.variant === "outline";
+
+    return (
+      <ChakraTabs.Trigger
+        ref={ref}
+        fontSize={"md"}
+        roundedTop={isOutlineVariant ? theme.radii.component : undefined}
+        {...restProps}
+      />
+    );
   },
 );
 

@@ -11,7 +11,7 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { SPACING } from "@/design-system/constants/styles";
 import { MitraCartDataList } from "@/features/mitra/cart/components/mitra.cart.data-list";
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
@@ -58,9 +58,9 @@ const MitraCartContent = () => {
           overflowY={isSmContainer ? undefined : "auto"}
         >
           <HeaderContainer pr={3}>
-            <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
+            <Heading>
               {"Keranjang"}
-            </ClampedP>
+            </Heading>
 
             {hasCartItems && (
               <ConfirmationTrigger
@@ -96,9 +96,9 @@ const MitraCartContent = () => {
           overflowY={isSmContainer ? undefined : "auto"}
         >
           <HeaderContainer>
-            <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
+            <Heading>
               {"Ringkasan"}
-            </ClampedP>
+            </Heading>
           </HeaderContainer>
 
           <Separator borderColor={"bg.canvas"} />

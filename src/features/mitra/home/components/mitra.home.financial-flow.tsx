@@ -8,7 +8,7 @@ import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-g
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { P } from "@/design-system/components/typography/ui/p";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
@@ -72,9 +72,9 @@ const MitraHomeFinancialFlowHeader = (
       px={SPACING.md}
     >
       <HStack gap={SPACING.xs} align={"center"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
+        <Heading>
           {"Statistik Alur Keuangan"}
-        </P>
+        </Heading>
 
         <InfoTip
           variant={"icon"}

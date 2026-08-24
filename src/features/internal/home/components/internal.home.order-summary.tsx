@@ -9,7 +9,7 @@ import {
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { P } from "@/design-system/components/typography/ui/p";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { SPACING } from "@/design-system/constants/styles";
 import type {
   InternalHomeOrderStatConfig,
@@ -73,9 +73,9 @@ const InternalHomeOrderSummaryHeader = (
       px={SPACING.md}
     >
       <HStack gap={SPACING.xs} align={"center"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
+        <Heading>
           {"Ringkasan Pesanan"}
-        </P>
+        </Heading>
 
         <InfoTip
           variant={"icon"}

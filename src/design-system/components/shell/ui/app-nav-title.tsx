@@ -1,7 +1,7 @@
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import type { AppNavTitleProps } from "@/design-system/components/shell/types/app-nav-title.type";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import {
   APP_NAVS_MAP,
   INTERNAL_APP_NAVS_MAP,
@@ -21,9 +21,7 @@ export const AppNavTitle = (props: AppNavTitleProps) => {
   // Derived Values
   const effectiveNavsMap =
     propNavsMap ??
-    (pathname.startsWith("/internal")
-      ? INTERNAL_APP_NAVS_MAP
-      : APP_NAVS_MAP);
+    (pathname.startsWith("/internal") ? INTERNAL_APP_NAVS_MAP : APP_NAVS_MAP);
 
   // Constants
   const navKey =
@@ -44,11 +42,7 @@ export const AppNavTitle = (props: AppNavTitleProps) => {
 
   return (
     <HeaderContainer {...restProps}>
-      {navTitle && (
-        <ClampedP fontSize={"lg"} fontWeight={"semibold"}>
-          {navTitle}
-        </ClampedP>
-      )}
+      {navTitle && <Heading>{navTitle}</Heading>}
     </HeaderContainer>
   );
 };

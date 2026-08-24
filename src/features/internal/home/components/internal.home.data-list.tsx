@@ -16,6 +16,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
@@ -75,9 +76,9 @@ const InternalHomeIgtDataListHeader = () => {
       p={SPACING.md}
     >
       <HStack gap={SPACING.xs} align={"center"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
+        <Heading>
           {"Daftar Data"}
-        </P>
+        </Heading>
 
         <InfoTip
           variant={"icon"}

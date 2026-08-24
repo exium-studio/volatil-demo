@@ -7,6 +7,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -65,9 +66,9 @@ const InternalHomeDataSummaryHeader = (
       px={SPACING.md}
     >
       <HStack gap={SPACING.xs} align={"center"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
+        <Heading>
           {"Ringkasan Data"}
-        </P>
+        </Heading>
 
         <InfoTip
           variant={"icon"}

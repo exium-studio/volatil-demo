@@ -1,5 +1,6 @@
 // src/features/mitra/home/components/mitra.home.data-summary.tsx
 
+import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
@@ -12,9 +13,10 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { SPACING } from "@/design-system/constants/styles";
+import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import type {
   HomePeriod,
   MitraHomeDataSummaryChartsProps,
@@ -23,7 +25,6 @@ import type {
   MitraHomeDataSummaryProps,
   MitraHomeDataSummaryStatusConfig,
 } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import { useState } from "react";
 
 const PERIOD_OPTIONS = [
@@ -67,9 +68,7 @@ const MitraHomeDataSummaryHeader = (props: MitraHomeDataSummaryHeaderProps) => {
       px={SPACING.md}
     >
       <HStack gap={SPACING.xs} align={"center"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
-          {"Ringkasan Data Anda"}
-        </P>
+        <Heading>{"Ringkasan Data Anda"}</Heading>
 
         <InfoTip
           variant={"icon"}
@@ -249,9 +248,7 @@ const MitraHomeDataSummaryLegend = (props: MitraHomeDataSummaryLegendProps) => {
       <Box>
         <P color={"fg.muted"}>{label}</P>
 
-        <P fontSize={"2xl"} fontWeight={"semibold"}>
-          <FormatNumber value={value} />
-        </P>
+        <StatGrid.Value>{value}</StatGrid.Value>
       </Box>
     </HStack>
   );

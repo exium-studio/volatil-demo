@@ -5,6 +5,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -37,9 +38,9 @@ const UserManagementStatsHeader = () => {
       px={SPACING.md}
     >
       <VStack gap={1} align={"start"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
+        <Heading>
           {"Statistik Pengguna"}
-        </P>
+        </Heading>
 
         <P fontSize={"sm"} color={"fg.subtle"}>
           {"Ringkasan status dan tipe peran pengguna sistem."}

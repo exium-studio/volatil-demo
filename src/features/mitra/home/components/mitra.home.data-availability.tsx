@@ -10,7 +10,7 @@ import {
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { P } from "@/design-system/components/typography/ui/p";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { SPACING } from "@/design-system/constants/styles";
 import { DatabaseIcon, Layers2Icon, TreesIcon } from "lucide-react";
 
@@ -34,9 +34,7 @@ const MitraHomeDataAvailabilityHeader = () => {
   return (
     <HStack align={"center"} justify={"space-between"} px={SPACING.md}>
       <HStack gap={SPACING.xs} align={"center"}>
-        <P fontSize={"lg"} fontWeight={"semibold"}>
-          {"Ketersediaan Data Spasial IGT"}
-        </P>
+        <Heading>{"Ketersediaan Data Spasial IGT"}</Heading>
 
         <InfoTip
           variant={"icon"}
@@ -109,7 +107,6 @@ const MitraHomeDataAvailabilityStats = () => {
               value={stat.value}
               suffix={stat.suffix}
               color={`${stat.colorPalette}.fg`}
-              fontWeight={"semibold"}
             />
 
             <StatGrid.Description mt={1}>
