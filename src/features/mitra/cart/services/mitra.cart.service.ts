@@ -204,3 +204,112 @@ export async function checkout(
     };
   }
 }
+
+// -------------------------------------------------------------------------------------
+// Batch Interop Workflow Services
+// -------------------------------------------------------------------------------------
+
+import {
+  deleteCartBatchApi,
+  fetchActiveCartBatchApi,
+  postCheckoutBatchApi,
+  postCreateCartBatchApi,
+} from "@/features/mitra/cart/api/mitra.cart.api";
+import type {
+  ActiveCartBatch,
+  AddToCartBatchRequest,
+  AddToCartBatchResponse,
+  CheckoutBatchRequest,
+  CheckoutBatchResponse,
+} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { DUMMY_ACTIVE_CART_BATCH } from "@/shared/constants/dummy-data/dummy-cart-batch";
+import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
+
+export async function createCartBatch(
+  payload: AddToCartBatchRequest,
+  signal?: AbortSignal,
+): Promise<AddToCartBatchResponse> {
+  try {
+    const response = await postCreateCartBatchApi(payload, signal);
+    if (response.data) return response.data;
+    return {
+      batchId: `btc-${Date.now()}`,
+      status: "preparing",
+      estimatedTotalPrice: 1850000,
+      createdAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return {
+        batchId: `btc-${Date.now()}`,
+        status: "preparing",
+        estimatedTotalPrice: 1850000,
+        createdAt: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
+}
+
+export async function getActiveCartBatch(
+  signal?: AbortSignal,
+): Promise<ActiveCartBatch | null> {
+  try {
+    const response = await fetchActiveCartBatchApi(signal);
+    if (response.data !== undefined) return response.data;
+    return isDummyDataEnabled() ? DUMMY_ACTIVE_CART_BATCH : null;
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return DUMMY_ACTIVE_CART_BATCH;
+    }
+    throw error;
+  }
+}
+
+export async function cancelActiveCartBatch(
+  batchId: string,
+  signal?: AbortSignal,
+): Promise<void> {
+  try {
+    await deleteCartBatchApi(batchId, signal);
+  } catch (error) {
+    if (!isDummyDataEnabled()) throw error;
+  }
+}
+
+export async function checkoutCartBatch(
+  batchId: string,
+  payload: CheckoutBatchRequest,
+  signal?: AbortSignal,
+): Promise<CheckoutBatchResponse> {
+  try {
+    const response = await postCheckoutBatchApi(batchId, payload, signal);
+    if (response.data) return response.data;
+    return {
+      orderId: `ord-${Date.now()}`,
+      transactionNumber: `TRX-${Date.now()}`,
+      orderNumber: `ORD-${Date.now()}`,
+      billingCode: `820260825${Math.floor(1000 + Math.random() * 9000)}`,
+      paymentMethod: payload.paymentMethod,
+      totalAmount: 1850000,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+      billingExpiredAt: new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString(),
+    };
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return {
+        orderId: `ord-${Date.now()}`,
+        transactionNumber: `TRX-${Date.now()}`,
+        orderNumber: `ORD-${Date.now()}`,
+        billingCode: `820260825${Math.floor(1000 + Math.random() * 9000)}`,
+        paymentMethod: payload.paymentMethod,
+        totalAmount: 1850000,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        billingExpiredAt: new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString(),
+      };
+    }
+    throw error;
+  }
+}

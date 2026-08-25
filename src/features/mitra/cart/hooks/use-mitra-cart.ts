@@ -172,3 +172,122 @@ export const useAddAllToCartFromWfs = (
     },
   });
 };
+
+// -------------------------------------------------------------------------------------
+// Batch Interop Query & Mutation Hooks
+// -------------------------------------------------------------------------------------
+
+import {
+  cancelActiveCartBatch,
+  checkoutCartBatch,
+  createCartBatch,
+  getActiveCartBatch,
+} from "@/features/mitra/cart/services/mitra.cart.service";
+import type {
+  ActiveCartBatch,
+  AddToCartBatchRequest,
+  CheckoutBatchRequest,
+} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+
+export const useActiveCartBatchQuery = () => {
+  const query = useQuery<ActiveCartBatch | null>({
+    queryKey: ["mitra", "cart", "active-batch"],
+    queryFn: ({ signal }) => getActiveCartBatch(signal),
+  });
+
+  return {
+    ...query,
+    activeBatch: query.data ?? null,
+  };
+};
+
+export const useCreateCartBatch = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("create-cart-batch", {
+    group: "Keranjang",
+    loadingMessage: {
+      title: "Membuat batch keranjang...",
+    },
+    successMessage: {
+      title: "Data dimasukkan ke keranjang!",
+      description: "Sistem Interop sedang memproses penyiapan layer spasial Anda.",
+    },
+    errorMessage: {
+      title: "Gagal membuat batch keranjang",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: AddToCartBatchRequest) => createCartBatch(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useCancelActiveCartBatch = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("cancel-cart-batch", {
+    group: "Keranjang",
+    loadingMessage: {
+      title: "Membatalkan batch keranjang...",
+    },
+    successMessage: {
+      title: "Batch keranjang berhasil dibatalkan",
+    },
+    errorMessage: {
+      title: "Gagal membatalkan batch keranjang",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (batchId: string) => cancelActiveCartBatch(batchId),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useCheckoutCartBatch = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("checkout-cart-batch", {
+    group: "Pembayaran",
+    loadingMessage: {
+      title: "Membuat kode billing...",
+    },
+    successMessage: {
+      title: "Kode billing berhasil diterbitkan!",
+      description: "Silakan selesaikan pembayaran sebelum batas waktu berakhir.",
+    },
+    errorMessage: {
+      title: "Gagal memproses checkout",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (params: { batchId: string; payload: CheckoutBatchRequest }) =>
+      checkoutCartBatch(params.batchId, params.payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: (data) => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "transaction-history"],
+      });
+      return data;
+    },
+    onError: toastHandlers.onError,
+  });
+};

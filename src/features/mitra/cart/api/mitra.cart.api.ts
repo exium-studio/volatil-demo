@@ -137,3 +137,57 @@ export async function postCheckoutApi(
     { signal },
   );
 }
+
+// -------------------------------------------------------------
+// Batch Interop Cart & Checkout API Endpoints (No /v1)
+// -------------------------------------------------------------
+
+import type {
+  ActiveCartBatch,
+  AddToCartBatchRequest,
+  AddToCartBatchResponse,
+  CheckoutBatchRequest,
+  CheckoutBatchResponse,
+} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+
+export async function postCreateCartBatchApi(
+  payload: AddToCartBatchRequest,
+  signal?: AbortSignal,
+): Promise<ApiResponse<AddToCartBatchResponse>> {
+  return apiClient.post<ApiResponse<AddToCartBatchResponse>>(
+    "/mitra/cart/batches",
+    payload,
+    { signal },
+  );
+}
+
+export async function fetchActiveCartBatchApi(
+  signal?: AbortSignal,
+): Promise<ApiResponse<ActiveCartBatch | null>> {
+  return apiClient.get<ApiResponse<ActiveCartBatch | null>>(
+    "/mitra/cart/active-batch",
+    { signal },
+  );
+}
+
+export async function deleteCartBatchApi(
+  batchId: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<void>> {
+  return apiClient.delete<ApiResponse<void>>(
+    `/mitra/cart/batches/${batchId}`,
+    { signal },
+  );
+}
+
+export async function postCheckoutBatchApi(
+  batchId: string,
+  payload: CheckoutBatchRequest,
+  signal?: AbortSignal,
+): Promise<ApiResponse<CheckoutBatchResponse>> {
+  return apiClient.post<ApiResponse<CheckoutBatchResponse>>(
+    `/mitra/cart/batches/${batchId}/checkout`,
+    payload,
+    { signal },
+  );
+}

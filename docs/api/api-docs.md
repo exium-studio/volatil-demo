@@ -233,225 +233,232 @@ type IgtCatalogResponse = {
 
 ---
 
-## 5. Mitra - Keranjang & Order Provisioning Spasial
+## 5. Mitra - Keranjang & Order Batch Provisioning Spasial
 
-> [!NOTE]
-> **TODO: Refactor Pending** — Skema endpoint cart, checkout, dan provisioning order di bawah ini belum final dan akan direfactor menyesuaikan arsitektur backend transaksi.
+Modul transaksi data IGT berbasis **Batch Interop Spasial**. Setelah mitra memasukkan layer ke keranjang, sistem membentuk 1 batch transaksi dan mengeksekusi pemotongan/penyiapan data via **INTEROP Engine** di background. Setelah data layer WFS/WMS siap (`ready`), berlaku masa tenggang **TTL 24 Jam** (`expiredAt`) bagi mitra untuk melakukan checkout/pembayaran.
 
-Modul transaksi data IGT, checkout, provisioning isolated PostGIS table per-mitra, GeoServer workspace provisioning, serta manajemen kredensial WFS/WMS (Hash-Only & Rotation).
+### 5.1 Add to Cart (Buat Batch Keranjang)
 
-### 5.1 Add to Cart
-
-- **Endpoint**: `POST /api/v1/mitra/cart/add`
+- **Endpoint**: `POST /api/mitra/cart/batches`
 - **Payload**:
 
 ```typescript
-type AddToCartRequest = {
+type AddToCartBatchRequest = {
   items: Array<{
     sourceLayerId: string;
-    selectionType: "aoi" | "selected_features" | "whole_layer";
-    /** Polygon/MultiPolygon dalam koordinat EPSG:4326 (lon/lat) */
+    selectionType: "administrative_filter" | "aoi_polygon" | "selected_features" | "whole_layer";
+    administrativeFilter?: {
+      kodeProvinsi?: string;
+      kodeKabupaten?: string;
+      kodeKecamatan?: string;
+      kodeDesa?: string;
+    };
     aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-    /** CQL query string untuk filter atribut/spasial */
     cqlFilter?: string;
-    /** Daftar ID baris terpilih jika granular selection */
     selectedFeatureIds?: string[];
   }>;
 };
 ```
 
-### 5.2 Get Cart Summary & Items
-
-- **Endpoint**: `GET /api/v1/mitra/cart`
 - **Response**:
 
 ```typescript
-type CartResponse = {
+type AddToCartBatchResponse = {
+  batchId: string;
+  status: "preparing";
+  estimatedTotalPrice: number;
+  createdAt: string;
+};
+```
+
+### 5.2 Ambil Batch Aktif di Keranjang
+
+- **Endpoint**: `GET /api/mitra/cart/active-batch`
+- **Response**:
+
+```typescript
+type ActiveCartBatchResponse = {
+  batchId: string;
+  status: "preparing" | "ready" | "expired";
+  createdAt: string;
+  readyAt?: string;
+  expiredAt?: string; // Datetime ISO (TTL 24 jam setelah status 'ready' untuk hitung mundur countdown)
+  totalPrice: number;
   items: Array<{
     id: string;
     sourceLayerId: string;
     sourceLayerTitle: string;
     spatialBasis: "bidang" | "kawasan";
-    selectionType: "aoi" | "selected_features" | "whole_layer";
-    aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-    cqlFilter?: string;
-    selectedFeatureIds?: string[];
-    estimatedFeaturesCount: number;
-    estimatedAreaHa?: number;
-    unitPrice: number;
-    estimatedSubtotalPrice: number;
-    createdAt: string;
-  }>;
-  summary: {
-    totalItems: number;
-    totalBidang: number;
-    totalBidangPrice: number;
-    totalKawasan: number;
-    totalKawasanHa: number;
-    totalKawasanPrice: number;
-    grandTotal: number;
-  };
-};
-```
-
-### 5.3 Checkout / Create Order
-
-- **Endpoint**: `POST /api/v1/mitra/cart/checkout`
-- **Payload**:
-
-```typescript
-type CreateOrderCheckoutRequest = {
-  cartItemIds?: string[];
-  notes?: string;
-};
-```
-
-- **Response**:
-
-```typescript
-type CreateOrderCheckoutResponse = {
-  orderId: string;
-  orderNumber: string;
-  status:
-    | "draft"
-    | "pending_payment"
-    | "processing"
-    | "active"
-    | "expired"
-    | "rejected";
-  billingCode: string;
-  totalPrice: number;
-  validatedAt: string;
-  expiredAt: string;
-};
-```
-
-### 5.4 Order Detail & Provisioned Spatial Layer
-
-- **Endpoint**: `GET /api/v1/mitra/orders/{id}`
-- **Response**:
-
-```typescript
-type OrderDetailResponse = {
-  id: string;
-  orderNumber: string;
-  userId: string;
-  status:
-    | "draft"
-    | "pending_payment"
-    | "processing"
-    | "active"
-    | "expired"
-    | "rejected";
-  billingCode?: string;
-  totalPrice: number;
-  orderedAt: string;
-  validatedAt: string;
-  expiredAt?: string;
-  items: Array<{
-    id: string;
-    sourceLayerId: string;
-    sourceLayerTitle: string;
-    spatialBasis: "bidang" | "kawasan";
-    selectionType: "aoi" | "selected_features" | "whole_layer";
-    snapshotFeaturesCount: number;
-    snapshotAreaHa?: number;
+    selectionType: "administrative_filter" | "aoi_polygon" | "selected_features" | "whole_layer";
+    featuresCount: number;
+    areaHa?: number;
     unitPrice: number;
     subtotalPrice: number;
-    provisionedLayer?: {
-      id: string;
-      orderItemId: string;
-      tableName: string; // PostGIS isolated table
-      geoserverWorkspace: string;
-      geoserverLayerName: string;
-      proxyWfsUrl: string; // Proxy URL terproteksi
-      proxyWmsUrl: string;
-      apiKeyMasked: string | null; // e.g. "vtl_live_...9x4b"
-      keyGeneratedAt: string | null;
-      status:
-        | "queued"
-        | "provisioning"
-        | "ready"
-        | "failed"
-        | "expired"
-        | "revoked";
-      validUntil: string;
-    };
+    wfsUrl?: string;
+    wmsUrl?: string;
   }>;
 };
 ```
 
-### 5.5 Generate & Rotate API Key Kredensial Spasial (One-Time Reveal)
+### 5.3 Hapus Batch dari Keranjang (Cancel / Clear)
 
-- **Endpoint**: `POST /api/v1/mitra/provisioned-layers/{id}/generate-key`
+- **Endpoint**: `DELETE /api/mitra/cart/batches/{batchId}`
+- **Response**: `200 OK` / `{ success: true, message: "Batch keranjang berhasil dibatalkan" }`
+
+### 5.4 Checkout Batch (Request Kode Billing)
+
+- **Endpoint**: `POST /api/mitra/cart/batches/{batchId}/checkout`
 - **Payload**:
 
 ```typescript
-type GenerateApiKeyRequest = {
-  provisionedLayerId: string;
+type CheckoutBatchRequest = {
+  paymentMethod: "MPN_GEN2" | "VA_MANDIRI" | "VA_BRI" | "VA_BCA" | "QRIS";
 };
 ```
 
-- **Response** _(Raw key hanya dikembalikan sekali dalam response ini, database hanya menyimpan hash)_:
+- **Response**:
 
 ```typescript
-type GenerateApiKeyResponse = {
-  provisionedLayerId: string;
-  apiKeyMasked: string; // "vtl_live_...9x4b"
-  rawApiKey: string; // "vtl_live_d83fa9c2..." (One-time Reveal)
-  keyGeneratedAt: string;
+type CheckoutBatchResponse = {
+  orderId: string;
+  transactionNumber: string;
+  orderNumber: string;
+  billingCode: string;
+  paymentMethod: string;
+  totalAmount: number;
+  status: "pending";
+  createdAt: string;
+  billingExpiredAt: string;
+};
+```
+
+### 5.5 Cek Status Pembayaran Order (Manual / Trigger)
+
+- **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
+- **Response**:
+
+```typescript
+type OrderPaymentStatusResponse = {
+  orderId: string;
+  transactionStatus: "pending" | "settled" | "expired" | "failed";
+  paidAt?: string;
 };
 ```
 
 ---
 
-## 6. Mitra - My Data & Transaksi
-
-> [!NOTE]
-> **TODO: Refactor Pending** — Skema endpoint `my-data` (layer aktif) dan riwayat transaksi mitra belum fix dan akan disesuaikan kembali pada iterasi backend berikutnya.
+## 6. Mitra - My Data & Riwayat Transaksi
 
 ### 6.1 My Data (Layer Aktif Mitra)
 
-- **Endpoint**: `GET /api/v1/mitra/my-data`
-- **Response**: Daftar layer aktif ter-provisioning milik mitra beserta sisa waktu akses dan statistik pemakaian WFS/WMS proxy.
+- **Endpoint**: `GET /api/mitra/my-data`
+- **Response**: Daftar layer aktif hasil provisioning yang telah lunas (`settled`) beserta URL WFS/WMS proxy dan tanggal kadaluwarsa akses.
 
 ### 6.2 Riwayat Transaksi Mitra
 
-- **Endpoint**: `GET /api/v1/mitra/transactions`
+- **Endpoint**: `GET /api/mitra/transaction-history`
+- **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `status?: "pending" | "settled" | "expired" | "failed"`
 - **Response**:
 
 ```typescript
-type MitraTransactionListResponse = {
+type TransactionHistoryResponse = {
   items: Array<{
     id: string;
+    transactionNumber: string;
     orderNumber: string;
-    billingCode?: string;
-    status:
-      | "draft"
-      | "pending_payment"
-      | "processing"
-      | "active"
-      | "expired"
-      | "rejected";
-    totalPrice: number;
-    orderedAt: string;
+    billingCode: string;
+    paymentMethod: string;
+    transactionStatus: "pending" | "settled" | "expired" | "failed";
+    totalAmount: number;
+    createdAt: string;
+    paidAt?: string;
+    expiredAt?: string;
     items: Array<{
       id: string;
       sourceLayerId: string;
       sourceLayerTitle: string;
+      spatialBasis: "bidang" | "kawasan";
+      selectionType: string;
+      snapshotFeaturesCount: number;
+      snapshotAreaHa?: number;
+      unitPrice: number;
+      subtotalPrice: number;
+      provisionStatus: "queued" | "provisioning" | "ready" | "failed" | "expired" | "revoked";
+      proxyWfsUrl?: string;
+      proxyWmsUrl?: string;
     }>;
   }>;
-  total: number;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
 };
 ```
 
 ---
 
-## 7. Mitra - Dashboard & Statistik
+## 7. Kamus Log Denum (Enumerations)
 
-### 7.1 Mitra Home Summary
+Berikut adalah ringkasan seluruh enum/konstanta yang digunakan di modul transaksi, keranjang, dan order (dapat langsung di-copy):
 
-- **Endpoint**: `GET /api/v1/mitra/home/summary?period={1d|1w|1m|1y|all}`
+```typescript
+// 1. Basis Spasial Data IGT
+export type SpatialBasisType = "bidang" | "kawasan";
+
+// 2. Tipe Seleksi Area Pemotongan Data
+export type SelectionType =
+  | "administrative_filter"
+  | "aoi_polygon"
+  | "selected_features"
+  | "whole_layer";
+
+// 3. Status Batch Aktif Keranjang (Interop Engine Provisioning)
+export type CartBatchStatus = "preparing" | "ready" | "expired";
+
+// 4. Status Transaksi / Invoice Pembayaran
+export type TransactionStatus =
+  | "pending"
+  | "settled"
+  | "expired"
+  | "failed";
+
+// 5. Metode Kanal Pembayaran PNBP ATR/BPN
+export type PaymentMethod =
+  | "MPN_GEN2"
+  | "VA_MANDIRI"
+  | "VA_BRI"
+  | "VA_BCA"
+  | "QRIS";
+
+// 6. Status Teknis Provisioning Layer di GeoServer / PostGIS
+export type OrderProvisionStatus =
+  | "queued"
+  | "provisioning"
+  | "ready"
+  | "failed"
+  | "expired"
+  | "revoked";
+
+// 7. Status Tiket Bantuan / Pengaduan Kendala
+export type HelpCenterStatus =
+  | "submitted"
+  | "in_review"
+  | "in_progress"
+  | "resolved"
+  | "rejected";
+```
+
+---
+
+## 8. Mitra - Dashboard & Statistik
+
+### 8.1 Mitra Home Summary
+
+- **Endpoint**: `GET /api/mitra/home/summary?period={1d|1w|1m|1y|all}`
 - **Response**:
   - `dataSummary`: Breakdown bidang vs kawasan (active, almostExpired, expired).
   - `financialFlow`: Riwayat nominal belanja data spasial per periode.
@@ -461,26 +468,26 @@ type MitraTransactionListResponse = {
 
 # C. Role: Internal (Admin / Verifikator)
 
-## 8. Internal - User Management
+## 9. Internal - User Management
 
-### 8.1 List Users
+### 9.1 List Users
 
-- **Endpoint**: `GET /api/v1/internal/users`
+- **Endpoint**: `GET /api/internal/users`
 - **Params**: `page?: number`, `limit?: number`, `role?: string`, `search?: string`
 
-### 8.2 User Detail
+### 9.2 User Detail
 
-- **Endpoint**: `GET /api/v1/internal/users/{id}`
+- **Endpoint**: `GET /api/internal/users/{id}`
 
-### 8.3 Update Status / Role User
+### 9.3 Update Status / Role User
 
-- **Endpoint**: `PUT /api/v1/internal/users/{id}`
+- **Endpoint**: `PUT /api/internal/users/{id}`
 
 ---
 
-## 9. Internal - Dashboard & Statistik Sistem
+## 10. Internal - Dashboard & Statistik Sistem
 
-### 9.1 Internal Dashboard Overview
+### 10.1 Internal Dashboard Overview
 
-- **Endpoint**: `GET /api/v1/internal/home/summary?period={1d|1w|1m|1y|all}`
+- **Endpoint**: `GET /api/internal/home/summary?period={1d|1w|1m|1y|all}`
 - **Response**: Statistik pengguna aktif, permohonan data masuk, volume transaksi, dan utilisasi resource server.
