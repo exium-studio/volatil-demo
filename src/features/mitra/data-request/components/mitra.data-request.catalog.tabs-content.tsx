@@ -42,15 +42,8 @@ const CatalogAttributeList = () => {
   });
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
 
-  // Queries
-  const {
-    features,
-    totalFeatures,
-    bidangCount,
-    kawasanCount,
-    isLoading,
-    isFetching,
-  } = useIgtWfsCatalog({
+  // Queries — server-side WFS pagination
+  const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
     page: pageState.page,
     pageSize: pageState.pageSize,
     cqlFilter,
@@ -64,8 +57,6 @@ const CatalogAttributeList = () => {
       cqlFilter={cqlFilter}
       features={features}
       totalFeatures={totalFeatures}
-      bidangCount={bidangCount}
-      kawasanCount={kawasanCount}
       isLoading={isLoading}
       isFetching={isFetching}
       page={pageState.page}

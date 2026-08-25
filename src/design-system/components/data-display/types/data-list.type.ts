@@ -14,7 +14,7 @@ export type ActionIconType =
 
 export type DataListDeclarativeItemAction<T = Record<string, unknown>> = {
   key?: string;
-  label: string; // Label is mandatory
+  label: string | ((item: T) => string); // Label is mandatory
   icon?: ActionIconType | ((item: T) => ActionIconType);
   colorPalette?: string | ((item: T) => string | undefined);
   variant?: "solid" | "subtle" | "outline" | "ghost";

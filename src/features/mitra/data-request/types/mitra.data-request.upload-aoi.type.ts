@@ -39,10 +39,6 @@ export type MitraDataRequestUploadAoiDataListProps = {
   onFilesAdded: (files: File[]) => void;
   onDeleteLayer: (id: string) => void;
   onClearAll: () => void;
-  onAddToCartSelected: (selectedIds: string[]) => void;
-  onAddAllBidang: () => void;
-  onAddAllKawasan: () => void;
-  onAddAllBoth: () => void;
 };
 
 export type MitraDataRequestUploadAoiPageState = {

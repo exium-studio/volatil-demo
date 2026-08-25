@@ -146,7 +146,10 @@ export const InternalUserManagementDataList = () => {
     const itemActions = [
       {
         key: "toggle-status",
-        label: "Ubah Status",
+        label: (user: UserManagementItem) =>
+          user.status === "active"
+            ? "Nonaktifkan Pengguna"
+            : "Aktifkan Pengguna",
         icon: (user: UserManagementItem) =>
           user.status === "active" ? ShieldAlertIcon : CheckCircleIcon,
         colorPalette: (user: UserManagementItem) =>

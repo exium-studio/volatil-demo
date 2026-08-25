@@ -2,10 +2,8 @@
 
 import { toast } from "@/design-system/components/toast";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import {
-  addAllToCartFromWfs,
-  addSelectedToCart,
-} from "@/features/mitra/cart/services/mitra.cart.service";
+import { createCartBatch } from "@/features/mitra/cart/services/mitra.cart.service";
+import type { AddToCartBatchRequest } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import {
   getIgtByAoi,
   getIgtByUploadedAoi,
@@ -74,34 +72,50 @@ export const useAddToCartSelected = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (featureIds: string[]) => addSelectedToCart(featureIds),
-    onMutate: (featureIds) => {
+    mutationFn: (params: { layerId: string; featureIds: string[] }) => {
+      const payload: AddToCartBatchRequest = {
+        items: [
+          {
+            sourceLayerId: params.layerId,
+            selectionType: "selected_features",
+            selectedFeatureIds: params.featureIds,
+          },
+        ],
+      };
+      return createCartBatch(payload);
+    },
+    onMutate: (params) => {
       const itemKey =
-        featureIds.length === 1 ? featureIds[0] : `batch-${Date.now()}`;
+        params.featureIds.length === 1
+          ? params.featureIds[0]
+          : `batch-${Date.now()}`;
       const toastId = `add-to-cart-${itemKey}`;
 
       const title =
-        featureIds.length === 1
-          ? `Menambahkan item "${featureIds[0]}" ke keranjang...`
-          : `Menambahkan ${featureIds.length} item terpilih ke keranjang...`;
+        params.featureIds.length === 1
+          ? `Menambahkan item "${params.featureIds[0]}" ke keranjang...`
+          : `Menambahkan ${params.featureIds.length} item terpilih ke keranjang...`;
 
       toast.loading(title, { id: toastId, group: "Keranjang" });
-      return { toastId, featureIds };
+      return { toastId, featureIds: params.featureIds };
     },
-    onSuccess: (_, featureIds, context) => {
+    onSuccess: (_, params, context) => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
 
       const title =
-        featureIds.length === 1
-          ? `Item "${featureIds[0]}" berhasil ditambahkan ke keranjang`
-          : `Berhasil menambahkan ${featureIds.length} item ke keranjang`;
+        params.featureIds.length === 1
+          ? `Item "${params.featureIds[0]}" berhasil ditambahkan ke keranjang`
+          : `Berhasil menambahkan ${params.featureIds.length} item ke keranjang`;
 
       toast.success(title, { id: toastId, group: "Keranjang" });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
     },
-    onError: (error, _featureIds, context) => {
+    onError: (error, _params, context) => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
       const message =
         error instanceof Error
@@ -121,24 +135,40 @@ export const useAddToCartAll = () => {
 
   return useMutation({
     mutationFn: (params: {
+      layerId: string;
       typeName: string;
-      wfsUrl: string;
       cqlFilter?: string;
-    }) => addAllToCartFromWfs(params),
+    }) => {
+      const payload: AddToCartBatchRequest = {
+        items: [
+          {
+            sourceLayerId: params.layerId,
+            selectionType: params.cqlFilter
+              ? "administrative_filter"
+              : "whole_layer",
+            cqlFilter: params.cqlFilter,
+          },
+        ],
+      };
+      return createCartBatch(payload);
+    },
     onMutate: (params) => {
       const toastId = `add-to-cart-${params.typeName}-${Date.now()}`;
-      toast.loading(
-        `Mengambil & menambahkan seluruh item ${params.typeName} ke keranjang...`,
-        { id: toastId, group: "Keranjang" },
-      );
+      toast.loading(`Memproses penyiapan batch data ${params.typeName}...`, {
+        id: toastId,
+        group: "Keranjang",
+      });
       return { toastId };
     },
     onSuccess: (_, params, context) => {
       const toastId = context?.toastId;
       toast.success(
-        `Berhasil menambahkan seluruh item ${params.typeName} ke keranjang`,
+        `Batch ${params.typeName} berhasil dibuat! Sistem Interop sedang menyiapkan data.`,
         { id: toastId, group: "Keranjang" },
       );
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
@@ -148,7 +178,7 @@ export const useAddToCartAll = () => {
       const message =
         error instanceof Error
           ? error.message
-          : "Gagal menambahkan ke keranjang";
+          : "Gagal membuat batch transaksi";
       toast.error(message, { id: toastId, group: "Keranjang" });
     },
   });

@@ -76,7 +76,6 @@ export const ConfirmDialogModal = (props: {
       close={handleCancel}
       size={"xs"}
     >
-      <Modal.Backdrop />
       <Modal.Content bg={"transparent"} shadow={"none"}>
         <Modal.Body p={0}>
           <VStack align={"center"} gap={"40px"}>

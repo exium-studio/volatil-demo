@@ -6,14 +6,8 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { SPACING } from "@/design-system/constants/styles";
-import { useThemeStore } from "@/design-system/stores/theme-store";
-import { MitraDataRequestAddToCartButtons } from "@/features/mitra/data-request/components/mitra.data-request.add-to-cart-buttons";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
 import { SpatialFeaturesList } from "@/features/shared/components/spatial-features-list";
-import {
-  useAddToCartAll,
-  useAddToCartSelected,
-} from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 import { memo } from "react";
@@ -23,8 +17,6 @@ export type MitraDataRequestDetailAttributeViewProps = {
   cqlFilter?: string;
   features: GeoJSON.Feature[];
   totalFeatures: number;
-  bidangCount?: number;
-  kawasanCount?: number;
   isLoading: boolean;
   isFetching: boolean;
   page?: number;
@@ -44,8 +36,6 @@ export const MitraDataRequestDetailAttributeView = memo(
       cqlFilter,
       features,
       totalFeatures,
-      bidangCount,
-      kawasanCount,
       isLoading,
       isFetching,
       page,
@@ -57,27 +47,17 @@ export const MitraDataRequestDetailAttributeView = memo(
       showActions = true,
     } = props;
 
-    // Stores
-    const { theme } = useThemeStore();
-
-    // Hooks (Mutations)
-    const addToCartSelectedMutation = useAddToCartSelected();
-    const addToCartAllMutation = useAddToCartAll();
-
-    // Derived States
-    const isInitialLoading =
-      isLoading || (isFetching && isEmptyArray(features));
-    const hasNoFeatures = !isInitialLoading && isEmptyArray(features);
-    const hasFeatures = !isInitialLoading && !isEmptyArray(features);
+    // Derived Values
+    const hasData = !isEmptyArray(features);
 
     return (
       <VStack
         flex={1}
         gap={0}
-        overflowY={"auto"}
+        align={"stretch"}
         bg={"bg.canvas"}
-        w={"full"}
         position={"relative"}
+        overflow={"hidden"}
       >
         <MitraDataRequestDetailAttributeHeader
           layer={layer}
@@ -85,31 +65,27 @@ export const MitraDataRequestDetailAttributeView = memo(
           showActions={showActions}
         />
 
-        {isInitialLoading && (
-          <Skeleton h={"full"} w={"full"} flex={1} rounded={0} p={SPACING.md} />
+        {isLoading && (
+          <VStack flex={1} p={SPACING.md} bg={"bg.body"} minH={0}>
+            <Skeleton flex={1} w={"full"} h={"full"} rounded={0} />
+          </VStack>
         )}
 
-        {hasNoFeatures && (
+        {!isLoading && !hasData && (
           <VStack
             flex={1}
             align={"center"}
             justify={"center"}
             p={SPACING.md}
             bg={"bg.body"}
+            minH={0}
           >
-            <NoResultState query={layer?.wfs?.wfsTypeName || ""} />
+            <NoResultState />
           </VStack>
         )}
 
-        {hasFeatures && (
-          <VStack
-            flex={1}
-            gap={SPACING.sm}
-            overflow={"hidden"}
-            h={"full"}
-            w={"full"}
-            roundedBottom={theme.radii.container}
-          >
+        {!isLoading && hasData && (
+          <VStack flex={1} gap={0} bg={"bg.body"} minH={0}>
             <SpatialFeaturesList
               wfsFeatures={features}
               totalFeatures={totalFeatures}
@@ -123,30 +99,6 @@ export const MitraDataRequestDetailAttributeView = memo(
               onSelectedItemChange={({ selectedItems: items }) =>
                 setSelectedItems(items)
               }
-            />
-
-            <MitraDataRequestAddToCartButtons
-              spatialBasis={layer?.spatialBasis}
-              cqlFilter={cqlFilter}
-              selectedItems={selectedItems}
-              allItems={features}
-              totalBidangCount={bidangCount}
-              totalKawasanCount={kawasanCount}
-              totalCount={totalFeatures}
-              onAddSelectedClick={() => {
-                if (!layer) return;
-                addToCartSelectedMutation.mutate(
-                  selectedItems.map((item) => String(item.id)),
-                );
-              }}
-              onAddAllBothClick={() => {
-                if (!layer) return;
-                addToCartAllMutation.mutate({
-                  cqlFilter,
-                  typeName: layer.wfs.wfsTypeName,
-                  wfsUrl: layer.wfs.wfsUrl ?? "",
-                });
-              }}
             />
           </VStack>
         )}

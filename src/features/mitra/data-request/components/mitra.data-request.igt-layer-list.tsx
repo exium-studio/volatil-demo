@@ -70,9 +70,9 @@ export const MitraDataRequestIgtLayerList = memo(
         const layer = item.data as IgtLayerItem;
         if (layer?.wfs?.wfsTypeName) {
           addToCartAllMutation.mutate({
+            layerId: layer.id,
             cqlFilter: combinedCqlFilter,
             typeName: layer.wfs.wfsTypeName,
-            wfsUrl: layer.wfs.wfsUrl ?? "",
           });
         }
       });
@@ -194,9 +194,9 @@ export const MitraDataRequestIgtLayerList = memo(
                         e.stopPropagation();
                         if (layer?.wfs?.wfsTypeName) {
                           addToCartAllMutation.mutate({
+                            layerId: layer.id,
                             cqlFilter: combinedCqlFilter,
                             typeName: layer.wfs.wfsTypeName,
-                            wfsUrl: layer.wfs.wfsUrl ?? "",
                           });
                         }
                       }}

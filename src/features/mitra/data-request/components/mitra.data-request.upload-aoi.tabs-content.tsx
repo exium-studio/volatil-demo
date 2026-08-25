@@ -37,10 +37,6 @@ import {
   useMitraDataRequestUploadAoiContext,
 } from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
-import {
-  useAddToCartAll,
-  useAddToCartSelected,
-} from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import type {
@@ -102,7 +98,6 @@ export const MitraDataRequestUploadAoiTabsContent = (
   // Stores
   const map = useMapInstanceStore((state) => state.map);
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
-  const { selectedIgtLayer } = useSelectedIgtLayer();
 
   // States
   const [aoiLayers, setAoiLayers] = useState<MitraDataRequestUploadAoiLayer[]>(
@@ -111,8 +106,6 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
   // Hooks
   useMitraUploadAoi(map, aoiLayers);
-  const addToCartSelectedMutation = useAddToCartSelected();
-  const addToCartAllMutation = useAddToCartAll();
 
   // Search Params
   const search = useSearch({ strict: false }) as Record<
@@ -325,33 +318,6 @@ export const MitraDataRequestUploadAoiTabsContent = (
             onFilesAdded={handleFilesAdded}
             onDeleteLayer={handleDeleteLayer}
             onClearAll={handleClearAll}
-            onAddToCartSelected={(selectedIds) =>
-              addToCartSelectedMutation.mutate(selectedIds)
-            }
-            onAddAllBidang={() => {
-              if (!selectedIgtLayer) return;
-              addToCartAllMutation.mutate({
-                cqlFilter: aoiCqlFilter,
-                typeName: selectedIgtLayer.wfs.wfsTypeName,
-                wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
-              });
-            }}
-            onAddAllKawasan={() => {
-              if (!selectedIgtLayer) return;
-              addToCartAllMutation.mutate({
-                cqlFilter: aoiCqlFilter,
-                typeName: selectedIgtLayer.wfs.wfsTypeName,
-                wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
-              });
-            }}
-            onAddAllBoth={() => {
-              if (!selectedIgtLayer) return;
-              addToCartAllMutation.mutate({
-                cqlFilter: aoiCqlFilter,
-                typeName: selectedIgtLayer.wfs.wfsTypeName,
-                wfsUrl: selectedIgtLayer.wfs.wfsUrl ?? "",
-              });
-            }}
           />
         )}
       </Tabs.Content>
@@ -527,8 +493,6 @@ const MitraDataRequestUploadAoiAttributeList = memo(
     const {
       features,
       totalFeatures,
-      bidangCount,
-      kawasanCount,
       isLoading,
       isFetching,
     } = useIgtWfsCatalog({
@@ -604,8 +568,6 @@ const MitraDataRequestUploadAoiAttributeList = memo(
         cqlFilter={aoiCqlFilter}
         features={features}
         totalFeatures={totalFeatures}
-        bidangCount={bidangCount}
-        kawasanCount={kawasanCount}
         isLoading={isLoading}
         isFetching={isFetching}
         page={pageState.page}
