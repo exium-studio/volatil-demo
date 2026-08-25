@@ -32,7 +32,7 @@ Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, 
 
 ### 1.1 Sign In
 
-- **Endpoint**: `POST /api/v1/auth/sign-in`
+- **Endpoint**: `POST /api/auth/sign-in`
 - **Payload**:
 
 ```typescript
@@ -59,8 +59,8 @@ type SignInResponse = {
 
 ### 1.2 User Profile & Logout
 
-- **Get Profile**: `GET /api/v1/auth/me`
-- **Logout**: `POST /api/v1/auth/logout`
+- **Get Profile**: `GET /api/auth/me`
+- **Logout**: `POST /api/auth/logout`
 
 ---
 
@@ -140,11 +140,12 @@ type HelpCenterListApiResponse = {
 
 ## 3. Notifikasi & Inbox
 
-Modul pesan inbox resmi dan sinkronisasi riwayat toast notification sistem.
+Modul pesan inbox resmi dan sinkronisasi riwayat notifikasi sistem.
 
 ### 3.1 List Inbox Pesan
 
-- **Endpoint**: `GET /api/v1/inbox`
+- **Endpoint**: `GET /api/inbox`
+- **Params**: `page?: number`, `pageSize?: number`, `category?: "transaksi" | "sistem" | "bantuan" | "akun"`, `isRead?: boolean`, `search?: string`
 - **Response**:
 
 ```typescript
@@ -160,12 +161,29 @@ type InboxListResponse = {
   }>;
   total: number;
   unreadCount: number;
+  page?: number;
+  pageSize?: number;
 };
 ```
 
 ### 3.2 Tandai Inbox Telah Dibaca
 
-- **Endpoint**: `PATCH /api/v1/inbox/{id}/read`
+- **Endpoint**: `PATCH /api/inbox/{id}/read`
+- **Response**: `200 OK` / `void`
+
+### 3.3 Tandai Semua Inbox Telah Dibaca
+
+- **Endpoint**: `PATCH /api/inbox/read-all`
+- **Response**: `200 OK` / `void`
+
+### 3.4 Hapus Pesan Inbox
+
+- **Endpoint**: `DELETE /api/inbox/{id}`
+- **Response**: `200 OK` / `void`
+
+### 3.5 Bersihkan Semua Pesan Inbox
+
+- **Endpoint**: `DELETE /api/inbox/clear-all`
 - **Response**: `200 OK` / `void`
 
 ---
@@ -178,7 +196,7 @@ Modul eksplorasi katalog IGT, filter spasial wilayah administrasi, serta query f
 
 ### 4.1 Katalog IGT
 
-- **Endpoint**: `GET /api/v1/igt/catalog`
+- **Endpoint**: `GET /api/igt/catalog`
 - **Params**:
   - `page?: number`
   - `limit?: number`
@@ -219,17 +237,17 @@ type IgtCatalogResponse = {
 
 ### 4.2 Query IGT by AOI (Polygon / Upload SHP/GeoJSON)
 
-- **By AOI Polygon**: `POST /api/v1/igt/by-aoi`
+- **By AOI Polygon**: `POST /api/igt/by-aoi`
   - **Payload**: GeoJSON Polygon (`geometry: GeoJSON.Polygon`)
-- **By Uploaded File**: `POST /api/v1/igt/by-uploaded-aoi`
+- **By Uploaded File**: `POST /api/igt/by-uploaded-aoi`
   - **Payload**: `FormData` (`file: File`) (.zip shp, .geojson, .kml)
 
 ### 4.3 Filter Options Wilayah Administrasi
 
-- `GET /api/v1/igt/filter-options/provinsi`
-- `GET /api/v1/igt/filter-options/kabupaten?provinsiId={id}`
-- `GET /api/v1/igt/filter-options/kecamatan?kabupatenId={id}`
-- `GET /api/v1/igt/filter-options/kelurahan?kecamatanId={id}`
+- `GET /api/igt/filter-options/provinsi`
+- `GET /api/igt/filter-options/kabupaten?provinsiId={id}`
+- `GET /api/igt/filter-options/kecamatan?kabupatenId={id}`
+- `GET /api/igt/filter-options/kelurahan?kecamatanId={id}`
 
 ---
 
@@ -246,7 +264,11 @@ Modul transaksi data IGT berbasis **Batch Interop Spasial**. Setelah mitra memas
 type AddToCartBatchRequest = {
   items: Array<{
     sourceLayerId: string;
-    selectionType: "administrative_filter" | "aoi_polygon" | "selected_features" | "whole_layer";
+    selectionType:
+      | "administrative_filter"
+      | "aoi_polygon"
+      | "selected_features"
+      | "whole_layer";
     administrativeFilter?: {
       kodeProvinsi?: string;
       kodeKabupaten?: string;
@@ -289,7 +311,11 @@ type ActiveCartBatchResponse = {
     sourceLayerId: string;
     sourceLayerTitle: string;
     spatialBasis: "bidang" | "kawasan";
-    selectionType: "administrative_filter" | "aoi_polygon" | "selected_features" | "whole_layer";
+    selectionType:
+      | "administrative_filter"
+      | "aoi_polygon"
+      | "selected_features"
+      | "whole_layer";
     featuresCount: number;
     areaHa?: number;
     unitPrice: number;
@@ -383,7 +409,13 @@ type TransactionHistoryResponse = {
       snapshotAreaHa?: number;
       unitPrice: number;
       subtotalPrice: number;
-      provisionStatus: "queued" | "provisioning" | "ready" | "failed" | "expired" | "revoked";
+      provisionStatus:
+        | "queued"
+        | "provisioning"
+        | "ready"
+        | "failed"
+        | "expired"
+        | "revoked";
       proxyWfsUrl?: string;
       proxyWmsUrl?: string;
     }>;
@@ -420,11 +452,7 @@ export type SelectionType =
 export type CartBatchStatus = "preparing" | "ready" | "expired";
 
 // 4. Status Transaksi / Invoice Pembayaran
-export type TransactionStatus =
-  | "pending"
-  | "settled"
-  | "expired"
-  | "failed";
+export type TransactionStatus = "pending" | "settled" | "expired" | "failed";
 
 // 5. Metode Kanal Pembayaran PNBP ATR/BPN
 export type PaymentMethod =

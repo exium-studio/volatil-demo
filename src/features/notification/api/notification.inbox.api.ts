@@ -46,7 +46,7 @@ export const getInboxListApi = async (
     };
   }
 
-  return apiClient.get<InboxListResponse>("/api/v1/inbox", {
+  return apiClient.get<InboxListResponse>("/api/inbox", {
     params,
     signal,
   });
@@ -63,7 +63,7 @@ export const markInboxAsReadApi = async (
     return;
   }
 
-  await apiClient.patch(`/api/v1/inbox/${id}/read`, {}, { signal });
+  await apiClient.patch(`/api/inbox/${id}/read`, {}, { signal });
 };
 
 export const markAllInboxAsReadApi = async (
@@ -77,7 +77,7 @@ export const markAllInboxAsReadApi = async (
     return;
   }
 
-  await apiClient.patch("/api/v1/inbox/read-all", {}, { signal });
+  await apiClient.patch("/api/inbox/read-all", {}, { signal });
 };
 
 export const deleteInboxApi = async (
@@ -89,7 +89,7 @@ export const deleteInboxApi = async (
     return;
   }
 
-  await apiClient.delete(`/api/v1/inbox/${id}`, { signal });
+  await apiClient.delete(`/api/inbox/${id}`, { signal });
 };
 
 export const clearAllInboxApi = async (
@@ -100,5 +100,5 @@ export const clearAllInboxApi = async (
     return;
   }
 
-  await apiClient.delete("/api/v1/inbox/clear-all", { signal });
+  await apiClient.delete("/api/inbox/clear-all", { signal });
 };
