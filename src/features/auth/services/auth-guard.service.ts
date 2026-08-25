@@ -72,6 +72,14 @@ export const requireRoleGuard = async (requiredRole: UserRole): Promise<{ user: 
 };
 
 /**
+ * Route guard helper for shared routes accessible by any authenticated role (internal or mitra).
+ */
+export const requireAuthenticatedGuard = async (): Promise<{ user: User }> => {
+  const user = await ensureAuthenticatedUser();
+  return { user };
+};
+
+/**
  * Route guard helper for Public login routes (e.g. `/` for mitra, `/admin` for internal).
  * Redirects already logged-in users to their respective home/welcome domain.
  */
