@@ -1,4 +1,5 @@
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
+import { MitraPurchaseHistoryPage } from "@/features/mitra/purchase-history/pages/mitra.purchase-history.page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private/mitra/purchase-history")({
@@ -9,5 +10,5 @@ export const Route = createFileRoute("/_private/mitra/purchase-history")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/_app/portal/purchase-history"!</div>;
+  return <MitraPurchaseHistoryPage />;
 }
