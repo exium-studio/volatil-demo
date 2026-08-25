@@ -4,23 +4,19 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import type { PaginatedResponse } from "@/shared/types/common-response.type";
 
 export type MyDataStatus = "active" | "expired";
-export type MyDataTransactionStatus = "pending" | "settled" | "failed";
+export type MyDataSpatialBasis = "bidang" | "kawasan";
 
 export type MyDataItem = {
   id: string;
-  name: string;
-  basis: "bidang" | "kawasan";
-  purchasedBy: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  transactionDate: string;
-  transactionSettledAt: string | null;
-  transactionStatus: MyDataTransactionStatus;
+  title: string;
+  spatialBasis: MyDataSpatialBasis;
   wfsUrl: string | null;
-  expiresAt: string;
+  wmsUrl: string | null;
+  wfsTypeName?: string;
+  wmsLayers?: string;
   status: MyDataStatus;
+  expiresAt: string;
+  bbox?: [number, number, number, number];
 };
 
 export type MyDataQueryParams = {
@@ -28,12 +24,7 @@ export type MyDataQueryParams = {
   pageSize: number;
   search?: string;
   basis?: string;
-  tema?: string;
-  provinsi?: string;
-  kabupaten?: string;
-  kecamatan?: string;
-  kelurahan?: string;
-  status: MyDataStatus;
+  status?: MyDataStatus;
 };
 
 export type MyDataResponse = PaginatedResponse<MyDataItem>;

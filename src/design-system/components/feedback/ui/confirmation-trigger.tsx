@@ -83,7 +83,6 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                 p={SPACING.xl}
                 bg={"bg.body"}
                 roundedTop={theme.radii.container}
-                shadow={"md"}
               >
                 <Modal.CloseButton />
 

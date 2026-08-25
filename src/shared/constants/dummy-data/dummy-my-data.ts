@@ -2,46 +2,53 @@
 
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 
-const names = [
-  "Layer Bidang Jakarta",
-  "Layer Kawasan Bali",
-  "Layer Bidang Bandung",
-  "Layer Kawasan Surabaya",
-  "Layer Bidang Yogyakarta",
-  "Layer Kawasan Makassar",
-  "Layer Bidang Medan",
-  "Layer Kawasan Semarang",
-  "Layer Bidang Palembang",
-  "Layer Kawasan Balikpapan",
-  "Layer Bidang Manado",
-  "Layer Kawasan Lombok",
+export const dummyMitraMyDataItems: MyDataItem[] = [
+  {
+    id: "testing_workspace:TEST_RTRW_BADUNG",
+    title: "RTRW Badung",
+    spatialBasis: "kawasan",
+    wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows?service=WFS&request=GetCapabilities",
+    wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms?service=WMS&request=GetCapabilities",
+    wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
+    wmsLayers: "testing_workspace:TEST_RTRW_BADUNG",
+    status: "active",
+    expiresAt: "2026-12-31T23:59:59.000Z",
+    bbox: [115.083839, -8.850039, 115.251389, -8.239441],
+  },
+  {
+    id: "testing_workspace:TEST_ZNT_BADUNG",
+    title: "ZNT Badung",
+    spatialBasis: "kawasan",
+    wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows?service=WFS&request=GetCapabilities",
+    wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms?service=WMS&request=GetCapabilities",
+    wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
+    wmsLayers: "testing_workspace:TEST_ZNT_BADUNG",
+    status: "active",
+    expiresAt: "2026-11-30T23:59:59.000Z",
+    bbox: [115.083839, -8.849308, 115.251534, -8.239852],
+  },
+  {
+    id: "testing_workspace:TEST_BIDANG_TANAH",
+    title: "Bidang Tanah",
+    spatialBasis: "bidang",
+    wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows?service=WFS&request=GetCapabilities",
+    wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms?service=WMS&request=GetCapabilities",
+    wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
+    wmsLayers: "testing_workspace:TEST_BIDANG_TANAH",
+    status: "active",
+    expiresAt: "2026-10-15T12:00:00.000Z",
+    bbox: [115.134102, -8.685009, 115.183136, -8.622203],
+  },
+  {
+    id: "testing_workspace:TEST_RDTR_KUTA",
+    title: "RDTR Kuta",
+    spatialBasis: "kawasan",
+    wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows?service=WFS&request=GetCapabilities",
+    wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms?service=WMS&request=GetCapabilities",
+    wfsTypeName: "testing_workspace:TEST_RDTR_KUTA",
+    wmsLayers: "testing_workspace:TEST_RDTR_KUTA",
+    status: "expired",
+    expiresAt: "2026-01-01T00:00:00.000Z",
+    bbox: [115.15, -8.75, 115.2, -8.68],
+  },
 ];
-
-export const dummyMitraMyDataItems: MyDataItem[] = names.map((name, index) => {
-  const transactionDate = new Date(Date.UTC(2026, 6, index + 1, 1, 30));
-  const expiresAt = new Date(Date.UTC(2026, 9, index + 1, 1, 30));
-  const isExpired = index === names.length - 1;
-  if (isExpired) expiresAt.setUTCFullYear(2025);
-
-  return {
-    id: `DATA-${String(index + 1).padStart(3, "0")}`,
-    name,
-    basis: index % 2 === 0 ? "bidang" : "kawasan",
-    purchasedBy: {
-      id: `USR-${String((index % 3) + 1).padStart(3, "0")}`,
-      name: ["Siti Aminah", "Budi Santoso", "Rina Wijaya"][index % 3],
-      email: ["siti@example.com", "budi@example.com", "rina@example.com"][index % 3],
-    },
-    transactionDate: transactionDate.toISOString(),
-    transactionSettledAt: new Date(
-      transactionDate.getTime() + 60 * 60 * 1000,
-    ).toISOString(),
-    transactionStatus: "settled",
-    wfsUrl:
-      index % 3 === 0
-        ? null
-        : `/geoserver/igt/ows?service=WFS&typeName=${index + 1}`,
-    expiresAt: expiresAt.toISOString(),
-    status: isExpired ? "expired" : "active",
-  };
-});

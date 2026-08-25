@@ -13,24 +13,22 @@ import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 const matchesSearch = (item: MyDataItem, search: string) =>
   [
     item.id,
-    item.name,
-    item.basis,
-    item.purchasedBy.name,
-    item.purchasedBy.email,
-    item.transactionStatus,
+    item.title,
+    item.spatialBasis,
     item.wfsUrl,
-  ].some((value) => value?.toLocaleLowerCase().includes(search));
+    item.wmsUrl,
+  ].some((value) => value?.toLowerCase().includes(search));
 
 export const getPaginatedMyData = (
   items: MyDataItem[],
   params: MyDataQueryParams,
 ): MyDataResponse => {
-  const search = params.search?.trim().toLocaleLowerCase();
+  const search = params.search?.trim().toLowerCase();
   const filteredItems = items.filter((item) => {
-    const matchesStatus = item.status === params.status;
-    const matchesWfs = !params.basis || item.basis === params.basis;
+    const matchesStatus = !params.status || item.status === params.status;
+    const matchesBasis = !params.basis || item.spatialBasis === params.basis;
     const matchesQuery = !search || matchesSearch(item, search);
-    return matchesStatus && matchesWfs && matchesQuery;
+    return matchesStatus && matchesBasis && matchesQuery;
   });
   const startIndex = (params.page - 1) * params.pageSize;
 
