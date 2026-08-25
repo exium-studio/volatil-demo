@@ -68,10 +68,6 @@ export const postCreateHelpCenterTicketApi = async (
     formData.append("transactionId", payload.transactionId);
   }
 
-  if (payload.orderNumber) {
-    formData.append("orderNumber", payload.orderNumber);
-  }
-
   if (payload.files && payload.files.length > 0) {
     payload.files.forEach((file) => {
       formData.append("files", file);

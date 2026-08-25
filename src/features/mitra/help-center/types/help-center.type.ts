@@ -108,7 +108,6 @@ export type CreateHelpCenterPayload = {
   title: string;
   description: string;
   transactionId?: string;
-  orderNumber?: string;
   priority?: "low" | "medium" | "high" | "urgent";
   category?: string;
   files?: File[];
@@ -136,7 +135,6 @@ export type CreateHelpCenterTriggerProps = {
     description: string,
     files?: File[],
     transactionId?: string,
-    orderNumber?: string,
   ) => Promise<void> | void;
   isLoading?: boolean;
 };

@@ -43,7 +43,6 @@ export const CreateHelpCenterTrigger = (
       title: "",
       description: "",
       transactionId: "",
-      orderNumber: "",
       files: [],
     },
   });
@@ -65,14 +64,12 @@ export const CreateHelpCenterTrigger = (
           values.description.trim(),
           values.files,
           values.transactionId || undefined,
-          values.orderNumber || undefined,
         );
       } else {
         await createTicketMutation.mutateAsync({
           title: values.title.trim(),
           description: values.description.trim(),
           transactionId: values.transactionId || undefined,
-          orderNumber: values.orderNumber || undefined,
           files: values.files,
         });
       }
@@ -137,14 +134,8 @@ export const CreateHelpCenterTrigger = (
               >
                 <HelpCenterTransactionSelect
                   modalKey={`${modalKey}.selectTransaction`}
-                  onValueChange={(val, option) => {
+                  onValueChange={(val) => {
                     setValue("transactionId", val, { shouldValidate: true });
-                    if (option?.label) {
-                      const matchedOrderNo = option.label.split(" - ")[0];
-                      setValue("orderNumber", matchedOrderNo);
-                    } else {
-                      setValue("orderNumber", "");
-                    }
                   }}
                 />
               </Field>

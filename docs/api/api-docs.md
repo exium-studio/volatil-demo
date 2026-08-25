@@ -90,7 +90,6 @@ type HelpCenterListApiResponse = {
     status: "submitted" | "in_review" | "in_progress" | "resolved" | "rejected";
     priority?: "low" | "medium" | "high" | "urgent";
     transactionId?: string;
-    orderNumber?: string;
     attachmentsCount?: number;
     repliesCount?: number;
     createdAt: string;
@@ -113,18 +112,17 @@ type HelpCenterListApiResponse = {
 };
 ```
 
-### 2.2 Create Tiket Laporan (dengan Transaksi Terkait)
+### 2.2 Create Tiket Laporan
 
 - **Endpoint**: `POST /api/tickets`
 - **Content-Type**: `multipart/form-data`
 - **Form Data Fields**:
   - `title` _(string, required)_: Judul laporan
   - `description` _(string, required)_: Rincian kendala
-  - `transactionId` _(string, optional)_: UUID transaksi/order terkait
-  - `orderNumber` _(string, optional)_: Nomor order terkait (contoh: `ORD-2026-00192`)
+  - `transactionId` _(string, optional)_: ID transaksi terkait
   - `priority` _(string, optional)_: `low` | `medium` | `high` | `urgent`
-  - `category` _(string, optional)_: Kategori isu
-  - `files` _(binary array, optional)_: Berkas lampiran gambar, dokumen, atau video
+  - `category` _(string, optional)_: Kategori kendala
+  - `files` _(binary array, optional)_: Berkas lampiran foto, dokumen, atau video
 
 ### 2.3 Detail Tiket & Balasan
 

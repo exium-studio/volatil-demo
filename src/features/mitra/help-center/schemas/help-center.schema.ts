@@ -8,7 +8,6 @@ export const createHelpCenterSchema = () =>
     title: z.string().trim().min(1, "Judul laporan wajib diisi"),
     description: z.string().trim().min(1, "Deskripsi kendala wajib diisi"),
     transactionId: z.string().optional(),
-    orderNumber: z.string().optional(),
     files: z.array(z.custom<File>()).default([]),
   });
 

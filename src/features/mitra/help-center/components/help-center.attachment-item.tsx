@@ -84,9 +84,10 @@ export const HelpCenterAttachmentItem = memo(
               >
                 {fileName}
               </P>
+
               <AppIcon
                 icon={isImage || isVideo ? ExternalLinkIcon : DownloadIcon}
-                size={"xs"}
+                size={"sm"}
                 color={"fg.subtle"}
               />
             </HStack>

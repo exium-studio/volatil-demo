@@ -143,7 +143,7 @@ export const TNum = forwardRef<HTMLSpanElement, TNumProps>(
             : isSpace
               ? "0.35ch"
               : isDigit
-                ? "0.95ch"
+                ? "0.875ch"
                 : "auto";
 
           return (
