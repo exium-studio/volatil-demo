@@ -1,12 +1,12 @@
-// src/features/mitra/purchase-history/services/purchase-history.service.ts
+// src/features/mitra/transaction-history/services/transaction-history.service.ts
 
-import { fetchPurchaseHistoryApi } from "@/features/mitra/purchase-history/api/purchase-history.api";
+import { fetchTransactionHistoryApi } from "@/features/mitra/transaction-history/api/transaction-history.api";
 import type {
-  PurchaseHistoryQueryParams,
-  PurchaseHistoryResponse,
+  TransactionHistoryQueryParams,
+  TransactionHistoryResponse,
   TransactionRecord,
-} from "@/features/mitra/purchase-history/types/purchase-history.type";
-import { DUMMY_PURCHASE_HISTORY } from "@/shared/constants/dummy-data/dummy-purchase-history";
+} from "@/features/mitra/transaction-history/types/transaction-history.type";
+import { DUMMY_TRANSACTION_HISTORY } from "@/shared/constants/dummy-data/dummy-transaction-history";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
@@ -20,10 +20,10 @@ const matchesSearch = (item: TransactionRecord, search: string) =>
     ...item.items.map((i) => i.sourceLayerId),
   ].some((value) => value?.toLowerCase().includes(search));
 
-export const getPaginatedPurchaseHistory = (
+export const getPaginatedTransactionHistory = (
   items: TransactionRecord[],
-  params: PurchaseHistoryQueryParams,
-): PurchaseHistoryResponse => {
+  params: TransactionHistoryQueryParams,
+): TransactionHistoryResponse => {
   const search = params.search?.trim().toLowerCase();
   const filteredItems = items.filter((item) => {
     const matchesStatus = !params.status || item.transactionStatus === params.status;
@@ -43,30 +43,30 @@ export const getPaginatedPurchaseHistory = (
   };
 };
 
-const EMPTY_PURCHASE_HISTORY_RESPONSE: PurchaseHistoryResponse = {
+const EMPTY_TRANSACTION_HISTORY_RESPONSE: TransactionHistoryResponse = {
   items: [],
   pagination: createPaginationMeta(1, 10, 0),
 };
 
-export const getPurchaseHistory = async (
-  params: PurchaseHistoryQueryParams,
+export const getTransactionHistory = async (
+  params: TransactionHistoryQueryParams,
   signal?: AbortSignal,
-): Promise<PurchaseHistoryResponse> => {
+): Promise<TransactionHistoryResponse> => {
   try {
-    const response = await fetchPurchaseHistoryApi(params, signal);
+    const response = await fetchTransactionHistoryApi(params, signal);
     if (response.data) {
       return response.data;
     }
     return isDummyDataEnabled()
-      ? getPaginatedPurchaseHistory(DUMMY_PURCHASE_HISTORY, params)
-      : EMPTY_PURCHASE_HISTORY_RESPONSE;
+      ? getPaginatedTransactionHistory(DUMMY_TRANSACTION_HISTORY, params)
+      : EMPTY_TRANSACTION_HISTORY_RESPONSE;
   } catch (error) {
     if (isDummyDataEnabled()) {
       console.warn(
-        "getPurchaseHistory API error, falling back to dummy data:",
+        "getTransactionHistory API error, falling back to dummy data:",
         error,
       );
-      return getPaginatedPurchaseHistory(DUMMY_PURCHASE_HISTORY, params);
+      return getPaginatedTransactionHistory(DUMMY_TRANSACTION_HISTORY, params);
     }
     throw error;
   }

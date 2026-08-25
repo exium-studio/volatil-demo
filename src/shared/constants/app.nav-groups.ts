@@ -9,7 +9,7 @@ export const APP_NAV_GROUPS_LIST: NavGroup<AppNavKey>[] = [
       { key: "home" },
       { key: "data_request" },
       { key: "cart" },
-      { key: "purchase_history" },
+      { key: "transaction_history" },
       { key: "my_data" },
     ],
   },

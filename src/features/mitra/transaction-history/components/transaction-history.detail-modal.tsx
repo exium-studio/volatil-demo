@@ -1,4 +1,4 @@
-// src/features/mitra/purchase-history/components/purchase-history.detail-modal.tsx
+// src/features/mitra/transaction-history/components/transaction-history.detail-modal.tsx
 
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-list-table.type";
@@ -16,7 +16,7 @@ import { SPACING } from "@/design-system/constants/styles";
 import type {
   TransactionOrderItem,
   TransactionRecord,
-} from "@/features/mitra/purchase-history/types/purchase-history.type";
+} from "@/features/mitra/transaction-history/types/transaction-history.type";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -24,14 +24,14 @@ import {
 import { CheckCircleIcon, ClockIcon, XCircleIcon } from "lucide-react";
 import { useMemo } from "react";
 
-export type PurchaseHistoryDetailModalProps = {
+export type TransactionHistoryDetailModalProps = {
   transaction: TransactionRecord | null;
   isOpen: boolean;
   onClose: () => void;
 };
 
-export const PurchaseHistoryDetailModal = (
-  props: PurchaseHistoryDetailModalProps,
+export const TransactionHistoryDetailModal = (
+  props: TransactionHistoryDetailModalProps,
 ) => {
   // Props
   const { transaction, isOpen, onClose } = props;
@@ -42,8 +42,8 @@ export const PurchaseHistoryDetailModal = (
   const orderItemHeaders: FormattedTableHeader[] = useMemo(
     () => [
       { th: "Layer IGT", sortable: false, align: "start" },
-      { th: "Basis Spasial", sortable: false, align: "center" },
-      { th: "Metode Seleksi", sortable: false, align: "center" },
+      { th: "Basis Spasial", sortable: false, align: "start" },
+      { th: "Metode Seleksi", sortable: false, align: "start" },
       { th: "Jumlah / Luas", sortable: false, align: "start" },
       { th: "Subtotal", sortable: false, align: "end" },
     ],
@@ -87,7 +87,7 @@ export const PurchaseHistoryDetailModal = (
                 {isBidang ? "Bidang" : "Kawasan"}
               </Badge>
             ),
-            align: "center" as const,
+            align: "start" as const,
           },
           {
             value: item.selectionType,
@@ -96,7 +96,7 @@ export const PurchaseHistoryDetailModal = (
                 {item.selectionType.replace(/_/g, " ")}
               </Badge>
             ),
-            align: "center" as const,
+            align: "start" as const,
           },
           {
             value: quantityText,
@@ -133,7 +133,7 @@ export const PurchaseHistoryDetailModal = (
 
   return (
     <Modal.Root
-      modalKey={"purchase-history-detail-modal"}
+      modalKey={"transaction-history-detail-modal"}
       opened={isOpen}
       close={onClose}
       size={"lg"}
@@ -177,7 +177,6 @@ export const PurchaseHistoryDetailModal = (
                       : XCircleIcon
                 }
                 color={isSettled ? "green.fg" : isPending ? "orange.fg" : "red.fg"}
-                size={"md"}
               />
               <VStack align={"start"} gap={0}>
                 <P fontSize={"sm"} fontWeight={"semibold"}>
@@ -220,7 +219,7 @@ export const PurchaseHistoryDetailModal = (
                 <P fontWeight={"medium"}>
                   <TNum>{transaction.billingCode}</TNum>
                 </P>
-                <ClipboardButton value={transaction.billingCode} size={"xs"} />
+                <ClipboardButton value={transaction.billingCode} />
               </HStack>
             </HStack>
             <HStack justify={"space-between"} fontSize={"sm"}>

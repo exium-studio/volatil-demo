@@ -1,4 +1,4 @@
-// src/features/mitra/purchase-history/components/purchase-history.data-list.tsx
+// src/features/mitra/transaction-history/components/transaction-history.data-list.tsx
 
 import type {
   FormattedListItem,
@@ -19,12 +19,12 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { PurchaseHistoryDetailModal } from "@/features/mitra/purchase-history/components/purchase-history.detail-modal";
-import { usePurchaseHistoryQuery } from "@/features/mitra/purchase-history/hooks/use-purchase-history";
+import { TransactionHistoryDetailModal } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal";
+import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
   TransactionRecord,
   TransactionStatus,
-} from "@/features/mitra/purchase-history/types/purchase-history.type";
+} from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
 import {
   formatUtcDateTime,
@@ -51,16 +51,14 @@ const STATUS_BADGE_MAP: Record<
   failed: { label: "Gagal", color: "red" },
 };
 
-export const PurchaseHistoryDataList = () => {
+export const TransactionHistoryDataList = () => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
   // States
   const [searchRaw, setSearchRaw] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE_OPTIONS[0]);
   const [status, setStatus] = useState<string>("");
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionRecord | null>(null);
@@ -70,12 +68,13 @@ export const PurchaseHistoryDataList = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
-  const { purchaseHistory, isLoading, isFetching } = usePurchaseHistoryQuery({
-    page,
-    pageSize,
-    search: debouncedSearch || undefined,
-    status: (status as TransactionStatus) || undefined,
-  });
+  const { transactionHistory, isLoading, isFetching } =
+    useTransactionHistoryQuery({
+      page,
+      pageSize,
+      search: debouncedSearch || undefined,
+      status: (status as TransactionStatus) || undefined,
+    });
 
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
@@ -91,7 +90,7 @@ export const PurchaseHistoryDataList = () => {
     ];
 
     const items: FormattedListItem<TransactionRecord>[] =
-      purchaseHistory.items.map((item: TransactionRecord) => {
+      transactionHistory.items.map((item: TransactionRecord) => {
         const itemNames = item.items
           .map((it) => it.sourceLayerTitle)
           .join(", ");
@@ -188,8 +187,7 @@ export const PurchaseHistoryDataList = () => {
             },
           ],
         };
-      },
-    );
+      });
 
     const itemActions = [
       {
@@ -208,7 +206,7 @@ export const PurchaseHistoryDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [purchaseHistory.items, preferredTimezone]);
+  }, [transactionHistory.items, preferredTimezone]);
 
   return (
     <VStack w={"full"}>
@@ -234,7 +232,7 @@ export const PurchaseHistoryDataList = () => {
 
         <HStack wrap={"wrap"} gap={SPACING.sm}>
           <StatusSelect
-            modalKey={"purchase-history-status-filter"}
+            modalKey={"transaction-history-status-filter"}
             placeholder={"Status"}
             options={TRANSACTION_STATUS_OPTIONS}
             value={status}
@@ -289,9 +287,9 @@ export const PurchaseHistoryDataList = () => {
                 setPageSize(nextSize);
                 setPage(1);
               }}
-              currentDataLength={purchaseHistory.items.length}
-              totalData={purchaseHistory.pagination.totalItems}
-              totalPage={purchaseHistory.pagination.totalPages}
+              currentDataLength={transactionHistory.items.length}
+              totalData={transactionHistory.pagination.totalItems}
+              totalPage={transactionHistory.pagination.totalPages}
               roundedBottom={0}
               shadow={"none"}
             />
@@ -300,7 +298,7 @@ export const PurchaseHistoryDataList = () => {
       </VStack>
 
       {/* Detail Modal */}
-      <PurchaseHistoryDetailModal
+      <TransactionHistoryDetailModal
         transaction={selectedTransaction}
         isOpen={Boolean(selectedTransaction)}
         onClose={() => setSelectedTransaction(null)}

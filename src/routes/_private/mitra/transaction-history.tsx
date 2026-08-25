@@ -1,8 +1,8 @@
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
-import { MitraPurchaseHistoryPage } from "@/features/mitra/purchase-history/pages/mitra.purchase-history.page";
+import { MitraTransactionHistoryPage } from "@/features/mitra/transaction-history/pages/mitra.transaction-history.page";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_private/mitra/purchase-history")({
+export const Route = createFileRoute("/_private/mitra/transaction-history")({
   beforeLoad: async () => {
     await requireRoleGuard("mitra");
   },
@@ -10,5 +10,5 @@ export const Route = createFileRoute("/_private/mitra/purchase-history")({
 });
 
 function RouteComponent() {
-  return <MitraPurchaseHistoryPage />;
+  return <MitraTransactionHistoryPage />;
 }

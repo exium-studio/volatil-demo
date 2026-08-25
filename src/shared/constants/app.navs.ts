@@ -29,10 +29,10 @@ export const APP_NAVS_MAP = {
     titleKey: "app.navs.cart",
     pathname: "/mitra/cart",
   },
-  purchase_history: {
+  transaction_history: {
     icon: HistoryIcon,
-    titleKey: "app.navs.purchase_history",
-    pathname: "/mitra/purchase-history",
+    titleKey: "app.navs.transaction_history",
+    pathname: "/mitra/transaction-history",
   },
   my_data: {
     icon: DatabaseIcon,

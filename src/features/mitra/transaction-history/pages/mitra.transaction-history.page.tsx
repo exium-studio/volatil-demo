@@ -1,13 +1,13 @@
-// src/features/mitra/purchase-history/pages/mitra.purchase-history.page.tsx
+// src/features/mitra/transaction-history/pages/mitra.transaction-history.page.tsx
 
 import { Container } from "@/design-system/components/layout/ui/container";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { PurchaseHistoryDataList } from "@/features/mitra/purchase-history/components/purchase-history.data-list";
+import { TransactionHistoryDataList } from "@/features/mitra/transaction-history/components/transaction-history.data-list";
 
-export const MitraPurchaseHistoryPage = () => {
+export const MitraTransactionHistoryPage = () => {
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
       <PanelContentContainer>
@@ -20,7 +20,7 @@ export const MitraPurchaseHistoryPage = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <PurchaseHistoryDataList />
+          <TransactionHistoryDataList />
         </Container.Body>
       </PanelContentContainer>
     </Container.Root>

@@ -1,0 +1,58 @@
+// src/features/mitra/transaction-history/types/transaction-history.type.ts
+
+export type TransactionStatus =
+  | "pending"
+  | "settled"
+  | "expired"
+  | "failed";
+
+export type OrderProvisionStatus =
+  | "queued"
+  | "provisioning"
+  | "ready"
+  | "failed"
+  | "expired"
+  | "revoked";
+
+export type TransactionOrderItem = {
+  id: string;
+  sourceLayerId: string;
+  sourceLayerTitle: string;
+  spatialBasis: "bidang" | "kawasan";
+  selectionType: string;
+  snapshotFeaturesCount: number;
+  snapshotAreaHa?: number;
+  unitPrice: number;
+  subtotalPrice: number;
+  provisionStatus: OrderProvisionStatus;
+  proxyWfsUrl?: string;
+  proxyWmsUrl?: string;
+};
+
+export type TransactionRecord = {
+  id: string;
+  transactionNumber: string;
+  orderNumber: string;
+  billingCode: string;
+  paymentMethod: string;
+  transactionStatus: TransactionStatus;
+  totalAmount: number;
+  createdAt: string;
+  paidAt?: string;
+  expiredAt?: string;
+  items: TransactionOrderItem[];
+};
+
+export type TransactionHistoryQueryParams = {
+  page: number;
+  pageSize: number;
+  search?: string;
+  status?: TransactionStatus;
+};
+
+import type { PaginationMeta } from "@/shared/types/common-response.type";
+
+export type TransactionHistoryResponse = {
+  items: TransactionRecord[];
+  pagination: PaginationMeta;
+};
