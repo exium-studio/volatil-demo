@@ -108,7 +108,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
           </HStack>
         </HStack>
 
-        <Separator borderColor={"bg.canvas"} />
+        <Separator />
 
         {/* Content Details */}
         <VStack align={"stretch"} gap={SPACING.xs} fontSize={"xs"}>
