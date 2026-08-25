@@ -5,7 +5,9 @@ import {
   getHelpCenterTicketByIdApi,
   getHelpCenterTicketsApi,
   postCreateHelpCenterTicketApi,
+  postRejectHelpCenterTicketApi,
   postReplyHelpCenterTicketApi,
+  postResolveHelpCenterTicketApi,
 } from "@/features/mitra/help-center/api/help-center.api";
 import type {
   CreateHelpCenterApiResponse,
@@ -127,5 +129,21 @@ export const helpCenterService = {
     signal?: AbortSignal,
   ): Promise<ReplyHelpCenterApiResponse> => {
     return postReplyHelpCenterTicketApi(id, payload, signal);
+  },
+
+  resolveTicket: async (
+    id: number | string,
+    payload?: { note?: string },
+    signal?: AbortSignal,
+  ): Promise<ReplyHelpCenterApiResponse> => {
+    return postResolveHelpCenterTicketApi(id, payload, signal);
+  },
+
+  rejectTicket: async (
+    id: number | string,
+    payload?: { reason?: string },
+    signal?: AbortSignal,
+  ): Promise<ReplyHelpCenterApiResponse> => {
+    return postRejectHelpCenterTicketApi(id, payload, signal);
   },
 };

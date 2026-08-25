@@ -105,3 +105,27 @@ export const postReplyHelpCenterTicketApi = async (
     { signal },
   );
 };
+
+export const postResolveHelpCenterTicketApi = async (
+  id: number | string,
+  payload?: { note?: string },
+  signal?: AbortSignal,
+): Promise<ReplyHelpCenterApiResponse> => {
+  return apiClient.post<ReplyHelpCenterApiResponse>(
+    `/api/tickets/${id}/resolve`,
+    payload ?? {},
+    { signal },
+  );
+};
+
+export const postRejectHelpCenterTicketApi = async (
+  id: number | string,
+  payload?: { reason?: string },
+  signal?: AbortSignal,
+): Promise<ReplyHelpCenterApiResponse> => {
+  return apiClient.post<ReplyHelpCenterApiResponse>(
+    `/api/tickets/${id}/reject`,
+    payload ?? {},
+    { signal },
+  );
+};

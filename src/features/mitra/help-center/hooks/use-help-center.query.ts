@@ -120,3 +120,73 @@ export const useReplyHelpCenterTicket = (ticketId: number | string) => {
     onError: toastHandlers.onError,
   });
 };
+
+export const useResolveHelpCenterTicket = (ticketId: number | string) => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers(`resolve-ticket-${ticketId}`, {
+    group: "Pusat Bantuan",
+    loadingMessage: {
+      title: "Menyelesaikan laporan...",
+    },
+    successMessage: {
+      title: "Laporan berhasil diselesaikan!",
+    },
+    errorMessage: {
+      title: "Gagal menyelesaikan laporan",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload?: { note?: string }) =>
+      helpCenterService.resolveTicket(ticketId, payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.helpCenter.detail(ticketId),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.helpCenter.detail(String(ticketId)),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.helpCenter.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useRejectHelpCenterTicket = (ticketId: number | string) => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers(`reject-ticket-${ticketId}`, {
+    group: "Pusat Bantuan",
+    loadingMessage: {
+      title: "Menolak laporan...",
+    },
+    successMessage: {
+      title: "Laporan berhasil ditolak",
+    },
+    errorMessage: {
+      title: "Gagal menolak laporan",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload?: { reason?: string }) =>
+      helpCenterService.rejectTicket(ticketId, payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.helpCenter.detail(ticketId),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.helpCenter.detail(String(ticketId)),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.helpCenter.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};

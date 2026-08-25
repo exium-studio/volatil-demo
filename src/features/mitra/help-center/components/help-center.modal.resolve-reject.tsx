@@ -9,8 +9,10 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { useReplyHelpCenterTicket } from "@/features/mitra/help-center/hooks/use-help-center.query";
-import type { HelpCenterStatus } from "@/features/mitra/help-center/types/help-center.type";
+import {
+  useRejectHelpCenterTicket,
+  useResolveHelpCenterTicket,
+} from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type React from "react";
 import { useState } from "react";
 
@@ -29,14 +31,17 @@ export const HelpCenterModalResolveRejectTrigger = (
   // Stores
   const { theme } = useThemeStore();
   const isResolve = actionType === "resolve";
-  const targetStatus: HelpCenterStatus = isResolve ? "resolved" : "rejected";
   const modalKey = `${actionType}HelpCenterModal-${ticketId}`;
 
   const { isOpen, open, close } = usePopModal({
     modalKey,
   });
 
-  const replyMutation = useReplyHelpCenterTicket(ticketId);
+  const resolveMutation = useResolveHelpCenterTicket(ticketId);
+  const rejectMutation = useRejectHelpCenterTicket(ticketId);
+  const isPending = isResolve
+    ? resolveMutation.isPending
+    : rejectMutation.isPending;
 
   // States
   const [message, setMessage] = useState<string>("");
@@ -51,10 +56,15 @@ export const HelpCenterModalResolveRejectTrigger = (
     e.preventDefault();
     if (!message.trim()) return;
 
-    await replyMutation.mutateAsync({
-      message: message.trim(),
-      status: targetStatus,
-    });
+    if (isResolve) {
+      await resolveMutation.mutateAsync({
+        note: message.trim(),
+      });
+    } else {
+      await rejectMutation.mutateAsync({
+        reason: message.trim(),
+      });
+    }
 
     handleClose();
   };
@@ -116,7 +126,7 @@ export const HelpCenterModalResolveRejectTrigger = (
             type={"submit"}
             form={`form-${modalKey}`}
             colorPalette={isResolve ? `${theme.colorPalette}` : "red"}
-            loading={replyMutation.isPending}
+            loading={isPending}
             disabled={!message.trim()}
             variant={isResolve ? "solid" : "outline"}
           >
