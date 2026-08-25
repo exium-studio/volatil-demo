@@ -10,7 +10,9 @@ import type {
 import type {
   CreateHelpCenterPayload,
   HelpCenterQueryParams,
+  RejectHelpCenterPayload,
   ReplyHelpCenterPayload,
+  ResolveHelpCenterPayload,
 } from "@/features/mitra/help-center/types/help-center.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 
@@ -108,24 +110,24 @@ export const postReplyHelpCenterTicketApi = async (
 
 export const postResolveHelpCenterTicketApi = async (
   id: number | string,
-  payload?: { note?: string },
+  payload: ResolveHelpCenterPayload,
   signal?: AbortSignal,
 ): Promise<ReplyHelpCenterApiResponse> => {
   return apiClient.post<ReplyHelpCenterApiResponse>(
     `/api/tickets/${id}/resolve`,
-    payload ?? {},
+    payload,
     { signal },
   );
 };
 
 export const postRejectHelpCenterTicketApi = async (
   id: number | string,
-  payload?: { reason?: string },
+  payload: RejectHelpCenterPayload,
   signal?: AbortSignal,
 ): Promise<ReplyHelpCenterApiResponse> => {
   return apiClient.post<ReplyHelpCenterApiResponse>(
     `/api/tickets/${id}/reject`,
-    payload ?? {},
+    payload,
     { signal },
   );
 };

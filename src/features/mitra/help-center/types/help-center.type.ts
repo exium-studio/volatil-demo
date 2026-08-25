@@ -120,6 +120,14 @@ export type ReplyHelpCenterPayload = {
   files?: File[];
 };
 
+export type ResolveHelpCenterPayload = {
+  reason: string;
+};
+
+export type RejectHelpCenterPayload = {
+  reason: string;
+};
+
 export type CreateHelpCenterTriggerProps = {
   children: ReactNode;
   modalKey?: string;

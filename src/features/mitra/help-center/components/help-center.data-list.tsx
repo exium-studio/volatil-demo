@@ -103,7 +103,7 @@ export const HelpCenterDataList = () => {
       { th: "Pelapor", sortable: true, align: "start" },
       { th: "Balasan Terakhir", sortable: false, align: "start" },
       { th: "Transaksi Terkait", sortable: true, align: "start" },
-      { th: "Lampiran", sortable: false, align: "center" },
+      { th: "Lampiran", sortable: false, align: "start" },
       { th: "Waktu Dibuat", sortable: true, align: "start" },
     ];
 
@@ -201,14 +201,14 @@ export const HelpCenterDataList = () => {
                 {ticket.orderNumber ?? ticket.transactionId ?? "-"}
               </P>
             ),
-            align: hasTransaction ? "start" : "center",
+            align: "start",
           },
           {
             value: totalAttachments,
             td:
               totalAttachments > 0 ? (
                 <Badge variant={"outline"} colorPalette={"gray"}>
-                  <AppIcon icon={PaperclipIcon} size={"xs"} />
+                  <AppIcon icon={PaperclipIcon} />
                   {String(totalAttachments)}
                 </Badge>
               ) : (
@@ -216,7 +216,7 @@ export const HelpCenterDataList = () => {
                   {"-"}
                 </P>
               ),
-            align: "center",
+            align: "start",
           },
           {
             value: ticket.createdAt,

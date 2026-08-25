@@ -4,7 +4,9 @@ import { helpCenterService } from "@/features/mitra/help-center/services/help-ce
 import type {
   CreateHelpCenterPayload,
   HelpCenterQueryParams,
+  RejectHelpCenterPayload,
   ReplyHelpCenterPayload,
+  ResolveHelpCenterPayload,
 } from "@/features/mitra/help-center/types/help-center.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
@@ -137,7 +139,7 @@ export const useResolveHelpCenterTicket = (ticketId: number | string) => {
   });
 
   return useMutation({
-    mutationFn: (payload?: { note?: string }) =>
+    mutationFn: (payload: ResolveHelpCenterPayload) =>
       helpCenterService.resolveTicket(ticketId, payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
@@ -172,7 +174,7 @@ export const useRejectHelpCenterTicket = (ticketId: number | string) => {
   });
 
   return useMutation({
-    mutationFn: (payload?: { reason?: string }) =>
+    mutationFn: (payload: RejectHelpCenterPayload) =>
       helpCenterService.rejectTicket(ticketId, payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {

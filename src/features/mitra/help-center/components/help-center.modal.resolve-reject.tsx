@@ -58,7 +58,7 @@ export const HelpCenterModalResolveRejectTrigger = (
 
     if (isResolve) {
       await resolveMutation.mutateAsync({
-        note: message.trim(),
+        reason: message.trim(),
       });
     } else {
       await rejectMutation.mutateAsync({

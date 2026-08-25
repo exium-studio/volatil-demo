@@ -134,6 +134,7 @@ type HelpCenterListApiResponse = {
   - `status` _(string, optional)_
   - `files` _(binary array, optional)_
 - **Resolve / Reject Ticket (Internal Admin)**: `POST /api/tickets/{id}/resolve` / `POST /api/tickets/{id}/reject`
+  - `reason` _(string, required)_: Catatan / alasan keputusan penyelesaian atau penolakan laporan
 
 ---
 

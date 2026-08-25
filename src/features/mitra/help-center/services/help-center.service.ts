@@ -20,7 +20,9 @@ import type {
   HelpCenterQueryParams,
   HelpCenterStatistics,
   HelpCenterStatus,
+  RejectHelpCenterPayload,
   ReplyHelpCenterPayload,
+  ResolveHelpCenterPayload,
 } from "@/features/mitra/help-center/types/help-center.type";
 
 const EMPTY_STATISTICS: HelpCenterStatistics = {
@@ -133,7 +135,7 @@ export const helpCenterService = {
 
   resolveTicket: async (
     id: number | string,
-    payload?: { note?: string },
+    payload: ResolveHelpCenterPayload,
     signal?: AbortSignal,
   ): Promise<ReplyHelpCenterApiResponse> => {
     return postResolveHelpCenterTicketApi(id, payload, signal);
@@ -141,7 +143,7 @@ export const helpCenterService = {
 
   rejectTicket: async (
     id: number | string,
-    payload?: { reason?: string },
+    payload: RejectHelpCenterPayload,
     signal?: AbortSignal,
   ): Promise<ReplyHelpCenterApiResponse> => {
     return postRejectHelpCenterTicketApi(id, payload, signal);
