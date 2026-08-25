@@ -4,11 +4,7 @@ import type GeoJSON from "geojson";
 
 export type SpatialBasisType = "bidang" | "kawasan";
 
-export type SelectionType =
-  | "administrative_filter"
-  | "aoi_polygon"
-  | "selected_features"
-  | "whole_layer";
+export type SelectionType = "administrative_filter" | "aoi_polygon";
 
 export type CartBatchStatus = "preparing" | "ready" | "expired";
 

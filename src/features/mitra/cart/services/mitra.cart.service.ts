@@ -281,7 +281,7 @@ export async function createCartBatch(
             sourceLayerId: payload.items[0]?.sourceLayerId ?? "geonode:layer",
             sourceLayerTitle: "Layer IGT Terpilih",
             spatialBasis: "bidang",
-            selectionType: payload.items[0]?.selectionType ?? "whole_layer",
+            selectionType: payload.items[0]?.selectionType ?? "administrative_filter",
             featuresCount: 15,
             unitPrice: 50000,
             subtotalPrice: 1200000,

@@ -262,11 +262,7 @@ Modul transaksi data IGT berbasis **Batch Interop Spasial**. Setelah mitra memas
 type AddToCartBatchRequest = {
   items: Array<{
     sourceLayerId: string;
-    selectionType:
-      | "administrative_filter"
-      | "aoi_polygon"
-      | "selected_features"
-      | "whole_layer";
+    selectionType: "administrative_filter" | "aoi_polygon";
     administrativeFilter?: {
       kodeProvinsi?: string;
       kodeKabupaten?: string;
@@ -310,11 +306,7 @@ type CartBatchListResponse = {
       sourceLayerId: string;
       sourceLayerTitle: string;
       spatialBasis: "bidang" | "kawasan";
-      selectionType:
-        | "administrative_filter"
-        | "aoi_polygon"
-        | "selected_features"
-        | "whole_layer";
+      selectionType: "administrative_filter" | "aoi_polygon";
       featuresCount: number;
       areaHa?: number;
       unitPrice: number;
@@ -327,17 +319,17 @@ type CartBatchListResponse = {
 };
 ```
 
-### 5.3 Ambil Batch Aktif / Terpilih di Keranjang
+### 5.3 Ambil Detail Batch di Keranjang
 
-- **Endpoint**: `GET /api/mitra/cart/active-batch`
+- **Endpoint**: `GET /api/mitra/cart/batches/{batchId}`
 - **Response**: `CartBatch | null`
 
-### 5.4 Hapus Batch dari Keranjang (Cancel / Clear)
+### 5.4 Kosongkan / Hapus Batch dari Keranjang
 
 - **Endpoint**: `DELETE /api/mitra/cart/batches/{batchId}`
-- **Response**: `200 OK` / `{ success: true, message: "Batch keranjang berhasil dibatalkan" }`
+- **Response**: `200 OK` / `{ success: true, message: "Batch keranjang berhasil dihapus" }`
 
-### 5.5 Checkout Batch (1 Batch = 1 Transaksi & Request Kode Billing)
+### 5.5 Pembayaran Batch (1 Batch = 1 Transaksi & Request Kode Billing)
 
 - **Endpoint**: `POST /api/mitra/cart/batches/{batchId}/checkout`
 - **Payload**: `{}` (Empty JSON / Opsional)
@@ -440,11 +432,7 @@ Berikut adalah ringkasan seluruh enum/konstanta yang digunakan di modul transaks
 export type SpatialBasisType = "bidang" | "kawasan";
 
 // 2. Tipe Seleksi Area Pemotongan Data
-export type SelectionType =
-  | "administrative_filter"
-  | "aoi_polygon"
-  | "selected_features"
-  | "whole_layer";
+export type SelectionType = "administrative_filter" | "aoi_polygon";
 
 // 3. Status Batch Aktif Keranjang (Interop Engine Provisioning)
 export type CartBatchStatus = "preparing" | "ready" | "expired";

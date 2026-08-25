@@ -77,7 +77,7 @@ export const useAddToCartSelected = () => {
         items: [
           {
             sourceLayerId: params.layerId,
-            selectionType: "selected_features",
+            selectionType: "administrative_filter",
             selectedFeatureIds: params.featureIds,
           },
         ],
@@ -108,6 +108,9 @@ export const useAddToCartSelected = () => {
           : `Berhasil menambahkan ${params.featureIds.length} item ke keranjang`;
 
       toast.success(title, { id: toastId, group: "Keranjang" });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "batches"],
+      });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "active-batch"],
       });
@@ -143,9 +146,7 @@ export const useAddToCartAll = () => {
         items: [
           {
             sourceLayerId: params.layerId,
-            selectionType: params.cqlFilter
-              ? "administrative_filter"
-              : "whole_layer",
+            selectionType: "administrative_filter",
             cqlFilter: params.cqlFilter,
           },
         ],

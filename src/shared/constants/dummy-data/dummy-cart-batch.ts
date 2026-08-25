@@ -58,7 +58,7 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
         sourceLayerId: "geonode:zona_nilai_tanah_2026",
         sourceLayerTitle: "Zona Nilai Tanah (ZNT) 2026",
         spatialBasis: "bidang",
-        selectionType: "whole_layer",
+        selectionType: "administrative_filter",
         featuresCount: 19,
         unitPrice: 50000,
         subtotalPrice: 950000,
