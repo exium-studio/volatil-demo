@@ -1,17 +1,16 @@
-// src/design-system/components/feedback/utils/confirm-dialog.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmDialogOptions } from "@/design-system/components/feedback/types/confirm-dialog.type";
-import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { focusAlert } from "@/design-system/components/focus-alert/utils/focus-alert";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Circle } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
-import { useAlertAnimation } from "@/design-system/hooks/use-alert-animation";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
+import { AlertTriangleIcon } from "lucide-react";
 import { useState } from "react";
 
 export const ConfirmDialogModal = (props: {
@@ -27,18 +26,14 @@ export const ConfirmDialogModal = (props: {
     confirmLabel,
     cancelLabel,
     colorPalette = "red",
-    variant = "confused",
+    icon,
     confirmButtonProps,
     onConfirm,
     onCancel,
   } = options;
 
-  // Stores
-  const { theme } = useThemeStore();
-
   // Hooks
   const { isOpen, close } = usePopModal({ modalKey });
-  const transition = useAlertAnimation(isOpen);
 
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,50 +69,44 @@ export const ConfirmDialogModal = (props: {
       modalKey={modalKey}
       opened={isOpen}
       close={handleCancel}
-      size={"xs"}
+      size={"sm"}
     >
-      <Modal.Content bg={"transparent"} shadow={"none"}>
-        <Modal.Body p={0}>
-          <VStack align={"center"} gap={"40px"}>
-            <FaceEmoji
-              variant={variant}
-              transition={transition}
-              size={"lg"}
-              mb={"-42px"}
-            />
+      <Modal.Content>
+        <Modal.Header>
+          <Modal.CloseButton />
+        </Modal.Header>
 
-            <VStack
-              gap={SPACING.md}
-              pos={"relative"}
-              w={"full"}
-              p={SPACING.xl}
-              bg={"bg.body"}
-              roundedTop={theme.radii.container}
+        <Modal.Body pt={0} pb={SPACING.lg}>
+          <VStack align={"center"} gap={SPACING.md} textAlign={"center"}>
+            <Circle
+              size={"48px"}
+              bg={`${colorPalette}.subtle`}
+              color={`${colorPalette}.fg`}
+              mb={1}
             >
-              <Modal.CloseButton />
+              {icon ? (
+                typeof icon === "function" ? (
+                  <AppIcon icon={icon as typeof AlertTriangleIcon} size={"md"} />
+                ) : (
+                  icon
+                )
+              ) : (
+                <AppIcon icon={AlertTriangleIcon} size={"md"} />
+              )}
+            </Circle>
 
-              <P fontSize={"lg"} textAlign={"center"}>
-                {resolvedTitle}
-              </P>
+            <Heading size={"md"} fontWeight={"semibold"}>
+              {resolvedTitle}
+            </Heading>
 
-              <P
-                maxW={"240px"}
-                mx={"auto"}
-                color={"fg.subtle"}
-                textAlign={"center"}
-              >
-                {resolvedDesc}
-              </P>
-            </VStack>
+            <P fontSize={"sm"} color={"fg.muted"} maxW={"320px"}>
+              {resolvedDesc}
+            </P>
           </VStack>
+        </Modal.Body>
 
-          <HStack
-            gap={SPACING.sm}
-            p={SPACING.md}
-            bg={"bg.body"}
-            borderTop={"1px solid"}
-            borderColor={"border.subtle"}
-          >
+        <Modal.Footer>
+          <HStack gap={SPACING.sm} w={"full"}>
             <Button
               flex={1}
               variant={"outline"}
@@ -139,7 +128,7 @@ export const ConfirmDialogModal = (props: {
               {resolvedConfirmLabel}
             </Button>
           </HStack>
-        </Modal.Body>
+        </Modal.Footer>
       </Modal.Content>
     </Modal.Root>
   );

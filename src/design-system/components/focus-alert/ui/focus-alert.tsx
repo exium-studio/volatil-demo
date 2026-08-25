@@ -1,8 +1,4 @@
-// src/design-system/components/focus-alert/ui/focus-alert.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
-import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
-import { useAlertAnimation } from "@/design-system/components/feedback/hooks/use-alert-animation";
 import type {
   FocusAlertContentProps,
   FocusAlertItemProps,
@@ -10,11 +6,24 @@ import type {
   FocusAlertVariant,
 } from "@/design-system/components/focus-alert/types/focus-alert.type";
 import { useFocusAlertContext } from "@/design-system/components/focus-alert/ui/focus-alert-key-context";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Box, Circle } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
+import {
+  AlertCircleIcon,
+  AlertTriangleIcon,
+  CheckCircle2Icon,
+  HeartIcon,
+  HelpCircleIcon,
+  InfoIcon,
+  SearchIcon,
+  SparklesIcon,
+} from "lucide-react";
 
 export const FocusAlertItem = (props: FocusAlertItemProps) => {
   // Props
@@ -33,9 +42,6 @@ export const FocusAlertItem = (props: FocusAlertItemProps) => {
   // Hooks
   const { isOpen, open, close } = usePopModal({ modalKey });
 
-  // Derived Values
-  const transition = useAlertAnimation(isOpen);
-
   return (
     <Modal.Root
       modalKey={modalKey}
@@ -43,12 +49,12 @@ export const FocusAlertItem = (props: FocusAlertItemProps) => {
       open={open}
       close={close}
       closeOnInteractOutside={false}
+      size={"xs"}
     >
       <FocusAlertContent
         variant={variant}
         title={title}
         description={description}
-        transition={transition}
         close={close}
         onDone={onDone}
       />
@@ -71,9 +77,6 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
     modalKey: modalKeyProp,
   });
 
-  // Derived Values
-  const transition = useAlertAnimation(isOpen);
-
   return (
     <Modal.Root
       modalKey={modalKey}
@@ -81,6 +84,7 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
       open={open}
       close={close}
       closeOnInteractOutside={false}
+      size={"xs"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
@@ -88,7 +92,6 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
         variant={variant}
         title={title}
         description={description}
-        transition={transition}
         close={close}
       />
     </Modal.Root>
@@ -97,69 +100,80 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
 
 const FocusAlertContent = (props: FocusAlertContentProps) => {
   // Props
-  const { variant, title, description, transition, close, onDone } = props;
+  const { variant, title, description, close, onDone } = props;
 
   // Constants
-  const VARIANTS_MAP: Record<FocusAlertVariant, { colorPalette: string }> = {
-    happy: { colorPalette: "green" },
-    sad: { colorPalette: "red" },
-    worried: { colorPalette: "orange" },
-    neutral: { colorPalette: "neutral" },
-    confused: { colorPalette: "neutral" },
-    sleepy: { colorPalette: "neutral" },
-    shocked: { colorPalette: "red" },
-    celebrate: { colorPalette: "green" },
-    love: { colorPalette: "pink" },
-    dizzy: { colorPalette: "red" },
-    winking: { colorPalette: "green" },
-    crying: { colorPalette: "blue" },
-    searching: { colorPalette: "neutral" },
-    sleeping: { colorPalette: "neutral" },
+  const VARIANTS_MAP: Record<
+    FocusAlertVariant,
+    { colorPalette: string; icon: typeof CheckCircle2Icon }
+  > = {
+    happy: { colorPalette: "green", icon: CheckCircle2Icon },
+    celebrate: { colorPalette: "green", icon: SparklesIcon },
+    winking: { colorPalette: "green", icon: CheckCircle2Icon },
+    sad: { colorPalette: "red", icon: AlertCircleIcon },
+    shocked: { colorPalette: "red", icon: AlertCircleIcon },
+    dizzy: { colorPalette: "red", icon: AlertCircleIcon },
+    worried: { colorPalette: "orange", icon: AlertTriangleIcon },
+    neutral: { colorPalette: "neutral", icon: InfoIcon },
+    confused: { colorPalette: "neutral", icon: HelpCircleIcon },
+    sleepy: { colorPalette: "neutral", icon: InfoIcon },
+    sleeping: { colorPalette: "neutral", icon: InfoIcon },
+    love: { colorPalette: "pink", icon: HeartIcon },
+    crying: { colorPalette: "blue", icon: AlertCircleIcon },
+    searching: { colorPalette: "neutral", icon: SearchIcon },
   };
 
   // Resolved Values
-  const resolvedVariant = VARIANTS_MAP[variant ?? "neutral"];
+  const resolved = VARIANTS_MAP[variant ?? "neutral"] ?? VARIANTS_MAP.neutral;
 
   return (
     <Modal.Content>
-      <Modal.Body>
-        <VStack align={"center"} justify={"center"} gap={SPACING.xl}>
-          <VStack align={"center"} gap={SPACING.lg} w={"full"}>
-            <FaceEmoji
-              variant={variant}
-              transition={transition}
-              size={"lg"}
-              my={"20px"}
+      <Modal.Body pt={SPACING.lg} pb={SPACING.md}>
+        <VStack align={"center"} gap={SPACING.md} textAlign={"center"}>
+          <Box
+            pos={"relative"}
+            display={"inline-flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            mb={1}
+          >
+            {/* Outer expanding elegant pulse ripple */}
+            <Circle
+              pos={"absolute"}
+              inset={0}
+              size={"48px"}
+              bg={`${resolved.colorPalette}.emphasized`}
+              opacity={0.35}
+              pointerEvents={"none"}
+              animation={"ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite"}
             />
 
-            <VStack gap={SPACING.md} zIndex={2}>
-              <P
-                fontSize={"lg"}
-                fontWeight={"bold"}
-                textAlign={"center"}
-                color={`${resolvedVariant.colorPalette}.solid`}
-              >
-                {title}
-              </P>
+            {/* Inner Icon Circle */}
+            <Circle
+              size={"48px"}
+              pos={"relative"}
+              bg={`${resolved.colorPalette}.subtle`}
+              color={`${resolved.colorPalette}.fg`}
+            >
+              <AppIcon icon={resolved.icon} size={"md"} />
+            </Circle>
+          </Box>
 
-              <P
-                fontSize={"sm"}
-                textAlign={"center"}
-                color={"fg.muted"}
-                maxW={"240px"}
-                mx={"auto"}
-                mb={6}
-              >
-                {description}
-              </P>
-            </VStack>
-          </VStack>
+          <Heading size={"md"} fontWeight={"semibold"}>
+            {title}
+          </Heading>
+
+          {description && (
+            <P fontSize={"sm"} color={"fg.muted"} maxW={"260px"}>
+              {description}
+            </P>
+          )}
         </VStack>
       </Modal.Body>
 
       <Modal.Footer>
-        <Button flex={1} onClick={onDone ?? close}>
-          Selesai
+        <Button primary flex={1} onClick={onDone ?? close}>
+          {"Selesai"}
         </Button>
       </Modal.Footer>
     </Modal.Content>

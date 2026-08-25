@@ -24,7 +24,7 @@ export type FocusAlertContentProps = {
   variant?: FocusAlertVariant;
   title?: string;
   description?: string;
-  transition: boolean;
+  transition?: boolean;
   close: () => void;
   onDone?: () => void;
 };
