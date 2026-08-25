@@ -97,7 +97,7 @@ export const NotificationInboxList = memo(() => {
     <VStack
       flex={1}
       align={"stretch"}
-      gap={SPACING.md}
+      // gap={SPACING.md}
       overflowY={"auto"}
       p={SPACING.md}
     >

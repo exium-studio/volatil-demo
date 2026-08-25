@@ -67,7 +67,7 @@ export const NotificationToastHistoryList = memo(
       <VStack
         flex={1}
         align={"stretch"}
-        gap={SPACING.md}
+        // gap={SPACING.md}
         p={SPACING.md}
         overflowY={"auto"}
       >
