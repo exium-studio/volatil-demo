@@ -6,15 +6,27 @@ Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, 
 
 ## Daftar Isi
 
+### A. Shared Services (Publik / Lintas Role)
+
 1. [Auth & Session](#1-auth--session)
-2. [Data Request & IGT Spasial](#2-data-request--igt-spasial)
-3. [Keranjang & Order Provisioning Spasial](#3-keranjang--order-provisioning-spasial)
-4. [Pusat Bantuan (Help Center)](#4-pusat-bantuan-help-center)
-5. [My Data & User Management](#5-my-data--user-management)
-6. [Dashboard & Statistik](#6-dashboard--statistik)
-7. [Notifikasi & Inbox](#7-notifikasi--inbox)
+2. [Pusat Bantuan (Help Center)](#2-pusat-bantuan-help-center)
+3. [Notifikasi & Inbox](#3-notifikasi--inbox)
+
+### B. Role: Mitra
+
+4. [Mitra - Data Request & IGT Spasial](#4-mitra---data-request--igt-spasial)
+5. [Mitra - Keranjang & Order Provisioning Spasial](#5-mitra---keranjang--order-provisioning-spasial)
+6. [Mitra - My Data & Transaksi](#6-mitra---my-data--transaksi)
+7. [Mitra - Dashboard & Statistik](#7-mitra---dashboard--statistik)
+
+### C. Role: Internal (Admin / Verifikator)
+
+8. [Internal - User Management](#8-internal---user-management)
+9. [Internal - Dashboard & Statistik Sistem](#9-internal---dashboard--statistik-sistem)
 
 ---
+
+# A. Shared Services (Publik / Lintas Role)
 
 ## 1. Auth & Session
 
@@ -52,11 +64,118 @@ type SignInResponse = {
 
 ---
 
-## 2. Data Request & IGT Spasial
+## 2. Pusat Bantuan (Help Center)
 
-Modul untuk melihat katalog IGT, filter spasial wilayah administrasi, serta query feature via WFS/AOI.
+Modul penanganan tiket kendala, integrasi transaksi terkait, lampiran berkas, dan balasan laporan (dapat diakses oleh Mitra untuk membuat/melihat tiket miliknya, dan Internal untuk mengelola/menjawab tiket).
 
-### 2.1 Katalog IGT
+### 2.1 Get List Tiket
+
+- **Endpoint**: `GET /api/tickets`
+- **Params**:
+  - `scope?: "all" | "my"`
+  - `status?: "active" | "history" | "submitted" | "in_review" | "in_progress" | "resolved" | "rejected"`
+  - `search?: string`
+  - `page?: number`
+  - `limit?: number`
+- **Response**:
+
+```typescript
+type HelpCenterListApiResponse = {
+  success: boolean;
+  data: Array<{
+    id: number;
+    userId?: number;
+    title: string;
+    description: string;
+    status: "submitted" | "in_review" | "in_progress" | "resolved" | "rejected";
+    priority?: "low" | "medium" | "high" | "urgent";
+    transactionId?: string;
+    orderNumber?: string;
+    attachmentsCount?: number;
+    repliesCount?: number;
+    createdAt: string;
+    updatedAt: string;
+    user?: {
+      id: number;
+      name: string;
+      email: string;
+      role: "mitra" | "internal";
+    };
+  }>;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+};
+```
+
+### 2.2 Create Tiket Laporan (dengan Transaksi Terkait)
+
+- **Endpoint**: `POST /api/tickets`
+- **Content-Type**: `multipart/form-data`
+- **Form Data Fields**:
+  - `title` _(string, required)_: Judul laporan
+  - `description` _(string, required)_: Rincian kendala
+  - `transactionId` _(string, optional)_: UUID transaksi/order terkait
+  - `orderNumber` _(string, optional)_: Nomor order terkait (contoh: `ORD-2026-00192`)
+  - `priority` _(string, optional)_: `low` | `medium` | `high` | `urgent`
+  - `category` _(string, optional)_: Kategori isu
+  - `files` _(binary array, optional)_: Berkas lampiran gambar, dokumen, atau video
+
+### 2.3 Detail Tiket & Balasan
+
+- **Get Detail**: `GET /api/tickets/{id}`
+- **Reply Ticket**: `POST /api/tickets/{id}/reply` (`multipart/form-data`)
+  - `message` _(string, required)_
+  - `status` _(string, optional)_
+  - `files` _(binary array, optional)_
+- **Resolve / Reject Ticket (Internal Admin)**: `POST /api/tickets/{id}/resolve` / `POST /api/tickets/{id}/reject`
+
+---
+
+## 3. Notifikasi & Inbox
+
+Modul pesan inbox resmi dan sinkronisasi riwayat toast notification sistem.
+
+### 3.1 List Inbox Pesan
+
+- **Endpoint**: `GET /api/v1/inbox`
+- **Response**:
+
+```typescript
+type InboxListResponse = {
+  items: Array<{
+    id: string;
+    title: string;
+    message: string;
+    category: "transaksi" | "sistem" | "bantuan" | "akun";
+    isRead: boolean;
+    actionUrl?: string;
+    createdAt: string;
+  }>;
+  total: number;
+  unreadCount: number;
+};
+```
+
+### 3.2 Tandai Inbox Telah Dibaca
+
+- **Endpoint**: `PATCH /api/v1/inbox/{id}/read`
+- **Response**: `200 OK` / `void`
+
+---
+
+# B. Role: Mitra
+
+## 4. Mitra - Data Request & IGT Spasial
+
+Modul eksplorasi katalog IGT, filter spasial wilayah administrasi, serta query feature via WFS/AOI untuk pengajuan data mitra.
+
+### 4.1 Katalog IGT
 
 - **Endpoint**: `GET /api/v1/igt/catalog`
 - **Params**:
@@ -97,14 +216,14 @@ type IgtCatalogResponse = {
 };
 ```
 
-### 2.2 Query IGT by AOI (Polygon / Upload SHP/GeoJSON)
+### 4.2 Query IGT by AOI (Polygon / Upload SHP/GeoJSON)
 
 - **By AOI Polygon**: `POST /api/v1/igt/by-aoi`
   - **Payload**: GeoJSON Polygon (`geometry: GeoJSON.Polygon`)
 - **By Uploaded File**: `POST /api/v1/igt/by-uploaded-aoi`
   - **Payload**: `FormData` (`file: File`) (.zip shp, .geojson, .kml)
 
-### 2.3 Filter Options Wilayah Administrasi
+### 4.3 Filter Options Wilayah Administrasi
 
 - `GET /api/v1/igt/filter-options/provinsi`
 - `GET /api/v1/igt/filter-options/kabupaten?provinsiId={id}`
@@ -113,11 +232,14 @@ type IgtCatalogResponse = {
 
 ---
 
-## 3. Keranjang & Order Provisioning Spasial
+## 5. Mitra - Keranjang & Order Provisioning Spasial
+
+> [!NOTE]
+> **TODO: Refactor Pending** — Skema endpoint cart, checkout, dan provisioning order di bawah ini belum final dan akan direfactor menyesuaikan arsitektur backend transaksi.
 
 Modul transaksi data IGT, checkout, provisioning isolated PostGIS table per-mitra, GeoServer workspace provisioning, serta manajemen kredensial WFS/WMS (Hash-Only & Rotation).
 
-### 3.1 Add to Cart
+### 5.1 Add to Cart
 
 - **Endpoint**: `POST /api/v1/mitra/cart/add`
 - **Payload**:
@@ -137,7 +259,7 @@ type AddToCartRequest = {
 };
 ```
 
-### 3.2 Get Cart Summary & Items
+### 5.2 Get Cart Summary & Items
 
 - **Endpoint**: `GET /api/v1/mitra/cart`
 - **Response**:
@@ -171,7 +293,7 @@ type CartResponse = {
 };
 ```
 
-### 3.3 Checkout / Create Order
+### 5.3 Checkout / Create Order
 
 - **Endpoint**: `POST /api/v1/mitra/cart/checkout`
 - **Payload**:
@@ -203,7 +325,7 @@ type CreateOrderCheckoutResponse = {
 };
 ```
 
-### 3.4 Order Detail & Provisioned Spatial Layer
+### 5.4 Order Detail & Provisioned Spatial Layer
 
 - **Endpoint**: `GET /api/v1/mitra/orders/{id}`
 - **Response**:
@@ -258,7 +380,7 @@ type OrderDetailResponse = {
 };
 ```
 
-### 3.5 Generate & Rotate API Key Kredensial Spasial (One-Time Reveal)
+### 5.5 Generate & Rotate API Key Kredensial Spasial (One-Time Reveal)
 
 - **Endpoint**: `POST /api/v1/mitra/provisioned-layers/{id}/generate-key`
 - **Payload**:
@@ -282,80 +404,19 @@ type GenerateApiKeyResponse = {
 
 ---
 
-## 4. Pusat Bantuan (Help Center)
+## 6. Mitra - My Data & Transaksi
 
-Modul penanganan tiket kendala, integrasi transaksi terkait, lampiran berkas, dan balasan laporan.
+> [!NOTE]
+> **TODO: Refactor Pending** — Skema endpoint `my-data` (layer aktif) dan riwayat transaksi mitra belum fix dan akan disesuaikan kembali pada iterasi backend berikutnya.
 
-### 4.1 Get List Tiket
+### 6.1 My Data (Layer Aktif Mitra)
 
-- **Endpoint**: `GET /api/tickets`
-- **Params**:
-  - `scope?: "all" | "my"`
-  - `status?: "active" | "history" | "submitted" | "in_review" | "in_progress" | "resolved" | "rejected"`
-  - `search?: string`
-  - `page?: number`
-  - `limit?: number`
-- **Response**:
+- **Endpoint**: `GET /api/v1/mitra/my-data`
+- **Response**: Daftar layer aktif ter-provisioning milik mitra beserta sisa waktu akses dan statistik pemakaian WFS/WMS proxy.
 
-```typescript
-type HelpCenterListApiResponse = {
-  success: boolean;
-  data: Array<{
-    id: number;
-    userId?: number;
-    title: string;
-    description: string;
-    status: "submitted" | "in_review" | "in_progress" | "resolved" | "rejected";
-    priority?: "low" | "medium" | "high" | "urgent";
-    transactionId?: string;
-    orderNumber?: string;
-    attachmentsCount?: number;
-    repliesCount?: number;
-    createdAt: string;
-    updatedAt: string;
-    user?: {
-      id: number;
-      name: string;
-      email: string;
-      role: "mitra" | "internal";
-    };
-  }>;
-  pagination: {
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-    itemsPerPage: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-  };
-};
-```
+### 6.2 Riwayat Transaksi Mitra
 
-### 4.2 Create Tiket Laporan (dengan Transaksi Terkait)
-
-- **Endpoint**: `POST /api/tickets`
-- **Content-Type**: `multipart/form-data`
-- **Form Data Fields**:
-  - `title` _(string, required)_: Judul laporan
-  - `description` _(string, required)_: Rincian kendala
-  - `transactionId` _(string, optional)_: UUID transaksi/order terkait
-  - `orderNumber` _(string, optional)_: Nomor order terkait (contoh: `ORD-2026-00192`)
-  - `priority` _(string, optional)_: `low` | `medium` | `high` | `urgent`
-  - `category` _(string, optional)_: Kategori isu
-  - `files` _(binary array, optional)_: Berkas lampiran gambar, dokumen, atau video
-
-### 4.3 Detail Tiket & Balasan
-
-- **Get Detail**: `GET /api/tickets/{id}`
-- **Reply Ticket**: `POST /api/tickets/{id}/reply` (`multipart/form-data`)
-  - `message` _(string, required)_
-  - `status` _(string, optional)_
-  - `files` _(binary array, optional)_
-- **Resolve / Reject Ticket (Internal Admin)**: `POST /api/tickets/{id}/resolve` / `POST /api/tickets/{id}/reject`
-
-### 4.4 List Transaksi untuk Select Box Bantuan
-
-- **Endpoint**: `GET /api/v1/mitra/transactions` _(atau internal order history query)_
+- **Endpoint**: `GET /api/v1/mitra/transactions`
 - **Response**:
 
 ```typescript
@@ -385,24 +446,9 @@ type MitraTransactionListResponse = {
 
 ---
 
-## 5. My Data & User Management
+## 7. Mitra - Dashboard & Statistik
 
-### 5.1 My Data (Layer Aktif Mitra)
-
-- **Endpoint**: `GET /api/v1/mitra/my-data`
-- **Response**: Daftar layer aktif ter-provisioning beserta sisa waktu akses dan statistik pemakaian WFS/WMS proxy.
-
-### 5.2 User Management (Internal Admin)
-
-- **List Users**: `GET /api/v1/internal/users`
-- **User Detail**: `GET /api/v1/internal/users/{id}`
-- **Update Status / Role**: `PUT /api/v1/internal/users/{id}`
-
----
-
-## 6. Dashboard & Statistik
-
-### 6.1 Mitra Home Summary
+### 7.1 Mitra Home Summary
 
 - **Endpoint**: `GET /api/v1/mitra/home/summary?period={1d|1w|1m|1y|all}`
 - **Response**:
@@ -410,39 +456,30 @@ type MitraTransactionListResponse = {
   - `financialFlow`: Riwayat nominal belanja data spasial per periode.
   - `cartSummary`: Total item aktif di keranjang saat ini.
 
-### 6.2 Internal Dashboard Overview
+---
 
-- **Endpoint**: `GET /api/v1/internal/home/summary?period={1d|1w|1m|1y|all}`
-- **Response**: Statistik pengguna aktif, permohonan data masuk, volume transaksi, dan utilisasi resource server.
+# C. Role: Internal (Admin / Verifikator)
+
+## 8. Internal - User Management
+
+### 8.1 List Users
+
+- **Endpoint**: `GET /api/v1/internal/users`
+- **Params**: `page?: number`, `limit?: number`, `role?: string`, `search?: string`
+
+### 8.2 User Detail
+
+- **Endpoint**: `GET /api/v1/internal/users/{id}`
+
+### 8.3 Update Status / Role User
+
+- **Endpoint**: `PUT /api/v1/internal/users/{id}`
 
 ---
 
-## 7. Notifikasi & Inbox
+## 9. Internal - Dashboard & Statistik Sistem
 
-Modul pesan inbox resmi dan sinkronisasi riwayat toast notification sistem.
+### 9.1 Internal Dashboard Overview
 
-### 7.1 List Inbox Pesan
-
-- **Endpoint**: `GET /api/v1/inbox`
-- **Response**:
-
-```typescript
-type InboxListResponse = {
-  items: Array<{
-    id: string;
-    title: string;
-    message: string;
-    category: "transaksi" | "sistem" | "bantuan" | "akun";
-    isRead: boolean;
-    actionUrl?: string;
-    createdAt: string;
-  }>;
-  total: number;
-  unreadCount: number;
-};
-```
-
-### 7.2 Tandai Inbox Telah Dibaca
-
-- **Endpoint**: `PATCH /api/v1/inbox/{id}/read`
-- **Response**: `200 OK` / `void`
+- **Endpoint**: `GET /api/v1/internal/home/summary?period={1d|1w|1m|1y|all}`
+- **Response**: Statistik pengguna aktif, permohonan data masuk, volume transaksi, dan utilisasi resource server.
