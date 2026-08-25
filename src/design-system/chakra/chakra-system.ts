@@ -624,16 +624,13 @@ export const chakraConfig = defineConfig({
 
       fonts: {
         heading: {
-          value:
-            "'Plus Jakarta Sans Variable', 'Outfit Variable', 'Wix Madefor Text Variable', sans-serif",
+          value: "'Plus Jakarta Sans Variable', sans-serif",
         },
         body: {
-          value:
-            "'Plus Jakarta Sans Variable', 'Outfit Variable', 'Wix Madefor Text Variable', sans-serif",
+          value: "'Plus Jakarta Sans Variable', sans-serif",
         },
         number: {
-          value:
-            "'Plus Jakarta Sans Variable', 'Outfit Variable', 'Wix Madefor Text Variable', sans-serif",
+          value: "'Plus Jakarta Sans Variable', sans-serif",
         },
 
         jakarta: { value: "'Plus Jakarta Sans Variable', sans-serif" },
