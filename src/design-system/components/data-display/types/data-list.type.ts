@@ -1,20 +1,39 @@
 // src/design-system/components/data-display/types/data-list.type.ts
+
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { ConfirmDialogOptions } from "@/design-system/components/feedback/types/confirm-dialog.type";
 import type { SelectProps } from "@/design-system/components/input/types/select.type";
 import type { ActionBarRootProps } from "@/design-system/components/overlay/types/action-bar.type";
 import type { MenuRootProps, StackProps } from "@chakra-ui/react";
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 
-export type DataListItemActionsGenerator<T = Record<string, unknown>> = (
-  item: FormattedListItem<T>,
-  index: number,
-) => ReactNode;
+export type ActionIconType =
+  | ComponentType<{ size?: string | number; className?: string; [key: string]: unknown }>
+  | ReactNode;
+
+export type DataListDeclarativeItemAction<T = Record<string, unknown>> = {
+  key?: string;
+  label: string; // Label is mandatory
+  icon?: ActionIconType | ((item: T) => ActionIconType);
+  colorPalette?: string | ((item: T) => string | undefined);
+  variant?: "solid" | "subtle" | "outline" | "ghost";
+  confirmation?: ConfirmDialogOptions | ((item: T) => ConfirmDialogOptions);
+  onClick?: (item: T, formattedItem: FormattedListItem<T>) => void | Promise<void>;
+  hidden?: (item: T, formattedItem: FormattedListItem<T>) => boolean;
+  disabled?: (item: T, formattedItem: FormattedListItem<T>) => boolean;
+  showInRow?: boolean; // If true, render in spread action column (default: true)
+  showInMenu?: boolean; // If true, render in sticky dropdown menu (default: true)
+};
+
+export type DataListItemActionsGenerator<T = Record<string, unknown>> =
+  | DataListDeclarativeItemAction<T>
+  | ((item: FormattedListItem<T>, index: number) => ReactNode);
 
 export type DataListItemActionsTriggerProps<T = Record<string, unknown>> =
   MenuRootProps & {
     item: FormattedListItem<T>;
-    itemActions?: DataListItemActionsGenerator[];
+    itemActions?: DataListItemActionsGenerator<T>[];
     contextedTrigger?: boolean;
   };
 

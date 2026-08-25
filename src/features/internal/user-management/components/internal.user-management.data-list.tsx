@@ -9,13 +9,11 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -80,13 +78,13 @@ export const InternalUserManagementDataList = () => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Pengguna", sortable: true, align: "start" },
-      { th: "Role", sortable: true, align: "center" },
+      { th: "Role", sortable: true, align: "start" },
       { th: "Instansi / Perusahaan", sortable: true, align: "start" },
-      { th: "Status", sortable: true, align: "center" },
+      { th: "Status", sortable: true, align: "start" },
       { th: "Terakhir Masuk", sortable: true, align: "start" },
     ];
 
-    const items: FormattedListItem[] = users.map(
+    const items: FormattedListItem<UserManagementItem>[] = users.map(
       (user: UserManagementItem) => ({
         id: user.id,
         data: user,
@@ -113,7 +111,7 @@ export const InternalUserManagementDataList = () => {
                 {ROLE_MAP[user.role].label}
               </Badge>
             ),
-            align: "center",
+            align: "start",
           },
           {
             value: user.agencyOrCompany,
@@ -130,7 +128,7 @@ export const InternalUserManagementDataList = () => {
                 {STATUS_MAP[user.status].label}
               </Badge>
             ),
-            align: "center",
+            align: "start",
           },
           {
             value: user.lastLoginAt ?? "",
@@ -146,43 +144,29 @@ export const InternalUserManagementDataList = () => {
     );
 
     const itemActions = [
-      (item: FormattedListItem) => {
-        const user = item.data as UserManagementItem;
-        const isActive = user.status === "active";
-
-        return (
-          <>
-            {isActive ? (
-              <Menu.Item
-                value={"suspend"}
-                color={"red.fg"}
-                onClick={() => {
-                  updateStatusMutation.mutate({
-                    id: user.id,
-                    status: "inactive",
-                  });
-                }}
-              >
-                <AppIcon icon={ShieldAlertIcon} />
-                {"Nonaktifkan Pengguna"}
-              </Menu.Item>
-            ) : (
-              <Menu.Item
-                value={"activate"}
-                color={"green.fg"}
-                onClick={() => {
-                  updateStatusMutation.mutate({
-                    id: user.id,
-                    status: "active",
-                  });
-                }}
-              >
-                <AppIcon icon={CheckCircleIcon} />
-                {"Aktifkan Pengguna"}
-              </Menu.Item>
-            )}
-          </>
-        );
+      {
+        key: "toggle-status",
+        label: "Ubah Status",
+        icon: (user: UserManagementItem) =>
+          user.status === "active" ? ShieldAlertIcon : CheckCircleIcon,
+        colorPalette: (user: UserManagementItem) =>
+          user.status === "active" ? "red" : "green",
+        confirmation: (user: UserManagementItem) => ({
+          title:
+            user.status === "active"
+              ? "Nonaktifkan Pengguna?"
+              : "Aktifkan Pengguna?",
+          description: `Apakah Anda yakin ingin mengubah status akun ${user.name}?`,
+          confirmLabel:
+            user.status === "active" ? "Nonaktifkan" : "Aktifkan",
+          colorPalette: user.status === "active" ? "red" : "green",
+          onConfirm: () => {
+            updateStatusMutation.mutate({
+              id: user.id,
+              status: user.status === "active" ? "inactive" : "active",
+            });
+          },
+        }),
       },
     ];
 

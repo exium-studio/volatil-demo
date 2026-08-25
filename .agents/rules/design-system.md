@@ -59,6 +59,8 @@ import { P } from "@/design-system/components/typography/ui/p";
 - **Aturan Ukuran Badge (WAJIB)**:
   - DILARANG menggunakan `size={"xs"}` atau `size={"sm"}` pada `Badge`.
   - Gunakan ukuran default dari `Badge` tanpa override size kecil.
+- **Aturan Alignment Tabel/List (WAJIB)**:
+  - Kolom/sel yang merender `Badge` alignment-nya WAJIB default (`"start"`), DILARANG di-`center`.
 - **Penggunaan**:
 
 ```tsx
@@ -118,16 +120,20 @@ const ChildComponent = () => {
 
 #### `Button` & `IconButton`
 
+- **Aturan Sizing (MUTLAK)**:
+  - DILARANG melakukan override ukuran `size={"xs"}` atau `size={"sm"}` pada `Button`, `IconButton`, dan `AppIcon` kecuali ada instruksi eksplisit khusus.
+  - Gunakan ukuran standar/default dari komponen design system (`md`).
+
 ```tsx
 import { Button, IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { IconTrash } from "@tabler/icons-react";
 
-<Button primary size={"md"} onClick={handleAction}>
+<Button primary onClick={handleAction}>
   {"Simpan"}
 </Button>
 
-<Button variant={"outline"} colorPalette={"red"} size={"xs"}>
+<Button variant={"outline"} colorPalette={"red"}>
   <AppIcon icon={IconTrash} />
   {"Hapus"}
 </Button>

@@ -18,7 +18,6 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
@@ -100,7 +99,7 @@ export const HelpCenterDataList = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Judul Laporan", sortable: true, align: "start" },
       { th: "Pesan", sortable: true, align: "start" },
-      { th: "Status", sortable: true, align: "center" },
+      { th: "Status", sortable: true, align: "start" },
       { th: "Pelapor", sortable: true, align: "start" },
       { th: "Balasan Terakhir", sortable: false, align: "start" },
       { th: "Transaksi Terkait", sortable: true, align: "start" },
@@ -108,7 +107,8 @@ export const HelpCenterDataList = () => {
       { th: "Waktu Dibuat", sortable: true, align: "start" },
     ];
 
-    const items: FormattedListItem[] = tickets.map((ticket: HelpCenterItem) => {
+    const items: FormattedListItem<HelpCenterItem>[] = tickets.map(
+      (ticket: HelpCenterItem) => {
       const repliesList: HelpCenterResponse[] =
         ticket.responses ?? ticket.replies ?? [];
       const latestReply =
@@ -151,7 +151,7 @@ export const HelpCenterDataList = () => {
                 {statusConfig.label}
               </Badge>
             ),
-            align: "center",
+            align: "start",
           },
           {
             value: ticket.user?.name,
@@ -231,24 +231,16 @@ export const HelpCenterDataList = () => {
     });
 
     const itemActions = [
-      (item: FormattedListItem) => {
-        const ticket = item.data as HelpCenterItem;
-
-        return (
-          <Menu.Item
-            key={`detail-${ticket.id}`}
-            value={`detail-${ticket.id}`}
-            onClick={() => {
-              void navigate({
-                to: "/mitra/help-center/$ticketId",
-                params: { ticketId: String(ticket.id) },
-              });
-            }}
-          >
-            <AppIcon icon={EyeIcon} />
-            {"Lihat Detail"}
-          </Menu.Item>
-        );
+      {
+        key: "view-detail",
+        label: "Lihat Detail",
+        icon: EyeIcon,
+        onClick: (ticket: HelpCenterItem) => {
+          void navigate({
+            to: "/mitra/help-center/$ticketId",
+            params: { ticketId: String(ticket.id) },
+          });
+        },
       },
     ];
 

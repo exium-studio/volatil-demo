@@ -73,7 +73,6 @@ import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Drawer } from "@/design-system/components/overlay/ui/drawer";
-import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
@@ -1661,44 +1660,36 @@ export const DataDisplay = () => {
     ] as DataListBatchActionsGenerator[],
 
     itemActions: [
-      (item) => {
-        return (
-          <Menu.Item
-            value={"edit"}
-            onClick={() => {
-              console.log(item);
-            }}
-          >
-            <AppIcon icon={EditIcon} size={"sm"} />
-            Edit
-          </Menu.Item>
-        );
+      {
+        key: "edit",
+        label: "Edit",
+        icon: EditIcon,
+        onClick: (item) => {
+          console.log("Edit item:", item);
+        },
       },
-      (item) => {
-        return (
-          <Menu.Item
-            value={"restore"}
-            onClick={() => {
-              console.log(item);
-            }}
-          >
-            <AppIcon icon={Undo2Icon} size={"sm"} />
-            Restore
-          </Menu.Item>
-        );
+      {
+        key: "restore",
+        label: "Restore",
+        icon: Undo2Icon,
+        onClick: (item) => {
+          console.log("Restore item:", item);
+        },
       },
-      (item) => {
-        return (
-          <Menu.Item
-            value={"delete"}
-            onClick={() => {
-              console.log(item);
-            }}
-          >
-            <AppIcon icon={TrashIcon} size={"sm"} />
-            Delete
-          </Menu.Item>
-        );
+      {
+        key: "delete",
+        label: "Delete",
+        icon: TrashIcon,
+        colorPalette: "red",
+        confirmation: (item) => ({
+          title: "Hapus Item?",
+          description: `Apakah Anda yakin ingin menghapus data ${(item as Record<string, unknown>).name || item.id}?`,
+          confirmLabel: "Hapus",
+          colorPalette: "red",
+          onConfirm: () => {
+            console.log("Delete confirmed:", item);
+          },
+        }),
       },
     ] as DataListItemActionsGenerator[],
   };

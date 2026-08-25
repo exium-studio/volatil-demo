@@ -87,6 +87,7 @@
     "notifications": "Notifications"
   },
   "action": {
+    "actions": "Actions",
     "expand": "Expand",
     "collapse": "Collapse",
     "save": "Save",

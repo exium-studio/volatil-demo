@@ -7,14 +7,14 @@ import type {
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ReactNode } from "react";
 
-export type DataListTableRowProps = {
-  item: FormattedListItem;
+export type DataListTableRowProps<T = Record<string, unknown>> = {
+  item: FormattedListItem<T>;
   index: number;
   isItemSelected: boolean;
   canBatchSelect: boolean;
   withNumbering: boolean;
-  itemActions?: DataListItemActionsGenerator[];
-  toggleItemSelection: (item: FormattedListItem) => void;
+  itemActions?: DataListItemActionsGenerator<T>[];
+  toggleItemSelection: (item: FormattedListItem<T>) => void;
   measureRef?: (element: Element | null) => void;
   dataIndex?: number;
   styleProps?: StackProps;

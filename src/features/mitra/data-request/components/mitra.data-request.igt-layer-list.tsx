@@ -15,7 +15,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -125,7 +124,7 @@ export const MitraDataRequestIgtLayerList = memo(
     const dataList = useMemo(() => {
       const headers: FormattedTableHeader[] = [
         { th: "Layer IGT", sortable: true, align: "start" },
-        { th: "Basis IGT", sortable: true, align: "center" },
+        { th: "Basis IGT", sortable: true, align: "start" },
         { th: "Jumlah / Luas", sortable: false, align: "start" },
         {
           th: "",
@@ -140,7 +139,7 @@ export const MitraDataRequestIgtLayerList = memo(
         },
       ];
 
-      const items: FormattedListItem[] = filteredLayers.map(
+      const items: FormattedListItem<IgtLayerItem>[] = filteredLayers.map(
         (layer: IgtLayerItem) => {
           const isBidang = layer.spatialBasis === "bidang";
           const layerDisplayName =
@@ -171,7 +170,7 @@ export const MitraDataRequestIgtLayerList = memo(
                     {"Kawasan"}
                   </Badge>
                 ),
-                align: "center",
+                align: "start",
               },
               {
                 value: layer.spatialBasis,
@@ -188,8 +187,6 @@ export const MitraDataRequestIgtLayerList = memo(
                 td: (
                   <Tooltip content={"Masukkan ke keranjang"}>
                     <IconButton
-                      size={"xs"}
-                      h={"32px"}
                       primary
                       variant={"outline"}
                       aria-label={"Masukkan ke keranjang"}
@@ -226,37 +223,23 @@ export const MitraDataRequestIgtLayerList = memo(
       );
 
       const itemActions = [
-        (item: FormattedListItem) => {
-          const layer = item.data as IgtLayerItem;
-
-          return (
-            <Menu.Item
-              key={`fly-to-${layer.id}`}
-              value={`fly-to-${layer.id}`}
-              onClick={() => {
-                void flyToIgtLayer(map, layer, {
-                  cqlFilter: combinedCqlFilter,
-                });
-              }}
-            >
-              <AppIcon icon={MapPinIcon} />
-              {"Lihat di Peta"}
-            </Menu.Item>
-          );
+        {
+          key: "fly-to-map",
+          label: "Lihat di Peta",
+          icon: MapPinIcon,
+          onClick: (layer: IgtLayerItem) => {
+            void flyToIgtLayer(map, layer, {
+              cqlFilter: combinedCqlFilter,
+            });
+          },
         },
-        (item: FormattedListItem) => {
-          const layer = item.data as IgtLayerItem;
-
-          return (
-            <Menu.Item
-              key={`detail-${layer.id}`}
-              value={`detail-${layer.id}`}
-              onClick={() => onSelectIgtLayer(layer)}
-            >
-              <AppIcon icon={TablePropertiesIcon} />
-              {"Detail Atribut"}
-            </Menu.Item>
-          );
+        {
+          key: "detail-attribute",
+          label: "Detail Atribut",
+          icon: TablePropertiesIcon,
+          onClick: (layer: IgtLayerItem) => {
+            onSelectIgtLayer(layer);
+          },
         },
       ];
 
@@ -329,12 +312,12 @@ export const MitraDataRequestIgtLayerList = memo(
           {isLoadingLayers && <Skeleton flex={1} p={SPACING.md} rounded={0} />}
 
           {!isLoadingLayers && (
-            <DataListTable.Root
+            <DataListTable.Root<IgtLayerItem>
               headers={dataList.headers}
               items={dataList.items}
               itemActions={dataList.itemActions}
               canBatchSelect={true}
-              selectedItems={selectedItems}
+              selectedItems={selectedItems as FormattedListItem<IgtLayerItem>[]}
               onSelectedItemChange={({ selectedItems: next }) =>
                 setSelectedItems(next as FormattedListItem[])
               }

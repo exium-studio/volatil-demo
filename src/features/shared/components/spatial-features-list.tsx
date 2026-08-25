@@ -6,10 +6,8 @@ import { DataListFooter } from "@/design-system/components/data-display/ui/data-
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { SPACING } from "@/design-system/constants/styles";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -162,28 +160,22 @@ const SpatialFeaturesListContent = memo(
         batchActions,
 
         itemActions: [
-          (item: FormattedListItem) => {
-            const feat = item.data as unknown as
-              | GeoJSON.Feature
-              | Record<string, unknown>
-              | undefined;
-            return (
-              <Menu.Item
-                key={`fly-to-${item.id}`}
-                value={`fly-to-${item.id}`}
-                onClick={() => {
-                  const currentMap = map ?? useMapInstanceStore.getState().map;
-                  if (!currentMap || !feat) return;
-                  highlightFeatureOnMap(
-                    currentMap,
-                    feat as unknown as GeoJSON.Feature,
-                  );
-                }}
-              >
-                <AppIcon icon={MapPinIcon} />
-                {"Lihat di Peta"}
-              </Menu.Item>
-            );
+          {
+            key: "fly-to-feature",
+            label: "Lihat di Peta",
+            icon: MapPinIcon,
+            onClick: (_data: Record<string, unknown>, formattedItem: FormattedListItem) => {
+              const feat = formattedItem.data as unknown as
+                | GeoJSON.Feature
+                | Record<string, unknown>
+                | undefined;
+              const currentMap = map ?? useMapInstanceStore.getState().map;
+              if (!currentMap || !feat) return;
+              highlightFeatureOnMap(
+                currentMap,
+                feat as unknown as GeoJSON.Feature,
+              );
+            },
           },
           ...(extraItemActions ?? []),
         ] as DataListItemActionsGenerator[],

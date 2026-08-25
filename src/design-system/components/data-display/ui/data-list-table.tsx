@@ -23,7 +23,10 @@ import {
   DataListBatchActionBar,
   DataListBatchActionsTrigger,
 } from "@/design-system/components/data-display/ui/data-list-batch-actions";
-import { DataListItemActionsTrigger } from "@/design-system/components/data-display/ui/data-list-item-actions";
+import {
+  DataListItemActionsTrigger,
+  DataListRowSpreadActions,
+} from "@/design-system/components/data-display/ui/data-list-item-actions";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
@@ -32,6 +35,7 @@ import { Grid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
 import { TABLE } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { tintAlpha } from "@/shared/utils/style/color";
 import { Box, Center } from "@chakra-ui/react";
@@ -217,6 +221,9 @@ const DataListTableRootInternal = <
     headersList.forEach(() => cols.push("auto"));
 
     if (!isEmptyArray(itemActionsList)) {
+      // 1 normal column for spread action buttons
+      cols.push("auto");
+      // 1 sticky column for sticky menu trigger
       cols.push(TABLE.actionsCellW);
     }
 
@@ -353,7 +360,16 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       ))}
 
       {!isEmptyArray(itemActions) && (
-        <DataListTableCell pos={"sticky"} top={0} right={0} zIndex={11} />
+        <>
+          {/* Normal column header for spread action buttons */}
+          <DataListTableCell justify={"center"}>
+            <P fontWeight={"semibold"} color={"fg.subtle"}>
+              {t["action.actions"]()}
+            </P>
+          </DataListTableCell>
+          {/* Sticky column header for sticky menu */}
+          <DataListTableCell pos={"sticky"} top={0} right={0} zIndex={11} />
+        </>
       )}
     </Box>
   );
@@ -445,21 +461,41 @@ const DataListTableRow = memo(
         ))}
 
         {!isEmptyArray(itemActions) && (
-          <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
-            <Center
-              w={"full"}
-              h={"full"}
-              px={"10px"}
+          <>
+            {/* Normal column cell for spread action buttons */}
+            <HStack
+              justify={"center"}
+              align={"center"}
+              px={4}
+              py={2}
               bg={cellBg}
-              onClick={(e) => e.stopPropagation()}
+              gap={1}
             >
-              <DataListItemActionsTrigger itemActions={itemActions} item={item}>
-                <IconButton variant={"ghost"} size={"xs"}>
-                  <AppIcon icon={EllipsisIcon} />
-                </IconButton>
-              </DataListItemActionsTrigger>
+              <DataListRowSpreadActions item={item} itemActions={itemActions} />
+            </HStack>
+
+            {/* Sticky column cell for sticky menu trigger */}
+            <Center
+              pos={"sticky"}
+              right={0}
+              zIndex={2}
+              bg={"bg.body"}
+            >
+              <Center
+                w={"full"}
+                h={"full"}
+                px={"10px"}
+                bg={cellBg}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <DataListItemActionsTrigger itemActions={itemActions} item={item}>
+                  <IconButton variant={"ghost"}>
+                    <AppIcon icon={EllipsisIcon} />
+                  </IconButton>
+                </DataListItemActionsTrigger>
+              </Center>
             </Center>
-          </Center>
+          </>
         )}
       </Box>
     );

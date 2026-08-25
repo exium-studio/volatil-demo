@@ -69,10 +69,10 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT", sortable: true, align: "start" },
-      { th: "Basis IGT", sortable: true, align: "center" },
+      { th: "Basis IGT", sortable: true, align: "start" },
       { th: "WFS URL", sortable: false, align: "start" },
       { th: "WMS URL", sortable: false, align: "start" },
-      { th: "Status Aktif", sortable: true, align: "center" },
+      { th: "Status Aktif", sortable: true, align: "start" },
       { th: "Sisa Waktu", sortable: true, align: "start" },
       { th: "Tanggal Kadaluwarsa", sortable: true, align: "start" },
     ];
@@ -106,7 +106,7 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
                 {"Kawasan"}
               </Badge>
             ),
-            align: "center" as const,
+            align: "start" as const,
           },
           {
             value: item.wfsUrl ?? "",
@@ -162,7 +162,7 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
                 {isActive ? "Aktif" : "Tidak Aktif"}
               </Badge>
             ),
-            align: "center" as const,
+            align: "start" as const,
           },
           {
             value: item.expiresAt,
