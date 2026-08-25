@@ -12,6 +12,21 @@ export type SelectionType =
 
 export type CartBatchStatus = "preparing" | "ready" | "expired";
 
+export type CartBatchStatusConfig = {
+  label: string;
+  colorPalette: "green" | "blue" | "red" | "gray";
+  icon: typeof import("lucide-react")["CheckCircle2Icon"];
+  iconColor: string;
+  isSpinning?: boolean;
+};
+
+export type MitraCartBatchItemProps = {
+  batch: CartBatch;
+  index: number;
+  isSelected: boolean;
+  onSelect: (batchId: string) => void;
+};
+
 export type PaymentMethod =
   | "MPN_GEN2"
   | "VA_MANDIRI"
@@ -44,7 +59,7 @@ export type AddToCartBatchResponse = {
   createdAt: string;
 };
 
-export type ActiveCartBatchItem = {
+export type CartBatchItem = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
@@ -58,18 +73,26 @@ export type ActiveCartBatchItem = {
   wmsUrl?: string;
 };
 
-export type ActiveCartBatch = {
+export type CartBatch = {
   batchId: string;
   status: CartBatchStatus;
   createdAt: string;
   readyAt?: string;
   expiredAt?: string;
   totalPrice: number;
-  items: ActiveCartBatchItem[];
+  items: CartBatchItem[];
+};
+
+export type ActiveCartBatch = CartBatch;
+export type ActiveCartBatchItem = CartBatchItem;
+
+export type CartBatchListResponse = {
+  batches: CartBatch[];
+  total: number;
 };
 
 export type CheckoutBatchRequest = {
-  paymentMethod: PaymentMethod;
+  paymentMethod?: PaymentMethod;
 };
 
 export type CheckoutBatchResponse = {
@@ -77,7 +100,7 @@ export type CheckoutBatchResponse = {
   transactionNumber: string;
   orderNumber: string;
   billingCode: string;
-  paymentMethod: string;
+  paymentMethod?: string;
   totalAmount: number;
   status: "pending";
   createdAt: string;

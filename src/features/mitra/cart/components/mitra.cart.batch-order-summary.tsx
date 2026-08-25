@@ -1,9 +1,6 @@
-// src/features/mitra/cart/components/mitra.cart.batch-order-summary.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -12,31 +9,21 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartBatch } from "@/features/mitra/cart/hooks/use-mitra-cart";
-import type {
-  ActiveCartBatch,
-  PaymentMethod,
-} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import type { ActiveCartBatch } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { useNavigate } from "@tanstack/react-router";
 import { CreditCardIcon, InfoIcon, ShieldCheckIcon } from "lucide-react";
-import { useMemo, useState } from "react";
-
-const PAYMENT_METHOD_OPTIONS = [
-  { label: "MPN Gen 2 (Penerimaan Negara Bukan Pajak)", value: "MPN_GEN2" },
-  { label: "Virtual Account Mandiri", value: "VA_MANDIRI" },
-  { label: "Virtual Account BRI", value: "VA_BRI" },
-  { label: "Virtual Account BCA", value: "VA_BCA" },
-  { label: "QRIS Dinamis", value: "QRIS" },
-];
+import { useMemo } from "react";
 
 export type MitraCartBatchOrderSummaryProps = {
   activeBatch: ActiveCartBatch | null;
+  isLoading?: boolean;
 };
 
 export const MitraCartBatchOrderSummary = (
   props: MitraCartBatchOrderSummaryProps,
 ) => {
   // Props
-  const { activeBatch } = props;
+  const { activeBatch, isLoading = false } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -44,13 +31,11 @@ export const MitraCartBatchOrderSummary = (
   // Navigation
   const navigate = useNavigate();
 
-  // States
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("MPN_GEN2");
-
   // Mutations
   const checkoutMutation = useCheckoutCartBatch();
 
   // Derived Values
+  const isSelected = Boolean(activeBatch);
   const isReadyToPay = activeBatch?.status === "ready";
   const isPreparing = activeBatch?.status === "preparing";
   const isExpired = activeBatch?.status === "expired";
@@ -76,13 +61,19 @@ export const MitraCartBatchOrderSummary = (
     checkoutMutation.mutate(
       {
         batchId: activeBatch.batchId,
-        payload: { paymentMethod },
       },
       {
-        onSuccess: () => {
-          void navigate({
-            to: "/mitra/transaction-history",
-          });
+        onSuccess: (data) => {
+          if (data?.billingCode) {
+            void navigate({
+              to: "/mitra/billing/$billingCode",
+              params: { billingCode: data.billingCode },
+            });
+          } else {
+            void navigate({
+              to: "/mitra/transaction-history",
+            });
+          }
         },
       },
     );
@@ -102,20 +93,26 @@ export const MitraCartBatchOrderSummary = (
           <P fontSize={"xs"} color={"fg.subtle"}>
             {"ID Batch Transaksi"}
           </P>
-          <Badge
-            colorPalette={
-              isReadyToPay ? "green" : isPreparing ? "blue" : "gray"
-            }
-            variant={"subtle"}
-          >
-            {isReadyToPay
-              ? "Siap Dibayar"
-              : isPreparing
-                ? "Menyiapkan Data"
-                : isExpired
-                  ? "Kadaluwarsa"
-                  : "Draft"}
-          </Badge>
+          {isSelected ? (
+            <Badge
+              colorPalette={
+                isReadyToPay ? "green" : isPreparing ? "blue" : isExpired ? "red" : "gray"
+              }
+              variant={"subtle"}
+            >
+              {isReadyToPay
+                ? "Siap Dibayar"
+                : isPreparing
+                  ? "Menyiapkan Data"
+                  : isExpired
+                    ? "Kadaluwarsa"
+                    : "Draft"}
+            </Badge>
+          ) : (
+            <Badge colorPalette={"gray"} variant={"subtle"}>
+              {"Belum Dipilih"}
+            </Badge>
+          )}
         </HStack>
         <P fontSize={"sm"} fontWeight={"semibold"}>
           {activeBatch?.batchId ?? "-"}
@@ -124,57 +121,48 @@ export const MitraCartBatchOrderSummary = (
 
       <Separator borderColor={"bg.canvas"} />
 
-      {/* Payment Method Selector */}
-      <VStack align={"start"} gap={1} w={"full"}>
-        <P fontSize={"xs"} fontWeight={"medium"} color={"fg.muted"}>
-          {"Metode Pembayaran"}
-        </P>
-        <FocusSelectInput
-          modalKey={"cart-batch-payment-method-select"}
-          placeholder={"Pilih Metode Pembayaran"}
-          options={PAYMENT_METHOD_OPTIONS}
-          value={paymentMethod}
-          onValueChange={(val: string | null) => {
-            if (val) setPaymentMethod(val as PaymentMethod);
-          }}
-          disabled={!isReadyToPay || checkoutMutation.isPending}
-          w={"full"}
-        />
-      </VStack>
-
-      <Separator
-        variant={"dashed"}
-        borderStyle={"dashed"}
-        borderTopWidth={"2px"}
-        borderColor={"border.emphasized"}
-      />
-
       {/* Summary Breakdown */}
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Total Layer IGT"}</P>
           <P fontWeight={"medium"}>
-            {`${activeBatch?.items.length ?? 0} layer`}
+            {isSelected ? `${activeBatch?.items.length ?? 0} layer` : "-"}
           </P>
         </HStack>
 
-        {totalBidang > 0 && (
-          <HStack justify={"space-between"}>
-            <P color={"fg.muted"}>{"Total Objek Bidang"}</P>
-            <P fontWeight={"medium"}>
-              <TNum>{totalBidang}</TNum> {"bidang"}
-            </P>
-          </HStack>
-        )}
+        <HStack justify={"space-between"}>
+          <P color={"fg.muted"}>{"Total Objek Bidang"}</P>
+          <P fontWeight={"medium"}>
+            {isSelected ? (
+              totalBidang > 0 ? (
+                <>
+                  <TNum>{totalBidang}</TNum> {"bidang"}
+                </>
+              ) : (
+                "-"
+              )
+            ) : (
+              "-"
+            )}
+          </P>
+        </HStack>
 
-        {totalKawasanHa > 0 && (
-          <HStack justify={"space-between"}>
-            <P color={"fg.muted"}>{"Total Luas Kawasan"}</P>
-            <P fontWeight={"medium"}>
-              <TNum>{totalKawasanHa}</TNum> {"ha"}
-            </P>
-          </HStack>
-        )}
+        <HStack justify={"space-between"}>
+          <P color={"fg.muted"}>{"Total Luas Kawasan"}</P>
+          <P fontWeight={"medium"}>
+            {isSelected ? (
+              totalKawasanHa > 0 ? (
+                <>
+                  <TNum>{totalKawasanHa}</TNum> {"ha"}
+                </>
+              ) : (
+                "-"
+              )
+            ) : (
+              "-"
+            )}
+          </P>
+        </HStack>
 
         <Separator
           variant={"dashed"}
@@ -189,21 +177,34 @@ export const MitraCartBatchOrderSummary = (
             {"Total Tagihan"}
           </P>
           <P fontSize={"lg"} fontWeight={"bold"}>
-            <FormatNumber
-              value={activeBatch?.totalPrice ?? 0}
-              style={"currency"}
-              currency={"IDR"}
-              maximumFractionDigits={0}
-            />
+            {isSelected ? (
+              <FormatNumber
+                value={activeBatch?.totalPrice ?? 0}
+                style={"currency"}
+                currency={"IDR"}
+                maximumFractionDigits={0}
+              />
+            ) : (
+              "Rp0"
+            )}
           </P>
         </HStack>
       </VStack>
 
-      {/* Info notices */}
-      {isPreparing && (
+      {/* Notice States */}
+      {!isSelected && (
+        <Alert.Root status={"neutral"} colorPalette={"gray"} variant={"subtle"}>
+          <AppIcon icon={InfoIcon} />
+          <Alert.Title>
+            {"Silakan pilih salah satu batch pesanan pada daftar keranjang untuk menampilkan rincian dan melakukan pembayaran."}
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isPreparing && (
         <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
-          <Alert.Title fontSize={"xs"}>
+          <Alert.Title>
             {"Tombol pembayaran akan aktif otomatis setelah Interop Engine selesai menyiapkan data."}
           </Alert.Title>
         </Alert.Root>
@@ -213,17 +214,19 @@ export const MitraCartBatchOrderSummary = (
       <Button
         primary={true}
         w={"full"}
-        disabled={!isReadyToPay || !hasItems || checkoutMutation.isPending}
+        disabled={!isSelected || !isReadyToPay || !hasItems || checkoutMutation.isPending || isLoading}
         loading={checkoutMutation.isPending}
         onClick={handleCheckout}
         mt={1}
       >
         <AppIcon icon={CreditCardIcon} />
-        {isPreparing
-          ? "Menunggu Interop..."
-          : isExpired
-            ? "Batch Kadaluwarsa"
-            : "Checkout & Bayar"}
+        {!isSelected
+          ? "Pilih Batch Terlebih Dahulu"
+          : isPreparing
+            ? "Menunggu Interop..."
+            : isExpired
+              ? "Batch Kadaluwarsa"
+              : "Bayar Sekarang"}
       </Button>
 
       <HStack justify={"center"} gap={1} pt={1}>

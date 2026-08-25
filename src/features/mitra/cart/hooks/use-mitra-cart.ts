@@ -182,12 +182,43 @@ import {
   checkoutCartBatch,
   createCartBatch,
   getActiveCartBatch,
+  getCartBatchDetail,
+  getCartBatches,
 } from "@/features/mitra/cart/services/mitra.cart.service";
 import type {
   ActiveCartBatch,
   AddToCartBatchRequest,
+  CartBatch,
+  CartBatchListResponse,
   CheckoutBatchRequest,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+
+export const useCartBatchesQuery = () => {
+  const query = useQuery<CartBatchListResponse>({
+    queryKey: ["mitra", "cart", "batches"],
+    queryFn: ({ signal }) => getCartBatches(signal),
+  });
+
+  return {
+    ...query,
+    batches: query.data?.batches ?? [],
+    total: query.data?.total ?? 0,
+  };
+};
+
+export const useCartBatchDetailQuery = (batchId?: string) => {
+  const query = useQuery<CartBatch | null>({
+    queryKey: ["mitra", "cart", "batch-detail", batchId],
+    queryFn: ({ signal }) =>
+      batchId ? getCartBatchDetail(batchId, signal) : Promise.resolve(null),
+    enabled: Boolean(batchId),
+  });
+
+  return {
+    ...query,
+    batchDetail: query.data ?? null,
+  };
+};
 
 export const useActiveCartBatchQuery = () => {
   const query = useQuery<ActiveCartBatch | null>({
@@ -235,13 +266,13 @@ export const useCancelActiveCartBatch = () => {
   const toastHandlers = mutationToastHandlers("cancel-cart-batch", {
     group: "Keranjang",
     loadingMessage: {
-      title: "Membatalkan batch keranjang...",
+      title: "Mengosongkan keranjang...",
     },
     successMessage: {
-      title: "Batch keranjang berhasil dibatalkan",
+      title: "Keranjang berhasil dikosongkan",
     },
     errorMessage: {
-      title: "Gagal membatalkan batch keranjang",
+      title: "Gagal mengosongkan keranjang",
     },
   });
 
@@ -250,6 +281,9 @@ export const useCancelActiveCartBatch = () => {
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "batches"],
+      });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "active-batch"],
       });
@@ -267,21 +301,27 @@ export const useCheckoutCartBatch = () => {
     },
     successMessage: {
       title: "Kode billing berhasil diterbitkan!",
-      description: "Silakan selesaikan pembayaran sebelum batas waktu berakhir.",
+      description: "Mengarahkan ke halaman instruksi pembayaran billing...",
     },
     errorMessage: {
-      title: "Gagal memproses checkout",
+      title: "Gagal memproses pembayaran",
     },
   });
 
   return useMutation({
-    mutationFn: (params: { batchId: string; payload: CheckoutBatchRequest }) =>
+    mutationFn: (params: { batchId: string; payload?: CheckoutBatchRequest }) =>
       checkoutCartBatch(params.batchId, params.payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: (data) => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "batches"],
+      });
+      void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "active-batch"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "billing"],
       });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "transaction-history"],

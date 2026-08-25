@@ -14,13 +14,20 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { SPACING } from "@/design-system/constants/styles";
-import { MitraCartBatchDataList } from "@/features/mitra/cart/components/mitra.cart.batch-data-list";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { Box } from "@/design-system/components/layout/ui/box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { MitraCartBatchItem } from "@/features/mitra/cart/components/mitra.cart.batch-item";
 import { MitraCartBatchOrderSummary } from "@/features/mitra/cart/components/mitra.cart.batch-order-summary";
 import {
-  useActiveCartBatchQuery,
   useCancelActiveCartBatch,
+  useCartBatchDetailQuery,
+  useCartBatchesQuery,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
+import { IconShoppingCartOff } from "@tabler/icons-react";
 import { Trash2Icon } from "lucide-react";
+import { useState } from "react";
 
 export const MitraCartPage = () => {
   return (
@@ -35,17 +42,37 @@ const MitraCartContent = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries & Mutations
-  const { activeBatch, isLoading, isFetching } = useActiveCartBatchQuery();
+  const {
+    batches,
+    isLoading: isBatchesLoading,
+    isFetching: isBatchesFetching,
+  } = useCartBatchesQuery();
   const cancelBatchMutation = useCancelActiveCartBatch();
 
-  const hasBatch = Boolean(activeBatch && activeBatch.items.length > 0);
+  // States — initial load has NO selected batch
+  const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
+
+  // Queries — detail of selected batch
+  const {
+    batchDetail: selectedBatch,
+    isLoading: isDetailLoading,
+    isFetching: isDetailFetching,
+  } = useCartBatchDetailQuery(selectedBatchId ?? undefined);
+
+  // Handlers — once selected, user cannot unselect (only switch to another batch)
+  const handleSelectBatch = (batchId: string) => {
+    setSelectedBatchId(batchId);
+  };
+
+  const hasBatches = batches.length > 0;
+  const isGlobalFetching = isBatchesFetching || isDetailFetching;
 
   return (
     <PanelContentContainer
       overflowY={isSmContainer ? "auto" : undefined}
       position={"relative"}
     >
-      <TopBarLoader isFetching={isFetching} />
+      <TopBarLoader isFetching={isGlobalFetching} />
 
       <HStack
         flex={1}
@@ -54,35 +81,43 @@ const MitraCartContent = () => {
         minH={isSmContainer ? undefined : 0}
         w={"full"}
       >
-        {/* DataList Container */}
+        {/* Batches List Container */}
         <Container.Body
           flex={isSmContainer ? 1 : 2}
           minH={isSmContainer ? undefined : 0}
           overflowY={isSmContainer ? undefined : "auto"}
         >
           <HeaderContainer pr={3}>
-            <Heading>
-              {"Keranjang Transaksi"}
-            </Heading>
+            <Heading>{"Keranjang Transaksi"}</Heading>
 
-            {hasBatch && (
+            {hasBatches && (
               <ConfirmationTrigger
-                modalKey={"cancel-cart-batch-confirmation"}
-                title={"Batalkan Batch Keranjang?"}
+                modalKey={"clear-cart-confirmation"}
+                title={"Kosongkan Keranjang?"}
                 description={
-                  "Batch pesanan ini beserta layer spasial yang telah diproses akan dibatalkan."
+                  "Semua daftar batch pesanan layer spasial di keranjang akan dihapus."
                 }
-                confirmLabel={"Batalkan Batch"}
+                confirmLabel={"Kosongkan keranjang"}
                 colorPalette={"red"}
                 onConfirm={() => {
-                  if (activeBatch?.batchId) {
-                    cancelBatchMutation.mutate(activeBatch.batchId);
+                  if (selectedBatch?.batchId) {
+                    cancelBatchMutation.mutate(selectedBatch.batchId, {
+                      onSuccess: () => {
+                        setSelectedBatchId(null);
+                      },
+                    });
+                  } else if (batches[0]?.batchId) {
+                    cancelBatchMutation.mutate(batches[0].batchId, {
+                      onSuccess: () => {
+                        setSelectedBatchId(null);
+                      },
+                    });
                   }
                 }}
               >
-                <Button colorPalette={"red"} variant={"outline"}>
+                <Button colorPalette={"red"} size={"sm"} pl={3}>
                   <AppIcon icon={Trash2Icon} />
-                  {"Batalkan Batch"}
+                  {"Kosongkan keranjang"}
                 </Button>
               </ConfirmationTrigger>
             )}
@@ -90,10 +125,44 @@ const MitraCartContent = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <MitraCartBatchDataList
-            activeBatch={activeBatch}
-            isLoading={isLoading}
-          />
+          <Box flex={1} p={SPACING.md} overflowY={"auto"}>
+            {isBatchesLoading ? (
+              <VStack gap={SPACING.md} w={"full"}>
+                <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
+                <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
+              </VStack>
+            ) : !hasBatches ? (
+              <Box
+                flex={1}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                w={"full"}
+                py={SPACING.xl}
+                bg={"bg.body"}
+              >
+                <NoDataState
+                  icon={IconShoppingCartOff}
+                  title={"Keranjang Kosong"}
+                  description={
+                    "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permohonan Data."
+                  }
+                />
+              </Box>
+            ) : (
+              <VStack gap={SPACING.md} align={"stretch"} w={"full"}>
+                {batches.map((batch, index) => (
+                  <MitraCartBatchItem
+                    key={batch.batchId}
+                    batch={batch}
+                    index={index}
+                    isSelected={batch.batchId === selectedBatchId}
+                    onSelect={handleSelectBatch}
+                  />
+                ))}
+              </VStack>
+            )}
+          </Box>
         </Container.Body>
 
         {/* Summary Container */}
@@ -106,14 +175,15 @@ const MitraCartContent = () => {
           overflowY={isSmContainer ? undefined : "auto"}
         >
           <HeaderContainer>
-            <Heading>
-              {"Ringkasan Order"}
-            </Heading>
+            <Heading>{"Ringkasan Order"}</Heading>
           </HeaderContainer>
 
           <Separator borderColor={"bg.canvas"} />
 
-          <MitraCartBatchOrderSummary activeBatch={activeBatch} />
+          <MitraCartBatchOrderSummary
+            activeBatch={selectedBatch}
+            isLoading={isDetailLoading}
+          />
         </Container.Body>
       </HStack>
     </PanelContentContainer>

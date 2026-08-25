@@ -212,6 +212,8 @@ export async function checkout(
 import {
   deleteCartBatchApi,
   fetchActiveCartBatchApi,
+  fetchCartBatchDetailApi,
+  fetchCartBatchesApi,
   postCheckoutBatchApi,
   postCreateCartBatchApi,
 } from "@/features/mitra/cart/api/mitra.cart.api";
@@ -219,11 +221,18 @@ import type {
   ActiveCartBatch,
   AddToCartBatchRequest,
   AddToCartBatchResponse,
+  CartBatch,
+  CartBatchListResponse,
   CheckoutBatchRequest,
   CheckoutBatchResponse,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
-import { DUMMY_ACTIVE_CART_BATCH } from "@/shared/constants/dummy-data/dummy-cart-batch";
+import {
+  DUMMY_ACTIVE_CART_BATCH,
+  DUMMY_CART_BATCHES,
+} from "@/shared/constants/dummy-data/dummy-cart-batch";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
+
+let localDummyBatches = [...DUMMY_CART_BATCHES];
 
 export async function createCartBatch(
   payload: AddToCartBatchRequest,
@@ -232,20 +241,96 @@ export async function createCartBatch(
   try {
     const response = await postCreateCartBatchApi(payload, signal);
     if (response.data) return response.data;
-    return {
-      batchId: `btc-${Date.now()}`,
+    const newBatchId = `btc-${Date.now()}`;
+    const newBatch: CartBatch = {
+      batchId: newBatchId,
       status: "preparing",
-      estimatedTotalPrice: 1850000,
       createdAt: new Date().toISOString(),
+      totalPrice: 1200000,
+      items: [
+        {
+          id: `cbi-${Date.now()}`,
+          sourceLayerId: payload.items[0]?.sourceLayerId ?? "geonode:layer",
+          sourceLayerTitle: "Layer IGT Terpilih",
+          spatialBasis: "bidang",
+          selectionType: payload.items[0]?.selectionType ?? "whole_layer",
+          featuresCount: 15,
+          unitPrice: 50000,
+          subtotalPrice: 1200000,
+        },
+      ],
+    };
+    localDummyBatches = [newBatch, ...localDummyBatches];
+    return {
+      batchId: newBatchId,
+      status: "preparing",
+      estimatedTotalPrice: 1200000,
+      createdAt: newBatch.createdAt,
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return {
-        batchId: `btc-${Date.now()}`,
+      const newBatchId = `btc-${Date.now()}`;
+      const newBatch: CartBatch = {
+        batchId: newBatchId,
         status: "preparing",
-        estimatedTotalPrice: 1850000,
         createdAt: new Date().toISOString(),
+        totalPrice: 1200000,
+        items: [
+          {
+            id: `cbi-${Date.now()}`,
+            sourceLayerId: payload.items[0]?.sourceLayerId ?? "geonode:layer",
+            sourceLayerTitle: "Layer IGT Terpilih",
+            spatialBasis: "bidang",
+            selectionType: payload.items[0]?.selectionType ?? "whole_layer",
+            featuresCount: 15,
+            unitPrice: 50000,
+            subtotalPrice: 1200000,
+          },
+        ],
       };
+      localDummyBatches = [newBatch, ...localDummyBatches];
+      return {
+        batchId: newBatchId,
+        status: "preparing",
+        estimatedTotalPrice: 1200000,
+        createdAt: newBatch.createdAt,
+      };
+    }
+    throw error;
+  }
+}
+
+export async function getCartBatches(
+  signal?: AbortSignal,
+): Promise<CartBatchListResponse> {
+  try {
+    const response = await fetchCartBatchesApi(signal);
+    if (response.data) return response.data;
+    return isDummyDataEnabled()
+      ? { batches: localDummyBatches, total: localDummyBatches.length }
+      : { batches: [], total: 0 };
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return { batches: localDummyBatches, total: localDummyBatches.length };
+    }
+    throw error;
+  }
+}
+
+export async function getCartBatchDetail(
+  batchId: string,
+  signal?: AbortSignal,
+): Promise<CartBatch | null> {
+  try {
+    const response = await fetchCartBatchDetailApi(batchId, signal);
+    if (response.data !== undefined) return response.data;
+    if (isDummyDataEnabled()) {
+      return localDummyBatches.find((b) => b.batchId === batchId) ?? null;
+    }
+    return null;
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return localDummyBatches.find((b) => b.batchId === batchId) ?? null;
     }
     throw error;
   }
@@ -257,10 +342,10 @@ export async function getActiveCartBatch(
   try {
     const response = await fetchActiveCartBatchApi(signal);
     if (response.data !== undefined) return response.data;
-    return isDummyDataEnabled() ? DUMMY_ACTIVE_CART_BATCH : null;
+    return isDummyDataEnabled() ? localDummyBatches[0] ?? DUMMY_ACTIVE_CART_BATCH : null;
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return DUMMY_ACTIVE_CART_BATCH;
+      return localDummyBatches[0] ?? DUMMY_ACTIVE_CART_BATCH;
     }
     throw error;
   }
@@ -272,14 +357,21 @@ export async function cancelActiveCartBatch(
 ): Promise<void> {
   try {
     await deleteCartBatchApi(batchId, signal);
+    if (isDummyDataEnabled()) {
+      localDummyBatches = localDummyBatches.filter((b) => b.batchId !== batchId);
+    }
   } catch (error) {
-    if (!isDummyDataEnabled()) throw error;
+    if (isDummyDataEnabled()) {
+      localDummyBatches = localDummyBatches.filter((b) => b.batchId !== batchId);
+      return;
+    }
+    throw error;
   }
 }
 
 export async function checkoutCartBatch(
   batchId: string,
-  payload: CheckoutBatchRequest,
+  payload?: CheckoutBatchRequest,
   signal?: AbortSignal,
 ): Promise<CheckoutBatchResponse> {
   try {
@@ -290,7 +382,7 @@ export async function checkoutCartBatch(
       transactionNumber: `TRX-${Date.now()}`,
       orderNumber: `ORD-${Date.now()}`,
       billingCode: `820260825${Math.floor(1000 + Math.random() * 9000)}`,
-      paymentMethod: payload.paymentMethod,
+      paymentMethod: payload?.paymentMethod ?? "MPN_GEN2",
       totalAmount: 1850000,
       status: "pending",
       createdAt: new Date().toISOString(),
@@ -303,7 +395,7 @@ export async function checkoutCartBatch(
         transactionNumber: `TRX-${Date.now()}`,
         orderNumber: `ORD-${Date.now()}`,
         billingCode: `820260825${Math.floor(1000 + Math.random() * 9000)}`,
-        paymentMethod: payload.paymentMethod,
+        paymentMethod: payload?.paymentMethod ?? "MPN_GEN2",
         totalAmount: 1850000,
         status: "pending",
         createdAt: new Date().toISOString(),

@@ -5,7 +5,7 @@ import {
   formatCountdownParts,
   getCountdownParts,
 } from "@/design-system/components/data-display/utils/countdown.utils";
-import { P } from "@/design-system/components/typography/ui/p";
+import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { useEffect, useState } from "react";
 
 const COUNTDOWN_INTERVAL_MS = 1000;
@@ -34,7 +34,7 @@ export const Countdown = (props: CountdownProps) => {
 
   return (
     <P whiteSpace={"nowrap"} {...restProps}>
-      {formatCountdownParts(countdown, format)}
+      <TNum>{formatCountdownParts(countdown, format)}</TNum>
     </P>
   );
 };

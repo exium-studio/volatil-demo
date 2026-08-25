@@ -6,6 +6,7 @@ import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { useAlertAnimation } from "@/design-system/hooks/use-alert-animation";
@@ -86,9 +87,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
               >
                 <Modal.CloseButton />
 
-                <P fontSize={"lg"} textAlign={"center"}>
-                  {resolvedTitle}
-                </P>
+                <Heading textAlign={"center"}>{resolvedTitle}</Heading>
 
                 <P
                   maxW={"240px"}

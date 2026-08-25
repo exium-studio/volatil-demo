@@ -1,0 +1,189 @@
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { RadioIndicator } from "@/design-system/components/input/ui/radio-indicator";
+import { Box } from "@/design-system/components/layout/ui/box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
+import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
+import { SPACING } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/theme-store";
+import type {
+  CartBatchStatus,
+  CartBatchStatusConfig,
+  MitraCartBatchItemProps,
+} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { AlertCircleIcon, CheckCircle2Icon, LoaderIcon } from "lucide-react";
+import { memo } from "react";
+
+// SSOT Configuration Map for Cart Batch Status
+const BATCH_STATUS_CONFIG: Record<CartBatchStatus, CartBatchStatusConfig> = {
+  ready: {
+    label: "Siap bayar",
+    colorPalette: "green",
+    icon: CheckCircle2Icon,
+    iconColor: "green.fg",
+  },
+  preparing: {
+    label: "Menyiapkan data",
+    colorPalette: "blue",
+    icon: LoaderIcon,
+    iconColor: "blue.fg",
+    isSpinning: true,
+  },
+  expired: {
+    label: "Kadaluwarsa",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+  },
+};
+
+export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
+  // Props
+  const { batch, index, isSelected, onSelect } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
+
+  // Derived Values
+  const statusConfig = BATCH_STATUS_CONFIG[batch.status];
+
+  const totalBidang = batch.items
+    .filter((i) => i.spatialBasis === "bidang")
+    .reduce((sum, item) => sum + item.featuresCount, 0);
+
+  const totalKawasanHa = batch.items
+    .filter((i) => i.spatialBasis === "kawasan")
+    .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
+
+  const layerTitles = batch.items.map((i) => i.sourceLayerTitle).join(", ");
+
+  return (
+    <Box
+      w={"full"}
+      p={SPACING.md}
+      bg={isSelected ? "bg.subtle" : "bg.body"}
+      rounded={theme.radii.container}
+      border={"1.5px solid"}
+      borderColor={isSelected ? `${theme.colorPalette}.solid` : "border.subtle"}
+      cursor={"pointer"}
+      transition={"all 0.15s ease-in-out"}
+      _hover={{
+        borderColor: isSelected
+          ? `${theme.colorPalette}.solid`
+          : "border.emphasized",
+        bg: "bg.subtle",
+      }}
+      onClick={() => onSelect(batch.batchId)}
+    >
+      <VStack align={"stretch"} gap={SPACING.sm}>
+        {/* Header: Batch Number, Status & Radio Indicator */}
+        <HStack justify={"space-between"} align={"center"} w={"full"}>
+          <HStack gap={SPACING.sm} align={"center"}>
+            <AppIcon
+              icon={statusConfig.icon}
+              color={statusConfig.iconColor}
+              className={statusConfig.isSpinning ? "animate-spin" : undefined}
+            />
+            <P fontWeight={"semibold"} fontSize={"sm"}>
+              {`Batch #${index + 1}`}
+            </P>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {`(${batch.batchId})`}
+            </P>
+          </HStack>
+
+          <HStack gap={SPACING.sm} align={"center"}>
+            <Badge
+              size={"sm"}
+              variant={"subtle"}
+              colorPalette={statusConfig.colorPalette}
+            >
+              {statusConfig.label}
+            </Badge>
+
+            <RadioIndicator checked={isSelected} />
+          </HStack>
+        </HStack>
+
+        <Separator borderColor={"bg.canvas"} />
+
+        {/* Content Details */}
+        <VStack align={"stretch"} gap={SPACING.xs} fontSize={"xs"}>
+          <HStack justify={"space-between"} align={"center"}>
+            <P color={"fg.muted"}>{"Daftar Layer IGT:"}</P>
+            <ClampedP maxW={"65%"} textAlign={"end"} color={"fg.default"}>
+              {layerTitles || "-"}
+            </ClampedP>
+          </HStack>
+
+          <HStack justify={"space-between"} align={"center"}>
+            <P color={"fg.muted"}>{"Volume Spasial:"}</P>
+            <P fontWeight={"medium"}>
+              {totalBidang > 0 && (
+                <>
+                  <TNum>{totalBidang}</TNum> {"bidang"}
+                </>
+              )}
+              {totalBidang > 0 && totalKawasanHa > 0 && " • "}
+              {totalKawasanHa > 0 && (
+                <>
+                  <TNum>{totalKawasanHa}</TNum> {"ha"}
+                </>
+              )}
+            </P>
+          </HStack>
+
+          <HStack justify={"space-between"} align={"center"}>
+            <P color={"fg.muted"}>{"Total Estimasi:"}</P>
+            <P fontWeight={"bold"} color={"blue.fg"}>
+              <FormatNumber
+                value={batch.totalPrice}
+                style={"currency"}
+                currency={"IDR"}
+                maximumFractionDigits={0}
+              />
+            </P>
+          </HStack>
+        </VStack>
+
+        {/* Dynamic Status Notices */}
+        {batch.status === "ready" && batch.expiredAt && (
+          <HStack
+            justify={"space-between"}
+            align={"center"}
+            gap={SPACING.md}
+            bg={"an0"}
+            p={2}
+            rounded={"md"}
+            fontSize={"xs"}
+          >
+            <P color={"fg.muted"}>{"Sisa Waktu Pembayaran (TTL):"}</P>
+
+            <Countdown
+              finishedAt={batch.expiredAt}
+              fontWeight={"bold"}
+              color={"orange.fg"}
+            />
+          </HStack>
+        )}
+
+        {batch.status === "preparing" && (
+          <HStack
+            align={"center"}
+            gap={SPACING.xs}
+            bg={"blue.subtle"}
+            p={2}
+            rounded={"md"}
+            fontSize={"xs"}
+            color={"blue.fg"}
+          >
+            <P>{"Interop Engine sedang memproses & memotong data layer..."}</P>
+          </HStack>
+        )}
+      </VStack>
+    </Box>
+  );
+});

@@ -309,17 +309,19 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                       >
                         {opt.icon && <AppIcon icon={opt.icon} size={"sm"} />}
                         <VStack align={"start"} gap={0} minW={0} flex={1}>
-                          <P
+                          <ClampedP
                             fontWeight={isSelected ? "semibold" : "normal"}
-                            truncate
                           >
                             {opt.label}
-                          </P>
+                          </ClampedP>
 
                           {opt.description && (
-                            <P fontSize={"xs"} color={"fg.subtle"} truncate>
+                            <ClampedP
+                              fontSize={"xs"}
+                              color={"fg.subtle"}
+                            >
                               {opt.description}
-                            </P>
+                            </ClampedP>
                           )}
                         </VStack>
                       </HStack>

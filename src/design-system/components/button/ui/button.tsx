@@ -6,6 +6,7 @@ import type {
   ButtonProps,
   IconButtonProps,
 } from "@/design-system/components/button/types/button.type";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { SIZES } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
@@ -43,24 +44,34 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           const combinedText = currentTextGroup.join("");
           const clampVal = lineClamp != null ? Number(lineClamp) : 1;
 
-          result.push(
+          const textNode = (
             <Span
               key={`button-text-group-${result.length}`}
-              overflow={"hidden"}
               minW={0}
               maxW={"full"}
+              overflow={"hidden"}
               py={"1px"}
               display={"inline-block"}
               fontSize={restProps?.fontSize}
               lineHeight={"normal"}
               lineClamp={clampVal > 0 ? clampVal : undefined}
-              truncate={clampVal === 1}
-              whiteSpace={clampVal === 1 ? "nowrap" : "normal"}
-              textOverflow={clampVal === 1 ? "ellipsis" : undefined}
             >
               {combinedText}
-            </Span>,
+            </Span>
           );
+
+          if (typeof combinedText === "string" && combinedText.trim()) {
+            result.push(
+              <Tooltip
+                key={`button-tooltip-${result.length}`}
+                content={combinedText}
+              >
+                {textNode}
+              </Tooltip>,
+            );
+          } else {
+            result.push(textNode);
+          }
           currentTextGroup = [];
         }
       };

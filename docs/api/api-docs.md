@@ -293,55 +293,56 @@ type AddToCartBatchResponse = {
 };
 ```
 
-### 5.2 Ambil Batch Aktif di Keranjang
+### 5.2 Ambil Daftar Batch di Keranjang
 
-- **Endpoint**: `GET /api/mitra/cart/active-batch`
+- **Endpoint**: `GET /api/mitra/cart/batches`
 - **Response**:
 
 ```typescript
-type ActiveCartBatchResponse = {
-  batchId: string;
-  status: "preparing" | "ready" | "expired";
-  createdAt: string;
-  readyAt?: string;
-  expiredAt?: string; // Datetime ISO (TTL 24 jam setelah status 'ready' untuk hitung mundur countdown)
-  totalPrice: number;
-  items: Array<{
-    id: string;
-    sourceLayerId: string;
-    sourceLayerTitle: string;
-    spatialBasis: "bidang" | "kawasan";
-    selectionType:
-      | "administrative_filter"
-      | "aoi_polygon"
-      | "selected_features"
-      | "whole_layer";
-    featuresCount: number;
-    areaHa?: number;
-    unitPrice: number;
-    subtotalPrice: number;
-    wfsUrl?: string;
-    wmsUrl?: string;
+type CartBatchListResponse = {
+  batches: Array<{
+    batchId: string;
+    status: "preparing" | "ready" | "expired";
+    createdAt: string;
+    readyAt?: string;
+    expiredAt?: string; // Datetime ISO (TTL 24 jam setelah status 'ready' untuk hitung mundur countdown)
+    totalPrice: number;
+    items: Array<{
+      id: string;
+      sourceLayerId: string;
+      sourceLayerTitle: string;
+      spatialBasis: "bidang" | "kawasan";
+      selectionType:
+        | "administrative_filter"
+        | "aoi_polygon"
+        | "selected_features"
+        | "whole_layer";
+      featuresCount: number;
+      areaHa?: number;
+      unitPrice: number;
+      subtotalPrice: number;
+      wfsUrl?: string;
+      wmsUrl?: string;
+    }>;
   }>;
+  total: number;
 };
 ```
 
-### 5.3 Hapus Batch dari Keranjang (Cancel / Clear)
+### 5.3 Ambil Batch Aktif / Terpilih di Keranjang
+
+- **Endpoint**: `GET /api/mitra/cart/active-batch`
+- **Response**: `CartBatch | null`
+
+### 5.4 Hapus Batch dari Keranjang (Cancel / Clear)
 
 - **Endpoint**: `DELETE /api/mitra/cart/batches/{batchId}`
 - **Response**: `200 OK` / `{ success: true, message: "Batch keranjang berhasil dibatalkan" }`
 
-### 5.4 Checkout Batch (Request Kode Billing)
+### 5.5 Checkout Batch (1 Batch = 1 Transaksi & Request Kode Billing)
 
 - **Endpoint**: `POST /api/mitra/cart/batches/{batchId}/checkout`
-- **Payload**:
-
-```typescript
-type CheckoutBatchRequest = {
-  paymentMethod: "MPN_GEN2" | "VA_MANDIRI" | "VA_BRI" | "VA_BCA" | "QRIS";
-};
-```
-
+- **Payload**: `{}` (Empty JSON / Opsional)
 - **Response**:
 
 ```typescript
@@ -350,7 +351,6 @@ type CheckoutBatchResponse = {
   transactionNumber: string;
   orderNumber: string;
   billingCode: string;
-  paymentMethod: string;
   totalAmount: number;
   status: "pending";
   createdAt: string;
@@ -358,7 +358,7 @@ type CheckoutBatchResponse = {
 };
 ```
 
-### 5.5 Cek Status Pembayaran Order (Manual / Trigger)
+### 5.6 Cek Status Pembayaran Order (Manual / Trigger)
 
 - **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
 - **Response**:
