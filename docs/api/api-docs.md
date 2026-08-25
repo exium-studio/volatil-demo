@@ -1,577 +1,448 @@
-📖 API Documentation - Backend Volatil
-
-Dokumentasi resmi untuk seluruh endpoint REST API pada Backend Volatil (IGTPR 2026).
-File ini menjadi acuan utama dan wajib diperbarui setiap kali ada penambahan atau perubahan endpoint API.
-🌐 Base URL
-
-    Production / Staging: https://volatil-be.exium.web.id
-    Local Development: http://localhost:3001
-
-🔐 Standar Autentikasi (Bearer Token)
-
-Sebagian besar endpoint yang dilindungi memerlukan token JWT yang dikirimkan melalui Header HTTP:
-
-Authorization: Bearer <your_access_token>
-
-Role Pengguna:
-
-    internal (Administrator): Memiliki akses penuh ke seluruh fitur dan endpoint admin.
-    mitra (User / Partner): Memiliki akses ke fitur operasional mitra.
-
-Akun Demo untuk Development / Testing:
-Role Email Password
-MITRA (User) mitra@demo.com mitra123
-INTERNAL (Admin) internal@demo.com internal123
-📑 Daftar Endpoint
-
-1. Sistem & Health Check
-   GET /
-
-Mengecek status root backend.
-
-    Auth: Tidak perlu
-    Response 200 OK:
-
-{
-"message": "Express.js backend with PostgreSQL/PostGIS is running!"
-}
-
-GET /health
-
-Liveness/readiness probe untuk monitoring container.
-
-    Auth: Tidak perlu
-    Response 200 OK:
-
-{
-"status": "OK",
-"timestamp": "2026-08-17T05:00:00.000Z"
-}
-
-GET /check-db
-
-Mengecek konektivitas database PostgreSQL dan status modul PostGIS.
-
-    Auth: Tidak perlu
-    Response 200 OK:
-
-{
-"success": true,
-"message": "Database connection is healthy and connected successfully!",
-"database": {
-"host": "db",
-"name": "backend_volatil",
-"port": "5432",
-"user": "postgres"
-},
-"postgresVersion": "PostgreSQL 15.3...",
-"postgisVersion": "POSTGIS=\"3.3.3...\""
-}
-
-2. Autentikasi & Akun (/api/auth)
-   POST /api/auth/login
-
-Login menggunakan email dan password untuk mendapatkan Bearer Access Token.
-
-    Auth: Tidak perlu
-    Request Body:
-
-{
-"email": "internal@demo.com",
-"password": "internal123"
-}
-
-    Response 200 OK:
-
-{
-"success": true,
-"message": "Login successful",
-"data": {
-"tokenType": "Bearer",
-"accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-"user": {
-"id": 2,
-"name": "Internal Admin Demo",
-"email": "internal@demo.com",
-"role": "internal"
-}
-}
-}
-
-    Response 401 Unauthorized:
-
-{
-"success": false,
-"message": "Invalid email or password."
-}
-
-GET /api/auth/me
-
-Mendapatkan data profil user yang sedang login.
-
-    Auth: Bearer Token (Semua Role)
-    Headers: Authorization: Bearer <token>
-    Response 200 OK:
-
-{
-"success": true,
-"data": {
-"id": 2,
-"name": "Internal Admin Demo",
-"email": "internal@demo.com",
-"role": "internal",
-"keycloakId": null
-}
-}
-
-3. Role-Protected Dashboard Areas
-   GET /api/internal/dashboard
-
-Area khusus role internal/administrator.
-
-    Auth: Bearer Token (Hanya Role internal)
-    Response 200 OK:
-
-{
-"success": true,
-"message": "Welcome to Internal Dashboard, Internal Admin Demo!",
-"user": { ... }
-}
-
-    Response 403 Forbidden (Jika diakses oleh role mitra):
-
-{
-"success": false,
-"message": "Forbidden: Access restricted to roles [internal]. Your role is 'mitra'."
-}
-
-GET /api/mitra/dashboard
-
-Area khusus role mitra (juga dapat diakses oleh internal).
-
-    Auth: Bearer Token (Role mitra & internal)
-    Response 200 OK:
-
-{
-"success": true,
-"message": "Welcome to Mitra Area, Mitra User Demo!",
-"user": { ... }
-}
-
-4. Spasial / GIS (/api/locations)
-   GET /api/locations
-
-Mengambil semua data titik lokasi geografis.
-
-    Auth: Tidak perlu
-    Response 200 OK:
-
-{
-"success": true,
-"data": [
-{
-"id": 1,
-"name": "Monas, Jakarta",
-"geom": {
-"type": "Point",
-"coordinates": [106.827153, -6.175392]
-},
-"createdAt": "2026-08-17T04:00:00.000Z",
-"updatedAt": "2026-08-17T04:00:00.000Z"
-}
-]
-}
-
-POST /api/locations
-
-Menambahkan data koordinat titik lokasi baru.
-
-    Auth: Bearer Token (Semua Role terotentikasi)
-    Headers:
-        Authorization: Bearer <token>
-        Content-Type: application/json
-    Request Body:
-
-{
-"name": "Kantor Pusat",
-"latitude": -6.2088,
-"longitude": 106.8456
-}
-
-    Response 201 Created:
-
-{
-"success": true,
-"data": {
-"id": 3,
-"name": "Kantor Pusat",
-"geom": {
-"type": "Point",
-"coordinates": [106.8456, -6.2088]
-},
-"createdAt": "2026-08-17T05:10:00.000Z",
-"updatedAt": "2026-08-17T05:10:00.000Z"
-}
-}
-
-5. Modul Tiket & Laporan (/api/tickets)
-   GET /api/tickets/statistics
-
-Mengambil data statistik laporan untuk widget dashboard (Laporan Aktif, Selesai, Total, dan Rincian Status).
-
-    Auth: Bearer Token (Semua Role)
-    Headers: Authorization: Bearer <token>
-    Query Parameters:
-        scope (opsional): my (khusus laporan user) atau all (default untuk admin)
-    Response 200 OK:
-
-{
-"success": true,
-"data": {
-"totalTickets": 12,
-"activeTickets": 5,
-"resolvedTickets": 7,
-"breakdown": {
-"submitted": 2,
-"inReview": 2,
-"inProgress": 1,
-"resolved": 7,
-"rejected": 0
-}
-}
-}
-
-GET /api/tickets
-
-Mengambil daftar laporan/tiket dengan filter dinamis dan pagination.
-
-    Auth: Bearer Token (Semua Role)
-    Headers: Authorization: Bearer <token>
-    Query Parameters:
-        scope (opsional): my (hanya tiket milik user pembuat) atau all (seluruh tiket di sistem, default untuk role internal). Role mitra otomatis dipaksa scope=my.
-        status (opsional): active (menampilkan submitted, in_review, in_progress) atau history (menampilkan resolved, rejected) atau status spesifik (submitted, in_review, in_progress, resolved, rejected).
-        search (opsional): Pencarian teks pada judul laporan (title), nama pelapor, atau instansi/perusahaan.
-        startDate & endDate (opsional): Filter rentang tanggal laporan dibuat (YYYY-MM-DD).
-        page / pageNumber (opsional, default: 1): Nomor halaman.
-        itemPerPage / itemsPerPage / limit / perPage (opsional, default: 10, maks: 100): Jumlah data per halaman.
-        sortBy (opsional, default: createdAt): Kolom pengurutan (createdAt, title, status).
-        sortOrder (opsional, default: DESC): Arah pengurutan (ASC atau DESC).
-    Contoh Request:
-        GET /api/tickets?scope=all&status=active&page=1&itemPerPage=10
-        GET /api/tickets?search=Nusantara&startDate=2026-08-01&endDate=2026-08-31
-    Response 200 OK:
-
-{
-"success": true,
-"data": [
-{
-"id": 1,
-"title": "Kesalahan Pembacaan Data Geometri Bidang",
-"description": "File GeoJSON yang diunggah tidak merender layer poligon dengan sempurna.",
-"status": "in_progress",
-"priority": "high",
-"category": "Data Geospasial",
-"user": {
-"id": 1,
-"name": "Mitra User Demo",
-"email": "mitra@demo.com",
-"role": "mitra"
-},
-"repliesCount": 2,
-"attachmentsCount": 2,
-"createdAt": "2026-08-17T05:00:00.000Z",
-"updatedAt": "2026-08-17T05:30:00.000Z"
-}
-],
-"pagination": {
-"totalItems": 1,
-"totalPages": 1,
-"currentPage": 1,
-"itemsPerPage": 10,
-"hasNextPage": false,
-"hasPrevPage": false
-}
-}
-
-GET /api/tickets/:id
-
-Melihat rincian detail 1 tiket beserta semua riwayat balasan (timeline replies) dan lampiran (attachments).
-
-    Auth: Bearer Token (Role internal atau Pembuat Tiket)
-    Headers: Authorization: Bearer <token>
-    Response 200 OK:
-
-{
-"success": true,
-"data": {
-"id": 1,
-"title": "Kesalahan Pembacaan Data Geometri Bidang",
-"description": "File GeoJSON yang diunggah tidak merender layer poligon dengan sempurna.",
-"status": "in_progress",
-"priority": "high",
-"category": "Data Geospasial",
-"userId": 1,
-"user": {
-"id": 1,
-"name": "Mitra User Demo",
-"email": "mitra@demo.com",
-"organizationName": "PT Nusantara Citra Mandiri",
-"role": "mitra"
-},
-"attachments": [
-{
-"id": 1,
-"originalFileName": "screenshot-polygon-error.png",
-"storedFileName": "file-1723871200000-123456789.png",
-"fileSize": 204850,
-"fileType": "image/png",
-"fileUrl": "http://localhost:3001/uploads/tickets/file-1723871200000-123456789.png",
-"createdAt": "2026-08-17T05:00:00.000Z"
-}
-],
-"replies": [
-{
-"id": 1,
-"message": "Laporan telah kami terima dan sedang dianalisis oleh tim GIS Internal.",
-"user": {
-"id": 2,
-"name": "Internal Admin Demo",
-"email": "internal@demo.com",
-"role": "internal"
-},
-"attachments": [
-{
-"id": 2,
-"originalFileName": "revisi-koordinat.pdf",
-"fileUrl": "http://localhost:3001/uploads/replies/file-1723872000000-987654321.pdf"
-}
-],
-"createdAt": "2026-08-17T05:20:00.000Z"
-}
-],
-"createdAt": "2026-08-17T05:00:00.000Z",
-"updatedAt": "2026-08-17T05:20:00.000Z"
-}
-}
-
-POST /api/tickets
-
-Membuat tiket / laporan baru. Mendukung unggah multiple files (foto/dokumen PDF/ZIP/dokumen teknis maks 10MB per file).
-
-    Auth: Bearer Token (Semua Role terotentikasi)
-    Headers:
-        Authorization: Bearer <token>
-        Content-Type: multipart/form-data
-    Form Data:
-        title (string, required): Judul ringkas kendala/laporan.
-        description (string, required): Penjelasan detail kendala.
-        priority (string, opsional): low | medium | high | urgent (default: medium).
-        category (string, opsional): Kategori tiket (contoh: Teknis, Data Geospasial, Akun, Lainnya).
-        files (file binary, opsional, multiple): File bukti dukung (gambar .png/.jpg/.jpeg, dokumen .pdf/.doc/.docx/.zip).
-    Response 201 Created:
-
-{
-"success": true,
-"message": "Ticket created successfully.",
-"data": {
-"id": 2,
-"title": "Permintaan Pembaruan Peta Dasar Tematik",
-"description": "Mohon update batas deliniasi kawasan per 2026.",
-"status": "submitted",
-"priority": "medium",
-"category": "Data Geospasial",
-"userId": 1,
-"attachments": [
-{
-"id": 3,
-"originalFileName": "surat-permohonan.pdf",
-"fileUrl": "http://localhost:3001/uploads/tickets/surat-permohonan-123.pdf"
-}
-],
-"createdAt": "2026-08-17T05:35:00.000Z"
-}
-}
-
-POST /api/tickets/:id/reply
-
-Mengirim balasan respon pada tiket, mengubah status tiket, dan melampirkan file dokumen pendukung penyelesaian (Khusus Admin Internal).
-
-    Auth: Bearer Token (Khusus Role internal)
-    Headers:
-        Authorization: Bearer <token>
-        Content-Type: multipart/form-data (atau application/json jika tanpa file)
-    Form Data / Body:
-        message (string, required): Isi pesan balasan dari admin internal.
-        status (string, opsional): Status baru untuk tiket (in_review | in_progress | resolved | rejected).
-        files (file binary, opsional, multiple): Dokumen pendukung balasan.
-    Response 201 Created:
-
-{
-"success": true,
-"message": "Reply sent successfully.",
-"data": {
-"reply": {
-"id": 3,
-"ticketId": 2,
-"userId": 2,
-"message": "Peta tematik batas deliniasi telah diperbarui. Mohon dicek kembali.",
-"attachments": [
-{
-"id": 4,
-"originalFileName": "berita-acara-selesai.pdf",
-"fileUrl": "http://localhost:3001/uploads/replies/berita-acara-selesai-456.pdf"
-}
-],
-"createdAt": "2026-08-17T05:40:00.000Z"
-},
-"ticket": {
-"id": 2,
-"status": "resolved"
-}
-}
-}
-
-    Response 403 Forbidden (Jika diakses non-admin):
-
-{
-"success": false,
-"message": "Forbidden: Access restricted to roles [internal]. Your role is 'mitra'."
-}
-
-6. Modul Manage User & Data (/api/internal/user-management) — Khusus Admin (Internal)
-   GET /api/internal/users/statistics
-
-Mengambil ringkasan statistik pengguna sistem (Pengguna Aktif, Pengguna Non Aktif, Total Pengguna, dan rincian per role).
-
-    Auth: Bearer Token (Khusus Role internal)
-    Headers: Authorization: Bearer <token>
-    Response 200 OK:
-
-{
-"success": true,
-"data": {
-"totalUsers": 25,
-"activeUsers": 23,
-"inactiveUsers": 2,
-"breakdownByRole": {
-"internal": 5,
-"mitra": 20
-}
-}
-}
-
-GET /api/internal/user-management
-
-Mengambil daftar seluruh pengguna dengan pencarian, filter status & role, serta pagination.
-
-    Auth: Bearer Token (Khusus Role internal)
-    Headers: Authorization: Bearer <token>
-    Query Parameters:
-        search (opsional): Kata kunci pencarian pada Nama, Email, atau Nama Perusahaan / Organisasi.
-        status (opsional): active | inactive.
-        role (opsional): internal | mitra.
-        page / pageNumber (opsional, default: 1): Nomor halaman.
-        itemPerPage / itemsPerPage / limit / perPage (opsional, default: 10, maks: 200): Mengatur jumlah data per halaman.
-        sortBy (opsional, default: createdAt): Kolom sorting.
-        sortOrder (opsional, default: DESC): Urutan sorting (DESC untuk latest / terbaru).
-    Contoh Request:
-        GET /api/internal/user-management?page=1&itemPerPage=10
-        GET /api/internal/user-management?status=active&role=mitra&search=nusantara
-    Response 200 OK:
-
-{
-"success": true,
-"data": [
-{
-"id": 1,
-"name": "Mitra User Demo",
-"email": "mitra@demo.com",
-"role": "mitra",
-"status": "active",
-"organizationName": "PT Nusantara Citra Mandiri",
-"joinedAt": "2026-08-17T05:00:00.000Z"
-},
-{
-"id": 2,
-"name": "Internal Admin Demo",
-"email": "internal@demo.com",
-"role": "internal",
-"status": "active",
-"organizationName": "Kementerian / Badan IGTPR",
-"joinedAt": "2026-08-17T05:00:00.000Z"
-}
-],
-"pagination": {
-"totalItems": 2,
-"totalPages": 1,
-"currentPage": 1,
-"itemsPerPage": 10,
-"hasNextPage": false,
-"hasPrevPage": false
-}
-}
-
-GET /api/internal/users/:id
-
-Melihat detail lengkap satu akun pengguna.
-
-    Auth: Bearer Token (Khusus Role internal)
-    Headers: Authorization: Bearer <token>
-    Response 200 OK (Contoh Akun Mitra / User):
-
-{
-"success": true,
-"data": {
-"id": 1,
-"name": "Mitra User Demo",
-"email": "mitra@demo.com",
-"role": "mitra",
-"status": "active",
-"organizationName": "PT Nusantara Citra Mandiri",
-"joinedAt": "2026-08-17T05:00:00.000Z",
-"updatedAt": "2026-08-17T05:00:00.000Z"
-}
-}
-
-PATCH /api/internal/users/:id/status
-
-Menonaktifkan (inactive) atau mengaktifkan kembali (active) akun pengguna.
-
-    Auth: Bearer Token (Khusus Role internal)
-    Headers:
-        Authorization: Bearer <token>
-        Content-Type: application/json
-    Request Body (opsional):
-
-{
-"status": "inactive"
-}
-
-(Jika body kosong, status akan otomatis di-toggle).
-
-    Response 200 OK:
-
-{
-"success": true,
-"message": "User status successfully updated to 'inactive'.",
-"data": {
-"id": 1,
-"name": "Mitra User Demo",
-"email": "mitra@demo.com",
-"role": "mitra",
-"status": "inactive",
-"organizationName": "PT Nusantara Citra Mandiri",
-"updatedAt": "2026-08-17T05:50:00.000Z"
-}
-}
-
-📌 Panduan Menambahkan Endpoint Baru
-
-Setiap pengembang yang menambahkan route/endpoint baru wajib mencatatnya pada file ini dengan format:
-
-    Method & Path (contoh: POST /api/v1/resource)
-    Deskripsi singkat
-    Persyaratan Autentikasi & Role yang diizinkan
-    Header yang diperlukan
-    Request Body / Form-Data / Query Params (jika ada)
-    Contoh Response Sukses & Gagal (Status code + JSON)
+# Volatil Frontend - API & Schema Documentation
+
+Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, serta model interoperabilitas data spasial di Volatil.
+
+---
+
+## Daftar Isi
+
+1. [Auth & Session](#1-auth--session)
+2. [Data Request & IGT Spasial](#2-data-request--igt-spasial)
+3. [Keranjang & Order Provisioning Spasial](#3-keranjang--order-provisioning-spasial)
+4. [Pusat Bantuan (Help Center)](#4-pusat-bantuan-help-center)
+5. [My Data & User Management](#5-my-data--user-management)
+6. [Dashboard & Statistik](#6-dashboard--statistik)
+7. [Notifikasi & Inbox](#7-notifikasi--inbox)
+
+---
+
+## 1. Auth & Session
+
+### 1.1 Sign In
+
+- **Endpoint**: `POST /api/v1/auth/sign-in`
+- **Payload**:
+
+```typescript
+type SignInPayload = {
+  email: string;
+  password: string;
+};
+```
+
+- **Response**:
+
+```typescript
+type SignInResponse = {
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    role: "mitra" | "internal";
+    organizationName?: string;
+  };
+};
+```
+
+### 1.2 User Profile & Logout
+
+- **Get Profile**: `GET /api/v1/auth/me`
+- **Logout**: `POST /api/v1/auth/logout`
+
+---
+
+## 2. Data Request & IGT Spasial
+
+Modul untuk melihat katalog IGT, filter spasial wilayah administrasi, serta query feature via WFS/AOI.
+
+### 2.1 Katalog IGT
+
+- **Endpoint**: `GET /api/v1/igt/catalog`
+- **Params**:
+  - `page?: number`
+  - `limit?: number`
+  - `search?: string`
+  - `basis?: "bidang" | "kawasan"`
+  - `tema?: string`
+  - `provinsi?: string`
+  - `kabupaten?: string`
+  - `kecamatan?: string`
+  - `kelurahan?: string`
+- **Response**:
+
+```typescript
+type IgtCatalogResponse = {
+  items: Array<{
+    id: string;
+    title: string;
+    spatialBasis: "bidang" | "kawasan";
+    bbox: [number, number, number, number]; // [minX, minY, maxX, maxY] EPSG:4326
+    visible: boolean;
+    wfs?: {
+      wfsUrl: string;
+      wfsTypeName: string;
+    };
+    wms?: {
+      wmsUrl: string;
+      layers: string;
+    };
+  }>;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
+};
+```
+
+### 2.2 Query IGT by AOI (Polygon / Upload SHP/GeoJSON)
+
+- **By AOI Polygon**: `POST /api/v1/igt/by-aoi`
+  - **Payload**: GeoJSON Polygon (`geometry: GeoJSON.Polygon`)
+- **By Uploaded File**: `POST /api/v1/igt/by-uploaded-aoi`
+  - **Payload**: `FormData` (`file: File`) (.zip shp, .geojson, .kml)
+
+### 2.3 Filter Options Wilayah Administrasi
+
+- `GET /api/v1/igt/filter-options/provinsi`
+- `GET /api/v1/igt/filter-options/kabupaten?provinsiId={id}`
+- `GET /api/v1/igt/filter-options/kecamatan?kabupatenId={id}`
+- `GET /api/v1/igt/filter-options/kelurahan?kecamatanId={id}`
+
+---
+
+## 3. Keranjang & Order Provisioning Spasial
+
+Modul transaksi data IGT, checkout, provisioning isolated PostGIS table per-mitra, GeoServer workspace provisioning, serta manajemen kredensial WFS/WMS (Hash-Only & Rotation).
+
+### 3.1 Add to Cart
+
+- **Endpoint**: `POST /api/v1/mitra/cart/add`
+- **Payload**:
+
+```typescript
+type AddToCartRequest = {
+  items: Array<{
+    sourceLayerId: string;
+    selectionType: "aoi" | "selected_features" | "whole_layer";
+    /** Polygon/MultiPolygon dalam koordinat EPSG:4326 (lon/lat) */
+    aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+    /** CQL query string untuk filter atribut/spasial */
+    cqlFilter?: string;
+    /** Daftar ID baris terpilih jika granular selection */
+    selectedFeatureIds?: string[];
+  }>;
+};
+```
+
+### 3.2 Get Cart Summary & Items
+
+- **Endpoint**: `GET /api/v1/mitra/cart`
+- **Response**:
+
+```typescript
+type CartResponse = {
+  items: Array<{
+    id: string;
+    sourceLayerId: string;
+    sourceLayerTitle: string;
+    spatialBasis: "bidang" | "kawasan";
+    selectionType: "aoi" | "selected_features" | "whole_layer";
+    aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+    cqlFilter?: string;
+    selectedFeatureIds?: string[];
+    estimatedFeaturesCount: number;
+    estimatedAreaHa?: number;
+    unitPrice: number;
+    estimatedSubtotalPrice: number;
+    createdAt: string;
+  }>;
+  summary: {
+    totalItems: number;
+    totalBidang: number;
+    totalBidangPrice: number;
+    totalKawasan: number;
+    totalKawasanHa: number;
+    totalKawasanPrice: number;
+    grandTotal: number;
+  };
+};
+```
+
+### 3.3 Checkout / Create Order
+
+- **Endpoint**: `POST /api/v1/mitra/cart/checkout`
+- **Payload**:
+
+```typescript
+type CreateOrderCheckoutRequest = {
+  cartItemIds?: string[];
+  notes?: string;
+};
+```
+
+- **Response**:
+
+```typescript
+type CreateOrderCheckoutResponse = {
+  orderId: string;
+  orderNumber: string;
+  status:
+    | "draft"
+    | "pending_payment"
+    | "processing"
+    | "active"
+    | "expired"
+    | "rejected";
+  billingCode: string;
+  totalPrice: number;
+  validatedAt: string;
+  expiredAt: string;
+};
+```
+
+### 3.4 Order Detail & Provisioned Spatial Layer
+
+- **Endpoint**: `GET /api/v1/mitra/orders/{id}`
+- **Response**:
+
+```typescript
+type OrderDetailResponse = {
+  id: string;
+  orderNumber: string;
+  userId: string;
+  status:
+    | "draft"
+    | "pending_payment"
+    | "processing"
+    | "active"
+    | "expired"
+    | "rejected";
+  billingCode?: string;
+  totalPrice: number;
+  orderedAt: string;
+  validatedAt: string;
+  expiredAt?: string;
+  items: Array<{
+    id: string;
+    sourceLayerId: string;
+    sourceLayerTitle: string;
+    spatialBasis: "bidang" | "kawasan";
+    selectionType: "aoi" | "selected_features" | "whole_layer";
+    snapshotFeaturesCount: number;
+    snapshotAreaHa?: number;
+    unitPrice: number;
+    subtotalPrice: number;
+    provisionedLayer?: {
+      id: string;
+      orderItemId: string;
+      tableName: string; // PostGIS isolated table
+      geoserverWorkspace: string;
+      geoserverLayerName: string;
+      proxyWfsUrl: string; // Proxy URL terproteksi
+      proxyWmsUrl: string;
+      apiKeyMasked: string | null; // e.g. "vtl_live_...9x4b"
+      keyGeneratedAt: string | null;
+      status:
+        | "queued"
+        | "provisioning"
+        | "ready"
+        | "failed"
+        | "expired"
+        | "revoked";
+      validUntil: string;
+    };
+  }>;
+};
+```
+
+### 3.5 Generate & Rotate API Key Kredensial Spasial (One-Time Reveal)
+
+- **Endpoint**: `POST /api/v1/mitra/provisioned-layers/{id}/generate-key`
+- **Payload**:
+
+```typescript
+type GenerateApiKeyRequest = {
+  provisionedLayerId: string;
+};
+```
+
+- **Response** _(Raw key hanya dikembalikan sekali dalam response ini, database hanya menyimpan hash)_:
+
+```typescript
+type GenerateApiKeyResponse = {
+  provisionedLayerId: string;
+  apiKeyMasked: string; // "vtl_live_...9x4b"
+  rawApiKey: string; // "vtl_live_d83fa9c2..." (One-time Reveal)
+  keyGeneratedAt: string;
+};
+```
+
+---
+
+## 4. Pusat Bantuan (Help Center)
+
+Modul penanganan tiket kendala, integrasi transaksi terkait, lampiran berkas, dan balasan laporan.
+
+### 4.1 Get List Tiket
+
+- **Endpoint**: `GET /api/tickets`
+- **Params**:
+  - `scope?: "all" | "my"`
+  - `status?: "active" | "history" | "submitted" | "in_review" | "in_progress" | "resolved" | "rejected"`
+  - `search?: string`
+  - `page?: number`
+  - `limit?: number`
+- **Response**:
+
+```typescript
+type HelpCenterListApiResponse = {
+  success: boolean;
+  data: Array<{
+    id: number;
+    userId?: number;
+    title: string;
+    description: string;
+    status: "submitted" | "in_review" | "in_progress" | "resolved" | "rejected";
+    priority?: "low" | "medium" | "high" | "urgent";
+    transactionId?: string;
+    orderNumber?: string;
+    attachmentsCount?: number;
+    repliesCount?: number;
+    createdAt: string;
+    updatedAt: string;
+    user?: {
+      id: number;
+      name: string;
+      email: string;
+      role: "mitra" | "internal";
+    };
+  }>;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+};
+```
+
+### 4.2 Create Tiket Laporan (dengan Transaksi Terkait)
+
+- **Endpoint**: `POST /api/tickets`
+- **Content-Type**: `multipart/form-data`
+- **Form Data Fields**:
+  - `title` _(string, required)_: Judul laporan
+  - `description` _(string, required)_: Rincian kendala
+  - `transactionId` _(string, optional)_: UUID transaksi/order terkait
+  - `orderNumber` _(string, optional)_: Nomor order terkait (contoh: `ORD-2026-00192`)
+  - `priority` _(string, optional)_: `low` | `medium` | `high` | `urgent`
+  - `category` _(string, optional)_: Kategori isu
+  - `files` _(binary array, optional)_: Berkas lampiran gambar, dokumen, atau video
+
+### 4.3 Detail Tiket & Balasan
+
+- **Get Detail**: `GET /api/tickets/{id}`
+- **Reply Ticket**: `POST /api/tickets/{id}/reply` (`multipart/form-data`)
+  - `message` _(string, required)_
+  - `status` _(string, optional)_
+  - `files` _(binary array, optional)_
+- **Resolve / Reject Ticket (Internal Admin)**: `POST /api/tickets/{id}/resolve` / `POST /api/tickets/{id}/reject`
+
+### 4.4 List Transaksi untuk Select Box Bantuan
+
+- **Endpoint**: `GET /api/v1/mitra/transactions` _(atau internal order history query)_
+- **Response**:
+
+```typescript
+type MitraTransactionListResponse = {
+  items: Array<{
+    id: string;
+    orderNumber: string;
+    billingCode?: string;
+    status:
+      | "draft"
+      | "pending_payment"
+      | "processing"
+      | "active"
+      | "expired"
+      | "rejected";
+    totalPrice: number;
+    orderedAt: string;
+    items: Array<{
+      id: string;
+      sourceLayerId: string;
+      sourceLayerTitle: string;
+    }>;
+  }>;
+  total: number;
+};
+```
+
+---
+
+## 5. My Data & User Management
+
+### 5.1 My Data (Layer Aktif Mitra)
+
+- **Endpoint**: `GET /api/v1/mitra/my-data`
+- **Response**: Daftar layer aktif ter-provisioning beserta sisa waktu akses dan statistik pemakaian WFS/WMS proxy.
+
+### 5.2 User Management (Internal Admin)
+
+- **List Users**: `GET /api/v1/internal/users`
+- **User Detail**: `GET /api/v1/internal/users/{id}`
+- **Update Status / Role**: `PUT /api/v1/internal/users/{id}`
+
+---
+
+## 6. Dashboard & Statistik
+
+### 6.1 Mitra Home Summary
+
+- **Endpoint**: `GET /api/v1/mitra/home/summary?period={1d|1w|1m|1y|all}`
+- **Response**:
+  - `dataSummary`: Breakdown bidang vs kawasan (active, almostExpired, expired).
+  - `financialFlow`: Riwayat nominal belanja data spasial per periode.
+  - `cartSummary`: Total item aktif di keranjang saat ini.
+
+### 6.2 Internal Dashboard Overview
+
+- **Endpoint**: `GET /api/v1/internal/home/summary?period={1d|1w|1m|1y|all}`
+- **Response**: Statistik pengguna aktif, permohonan data masuk, volume transaksi, dan utilisasi resource server.
+
+---
+
+## 7. Notifikasi & Inbox
+
+Modul pesan inbox resmi dan sinkronisasi riwayat toast notification sistem.
+
+### 7.1 List Inbox Pesan
+
+- **Endpoint**: `GET /api/v1/inbox`
+- **Response**:
+
+```typescript
+type InboxListResponse = {
+  items: Array<{
+    id: string;
+    title: string;
+    message: string;
+    category: "transaksi" | "sistem" | "bantuan" | "akun";
+    isRead: boolean;
+    actionUrl?: string;
+    createdAt: string;
+  }>;
+  total: number;
+  unreadCount: number;
+};
+```
+
+### 7.2 Tandai Inbox Telah Dibaca
+
+- **Endpoint**: `PATCH /api/v1/inbox/{id}/read`
+- **Response**: `200 OK` / `void`
