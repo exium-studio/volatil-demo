@@ -48,7 +48,9 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
   // States
   const [searchRaw, setSearchRaw] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE_OPTIONS[0]);
+  const [pageSize, setPageSize] = useState<number>(
+    DEFAULT_PAGE_SIZE_OPTIONS[0],
+  );
   const [status, setStatus] = useState<string>("");
 
   // Derived Values
@@ -165,10 +167,7 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
           {
             value: item.expiresAt,
             td: isActive ? (
-              <Countdown
-                finishedAt={item.expiresAt}
-                fontSize={"sm"}
-              />
+              <Countdown finishedAt={item.expiresAt} fontSize={"sm"} />
             ) : (
               <P fontSize={"sm"} color={"fg.subtle"}>
                 {"-"}
@@ -198,12 +197,12 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
   }, [myData.items, preferredTimezone]);
 
   return (
-    <VStack gap={SPACING.md} w={"full"}>
+    <VStack w={"full"}>
       {/* Header Controls */}
       <HStack
         wrap={"wrap"}
         align={"center"}
-        justify={"space-between"}
+        justify={"start"}
         gap={SPACING.sm}
         w={"full"}
         p={SPACING.md}
