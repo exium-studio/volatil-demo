@@ -21,6 +21,7 @@ import { Collapsible } from "@/design-system/components/disclosure/ui/collapsibl
 import { Steps } from "@/design-system/components/disclosure/ui/steps";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import type { FaceEmojiVariant } from "@/design-system/components/feedback/types/face-emoji.type";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { DotIndicator } from "@/design-system/components/feedback/ui/indicator";
 import {
@@ -1681,15 +1682,20 @@ export const DataDisplay = () => {
         label: "Delete",
         icon: TrashIcon,
         colorPalette: "red",
-        confirmation: (item) => ({
-          title: "Hapus Item?",
-          description: `Apakah Anda yakin ingin menghapus data ${(item as Record<string, unknown>).name || item.id}?`,
-          confirmLabel: "Hapus",
-          colorPalette: "red",
-          onConfirm: () => {
-            console.log("Delete confirmed:", item);
-          },
-        }),
+        modalTrigger: (children, item) => (
+          <ConfirmationTrigger
+            modalKey={`demo-delete-${(item as Record<string, unknown>).id || "item"}`}
+            title={"Hapus Item?"}
+            description={`Apakah Anda yakin ingin menghapus data ${(item as Record<string, unknown>).name || item.id}?`}
+            confirmLabel={"Hapus"}
+            colorPalette={"red"}
+            onConfirm={() => {
+              console.log("Delete confirmed:", item);
+            }}
+          >
+            {children}
+          </ConfirmationTrigger>
+        ),
       },
     ] as DataListItemActionsGenerator[],
   };

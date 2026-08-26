@@ -47,7 +47,6 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { EllipsisIcon } from "lucide-react";
 import {
-  forwardRef,
   memo,
   useCallback,
   useImperativeHandle,
@@ -273,7 +272,7 @@ const DataListTableRootInternal = <
   );
 };
 
-const DataListTableRoot = forwardRef(DataListTableRootInternal) as <
+const DataListTableRoot = DataListTableRootInternal as <
   T = Record<string, unknown>,
   N extends number = number,
 >(
@@ -600,6 +599,8 @@ const DataListTableBody = () => {
   );
 };
 
+// -------------------------------------------------------------------------------------
+
 const DataListTableCell = (props: StackProps) => {
   return (
     <HStack
@@ -645,6 +646,8 @@ const DataListTableSortIcon = ({
     </VStack>
   );
 };
+
+// -------------------------------------------------------------------------------------
 
 export const DataListTable = {
   Root: DataListTableRoot,

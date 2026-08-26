@@ -11,7 +11,6 @@ import type {
   DataListItemActionsTriggerProps,
 } from "@/design-system/components/data-display/types/data-list.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import { confirmDialog } from "@/design-system/components/feedback/utils/confirm-dialog";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
@@ -28,22 +27,6 @@ export function executeItemAction<T = Record<string, unknown>>(
   action: DataListDeclarativeItemAction<T>,
   item: FormattedListItem<T>,
 ) {
-  const confirmationConfig =
-    typeof action.confirmation === "function"
-      ? action.confirmation(item.data)
-      : action.confirmation;
-
-  if (confirmationConfig) {
-    confirmDialog({
-      ...confirmationConfig,
-      onConfirm: async () => {
-        await confirmationConfig.onConfirm?.();
-        await action.onClick?.(item.data, item);
-      },
-    });
-    return;
-  }
-
   void action.onClick?.(item.data, item);
 }
 
@@ -113,33 +96,39 @@ export function DataListRowSpreadActions<
         );
         const iconNode = renderIcon(resolvedIcon);
 
-        if (resolvedIcon) {
-          return (
-            <Tooltip key={key} content={resolvedLabel}>
-              <IconButton
-                variant={action.variant ?? "ghost"}
-                colorPalette={resolvedColorPalette}
-                disabled={isDisabled}
-                aria-label={resolvedLabel}
-                onClick={() => executeItemAction(action, item)}
-              >
-                {iconNode}
-              </IconButton>
-            </Tooltip>
-          );
-        }
-
-        return (
+        const buttonNode = resolvedIcon ? (
+          <Tooltip key={key} content={resolvedLabel}>
+            <IconButton
+              variant={action.variant ?? "ghost"}
+              colorPalette={resolvedColorPalette}
+              disabled={isDisabled}
+              aria-label={resolvedLabel}
+              onClick={action.modalTrigger ? undefined : () => executeItemAction(action, item)}
+            >
+              {iconNode}
+            </IconButton>
+          </Tooltip>
+        ) : (
           <Button
             key={key}
             variant={action.variant ?? "outline"}
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
-            onClick={() => executeItemAction(action, item)}
+            onClick={action.modalTrigger ? undefined : () => executeItemAction(action, item)}
           >
             {resolvedLabel}
           </Button>
         );
+
+        if (action.modalTrigger) {
+          return (
+            <span key={key}>
+              {action.modalTrigger(buttonNode, item.data, item)}
+            </span>
+          );
+        }
+
+        return buttonNode;
       })}
     </HStack>
   );
@@ -193,7 +182,7 @@ export function DataListItemActionsTrigger<
               );
               const iconNode = renderIcon(resolvedIcon);
 
-              return (
+              const menuItemNode = (
                 <Menu.Item
                   key={key}
                   value={key}
@@ -203,12 +192,22 @@ export function DataListItemActionsTrigger<
                       ? `${resolvedColorPalette}.fg`
                       : undefined
                   }
-                  onClick={() => executeItemAction(action, item)}
+                  onClick={action.modalTrigger ? undefined : () => executeItemAction(action, item)}
                 >
                   {iconNode}
                   {resolvedLabel}
                 </Menu.Item>
               );
+
+              if (action.modalTrigger) {
+                return (
+                  <span key={key}>
+                    {action.modalTrigger(menuItemNode, item.data, item)}
+                  </span>
+                );
+              }
+
+              return menuItemNode;
             }
 
             // Legacy functional generator fallback

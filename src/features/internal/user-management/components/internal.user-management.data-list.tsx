@@ -7,6 +7,7 @@ import type {
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -158,21 +159,30 @@ export const InternalUserManagementDataList = () => {
           user.status === "active" ? ShieldAlertIcon : CheckCircleIcon,
         colorPalette: (user: UserManagementItem) =>
           user.status === "active" ? "red" : "green",
-        confirmation: (user: UserManagementItem) => ({
-          title:
-            user.status === "active"
-              ? "Nonaktifkan Pengguna?"
-              : "Aktifkan Pengguna?",
-          description: `Apakah Anda yakin ingin mengubah status akun ${user.name}?`,
-          confirmLabel: user.status === "active" ? "Nonaktifkan" : "Aktifkan",
-          colorPalette: user.status === "active" ? "red" : theme.colorPalette,
-          onConfirm: () => {
-            updateStatusMutation.mutate({
-              id: user.id,
-              status: user.status === "active" ? "inactive" : "active",
-            });
-          },
-        }),
+        modalTrigger: (
+          children: React.ReactNode,
+          user: UserManagementItem,
+        ) => (
+          <ConfirmationTrigger
+            modalKey={`toggle-user-status-${user.id}`}
+            title={
+              user.status === "active"
+                ? "Nonaktifkan Pengguna?"
+                : "Aktifkan Pengguna?"
+            }
+            description={`Apakah Anda yakin ingin mengubah status akun ${user.name}?`}
+            confirmLabel={user.status === "active" ? "Nonaktifkan" : "Aktifkan"}
+            colorPalette={user.status === "active" ? "red" : theme.colorPalette}
+            onConfirm={() => {
+              updateStatusMutation.mutate({
+                id: user.id,
+                status: user.status === "active" ? "inactive" : "active",
+              });
+            }}
+          >
+            {children}
+          </ConfirmationTrigger>
+        ),
       },
     ];
 
