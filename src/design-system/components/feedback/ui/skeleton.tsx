@@ -16,8 +16,44 @@ import {
 } from "@chakra-ui/react";
 
 export const Skeleton = (props: SkeletonProps) => {
+  // Props
+  const {
+    loading,
+    loaded,
+    children,
+    variant = "shine",
+    ...restProps
+  } = props;
+
   // Stores
   const { theme } = useThemeStore();
+
+  const isLoaded = loaded !== undefined ? loaded : loading !== undefined ? !loading : undefined;
+
+  // If used as a loaded container and content is loaded, render children
+  if (isLoaded === true && children) {
+    return <>{children}</>;
+  }
+
+  // If wrapping children while still loading, use ChakraSkeleton as wrapper
+  if (children) {
+    return (
+      <ChakraSkeleton
+        loading={isLoaded !== undefined ? !isLoaded : true}
+        variant={variant}
+        w={"full"}
+        h={"full"}
+        rounded={theme.radii.container}
+        css={{
+          "--start-color": "transparent",
+          "--end-color": "colors.bg.subtle",
+        }}
+        {...restProps}
+      >
+        {children}
+      </ChakraSkeleton>
+    );
+  }
 
   return (
     <Center
@@ -26,10 +62,10 @@ export const Skeleton = (props: SkeletonProps) => {
       bg={"bg.body"}
       rounded={theme.radii.container}
       overflow={"clip"}
-      {...props}
+      {...restProps}
     >
       <ChakraSkeleton
-        variant={"shine"}
+        variant={variant}
         w={"full"}
         h={"full"}
         rounded={theme.radii.container}

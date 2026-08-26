@@ -46,6 +46,12 @@ export const TransactionDetailTrigger = (
     modalKey: customModalKey,
   });
 
+  const isMounted = useMountTimeout({
+    isOpen,
+    delayMs: 0,
+    unmountDelay: 250,
+  });
+
   return (
     <Modal.Root
       modalKey={modalKey}
@@ -56,11 +62,8 @@ export const TransactionDetailTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      {transaction && (
-        <TransactionDetailModalContent
-          transaction={transaction}
-          isOpen={isOpen}
-        />
+      {transaction && isMounted && (
+        <TransactionDetailModalContent transaction={transaction} />
       )}
     </Modal.Root>
   );
@@ -70,13 +73,15 @@ export const TransactionDetailModalContent = (
   props: TransactionDetailModalContentProps,
 ) => {
   // Props
-  const { transaction, isOpen } = props;
+  const { transaction } = props;
 
   // Stores
   const { theme } = useThemeStore();
 
-  // Hooks — Delay heavy content mounting to render initial skeleton
-  const isReady = useMountTimeout(250);
+  // Hooks — Mount timeout delay to show realistic skeleton container based on order items length
+  const isLoaded = useMountTimeout({
+    delayMs: 250,
+  });
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
@@ -154,6 +159,10 @@ export const TransactionDetailModalContent = (
   const isSettled = transaction.transactionStatus === "settled";
   const isPending = transaction.transactionStatus === "pending";
 
+  const orderItemsCount = transaction.items?.length ?? 1;
+  // Header (~40px) + each row (~48px)
+  const tableSkeletonHeight = `${40 + orderItemsCount * 48}px`;
+
   return (
     <Modal.Content>
       <Modal.Header>
@@ -171,11 +180,19 @@ export const TransactionDetailModalContent = (
       <Separator borderColor={"bg.canvas"} />
 
       <Modal.Body p={0}>
-        {!isReady || !isOpen ? (
+        {!isLoaded ? (
           <VStack gap={SPACING.md} p={SPACING.md} w={"full"}>
+            {/* Status Summary Skeleton */}
             <Skeleton h={"72px"} w={"full"} rounded={theme.radii.component} />
+
+            {/* Metadata Grid Skeleton */}
             <Skeleton h={"128px"} w={"full"} rounded={"md"} />
-            <Skeleton h={"100px"} w={"full"} rounded={"md"} />
+
+            {/* Order Items Table Skeleton measured from items length */}
+            <VStack align={"stretch"} gap={SPACING.xs} w={"full"}>
+              <Skeleton h={"20px"} w={"200px"} rounded={"sm"} />
+              <Skeleton h={tableSkeletonHeight} w={"full"} rounded={"md"} />
+            </VStack>
           </VStack>
         ) : (
           <VStack gap={SPACING.md} pt={SPACING.md}>
@@ -268,10 +285,7 @@ export const TransactionDetailModalContent = (
                   <P fontWeight={"medium"}>
                     <TNum>{transaction.billingCode}</TNum>
                   </P>
-                  <ClipboardButton
-                    value={transaction.billingCode}
-                    size={"xs"}
-                  />
+                  <ClipboardButton value={transaction.billingCode} size={"xs"} />
                 </HStack>
               </HStack>
 
