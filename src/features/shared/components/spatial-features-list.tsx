@@ -42,7 +42,7 @@ export const SpatialFeaturesList = memo((props: SpatialFeaturesListProps) => {
   const { theme } = useThemeStore();
 
   // Hooks — Delay heavy table mounting to allow initial skeleton render
-  const isReady = useMountTimeout(50);
+  const isMounted = useMountTimeout(50);
 
   // Derived Values — Dynamic Attribute Keys from WFS features
   const attributeKeys = useMemo(() => {
@@ -66,7 +66,7 @@ export const SpatialFeaturesList = memo((props: SpatialFeaturesListProps) => {
   const hasPagination =
     page != null && pageSize != null && totalFeatures != null;
 
-  if (!isReady || isLoading || (isFetching && wfsFeatures.length === 0)) {
+  if (!isMounted || isLoading || (isFetching && wfsFeatures.length === 0)) {
     return (
       <Skeleton h={"full"} w={"full"} flex={1} roundedTop={0} p={SPACING.md} />
     );
@@ -164,7 +164,10 @@ const SpatialFeaturesListContent = memo(
             key: "fly-to-feature",
             label: "Lihat di Peta",
             icon: MapPinIcon,
-            onClick: (_data: Record<string, unknown>, formattedItem: FormattedListItem) => {
+            onClick: (
+              _data: Record<string, unknown>,
+              formattedItem: FormattedListItem,
+            ) => {
               const feat = formattedItem.data as unknown as
                 | GeoJSON.Feature
                 | Record<string, unknown>

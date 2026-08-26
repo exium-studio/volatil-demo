@@ -78,8 +78,8 @@ export const TransactionDetailModalContent = (
   // Stores
   const { theme } = useThemeStore();
 
-  // Hooks — Mount timeout delay to show realistic skeleton container based on order items length
-  const isLoaded = useMountTimeout({
+  // Hooks
+  const isMounted = useMountTimeout({
     delayMs: 250,
   });
 
@@ -159,10 +159,6 @@ export const TransactionDetailModalContent = (
   const isSettled = transaction.transactionStatus === "settled";
   const isPending = transaction.transactionStatus === "pending";
 
-  const orderItemsCount = transaction.items?.length ?? 1;
-  // Header (~40px) + each row (~48px)
-  const tableSkeletonHeight = `${40 + orderItemsCount * 48}px`;
-
   return (
     <Modal.Content>
       <Modal.Header>
@@ -180,83 +176,65 @@ export const TransactionDetailModalContent = (
       <Separator borderColor={"bg.canvas"} />
 
       <Modal.Body p={0}>
-        {!isLoaded ? (
-          <VStack gap={SPACING.md} p={SPACING.md} w={"full"}>
-            {/* Status Summary Skeleton */}
-            <Skeleton h={"72px"} w={"full"} rounded={theme.radii.component} />
+        <VStack gap={SPACING.md} pt={SPACING.md}>
+          {/* Transaction Status Summary Box */}
+          <Skeleton loaded={isMounted} w={"full"} px={SPACING.md}>
+            <HStack
+              p={SPACING.md}
+              rounded={theme.radii.component}
+              bg={"bg.canvas"}
+              justify={"space-between"}
+              align={"center"}
+              wrap={"wrap"}
+              gap={SPACING.sm}
+            >
+              <HStack gap={SPACING.sm} align={"center"}>
+                <AppIcon
+                  icon={
+                    isSettled
+                      ? CheckCircleIcon
+                      : isPending
+                        ? ClockIcon
+                        : XCircleIcon
+                  }
+                  size={"lg"}
+                  color={
+                    isSettled ? "green.fg" : isPending ? "orange.fg" : "red.fg"
+                  }
+                />
 
-            {/* Metadata Grid Skeleton */}
-            <Skeleton h={"128px"} w={"full"} rounded={"md"} />
-
-            {/* Order Items Table Skeleton measured from items length */}
-            <VStack align={"stretch"} gap={SPACING.xs} w={"full"}>
-              <Skeleton h={"20px"} w={"200px"} rounded={"sm"} />
-              <Skeleton h={tableSkeletonHeight} w={"full"} rounded={"md"} />
-            </VStack>
-          </VStack>
-        ) : (
-          <VStack gap={SPACING.md} pt={SPACING.md}>
-            {/* Transaction Status Summary Box */}
-            <Box w={"full"} px={SPACING.md}>
-              <HStack
-                p={SPACING.md}
-                rounded={theme.radii.component}
-                bg={"bg.canvas"}
-                justify={"space-between"}
-                align={"center"}
-                wrap={"wrap"}
-                gap={SPACING.sm}
-              >
-                <HStack gap={SPACING.sm} align={"center"}>
-                  <AppIcon
-                    icon={
-                      isSettled
-                        ? CheckCircleIcon
-                        : isPending
-                          ? ClockIcon
-                          : XCircleIcon
-                    }
-                    size={"lg"}
-                    color={
-                      isSettled
-                        ? "green.fg"
-                        : isPending
-                          ? "orange.fg"
-                          : "red.fg"
-                    }
-                  />
-
-                  <VStack align={"start"} gap={0}>
-                    <P fontWeight={"semibold"}>
-                      {isSettled
-                        ? "Pembayaran Berhasil"
-                        : isPending
-                          ? "Menunggu Pembayaran"
-                          : "Transaksi Kedaluwarsa"}
-                    </P>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {`Dibuat: ${formatUtcDateTime(transaction.createdAt, preferredTimezone)}`}
-                    </P>
-                  </VStack>
-                </HStack>
-
-                <VStack align={"end"} gap={0}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Total Nominal"}
+                <VStack align={"start"} gap={0}>
+                  <P fontWeight={"semibold"}>
+                    {isSettled
+                      ? "Pembayaran Berhasil"
+                      : isPending
+                        ? "Menunggu Pembayaran"
+                        : "Transaksi Kedaluwarsa"}
                   </P>
-                  <P fontSize={"lg"} fontWeight={"bold"}>
-                    <FormatNumber
-                      value={transaction.totalAmount}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {`Dibuat: ${formatUtcDateTime(transaction.createdAt, preferredTimezone)}`}
                   </P>
                 </VStack>
               </HStack>
-            </Box>
 
-            {/* Transaction Metadata Grid */}
+              <VStack align={"end"} gap={0}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Total Nominal"}
+                </P>
+                <P fontSize={"lg"} fontWeight={"bold"}>
+                  <FormatNumber
+                    value={transaction.totalAmount}
+                    style={"currency"}
+                    currency={"IDR"}
+                    maximumFractionDigits={0}
+                  />
+                </P>
+              </VStack>
+            </HStack>
+          </Skeleton>
+
+          {/* Transaction Metadata Grid */}
+          <Skeleton loaded={isMounted}>
             <VStack
               align={"stretch"}
               gap={SPACING.xs}
@@ -285,7 +263,10 @@ export const TransactionDetailModalContent = (
                   <P fontWeight={"medium"}>
                     <TNum>{transaction.billingCode}</TNum>
                   </P>
-                  <ClipboardButton value={transaction.billingCode} size={"xs"} />
+                  <ClipboardButton
+                    value={transaction.billingCode}
+                    size={"xs"}
+                  />
                 </HStack>
               </HStack>
 
@@ -315,8 +296,10 @@ export const TransactionDetailModalContent = (
                 </HStack>
               )}
             </VStack>
+          </Skeleton>
 
-            {/* Order Items Table */}
+          {/* Order Items Table */}
+          <Skeleton loaded={isMounted}>
             <VStack align={"stretch"} gap={SPACING.xs} pt={SPACING.md}>
               <Box px={SPACING.md}>
                 <P fontSize={"sm"} fontWeight={"semibold"}>
@@ -341,8 +324,8 @@ export const TransactionDetailModalContent = (
                 </DataListTable.Root>
               </Box>
             </VStack>
-          </VStack>
-        )}
+          </Skeleton>
+        </VStack>
       </Modal.Body>
 
       <Modal.Footer>
