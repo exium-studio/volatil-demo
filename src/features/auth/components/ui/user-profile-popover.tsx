@@ -92,7 +92,7 @@ export const UserProfilePopoverTrigger = (
 
             <Separator />
 
-            <VStack gap={"xs"} p={"xs"}>
+            <VStack gap={"2xs"} p={"xs"}>
               {/* Dark Mode Toggle */}
               <Button
                 justifyContent={"space-between"}
