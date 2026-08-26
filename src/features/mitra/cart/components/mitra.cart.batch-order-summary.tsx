@@ -172,20 +172,26 @@ export const MitraCartBatchOrderSummary = (
           my={1}
         />
 
-        <HStack justify={"space-between"} color={"blue.fg"}>
+        <HStack justify={"space-between"} color={isReadyToPay ? "blue.fg" : undefined}>
           <P fontSize={"md"} fontWeight={"bold"}>
             {"Total Tagihan"}
           </P>
           <P fontSize={"lg"} fontWeight={"bold"}>
             {isSelected ? (
-              <FormatNumber
-                value={activeBatch?.totalPrice ?? 0}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
+              isPreparing ? (
+                <P color={"fg.subtle"} fontSize={"sm"} fontStyle={"italic"}>
+                  {"Menunggu penyiapan data..."}
+                </P>
+              ) : (
+                <FormatNumber
+                  value={activeBatch?.totalPrice ?? 0}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              )
             ) : (
-              "Rp0"
+              "-"
             )}
           </P>
         </HStack>

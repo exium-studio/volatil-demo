@@ -639,32 +639,32 @@ export const chakraConfig = defineConfig({
         sortsMillGoudy: { value: "'Sorts Mill Goudy', serif" },
       },
       fontSizes: {
-        // xs: { value: "0.75rem" }, // 12px
-        // sm: { value: "0.8125rem" }, // 13px
-        // md: { value: "0.875rem" }, // 14px
-        // lg: { value: "1rem" }, // 16px
-        // xl: { value: "1.125rem" }, // 18px
-        // "2xl": { value: "1.3125rem" }, // 21px
-        // "3xl": { value: "1.625rem" }, // 26px
-        // "4xl": { value: "2rem" }, // 32px
-        // "5xl": { value: "2.5rem" }, // 40px
-        // "6xl": { value: "3.125rem" }, // 50px
-        // "7xl": { value: "3.9375rem" }, // 63px
-        // "8xl": { value: "5rem" }, // 80px
-        // "9xl": { value: "6.3125rem" }, // 101px
-        xs: { value: "0.6875rem" }, // 11px
+        xs: { value: "0.75rem" }, // 12px
         sm: { value: "0.8125rem" }, // 13px
-        md: { value: "0.9375rem" }, // 15px
-        lg: { value: "1.0625rem" }, // 17px
-        xl: { value: "1.1875rem" }, // 19px
-        "2xl": { value: "1.4375rem" }, // 23px
-        "3xl": { value: "1.8125rem" }, // 29px
-        "4xl": { value: "2.1875rem" }, // 35px
-        "5xl": { value: "2.9375rem" }, // 47px
-        "6xl": { value: "3.6875rem" }, // 59px
-        "7xl": { value: "4.4375rem" }, // 71px
-        "8xl": { value: "5.9375rem" }, // 95px
-        "9xl": { value: "7.9375rem" }, // 127px
+        md: { value: "0.875rem" }, // 14px
+        lg: { value: "1rem" }, // 16px
+        xl: { value: "1.125rem" }, // 18px
+        "2xl": { value: "1.3125rem" }, // 21px
+        "3xl": { value: "1.625rem" }, // 26px
+        "4xl": { value: "2rem" }, // 32px
+        "5xl": { value: "2.5rem" }, // 40px
+        "6xl": { value: "3.125rem" }, // 50px
+        "7xl": { value: "3.9375rem" }, // 63px
+        "8xl": { value: "5rem" }, // 80px
+        "9xl": { value: "6.3125rem" }, // 101px
+        // xs: { value: "0.6875rem" }, // 11px
+        // sm: { value: "0.8125rem" }, // 13px
+        // md: { value: "0.9375rem" }, // 15px
+        // lg: { value: "1.0625rem" }, // 17px
+        // xl: { value: "1.1875rem" }, // 19px
+        // "2xl": { value: "1.4375rem" }, // 23px
+        // "3xl": { value: "1.8125rem" }, // 29px
+        // "4xl": { value: "2.1875rem" }, // 35px
+        // "5xl": { value: "2.9375rem" }, // 47px
+        // "6xl": { value: "3.6875rem" }, // 59px
+        // "7xl": { value: "4.4375rem" }, // 71px
+        // "8xl": { value: "5.9375rem" }, // 95px
+        // "9xl": { value: "7.9375rem" }, // 127px
       },
       fontWeights: {
         normal: { value: "500" },

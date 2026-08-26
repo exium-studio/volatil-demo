@@ -299,6 +299,7 @@ export const TransactionHistoryDataList = () => {
 
       {/* Detail Modal */}
       <TransactionHistoryDetailModal
+        modalKey={`transaction-detail.${selectedTransaction?.id ?? "none"}`}
         transaction={selectedTransaction}
         isOpen={Boolean(selectedTransaction)}
         onClose={() => setSelectedTransaction(null)}

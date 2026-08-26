@@ -1,7 +1,8 @@
 // src/features/mitra/transaction-history/components/transaction-history.detail-modal.tsx
 
-import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
+import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-list-table.type";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -13,10 +14,13 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { SPACING } from "@/design-system/constants/styles";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
   TransactionOrderItem,
   TransactionRecord,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
+import { t } from "@/shared/libs/i18n";
+import { back } from "@/shared/utils/client/navigation";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -25,6 +29,7 @@ import { CheckCircleIcon, ClockIcon, XCircleIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export type TransactionHistoryDetailModalProps = {
+  modalKey: string;
   transaction: TransactionRecord | null;
   isOpen: boolean;
   onClose: () => void;
@@ -34,7 +39,10 @@ export const TransactionHistoryDetailModal = (
   props: TransactionHistoryDetailModalProps,
 ) => {
   // Props
-  const { transaction, isOpen, onClose } = props;
+  const { modalKey, transaction, isOpen, onClose } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
@@ -67,10 +75,8 @@ export const TransactionHistoryDetailModal = (
             value: item.sourceLayerTitle,
             td: (
               <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"} fontWeight={"medium"}>
-                  {item.sourceLayerTitle}
-                </P>
-                <P fontSize={"xs"} color={"fg.subtle"}>
+                <P fontWeight={"medium"}>{item.sourceLayerTitle}</P>
+                <P fontSize={"sm"} color={"fg.subtle"}>
                   {item.sourceLayerId}
                 </P>
               </VStack>
@@ -132,104 +138,130 @@ export const TransactionHistoryDetailModal = (
   const isPending = transaction.transactionStatus === "pending";
 
   return (
-    <Modal.Root
-      modalKey={"transaction-history-detail-modal"}
-      opened={isOpen}
-      close={onClose}
-      size={"lg"}
-    >
-      <Modal.Backdrop />
+    <Modal.Root modalKey={modalKey} opened={isOpen} close={onClose} size={"lg"}>
       <Modal.Content>
         <Modal.Header>
-          <HStack justify={"space-between"} align={"center"} w={"full"} pr={8}>
-            <VStack align={"start"} gap={0}>
-              <Heading fontSize={"md"}>
-                {"Detail Transaksi & Order"}
-              </Heading>
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {transaction.transactionNumber}
-              </P>
-            </VStack>
-          </HStack>
           <Modal.CloseButton />
+
+          <VStack align={"center"} gap={0} textAlign={"center"}>
+            <Heading>{"Detail Transaksi & Order"}</Heading>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {transaction.transactionNumber}
+            </P>
+          </VStack>
         </Modal.Header>
 
         <Separator borderColor={"bg.canvas"} />
 
-        <Modal.Body p={SPACING.md} gap={SPACING.md}>
+        <Modal.Body p={0}>
           {/* Transaction Status Summary Box */}
-          <HStack
-            p={SPACING.md}
-            rounded={"md"}
-            bg={"bg.canvas"}
-            justify={"space-between"}
-            align={"center"}
-            wrap={"wrap"}
-            gap={SPACING.sm}
-          >
-            <HStack gap={SPACING.sm} align={"center"}>
-              <AppIcon
-                icon={
-                  isSettled
-                    ? CheckCircleIcon
-                    : isPending
-                      ? ClockIcon
-                      : XCircleIcon
-                }
-                color={isSettled ? "green.fg" : isPending ? "orange.fg" : "red.fg"}
-              />
-              <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"} fontWeight={"semibold"}>
-                  {isSettled
-                    ? "Pembayaran Berhasil"
-                    : isPending
-                      ? "Menunggu Pembayaran"
-                      : "Transaksi Kedaluwarsa"}
-                </P>
+          <Box w={"full"} p={SPACING.md}>
+            <HStack
+              p={SPACING.md}
+              rounded={theme.radii.component}
+              bg={"bg.canvas"}
+              justify={"space-between"}
+              align={"center"}
+              wrap={"wrap"}
+              gap={SPACING.sm}
+            >
+              <HStack gap={SPACING.sm} align={"center"}>
+                <AppIcon
+                  icon={
+                    isSettled
+                      ? CheckCircleIcon
+                      : isPending
+                        ? ClockIcon
+                        : XCircleIcon
+                  }
+                  color={
+                    isSettled ? "green.fg" : isPending ? "orange.fg" : "red.fg"
+                  }
+                />
+
+                <VStack align={"start"} gap={0}>
+                  <P fontWeight={"semibold"}>
+                    {isSettled
+                      ? "Pembayaran Berhasil"
+                      : isPending
+                        ? "Menunggu Pembayaran"
+                        : "Transaksi Kedaluwarsa"}
+                  </P>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {`Dibuat: ${formatUtcDateTime(transaction.createdAt, preferredTimezone)}`}
+                  </P>
+                </VStack>
+              </HStack>
+
+              <VStack align={"end"} gap={0}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {`Dibuat: ${formatUtcDateTime(transaction.createdAt, preferredTimezone)}`}
+                  {"Total Nominal"}
+                </P>
+                <P fontSize={"lg"} fontWeight={"bold"}>
+                  <FormatNumber
+                    value={transaction.totalAmount}
+                    style={"currency"}
+                    currency={"IDR"}
+                    maximumFractionDigits={0}
+                  />
                 </P>
               </VStack>
             </HStack>
-
-            <VStack align={"end"} gap={0}>
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Total Nominal"}
-              </P>
-              <P fontSize={"md"} fontWeight={"bold"} color={"teal.fg"}>
-                <FormatNumber
-                  value={transaction.totalAmount}
-                  style={"currency"}
-                  currency={"IDR"}
-                  maximumFractionDigits={0}
-                />
-              </P>
-            </VStack>
-          </HStack>
+          </Box>
 
           {/* Transaction Metadata Grid */}
-          <VStack align={"stretch"} gap={SPACING.xs} p={SPACING.sm} bg={"bg.body"} rounded={"md"}>
-            <HStack justify={"space-between"} fontSize={"sm"}>
+          <VStack
+            align={"stretch"}
+            gap={SPACING.xs}
+            px={SPACING.md}
+            py={SPACING.xs}
+            bg={"bg.body"}
+            rounded={"md"}
+          >
+            <HStack
+              align={"center"}
+              justify={"space-between"}
+              h={"32px"}
+              fontSize={"sm"}
+            >
               <P color={"fg.subtle"}>{"Nomor Order"}</P>
               <P fontWeight={"medium"}>{transaction.orderNumber}</P>
             </HStack>
-            <HStack justify={"space-between"} fontSize={"sm"}>
+
+            <HStack
+              align={"center"}
+              justify={"space-between"}
+              h={"32px"}
+              fontSize={"sm"}
+            >
               <P color={"fg.subtle"}>{"Kode Billing (MPN)"}</P>
               <HStack gap={1} align={"center"}>
                 <P fontWeight={"medium"}>
                   <TNum>{transaction.billingCode}</TNum>
                 </P>
-                <ClipboardButton value={transaction.billingCode} />
+                <ClipboardButton value={transaction.billingCode} size={"xs"} />
               </HStack>
             </HStack>
-            <HStack justify={"space-between"} fontSize={"sm"}>
+
+            <HStack
+              align={"center"}
+              justify={"space-between"}
+              h={"32px"}
+              fontSize={"sm"}
+            >
               <P color={"fg.subtle"}>{"Metode Pembayaran"}</P>
               <Badge variant={"subtle"} colorPalette={"gray"}>
                 {transaction.paymentMethod}
               </Badge>
             </HStack>
+
             {transaction.paidAt && (
-              <HStack justify={"space-between"} fontSize={"sm"}>
+              <HStack
+                align={"center"}
+                justify={"space-between"}
+                h={"32px"}
+                fontSize={"sm"}
+              >
                 <P color={"fg.subtle"}>{"Waktu Pembayaran"}</P>
                 <P fontWeight={"medium"}>
                   {formatUtcDateTime(transaction.paidAt, preferredTimezone)}
@@ -239,11 +271,19 @@ export const TransactionHistoryDetailModal = (
           </VStack>
 
           {/* Order Items Table */}
-          <VStack align={"stretch"} gap={SPACING.xs}>
-            <P fontSize={"sm"} fontWeight={"semibold"}>
-              {`Daftar Order Layer IGT (${transaction.items.length} Item)`}
-            </P>
-            <Box rounded={"md"} overflow={"hidden"} border={"1px solid"} borderColor={"border.subtle"}>
+          <VStack align={"stretch"} gap={SPACING.xs} py={SPACING.md}>
+            <Box px={SPACING.md}>
+              <P fontSize={"sm"} fontWeight={"semibold"}>
+                {`Daftar Order Layer IGT (${transaction.items.length} Item)`}
+              </P>
+            </Box>
+
+            <Box
+              rounded={"md"}
+              overflow={"hidden"}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+            >
               <DataListTable.Root
                 headers={orderItemHeaders}
                 items={orderItemsData}
@@ -256,6 +296,12 @@ export const TransactionHistoryDetailModal = (
             </Box>
           </VStack>
         </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant={"outline"} flex={1} onClick={back}>
+            {t["action.close"]()}
+          </Button>
+        </Modal.Footer>
       </Modal.Content>
     </Modal.Root>
   );

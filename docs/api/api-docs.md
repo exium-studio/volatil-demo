@@ -22,8 +22,9 @@ Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, 
 ### C. Role: Internal (Admin / Verifikator)
 
 8. [Internal - Master IGT Layers & Data Management](#8-internal---master-igt-layers--data-management)
-9. [Internal - User Management](#9-internal---user-management)
-10. [Internal - Dashboard & Statistik Sistem](#10-internal---dashboard--statistik-sistem)
+9. [Internal - Tarif & Pricing Management](#9-internal---tarif--pricing-management)
+10. [Internal - User Management](#10-internal---user-management)
+11. [Internal - Dashboard & Statistik Sistem](#11-internal---dashboard--statistik-sistem)
 
 ---
 
@@ -303,7 +304,7 @@ type CartBatchListResponse = {
     createdAt: string;
     readyAt?: string;
     expiredAt?: string; // Datetime ISO (TTL 24 jam setelah status 'ready' untuk hitung mundur countdown)
-    totalPrice: number;
+    totalPrice?: number; // Bernilai undefined/null jika status masih 'preparing' (belum selesai dihitung Interop Engine)
     items: Array<{
       id: string;
       sourceLayerId: string;
@@ -325,7 +326,36 @@ type CartBatchListResponse = {
 ### 5.3 Ambil Detail Batch di Keranjang
 
 - **Endpoint**: `GET /api/mitra/cart/batches/{batchId}`
-- **Response**: `CartBatch | null`
+- **Response**:
+
+```typescript
+type CartBatchDetailResponse = {
+  batchId: string;
+  status: "preparing" | "ready" | "expired";
+  createdAt: string;
+  readyAt?: string;
+  expiredAt?: string;
+  totalPrice?: number; // Total tagihan batch (tersedia saat status 'ready'). Jika 'preparing', bernilai null/0/menunggu.
+  items: Array<{
+    id: string;
+    sourceLayerId: string;
+    sourceLayerTitle: string;
+    spatialBasis: "bidang" | "kawasan";
+    selectionType: "administrative_filter" | "aoi_polygon";
+    featuresCount: number;
+    areaHa?: number;
+    unitPrice: number;
+    subtotalPrice: number;
+    wfsUrl?: string;
+    wmsUrl?: string;
+  }>;
+};
+```
+
+> [!NOTE]
+> **Skema Perhitungan Tarif (Pricing)**:
+> - Penentuan tarif (`unitPrice`) diambil dari **Master Data Tarif PNBP** yang dikelola melalui modul [Internal - Tarif & Pricing Management](#9-internal---tarif--pricing-management).
+> - Selama status batch masih `preparing`, nilai total harga dan tarif akhir belum selesai dikalkulasi secara final oleh Interop Engine dan UI akan menampilkan indikasi *"Menunggu penyiapan data..."*.
 
 ### 5.4 Kosongkan / Hapus Batch dari Keranjang
 
@@ -565,26 +595,62 @@ type CreateMasterIgtLayerPayload = {
 
 ---
 
-## 9. Internal - User Management
+## 9. Internal - Tarif & Pricing Management
 
-### 9.1 List Users
+Modul pengelolaan tarif PNBP layer IGT (tarif per bidang objek spasial, tarif per hektar kawasan, serta formula perhitungan PNBP ATR/BPN). Nilai tarif di modul ini digunakan oleh Interop Engine saat kalkulasi total harga batch di keranjang mitra.
+
+### 9.1 List Master Tarif
+
+- **Endpoint**: `GET /api/internal/pricing`
+- **Response**:
+
+```typescript
+type PricingListResponse = {
+  items: Array<{
+    id: string;
+    layerId?: string; // Optional: spesifik untuk layer tertentu atau default global
+    spatialBasis: "bidang" | "kawasan";
+    unitPrice: number; // Harga per bidang / per hektar (IDR)
+    unitLabel: string; // "per bidang" | "per hektar"
+    effectiveDate: string;
+    isActive: boolean;
+  }>;
+};
+```
+
+### 9.2 Update / Set Tarif Layer
+
+- **Endpoint**: `PUT /api/internal/pricing/{id}`
+- **Payload**:
+```typescript
+type UpdatePricingPayload = {
+  unitPrice: number;
+  isActive: boolean;
+};
+```
+
+---
+
+## 10. Internal - User Management
+
+### 10.1 List Users
 
 - **Endpoint**: `GET /api/internal/users`
 - **Params**: `page?: number`, `limit?: number`, `role?: string`, `search?: string`
 
-### 9.2 User Detail
+### 10.2 User Detail
 
 - **Endpoint**: `GET /api/internal/users/{id}`
 
-### 9.3 Update Status / Role User
+### 10.3 Update Status / Role User
 
 - **Endpoint**: `PUT /api/internal/users/{id}`
 
 ---
 
-## 10. Internal - Dashboard & Statistik Sistem
+## 11. Internal - Dashboard & Statistik Sistem
 
-### 10.1 Internal Dashboard Overview
+### 11.1 Internal Dashboard Overview
 
 - **Endpoint**: `GET /api/internal/home/summary?period={1d|1w|1m|1y|all}`
 - **Response**: Statistik pengguna aktif, permohonan data masuk, volume transaksi, dan utilisasi resource server.
