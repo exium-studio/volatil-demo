@@ -79,10 +79,10 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                   isValidElement(icon) ? (
                     icon
                   ) : (
-                    <AppIcon icon={icon as ComponentType} size={"md"} />
+                    <AppIcon icon={icon as ComponentType} size={"lg"} />
                   )
                 ) : (
-                  <AppIcon icon={AlertTriangleIcon} size={"md"} />
+                  <AppIcon icon={AlertTriangleIcon} size={"lg"} />
                 )}
               </Circle>
 

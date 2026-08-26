@@ -247,7 +247,6 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
             {/* Inner Icon Circle */}
             <Circle
               size={"48px"}
-              p={SPACING.lg}
               pos={"relative"}
               bg={`${resolved.colorPalette}.subtle`}
               color={`${resolved.colorPalette}.fg`}
