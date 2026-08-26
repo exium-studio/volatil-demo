@@ -475,12 +475,7 @@ const DataListTableRow = memo(
             </HStack>
 
             {/* Sticky column cell for sticky menu trigger */}
-            <Center
-              pos={"sticky"}
-              right={0}
-              zIndex={2}
-              bg={"bg.body"}
-            >
+            <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
               <Center
                 w={"full"}
                 h={"full"}
@@ -488,7 +483,10 @@ const DataListTableRow = memo(
                 bg={cellBg}
                 onClick={(e) => e.stopPropagation()}
               >
-                <DataListItemActionsTrigger itemActions={itemActions} item={item}>
+                <DataListItemActionsTrigger
+                  itemActions={itemActions}
+                  item={item}
+                >
                   <IconButton variant={"ghost"}>
                     <AppIcon icon={EllipsisIcon} />
                   </IconButton>

@@ -3,7 +3,7 @@ import type { ConfirmDialogOptions } from "@/design-system/components/feedback/t
 import { focusAlert } from "@/design-system/components/focus-alert/utils/focus-alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Circle } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -65,12 +65,7 @@ export const ConfirmDialogModal = (props: {
   };
 
   return (
-    <Modal.Root
-      modalKey={modalKey}
-      opened={isOpen}
-      close={handleCancel}
-      size={"sm"}
-    >
+    <Modal.Root modalKey={modalKey} opened={isOpen} close={handleCancel}>
       <Modal.Content>
         <Modal.Header>
           <Modal.CloseButton />
@@ -86,7 +81,10 @@ export const ConfirmDialogModal = (props: {
             >
               {icon ? (
                 typeof icon === "function" ? (
-                  <AppIcon icon={icon as typeof AlertTriangleIcon} size={"md"} />
+                  <AppIcon
+                    icon={icon as typeof AlertTriangleIcon}
+                    size={"md"}
+                  />
                 ) : (
                   icon
                 )
@@ -106,18 +104,8 @@ export const ConfirmDialogModal = (props: {
         </Modal.Body>
 
         <Modal.Footer>
-          <HStack gap={SPACING.sm} w={"full"}>
+          <VStack gap={SPACING.xs} w={"full"}>
             <Button
-              flex={1}
-              variant={"outline"}
-              onClick={handleCancel}
-              disabled={isSubmitting}
-            >
-              {resolvedCancelLabel}
-            </Button>
-
-            <Button
-              flex={1}
               primary
               variant={"solid"}
               colorPalette={colorPalette}
@@ -127,7 +115,11 @@ export const ConfirmDialogModal = (props: {
             >
               {resolvedConfirmLabel}
             </Button>
-          </HStack>
+
+            <Button onClick={handleCancel} disabled={isSubmitting}>
+              {resolvedCancelLabel}
+            </Button>
+          </VStack>
         </Modal.Footer>
       </Modal.Content>
     </Modal.Root>

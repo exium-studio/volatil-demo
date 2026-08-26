@@ -22,7 +22,6 @@ export const SignoutTrigger = (props: SignoutTriggerProps) => {
       cancelLabel={"Batal"}
       confirmButtonProps={{
         colorPalette: "red",
-        variant: "outline",
         loading: signoutMutation.isPending,
       }}
       onConfirm={() => signoutMutation.mutate()}
