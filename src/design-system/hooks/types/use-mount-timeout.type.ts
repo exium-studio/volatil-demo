@@ -2,6 +2,6 @@
 
 export type UseMountTimeoutOptions = {
   isOpen?: boolean;
-  delayMs?: number;
+  mountDelay?: number;
   unmountDelay?: number;
 };

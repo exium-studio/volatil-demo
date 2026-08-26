@@ -48,7 +48,7 @@ export const TransactionDetailTrigger = (
 
   const isMounted = useMountTimeout({
     isOpen,
-    delayMs: 0,
+    mountDelay: 0,
     unmountDelay: 250,
   });
 
@@ -58,7 +58,7 @@ export const TransactionDetailTrigger = (
       opened={isOpen}
       open={open}
       close={close}
-      size={"lg"}
+      size={"md"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
@@ -80,7 +80,7 @@ export const TransactionDetailModalContent = (
 
   // Hooks
   const isMounted = useMountTimeout({
-    delayMs: 250,
+    mountDelay: 250,
   });
 
   // Derived Values
@@ -176,7 +176,7 @@ export const TransactionDetailModalContent = (
       <Separator borderColor={"bg.canvas"} />
 
       <Modal.Body p={0}>
-        <VStack gap={SPACING.md} pt={SPACING.md}>
+        <VStack gap={SPACING.md}>
           {/* Transaction Status Summary Box */}
           <Skeleton loaded={isMounted} w={"full"} px={SPACING.md}>
             <HStack
@@ -203,7 +203,7 @@ export const TransactionDetailModalContent = (
                   }
                 />
 
-                <VStack align={"start"} gap={0}>
+                <VStack align={"start"} gap={SPACING["2xs"]}>
                   <P fontWeight={"semibold"}>
                     {isSettled
                       ? "Pembayaran Berhasil"

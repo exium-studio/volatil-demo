@@ -4,30 +4,23 @@ import type { UseMountTimeoutOptions } from "@/design-system/hooks/types/use-mou
 import { useEffect, useState } from "react";
 
 export const useMountTimeout = (
-  delayOrOptions: number | UseMountTimeoutOptions = 50,
+  options?: number | UseMountTimeoutOptions,
 ): boolean => {
   // Resolved Options
   const hasExplicitIsOpen =
-    typeof delayOrOptions === "object" && delayOrOptions.isOpen !== undefined;
+    typeof options === "object" && options.isOpen !== undefined;
 
   const isOpen =
-    typeof delayOrOptions === "object"
-      ? (delayOrOptions?.isOpen ?? true)
-      : true;
+    typeof options === "object" ? (options.isOpen ?? true) : true;
 
   const mountDelay =
-    typeof delayOrOptions === "number"
-      ? delayOrOptions
-      : (delayOrOptions?.delayMs ?? 50);
+    typeof options === "number" ? options : (options?.mountDelay ?? 50);
 
   const unmountDelay =
-    typeof delayOrOptions === "object"
-      ? (delayOrOptions?.unmountDelay ?? 0)
-      : 0;
+    typeof options === "object" ? (options?.unmountDelay ?? 0) : 0;
 
-  // States: If used as simple mount delay (like skeleton loading), start at false.
-  // If controlled by isOpen, start with current isOpen boolean.
-  const [isReady, setIsReady] = useState<boolean>(() => {
+  // States
+  const [isMounted, setIsMounted] = useState<boolean>(() => {
     if (hasExplicitIsOpen) {
       return Boolean(isOpen);
     }
@@ -41,14 +34,14 @@ export const useMountTimeout = (
     if (isOpen) {
       timer = setTimeout(
         () => {
-          setIsReady(true);
+          setIsMounted(true);
         },
         Math.max(0, mountDelay),
       );
     } else {
       timer = setTimeout(
         () => {
-          setIsReady(false);
+          setIsMounted(false);
         },
         Math.max(0, unmountDelay),
       );
@@ -61,5 +54,5 @@ export const useMountTimeout = (
     };
   }, [isOpen, mountDelay, unmountDelay]);
 
-  return isReady;
+  return isMounted;
 };
