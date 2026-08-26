@@ -215,7 +215,7 @@ export function DataListItemActionsTrigger<
         <Menu.Trigger aria-label={"item-actions"}>{children}</Menu.Trigger>
       )}
 
-      <Menu.Content minW={"160px"}>
+      <Menu.Content minW={"160px"} zIndex={"dropdown"}>
         <VStack gap={1}>
           {itemActions.map((action, index) => {
             if (isDeclarativeAction(action)) {

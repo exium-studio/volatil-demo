@@ -14,14 +14,13 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
+import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { SPACING } from "@/design-system/constants/styles";
-import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { TransactionDetailModalContent } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal-content";
-import { Modal } from "@/design-system/components/overlay/ui/modal";
+import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
+import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
   TransactionRecord,
@@ -64,13 +63,6 @@ export const TransactionHistoryDataList = () => {
     DEFAULT_PAGE_SIZE_OPTIONS[0],
   );
   const [status, setStatus] = useState<string>("");
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<TransactionRecord | null>(null);
-
-  // Stores & Hooks
-  const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: "transaction-detail",
-  });
 
   // Derived Values
   const debouncedSearch = useDebouncedValue(searchRaw);
@@ -198,14 +190,18 @@ export const TransactionHistoryDataList = () => {
         };
       });
 
-    const itemActions = [
+    const itemActions: DataListItemActionsGenerator<TransactionRecord>[] = [
       {
         key: "view-detail",
         label: "Detail",
         icon: EyeIcon,
-        onClick: (item: TransactionRecord) => {
-          setSelectedTransaction(item);
-          open();
+        modal: {
+          triggerComponent: (transaction: TransactionRecord) => (
+            <TransactionDetailTrigger
+              modalKey={`transaction-detail-${transaction.id}`}
+              transaction={transaction}
+            />
+          ),
         },
       },
     ];
@@ -216,7 +212,7 @@ export const TransactionHistoryDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [transactionHistory.items, preferredTimezone, open]);
+  }, [transactionHistory.items, preferredTimezone]);
 
   return (
     <VStack w={"full"}>
@@ -306,22 +302,6 @@ export const TransactionHistoryDataList = () => {
           </Box>
         )}
       </VStack>
-
-      {/* Detail Modal */}
-      <Modal.Root
-        modalKey={modalKey}
-        opened={isOpen}
-        open={open}
-        close={close}
-        size={"lg"}
-      >
-        {selectedTransaction && (
-          <TransactionDetailModalContent
-            transaction={selectedTransaction}
-            close={close}
-          />
-        )}
-      </Modal.Root>
     </VStack>
   );
 };

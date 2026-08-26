@@ -1,5 +1,6 @@
 // src/features/internal/data-management/components/internal.data-management.data-list.tsx
 
+import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
@@ -11,26 +12,36 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
-import { InternalDataManagementEditModal } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
+import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
 import { useMasterIgtLayersQuery } from "@/features/internal/data-management/hooks/use-data-management";
 import type {
   MasterIgtLayerItem,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
+import { SpatialBasisSelect } from "@/shared/components/select/ui/spatial-basis-select";
+import { StatusSelect } from "@/shared/components/select/ui/status-select";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { Edit2Icon, LayersIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+
+const PUBLISH_STATUS_OPTIONS = [
+  { value: "all", label: "Semua Status" },
+  { value: "published", label: "Publik" },
+  { value: "draft", label: "Draft" },
+];
 
 export const InternalDataManagementDataList = () => {
+  // Transitions
+  const [_isPending, startTransition] = useTransition();
+
   // States
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
@@ -39,14 +50,6 @@ export const InternalDataManagementDataList = () => {
   );
   const [spatialBasis, setSpatialBasis] = useState<string>("all");
   const [publishStatus, setPublishStatus] = useState<string>("all");
-  const [selectedLayer, setSelectedLayer] = useState<MasterIgtLayerItem | null>(
-    null,
-  );
-
-  // Stores & Hooks
-  const { open: openLayerModal, close: closeLayerModal } = usePopModal({
-    modalKey: "layer-edit",
-  });
 
   // Queries
   const {
@@ -103,11 +106,23 @@ export const InternalDataManagementDataList = () => {
           {
             value: item.title,
             td: (
-              <VStack align={"start"} gap={0} maxW={"260px"}>
-                <P fontWeight={"medium"}>{item.title}</P>
-                <P fontSize={"xs"} color={"fg.subtle"} truncate title={item.id}>
+              <VStack align={"start"} gap={0} maxW={"280px"}>
+                <P fontSize={"sm"} fontWeight={"semibold"}>
+                  {item.title}
+                </P>
+                <P fontSize={"xs"} color={"fg.subtle"} fontFamily={"mono"}>
                   {item.id}
                 </P>
+                {item.description && (
+                  <P
+                    fontSize={"xs"}
+                    color={"fg.muted"}
+                    truncate
+                    title={item.description}
+                  >
+                    {item.description}
+                  </P>
+                )}
               </VStack>
             ),
             align: "start" as const,
@@ -119,19 +134,19 @@ export const InternalDataManagementDataList = () => {
                 colorPalette={isBidang ? "blue" : "orange"}
                 variant={"subtle"}
               >
-                {isBidang ? "Objek Bidang" : "Luas Kawasan"}
+                {isBidang ? "Bidang" : "Kawasan"}
               </Badge>
             ),
             align: "start" as const,
           },
           {
-            value: item.isActive ? "published" : "draft",
+            value: item.isActive ? "Publik" : "Draft",
             td: (
               <Badge
                 colorPalette={item.isActive ? "green" : "gray"}
-                variant={"subtle"}
+                variant={item.isActive ? "solid" : "subtle"}
               >
-                {item.isActive ? "Publik (Aktif)" : "Draft (Internal)"}
+                {item.isActive ? "Publik" : "Draft"}
               </Badge>
             ),
             align: "center" as const,
@@ -139,13 +154,14 @@ export const InternalDataManagementDataList = () => {
           {
             value: item.wfs.wfsUrl,
             td: (
-              <VStack align={"start"} gap={0} maxW={"300px"}>
-                <HStack gap={1} align={"center"}>
-                  <Badge variant={"outline"} colorPalette={"teal"} size={"xs"}>
+              <VStack align={"start"} gap={1} maxW={"280px"}>
+                <HStack gap={1}>
+                  <Badge size={"xs"} variant={"outline"} colorPalette={"teal"}>
                     {"WFS"}
                   </Badge>
                   <P
                     fontSize={"xs"}
+                    fontFamily={"mono"}
                     color={"fg.subtle"}
                     truncate
                     title={item.wfs.wfsUrl}
@@ -153,16 +169,14 @@ export const InternalDataManagementDataList = () => {
                     {item.wfs.wfsUrl}
                   </P>
                 </HStack>
-                <HStack gap={1} align={"center"}>
-                  <Badge
-                    variant={"outline"}
-                    colorPalette={"purple"}
-                    size={"xs"}
-                  >
+
+                <HStack gap={1}>
+                  <Badge size={"xs"} variant={"outline"} colorPalette={"purple"}>
                     {"WMS"}
                   </Badge>
                   <P
                     fontSize={"xs"}
+                    fontFamily={"mono"}
                     color={"fg.subtle"}
                     truncate
                     title={item.wms.wmsUrl}
@@ -187,14 +201,15 @@ export const InternalDataManagementDataList = () => {
       };
     });
 
-    const itemActions = [
+    const itemActions: DataListItemActionsGenerator<MasterIgtLayerItem>[] = [
       {
         key: "edit-layer",
         label: "Ubah Layer",
         icon: Edit2Icon,
-        onClick: (item: MasterIgtLayerItem) => {
-          setSelectedLayer(item);
-          openLayerModal();
+        modal: {
+          triggerComponent: (layer: MasterIgtLayerItem) => (
+            <InternalDataManagementEditTrigger item={layer} />
+          ),
         },
       },
     ];
@@ -205,7 +220,7 @@ export const InternalDataManagementDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [filteredItems, preferredTimezone, openLayerModal]);
+  }, [filteredItems, preferredTimezone]);
 
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
@@ -244,69 +259,41 @@ export const InternalDataManagementDataList = () => {
         >
           <SearchInput
             value={search}
-            onValueChange={(val) => {
-              setSearch(val);
-              setPage(1);
-            }}
+            onValueChange={(val) =>
+              startTransition(() => {
+                setSearch(val);
+                setPage(1);
+              })
+            }
             placeholder={"Cari nama layer, ID, endpoint..."}
-            maxW={"300px"}
+            maxW={"280px"}
           />
 
-          {/* Basis Filter */}
-          <HStack gap={SPACING.xs}>
-            <Badge
-              cursor={"pointer"}
-              variant={spatialBasis === "all" ? "solid" : "outline"}
-              colorPalette={"teal"}
-              onClick={() => setSpatialBasis("all")}
-            >
-              {"Semua Basis"}
-            </Badge>
-            <Badge
-              cursor={"pointer"}
-              variant={spatialBasis === "bidang" ? "solid" : "outline"}
-              colorPalette={"blue"}
-              onClick={() => setSpatialBasis("bidang")}
-            >
-              {"Bidang"}
-            </Badge>
-            <Badge
-              cursor={"pointer"}
-              variant={spatialBasis === "kawasan" ? "solid" : "outline"}
-              colorPalette={"orange"}
-              onClick={() => setSpatialBasis("kawasan")}
-            >
-              {"Kawasan"}
-            </Badge>
-          </HStack>
+          <SpatialBasisSelect
+            modalKey={"data-management-spatial-basis-filter"}
+            value={spatialBasis}
+            onValueChange={(val) =>
+              startTransition(() => {
+                setSpatialBasis(val);
+                setPage(1);
+              })
+            }
+            w={"150px"}
+          />
 
-          {/* Publish Status Filter */}
-          <HStack gap={SPACING.xs}>
-            <Badge
-              cursor={"pointer"}
-              variant={publishStatus === "all" ? "solid" : "outline"}
-              colorPalette={"gray"}
-              onClick={() => setPublishStatus("all")}
-            >
-              {"Semua Status"}
-            </Badge>
-            <Badge
-              cursor={"pointer"}
-              variant={publishStatus === "published" ? "solid" : "outline"}
-              colorPalette={"green"}
-              onClick={() => setPublishStatus("published")}
-            >
-              {"Publik"}
-            </Badge>
-            <Badge
-              cursor={"pointer"}
-              variant={publishStatus === "draft" ? "solid" : "outline"}
-              colorPalette={"gray"}
-              onClick={() => setPublishStatus("draft")}
-            >
-              {"Draft"}
-            </Badge>
-          </HStack>
+          <StatusSelect
+            modalKey={"data-management-publish-status-filter"}
+            options={PUBLISH_STATUS_OPTIONS}
+            placeholder={"Semua Status"}
+            value={publishStatus}
+            onValueChange={(val) =>
+              startTransition(() => {
+                setPublishStatus(val);
+                setPage(1);
+              })
+            }
+            w={"150px"}
+          />
         </HStack>
 
         <Separator borderColor={"bg.canvas"} />
@@ -358,16 +345,6 @@ export const InternalDataManagementDataList = () => {
             </Box>
           )}
         </VStack>
-
-        {/* Edit Layer Modal */}
-        <InternalDataManagementEditModal
-          modalKey={"layer-edit"}
-          item={selectedLayer}
-          onClose={() => {
-            setSelectedLayer(null);
-            closeLayerModal();
-          }}
-        />
       </Container.Body>
     </Container.Root>
   );
