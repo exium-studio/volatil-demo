@@ -67,7 +67,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
           </Modal.Header>
 
           <Modal.Body pt={0} pb={"lg"}>
-            <VStack align={"center"} gap={"md"} textAlign={"center"}>
+            <VStack align={"center"} gap={"sm"} textAlign={"center"}>
               <Circle
                 size={"48px"}
                 bg={`${colorPalette}.subtle`}
@@ -85,11 +85,16 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                 )}
               </Circle>
 
-              <Heading size={"md"} fontWeight={"semibold"}>
+              <Heading size={"md"} fontWeight={"semibold"} textAlign={"center"}>
                 {resolvedTitle}
               </Heading>
 
-              <P fontSize={"sm"} color={"fg.muted"} maxW={"320px"}>
+              <P
+                fontSize={"sm"}
+                color={"fg.muted"}
+                textAlign={"center"}
+                maxW={"260px"}
+              >
                 {resolvedDesc}
               </P>
             </VStack>
