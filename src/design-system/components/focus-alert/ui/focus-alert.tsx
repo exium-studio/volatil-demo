@@ -15,14 +15,14 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import {
-  AlertCircleIcon,
-  AlertTriangleIcon,
-  CheckCircle2Icon,
+  CheckIcon,
   HeartIcon,
-  HelpCircleIcon,
-  InfoIcon,
+  MoonIcon,
   SearchIcon,
   SparklesIcon,
+  TriangleAlertIcon,
+  XIcon,
+  ZapIcon,
 } from "lucide-react";
 
 export const FocusAlertItem = (props: FocusAlertItemProps) => {
@@ -105,22 +105,78 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   // Constants
   const VARIANTS_MAP: Record<
     FocusAlertVariant,
-    { colorPalette: string; icon: typeof CheckCircle2Icon }
+    { colorPalette: string; icon: typeof CheckIcon }
   > = {
-    happy: { colorPalette: "green", icon: CheckCircle2Icon },
-    celebrate: { colorPalette: "green", icon: SparklesIcon },
-    winking: { colorPalette: "green", icon: CheckCircle2Icon },
-    sad: { colorPalette: "red", icon: AlertCircleIcon },
-    shocked: { colorPalette: "red", icon: AlertCircleIcon },
-    dizzy: { colorPalette: "red", icon: AlertCircleIcon },
-    worried: { colorPalette: "orange", icon: AlertTriangleIcon },
-    neutral: { colorPalette: "neutral", icon: InfoIcon },
-    confused: { colorPalette: "neutral", icon: HelpCircleIcon },
-    sleepy: { colorPalette: "neutral", icon: InfoIcon },
-    sleeping: { colorPalette: "neutral", icon: InfoIcon },
-    love: { colorPalette: "pink", icon: HeartIcon },
-    crying: { colorPalette: "blue", icon: AlertCircleIcon },
-    searching: { colorPalette: "neutral", icon: SearchIcon },
+    happy: {
+      colorPalette: "green",
+      icon: CheckIcon,
+      // emote: "happy",
+    },
+    celebrate: {
+      colorPalette: "green",
+      icon: SparklesIcon,
+      // emote: "celebrate",
+    },
+    winking: {
+      colorPalette: "green",
+      icon: CheckIcon,
+      // emote: "winking",
+    },
+    sad: {
+      colorPalette: "red",
+      icon: XIcon,
+      // emote: "sad",
+    },
+    shocked: {
+      colorPalette: "red",
+      icon: ZapIcon,
+      // emote: "shocked",
+    },
+    dizzy: {
+      colorPalette: "red",
+      icon: XIcon,
+      // emote: "dizzy",
+    },
+    worried: {
+      colorPalette: "orange",
+      icon: TriangleAlertIcon,
+      // emote: "worried",
+    },
+    neutral: {
+      colorPalette: "neutral",
+      icon: SparklesIcon,
+      // emote: "neutral",
+    },
+    confused: {
+      colorPalette: "neutral",
+      icon: TriangleAlertIcon,
+      // emote: "confused",
+    },
+    sleepy: {
+      colorPalette: "neutral",
+      icon: MoonIcon,
+      // emote: "sleepy",
+    },
+    sleeping: {
+      colorPalette: "neutral",
+      icon: MoonIcon,
+      // emote: "sleeping",
+    },
+    love: {
+      colorPalette: "pink",
+      icon: HeartIcon,
+      // emote: "love",
+    },
+    crying: {
+      colorPalette: "blue",
+      icon: XIcon,
+      // emote: "crying",
+    },
+    searching: {
+      colorPalette: "neutral",
+      icon: SearchIcon,
+      // emote: "searching",
+    },
   };
 
   // Resolved Values
@@ -129,13 +185,18 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   return (
     <Modal.Content>
       <Modal.Body pt={SPACING.lg} pb={SPACING.md}>
-        <VStack align={"center"} gap={SPACING.md} textAlign={"center"}>
+        <VStack
+          align={"center"}
+          gap={SPACING.md}
+          textAlign={"center"}
+          my={SPACING.sm}
+        >
           <Box
             pos={"relative"}
             display={"inline-flex"}
             alignItems={"center"}
             justifyContent={"center"}
-            mb={1}
+            mb={SPACING.md}
           >
             {/* Outer expanding elegant pulse ripple */}
             <Circle
@@ -151,11 +212,12 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
             {/* Inner Icon Circle */}
             <Circle
               size={"48px"}
+              p={SPACING.lg}
               pos={"relative"}
               bg={`${resolved.colorPalette}.subtle`}
               color={`${resolved.colorPalette}.fg`}
             >
-              <AppIcon icon={resolved.icon} size={"md"} />
+              <AppIcon icon={resolved.icon} size={"lg"} />
             </Circle>
           </Box>
 

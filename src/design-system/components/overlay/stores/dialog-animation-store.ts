@@ -97,26 +97,67 @@ export const useDialogAnimationStore = create<DialogAnimationStore>()(
   ),
 );
 
+let lastGlobalPointerPoint: Point | null = null;
+
+if (typeof window !== "undefined") {
+  window.addEventListener(
+    "pointerdown",
+    (e: PointerEvent) => {
+      lastGlobalPointerPoint = {
+        x: e.clientX,
+        y: e.clientY,
+      };
+    },
+    { capture: true, passive: true },
+  );
+}
+
 export function updateClickOrigin(
   modalKey: string,
-  target: EventTarget | null,
+  target?: EventTarget | HTMLElement | Point | null,
 ) {
-  if (!(target instanceof HTMLElement)) {
+  if (
+    target &&
+    typeof target === "object" &&
+    "x" in target &&
+    "y" in target &&
+    typeof (target as Point).x === "number" &&
+    typeof (target as Point).y === "number"
+  ) {
+    useDialogAnimationStore.getState().setClickOrigin(modalKey, target as Point);
     return;
   }
 
-  const rect = target.getBoundingClientRect();
+  if (target instanceof HTMLElement) {
+    const rect = target.getBoundingClientRect();
+    useDialogAnimationStore.getState().setClickOrigin(modalKey, {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    });
+    return;
+  }
 
-  useDialogAnimationStore.getState().setClickOrigin(modalKey, {
-    x: rect.left + rect.width / 2,
-    y: rect.top + rect.height / 2,
-  });
+  if (lastGlobalPointerPoint) {
+    useDialogAnimationStore
+      .getState()
+      .setClickOrigin(modalKey, lastGlobalPointerPoint);
+    return;
+  }
 }
 
 export function updateDialogOffset(modalKey: string) {
-  const { x: clickOriginX, y: clickOriginY } = useDialogAnimationStore
+  let { x: clickOriginX, y: clickOriginY } = useDialogAnimationStore
     .getState()
     .getClickOrigin(modalKey);
+
+  // If no origin recorded for this specific modalKey, fallback to lastGlobalPointerPoint
+  if (clickOriginX === 0 && clickOriginY === 0 && lastGlobalPointerPoint) {
+    clickOriginX = lastGlobalPointerPoint.x;
+    clickOriginY = lastGlobalPointerPoint.y;
+    useDialogAnimationStore
+      .getState()
+      .setClickOrigin(modalKey, lastGlobalPointerPoint);
+  }
 
   if (clickOriginX === 0 && clickOriginY === 0) {
     useDialogAnimationStore
