@@ -1682,20 +1682,20 @@ export const DataDisplay = () => {
         label: "Delete",
         icon: TrashIcon,
         colorPalette: "red",
-        modalTrigger: (children, item) => (
-          <ConfirmationTrigger
-            modalKey={`demo-delete-${(item as Record<string, unknown>).id || "item"}`}
-            title={"Hapus Item?"}
-            description={`Apakah Anda yakin ingin menghapus data ${(item as Record<string, unknown>).name || item.id}?`}
-            confirmLabel={"Hapus"}
-            colorPalette={"red"}
-            onConfirm={() => {
-              console.log("Delete confirmed:", item);
-            }}
-          >
-            {children}
-          </ConfirmationTrigger>
-        ),
+        modal: {
+          triggerComponent: (item) => (
+            <ConfirmationTrigger
+              modalKey={`demo-delete-${(item as Record<string, unknown>).id || "item"}`}
+              title={"Hapus Item?"}
+              description={`Apakah Anda yakin ingin menghapus data ${(item as Record<string, unknown>).name || item.id}?`}
+              confirmLabel={"Hapus"}
+              colorPalette={"red"}
+              onConfirm={() => {
+                console.log("Delete confirmed:", item);
+              }}
+            />
+          ),
+        },
       },
     ] as DataListItemActionsGenerator[],
   };

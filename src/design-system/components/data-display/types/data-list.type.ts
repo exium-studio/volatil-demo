@@ -5,11 +5,24 @@ import type { FormattedListItem } from "@/design-system/components/data-display/
 import type { SelectProps } from "@/design-system/components/input/types/select.type";
 import type { ActionBarRootProps } from "@/design-system/components/overlay/types/action-bar.type";
 import type { MenuRootProps, StackProps } from "@chakra-ui/react";
-import type { ComponentType, ReactNode } from "react";
+import type { ComponentType, ReactElement, ReactNode } from "react";
 
 export type ActionIconType =
-  | ComponentType<{ size?: string | number; className?: string; [key: string]: unknown }>
+  | ComponentType<{
+      size?: string | number;
+      className?: string;
+      [key: string]: unknown;
+    }>
   | ReactNode;
+
+export type DataListModalActionConfig<T = Record<string, unknown>> = {
+  triggerComponent:
+    | ReactElement<{ children?: ReactNode }>
+    | ((
+        item: T,
+        formattedItem: FormattedListItem<T>,
+      ) => ReactElement<{ children?: ReactNode }> | null | undefined);
+};
 
 export type DataListDeclarativeItemAction<T = Record<string, unknown>> = {
   key?: string;
@@ -17,21 +30,21 @@ export type DataListDeclarativeItemAction<T = Record<string, unknown>> = {
   icon?: ActionIconType | ((item: T) => ActionIconType);
   colorPalette?: string | ((item: T) => string | undefined);
   variant?: "solid" | "subtle" | "outline" | "ghost";
-  onClick?: (item: T, formattedItem: FormattedListItem<T>) => void | Promise<void>;
+  onClick?: (
+    item: T,
+    formattedItem: FormattedListItem<T>,
+  ) => void | Promise<void>;
   hidden?: (item: T, formattedItem: FormattedListItem<T>) => boolean;
   disabled?: (item: T, formattedItem: FormattedListItem<T>) => boolean;
   showInRow?: boolean; // If true, render in spread action column (default: true)
   showInMenu?: boolean; // If true, render in sticky dropdown menu (default: true)
 
   /**
-   * Declarative Modal Trigger wrapper (e.g. ConfirmationTrigger, TransactionDetailTrigger, etc.).
-   * Receives `children` (the standard button / menu item) and must return the trigger component wrapping that children.
+   * Modal trigger configuration (e.g. `modal: { triggerComponent: <ConfirmationTrigger ... /> }`).
    */
-  modalTrigger?: (
-    children: ReactNode,
-    item: T,
-    formattedItem: FormattedListItem<T>,
-  ) => ReactNode;
+  modal?:
+    | DataListModalActionConfig<T>
+    | ((item: T, formattedItem: FormattedListItem<T>) => DataListModalActionConfig<T> | null | undefined);
 };
 
 export type DataListItemActionsGenerator<T = Record<string, unknown>> =

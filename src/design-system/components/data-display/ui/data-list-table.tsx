@@ -25,7 +25,7 @@ import {
 } from "@/design-system/components/data-display/ui/data-list-batch-actions";
 import {
   DataListItemActionsTrigger,
-  DataListRowSpreadActions,
+  DataListSpreadActions,
 } from "@/design-system/components/data-display/ui/data-list-item-actions";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
@@ -470,7 +470,7 @@ const DataListTableRow = memo(
               bg={cellBg}
               gap={1}
             >
-              <DataListRowSpreadActions item={item} itemActions={itemActions} />
+              <DataListSpreadActions item={item} itemActions={itemActions} />
             </HStack>
 
             {/* Sticky column cell for sticky menu trigger */}

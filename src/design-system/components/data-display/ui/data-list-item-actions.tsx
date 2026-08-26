@@ -15,7 +15,13 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { isValidElement, type ComponentType } from "react";
+import {
+  cloneElement,
+  isValidElement,
+  type ComponentType,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 
 function isDeclarativeAction<T = Record<string, unknown>>(
   action: DataListItemActionsGenerator<T>,
@@ -66,7 +72,30 @@ function renderIcon(icon: ActionIconType | undefined) {
   return <AppIcon icon={icon as ComponentType} />;
 }
 
-export function DataListRowSpreadActions<
+function resolveTriggerElement<T>(
+  modalProp: DataListDeclarativeItemAction<T>["modal"],
+  item: FormattedListItem<T>,
+): ReactElement<{ children?: ReactNode }> | null {
+  if (!modalProp) return null;
+
+  const config =
+    typeof modalProp === "function" ? modalProp(item.data, item) : modalProp;
+
+  if (!config?.triggerComponent) return null;
+
+  const element =
+    typeof config.triggerComponent === "function"
+      ? config.triggerComponent(item.data, item)
+      : config.triggerComponent;
+
+  if (isValidElement<{ children?: ReactNode }>(element)) {
+    return element;
+  }
+
+  return null;
+}
+
+export function DataListSpreadActions<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(props: {
   item: FormattedListItem<T>;
@@ -95,40 +124,60 @@ export function DataListRowSpreadActions<
           item.data,
         );
         const iconNode = renderIcon(resolvedIcon);
+        const triggerElement = resolveTriggerElement(action.modal, item);
 
-        const buttonNode = resolvedIcon ? (
-          <Tooltip key={key} content={resolvedLabel}>
-            <IconButton
-              variant={action.variant ?? "ghost"}
-              colorPalette={resolvedColorPalette}
-              disabled={isDisabled}
-              aria-label={resolvedLabel}
-              onClick={action.modalTrigger ? undefined : () => executeItemAction(action, item)}
-            >
-              {iconNode}
-            </IconButton>
-          </Tooltip>
+        const rawButton = resolvedIcon ? (
+          <IconButton
+            variant={action.variant ?? "ghost"}
+            colorPalette={resolvedColorPalette}
+            disabled={isDisabled}
+            aria-label={resolvedLabel}
+            onClick={
+              triggerElement ? undefined : () => executeItemAction(action, item)
+            }
+          >
+            {iconNode}
+          </IconButton>
         ) : (
           <Button
-            key={key}
             variant={action.variant ?? "outline"}
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
-            onClick={action.modalTrigger ? undefined : () => executeItemAction(action, item)}
+            onClick={
+              triggerElement ? undefined : () => executeItemAction(action, item)
+            }
           >
             {resolvedLabel}
           </Button>
         );
 
-        if (action.modalTrigger) {
+        if (triggerElement) {
+          const buttonWithTrigger = cloneElement(
+            triggerElement,
+            { key: `trigger-${key}` },
+            rawButton,
+          );
+
+          if (resolvedIcon) {
+            return (
+              <Tooltip key={key} content={resolvedLabel}>
+                {buttonWithTrigger}
+              </Tooltip>
+            );
+          }
+
+          return buttonWithTrigger;
+        }
+
+        if (resolvedIcon) {
           return (
-            <span key={key}>
-              {action.modalTrigger(buttonNode, item.data, item)}
-            </span>
+            <Tooltip key={key} content={resolvedLabel}>
+              {rawButton}
+            </Tooltip>
           );
         }
 
-        return buttonNode;
+        return <span key={key}>{rawButton}</span>;
       })}
     </HStack>
   );
@@ -153,6 +202,7 @@ export function DataListItemActionsTrigger<
         offset: { crossAxis: 4 },
         hideWhenDetached: true,
       }}
+      closeOnSelect={false}
       {...restProps}
     >
       {contextedTrigger && (
@@ -181,10 +231,10 @@ export function DataListItemActionsTrigger<
                 item.data,
               );
               const iconNode = renderIcon(resolvedIcon);
+              const triggerElement = resolveTriggerElement(action.modal, item);
 
               const menuItemNode = (
                 <Menu.Item
-                  key={key}
                   value={key}
                   disabled={isDisabled}
                   color={
@@ -192,22 +242,22 @@ export function DataListItemActionsTrigger<
                       ? `${resolvedColorPalette}.fg`
                       : undefined
                   }
-                  onClick={action.modalTrigger ? undefined : () => executeItemAction(action, item)}
+                  onClick={
+                    triggerElement
+                      ? undefined
+                      : () => executeItemAction(action, item)
+                  }
                 >
                   {iconNode}
                   {resolvedLabel}
                 </Menu.Item>
               );
 
-              if (action.modalTrigger) {
-                return (
-                  <span key={key}>
-                    {action.modalTrigger(menuItemNode, item.data, item)}
-                  </span>
-                );
+              if (triggerElement) {
+                return cloneElement(triggerElement, { key }, menuItemNode);
               }
 
-              return menuItemNode;
+              return <span key={key}>{menuItemNode}</span>;
             }
 
             // Legacy functional generator fallback
