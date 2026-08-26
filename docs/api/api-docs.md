@@ -21,8 +21,9 @@ Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, 
 
 ### C. Role: Internal (Admin / Verifikator)
 
-8. [Internal - User Management](#8-internal---user-management)
-9. [Internal - Dashboard & Statistik Sistem](#9-internal---dashboard--statistik-sistem)
+8. [Internal - Master IGT Layers & Data Management](#8-internal---master-igt-layers--data-management)
+9. [Internal - User Management](#9-internal---user-management)
+10. [Internal - Dashboard & Statistik Sistem](#10-internal---dashboard--statistik-sistem)
 
 ---
 
@@ -190,11 +191,13 @@ type InboxListResponse = {
 
 ## 4. Mitra - Data Request & IGT Spasial
 
-Modul eksplorasi katalog IGT, filter spasial wilayah administrasi, serta query feature via WFS/AOI untuk pengajuan data mitra.
+Modul eksplorasi layer IGT aktif, filter spasial wilayah administrasi, serta query feature via WFS/AOI untuk pengajuan data mitra.
 
-### 4.1 Katalog IGT
+### 4.1 List IGT Layers (Public / Active Layers)
 
-- **Endpoint**: `GET /api/igt/catalog`
+Dedicated endpoint bagi Mitra untuk mengambil daftar layer IGT yang berstatus aktif/publik. Digunakan untuk rendering layer WMS di peta dan pemilihan layer pada form permohonan data (WFS).
+
+- **Endpoint**: `GET /api/mitra/igt-layers`
 - **Params**:
   - `page?: number`
   - `limit?: number`
@@ -208,7 +211,7 @@ Modul eksplorasi katalog IGT, filter spasial wilayah administrasi, serta query f
 - **Response**:
 
 ```typescript
-type IgtCatalogResponse = {
+type MitraIgtLayersResponse = {
   items: Array<{
     id: string;
     title: string;
@@ -481,6 +484,86 @@ export type HelpCenterStatus =
 ---
 
 # C. Role: Internal (Admin / Verifikator)
+
+## 8. Internal - Master IGT Layers & Data Management
+
+Modul master pengelolaan konfigurasi layer IGT spasial (GeoServer WMS/WFS, metadata spasial, spatial basis bidang/kawasan, dan status publikasi layer).
+
+### 8.1 List Master IGT Layers
+
+- **Endpoint**: `GET /api/internal/igt-layers`
+- **Params**:
+  - `page?: number`
+  - `limit?: number`
+  - `search?: string`
+  - `isActive?: boolean`
+  - `basis?: "bidang" | "kawasan"`
+- **Response**:
+
+```typescript
+type MasterIgtLayersResponse = {
+  items: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    spatialBasis: "bidang" | "kawasan";
+    bbox: [number, number, number, number]; // [minX, minY, maxX, maxY] EPSG:4326
+    isActive: boolean;
+    wfs: {
+      wfsUrl: string;
+      wfsTypeName: string;
+    };
+    wms: {
+      wmsUrl: string;
+      layers: string;
+    };
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
+};
+```
+
+### 8.2 Create Master IGT Layer
+
+- **Endpoint**: `POST /api/internal/igt-layers`
+- **Payload**:
+
+```typescript
+type CreateMasterIgtLayerPayload = {
+  id: string;
+  title: string;
+  description?: string;
+  spatialBasis: "bidang" | "kawasan";
+  bbox: [number, number, number, number];
+  isActive: boolean;
+  wfs: {
+    wfsUrl: string;
+    wfsTypeName: string;
+  };
+  wms: {
+    wmsUrl: string;
+    layers: string;
+  };
+};
+```
+
+### 8.3 Update Master IGT Layer
+
+- **Endpoint**: `PUT /api/internal/igt-layers/{id}`
+- **Payload**: `Partial<CreateMasterIgtLayerPayload>`
+
+### 8.4 Delete Master IGT Layer
+
+- **Endpoint**: `DELETE /api/internal/igt-layers/{id}`
+- **Response**: `200 OK` / `{ success: true }`
+
+---
 
 ## 9. Internal - User Management
 
