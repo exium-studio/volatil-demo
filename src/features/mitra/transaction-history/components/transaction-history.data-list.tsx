@@ -9,7 +9,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
-import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
+import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -18,7 +18,10 @@ import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
+import {
+  TRANSACTION_STATUS_BADGE_MAP,
+  TRANSACTION_STATUS_OPTIONS,
+} from "@/features/mitra/transaction-history/constants/transaction-history.config";
 import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
@@ -32,24 +35,6 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { EyeIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
-
-const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
-  { label: "Semua Status", value: "" },
-  { label: "Selesai (Lunas)", value: "settled" },
-  { label: "Menunggu Pembayaran", value: "pending" },
-  { label: "Kedaluwarsa", value: "expired" },
-  { label: "Gagal", value: "failed" },
-];
-
-const STATUS_BADGE_MAP: Record<
-  TransactionStatus,
-  { label: string; color: string }
-> = {
-  settled: { label: "Selesai", color: "green" },
-  pending: { label: "Menunggu", color: "orange" },
-  expired: { label: "Kedaluwarsa", color: "red" },
-  failed: { label: "Gagal", color: "red" },
-};
 
 export const TransactionHistoryDataList = () => {
   // Transitions
@@ -94,9 +79,9 @@ export const TransactionHistoryDataList = () => {
         const itemNames = item.items
           .map((it) => it.sourceLayerTitle)
           .join(", ");
-        const statusConfig = STATUS_BADGE_MAP[item.transactionStatus] ?? {
+        const statusConfig = TRANSACTION_STATUS_BADGE_MAP[item.transactionStatus] ?? {
           label: item.transactionStatus,
-          color: "gray",
+          colorPalette: "gray" as const,
         };
 
         return {
@@ -179,7 +164,7 @@ export const TransactionHistoryDataList = () => {
             {
               value: item.transactionStatus,
               td: (
-                <Badge colorPalette={statusConfig.color} variant={"subtle"}>
+                <Badge colorPalette={statusConfig.colorPalette} variant={"subtle"}>
                   {statusConfig.label}
                 </Badge>
               ),

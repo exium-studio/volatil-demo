@@ -8,36 +8,11 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { CART_BATCH_STATUS_CONFIG_MAP } from "@/features/mitra/cart/constants/cart.config";
 import type {
-  CartBatchStatus,
-  CartBatchStatusConfig,
   MitraCartBatchItemProps,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
-import { AlertCircleIcon, CheckCircle2Icon, LoaderIcon } from "lucide-react";
 import { memo } from "react";
-
-// SSOT Configuration Map for Cart Batch Status
-const BATCH_STATUS_CONFIG: Record<CartBatchStatus, CartBatchStatusConfig> = {
-  ready: {
-    label: "Siap bayar",
-    colorPalette: "green",
-    icon: CheckCircle2Icon,
-    iconColor: "green.fg",
-  },
-  preparing: {
-    label: "Menyiapkan data",
-    colorPalette: "blue",
-    icon: LoaderIcon,
-    iconColor: "blue.fg",
-    isSpinning: true,
-  },
-  expired: {
-    label: "Kadaluwarsa",
-    colorPalette: "red",
-    icon: AlertCircleIcon,
-    iconColor: "red.fg",
-  },
-};
 
 export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
   // Props
@@ -47,7 +22,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
   const { theme } = useThemeStore();
 
   // Derived Values
-  const statusConfig = BATCH_STATUS_CONFIG[batch.status];
+  const statusConfig = CART_BATCH_STATUS_CONFIG_MAP[batch.status];
 
   const totalBidang = batch.items
     .filter((i) => i.spatialBasis === "bidang")

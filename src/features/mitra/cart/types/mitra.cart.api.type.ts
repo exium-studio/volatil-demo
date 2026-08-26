@@ -4,7 +4,7 @@ import type GeoJSON from "geojson";
 
 export type SpatialBasisType = "bidang" | "kawasan";
 
-export type SelectionType = "aoi" | "selected_features" | "whole_layer";
+export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
 
 export type OrderStatus =
   | "draft"

@@ -4,7 +4,18 @@ import type GeoJSON from "geojson";
 
 export type SpatialBasisType = "bidang" | "kawasan";
 
-export type SelectionType = "administrative_filter" | "aoi_polygon";
+export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
+
+export type SelectionTypeConfig = {
+  label: string;
+  variant: "subtle" | "outline" | "solid";
+  colorPalette?: "blue" | "teal" | "purple" | "orange" | "gray";
+};
+
+export type SpatialBasisTypeConfig = {
+  label: string;
+  colorPalette: "blue" | "orange";
+};
 
 export type CartBatchStatus = "preparing" | "ready" | "expired";
 

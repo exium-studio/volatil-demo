@@ -253,7 +253,7 @@ export async function createCartBatch(
           sourceLayerId: payload.items[0]?.sourceLayerId ?? "geonode:layer",
           sourceLayerTitle: "Layer IGT Terpilih",
           spatialBasis: "bidang",
-          selectionType: payload.items[0]?.selectionType ?? "whole_layer",
+          selectionType: payload.items[0]?.selectionType ?? "catalog",
           featuresCount: 15,
           unitPrice: 50000,
           subtotalPrice: 1200000,
@@ -281,7 +281,7 @@ export async function createCartBatch(
             sourceLayerId: payload.items[0]?.sourceLayerId ?? "geonode:layer",
             sourceLayerTitle: "Layer IGT Terpilih",
             spatialBasis: "bidang",
-            selectionType: payload.items[0]?.selectionType ?? "administrative_filter",
+            selectionType: payload.items[0]?.selectionType ?? "catalog",
             featuresCount: 15,
             unitPrice: 50000,
             subtotalPrice: 1200000,
@@ -342,7 +342,9 @@ export async function getActiveCartBatch(
   try {
     const response = await fetchActiveCartBatchApi(signal);
     if (response.data !== undefined) return response.data;
-    return isDummyDataEnabled() ? localDummyBatches[0] ?? DUMMY_ACTIVE_CART_BATCH : null;
+    return isDummyDataEnabled()
+      ? (localDummyBatches[0] ?? DUMMY_ACTIVE_CART_BATCH)
+      : null;
   } catch (error) {
     if (isDummyDataEnabled()) {
       return localDummyBatches[0] ?? DUMMY_ACTIVE_CART_BATCH;
@@ -358,11 +360,15 @@ export async function cancelActiveCartBatch(
   try {
     await deleteCartBatchApi(batchId, signal);
     if (isDummyDataEnabled()) {
-      localDummyBatches = localDummyBatches.filter((b) => b.batchId !== batchId);
+      localDummyBatches = localDummyBatches.filter(
+        (b) => b.batchId !== batchId,
+      );
     }
   } catch (error) {
     if (isDummyDataEnabled()) {
-      localDummyBatches = localDummyBatches.filter((b) => b.batchId !== batchId);
+      localDummyBatches = localDummyBatches.filter(
+        (b) => b.batchId !== batchId,
+      );
       return;
     }
     throw error;
@@ -386,7 +392,9 @@ export async function checkoutCartBatch(
       totalAmount: 1850000,
       status: "pending",
       createdAt: new Date().toISOString(),
-      billingExpiredAt: new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString(),
+      billingExpiredAt: new Date(
+        Date.now() + 1000 * 60 * 60 * 48,
+      ).toISOString(),
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
@@ -399,7 +407,9 @@ export async function checkoutCartBatch(
         totalAmount: 1850000,
         status: "pending",
         createdAt: new Date().toISOString(),
-        billingExpiredAt: new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString(),
+        billingExpiredAt: new Date(
+          Date.now() + 1000 * 60 * 60 * 48,
+        ).toISOString(),
       };
     }
     throw error;

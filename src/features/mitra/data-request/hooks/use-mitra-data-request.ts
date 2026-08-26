@@ -77,7 +77,7 @@ export const useAddToCartSelected = () => {
         items: [
           {
             sourceLayerId: params.layerId,
-            selectionType: "administrative_filter",
+            selectionType: "catalog",
             selectedFeatureIds: params.featureIds,
           },
         ],
@@ -146,7 +146,7 @@ export const useAddToCartAll = () => {
         items: [
           {
             sourceLayerId: params.layerId,
-            selectionType: "administrative_filter",
+            selectionType: "catalog",
             cqlFilter: params.cqlFilter,
           },
         ],

@@ -1,3 +1,84 @@
 // src/features/mitra/cart/constants/cart.config.ts
 
-// Deprecated: Configurations are now loaded from the cart summary API response.
+import type {
+  CartBatchStatus,
+  CartBatchStatusConfig,
+  PaymentMethod,
+  SelectionType,
+  SelectionTypeConfig,
+  SpatialBasisType,
+  SpatialBasisTypeConfig,
+} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { AlertCircleIcon, CheckCircle2Icon, LoaderIcon } from "lucide-react";
+
+/**
+ * SSOT Configuration Maps for Cart, Orders & Transactions
+ */
+
+export const SELECTION_TYPE_CONFIG_MAP: Record<
+  SelectionType,
+  SelectionTypeConfig
+> = {
+  catalog: {
+    label: "Katalog",
+    variant: "subtle",
+    colorPalette: "blue",
+  },
+  upload_aoi: {
+    label: "Upload AOI",
+    variant: "subtle",
+    colorPalette: "purple",
+  },
+  draw_aoi: {
+    label: "Draw AOI",
+    variant: "subtle",
+    colorPalette: "teal",
+  },
+};
+
+export const SPATIAL_BASIS_CONFIG_MAP: Record<
+  SpatialBasisType,
+  SpatialBasisTypeConfig
+> = {
+  bidang: {
+    label: "Bidang",
+    colorPalette: "blue",
+  },
+  kawasan: {
+    label: "Kawasan",
+    colorPalette: "orange",
+  },
+};
+
+export const CART_BATCH_STATUS_CONFIG_MAP: Record<
+  CartBatchStatus,
+  CartBatchStatusConfig
+> = {
+  ready: {
+    label: "Siap bayar",
+    colorPalette: "green",
+    icon: CheckCircle2Icon,
+    iconColor: "green.fg",
+  },
+  preparing: {
+    label: "Menyiapkan data",
+    colorPalette: "blue",
+    icon: LoaderIcon,
+    iconColor: "blue.fg",
+    isSpinning: true,
+  },
+  expired: {
+    label: "Kadaluwarsa",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+  },
+};
+
+export const PAYMENT_METHOD_LABEL_MAP: Record<PaymentMethod, string> = {
+  MPN_GEN2: "MPN Gen 2 (Simponi / BPN)",
+  VA_MANDIRI: "Virtual Account Mandiri",
+  VA_BRI: "Virtual Account BRI",
+  VA_BCA: "Virtual Account BCA",
+  QRIS: "QRIS",
+};

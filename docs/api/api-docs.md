@@ -266,7 +266,7 @@ Modul transaksi data IGT berbasis **Batch Interop Spasial**. Setelah mitra memas
 type AddToCartBatchRequest = {
   items: Array<{
     sourceLayerId: string;
-    selectionType: "administrative_filter" | "aoi_polygon";
+    selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     administrativeFilter?: {
       kodeProvinsi?: string;
       kodeKabupaten?: string;
@@ -310,7 +310,7 @@ type CartBatchListResponse = {
       sourceLayerId: string;
       sourceLayerTitle: string;
       spatialBasis: "bidang" | "kawasan";
-      selectionType: "administrative_filter" | "aoi_polygon";
+      selectionType: "catalog" | "upload_aoi" | "draw_aoi";
       featuresCount: number;
       areaHa?: number;
       unitPrice: number;
@@ -341,7 +341,7 @@ type CartBatchDetailResponse = {
     sourceLayerId: string;
     sourceLayerTitle: string;
     spatialBasis: "bidang" | "kawasan";
-    selectionType: "administrative_filter" | "aoi_polygon";
+    selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     featuresCount: number;
     areaHa?: number;
     unitPrice: number;
@@ -428,7 +428,7 @@ type TransactionHistoryResponse = {
       sourceLayerId: string;
       sourceLayerTitle: string;
       spatialBasis: "bidang" | "kawasan";
-      selectionType: string;
+      selectionType: "catalog" | "upload_aoi" | "draw_aoi";
       snapshotFeaturesCount: number;
       snapshotAreaHa?: number;
       unitPrice: number;
@@ -466,7 +466,7 @@ Berikut adalah ringkasan seluruh enum/konstanta yang digunakan di modul transaks
 export type SpatialBasisType = "bidang" | "kawasan";
 
 // 2. Tipe Seleksi Area Pemotongan Data
-export type SelectionType = "administrative_filter" | "aoi_polygon";
+export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
 
 // 3. Status Batch Aktif Keranjang (Interop Engine Provisioning)
 export type CartBatchStatus = "preparing" | "ready" | "expired";
