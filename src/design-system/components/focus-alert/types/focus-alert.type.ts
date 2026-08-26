@@ -5,7 +5,15 @@ import type { ReactNode } from "react";
 
 export type FocusAlertRenderFn = () => ReactNode;
 
-export type FocusAlertVariant = FaceEmojiVariant;
+export type FocusAlertSemanticVariant =
+  | "success"
+  | "error"
+  | "danger"
+  | "warning"
+  | "info"
+  | "help";
+
+export type FocusAlertVariant = FaceEmojiVariant | FocusAlertSemanticVariant;
 
 export type FocusAlertItemProps = {
   modalKey?: string;

@@ -107,6 +107,39 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
     FocusAlertVariant,
     { colorPalette: string; icon: typeof CheckIcon }
   > = {
+    // Semantic aliases
+    success: {
+      colorPalette: "green",
+      icon: CheckIcon,
+      // emote: "happy",
+    },
+    error: {
+      colorPalette: "red",
+      icon: XIcon,
+      // emote: "sad",
+    },
+    danger: {
+      colorPalette: "red",
+      icon: XIcon,
+      // emote: "sad",
+    },
+    warning: {
+      colorPalette: "orange",
+      icon: TriangleAlertIcon,
+      // emote: "worried",
+    },
+    info: {
+      colorPalette: "neutral",
+      icon: SparklesIcon,
+      // emote: "neutral",
+    },
+    help: {
+      colorPalette: "neutral",
+      icon: TriangleAlertIcon,
+      // emote: "confused",
+    },
+
+    // Emote variants
     happy: {
       colorPalette: "green",
       icon: CheckIcon,

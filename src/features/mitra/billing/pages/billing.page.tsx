@@ -46,16 +46,12 @@ const BillingPageBillingCode = () => {
           p={SPACING.md}
         >
           <VStack gap={1}>
-            <P>Kode Billing </P>
+            <Heading>Kode Billing </Heading>
 
             <HStack align={"center"} gap={SPACING.sm}>
-              <P
-                fontSize={"lg"}
-                fontWeight={"semibold"}
-                color={`${theme.colorPalette}.fg`}
-              >
+              <Heading color={`${theme.colorPalette}.fg`}>
                 <TNum>{billingCode}</TNum>
-              </P>
+              </Heading>
 
               <ClipboardButton value={billingCode} size={"xs"} />
             </HStack>
