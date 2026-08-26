@@ -125,7 +125,13 @@ export const MitraCartBatchOrderSummary = (
         </P>
       </VStack>
 
-      <Separator borderColor={"bg.canvas"} />
+      <Separator
+        variant={"dashed"}
+        borderStyle={"dashed"}
+        borderTopWidth={"2px"}
+        borderColor={"border.emphasized"}
+        my={1}
+      />
 
       {/* Summary Breakdown */}
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
@@ -175,7 +181,7 @@ export const MitraCartBatchOrderSummary = (
           borderStyle={"dashed"}
           borderTopWidth={"2px"}
           borderColor={"border.emphasized"}
-          my={1}
+          my={3}
         />
 
         <HStack

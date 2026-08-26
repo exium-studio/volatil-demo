@@ -66,5 +66,15 @@ export const queryKeys = {
       detail: (id: string | number) =>
         [...queryKeys.internal.userManagement.all, "detail", id] as const,
     },
+    pricing: {
+      all: ["internal", "pricing"] as const,
+      list: (params?: Record<string, unknown>) =>
+        [...queryKeys.internal.pricing.all, "list", params] as const,
+    },
+    dataManagement: {
+      all: ["internal", "data-management"] as const,
+      layers: (params?: Record<string, unknown>) =>
+        [...queryKeys.internal.dataManagement.all, "layers", params] as const,
+    },
   },
 };

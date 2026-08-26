@@ -73,9 +73,7 @@ const InternalHomeOrderSummaryHeader = (
       px={SPACING.md}
     >
       <HStack gap={SPACING.xs} align={"center"}>
-        <Heading>
-          {"Ringkasan Pesanan"}
-        </Heading>
+        <Heading>{"Ringkasan Pesanan"}</Heading>
 
         <InfoTip
           variant={"icon"}

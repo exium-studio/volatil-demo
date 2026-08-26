@@ -94,7 +94,7 @@ export const Map3DToggle = (props: StackProps) => {
           onClick={handleToggle}
           color={is3D ? `${theme.colorPalette}.300` : undefined}
         >
-          <P fontSize={"sm"} fontWeight={"bold"}>
+          <P fontSize={"sm"} fontWeight={"medium"}>
             {is3D ? "3D" : "2D"}
           </P>
         </IconButton>

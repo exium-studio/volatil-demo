@@ -1,0 +1,170 @@
+// src/features/internal/pricing/components/internal.pricing-edit-modal.tsx
+
+import { Button } from "@/design-system/components/button/ui/button";
+import { Input } from "@/design-system/components/input/ui/input";
+import { NumberInput } from "@/design-system/components/input/ui/number-input";
+import { Switch } from "@/design-system/components/input/ui/switch";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { Heading } from "@/design-system/components/typography/ui/heading";
+import { P } from "@/design-system/components/typography/ui/p";
+import { SPACING } from "@/design-system/constants/styles";
+import { useUpdateInternalPricing } from "@/features/internal/pricing/hooks/use-internal-pricing";
+import type { PricingItem } from "@/features/internal/pricing/types/internal.pricing.type";
+import { t } from "@/shared/libs/i18n";
+import { useState } from "react";
+
+export type InternalPricingEditModalProps = {
+  modalKey: string;
+  item: PricingItem | null;
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export const InternalPricingEditModal = (props: InternalPricingEditModalProps) => {
+  // Props
+  const { modalKey, item, isOpen, onClose } = props;
+
+  if (!item) return null;
+
+  return (
+    <InternalPricingEditModalContent
+      key={item.id}
+      modalKey={modalKey}
+      item={item}
+      isOpen={isOpen}
+      onClose={onClose}
+    />
+  );
+};
+
+type InternalPricingEditModalContentProps = {
+  modalKey: string;
+  item: PricingItem;
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+const InternalPricingEditModalContent = (props: InternalPricingEditModalContentProps) => {
+  // Props
+  const { modalKey, item, isOpen, onClose } = props;
+
+  // States initialized from item props (no setState in useEffect)
+  const [unitPrice, setUnitPrice] = useState<number>(() => item.unitPrice);
+  const [description, setDescription] = useState<string>(() => item.description ?? "");
+  const [isActive, setIsActive] = useState<boolean>(() => item.isActive);
+
+  // Mutations
+  const updateMutation = useUpdateInternalPricing();
+
+  const handleSubmit = () => {
+    updateMutation.mutate(
+      {
+        id: item.id,
+        unitPrice,
+        description,
+        isActive,
+      },
+      {
+        onSuccess: () => {
+          onClose();
+        },
+      },
+    );
+  };
+
+  return (
+    <Modal.Root modalKey={modalKey} opened={isOpen} close={onClose} size={"sm"}>
+      <Modal.Content>
+        <Modal.Header>
+          <Modal.CloseButton />
+
+          <VStack align={"center"} gap={0} textAlign={"center"}>
+            <Heading>{"Ubah Tarif PNBP"}</Heading>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {item.layerTitle ?? item.id}
+            </P>
+          </VStack>
+        </Modal.Header>
+
+        <Separator borderColor={"bg.canvas"} />
+
+        <Modal.Body p={SPACING.md}>
+          <VStack align={"stretch"} gap={SPACING.md}>
+            {/* Metadata Badges */}
+            <HStack justify={"space-between"} align={"center"}>
+              <P fontSize={"sm"} color={"fg.subtle"}>
+                {"Basis Spasial"}
+              </P>
+              <Badge
+                colorPalette={item.spatialBasis === "bidang" ? "blue" : "orange"}
+                variant={"subtle"}
+              >
+                {item.spatialBasis === "bidang" ? "Objek Bidang" : "Luas Kawasan"}
+              </Badge>
+            </HStack>
+
+            {/* Input Unit Price */}
+            <VStack align={"stretch"} gap={1}>
+              <P fontSize={"sm"} fontWeight={"medium"}>
+                {`Tarif Satuan (${item.unitLabel})`}
+              </P>
+              <NumberInput
+                value={String(unitPrice)}
+                onValueChange={(val) => setUnitPrice(Number(val.value))}
+                min={0}
+                step={5000}
+              />
+            </VStack>
+
+            {/* Input Description */}
+            <VStack align={"stretch"} gap={1}>
+              <P fontSize={"sm"} fontWeight={"medium"}>
+                {"Keterangan / Dasar Regulasi"}
+              </P>
+              <Input
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={"Contoh: PP Tarif PNBP ATR/BPN No..."}
+              />
+            </VStack>
+
+            {/* Toggle Status Aktif */}
+            <HStack justify={"space-between"} align={"center"} py={1}>
+              <VStack align={"start"} gap={0}>
+                <P fontSize={"sm"} fontWeight={"medium"}>
+                  {"Status Tarif"}
+                </P>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Aktifkan untuk kalkulasi di keranjang mitra"}
+                </P>
+              </VStack>
+              <Switch
+                checked={isActive}
+                onCheckedChange={(e) => setIsActive(Boolean(e.checked))}
+              />
+            </HStack>
+          </VStack>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <HStack gap={SPACING.sm} w={"full"}>
+            <Button variant={"outline"} flex={1} onClick={onClose}>
+              {t["action.cancel"]()}
+            </Button>
+            <Button
+              primary
+              flex={1}
+              loading={updateMutation.isPending}
+              onClick={handleSubmit}
+            >
+              {"Simpan"}
+            </Button>
+          </HStack>
+        </Modal.Footer>
+      </Modal.Content>
+    </Modal.Root>
+  );
+};

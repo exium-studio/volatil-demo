@@ -12,6 +12,7 @@ import { SPACING } from "@/design-system/constants/styles";
 import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
+import { useNavigate } from "@tanstack/react-router";
 import { EditIcon } from "lucide-react";
 import { Circle } from "@/design-system/components/layout/ui/box";
 
@@ -34,6 +35,9 @@ export const InternalHomeServiceRate = (
 };
 
 const InternalHomeServiceRateHeader = () => {
+  // Navigation
+  const navigate = useNavigate();
+
   return (
     <HStack
       wrap={"wrap"}
@@ -58,9 +62,15 @@ const InternalHomeServiceRateHeader = () => {
         </InfoTip>
       </HStack>
 
-      <Button primary variant={"solid"}>
+      <Button
+        primary
+        variant={"solid"}
+        onClick={() => {
+          void navigate({ to: "/internal/data-management" });
+        }}
+      >
         <AppIcon icon={EditIcon} />
-        {"Perbarui"}
+        {"Kelola Tarif"}
       </Button>
     </HStack>
   );
