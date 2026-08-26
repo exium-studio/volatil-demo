@@ -8,9 +8,9 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { SPACING } from "@/design-system/constants/styles";
@@ -29,20 +29,31 @@ import { CheckCircleIcon, ClockIcon, XCircleIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export type TransactionHistoryDetailModalProps = {
-  modalKey: string;
+  modalKey?: string;
   transaction: TransactionRecord | null;
-  isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export const TransactionHistoryDetailModal = (
   props: TransactionHistoryDetailModalProps,
 ) => {
   // Props
-  const { modalKey, transaction, isOpen, onClose } = props;
+  const {
+    modalKey: customModalKey = "transaction-detail",
+    transaction,
+    onClose,
+  } = props;
 
-  // Stores
+  // Stores & Hooks
   const { theme } = useThemeStore();
+  const { modalKey, isOpen, open, close } = usePopModal({
+    modalKey: customModalKey,
+  });
+
+  const handleClose = () => {
+    close();
+    onClose?.();
+  };
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
@@ -138,14 +149,20 @@ export const TransactionHistoryDetailModal = (
   const isPending = transaction.transactionStatus === "pending";
 
   return (
-    <Modal.Root modalKey={modalKey} opened={isOpen} close={onClose} size={"lg"}>
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={handleClose}
+      size={"lg"}
+    >
       <Modal.Content>
         <Modal.Header>
           <Modal.CloseButton />
 
-          <VStack align={"center"} gap={0} textAlign={"center"}>
-            <Heading>{"Detail Transaksi & Order"}</Heading>
-            <P fontSize={"xs"} color={"fg.subtle"}>
+          <VStack gap={SPACING.xs}>
+            <Modal.Title>{"Detail Transaksi & Order"}</Modal.Title>
+            <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
               {transaction.transactionNumber}
             </P>
           </VStack>

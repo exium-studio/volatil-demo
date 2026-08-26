@@ -6,9 +6,9 @@ import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { useUpdateInternalPricing } from "@/features/internal/pricing/hooks/use-internal-pricing";
@@ -17,15 +17,24 @@ import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
 
 export type InternalPricingEditModalProps = {
-  modalKey: string;
+  modalKey?: string;
   item: PricingItem | null;
-  isOpen: boolean;
   onClose: () => void;
 };
 
 export const InternalPricingEditModal = (props: InternalPricingEditModalProps) => {
   // Props
-  const { modalKey, item, isOpen, onClose } = props;
+  const { modalKey: customModalKey = "pricing-edit", item, onClose } = props;
+
+  // Stores & Hooks
+  const { modalKey, isOpen, open, close } = usePopModal({
+    modalKey: customModalKey,
+  });
+
+  const handleClose = () => {
+    close();
+    onClose();
+  };
 
   if (!item) return null;
 
@@ -35,7 +44,8 @@ export const InternalPricingEditModal = (props: InternalPricingEditModalProps) =
       modalKey={modalKey}
       item={item}
       isOpen={isOpen}
-      onClose={onClose}
+      open={open}
+      close={handleClose}
     />
   );
 };
@@ -44,12 +54,13 @@ type InternalPricingEditModalContentProps = {
   modalKey: string;
   item: PricingItem;
   isOpen: boolean;
-  onClose: () => void;
+  open: () => void;
+  close: () => void;
 };
 
 const InternalPricingEditModalContent = (props: InternalPricingEditModalContentProps) => {
   // Props
-  const { modalKey, item, isOpen, onClose } = props;
+  const { modalKey, item, isOpen, open, close } = props;
 
   // States initialized from item props (no setState in useEffect)
   const [unitPrice, setUnitPrice] = useState<number>(() => item.unitPrice);
@@ -69,21 +80,21 @@ const InternalPricingEditModalContent = (props: InternalPricingEditModalContentP
       },
       {
         onSuccess: () => {
-          onClose();
+          close();
         },
       },
     );
   };
 
   return (
-    <Modal.Root modalKey={modalKey} opened={isOpen} close={onClose} size={"sm"}>
+    <Modal.Root modalKey={modalKey} opened={isOpen} open={open} close={close} size={"sm"}>
       <Modal.Content>
         <Modal.Header>
           <Modal.CloseButton />
 
-          <VStack align={"center"} gap={0} textAlign={"center"}>
-            <Heading>{"Ubah Tarif PNBP"}</Heading>
-            <P fontSize={"xs"} color={"fg.subtle"}>
+          <VStack gap={SPACING.xs}>
+            <Modal.Title>{"Ubah Tarif PNBP"}</Modal.Title>
+            <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
               {item.layerTitle ?? item.id}
             </P>
           </VStack>
@@ -151,7 +162,7 @@ const InternalPricingEditModalContent = (props: InternalPricingEditModalContentP
 
         <Modal.Footer>
           <HStack gap={SPACING.sm} w={"full"}>
-            <Button variant={"outline"} flex={1} onClick={onClose}>
+            <Button variant={"outline"} flex={1} onClick={close}>
               {t["action.cancel"]()}
             </Button>
             <Button

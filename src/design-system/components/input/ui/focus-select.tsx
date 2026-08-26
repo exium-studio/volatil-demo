@@ -316,10 +316,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                           </ClampedP>
 
                           {opt.description && (
-                            <ClampedP
-                              fontSize={"xs"}
-                              color={"fg.subtle"}
-                            >
+                            <ClampedP fontSize={"xs"} color={"fg.subtle"}>
                               {opt.description}
                             </ClampedP>
                           )}

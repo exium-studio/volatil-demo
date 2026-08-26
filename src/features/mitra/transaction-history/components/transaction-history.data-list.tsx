@@ -14,6 +14,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -62,6 +63,11 @@ export const TransactionHistoryDataList = () => {
   const [status, setStatus] = useState<string>("");
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionRecord | null>(null);
+
+  // Stores & Hooks
+  const { open: openDetailModal, close: closeDetailModal } = usePopModal({
+    modalKey: "transaction-detail",
+  });
 
   // Derived Values
   const debouncedSearch = useDebouncedValue(searchRaw);
@@ -196,6 +202,7 @@ export const TransactionHistoryDataList = () => {
         icon: EyeIcon,
         onClick: (item: TransactionRecord) => {
           setSelectedTransaction(item);
+          openDetailModal();
         },
       },
     ];
@@ -206,7 +213,7 @@ export const TransactionHistoryDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [transactionHistory.items, preferredTimezone]);
+  }, [transactionHistory.items, preferredTimezone, openDetailModal]);
 
   return (
     <VStack w={"full"}>
@@ -299,10 +306,12 @@ export const TransactionHistoryDataList = () => {
 
       {/* Detail Modal */}
       <TransactionHistoryDetailModal
-        modalKey={`transaction-detail.${selectedTransaction?.id ?? "none"}`}
+        modalKey={"transaction-detail"}
         transaction={selectedTransaction}
-        isOpen={Boolean(selectedTransaction)}
-        onClose={() => setSelectedTransaction(null)}
+        onClose={() => {
+          setSelectedTransaction(null);
+          closeDetailModal();
+        }}
       />
     </VStack>
   );

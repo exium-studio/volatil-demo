@@ -11,6 +11,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -41,6 +42,11 @@ export const InternalDataManagementDataList = () => {
   const [selectedLayer, setSelectedLayer] = useState<MasterIgtLayerItem | null>(
     null,
   );
+
+  // Stores & Hooks
+  const { open: openLayerModal, close: closeLayerModal } = usePopModal({
+    modalKey: "layer-edit",
+  });
 
   // Queries
   const {
@@ -188,6 +194,7 @@ export const InternalDataManagementDataList = () => {
         icon: Edit2Icon,
         onClick: (item: MasterIgtLayerItem) => {
           setSelectedLayer(item);
+          openLayerModal();
         },
       },
     ];
@@ -198,7 +205,7 @@ export const InternalDataManagementDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [filteredItems, preferredTimezone]);
+  }, [filteredItems, preferredTimezone, openLayerModal]);
 
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
@@ -354,10 +361,12 @@ export const InternalDataManagementDataList = () => {
 
         {/* Edit Layer Modal */}
         <InternalDataManagementEditModal
-          modalKey={`layer-edit.${selectedLayer?.id ?? "none"}`}
+          modalKey={"layer-edit"}
           item={selectedLayer}
-          isOpen={Boolean(selectedLayer)}
-          onClose={() => setSelectedLayer(null)}
+          onClose={() => {
+            setSelectedLayer(null);
+            closeLayerModal();
+          }}
         />
       </Container.Body>
     </Container.Root>

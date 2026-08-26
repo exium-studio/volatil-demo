@@ -1,7 +1,4 @@
-// src/features/auth/components/ui/user-profile-popover.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
-import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -13,6 +10,7 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { SignoutTrigger } from "@/features/auth/components/ui/signout-modal";
 import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
 import type { UserProfilePopoverTriggerProps } from "@/features/auth/types/user-profile-popover.type";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
@@ -115,20 +113,7 @@ export const UserProfilePopoverTrigger = (
               </Button>
 
               {/* Signout Button */}
-              <ConfirmationTrigger
-                modalKey={"auth-signout-confirmation"}
-                icon={LogOutIcon}
-                title={"Keluar dari Aplikasi"}
-                description={"Apakah Anda yakin ingin keluar dari akun Anda?"}
-                confirmLabel={"Keluar"}
-                cancelLabel={"Batal"}
-                confirmButtonProps={{
-                  colorPalette: "red",
-                  variant: "outline",
-                  loading: signoutMutation.isPending,
-                }}
-                onConfirm={() => signoutMutation.mutate()}
-              >
+              <SignoutTrigger>
                 <Button
                   colorPalette={"red"}
                   size={"sm"}
@@ -140,7 +125,7 @@ export const UserProfilePopoverTrigger = (
                   <AppIcon icon={LogOutIcon} />
                   {"Keluar"}
                 </Button>
-              </ConfirmationTrigger>
+              </SignoutTrigger>
             </VStack>
           </VStack>
         </Popover.Body>

@@ -13,6 +13,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -36,6 +37,11 @@ export const InternalPricingDataList = () => {
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE_OPTIONS[0]);
   const [spatialBasis, setSpatialBasis] = useState<string>("all");
   const [selectedItem, setSelectedItem] = useState<PricingItem | null>(null);
+
+  // Stores & Hooks
+  const { open: openEditModal, close: closeEditModal } = usePopModal({
+    modalKey: "pricing-edit",
+  });
 
   // Queries
   const {
@@ -157,6 +163,7 @@ export const InternalPricingDataList = () => {
         icon: Edit2Icon,
         onClick: (item: PricingItem) => {
           setSelectedItem(item);
+          openEditModal();
         },
       },
     ];
@@ -167,7 +174,7 @@ export const InternalPricingDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [filteredItems, preferredTimezone]);
+  }, [filteredItems, preferredTimezone, openEditModal]);
 
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
@@ -283,10 +290,12 @@ export const InternalPricingDataList = () => {
 
         {/* Edit Modal */}
         <InternalPricingEditModal
-          modalKey={`pricing-edit.${selectedItem?.id ?? "none"}`}
+          modalKey={"pricing-edit"}
           item={selectedItem}
-          isOpen={Boolean(selectedItem)}
-          onClose={() => setSelectedItem(null)}
+          onClose={() => {
+            setSelectedItem(null);
+            closeEditModal();
+          }}
         />
       </Container.Body>
     </Container.Root>

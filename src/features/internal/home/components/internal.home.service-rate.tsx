@@ -9,10 +9,10 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { SPACING } from "@/design-system/constants/styles";
-import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
+import { InternalHomeServiceRateModalTrigger } from "@/features/internal/home/components/internal.home.service-rate-modal";
 import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
+import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { useNavigate } from "@tanstack/react-router";
 import { EditIcon } from "lucide-react";
 import { Circle } from "@/design-system/components/layout/ui/box";
 
@@ -35,8 +35,8 @@ export const InternalHomeServiceRate = (
 };
 
 const InternalHomeServiceRateHeader = () => {
-  // Navigation
-  const navigate = useNavigate();
+  // Queries / Data
+  const { serviceRates } = useInternalHomeData();
 
   return (
     <HStack
@@ -62,16 +62,12 @@ const InternalHomeServiceRateHeader = () => {
         </InfoTip>
       </HStack>
 
-      <Button
-        primary
-        variant={"solid"}
-        onClick={() => {
-          void navigate({ to: "/internal/data-management" });
-        }}
-      >
-        <AppIcon icon={EditIcon} />
-        {"Kelola Tarif"}
-      </Button>
+      <InternalHomeServiceRateModalTrigger serviceRates={serviceRates}>
+        <Button primary variant={"solid"}>
+          <AppIcon icon={EditIcon} />
+          {"Perbarui"}
+        </Button>
+      </InternalHomeServiceRateModalTrigger>
     </HStack>
   );
 };

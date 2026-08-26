@@ -5,9 +5,9 @@ import { Input } from "@/design-system/components/input/ui/input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
@@ -16,16 +16,25 @@ import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
 
 export type InternalDataManagementEditModalProps = {
-  modalKey: string;
+  modalKey?: string;
   item: MasterIgtLayerItem | null;
-  isOpen: boolean;
   onClose: () => void;
 };
 
 export const InternalDataManagementEditModal = (
   props: InternalDataManagementEditModalProps,
 ) => {
-  const { modalKey, item, isOpen, onClose } = props;
+  const { modalKey: customModalKey = "layer-edit", item, onClose } = props;
+
+  // Stores & Hooks
+  const { modalKey, isOpen, open, close } = usePopModal({
+    modalKey: customModalKey,
+  });
+
+  const handleClose = () => {
+    close();
+    onClose();
+  };
 
   if (!item) return null;
 
@@ -35,7 +44,8 @@ export const InternalDataManagementEditModal = (
       modalKey={modalKey}
       item={item}
       isOpen={isOpen}
-      onClose={onClose}
+      open={open}
+      close={handleClose}
     />
   );
 };
@@ -44,13 +54,14 @@ type InternalDataManagementEditModalContentProps = {
   modalKey: string;
   item: MasterIgtLayerItem;
   isOpen: boolean;
-  onClose: () => void;
+  open: () => void;
+  close: () => void;
 };
 
 const InternalDataManagementEditModalContent = (
   props: InternalDataManagementEditModalContentProps,
 ) => {
-  const { modalKey, item, isOpen, onClose } = props;
+  const { modalKey, item, isOpen, open, close } = props;
 
   // States initialized from item props (no setState in useEffect)
   const [title, setTitle] = useState<string>(() => item.title);
@@ -82,21 +93,21 @@ const InternalDataManagementEditModalContent = (
       },
       {
         onSuccess: () => {
-          onClose();
+          close();
         },
       },
     );
   };
 
   return (
-    <Modal.Root modalKey={modalKey} opened={isOpen} close={onClose} size={"md"}>
+    <Modal.Root modalKey={modalKey} opened={isOpen} open={open} close={close} size={"md"}>
       <Modal.Content>
         <Modal.Header>
           <Modal.CloseButton />
 
-          <VStack align={"center"} gap={0} textAlign={"center"}>
-            <Heading>{"Ubah Konfigurasi Layer IGT"}</Heading>
-            <P fontSize={"xs"} color={"fg.subtle"}>
+          <VStack gap={SPACING.xs}>
+            <Modal.Title>{"Ubah Konfigurasi Layer IGT"}</Modal.Title>
+            <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
               {item.id}
             </P>
           </VStack>
@@ -187,7 +198,7 @@ const InternalDataManagementEditModalContent = (
 
         <Modal.Footer>
           <HStack gap={SPACING.sm} w={"full"}>
-            <Button variant={"outline"} flex={1} onClick={onClose}>
+            <Button variant={"outline"} flex={1} onClick={close}>
               {t["action.cancel"]()}
             </Button>
             <Button
