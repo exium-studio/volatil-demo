@@ -73,7 +73,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
       _hover={{
         borderColor: isSelected
           ? `${theme.colorPalette}.solid`
-          : "border.emphasized",
+          : "border.muted",
         bg: "bg.subtle",
       }}
       onClick={() => onSelect(batch.batchId)}

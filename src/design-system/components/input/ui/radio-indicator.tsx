@@ -6,7 +6,7 @@ import { forwardRef } from "react";
 export const RadioIndicator = forwardRef<HTMLDivElement, RadioIndicatorProps>(
   function RadioIndicator(props, ref) {
     // Props
-    const { checked = false, size = "16px", ...restProps } = props;
+    const { checked = false, size = "18px", ...restProps } = props;
 
     // Stores
     const { theme } = useThemeStore();

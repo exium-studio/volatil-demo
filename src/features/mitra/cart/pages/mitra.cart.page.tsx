@@ -155,7 +155,7 @@ const MitraCartContent = () => {
                 />
               </Box>
             ) : (
-              <VStack gap={SPACING.md} align={"stretch"} w={"full"}>
+              <VStack gap={SPACING.sm} align={"stretch"} w={"full"}>
                 {batches.map((batch, index) => (
                   <MitraCartBatchItem
                     key={batch.batchId}
