@@ -11,5 +11,5 @@ export type TransactionDetailTriggerProps = {
 
 export type TransactionDetailModalContentProps = {
   transaction: TransactionRecord;
-  close: () => void;
+  isOpen: boolean;
 };

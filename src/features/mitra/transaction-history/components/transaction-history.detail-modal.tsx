@@ -23,6 +23,7 @@ import type {
 } from "@/features/mitra/transaction-history/types/transaction-history.modal.type";
 import type { TransactionOrderItem } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { t } from "@/shared/libs/i18n";
+import { back } from "@/shared/utils/client/navigation";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -55,10 +56,10 @@ export const TransactionDetailTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      {transaction && isOpen && (
+      {transaction && (
         <TransactionDetailModalContent
           transaction={transaction}
-          close={close}
+          isOpen={isOpen}
         />
       )}
     </Modal.Root>
@@ -69,7 +70,7 @@ export const TransactionDetailModalContent = (
   props: TransactionDetailModalContentProps,
 ) => {
   // Props
-  const { transaction, close } = props;
+  const { transaction, isOpen } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -170,7 +171,7 @@ export const TransactionDetailModalContent = (
       <Separator borderColor={"bg.canvas"} />
 
       <Modal.Body p={0}>
-        {!isReady ? (
+        {!isReady || !isOpen ? (
           <VStack gap={SPACING.md} p={SPACING.md} w={"full"}>
             <Skeleton h={"72px"} w={"full"} rounded={theme.radii.component} />
             <Skeleton h={"128px"} w={"full"} rounded={"md"} />
@@ -331,7 +332,7 @@ export const TransactionDetailModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <Button flex={1} onClick={close}>
+        <Button flex={1} onClick={back}>
           {t["action.close"]()}
         </Button>
       </Modal.Footer>
