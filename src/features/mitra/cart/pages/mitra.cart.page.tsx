@@ -181,7 +181,7 @@ const MitraCartContent = () => {
         >
           <HeaderContainer>
             <HStack align={"center"} gap={SPACING.sm}>
-              <Heading>{"Ringkasan Order"}</Heading>
+              <Heading>{"Ringkasan Pesanan"}</Heading>
 
               {selectedBatchIndex !== -1 && (
                 <Badge>{`Batch #${selectedBatchIndex + 1}`}</Badge>

@@ -96,7 +96,13 @@ export const MitraCartBatchOrderSummary = (
           {isSelected ? (
             <Badge
               colorPalette={
-                isReadyToPay ? "green" : isPreparing ? "blue" : isExpired ? "red" : "gray"
+                isReadyToPay
+                  ? "green"
+                  : isPreparing
+                    ? "blue"
+                    : isExpired
+                      ? "red"
+                      : "gray"
               }
               variant={"subtle"}
             >
@@ -172,7 +178,10 @@ export const MitraCartBatchOrderSummary = (
           my={1}
         />
 
-        <HStack justify={"space-between"} color={isReadyToPay ? "blue.fg" : undefined}>
+        <HStack
+          justify={"space-between"}
+          color={isReadyToPay ? "blue.fg" : undefined}
+        >
           <P fontSize={"md"} fontWeight={"bold"}>
             {"Total Tagihan"}
           </P>
@@ -202,7 +211,9 @@ export const MitraCartBatchOrderSummary = (
         <Alert.Root status={"neutral"} colorPalette={"gray"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
-            {"Silakan pilih salah satu batch pesanan pada daftar keranjang untuk menampilkan rincian dan melakukan pembayaran."}
+            {
+              "Silakan pilih salah satu batch pesanan pada daftar keranjang untuk menampilkan rincian dan melakukan pembayaran."
+            }
           </Alert.Title>
         </Alert.Root>
       )}
@@ -211,7 +222,9 @@ export const MitraCartBatchOrderSummary = (
         <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
-            {"Tombol pembayaran akan aktif otomatis setelah Interop Engine selesai menyiapkan data."}
+            {
+              "Tombol pembayaran akan aktif otomatis setelah Interop Engine selesai menyiapkan data."
+            }
           </Alert.Title>
         </Alert.Root>
       )}
@@ -220,7 +233,13 @@ export const MitraCartBatchOrderSummary = (
       <Button
         primary={true}
         w={"full"}
-        disabled={!isSelected || !isReadyToPay || !hasItems || checkoutMutation.isPending || isLoading}
+        disabled={
+          !isSelected ||
+          !isReadyToPay ||
+          !hasItems ||
+          checkoutMutation.isPending ||
+          isLoading
+        }
         loading={checkoutMutation.isPending}
         onClick={handleCheckout}
         mt={1}
@@ -235,8 +254,9 @@ export const MitraCartBatchOrderSummary = (
               : "Bayar Sekarang"}
       </Button>
 
-      <HStack justify={"center"} gap={1} pt={1}>
+      <HStack justify={"center"} gap={1}>
         <AppIcon icon={ShieldCheckIcon} size={"xs"} color={"fg.subtle"} />
+
         <P fontSize={"xs"} color={"fg.subtle"}>
           {"Pembayaran Resmi PNBP ATR/BPN"}
         </P>

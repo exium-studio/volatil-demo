@@ -354,8 +354,9 @@ type CartBatchDetailResponse = {
 
 > [!NOTE]
 > **Skema Perhitungan Tarif (Pricing)**:
+>
 > - Penentuan tarif (`unitPrice`) diambil dari **Master Data Tarif PNBP** yang dikelola melalui modul [Internal - Tarif & Pricing Management](#9-internal---tarif--pricing-management).
-> - Selama status batch masih `preparing`, nilai total harga dan tarif akhir belum selesai dikalkulasi secara final oleh Interop Engine dan UI akan menampilkan indikasi *"Menunggu penyiapan data..."*.
+> - Selama status batch masih `preparing`, nilai total harga dan tarif akhir belum selesai dikalkulasi secara final oleh Interop Engine dan UI akan menampilkan indikasi _"Menunggu penyiapan data..."_.
 
 ### 5.4 Kosongkan / Hapus Batch dari Keranjang
 
@@ -622,6 +623,7 @@ type PricingListResponse = {
 
 - **Endpoint**: `PUT /api/internal/pricing/{id}`
 - **Payload**:
+
 ```typescript
 type UpdatePricingPayload = {
   unitPrice: number;
