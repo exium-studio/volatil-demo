@@ -8,7 +8,6 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { SPACING } from "@/design-system/constants/styles";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
@@ -68,7 +67,7 @@ export const SpatialFeaturesList = memo((props: SpatialFeaturesListProps) => {
 
   if (!isMounted || isLoading || (isFetching && wfsFeatures.length === 0)) {
     return (
-      <Skeleton h={"full"} w={"full"} flex={1} roundedTop={0} p={SPACING.md} />
+      <Skeleton h={"full"} w={"full"} flex={1} roundedTop={0} p={"md"} />
     );
   }
 

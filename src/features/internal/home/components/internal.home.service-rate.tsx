@@ -8,7 +8,6 @@ import { Container, useContainerContext } from "@/design-system/components/layou
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { SPACING } from "@/design-system/constants/styles";
 import { InternalHomeServiceRateModalTrigger } from "@/features/internal/home/components/internal.home.service-rate-modal";
 import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
@@ -21,7 +20,7 @@ export const InternalHomeServiceRate = (
 ) => {
   return (
     <Container.Root flex={"1 1 350px"} withContext={true} {...props}>
-      <Container.Body gap={4} pt={SPACING.md}>
+      <Container.Body gap={4} pt={"md"}>
         <InternalHomeServiceRateHeader />
 
         <VStack flex={1}>
@@ -43,10 +42,10 @@ const InternalHomeServiceRateHeader = () => {
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING.md}
-      px={SPACING.md}
+      gap={"md"}
+      px={"md"}
     >
-      <HStack gap={SPACING.xs} align={"center"}>
+      <HStack gap={"xs"} align={"center"}>
         <Heading>
           {"Tarif Jasa Akses IGT-PR"}
         </Heading>
@@ -88,7 +87,7 @@ const InternalHomeServiceRateStats = () => {
           <StatGrid.Header>
             <StatGrid.Label>{rate.title}</StatGrid.Label>
 
-            <Circle bg={`${rate.colorPalette}.subtle`} p={SPACING.xs}>
+            <Circle bg={`${rate.colorPalette}.subtle`} p={"xs"}>
               <AppIcon icon={rate.icon} color={`${rate.colorPalette}.fg`} />
             </Circle>
           </StatGrid.Header>

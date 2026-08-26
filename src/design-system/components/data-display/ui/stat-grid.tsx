@@ -15,7 +15,6 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
 const StatGridRoot = (props: StatGridRootProps) => {
@@ -53,7 +52,7 @@ const StatGridItem = (props: StatGridItemProps) => {
       position={"relative"}
       gap={2}
       h={"full"}
-      p={SPACING.md}
+      p={"md"}
       borderRight={isLastInRow ? undefined : "2px solid"}
       borderTop={isNotFirstRow ? "2px solid" : undefined}
       borderColor={"bg.canvas"}

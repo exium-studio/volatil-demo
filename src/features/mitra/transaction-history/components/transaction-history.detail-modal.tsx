@@ -14,7 +14,6 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { SPACING } from "@/design-system/constants/styles";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
@@ -164,7 +163,7 @@ export const TransactionDetailModalContent = (
       <Modal.Header>
         <Modal.CloseButton />
 
-        <VStack gap={SPACING.xs}>
+        <VStack gap={"xs"}>
           <Modal.Title>{"Detail Transaksi & Order"}</Modal.Title>
 
           <P fontSize={"sm"} textAlign={"center"} color={"fg.subtle"}>
@@ -176,19 +175,19 @@ export const TransactionDetailModalContent = (
       <Separator borderColor={"bg.canvas"} />
 
       <Modal.Body p={0}>
-        <VStack gap={SPACING.md}>
+        <VStack gap={"md"}>
           {/* Transaction Status Summary Box */}
-          <Skeleton loaded={isMounted} w={"full"} px={SPACING.md}>
+          <Skeleton loaded={isMounted} w={"full"} px={"md"}>
             <HStack
-              p={SPACING.md}
+              p={"md"}
               rounded={theme.radii.component}
               bg={"bg.canvas"}
               justify={"space-between"}
               align={"center"}
               wrap={"wrap"}
-              gap={SPACING.sm}
+              gap={"sm"}
             >
-              <HStack gap={SPACING.sm} align={"center"}>
+              <HStack gap={"sm"} align={"center"}>
                 <AppIcon
                   icon={
                     isSettled
@@ -203,7 +202,7 @@ export const TransactionDetailModalContent = (
                   }
                 />
 
-                <VStack align={"start"} gap={SPACING["2xs"]}>
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontWeight={"semibold"}>
                     {isSettled
                       ? "Pembayaran Berhasil"
@@ -237,8 +236,8 @@ export const TransactionDetailModalContent = (
           <Skeleton loaded={isMounted}>
             <VStack
               align={"stretch"}
-              gap={SPACING.xs}
-              px={SPACING.md}
+              gap={"xs"}
+              px={"md"}
               bg={"bg.body"}
               rounded={"md"}
             >
@@ -300,8 +299,8 @@ export const TransactionDetailModalContent = (
 
           {/* Order Items Table */}
           <Skeleton loaded={isMounted}>
-            <VStack align={"stretch"} gap={SPACING.xs} pt={SPACING.md}>
-              <Box px={SPACING.md}>
+            <VStack align={"stretch"} gap={"xs"} pt={"md"}>
+              <Box px={"md"}>
                 <P fontSize={"sm"} fontWeight={"semibold"}>
                   {`Daftar Order Layer IGT (${transaction.items.length} Item)`}
                 </P>

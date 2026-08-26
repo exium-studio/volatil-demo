@@ -7,7 +7,6 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   useRejectHelpCenterTicket,
@@ -90,7 +89,7 @@ export const HelpCenterModalResolveRejectTrigger = (
 
         <Modal.Body>
           <form id={`form-${modalKey}`} onSubmit={handleSubmit}>
-            <VStack gap={SPACING.md} align={"stretch"}>
+            <VStack gap={"md"} align={"stretch"}>
               <P fontSize={"sm"} color={"fg.muted"}>
                 {isResolve
                   ? "Berikan catatan atau penjelasan mengenai penyelesaian kendala ini sebelum menandainya sebagai selesai."

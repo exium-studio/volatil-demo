@@ -9,7 +9,6 @@ import { Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { Box } from "@chakra-ui/react";
 import type { ReactNode } from "react";
@@ -29,7 +28,7 @@ const RoundEyes = ({
   size?: string;
   mt?: string;
 }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <Circle
       w={size}
       h={size}
@@ -48,7 +47,7 @@ const RoundEyes = ({
 );
 
 const SquareEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <Box
       w={"28px"}
       h={"28px"}
@@ -69,7 +68,7 @@ const SquareEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
 );
 
 const BrowEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <Box
       w={"36px"}
       h={"16px"}
@@ -91,7 +90,7 @@ const BrowEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
 
 // Heavy-lidded eyes — thicker than FlatEyes, for sad/tired
 const HeavyEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <Box
       w={"34px"}
       h={"12px"}
@@ -112,7 +111,7 @@ const HeavyEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
 );
 
 const FlatEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <Box
       w={"36px"}
       h={"6px"}
@@ -133,7 +132,7 @@ const FlatEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
 );
 
 const BigEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <Circle
       w={"40px"}
       h={"40px"}
@@ -164,7 +163,7 @@ const ArcEye = ({ color }: { color: string }) => (
 );
 
 const CelebEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <ArcEye color={color} />
     <ArcEye color={color} />
   </HStack>
@@ -177,7 +176,7 @@ const HeartEye = ({ color }: { color: string }) => (
 );
 
 const HeartEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <HeartEye color={color} />
     <HeartEye color={color} />
   </HStack>
@@ -201,14 +200,14 @@ const CrossEye = ({ color }: { color: string }) => (
 );
 
 const CrossEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <CrossEye color={color} />
     <CrossEye color={color} />
   </HStack>
 );
 
 const WinkEyes = ({ color, mt = "36px" }: { color: string; mt?: string }) => (
-  <HStack justify={"center"} gap={SPACING.lg} mt={mt}>
+  <HStack justify={"center"} gap={"lg"} mt={mt}>
     <ArcEye color={color} />
     <Circle
       w={"32px"}

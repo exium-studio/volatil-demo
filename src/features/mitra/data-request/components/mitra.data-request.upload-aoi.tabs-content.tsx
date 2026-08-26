@@ -29,7 +29,6 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
 import {
@@ -272,7 +271,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
         {...restProps}
       >
         {!hasLayers && (
-          <Box flex={1} p={SPACING.md} display={"flex"} flexDir={"column"}>
+          <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
             <FileInput
               variant={"dropzone"}
               label={
@@ -401,7 +400,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
           <Modal.CloseButton />
         </Modal.Header>
 
-        <Modal.Body gap={SPACING.sm}>
+        <Modal.Body gap={"sm"}>
           {isEmptyArray(aoiLayers) && <NoDataState />}
 
           {aoiLayers.map((layer) => (
@@ -446,7 +445,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
           ))}
         </Modal.Body>
 
-        <Modal.Footer gap={SPACING.sm}>
+        <Modal.Footer gap={"sm"}>
           <Button
             flex={1}
             w={"full"}
@@ -517,8 +516,8 @@ const MitraDataRequestUploadAoiAttributeList = memo(
           <VStack
             wrap={"wrap"}
             justify={"space-between"}
-            gap={SPACING.sm}
-            p={SPACING.md}
+            gap={"sm"}
+            p={"md"}
             bg={"bg.body"}
             w={"full"}
           >
@@ -527,7 +526,7 @@ const MitraDataRequestUploadAoiAttributeList = memo(
                 {`Hasil query spasial AOI`}
               </P>
 
-              <HStack align={"center"} gap={SPACING.sm}>
+              <HStack align={"center"} gap={"sm"}>
                 <MitraDataRequestUploadAoiFileListTrigger
                   onFilesAdded={onFilesAdded}
                   onDeleteLayer={onDeleteLayer}

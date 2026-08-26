@@ -6,7 +6,6 @@ import type {
   ContainerRootProps,
 } from "@/design-system/components/layout/types/container.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useRefDimension } from "@/design-system/hooks/use-ref-dimenssion";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { createContext, useContext, useMemo, useRef } from "react";
@@ -45,7 +44,7 @@ const ContainerRoot = (props: ContainerRootProps) => {
   // Derived Values
   const isValidDimension = dimension.width > 0 && dimension.height > 0;
   const isSmContainer =
-    dimension.width < parseInt(DIMENSIONS.smScreenBreakpoint);
+    dimension.width < parseInt("720px");
 
   const contextValue = useMemo(
     () => ({ dimension, isValidDimension, isSmContainer }),
@@ -72,7 +71,7 @@ const ContainerHeader = (props: ContainerHeaderProps) => {
   const { children, ...restProps } = props;
 
   return (
-    <HStack w={"full"} minH={DIMENSIONS.headerH} px={SPACING.md} {...restProps}>
+    <HStack w={"full"} minH={"headerH"} px={"md"} {...restProps}>
       {children}
     </HStack>
   );

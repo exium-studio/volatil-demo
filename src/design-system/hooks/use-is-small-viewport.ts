@@ -1,6 +1,5 @@
 // src/design-system/hooks/use-is-small-viewport.ts
 
-import { DIMENSIONS } from "@/design-system/constants/styles";
 import { useViewport } from "@/design-system/hooks/use-viewport";
 
 type UseIsSmallViewportOptions = {
@@ -14,9 +13,9 @@ export function useIsSmallViewport(options?: UseIsSmallViewportOptions) {
   // Hooks
   const viewport = useViewport({
     onChange(viewport) {
-      onChange?.(viewport.width < parseInt(DIMENSIONS.smScreenBreakpoint));
+      onChange?.(viewport.width < parseInt("720px"));
     },
   });
 
-  return viewport.width < parseInt(DIMENSIONS.smScreenBreakpoint);
+  return viewport.width < parseInt("720px");
 }

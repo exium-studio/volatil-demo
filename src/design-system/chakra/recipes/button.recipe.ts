@@ -1,6 +1,5 @@
 // src/design-system/chakra/recipes/button.recipe.ts
 
-import { BACKDROP_FILTER } from "@/design-system/constants/styles";
 import { defineRecipe } from "@chakra-ui/react";
 
 export const buttonRecipe = defineRecipe({
@@ -28,7 +27,7 @@ export const buttonRecipe = defineRecipe({
 
       frosted: {
         bg: "an1",
-        backdropFilter: `${BACKDROP_FILTER.blur}`,
+        backdropFilter: `blur(10px)`,
         _hover: {
           bg: "an2",
         },

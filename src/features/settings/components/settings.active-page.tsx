@@ -9,7 +9,6 @@ import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-co
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import { DIMENSIONS, MODAL } from "@/design-system/constants/styles";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { SettingsSearchButton } from "@/features/settings/components/settings.search";
 import { SETTINGS_PAGES_MAP } from "@/features/settings/constants/settings.pages";
@@ -96,11 +95,11 @@ export const SettingsActivePageHeader = (props: StackProps) => {
       className={"settings-active-page__header"}
       align={"center"}
       justify={"space-between"}
-      h={DIMENSIONS.headerH}
+      h={"headerH"}
       p={2}
       {...restProps}
     >
-      <HStack w={DIMENSIONS.modalControlContainerW}>
+      <HStack w={"modalControlsW"}>
         {isSmallViewport && (
           <IconButton onClick={back}>
             <AppIcon icon={ChevronLeftIcon} />
@@ -115,8 +114,8 @@ export const SettingsActivePageHeader = (props: StackProps) => {
       <HStack
         justify={"end"}
         gap={3}
-        w={DIMENSIONS.modalControlContainerW}
-        pr={[0, null, MODAL.controlContainerSpacingR]}
+        w={"modalControlsW"}
+        pr={[0, null, 1.5]}
       >
         {isSmallViewport && <SettingsSearchButton />}
 
@@ -141,7 +140,7 @@ export const ActiveSettingsPageContentIndex = () => {
     <FeedbackState
       title={t["settings.index.title"]()}
       description={t["settings.index.description"]()}
-      pb={DIMENSIONS.headerH}
+      pb={"headerH"}
       m={"auto"}
     />
   );

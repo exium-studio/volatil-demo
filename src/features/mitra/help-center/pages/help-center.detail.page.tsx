@@ -13,7 +13,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { HelpCenterAttachmentItem } from "@/features/mitra/help-center/components/help-center.attachment-item";
 import { HelpCenterModalReplyTrigger } from "@/features/mitra/help-center/components/help-center.modal.reply";
@@ -95,7 +94,7 @@ export const HelpCenterDetailPage = () => {
     return (
       <PanelContentContainer>
         <Container.Root withContext={true}>
-          <Container.Body p={SPACING.lg} align={"center"}>
+          <Container.Body p={"lg"} align={"center"}>
             <P fontSize={"lg"} fontWeight={"bold"} mb={2}>
               {"Laporan Tidak Ditemukan"}
             </P>
@@ -126,7 +125,7 @@ export const HelpCenterDetailPage = () => {
       <Container.Root withContext={true}>
         <Container.Body>
           <VStack w={"full"}>
-            <HStack gap={SPACING.md} align={"center"} p={SPACING.md}>
+            <HStack gap={"md"} align={"center"} p={"md"}>
               <BackButton />
 
               <VStack align={"start"}>
@@ -161,7 +160,7 @@ export const HelpCenterDetailPage = () => {
               <>
                 <Separator borderColor={"bg.canvas"} />
 
-                <HStack align={"center"} gap={2} p={SPACING.md}>
+                <HStack align={"center"} gap={2} p={"md"}>
                   {isInternalAdmin && (
                     <HelpCenterModalResolveRejectTrigger
                       ticketId={ticket.id}
@@ -207,8 +206,8 @@ export const HelpCenterDetailPage = () => {
       <Container.Root withContext={true}>
         <Container.Body>
           <VStack>
-            <HStack justify={"space-between"} align={"center"} p={SPACING.md}>
-              <HStack gap={SPACING.md} align={"center"}>
+            <HStack justify={"space-between"} align={"center"} p={"md"}>
+              <HStack gap={"md"} align={"center"}>
                 <Circle
                   aspectRatio={1}
                   w={"40px"}
@@ -233,7 +232,7 @@ export const HelpCenterDetailPage = () => {
 
             <Separator borderColor={"bg.canvas"} />
 
-            <VStack align={"start"} gap={SPACING.md} p={SPACING.md}>
+            <VStack align={"start"} gap={"md"} p={"md"}>
               <P whiteSpace={"pre-wrap"} lineHeight={"tall"}>
                 {ticket.description}
               </P>
@@ -261,7 +260,7 @@ export const HelpCenterDetailPage = () => {
       <Container.Root withContext={true}>
         <Container.Body>
           <VStack>
-            <HStack p={SPACING.md} justify={"space-between"} align={"center"}>
+            <HStack p={"md"} justify={"space-between"} align={"center"}>
               <P fontSize={"md"} fontWeight={"semibold"}>
                 {`Riwayat Tanggapan & Balasan (${replies.length})`}
               </P>
@@ -270,7 +269,7 @@ export const HelpCenterDetailPage = () => {
             <Separator borderColor={"bg.canvas"} />
 
             {replies.length === 0 ? (
-              <Box p={SPACING.xl} textAlign={"center"}>
+              <Box p={"xl"} textAlign={"center"}>
                 <P color={"fg.subtle"}>
                   {
                     "Belum ada balasan untuk laporan ini. Klik tombol 'Balas Laporan' di atas untuk memberikan tanggapan."
@@ -278,7 +277,7 @@ export const HelpCenterDetailPage = () => {
                 </P>
               </Box>
             ) : (
-              <VStack gap={SPACING.xs} w={"full"} bg={"bg.canvas"}>
+              <VStack gap={"xs"} w={"full"} bg={"bg.canvas"}>
                 {replies.map((reply, idx) => {
                   const replyUserName =
                     reply.admin?.name ?? reply.user?.name ?? "Admin Internal";
@@ -291,19 +290,19 @@ export const HelpCenterDetailPage = () => {
                   return (
                     <Box
                       key={reply.id || String(idx)}
-                      p={SPACING.md}
+                      p={"md"}
                       bg={"bg.body"}
                       roundedTop={0}
                       roundedBottom={isLast ? theme.radii.container : 0}
                       w={"full"}
                     >
-                      <VStack gap={SPACING.sm}>
+                      <VStack gap={"sm"}>
                         <HStack
                           justify={"space-between"}
                           align={"center"}
                           w={"full"}
                         >
-                          <HStack gap={SPACING.sm} align={"center"}>
+                          <HStack gap={"sm"} align={"center"}>
                             <Circle
                               p={1.5}
                               bg={isInternal ? `purple.subtle` : "bg.muted"}

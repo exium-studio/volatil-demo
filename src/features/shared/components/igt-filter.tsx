@@ -7,7 +7,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
-import { MODAL, SPACING } from "@/design-system/constants/styles";
 // import { IgtFilterBasisSelect } from "@/features/mitra/data-request/components/igt-filter.basis-select";
 import { IgtFilterKabupatenSelect } from "@/features/shared/components/igt-filter.kabupaten-select";
 import { IgtFilterKecamatanSelect } from "@/features/shared/components/igt-filter.kecamatan-select";
@@ -70,7 +69,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
       if (!isCancelled) {
         setLocalDraftFilters(currentAppliedFilters);
       }
-    }, MODAL.animationDurationMs);
+    }, 300);
 
     return () => {
       isCancelled = true;
@@ -142,7 +141,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
 
       <Modal.Content>
         <Modal.Header>
-          <HStack gap={SPACING.md} align={"center"}>
+          <HStack gap={"md"} align={"center"}>
             <Modal.Title>Filter Data IGT</Modal.Title>
 
             {activeFilterCount > 0 && <CountBadge count={activeFilterCount} />}
@@ -150,7 +149,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
           <Modal.CloseButton />
         </Modal.Header>
 
-        <Modal.Body gap={SPACING.md}>
+        <Modal.Body gap={"md"}>
           <Alert.Root status={"info"} colorPalette={"blue"} w={"full"}>
             <Alert.Indicator />
             <Alert.Content>
@@ -166,7 +165,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
             </Alert.Content>
           </Alert.Root>
 
-          <VStack gap={SPACING.md} w={"full"}>
+          <VStack gap={"md"} w={"full"}>
             {/* Temporarily hidden: Basis IGT & Tema IGT
             <IgtFilterBasisSelect
               modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.BASIS}`}
@@ -241,7 +240,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
           </VStack>
         </Modal.Body>
 
-        <Modal.Footer gap={SPACING.sm}>
+        <Modal.Footer gap={"sm"}>
           <Button variant={"outline"} flex={1} onClick={handleReset}>
             {"Reset"}
           </Button>

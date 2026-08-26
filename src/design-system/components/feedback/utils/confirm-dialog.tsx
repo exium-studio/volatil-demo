@@ -8,7 +8,6 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { t } from "@/shared/libs/i18n";
 import { AlertTriangleIcon } from "lucide-react";
 import { useState } from "react";
@@ -71,8 +70,8 @@ export const ConfirmDialogModal = (props: {
           <Modal.CloseButton />
         </Modal.Header>
 
-        <Modal.Body pt={0} pb={SPACING.lg}>
-          <VStack align={"center"} gap={SPACING.md} textAlign={"center"}>
+        <Modal.Body pt={0} pb={"lg"}>
+          <VStack align={"center"} gap={"md"} textAlign={"center"}>
             <Circle
               size={"48px"}
               bg={`${colorPalette}.subtle`}
@@ -104,7 +103,7 @@ export const ConfirmDialogModal = (props: {
         </Modal.Body>
 
         <Modal.Footer>
-          <VStack gap={SPACING.xs} w={"full"}>
+          <VStack gap={"xs"} w={"full"}>
             <Button
               primary
               variant={"solid"}

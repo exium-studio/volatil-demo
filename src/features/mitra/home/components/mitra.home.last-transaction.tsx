@@ -13,7 +13,6 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { SPACING } from "@/design-system/constants/styles";
 import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import type {
   DataStatus,
@@ -58,7 +57,7 @@ export const MitraHomeLastTransaction = (
 ) => {
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body pb={SPACING.md}>
+      <Container.Body pb={"md"}>
         <MitraHomeLastTransactionHeader />
 
         <Separator borderColor={"bg.canvas"} />
@@ -75,10 +74,10 @@ const MitraHomeLastTransactionHeader = () => {
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING.md}
-      p={SPACING.md}
+      gap={"md"}
+      p={"md"}
     >
-      <HStack gap={SPACING.xs} align={"center"}>
+      <HStack gap={"xs"} align={"center"}>
         <Heading>
           {"Transaksi Terakhir"}
         </Heading>

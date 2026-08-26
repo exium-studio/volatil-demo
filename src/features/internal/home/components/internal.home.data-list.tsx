@@ -21,7 +21,6 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { SPACING } from "@/design-system/constants/styles";
 import type {
   InternalHomeIgtDataListItem,
   InternalHomeIgtDataListProps,
@@ -55,7 +54,7 @@ export const InternalHomeIgtDataList = (
 ) => {
   return (
     <Container.Root flex={"1 1 100%"} withContext={true} {...props}>
-      <Container.Body pb={SPACING.md}>
+      <Container.Body pb={"md"}>
         <InternalHomeIgtDataListHeader />
 
         <Separator borderColor={"bg.canvas"} />
@@ -72,10 +71,10 @@ const InternalHomeIgtDataListHeader = () => {
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING.md}
-      p={SPACING.md}
+      gap={"md"}
+      p={"md"}
     >
-      <HStack gap={SPACING.xs} align={"center"}>
+      <HStack gap={"xs"} align={"center"}>
         <Heading>
           {"Daftar Data"}
         </Heading>
@@ -91,7 +90,7 @@ const InternalHomeIgtDataListHeader = () => {
         </InfoTip>
       </HStack>
 
-      <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
+      <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
         <SearchInput placeholder={t["action.search"]()} maxW={"220px"} />
 
         <Button variant={"outline"} px={3}>

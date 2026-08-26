@@ -9,7 +9,6 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { SPACING } from "@/design-system/constants/styles";
 import { useUserManagementStatsQuery } from "@/features/internal/user-management/hooks/use-user-management.query";
 import type {
   UserManagementStatsLegendProps,
@@ -20,7 +19,7 @@ import type {
 export const InternalUserManagementStats = () => {
   return (
     <Container.Root withContext={true}>
-      <Container.Body gap={4} py={SPACING.md}>
+      <Container.Body gap={4} py={"md"}>
         <UserManagementStatsHeader />
         <UserManagementStatsCharts />
       </Container.Body>
@@ -34,8 +33,8 @@ const UserManagementStatsHeader = () => {
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING.md}
-      px={SPACING.md}
+      gap={"md"}
+      px={"md"}
     >
       <VStack gap={1} align={"start"}>
         <Heading>
@@ -89,12 +88,12 @@ const UserManagementStatsCharts = () => {
   const { stats } = useUserManagementStatsQuery();
 
   return (
-    <SimpleGrid columns={[1, 1, 2]} gap={SPACING.md} px={SPACING.md}>
+    <SimpleGrid columns={[1, 1, 2]} gap={"md"} px={"md"}>
       {/* Kategori Status Aktif */}
-      <VStack align={"start"} gap={SPACING.md}>
+      <VStack align={"start"} gap={"md"}>
         <P color={"fg.muted"}>{"Kategori Status Pengguna"}</P>
 
-        <HStack gap={SPACING.xs} w={"full"}>
+        <HStack gap={"xs"} w={"full"}>
           {STATUS_CONFIGS.map((config) => {
             const value = stats.statusStats[config.key];
 
@@ -131,10 +130,10 @@ const UserManagementStatsCharts = () => {
       </VStack>
 
       {/* Kategori Role / Pengguna */}
-      <VStack align={"start"} gap={SPACING.md}>
+      <VStack align={"start"} gap={"md"}>
         <P color={"fg.muted"}>{"Kategori Tipe Pengguna (Role)"}</P>
 
-        <HStack gap={SPACING.xs} w={"full"}>
+        <HStack gap={"xs"} w={"full"}>
           {ROLE_CONFIGS.map((config) => {
             const value = stats.roleStats[config.key];
 

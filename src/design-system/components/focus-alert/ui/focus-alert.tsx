@@ -13,7 +13,6 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { IconInfoCircle } from "@tabler/icons-react";
 import type { ComponentType } from "react";
 import {
@@ -219,19 +218,19 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
 
   return (
     <Modal.Content>
-      <Modal.Body pt={SPACING.lg} pb={SPACING.md}>
+      <Modal.Body pt={"lg"} pb={"md"}>
         <VStack
           align={"center"}
-          gap={SPACING.md}
+          gap={"md"}
           textAlign={"center"}
-          my={SPACING.sm}
+          my={"sm"}
         >
           <Box
             pos={"relative"}
             display={"inline-flex"}
             alignItems={"center"}
             justifyContent={"center"}
-            mb={SPACING.md}
+            mb={"md"}
           >
             {/* Outer expanding elegant pulse ripple */}
             <Circle

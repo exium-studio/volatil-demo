@@ -7,7 +7,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
   CartBatchStatus,
@@ -63,7 +62,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
   return (
     <Box
       w={"full"}
-      p={SPACING.md}
+      p={"md"}
       bg={isSelected ? "bg.subtle" : "bg.body"}
       rounded={theme.radii.container}
       border={"1.5px solid"}
@@ -78,10 +77,10 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
       }}
       onClick={() => onSelect(batch.batchId)}
     >
-      <VStack align={"stretch"} gap={SPACING.sm}>
+      <VStack align={"stretch"} gap={"sm"}>
         {/* Header: Batch Number, Status & Radio Indicator */}
         <HStack justify={"space-between"} align={"center"} w={"full"}>
-          <HStack gap={SPACING.sm} align={"center"}>
+          <HStack gap={"sm"} align={"center"}>
             <AppIcon
               icon={statusConfig.icon}
               color={statusConfig.iconColor}
@@ -95,7 +94,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
             </P>
           </HStack>
 
-          <HStack gap={SPACING.sm} align={"center"}>
+          <HStack gap={"sm"} align={"center"}>
             <Badge
               size={"sm"}
               variant={"subtle"}
@@ -111,7 +110,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
         <Separator />
 
         {/* Content Details */}
-        <VStack align={"stretch"} gap={SPACING.xs} fontSize={"xs"}>
+        <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
           <HStack justify={"space-between"} align={"center"}>
             <P color={"fg.muted"}>{"Daftar Layer IGT:"}</P>
             <ClampedP maxW={"65%"} textAlign={"end"} color={"fg.default"}>
@@ -154,7 +153,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
           <HStack
             justify={"space-between"}
             align={"center"}
-            gap={SPACING.md}
+            gap={"md"}
             bg={"an0"}
             p={2}
             rounded={"md"}
@@ -173,7 +172,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
         {batch.status === "preparing" && (
           <HStack
             align={"center"}
-            gap={SPACING.xs}
+            gap={"xs"}
             bg={"blue.subtle"}
             p={2}
             rounded={"md"}

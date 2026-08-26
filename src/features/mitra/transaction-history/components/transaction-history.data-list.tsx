@@ -18,7 +18,6 @@ import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { SPACING } from "@/design-system/constants/styles";
 import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
 import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
@@ -221,9 +220,9 @@ export const TransactionHistoryDataList = () => {
         wrap={"wrap"}
         align={"center"}
         justify={"start"}
-        gap={SPACING.sm}
+        gap={"sm"}
         w={"full"}
-        p={SPACING.md}
+        p={"md"}
         bg={"bg.body"}
       >
         <SearchInput
@@ -236,7 +235,7 @@ export const TransactionHistoryDataList = () => {
           maxW={"300px"}
         />
 
-        <HStack wrap={"wrap"} gap={SPACING.sm}>
+        <HStack wrap={"wrap"} gap={"sm"}>
           <StatusSelect
             modalKey={"transaction-history-status-filter"}
             placeholder={"Status"}
@@ -258,14 +257,14 @@ export const TransactionHistoryDataList = () => {
       {/* Table Content */}
       <VStack
         flex={1}
-        gap={SPACING.sm}
+        gap={"sm"}
         overflowY={"auto"}
         bg={"bg.canvas"}
         w={"full"}
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton p={SPACING.md} rounded={0} />
+          <Skeleton p={"md"} rounded={0} />
         ) : (
           <Box w={"full"} position={"relative"} overflowY={"auto"}>
             <DataListTable.Root<TransactionRecord>

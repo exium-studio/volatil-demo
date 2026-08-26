@@ -7,7 +7,6 @@ import { Avatar } from "@/design-system/components/media/ui/avatar";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { SignoutTrigger } from "@/features/auth/components/ui/signout-modal";
@@ -49,7 +48,7 @@ export const UserProfilePopoverTrigger = (
       <Popover.Content minW={"240px"} zIndex={"dropdown"}>
         <Popover.Body p={0}>
           <VStack>
-            <VStack gap={SPACING.md} align={"center"} p={SPACING.md}>
+            <VStack gap={"md"} align={"center"} p={"md"}>
               <Avatar
                 name={displayName || displayEmail || "User"}
                 size={"2xl"}
@@ -57,12 +56,12 @@ export const UserProfilePopoverTrigger = (
                 flexShrink={0}
               />
 
-              <VStack align={"center"} gap={SPACING.xs}>
+              <VStack align={"center"} gap={"xs"}>
                 {user?.role && (
                   <Badge
                     colorPalette={roleColorPalette}
                     variant={"subtle"}
-                    mb={SPACING.xs}
+                    mb={"xs"}
                   >
                     {displayRole}
                   </Badge>
@@ -71,7 +70,7 @@ export const UserProfilePopoverTrigger = (
                 <HStack
                   align={"center"}
                   justify={"center"}
-                  gap={SPACING.sm}
+                  gap={"sm"}
                   w={"full"}
                 >
                   <ClampedP fontWeight={"semibold"} textAlign={"center"}>
@@ -93,14 +92,14 @@ export const UserProfilePopoverTrigger = (
 
             <Separator />
 
-            <VStack gap={SPACING.xs} p={SPACING.xs}>
+            <VStack gap={"xs"} p={"xs"}>
               {/* Dark Mode Toggle */}
               <Button
                 justifyContent={"space-between"}
-                px={SPACING.sm}
+                px={"sm"}
                 onClick={toggleColorMode}
               >
-                <HStack gap={SPACING.xs} align={"center"}>
+                <HStack gap={"xs"} align={"center"}>
                   <AppIcon
                     icon={isDarkMode ? MoonIcon : SunIcon}
                     color={"fg.muted"}
@@ -118,7 +117,7 @@ export const UserProfilePopoverTrigger = (
                   colorPalette={"red"}
                   size={"sm"}
                   w={"full"}
-                  px={SPACING.sm}
+                  px={"sm"}
                   loading={signoutMutation.isPending}
                   justifyContent={"start"}
                 >

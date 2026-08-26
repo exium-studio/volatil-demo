@@ -9,7 +9,6 @@ import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import type {
@@ -43,7 +42,7 @@ export const MitraHomeFinancialFlow = (props: MitraHomeFinancialFlowProps) => {
 
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body gap={8} pt={SPACING.md}>
+      <Container.Body gap={8} pt={"md"}>
         <MitraHomeFinancialFlowHeader
           period={period}
           onPeriodChange={setPeriod}
@@ -68,10 +67,10 @@ const MitraHomeFinancialFlowHeader = (
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING.md}
-      px={SPACING.md}
+      gap={"md"}
+      px={"md"}
     >
-      <HStack gap={SPACING.xs} align={"center"}>
+      <HStack gap={"xs"} align={"center"}>
         <Heading>
           {"Statistik Alur Keuangan"}
         </Heading>
@@ -118,7 +117,7 @@ const MitraHomeFinancialFlowChartContent = (
   });
 
   return (
-    <Chart.Root maxH={"256px"} chart={chart} px={SPACING.lg}>
+    <Chart.Root maxH={"256px"} chart={chart} px={"lg"}>
       <ResponsiveContainer width={"100%"} height={240}>
         <AreaChart data={chart.data}>
           <ChartTooltip

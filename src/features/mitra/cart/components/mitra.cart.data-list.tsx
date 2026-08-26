@@ -9,7 +9,6 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { SPACING } from "@/design-system/constants/styles";
 import {
   useCartItemsQuery,
   useRemoveFromCart,
@@ -106,7 +105,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
           alignItems={"center"}
           justifyContent={"center"}
           w={"full"}
-          py={SPACING.md}
+          py={"md"}
           bg={"bg.body"}
         >
           <NoDataState
@@ -125,7 +124,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
               w={"full"}
               h={"full"}
               rounded={0}
-              p={SPACING.md}
+              p={"md"}
             />
           )}
 
@@ -136,7 +135,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
               alignItems={"center"}
               justifyContent={"center"}
               w={"full"}
-              py={SPACING.md}
+              py={"md"}
               bg={"bg.body"}
             >
               <NoResultState />

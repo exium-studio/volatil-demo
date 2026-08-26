@@ -4,7 +4,6 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { HelpCenterAttachment } from "@/features/mitra/help-center/types/help-center.type";
 import {
@@ -47,7 +46,7 @@ export const HelpCenterAttachmentItem = memo(
     return (
       <Box
         asChild={Boolean(fileUrl)}
-        p={SPACING.sm}
+        p={"sm"}
         border={"1px solid"}
         borderColor={"border.subtle"}
         rounded={theme.radii.component}
@@ -70,7 +69,7 @@ export const HelpCenterAttachmentItem = memo(
             rel={"noopener noreferrer"}
             download={!isImage && !isVideo ? fileName : undefined}
           >
-            <HStack gap={SPACING.sm} align={"center"}>
+            <HStack gap={"sm"} align={"center"}>
               <AppIcon
                 icon={isImage ? ImageIcon : isVideo ? VideoIcon : FileIcon}
                 size={"sm"}
@@ -93,7 +92,7 @@ export const HelpCenterAttachmentItem = memo(
             </HStack>
           </a>
         ) : (
-          <HStack gap={SPACING.sm} align={"center"}>
+          <HStack gap={"sm"} align={"center"}>
             <AppIcon
               icon={isImage ? ImageIcon : isVideo ? VideoIcon : FileIcon}
               size={"sm"}

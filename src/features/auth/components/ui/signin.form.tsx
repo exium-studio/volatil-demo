@@ -10,7 +10,6 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, PLink } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useSigninMutation } from "@/features/auth/hooks/use-signin.mutation";
 import {
   createSigninSchema,
@@ -50,11 +49,11 @@ export const MitraSignin = (props: StackProps) => {
       onSubmit={handleSubmit(handleLogin)}
       flex={1}
       justify={"space-between"}
-      gap={SPACING.lg}
+      gap={"lg"}
       w={"full"}
       {...props}
     >
-      <VStack align={"center"} gap={SPACING.lg}>
+      <VStack align={"center"} gap={"lg"}>
         <Badge size={"lg"} colorPalette={"blue"}>
           <AppIcon icon={HandshakeIcon} size={"sm"} />
 
@@ -137,11 +136,11 @@ export const InternalSignin = (props: StackProps) => {
       onSubmit={handleSubmit(handleLogin)}
       flex={1}
       justify={"space-between"}
-      gap={SPACING.lg}
+      gap={"lg"}
       w={"full"}
       {...props}
     >
-      <VStack align={"center"} gap={SPACING.lg}>
+      <VStack align={"center"} gap={"lg"}>
         <Badge size={"lg"} colorPalette={"purple"}>
           <AppIcon icon={ShieldCheckIcon} size={"sm"} />
 

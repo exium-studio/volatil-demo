@@ -13,7 +13,6 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   useClearAllInbox,
@@ -97,12 +96,12 @@ export const NotificationInboxList = memo(() => {
     <VStack
       flex={1}
       align={"stretch"}
-      // gap={SPACING.md}
+      // gap={"md"}
       overflowY={"auto"}
-      p={SPACING.md}
+      p={"md"}
     >
       {/* Inbox Actions Bar */}
-      <HStack justify={"end"} align={"center"} mb={SPACING.sm}>
+      <HStack justify={"end"} align={"center"} mb={"sm"}>
         <HStack gap={2}>
           {unreadCount > 0 && (
             <Button
@@ -138,7 +137,7 @@ export const NotificationInboxList = memo(() => {
       </HStack>
 
       {/* Inbox Items List */}
-      <VStack align={"stretch"} gap={SPACING.sm}>
+      <VStack align={"stretch"} gap={"sm"}>
         {items.map((item) => (
           <InboxCardItem
             key={item.id}
@@ -183,15 +182,15 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
     <HStack
       align={"start"}
       justify={"space-between"}
-      p={SPACING.sm}
-      gap={SPACING.md}
+      p={"sm"}
+      gap={"md"}
       bg={item.isRead ? "bg.body" : "bg.subtle"}
       borderWidth={"1px"}
       borderColor={"border.subtle"}
       shadow={"sm"}
       rounded={theme.radii.container}
     >
-      <HStack align={"start"} gap={SPACING.md} flex={1}>
+      <HStack align={"start"} gap={"md"} flex={1}>
         <Circle
           aspectRatio={1}
           w={"24px"}
@@ -204,7 +203,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
           <AppIcon icon={IconComponent} size={"sm"} />
         </Circle>
 
-        <VStack flex={1} gap={SPACING.sm}>
+        <VStack flex={1} gap={"sm"}>
           <HStack justify={"space-between"}>
             <HStack gap={2} align={"center"}>
               <P fontWeight={item.isRead ? "medium" : "bold"}>{item.title}</P>
@@ -222,7 +221,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
               </Badge>
             </HStack>
 
-            <HStack gap={SPACING.md} align={"center"}>
+            <HStack gap={"md"} align={"center"}>
               <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
                 {formatUtcDateTime(item.createdAt, preferredTimezone)}
               </P>
@@ -247,7 +246,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
             </HStack>
           </HStack>
 
-          <VStack align={"start"} gap={SPACING.sm} flex={1}>
+          <VStack align={"start"} gap={"sm"} flex={1}>
             <P color={"fg.muted"} lineHeight={"tall"}>
               {item.message}
             </P>

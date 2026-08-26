@@ -9,7 +9,6 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { SPACING } from "@/design-system/constants/styles";
 import type {
   MitraHomeCartStatConfig,
   MitraHomeCartSummaryProps,
@@ -25,7 +24,7 @@ import {
 export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body gap={4} pt={SPACING.md}>
+      <Container.Body gap={4} pt={"md"}>
         <MitraHomeCartSummaryHeader />
 
         <VStack flex={1}>
@@ -40,8 +39,8 @@ export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
 
 const MitraHomeCartSummaryHeader = () => {
   return (
-    <HStack align={"center"} justify={"space-between"} px={SPACING.md}>
-      <HStack gap={SPACING.xs} align={"center"}>
+    <HStack align={"center"} justify={"space-between"} px={"md"}>
+      <HStack gap={"xs"} align={"center"}>
         <Heading>
           {"Ringkasan Keranjang Pembelian"}
         </Heading>

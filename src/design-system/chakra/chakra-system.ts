@@ -11,7 +11,6 @@ import {
   DIALOG_OFFSET_X_VAR,
   DIALOG_OFFSET_Y_VAR,
 } from "@/design-system/components/overlay/stores/dialog-animation-store";
-import { DIMENSIONS } from "@/design-system/constants/styles";
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
 export const chakraConfig = defineConfig({
@@ -36,7 +35,7 @@ export const chakraConfig = defineConfig({
   theme: {
     breakpoints: {
       sm: "320px",
-      md: DIMENSIONS.smScreenBreakpoint,
+      md: "720px",
       lg: "960px",
       xl: "1200px",
     },
@@ -2441,6 +2440,38 @@ export const chakraConfig = defineConfig({
       },
       radii: {},
       borders: {},
+      spacing: {
+        "2xs": { value: "4px" },
+        xs: { value: "8px" },
+        sm: { value: "12px" },
+        md: { value: "16px" },
+        lg: { value: "24px" },
+        xl: { value: "32px" },
+        "2xl": { value: "48px" },
+        "3xl": { value: "64px" },
+      },
+      sizes: {
+        "2xs": { value: "4px" },
+        xs: { value: "8px" },
+        sm: { value: "12px" },
+        md: { value: "16px" },
+        lg: { value: "24px" },
+        xl: { value: "32px" },
+        "2xl": { value: "48px" },
+        "3xl": { value: "64px" },
+        headerH: { value: "56px" },
+        tableRowH: { value: "56px" },
+        tableCellH: { value: "56px" },
+        tableActionsW: { value: "56px" },
+        modalControlsW: { value: "70px" },
+        feedbackMinH: { value: "250px" },
+      },
+      zIndex: {
+        modal: { value: 1400 },
+      },
+      blurs: {
+        backdrop: { value: "10px" },
+      },
     },
 
     textStyles: {},

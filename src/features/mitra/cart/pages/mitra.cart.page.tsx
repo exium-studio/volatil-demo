@@ -14,7 +14,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { SPACING } from "@/design-system/constants/styles";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -82,7 +81,7 @@ const MitraCartContent = () => {
       <HStack
         flex={1}
         flexDir={isSmContainer ? "column-reverse" : "row"}
-        gap={SPACING.sm}
+        gap={"sm"}
         minH={isSmContainer ? undefined : 0}
         w={"full"}
       >
@@ -130,9 +129,9 @@ const MitraCartContent = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <Box flex={1} p={SPACING.md} overflowY={"auto"}>
+          <Box flex={1} p={"md"} overflowY={"auto"}>
             {isBatchesLoading ? (
-              <VStack gap={SPACING.md} w={"full"}>
+              <VStack gap={"md"} w={"full"}>
                 <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
                 <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
               </VStack>
@@ -143,7 +142,7 @@ const MitraCartContent = () => {
                 alignItems={"center"}
                 justifyContent={"center"}
                 w={"full"}
-                py={SPACING.xl}
+                py={"xl"}
                 bg={"bg.body"}
               >
                 <NoDataState
@@ -155,7 +154,7 @@ const MitraCartContent = () => {
                 />
               </Box>
             ) : (
-              <VStack gap={SPACING.sm} align={"stretch"} w={"full"}>
+              <VStack gap={"sm"} align={"stretch"} w={"full"}>
                 {batches.map((batch, index) => (
                   <MitraCartBatchItem
                     key={batch.batchId}
@@ -180,7 +179,7 @@ const MitraCartContent = () => {
           overflowY={isSmContainer ? undefined : "auto"}
         >
           <HeaderContainer>
-            <HStack align={"center"} gap={SPACING.sm}>
+            <HStack align={"center"} gap={"sm"}>
               <Heading>{"Ringkasan Pesanan"}</Heading>
 
               {selectedBatchIndex !== -1 && (

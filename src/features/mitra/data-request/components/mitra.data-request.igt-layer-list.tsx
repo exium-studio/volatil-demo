@@ -18,7 +18,6 @@ import type { IgtLayerItem } from "@/design-system/components/map/types/map.type
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
@@ -268,12 +267,12 @@ export const MitraDataRequestIgtLayerList = memo(
           wrap={"wrap"}
           align={"center"}
           justify={"space-between"}
-          gap={SPACING.sm}
+          gap={"sm"}
           w={"full"}
-          p={SPACING.md}
+          p={"md"}
           bg={"bg.body"}
         >
-          <HStack gap={SPACING.sm}>
+          <HStack gap={"sm"}>
             <SearchInput
               placeholder={"Cari nama / layer IGT"}
               value={searchRaw}
@@ -307,7 +306,7 @@ export const MitraDataRequestIgtLayerList = memo(
           overflow={"clip"}
           roundedBottom={theme.radii.container}
         >
-          {isLoadingLayers && <Skeleton flex={1} p={SPACING.md} rounded={0} />}
+          {isLoadingLayers && <Skeleton flex={1} p={"md"} rounded={0} />}
 
           {!isLoadingLayers && (
             <DataListTable.Root<IgtLayerItem>
@@ -335,10 +334,10 @@ export const MitraDataRequestIgtLayerList = memo(
           <HStack
             align={"center"}
             justify={"space-between"}
-            gap={SPACING.sm}
+            gap={"sm"}
             w={"full"}
-            p={SPACING.md}
-            mt={SPACING.sm}
+            p={"md"}
+            mt={"sm"}
             rounded={theme.radii.container}
             bg={"bg.body"}
           >

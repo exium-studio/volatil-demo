@@ -33,7 +33,6 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
-import { TABLE } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -210,11 +209,11 @@ const DataListTableRootInternal = <
     const cols: string[] = [];
 
     if (canBatchSelect || !isEmptyArray(batchActions)) {
-      cols.push(TABLE.actionsCellW);
+      cols.push("56px");
     }
 
     if (withNumbering) {
-      cols.push(TABLE.actionsCellW);
+      cols.push("56px");
     }
 
     headersList.forEach(() => cols.push("auto"));
@@ -223,7 +222,7 @@ const DataListTableRootInternal = <
       // 1 normal column for spread action buttons
       cols.push("auto");
       // 1 sticky column for sticky menu trigger
-      cols.push(TABLE.actionsCellW);
+      cols.push("56px");
     }
 
     return cols.join(" ");
@@ -244,7 +243,7 @@ const DataListTableRootInternal = <
         // flex={1}
         w={"full"}
         maxH={"full"}
-        pb={TABLE.rowGap}
+        pb={"4px"}
         roundedTop={theme.radii.container}
         bg={"bg.canvas"}
         shadow={"sm"}
@@ -254,7 +253,7 @@ const DataListTableRootInternal = <
           role={"table"}
           gridTemplateColumns={gridCols}
           w={headersList.length > 1 ? "full" : "fit"}
-          rowGap={TABLE.rowGap}
+          rowGap={"4px"}
         >
           {children}
         </Grid>
@@ -304,7 +303,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
       gridTemplateColumns={"subgrid"}
       gridColumn={"1 / -1"}
       overflow={"clip"}
-      h={TABLE.rowH}
+      h={"56px"}
       pos={"sticky"}
       top={0}
       left={0}
@@ -404,7 +403,7 @@ const DataListTableRow = memo(
         gridTemplateColumns={"subgrid"}
         gridColumn={"1 / -1"}
         overflow={"clip"}
-        minH={TABLE.rowH}
+        minH={"56px"}
         bg={"bg.body"}
         shadow={isItemSelected ? "md" : "none"}
         {...styleProps}
@@ -514,8 +513,8 @@ const DataListTableBody = () => {
     tableContainerEl,
   } = useDataListTableContext();
 
-  const rowHeight = useMemo(() => parseInt(TABLE.rowH, 10), []);
-  const rowGap = useMemo(() => parseInt(TABLE.rowGap, 10), []);
+  const rowHeight = useMemo(() => parseInt("56px", 10), []);
+  const rowGap = useMemo(() => parseInt("4px", 10), []);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({

@@ -11,13 +11,12 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { SPACING } from "@/design-system/constants/styles";
 import { DatabaseIcon, Layers2Icon, TreesIcon } from "lucide-react";
 
 export const MitraHomeDataAvailability = () => {
   return (
     <Container.Root withContext={true}>
-      <Container.Body gap={4} pt={SPACING.md}>
+      <Container.Body gap={4} pt={"md"}>
         <MitraHomeDataAvailabilityHeader />
 
         <VStack flex={1}>
@@ -32,8 +31,8 @@ export const MitraHomeDataAvailability = () => {
 
 const MitraHomeDataAvailabilityHeader = () => {
   return (
-    <HStack align={"center"} justify={"space-between"} px={SPACING.md}>
-      <HStack gap={SPACING.xs} align={"center"}>
+    <HStack align={"center"} justify={"space-between"} px={"md"}>
+      <HStack gap={"xs"} align={"center"}>
         <Heading>{"Ketersediaan Data Spasial IGT"}</Heading>
 
         <InfoTip

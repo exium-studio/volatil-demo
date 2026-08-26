@@ -8,7 +8,6 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
-import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
@@ -112,7 +111,7 @@ export const MitraDataRequestPage = () => {
                     value={method.value}
                     flex={1}
                     justifyContent={"center"}
-                    h={DIMENSIONS.headerH}
+                    h={"headerH"}
                   >
                     <AppIcon icon={method.icon} />
                     {method.label}
@@ -127,7 +126,7 @@ export const MitraDataRequestPage = () => {
                   h={"full"}
                   w={"full"}
                   flex={1}
-                  p={SPACING.md}
+                  p={"md"}
                   rounded={0}
                 />
               }

@@ -15,7 +15,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
@@ -102,7 +101,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
               )}
 
               {hasFinishedDraw && (
-                <HStack gap={SPACING.sm}>
+                <HStack gap={"sm"}>
                   <Button
                     variant={"outline"}
                     colorPalette={"red"}
@@ -140,7 +139,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
         )}
 
         {isError && (
-          <VStack gap={SPACING.sm} p={SPACING.md}>
+          <VStack gap={"sm"} p={"md"}>
             <P color={"fg.error"}>{error ?? "Terjadi kesalahan"}</P>
             <Button variant={"outline"} onClick={handleResetDraw}>
               {"Coba lagi"}
@@ -203,8 +202,8 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
     <VStack
       wrap={"wrap"}
       justify={"space-between"}
-      gap={SPACING.md}
-      p={SPACING.md}
+      gap={"md"}
+      p={"md"}
       pb={0}
       visibility={isVisible ? "visible" : "hidden"}
       pointerEvents={isVisible ? "auto" : "none"}
@@ -212,8 +211,8 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
     >
       <HStack
         align={"center"}
-        gap={SPACING.md}
-        p={SPACING.md}
+        gap={"md"}
+        p={"md"}
         bg={getAlertBg()}
         rounded={theme.radii.container}
         color={getAlertColor()}
@@ -266,8 +265,8 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
         <VStack
           wrap={"wrap"}
           justify={"space-between"}
-          gap={SPACING.sm}
-          p={SPACING.md}
+          gap={"sm"}
+          p={"md"}
           bg={"bg.body"}
           w={"full"}
         >
@@ -276,7 +275,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
               {"Hasil query spasial gambar AOI"}
             </P>
 
-            <HStack align={"center"} gap={SPACING.sm}>
+            <HStack align={"center"} gap={"sm"}>
               {confirmedPolygon && map && (
                 <Tooltip content={"Lihat di Peta"}>
                   <IconButton

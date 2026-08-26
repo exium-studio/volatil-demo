@@ -3,7 +3,6 @@
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
-import { SPACING } from "@/design-system/constants/styles";
 import { MitraHomeCartSummary } from "@/features/mitra/home/components/mitra.home.cart-summary";
 import { MitraHomeDataAvailability } from "@/features/mitra/home/components/mitra.home.data-availability";
 import { MitraHomeDataSummary } from "@/features/mitra/home/components/mitra.home.data-summary";
@@ -21,7 +20,7 @@ export const MitraHomePage = () => {
         <Skeleton h={"140px"} w={"full"} />
         <Skeleton h={"233px"} w={"full"} />
 
-        <HStack wrap={"wrap"} gap={SPACING.sm} w={"full"}>
+        <HStack wrap={"wrap"} gap={"sm"} w={"full"}>
           <Skeleton h={"353px"} flex={"1 1 300px"} />
           <Skeleton h={"353px"} flex={"1 1 500px"} />
           <Skeleton h={"353px"} flex={"1 1 100%"} />
@@ -39,7 +38,7 @@ export const MitraHomePage = () => {
 
       <MitraHomeDataSummary />
 
-      <HStack wrap={"wrap"} gap={SPACING.sm}>
+      <HStack wrap={"wrap"} gap={"sm"}>
         <MitraHomeCartSummary flex={"1 1 300px"} />
         <MitraHomeFinancialFlow flex={"1 1 500px"} />
         <MitraHomeLastTransaction flex={"1 1 100%"} />

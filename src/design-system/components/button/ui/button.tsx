@@ -7,7 +7,6 @@ import type {
   IconButtonProps,
 } from "@/design-system/components/button/types/button.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { SIZES } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   Button as ChakraButton,
@@ -93,7 +92,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <ChakraButton
         ref={ref}
-        size={SIZES.mainButton}
+        size={["lg", null, "md"]}
         variant={variant || (primary ? "solid" : "ghost")}
         colorPalette={
           colorPalette ?? (primary ? theme.colorPalette : "neutral")
@@ -125,7 +124,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     return (
       <ChakraIconButton
         ref={ref}
-        size={SIZES.mainButton}
+        size={["lg", null, "md"]}
         variant={variant || (primary ? "solid" : "ghost")}
         colorPalette={
           colorPalette ?? (primary ? theme.colorPalette : "neutral")

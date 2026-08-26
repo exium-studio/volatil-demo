@@ -9,7 +9,6 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
 import type { MasterIgtLayerItem } from "@/features/internal/data-management/types/data-management.type";
 import { t } from "@/shared/libs/i18n";
@@ -94,7 +93,7 @@ const InternalDataManagementEditModalContent = (
       <Modal.Header>
         <Modal.CloseButton />
 
-        <VStack gap={SPACING.xs}>
+        <VStack gap={"xs"}>
           <Modal.Title>{"Ubah Konfigurasi Layer IGT"}</Modal.Title>
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
             {item.id}
@@ -104,8 +103,8 @@ const InternalDataManagementEditModalContent = (
 
       <Separator borderColor={"bg.canvas"} />
 
-      <Modal.Body p={SPACING.md}>
-        <VStack align={"stretch"} gap={SPACING.md}>
+      <Modal.Body p={"md"}>
+        <VStack align={"stretch"} gap={"md"}>
           {/* Basis Spasial Badge */}
           <HStack justify={"space-between"} align={"center"}>
             <P fontSize={"sm"} color={"fg.subtle"}>
@@ -186,7 +185,7 @@ const InternalDataManagementEditModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <HStack gap={SPACING.sm} w={"full"}>
+        <HStack gap={"sm"} w={"full"}>
           <Button variant={"outline"} flex={1} onClick={close}>
             {t["action.cancel"]()}
           </Button>

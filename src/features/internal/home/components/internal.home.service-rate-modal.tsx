@@ -7,7 +7,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import type { InternalHomeServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useUpdateInternalPricing } from "@/features/internal/pricing/hooks/use-internal-pricing";
 import { t } from "@/shared/libs/i18n";
@@ -109,7 +108,7 @@ const InternalHomeServiceRateModalContent = (
       <Modal.Header>
         <Modal.CloseButton />
 
-        <VStack gap={SPACING.xs}>
+        <VStack gap={"xs"}>
           <Modal.Title>{"Ubah Tarif Jasa Akses IGT-PR"}</Modal.Title>
 
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
@@ -120,8 +119,8 @@ const InternalHomeServiceRateModalContent = (
 
       <Separator borderColor={"bg.canvas"} />
 
-      <Modal.Body p={SPACING.md}>
-        <VStack align={"stretch"} gap={SPACING.md}>
+      <Modal.Body p={"md"}>
+        <VStack align={"stretch"} gap={"md"}>
           {/* Input Tarif Bidang */}
           <VStack align={"stretch"} gap={1}>
             <HStack justify={"space-between"}>
@@ -161,7 +160,7 @@ const InternalHomeServiceRateModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <HStack gap={SPACING.sm} w={"full"}>
+        <HStack gap={"sm"} w={"full"}>
           <Button variant={"outline"} flex={1} onClick={close}>
             {t["action.cancel"]()}
           </Button>

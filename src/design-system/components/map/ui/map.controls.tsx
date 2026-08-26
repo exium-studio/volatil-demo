@@ -8,7 +8,6 @@ import { MapCompass } from "@/design-system/components/map/ui/map.controls/map.c
 import { MapLocate } from "@/design-system/components/map/ui/map.controls/map.locate";
 import { MapScale } from "@/design-system/components/map/ui/map.controls/map.scale";
 import { MapZoom } from "@/design-system/components/map/ui/map.controls/map.zoom";
-import { SPACING } from "@/design-system/constants/styles";
 
 export const MapControls = (props: StackProps) => {
   return (
@@ -16,18 +15,18 @@ export const MapControls = (props: StackProps) => {
       align={"end"}
       overflowX={"auto"}
       justify={"space-between"}
-      gap={SPACING.md}
+      gap={"md"}
       w={"full"}
       p={4}
       pointerEvents={"none"}
       {...props}
     >
-      <HStack align={"end"} gap={SPACING.md} pointerEvents={"none"}>
+      <HStack align={"end"} gap={"md"} pointerEvents={"none"}>
         <MapBasemapSelect />
         <MapScale mb={1} />
       </HStack>
 
-      <HStack gap={SPACING.sm} pointerEvents={"none"}>
+      <HStack gap={"sm"} pointerEvents={"none"}>
         <Map3DToggle />
         <MapZoom />
         <MapLocate />

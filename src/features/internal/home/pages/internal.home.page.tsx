@@ -4,7 +4,6 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
-import { SPACING } from "@/design-system/constants/styles";
 import { InternalHomeIgtDataList } from "@/features/internal/home/components/internal.home.data-list";
 import { InternalHomeDataSummary } from "@/features/internal/home/components/internal.home.data-summary";
 import { InternalHomeOrderSummary } from "@/features/internal/home/components/internal.home.order-summary";
@@ -18,7 +17,7 @@ export const InternalHomePage = () => {
   if (isLoading) {
     return (
       <PanelContentContainer h={"auto"}>
-        <HStack wrap={"wrap"} gap={SPACING.sm} w={"full"}>
+        <HStack wrap={"wrap"} gap={"sm"} w={"full"}>
           <Skeleton h={"350px"} flex={"1 1 550px"} />
           <Skeleton h={"350px"} flex={"1 1 350px"} />
         </HStack>
@@ -37,7 +36,7 @@ export const InternalHomePage = () => {
     >
       <TopBarLoader isFetching={isFetching} />
 
-      <HStack wrap={"wrap"} gap={SPACING.sm}>
+      <HStack wrap={"wrap"} gap={"sm"}>
         <InternalHomeDataSummary />
         <InternalHomeServiceRate />
       </HStack>

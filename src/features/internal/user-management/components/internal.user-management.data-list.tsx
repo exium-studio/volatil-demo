@@ -19,7 +19,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import {
   useUpdateUserStatus,
   useUserManagementUsersQuery,
@@ -200,8 +199,8 @@ export const InternalUserManagementDataList = () => {
           wrap={"wrap"}
           align={"center"}
           justify={"space-between"}
-          gap={SPACING.md}
-          p={SPACING.md}
+          gap={"md"}
+          p={"md"}
         >
           <VStack gap={1} align={"start"}>
             <Heading>{"Daftar Pengguna"}</Heading>
@@ -210,7 +209,7 @@ export const InternalUserManagementDataList = () => {
             </P>
           </VStack>
 
-          <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
+          <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
             <SearchInput
               placeholder={t["action.search"]()}
               value={search}
@@ -254,7 +253,7 @@ export const InternalUserManagementDataList = () => {
         {/* Table & Footer Content */}
         <VStack bg={"bg.canvas"} w={"full"} position={"relative"} gap={0}>
           {isLoading ? (
-            <Skeleton h={"280px"} w={"full"} p={SPACING.md} roundedTop={0} />
+            <Skeleton h={"280px"} w={"full"} p={"md"} roundedTop={0} />
           ) : (
             <Box w={"full"} position={"relative"}>
               <DataListTable.Root

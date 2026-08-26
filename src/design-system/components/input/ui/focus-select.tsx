@@ -16,7 +16,6 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from "lucide-react";
@@ -150,7 +149,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         fontWeight={"normal"}
         {...restProps}
       >
-        <HStack gap={SPACING.sm} flex={1} minW={0} justify={"start"}>
+        <HStack gap={"sm"} flex={1} minW={0} justify={"start"}>
           {selectedOption?.icon && (
             <AppIcon icon={selectedOption.icon} size={"sm"} />
           )}
@@ -159,7 +158,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           </P>
         </HStack>
 
-        <HStack gap={SPACING.sm} align={"center"}>
+        <HStack gap={"sm"} align={"center"}>
           {clearable && currentValue && !disabled ? (
             <AppIcon
               icon={XIcon}
@@ -215,7 +214,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         <Modal.Body p={0}>
           {/* Always render SearchInput when not fetching */}
           {!isFetching && (
-            <VStack w={"full"} px={SPACING.md} pt={"2px"} mb={SPACING.sm}>
+            <VStack w={"full"} px={"md"} pt={"2px"} mb={"sm"}>
               <SearchInput
                 placeholder={t["action.search"]()}
                 onValueChange={setSearchQuery}
@@ -227,7 +226,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
           {/* Always render Custom Option at top if customOption prop is true */}
           {customOption && !isFetching && (
-            <VStack w={"full"} px={SPACING.md} mb={SPACING.sm}>
+            <VStack w={"full"} px={"md"} mb={"sm"}>
               <Button
                 variant={
                   isCustomValueSelected && currentValue === searchQuery.trim()
@@ -235,7 +234,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                     : "outline"
                 }
                 w={"full"}
-                py={SPACING.sm}
+                py={"sm"}
                 px={3}
                 justifyContent={"space-between"}
                 alignItems={"center"}
@@ -250,7 +249,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                 }}
                 disabled={!searchQuery.trim()}
               >
-                <HStack gap={SPACING.sm} align={"center"} flex={1} minW={0}>
+                <HStack gap={"sm"} align={"center"} flex={1} minW={0}>
                   <AppIcon icon={PlusIcon} size={"sm"} />
                   <ClampedP>
                     {searchQuery.trim()
@@ -267,11 +266,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           <VScrollContainer
             w={"full"}
             maxH={"300px"}
-            px={SPACING.md}
-            pb={SPACING.md}
+            px={"md"}
+            pb={"md"}
           >
             {isFetching ? (
-              <VStack gap={SPACING.sm} w={"full"}>
+              <VStack gap={"sm"} w={"full"}>
                 {Array.from({ length: SKELETON_LIST_COUNT }).map((_, index) => (
                   <Skeleton
                     key={`skeleton-${index + 1}`}
@@ -292,7 +291,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                       key={opt.value}
                       variant={isSelected ? "subtle" : "ghost"}
                       w={"full"}
-                      py={SPACING.sm}
+                      py={"sm"}
                       px={3}
                       justifyContent={"space-between"}
                       alignItems={"center"}
@@ -300,7 +299,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                       onClick={() => handleOptionSelect(opt.value, opt)}
                     >
                       <HStack
-                        gap={SPACING.sm}
+                        gap={"sm"}
                         align={"center"}
                         flex={1}
                         minW={0}

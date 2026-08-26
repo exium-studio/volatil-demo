@@ -17,7 +17,6 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
@@ -99,8 +98,8 @@ export const MapIgtLayerSelect = memo(() => {
             <HStack
               align={"center"}
               justify={"center"}
-              gap={SPACING.md}
-              p={SPACING.md}
+              gap={"md"}
+              p={"md"}
             >
               <Loader />
 
@@ -178,7 +177,7 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
       <HStack
         align={"center"}
         justify={"space-between"}
-        gap={SPACING.md}
+        gap={"md"}
         p={2}
         colorPalette={colorPalette}
         rounded={theme.radii.component}
@@ -186,9 +185,9 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
         onClick={() => onToggle(layer.id)}
         _hover={{ bg: "bg.subtle" }}
       >
-        <HStack gap={SPACING.md} align={"center"} flex={1}>
+        <HStack gap={"md"} align={"center"} flex={1}>
           <Center
-            p={SPACING.sm}
+            p={"sm"}
             bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
             rounded={theme.radii.component}
           >

@@ -8,7 +8,6 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { DIMENSIONS, SPACING } from "@/design-system/constants/styles";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { NotificationInboxList } from "@/features/notification/components/notification.inbox-list";
 import { NotificationToastHistoryList } from "@/features/notification/components/notification.toast-list";
@@ -101,7 +100,7 @@ const NotificationHeader = memo((props: NotificationHeaderProps) => {
   const { activeTab, totalNotifications, unreadCount } = props;
 
   return (
-    <HStack align={"center"} justify={"space-between"} gap={SPACING.md} pr={2}>
+    <HStack align={"center"} justify={"space-between"} gap={"md"} pr={2}>
       <HStack align={"center"}>
         <AppNavTitle />
 
@@ -153,7 +152,7 @@ const NotificationTabs = memo((props: NotificationTabsProps) => {
           value={"inbox"}
           flex={1}
           justifyContent={"center"}
-          h={DIMENSIONS.headerH}
+          h={"headerH"}
         >
           <AppIcon icon={InboxIcon} />
           {"Inbox"}
@@ -168,7 +167,7 @@ const NotificationTabs = memo((props: NotificationTabsProps) => {
           value={"notifications"}
           flex={1}
           justifyContent={"center"}
-          h={DIMENSIONS.headerH}
+          h={"headerH"}
         >
           <AppIcon icon={BellIcon} />
           {"Notifikasi"}

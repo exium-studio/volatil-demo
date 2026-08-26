@@ -10,7 +10,6 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { SPACING } from "@/design-system/constants/styles";
 import type {
   InternalHomeOrderStatConfig,
   InternalHomeOrderSummaryHeaderProps,
@@ -42,7 +41,7 @@ export const InternalHomeOrderSummary = (
 
   return (
     <Container.Root flex={1} withContext={true} {...props}>
-      <Container.Body gap={4} pt={SPACING.md}>
+      <Container.Body gap={4} pt={"md"}>
         <InternalHomeOrderSummaryHeader
           period={period}
           onPeriodChange={setPeriod}
@@ -69,10 +68,10 @@ const InternalHomeOrderSummaryHeader = (
       wrap={"wrap"}
       align={"center"}
       justify={"space-between"}
-      gap={SPACING.md}
-      px={SPACING.md}
+      gap={"md"}
+      px={"md"}
     >
-      <HStack gap={SPACING.xs} align={"center"}>
+      <HStack gap={"xs"} align={"center"}>
         <Heading>{"Ringkasan Pesanan"}</Heading>
 
         <InfoTip

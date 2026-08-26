@@ -16,7 +16,6 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
 import { useMasterIgtLayersQuery } from "@/features/internal/data-management/hooks/use-data-management";
 import type {
@@ -236,7 +235,7 @@ export const InternalDataManagementDataList = () => {
               </P>
             </VStack>
 
-            <HStack gap={SPACING.xs} align={"center"}>
+            <HStack gap={"xs"} align={"center"}>
               <Badge variant={"subtle"} colorPalette={"blue"}>
                 <LayersIcon size={14} />
                 {`${filteredItems.length} Layer`}
@@ -252,9 +251,9 @@ export const InternalDataManagementDataList = () => {
           wrap={"wrap"}
           align={"center"}
           justify={"start"}
-          gap={SPACING.sm}
+          gap={"sm"}
           w={"full"}
-          p={SPACING.md}
+          p={"md"}
           bg={"bg.body"}
         >
           <SearchInput
@@ -301,14 +300,14 @@ export const InternalDataManagementDataList = () => {
         {/* Table Content */}
         <VStack
           flex={1}
-          gap={SPACING.sm}
+          gap={"sm"}
           overflowY={"auto"}
           bg={"bg.canvas"}
           w={"full"}
           position={"relative"}
         >
           {isLoading ? (
-            <Skeleton p={SPACING.md} rounded={0} h={"320px"} />
+            <Skeleton p={"md"} rounded={0} h={"320px"} />
           ) : (
             <Box w={"full"} position={"relative"} overflowY={"auto"}>
               <DataListTable.Root<MasterIgtLayerItem>

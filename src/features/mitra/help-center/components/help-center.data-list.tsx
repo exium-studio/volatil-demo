@@ -20,7 +20,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { CreateHelpCenterTrigger } from "@/features/mitra/help-center/components/help-center.create";
 import { useHelpCenterTicketsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type {
@@ -258,7 +257,7 @@ export const HelpCenterDataList = () => {
   return (
     <Container.Root withContext={true}>
       <Container.Body overflowY={"auto"}>
-        <VStack align={"start"} gap={1} p={SPACING.md}>
+        <VStack align={"start"} gap={1} p={"md"}>
           <Heading>{"Daftar Laporan Kendala"}</Heading>
 
           <P fontSize={"sm"} color={"fg.subtle"}>
@@ -272,10 +271,10 @@ export const HelpCenterDataList = () => {
           wrap={"wrap"}
           align={"center"}
           justify={"space-between"}
-          gap={SPACING.sm}
-          p={SPACING.md}
+          gap={"sm"}
+          p={"md"}
         >
-          <HStack wrap={"wrap"} align={"center"} gap={SPACING.sm}>
+          <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
             <SearchInput
               placeholder={t["action.search"]()}
               value={search}
@@ -316,11 +315,11 @@ export const HelpCenterDataList = () => {
         {/* Table & Footer Content */}
         <VStack position={"relative"} w={"full"} bg={"bg.canvas"}>
           {isLoading && (
-            <Skeleton w={"full"} h={"300px"} p={SPACING.md} roundedTop={0} />
+            <Skeleton w={"full"} h={"300px"} p={"md"} roundedTop={0} />
           )}
 
           {!isLoading && isEmptyArray(tickets) && (
-            <Box py={SPACING.xl} w={"full"} bg={"bg.body"}>
+            <Box py={"xl"} w={"full"} bg={"bg.body"}>
               <NoDataState
                 icon={InboxIcon}
                 title={"Belum Ada Laporan"}

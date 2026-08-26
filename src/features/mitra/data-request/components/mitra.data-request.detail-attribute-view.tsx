@@ -5,7 +5,6 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import { SPACING } from "@/design-system/constants/styles";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
 import { SpatialFeaturesList } from "@/features/shared/components/spatial-features-list";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -66,7 +65,7 @@ export const MitraDataRequestDetailAttributeView = memo(
         />
 
         {isLoading && (
-          <VStack flex={1} p={SPACING.md} bg={"bg.body"} minH={0}>
+          <VStack flex={1} p={"md"} bg={"bg.body"} minH={0}>
             <Skeleton flex={1} w={"full"} h={"full"} rounded={0} />
           </VStack>
         )}
@@ -76,7 +75,7 @@ export const MitraDataRequestDetailAttributeView = memo(
             flex={1}
             align={"center"}
             justify={"center"}
-            p={SPACING.md}
+            p={"md"}
             bg={"bg.body"}
             minH={0}
           >

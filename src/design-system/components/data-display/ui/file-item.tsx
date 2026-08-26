@@ -11,7 +11,6 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Image } from "@/design-system/components/media/ui/image";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { isImageFile } from "@/shared/utils/data/file";
@@ -68,7 +67,7 @@ export const FileItem = (props: FileItemProps) => {
         </P>
       </HStack>
 
-      <HStack align={"center"} gap={SPACING.xs}>
+      <HStack align={"center"} gap={"xs"}>
         {actionButtons}
 
         {onDelete && (

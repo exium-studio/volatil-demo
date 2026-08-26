@@ -19,7 +19,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
@@ -203,9 +202,9 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
         wrap={"wrap"}
         align={"center"}
         justify={"start"}
-        gap={SPACING.sm}
+        gap={"sm"}
         w={"full"}
-        p={SPACING.md}
+        p={"md"}
         bg={"bg.body"}
       >
         <SearchInput
@@ -218,7 +217,7 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
           maxW={"280px"}
         />
 
-        <HStack wrap={"wrap"} gap={SPACING.sm}>
+        <HStack wrap={"wrap"} gap={"sm"}>
           <StatusSelect
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
@@ -240,14 +239,14 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
       {/* Table Content */}
       <VStack
         flex={1}
-        gap={SPACING.sm}
+        gap={"sm"}
         overflowY={"auto"}
         bg={"bg.canvas"}
         w={"full"}
         position={"relative"}
       >
         {isLoading ? (
-          <Skeleton p={SPACING.md} rounded={0} />
+          <Skeleton p={"md"} rounded={0} />
         ) : (
           <Box w={"full"} position={"relative"} overflowY={"auto"}>
             <DataListTable.Root

@@ -80,7 +80,6 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { RichTextEditorPresetEssential } from "@/design-system/components/typography/ui/rich-text-editor.preset";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
-import { SPACING } from "@/design-system/constants/styles";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { SettingsTrigger } from "@/features/settings/components/settings";
@@ -136,7 +135,7 @@ const IntegratedFeatures = () => {
   const { setLocale } = useLocale();
 
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Integrated Features
@@ -167,7 +166,7 @@ const IntegratedFeatures = () => {
 
 const Branding = () => {
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Branding
@@ -187,7 +186,7 @@ const Typography = () => {
   const [tnum, setTnum] = useState<number>(10);
 
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Typography
@@ -238,7 +237,7 @@ const Typography = () => {
 
 const Navigation = () => {
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Navigation
@@ -254,7 +253,7 @@ const Navigation = () => {
 
 const Buttons = () => {
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Buttons
@@ -278,7 +277,7 @@ const Buttons = () => {
 
 const Toast = () => {
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Toast
@@ -434,7 +433,7 @@ const Layout = () => {
   );
 
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Layout
@@ -587,7 +586,7 @@ export const Inputs = () => {
   // console.log("number1", number1);
 
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Inputs
@@ -947,7 +946,7 @@ const ONestedDrawer = () => {
 
 export const Overlay = () => {
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Overlay
@@ -1002,7 +1001,7 @@ export const Disclosure = () => {
   ];
 
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Disclosure
@@ -1238,7 +1237,7 @@ export const Feedback = () => {
   ];
 
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Feedback
@@ -1705,7 +1704,7 @@ export const DataDisplay = () => {
   const [page, setPage] = useState<number>(1);
 
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Data Display
@@ -1782,7 +1781,7 @@ export const Utilities = () => {
   };
 
   return (
-    <Container.Root w={"full"} px={SPACING.md}>
+    <Container.Root w={"full"} px={"md"}>
       <Container.Body gap={4} p={4}>
         <P textAlign={"center"} fontWeight={"semibold"}>
           Utilities

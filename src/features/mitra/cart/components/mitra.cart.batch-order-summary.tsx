@@ -6,7 +6,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { SPACING } from "@/design-system/constants/styles";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartBatch } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type { ActiveCartBatch } from "@/features/mitra/cart/types/mitra.cart.batch.type";
@@ -81,8 +80,8 @@ export const MitraCartBatchOrderSummary = (
 
   return (
     <VStack
-      gap={SPACING.md}
-      p={SPACING.md}
+      gap={"md"}
+      p={"md"}
       rounded={theme.radii.container}
       bg={"bg.body"}
       align={"stretch"}
