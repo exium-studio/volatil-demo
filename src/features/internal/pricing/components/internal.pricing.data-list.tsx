@@ -293,7 +293,6 @@ export const InternalPricingDataList = () => {
           modalKey={"pricing-edit"}
           item={selectedItem}
           onClose={() => {
-            setSelectedItem(null);
             closeEditModal();
           }}
         />

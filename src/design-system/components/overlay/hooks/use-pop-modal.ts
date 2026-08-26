@@ -48,13 +48,19 @@ export function usePopModal(options: UsePopModalOptions) {
     );
   }, [modalKey, activeModalKey]);
 
-  const open = useCallback(() => {
-    navigate({
-      to: ".",
-      resetScroll: false,
-      search: (old) => ({ ...old, activeModalKey: modalKeyRef.current }),
-    });
-  }, [navigate]);
+  const open = useCallback(
+    (subKey?: string) => {
+      const targetKey = subKey
+        ? `${modalKeyRef.current}.${subKey}`
+        : modalKeyRef.current;
+      navigate({
+        to: ".",
+        resetScroll: false,
+        search: (old) => ({ ...old, activeModalKey: targetKey }),
+      });
+    },
+    [navigate],
+  );
 
   const close = useCallback(() => {
     const now = Date.now();

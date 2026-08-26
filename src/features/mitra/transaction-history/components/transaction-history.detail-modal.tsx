@@ -9,11 +9,11 @@ export const TransactionDetailTrigger = (
   props: TransactionDetailTriggerProps,
 ) => {
   // Props
-  const { modalKey: customModalKey, transaction, children } = props;
+  const { modalKey: customModalKey = "transaction-detail", transaction, children } = props;
 
   // Stores & Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: customModalKey ?? `transaction-detail-${transaction.id}`,
+    modalKey: customModalKey,
   });
 
   return (
@@ -26,7 +26,7 @@ export const TransactionDetailTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      {isOpen && (
+      {transaction && (
         <TransactionDetailModalContent
           transaction={transaction}
           close={close}

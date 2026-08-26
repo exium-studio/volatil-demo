@@ -20,7 +20,8 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal";
+import { TransactionDetailModalContent } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal-content";
+import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
   TransactionRecord,
@@ -67,7 +68,7 @@ export const TransactionHistoryDataList = () => {
     useState<TransactionRecord | null>(null);
 
   // Stores & Hooks
-  const { open: openDetailModal } = usePopModal({
+  const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: "transaction-detail",
   });
 
@@ -204,7 +205,7 @@ export const TransactionHistoryDataList = () => {
         icon: EyeIcon,
         onClick: (item: TransactionRecord) => {
           setSelectedTransaction(item);
-          openDetailModal();
+          open();
         },
       },
     ];
@@ -215,7 +216,7 @@ export const TransactionHistoryDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [transactionHistory.items, preferredTimezone, openDetailModal]);
+  }, [transactionHistory.items, preferredTimezone, open]);
 
   return (
     <VStack w={"full"}>
@@ -306,15 +307,21 @@ export const TransactionHistoryDataList = () => {
         )}
       </VStack>
 
-      {/* Detail Modal Trigger Wrapper */}
-      {selectedTransaction && (
-        <TransactionDetailTrigger
-          modalKey={"transaction-detail"}
-          transaction={selectedTransaction}
-        >
-          <span style={{ display: "none" }} />
-        </TransactionDetailTrigger>
-      )}
+      {/* Detail Modal */}
+      <Modal.Root
+        modalKey={modalKey}
+        opened={isOpen}
+        open={open}
+        close={close}
+        size={"lg"}
+      >
+        {selectedTransaction && (
+          <TransactionDetailModalContent
+            transaction={selectedTransaction}
+            close={close}
+          />
+        )}
+      </Modal.Root>
     </VStack>
   );
 };

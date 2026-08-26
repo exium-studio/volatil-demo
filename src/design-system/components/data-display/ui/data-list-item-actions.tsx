@@ -1,6 +1,9 @@
 // src/design-system/components/data-display/ui/data-list-item-actions.tsx
 
-import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type {
   ActionIconType,
   DataListDeclarativeItemAction,
@@ -15,13 +18,13 @@ import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { isValidElement, type ComponentType } from "react";
 
-const isDeclarativeAction = <T = Record<string, unknown>>(
+const isDeclarativeAction = <T = Record<string, unknown>,>(
   action: DataListItemActionsGenerator<T>,
 ): action is DataListDeclarativeItemAction<T> => {
   return typeof action === "object" && action !== null && "label" in action;
 };
 
-export const executeItemAction = <T = Record<string, unknown>>(
+export const executeItemAction = <T = Record<string, unknown>,>(
   action: DataListDeclarativeItemAction<T>,
   item: FormattedListItem<T>,
 ) => {
@@ -110,7 +113,10 @@ export const DataListRowSpreadActions = <
         const isDisabled = Boolean(action.disabled?.(item.data, item));
         const resolvedLabel = resolveLabel(action.label, item.data);
         const resolvedIcon = resolveIcon(action.icon, item.data);
-        const resolvedColorPalette = resolveColorPalette(action.colorPalette, item.data);
+        const resolvedColorPalette = resolveColorPalette(
+          action.colorPalette,
+          item.data,
+        );
         const iconNode = renderIcon(resolvedIcon);
 
         if (resolvedIcon) {
@@ -192,7 +198,10 @@ export const DataListItemActionsTrigger = <
               const isDisabled = Boolean(action.disabled?.(item.data, item));
               const resolvedLabel = resolveLabel(action.label, item.data);
               const resolvedIcon = resolveIcon(action.icon, item.data);
-              const resolvedColorPalette = resolveColorPalette(action.colorPalette, item.data);
+              const resolvedColorPalette = resolveColorPalette(
+                action.colorPalette,
+                item.data,
+              );
               const iconNode = renderIcon(resolvedIcon);
 
               return (
@@ -200,7 +209,11 @@ export const DataListItemActionsTrigger = <
                   key={key}
                   value={key}
                   disabled={isDisabled}
-                  color={resolvedColorPalette ? `${resolvedColorPalette}.fg` : undefined}
+                  color={
+                    resolvedColorPalette
+                      ? `${resolvedColorPalette}.fg`
+                      : undefined
+                  }
                   onClick={() => executeItemAction(action, item)}
                 >
                   {iconNode}

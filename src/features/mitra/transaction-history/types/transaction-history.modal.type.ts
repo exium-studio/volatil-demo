@@ -5,7 +5,7 @@ import type React from "react";
 
 export type TransactionDetailTriggerProps = {
   modalKey?: string;
-  transaction: TransactionRecord;
+  transaction?: TransactionRecord | null;
   children: React.ReactNode;
 };
 

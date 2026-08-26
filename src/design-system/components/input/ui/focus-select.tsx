@@ -292,7 +292,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                       key={opt.value}
                       variant={isSelected ? "subtle" : "ghost"}
                       w={"full"}
-                      h={"auto"}
                       py={SPACING.sm}
                       px={3}
                       justifyContent={"space-between"}

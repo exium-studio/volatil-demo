@@ -45,12 +45,10 @@ export const InternalHomeServiceRateModalTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      {isOpen && (
-        <InternalHomeServiceRateModalContent
-          serviceRates={serviceRates}
-          close={close}
-        />
-      )}
+      <InternalHomeServiceRateModalContent
+        serviceRates={serviceRates}
+        close={close}
+      />
     </Modal.Root>
   );
 };
