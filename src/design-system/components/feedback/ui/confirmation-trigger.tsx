@@ -2,7 +2,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmationTriggerProps } from "@/design-system/components/feedback/types/confirmation-trigger.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Circle } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -79,10 +79,10 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                   isValidElement(icon) ? (
                     icon
                   ) : (
-                    <AppIcon icon={icon as ComponentType} size={"lg"} />
+                    <AppIcon icon={icon as ComponentType} size={"md"} />
                   )
                 ) : (
-                  <AppIcon icon={AlertTriangleIcon} size={"lg"} />
+                  <AppIcon icon={AlertTriangleIcon} size={"md"} />
                 )}
               </Circle>
 
@@ -90,20 +90,15 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                 {resolvedTitle}
               </Heading>
 
-              <P fontSize={"sm"} color={"fg.muted"} maxW={"260px"}>
+              <P fontSize={"sm"} color={"fg.muted"} maxW={"320px"}>
                 {resolvedDesc}
               </P>
             </VStack>
           </Modal.Body>
 
           <Modal.Footer>
-            <HStack gap={SPACING.sm} w={"full"}>
-              <Button flex={1} variant={"outline"} onClick={handleCancel}>
-                {resolvedCancelLabel}
-              </Button>
-
+            <VStack gap={SPACING.xs} w={"full"}>
               <Button
-                flex={1}
                 primary
                 variant={"solid"}
                 colorPalette={colorPalette}
@@ -112,7 +107,9 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
               >
                 {resolvedConfirmLabel}
               </Button>
-            </HStack>
+
+              <Button onClick={handleCancel}>{resolvedCancelLabel}</Button>
+            </VStack>
           </Modal.Footer>
         </Modal.Content>
       </Modal.Root>

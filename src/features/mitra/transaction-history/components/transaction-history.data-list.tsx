@@ -20,7 +20,7 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { SPACING } from "@/design-system/constants/styles";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { TransactionHistoryDetailModal } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal";
+import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
   TransactionRecord,
@@ -59,13 +59,15 @@ export const TransactionHistoryDataList = () => {
   // States
   const [searchRaw, setSearchRaw] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE_OPTIONS[0]);
+  const [pageSize, setPageSize] = useState<number>(
+    DEFAULT_PAGE_SIZE_OPTIONS[0],
+  );
   const [status, setStatus] = useState<string>("");
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionRecord | null>(null);
 
   // Stores & Hooks
-  const { open: openDetailModal, close: closeDetailModal } = usePopModal({
+  const { open: openDetailModal } = usePopModal({
     modalKey: "transaction-detail",
   });
 
@@ -304,15 +306,15 @@ export const TransactionHistoryDataList = () => {
         )}
       </VStack>
 
-      {/* Detail Modal */}
-      <TransactionHistoryDetailModal
-        modalKey={"transaction-detail"}
-        transaction={selectedTransaction}
-        onClose={() => {
-          setSelectedTransaction(null);
-          closeDetailModal();
-        }}
-      />
+      {/* Detail Modal Trigger Wrapper */}
+      {selectedTransaction && (
+        <TransactionDetailTrigger
+          modalKey={"transaction-detail"}
+          transaction={selectedTransaction}
+        >
+          <span style={{ display: "none" }} />
+        </TransactionDetailTrigger>
+      )}
     </VStack>
   );
 };
