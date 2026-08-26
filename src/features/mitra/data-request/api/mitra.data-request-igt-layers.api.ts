@@ -23,22 +23,13 @@ export async function getIgtLayers(
     }
     return isDummyDataEnabled() ? DUMMY_IGT_LAYERS : EMPTY_LAYERS_RESPONSE;
   } catch (error) {
-    console.warn(
-      "getIgtLayers API error, trying fallback endpoint /map/layers:",
-      error,
-    );
-    try {
-      const fallbackResponse = await apiClient.get<
-        ApiResponse<IgtLayersResponse>
-      >("/map/layers", {
-        signal,
-      });
-      if (fallbackResponse.data) {
-        return fallbackResponse.data;
-      }
-      return isDummyDataEnabled() ? DUMMY_IGT_LAYERS : EMPTY_LAYERS_RESPONSE;
-    } catch {
-      return isDummyDataEnabled() ? DUMMY_IGT_LAYERS : EMPTY_LAYERS_RESPONSE;
+    if (isDummyDataEnabled()) {
+      console.warn(
+        "getIgtLayers API error, falling back to dummy data:",
+        error,
+      );
+      return DUMMY_IGT_LAYERS;
     }
+    return EMPTY_LAYERS_RESPONSE;
   }
 }

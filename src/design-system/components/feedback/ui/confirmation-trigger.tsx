@@ -10,6 +10,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
 import { t } from "@/shared/libs/i18n";
 import { AlertTriangleIcon } from "lucide-react";
+import { isValidElement, type ComponentType } from "react";
 
 export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
   // Props
@@ -76,10 +77,13 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                 mb={1}
               >
                 {icon ? (
-                  typeof icon === "function" ? (
-                    <AppIcon icon={icon as typeof AlertTriangleIcon} size={"md"} />
-                  ) : (
+                  isValidElement(icon) ? (
                     icon
+                  ) : (
+                    <AppIcon
+                      icon={icon as ComponentType}
+                      size={"md"}
+                    />
                   )
                 ) : (
                   <AppIcon icon={AlertTriangleIcon} size={"md"} />

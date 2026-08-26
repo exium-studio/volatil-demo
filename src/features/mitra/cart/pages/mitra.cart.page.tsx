@@ -12,6 +12,7 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { SPACING } from "@/design-system/constants/styles";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -64,6 +65,10 @@ const MitraCartContent = () => {
     setSelectedBatchId(batchId);
   };
 
+  // Derived Values
+  const selectedBatchIndex = batches.findIndex(
+    (b) => b.batchId === selectedBatchId,
+  );
   const hasBatches = batches.length > 0;
   const isGlobalFetching = isBatchesFetching || isDetailFetching;
 
@@ -175,7 +180,13 @@ const MitraCartContent = () => {
           overflowY={isSmContainer ? undefined : "auto"}
         >
           <HeaderContainer>
-            <Heading>{"Ringkasan Order"}</Heading>
+            <HStack align={"center"} gap={SPACING.sm}>
+              <Heading>{"Ringkasan Order"}</Heading>
+
+              {selectedBatchIndex !== -1 && (
+                <Badge>{`Batch #${selectedBatchIndex + 1}`}</Badge>
+              )}
+            </HStack>
           </HeaderContainer>
 
           <Separator borderColor={"bg.canvas"} />
