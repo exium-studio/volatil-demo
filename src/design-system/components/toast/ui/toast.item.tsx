@@ -182,6 +182,7 @@ export const ToastItem = memo(function ToastItem(
                 fontWeight={"medium"}
                 color={TOAST_VARIANT_MAP[record.variant].color}
                 lineClamp={stackExpanded || toastItemExpanded ? undefined : 1}
+                w={"140px"}
               >
                 {record.title}
               </ClampedP>

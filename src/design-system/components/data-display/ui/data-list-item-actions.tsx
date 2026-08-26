@@ -18,16 +18,16 @@ import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { isValidElement, type ComponentType } from "react";
 
-const isDeclarativeAction = <T = Record<string, unknown>,>(
+function isDeclarativeAction<T = Record<string, unknown>>(
   action: DataListItemActionsGenerator<T>,
-): action is DataListDeclarativeItemAction<T> => {
+): action is DataListDeclarativeItemAction<T> {
   return typeof action === "object" && action !== null && "label" in action;
-};
+}
 
-export const executeItemAction = <T = Record<string, unknown>,>(
+export function executeItemAction<T = Record<string, unknown>>(
   action: DataListDeclarativeItemAction<T>,
   item: FormattedListItem<T>,
-) => {
+) {
   const confirmationConfig =
     typeof action.confirmation === "function"
       ? action.confirmation(item.data)
@@ -45,56 +45,50 @@ export const executeItemAction = <T = Record<string, unknown>,>(
   }
 
   void action.onClick?.(item.data, item);
-};
+}
 
-const resolveIcon = <T,>(
+function resolveIcon<T>(
   iconProp: ActionIconType | ((item: T) => ActionIconType) | undefined,
   item: T,
-): ActionIconType | undefined => {
+): ActionIconType | undefined {
   if (typeof iconProp === "function") {
     return (iconProp as (item: T) => ActionIconType)(item);
   }
   return iconProp;
-};
+}
 
-const resolveLabel = <T,>(
+function resolveLabel<T>(
   labelProp: string | ((item: T) => string),
   item: T,
-): string => {
+): string {
   if (typeof labelProp === "function") {
     return labelProp(item);
   }
   return labelProp;
-};
+}
 
-const resolveColorPalette = <T,>(
+function resolveColorPalette<T>(
   paletteProp: string | ((item: T) => string | undefined) | undefined,
   item: T,
-): string | undefined => {
+): string | undefined {
   if (typeof paletteProp === "function") {
     return paletteProp(item);
   }
   return paletteProp;
-};
+}
 
-const renderIcon = (icon: ActionIconType | undefined) => {
+function renderIcon(icon: ActionIconType | undefined) {
   if (!icon) return null;
   if (isValidElement(icon)) return icon;
   return <AppIcon icon={icon as ComponentType} />;
-};
+}
 
-/**
- * Renders the inline action buttons in the last spread column of each row.
- * - Uses standard/default component sizing without overriding small/xs sizes.
- * - If action has `icon`: renders IconButton with Tooltip (using label).
- * - If action has NO `icon`: renders regular Button with label.
- */
-export const DataListRowSpreadActions = <
+export function DataListRowSpreadActions<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(props: {
   item: FormattedListItem<T>;
   itemActions?: DataListItemActionsGenerator<T>[];
-}) => {
+}) {
   const { item, itemActions = [] } = props;
 
   const declarativeActions = itemActions.filter(isDeclarativeAction);
@@ -149,16 +143,11 @@ export const DataListRowSpreadActions = <
       })}
     </HStack>
   );
-};
+}
 
-/**
- * Dropdown trigger that lists actions for the sticky menu.
- */
-export const DataListItemActionsTrigger = <
+export function DataListItemActionsTrigger<
   T extends Record<string, unknown> = Record<string, unknown>,
->(
-  props: DataListItemActionsTriggerProps<T>,
-) => {
+>(props: DataListItemActionsTriggerProps<T>) {
   // Props
   const {
     children,
@@ -232,4 +221,4 @@ export const DataListItemActionsTrigger = <
       </Menu.Content>
     </Menu.Root>
   );
-};
+}

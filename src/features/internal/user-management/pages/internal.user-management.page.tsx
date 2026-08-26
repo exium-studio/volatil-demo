@@ -19,10 +19,7 @@ export const InternalUserManagementPage = () => {
   }
 
   return (
-    <PanelContentContainer
-      h={"auto"}
-      position={"relative"}
-    >
+    <PanelContentContainer h={"auto"} position={"relative"}>
       <TopBarLoader isFetching={isFetching} />
 
       <InternalUserManagementStats />

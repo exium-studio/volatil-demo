@@ -26,12 +26,12 @@ import type {
   UserManagementItem,
   UserStatus,
 } from "@/features/internal/user-management/types/user-management.type";
+import { t } from "@/shared/libs/i18n";
+import type { UserRole } from "@/shared/types/common-response.type";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { t } from "@/shared/libs/i18n";
-import type { UserRole } from "@/shared/types/common-response.type";
 import { CheckCircleIcon, ShieldAlertIcon } from "lucide-react";
 import { startTransition, useMemo, useState } from "react";
 
@@ -45,10 +45,14 @@ const ROLE_MAP: Record<UserRole, { label: string; color: string }> = {
   mitra: { label: "Mitra", color: "blue" },
 };
 
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { RoleSelect } from "@/shared/components/select/ui/role-select";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
 
 export const InternalUserManagementDataList = () => {
+  // Stores
+  const { theme } = useThemeStore();
+
   // States
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
@@ -160,9 +164,8 @@ export const InternalUserManagementDataList = () => {
               ? "Nonaktifkan Pengguna?"
               : "Aktifkan Pengguna?",
           description: `Apakah Anda yakin ingin mengubah status akun ${user.name}?`,
-          confirmLabel:
-            user.status === "active" ? "Nonaktifkan" : "Aktifkan",
-          colorPalette: user.status === "active" ? "red" : "green",
+          confirmLabel: user.status === "active" ? "Nonaktifkan" : "Aktifkan",
+          colorPalette: user.status === "active" ? "red" : theme.colorPalette,
           onConfirm: () => {
             updateStatusMutation.mutate({
               id: user.id,
@@ -179,7 +182,7 @@ export const InternalUserManagementDataList = () => {
       batchActions: [],
       itemActions,
     };
-  }, [users, preferredTimezone, updateStatusMutation]);
+  }, [users, preferredTimezone, updateStatusMutation, theme.colorPalette]);
 
   return (
     <Container.Root withContext={true}>
@@ -193,9 +196,7 @@ export const InternalUserManagementDataList = () => {
           p={SPACING.md}
         >
           <VStack gap={1} align={"start"}>
-            <Heading>
-              {"Daftar Pengguna"}
-            </Heading>
+            <Heading>{"Daftar Pengguna"}</Heading>
             <P fontSize={"sm"} color={"fg.subtle"}>
               {"Kelola data akun pengguna internal dan mitra ATR/BPN."}
             </P>
