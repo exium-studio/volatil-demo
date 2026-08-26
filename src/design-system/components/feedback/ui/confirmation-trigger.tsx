@@ -59,7 +59,6 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
         opened={popModal.isOpen}
         open={popModal.open}
         close={popModal.close}
-        size={"sm"}
       >
         <Modal.Trigger>{children}</Modal.Trigger>
 
@@ -80,10 +79,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                   isValidElement(icon) ? (
                     icon
                   ) : (
-                    <AppIcon
-                      icon={icon as ComponentType}
-                      size={"md"}
-                    />
+                    <AppIcon icon={icon as ComponentType} size={"md"} />
                   )
                 ) : (
                   <AppIcon icon={AlertTriangleIcon} size={"md"} />
@@ -94,7 +90,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
                 {resolvedTitle}
               </Heading>
 
-              <P fontSize={"sm"} color={"fg.muted"} maxW={"320px"}>
+              <P fontSize={"sm"} color={"fg.muted"} maxW={"260px"}>
                 {resolvedDesc}
               </P>
             </VStack>
