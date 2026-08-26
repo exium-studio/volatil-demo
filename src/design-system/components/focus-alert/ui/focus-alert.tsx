@@ -14,6 +14,8 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SPACING } from "@/design-system/constants/styles";
+import { IconInfoCircle } from "@tabler/icons-react";
+import type { ComponentType } from "react";
 import {
   CheckIcon,
   HeartIcon,
@@ -105,7 +107,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   // Constants
   const VARIANTS_MAP: Record<
     FocusAlertVariant,
-    { colorPalette: string; icon: typeof CheckIcon }
+    { colorPalette: string; icon: ComponentType }
   > = {
     // Semantic aliases
     success: {
@@ -130,7 +132,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
     },
     info: {
       colorPalette: "neutral",
-      icon: SparklesIcon,
+      icon: IconInfoCircle,
       // emote: "neutral",
     },
     help: {
