@@ -8,7 +8,6 @@ import { RadioCardInput } from "@/design-system/components/input/ui/radio-card-i
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -124,10 +123,10 @@ const InternalDataManagementEditModalContent = (
       </Modal.Header>
 
       <Modal.Body p={"md"}>
-        <VStack align={"stretch"} gap={"lg"}>
+        <VStack align={"stretch"} gap={"xl"}>
           {/* Grup 1: Informasi Dasar */}
-          <Fieldset legend={"Informasi Dasar"}>
-            <VStack align={"stretch"} gap={"md"} pt={1}>
+          <Fieldset legend={"Informasi Dasar"} containeredContent>
+            <VStack align={"stretch"} gap={"md"}>
               {/* Input Judul Layer */}
               <Field label={"Nama / Judul Layer"}>
                 <Input
@@ -174,11 +173,9 @@ const InternalDataManagementEditModalContent = (
             </VStack>
           </Fieldset>
 
-          <Separator borderColor={"bg.canvas"} />
-
           {/* Grup 2: Konfigurasi Spasial */}
-          <Fieldset legend={"Konfigurasi Spasial"}>
-            <VStack align={"stretch"} gap={"md"} pt={1}>
+          <Fieldset legend={"Konfigurasi Spasial"} containeredContent>
+            <VStack align={"stretch"} gap={"md"}>
               {/* Select Basis Spasial via RadioCardInput */}
               <Field label={"Basis Spasial"}>
                 <RadioCardInput.Root
@@ -245,11 +242,9 @@ const InternalDataManagementEditModalContent = (
             </VStack>
           </Fieldset>
 
-          <Separator borderColor={"bg.canvas"} />
-
           {/* Grup 3: Endpoint Layanan OGC */}
-          <Fieldset legend={"Endpoint Layanan OGC"}>
-            <VStack align={"stretch"} gap={"md"} pt={1}>
+          <Fieldset legend={"Endpoint Layanan OGC"} containeredContent>
+            <VStack align={"stretch"} gap={"md"}>
               {/* Input WFS Endpoint */}
               <Field label={"WFS Endpoint URL"}>
                 <Textarea

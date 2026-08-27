@@ -5,4 +5,5 @@ import type { ReactNode } from "react";
 
 export type FieldsetProps = ChakraFieldset.RootProps & {
   legend?: ReactNode;
+  containeredContent?: boolean;
 };

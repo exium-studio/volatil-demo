@@ -3,10 +3,16 @@
 import { forwardRef } from "react";
 import { Fieldset as ChakraFieldset } from "@chakra-ui/react";
 import type { FieldsetProps } from "@/design-system/components/input/types/fieldset.type";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 export const Fieldset = forwardRef<HTMLFieldSetElement, FieldsetProps>(
   function Fieldset(props, ref) {
-    const { legend, children, ...restProps } = props;
+    // Props
+    const { children, legend, containeredContent, ...restProps } = props;
+
+    // Stores
+    const { theme } = useThemeStore();
 
     return (
       <ChakraFieldset.Root ref={ref} gap={4} {...restProps}>
@@ -16,7 +22,20 @@ export const Fieldset = forwardRef<HTMLFieldSetElement, FieldsetProps>(
           </ChakraFieldset.Legend>
         )}
 
-        <ChakraFieldset.Content>{children}</ChakraFieldset.Content>
+        <ChakraFieldset.Content>
+          {containeredContent && (
+            <VStack
+              p={"md"}
+              border={"1px solid"}
+              borderColor={"border"}
+              rounded={theme.radii.component}
+            >
+              {children}
+            </VStack>
+          )}
+
+          {!containeredContent && children}
+        </ChakraFieldset.Content>
       </ChakraFieldset.Root>
     );
   },
