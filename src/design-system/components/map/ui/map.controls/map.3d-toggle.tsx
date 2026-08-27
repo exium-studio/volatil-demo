@@ -23,6 +23,15 @@ export const Map3DToggle = (props: StackProps) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(map as any).style || !map.isStyleLoaded()) return;
 
+    if (is3D && map.getSource("terrain-dem")) {
+      map.setTerrain({
+        source: "terrain-dem",
+        exaggeration: 1.5,
+      });
+    } else {
+      map.setTerrain(null);
+    }
+
     if (map.getLayer("building-3d")) {
       map.setLayoutProperty(
         "building-3d",
@@ -52,6 +61,15 @@ export const Map3DToggle = (props: StackProps) => {
 
     const nextIs3D = !is3D;
     const targetPitch = nextIs3D ? 60 : 0;
+
+    if (nextIs3D && map.getSource("terrain-dem")) {
+      map.setTerrain({
+        source: "terrain-dem",
+        exaggeration: 1.5,
+      });
+    } else {
+      map.setTerrain(null);
+    }
 
     if (map.getLayer("building-3d")) {
       map.setLayoutProperty(

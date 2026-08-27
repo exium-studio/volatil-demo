@@ -153,19 +153,18 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
         }
       }
 
-      if (activeKey === "satellite") {
-        if (instance.getSource("terrain-dem")) {
-          instance.setTerrain({
-            source: "terrain-dem",
-            exaggeration: 1.5,
-          });
-        }
+      // Step 2: Handle 3D vs 2D state (terrain & building visibility) according to is3D setting
+      const is3DActive = useMapBaseMapStore.getState().is3D;
+
+      if (is3DActive && instance.getSource("terrain-dem")) {
+        instance.setTerrain({
+          source: "terrain-dem",
+          exaggeration: 1.5,
+        });
       } else {
         instance.setTerrain(null);
       }
 
-      // Step 2: Handle 3D vs 2D building visibility state according to is3D setting
-      const is3DActive = useMapBaseMapStore.getState().is3D;
       if (instance.getLayer("building-3d")) {
         instance.setLayoutProperty(
           "building-3d",
@@ -264,6 +263,16 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
         }
 
         const is3DActive = useMapBaseMapStore.getState().is3D;
+
+        if (is3DActive && map.getSource("terrain-dem")) {
+          map.setTerrain({
+            source: "terrain-dem",
+            exaggeration: 1.5,
+          });
+        } else {
+          map.setTerrain(null);
+        }
+
         if (map.getLayer("building-3d")) {
           map.setLayoutProperty(
             "building-3d",
