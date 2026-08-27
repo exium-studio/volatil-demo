@@ -633,6 +633,8 @@ export const chakraConfig = defineConfig({
         },
 
         jakarta: { value: "'Plus Jakarta Sans Variable', sans-serif" },
+        figtree: { value: "'Figtree Variable', sans-serif" },
+        ubuntu: { value: "'Ubuntu', sans-serif" },
         outfit: { value: "'Outfit Variable', sans-serif" },
         wix: { value: "'Wix Madefor Text Variable', sans-serif" },
         sortsMillGoudy: { value: "'Sorts Mill Goudy', serif" },

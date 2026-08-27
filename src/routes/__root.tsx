@@ -12,10 +12,12 @@ import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { LocaleProvider } from "@/shared/libs/i18n/locale-provider";
 import { queryClient } from "@/shared/libs/tanstack-query/query.client";
 import { globalSearchParamsSchema } from "@/shared/schemas/root.search-params-schema";
+import "@fontsource-variable/figtree";
 import "@fontsource-variable/outfit";
 import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource-variable/wix-madefor-text";
 import "@fontsource/sorts-mill-goudy";
+import "@fontsource/ubuntu";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
 

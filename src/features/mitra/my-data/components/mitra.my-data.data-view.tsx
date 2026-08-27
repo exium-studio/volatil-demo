@@ -117,13 +117,13 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                 gap={1}
                 maxW={"200px"}
               >
-                <P fontSize={"sm"} truncate>
+                <P truncate>
                   {item.wfsUrl}
                 </P>
                 <AppIcon icon={ExternalLinkIcon} size={"xs"} flexShrink={0} />
               </ExternalLink>
             ) : (
-              <P fontSize={"sm"} color={"fg.subtle"}>
+              <P color={"fg.subtle"}>
                 {"-"}
               </P>
             ),
@@ -139,13 +139,13 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                 gap={1}
                 maxW={"200px"}
               >
-                <P fontSize={"sm"} truncate>
+                <P truncate>
                   {item.wmsUrl}
                 </P>
                 <AppIcon icon={ExternalLinkIcon} size={"xs"} flexShrink={0} />
               </ExternalLink>
             ) : (
-              <P fontSize={"sm"} color={"fg.subtle"}>
+              <P color={"fg.subtle"}>
                 {"-"}
               </P>
             ),
@@ -166,9 +166,9 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           {
             value: item.expiresAt,
             td: isActive ? (
-              <Countdown finishedAt={item.expiresAt} fontSize={"sm"} />
+              <Countdown finishedAt={item.expiresAt} />
             ) : (
-              <P fontSize={"sm"} color={"fg.subtle"}>
+              <P color={"fg.subtle"}>
                 {"-"}
               </P>
             ),
@@ -177,7 +177,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           {
             value: item.expiresAt,
             td: (
-              <P fontSize={"sm"} whiteSpace={"nowrap"}>
+              <P whiteSpace={"nowrap"}>
                 {formatUtcDateTime(item.expiresAt, preferredTimezone)}
               </P>
             ),

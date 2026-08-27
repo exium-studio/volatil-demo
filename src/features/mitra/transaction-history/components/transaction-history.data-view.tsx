@@ -91,7 +91,7 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.transactionNumber,
               td: (
-                <P fontSize={"sm"} fontWeight={"semibold"}>
+                <P fontWeight={"semibold"}>
                   {item.transactionNumber}
                 </P>
               ),
@@ -100,7 +100,7 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.orderNumber,
               td: (
-                <P fontSize={"sm"} color={"fg.muted"}>
+                <P color={"fg.muted"}>
                   {item.orderNumber}
                 </P>
               ),
@@ -109,7 +109,7 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.billingCode,
               td: (
-                <P fontSize={"sm"}>
+                <P>
                   <TNum>{item.billingCode}</TNum>
                 </P>
               ),
@@ -118,7 +118,7 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.createdAt,
               td: (
-                <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                <P whiteSpace={"nowrap"}>
                   {formatUtcDateTime(item.createdAt, preferredTimezone)}
                 </P>
               ),
@@ -137,10 +137,10 @@ export const TransactionHistoryDataView = () => {
               value: itemNames,
               td: (
                 <VStack align={"start"} gap={0} maxW={"220px"}>
-                  <P fontSize={"sm"} truncate title={itemNames}>
+                  <P truncate title={itemNames}>
                     {itemNames || "-"}
                   </P>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
                     {`${item.items.length} Layer IGT`}
                   </P>
                 </VStack>
@@ -150,7 +150,7 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.totalAmount,
               td: (
-                <P fontSize={"sm"} fontWeight={"medium"}>
+                <P fontWeight={"medium"}>
                   <FormatNumber
                     value={item.totalAmount}
                     style={"currency"}

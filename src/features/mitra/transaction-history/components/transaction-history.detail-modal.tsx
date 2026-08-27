@@ -160,7 +160,7 @@ export const TransactionDetailModalContent = (
           {
             value: item.subtotalPrice,
             td: (
-              <P fontSize={"sm"} fontWeight={"medium"}>
+              <P fontWeight={"medium"}>
                 <FormatNumber
                   value={item.subtotalPrice}
                   style={"currency"}

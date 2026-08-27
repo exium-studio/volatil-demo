@@ -145,7 +145,7 @@ export const InternalPricingDataView = () => {
           {
             value: item.updatedAt,
             td: (
-              <P fontSize={"sm"} color={"fg.muted"} whiteSpace={"nowrap"}>
+              <P color={"fg.muted"} whiteSpace={"nowrap"}>
                 {formatUtcDateTime(item.updatedAt, preferredTimezone)}
               </P>
             ),
