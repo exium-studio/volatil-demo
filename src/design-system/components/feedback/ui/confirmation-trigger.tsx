@@ -67,12 +67,12 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
           </Modal.Header>
 
           <Modal.Body pt={0} pb={"lg"}>
-            <VStack align={"center"} gap={"sm"} textAlign={"center"}>
+            <VStack align={"center"} gap={"md"} textAlign={"center"}>
               <Circle
                 size={"48px"}
                 bg={`${colorPalette}.subtle`}
                 color={`${colorPalette}.fg`}
-                mb={1}
+                mb={"md"}
               >
                 {icon ? (
                   isValidElement(icon) ? (

@@ -93,7 +93,7 @@ export const MapBasemapSelect = () => {
         </Popover.Header>
 
         <Popover.Body
-          className={"noScroll"}
+          className={"noScrollbar"}
           w={["full", null, "400px"]}
           p={2}
           overflowY={"auto"}

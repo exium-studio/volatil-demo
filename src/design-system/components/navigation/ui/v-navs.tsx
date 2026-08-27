@@ -52,7 +52,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
   }, [groups, activeKey]);
 
   return (
-    <VScrollContainer className={"noScroll"} {...restProps}>
+    <VScrollContainer className={"noScrollbar"} {...restProps}>
       {groups.map((group, groupIndex) => {
         const isFirstGroup = groupIndex === 0;
         const groupTitle = group.titleKey ? t[group.titleKey]() : null;
@@ -207,7 +207,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
         >
           <NavIcon nav={nav} />
 
-          <P lineClamp={1}>{navTitle}</P>
+          <ClampedP>{navTitle}</ClampedP>
         </NavButton>
       </Tooltip>
     );

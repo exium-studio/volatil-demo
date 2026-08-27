@@ -219,12 +219,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   return (
     <Modal.Content>
       <Modal.Body pt={"lg"} pb={"md"}>
-        <VStack
-          align={"center"}
-          gap={"md"}
-          textAlign={"center"}
-          my={"sm"}
-        >
+        <VStack align={"center"} gap={"md"} textAlign={"center"} my={"sm"}>
           <Box
             pos={"relative"}
             display={"inline-flex"}

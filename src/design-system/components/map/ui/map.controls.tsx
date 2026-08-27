@@ -12,6 +12,7 @@ import { MapZoom } from "@/design-system/components/map/ui/map.controls/map.zoom
 export const MapControls = (props: StackProps) => {
   return (
     <HStack
+      className={"noScrollbar"}
       align={"end"}
       overflowX={"auto"}
       justify={"space-between"}

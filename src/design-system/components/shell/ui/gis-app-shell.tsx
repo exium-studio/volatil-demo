@@ -20,6 +20,7 @@ import {
 import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
+import { HNavs } from "@/design-system/components/navigation/ui/h-navs";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
@@ -77,11 +78,16 @@ export const GisAppShell = (props: GisAppShellProps) => {
   return (
     <AppPageContainer
       flexDir={isSmallViewport ? "column" : "row"}
+      pos={"relative"}
+      overflow={"hidden"}
+      bg={"bg.canvas"}
       {...restProps}
     >
       {!isSmallViewport && <Sidebar />}
 
       <Content />
+
+      {isSmallViewport && <MobileBottomNav />}
     </AppPageContainer>
   );
 };
@@ -454,5 +460,101 @@ const Content = () => {
           : [contentPanel, resizeTrigger, spacerPanel]}
       </Splitter.Root>
     </>
+  );
+};
+
+// -------------------------------------------------------------------------------------
+
+const MobileBottomNav = () => {
+  // Stores
+
+  // Hooks
+  const pathname = useLocation().pathname;
+  const navigate = useNavigate();
+
+  // Derived Values
+  const userData = getUserSession();
+  const role = userData?.role ?? "mitra";
+  const navsMap = (role === "internal"
+    ? INTERNAL_APP_NAVS_MAP
+    : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
+  const mainGroups =
+    role === "internal" ? INTERNAL_APP_NAV_GROUPS_LIST : APP_NAV_GROUPS_LIST;
+  const otherGroups =
+    role === "internal"
+      ? INTERNAL_APP_OTHER_NAV_GROUPS_LIST
+      : APP_OTHER_NAV_GROUPS_LIST;
+
+  const allNavKeys = useMemo(() => {
+    const mainKeys = mainGroups.flatMap((g) => g.items.map((i) => i.key));
+    const otherKeys = otherGroups.flatMap((g) => g.items.map((i) => i.key));
+    return [...mainKeys, ...otherKeys];
+  }, [mainGroups, otherGroups]);
+
+  const activeKey = getNavKeyFromPathname(navsMap, pathname);
+
+  return (
+    <HStack
+      w={"full"}
+      bg={"bg.body"}
+      borderTop={"1px solid"}
+      borderColor={"border.subtle"}
+      p={"sm"}
+      pb={"md"}
+      align={"center"}
+      zIndex={2}
+      pointerEvents={"auto"}
+      flexShrink={0}
+    >
+      <Box flex={1} minW={0} overflow={"hidden"}>
+        <HNavs<AdminAppNavKey | AppNavKey>
+          navs={navsMap}
+          navKeys={allNavKeys}
+          activeKey={activeKey}
+          onNavClick={(key) => {
+            const target = navsMap[key];
+            if (target?.pathname) {
+              navigate({
+                to: target.pathname,
+                resetScroll: false,
+              });
+            }
+          }}
+        />
+      </Box>
+
+      <Separator
+        orientation={"vertical"}
+        h={"52px"}
+        borderColor={"border.subtle"}
+      />
+
+      <UserProfilePopoverTrigger>
+        <NavButton
+          aria-label={t["app.navs.profile"]()}
+          variant={"ghost"}
+          size={"sm"}
+          h={"auto"}
+          p={"xs"}
+          ml={"xs"}
+          flexShrink={0}
+        >
+          <VStack gap={"2xs"} align={"center"} justify={"center"}>
+            <AppIcon icon={UserIcon} color={"fg.muted"} />
+
+            <ClampedP
+              fontSize={"2xs"}
+              fontWeight={"medium"}
+              color={"fg.muted"}
+              textAlign={"center"}
+              lineHeight={"normal"}
+              pb={"1px"}
+            >
+              {t["app.navs.profile"]()}
+            </ClampedP>
+          </VStack>
+        </NavButton>
+      </UserProfilePopoverTrigger>
+    </HStack>
   );
 };

@@ -1,11 +1,11 @@
 /* src/app.css */
 
-.debug{
-    border: 1px solid red !important;
+.debug {
+  border: 1px solid red !important;
 }
 
-.debug2{
-    border: 1px solid blue !important;
+.debug2 {
+  border: 1px solid blue !important;
 }
 
 [data-modal-purging="true"] *,
@@ -16,11 +16,11 @@
 }
 
 /* Scroll */
-.noScroll {
+.noScrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.noScroll::-webkit-scrollbar {
+.noScrollbar::-webkit-scrollbar {
   display: none;
 }
 .scrollX {
