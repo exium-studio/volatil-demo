@@ -10,9 +10,7 @@ export const MitraMyDataPage = () => (
     <PanelContentContainer>
       <Container.Body flex={1} minH={0} overflowY={"auto"}>
         <HeaderContainer>
-          <Heading>
-            {"Data Saya"}
-          </Heading>
+          <Heading>{"Data Saya"}</Heading>
         </HeaderContainer>
 
         <Separator borderColor={"bg.canvas"} />

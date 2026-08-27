@@ -95,10 +95,10 @@ export const InternalDataManagementDataView = () => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Layer IGT", sortable: false, align: "start" },
+      { th: "Status", sortable: false, align: "center" },
       { th: "Workspace / Typename", sortable: false, align: "start" },
       { th: "Basis Spasial", sortable: false, align: "start" },
       { th: "Urutan (Z-Index)", sortable: false, align: "center" },
-      { th: "Status", sortable: false, align: "center" },
       { th: "WFS Service URL", sortable: false, align: "start" },
       { th: "WMS Service URL", sortable: false, align: "start" },
       { th: "Terakhir Diperbarui", sortable: false, align: "start" },
@@ -113,12 +113,17 @@ export const InternalDataManagementDataView = () => {
         columns: [
           {
             value: item.title,
-            td: (
-              <P fontSize={"sm"} fontWeight={"semibold"} whiteSpace={"nowrap"}>
-                {item.title}
-              </P>
-            ),
+            td: <ClampedP w={"200px"}>{item.title}</ClampedP>,
             align: "start" as const,
+          },
+          {
+            value: item.isActive ? "Publik" : "Draft",
+            td: (
+              <Badge colorPalette={item.isActive ? "green" : "gray"}>
+                {item.isActive ? "Publik" : "Draft"}
+              </Badge>
+            ),
+            align: "center" as const,
           },
           {
             value: item.wfs.wfsTypeName || item.id,
@@ -149,15 +154,6 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.zIndex ?? 0,
             td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
-            align: "center" as const,
-          },
-          {
-            value: item.isActive ? "Publik" : "Draft",
-            td: (
-              <Badge colorPalette={item.isActive ? "green" : "gray"}>
-                {item.isActive ? "Publik" : "Draft"}
-              </Badge>
-            ),
             align: "center" as const,
           },
           {
