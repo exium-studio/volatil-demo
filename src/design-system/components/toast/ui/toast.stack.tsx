@@ -153,6 +153,8 @@ export function ToastStack<TItem>({
 
           const hasVisibleItems = nonLeavingCount > 0;
           const isCollapsed = !expanded;
+          // Buffer threshold: keep up to 6 cards mounted in collapsed state so expand transition is smooth without DOM bloat
+          const maxCollapsedRenderCount = Math.max(maxVisible + 3, 6);
 
           return items.map((item, index) => {
             const visualIndex = visualIndexes[index];
@@ -163,10 +165,18 @@ export function ToastStack<TItem>({
               (!hasVisibleItems && index === 0) || visualIndex === 0;
             const isFirstVisual = visualIndex === 0;
 
-            // When collapsed, skip rendering items beyond maxVisible + 1 to prevent DOM bloat & lag
-            if (isCollapsed && !isStackedVisible && !isRelative) {
+            // When collapsed, skip rendering items beyond buffer threshold to keep DOM light
+            if (isCollapsed && visualIndex >= maxCollapsedRenderCount) {
               return null;
             }
+
+            // Stack transform calculations for cards in collapsed state
+            const collapsedTranslateY = isStackedVisible
+              ? visualIndex * 8
+              : maxVisible * 8;
+            const collapsedScale = isStackedVisible
+              ? 1 - visualIndex * 0.05
+              : 1 - maxVisible * 0.05;
 
             return (
               <Box
@@ -197,7 +207,7 @@ export function ToastStack<TItem>({
                 transformOrigin={"bottom"}
                 transform={
                   isCollapsed && !isFirstVisual && !isLeaving
-                    ? `scale(${1 - visualIndex * 0.05}) translateY(${visualIndex * 8}px)`
+                    ? `scale(${collapsedScale}) translateY(${collapsedTranslateY}px)`
                     : "scale(1)"
                 }
                 transition={
