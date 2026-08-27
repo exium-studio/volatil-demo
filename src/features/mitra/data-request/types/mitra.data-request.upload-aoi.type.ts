@@ -21,18 +21,6 @@ export type AoiLayer = MitraDataRequestUploadAoiLayer;
 
 export type MitraDataRequestUploadAoiTabsContentProps = TabsContentProps;
 
-export type MitraDataRequestUploadAoiAddFileButtonProps = ButtonProps & {
-  isIconButton?: boolean;
-  onFilesAdded: (files: File[]) => void;
-};
-
-export type MitraDataRequestUploadAoiFileListTriggerProps = {
-  children: ReactNode;
-  onFilesAdded: (files: File[]) => void;
-  onDeleteLayer: (id: string) => void;
-  onClearAll: () => void;
-};
-
 export type MitraDataRequestUploadAoiDataViewProps = {
   aoiCqlFilter: string;
   aoiLayers: MitraDataRequestUploadAoiLayer[];
@@ -50,3 +38,14 @@ export type MitraDataRequestUploadAoiPageState = {
 export type MitraDataRequestUploadAoiAttributeViewProps =
   MitraDataRequestUploadAoiDataViewProps;
 
+export type UploadAoiAddFileButtonProps = ButtonProps & {
+  isIconButton?: boolean;
+  onFilesAdded: (files: File[]) => void;
+};
+
+export type UploadAoiFileListTriggerProps = {
+  children: ReactNode;
+  onFilesAdded: (files: File[]) => void;
+  onDeleteLayer: (id: string) => void;
+  onClearAll: () => void;
+};

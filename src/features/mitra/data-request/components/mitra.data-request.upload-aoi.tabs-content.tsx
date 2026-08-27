@@ -39,12 +39,12 @@ import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wf
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import type {
-  MitraDataRequestUploadAoiAddFileButtonProps,
   MitraDataRequestUploadAoiAttributeViewProps,
-  MitraDataRequestUploadAoiFileListTriggerProps,
   MitraDataRequestUploadAoiLayer,
   MitraDataRequestUploadAoiPageState,
   MitraDataRequestUploadAoiTabsContentProps,
+  UploadAoiAddFileButtonProps,
+  UploadAoiFileListTriggerProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
@@ -52,7 +52,7 @@ import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
-import { FilesIcon, MapPinIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { FilePlusIcon, FilesIcon, MapPinIcon, TrashIcon } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 // -------------------------------------------------------------------------------------
@@ -182,7 +182,9 @@ export const MitraDataRequestUploadAoiTabsContent = (
     } catch (error) {
       console.error("Failed to parse AOI file:", error);
       const errorMsg =
-        error instanceof Error ? error.message : "Terjadi kesalahan saat membaca file";
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan saat membaca file";
       toast.error("Gagal memproses file AOI", {
         group: "Permohonan Data",
         description: `File "${file.name}": ${errorMsg}`,
@@ -299,7 +301,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
                 primary: true,
                 children: (
                   <>
-                    <AppIcon icon={PlusIcon} />
+                    <AppIcon icon={FilePlusIcon} />
                     {"Upload AOI"}
                   </>
                 ),
@@ -311,7 +313,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
         )}
 
         {hasLayers && aoiCqlFilter && (
-          <MitraDataRequestUploadAoiAttributeList
+          <UploadAoiAttributeList
             aoiCqlFilter={aoiCqlFilter}
             aoiLayers={aoiLayers}
             onFilesAdded={handleFilesAdded}
@@ -326,9 +328,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
 // -------------------------------------------------------------------------------------
 
-const MitraDataRequestUploadAoiAddFileButton = (
-  props: MitraDataRequestUploadAoiAddFileButtonProps,
-) => {
+const UploadAoiAddFileButton = (props: UploadAoiAddFileButtonProps) => {
   // Props
   const { isIconButton, onFilesAdded, ...restProps } = props;
 
@@ -353,11 +353,11 @@ const MitraDataRequestUploadAoiAddFileButton = (
     >
       {isIconButton ? (
         <IconButton primary {...restProps}>
-          <AppIcon icon={PlusIcon} />
+          <AppIcon icon={FilePlusIcon} />
         </IconButton>
       ) : (
         <Button primary w={"full"} pl={3} {...restProps}>
-          <AppIcon icon={PlusIcon} />
+          <AppIcon icon={FilePlusIcon} />
           {"Tambah file AOI"}
         </Button>
       )}
@@ -367,9 +367,7 @@ const MitraDataRequestUploadAoiAddFileButton = (
 
 // -------------------------------------------------------------------------------------
 
-const MitraDataRequestUploadAoiFileListTrigger = (
-  props: MitraDataRequestUploadAoiFileListTriggerProps,
-) => {
+const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
   // Props
   const { children, onFilesAdded, onDeleteLayer, onClearAll } = props;
 
@@ -457,7 +455,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
             {"Hapus semua"}
           </Button>
 
-          <MitraDataRequestUploadAoiAddFileButton
+          <UploadAoiAddFileButton
             flex={1}
             w={"full"}
             onFilesAdded={onFilesAdded}
@@ -471,7 +469,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
 
 // -------------------------------------------------------------------------------------
 
-const MitraDataRequestUploadAoiAttributeList = memo(
+const UploadAoiAttributeList = memo(
   (props: MitraDataRequestUploadAoiAttributeViewProps) => {
     // Props
     const { aoiCqlFilter, aoiLayers, onFilesAdded, onDeleteLayer, onClearAll } =
@@ -489,18 +487,15 @@ const MitraDataRequestUploadAoiAttributeList = memo(
     const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
 
     // Queries — server-side WFS pagination
-    const {
-      features,
-      totalFeatures,
-      isLoading,
-      isFetching,
-    } = useIgtWfsCatalog({
-      page: pageState.page,
-      pageSize: pageState.pageSize,
-      cqlFilter: aoiCqlFilter,
-      typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
-      wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
-    });
+    const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog(
+      {
+        page: pageState.page,
+        pageSize: pageState.pageSize,
+        cqlFilter: aoiCqlFilter,
+        typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
+        wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
+      },
+    );
 
     if (!selectedIgtLayer || !layerId) {
       return (
@@ -527,7 +522,7 @@ const MitraDataRequestUploadAoiAttributeList = memo(
               </P>
 
               <HStack align={"center"} gap={"sm"}>
-                <MitraDataRequestUploadAoiFileListTrigger
+                <UploadAoiFileListTrigger
                   onFilesAdded={onFilesAdded}
                   onDeleteLayer={onDeleteLayer}
                   onClearAll={onClearAll}
@@ -536,9 +531,9 @@ const MitraDataRequestUploadAoiAttributeList = memo(
                     <AppIcon icon={FilesIcon} />
                     {`File AOI anda (${aoiLayers.length})`}
                   </Button>
-                </MitraDataRequestUploadAoiFileListTrigger>
+                </UploadAoiFileListTrigger>
 
-                <MitraDataRequestUploadAoiAddFileButton
+                <UploadAoiAddFileButton
                   isIconButton
                   onFilesAdded={onFilesAdded}
                   variant={"outline"}
