@@ -11,6 +11,7 @@ export type MasterIgtLayerItem = {
   spatialBasis: SpatialBasisType;
   bbox: [number, number, number, number];
   isActive: boolean;
+  zIndex?: number;
   wfs: {
     wfsUrl: string;
     wfsTypeName: string;
@@ -40,6 +41,7 @@ export type CreateMasterIgtLayerPayload = {
   spatialBasis: SpatialBasisType;
   bbox: [number, number, number, number];
   isActive: boolean;
+  zIndex?: number;
   wfs: {
     wfsUrl: string;
     wfsTypeName: string;

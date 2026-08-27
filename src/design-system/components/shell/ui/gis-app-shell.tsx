@@ -356,20 +356,23 @@ const Content = () => {
   const { enabledLayerIds, layerOpacities, cqlFilter } = useIgtLayerStore();
 
   const mapLayers = useMemo<MapLayerConfig[]>(
-    () =>
-      (fetchedLayers?.items ?? fetchedLayers?.layers ?? []).map(
-        (layer: IgtLayerItem) => {
-          const isEnabled =
-            enabledLayerIds[layer.id] ??
-            layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
-          const opacity = layerOpacities[layer.id] ?? 1.0;
-          return getWmsRasterConfigFromIgtLayer(
-            layer,
-            wmsVisible && isEnabled,
-            opacity,
-          );
-        },
-      ),
+    () => {
+      const rawList = fetchedLayers?.items ?? fetchedLayers?.layers ?? [];
+      const sorted = [...rawList].sort(
+        (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
+      );
+      return sorted.map((layer: IgtLayerItem) => {
+        const isEnabled =
+          enabledLayerIds[layer.id] ??
+          layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
+        const opacity = layerOpacities[layer.id] ?? 1.0;
+        return getWmsRasterConfigFromIgtLayer(
+          layer,
+          wmsVisible && isEnabled,
+          opacity,
+        );
+      });
+    },
     [fetchedLayers, wmsVisible, enabledLayerIds, layerOpacities],
   );
 

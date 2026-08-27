@@ -36,6 +36,8 @@ export type BaseLayerConfig = {
   visible?: boolean;
   /** Opacity of the layer (0 to 1). Defaults to 1. */
   opacity?: number;
+  /** Layer stacking order index (lower = bottom, higher = top). */
+  zIndex?: number;
   paint?: Record<string, unknown>;
   layout?: Record<string, unknown>;
 };
@@ -103,6 +105,7 @@ export type IgtLayerItem = {
   spatialBasis: "bidang" | "kawasan";
   bbox?: [number, number, number, number];
   visible?: boolean;
+  zIndex?: number;
   wfs: IgtLayerWfsConfig;
   wms: IgtLayerWmsConfig;
 };
@@ -128,6 +131,7 @@ export const getWmsRasterConfigFromIgtLayer = (
   bbox: igtLayer.bbox,
   visible,
   opacity,
+  zIndex: igtLayer.zIndex,
   wmsUrl: igtLayer.wms.wmsUrl,
   layers: igtLayer.wms.layers,
   tileSize: igtLayer.wms.tileSize,

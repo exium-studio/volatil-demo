@@ -14,6 +14,7 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
     spatialBasis: "kawasan",
     bbox: [115.083839, -8.850039, 115.251389, -8.239441],
     isActive: true,
+    zIndex: 1,
     wfs: {
       wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
       wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
@@ -32,6 +33,7 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
     spatialBasis: "kawasan",
     bbox: [115.083839, -8.849308, 115.251534, -8.239852],
     isActive: true,
+    zIndex: 2,
     wfs: {
       wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
       wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
@@ -50,6 +52,7 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
     spatialBasis: "bidang",
     bbox: [115.134102, -8.685009, 115.183136, -8.622203],
     isActive: true,
+    zIndex: 3,
     wfs: {
       wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
       wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",

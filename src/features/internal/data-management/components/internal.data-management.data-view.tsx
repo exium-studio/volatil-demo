@@ -94,6 +94,7 @@ export const InternalDataManagementDataView = () => {
       { th: "Nama Layer IGT", sortable: false, align: "start" },
       { th: "Workspace / Typename", sortable: false, align: "start" },
       { th: "Basis Spasial", sortable: false, align: "start" },
+      { th: "Urutan (Z-Index)", sortable: false, align: "center" },
       { th: "Status", sortable: false, align: "center" },
       { th: "WFS Service URL", sortable: false, align: "start" },
       { th: "WMS Service URL", sortable: false, align: "start" },
@@ -141,6 +142,15 @@ export const InternalDataManagementDataView = () => {
               </Badge>
             ),
             align: "start" as const,
+          },
+          {
+            value: item.zIndex ?? 0,
+            td: (
+              <Badge variant={"outline"} colorPalette={"gray"}>
+                {item.zIndex != null ? `Layer ${item.zIndex}` : "-"}
+              </Badge>
+            ),
+            align: "center" as const,
           },
           {
             value: item.isActive ? "Publik" : "Draft",

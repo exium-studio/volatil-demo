@@ -4,7 +4,9 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
+import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
+import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -82,6 +84,7 @@ const InternalDataManagementEditModalContent = (
   const [spatialBasis, setSpatialBasis] = useState<SpatialBasisType>(
     () => item.spatialBasis,
   );
+  const [zIndex, setZIndex] = useState<number>(() => item.zIndex ?? 1);
   const [wfsUrl, setWfsUrl] = useState<string>(() => item.wfs.wfsUrl);
   const [wmsUrl, setWmsUrl] = useState<string>(() => item.wms.wmsUrl);
   const [isActive, setIsActive] = useState<boolean>(() => item.isActive);
@@ -96,6 +99,7 @@ const InternalDataManagementEditModalContent = (
         title,
         description,
         spatialBasis,
+        zIndex,
         isActive,
         wfs: {
           wfsUrl,
@@ -119,7 +123,7 @@ const InternalDataManagementEditModalContent = (
       <Modal.Header>
         <Modal.CloseButton />
 
-        <VStack gap={"xs"}>
+        <VStack gap={"2xs"}>
           <Modal.Title>{"Ubah Konfigurasi Layer IGT"}</Modal.Title>
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
             {item.id}
@@ -155,9 +159,27 @@ const InternalDataManagementEditModalContent = (
               />
             </Field>
 
+            {/* Input Urutan Z-Index */}
+            <Field
+              label={"Urutan Tumpukan Layer (Z-Index)"}
+              helperText={
+                "Angka lebih kecil = di bawah, angka lebih besar = di atas"
+              }
+            >
+              <NumberInput
+                w={"full"}
+                min={1}
+                max={100}
+                value={String(zIndex)}
+                onValueChange={({ value }) => setZIndex(value || 1)}
+                placeholder={"Contoh: 1"}
+              />
+            </Field>
+
             {/* Input Deskripsi */}
             <Field label={"Deskripsi"} optional>
-              <Input
+              <Textarea
+                rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder={"Deskripsi data layer..."}
@@ -166,7 +188,8 @@ const InternalDataManagementEditModalContent = (
 
             {/* Input WFS Endpoint */}
             <Field label={"WFS Endpoint URL"}>
-              <Input
+              <Textarea
+                rows={2}
                 value={wfsUrl}
                 onChange={(e) => setWfsUrl(e.target.value)}
                 placeholder={"https://.../geoserver/.../ows"}
@@ -175,7 +198,8 @@ const InternalDataManagementEditModalContent = (
 
             {/* Input WMS Endpoint */}
             <Field label={"WMS Endpoint URL"}>
-              <Input
+              <Textarea
+                rows={2}
                 value={wmsUrl}
                 onChange={(e) => setWmsUrl(e.target.value)}
                 placeholder={"https://.../geoserver/.../wms"}

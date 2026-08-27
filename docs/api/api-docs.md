@@ -218,17 +218,18 @@ type MitraIgtLayersResponse = {
     title: string;
     spatialBasis: "bidang" | "kawasan";
     bbox: [number, number, number, number]; // [minX, minY, maxX, maxY] EPSG:4326
-    visible: boolean;
-    wfs?: {
+    visible?: boolean;
+    zIndex?: number; // Layer stacking order index (1 = bawah, 2 = tengah, 3 = atas)
+    wfs: {
       wfsUrl: string;
       wfsTypeName: string;
     };
-    wms?: {
+    wms: {
       wmsUrl: string;
       layers: string;
     };
   }>;
-  pagination: {
+  pagination?: {
     totalItems: number;
     totalPages: number;
     currentPage: number;
@@ -239,15 +240,17 @@ type MitraIgtLayersResponse = {
 
 ### 4.2 Query IGT by AOI (Polygon / Upload SHP/GeoJSON)
 
-- **By AOI Polygon**: `POST /api/igt/by-aoi`
-  - **Payload**: GeoJSON Polygon (`geometry: GeoJSON.Polygon`)
-- **By Uploaded File**: `POST /api/igt/by-uploaded-aoi`
+- **By AOI Polygon**: `POST /api/mitra/data-request/by-aoi`
+  - **Payload**: GeoJSON Polygon (`{ geometry: GeoJSON.Polygon }`)
+- **By Uploaded File**: `POST /api/mitra/data-request/upload-aoi`
   - **Payload**: `FormData` (`file: File`) (.zip shp, .geojson, .kml)
+- **Get Catalog**: `GET /api/mitra/data-request/catalog`
+  - **Params**: `page?: number`, `pageSize?: number`, `search?: string`
 
-### 4.3 Filter Options Wilayah Administrasi
+### 4.3 Filter Options Wilayah & Tema
 
-- `GET /api/igt/filter-options/provinsi`
-- `GET /api/igt/filter-options/kabupaten?provinsiId={id}`
+- `GET /api/mitra/data-request/filter-options/basis`
+- `GET /api/mitra/data-request/filter-options/tema`
 - `GET /api/igt/filter-options/kecamatan?kabupatenId={id}`
 - `GET /api/igt/filter-options/kelurahan?kecamatanId={id}`
 
@@ -506,7 +509,7 @@ export type HelpCenterStatus =
 
 ### 8.1 Mitra Home Summary
 
-- **Endpoint**: `GET /api/mitra/home/summary?period={1d|1w|1m|1y|all}`
+- **Endpoint**: `GET /api/mitra/home?period={1d|1w|1m|1y|all}`
 - **Response**:
   - `dataSummary`: Breakdown bidang vs kawasan (active, almostExpired, expired).
   - `financialFlow`: Riwayat nominal belanja data spasial per periode.
@@ -540,6 +543,7 @@ type MasterIgtLayersResponse = {
     spatialBasis: "bidang" | "kawasan";
     bbox: [number, number, number, number]; // [minX, minY, maxX, maxY] EPSG:4326
     isActive: boolean;
+    zIndex?: number; // Layer stacking order index (1 = bawah, 2 = tengah, 3 = atas)
     wfs: {
       wfsUrl: string;
       wfsTypeName: string;
@@ -573,6 +577,7 @@ type CreateMasterIgtLayerPayload = {
   spatialBasis: "bidang" | "kawasan";
   bbox: [number, number, number, number];
   isActive: boolean;
+  zIndex?: number;
   wfs: {
     wfsUrl: string;
     wfsTypeName: string;
