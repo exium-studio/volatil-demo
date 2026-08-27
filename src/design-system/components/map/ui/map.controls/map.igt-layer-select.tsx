@@ -44,7 +44,10 @@ export const MapIgtLayerSelect = memo(() => {
   });
 
   // Derived Values
-  const activeLayers = useMemo(() => layersData?.layers ?? [], [layersData]);
+  const activeLayers = useMemo(
+    () => layersData?.items ?? layersData?.layers ?? [],
+    [layersData],
+  );
 
   const enabledCount = useMemo(() => {
     return activeLayers.filter((l) => {

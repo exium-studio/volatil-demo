@@ -47,7 +47,7 @@ export const fetchFilterOptionsBasisApi = async (
   signal?: AbortSignal,
 ): Promise<FilterOptionsResponse> => {
   const response = await apiClient.get<ApiResponse<FilterOptionsResponse>>(
-    "/mitra/data-request/filter-options/basis",
+    "/api/mitra/data-request/filter-options/basis",
     { signal },
   );
   return response.data ?? { data: [] };
@@ -57,7 +57,7 @@ export const fetchFilterOptionsTemaApi = async (
   signal?: AbortSignal,
 ): Promise<FilterOptionsResponse> => {
   const response = await apiClient.get<ApiResponse<FilterOptionsResponse>>(
-    "/mitra/data-request/filter-options/tema",
+    "/api/mitra/data-request/filter-options/tema",
     { signal },
   );
   return response.data ?? { data: [] };

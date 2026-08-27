@@ -17,8 +17,9 @@ export const useSelectedIgtLayer = () => {
   });
 
   const selectedIgtLayer = useMemo<IgtLayerItem | null>(() => {
-    if (!layerId || !layersData?.layers) return null;
-    return layersData.layers.find((l) => l.id === layerId) ?? null;
+    const list = layersData?.items ?? layersData?.layers;
+    if (!layerId || !list) return null;
+    return list.find((l) => l.id === layerId) ?? null;
   }, [layerId, layersData]);
 
   const selectLayer = (id: string | undefined) => {

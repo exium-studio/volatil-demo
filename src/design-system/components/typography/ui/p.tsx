@@ -106,7 +106,7 @@ export const ClampedP = forwardRef<HTMLParagraphElement, PProps>(
 export const TNum = forwardRef<HTMLSpanElement, TNumProps>(
   function TNum(props, ref) {
     // Props
-    const { children = "", numberFont = false, ...restProps } = props;
+    const { children = "", numberFont = true, ...restProps } = props;
 
     // Constants
     const characters = String(children).split("");

@@ -193,15 +193,20 @@ export async function checkout(
 ): Promise<CheckoutResponse> {
   try {
     const response = await postCheckoutApi(signal);
-    return (
-      response.data ?? {
+    if (response.data) return response.data;
+    if (isDummyDataEnabled()) {
+      return {
         billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}`,
-      }
-    );
-  } catch {
-    return {
-      billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}`,
-    };
+      };
+    }
+    throw new Error("Checkout response is empty");
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return {
+        billingCode: `BILL-${Math.floor(100000 + Math.random() * 900000)}`,
+      };
+    }
+    throw error;
   }
 }
 

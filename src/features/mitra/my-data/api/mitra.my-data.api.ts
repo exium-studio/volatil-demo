@@ -11,7 +11,7 @@ export const fetchMyDataApi = async (
   params: MyDataQueryParams,
   signal?: AbortSignal,
 ): Promise<ApiResponse<MyDataResponse>> => {
-  return apiClient.get<ApiResponse<MyDataResponse>>("/mitra/my-data", {
+  return apiClient.get<ApiResponse<MyDataResponse>>("/api/mitra/my-data", {
     params,
     signal,
   });

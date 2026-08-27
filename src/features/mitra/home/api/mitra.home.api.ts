@@ -11,7 +11,7 @@ export const fetchMitraHomeDataApi = async (
   period?: MitraHomePeriod,
   signal?: AbortSignal,
 ): Promise<ApiResponse<MitraHomeDataResponse>> => {
-  return apiClient.get<ApiResponse<MitraHomeDataResponse>>("/mitra/home", {
+  return apiClient.get<ApiResponse<MitraHomeDataResponse>>("/api/mitra/home", {
     params: { period },
     signal,
   });

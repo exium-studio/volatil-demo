@@ -85,7 +85,7 @@ export async function postAddSelectedToCartApi(
   featureIds: string[],
   signal?: AbortSignal,
 ): Promise<void> {
-  await apiClient.post("/mitra/cart/add-selected", { featureIds }, { signal });
+  await apiClient.post("/api/mitra/cart/add-selected", { featureIds }, { signal });
 }
 
 /** Add ALL features matching the given WFS params to cart via WFS. */
@@ -121,18 +121,18 @@ export async function postRemoveFromCartApi(
   itemIds: string[],
   signal?: AbortSignal,
 ): Promise<void> {
-  await apiClient.post("/mitra/cart/remove", { itemIds }, { signal });
+  await apiClient.post("/api/mitra/cart/remove", { itemIds }, { signal });
 }
 
 export async function postClearCartApi(signal?: AbortSignal): Promise<void> {
-  await apiClient.post("/mitra/cart/clear", {}, { signal });
+  await apiClient.post("/api/mitra/cart/clear", {}, { signal });
 }
 
 export async function postCheckoutApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CheckoutResponse>> {
   return apiClient.post<ApiResponse<CheckoutResponse>>(
-    "/mitra/cart/checkout",
+    "/api/mitra/cart/checkout",
     {},
     { signal },
   );
@@ -156,7 +156,7 @@ export async function postCreateCartBatchApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<AddToCartBatchResponse>> {
   return apiClient.post<ApiResponse<AddToCartBatchResponse>>(
-    "/mitra/cart/batches",
+    "/api/mitra/cart/batches",
     payload,
     { signal },
   );
@@ -166,7 +166,7 @@ export async function fetchCartBatchesApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartBatchListResponse>> {
   return apiClient.get<ApiResponse<CartBatchListResponse>>(
-    "/mitra/cart/batches",
+    "/api/mitra/cart/batches",
     { signal },
   );
 }
@@ -176,7 +176,7 @@ export async function fetchCartBatchDetailApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartBatch | null>> {
   return apiClient.get<ApiResponse<CartBatch | null>>(
-    `/mitra/cart/batches/${batchId}`,
+    `/api/mitra/cart/batches/${batchId}`,
     { signal },
   );
 }
@@ -185,7 +185,7 @@ export async function fetchActiveCartBatchApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartBatch | null>> {
   return apiClient.get<ApiResponse<CartBatch | null>>(
-    "/mitra/cart/active-batch",
+    "/api/mitra/cart/active-batch",
     { signal },
   );
 }
@@ -195,7 +195,7 @@ export async function deleteCartBatchApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> {
   return apiClient.delete<ApiResponse<void>>(
-    `/mitra/cart/batches/${batchId}`,
+    `/api/mitra/cart/batches/${batchId}`,
     { signal },
   );
 }
@@ -206,7 +206,7 @@ export async function postCheckoutBatchApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CheckoutBatchResponse>> {
   return apiClient.post<ApiResponse<CheckoutBatchResponse>>(
-    `/mitra/cart/batches/${batchId}/checkout`,
+    `/api/mitra/cart/batches/${batchId}/checkout`,
     payload ?? {},
     { signal },
   );

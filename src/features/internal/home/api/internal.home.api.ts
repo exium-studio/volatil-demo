@@ -9,8 +9,11 @@ export const fetchInternalHomeDataApi = async (
   period?: MitraHomePeriod,
   signal?: AbortSignal,
 ): Promise<ApiResponse<InternalHomeDataResponse>> => {
-  return apiClient.get<ApiResponse<InternalHomeDataResponse>>("/internal/home", {
-    params: { period },
-    signal,
-  });
+  return apiClient.get<ApiResponse<InternalHomeDataResponse>>(
+    "/api/internal/home",
+    {
+      params: { period },
+      signal,
+    },
+  );
 };

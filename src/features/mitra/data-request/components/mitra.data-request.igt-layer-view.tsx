@@ -109,7 +109,10 @@ export const MitraDataRequestIgtLayerView = memo(
       staleTime: Infinity,
     });
 
-    const activeLayers = useMemo(() => layersData?.layers ?? [], [layersData]);
+    const activeLayers = useMemo(
+      () => layersData?.items ?? layersData?.layers ?? [],
+      [layersData],
+    );
 
     const filteredLayers = useMemo(() => {
       if (!debouncedSearch) return activeLayers;

@@ -357,16 +357,19 @@ const Content = () => {
 
   const mapLayers = useMemo<MapLayerConfig[]>(
     () =>
-      (fetchedLayers?.layers ?? []).map((layer: IgtLayerItem) => {
-        const isEnabled =
-          enabledLayerIds[layer.id] ?? layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
-        const opacity = layerOpacities[layer.id] ?? 1.0;
-        return getWmsRasterConfigFromIgtLayer(
-          layer,
-          wmsVisible && isEnabled,
-          opacity,
-        );
-      }),
+      (fetchedLayers?.items ?? fetchedLayers?.layers ?? []).map(
+        (layer: IgtLayerItem) => {
+          const isEnabled =
+            enabledLayerIds[layer.id] ??
+            layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
+          const opacity = layerOpacities[layer.id] ?? 1.0;
+          return getWmsRasterConfigFromIgtLayer(
+            layer,
+            wmsVisible && isEnabled,
+            opacity,
+          );
+        },
+      ),
     [fetchedLayers, wmsVisible, enabledLayerIds, layerOpacities],
   );
 

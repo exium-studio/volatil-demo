@@ -5,7 +5,7 @@ import type { ApiResponse } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const EMPTY_LAYERS_RESPONSE: IgtLayersResponse = {
-  layers: [],
+  items: [],
 };
 
 export async function getIgtLayers(
@@ -18,8 +18,13 @@ export async function getIgtLayers(
         signal,
       },
     );
-    if (response.data) {
-      return response.data;
+
+    if (response && response.data) {
+      const d = response.data;
+      return {
+        items: d.items ?? d.layers ?? [],
+        pagination: d.pagination,
+      };
     }
     return isDummyDataEnabled() ? DUMMY_IGT_LAYERS : EMPTY_LAYERS_RESPONSE;
   } catch (error) {

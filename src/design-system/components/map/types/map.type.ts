@@ -107,8 +107,13 @@ export type IgtLayerItem = {
   wms: IgtLayerWmsConfig;
 };
 
+import type { PaginationMeta } from "@/shared/types/common-response.type";
+
 export type IgtLayersResponse = {
-  layers: IgtLayerItem[];
+  items: IgtLayerItem[];
+  pagination?: PaginationMeta;
+  /** @deprecated fallback if returned as raw array */
+  layers?: IgtLayerItem[];
 };
 
 /** Helper converter to build WmsRasterLayerConfig for map rendering from an IgtLayerItem */

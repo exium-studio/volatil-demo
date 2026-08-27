@@ -18,7 +18,7 @@ export async function fetchIgtCatalogApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<MitraDataRequestIgtDataResponse>> {
   return apiClient.get<ApiResponse<MitraDataRequestIgtDataResponse>>(
-    "/mitra/data-request/catalog",
+    "/api/mitra/data-request/catalog",
     {
       params: {
         page: params?.page,
@@ -35,7 +35,7 @@ export async function fetchIgtByAoiApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<MitraDataRequestIgtDataItem[]>> {
   return apiClient.post<ApiResponse<MitraDataRequestIgtDataItem[]>>(
-    "/mitra/data-request/by-aoi",
+    "/api/mitra/data-request/by-aoi",
     { geometry },
     { signal },
   );
@@ -49,7 +49,7 @@ export async function fetchIgtByUploadedAoiApi(
   formData.append("file", file);
 
   return apiClient.post<ApiResponse<MitraDataRequestIgtDataResponse>>(
-    "/mitra/data-request/upload-aoi",
+    "/api/mitra/data-request/upload-aoi",
     formData,
     { signal },
   );

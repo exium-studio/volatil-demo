@@ -12,7 +12,7 @@ export const fetchTransactionHistoryApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<TransactionHistoryResponse>> => {
   return apiClient.get<ApiResponse<TransactionHistoryResponse>>(
-    "/mitra/transaction-history",
+    "/api/mitra/transaction-history",
     {
       params,
       signal,

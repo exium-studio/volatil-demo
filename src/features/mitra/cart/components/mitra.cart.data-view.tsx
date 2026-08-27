@@ -35,7 +35,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
 
   // Derived Values
   const selectedIgtLayer = useMemo(
-    () => layersData?.layers[0] ?? null,
+    () => (layersData?.items ?? layersData?.layers)?.[0] ?? null,
     [layersData],
   );
 
