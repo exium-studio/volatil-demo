@@ -35,7 +35,10 @@ export const MapCompass = (props: StackProps) => {
 
   return (
     <MapOverlayContainer {...props}>
-      <ToggleTip content={`Rotasi: ${bearing.toFixed(1)}°`} positioning={{ placement: "top" }}>
+      <ToggleTip
+        content={`Rotasi: ${bearing.toFixed(1)}°`}
+        positioning={{ placement: "top" }}
+      >
         <P
           w={"4ch"}
           mx={2}
@@ -48,7 +51,12 @@ export const MapCompass = (props: StackProps) => {
       </ToggleTip>
 
       <Tooltip content={"Reset Arah Utara"} positioning={{ placement: "top" }}>
-        <IconButton aria-label={"Reset north"} size={"sm"} onClick={resetNorth}>
+        <IconButton
+          aria-label={"Reset north"}
+          size={"sm"}
+          roundedLeft={0}
+          onClick={resetNorth}
+        >
           <AppIcon
             icon={Navigation2Icon}
             fill={"red.400"}
