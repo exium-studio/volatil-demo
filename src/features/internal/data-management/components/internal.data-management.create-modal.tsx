@@ -28,10 +28,7 @@ export type InternalDataManagementCreateTriggerProps = {
 export const InternalDataManagementCreateTrigger = (
   props: InternalDataManagementCreateTriggerProps,
 ) => {
-  const {
-    modalKey: customModalKey = "create-igt-layer",
-    children,
-  } = props;
+  const { modalKey: customModalKey = "create-igt-layer", children } = props;
 
   // Stores & Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -115,12 +112,12 @@ const InternalDataManagementCreateModalContent = (
         <VStack gap={"2xs"}>
           <Modal.Title>{"Tambah Layer IGT Baru"}</Modal.Title>
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
-            {"Daftarkan layer geospasial tematik baru ke katalog internal ATR/BPN"}
+            {
+              "Daftarkan layer geospasial tematik baru ke katalog internal ATR/BPN"
+            }
           </P>
         </VStack>
       </Modal.Header>
-
-      <Separator borderColor={"bg.canvas"} />
 
       <Modal.Body p={"md"}>
         <VStack align={"stretch"} gap={"lg"}>
@@ -130,7 +127,9 @@ const InternalDataManagementCreateModalContent = (
               {/* Input ID / Workspace Layer */}
               <Field
                 label={"ID / Identifier Layer"}
-                helperText={"Contoh: testing_workspace:TEST_RTRW_BADUNG (opsional, otomatis dibuat jika kosong)"}
+                helperText={
+                  "Contoh: testing_workspace:TEST_RTRW_BADUNG (opsional, otomatis dibuat jika kosong)"
+                }
                 optional
               >
                 <Input

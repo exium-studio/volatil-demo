@@ -123,8 +123,6 @@ const InternalDataManagementEditModalContent = (
         </VStack>
       </Modal.Header>
 
-      <Separator borderColor={"bg.canvas"} />
-
       <Modal.Body p={"md"}>
         <VStack align={"stretch"} gap={"lg"}>
           {/* Grup 1: Informasi Dasar */}

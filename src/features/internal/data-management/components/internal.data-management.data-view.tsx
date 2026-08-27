@@ -148,20 +148,13 @@ export const InternalDataManagementDataView = () => {
           },
           {
             value: item.zIndex ?? 0,
-            td: (
-              <Badge variant={"outline"} colorPalette={"gray"}>
-                {item.zIndex != null ? `Layer ${item.zIndex}` : "-"}
-              </Badge>
-            ),
+            td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
             align: "center" as const,
           },
           {
             value: item.isActive ? "Publik" : "Draft",
             td: (
-              <Badge
-                colorPalette={item.isActive ? "green" : "gray"}
-                variant={item.isActive ? "solid" : "subtle"}
-              >
+              <Badge colorPalette={item.isActive ? "green" : "gray"}>
                 {item.isActive ? "Publik" : "Draft"}
               </Badge>
             ),
