@@ -94,14 +94,14 @@ export const InternalDataManagementDataView = () => {
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "Nama Layer IGT", sortable: false, align: "start" },
-      { th: "Status", sortable: false, align: "center" },
-      { th: "Workspace / Typename", sortable: false, align: "start" },
-      { th: "Basis Spasial", sortable: false, align: "start" },
-      { th: "Urutan (Z-Index)", sortable: false, align: "center" },
-      { th: "WFS Service URL", sortable: false, align: "start" },
-      { th: "WMS Service URL", sortable: false, align: "start" },
-      { th: "Terakhir Diperbarui", sortable: false, align: "start" },
+      { th: "Nama Layer IGT", sortable: true },
+      { th: "Status", sortable: true, align: "center" },
+      { th: "Workspace / Typename", sortable: true },
+      { th: "Basis Spasial", sortable: true },
+      { th: "Urutan (Z-Index)", sortable: true, align: "center" },
+      { th: "WFS URL" },
+      { th: "WMS URL" },
+      { th: "Terakhir Diperbarui", sortable: true },
     ];
 
     const items = filteredItems.map((item) => {
