@@ -141,7 +141,7 @@ const InternalDataManagementCreateModalContent = (
               </Field>
 
               {/* Input Judul Layer */}
-              <Field label={"Nama / Judul Layer"} required>
+              <Field label={"Nama / Judul Layer"}>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}

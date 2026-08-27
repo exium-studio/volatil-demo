@@ -102,7 +102,6 @@ export const CreateHelpCenterTrigger = (
             <VStack gap={4} align={"stretch"}>
               <Field
                 label={"Judul Laporan"}
-                required={true}
                 invalid={Boolean(errors.title)}
                 errorText={errors.title?.message}
               >
@@ -114,7 +113,6 @@ export const CreateHelpCenterTrigger = (
 
               <Field
                 label={"Deskripsi Kendala"}
-                required={true}
                 invalid={Boolean(errors.description)}
                 errorText={errors.description?.message}
               >
@@ -141,7 +139,8 @@ export const CreateHelpCenterTrigger = (
               </Field>
 
               <Field
-                label={"Lampiran Dokumen/Foto (Opsional)"}
+                label={"Lampiran Dokumen/Foto"}
+                optional
                 invalid={Boolean(errors.files)}
                 errorText={errors.files?.message}
               >

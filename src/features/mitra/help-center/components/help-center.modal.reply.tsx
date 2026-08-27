@@ -75,7 +75,7 @@ export const HelpCenterModalReplyTrigger = (
         <Modal.Body>
           <form id={"reply-form"} onSubmit={handleSubmit}>
             <VStack gap={4}>
-              <Field label={"Pesan Balasan"} required={true}>
+              <Field label={"Pesan Balasan"}>
                 <Textarea
                   placeholder={"Tuliskan pesan balasan atau tanggapan Anda..."}
                   rows={4}
@@ -84,7 +84,7 @@ export const HelpCenterModalReplyTrigger = (
                 />
               </Field>
 
-              <Field label={"Lampiran Dokumen/Foto/Video (Opsional)"}>
+              <Field label={"Lampiran Dokumen/Foto/Video"} optional>
                 <FileInput
                   accept={[
                     ".jpg",

@@ -98,7 +98,6 @@ export const HelpCenterModalResolveRejectTrigger = (
 
               <Field
                 label={isResolve ? "Catatan Penyelesaian" : "Alasan Penolakan"}
-                required={true}
               >
                 <Textarea
                   placeholder={

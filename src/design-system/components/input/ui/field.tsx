@@ -14,7 +14,6 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
       children,
       helperText,
       errorText,
-      optionalText,
       optional,
       ...restProps
     } = props;
@@ -32,7 +31,6 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
                 Optional
               </Badge>
             )}
-            <ChakraField.RequiredIndicator fallback={optionalText} />
           </ChakraField.Label>
         )}
 
