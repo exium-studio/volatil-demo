@@ -1,26 +1,21 @@
-// src/features/mitra/data-request/components/igt-filter.kabupaten-select.tsx
+// src/features/shared/components/filter.administrative-area.province-select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type {
-  IgtFilterOptionDetail,
-  IgtFilterSelectProps,
-} from "@/features/shared/types/filter-igt-trigger.type";
-import { useFilterOptionsKabupaten } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
+  FilterAdministrativeAreaOptionDetail,
+  FilterAdministrativeAreaSelectProps,
+} from "@/features/shared/types/filter.administrative-area.type";
+import { useFilterOptionsProvinsi } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
 
-export type IgtFilterKabupatenSelectProps = IgtFilterSelectProps & {
-  provinsiId?: string;
-};
-
-export const IgtFilterKabupatenSelect = (
-  props: IgtFilterKabupatenSelectProps,
+export const FilterAdministrativeAreaProvinceSelect = (
+  props: FilterAdministrativeAreaSelectProps,
 ) => {
   // Props
   const {
     modalKey,
-    provinsiId,
     value: controlledValue,
     defaultValue = "",
     onValueChange,
@@ -35,18 +30,19 @@ export const IgtFilterKabupatenSelect = (
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: kabupatenOptionsData, isLoading } = useFilterOptionsKabupaten({
-    provinsiId,
-  });
+  const { data: provinsiOptionsData, isLoading } = useFilterOptionsProvinsi();
   const selectOptions: FocusSelectOption[] = (
-    kabupatenOptionsData?.data ?? []
+    provinsiOptionsData?.data ?? []
   ).map((item) => ({
     label: item.label,
     value: item.value,
   }));
 
   // Handlers
-  const handleValueChange = (val: string, option?: IgtFilterOptionDetail) => {
+  const handleValueChange = (
+    val: string,
+    option?: FilterAdministrativeAreaOptionDetail,
+  ) => {
     if (!isControlled) {
       setInternalValue(val);
     }
@@ -57,8 +53,8 @@ export const IgtFilterKabupatenSelect = (
 
   return (
     <FocusSelectInput
-      modalKey={modalKey ?? "igt-filter-kabupaten-select-modal"}
-      label={"Kabupaten / Kota"}
+      modalKey={modalKey ?? "filter-administrative-area-province-select-modal"}
+      label={"Provinsi"}
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}
@@ -70,13 +66,8 @@ export const IgtFilterKabupatenSelect = (
             : undefined,
         )
       }
-      disabled={disabled || !provinsiId}
-      isFetching={isLoading}
-      customOption={true}
+      loading={isLoading}
+      disabled={disabled}
     />
   );
 };
-
-// Aliases for compatibility
-export type WfsIgtFilterKabupatenSelectProps = IgtFilterKabupatenSelectProps;
-export const WfsIgtFilterKabupatenSelect = IgtFilterKabupatenSelect;

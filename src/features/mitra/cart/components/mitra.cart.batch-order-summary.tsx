@@ -190,24 +190,26 @@ export const MitraCartBatchOrderSummary = (
           <P fontSize={"md"} fontWeight={"bold"}>
             {"Total Tagihan"}
           </P>
-          <P fontSize={"lg"} fontWeight={"bold"}>
-            {isSelected ? (
-              isPreparing ? (
-                <P color={"fg.subtle"} fontSize={"sm"} fontStyle={"italic"}>
-                  {"Menunggu penyiapan data..."}
-                </P>
-              ) : (
+          {isSelected ? (
+            isPreparing ? (
+              <P color={"fg.subtle"} fontSize={"sm"} fontStyle={"italic"}>
+                {"Menunggu penyiapan data..."}
+              </P>
+            ) : (
+              <P fontSize={"lg"} fontWeight={"bold"}>
                 <FormatNumber
                   value={activeBatch?.totalPrice ?? 0}
                   style={"currency"}
                   currency={"IDR"}
                   maximumFractionDigits={0}
                 />
-              )
-            ) : (
-              "-"
-            )}
-          </P>
+              </P>
+            )
+          ) : (
+            <P fontSize={"lg"} fontWeight={"bold"}>
+              {"-"}
+            </P>
+          )}
         </HStack>
       </VStack>
 
@@ -259,7 +261,7 @@ export const MitraCartBatchOrderSummary = (
               : "Bayar Sekarang"}
       </Button>
 
-      <HStack justify={"center"} gap={1}>
+      <HStack align={"center"} justify={"center"} gap={1}>
         <AppIcon icon={ShieldCheckIcon} size={"xs"} color={"fg.subtle"} />
 
         <P fontSize={"xs"} color={"fg.subtle"}>

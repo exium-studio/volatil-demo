@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/components/igt-filter.tsx
+// src/features/shared/components/filter.administrative-area.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
@@ -7,20 +7,21 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
-// import { IgtFilterBasisSelect } from "@/features/mitra/data-request/components/igt-filter.basis-select";
-import { IgtFilterKabupatenSelect } from "@/features/shared/components/igt-filter.kabupaten-select";
-import { IgtFilterKecamatanSelect } from "@/features/shared/components/igt-filter.kecamatan-select";
-import { IgtFilterKelurahanSelect } from "@/features/shared/components/igt-filter.kelurahan-select";
-import { IgtFilterProvinsiSelect } from "@/features/shared/components/igt-filter.provinsi-select";
+import { FilterAdministrativeAreaDistrictSelect } from "@/features/shared/components/filter.administrative-area.district-select";
+import { FilterAdministrativeAreaProvinceSelect } from "@/features/shared/components/filter.administrative-area.province-select";
+import { FilterAdministrativeAreaRegencySelect } from "@/features/shared/components/filter.administrative-area.regency-select";
+import { FilterAdministrativeAreaSubdistrictSelect } from "@/features/shared/components/filter.administrative-area.subdistrict-select";
 import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
 import type {
-  IgtFilterOptionDetail,
-  IgtFilterTriggerProps,
-  IgtFilterValues,
-} from "@/features/shared/types/filter-igt-trigger.type";
+  FilterAdministrativeAreaOptionDetail,
+  FilterAdministrativeAreaTriggerProps,
+  FilterAdministrativeAreaValues,
+} from "@/features/shared/types/filter.administrative-area.type";
 import { useEffect, useMemo, useState } from "react";
 
-export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
+export const FilterAdministrativeAreaTrigger = (
+  props: FilterAdministrativeAreaTriggerProps,
+) => {
   // Props
   const {
     children,
@@ -34,7 +35,9 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
 
   // Uncontrolled applied state (internal)
   const [internalAppliedFilters, setInternalAppliedFilters] =
-    useState<IgtFilterValues>(defaultValue ?? defaultValues ?? {});
+    useState<FilterAdministrativeAreaValues>(
+      defaultValue ?? defaultValues ?? {},
+    );
 
   // Determine current applied filters (controlled vs uncontrolled)
   const isControlled = controlledValue !== undefined;
@@ -51,13 +54,12 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: customModalKey ?? "igt-filter-modal",
+    modalKey: customModalKey ?? "filter-administrative-area-modal",
   });
 
   // Local draft state inside modal (editing before click "Terapkan Filter")
-  const [localDraftFilters, setLocalDraftFilters] = useState<IgtFilterValues>(
-    currentAppliedFilters,
-  );
+  const [localDraftFilters, setLocalDraftFilters] =
+    useState<FilterAdministrativeAreaValues>(currentAppliedFilters);
 
   // Synchronize local draft state with applied filters ONLY after modal animation finishes
   useEffect(() => {
@@ -69,7 +71,7 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
       if (!isCancelled) {
         setLocalDraftFilters(currentAppliedFilters);
       }
-    }, 300);
+    }, 150);
 
     return () => {
       isCancelled = true;
@@ -79,28 +81,22 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
 
   // Handlers
   const handleFieldChange = (
-    key: string,
-    details: IgtFilterOptionDetail | null,
+    fieldKey: string,
+    details: FilterAdministrativeAreaOptionDetail | null,
   ) => {
     setLocalDraftFilters((prev) => {
-      const next = { ...prev, [key]: details };
+      const next = { ...prev, [fieldKey]: details };
 
-      // Cascading: provinsi changed → reset kabupaten, kecamatan, and kelurahan
-      if (key === IGT_FILTER_KEYS_MAP.PROVINSI) {
-        next[IGT_FILTER_KEYS_MAP.KABUPATEN] = null;
-        next[IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
-        next[IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
-      }
-
-      // Cascading: kabupaten changed → reset kecamatan and kelurahan
-      if (key === IGT_FILTER_KEYS_MAP.KABUPATEN) {
-        next[IGT_FILTER_KEYS_MAP.KECAMATAN] = null;
-        next[IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
-      }
-
-      // Cascading: kecamatan changed → reset kelurahan
-      if (key === IGT_FILTER_KEYS_MAP.KECAMATAN) {
-        next[IGT_FILTER_KEYS_MAP.KELURAHAN] = null;
+      // Cascade reset child fields when parent field changes
+      if (fieldKey === IGT_FILTER_KEYS_MAP.PROVINSI) {
+        delete next[IGT_FILTER_KEYS_MAP.KABUPATEN];
+        delete next[IGT_FILTER_KEYS_MAP.KECAMATAN];
+        delete next[IGT_FILTER_KEYS_MAP.KELURAHAN];
+      } else if (fieldKey === IGT_FILTER_KEYS_MAP.KABUPATEN) {
+        delete next[IGT_FILTER_KEYS_MAP.KECAMATAN];
+        delete next[IGT_FILTER_KEYS_MAP.KELURAHAN];
+      } else if (fieldKey === IGT_FILTER_KEYS_MAP.KECAMATAN) {
+        delete next[IGT_FILTER_KEYS_MAP.KELURAHAN];
       }
 
       return next;
@@ -108,7 +104,14 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
   };
 
   const handleReset = () => {
-    setLocalDraftFilters({});
+    const emptyFilters: FilterAdministrativeAreaValues = {};
+    setLocalDraftFilters(emptyFilters);
+    if (!isControlled) {
+      setInternalAppliedFilters(emptyFilters);
+    }
+    onFilterChange?.(emptyFilters);
+    onApply?.(emptyFilters);
+    close();
   };
 
   const handleApply = () => {
@@ -126,23 +129,28 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
       opened={isOpen}
       open={open}
       close={close}
-      size={"sm"}
+      scrollBehavior={"inside"}
+      size={"lg"}
+      onExitComplete={() => {
+        setLocalDraftFilters(currentAppliedFilters);
+      }}
     >
-      <Box pos={"relative"} display={"inline-block"}>
-        <Modal.Trigger>{children}</Modal.Trigger>
-        {activeFilterCount > 0 && (
-          <CountBadge
-            floating
-            count={activeFilterCount}
-            colorPalette={"blue"}
-          />
-        )}
+      <Box
+        as={"span"}
+        display={"inline-flex"}
+        onClick={() => {
+          setLocalDraftFilters(currentAppliedFilters);
+          open();
+        }}
+        cursor={"pointer"}
+      >
+        {children}
       </Box>
 
       <Modal.Content>
         <Modal.Header>
           <HStack gap={"md"} align={"center"}>
-            <Modal.Title>Filter Data IGT</Modal.Title>
+            <Modal.Title>{"Filter Wilayah Administratif"}</Modal.Title>
 
             {activeFilterCount > 0 && <CountBadge count={activeFilterCount} />}
           </HStack>
@@ -154,37 +162,19 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
             <Alert.Indicator />
             <Alert.Content>
               <Alert.Title fontWeight={"bold"}>
-                {"Informasi Filter IGT"}
+                {"Informasi Filter Wilayah Administratif"}
               </Alert.Title>
 
               <Alert.Description>
                 {
-                  "Filter yang diterapkan akan berlaku secara menyeluruh pada katalog layer IGT dan tabel atribut."
+                  "Filter wilayah administratif yang diterapkan akan berlaku secara menyeluruh pada katalog layer IGT dan tabel atribut."
                 }
               </Alert.Description>
             </Alert.Content>
           </Alert.Root>
 
           <VStack gap={"md"} w={"full"}>
-            {/* Temporarily hidden: Basis IGT & Tema IGT
-            <IgtFilterBasisSelect
-              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.BASIS}`}
-              value={localDraftFilters[IGT_FILTER_KEYS_MAP.BASIS]?.value}
-              onValueChange={(details) =>
-                handleFieldChange(IGT_FILTER_KEYS_MAP.BASIS, details)
-              }
-            />
-
-            <IgtFilterTemaSelect
-              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.TEMA}`}
-              value={localDraftFilters[IGT_FILTER_KEYS_MAP.TEMA]?.value}
-              onValueChange={(details) =>
-                handleFieldChange(IGT_FILTER_KEYS_MAP.TEMA, details)
-              }
-            />
-            */}
-
-            <IgtFilterProvinsiSelect
+            <FilterAdministrativeAreaProvinceSelect
               modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.PROVINSI}`}
               value={localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
               onValueChange={(details) =>
@@ -192,9 +182,9 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
               }
             />
 
-            <IgtFilterKabupatenSelect
+            <FilterAdministrativeAreaRegencySelect
               modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KABUPATEN}`}
-              provinsiId={
+              provinceId={
                 localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value
               }
               value={
@@ -206,9 +196,9 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
               }
             />
 
-            <IgtFilterKecamatanSelect
+            <FilterAdministrativeAreaDistrictSelect
               modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KECAMATAN}`}
-              kabupatenId={
+              regencyId={
                 localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
               }
               value={
@@ -222,9 +212,9 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
               }
             />
 
-            <IgtFilterKelurahanSelect
+            <FilterAdministrativeAreaSubdistrictSelect
               modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KELURAHAN}`}
-              kecamatanId={
+              districtId={
                 localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
               }
               value={
@@ -253,6 +243,3 @@ export const IgtFilterTrigger = (props: IgtFilterTriggerProps) => {
     </Modal.Root>
   );
 };
-
-// Aliases for compatibility
-export const WfsIgtFilterTrigger = IgtFilterTrigger;

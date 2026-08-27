@@ -1,19 +1,27 @@
-// src/features/mitra/data-request/components/igt-filter.basis-select.tsx
+// src/features/shared/components/filter.administrative-area.district-select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type {
-  IgtFilterOptionDetail,
-  IgtFilterSelectProps,
-} from "@/features/shared/types/filter-igt-trigger.type";
-import { useFilterOptionsBasis } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
+  FilterAdministrativeAreaOptionDetail,
+  FilterAdministrativeAreaSelectProps,
+} from "@/features/shared/types/filter.administrative-area.type";
+import { useFilterOptionsKecamatan } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
 
-export const IgtFilterBasisSelect = (props: IgtFilterSelectProps) => {
+export type FilterAdministrativeAreaDistrictSelectProps =
+  FilterAdministrativeAreaSelectProps & {
+    regencyId?: string;
+  };
+
+export const FilterAdministrativeAreaDistrictSelect = (
+  props: FilterAdministrativeAreaDistrictSelectProps,
+) => {
   // Props
   const {
     modalKey,
+    regencyId,
     value: controlledValue,
     defaultValue = "",
     onValueChange,
@@ -28,16 +36,21 @@ export const IgtFilterBasisSelect = (props: IgtFilterSelectProps) => {
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: basisOptionsData, isLoading } = useFilterOptionsBasis();
-  const selectOptions: FocusSelectOption[] = (basisOptionsData?.data ?? []).map(
-    (item) => ({
-      label: item.label,
-      value: item.value,
-    }),
-  );
+  const { data: kecamatanOptionsData, isLoading } = useFilterOptionsKecamatan({
+    kabupatenId: regencyId,
+  });
+  const selectOptions: FocusSelectOption[] = (
+    kecamatanOptionsData?.data ?? []
+  ).map((item) => ({
+    label: item.label,
+    value: item.value,
+  }));
 
   // Handlers
-  const handleValueChange = (val: string, option?: IgtFilterOptionDetail) => {
+  const handleValueChange = (
+    val: string,
+    option?: FilterAdministrativeAreaOptionDetail,
+  ) => {
     if (!isControlled) {
       setInternalValue(val);
     }
@@ -48,8 +61,8 @@ export const IgtFilterBasisSelect = (props: IgtFilterSelectProps) => {
 
   return (
     <FocusSelectInput
-      modalKey={modalKey ?? "igt-filter-basis-select-modal"}
-      label={"Basis IGT"}
+      modalKey={modalKey ?? "filter-administrative-area-district-select-modal"}
+      label={"Kecamatan"}
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}
@@ -61,12 +74,8 @@ export const IgtFilterBasisSelect = (props: IgtFilterSelectProps) => {
             : undefined,
         )
       }
+      loading={isLoading}
       disabled={disabled}
-      isFetching={isLoading}
-      customOption={true}
     />
   );
 };
-
-// Aliases for compatibility
-export const WfsIgtFilterBasisSelect = IgtFilterBasisSelect;

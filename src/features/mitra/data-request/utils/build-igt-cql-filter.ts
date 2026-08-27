@@ -1,7 +1,7 @@
 // src/features/mitra/data-request/utils/build-igt-cql-filter.ts
 
 import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
-import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
+import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 
 /**
  * Resolves a target attribute field key against sample properties in a case-insensitive manner.
@@ -53,7 +53,7 @@ export const adaptCqlFilterToLayerAttributes = (
  * Uses ILIKE '%value%' partial matching so API values like "BALI" match DB values like "Provinsi Bali".
  */
 export const buildIgtCqlFilter = (
-  filters: IgtFilterValues,
+  filters: FilterAdministrativeAreaValues,
   sampleProperties?: Record<string, unknown> | string[],
 ): string | undefined => {
   const clauses: string[] = [];

@@ -1,19 +1,27 @@
-// src/features/mitra/data-request/components/igt-filter.provinsi-select.tsx
+// src/features/shared/components/filter.administrative-area.subdistrict-select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type {
-  IgtFilterOptionDetail,
-  IgtFilterSelectProps,
-} from "@/features/shared/types/filter-igt-trigger.type";
-import { useFilterOptionsProvinsi } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
+  FilterAdministrativeAreaOptionDetail,
+  FilterAdministrativeAreaSelectProps,
+} from "@/features/shared/types/filter.administrative-area.type";
+import { useFilterOptionsKelurahan } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
 
-export const IgtFilterProvinsiSelect = (props: IgtFilterSelectProps) => {
+export type FilterAdministrativeAreaSubdistrictSelectProps =
+  FilterAdministrativeAreaSelectProps & {
+    districtId?: string;
+  };
+
+export const FilterAdministrativeAreaSubdistrictSelect = (
+  props: FilterAdministrativeAreaSubdistrictSelectProps,
+) => {
   // Props
   const {
     modalKey,
+    districtId,
     value: controlledValue,
     defaultValue = "",
     onValueChange,
@@ -28,16 +36,21 @@ export const IgtFilterProvinsiSelect = (props: IgtFilterSelectProps) => {
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: provinsiOptionsData, isLoading } = useFilterOptionsProvinsi();
+  const { data: kelurahanOptionsData, isLoading } = useFilterOptionsKelurahan({
+    kecamatanId: districtId,
+  });
   const selectOptions: FocusSelectOption[] = (
-    provinsiOptionsData?.data ?? []
+    kelurahanOptionsData?.data ?? []
   ).map((item) => ({
     label: item.label,
     value: item.value,
   }));
 
   // Handlers
-  const handleValueChange = (val: string, option?: IgtFilterOptionDetail) => {
+  const handleValueChange = (
+    val: string,
+    option?: FilterAdministrativeAreaOptionDetail,
+  ) => {
     if (!isControlled) {
       setInternalValue(val);
     }
@@ -48,8 +61,8 @@ export const IgtFilterProvinsiSelect = (props: IgtFilterSelectProps) => {
 
   return (
     <FocusSelectInput
-      modalKey={modalKey ?? "igt-filter-provinsi-select-modal"}
-      label={"Provinsi"}
+      modalKey={modalKey ?? "filter-administrative-area-subdistrict-select-modal"}
+      label={"Kelurahan / Desa"}
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}
@@ -61,12 +74,8 @@ export const IgtFilterProvinsiSelect = (props: IgtFilterSelectProps) => {
             : undefined,
         )
       }
+      loading={isLoading}
       disabled={disabled}
-      isFetching={isLoading}
-      customOption={true}
     />
   );
 };
-
-// Aliases for compatibility
-export const WfsIgtFilterProvinsiSelect = IgtFilterProvinsiSelect;

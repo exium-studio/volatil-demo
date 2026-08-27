@@ -1,26 +1,27 @@
-// src/features/mitra/data-request/components/igt-filter.kelurahan-select.tsx
+// src/features/shared/components/filter.administrative-area.regency-select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type {
-  IgtFilterOptionDetail,
-  IgtFilterSelectProps,
-} from "@/features/shared/types/filter-igt-trigger.type";
-import { useFilterOptionsKelurahan } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
+  FilterAdministrativeAreaOptionDetail,
+  FilterAdministrativeAreaSelectProps,
+} from "@/features/shared/types/filter.administrative-area.type";
+import { useFilterOptionsKabupaten } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
 
-export type IgtFilterKelurahanSelectProps = IgtFilterSelectProps & {
-  kecamatanId?: string;
-};
+export type FilterAdministrativeAreaRegencySelectProps =
+  FilterAdministrativeAreaSelectProps & {
+    provinceId?: string;
+  };
 
-export const IgtFilterKelurahanSelect = (
-  props: IgtFilterKelurahanSelectProps,
+export const FilterAdministrativeAreaRegencySelect = (
+  props: FilterAdministrativeAreaRegencySelectProps,
 ) => {
   // Props
   const {
     modalKey,
-    kecamatanId,
+    provinceId,
     value: controlledValue,
     defaultValue = "",
     onValueChange,
@@ -35,18 +36,21 @@ export const IgtFilterKelurahanSelect = (
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: kelurahanOptionsData, isLoading } = useFilterOptionsKelurahan({
-    kecamatanId,
+  const { data: kabupatenOptionsData, isLoading } = useFilterOptionsKabupaten({
+    provinsiId: provinceId,
   });
   const selectOptions: FocusSelectOption[] = (
-    kelurahanOptionsData?.data ?? []
+    kabupatenOptionsData?.data ?? []
   ).map((item) => ({
     label: item.label,
     value: item.value,
   }));
 
   // Handlers
-  const handleValueChange = (val: string, option?: IgtFilterOptionDetail) => {
+  const handleValueChange = (
+    val: string,
+    option?: FilterAdministrativeAreaOptionDetail,
+  ) => {
     if (!isControlled) {
       setInternalValue(val);
     }
@@ -57,8 +61,8 @@ export const IgtFilterKelurahanSelect = (
 
   return (
     <FocusSelectInput
-      modalKey={modalKey ?? "igt-filter-kelurahan-select-modal"}
-      label={"Kelurahan / Desa"}
+      modalKey={modalKey ?? "filter-administrative-area-regency-select-modal"}
+      label={"Kabupaten / Kota"}
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}
@@ -70,13 +74,8 @@ export const IgtFilterKelurahanSelect = (
             : undefined,
         )
       }
-      disabled={disabled || !kecamatanId}
-      isFetching={isLoading}
-      customOption={true}
+      loading={isLoading}
+      disabled={disabled}
     />
   );
 };
-
-// Aliases for compatibility
-export type WfsIgtFilterKelurahanSelectProps = IgtFilterKelurahanSelectProps;
-export const WfsIgtFilterKelurahanSelect = IgtFilterKelurahanSelect;

@@ -26,11 +26,11 @@ import {
   useAddToCartAll,
   useAddToCartMultipleLayers,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-import { useIgtFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { MitraDataRequestIgtLayerViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
-import { IgtFilterTrigger } from "@/features/shared/components/igt-filter";
-import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
+import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
+import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -53,11 +53,13 @@ export const MitraDataRequestIgtLayerView = memo(
     // Stores
     const { theme } = useThemeStore();
     const { map } = useMapInstanceStore();
-    const appliedWfsFilters = useIgtFilterStore((s) => s.appliedWfsFilters);
-    const setAppliedWfsFilters = useIgtFilterStore(
-      (s) => s.setAppliedWfsFilters,
+    const appliedAdministrativeFilters = useAdministrativeFilterStore(
+      (s) => s.appliedAdministrativeFilters,
     );
-    const storeCqlFilter = useIgtFilterStore((s) => s.cqlFilter);
+    const setAppliedAdministrativeFilters = useAdministrativeFilterStore(
+      (s) => s.setAppliedAdministrativeFilters,
+    );
+    const storeCqlFilter = useAdministrativeFilterStore((s) => s.cqlFilter);
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
@@ -121,8 +123,8 @@ export const MitraDataRequestIgtLayerView = memo(
     }, [activeLayers, debouncedSearch]);
 
     // Handlers
-    const handleApplyFilters = (filters: IgtFilterValues) => {
-      setAppliedWfsFilters(filters);
+    const handleApplyFilters = (filters: FilterAdministrativeAreaValues) => {
+      setAppliedAdministrativeFilters(filters);
       onApplyFilter?.(filters);
     };
 
@@ -287,15 +289,15 @@ export const MitraDataRequestIgtLayerView = memo(
             />
 
             {showFilter && (
-              <IgtFilterTrigger
+              <FilterAdministrativeAreaTrigger
                 modalKey={"mitra-data-request-igt-card-filter-modal"}
-                value={appliedWfsFilters}
+                value={appliedAdministrativeFilters}
                 onApply={handleApplyFilters}
               >
                 <IconButton variant={"outline"}>
                   <AppIcon icon={SlidersHorizontalIcon} />
                 </IconButton>
-              </IgtFilterTrigger>
+              </FilterAdministrativeAreaTrigger>
             )}
           </HStack>
 
