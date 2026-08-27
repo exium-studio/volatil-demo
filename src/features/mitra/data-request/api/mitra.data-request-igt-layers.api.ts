@@ -13,7 +13,7 @@ export async function getIgtLayers(
 ): Promise<IgtLayersResponse> {
   try {
     const response = await apiClient.get<ApiResponse<IgtLayersResponse>>(
-      "/mitra/igt-layers",
+      "/api/mitra/igt-layers",
       {
         signal,
       },

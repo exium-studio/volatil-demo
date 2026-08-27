@@ -70,7 +70,7 @@ export const NotificationToastHistoryView = memo(
         p={"md"}
         overflowY={"auto"}
       >
-        <HStack justify={"flex-end"} mb={"sm"}>
+        <HStack justify={"flex-end"} mb={"md"}>
           <ConfirmationTrigger
             modalKey={"clear-all-notification-toast-history"}
             title={"Hapus Semua Riwayat Notifikasi?"}

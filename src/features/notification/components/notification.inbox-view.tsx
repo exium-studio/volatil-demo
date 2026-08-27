@@ -101,7 +101,7 @@ export const NotificationInboxView = memo(() => {
       p={"md"}
     >
       {/* Inbox Actions Bar */}
-      <HStack justify={"end"} align={"center"} mb={"sm"}>
+      <HStack justify={"end"} align={"center"} mb={"md"}>
         <HStack gap={2}>
           {unreadCount > 0 && (
             <Button
