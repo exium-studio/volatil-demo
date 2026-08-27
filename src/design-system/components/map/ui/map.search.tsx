@@ -254,9 +254,7 @@ export const MapSearch = () => {
           right={0}
           bg={"bg.body"}
           rounded={theme.radii.component}
-          shadow={"lg"}
-          border={"1px solid"}
-          borderColor={"border.emphasized"}
+          shadow={"xs"}
           maxH={"360px"}
           overflowY={"auto"}
           zIndex={2000}
