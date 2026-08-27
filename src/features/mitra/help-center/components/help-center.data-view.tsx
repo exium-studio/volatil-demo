@@ -4,10 +4,10 @@ import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
@@ -67,7 +67,7 @@ const HELP_CENTER_STATUS_OPTIONS: FocusSelectOption[] = [
   { value: "rejected", label: "Ditolak" },
 ];
 
-export const HelpCenterDataList = () => {
+export const HelpCenterDataView = () => {
   // Navigation
   const navigate = useNavigate();
 
@@ -334,7 +334,7 @@ export const HelpCenterDataList = () => {
 
           {!isLoading && !isEmptyArray(tickets) && (
             <Box w={"full"} position={"relative"}>
-              <DataListTable.Root
+              <DataView.Table.Root
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
@@ -343,17 +343,17 @@ export const HelpCenterDataList = () => {
                 roundedTop={0}
                 shadow={"none"}
               >
-                <DataListTable.Header />
-                <DataListTable.Body />
-              </DataListTable.Root>
+                <DataView.Table.Header />
+                <DataView.Table.Body />
+              </DataView.Table.Root>
 
               <TopBarLoader isFetching={isFetching} />
 
-              <DataListFooter
+              <DataViewFooter
                 page={page}
                 pageSize={pageSize}
                 setPage={setPage}
-                setPageSize={(newSize) => {
+                setPageSize={(newSize: number) => {
                   setPageSize(newSize);
                   setPage(1);
                 }}

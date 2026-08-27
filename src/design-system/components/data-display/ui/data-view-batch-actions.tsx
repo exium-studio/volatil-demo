@@ -2,9 +2,9 @@
 
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
 import type {
-  DataListBatchActionBarProps,
-  DataListBatchActionsTriggerProps,
-} from "@/design-system/components/data-display/types/data-list.type";
+  DataViewBatchActionBarProps,
+  DataViewBatchActionsTriggerProps,
+} from "@/design-system/components/data-display/types/data-view.type";
 import { CheckIndicator } from "@/design-system/components/feedback/ui/indicator";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -18,8 +18,8 @@ import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { Fragment } from "react";
 
-export const DataListBatchActionsTrigger = (
-  props: DataListBatchActionsTriggerProps,
+export const DataViewBatchActionsTrigger = (
+  props: DataViewBatchActionsTriggerProps,
 ) => {
   const {
     children,
@@ -90,7 +90,7 @@ export const DataListBatchActionsTrigger = (
   );
 };
 
-export const DataListBatchActionBar = (props: DataListBatchActionBarProps) => {
+export const DataViewBatchActionBar = (props: DataViewBatchActionBarProps) => {
   // Props
   const {
     batchActions,

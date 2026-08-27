@@ -4,8 +4,8 @@ import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -30,7 +30,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
-import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
+import { MitraDataRequestIgtLayerView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-view";
 import {
   MitraDataRequestUploadAoiContext,
   useMitraDataRequestUploadAoiContext,
@@ -40,7 +40,7 @@ import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import type {
   MitraDataRequestUploadAoiAddFileButtonProps,
-  MitraDataRequestUploadAoiAttributeListProps,
+  MitraDataRequestUploadAoiAttributeViewProps,
   MitraDataRequestUploadAoiFileListTriggerProps,
   MitraDataRequestUploadAoiLayer,
   MitraDataRequestUploadAoiPageState,
@@ -472,7 +472,7 @@ const MitraDataRequestUploadAoiFileListTrigger = (
 // -------------------------------------------------------------------------------------
 
 const MitraDataRequestUploadAoiAttributeList = memo(
-  (props: MitraDataRequestUploadAoiAttributeListProps) => {
+  (props: MitraDataRequestUploadAoiAttributeViewProps) => {
     // Props
     const { aoiCqlFilter, aoiLayers, onFilesAdded, onDeleteLayer, onClearAll } =
       props;
@@ -549,7 +549,7 @@ const MitraDataRequestUploadAoiAttributeList = memo(
 
           <Separator borderColor={"bg.canvas"} />
 
-          <MitraDataRequestIgtLayerList
+          <MitraDataRequestIgtLayerView
             cqlFilter={aoiCqlFilter}
             showFilter={false}
             onSelectIgtLayer={(layer) => {

@@ -1,13 +1,13 @@
 // src/features/internal/user-management/components/internal.user-management.data-list.tsx
 
-import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import type {
   FormattedListItem,
   FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
@@ -50,7 +50,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { RoleSelect } from "@/shared/components/select/ui/role-select";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
 
-export const InternalUserManagementDataList = () => {
+export const InternalUserManagementDataView = () => {
   // Stores
   const { theme } = useThemeStore();
 
@@ -148,7 +148,7 @@ export const InternalUserManagementDataList = () => {
       }),
     );
 
-    const itemActions: DataListItemActionsGenerator<UserManagementItem>[] = [
+    const itemActions: DataViewItemActionsGenerator<UserManagementItem>[] = [
       {
         key: "toggle-status",
         label: (user: UserManagementItem) =>
@@ -256,7 +256,7 @@ export const InternalUserManagementDataList = () => {
             <Skeleton h={"280px"} w={"full"} p={"md"} roundedTop={0} />
           ) : (
             <Box w={"full"} position={"relative"}>
-              <DataListTable.Root
+              <DataView.Table.Root
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
@@ -265,17 +265,17 @@ export const InternalUserManagementDataList = () => {
                 roundedTop={0}
                 shadow={"none"}
               >
-                <DataListTable.Header />
-                <DataListTable.Body />
-              </DataListTable.Root>
+                <DataView.Table.Header />
+                <DataView.Table.Body />
+              </DataView.Table.Root>
 
               <TopBarLoader isFetching={isFetching} />
 
-              <DataListFooter
+              <DataViewFooter
                 page={page}
                 pageSize={pageSize}
                 setPage={setPage}
-                setPageSize={(newSize) => {
+                setPageSize={(newSize: number) => {
                   setPageSize(newSize);
                   setPage(1);
                 }}

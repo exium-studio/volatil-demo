@@ -9,11 +9,11 @@ import {
 import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import { ColorModeToggleButton } from "@/design-system/components/button/ui/color-mode";
 import type {
-  DataListBatchActionsGenerator,
-  DataListItemActionsGenerator,
-} from "@/design-system/components/data-display/types/data-list.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+  DataViewBatchActionsGenerator,
+  DataViewItemActionsGenerator,
+} from "@/design-system/components/data-display/types/data-view.type";
+import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Breadcrumb } from "@/design-system/components/disclosure/ui/breadcrumb";
 import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
@@ -1657,7 +1657,7 @@ export const DataDisplay = () => {
           </Button>
         );
       },
-    ] as DataListBatchActionsGenerator[],
+    ] as DataViewBatchActionsGenerator[],
 
     itemActions: [
       {
@@ -1696,7 +1696,7 @@ export const DataDisplay = () => {
           ),
         },
       },
-    ] as DataListItemActionsGenerator[],
+    ] as DataViewItemActionsGenerator[],
   };
 
   // States
@@ -1745,19 +1745,19 @@ export const DataDisplay = () => {
           </HStack>
 
           <VStack>
-            <DataListTable.Root
+            <DataView.Table.Root
               headers={dataList.fields}
               items={dataList.items}
               batchActions={dataList.batchActions}
               itemActions={dataList.itemActions}
               // maxH={"500px"}
             >
-              <DataListTable.Header />
+              <DataView.Table.Header />
 
-              <DataListTable.Body />
-            </DataListTable.Root>
+              <DataView.Table.Body />
+            </DataView.Table.Root>
 
-            <DataListFooter
+            <DataViewFooter
               pageSize={pageSize}
               setPageSize={setPageSize}
               page={page}

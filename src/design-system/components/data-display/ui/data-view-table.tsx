@@ -1,32 +1,32 @@
 // src/design-system/components/data-display/ui/data-list-table.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
-import type { DataListTableContextValue } from "@/design-system/components/data-display/contexts/data-list-table.context";
+import type { DataViewTableContextValue } from "@/design-system/components/data-display/contexts/data-view-table.context";
 import {
-  DataListTableContext,
-  useDataListTableContext,
-} from "@/design-system/components/data-display/contexts/data-list-table.context";
-import { useDataListSelection } from "@/design-system/components/data-display/hooks/use-data-list-selection";
-import { useDataListSort } from "@/design-system/components/data-display/hooks/use-data-list-sort";
+  DataViewTableContext,
+  useDataViewTableContext,
+} from "@/design-system/components/data-display/contexts/data-view-table.context";
+import { useDataViewSelection } from "@/design-system/components/data-display/hooks/use-data-view-selection";
+import { useDataViewSort } from "@/design-system/components/data-display/hooks/use-data-view-sort";
 import type {
-  DataListTableHeaderProps,
-  DataListTableOnSelectedItemChange,
-  DataListTableRootProps,
-  DataListTableRowProps,
-  DataListTableSortIconProps,
+  DataViewTableHeaderProps,
+  DataViewTableOnSelectedItemChange,
+  DataViewTableRootProps,
+  DataViewTableRowProps,
+  DataViewTableSortIconProps,
   FormattedListItem,
   FormattedTableColumn,
   FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
-import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import {
-  DataListBatchActionBar,
-  DataListBatchActionsTrigger,
-} from "@/design-system/components/data-display/ui/data-list-batch-actions";
+  DataViewBatchActionBar,
+  DataViewBatchActionsTrigger,
+} from "@/design-system/components/data-display/ui/data-view-batch-actions";
 import {
   DataListItemActionsTrigger,
-  DataListSpreadActions,
-} from "@/design-system/components/data-display/ui/data-list-item-actions";
+  DataViewSpreadActions,
+} from "@/design-system/components/data-display/ui/data-view-item-actions";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
@@ -60,7 +60,7 @@ const DataListTableRootInternal = <
   T extends Record<string, unknown> = Record<string, unknown>,
   N extends number = number,
 >(
-  props: DataListTableRootProps<T, N> & {
+  props: DataViewTableRootProps<T, N> & {
     ref?: React.ForwardedRef<HTMLDivElement>;
   },
 ) => {
@@ -116,10 +116,10 @@ const DataListTableRootInternal = <
     | FormattedListItem[]
     | undefined;
   const onSelectedItemChangeHandler = onSelectedItemChange as unknown as
-    | DataListTableOnSelectedItemChange
+    | DataViewTableOnSelectedItemChange
     | undefined;
   const itemActionsList = itemActions as unknown as
-    | DataListItemActionsGenerator[]
+    | DataViewItemActionsGenerator[]
     | undefined;
   const renderTdCellHandler = renderTdCell as unknown as
     | ((
@@ -130,7 +130,7 @@ const DataListTableRootInternal = <
     | undefined;
 
   // Hooks
-  const { sortConfig, toggleSort, sortedItems } = useDataListSort({
+  const { sortConfig, toggleSort, sortedItems } = useDataViewSort({
     formattedItems: itemsList,
     initialColumnIndex: initialSortColumnIndex,
     initialDirection: initialSortOrder,
@@ -142,14 +142,14 @@ const DataListTableRootInternal = <
     selectAllItems,
     clearSelectedItems,
     toggleItemSelection,
-  } = useDataListSelection(
+  } = useDataViewSelection(
     itemsList,
     selectedItemsList,
     onSelectedItemChangeHandler,
   );
 
   // Resolved Values
-  const contextValue = useMemo<DataListTableContextValue>(
+  const contextValue = useMemo<DataViewTableContextValue>(
     () => ({
       headers: headersList,
       items: itemsList,
@@ -235,7 +235,7 @@ const DataListTableRootInternal = <
   ]);
 
   return (
-    <DataListTableContext.Provider value={contextValue}>
+    <DataViewTableContext.Provider value={contextValue}>
       <VStack
         className={"table-container"}
         ref={setTableContainerRef}
@@ -260,14 +260,14 @@ const DataListTableRootInternal = <
       </VStack>
 
       {!isEmptyArray(batchActions) && (
-        <DataListBatchActionBar
+        <DataViewBatchActionBar
           selectedItemIds={selectedItemIds}
           selectedItems={selectedItems}
           clearSelectedItems={clearSelectedItems}
           batchActions={batchActions}
         />
       )}
-    </DataListTableContext.Provider>
+    </DataViewTableContext.Provider>
   );
 };
 
@@ -275,12 +275,12 @@ const DataListTableRoot = DataListTableRootInternal as <
   T = Record<string, unknown>,
   N extends number = number,
 >(
-  props: DataListTableRootProps<T, N> & {
+  props: DataViewTableRootProps<T, N> & {
     ref?: React.ForwardedRef<HTMLDivElement>;
   },
 ) => React.ReactElement;
 
-const DataListTableHeader = (props: DataListTableHeaderProps) => {
+const DataListTableHeader = (props: DataViewTableHeaderProps) => {
   const {
     canBatchSelect,
     batchActions,
@@ -294,7 +294,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
     sortConfig,
     toggleSort,
     withNumbering,
-  } = useDataListTableContext();
+  } = useDataViewTableContext();
 
   return (
     <Box
@@ -314,7 +314,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
     >
       {canBatchSelect && (
         <DataListTableCell pos={"sticky"} left={0} zIndex={11}>
-          <DataListBatchActionsTrigger
+          <DataViewBatchActionsTrigger
             batchActions={batchActions}
             selectedItemIds={selectedItemIds}
             selectedItems={selectedItems}
@@ -326,7 +326,7 @@ const DataListTableHeader = (props: DataListTableHeaderProps) => {
             <IconButton variant={"ghost"} size={"xs"}>
               <AppIcon icon={IconListCheck} />
             </IconButton>
-          </DataListBatchActionsTrigger>
+          </DataViewBatchActionsTrigger>
         </DataListTableCell>
       )}
 
@@ -385,9 +385,9 @@ const DataListTableRow = memo(
     measureRef,
     dataIndex,
     styleProps,
-  }: DataListTableRowProps) => {
+  }: DataViewTableRowProps) => {
     // Contexts & Stores
-    const { page, pageSize, renderTdCell } = useDataListTableContext();
+    const { page, pageSize, renderTdCell } = useDataViewTableContext();
     const { theme } = useThemeStore();
 
     const cellBg = isItemSelected
@@ -469,7 +469,7 @@ const DataListTableRow = memo(
               bg={cellBg}
               gap={1}
             >
-              <DataListSpreadActions item={item} itemActions={itemActions} />
+              <DataViewSpreadActions item={item} itemActions={itemActions} />
             </HStack>
 
             {/* Sticky column cell for sticky menu trigger */}
@@ -511,7 +511,7 @@ const DataListTableBody = () => {
     fixedItemHeight = true,
     tableContainerRef,
     tableContainerEl,
-  } = useDataListTableContext();
+  } = useDataViewTableContext();
 
   const rowHeight = useMemo(() => parseInt("56px", 10), []);
   const rowGap = useMemo(() => parseInt("4px", 10), []);
@@ -620,7 +620,7 @@ const DataListTableCell = (props: StackProps) => {
 const DataListTableSortIcon = ({
   active,
   direction,
-}: DataListTableSortIconProps) => {
+}: DataViewTableSortIconProps) => {
   // Stores
   const { theme } = useThemeStore();
 
@@ -648,8 +648,13 @@ const DataListTableSortIcon = ({
 
 // -------------------------------------------------------------------------------------
 
-export const DataListTable = {
+const DataViewTableInternal = {
   Root: DataListTableRoot,
   Header: DataListTableHeader,
   Body: DataListTableBody,
 };
+
+export const DataView = {
+  Table: DataViewTableInternal,
+};
+

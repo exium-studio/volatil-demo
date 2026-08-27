@@ -1,8 +1,8 @@
 // src/features/mitra/cart/components/mitra.cart.data-list.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
@@ -16,13 +16,13 @@ import {
 import { getLocalCartIds } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { MitraCartTableProps } from "@/features/mitra/cart/types/cart.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import { SpatialFeaturesList } from "@/features/shared/components/spatial-features-list";
+import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 
-export const MitraCartDataList = (props: MitraCartTableProps) => {
+export const MitraCartDataView = (props: MitraCartTableProps) => {
   // Props
   const { ...restProps } = props;
 
@@ -143,7 +143,7 @@ export const MitraCartDataList = (props: MitraCartTableProps) => {
           )}
 
           {!isLoading && features.length > 0 && (
-            <SpatialFeaturesList
+            <SpatialFeaturesDataView
               wfsFeatures={features}
               page={pageState.page}
               pageSize={pageState.pageSize}

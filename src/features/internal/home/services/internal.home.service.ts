@@ -2,7 +2,7 @@ import { fetchInternalHomeDataApi } from "@/features/internal/home/api/internal.
 import type { InternalHomeDataResponse } from "@/features/internal/home/types/internal.home.api.type";
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import {
-  dummyInternalDataList,
+  dummyInternalDataView,
   dummyInternalDataSummary,
   dummyInternalOrderSummary,
   dummyInternalServiceRates,
@@ -14,7 +14,7 @@ const fallbackInternalHomeData: InternalHomeDataResponse = {
   dataSummary: dummyInternalDataSummary,
   serviceRates: dummyInternalServiceRates,
   orderSummary: dummyInternalOrderSummary,
-  dataList: dummyInternalDataList,
+  dataList: dummyInternalDataView,
 };
 
 const EMPTY_INTERNAL_SUMMARY: InternalHomeDataSummaryResponse = {

@@ -1,9 +1,9 @@
 // src/features/mitra/shared/components/wfs-data-list/wfs-data-list.tsx
 
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -12,13 +12,13 @@ import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import type {
-  SpatialFeaturesListContentProps,
-  SpatialFeaturesListProps,
-} from "@/features/shared/types/spatial-features-data-list.type";
+  SpatialFeaturesDataViewContentProps,
+  SpatialFeaturesDataViewProps,
+} from "@/features/shared/types/spatial-features-data-view.type";
 import { MapPinIcon } from "lucide-react";
 import { memo, useMemo } from "react";
 
-export const SpatialFeaturesList = memo((props: SpatialFeaturesListProps) => {
+export const SpatialFeaturesDataView = memo((props: SpatialFeaturesDataViewProps) => {
   // Props
   const {
     wfsFeatures,
@@ -84,7 +84,7 @@ export const SpatialFeaturesList = memo((props: SpatialFeaturesListProps) => {
         position={"relative"}
         {...restProps}
       >
-        <SpatialFeaturesListContent
+        <SpatialFeaturesDataViewContent
           wfsFeatures={wfsFeatures}
           attributeKeys={attributeKeys}
           canBatchSelect={canBatchSelect}
@@ -97,7 +97,7 @@ export const SpatialFeaturesList = memo((props: SpatialFeaturesListProps) => {
         />
 
         {hasPagination && (
-          <DataListFooter
+          <DataViewFooter
             page={page}
             pageSize={pageSize}
             currentDataLength={wfsFeatures.length}
@@ -113,8 +113,8 @@ export const SpatialFeaturesList = memo((props: SpatialFeaturesListProps) => {
   );
 });
 
-const SpatialFeaturesListContent = memo(
-  (props: SpatialFeaturesListContentProps) => {
+const SpatialFeaturesDataViewContent = memo(
+  (props: SpatialFeaturesDataViewContentProps) => {
     // Props
     const {
       wfsFeatures,
@@ -180,13 +180,13 @@ const SpatialFeaturesListContent = memo(
             },
           },
           ...(extraItemActions ?? []),
-        ] as DataListItemActionsGenerator[],
+        ] as DataViewItemActionsGenerator[],
       }),
       [wfsFeatures, attributeKeys, map, batchActions, extraItemActions],
     );
 
     return (
-      <DataListTable.Root
+      <DataView.Table.Root
         headers={dataList.headers}
         items={dataList.items}
         batchActions={dataList.batchActions}
@@ -204,9 +204,9 @@ const SpatialFeaturesListContent = memo(
         rounded={0}
         shadow={"none"}
       >
-        <DataListTable.Header />
-        <DataListTable.Body />
-      </DataListTable.Root>
+        <DataView.Table.Header />
+        <DataView.Table.Body />
+      </DataView.Table.Root>
     );
   },
 );

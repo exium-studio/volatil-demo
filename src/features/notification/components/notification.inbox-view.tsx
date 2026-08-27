@@ -57,7 +57,7 @@ const CATEGORY_COLOR_MAP: Record<InboxCategory, string> = {
   akun: "purple",
 };
 
-export const NotificationInboxList = memo(() => {
+export const NotificationInboxView = memo(() => {
   // Queries & Mutations
   const {
     items,

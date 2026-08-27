@@ -4,8 +4,8 @@ import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -17,12 +17,12 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
-import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
+import { MitraDataRequestIgtLayerView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-view";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import type {
-  DrawAoiAttributeListProps,
+  DrawAoiAttributeViewProps,
   DrawAoiGuideAlertProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
@@ -226,7 +226,7 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
 
 // -------------------------------------------------------------------------------------
 
-const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
+const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
   // Props
   const { aoiCqlFilter, confirmedPolygon, onResetDraw } = props;
 
@@ -304,7 +304,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeListProps) => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <MitraDataRequestIgtLayerList
+        <MitraDataRequestIgtLayerView
           cqlFilter={aoiCqlFilter}
           showFilter={false}
           onSelectIgtLayer={(layer) => {

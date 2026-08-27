@@ -5,8 +5,8 @@ import {
 import type {
   FormattedListItem,
   FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -24,7 +24,7 @@ import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-reque
 import { getLayerCountSummary } from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
 import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useIgtFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import type { MitraDataRequestIgtLayerCardListProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-list.type";
+import type { MitraDataRequestIgtLayerViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { IgtFilterTrigger } from "@/features/shared/components/igt-filter";
 import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
@@ -37,8 +37,8 @@ import {
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
-export const MitraDataRequestIgtLayerList = memo(
-  (props: MitraDataRequestIgtLayerCardListProps) => {
+export const MitraDataRequestIgtLayerView = memo(
+  (props: MitraDataRequestIgtLayerViewProps) => {
     // Props
     const {
       cqlFilter: baseCqlFilter,
@@ -309,7 +309,7 @@ export const MitraDataRequestIgtLayerList = memo(
           {isLoadingLayers && <Skeleton flex={1} p={"md"} rounded={0} />}
 
           {!isLoadingLayers && (
-            <DataListTable.Root<IgtLayerItem>
+            <DataView.Table.Root<IgtLayerItem>
               headers={dataList.headers}
               items={dataList.items}
               itemActions={dataList.itemActions}
@@ -323,9 +323,9 @@ export const MitraDataRequestIgtLayerList = memo(
               roundedTop={0}
               shadow={"none"}
             >
-              <DataListTable.Header />
-              <DataListTable.Body />
-            </DataListTable.Root>
+              <DataView.Table.Header />
+              <DataView.Table.Body />
+            </DataView.Table.Root>
           )}
         </VStack>
 

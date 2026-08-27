@@ -10,12 +10,12 @@ export type DrawAoiGuideAlertProps = StackProps & {
   isVisible?: boolean;
 };
 
-export type DrawAoiDataListProps = {
+export type DrawAoiDataViewProps = {
   igtItems: IgtDataItem[];
   onResetDraw: () => void;
 };
 
-export type DrawAoiAttributeListProps = {
+export type DrawAoiAttributeViewProps = {
   aoiCqlFilter: string;
   confirmedPolygon?: GeoJSON.Feature<GeoJSON.Polygon> | null;
   onResetDraw: () => void;

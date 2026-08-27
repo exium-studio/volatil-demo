@@ -1,24 +1,24 @@
 // src/features/mitra/shared/types/wfs-data-list.type.ts
 
-import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type GeoJSON from "geojson";
 import type { ReactNode } from "react";
 
-export type SpatialFeaturesListContentProps = {
+export type SpatialFeaturesDataViewContentProps = {
   wfsFeatures: GeoJSON.Feature[];
   attributeKeys: string[];
   canBatchSelect?: boolean;
-  batchActions?: SpatialFeaturesListProps["batchActions"];
-  extraItemActions?: SpatialFeaturesListProps["extraItemActions"];
+  batchActions?: SpatialFeaturesDataViewProps["batchActions"];
+  extraItemActions?: SpatialFeaturesDataViewProps["extraItemActions"];
   page?: number;
   pageSize?: number;
   selectedItems?: FormattedListItem[];
-  onSelectedItemChange?: SpatialFeaturesListProps["onSelectedItemChange"];
+  onSelectedItemChange?: SpatialFeaturesDataViewProps["onSelectedItemChange"];
 };
 
-export type SpatialFeaturesListProps = StackProps & {
+export type SpatialFeaturesDataViewProps = StackProps & {
   wfsFeatures: GeoJSON.Feature[];
   page?: number;
   pageSize?: number;
@@ -36,7 +36,7 @@ export type SpatialFeaturesListProps = StackProps & {
       clearSelectedItems: () => void;
     }) => ReactNode
   >;
-  extraItemActions?: DataListItemActionsGenerator[];
+  extraItemActions?: DataViewItemActionsGenerator[];
   isLoading?: boolean;
   isFetching?: boolean;
 };

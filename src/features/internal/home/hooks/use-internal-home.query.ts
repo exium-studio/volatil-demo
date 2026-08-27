@@ -3,7 +3,7 @@
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import { getInternalHomeData } from "@/features/internal/home/services/internal.home.service";
 import {
-  dummyInternalDataList,
+  dummyInternalDataView,
   dummyInternalDataSummary,
   dummyInternalOrderSummary,
   dummyInternalServiceRates,
@@ -15,7 +15,7 @@ const fallbackInternalHomeData = {
   dataSummary: dummyInternalDataSummary,
   serviceRates: dummyInternalServiceRates,
   orderSummary: dummyInternalOrderSummary,
-  dataList: dummyInternalDataList,
+  dataList: dummyInternalDataView,
 };
 
 export const useInternalHomeData = (period: MitraHomePeriod = "all") => {

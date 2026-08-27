@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react";
 import type {
-  DataListTableSortConfig,
-  DataListTableSortHandler,
+  DataViewTableSortConfig,
+  DataViewTableSortHandler,
   FormattedListItem,
-} from "@/design-system/components/data-display/types/data-list-table.type";
+} from "@/design-system/components/data-display/types/data-view-table.type";
 
-const sortHandlers: Record<string, DataListTableSortHandler> = {
+const sortHandlers: Record<string, DataViewTableSortHandler> = {
   string: (aValue, bValue, direction) =>
     direction === "asc"
       ? String(aValue).localeCompare(String(bValue))
@@ -41,7 +41,7 @@ type UseDataListSortOptions = {
   initialDirection?: "asc" | "desc";
 };
 
-export function useDataListSort(options: UseDataListSortOptions) {
+export function useDataViewSort(options: UseDataListSortOptions) {
   // Options
   const {
     formattedItems,
@@ -49,7 +49,7 @@ export function useDataListSort(options: UseDataListSortOptions) {
     initialDirection = "asc",
   } = options;
 
-  const [sortConfig, setSortConfigState] = useState<DataListTableSortConfig>({
+  const [sortConfig, setSortConfigState] = useState<DataViewTableSortConfig>({
     columnIndex: initialColumnIndex,
     direction: initialDirection,
   });

@@ -3,11 +3,11 @@
 import type {
   FormattedListItem,
   FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
+} from "@/design-system/components/data-display/types/data-view-table.type";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -22,7 +22,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
-  MitraMyDataListProps,
+  MitraMyDataViewProps,
   MyDataItem,
   MyDataStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
@@ -40,7 +40,7 @@ const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Tidak Aktif", value: "expired" },
 ];
 
-export const MitraMyDataList = (_props: MitraMyDataListProps) => {
+export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
@@ -249,7 +249,7 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
           <Skeleton p={"md"} rounded={0} />
         ) : (
           <Box w={"full"} position={"relative"} overflowY={"auto"}>
-            <DataListTable.Root
+            <DataView.Table.Root
               headers={dataList.headers}
               items={dataList.items}
               withNumbering={true}
@@ -259,17 +259,17 @@ export const MitraMyDataList = (_props: MitraMyDataListProps) => {
               pb={0}
               shadow={"none"}
             >
-              <DataListTable.Header />
-              <DataListTable.Body />
-            </DataListTable.Root>
+              <DataView.Table.Header />
+              <DataView.Table.Body />
+            </DataView.Table.Root>
 
             <TopBarLoader isFetching={isFetching} />
 
-            <DataListFooter
+            <DataViewFooter
               page={page}
               pageSize={pageSize}
-              setPage={(nextPage) => setPage(nextPage)}
-              setPageSize={(nextSize) => {
+              setPage={(nextPage: number) => setPage(nextPage)}
+              setPageSize={(nextSize: number) => {
                 setPageSize(nextSize);
                 setPage(1);
               }}

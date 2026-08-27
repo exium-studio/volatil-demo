@@ -1,11 +1,9 @@
-// src/design-system/components/data-display/ui/data-list-footer.tsx
-
-import type { DataListFooterProps } from "@/design-system/components/data-display/types/data-list.type";
+import type { DataViewFooterProps } from "@/design-system/components/data-display/types/data-view-footer.type";
+import { DataViewPageSize } from "@/design-system/components/data-display/ui/data-view-page-size";
+import { DataViewPagination } from "@/design-system/components/data-display/ui/data-view-pagination";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { DataListPagination } from "./data-list-pagination";
-import { DataListPageSize } from "./data-list-page-size";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 
 const formatDataLengthText = (_?: number, totalData?: number) => {
@@ -13,7 +11,7 @@ const formatDataLengthText = (_?: number, totalData?: number) => {
   return `Total ${totalData ? formatNumber(totalData) : "?"}`;
 };
 
-export const DataListFooter = (props: DataListFooterProps) => {
+export const DataViewFooter = (props: DataViewFooterProps) => {
   // Props
   const {
     currentDataLength,
@@ -52,7 +50,7 @@ export const DataListFooter = (props: DataListFooterProps) => {
         w={"full"}
       >
         <HStack align="start">
-          <DataListPageSize
+          <DataViewPageSize
             pageSize={pageSize}
             setPageSize={setPageSize}
             size={"xs"}
@@ -69,7 +67,7 @@ export const DataListFooter = (props: DataListFooterProps) => {
             {dataLengthText}
           </P>
 
-          <DataListPagination
+          <DataViewPagination
             page={page}
             setPage={setPage}
             totalPage={totalPage}

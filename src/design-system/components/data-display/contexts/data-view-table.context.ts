@@ -1,34 +1,34 @@
 // src/design-system/components/data-display/contexts/data-list-table.context.ts
 
 import type {
-  DataListTableSortConfig,
+  DataViewTableSortConfig,
   FormattedListItem,
   FormattedTableHeader,
   FormattedTableColumn,
-} from "@/design-system/components/data-display/types/data-list-table.type";
+} from "@/design-system/components/data-display/types/data-view-table.type";
 import type {
-  DataListBatchActionsGenerator,
-  DataListItemActionsGenerator,
-} from "@/design-system/components/data-display/types/data-list.type";
+  DataViewBatchActionsGenerator,
+  DataViewItemActionsGenerator,
+} from "@/design-system/components/data-display/types/data-view.type";
 import type { RefObject } from "react";
 import { createContext, useContext } from "react";
 
-export type DataListTableContextValue = {
+export type DataViewTableContextValue = {
   headers: FormattedTableHeader[];
   items: FormattedListItem[];
   page?: number;
   pageSize?: number;
   initialSortColumnIndex?: number;
   initialSortOrder?: "asc" | "desc";
-  batchActions?: DataListBatchActionsGenerator[];
-  itemActions?: DataListItemActionsGenerator[];
+  batchActions?: DataViewBatchActionsGenerator[];
+  itemActions?: DataViewItemActionsGenerator[];
   withNumbering?: boolean;
   virtualized?: boolean;
   fixedItemHeight?: boolean;
   tableContainerRef: RefObject<HTMLDivElement | null>;
   tableContainerEl: HTMLDivElement | null;
 
-  sortConfig: DataListTableSortConfig;
+  sortConfig: DataViewTableSortConfig;
   toggleSort: (columnIndex: number) => void;
   sortedItems: FormattedListItem[];
   selectedItemIds: string[];
@@ -45,14 +45,14 @@ export type DataListTableContextValue = {
   ) => React.ReactNode;
 };
 
-export const DataListTableContext =
-  createContext<DataListTableContextValue | null>(null);
+export const DataViewTableContext =
+  createContext<DataViewTableContextValue | null>(null);
 
-export const useDataListTableContext = () => {
-  const ctx = useContext(DataListTableContext);
+export const useDataViewTableContext = () => {
+  const ctx = useContext(DataViewTableContext);
   if (!ctx) {
     throw new Error(
-      "DataListTable compound components must be used within <DataListTable.Root>",
+      "DataView.Table compound components must be used within <DataView.Table.Root>",
     );
   }
   return ctx;

@@ -28,4 +28,4 @@ export type MyDataQueryParams = {
 };
 
 export type MyDataResponse = PaginatedResponse<MyDataItem>;
-export type MitraMyDataListProps = StackProps;
+export type MitraMyDataViewProps = StackProps;

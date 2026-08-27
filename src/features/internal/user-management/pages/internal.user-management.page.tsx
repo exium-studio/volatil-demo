@@ -1,7 +1,7 @@
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
-import { InternalUserManagementDataList } from "@/features/internal/user-management/components/internal.user-management.data-list";
+import { InternalUserManagementDataView } from "@/features/internal/user-management/components/internal.user-management.data-view";
 import { InternalUserManagementStats } from "@/features/internal/user-management/components/internal.user-management.stats";
 import { useUserManagementQuery } from "@/features/internal/user-management/hooks/use-user-management.query";
 
@@ -24,7 +24,7 @@ export const InternalUserManagementPage = () => {
 
       <InternalUserManagementStats />
 
-      <InternalUserManagementDataList />
+      <InternalUserManagementDataView />
     </PanelContentContainer>
   );
 };

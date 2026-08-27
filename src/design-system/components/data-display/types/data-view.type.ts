@@ -1,7 +1,7 @@
 // src/design-system/components/data-display/types/data-list.type.ts
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { SelectProps } from "@/design-system/components/input/types/select.type";
 import type { ActionBarRootProps } from "@/design-system/components/overlay/types/action-bar.type";
 import type { MenuRootProps, StackProps } from "@chakra-ui/react";
@@ -15,7 +15,7 @@ export type ActionIconType =
     }>
   | ReactNode;
 
-export type DataListModalActionConfig<T = Record<string, unknown>> = {
+export type DataViewModalActionConfig<T = Record<string, unknown>> = {
   triggerComponent:
     | ReactElement<{ children?: ReactNode }>
     | ((
@@ -24,7 +24,7 @@ export type DataListModalActionConfig<T = Record<string, unknown>> = {
       ) => ReactElement<{ children?: ReactNode }> | null | undefined);
 };
 
-export type DataListDeclarativeItemAction<T = Record<string, unknown>> = {
+export type DataViewDeclarativeItemAction<T = Record<string, unknown>> = {
   key?: string;
   label: string | ((item: T) => string); // Label is mandatory
   icon?: ActionIconType | ((item: T) => ActionIconType);
@@ -43,49 +43,49 @@ export type DataListDeclarativeItemAction<T = Record<string, unknown>> = {
    * Modal trigger configuration (e.g. `modal: { triggerComponent: <ConfirmationTrigger ... /> }`).
    */
   modal?:
-    | DataListModalActionConfig<T>
-    | ((item: T, formattedItem: FormattedListItem<T>) => DataListModalActionConfig<T> | null | undefined);
+    | DataViewModalActionConfig<T>
+    | ((item: T, formattedItem: FormattedListItem<T>) => DataViewModalActionConfig<T> | null | undefined);
 };
 
-export type DataListItemActionsGenerator<T = Record<string, unknown>> =
-  | DataListDeclarativeItemAction<T>
+export type DataViewItemActionsGenerator<T = Record<string, unknown>> =
+  | DataViewDeclarativeItemAction<T>
   | ((item: FormattedListItem<T>, index: number) => ReactNode);
 
-export type DataListItemActionsTriggerProps<T = Record<string, unknown>> =
+export type DataViewItemActionsTriggerProps<T = Record<string, unknown>> =
   MenuRootProps & {
     item: FormattedListItem<T>;
-    itemActions?: DataListItemActionsGenerator<T>[];
+    itemActions?: DataViewItemActionsGenerator<T>[];
     contextedTrigger?: boolean;
   };
 
-export type DataListBatchActionsGenerator = (params: {
+export type DataViewBatchActionsGenerator = (params: {
   selectedItemIds: string[];
   selectedItems: FormattedListItem[];
   clearSelectedItems: () => void;
 }) => ReactNode;
 
-export type DataListBatchActionsTriggerProps = MenuRootProps & {
+export type DataViewBatchActionsTriggerProps = MenuRootProps & {
   selectedItemIds: string[];
   selectedItems: FormattedListItem[];
   clearSelectedItems: () => void;
-  batchActions?: DataListBatchActionsGenerator[];
+  batchActions?: DataViewBatchActionsGenerator[];
   isAllItemsSelected: boolean;
   selectAllItems: (isChecked: boolean) => void;
   menuRootProps?: Omit<MenuRootProps, "children">;
   triggerActionBarMode?: boolean;
 };
 
-export type DataListBatchActionBarProps = Omit<
+export type DataViewBatchActionBarProps = Omit<
   ActionBarRootProps,
   "children"
 > & {
   selectedItemIds: string[];
   selectedItems: FormattedListItem[];
   clearSelectedItems: () => void;
-  batchActions?: DataListBatchActionsGenerator[];
+  batchActions?: DataViewBatchActionsGenerator[];
 };
 
-export type DataListFooterProps = Omit<StackProps, "page"> & {
+export type DataViewFooterProps = Omit<StackProps, "page"> & {
   currentDataLength?: number;
   totalData?: number;
   pageSize: number;
@@ -95,13 +95,13 @@ export type DataListFooterProps = Omit<StackProps, "page"> & {
   totalPage?: number;
 };
 
-export type DataListPageSizeProps = SelectProps & {
+export type DataViewPageSizeProps = SelectProps & {
   pageSize: number;
   setPageSize?: (pageSize: number) => void;
   options?: number[];
 };
 
-export type DataListPaginationProps = IconButtonProps & {
+export type DataViewPaginationProps = IconButtonProps & {
   page: number;
   setPage?: (page: number) => void;
   totalPage?: number;

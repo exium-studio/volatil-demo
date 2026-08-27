@@ -1,9 +1,9 @@
 // src/features/mitra/transaction-history/components/transaction-history.detail-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
-import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -333,15 +333,15 @@ export const TransactionDetailModalContent = (
                 border={"1px solid"}
                 borderColor={"border.subtle"}
               >
-                <DataListTable.Root
+                <DataView.Table.Root
                   headers={orderItemHeaders}
                   items={orderItemsData}
                   withNumbering={false}
                   shadow={"none"}
                 >
-                  <DataListTable.Header />
-                  <DataListTable.Body />
-                </DataListTable.Root>
+                  <DataView.Table.Header />
+                  <DataView.Table.Body />
+                </DataView.Table.Root>
               </Box>
             </VStack>
           </Skeleton>

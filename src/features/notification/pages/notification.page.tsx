@@ -9,8 +9,8 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
-import { NotificationInboxList } from "@/features/notification/components/notification.inbox-list";
-import { NotificationToastHistoryList } from "@/features/notification/components/notification.toast-list";
+import { NotificationInboxView } from "@/features/notification/components/notification.inbox-view";
+import { NotificationToastHistoryView } from "@/features/notification/components/notification.toast-view";
 import { useInboxQuery } from "@/features/notification/hooks/use-inbox.query";
 import { useNotifications } from "@/features/notification/hooks/use-notifications";
 import type {
@@ -188,7 +188,7 @@ const NotificationTabs = memo((props: NotificationTabsProps) => {
         overflowY={"auto"}
         p={0}
       >
-        <NotificationInboxList />
+        <NotificationInboxView />
       </Tabs.Content>
 
       {/* Tab 2: Notifikasi Toast History Content */}
@@ -200,7 +200,7 @@ const NotificationTabs = memo((props: NotificationTabsProps) => {
         overflowY={"auto"}
         p={0}
       >
-        <NotificationToastHistoryList
+        <NotificationToastHistoryView
           categoryGroups={categoryGroups}
           hasNotifications={hasNotifications}
           isReady={isReady}

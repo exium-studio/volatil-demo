@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import type GeoJSON from "geojson";
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 
 /** Single uploaded AOI file with its parsed GeoJSON polygon — source of truth. */
@@ -33,7 +33,7 @@ export type MitraDataRequestUploadAoiFileListTriggerProps = {
   onClearAll: () => void;
 };
 
-export type MitraDataRequestUploadAoiDataListProps = {
+export type MitraDataRequestUploadAoiDataViewProps = {
   aoiCqlFilter: string;
   aoiLayers: MitraDataRequestUploadAoiLayer[];
   onFilesAdded: (files: File[]) => void;
@@ -47,6 +47,6 @@ export type MitraDataRequestUploadAoiPageState = {
   selectedItems: FormattedListItem[];
 };
 
-export type MitraDataRequestUploadAoiAttributeListProps =
-  MitraDataRequestUploadAoiDataListProps;
+export type MitraDataRequestUploadAoiAttributeViewProps =
+  MitraDataRequestUploadAoiDataViewProps;
 

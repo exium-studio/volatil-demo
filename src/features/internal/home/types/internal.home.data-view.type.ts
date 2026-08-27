@@ -7,7 +7,7 @@ export type InternalHomeIgtDataListProps = StackProps;
 
 export type InternalHomeSyncStatus = "connected" | "disconnected" | "syncing";
 
-export type InternalHomeIgtDataListItem = Record<string, unknown> & {
+export type InternalHomeIgtDataViewItem = Record<string, unknown> & {
   id: string;
   layerFileName: string;
   syncStatus: InternalHomeSyncStatus;

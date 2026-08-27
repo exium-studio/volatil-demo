@@ -1,11 +1,11 @@
 // src/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content.tsx
 
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
-import { MitraDataRequestIgtLayerList } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-list";
+import { MitraDataRequestIgtLayerView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-view";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
@@ -18,7 +18,7 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
   return (
     <Tabs.Content p={0} flex={1} display={"flex"} {...props} value={"catalog"}>
       {!layerId || !selectedIgtLayer ? (
-        <MitraDataRequestIgtLayerList
+        <MitraDataRequestIgtLayerView
           onSelectIgtLayer={(layer) => {
             selectLayer(layer.id);
           }}

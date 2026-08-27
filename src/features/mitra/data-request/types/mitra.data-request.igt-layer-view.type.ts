@@ -4,7 +4,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import type { IgtFilterValues } from "@/features/shared/types/filter-igt-trigger.type";
 
-export type MitraDataRequestIgtLayerCardListProps = {
+export type MitraDataRequestIgtLayerViewProps = {
   cqlFilter?: string;
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
   onApplyFilter?: (filters: IgtFilterValues) => void;

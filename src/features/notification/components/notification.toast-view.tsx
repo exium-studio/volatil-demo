@@ -13,7 +13,7 @@ import { t } from "@/shared/libs/i18n";
 import { BellOffIcon, Trash2Icon } from "lucide-react";
 import { memo } from "react";
 
-export const NotificationToastHistoryList = memo(
+export const NotificationToastHistoryView = memo(
   (props: NotificationToastHistoryContentProps) => {
     // Props
     const {

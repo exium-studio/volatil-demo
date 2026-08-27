@@ -7,8 +7,8 @@ import {
 import type {
   FormattedListItem,
   FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -22,10 +22,10 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import type {
-  InternalHomeIgtDataListItem,
+  InternalHomeIgtDataViewItem,
   InternalHomeIgtDataListProps,
   SyncStatus,
-} from "@/features/internal/home/types/internal.home.data-list.type";
+} from "@/features/internal/home/types/internal.home.data-view.type";
 import type { IgtBasis } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import { t } from "@/shared/libs/i18n";
@@ -129,7 +129,7 @@ const InternalHomeIgtDataListTableContent = () => {
   );
 
   const items = useMemo<FormattedListItem[]>(() => {
-    return dataList.map((item: InternalHomeIgtDataListItem) => ({
+    return dataList.map((item: InternalHomeIgtDataViewItem) => ({
       id: item.id,
       data: item,
       columns: [
@@ -207,15 +207,15 @@ const InternalHomeIgtDataListTableContent = () => {
       ) : (
         <>
           <Box w={"full"} position={"relative"}>
-            <DataListTable.Root
+            <DataView.Table.Root
               headers={headers}
               items={items}
               roundedTop={0}
               shadow={"none"}
             >
-              <DataListTable.Header />
-              <DataListTable.Body />
-            </DataListTable.Root>
+              <DataView.Table.Header />
+              <DataView.Table.Body />
+            </DataView.Table.Root>
 
             {isFetching && (
               <Box

@@ -3,8 +3,8 @@
 import type {
   FormattedListItem,
   FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -62,7 +62,7 @@ export const MitraHomeLastTransaction = (
 
         <Separator borderColor={"bg.canvas"} />
 
-        <MitraHomeLastTransactionDataList />
+        <MitraHomeLastTransactionDataView />
       </Container.Body>
     </Container.Root>
   );
@@ -96,7 +96,7 @@ const MitraHomeLastTransactionHeader = () => {
   );
 };
 
-const MitraHomeLastTransactionDataList = () => {
+const MitraHomeLastTransactionDataView = () => {
   // Queries / Data
   const { lastTransactions } = useMitraHomeData();
 
@@ -237,15 +237,15 @@ const MitraHomeLastTransactionDataList = () => {
 
   return (
     <VStack bg={"bg.canvas"} w={"full"}>
-      <DataListTable.Root
+      <DataView.Table.Root
         headers={headers}
         items={items}
         roundedTop={0}
         shadow={"none"}
       >
-        <DataListTable.Header />
-        <DataListTable.Body />
-      </DataListTable.Root>
+        <DataView.Table.Header />
+        <DataView.Table.Body />
+      </DataView.Table.Root>
     </VStack>
   );
 };

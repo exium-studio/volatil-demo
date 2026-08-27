@@ -5,7 +5,7 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { TransactionHistoryDataList } from "@/features/mitra/transaction-history/components/transaction-history.data-list";
+import { TransactionHistoryDataView } from "@/features/mitra/transaction-history/components/transaction-history.data-view";
 
 export const MitraTransactionHistoryPage = () => {
   return (
@@ -20,7 +20,7 @@ export const MitraTransactionHistoryPage = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <TransactionHistoryDataList />
+          <TransactionHistoryDataView />
         </Container.Body>
       </PanelContentContainer>
     </Container.Root>

@@ -1,15 +1,15 @@
 // src/design-system/components/data-display/hooks/use-data-list-selection.ts
 
 import type {
-  DataListTableOnSelectedItemChange,
+  DataViewTableOnSelectedItemChange,
   FormattedListItem,
-} from "@/design-system/components/data-display/types/data-list-table.type";
+} from "@/design-system/components/data-display/types/data-view-table.type";
 import { useMemo, useState } from "react";
 
-export function useDataListSelection(
+export function useDataViewSelection(
   formattedListItems: FormattedListItem[],
   controlledSelectedItems?: FormattedListItem[],
-  onSelectedItemChange?: DataListTableOnSelectedItemChange,
+  onSelectedItemChange?: DataViewTableOnSelectedItemChange,
 ) {
   // Internal state — only used in uncontrolled mode
   const [internalSelectedItems, setInternalSelectedItems] = useState<

@@ -1,19 +1,19 @@
 // src/design-system/components/data-display/types/data-list-table.type.ts
 
 import type {
-  DataListBatchActionsGenerator,
-  DataListItemActionsGenerator,
-} from "@/design-system/components/data-display/types/data-list.type";
+  DataViewBatchActionsGenerator,
+  DataViewItemActionsGenerator,
+} from "@/design-system/components/data-display/types/data-view.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ReactNode } from "react";
 
-export type DataListTableRowProps<T = Record<string, unknown>> = {
+export type DataViewTableRowProps<T = Record<string, unknown>> = {
   item: FormattedListItem<T>;
   index: number;
   isItemSelected: boolean;
   canBatchSelect: boolean;
   withNumbering: boolean;
-  itemActions?: DataListItemActionsGenerator<T>[];
+  itemActions?: DataViewItemActionsGenerator<T>[];
   toggleItemSelection: (item: FormattedListItem<T>) => void;
   measureRef?: (element: Element | null) => void;
   dataIndex?: number;
@@ -40,7 +40,7 @@ export type FormattedListItem<
   dim?: boolean;
 };
 
-export type DataListTableOnSelectedItemChange<
+export type DataViewTableOnSelectedItemChange<
   T = Record<string, unknown>,
   N extends number = number,
 > = (payload: {
@@ -48,7 +48,7 @@ export type DataListTableOnSelectedItemChange<
   selectedCurrentItem?: FormattedListItem<T, N>;
 }) => void;
 
-export type DataListTableRootProps<
+export type DataViewTableRootProps<
   T = Record<string, unknown>,
   N extends number = number,
 > = Omit<StackProps, "page"> & {
@@ -61,9 +61,9 @@ export type DataListTableRootProps<
   initialSortOrder?: "asc" | "desc";
   canBatchSelect?: boolean;
   selectedItems?: FormattedListItem<T, N>[];
-  onSelectedItemChange?: DataListTableOnSelectedItemChange<T, N>;
-  batchActions?: DataListBatchActionsGenerator[];
-  itemActions?: DataListItemActionsGenerator<T>[];
+  onSelectedItemChange?: DataViewTableOnSelectedItemChange<T, N>;
+  batchActions?: DataViewBatchActionsGenerator[];
+  itemActions?: DataViewItemActionsGenerator<T>[];
   withNumbering?: boolean;
   virtualized?: boolean;
   fixedItemHeight?: boolean;
@@ -74,30 +74,30 @@ export type DataListTableRootProps<
   ) => ReactNode;
 };
 
-export type DataListTableHeaderProps = StackProps & {};
+export type DataViewTableHeaderProps = StackProps & {};
 
-export type DataListTableBodyProps = StackProps & {}; // Unused type
+export type DataViewTableBodyProps = StackProps & {}; // Unused type
 
-export type DataListTableSortIconProps = {
+export type DataViewTableSortIconProps = {
   active: boolean;
   direction: "asc" | "desc";
 };
 
 // ---------------------------------------------------------------------------
 
-export type DataListTableColumnDataType = "string" | "number" | "date" | "time";
+export type DataViewTableColumnDataType = "string" | "number" | "date" | "time";
 
-export type DataListTableSortDirection = "asc" | "desc";
+export type DataViewTableSortDirection = "asc" | "desc";
 
-export type DataListTableSortConfig = {
+export type DataViewTableSortConfig = {
   columnIndex?: number;
-  direction: DataListTableSortDirection;
+  direction: DataViewTableSortDirection;
 };
 
-export type DataListTableSortHandler = (
+export type DataViewTableSortHandler = (
   aValue: unknown,
   bValue: unknown,
-  direction: DataListTableSortDirection,
+  direction: DataViewTableSortDirection,
 ) => number;
 
 export type FormattedTableHeader = {
@@ -112,7 +112,7 @@ export type FormattedTableColumn = {
   td?: ReactNode;
   value: unknown;
   align?: "start" | "center" | "end";
-  dataType?: DataListTableColumnDataType;
+  dataType?: DataViewTableColumnDataType;
   dim?: boolean;
   bodyCellProps?: StackProps;
 };

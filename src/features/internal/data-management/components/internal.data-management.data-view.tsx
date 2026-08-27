@@ -1,10 +1,10 @@
 // src/features/internal/data-management/components/internal.data-management.data-list.tsx
 
-import type { DataListItemActionsGenerator } from "@/design-system/components/data-display/types/data-list.type";
-import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-list-table.type";
-import { DataListFooter } from "@/design-system/components/data-display/ui/data-list-footer";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-list-page-size";
-import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
+import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
+import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -37,7 +37,7 @@ const PUBLISH_STATUS_OPTIONS = [
   { value: "draft", label: "Draft" },
 ];
 
-export const InternalDataManagementDataList = () => {
+export const InternalDataManagementDataView = () => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
@@ -200,7 +200,7 @@ export const InternalDataManagementDataList = () => {
       };
     });
 
-    const itemActions: DataListItemActionsGenerator<MasterIgtLayerItem>[] = [
+    const itemActions: DataViewItemActionsGenerator<MasterIgtLayerItem>[] = [
       {
         key: "edit-layer",
         label: "Ubah Layer",
@@ -310,7 +310,7 @@ export const InternalDataManagementDataList = () => {
             <Skeleton p={"md"} rounded={0} h={"320px"} />
           ) : (
             <Box w={"full"} position={"relative"} overflowY={"auto"}>
-              <DataListTable.Root<MasterIgtLayerItem>
+              <DataView.Table.Root<MasterIgtLayerItem>
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
@@ -321,17 +321,17 @@ export const InternalDataManagementDataList = () => {
                 pb={0}
                 shadow={"none"}
               >
-                <DataListTable.Header />
-                <DataListTable.Body />
-              </DataListTable.Root>
+                <DataView.Table.Header />
+                <DataView.Table.Body />
+              </DataView.Table.Root>
 
               <TopBarLoader isFetching={isFetching} />
 
-              <DataListFooter
+              <DataViewFooter
                 page={page}
                 pageSize={pageSize}
-                setPage={(nextPage) => setPage(nextPage)}
-                setPageSize={(nextSize) => {
+                setPage={(nextPage: number) => setPage(nextPage)}
+                setPageSize={(nextSize: number) => {
                   setPageSize(nextSize);
                   setPage(1);
                 }}

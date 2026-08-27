@@ -3,7 +3,7 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { HelpCenterDataList } from "@/features/mitra/help-center/components/help-center.data-list";
+import { HelpCenterDataView } from "@/features/mitra/help-center/components/help-center.data-view";
 import { HelpCenterSummary } from "@/features/mitra/help-center/components/help-center.summary";
 
 export const HelpCenterPage = () => {
@@ -21,7 +21,7 @@ export const HelpCenterPage = () => {
         </Container.Body>
       </Container.Root>
 
-      <HelpCenterDataList />
+      <HelpCenterDataView />
     </PanelContentContainer>
   );
 };

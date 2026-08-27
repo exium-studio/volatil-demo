@@ -1,12 +1,12 @@
 // src/features/mitra/data-request/components/mitra.data-request.detail-attribute-view.tsx
 
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
-import { SpatialFeaturesList } from "@/features/shared/components/spatial-features-list";
+import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 import { memo } from "react";
@@ -85,7 +85,7 @@ export const MitraDataRequestDetailAttributeView = memo(
 
         {!isLoading && hasData && (
           <VStack flex={1} gap={0} bg={"bg.body"} minH={0}>
-            <SpatialFeaturesList
+            <SpatialFeaturesDataView
               wfsFeatures={features}
               totalFeatures={totalFeatures}
               isLoading={isLoading}

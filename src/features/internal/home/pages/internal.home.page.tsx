@@ -4,7 +4,7 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
-import { InternalHomeIgtDataList } from "@/features/internal/home/components/internal.home.data-list";
+import { InternalHomeIgtDataList } from "@/features/internal/home/components/internal.home.data-view";
 import { InternalHomeDataSummary } from "@/features/internal/home/components/internal.home.data-summary";
 import { InternalHomeOrderSummary } from "@/features/internal/home/components/internal.home.order-summary";
 import { InternalHomeServiceRate } from "@/features/internal/home/components/internal.home.service-rate";

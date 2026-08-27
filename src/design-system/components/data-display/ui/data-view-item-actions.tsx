@@ -6,11 +6,11 @@ import {
 } from "@/design-system/components/button/ui/button";
 import type {
   ActionIconType,
-  DataListDeclarativeItemAction,
-  DataListItemActionsGenerator,
-  DataListItemActionsTriggerProps,
-} from "@/design-system/components/data-display/types/data-list.type";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
+  DataViewDeclarativeItemAction,
+  DataViewItemActionsGenerator,
+  DataViewItemActionsTriggerProps,
+} from "@/design-system/components/data-display/types/data-view.type";
+import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
@@ -24,13 +24,13 @@ import {
 } from "react";
 
 function isDeclarativeAction<T = Record<string, unknown>>(
-  action: DataListItemActionsGenerator<T>,
-): action is DataListDeclarativeItemAction<T> {
+  action: DataViewItemActionsGenerator<T>,
+): action is DataViewDeclarativeItemAction<T> {
   return typeof action === "object" && action !== null && "label" in action;
 }
 
 export function executeItemAction<T = Record<string, unknown>>(
-  action: DataListDeclarativeItemAction<T>,
+  action: DataViewDeclarativeItemAction<T>,
   item: FormattedListItem<T>,
 ) {
   void action.onClick?.(item.data, item);
@@ -73,7 +73,7 @@ function renderIcon(icon: ActionIconType | undefined) {
 }
 
 function resolveTriggerElement<T>(
-  modalProp: DataListDeclarativeItemAction<T>["modal"],
+  modalProp: DataViewDeclarativeItemAction<T>["modal"],
   item: FormattedListItem<T>,
 ): ReactElement<{ children?: ReactNode }> | null {
   if (!modalProp) return null;
@@ -95,11 +95,11 @@ function resolveTriggerElement<T>(
   return null;
 }
 
-export function DataListSpreadActions<
+export function DataViewSpreadActions<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(props: {
   item: FormattedListItem<T>;
-  itemActions?: DataListItemActionsGenerator<T>[];
+  itemActions?: DataViewItemActionsGenerator<T>[];
 }) {
   const { item, itemActions = [] } = props;
 
@@ -185,7 +185,7 @@ export function DataListSpreadActions<
 
 export function DataListItemActionsTrigger<
   T extends Record<string, unknown> = Record<string, unknown>,
->(props: DataListItemActionsTriggerProps<T>) {
+>(props: DataViewItemActionsTriggerProps<T>) {
   // Props
   const {
     children,
