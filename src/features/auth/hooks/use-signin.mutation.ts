@@ -4,12 +4,13 @@ import { authService } from "@/features/auth/services/auth.service";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
 import type { User } from "@/shared/types/common-response.type";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 
 export const useSigninMutation = () => {
   // Hooks
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Handlers
   const toastHandlers = mutationToastHandlers("auth-signin", {
@@ -27,6 +28,7 @@ export const useSigninMutation = () => {
     onMutate: toastHandlers.onLoading,
     onSuccess: (user) => {
       toastHandlers.onSuccess();
+      queryClient.clear();
       if (user.role === "mitra") {
         navigate({ to: "/mitra/welcome" });
       } else {

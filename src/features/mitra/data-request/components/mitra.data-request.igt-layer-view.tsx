@@ -31,6 +31,7 @@ import type { MitraDataRequestIgtLayerViewProps } from "@/features/mitra/data-re
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -104,9 +105,9 @@ export const MitraDataRequestIgtLayerView = memo(
       data: layersData,
       // isLoading: isLoadingLayers
     } = useQuery({
-      queryKey: ["igt-layers-list"],
-      queryFn: () => getIgtLayers(),
-      staleTime: Infinity,
+      queryKey: queryKeys.map.layers(),
+      queryFn: ({ signal }) => getIgtLayers(signal),
+      staleTime: 1000 * 60 * 5,
     });
 
     const activeLayers = useMemo(

@@ -17,6 +17,7 @@ import { getLocalCartIds } from "@/features/mitra/cart/services/mitra.cart.servi
 import type { MitraCartTableProps } from "@/features/mitra/cart/types/cart.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
@@ -28,9 +29,9 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
 
   // Queries (Get layers dynamically)
   const { data: layersData } = useQuery({
-    queryKey: ["igt-layers-list"],
-    queryFn: () => getIgtLayers(),
-    staleTime: Infinity,
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
   });
 
   // Derived Values

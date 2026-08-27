@@ -45,12 +45,10 @@ import {
   APP_NAVS_MAP,
   INTERNAL_APP_NAVS_MAP,
 } from "@/shared/constants/app.navs";
-import { DUMMY_IGT_LAYERS } from "@/shared/constants/dummy-data/dummy-igt-layers";
 import { t } from "@/shared/libs/i18n";
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
 import type { NavGroup, NavItem } from "@/shared/types/nav.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
-import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { Box } from "@chakra-ui/react";
 import {
@@ -350,7 +348,6 @@ const Content = () => {
   const { data: fetchedLayers } = useQuery({
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
-    initialData: isDummyDataEnabled() ? DUMMY_IGT_LAYERS : undefined,
     staleTime: 1000 * 60 * 5,
   });
 
