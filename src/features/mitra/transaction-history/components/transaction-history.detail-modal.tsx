@@ -19,7 +19,6 @@ import {
   SELECTION_TYPE_CONFIG_MAP,
   SPATIAL_BASIS_CONFIG_MAP,
 } from "@/features/mitra/cart/constants/cart.config";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
   TransactionDetailModalContentProps,
   TransactionDetailTriggerProps,
@@ -77,9 +76,6 @@ export const TransactionDetailModalContent = (
 ) => {
   // Props
   const { transaction } = props;
-
-  // Stores
-  const { theme } = useThemeStore();
 
   // Hooks
   const isMounted = useMountTimeout({
@@ -201,14 +197,13 @@ export const TransactionDetailModalContent = (
           <Skeleton loaded={isMounted} w={"full"} px={"md"}>
             <HStack
               p={"md"}
-              rounded={theme.radii.component}
               bg={"bg.canvas"}
               justify={"space-between"}
               align={"center"}
               wrap={"wrap"}
-              gap={"sm"}
+              gap={"md"}
             >
-              <HStack gap={"sm"} align={"center"}>
+              <HStack gap={"md"} align={"center"}>
                 <AppIcon
                   icon={
                     isSettled

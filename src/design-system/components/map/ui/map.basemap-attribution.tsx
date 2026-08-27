@@ -19,41 +19,44 @@ export const MapAttribution = () => {
   const attributions = activeBaseLayer?.attributions ?? [];
 
   return (
-    <MapOverlayContainer>
-      <Popover.Root
-        positioning={{
-          offset: { crossAxis: -80 },
-        }}
-      >
-        <Popover.Trigger>
-          <Tooltip content={"Atribusi Peta"} positioning={{ placement: "bottom" }}>
+    <Popover.Root
+      positioning={{
+        offset: { crossAxis: -80 },
+      }}
+    >
+      <Popover.Trigger>
+        <MapOverlayContainer>
+          <Tooltip
+            content={"Atribusi Peta"}
+            positioning={{ placement: "bottom" }}
+          >
             <IconButton aria-label={"Map attribution"} size={"sm"}>
               <AppIcon icon={InfoIcon} />
             </IconButton>
           </Tooltip>
-        </Popover.Trigger>
+        </MapOverlayContainer>
+      </Popover.Trigger>
 
-        <Popover.Content w={"200px"}>
-          <Popover.Body>
-            <VStack
-              alignItems={"flex-start"}
-              gap={1}
-              css={{
-                "& a:hover": {
-                  textDecoration: "underline",
-                },
-              }}
-            >
-              {attributions.map((attribution) => (
-                <Span
-                  key={attribution}
-                  dangerouslySetInnerHTML={{ __html: attribution }}
-                />
-              ))}
-            </VStack>
-          </Popover.Body>
-        </Popover.Content>
-      </Popover.Root>
-    </MapOverlayContainer>
+      <Popover.Content w={"200px"}>
+        <Popover.Body>
+          <VStack
+            alignItems={"flex-start"}
+            gap={1}
+            css={{
+              "& a:hover": {
+                textDecoration: "underline",
+              },
+            }}
+          >
+            {attributions.map((attribution) => (
+              <Span
+                key={attribution}
+                dangerouslySetInnerHTML={{ __html: attribution }}
+              />
+            ))}
+          </VStack>
+        </Popover.Body>
+      </Popover.Content>
+    </Popover.Root>
   );
 };

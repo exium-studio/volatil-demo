@@ -48,9 +48,7 @@ export const MapIgtLayerSelect = memo(() => {
 
   const enabledCount = useMemo(() => {
     return activeLayers.filter((l) => {
-      return (
-        enabledLayerIds[l.id] ?? (l.id === DEFAULT_ACTIVE_IGT_LAYER_ID)
-      );
+      return enabledLayerIds[l.id] ?? l.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
     }).length;
   }, [activeLayers, enabledLayerIds]);
 
@@ -95,22 +93,17 @@ export const MapIgtLayerSelect = memo(() => {
 
         <Popover.Body p={2}>
           {isLoading ? (
-            <HStack
-              align={"center"}
-              justify={"center"}
-              gap={"md"}
-              p={"md"}
-            >
+            <HStack align={"center"} justify={"center"} gap={"md"} p={"md"}>
               <Loader />
 
               <P color={"fg.muted"}>{"Memuat layer..."}</P>
             </HStack>
           ) : (
-            <VStack gap={2} align={"stretch"}>
+            <VStack gap={"xs"} align={"stretch"}>
               {activeLayers.map((layer) => {
                 const isEnabled =
                   enabledLayerIds[layer.id] ??
-                  (layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+                  layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
                 const opacity = layerOpacities[layer.id] ?? 1.0;
 
                 return (

@@ -55,9 +55,7 @@ export const MapOverlayContainer = (props: StackProps) => {
       align={"center"}
       bg={"bg.body"}
       rounded={theme.radii.component}
-      outline={"1px solid"}
-      outlineColor={"border.emphasized"}
-      backdropFilter={"blur(50px)"}
+      shadow={"xs"}
       pointerEvents={"auto"}
       {...props}
     />

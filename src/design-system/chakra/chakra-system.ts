@@ -131,6 +131,9 @@ export const chakraConfig = defineConfig({
         bodyLight: { value: "#ffffff" },
         bodyDark: { value: "#1a1a1a" },
 
+        frostedLight: { value: "rgba(250, 249, 255, 0.75)" },
+        frostedDark: { value: "rgba(40, 40, 40, 0.75)" },
+
         an0: { value: "#6b72800f" },
         an1: { value: "#6b72801f" },
         an2: { value: "#6b72802f" },
@@ -786,8 +789,14 @@ export const chakraConfig = defineConfig({
           },
           frosted: {
             value: {
-              base: "rgba(250, 249, 255, 0.5)",
-              _dark: "rgba(40, 40, 40, 0.5)",
+              base: "{colors.frostedLight}",
+              _dark: "{colors.frostedDark}",
+            },
+          },
+          frostedInverted: {
+            value: {
+              base: "{colors.frostedDark}",
+              _dark: "{colors.frostedLight}",
             },
           },
           backdrop: {
@@ -2445,7 +2454,7 @@ export const chakraConfig = defineConfig({
       spacing: {
         "2xs": { value: "4px" },
         xs: { value: "8px" },
-        sm: { value: "12px" },
+        sm: { value: "10px" },
         md: { value: "16px" },
         lg: { value: "24px" },
         xl: { value: "32px" },
@@ -2464,13 +2473,47 @@ export const chakraConfig = defineConfig({
         modal: { value: 1400 },
       },
       blurs: {
+        none: { value: "0" },
+        sm: { value: "4px" },
+        md: { value: "10px" },
+        lg: { value: "20px" },
+        xl: { value: "50px" },
         backdrop: { value: "10px" },
       },
     },
 
     textStyles: {},
 
-    layerStyles: {},
+    layerStyles: {
+      frosted: {
+        value: {
+          bg: "bg.frosted",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+        },
+      },
+      frostedInverted: {
+        value: {
+          bg: "bg.frostedInverted",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+        },
+      },
+      frostedLight: {
+        value: {
+          bg: "{colors.frostedLight}",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+        },
+      },
+      frostedDark: {
+        value: {
+          bg: "{colors.frostedDark}",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+        },
+      },
+    },
 
     animationStyles: {},
 

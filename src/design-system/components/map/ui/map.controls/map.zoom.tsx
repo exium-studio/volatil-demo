@@ -23,14 +23,30 @@ export const MapZoom = (props: StackProps) => {
   return (
     <MapOverlayContainer {...props}>
       <ButtonGroup attached color={"white"}>
-        <Tooltip content={"Perkecil (Zoom Out)"} positioning={{ placement: "top" }}>
-          <IconButton aria-label={"Zoom out"} size={"sm"} onClick={zoomOut}>
+        <Tooltip
+          content={"Perkecil (Zoom Out)"}
+          positioning={{ placement: "top" }}
+        >
+          <IconButton
+            aria-label={"Zoom out"}
+            size={"sm"}
+            roundedRight={0}
+            onClick={zoomOut}
+          >
             <AppIcon icon={MinusIcon} />
           </IconButton>
         </Tooltip>
 
-        <Tooltip content={"Perbesar (Zoom In)"} positioning={{ placement: "top" }}>
-          <IconButton aria-label={"Zoom in"} size={"sm"} onClick={zoomIn}>
+        <Tooltip
+          content={"Perbesar (Zoom In)"}
+          positioning={{ placement: "top" }}
+        >
+          <IconButton
+            aria-label={"Zoom in"}
+            size={"sm"}
+            roundedLeft={0}
+            onClick={zoomIn}
+          >
             <AppIcon icon={PlusIcon} />
           </IconButton>
         </Tooltip>
