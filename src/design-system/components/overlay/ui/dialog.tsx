@@ -36,6 +36,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type Dispatch,
   type MouseEvent,
   type SetStateAction,
@@ -234,9 +235,12 @@ const DialogContent = (props: DialogContentProps) => {
   // Refs
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Derived Values
   const isFullscreen = fullscreen || size === "full";
   const zIndex = 1400 + modalKey.split(".").length;
+
+  // Pre-calculate dialog offset synchronously before browser paint
+  updateDialogOffset(modalKey);
+  const { x, y } = getDialogOffset(modalKey);
 
   useLayoutEffect(() => {
     let currentAnimation: Animation | null = null;
@@ -245,28 +249,21 @@ const DialogContent = (props: DialogContentProps) => {
       const el = contentRef.current;
       if (!el) return;
 
-      // cancel fullscreen animation
-      // currentAnimation?.cancel();
-
       currentAnimation = el.animate(
         next
           ? [
               {
-                // filter: "blur(5px)",
                 transform: "scale(0.96)",
               },
               {
-                // filter: "blur(0px)",
                 transform: "scale(1)",
               },
             ]
           : [
               {
-                // filter: "blur(5px)",
                 transform: "scale(1.04)",
               },
               {
-                // filter: "blur(0px)",
                 transform: "scale(1)",
               },
             ],
@@ -301,13 +298,13 @@ const DialogContent = (props: DialogContentProps) => {
           bg={"bg.body"}
           rounded={isFullscreen ? 0 : theme.radii.container}
           shadow={"md"}
-          onAnimationStart={() => {
-            if (!contentRef.current) return;
-            updateDialogOffset(modalKey);
-            const { x, y } = getDialogOffset(modalKey);
-            contentRef.current.style.setProperty(DIALOG_OFFSET_X_VAR, `${x}px`);
-            contentRef.current.style.setProperty(DIALOG_OFFSET_Y_VAR, `${y}px`);
-          }}
+          style={
+            {
+              [DIALOG_OFFSET_X_VAR]: `${x}px`,
+              [DIALOG_OFFSET_Y_VAR]: `${y}px`,
+              ...restProps.style,
+            } as CSSProperties
+          }
           _open={{
             animation: clickOriginAnimation
               ? "scale-up-overshoot-from-click-origin"

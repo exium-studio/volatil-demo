@@ -13,6 +13,7 @@ import type {
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { updateClickOrigin } from "@/design-system/components/overlay/stores/dialog-animation-store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import {
@@ -242,6 +243,17 @@ export function DataListItemActionsTrigger<
                       ? `${resolvedColorPalette}.fg`
                       : undefined
                   }
+                  onPointerDown={(e) => {
+                    const triggerProps = triggerElement?.props as
+                      | { modalKey?: string }
+                      | undefined;
+                    if (triggerProps?.modalKey) {
+                      updateClickOrigin(triggerProps.modalKey, {
+                        x: e.clientX,
+                        y: e.clientY,
+                      });
+                    }
+                  }}
                   onClick={
                     triggerElement
                       ? undefined

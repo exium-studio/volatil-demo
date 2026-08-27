@@ -22,17 +22,17 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
   catalog: {
     label: "Katalog",
     variant: "subtle",
-    colorPalette: "blue",
+    colorPalette: "gray",
   },
   upload_aoi: {
     label: "Upload AOI",
     variant: "subtle",
-    colorPalette: "purple",
+    colorPalette: "orange",
   },
   draw_aoi: {
     label: "Draw AOI",
     variant: "subtle",
-    colorPalette: "teal",
+    colorPalette: "blue",
   },
 };
 
