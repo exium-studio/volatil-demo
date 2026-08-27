@@ -9,6 +9,7 @@ import type {
   RadioCardInputLabelProps,
   RadioCardInputRootProps,
 } from "@/design-system/components/input/types/radio-card-input.type";
+import { RadioIndicator } from "@/design-system/components/input/ui/radio-indicator";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { RadioCard as ChakraRadioCard } from "@chakra-ui/react";
 import * as React from "react";
@@ -48,7 +49,7 @@ const RadioCardInputItem = React.forwardRef<
   HTMLDivElement,
   RadioCardInputItemProps
 >(function RadioCardInputItem(props, ref) {
-  const { children, value, hideCheckedOutline = false, ...restProps } = props;
+  const { children, value, hideCheckedOutline = true, ...restProps } = props;
   const { theme } = useThemeStore();
 
   return (
@@ -116,7 +117,19 @@ const RadioCardInputItemIndicator = React.forwardRef<
   HTMLDivElement,
   RadioCardInputItemIndicatorProps
 >(function RadioCardInputItemIndicator(props, ref) {
-  return <ChakraRadioCard.ItemIndicator ref={ref} {...props} />;
+  const { className, ...restProps } = props;
+  return (
+    <ChakraRadioCard.ItemContext>
+      {(item) => (
+        <RadioIndicator
+          ref={ref}
+          checked={Boolean(item.checked)}
+          className={className}
+          {...(restProps as unknown as Record<string, unknown>)}
+        />
+      )}
+    </ChakraRadioCard.ItemContext>
+  );
 });
 
 export const RadioCardInput = {

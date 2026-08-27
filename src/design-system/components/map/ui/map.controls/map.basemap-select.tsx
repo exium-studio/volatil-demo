@@ -89,7 +89,7 @@ export const MapBasemapSelect = () => {
 
       <Popover.Content>
         <Popover.Header p={3} borderBottom={"1px solid"} borderColor={"border"}>
-          <P fontWeight={"medium"}>{"Basemap"}</P>
+          <P fontWeight={"medium"}>{"Peta Dasar"}</P>
         </Popover.Header>
 
         <Popover.Body

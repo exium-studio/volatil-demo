@@ -151,10 +151,32 @@ const EditModalContent = (props: EditModalContentProps) => {
 
 ---
 
-## 4. Checklist for Code Reviews & Edits
+## 4. `itemActions` Modal Triggers in `DataViewTable`
+
+When configuring modal triggers inside `itemActions` of `DataViewTable`:
+
+1. **Always pass explicit unique `modalKey` to the trigger component**:
+   ```tsx
+   modal: {
+     triggerComponent: (item: EntityItem) => (
+       <EntityEditTrigger
+         modalKey={`entity-edit-${item.id}`}
+         item={item}
+       />
+     ),
+   }
+   ```
+2. **Prevent double trigger rendering between Row button and Ellipsis Menu**:
+   - `DataViewTable` renders action buttons in both the **spread row column** (`DataViewSpreadActions`) and the **sticky ellipsis dropdown menu** (`DataListItemActionsTrigger`).
+   - If an action has a modal trigger and is displayed in the row, set `showInRow: true` and `showInMenu: false` (or vice versa) to prevent two modal trigger wrapper instances listening to the same `modalKey` simultaneously in the DOM tree.
+
+---
+
+## 5. Checklist for Code Reviews & Edits
 
 - [ ] Is every modalKey unique per screen/row (incorporating `item.id` for table rows)?
-- [ ] Are all select/dropdown filters inside overlays configured with `modalKey={`${parentModalKey}.${selectSubKey}`} `?
+- [ ] In `DataViewTable` itemActions with modals, is explicit `modalKey={`...-${item.id}`}` provided and `showInMenu: false` set when `showInRow: true`?
+- [ ] Are all select/dropdown filters inside overlays configured with `modalKey={`${parentModalKey}.${selectSubKey}`}`?
 - [ ] Are all forms wrapped in `<Fieldset>` with `<Field label={"..."}>`?
 - [ ] Are state values initialized without `useEffect` setters?
 - [ ] Is `pnpm verify` run with 0 errors?

@@ -16,6 +16,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { updateClickOrigin } from "@/design-system/components/overlay/stores/dialog-animation-store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { useNavigate } from "@tanstack/react-router";
 import {
   cloneElement,
   isValidElement,
@@ -196,6 +197,9 @@ export function DataListItemActionsTrigger<
     ...restProps
   } = props;
 
+  // Hooks
+  const navigate = useNavigate();
+
   return (
     <Menu.Root
       lazyMount
@@ -233,6 +237,8 @@ export function DataListItemActionsTrigger<
               );
               const iconNode = renderIcon(resolvedIcon);
               const triggerElement = resolveTriggerElement(action.modal, item);
+              const shouldMountModalInMenu =
+                Boolean(triggerElement) && action.showInRow === false;
 
               const menuItemNode = (
                 <Menu.Item
@@ -256,7 +262,24 @@ export function DataListItemActionsTrigger<
                   }}
                   onClick={
                     triggerElement
-                      ? undefined
+                      ? () => {
+                          const triggerProps = triggerElement.props as {
+                            modalKey?: string;
+                          };
+                          const targetKey =
+                            triggerProps?.modalKey ??
+                            (action.key ? `${action.key}-${item.id}` : undefined);
+                          if (targetKey) {
+                            navigate({
+                              to: ".",
+                              resetScroll: false,
+                              search: (old: Record<string, unknown>) => ({
+                                ...old,
+                                activeModalKey: targetKey,
+                              }),
+                            });
+                          }
+                        }
                       : () => executeItemAction(action, item)
                   }
                 >
@@ -265,7 +288,7 @@ export function DataListItemActionsTrigger<
                 </Menu.Item>
               );
 
-              if (triggerElement) {
+              if (shouldMountModalInMenu && triggerElement) {
                 return cloneElement(triggerElement, { key }, menuItemNode);
               }
 

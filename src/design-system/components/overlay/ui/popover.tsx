@@ -75,7 +75,7 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
             border={"1px solid"}
             borderColor={"border.subtle"}
             rounded={theme.radii.container}
-            shadow={"soft"}
+            shadow={"sm"}
             _open={{
               animation: "scale-up-overshoot",
               animationDuration: "slow",

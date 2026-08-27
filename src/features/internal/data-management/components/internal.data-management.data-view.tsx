@@ -236,7 +236,10 @@ export const InternalDataManagementDataView = () => {
         icon: EditIcon,
         modal: {
           triggerComponent: (layer: MasterIgtLayerItem) => (
-            <InternalDataManagementEditTrigger item={layer} />
+            <InternalDataManagementEditTrigger
+              modalKey={`layer-edit-${layer.id}`}
+              item={layer}
+            />
           ),
         },
       },

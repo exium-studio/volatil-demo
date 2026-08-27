@@ -23,12 +23,12 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
       <ChakraField.Root ref={ref} gap={1} {...restProps}>
         {label && (
           <ChakraField.Label fontSize={"md"} {...labelProps}>
-            <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
+            <P fontSize={"xs"} fontWeight={"medium"} color={"fg.subtle"}>
               {label}
             </P>
 
             {optional && (
-              <Badge colorPalette={"gray"} color={"fg.muted"}>
+              <Badge fontSize={"2xs"} colorPalette={"gray"} color={"fg.subtle"}>
                 Optional
               </Badge>
             )}

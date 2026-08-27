@@ -10,7 +10,11 @@ export const Fieldset = forwardRef<HTMLFieldSetElement, FieldsetProps>(
 
     return (
       <ChakraFieldset.Root ref={ref} gap={4} {...restProps}>
-        {legend && <ChakraFieldset.Legend>{legend}</ChakraFieldset.Legend>}
+        {legend && (
+          <ChakraFieldset.Legend fontWeight={"bold"}>
+            {legend}
+          </ChakraFieldset.Legend>
+        )}
 
         <ChakraFieldset.Content>{children}</ChakraFieldset.Content>
       </ChakraFieldset.Root>
