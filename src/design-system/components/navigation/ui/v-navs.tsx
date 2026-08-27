@@ -132,11 +132,14 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
       >
         <NavButton
           aria-label={navTitle}
-          variant={isActive ? "subtle" : "ghost"}
-          // color={isActive ? `${theme.colorPalette}.fg` : undefined}
+          variant={"ghost"}
+          color={isActive ? `${theme.colorPalette}.fg` : undefined}
           onClick={() => onNavClick?.(node.key)}
         >
-          <NavIcon nav={nav} />
+          <NavIcon
+            nav={nav}
+            color={isActive ? `${theme.colorPalette}.fg` : "fg.muted"}
+          />
         </NavButton>
       </Tooltip>
     );
@@ -155,10 +158,21 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           >
             <NavButton
               aria-label={navTitle}
-              variant={isActive || isAncestorActive ? "subtle" : "ghost"}
-              // color={isActive ? `${theme.colorPalette}.fg` : undefined}
+              variant={"ghost"}
+              color={
+                isActive || isAncestorActive
+                  ? `${theme.colorPalette}.fg`
+                  : undefined
+              }
             >
-              <NavIcon nav={nav} />
+              <NavIcon
+                nav={nav}
+                color={
+                  isActive || isAncestorActive
+                    ? `${theme.colorPalette}.fg`
+                    : "fg.muted"
+                }
+              />
             </NavButton>
           </Tooltip>
         </Menu.Trigger>
@@ -173,10 +187,18 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
                 key={child.key}
                 value={child.key}
                 onClick={() => onNavClick?.(child.key)}
-                bg={isChildActive ? "neutral.subtle" : undefined}
-                // color={isChildActive ? `${theme.colorPalette}.fg` : undefined}
+                color={isChildActive ? `${theme.colorPalette}.fg` : undefined}
               >
-                {childNav.icon && <AppIcon icon={childNav.icon} />}
+                {childNav.icon && (
+                  <AppIcon
+                    icon={childNav.icon}
+                    color={
+                      isChildActive
+                        ? `${theme.colorPalette}.fg`
+                        : "fg.muted"
+                    }
+                  />
+                )}
 
                 {t[childNav.titleKey]()}
               </Menu.Item>
@@ -198,16 +220,32 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
       >
         <NavButton
           aria-label={navTitle}
-          variant={isActive && depth === 0 ? "subtle" : "ghost"}
-          // color={isActive ? `${theme.colorPalette}.fg` : undefined}
+          variant={"ghost"}
+          color={isActive && depth === 0 ? `${theme.colorPalette}.fg` : undefined}
           h={"40px"}
           w={"full"}
           rounded={isSmallViewport ? 0 : theme.radii.component}
           onClick={() => onNavClick?.(node.key)}
         >
-          <NavIcon nav={nav} />
+          <NavIcon
+            nav={nav}
+            color={
+              isActive && depth === 0
+                ? `${theme.colorPalette}.fg`
+                : "fg.muted"
+            }
+          />
 
-          <ClampedP>{navTitle}</ClampedP>
+          <ClampedP
+            fontWeight={isActive && depth === 0 ? "semibold" : "medium"}
+            color={
+              isActive && depth === 0
+                ? `${theme.colorPalette}.fg`
+                : undefined
+            }
+          >
+            {navTitle}
+          </ClampedP>
         </NavButton>
       </Tooltip>
     );
@@ -236,7 +274,12 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           <NavButton
             aria-expanded={opened}
             size={"md"}
-            variant={isActive || isAncestorActive ? "subtle" : "ghost"}
+            variant={"ghost"}
+            color={
+              isActive || isAncestorActive
+                ? `${theme.colorPalette}.fg`
+                : undefined
+            }
             h={"40px"}
             w={"full"}
             rounded={isSmallViewport ? 0 : theme.radii.component}
@@ -244,14 +287,37 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
               bg: "bg.subtle",
             }}
           >
-            <NavIcon nav={nav} />
+            <NavIcon
+              nav={nav}
+              color={
+                isActive || isAncestorActive
+                  ? `${theme.colorPalette}.fg`
+                  : "fg.muted"
+              }
+            />
 
-            <ClampedP>{navTitle}</ClampedP>
+            <ClampedP
+              fontWeight={
+                isActive || isAncestorActive ? "semibold" : "medium"
+              }
+              color={
+                isActive || isAncestorActive
+                  ? `${theme.colorPalette}.fg`
+                  : undefined
+              }
+            >
+              {navTitle}
+            </ClampedP>
 
             <AppIcon
               icon={ChevronDownIcon}
               size={"sm"}
               ml={"auto"}
+              color={
+                isActive || isAncestorActive
+                  ? `${theme.colorPalette}.fg`
+                  : "fg.muted"
+              }
               transform={opened ? "rotate(180deg)" : undefined}
               transition={"transform 150ms ease"}
             />
