@@ -23,7 +23,7 @@ export const AlertRoot = (props: AlertRootProps) => {
 };
 
 export const AlertIndicator = (props: AlertIndicatorProps) => {
-  return <ChakraAlert.Indicator {...props} />;
+  return <ChakraAlert.Indicator mt={"2px"} {...props} />;
 };
 
 export const AlertTitle = (props: AlertTitleProps) => {

@@ -246,25 +246,23 @@ export async function createCartBatch(
       batchId: newBatchId,
       status: "preparing",
       createdAt: new Date().toISOString(),
-      totalPrice: 1200000,
-      items: [
-        {
-          id: `cbi-${Date.now()}`,
-          sourceLayerId: payload.items[0]?.sourceLayerId ?? "geonode:layer",
-          sourceLayerTitle: "Layer IGT Terpilih",
-          spatialBasis: "bidang",
-          selectionType: payload.items[0]?.selectionType ?? "catalog",
-          featuresCount: 15,
-          unitPrice: 50000,
-          subtotalPrice: 1200000,
-        },
-      ],
+      totalPrice: 1200000 * payload.items.length,
+      items: payload.items.map((it, idx) => ({
+        id: `cbi-${Date.now()}-${idx}`,
+        sourceLayerId: it.sourceLayerId ?? "geonode:layer",
+        sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
+        spatialBasis: "bidang",
+        selectionType: it.selectionType ?? "catalog",
+        featuresCount: 15,
+        unitPrice: 50000,
+        subtotalPrice: 1200000,
+      })),
     };
     localDummyBatches = [newBatch, ...localDummyBatches];
     return {
       batchId: newBatchId,
       status: "preparing",
-      estimatedTotalPrice: 1200000,
+      estimatedTotalPrice: 1200000 * payload.items.length,
       createdAt: newBatch.createdAt,
     };
   } catch (error) {
@@ -274,19 +272,17 @@ export async function createCartBatch(
         batchId: newBatchId,
         status: "preparing",
         createdAt: new Date().toISOString(),
-        totalPrice: 1200000,
-        items: [
-          {
-            id: `cbi-${Date.now()}`,
-            sourceLayerId: payload.items[0]?.sourceLayerId ?? "geonode:layer",
-            sourceLayerTitle: "Layer IGT Terpilih",
-            spatialBasis: "bidang",
-            selectionType: payload.items[0]?.selectionType ?? "catalog",
-            featuresCount: 15,
-            unitPrice: 50000,
-            subtotalPrice: 1200000,
-          },
-        ],
+        totalPrice: 1200000 * payload.items.length,
+        items: payload.items.map((it, idx) => ({
+          id: `cbi-${Date.now()}-${idx}`,
+          sourceLayerId: it.sourceLayerId ?? "geonode:layer",
+          sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
+          spatialBasis: "bidang",
+          selectionType: it.selectionType ?? "catalog",
+          featuresCount: 15,
+          unitPrice: 50000,
+          subtotalPrice: 1200000,
+        })),
       };
       localDummyBatches = [newBatch, ...localDummyBatches];
       return {

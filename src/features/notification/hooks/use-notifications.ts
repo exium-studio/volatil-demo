@@ -2,7 +2,7 @@
 
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
 import { useToastHistory } from "@/design-system/components/toast/hooks/use-toast-history";
-import type { ToastRecord } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
 import { mapToastHistoryToNotificationItem } from "@/features/notification/services/notification.service";
 import type {
   NotificationCategoryGroup,
@@ -42,8 +42,8 @@ export const useNotifications = () => {
       // Sort items within group by timestamp descending
       const sorted = [...items].sort((a, b) => b.timestamp - a.timestamp);
 
-      // Convert items to ToastRecord for standard ToastStack + ToastItem reuse
-      const records: ToastRecord[] = sorted.map((item) => ({
+      // Convert items to ToastItemData for standard ToastStack + ToastItem reuse
+      const toasts: ToastItemData[] = sorted.map((item) => ({
         id: item.id,
         group: groupName,
         variant: item.variant,
@@ -60,20 +60,20 @@ export const useNotifications = () => {
 
       groups.push({
         groupName,
-        records,
+        toasts,
       });
     });
 
     // Sort groups so group with newest notification comes first
     return groups.sort((a, b) => {
-      const aTime = a.records[0]?.createdAt ?? 0;
-      const bTime = b.records[0]?.createdAt ?? 0;
+      const aTime = a.toasts[0]?.createdAt ?? 0;
+      const bTime = b.toasts[0]?.createdAt ?? 0;
       return bTime - aTime;
     });
   }, [toastItems]);
 
   const totalNotifications = useMemo(() => {
-    return categoryGroups.reduce((acc, g) => acc + g.records.length, 0);
+    return categoryGroups.reduce((acc, g) => acc + g.toasts.length, 0);
   }, [categoryGroups]);
 
   // Handlers
@@ -81,7 +81,7 @@ export const useNotifications = () => {
     deleteOne(id);
   };
 
-  const handleDeleteGroup = (groupRecords: ToastRecord[]) => {
+  const handleDeleteGroup = (groupRecords: ToastItemData[]) => {
     const ids = groupRecords.map((r) => r.id);
     deleteMany(ids);
   };

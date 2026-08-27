@@ -1,17 +1,17 @@
 // src/design-system/components/toast/ui/toast.progress-bar.tsx
 
 import { Box } from "@/design-system/components/layout/ui/box";
-import type { ToastRecord } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
 import { useColorModeValue } from "@/design-system/hooks/use-color-mode";
 
-export function ToastProgressBar({ record }: { record: ToastRecord }) {
+export function ToastProgressBar({ toast }: { toast: ToastItemData }) {
   const bg = useColorModeValue("bg.emphasized", "bg.muted");
 
-  if (record.duration === null) return null;
+  if (toast.duration === null) return null;
 
   return (
     <Box
-      key={record.updatedAt}
+      key={toast.updatedAt}
       pos={"absolute"}
       left={"16px"}
       top={0}
@@ -20,10 +20,10 @@ export function ToastProgressBar({ record }: { record: ToastRecord }) {
       bg={bg}
       transformOrigin={"left"}
       animationName={"shrink-x"}
-      animationDuration={`${record.duration}ms`}
+      animationDuration={`${toast.duration}ms`}
       animationTimingFunction={"linear"}
       animationFillMode={"forwards"}
-      animationPlayState={record.paused ? "paused" : "running"}
+      animationPlayState={toast.paused ? "paused" : "running"}
     />
   );
 }

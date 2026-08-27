@@ -185,6 +185,70 @@ export const useAddToCartAll = () => {
   });
 };
 
+/**
+ * Add multiple selected IGT layers to cart in a single request and 1 toast.
+ */
+export const useAddToCartMultipleLayers = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: {
+      layers: Array<{
+        layerId: string;
+        typeName: string;
+        cqlFilter?: string;
+      }>;
+    }) => {
+      const payload: AddToCartBatchRequest = {
+        items: params.layers.map((l) => ({
+          sourceLayerId: l.layerId,
+          selectionType: "catalog",
+          cqlFilter: l.cqlFilter,
+        })),
+      };
+      return createCartBatch(payload);
+    },
+    onMutate: (params) => {
+      const count = params.layers.length;
+      const toastId = `add-to-cart-multi-${Date.now()}`;
+      const title =
+        count === 1
+          ? `Menambahkan ${params.layers[0]?.typeName} ke keranjang...`
+          : `Menambahkan ${count} Layer IGT ke keranjang...`;
+
+      toast.loading(title, { id: toastId, group: "Keranjang" });
+      return { toastId, count };
+    },
+    onSuccess: (_, params, context) => {
+      const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
+      const count = params.layers.length;
+      const title =
+        count === 1
+          ? `Layer ${params.layers[0]?.typeName} berhasil ditambahkan ke keranjang`
+          : `Berhasil menambahkan ${count} Layer IGT ke keranjang`;
+
+      toast.success(title, { id: toastId, group: "Keranjang" });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "batches"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.cart.all,
+      });
+    },
+    onError: (error, _params, context) => {
+      const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Gagal menambahkan ke keranjang";
+      toast.error(message, { id: toastId, group: "Keranjang" });
+    },
+  });
+};
+
 export const useFlyToIgtGeometry = () => {
   const map = useMapInstanceStore((state) => state.map);
 

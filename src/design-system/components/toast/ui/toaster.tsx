@@ -37,8 +37,8 @@ export function Toaster() {
   const placementStyles = getPlacementStyles(placement);
 
   // Flatten all groups into a single ordered array.
-  const allRecords = Object.values(entries).flat();
-  const visibleToasts = [...allRecords].sort((a, b) =>
+  const allToasts = Object.values(entries).flat();
+  const visibleToasts = [...allToasts].sort((a, b) =>
     newestOnTop ? b.createdAt - a.createdAt : a.createdAt - b.createdAt,
   );
 
@@ -71,36 +71,22 @@ export function Toaster() {
         }}
       >
         <VStack minW={0} w={"full"} maxW={"360px"}>
-          {/* {groups.map(({ group, items }) => (
-          <ToastStack
-            key={group}
-            groupLabel={group}
-            items={items}
-            getId={(record) => record.id}
-            maxVisible={maxVisiblePerGroup}
-            renderItem={({ item, index, expanded }) => (
-              <ToastItem record={item} index={index} expanded={expanded} />
-            )}
-            onCloseAll={() => items.forEach((record) => toast.close(record.id))}
-          />
-        ))} */}
-
           <ToastStack
             groupLabel={""}
             items={visibleToasts}
-            getId={(record) => record.id}
+            getId={(toastItem) => toastItem.id}
             maxVisible={maxVisiblePerGroup}
             renderItem={({ item, index, stackExpanded, setStackExpanded }) => (
               <ToastItem
-                record={item}
+                toast={item}
                 index={index}
                 stackExpanded={stackExpanded}
                 onRequestExpand={() => setStackExpanded?.(true)}
               />
             )}
-            isItemLeaving={(record) => record.status === "leaving"}
+            isItemLeaving={(toastItem) => toastItem.status === "leaving"}
             onCloseAll={() =>
-              visibleToasts.forEach((record) => toast.close(record.id))
+              visibleToasts.forEach((toastItem) => toast.close(toastItem.id))
             }
           />
         </VStack>

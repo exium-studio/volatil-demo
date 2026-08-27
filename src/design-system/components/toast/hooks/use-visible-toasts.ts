@@ -5,17 +5,17 @@
 
 import { useToastVisibleStore } from "@/design-system/components/toast/stores/toast-visible.store";
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
-import type { ToastRecord } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
 
 export type ToastGroupStack = {
   group: string;
-  items: ToastRecord[];
+  items: ToastItemData[];
 };
 
 function orderRecords(
-  records: ToastRecord[],
+  records: ToastItemData[],
   newestOnTop: boolean,
-): ToastRecord[] {
+): ToastItemData[] {
   const sorted = [...records].sort((a, b) => a.createdAt - b.createdAt);
   return newestOnTop ? sorted.reverse() : sorted;
 }

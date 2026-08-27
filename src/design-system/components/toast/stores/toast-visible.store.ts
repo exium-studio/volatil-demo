@@ -1,20 +1,20 @@
 // src/design-system/components/toast/stores/toast-visible.store.ts
 
 import { create } from "zustand";
-import type { ToastRecord } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
 
 type VisibleToastState = {
   /** group -> toasts belonging to that group, items by `createdAt` ascending. */
-  entries: Record<string, ToastRecord[]>;
+  entries: Record<string, ToastItemData[]>;
 };
 
 type VisibleToastActions = {
-  add: (record: ToastRecord) => void;
-  update: (id: string, patch: Partial<ToastRecord>) => void;
+  add: (toast: ToastItemData) => void;
+  update: (id: string, patch: Partial<ToastItemData>) => void;
   remove: (id: string) => void;
   removeAll: () => void;
   markDeletedFromHistory: (toastId: string) => void;
-  find: (id: string) => ToastRecord | undefined;
+  find: (id: string) => ToastItemData | undefined;
 };
 
 export type VisibleToastStore = VisibleToastState & VisibleToastActions;
@@ -22,20 +22,20 @@ export type VisibleToastStore = VisibleToastState & VisibleToastActions;
 export const useToastVisibleStore = create<VisibleToastStore>((set, get) => ({
   entries: {},
 
-  add: (record) =>
+  add: (toast) =>
     set((state) => {
-      const group = state.entries[record.group] ?? [];
+      const group = state.entries[toast.group] ?? [];
       return {
-        entries: { ...state.entries, [record.group]: [...group, record] },
+        entries: { ...state.entries, [toast.group]: [...group, toast] },
       };
     }),
 
   update: (id, patch) =>
     set((state) => {
-      const next: Record<string, ToastRecord[]> = {};
-      for (const [group, records] of Object.entries(state.entries)) {
-        next[group] = records.map((record) =>
-          record.id === id ? { ...record, ...patch } : record,
+      const next: Record<string, ToastItemData[]> = {};
+      for (const [group, toasts] of Object.entries(state.entries)) {
+        next[group] = toasts.map((toast) =>
+          toast.id === id ? { ...toast, ...patch } : toast,
         );
       }
       return { entries: next };
@@ -43,9 +43,9 @@ export const useToastVisibleStore = create<VisibleToastStore>((set, get) => ({
 
   remove: (id) =>
     set((state) => {
-      const next: Record<string, ToastRecord[]> = {};
-      for (const [group, records] of Object.entries(state.entries)) {
-        const filtered = records.filter((record) => record.id !== id);
+      const next: Record<string, ToastItemData[]> = {};
+      for (const [group, toasts] of Object.entries(state.entries)) {
+        const filtered = toasts.filter((toast) => toast.id !== id);
         if (filtered.length > 0) next[group] = filtered;
       }
       return { entries: next };
@@ -55,21 +55,21 @@ export const useToastVisibleStore = create<VisibleToastStore>((set, get) => ({
 
   markDeletedFromHistory: (toastId) =>
     set((state) => {
-      const next: Record<string, ToastRecord[]> = {};
-      for (const [group, records] of Object.entries(state.entries)) {
-        next[group] = records.map((record) =>
-          record.id === toastId
-            ? { ...record, isDeletedFromHistory: true }
-            : record,
+      const next: Record<string, ToastItemData[]> = {};
+      for (const [group, toasts] of Object.entries(state.entries)) {
+        next[group] = toasts.map((toast) =>
+          toast.id === toastId
+            ? { ...toast, isDeletedFromHistory: true }
+            : toast,
         );
       }
       return { entries: next };
     }),
 
   find: (id) => {
-    for (const records of Object.values(get().entries)) {
-      const found = records.find((record) => record.id === id);
-      if (found) return found;
+    for (const toasts of Object.values(get().entries)) {
+      const match = toasts.find((toast) => toast.id === id);
+      if (match) return match;
     }
     return undefined;
   },

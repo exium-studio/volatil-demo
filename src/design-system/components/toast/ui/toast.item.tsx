@@ -17,7 +17,7 @@ import {
 } from "@/design-system/components/toast/core/toast.manager";
 import type {
   ToastItemProps,
-  ToastRecord,
+  ToastItemData,
   ToastVariantMap,
 } from "@/design-system/components/toast/types/toast.types";
 import { ToastIcon } from "@/design-system/components/toast/ui/toast.icon";
@@ -77,12 +77,12 @@ export const ToastItem = memo(function ToastItem(
   props: ToastItemProps & {
     stackExpanded?: boolean;
     onRequestExpand?: () => void;
-    onClose?: (record: ToastRecord) => void;
+    onClose?: (toast: ToastItemData) => void;
   },
 ) {
   // Props
   const {
-    record,
+    toast: toastData,
     index,
     stackExpanded,
     showTimestamp,
@@ -103,7 +103,7 @@ export const ToastItem = memo(function ToastItem(
   // Derived Values
   const isFirstIndex = index === 0;
   const hasExpandableContent = Boolean(
-    record.description || (record.actions && !isEmptyArray(record.actions)),
+    toastData.description || (toastData.actions && !isEmptyArray(toastData.actions)),
   );
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
@@ -117,15 +117,15 @@ export const ToastItem = memo(function ToastItem(
     [stackExpanded],
   );
 
-  if (record.variant === "custom" && record.renderer) {
-    return <>{record.renderer(record)}</>;
+  if (toastData.variant === "custom" && toastData.renderer) {
+    return <>{toastData.renderer(toastData)}</>;
   }
 
   return (
     <VStack
-      data-state={record.status}
-      aria-live={record.variant === "error" ? "assertive" : "polite"}
-      role={record.variant === "error" ? "alert" : "status"}
+      data-state={toastData.status}
+      aria-live={toastData.variant === "error" ? "assertive" : "polite"}
+      role={toastData.variant === "error" ? "alert" : "status"}
       pos={"relative"}
       overflow={"clip"}
       py={3}
@@ -137,11 +137,11 @@ export const ToastItem = memo(function ToastItem(
       borderColor={"border.subtle"}
       rounded={theme.radii.container}
       shadow={"sm"}
-      opacity={record.status === "visible" ? 1 : 0}
+      opacity={toastData.status === "visible" ? 1 : 0}
       tabIndex={0}
       cursor={!stackExpanded || hasExpandableContent ? "pointer" : "auto"}
       transform={
-        record.status === "visible" ? "translateY(0)" : "translateY(-20px)"
+        toastData.status === "visible" ? "translateY(0)" : "translateY(-20px)"
       }
       transition={"transform 300ms, opacity 300ms"}
       onPointerEnter={() => toastTimerControls.pauseAll()}
@@ -149,7 +149,7 @@ export const ToastItem = memo(function ToastItem(
       onFocus={() => toastTimerControls.pauseAll()}
       onBlur={() => toastTimerControls.resumeAll()}
       onKeyDown={(event) => {
-        if (event.key === "Escape") toast.close(record.id);
+        if (event.key === "Escape") toast.close(toastData.id);
       }}
       onClick={() => {
         if (!hasExpandableContent) return;
@@ -164,32 +164,36 @@ export const ToastItem = memo(function ToastItem(
     >
       <HStack gap={3} px={3} w={"full"} minW={0} align={"start"}>
         <ToastIcon
-          record={record}
-          icon={TOAST_VARIANT_MAP[record.variant].icon}
-          bg={TOAST_VARIANT_MAP[record.variant].bg}
-          color={TOAST_VARIANT_MAP[record.variant].color}
+          toast={toastData}
+          icon={TOAST_VARIANT_MAP[toastData.variant].icon}
+          bg={TOAST_VARIANT_MAP[toastData.variant].bg}
+          color={TOAST_VARIANT_MAP[toastData.variant].color}
         />
 
         <VStack flex={1} minW={0} w={"full"}>
           {/* Header */}
           <HStack align={"start"} gap={2} w={"full"} minW={0}>
             {/* Title */}
-            {record.title && (
+            {toastData.title && (
               <ClampedP
                 flex={"0 1 auto"}
                 minW={0}
-                mr={record.description ? 0 : 1}
+                mr={toastData.description ? 0 : 1}
                 fontWeight={"medium"}
-                color={TOAST_VARIANT_MAP[record.variant].color}
+                color={TOAST_VARIANT_MAP[toastData.variant].color}
                 lineClamp={stackExpanded || toastItemExpanded ? undefined : 1}
-                w={"140px"}
+                w={
+                  stackExpanded || toastItemExpanded || !toastData.description
+                    ? "fit"
+                    : "140px"
+                }
               >
-                {record.title}
+                {toastData.title}
               </ClampedP>
             )}
 
             {/* Description */}
-            {record.description && !showTimestamp && (
+            {toastData.description && !showTimestamp && (
               <P
                 flex={"0 1 auto"}
                 flexShrink={99}
@@ -204,12 +208,12 @@ export const ToastItem = memo(function ToastItem(
                 display={toastItemExpanded ? "none" : undefined}
                 transition={"200ms"}
               >
-                {record.description}
+                {toastData.description}
               </P>
             )}
 
             {/* Timestamp */}
-            {showTimestamp && record.createdAt ? (
+            {showTimestamp && toastData.createdAt ? (
               <P
                 fontSize={"sm"}
                 color={"fg.subtle"}
@@ -218,7 +222,7 @@ export const ToastItem = memo(function ToastItem(
                 mr={1}
                 alignSelf={"center"}
               >
-                {formatUtcDateTime(record.createdAt, preferredTimezone)}
+                {formatUtcDateTime(toastData.createdAt, preferredTimezone)}
               </P>
             ) : null}
 
@@ -229,7 +233,7 @@ export const ToastItem = memo(function ToastItem(
               ml={showTimestamp ? 0 : "auto"}
               flexShrink={0}
             >
-              {record.quickAction && (
+              {toastData.quickAction && (
                 <Button
                   variant={"subtle"}
                   size={"2xs"}
@@ -237,10 +241,10 @@ export const ToastItem = memo(function ToastItem(
                   fontSize={"sm"}
                   onClick={(event) => {
                     event.stopPropagation();
-                    record?.quickAction?.onClick(record.id);
+                    toastData?.quickAction?.onClick(toastData.id);
                   }}
                 >
-                  {record.quickAction.content}
+                  {toastData.quickAction.content}
                 </Button>
               )}
 
@@ -279,9 +283,9 @@ export const ToastItem = memo(function ToastItem(
                 onClick={(event: React.MouseEvent) => {
                   event.stopPropagation();
                   if (onClose) {
-                    onClose(record);
+                    onClose(toastData);
                   } else {
-                    toast.close(record.id);
+                    toast.close(toastData.id);
                   }
                 }}
               />
@@ -301,20 +305,20 @@ export const ToastItem = memo(function ToastItem(
             <Collapsible.Root opened={toastItemExpanded}>
               <Collapsible.Content>
                 {/* Description */}
-                {record.description && stackExpanded && (
+                {toastData.description && stackExpanded && (
                   <P
                     color={"fg.muted"}
                     fontSize={"sm"}
                     lineClamp={toastItemExpanded ? undefined : 1}
                   >
-                    {record.description}
+                    {toastData.description}
                   </P>
                 )}
 
                 {/* Actions */}
-                {record.actions && !isEmptyArray(record.actions) && (
-                  <ButtonGroup gap={2} mt={record.description ? 3 : 0}>
-                    {record.actions.map((action, index) => (
+                {toastData.actions && !isEmptyArray(toastData.actions) && (
+                  <ButtonGroup gap={2} mt={toastData.description ? 3 : 0}>
+                    {toastData.actions.map((action, index) => (
                       <Button
                         key={index}
                         variant={"subtle"}
@@ -323,7 +327,7 @@ export const ToastItem = memo(function ToastItem(
                         fontSize={"sm"}
                         onClick={(event) => {
                           event.stopPropagation();
-                          action.onClick(record.id);
+                          action.onClick(toastData.id);
                         }}
                       >
                         {action.content}
@@ -335,7 +339,7 @@ export const ToastItem = memo(function ToastItem(
             </Collapsible.Root>
 
             {/* Removed from history flag */}
-            {showDeletedFromHistoryIndicator && record.isDeletedFromHistory && (
+            {showDeletedFromHistoryIndicator && toastData.isDeletedFromHistory && (
               <P fontSize={"xs"} color={"fg.muted"} mt={1}>
                 {"Removed from history"}
               </P>
@@ -344,7 +348,7 @@ export const ToastItem = memo(function ToastItem(
         </VStack>
       </HStack>
 
-      {showProgressBar && <ToastProgressBar record={record} />}
+      {showProgressBar && <ToastProgressBar toast={toastData} />}
     </VStack>
   );
 });

@@ -22,7 +22,10 @@ import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { getLayerCountSummary } from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
-import { useAddToCartAll } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import {
+  useAddToCartAll,
+  useAddToCartMultipleLayers,
+} from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useIgtFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { MitraDataRequestIgtLayerViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
@@ -62,18 +65,22 @@ export const MitraDataRequestIgtLayerView = memo(
 
     // Mutations
     const addToCartAllMutation = useAddToCartAll();
+    const addToCartMultipleMutation = useAddToCartMultipleLayers();
 
     // Handlers
     const handleAddSelectedToCart = () => {
-      selectedItems.forEach((item) => {
-        const layer = item.data as IgtLayerItem;
-        if (layer?.wfs?.wfsTypeName) {
-          addToCartAllMutation.mutate({
-            layerId: layer.id,
-            cqlFilter: combinedCqlFilter,
-            typeName: layer.wfs.wfsTypeName,
-          });
-        }
+      const validLayers = selectedItems
+        .map((item) => item.data as IgtLayerItem)
+        .filter((layer) => Boolean(layer?.wfs?.wfsTypeName));
+
+      if (validLayers.length === 0) return;
+
+      addToCartMultipleMutation.mutate({
+        layers: validLayers.map((layer) => ({
+          layerId: layer.id,
+          typeName: layer.wfs?.wfsTypeName ?? "",
+          cqlFilter: combinedCqlFilter,
+        })),
       });
     };
 

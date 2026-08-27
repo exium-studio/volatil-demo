@@ -3,7 +3,7 @@
 import type {
   DismissedReason,
   ToastOptions,
-  ToastRecord,
+  ToastItemData,
   ToastVariant,
   UpdateToastOptions,
 } from "@/design-system/components/toast/types/toast.types";
@@ -145,7 +145,7 @@ function nextHistoryVersion(toastId: string): number {
 }
 
 function recordHistorySnapshot(
-  record: ToastRecord,
+  record: ToastItemData,
   source: "create" | "update",
 ): void {
   if (record.variant === "loading") return;
@@ -206,7 +206,7 @@ function resolveDuration(
   return getToastConfig().defaultDuration;
 }
 
-function buildRecord(options: ToastOptions, id: string): ToastRecord {
+function buildToastItem(options: ToastOptions, id: string): ToastItemData {
   const variant = options.variant ?? "info";
   const duration = resolveDuration(options.duration, variant);
   const now = Date.now();
@@ -226,27 +226,27 @@ function buildRecord(options: ToastOptions, id: string): ToastRecord {
 }
 
 /** Marks a toast "leaving" and schedules its actual removal after `leaveAnimationDuration`. */
-function beginClose(record: ToastRecord, reason: DismissedReason): void {
-  toastEventBus.emit("close", { record, reason });
-  annotateHistoryOnClose(record.id, reason);
-  record.onClose?.(record, reason);
-  useToastVisibleStore.getState().update(record.id, { status: "leaving" });
+function beginClose(toast: ToastItemData, reason: DismissedReason): void {
+  toastEventBus.emit("close", { record: toast, reason });
+  annotateHistoryOnClose(toast.id, reason);
+  toast.onClose?.(toast, reason);
+  useToastVisibleStore.getState().update(toast.id, { status: "leaving" });
 
   const { leaveAnimationDuration } = getToastConfig();
   const timeoutId = setTimeout(() => {
-    leaveTimeouts.delete(record.id);
-    remove(record.id);
+    leaveTimeouts.delete(toast.id);
+    remove(toast.id);
   }, leaveAnimationDuration);
-  leaveTimeouts.set(record.id, timeoutId);
+  leaveTimeouts.set(toast.id, timeoutId);
 }
 
 function handleExpire(id: string): void {
-  const record = useToastVisibleStore.getState().find(id);
-  if (!record) return;
+  const toast = useToastVisibleStore.getState().find(id);
+  if (!toast) return;
 
-  toastEventBus.emit("expire", record);
-  record.onExpire?.(record);
-  beginClose(record, "timeout");
+  toastEventBus.emit("expire", toast);
+  toast.onExpire?.(toast);
+  beginClose(toast, "timeout");
 }
 
 function create(options: ToastOptions = {}): string {
@@ -269,14 +269,14 @@ function create(options: ToastOptions = {}): string {
   }
 
   const id = requestedId ?? generateId();
-  const record = buildRecord(options, id);
+  const toastItem = buildToastItem(options, id);
 
-  useToastVisibleStore.getState().add(record);
-  startTimer(id, record.duration, () => handleExpire(id));
-  recordHistorySnapshot(record, "create");
+  useToastVisibleStore.getState().add(toastItem);
+  startTimer(id, toastItem.duration, () => handleExpire(id));
+  recordHistorySnapshot(toastItem, "create");
 
-  toastEventBus.emit("show", record);
-  record.onShow?.(record);
+  toastEventBus.emit("show", toastItem);
+  toastItem.onShow?.(toastItem);
 
   nextFrame(() => {
     // Only flip if still present — it may have already been closed/removed synchronously.
@@ -301,7 +301,7 @@ function update(id: string, patch: UpdateToastOptions): void {
         ? resolveDuration(undefined, nextVariant)
         : existing.duration;
 
-  const nextRecord: ToastRecord = {
+  const nextToast: ToastItemData = {
     ...existing,
     ...patch,
     id: existing.id,
@@ -312,12 +312,12 @@ function update(id: string, patch: UpdateToastOptions): void {
     updatedAt: Date.now(),
   };
 
-  useToastVisibleStore.getState().update(id, nextRecord);
+  useToastVisibleStore.getState().update(id, nextToast);
   startTimer(id, duration, () => handleExpire(id)); // restart timer with the (possibly new) duration
-  recordHistorySnapshot(nextRecord, "update");
+  recordHistorySnapshot(nextToast, "update");
 
-  toastEventBus.emit("update", nextRecord);
-  nextRecord.onUpdate?.(nextRecord);
+  toastEventBus.emit("update", nextToast);
+  nextToast.onUpdate?.(nextToast);
 }
 
 function close(id: string, reason: DismissedReason = "manual"): void {

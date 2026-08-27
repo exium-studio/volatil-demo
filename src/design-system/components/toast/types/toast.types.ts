@@ -24,12 +24,12 @@ export type DismissedReason =
   | "unknown";
 
 export type ToastIconProps = CenterProps & {
-  record: ToastRecord;
+  toast: ToastItemData;
   icon?: ReactNode;
 };
 
 export type ToastVariantMap = Record<
-  ToastRecord["variant"],
+  ToastItemData["variant"],
   {
     icon: React.ReactNode;
     bg: string;
@@ -61,20 +61,20 @@ export type ToastStackProps<TItem> = {
 };
 
 export type ToastItemProps = StackProps & {
-  record: ToastRecord;
+  toast: ToastItemData;
   index: number;
   expanded?: boolean;
   showTimestamp?: boolean;
 };
 
-export type ToastRenderer = (record: ToastRecord) => ReactNode;
+export type ToastRenderer = (toast: ToastItemData) => ReactNode;
 
 export type ToastLifecycleHandlers = {
-  onShow?: (record: ToastRecord) => void;
-  onUpdate?: (record: ToastRecord) => void;
-  onClose?: (record: ToastRecord, reason: DismissedReason) => void;
-  onRemove?: (record: ToastRecord) => void;
-  onExpire?: (record: ToastRecord) => void;
+  onShow?: (toast: ToastItemData) => void;
+  onUpdate?: (toast: ToastItemData) => void;
+  onClose?: (toast: ToastItemData, reason: DismissedReason) => void;
+  onRemove?: (toast: ToastItemData) => void;
+  onExpire?: (toast: ToastItemData) => void;
 };
 
 export type ToastOptions = ToastLifecycleHandlers & {
@@ -92,7 +92,7 @@ export type ToastOptions = ToastLifecycleHandlers & {
   renderer?: ToastRenderer;
 };
 
-export type ToastRecord = Omit<ToastOptions, "group" | "duration"> & {
+export type ToastItemData = Omit<ToastOptions, "group" | "duration"> & {
   id: string;
   group: string;
   variant: ToastVariant;
@@ -138,11 +138,11 @@ export type StoredHistoryShape = {
 };
 
 export type ToastEventMap = {
-  show: ToastRecord;
-  update: ToastRecord;
-  close: { record: ToastRecord; reason: DismissedReason };
+  show: ToastItemData;
+  update: ToastItemData;
+  close: { record: ToastItemData; reason: DismissedReason };
   remove: { id: string };
-  expire: ToastRecord;
+  expire: ToastItemData;
 };
 
 export type ToastEventName = keyof ToastEventMap;

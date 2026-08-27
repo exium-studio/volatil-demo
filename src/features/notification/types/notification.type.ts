@@ -1,7 +1,7 @@
 // src/features/notification/types/notification.type.ts
 
 import type {
-  ToastRecord,
+  ToastItemData,
   ToastVariant,
 } from "@/design-system/components/toast/types/toast.types";
 import type { ReactNode } from "react";
@@ -25,7 +25,7 @@ export type NotificationItem = {
 
 export type NotificationCategoryGroup = {
   groupName: string;
-  records: ToastRecord[];
+  toasts: ToastItemData[];
 };
 
 export type NotificationTabValue = "inbox" | "notifications";
@@ -45,7 +45,7 @@ export type NotificationTabsProps = {
   hasNotifications: boolean;
   isReady: boolean;
   isPending: boolean;
-  onDeleteGroup: (records: ToastRecord[]) => void;
+  onDeleteGroup: (toasts: ToastItemData[]) => void;
   onDeleteNotification: (id: string) => void;
   onClearAllHistory: () => void;
 };
@@ -55,7 +55,7 @@ export type NotificationToastHistoryContentProps = {
   hasNotifications: boolean;
   isReady: boolean;
   isPending: boolean;
-  onDeleteGroup: (records: ToastRecord[]) => void;
+  onDeleteGroup: (toasts: ToastItemData[]) => void;
   onDeleteNotification: (id: string) => void;
   onClearAllHistory: () => void;
 };

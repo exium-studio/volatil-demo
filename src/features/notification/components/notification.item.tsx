@@ -1,7 +1,7 @@
 // src/features/notification/components/notification.item.tsx
 
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
-import type { ToastRecord } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
 import { ToastItem } from "@/design-system/components/toast/ui/toast.item";
 import { ToastStack } from "@/design-system/components/toast/ui/toast.stack";
 import type { NotificationCategoryGroup } from "@/features/notification/types/notification.type";
@@ -9,7 +9,7 @@ import { memo } from "react";
 
 export type NotificationGroupStackCardProps = {
   group: NotificationCategoryGroup;
-  onDeleteGroup?: (records: ToastRecord[]) => void;
+  onDeleteGroup?: (toasts: ToastItemData[]) => void;
   onDeleteNotification?: (id: string) => void;
 };
 
@@ -24,22 +24,22 @@ export const NotificationGroupStackCard = memo(
     return (
       <ToastStack
         groupLabel={group.groupName}
-        items={group.records}
-        getId={(record) => record.id}
+        items={group.toasts}
+        getId={(toastItem) => toastItem.id}
         maxVisible={maxVisiblePerGroup}
         onCloseAll={
-          onDeleteGroup ? () => onDeleteGroup(group.records) : undefined
+          onDeleteGroup ? () => onDeleteGroup(group.toasts) : undefined
         }
         renderItem={({ item, index, stackExpanded, setStackExpanded }) => (
           <ToastItem
-            record={item}
+            toast={item}
             index={index}
             stackExpanded={stackExpanded}
             showTimestamp={true}
             onRequestExpand={() => setStackExpanded?.(true)}
             onClose={
               onDeleteNotification
-                ? (rec) => onDeleteNotification(rec.id)
+                ? (t) => onDeleteNotification(t.id)
                 : undefined
             }
           />

@@ -5,14 +5,14 @@ import type { ToastIconProps } from "@/design-system/components/toast/types/toas
 
 export function ToastIcon(props: ToastIconProps) {
   // Props
-  const { record, icon, ...restProps } = props;
-  const resolvedIcon = record.icon ?? icon;
+  const { toast, icon, ...restProps } = props;
+  const resolvedIcon = toast.icon ?? icon;
 
   if (!resolvedIcon) return null;
 
   return (
     <Circle
-      data-toast-icon={record.variant}
+      data-toast-icon={toast.variant}
       w={"24px"}
       h={"24px"}
       rounded={"full"}

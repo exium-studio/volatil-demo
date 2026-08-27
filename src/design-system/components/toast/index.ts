@@ -19,7 +19,7 @@ export { NotificationCenter } from "@/design-system/components/toast/ui/notifica
 
 export type {
   ToastOptions,
-  ToastRecord,
+  ToastItemData,
   ToastVariant,
   ToastAction,
   DismissedReason,
