@@ -6,6 +6,7 @@ import {
   postLogoutApi,
 } from "@/features/auth/api/auth.api";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
+import { ApiError } from "@/shared/libs/api-client/api-error";
 import type {
   InternalUser,
   MitraUser,
@@ -16,7 +17,6 @@ import {
   setStorage,
 } from "@/shared/utils/client/client.storage";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
-
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 export const authService = {
@@ -36,6 +36,10 @@ export const authService = {
 
       return response.data.user;
     } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
       if (!isDummyDataEnabled()) {
         throw error;
       }
@@ -84,7 +88,17 @@ export const authService = {
         return response.data;
       }
       return null;
-    } catch {
+    } catch (error) {
+      if (error instanceof ApiError) {
+        localStorage.removeItem("auth_token");
+        removeStorage("user");
+        return null;
+      }
+      if (!isDummyDataEnabled()) {
+        localStorage.removeItem("auth_token");
+        removeStorage("user");
+        return null;
+      }
       return getUserSession();
     }
   },

@@ -33,6 +33,8 @@ export const useSigninMutation = () => {
         navigate({ to: "/internal/welcome" });
       }
     },
-    onError: toastHandlers.onError,
+    onError: (error) => {
+      toastHandlers.onError(error);
+    },
   });
 };

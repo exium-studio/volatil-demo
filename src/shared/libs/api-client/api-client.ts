@@ -1,12 +1,12 @@
-// src/shared/libs/api-client/api-client.ts
-
+import { router } from "@/app/router";
+import { toast } from "@/design-system/components/toast";
 import { ApiError } from "@/shared/libs/api-client/api-error";
-import { back } from "@/shared/utils/client/navigation";
 
 export type RequestOptions = Omit<RequestInit, "body"> & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any;
   params?: Record<string, string | number | boolean | undefined>;
+  toastId?: string;
 };
 
 const getAuthToken = (): string | null => {
@@ -65,13 +65,6 @@ export const apiClient = {
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("auth_token");
-            back();
-          }
-        }
-
         let errorMessage = `HTTP Error ${response.status}: ${response.statusText}`;
         let errorData: Record<string, string[]> | undefined = undefined;
 
@@ -81,6 +74,31 @@ export const apiClient = {
           if (jsonError.errors) errorData = jsonError.errors;
         } catch {
           // Fallback if response is not JSON
+        }
+
+        if (response.status === 401 || response.status === 403) {
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("auth_token");
+            localStorage.removeItem("user");
+            sessionStorage.removeItem("user");
+
+            // If we are on private pages or not already on login root, navigate to root
+            const isPublicPage = window.location.pathname === "/" || window.location.pathname === "/admin";
+            if (!isPublicPage) {
+              toast.error(
+                response.status === 401
+                  ? "Sesi Anda telah berakhir"
+                  : "Akses Ditolak",
+                {
+                  id: "auth-session-expired-toast",
+                  group: "Sistem",
+                  description: errorMessage || "Akun Anda tidak memiliki akses atau telah dinonaktifkan.",
+                },
+              );
+
+              void router.navigate({ to: "/" });
+            }
+          }
         }
 
         throw new ApiError(errorMessage, response.status, errorData);

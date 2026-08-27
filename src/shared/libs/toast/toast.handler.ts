@@ -49,8 +49,11 @@ export const mutationToastHandlers = (
       }
     },
     onError: (error: unknown) => {
-      const errorMessageString =
-        error instanceof Error ? error.message : "Terjadi kesalahan";
+      let errorMessageString = "Terjadi kesalahan";
+      if (error instanceof Error) {
+        errorMessageString = error.message;
+      }
+
       const title = options.errorMessage?.title ?? errorMessageString;
       const description =
         options.errorMessage?.description ??

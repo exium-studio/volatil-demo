@@ -10,7 +10,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { NotificationGroupStackCard } from "@/features/notification/components/notification.item";
 import type { NotificationToastHistoryContentProps } from "@/features/notification/types/notification.type";
 import { t } from "@/shared/libs/i18n";
-import { BellOffIcon, Trash2Icon } from "lucide-react";
+import { BellIcon, Trash2Icon } from "lucide-react";
 import { memo } from "react";
 
 export const NotificationToastHistoryView = memo(
@@ -52,7 +52,7 @@ export const NotificationToastHistoryView = memo(
           overflowY={"auto"}
         >
           <NoDataState
-            icon={BellOffIcon}
+            icon={BellIcon}
             title={"Belum Ada Riwayat Notifikasi"}
             description={
               "Seluruh notifikasi dan status proses dari sistem akan muncul di sini."
