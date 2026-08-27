@@ -21,6 +21,7 @@ import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
@@ -38,9 +39,9 @@ export const MapIgtLayerSelect = memo(() => {
 
   // Queries — list of all active IGT layers
   const { data: layersData, isLoading } = useQuery({
-    queryKey: ["igt-layers-list"],
-    queryFn: () => getIgtLayers(),
-    staleTime: Infinity,
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
   });
 
   // Derived Values

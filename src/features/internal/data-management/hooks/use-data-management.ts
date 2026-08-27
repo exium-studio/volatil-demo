@@ -54,6 +54,9 @@ export const useUpdateMasterIgtLayer = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.internal.dataManagement.all,
       });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.map.all,
+      });
     },
     onError: toastHandlers.onError,
   });
@@ -83,6 +86,9 @@ export const useCreateMasterIgtLayer = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.internal.dataManagement.all,
       });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.map.all,
+      });
     },
     onError: toastHandlers.onError,
   });
@@ -110,6 +116,9 @@ export const useDeleteMasterIgtLayer = () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
         queryKey: queryKeys.internal.dataManagement.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.map.all,
       });
     },
     onError: toastHandlers.onError,

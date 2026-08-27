@@ -77,4 +77,8 @@ export const queryKeys = {
         [...queryKeys.internal.dataManagement.all, "layers", params] as const,
     },
   },
+  map: {
+    all: ["map"] as const,
+    layers: () => [...queryKeys.map.all, "layers"] as const,
+  },
 };

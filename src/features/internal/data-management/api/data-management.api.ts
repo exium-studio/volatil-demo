@@ -16,26 +16,44 @@ export const fetchMasterIgtLayersApi = async (
   signal?: AbortSignal,
 ): Promise<MasterIgtLayersResponse> => {
   try {
-    const response = await apiClient.get<ApiResponse<MasterIgtLayersResponse>>(
-      "/api/internal/igt-layers",
-      {
-        params: {
-          page: params?.page,
-          pageSize: params?.pageSize,
-          search: params?.search,
-          spatialBasis: params?.spatialBasis,
-          isActive: params?.isActive,
-        },
-        signal,
+    const response = await apiClient.get<
+      ApiResponse<MasterIgtLayersResponse> | MasterIgtLayersResponse
+    >("/api/internal/igt-layers", {
+      params: {
+        page: params?.page,
+        pageSize: params?.pageSize,
+        search: params?.search,
+        spatialBasis: params?.spatialBasis,
+        isActive: params?.isActive,
       },
-    );
+      signal,
+    });
 
-    if (response.data) {
-      return response.data;
+    // Handle standard ApiResponse wrapper or direct response payload
+    const resultData =
+      response && "data" in response && response.data
+        ? response.data
+        : (response as MasterIgtLayersResponse);
+
+    if (resultData && Array.isArray(resultData.items)) {
+      return resultData;
     }
-    return isDummyDataEnabled()
-      ? DUMMY_MASTER_IGT_LAYERS_RESPONSE
-      : { items: [], pagination: DUMMY_MASTER_IGT_LAYERS_RESPONSE.pagination };
+
+    if (isDummyDataEnabled()) {
+      return DUMMY_MASTER_IGT_LAYERS_RESPONSE;
+    }
+
+    return {
+      items: [],
+      pagination: {
+        totalItems: 0,
+        totalPages: 1,
+        currentPage: 1,
+        itemsPerPage: 10,
+        hasNextPage: false,
+        hasPrevPage: false,
+      },
+    };
   } catch (error) {
     if (isDummyDataEnabled()) {
       console.warn("fetchMasterIgtLayersApi fallback to dummy data:", error);
