@@ -1,16 +1,21 @@
 // src/features/internal/data-management/components/internal.data-management.edit-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Field } from "@/design-system/components/input/ui/field";
+import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
-import type { MasterIgtLayerItem } from "@/features/internal/data-management/types/data-management.type";
+import type {
+  MasterIgtLayerItem,
+  SpatialBasisType,
+} from "@/features/internal/data-management/types/data-management.type";
+import { SpatialBasisSelect } from "@/shared/components/select/ui/spatial-basis-select";
 import { t } from "@/shared/libs/i18n";
 import { useState, type ReactNode } from "react";
 
@@ -23,7 +28,11 @@ export type InternalDataManagementEditTriggerProps = {
 export const InternalDataManagementEditTrigger = (
   props: InternalDataManagementEditTriggerProps,
 ) => {
-  const { modalKey: customModalKey = `layer-edit-${props.item.id}`, item, children } = props;
+  const {
+    modalKey: customModalKey = `layer-edit-${props.item.id}`,
+    item,
+    children,
+  } = props;
 
   // Stores & Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -31,10 +40,17 @@ export const InternalDataManagementEditTrigger = (
   });
 
   return (
-    <Modal.Root modalKey={modalKey} opened={isOpen} open={open} close={close} size={"md"}>
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      size={"md"}
+    >
       <Modal.Trigger>{children}</Modal.Trigger>
 
       <InternalDataManagementEditModalContent
+        modalKey={modalKey}
         item={item}
         close={close}
       />
@@ -43,19 +59,28 @@ export const InternalDataManagementEditTrigger = (
 };
 
 type InternalDataManagementEditModalContentProps = {
+  modalKey: string;
   item: MasterIgtLayerItem;
   close: () => void;
 };
 
+const SPATIAL_BASIS_EDIT_OPTIONS = [
+  { value: "bidang", label: "Objek Bidang" },
+  { value: "kawasan", label: "Luas Kawasan" },
+];
+
 const InternalDataManagementEditModalContent = (
   props: InternalDataManagementEditModalContentProps,
 ) => {
-  const { item, close } = props;
+  const { modalKey, item, close } = props;
 
   // States initialized from item props (no setState in useEffect)
   const [title, setTitle] = useState<string>(() => item.title);
   const [description, setDescription] = useState<string>(
     () => item.description ?? "",
+  );
+  const [spatialBasis, setSpatialBasis] = useState<SpatialBasisType>(
+    () => item.spatialBasis,
   );
   const [wfsUrl, setWfsUrl] = useState<string>(() => item.wfs.wfsUrl);
   const [wmsUrl, setWmsUrl] = useState<string>(() => item.wms.wmsUrl);
@@ -70,6 +95,7 @@ const InternalDataManagementEditModalContent = (
         id: item.id,
         title,
         description,
+        spatialBasis,
         isActive,
         wfs: {
           wfsUrl,
@@ -104,84 +130,84 @@ const InternalDataManagementEditModalContent = (
       <Separator borderColor={"bg.canvas"} />
 
       <Modal.Body p={"md"}>
-        <VStack align={"stretch"} gap={"md"}>
-          {/* Basis Spasial Badge */}
-          <HStack justify={"space-between"} align={"center"}>
-            <P fontSize={"sm"} color={"fg.subtle"}>
-              {"Basis Spasial"}
-            </P>
-            <Badge
-              colorPalette={item.spatialBasis === "bidang" ? "blue" : "orange"}
-              variant={"subtle"}
-            >
-              {item.spatialBasis === "bidang" ? "Objek Bidang" : "Luas Kawasan"}
-            </Badge>
-          </HStack>
+        <Fieldset>
+          <VStack align={"stretch"} gap={"md"}>
+            {/* Input Judul Layer */}
+            <Field label={"Nama / Judul Layer"}>
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder={"Contoh: RTRW Kabupaten Badung"}
+              />
+            </Field>
 
-          {/* Input Judul Layer */}
-          <VStack align={"stretch"} gap={1}>
-            <P fontSize={"sm"} fontWeight={"medium"}>
-              {"Nama / Judul Layer"}
-            </P>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder={"Contoh: RTRW Kabupaten Badung"}
-            />
+            {/* Select Basis Spasial */}
+            <Field label={"Basis Spasial"}>
+              <SpatialBasisSelect
+                modalKey={`${modalKey}.spatial-basis`}
+                options={SPATIAL_BASIS_EDIT_OPTIONS}
+                value={spatialBasis}
+                onValueChange={(val) =>
+                  setSpatialBasis(val as SpatialBasisType)
+                }
+                placeholder={"Pilih Basis Spasial"}
+                w={"full"}
+              />
+            </Field>
+
+            {/* Input Deskripsi */}
+            <Field label={"Deskripsi"} optional>
+              <Input
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={"Deskripsi data layer..."}
+              />
+            </Field>
+
+            {/* Input WFS Endpoint */}
+            <Field label={"WFS Endpoint URL"}>
+              <Input
+                value={wfsUrl}
+                onChange={(e) => setWfsUrl(e.target.value)}
+                placeholder={"https://.../geoserver/.../ows"}
+              />
+            </Field>
+
+            {/* Input WMS Endpoint */}
+            <Field label={"WMS Endpoint URL"}>
+              <Input
+                value={wmsUrl}
+                onChange={(e) => setWmsUrl(e.target.value)}
+                placeholder={"https://.../geoserver/.../wms"}
+              />
+            </Field>
+
+            {/* Toggle Status Aktif (Publish) */}
+            <Field label={"Status Publikasi"}>
+              <HStack
+                justify={"space-between"}
+                align={"center"}
+                w={"full"}
+                py={1}
+              >
+                <VStack align={"start"} gap={0}>
+                  <P fontSize={"sm"} fontWeight={"medium"}>
+                    {isActive ? "Publik (Aktif)" : "Draft (Nonaktif)"}
+                  </P>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {
+                      "Layer yang aktif dapat dilihat & dipesan di katalog Mitra"
+                    }
+                  </P>
+                </VStack>
+                <Switch
+                  checked={isActive}
+                  onCheckedChange={(e) => setIsActive(Boolean(e.checked))}
+                />
+              </HStack>
+            </Field>
           </VStack>
-
-          {/* Input Deskripsi */}
-          <VStack align={"stretch"} gap={1}>
-            <P fontSize={"sm"} fontWeight={"medium"}>
-              {"Deskripsi"}
-            </P>
-            <Input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={"Deskripsi data layer..."}
-            />
-          </VStack>
-
-          {/* Input WFS Endpoint */}
-          <VStack align={"stretch"} gap={1}>
-            <P fontSize={"sm"} fontWeight={"medium"}>
-              {"WFS Endpoint URL"}
-            </P>
-            <Input
-              value={wfsUrl}
-              onChange={(e) => setWfsUrl(e.target.value)}
-              placeholder={"https://.../geoserver/.../ows"}
-            />
-          </VStack>
-
-          {/* Input WMS Endpoint */}
-          <VStack align={"stretch"} gap={1}>
-            <P fontSize={"sm"} fontWeight={"medium"}>
-              {"WMS Endpoint URL"}
-            </P>
-            <Input
-              value={wmsUrl}
-              onChange={(e) => setWmsUrl(e.target.value)}
-              placeholder={"https://.../geoserver/.../wms"}
-            />
-          </VStack>
-
-          {/* Toggle Status Aktif (Publish) */}
-          <HStack justify={"space-between"} align={"center"} py={1}>
-            <VStack align={"start"} gap={0}>
-              <P fontSize={"sm"} fontWeight={"medium"}>
-                {"Status Publikasi (Aktif)"}
-              </P>
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Layer yang aktif dapat dilihat & dipesan di katalog Mitra"}
-              </P>
-            </VStack>
-            <Switch
-              checked={isActive}
-              onCheckedChange={(e) => setIsActive(Boolean(e.checked))}
-            />
-          </HStack>
-        </VStack>
+        </Fieldset>
       </Modal.Body>
 
       <Modal.Footer>

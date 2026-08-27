@@ -1,21 +1,22 @@
-// src/features/internal/data-management/components/internal.data-management.data-list.tsx
-
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
 import { useMasterIgtLayersQuery } from "@/features/internal/data-management/hooks/use-data-management";
 import type {
@@ -28,7 +29,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { Edit2Icon, LayersIcon } from "lucide-react";
+import { EditIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const PUBLISH_STATUS_OPTIONS = [
@@ -82,16 +83,20 @@ export const InternalDataManagementDataView = () => {
         item.id.toLowerCase().includes(lower) ||
         item.description?.toLowerCase().includes(lower) ||
         item.wfs.wfsUrl.toLowerCase().includes(lower) ||
-        item.wms.wmsUrl.toLowerCase().includes(lower),
+        item.wfs.wfsTypeName.toLowerCase().includes(lower) ||
+        item.wms.wmsUrl.toLowerCase().includes(lower) ||
+        item.wms.layers.toLowerCase().includes(lower),
     );
   }, [rawItems, search]);
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "Tema / Layer IGT", sortable: false, align: "start" },
+      { th: "Nama Layer IGT", sortable: false, align: "start" },
+      { th: "Workspace / Typename", sortable: false, align: "start" },
       { th: "Basis Spasial", sortable: false, align: "start" },
-      { th: "Status Publikasi", sortable: false, align: "center" },
-      { th: "WFS / WMS Service URL", sortable: false, align: "start" },
+      { th: "Status", sortable: false, align: "center" },
+      { th: "WFS Service URL", sortable: false, align: "start" },
+      { th: "WMS Service URL", sortable: false, align: "start" },
       { th: "Terakhir Diperbarui", sortable: false, align: "start" },
     ];
 
@@ -105,24 +110,23 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.title,
             td: (
-              <VStack align={"start"} gap={0} maxW={"280px"}>
-                <P fontSize={"sm"} fontWeight={"semibold"}>
-                  {item.title}
-                </P>
-                <P fontSize={"xs"} color={"fg.subtle"} fontFamily={"mono"}>
-                  {item.id}
-                </P>
-                {item.description && (
-                  <P
-                    fontSize={"xs"}
-                    color={"fg.muted"}
-                    truncate
-                    title={item.description}
-                  >
-                    {item.description}
-                  </P>
-                )}
-              </VStack>
+              <P fontSize={"sm"} fontWeight={"semibold"} whiteSpace={"nowrap"}>
+                {item.title}
+              </P>
+            ),
+            align: "start" as const,
+          },
+          {
+            value: item.wfs.wfsTypeName || item.id,
+            td: (
+              <P
+                fontSize={"xs"}
+                color={"fg.subtle"}
+                fontFamily={"mono"}
+                whiteSpace={"nowrap"}
+              >
+                {item.wfs.wfsTypeName || item.id}
+              </P>
             ),
             align: "start" as const,
           },
@@ -153,37 +157,52 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.wfs.wfsUrl,
             td: (
-              <VStack align={"start"} gap={1} maxW={"280px"}>
-                <HStack gap={1}>
-                  <Badge size={"xs"} variant={"outline"} colorPalette={"teal"}>
-                    {"WFS"}
-                  </Badge>
-                  <P
-                    fontSize={"xs"}
-                    fontFamily={"mono"}
-                    color={"fg.subtle"}
-                    truncate
-                    title={item.wfs.wfsUrl}
-                  >
+              <HStack gap={1} align={"center"} maxW={"260px"}>
+                <ExternalLink
+                  href={item.wfs.wfsUrl}
+                  display={"inline-flex"}
+                  alignItems={"center"}
+                  minW={0}
+                  flex={1}
+                >
+                  <ClampedP fontSize={"sm"} truncate>
                     {item.wfs.wfsUrl}
-                  </P>
-                </HStack>
-
-                <HStack gap={1}>
-                  <Badge size={"xs"} variant={"outline"} colorPalette={"purple"}>
-                    {"WMS"}
-                  </Badge>
-                  <P
-                    fontSize={"xs"}
-                    fontFamily={"mono"}
-                    color={"fg.subtle"}
-                    truncate
-                    title={item.wms.wmsUrl}
-                  >
+                  </ClampedP>
+                </ExternalLink>
+                <ClipboardButton
+                  value={item.wfs.wfsUrl}
+                  size={"2xs"}
+                  variant={"ghost"}
+                  aria-label={"Salin URL WFS"}
+                  flexShrink={0}
+                />
+              </HStack>
+            ),
+            align: "start" as const,
+          },
+          {
+            value: item.wms.wmsUrl,
+            td: (
+              <HStack gap={1} align={"center"} maxW={"260px"}>
+                <ExternalLink
+                  href={item.wms.wmsUrl}
+                  display={"inline-flex"}
+                  alignItems={"center"}
+                  minW={0}
+                  flex={1}
+                >
+                  <ClampedP fontSize={"sm"} truncate>
                     {item.wms.wmsUrl}
-                  </P>
-                </HStack>
-              </VStack>
+                  </ClampedP>
+                </ExternalLink>
+                <ClipboardButton
+                  value={item.wms.wmsUrl}
+                  size={"2xs"}
+                  variant={"ghost"}
+                  aria-label={"Salin URL WMS"}
+                  flexShrink={0}
+                />
+              </HStack>
             ),
             align: "start" as const,
           },
@@ -204,7 +223,7 @@ export const InternalDataManagementDataView = () => {
       {
         key: "edit-layer",
         label: "Ubah Layer",
-        icon: Edit2Icon,
+        icon: EditIcon,
         modal: {
           triggerComponent: (layer: MasterIgtLayerItem) => (
             <InternalDataManagementEditTrigger item={layer} />
@@ -226,20 +245,20 @@ export const InternalDataManagementDataView = () => {
       <Container.Body flex={1} minH={0} overflowY={"auto"}>
         <HeaderContainer>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
-            <VStack align={"start"} gap={0}>
-              <Heading>{"Manajemen Tema & Layer IGT"}</Heading>
-              <P fontSize={"xs"} color={"fg.subtle"}>
+            <HStack gap={"xs"} align={"center"}>
+              <Heading>{"Manajemen Data IGT"}</Heading>
+
+              <InfoTip
+                variant={"icon"}
+                appIconProps={{
+                  size: "xs",
+                  color: "fg.subtle",
+                }}
+              >
                 {
                   "Katalog master data spasial geospasial ATR/BPN. Layer berstatus 'Publik' otomatis dapat diakses dan dipesan oleh Mitra."
                 }
-              </P>
-            </VStack>
-
-            <HStack gap={"xs"} align={"center"}>
-              <Badge variant={"subtle"} colorPalette={"blue"}>
-                <LayersIcon size={14} />
-                {`${filteredItems.length} Layer`}
-              </Badge>
+              </InfoTip>
             </HStack>
           </HStack>
         </HeaderContainer>
