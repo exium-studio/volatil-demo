@@ -1,3 +1,4 @@
+import { Button } from "@/design-system/components/button/ui/button";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
@@ -6,6 +7,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -17,6 +19,7 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { InternalDataManagementCreateTrigger } from "@/features/internal/data-management/components/internal.data-management.create-modal";
 import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
 import { useMasterIgtLayersQuery } from "@/features/internal/data-management/hooks/use-data-management";
 import type {
@@ -29,7 +32,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { EditIcon } from "lucide-react";
+import { EditIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const PUBLISH_STATUS_OPTIONS = [
@@ -273,6 +276,13 @@ export const InternalDataManagementDataView = () => {
                 }
               </InfoTip>
             </HStack>
+
+            <InternalDataManagementCreateTrigger>
+              <Button primary pl={3}>
+                <AppIcon icon={PlusIcon} />
+                {"Tambah Layer"}
+              </Button>
+            </InternalDataManagementCreateTrigger>
           </HStack>
         </HeaderContainer>
 
