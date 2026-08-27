@@ -1,16 +1,14 @@
-// src/features/mitra/my-data/components/mitra.my-data-list.tsx
-
 import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -18,7 +16,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
@@ -31,7 +29,6 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { ExternalLinkIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
@@ -110,18 +107,26 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           {
             value: item.wfsUrl ?? "",
             td: item.wfsUrl ? (
-              <ExternalLink
-                href={item.wfsUrl}
-                display={"inline-flex"}
-                alignItems={"center"}
-                gap={1}
-                maxW={"200px"}
-              >
-                <P truncate>
-                  {item.wfsUrl}
-                </P>
-                <AppIcon icon={ExternalLinkIcon} size={"xs"} flexShrink={0} />
-              </ExternalLink>
+              <HStack gap={1} align={"center"} maxW={"240px"}>
+                <ExternalLink
+                  href={item.wfsUrl}
+                  display={"inline-flex"}
+                  alignItems={"center"}
+                  minW={0}
+                  flex={1}
+                >
+                  <ClampedP fontSize={"sm"} truncate>
+                    {item.wfsUrl}
+                  </ClampedP>
+                </ExternalLink>
+                <ClipboardButton
+                  value={item.wfsUrl}
+                  size={"2xs"}
+                  variant={"ghost"}
+                  aria-label={"Salin URL WFS"}
+                  flexShrink={0}
+                />
+              </HStack>
             ) : (
               <P color={"fg.subtle"}>
                 {"-"}
@@ -132,18 +137,26 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           {
             value: item.wmsUrl ?? "",
             td: item.wmsUrl ? (
-              <ExternalLink
-                href={item.wmsUrl}
-                display={"inline-flex"}
-                alignItems={"center"}
-                gap={1}
-                maxW={"200px"}
-              >
-                <P truncate>
-                  {item.wmsUrl}
-                </P>
-                <AppIcon icon={ExternalLinkIcon} size={"xs"} flexShrink={0} />
-              </ExternalLink>
+              <HStack gap={1} align={"center"} maxW={"240px"}>
+                <ExternalLink
+                  href={item.wmsUrl}
+                  display={"inline-flex"}
+                  alignItems={"center"}
+                  minW={0}
+                  flex={1}
+                >
+                  <ClampedP fontSize={"sm"} truncate>
+                    {item.wmsUrl}
+                  </ClampedP>
+                </ExternalLink>
+                <ClipboardButton
+                  value={item.wmsUrl}
+                  size={"2xs"}
+                  variant={"ghost"}
+                  aria-label={"Salin URL WMS"}
+                  flexShrink={0}
+                />
+              </HStack>
             ) : (
               <P color={"fg.subtle"}>
                 {"-"}
