@@ -22,7 +22,7 @@ export const OPENFREEMAP_LIBERTY_STYLE_URL =
 // - Vector styles (OpenFreeMap Liberty) don't have this problem — geometry
 //   scales without quality loss, so no cap needed here.
 
-const SOURCE_ESRI_MAX_ZOOM = 17;
+const SOURCE_ESRI_MAX_ZOOM = 19;
 
 const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   version: 8,

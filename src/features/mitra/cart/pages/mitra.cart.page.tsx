@@ -2,22 +2,20 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
   Container,
   useContainerContext,
 } from "@/design-system/components/layout/ui/container";
-import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { Box } from "@/design-system/components/layout/ui/box";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { MitraCartBatchItem } from "@/features/mitra/cart/components/mitra.cart.batch-item";
 import { MitraCartBatchOrderSummary } from "@/features/mitra/cart/components/mitra.cart.batch-order-summary";
 import {
@@ -129,30 +127,20 @@ const MitraCartContent = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <Box flex={1} p={"md"} overflowY={"auto"}>
+          <VStack flex={1} p={"md"} overflowY={"auto"}>
             {isBatchesLoading ? (
               <VStack gap={"md"} w={"full"}>
                 <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
                 <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
               </VStack>
             ) : !hasBatches ? (
-              <Box
-                flex={1}
-                display={"flex"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                w={"full"}
-                py={"xl"}
-                bg={"bg.body"}
-              >
-                <NoDataState
-                  icon={IconShoppingCartOff}
-                  title={"Keranjang Kosong"}
-                  description={
-                    "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permohonan Data."
-                  }
-                />
-              </Box>
+              <NoDataState
+                icon={IconShoppingCartOff}
+                title={"Keranjang Kosong"}
+                description={
+                  "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permohonan Data."
+                }
+              />
             ) : (
               <VStack gap={"sm"} align={"stretch"} w={"full"}>
                 {batches.map((batch, index) => (
@@ -166,7 +154,7 @@ const MitraCartContent = () => {
                 ))}
               </VStack>
             )}
-          </Box>
+          </VStack>
         </Container.Body>
 
         {/* Summary Container */}
