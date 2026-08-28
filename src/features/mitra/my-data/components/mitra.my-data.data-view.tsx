@@ -1,3 +1,4 @@
+import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -8,7 +9,10 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -29,6 +33,8 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { useNavigate } from "@tanstack/react-router";
+import { DatabaseIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
@@ -38,6 +44,9 @@ const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
 ];
 
 export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
+  // Navigation
+  const navigate = useNavigate();
+
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
@@ -128,9 +137,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                 />
               </HStack>
             ) : (
-              <P color={"fg.subtle"}>
-                {"-"}
-              </P>
+              <P color={"fg.subtle"}>{"-"}</P>
             ),
             align: "start" as const,
           },
@@ -158,9 +165,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                 />
               </HStack>
             ) : (
-              <P color={"fg.subtle"}>
-                {"-"}
-              </P>
+              <P color={"fg.subtle"}>{"-"}</P>
             ),
             align: "start" as const,
           },
@@ -181,9 +186,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             td: isActive ? (
               <Countdown finishedAt={item.expiresAt} />
             ) : (
-              <P color={"fg.subtle"}>
-                {"-"}
-              </P>
+              <P color={"fg.subtle"}>{"-"}</P>
             ),
             align: "start" as const,
           },
@@ -209,7 +212,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   }, [myData.items, preferredTimezone]);
 
   return (
-    <VStack w={"full"}>
+    <VStack flex={1} w={"full"}>
       {/* Header Controls */}
       <HStack
         wrap={"wrap"}
@@ -260,6 +263,43 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       >
         {isLoading ? (
           <Skeleton p={"md"} rounded={0} />
+        ) : myData.items.length === 0 ? (
+          <VStack
+            flex={1}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+            bg={"bg.body"}
+          >
+            {debouncedSearch || status ? (
+              <NoResultState
+                description={
+                  "Tidak ada layer IGT yang sesuai dengan kata kunci atau filter yang Anda pilih."
+                }
+              />
+            ) : (
+              <NoDataState
+                icon={DatabaseIcon}
+                title={"Belum Ada Data IGT"}
+                description={
+                  "Anda belum memiliki akses ke layer data spasial IGT. Silakan ajukan permohonan data terlebih dahulu."
+                }
+              >
+                <Button
+                  primary
+                  size={"sm"}
+                  onClick={() => {
+                    navigate({ to: "/mitra/data-request" });
+                  }}
+                >
+                  <AppIcon icon={SquarePen} />
+                  {"Permohonan Data"}
+                </Button>
+              </NoDataState>
+            )}
+          </VStack>
         ) : (
           <Box w={"full"} position={"relative"} overflowY={"auto"}>
             <DataView.Table.Root

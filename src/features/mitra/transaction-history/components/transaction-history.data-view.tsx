@@ -1,5 +1,6 @@
 // src/features/mitra/transaction-history/components/transaction-history.data-list.tsx
 
+import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -8,7 +9,10 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -33,10 +37,14 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { EyeIcon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 export const TransactionHistoryDataView = () => {
+  // Navigation
+  const navigate = useNavigate();
+
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
@@ -250,6 +258,42 @@ export const TransactionHistoryDataView = () => {
       >
         {isLoading ? (
           <Skeleton p={"md"} rounded={0} />
+        ) : transactionHistory.items.length === 0 ? (
+          <Box
+            flex={1}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+          >
+            {debouncedSearch || status ? (
+              <NoResultState
+                description={
+                  "Tidak ada transaksi yang sesuai dengan kata kunci atau filter yang Anda pilih."
+                }
+              />
+            ) : (
+              <NoDataState
+                icon={HistoryIcon}
+                title={"Belum Ada Riwayat Transaksi"}
+                description={
+                  "Anda belum pernah melakukan transaksi permohonan data IGT. Silakan ajukan permohonan data terlebih dahulu."
+                }
+              >
+                <Button
+                  primary
+                  size={"sm"}
+                  onClick={() => {
+                    navigate({ to: "/mitra/data-request" });
+                  }}
+                >
+                  <AppIcon icon={SquarePen} />
+                  {"Permohonan Data"}
+                </Button>
+              </NoDataState>
+            )}
+          </Box>
         ) : (
           <Box w={"full"} position={"relative"} overflowY={"auto"}>
             <DataView.Table.Root<TransactionRecord>
