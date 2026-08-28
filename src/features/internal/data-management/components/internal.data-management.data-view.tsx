@@ -77,21 +77,6 @@ export const InternalDataManagementDataView = () => {
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
-  const filteredItems = useMemo(() => {
-    if (!search) return rawItems;
-    const lower = search.toLowerCase();
-    return rawItems.filter(
-      (item) =>
-        item.title.toLowerCase().includes(lower) ||
-        item.id.toLowerCase().includes(lower) ||
-        item.description?.toLowerCase().includes(lower) ||
-        item.wfs.wfsUrl.toLowerCase().includes(lower) ||
-        item.wfs.wfsTypeName.toLowerCase().includes(lower) ||
-        item.wms.wmsUrl.toLowerCase().includes(lower) ||
-        item.wms.layers.toLowerCase().includes(lower),
-    );
-  }, [rawItems, search]);
-
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Layer IGT", sortable: true },
@@ -104,7 +89,7 @@ export const InternalDataManagementDataView = () => {
       { th: "Terakhir Diperbarui", sortable: true },
     ];
 
-    const items = filteredItems.map((item) => {
+    const items = rawItems.map((item) => {
       const isBidang = item.spatialBasis === "bidang";
 
       return {
@@ -243,7 +228,7 @@ export const InternalDataManagementDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [filteredItems, preferredTimezone]);
+  }, [rawItems, preferredTimezone]);
 
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
@@ -364,8 +349,8 @@ export const InternalDataManagementDataView = () => {
                   setPageSize(nextSize);
                   setPage(1);
                 }}
-                currentDataLength={filteredItems.length}
-                totalData={pagination?.totalItems ?? filteredItems.length}
+                currentDataLength={rawItems.length}
+                totalData={pagination?.totalItems ?? rawItems.length}
                 totalPage={pagination?.totalPages ?? 1}
                 shadow={"none"}
               />
