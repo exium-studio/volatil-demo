@@ -249,7 +249,7 @@ export const InternalDataManagementDataView = () => {
             </HStack>
 
             <InternalDataManagementCreateTrigger>
-              <Button primary variant={"ghost"} size={"xs"} pl={1.5}>
+              <Button primary variant={"ghost"} pl={1.5}>
                 <AppIcon icon={PlusIcon} />
                 {"Tambah Layer"}
               </Button>
