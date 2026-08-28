@@ -15,28 +15,30 @@ export const Fieldset = forwardRef<HTMLFieldSetElement, FieldsetProps>(
     const { theme } = useThemeStore();
 
     return (
-      <ChakraFieldset.Root ref={ref} gap={4} {...restProps}>
-        {legend && (
-          <ChakraFieldset.Legend fontWeight={"semibold"}>
-            {legend}
-          </ChakraFieldset.Legend>
-        )}
-
-        <ChakraFieldset.Content>
-          {containeredContent && (
-            <VStack
-              p={"md"}
-              // bg={"bg.subtle"}
-              border={"1px solid"}
-              borderColor={"border"}
-              rounded={theme.radii.component}
-            >
-              {children}
-            </VStack>
+      <ChakraFieldset.Root ref={ref} {...restProps}>
+        <VStack gap={"sm"}>
+          {legend && (
+            <ChakraFieldset.Legend fontWeight={"semibold"}>
+              {legend}
+            </ChakraFieldset.Legend>
           )}
 
-          {!containeredContent && children}
-        </ChakraFieldset.Content>
+          <ChakraFieldset.Content>
+            {containeredContent && (
+              <VStack
+                p={"md"}
+                // bg={"bg.subtle"}
+                border={"1px solid"}
+                borderColor={"border"}
+                rounded={theme.radii.component}
+              >
+                {children}
+              </VStack>
+            )}
+
+            {!containeredContent && children}
+          </ChakraFieldset.Content>
+        </VStack>
       </ChakraFieldset.Root>
     );
   },

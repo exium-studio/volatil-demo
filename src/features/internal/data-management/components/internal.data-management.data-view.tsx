@@ -277,7 +277,6 @@ export const InternalDataManagementDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        {/* Controls Bar */}
         <HStack
           wrap={"wrap"}
           align={"center"}
@@ -328,7 +327,6 @@ export const InternalDataManagementDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        {/* Table Content */}
         <VStack
           flex={1}
           gap={"sm"}
@@ -337,9 +335,9 @@ export const InternalDataManagementDataView = () => {
           w={"full"}
           position={"relative"}
         >
-          {isLoading ? (
-            <Skeleton p={"md"} rounded={0} h={"320px"} />
-          ) : (
+          {isLoading && <Skeleton p={"md"} rounded={0} h={"320px"} />}
+
+          {!isLoading && (
             <Box w={"full"} position={"relative"} overflowY={"auto"}>
               <DataView.Table.Root<MasterIgtLayerItem>
                 headers={dataList.headers}
@@ -369,7 +367,6 @@ export const InternalDataManagementDataView = () => {
                 currentDataLength={filteredItems.length}
                 totalData={pagination?.totalItems ?? filteredItems.length}
                 totalPage={pagination?.totalPages ?? 1}
-                roundedBottom={0}
                 shadow={"none"}
               />
             </Box>

@@ -122,7 +122,7 @@ const InternalDataManagementCreateModalContent = (
         <VStack align={"stretch"} gap={"xl"}>
           {/* Grup 1: Informasi Dasar */}
           <Fieldset legend={"Informasi Dasar"} containeredContent>
-            <VStack align={"stretch"} gap={"md"} pt={1}>
+            <VStack align={"stretch"} gap={"md"}>
               {/* Input ID / Workspace Layer */}
               <Field
                 label={"ID / Identifier Layer"}
@@ -186,7 +186,7 @@ const InternalDataManagementCreateModalContent = (
 
           {/* Grup 2: Konfigurasi Spasial */}
           <Fieldset legend={"Konfigurasi Spasial"} containeredContent>
-            <VStack align={"stretch"} gap={"md"} pt={1}>
+            <VStack align={"stretch"} gap={"md"}>
               {/* Select Basis Spasial via RadioCardInput */}
               <Field label={"Basis Spasial"}>
                 <RadioCardInput.Root
@@ -255,7 +255,7 @@ const InternalDataManagementCreateModalContent = (
 
           {/* Grup 3: Endpoint Layanan OGC */}
           <Fieldset legend={"Endpoint Layanan OGC"} containeredContent>
-            <VStack align={"stretch"} gap={"md"} pt={1}>
+            <VStack align={"stretch"} gap={"md"}>
               {/* Input WFS Endpoint */}
               <Field label={"WFS Endpoint URL"}>
                 <Textarea
