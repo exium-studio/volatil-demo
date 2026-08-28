@@ -17,7 +17,14 @@ export type SpatialBasisTypeConfig = {
   colorPalette: "blue" | "orange";
 };
 
-export type CartBatchStatus = "preparing" | "ready" | "expired";
+export type BatchStatus =
+  | "preparing"
+  | "pending_review"
+  | "approved"
+  | "rejected"
+  | "expired";
+
+export type CartBatchStatus = BatchStatus | "ready";
 
 export type CartBatchStatusConfig = {
   label: string;
@@ -65,6 +72,8 @@ export type AddToCartBatchResponse = {
   estimatedTotalPrice: number;
   createdAt: string;
 };
+
+export type CartBatchReorderResponse = AddToCartBatchResponse;
 
 export type CartBatchItem = {
   id: string;

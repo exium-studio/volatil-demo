@@ -163,10 +163,37 @@ export async function postCreateCartBatchApi(
 }
 
 export async function fetchCartBatchesApi(
+  params?: { status?: string },
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartBatchListResponse>> {
   return apiClient.get<ApiResponse<CartBatchListResponse>>(
     "/api/mitra/cart/batches",
+    {
+      params,
+      signal,
+    },
+  );
+}
+
+export async function fetchExpiredCartBatchesApi(
+  signal?: AbortSignal,
+): Promise<ApiResponse<CartBatchListResponse>> {
+  return apiClient.get<ApiResponse<CartBatchListResponse>>(
+    "/api/mitra/cart/batches",
+    {
+      params: { status: "expired" },
+      signal,
+    },
+  );
+}
+
+export async function postReorderCartBatchApi(
+  batchId: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<AddToCartBatchResponse>> {
+  return apiClient.post<ApiResponse<AddToCartBatchResponse>>(
+    `/api/mitra/cart/batches/${batchId}/reorder`,
+    {},
     { signal },
   );
 }

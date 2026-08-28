@@ -151,7 +151,70 @@ const EditModalContent = (props: EditModalContentProps) => {
 
 ---
 
-## 4. `itemActions` Modal Triggers in `DataViewTable`
+## 4. The Trigger Component Pattern (Mandatory for All Overlays)
+
+### 🔴 Critical Rule: Every Modal/Dialog/Drawer MUST Be Built as a `*Trigger` Component
+
+Trigger components act as modular containers that encapsulate overlay logic (`usePopModal`, `useMountTimeout`, and modal content), while delegating the trigger visual elements (`children`) to the parent caller:
+
+1. **Naming Convention**: Suffix the component with `Trigger` (e.g. `TransactionDetailTrigger`, `MitraCartExpiredBatchesTrigger`, `EntityEditTrigger`).
+2. **Prop Interface**: Always accept `modalKey?: string`, optional entity data, and `children?: ReactNode` (or `children: ReactNode` when caller provides the visual button/action).
+3. **Trigger Delegation**: The trigger element (e.g. `<Button>`, `<IconButton>`, or custom row) is passed from the parent caller via `{children}` and rendered inside `<Modal.Trigger>{children}</Modal.Trigger>`.
+4. **Mount Animation & Lazy Mounting**:
+   - Wrap the inner modal content component inside `{isMounted && <...ModalContent />}` using `useMountTimeout` so content is unmounted when closed and exits with clean animation.
+
+### ✅ SSOT Trigger Pattern Blueprint:
+
+```tsx
+export type EntityDetailTriggerProps = {
+  modalKey?: string;
+  entity?: EntityItem | null;
+  children?: ReactNode;
+};
+
+export const EntityDetailTrigger = (props: EntityDetailTriggerProps) => {
+  const {
+    modalKey: customModalKey = `entity-detail-${props.entity?.id ?? "default"}`,
+    entity,
+    children,
+  } = props;
+
+  // Stores & Hooks
+  const { modalKey, isOpen, open, close } = usePopModal({
+    modalKey: customModalKey,
+  });
+
+  const isMounted = useMountTimeout({
+    isOpen,
+    mountDelay: 0,
+    unmountDelay: 250,
+  });
+
+  return (
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      size={"lg"}
+    >
+      <Modal.Trigger>{children}</Modal.Trigger>
+
+      {entity && isMounted && (
+        <EntityDetailModalContent
+          modalKey={modalKey}
+          entity={entity}
+          close={close}
+        />
+      )}
+    </Modal.Root>
+  );
+};
+```
+
+---
+
+## 5. `itemActions` Modal Triggers in `DataViewTable`
 
 When configuring modal triggers inside `itemActions` of `DataViewTable`:
 
@@ -172,8 +235,9 @@ When configuring modal triggers inside `itemActions` of `DataViewTable`:
 
 ---
 
-## 5. Checklist for Code Reviews & Edits
+## 6. Checklist for Code Reviews & Edits
 
+- [ ] Is every modal/overlay built using the **Trigger Pattern** (`*Trigger` suffix with `modalKey` and optional `children` prop)?
 - [ ] Is every modalKey unique per screen/row (incorporating `item.id` for table rows)?
 - [ ] In `DataViewTable` itemActions with modals, is explicit `modalKey={`...-${item.id}`}` provided and `showInMenu: false` set when `showInRow: true`?
 - [ ] Are all select/dropdown filters inside overlays configured with `modalKey={`${parentModalKey}.${selectSubKey}`}`?

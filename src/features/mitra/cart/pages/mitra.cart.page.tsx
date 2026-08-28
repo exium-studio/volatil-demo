@@ -18,13 +18,14 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { MitraCartBatchItem } from "@/features/mitra/cart/components/mitra.cart.batch-item";
 import { MitraCartBatchOrderSummary } from "@/features/mitra/cart/components/mitra.cart.batch-order-summary";
+import { MitraCartExpiredBatchesTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-batches";
 import {
   useCancelActiveCartBatch,
   useCartBatchDetailQuery,
   useCartBatchesQuery,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import { IconShoppingCartOff } from "@tabler/icons-react";
-import { Trash2Icon } from "lucide-react";
+import { HistoryIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 
 export const MitraCartPage = () => {
@@ -155,6 +156,18 @@ const MitraCartContent = () => {
               </VStack>
             )}
           </VStack>
+
+          <Separator borderColor={"bg.canvas"} />
+
+          {/* Bottom Actions: Expired Batches Shortcut */}
+          <HStack p={"md"} align={"center"} justify={"center"}>
+            <MitraCartExpiredBatchesTrigger>
+              <Button flex={1}>
+                <AppIcon icon={HistoryIcon} />
+                {"Batch Kadaluwarsa"}
+              </Button>
+            </MitraCartExpiredBatchesTrigger>
+          </HStack>
         </Container.Body>
 
         {/* Summary Container */}

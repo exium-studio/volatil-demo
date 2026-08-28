@@ -219,8 +219,10 @@ import {
   fetchActiveCartBatchApi,
   fetchCartBatchDetailApi,
   fetchCartBatchesApi,
+  fetchExpiredCartBatchesApi,
   postCheckoutBatchApi,
   postCreateCartBatchApi,
+  postReorderCartBatchApi,
 } from "@/features/mitra/cart/api/mitra.cart.api";
 import type {
   ActiveCartBatch,
@@ -305,7 +307,7 @@ export async function getCartBatches(
   signal?: AbortSignal,
 ): Promise<CartBatchListResponse> {
   try {
-    const response = await fetchCartBatchesApi(signal);
+    const response = await fetchCartBatchesApi(undefined, signal);
     if (response.data) return response.data;
     return isDummyDataEnabled()
       ? { batches: localDummyBatches, total: localDummyBatches.length }
@@ -411,6 +413,72 @@ export async function checkoutCartBatch(
         billingExpiredAt: new Date(
           Date.now() + 1000 * 60 * 60 * 48,
         ).toISOString(),
+      };
+    }
+    throw error;
+  }
+}
+
+export async function getExpiredCartBatches(
+  signal?: AbortSignal,
+): Promise<CartBatchListResponse> {
+  try {
+    const response = await fetchExpiredCartBatchesApi(signal);
+    if (response.data) return response.data;
+    if (isDummyDataEnabled()) {
+      const expired = localDummyBatches.filter((b) => b.status === "expired");
+      return { batches: expired, total: expired.length };
+    }
+    return { batches: [], total: 0 };
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const expired = localDummyBatches.filter((b) => b.status === "expired");
+      return { batches: expired, total: expired.length };
+    }
+    throw error;
+  }
+}
+
+export async function reorderCartBatch(
+  batchId: string,
+  signal?: AbortSignal,
+): Promise<AddToCartBatchResponse> {
+  try {
+    const response = await postReorderCartBatchApi(batchId, signal);
+    if (response.data) return response.data;
+    const newBatchId = `btc-${Date.now()}`;
+    const oldBatch = localDummyBatches.find((b) => b.batchId === batchId);
+    const newBatch: CartBatch = {
+      batchId: newBatchId,
+      status: "preparing",
+      createdAt: new Date().toISOString(),
+      totalPrice: oldBatch?.totalPrice ?? 1200000,
+      items: oldBatch?.items ?? [],
+    };
+    localDummyBatches = [newBatch, ...localDummyBatches];
+    return {
+      batchId: newBatchId,
+      status: "preparing",
+      estimatedTotalPrice: newBatch.totalPrice,
+      createdAt: newBatch.createdAt,
+    };
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const newBatchId = `btc-${Date.now()}`;
+      const oldBatch = localDummyBatches.find((b) => b.batchId === batchId);
+      const newBatch: CartBatch = {
+        batchId: newBatchId,
+        status: "preparing",
+        createdAt: new Date().toISOString(),
+        totalPrice: oldBatch?.totalPrice ?? 1200000,
+        items: oldBatch?.items ?? [],
+      };
+      localDummyBatches = [newBatch, ...localDummyBatches];
+      return {
+        batchId: newBatchId,
+        status: "preparing",
+        estimatedTotalPrice: newBatch.totalPrice,
+        createdAt: newBatch.createdAt,
       };
     }
     throw error;

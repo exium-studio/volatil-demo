@@ -60,12 +60,31 @@ export const CART_BATCH_STATUS_CONFIG_MAP: Record<
     icon: CheckCircle2Icon,
     iconColor: "green.fg",
   },
+  approved: {
+    label: "Disetujui",
+    colorPalette: "green",
+    icon: CheckCircle2Icon,
+    iconColor: "green.fg",
+  },
   preparing: {
     label: "Menyiapkan data",
     colorPalette: "blue",
     icon: LoaderIcon,
     iconColor: "blue.fg",
     isSpinning: true,
+  },
+  pending_review: {
+    label: "Menunggu review",
+    colorPalette: "blue",
+    icon: LoaderIcon,
+    iconColor: "blue.fg",
+    isSpinning: true,
+  },
+  rejected: {
+    label: "Ditolak",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
   },
   expired: {
     label: "Kadaluwarsa",

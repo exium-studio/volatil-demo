@@ -184,6 +184,8 @@ import {
   getActiveCartBatch,
   getCartBatchDetail,
   getCartBatches,
+  getExpiredCartBatches,
+  reorderCartBatch,
 } from "@/features/mitra/cart/services/mitra.cart.service";
 import type {
   ActiveCartBatch,
@@ -325,6 +327,57 @@ export const useCheckoutCartBatch = () => {
       });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "transaction-history"],
+      });
+      return data;
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useExpiredCartBatchesQuery = (options?: { enabled?: boolean }) => {
+  const query = useQuery<CartBatchListResponse>({
+    queryKey: ["mitra", "cart", "expired-batches"],
+    queryFn: ({ signal }) => getExpiredCartBatches(signal),
+    enabled: options?.enabled ?? false,
+  });
+
+  return {
+    ...query,
+    expiredBatches: query.data?.batches ?? [],
+    total: query.data?.total ?? 0,
+  };
+};
+
+export const useReorderCartBatch = (onSuccessCallback?: () => void) => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("reorder-cart-batch", {
+    group: "Keranjang",
+    loadingMessage: {
+      title: "Membuat permohonan ulang...",
+    },
+    successMessage: {
+      title: "Permohonan ulang berhasil dibuat!",
+      description: "Batch baru telah masuk ke keranjang dan sedang disiapkan.",
+    },
+    errorMessage: {
+      title: "Gagal membuat permohonan ulang",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (batchId: string) => reorderCartBatch(batchId),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: (data) => {
+      toastHandlers.onSuccess();
+      onSuccessCallback?.();
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "batches"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "expired-batches"],
       });
       return data;
     },
