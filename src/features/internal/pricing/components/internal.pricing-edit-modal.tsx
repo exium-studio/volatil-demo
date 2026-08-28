@@ -21,7 +21,9 @@ export type InternalPricingEditModalProps = {
   onClose: () => void;
 };
 
-export const InternalPricingEditModal = (props: InternalPricingEditModalProps) => {
+export const InternalPricingEditModal = (
+  props: InternalPricingEditModalProps,
+) => {
   // Props
   const { modalKey: customModalKey = "pricing-edit", item, onClose } = props;
 
@@ -57,13 +59,17 @@ type InternalPricingEditModalContentProps = {
   close: () => void;
 };
 
-const InternalPricingEditModalContent = (props: InternalPricingEditModalContentProps) => {
+const InternalPricingEditModalContent = (
+  props: InternalPricingEditModalContentProps,
+) => {
   // Props
   const { modalKey, item, isOpen, open, close } = props;
 
   // States initialized from item props (no setState in useEffect)
   const [unitPrice, setUnitPrice] = useState<number>(() => item.unitPrice);
-  const [description, setDescription] = useState<string>(() => item.description ?? "");
+  const [description, setDescription] = useState<string>(
+    () => item.description ?? "",
+  );
   const [isActive, setIsActive] = useState<boolean>(() => item.isActive);
 
   // Mutations
@@ -86,7 +92,13 @@ const InternalPricingEditModalContent = (props: InternalPricingEditModalContentP
   };
 
   return (
-    <Modal.Root modalKey={modalKey} opened={isOpen} open={open} close={close} size={"sm"}>
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      size={"sm"}
+    >
       <Modal.Content>
         <Modal.Header>
           <Modal.CloseButton />
@@ -109,10 +121,14 @@ const InternalPricingEditModalContent = (props: InternalPricingEditModalContentP
                 {"Basis Spasial"}
               </P>
               <Badge
-                colorPalette={item.spatialBasis === "bidang" ? "blue" : "orange"}
+                colorPalette={
+                  item.spatialBasis === "bidang" ? "blue" : "orange"
+                }
                 variant={"subtle"}
               >
-                {item.spatialBasis === "bidang" ? "Objek Bidang" : "Luas Kawasan"}
+                {item.spatialBasis === "bidang"
+                  ? "Objek Bidang"
+                  : "Luas Kawasan"}
               </Badge>
             </HStack>
 
