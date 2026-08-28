@@ -26,6 +26,7 @@ export const Fieldset = forwardRef<HTMLFieldSetElement, FieldsetProps>(
           {containeredContent && (
             <VStack
               p={"md"}
+              // bg={"bg.subtle"}
               border={"1px solid"}
               borderColor={"border"}
               rounded={theme.radii.component}
