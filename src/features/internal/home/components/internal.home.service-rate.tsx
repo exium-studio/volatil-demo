@@ -75,8 +75,12 @@ const InternalHomeServiceRateStats = () => {
         <StatGrid.Item key={rate.id} index={index} columns={cols}>
           <StatGrid.Header>
             <HStack gap={"xs"} align={"center"}>
-              <Circle bg={`${rate.colorPalette}.subtle`} p={"xs"}>
-                <AppIcon icon={rate.icon} color={`${rate.colorPalette}.fg`} />
+              <Circle bg={`${rate.colorPalette}.subtle`} p={"2xs"}>
+                <AppIcon
+                  icon={rate.icon}
+                  size={"sm"}
+                  color={`${rate.colorPalette}.fg`}
+                />
               </Circle>
 
               <StatGrid.Label>{rate.title}</StatGrid.Label>

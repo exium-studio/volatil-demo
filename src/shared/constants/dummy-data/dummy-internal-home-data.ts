@@ -1,6 +1,9 @@
 // src/shared/constants/dummy-data/dummy-internal-home-data.ts
 
-import type { InternalHomeDataSummaryResponse } from "@/features/internal/home/types/internal.home.data-summary.type";
+import type {
+  InternalHomeDataSummaryResponse,
+  InternalHomeMitraRegistrationResponse,
+} from "@/features/internal/home/types/internal.home.api.type";
 import type {
   SystemHealthMetricItem,
   TopIgtLayerItem,
@@ -11,30 +14,20 @@ import type { InternalHomeTrendItem } from "@/features/internal/home/types/inter
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import { Layers2Icon, TreesIcon } from "lucide-react";
 
-export const dummyInternalDataSummary: Record<
-  HomePeriod,
-  InternalHomeDataSummaryResponse
-> = {
-  "1d": {
-    field: { active: 10000, inactive: 2000 },
-    area: { active: 5000, inactive: 1000 },
+export const dummyInternalDataSummary: InternalHomeDataSummaryResponse = {
+  basisSpasial: {
+    bidang: 325,
+    kawasan: 125,
   },
-  "1w": {
-    field: { active: 50000, inactive: 10000 },
-    area: { active: 25000, inactive: 5000 },
+  statusPublikasi: {
+    aktif: 324,
+    nonAktif: 126,
   },
-  "1m": {
-    field: { active: 150000, inactive: 30000 },
-    area: { active: 80000, inactive: 12000 },
-  },
-  "1y": {
-    field: { active: 300000, inactive: 70000 },
-    area: { active: 150000, inactive: 20000 },
-  },
-  all: {
-    field: { active: 325000, inactive: 75000 },
-    area: { active: 175000, inactive: 25000 },
-  },
+};
+
+export const dummyInternalMitraRegistration: InternalHomeMitraRegistrationResponse = {
+  active: 48,
+  pendingVerification: 12,
 };
 
 export const dummyInternalServiceRates: ServiceRateItem[] = [

@@ -1,39 +1,36 @@
 import { fetchInternalHomeDataApi } from "@/features/internal/home/api/internal.home.api";
-import type { InternalHomeDataResponse } from "@/features/internal/home/types/internal.home.api.type";
+import type {
+  InternalHomeDataResponse,
+  InternalHomeDataSummaryResponse,
+} from "@/features/internal/home/types/internal.home.api.type";
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import {
   dummyInternalDataSummary,
+  dummyInternalMitraRegistration,
   dummyInternalServiceRates,
   dummyInternalTrends,
   dummyTopMitraList,
   dummyTopIgtLayers,
-  dummySystemHealth,
 } from "@/shared/constants/dummy-data/dummy-internal-home-data";
-import type { InternalHomeDataSummaryResponse } from "@/features/internal/home/types/internal.home.data-summary.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const fallbackInternalHomeData: InternalHomeDataResponse = {
   dataSummary: dummyInternalDataSummary,
+  mitraRegistration: dummyInternalMitraRegistration,
   serviceRates: dummyInternalServiceRates,
   acquisitionTrends: dummyInternalTrends,
   topMitraList: dummyTopMitraList,
   topIgtLayers: dummyTopIgtLayers,
-  systemHealth: dummySystemHealth,
 };
 
 const EMPTY_INTERNAL_SUMMARY: InternalHomeDataSummaryResponse = {
-  field: { active: 0, inactive: 0 },
-  area: { active: 0, inactive: 0 },
+  basisSpasial: { bidang: 0, kawasan: 0 },
+  statusPublikasi: { aktif: 0, nonAktif: 0 },
 };
 
 const emptyInternalHomeData: InternalHomeDataResponse = {
-  dataSummary: {
-    "1d": EMPTY_INTERNAL_SUMMARY,
-    "1w": EMPTY_INTERNAL_SUMMARY,
-    "1m": EMPTY_INTERNAL_SUMMARY,
-    "1y": EMPTY_INTERNAL_SUMMARY,
-    all: EMPTY_INTERNAL_SUMMARY,
-  },
+  dataSummary: EMPTY_INTERNAL_SUMMARY,
+  mitraRegistration: { active: 0, pendingVerification: 0 },
   serviceRates: [],
   acquisitionTrends: {
     "1d": [],
@@ -44,7 +41,6 @@ const emptyInternalHomeData: InternalHomeDataResponse = {
   },
   topMitraList: [],
   topIgtLayers: [],
-  systemHealth: [],
 };
 
 export const getInternalHomeData = async (

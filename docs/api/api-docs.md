@@ -1021,13 +1021,20 @@ Modul agregasi metrik operasional IGT, tren perolehan PNBP spasial, leaderboard 
 
 ```typescript
 type InternalHomeDataResponse = {
-  dataSummary: Record<
-    "1d" | "1w" | "1m" | "1y" | "all",
-    {
-      field: { active: number; inactive: number };
-      area: { active: number; inactive: number };
-    }
-  >;
+  dataSummary: {
+    basisSpasial: {
+      bidang: number;
+      kawasan: number;
+    };
+    statusPublikasi: {
+      aktif: number;
+      nonAktif: number;
+    };
+  };
+  mitraRegistration: {
+    active: number;
+    pendingVerification: number;
+  };
   serviceRates: Array<{
     id: string;
     title: string;

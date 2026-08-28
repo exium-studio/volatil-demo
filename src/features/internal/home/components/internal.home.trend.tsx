@@ -42,10 +42,7 @@ export const InternalHomeTrend = (props: InternalHomeTrendProps) => {
   return (
     <Container.Root withContext={true} flex={"1 1 100%"} {...props}>
       <Container.Body gap={8} pt={"md"} pb={"md"}>
-        <InternalHomeTrendHeader
-          period={period}
-          onPeriodChange={setPeriod}
-        />
+        <InternalHomeTrendHeader period={period} onPeriodChange={setPeriod} />
 
         <VStack mt={"auto"}>
           <InternalHomeTrendChartContent period={period} />
@@ -68,7 +65,7 @@ const InternalHomeTrendHeader = (props: InternalHomeTrendHeaderProps) => {
       px={"md"}
     >
       <HStack gap={"xs"} align={"center"}>
-        <Heading>{"Tren Akuisisi Data IGT & PNBP"}</Heading>
+        <Heading>{"Tren Akuisisi Data IGT"}</Heading>
 
         <InfoTip
           variant={"icon"}
@@ -77,7 +74,9 @@ const InternalHomeTrendHeader = (props: InternalHomeTrendHeaderProps) => {
             color: "fg.subtle",
           }}
         >
-          {"Tren dinamika volume akuisisi data IGT Bidang, Kawasan, dan estimasi penerimaan PNBP"}
+          {
+            "Tren dinamika volume akuisisi data IGT Bidang, Kawasan, dan estimasi penerimaan PNBP"
+          }
         </InfoTip>
       </HStack>
 
