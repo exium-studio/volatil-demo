@@ -130,7 +130,7 @@ export const FilterAdministrativeAreaTrigger = (
       open={open}
       close={close}
       scrollBehavior={"inside"}
-      size={"lg"}
+      size={"sm"}
       onExitComplete={() => {
         setLocalDraftFilters(currentAppliedFilters);
       }}
@@ -231,13 +231,13 @@ export const FilterAdministrativeAreaTrigger = (
         </Modal.Body>
 
         <Modal.Footer gap={"sm"}>
-          <Button variant={"outline"} flex={1} onClick={handleReset}>
-            {"Reset"}
-          </Button>
+          <VStack gap={"xs"} w={"full"}>
+            <Button primary onClick={handleApply}>
+              {"Terapkan Filter"}
+            </Button>
 
-          <Button primary flex={1} onClick={handleApply}>
-            {"Terapkan Filter"}
-          </Button>
+            <Button onClick={handleReset}>{"Reset"}</Button>
+          </VStack>
         </Modal.Footer>
       </Modal.Content>
     </Modal.Root>
