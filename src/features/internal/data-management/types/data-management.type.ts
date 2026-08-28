@@ -1,8 +1,19 @@
 // src/features/internal/data-management/types/data-management.type.ts
 
-import type { PaginatedParams, PaginationMeta } from "@/shared/types/common-response.type";
+import type {
+  PaginatedParams,
+  PaginationMeta,
+} from "@/shared/types/common-response.type";
 
 export type SpatialBasisType = "bidang" | "kawasan";
+
+export type PublishStatusType = "all" | "published" | "draft";
+
+export type PublishStatusTypeConfig = {
+  value: PublishStatusType;
+  label: string;
+  colorPalette: "gray" | "green";
+};
 
 export type MasterIgtLayerItem = {
   id: string;
@@ -52,6 +63,7 @@ export type CreateMasterIgtLayerPayload = {
   };
 };
 
-export type UpdateMasterIgtLayerPayload = Partial<CreateMasterIgtLayerPayload> & {
-  id: string;
-};
+export type UpdateMasterIgtLayerPayload =
+  Partial<CreateMasterIgtLayerPayload> & {
+    id: string;
+  };

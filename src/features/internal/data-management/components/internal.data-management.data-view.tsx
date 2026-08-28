@@ -21,6 +21,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalDataManagementCreateTrigger } from "@/features/internal/data-management/components/internal.data-management.create-modal";
 import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
+import { PUBLISH_STATUS_OPTIONS } from "@/features/internal/data-management/constants/data-management.config";
 import { useMasterIgtLayersQuery } from "@/features/internal/data-management/hooks/use-data-management";
 import type {
   MasterIgtLayerItem,
@@ -28,18 +29,14 @@ import type {
 } from "@/features/internal/data-management/types/data-management.type";
 import { SpatialBasisSelect } from "@/shared/components/select/ui/spatial-basis-select";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { IconLayersOff } from "@tabler/icons-react";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { EditIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
-
-const PUBLISH_STATUS_OPTIONS = [
-  { value: "all", label: "Semua Status" },
-  { value: "published", label: "Publik" },
-  { value: "draft", label: "Draft" },
-];
 
 export const InternalDataManagementDataView = () => {
   // Transitions
@@ -231,8 +228,8 @@ export const InternalDataManagementDataView = () => {
   }, [rawItems, preferredTimezone]);
 
   return (
-    <Container.Root flex={1} minH={0} withContext={true}>
-      <Container.Body flex={1} minH={0} overflowY={"auto"}>
+    <Container.Root withContext={true}>
+      <Container.Body>
         <HeaderContainer>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
@@ -315,7 +312,6 @@ export const InternalDataManagementDataView = () => {
         <VStack
           flex={1}
           gap={"sm"}
-          overflowY={"auto"}
           bg={"bg.canvas"}
           w={"full"}
           position={"relative"}
@@ -323,38 +319,60 @@ export const InternalDataManagementDataView = () => {
           {isLoading && <Skeleton p={"md"} rounded={0} h={"320px"} />}
 
           {!isLoading && (
-            <Box w={"full"} position={"relative"} overflowY={"auto"}>
-              <DataView.Table.Root<MasterIgtLayerItem>
-                headers={dataList.headers}
-                items={dataList.items}
-                itemActions={dataList.itemActions}
-                withNumbering={true}
-                page={page}
-                pageSize={pageSize}
-                rounded={0}
-                pb={0}
-                shadow={"none"}
-              >
-                <DataView.Table.Header />
-                <DataView.Table.Body />
-              </DataView.Table.Root>
+            <>
+              {rawItems.length === 0 && (
+                <Box p={"xl"} w={"full"}>
+                  <NoDataState
+                    icon={IconLayersOff}
+                    title={"Layer IGT Tidak Ditemukan"}
+                    description={
+                      search ||
+                      spatialBasis !== "all" ||
+                      publishStatus !== "all"
+                        ? "Tidak ada layer master IGT yang sesuai dengan kriteria filter pencarian."
+                        : "Belum ada layer IGT terdaftar. Silakan tambahkan layer baru."
+                    }
+                  />
+                </Box>
+              )}
 
-              <TopBarLoader isFetching={isFetching} />
+              {rawItems.length > 0 && (
+                <Box w={"full"} position={"relative"}>
+                  <TopBarLoader isFetching={isFetching} />
 
-              <DataViewFooter
-                page={page}
-                pageSize={pageSize}
-                setPage={(nextPage: number) => setPage(nextPage)}
-                setPageSize={(nextSize: number) => {
-                  setPageSize(nextSize);
-                  setPage(1);
-                }}
-                currentDataLength={rawItems.length}
-                totalData={pagination?.totalItems ?? rawItems.length}
-                totalPage={pagination?.totalPages ?? 1}
-                shadow={"none"}
-              />
-            </Box>
+                  <DataView.Table.Root<MasterIgtLayerItem>
+                    headers={dataList.headers}
+                    items={dataList.items}
+                    itemActions={dataList.itemActions}
+                    withNumbering
+                    page={page}
+                    pageSize={pageSize}
+                    pb={0}
+                    rounded={0}
+                    shadow={"none"}
+                  >
+                    <DataView.Table.Header />
+                    <DataView.Table.Body />
+                  </DataView.Table.Root>
+
+                  <Separator borderColor={"bg.canvas"} />
+
+                  <DataViewFooter
+                    page={page}
+                    pageSize={pageSize}
+                    setPage={(nextPage: number) => setPage(nextPage)}
+                    setPageSize={(nextSize: number) => {
+                      setPageSize(nextSize);
+                      setPage(1);
+                    }}
+                    currentDataLength={rawItems.length}
+                    totalData={pagination?.totalItems ?? rawItems.length}
+                    totalPage={pagination?.totalPages ?? 1}
+                    shadow={"none"}
+                  />
+                </Box>
+              )}
+            </>
           )}
         </VStack>
       </Container.Body>
