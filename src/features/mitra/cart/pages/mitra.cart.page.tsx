@@ -90,7 +90,7 @@ const MitraCartContent = () => {
           minH={isSmContainer ? undefined : 0}
           overflowY={isSmContainer ? undefined : "auto"}
         >
-          <HeaderContainer pr={3}>
+          <HeaderContainer>
             <Heading>{"Keranjang Transaksi"}</Heading>
 
             {hasBatches && (

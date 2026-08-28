@@ -79,12 +79,7 @@ export const MitraDataRequestPage = () => {
     <PanelContentContainer overflowY={"auto"}>
       <Container.Root flex={1} overflowY={"auto"}>
         <Container.Body flex={1} overflowY={"auto"}>
-          <HStack
-            wrap={"wrap"}
-            justify={"space-between"}
-            align={"center"}
-            pr={3}
-          >
+          <HStack wrap={"wrap"} justify={"space-between"} align={"center"}>
             <AppNavTitle navsMap={APP_NAVS_MAP} />
           </HStack>
 
@@ -122,13 +117,7 @@ export const MitraDataRequestPage = () => {
 
             <Suspense
               fallback={
-                <Skeleton
-                  h={"full"}
-                  w={"full"}
-                  flex={1}
-                  p={"md"}
-                  rounded={0}
-                />
+                <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
               }
             >
               {REQUEST_METHOD_OPTIONS.map((method) => {
