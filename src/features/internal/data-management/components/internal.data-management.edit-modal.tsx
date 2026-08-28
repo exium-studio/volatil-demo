@@ -11,6 +11,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
 import type {
   MasterIgtLayerItem,
@@ -40,24 +41,35 @@ export const InternalDataManagementEditTrigger = (
     modalKey: customModalKey,
   });
 
-  return (
-    <>
-      <Modal.Root
-        modalKey={modalKey}
-        opened={isOpen}
-        open={open}
-        close={close}
-        size={"md"}
-      >
-        <Modal.Trigger>{children}</Modal.Trigger>
+  const isMounted = useMountTimeout({
+    isOpen,
+    mountDelay: 0,
+    unmountDelay: 250,
+  });
 
-        <InternalDataManagementEditModalContent item={item} close={close} />
-      </Modal.Root>
-    </>
+  return (
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      size={"md"}
+    >
+      <Modal.Trigger>{children}</Modal.Trigger>
+
+      {isMounted && (
+        <InternalDataManagementEditModalContent
+          modalKey={modalKey}
+          item={item}
+          close={close}
+        />
+      )}
+    </Modal.Root>
   );
 };
 
 type InternalDataManagementEditModalContentProps = {
+  modalKey?: string;
   item: MasterIgtLayerItem;
   close: () => void;
 };
