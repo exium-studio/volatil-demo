@@ -12,7 +12,6 @@ export const HeaderContainer = (props: StackProps) => {
       align={"center"}
       justify={"space-between"}
       minH={"headerH"}
-      maxH={"headerH"}
       px={"md"}
       {...restProps}
     >

@@ -118,7 +118,7 @@ const MitraCartContent = () => {
                   }
                 }}
               >
-                <Button colorPalette={"red"} size={"sm"} pl={3}>
+                <Button colorPalette={"red"} size={"xs"} pl={1.5}>
                   <AppIcon icon={Trash2Icon} />
                   {"Kosongkan keranjang"}
                 </Button>

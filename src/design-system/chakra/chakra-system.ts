@@ -2462,7 +2462,7 @@ export const chakraConfig = defineConfig({
         "3xl": { value: "64px" },
       },
       sizes: {
-        headerH: { value: "56px" },
+        headerH: { value: "64px" },
         tableRowH: { value: "56px" },
         tableCellH: { value: "56px" },
         tableActionsW: { value: "56px" },
