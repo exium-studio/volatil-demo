@@ -2,10 +2,12 @@ import { fetchInternalHomeDataApi } from "@/features/internal/home/api/internal.
 import type { InternalHomeDataResponse } from "@/features/internal/home/types/internal.home.api.type";
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import {
-  dummyInternalDataView,
   dummyInternalDataSummary,
-  dummyInternalOrderSummary,
   dummyInternalServiceRates,
+  dummyInternalTrends,
+  dummyTopMitraList,
+  dummyTopIgtLayers,
+  dummySystemHealth,
 } from "@/shared/constants/dummy-data/dummy-internal-home-data";
 import type { InternalHomeDataSummaryResponse } from "@/features/internal/home/types/internal.home.data-summary.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
@@ -13,8 +15,10 @@ import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 const fallbackInternalHomeData: InternalHomeDataResponse = {
   dataSummary: dummyInternalDataSummary,
   serviceRates: dummyInternalServiceRates,
-  orderSummary: dummyInternalOrderSummary,
-  dataList: dummyInternalDataView,
+  acquisitionTrends: dummyInternalTrends,
+  topMitraList: dummyTopMitraList,
+  topIgtLayers: dummyTopIgtLayers,
+  systemHealth: dummySystemHealth,
 };
 
 const EMPTY_INTERNAL_SUMMARY: InternalHomeDataSummaryResponse = {
@@ -31,13 +35,16 @@ const emptyInternalHomeData: InternalHomeDataResponse = {
     all: EMPTY_INTERNAL_SUMMARY,
   },
   serviceRates: [],
-  orderSummary: {
-    activeOrders: 0,
-    completedOrders: 0,
-    igtRequests: 0,
-    totalRevenue: 0,
+  acquisitionTrends: {
+    "1d": [],
+    "1w": [],
+    "1m": [],
+    "1y": [],
+    all: [],
   },
-  dataList: [],
+  topMitraList: [],
+  topIgtLayers: [],
+  systemHealth: [],
 };
 
 export const getInternalHomeData = async (

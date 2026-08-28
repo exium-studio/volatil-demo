@@ -1012,7 +1012,7 @@ type UserManagementStatsResponse = {
 
 ## 14. Internal - Dashboard & Statistik Sistem
 
-Modul agregasi metrik operasional IGT, ringkasan permohonan data, pendapatan PNBP, dan monitoring sinkronisasi layer data untuk admin internal ATR/BPN.
+Modul agregasi metrik operasional IGT, tren perolehan PNBP spasial, leaderboard mitra & layer terpopuler, serta spesifikasi utilisasi server untuk admin internal ATR/BPN.
 
 ### 14.1 Internal Dashboard Overview
 
@@ -1038,20 +1038,41 @@ type InternalHomeDataResponse = {
     minUnit: string;
     colorPalette?: string;
   }>;
-  orderSummary: {
-    activeOrders: number;
-    completedOrders: number;
-    igtRequests: number;
-    totalRevenue: number;
-  };
-  dataList: Array<{
-    id: string;
-    layerFileName: string;
-    syncStatus: "connected" | "syncing" | "error";
-    lastSyncTime: string;
-    igtBasis: "bidang" | "kawasan";
-    wfsApiLink: string;
-    wfsApiCode: string;
+  acquisitionTrends: Record<
+    "1d" | "1w" | "1m" | "1y" | "all",
+    Array<{
+      label: string;
+      field: number; // Volume akuisisi IGT bidang
+      area: number; // Volume akuisisi IGT kawasan (ha)
+      revenue: number; // PNBP nominal (IDR)
+    }>
+  >;
+  topMitraList: Array<{
+    rank: number;
+    mitraId: string;
+    mitraName: string;
+    agencyOrCompany: string;
+    totalOrders: number;
+    totalVolume: string; // misal "84.500 Bidang"
+    totalSpending: number; // Akumulasi spending (IDR)
+  }>;
+  topIgtLayers: Array<{
+    rank: number;
+    layerId: string;
+    layerTitle: string;
+    spatialBasis: "bidang" | "kawasan";
+    totalAcquisitions: number;
+    totalVolume: number;
+    unit: "bidang" | "ha";
+    totalPnbpRevenue: number;
+  }>;
+  systemHealth: Array<{
+    key: string;
+    title: string; // "Beban CPU Cluster", "Penggunaan Memori (RAM)", "Kapasitas Storage Spasial (NVMe)", "Bandwidth & Throughput WFS"
+    status: "healthy" | "warning" | "critical";
+    value: string;
+    subValue: string;
+    colorPalette: string;
   }>;
 };
 ```

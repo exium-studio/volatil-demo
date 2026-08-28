@@ -1,23 +1,18 @@
-// src/features/internal/home/types/internal.home.api.type.ts
-
-import type { InternalHomeIgtDataViewItem } from "@/features/internal/home/types/internal.home.data-view.type";
 import type { InternalHomeDataSummaryResponse } from "@/features/internal/home/types/internal.home.data-summary.type";
+import type {
+  SystemHealthMetricItem,
+  TopIgtLayerItem,
+  TopMitraAcquisitionItem,
+} from "@/features/internal/home/types/internal.home.leaderboard.type";
 import type { InternalHomeServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
-import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-
-export type InternalHomeOrderSummaryResponse = {
-  activeOrders: number;
-  completedOrders: number;
-  igtRequests: number;
-  totalRevenue: number;
-};
+import type { InternalHomeTrendItem } from "@/features/internal/home/types/internal.home.trend.type";
+import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 
 export type InternalHomeDataResponse = {
-  dataSummary: Record<MitraHomePeriod, InternalHomeDataSummaryResponse>;
+  dataSummary: Record<HomePeriod, InternalHomeDataSummaryResponse>;
   serviceRates: InternalHomeServiceRateItem[];
-  orderSummary: InternalHomeOrderSummaryResponse;
-  dataList: InternalHomeIgtDataViewItem[];
+  acquisitionTrends: Record<HomePeriod, InternalHomeTrendItem[]>;
+  topMitraList: TopMitraAcquisitionItem[];
+  topIgtLayers: TopIgtLayerItem[];
+  systemHealth: SystemHealthMetricItem[];
 };
-
-// Aliases for compatibility
-export type InternalOrderSummaryResponse = InternalHomeOrderSummaryResponse;
