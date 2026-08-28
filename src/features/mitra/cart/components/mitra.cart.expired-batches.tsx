@@ -124,138 +124,148 @@ const MitraCartExpiredBatchesModalContent = (
       </Modal.Header>
 
       <Modal.Body p={"md"}>
-        {isLoading ? (
+        {isLoading && (
           <VStack gap={"md"} align={"stretch"}>
             <Skeleton h={"100px"} rounded={"md"} />
             <Skeleton h={"100px"} rounded={"md"} />
           </VStack>
-        ) : expiredBatches.length === 0 ? (
-          <NoDataState
-            icon={HistoryIcon}
-            title={"Tidak Ada Batch Kadaluwarsa"}
-            description={
-              "Semua permohonan data Anda aktif atau telah diselesaikan."
-            }
-          />
-        ) : (
-          <VStack gap={"md"} align={"stretch"}>
-            {expiredBatches.map((batch, index) => {
-              const totalBidang = batch.items
-                .filter((i) => i.spatialBasis === "bidang")
-                .reduce((sum, item) => sum + item.featuresCount, 0);
+        )}
 
-              const totalKawasanHa = batch.items
-                .filter((i) => i.spatialBasis === "kawasan")
-                .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
+        {!isLoading && (
+          <>
+            {expiredBatches.length === 0 && (
+              <NoDataState
+                icon={HistoryIcon}
+                title={"Tidak Ada Batch Kadaluwarsa"}
+                description={
+                  "Semua permohonan data Anda aktif atau telah diselesaikan."
+                }
+              />
+            )}
 
-              const isThisReordering =
-                reorderMutation.isPending &&
-                reorderingBatchId === batch.batchId;
+            {expiredBatches.length > 0 && (
+              <VStack gap={"md"} align={"stretch"}>
+                {expiredBatches.map((batch, index) => {
+                  const totalBidang = batch.items
+                    .filter((i) => i.spatialBasis === "bidang")
+                    .reduce((sum, item) => sum + item.featuresCount, 0);
 
-              return (
-                <VStack
-                  key={batch.batchId}
-                  p={"md"}
-                  bg={"bg.subtle"}
-                  border={"1px solid"}
-                  borderColor={"border"}
-                  rounded={theme.radii.component}
-                  align={"stretch"}
-                  gap={"sm"}
-                >
-                  {/* Header Row: Batch Index & Expired Time */}
-                  <HStack
-                    justify={"space-between"}
-                    align={"center"}
-                    wrap={"wrap"}
-                  >
-                    <HStack gap={"xs"} align={"center"}>
-                      <Badge colorPalette={"red"} variant={"subtle"}>
-                        {"Kadaluwarsa"}
-                      </Badge>
-                      <P fontWeight={"semibold"}>{`Batch #${index + 1}`}</P>
-                    </HStack>
+                  const totalKawasanHa = batch.items
+                    .filter((i) => i.spatialBasis === "kawasan")
+                    .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
 
-                    {batch.expiredAt && (
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {`Kadaluwarsa: ${formatUtcDateTime(batch.expiredAt, preferredTimezone)}`}
-                      </P>
-                    )}
-                  </HStack>
+                  const isThisReordering =
+                    reorderMutation.isPending &&
+                    reorderingBatchId === batch.batchId;
 
-                  <Separator borderColor={"border"} />
-
-                  {/* List of Layers */}
-                  <VStack align={"stretch"} gap={"xs"}>
-                    {batch.items.map((item) => (
+                  return (
+                    <VStack
+                      key={batch.batchId}
+                      p={"md"}
+                      bg={"bg.subtle"}
+                      border={"1px solid"}
+                      borderColor={"border"}
+                      rounded={theme.radii.component}
+                      align={"stretch"}
+                      gap={"sm"}
+                    >
+                      {/* Header Row: Batch Index & Expired Time */}
                       <HStack
-                        key={item.id}
                         justify={"space-between"}
                         align={"center"}
+                        wrap={"wrap"}
                       >
-                        <ClampedP fontSize={"sm"} maxW={"340px"}>
-                          {item.sourceLayerTitle}
-                        </ClampedP>
-                        <Badge
+                        <HStack gap={"xs"} align={"center"}>
+                          <Badge colorPalette={"red"} variant={"subtle"}>
+                            {"Kadaluwarsa"}
+                          </Badge>
+                          <P fontWeight={"semibold"}>{`Batch #${index + 1}`}</P>
+                        </HStack>
+
+                        {batch.expiredAt && (
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {`Kadaluwarsa: ${formatUtcDateTime(batch.expiredAt, preferredTimezone)}`}
+                          </P>
+                        )}
+                      </HStack>
+
+                      <Separator borderColor={"border"} />
+
+                      {/* List of Layers */}
+                      <VStack align={"stretch"} gap={"xs"}>
+                        {batch.items.map((item) => (
+                          <HStack
+                            key={item.id}
+                            justify={"space-between"}
+                            align={"center"}
+                          >
+                            <ClampedP fontSize={"sm"} maxW={"340px"}>
+                              {item.sourceLayerTitle}
+                            </ClampedP>
+                            <Badge
+                              size={"xs"}
+                              colorPalette={
+                                item.spatialBasis === "bidang"
+                                  ? "blue"
+                                  : "orange"
+                              }
+                              variant={"subtle"}
+                            >
+                              {item.spatialBasis === "bidang"
+                                ? `${item.featuresCount} bidang`
+                                : `${item.areaHa ?? 0} ha`}
+                            </Badge>
+                          </HStack>
+                        ))}
+                      </VStack>
+
+                      <Separator borderColor={"border"} />
+
+                      {/* Footer Row: Total Summary & Re-order Action */}
+                      <HStack justify={"space-between"} align={"center"} pt={1}>
+                        <VStack align={"start"} gap={0}>
+                          <HStack gap={"xs"}>
+                            {totalBidang > 0 && (
+                              <P fontSize={"xs"} color={"fg.muted"}>
+                                {`${totalBidang} Bidang`}
+                              </P>
+                            )}
+                            {totalBidang > 0 && totalKawasanHa > 0 && (
+                              <P fontSize={"xs"} color={"fg.muted"}>
+                                {"•"}
+                              </P>
+                            )}
+                            {totalKawasanHa > 0 && (
+                              <P fontSize={"xs"} color={"fg.muted"}>
+                                {`${totalKawasanHa} ha Kawasan`}
+                              </P>
+                            )}
+                          </HStack>
+                          <TNum fontWeight={"semibold"} fontSize={"sm"}>
+                            <FormatNumber
+                              value={batch.totalPrice}
+                              style={"currency"}
+                              currency={"IDR"}
+                            />
+                          </TNum>
+                        </VStack>
+
+                        <Button
+                          primary
                           size={"xs"}
-                          colorPalette={
-                            item.spatialBasis === "bidang" ? "blue" : "orange"
-                          }
-                          variant={"subtle"}
+                          loading={isThisReordering}
+                          onClick={() => handleReorder(batch.batchId)}
                         >
-                          {item.spatialBasis === "bidang"
-                            ? `${item.featuresCount} bidang`
-                            : `${item.areaHa ?? 0} ha`}
-                        </Badge>
+                          <AppIcon icon={RotateCcwIcon} />
+                          {"Pesan Ulang"}
+                        </Button>
                       </HStack>
-                    ))}
-                  </VStack>
-
-                  <Separator borderColor={"border"} />
-
-                  {/* Footer Row: Total Summary & Re-order Action */}
-                  <HStack justify={"space-between"} align={"center"} pt={1}>
-                    <VStack align={"start"} gap={0}>
-                      <HStack gap={"xs"}>
-                        {totalBidang > 0 && (
-                          <P fontSize={"xs"} color={"fg.muted"}>
-                            {`${totalBidang} Bidang`}
-                          </P>
-                        )}
-                        {totalBidang > 0 && totalKawasanHa > 0 && (
-                          <P fontSize={"xs"} color={"fg.muted"}>
-                            {"•"}
-                          </P>
-                        )}
-                        {totalKawasanHa > 0 && (
-                          <P fontSize={"xs"} color={"fg.muted"}>
-                            {`${totalKawasanHa} ha Kawasan`}
-                          </P>
-                        )}
-                      </HStack>
-                      <TNum fontWeight={"semibold"} fontSize={"sm"}>
-                        <FormatNumber
-                          value={batch.totalPrice}
-                          style={"currency"}
-                          currency={"IDR"}
-                        />
-                      </TNum>
                     </VStack>
-
-                    <Button
-                      primary
-                      size={"xs"}
-                      loading={isThisReordering}
-                      onClick={() => handleReorder(batch.batchId)}
-                    >
-                      <AppIcon icon={RotateCcwIcon} />
-                      {"Pesan Ulang"}
-                    </Button>
-                  </HStack>
-                </VStack>
-              );
-            })}
-          </VStack>
+                  );
+                })}
+              </VStack>
+            )}
+          </>
         )}
       </Modal.Body>
 

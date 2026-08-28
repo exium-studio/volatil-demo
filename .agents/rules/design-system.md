@@ -28,7 +28,7 @@ const { theme } = useThemeStore();
 - **Import Alias**: Import di dalam `src/` WAJIB menggunakan alias `@/`.
 - **Komentar Section**: Wajib menambahkan komentar section di komponen (`// Contexts`, `// States`, `// Derived Values`, `// Hooks (Queries & Mutations)`, dll).
 - **Default Props**: DILARANG menuliskan prop yang nilainya sama dengan default komponen (misal: `VStack` default `align` adalah `stretch`, tidak perlu ditulis `align={"stretch"}`).
-- **Conditional Rendering (Eksplisit & Anti-Ternary)**: DILARANG menggunakan ternary operator (`condition ? <ComponentA /> : <ComponentB />`) untuk percabangan render view/state utama (seperti loading, empty/no data, error, atau multi-state render). WAJIB menggunakan early return eksplisit (`if (condition) return <... />;`) atau blok kondisi eksplisit. Nested conditional statements/returns diperbolehkan.
+- **Conditional Rendering (Eksplisit & Anti-Ternary Kompleks)**: DILARANG menggunakan nested/kompleks ternary operator (`a ? b : c ? d : e`). Ternary maksimal hanya untuk 2 kondisi sederhana (misal simple styling/variant). Untuk rendering blok view, state utama (loading, empty, error, content), WAJIB menggunakan kondisi eksplisit (`isLoading && <Skeleton />` dan nested eksplisit `!isLoading && (<>{isEmpty && <NoDataState />}{hasData && <DataView />}</>)`) atau early return eksplisit (`if (condition) return <... />;`).
 
 ---
 
@@ -37,6 +37,7 @@ const { theme } = useThemeStore();
 ### Imports: `@/design-system/components/typography/ui/*`
 
 #### Typography Size Rule (WAJIB)
+
 - **Default Font Size**: Wajib gunakan ukuran `md` (default komponen) untuk teks biasa. JANGAN tulis `fontSize={"md"}` karena itu sudah default.
 - **Dilarang Over-Styling `sm`/`xs`**: Gak perlu pakai `fontSize={"sm"}` atau `fontSize={"xs"}` untuk hal biasa. Ukuran `sm` hanya jika benar-benar diperlukan untuk hierarki tertentu, dan `xs` sangat jarang dipakai.
 

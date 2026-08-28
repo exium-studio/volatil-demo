@@ -129,31 +129,39 @@ const MitraCartContent = () => {
           <Separator borderColor={"bg.canvas"} />
 
           <VStack flex={1} p={"md"} overflowY={"auto"}>
-            {isBatchesLoading ? (
+            {isBatchesLoading && (
               <VStack gap={"md"} w={"full"}>
                 <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
                 <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
               </VStack>
-            ) : !hasBatches ? (
-              <NoDataState
-                icon={IconShoppingCartOff}
-                title={"Keranjang Kosong"}
-                description={
-                  "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permohonan Data."
-                }
-              />
-            ) : (
-              <VStack gap={"sm"} align={"stretch"} w={"full"}>
-                {batches.map((batch, index) => (
-                  <MitraCartBatchItem
-                    key={batch.batchId}
-                    batch={batch}
-                    index={index}
-                    isSelected={batch.batchId === selectedBatchId}
-                    onSelect={handleSelectBatch}
+            )}
+
+            {!isBatchesLoading && (
+              <>
+                {!hasBatches && (
+                  <NoDataState
+                    icon={IconShoppingCartOff}
+                    title={"Keranjang Kosong"}
+                    description={
+                      "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permohonan Data."
+                    }
                   />
-                ))}
-              </VStack>
+                )}
+
+                {hasBatches && (
+                  <VStack gap={"sm"} align={"stretch"} w={"full"}>
+                    {batches.map((batch, index) => (
+                      <MitraCartBatchItem
+                        key={batch.batchId}
+                        batch={batch}
+                        index={index}
+                        isSelected={batch.batchId === selectedBatchId}
+                        onSelect={handleSelectBatch}
+                      />
+                    ))}
+                  </VStack>
+                )}
+              </>
             )}
           </VStack>
 
