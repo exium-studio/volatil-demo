@@ -87,7 +87,9 @@ export const TransactionHistoryDataView = () => {
         const itemNames = item.items
           .map((it) => it.sourceLayerTitle)
           .join(", ");
-        const statusConfig = TRANSACTION_STATUS_BADGE_MAP[item.transactionStatus] ?? {
+        const statusConfig = TRANSACTION_STATUS_BADGE_MAP[
+          item.transactionStatus
+        ] ?? {
           label: item.transactionStatus,
           colorPalette: "gray" as const,
         };
@@ -98,20 +100,12 @@ export const TransactionHistoryDataView = () => {
           columns: [
             {
               value: item.transactionNumber,
-              td: (
-                <P fontWeight={"semibold"}>
-                  {item.transactionNumber}
-                </P>
-              ),
+              td: <P fontWeight={"semibold"}>{item.transactionNumber}</P>,
               align: "start" as const,
             },
             {
               value: item.orderNumber,
-              td: (
-                <P color={"fg.muted"}>
-                  {item.orderNumber}
-                </P>
-              ),
+              td: <P color={"fg.muted"}>{item.orderNumber}</P>,
               align: "start" as const,
             },
             {
@@ -172,7 +166,10 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.transactionStatus,
               td: (
-                <Badge colorPalette={statusConfig.colorPalette} variant={"subtle"}>
+                <Badge
+                  colorPalette={statusConfig.colorPalette}
+                  variant={"subtle"}
+                >
                   {statusConfig.label}
                 </Badge>
               ),

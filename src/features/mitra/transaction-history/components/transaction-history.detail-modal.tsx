@@ -332,6 +332,7 @@ export const TransactionDetailModalContent = (
                   headers={orderItemHeaders}
                   items={orderItemsData}
                   withNumbering={false}
+                  pb={0}
                   shadow={"none"}
                 >
                   <DataView.Table.Header />
