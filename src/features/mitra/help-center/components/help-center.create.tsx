@@ -106,7 +106,7 @@ export const CreateHelpCenterTrigger = (
                 errorText={errors.title?.message}
               >
                 <Input
-                  placeholder={"Contoh: Payment gagal tapi saldo berkurang"}
+                  placeholder={"Payment gagal tapi saldo berkurang"}
                   {...register("title")}
                 />
               </Field>

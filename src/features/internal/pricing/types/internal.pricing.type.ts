@@ -14,6 +14,8 @@ export type PricingItem = {
   spatialBasis: SpatialBasisType;
   unitPrice: number;
   unitLabel: string;
+  minPurchase?: number;
+  minUnit?: string;
   effectiveDate: string;
   description?: string;
   isActive: boolean;
@@ -35,6 +37,7 @@ export type UpdatePricingPayload = {
   id: string;
   unitPrice: number;
   kodePnbp?: string;
+  minPurchase?: number;
   isActive?: boolean;
   description?: string;
 };

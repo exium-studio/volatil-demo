@@ -144,7 +144,7 @@ const InternalDataManagementEditModalContent = (
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder={"Contoh: RTRW Kabupaten Badung"}
+                  placeholder={"RTRW Kabupaten Badung"}
                 />
               </Field>
 
@@ -248,7 +248,7 @@ const InternalDataManagementEditModalContent = (
                   max={100}
                   value={String(zIndex)}
                   onValueChange={({ value }) => setZIndex(value || 1)}
-                  placeholder={"Contoh: 1"}
+                  placeholder={"1"}
                 />
               </Field>
             </VStack>

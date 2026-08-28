@@ -852,7 +852,7 @@ type RejectBatchRequest = {
 
 ## 11. Internal - Tarif & Pricing Management
 
-Modul pengelolaan tarif PNBP layer IGT (tarif per bidang objek spasial, tarif per hektar kawasan, serta kode PNBP resmi ATR/BPN). Nilai tarif di modul ini digunakan oleh Interop Engine saat kalkulasi total harga batch di keranjang mitra.
+Modul pengelolaan tarif PNBP layer IGT (tarif per bidang objek spasial, tarif per hektar kawasan, ambang batas minimal pembelian, serta kode PNBP resmi ATR/BPN). Nilai tarif dan batas minimal ini digunakan oleh Interop Engine saat validasi keranjang dan kalkulasi total harga batch di keranjang mitra.
 
 ### 11.1 List Master Tarif
 
@@ -869,6 +869,9 @@ type TarifItem = {
   spatialBasis: "bidang" | "kawasan";
   kodePnbp: string; // Kode akun / klasifikasi PNBP resmi ATR/BPN per basis spasial
   unitPrice: number; // Nilai tarif nominal (IDR)
+  unitLabel: string; // "Bidang" | "Ha"
+  minPurchase: number; // Batas minimal pembelian (misal: 1000 bidang / 1000 ha)
+  minUnit: string; // "Bidang" | "Ha"
   effectiveDate: string;
   updatedAt: string;
   updatedBy: string;
@@ -884,6 +887,7 @@ type TarifItem = {
 type UpdateTarifRequest = {
   unitPrice: number;
   kodePnbp: string; // Wajib diisi saat update tarif
+  minPurchase?: number; // Nilai ambang batas minimal pembelian yang diperbarui
   effectiveDate?: string;
 };
 ```
@@ -929,24 +933,125 @@ type UpdatePurchaseLimitRequest = {
 
 ## 13. Internal - User Management
 
+Modul pengelolaan akun pengguna sistem, aktivasi status (aktif/nonaktif), penugasan peran (`mitra` vs `internal`), dan statistik agregat pengguna.
+
 ### 13.1 List Users
 
 - **Endpoint**: `GET /api/internal/users`
-- **Params**: `page?: number`, `limit?: number`, `role?: string`, `search?: string`
+- **Params**:
+  - `page?: number`
+  - `pageSize?: number`
+  - `search?: string`
+  - `role?: "internal" | "mitra"`
+  - `status?: "active" | "inactive"`
+- **Response**:
+
+```typescript
+type UserManagementListResponse = {
+  items: Array<UserManagementItem>;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
+};
+
+type UserManagementItem = {
+  id: string;
+  name: string;
+  email: string;
+  role: "internal" | "mitra";
+  agencyOrCompany: string;
+  status: "active" | "inactive";
+  phoneNumber?: string;
+  lastLoginAt?: string;
+  createdAt: string;
+};
+```
 
 ### 13.2 User Detail
 
 - **Endpoint**: `GET /api/internal/users/{id}`
+- **Response**: `UserManagementItem`
 
 ### 13.3 Update Status / Role User
 
 - **Endpoint**: `PUT /api/internal/users/{id}`
+- **Payload**:
+
+```typescript
+type UpdateUserStatusPayload = {
+  status: "active" | "inactive";
+  role?: "internal" | "mitra";
+};
+```
+
+- **Response**: `200 OK` / `{ success: true, message: "Status pengguna berhasil diperbarui" }`
+
+### 13.4 Statistik Pengguna
+
+- **Endpoint**: `GET /api/internal/users/statistics`
+- **Response**:
+
+```typescript
+type UserManagementStatsResponse = {
+  totalUsers: number;
+  statusStats: {
+    active: number;
+    inactive: number;
+  };
+  roleStats: {
+    internal: number;
+    mitra: number;
+  };
+};
+```
 
 ---
 
 ## 14. Internal - Dashboard & Statistik Sistem
 
+Modul agregasi metrik operasional IGT, ringkasan permohonan data, pendapatan PNBP, dan monitoring sinkronisasi layer data untuk admin internal ATR/BPN.
+
 ### 14.1 Internal Dashboard Overview
 
-- **Endpoint**: `GET /api/internal/home/summary?period={1d|1w|1m|1y|all}`
-- **Response**: Statistik pengguna aktif, permohonan data masuk, volume transaksi, dan utilisasi resource server.
+- **Endpoint**: `GET /api/internal/home?period={1d|1w|1m|1y|all}`
+- **Response**:
+
+```typescript
+type InternalHomeDataResponse = {
+  dataSummary: Record<
+    "1d" | "1w" | "1m" | "1y" | "all",
+    {
+      field: { active: number; inactive: number };
+      area: { active: number; inactive: number };
+    }
+  >;
+  serviceRates: Array<{
+    id: string;
+    title: string;
+    price: number;
+    unit: string;
+    kodePnbp?: string;
+    minPurchase: number;
+    minUnit: string;
+    colorPalette?: string;
+  }>;
+  orderSummary: {
+    activeOrders: number;
+    completedOrders: number;
+    igtRequests: number;
+    totalRevenue: number;
+  };
+  dataList: Array<{
+    id: string;
+    layerFileName: string;
+    syncStatus: "connected" | "syncing" | "error";
+    lastSyncTime: string;
+    igtBasis: "bidang" | "kawasan";
+    wfsApiLink: string;
+    wfsApiCode: string;
+  }>;
+};
+```

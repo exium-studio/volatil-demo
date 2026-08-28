@@ -6,11 +6,16 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
+import {
+  serviceRateFormSchema,
+  zodResolver,
+  type ServiceRateFormValues,
+} from "@/features/internal/home/schemas/service-rate.schema";
 import type { InternalHomeServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useUpdateInternalPricing } from "@/features/internal/pricing/hooks/use-internal-pricing";
 import { t } from "@/shared/libs/i18n";
 import type React from "react";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 export type InternalHomeServiceRateModalTriggerProps = {
   modalKey?: string;
@@ -62,18 +67,25 @@ const InternalHomeServiceRateModalContent = (
 ) => {
   const { rate, close } = props;
 
-  const [price, setPrice] = useState<number>(() => rate.price);
-  const [kodePnbp, setKodePnbp] = useState<string>(
-    () =>
-      rate.kodePnbp ??
-      (rate.unit.toLowerCase().includes("bidang")
-        ? "PNBP-IGT-01"
-        : "PNBP-IGT-02"),
-  );
+  // Forms
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<ServiceRateFormValues>({
+    resolver: zodResolver(serviceRateFormSchema),
+    defaultValues: {
+      price: rate.price,
+      minPurchase: rate.minPurchase,
+      kodePnbp: rate.kodePnbp ?? "",
+    },
+  });
 
+  // Mutations
   const updateMutation = useUpdateInternalPricing();
 
-  const handleSubmit = async () => {
+  const handleFormSubmit = async (values: ServiceRateFormValues) => {
     try {
       const targetId = rate.id.startsWith("rate-")
         ? rate.unit.toLowerCase().includes("bidang")
@@ -83,8 +95,9 @@ const InternalHomeServiceRateModalContent = (
 
       await updateMutation.mutateAsync({
         id: targetId,
-        unitPrice: price,
-        kodePnbp,
+        unitPrice: values.price,
+        minPurchase: values.minPurchase,
+        kodePnbp: values.kodePnbp,
       });
 
       close();
@@ -100,46 +113,87 @@ const InternalHomeServiceRateModalContent = (
         <Modal.Title>{`Ubah Tarif ${rate.title}`}</Modal.Title>
       </Modal.Header>
 
-      <Modal.Body p={"md"}>
-        <VStack align={"stretch"} gap={"md"}>
-          {/* Input Tarif Satuan */}
-          <Field label={`Tarif per ${rate.unit}`} w={"full"}>
-            <NumberInput
-              w={"full"}
-              value={String(price)}
-              onValueChange={(val) => setPrice(Number(val.value))}
-              min={0}
-              step={1000}
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <Modal.Body p={"md"}>
+          <VStack align={"stretch"} gap={"md"}>
+            {/* Input Tarif Satuan */}
+            <Controller
+              name={"price"}
+              control={control}
+              render={({ field }) => (
+                <Field
+                  label={`Tarif per ${rate.unit}`}
+                  w={"full"}
+                  errorText={errors.price?.message}
+                >
+                  <NumberInput
+                    w={"full"}
+                    value={String(field.value)}
+                    formatOptions={{
+                      style: "currency",
+                      currency: "IDR",
+                      maximumFractionDigits: 0,
+                    }}
+                    onValueChange={(val) => field.onChange(val.value)}
+                    min={0}
+                    step={1000}
+                  />
+                </Field>
+              )}
             />
-          </Field>
 
-          {/* Input Kode PNBP */}
-          <Field label={"Kode Akun PNBP"} w={"full"}>
-            <Input
-              w={"full"}
-              value={kodePnbp}
-              onChange={(e) => setKodePnbp(e.target.value)}
-              placeholder={"Contoh: PNBP-IGT-01"}
+            {/* Input Minimal Pembelian */}
+            <Controller
+              name={"minPurchase"}
+              control={control}
+              render={({ field }) => (
+                <Field
+                  label={`Minimal Pembelian (${rate.minUnit})`}
+                  w={"full"}
+                  errorText={errors.minPurchase?.message}
+                >
+                  <NumberInput
+                    w={"full"}
+                    value={String(field.value)}
+                    onValueChange={(val) => field.onChange(val.value)}
+                    min={1}
+                    step={100}
+                  />
+                </Field>
+              )}
             />
-          </Field>
-        </VStack>
-      </Modal.Body>
 
-      <Modal.Footer>
-        <VStack gap={"xs"} w={"full"}>
-          <Button
-            primary
-            w={"full"}
-            loading={updateMutation.isPending}
-            onClick={() => void handleSubmit()}
-          >
-            {"Simpan"}
-          </Button>
-          <Button w={"full"} onClick={close}>
-            {t["action.cancel"]()}
-          </Button>
-        </VStack>
-      </Modal.Footer>
+            {/* Input Kode PNBP */}
+            <Field
+              label={"Kode Akun PNBP"}
+              w={"full"}
+              errorText={errors.kodePnbp?.message}
+            >
+              <Input
+                w={"full"}
+                placeholder={"PNBP-IGT-01"}
+                {...register("kodePnbp")}
+              />
+            </Field>
+          </VStack>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <VStack gap={"xs"} w={"full"}>
+            <Button
+              type={"submit"}
+              primary
+              w={"full"}
+              loading={updateMutation.isPending}
+            >
+              {"Simpan"}
+            </Button>
+            <Button type={"button"} w={"full"} onClick={close}>
+              {t["action.cancel"]()}
+            </Button>
+          </VStack>
+        </Modal.Footer>
+      </form>
     </Modal.Content>
   );
 };

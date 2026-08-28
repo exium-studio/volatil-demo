@@ -2,7 +2,10 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import { Container, useContainerContext } from "@/design-system/components/layout/ui/container";
+import {
+  Container,
+  useContainerContext,
+} from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -41,9 +44,7 @@ const InternalHomeServiceRateHeader = () => {
       px={"md"}
     >
       <HStack gap={"xs"} align={"center"}>
-        <Heading>
-          {"Tarif Jasa Akses IGT-PR"}
-        </Heading>
+        <Heading>{"Tarif Jasa Akses IGT-PR"}</Heading>
 
         <InfoTip
           variant={"icon"}
@@ -82,7 +83,10 @@ const InternalHomeServiceRateStats = () => {
             </HStack>
 
             <InternalHomeServiceRateModalTrigger rate={rate}>
-              <IconButton variant={"ghost"} aria-label={`Ubah tarif ${rate.title}`}>
+              <IconButton
+                variant={"ghost"}
+                aria-label={`Ubah tarif ${rate.title}`}
+              >
                 <AppIcon icon={EditIcon} />
               </IconButton>
             </InternalHomeServiceRateModalTrigger>

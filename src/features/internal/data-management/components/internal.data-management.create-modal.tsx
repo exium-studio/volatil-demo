@@ -127,7 +127,7 @@ const InternalDataManagementCreateModalContent = (
               <Field
                 label={"ID / Identifier Layer"}
                 helperText={
-                  "Contoh: testing_workspace:TEST_RTRW_BADUNG (opsional, otomatis dibuat jika kosong)"
+                  ": testing_workspace:TEST_RTRW_BADUNG (opsional, otomatis dibuat jika kosong)"
                 }
                 optional
               >
@@ -143,7 +143,7 @@ const InternalDataManagementCreateModalContent = (
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder={"Contoh: RTRW Kabupaten Badung"}
+                  placeholder={"RTRW Kabupaten Badung"}
                 />
               </Field>
 
@@ -247,7 +247,7 @@ const InternalDataManagementCreateModalContent = (
                   max={100}
                   value={String(zIndex)}
                   onValueChange={({ value }) => setZIndex(value || 1)}
-                  placeholder={"Contoh: 1"}
+                  placeholder={"1"}
                 />
               </Field>
             </VStack>

@@ -102,8 +102,8 @@ export const HelpCenterModalResolveRejectTrigger = (
                 <Textarea
                   placeholder={
                     isResolve
-                      ? "Contoh: Kendala data telah berhasil diperbaiki dan diverifikasi..."
-                      : "Contoh: Laporan tidak memenuhi kriteria / data tidak lengkap..."
+                      ? ": Kendala data telah berhasil diperbaiki dan diverifikasi..."
+                      : ": Laporan tidak memenuhi kriteria / data tidak lengkap..."
                   }
                   rows={4}
                   value={message}

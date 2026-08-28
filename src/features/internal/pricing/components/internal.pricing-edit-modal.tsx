@@ -1,6 +1,7 @@
 // src/features/internal/pricing/components/internal.pricing-edit-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Field } from "@/design-system/components/input/ui/field";
 import { Input } from "@/design-system/components/input/ui/input";
 import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -147,14 +148,13 @@ const InternalPricingEditModalContent = (
 
             {/* Input Description */}
             <VStack align={"stretch"} gap={1}>
-              <P fontSize={"sm"} fontWeight={"medium"}>
-                {"Keterangan / Dasar Regulasi"}
-              </P>
-              <Input
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder={"Contoh: PP Tarif PNBP ATR/BPN No..."}
-              />
+              <Field label={"Dasar Regulasi / Keterangan"}>
+                <Input
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder={"PP Tarif PNBP ATR/BPN No..."}
+                />
+              </Field>
             </VStack>
 
             {/* Toggle Status Aktif */}

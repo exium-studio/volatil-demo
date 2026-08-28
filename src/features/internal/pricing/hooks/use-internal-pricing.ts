@@ -51,6 +51,9 @@ export const useUpdateInternalPricing = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.internal.pricing.all,
       });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.home.all,
+      });
     },
     onError: toastHandlers.onError,
   });

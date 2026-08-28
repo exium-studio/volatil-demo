@@ -52,7 +52,7 @@ const { theme } = useThemeStore();
 import { P } from "@/design-system/components/typography/ui/p";
 
 <P color={"fg.subtle"} fontWeight={"medium"}>
-  {"Teks Contoh"}
+  {"Teks "}
 </P>;
 ```
 

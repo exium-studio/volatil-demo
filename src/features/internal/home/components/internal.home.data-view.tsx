@@ -75,9 +75,7 @@ const InternalHomeIgtDataListHeader = () => {
       p={"md"}
     >
       <HStack gap={"xs"} align={"center"}>
-        <Heading>
-          {"Daftar Data"}
-        </Heading>
+        <Heading>{"Daftar Data"}</Heading>
 
         <InfoTip
           variant={"icon"}
