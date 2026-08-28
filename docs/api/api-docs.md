@@ -23,9 +23,11 @@ Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, 
 ### C. Role: Internal (Admin / Verifikator)
 
 9. [Internal - Master IGT Layers & Data Management](#9-internal---master-igt-layers--data-management)
-10. [Internal - Tarif & Pricing Management](#10-internal---tarif--pricing-management)
-11. [Internal - User Management](#11-internal---user-management)
-12. [Internal - Dashboard & Statistik Sistem](#12-internal---dashboard--statistik-sistem)
+10. [Internal - Interop Batch Review](#10-internal---interop-batch-review)
+11. [Internal - Tarif & Pricing Management](#11-internal---tarif--pricing-management)
+12. [Internal - Purchase Limit Configuration](#12-internal---purchase-limit-configuration)
+13. [Internal - User Management](#13-internal---user-management)
+14. [Internal - Dashboard & Statistik Sistem](#14-internal---dashboard--statistik-sistem)
 
 ---
 
@@ -141,51 +143,54 @@ type HelpCenterListApiResponse = {
 
 ## 3. Notifikasi & Inbox
 
-Modul pesan inbox resmi dan sinkronisasi riwayat notifikasi sistem.
+Sistem notifikasi in-app untuk Mitra dan Internal user. Setiap notifikasi masuk ke inbox user yang bersangkutan. Pada frontend, setiap notifikasi baru juga memicu visual _toast notification_ secara realtime (via SSE atau polling).
 
-### 3.1 List Inbox Pesan
+### 3.1 List Notifikasi
 
-- **Endpoint**: `GET /api/inbox`
-- **Params**: `page?: number`, `pageSize?: number`, `category?: "transaksi" | "sistem" | "bantuan" | "akun"`, `isRead?: boolean`, `search?: string`
+- **Endpoint**: `GET /api/notifications`
+- **Params**:
+  - `page?: number`
+  - `limit?: number`
+  - `isRead?: boolean`
 - **Response**:
 
 ```typescript
-type InboxListResponse = {
+type NotificationsResponse = {
   items: Array<{
     id: string;
+    type: NotificationType;
     title: string;
     message: string;
-    category: "transaksi" | "sistem" | "bantuan" | "akun";
     isRead: boolean;
-    actionUrl?: string;
     createdAt: string;
+    metadata?: Record<string, unknown>; // misal batchId, rejectionReason, orderId, dll
   }>;
-  total: number;
   unreadCount: number;
-  page?: number;
-  pageSize?: number;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
 };
+
+type NotificationType =
+  | "BATCH_PENDING_REVIEW" // → Dikirim ke internal user: ada batch baru perlu direview
+  | "BATCH_APPROVED" // → Dikirim ke mitra: batch disetujui, silakan checkout
+  | "BATCH_REJECTED" // → Dikirim ke mitra: batch ditolak + reason penolakan
+  | "BATCH_EXPIRED" // → Dikirim ke mitra: batch kadaluwarsa, tabel provisioned & layer dihapus
+  | "PAYMENT_SETTLED"; // → Dikirim ke mitra: pembayaran lunas & akses layer aktif
 ```
 
-### 3.2 Tandai Inbox Telah Dibaca
+### 3.2 Tandai Notifikasi Telah Dibaca
 
-- **Endpoint**: `PATCH /api/inbox/{id}/read`
-- **Response**: `200 OK` / `void`
+- **Endpoint**: `PUT /api/notifications/{id}/read`
+- **Response**: `200 OK` / `{ success: true }`
 
-### 3.3 Tandai Semua Inbox Telah Dibaca
+### 3.3 Tandai Semua Notifikasi Telah Dibaca
 
-- **Endpoint**: `PATCH /api/inbox/read-all`
-- **Response**: `200 OK` / `void`
-
-### 3.4 Hapus Pesan Inbox
-
-- **Endpoint**: `DELETE /api/inbox/{id}`
-- **Response**: `200 OK` / `void`
-
-### 3.5 Bersihkan Semua Pesan Inbox
-
-- **Endpoint**: `DELETE /api/inbox/clear-all`
-- **Response**: `200 OK` / `void`
+- **Endpoint**: `PUT /api/notifications/read-all`
+- **Response**: `200 OK` / `{ success: true }`
 
 ---
 
@@ -222,11 +227,11 @@ type MitraIgtLayersResponse = {
     visible?: boolean;
     zIndex?: number; // Layer stacking order index (1 = bawah, 2 = tengah, 3 = atas)
     wfs: {
-      wfsUrl: string;
+      wfsUrl: string; // URL Proxy BE: "/api/proxy/wfs?layerId={id}"
       wfsTypeName: string;
     };
     wms: {
-      wmsUrl: string;
+      wmsUrl: string; // URL Proxy BE: "/api/proxy/wms?layerId={id}"
       layers: string;
     };
   }>;
@@ -299,54 +304,121 @@ type AddToCartBatchResponse = {
 
 #### Trigger
 
-Setelah `POST /api/mitra/cart/batches` berhasil (`200 OK`), Backend langsung memicu (spawn) asynchronous background job via **Interop Engine**.
+Setelah `POST /api/mitra/cart/batches` berhasil (`200 OK`), Backend langsung memicu (_spawn_) asynchronous background job via **Interop Engine**.
 
 #### Flow per Batch:
 
 1. **Batch Item Handling**: 1 batch memuat $N$ layer IGT yang dipilih oleh Mitra.
-2. **PostGIS Isolated Table Creation**: Interop Engine membuat **1 tabel PostGIS baru per layer IGT per mitra** dengan format penamaan:
-   ```text
-   igt_provisioned_{mitraId}_{sourceLayerId}_{batchId}
-   ```
-3. **Struktur Data Tabel Provisioned**:
-   - Kolom `geometry`: Hasil pemotongan spasial (`ST_Intersection` / `ST_Clip`) dari master layer IGT sesuai dengan AOI poligon atau kriteria filter administratif mitra.
-   - Kolom `feature_id`: Foreign reference ke feature master IGT (untuk kebutuhan audit trail dan referensi data).
-   - **Perlindungan Atribut Sensitif**: Kolom atribut IGT yang bernilai komersial/sensitif **tidak disimpan secara langsung** pada tabel ini. Atribut disimpan pada tabel terpisah:
-     ```text
-     igt_attributes_{mitraId}_{sourceLayerId}_{batchId}
-     ```
-4. **Kebijakan Akses Tabel Atribut (`igt_attributes_*`)**:
-   - Hanya dapat diakses setelah status batch bertransisi menjadi `ready`.
-   - Mitra telah menyelesaikan proses checkout dan status transaksi pembayaran telah lunas (`settled`).
-   - Akses dibatasi secara ketat melalui layer GeoServer provisioned yang terisolasi khusus untuk mitra yang bersangkutan.
-5. **GeoServer Layer Auto-Publishing**: GeoServer mem-publish layer baru secara otomatis dari tabel provisioned tersebut (1 layer per tabel PostGIS).
-6. **Finalisasi Batch & TTL Countdown**:
-   - Setelah seluruh layer di dalam batch berhasil di-provision, status batch di-update menjadi `ready`.
-   - Timestamp `readyAt` dicatat, dan masa tenggang TTL 24 jam mulai berjalan:
-     ```text
-     expiredAt = readyAt + 24 Jam
-     ```
+2. **PostGIS Live Table Creation**: Interop Engine membuat **1 tabel PostGIS per IGT layer per mitra** dengan konvensi penamaan:
 
-> [!IMPORTANT]
-> **Security & Data Isolation Rule**:
-> Tabel provisioned bersifat **per-mitra, strictly isolated** — tidak ada data sharing antar mitra meskipun membeli layer atau wilayah IGT yang identik. Hal ini menjamin integritas _data attribution_, audit trail transaksi, serta perlindungan hak akses per mitra.
+   ```text
+   igt_provisioned_{mitraId}_{sourceLayerId}
+   ```
+
+   > [!NOTE]
+   > Format penamaan tidak menyertakan `batchId` karena data bersifat **live/update** (bukan snapshot statis). Jika mitra membeli layer yang sama pada batch berikutnya, tabel yang sama akan di-overwrite / di-reclip berdasarkan AOI / filter terbaru.
+
+3. **Skema Tabel Provisioned (`igt_provisioned_{mitraId}_{sourceLayerId}`)**:
+   - `feature_id`: Foreign Key ke Master IGT (digunakan untuk sinkronisasi update otomatis).
+   - `geometry`: Hasil pemotongan spasial (`ST_Intersection` / `ST_Clip`) dari master layer IGT sesuai AOI / filter administratif mitra (tipe PostGIS geometry).
+   - `source_layer_id`: Referensi ke identifier layer IGT asal.
+   - `mitra_id`: Foreign Key kepemilikan data mitra.
+   - `batch_id`: ID batch transaksi terakhir yang me-provision tabel ini.
+   - `provisioned_at`: Timestamp proses provision / re-clip terakhir.
+   - `external_attribute_ref`: _(Nullable)_ Hook untuk integrasi atribut dari sumber eksternal di masa depan.
+
+4. **Penyimpanan Parameter AOI & Filter Administratif di Database (`batch_items`)**:
+   - `aoi_polygon` (GeoJSON Polygon/MultiPolygon)
+   - `administrative_filter` (JSON provinsi, kabupaten, kecamatan, desa)
+   - `cql_filter` (string CQL)
+   - `selection_type` (`"catalog"` | `"upload_aoi"` | `"draw_aoi"`)
+   - _Parameter ini tersimpan permanen di DB dan digunakan untuk proses re-provision otomatis saat master data IGT diperbarui atau saat re-order batch._
+
+5. **Perlindungan Atribut Private IGT**:
+   - Kolom atribut private/sensitif IGT **tidak disimpan di tabel provisioned**, melainkan bersumber dari sistem/tabel eksternal secara modular via referensi `external_attribute_ref`.
+
+6. **GeoServer Provisioned Layer Auto-Publishing**:
+   - GeoServer Provisioned mem-publish layer baru secara otomatis dari tabel provisioned (1 layer per tabel PostGIS) dan di-refresh setiap kali tabel diupdate.
+
+7. **Status Transition & Internal Notification**:
+   - Setelah seluruh layer di dalam batch berhasil di-provision oleh Interop Engine, status batch berubah menjadi `pending_review`.
+   - Notifikasi inbox otomatis dikirimkan ke **Internal User** untuk meninjau permohonan data batch yang baru.
+
+#### Scalability & Auto-Sync Update:
+
+- **Tabel Provisioned Terisolasi**: Bersifat per-mitra (_isolated_), tidak ada data sharing antar mitra.
+- **Live Sync**: Ketika layer Master IGT diperbarui, seluruh tabel provisioned yang berelasi akan otomatis di-reclip ulang dan GeoServer layer di-refresh.
+- **Subscriber Tracking**: Backend mengelola tabel `master_igt_subscribers` untuk melacak mitra mana saja yang memiliki tabel provisioned aktif dari masing-masing master layer.
+
+#### Infrastruktur GeoServer (2 Server Terpisah):
+
+```
+GeoServer Master (Private Network, Internal Only)
+└── Hanya diakses Backend Interop Engine untuk proses clipping
+└── workspace: master_igt
+
+GeoServer Provisioned (Private Network, Akses via BE Proxy)
+└── workspace: provisioned
+    └── igt_provisioned_{mitraId}_{sourceLayerId}
+```
+
+_Kredensial disimpan pada environment variable Backend:_
+
+```env
+GEOSERVER_MASTER_URL=
+GEOSERVER_MASTER_USERNAME=
+GEOSERVER_MASTER_PASSWORD=
+
+GEOSERVER_PROVISIONED_URL=
+GEOSERVER_PROVISIONED_USERNAME=
+GEOSERVER_PROVISIONED_PASSWORD=
+```
+
+---
+
+### 5.1.2 Validasi Saat Add to Cart
+
+Sebelum batch keranjang dibuat, Backend **wajib** melakukan validasi kuota batas minimum pemesanan:
+
+- **Basis `bidang`**: Minimum **1.000 bidang** per item layer.
+- **Basis `kawasan`**: Minimum **1.000 ha** per item layer.
+- Nilai ambang batas minimum diambil secara dinamis dari tabel konfigurasi `purchase_limits` (dapat dikelola melalui modul [Internal - Purchase Limit Configuration](#10-internal---purchase-limit-configuration)).
+
+Jika terdapat item yang tidak memenuhi batas minimum, request ditolak dengan respon `400 Bad Request`:
+
+```typescript
+type CartValidationErrorResponse = {
+  error: "BELOW_MINIMUM_LIMIT";
+  message: string;
+  detail: Array<{
+    sourceLayerId: string;
+    spatialBasis: "bidang" | "kawasan";
+    requested: number;
+    minimum: number;
+    unit: "bidang" | "ha";
+  }>;
+};
+```
 
 ---
 
 ### 5.2 Ambil Daftar Batch di Keranjang
 
 - **Endpoint**: `GET /api/mitra/cart/batches`
+- **Params**: `status?: "preparing" | "pending_review" | "approved" | "rejected" | "expired"`
 - **Response**:
 
 ```typescript
 type CartBatchListResponse = {
   batches: Array<{
     batchId: string;
-    status: "preparing" | "ready" | "expired";
+    status: BatchStatus;
     createdAt: string;
     readyAt?: string;
-    expiredAt?: string; // Datetime ISO (TTL 24 jam setelah status 'ready' untuk hitung mundur countdown)
-    totalPrice?: number; // Bernilai undefined/null jika status masih 'preparing' (belum selesai dihitung Interop Engine)
+    approvedAt?: string;
+    expiredAt?: string; // Datetime ISO (TTL 24 jam setelah status 'approved' untuk hitung mundur countdown)
+    rejectionReason?: string; // Terisi jika status = 'rejected'
+    totalPrice?: number; // Bernilai undefined/null jika status masih 'preparing' / 'pending_review'
     items: Array<{
       id: string;
       sourceLayerId: string;
@@ -373,11 +445,13 @@ type CartBatchListResponse = {
 ```typescript
 type CartBatchDetailResponse = {
   batchId: string;
-  status: "preparing" | "ready" | "expired";
+  status: BatchStatus;
   createdAt: string;
   readyAt?: string;
+  approvedAt?: string;
   expiredAt?: string;
-  totalPrice?: number; // Total tagihan batch (tersedia saat status 'ready'). Jika 'preparing', bernilai null/0/menunggu.
+  rejectionReason?: string;
+  totalPrice?: number;
   items: Array<{
     id: string;
     sourceLayerId: string;
@@ -395,17 +469,32 @@ type CartBatchDetailResponse = {
 ```
 
 > [!NOTE]
-> **Skema Perhitungan Tarif (Pricing)**:
+> **Batch Lifecycle & TTL Countdown**:
 >
-> - Penentuan tarif (`unitPrice`) diambil dari **Master Data Tarif PNBP** yang dikelola melalui modul [Internal - Tarif & Pricing Management](#9-internal---tarif--pricing-management).
-> - Selama status batch masih `preparing`, nilai total harga dan tarif akhir belum selesai dikalkulasi secara final oleh Interop Engine dan UI akan menampilkan indikasi _"Menunggu penyiapan data..."_.
+> ```
+> preparing → pending_review → approved → (checkout) → settled
+>                            ↘ rejected (wajib ada reason)
+>
+> approved → expired (TTL 24 jam habis, tabel provisioned + GeoServer layer dihapus)
+> ```
+>
+> - Masa tenggang TTL 24 jam (`expiredAt`) **mulai dihitung saat batch berstatus `approved`**.
+> - Selama status batch masih `preparing` atau `pending_review`, nilai total harga dan tarif akhir belum selesai difinalisasi.
 
 ### 5.4 Kosongkan / Hapus Batch dari Keranjang
 
 - **Endpoint**: `DELETE /api/mitra/cart/batches/{batchId}`
 - **Response**: `200 OK` / `{ success: true, message: "Batch keranjang berhasil dihapus" }`
 
-### 5.5 Pembayaran Batch (1 Batch = 1 Transaksi & Request Kode Billing)
+### 5.5 Re-order Batch Kadaluwarsa (Shortcut)
+
+Memungkinkan Mitra mengajukan ulang permohonan batch yang sudah kadaluwarsa (`expired`) dengan parameter AOI/filter yang sama persis tanpa perlu input ulang dari peta.
+
+- **Endpoint**: `POST /api/mitra/cart/batches/{batchId}/reorder`
+- **Payload**: `{}` (Empty JSON — Backend otomatis mengambil AOI & filter dari tabel `batch_items` batch lama)
+- **Response**: `AddToCartBatchResponse` (Batch baru dengan status `"preparing"`)
+
+### 5.6 Pembayaran Batch (1 Batch = 1 Transaksi & Request Kode Billing)
 
 - **Endpoint**: `POST /api/mitra/cart/batches/{batchId}/checkout`
 - **Payload**: `{}` (Empty JSON / Opsional)
@@ -424,7 +513,7 @@ type CheckoutBatchResponse = {
 };
 ```
 
-### 5.6 Cek Status Pembayaran Order (Manual / Trigger)
+### 5.7 Cek Status Pembayaran Order (Manual / Trigger)
 
 - **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
 - **Response**:
@@ -441,18 +530,28 @@ type OrderPaymentStatusResponse = {
 
 ## 6. GeoServer Proxy Endpoints
 
-Backend wajib menyediakan endpoint proxy untuk seluruh akses GeoServer dari Frontend. Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production.
+Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production. Seluruh akses GeoServer dialihkan melalui endpoint proxy Backend.
+
+**Autentikasi**: Menggunakan Session / JWT via `httpOnly` cookie yang otomatis disertakan pada setiap request. Frontend tidak menyimpan atau mengirimkan kredensial GeoServer apapun.
+
+**Resolusi GeoServer Internal**:
+Backend melakukan resolusi `layerId` secara otomatis berdasarkan status order Mitra:
+
+- **Belum Beli / Permohonan**: Forward request ke **GeoServer Master** (hanya data geometri dasar).
+- **Sudah Beli & Lunas (`settled`)**: Forward request ke **GeoServer Provisioned** (tabel PostGIS `igt_provisioned_{mitraId}_{sourceLayerId}` milik mitra).
 
 ### 6.1 WMS Proxy
 
 - **Endpoint**: `GET /api/proxy/wms`
 - **Query Params**:
   - Standar WMS: `SERVICE`, `REQUEST`, `LAYERS`, `BBOX`, `WIDTH`, `HEIGHT`, `FORMAT`, `SRS` / `CRS`, `TRANSPARENT`, `STYLES`, `VERSION`, dll.
-  - Tambahan (Opsional): `layerId` (untuk validasi hak akses per layer).
+  - Wajib: `layerId` (digunakan Backend untuk resolve layer & validasi akses).
 - **Backend Behavior**:
-  1. Validasi auth session / JWT Mitra.
-  2. Validasi apakah Mitra memiliki hak akses aktif (`status = settled` dan belum `expired`) ke layer yang diminta.
-  3. Forward request ke GeoServer internal menggunakan GeoServer credential milik Backend.
+  1. Validasi session cookie $\rightarrow$ resolve `mitraId`.
+  2. Cek apakah Mitra memiliki order berstatus `settled` untuk `layerId` tersebut:
+     - **Belum Lunas**: Forward ke **GeoServer Master**.
+     - **Lunas (`settled`)**: Forward ke **GeoServer Provisioned**.
+  3. Override parameter `LAYERS` dengan nama layer GeoServer yang sesuai.
   4. Stream response binary gambar (`image/png`, `image/jpeg`) langsung ke Frontend.
 - **Response**: Raw image tile stream dari GeoServer.
 
@@ -461,21 +560,22 @@ Backend wajib menyediakan endpoint proxy untuk seluruh akses GeoServer dari Fron
 - **Endpoint**: `GET /api/proxy/wfs`
 - **Query Params**:
   - Standar WFS: `SERVICE`, `REQUEST`, `TYPENAMES` / `TYPENAME`, `CQL_FILTER`, `SRSNAME`, `OUTPUTFORMAT`, `MAXFEATURES`, `RESULTTYPE`, `VERSION`, dll.
-  - Tambahan (Opsional): `layerId`.
+  - Wajib: `layerId`.
 - **Backend Behavior**:
-  1. Validasi auth session / JWT Mitra.
-  2. Validasi hak akses data spasial Mitra.
-  3. Mengarahkan / meng-override `TYPENAMES` ke nama layer tabel PostGIS hasil provisioning milik mitra (`igt_provisioned_{mitraId}_{sourceLayerId}_{batchId}`) bukan master layer global.
-  4. Forward request ke GeoServer internal.
-  5. Stream GeoJSON response (`application/json`) ke Frontend.
+  1. Validasi session cookie $\rightarrow$ resolve `mitraId`.
+  2. Cek hak akses & status kepemilikan layer Mitra:
+     - **Belum Lunas**: Forward ke **GeoServer Master**.
+     - **Lunas (`settled`)**: Forward ke **GeoServer Provisioned** (tabel `igt_provisioned_{mitraId}_{sourceLayerId}`).
+  3. Override parameter `TYPENAMES` dengan nama layer yang sesuai.
+  4. Stream GeoJSON response (`application/json`) ke Frontend.
 - **Response**: `GeoJSON.FeatureCollection`
 
 ### 6.3 Security Rules (Wajib Implementasi Backend)
 
 1. **Zero Credential Exposure**: Kredensial GeoServer (Basic Auth / Master Token) **tidak boleh pernah dikirimkan ke Frontend** dalam format apapun.
 2. **Session Verification**: Backend wajib memvalidasi token JWT / session pengguna sebelum meneruskan (_forward_) request ke GeoServer.
-3. **Prevent Horizontal Access**: Backend memvalidasi bahwa `TYPENAMES` / `LAYERS` yang diminta adalah layer milik mitra yang sedang login. Mitra A tidak boleh dapat mengakses layer hasil provisioning Mitra B.
-4. **Rate Limiting**: Penerapan rate limit per user session / IP address untuk menjaga stabilitas GeoServer.
+3. **Prevent Horizontal Access**: Backend memvalidasi bahwa `TYPENAMES` / `LAYERS` yang diminta adalah layer milik mitra yang sedang login. Mitra A tidak dapat mengakses layer hasil provisioning milik Mitra B (`403 Forbidden`).
+4. **Rate Limiting**: Penerapan rate limit per `mitraId` per endpoint untuk menjaga stabilitas GeoServer.
 5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `mitraId`, `layerId`, `timestamp`, `params`, `ipAddress`).
 
 ---
@@ -551,8 +651,14 @@ export type SpatialBasisType = "bidang" | "kawasan";
 // 2. Tipe Seleksi Area Pemotongan Data
 export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
 
-// 3. Status Batch Aktif Keranjang (Interop Engine Provisioning)
-export type CartBatchStatus = "preparing" | "ready" | "expired";
+// 3. Status Batch Aktif Keranjang (Interop Engine Provisioning & Review)
+export type BatchStatus =
+  | "preparing"
+  | "pending_review"
+  | "approved"
+  | "rejected"
+  | "expired";
+export type CartBatchStatus = BatchStatus;
 
 // 4. Status Transaksi / Invoice Pembayaran
 export type TransactionStatus = "pending" | "settled" | "expired" | "failed";
@@ -681,63 +787,166 @@ type CreateMasterIgtLayerPayload = {
 
 ---
 
-## 10. Internal - Tarif & Pricing Management
+## 10. Internal - Interop Batch Review
 
-Modul pengelolaan tarif PNBP layer IGT (tarif per bidang objek spasial, tarif per hektar kawasan, serta formula perhitungan PNBP ATR/BPN). Nilai tarif di modul ini digunakan oleh Interop Engine saat kalkulasi total harga batch di keranjang mitra.
+Modul bagi Internal User untuk mereview dan memberikan keputusan persetujuan (_approval_) terhadap permohonan data spasial batch yang telah selesai diproses oleh Interop Engine (`pending_review`).
 
-### 10.1 List Master Tarif
+### 10.1 List Batches Pending Review
+
+- **Endpoint**: `GET /api/internal/interop/batches`
+- **Response**:
+
+```typescript
+type InternalBatchListResponse = {
+  batches: Array<{
+    batchId: string;
+    mitraId: string;
+    mitraName: string;
+    status: "pending_review";
+    createdAt: string;
+    items: Array<{
+      id: string;
+      sourceLayerId: string;
+      sourceLayerTitle: string;
+      spatialBasis: "bidang" | "kawasan";
+      featuresCount: number;
+      areaHa?: number;
+      selectionType: "catalog" | "upload_aoi" | "draw_aoi";
+    }>;
+  }>;
+  total: number;
+};
+```
+
+### 10.2 Detail Batch Review
+
+- **Endpoint**: `GET /api/internal/interop/batches/{batchId}`
+- **Response**: `CartBatchDetailResponse`
+
+### 10.3 Approve Batch
+
+Menyetujui batch permohonan data. Status batch berubah menjadi `approved` dan masa tenggang TTL 24 jam (`expiredAt`) mulai dihitung aktif.
+
+- **Endpoint**: `PUT /api/internal/interop/batches/{batchId}/approve`
+- **Payload**: `{}` (Empty JSON)
+- **Response**: `200 OK` / `{ success: true, message: "Batch berhasil disetujui" }`
+- **Side Effect**: Notifikasi inbox (`BATCH_APPROVED`) otomatis dikirimkan ke akun Mitra terkait.
+
+### 10.4 Reject Batch
+
+Menolak batch permohonan data dengan alasan penolakan yang wajib diisi.
+
+- **Endpoint**: `PUT /api/internal/interop/batches/{batchId}/reject`
+- **Payload**:
+
+```typescript
+type RejectBatchRequest = {
+  reason: string; // Wajib diisi, tidak boleh string kosong
+};
+```
+
+- **Response**: `200 OK` / `{ success: true, message: "Batch berhasil ditolak" }`
+- **Side Effect**: Notifikasi inbox (`BATCH_REJECTED`) otomatis dikirimkan ke akun Mitra beserta alasan penolakannya.
+
+---
+
+## 11. Internal - Tarif & Pricing Management
+
+Modul pengelolaan tarif PNBP layer IGT (tarif per bidang objek spasial, tarif per hektar kawasan, serta kode PNBP resmi ATR/BPN). Nilai tarif di modul ini digunakan oleh Interop Engine saat kalkulasi total harga batch di keranjang mitra.
+
+### 11.1 List Master Tarif
 
 - **Endpoint**: `GET /api/internal/pricing`
 - **Response**:
 
 ```typescript
 type PricingListResponse = {
-  items: Array<{
-    id: string;
-    layerId?: string; // Optional: spesifik untuk layer tertentu atau default global
-    spatialBasis: "bidang" | "kawasan";
-    unitPrice: number; // Harga per bidang / per hektar (IDR)
-    unitLabel: string; // "per bidang" | "per hektar"
-    effectiveDate: string;
-    isActive: boolean;
-  }>;
+  items: Array<TarifItem>;
+};
+
+type TarifItem = {
+  id: string;
+  spatialBasis: "bidang" | "kawasan";
+  kodePnbp: string; // Kode akun / klasifikasi PNBP resmi ATR/BPN per basis spasial
+  unitPrice: number; // Nilai tarif nominal (IDR)
+  effectiveDate: string;
+  updatedAt: string;
+  updatedBy: string;
 };
 ```
 
-### 10.2 Update / Set Tarif Layer
+### 11.2 Update / Set Tarif Layer
 
 - **Endpoint**: `PUT /api/internal/pricing/{id}`
 - **Payload**:
 
 ```typescript
-type UpdatePricingPayload = {
+type UpdateTarifRequest = {
   unitPrice: number;
-  isActive: boolean;
+  kodePnbp: string; // Wajib diisi saat update tarif
+  effectiveDate?: string;
 };
 ```
 
 ---
 
-## 11. Internal - User Management
+## 12. Internal - Purchase Limit Configuration
 
-### 11.1 List Users
+Modul pengelolaan ambang batas minimum pemesanan data spasial IGT (_purchase limit rules_) untuk mencegah permohonan data di bawah kuota minimum.
+
+### 12.1 Get Purchase Limits
+
+- **Endpoint**: `GET /api/internal/purchase-limits`
+- **Response**:
+
+```typescript
+type PurchaseLimitsResponse = {
+  limits: Array<{
+    id: string;
+    spatialBasis: "bidang" | "kawasan";
+    minimumValue: number; // misal: 1000 bidang / 1000 ha
+    unit: "bidang" | "ha";
+    updatedAt: string;
+    updatedBy: string;
+  }>;
+};
+```
+
+### 12.2 Update Purchase Limit
+
+- **Endpoint**: `PUT /api/internal/purchase-limits/{id}`
+- **Payload**:
+
+```typescript
+type UpdatePurchaseLimitRequest = {
+  minimumValue: number;
+};
+```
+
+- **Response**: `200 OK` / `{ success: true, message: "Batas minimum pembelian berhasil diperbarui" }`
+
+---
+
+## 13. Internal - User Management
+
+### 13.1 List Users
 
 - **Endpoint**: `GET /api/internal/users`
 - **Params**: `page?: number`, `limit?: number`, `role?: string`, `search?: string`
 
-### 11.2 User Detail
+### 13.2 User Detail
 
 - **Endpoint**: `GET /api/internal/users/{id}`
 
-### 11.3 Update Status / Role User
+### 13.3 Update Status / Role User
 
 - **Endpoint**: `PUT /api/internal/users/{id}`
 
 ---
 
-## 12. Internal - Dashboard & Statistik Sistem
+## 14. Internal - Dashboard & Statistik Sistem
 
-### 12.1 Internal Dashboard Overview
+### 14.1 Internal Dashboard Overview
 
 - **Endpoint**: `GET /api/internal/home/summary?period={1d|1w|1m|1y|all}`
 - **Response**: Statistik pengguna aktif, permohonan data masuk, volume transaksi, dan utilisasi resource server.
