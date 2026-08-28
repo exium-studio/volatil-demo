@@ -10,6 +10,7 @@ export type PricingItem = {
   id: string;
   layerId?: string;
   layerTitle?: string;
+  kodePnbp?: string;
   spatialBasis: SpatialBasisType;
   unitPrice: number;
   unitLabel: string;
@@ -33,6 +34,7 @@ export type PricingListResponse = {
 export type UpdatePricingPayload = {
   id: string;
   unitPrice: number;
+  kodePnbp?: string;
   isActive?: boolean;
   description?: string;
 };

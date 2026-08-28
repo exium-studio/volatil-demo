@@ -1,6 +1,4 @@
-// src/features/internal/home/components/internal.home.service-rate.tsx
-
-import { Button } from "@/design-system/components/button/ui/button";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -34,9 +32,6 @@ export const InternalHomeServiceRate = (
 };
 
 const InternalHomeServiceRateHeader = () => {
-  // Queries / Data
-  const { serviceRates } = useInternalHomeData();
-
   return (
     <HStack
       wrap={"wrap"}
@@ -60,13 +55,6 @@ const InternalHomeServiceRateHeader = () => {
           {"Pengaturan tarif bidang dan kawasan"}
         </InfoTip>
       </HStack>
-
-      <InternalHomeServiceRateModalTrigger serviceRates={serviceRates}>
-        <Button primary variant={"solid"}>
-          <AppIcon icon={EditIcon} />
-          {"Perbarui"}
-        </Button>
-      </InternalHomeServiceRateModalTrigger>
     </HStack>
   );
 };
@@ -85,11 +73,19 @@ const InternalHomeServiceRateStats = () => {
       {serviceRates.map((rate, index) => (
         <StatGrid.Item key={rate.id} index={index} columns={cols}>
           <StatGrid.Header>
-            <StatGrid.Label>{rate.title}</StatGrid.Label>
+            <HStack gap={"xs"} align={"center"}>
+              <Circle bg={`${rate.colorPalette}.subtle`} p={"xs"}>
+                <AppIcon icon={rate.icon} color={`${rate.colorPalette}.fg`} />
+              </Circle>
 
-            <Circle bg={`${rate.colorPalette}.subtle`} p={"xs"}>
-              <AppIcon icon={rate.icon} color={`${rate.colorPalette}.fg`} />
-            </Circle>
+              <StatGrid.Label>{rate.title}</StatGrid.Label>
+            </HStack>
+
+            <InternalHomeServiceRateModalTrigger rate={rate}>
+              <IconButton variant={"ghost"} aria-label={`Ubah tarif ${rate.title}`}>
+                <AppIcon icon={EditIcon} />
+              </IconButton>
+            </InternalHomeServiceRateModalTrigger>
           </StatGrid.Header>
 
           <StatGrid.Value

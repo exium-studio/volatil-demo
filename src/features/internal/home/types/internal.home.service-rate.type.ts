@@ -11,6 +11,7 @@ export type InternalHomeServiceRateItem = {
   icon: ComponentType;
   price: number;
   unit: string;
+  kodePnbp?: string;
   minPurchase: number;
   minUnit: string;
   color?: string;
