@@ -20,7 +20,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import {
   TRANSACTION_STATUS_BADGE_MAP,
@@ -69,6 +69,8 @@ export const TransactionHistoryDataView = () => {
       status: (status as TransactionStatus) || undefined,
     });
 
+  console.log(transactionHistory);
+
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -77,7 +79,7 @@ export const TransactionHistoryDataView = () => {
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Metode", sortable: false, align: "start" },
-      { th: "Item Order", sortable: false, align: "start" },
+      { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
       { th: "Status", sortable: true, align: "start" },
     ];
@@ -128,23 +130,23 @@ export const TransactionHistoryDataView = () => {
             },
             {
               value: item.paymentMethod,
-              td: (
+              td: item.paymentMethod ? (
                 <Badge variant={"subtle"} colorPalette={"gray"}>
                   {item.paymentMethod}
                 </Badge>
+              ) : (
+                "-"
               ),
               align: "start" as const,
             },
             {
               value: itemNames,
               td: (
-                <VStack align={"start"} gap={0} maxW={"220px"}>
-                  <P truncate title={itemNames}>
-                    {itemNames || "-"}
-                  </P>
-                  <P fontSize={"sm"} color={"fg.subtle"}>
+                <VStack align={"start"} w={"200px"}>
+                  <ClampedP title={itemNames}>{itemNames || "-"}</ClampedP>
+                  <ClampedP fontSize={"sm"} color={"fg.subtle"}>
                     {`${item.items.length} Layer IGT`}
-                  </P>
+                  </ClampedP>
                 </VStack>
               ),
               align: "start" as const,
