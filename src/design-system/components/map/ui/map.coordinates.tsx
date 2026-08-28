@@ -64,7 +64,7 @@ export const MapCoordinates = () => {
       <HStack gap={2}>
         <P
           fontSize={"2xs"}
-          fontWeight={"bold"}
+          fontWeight={"semibold"}
           color={"neutral.500"}
           letterSpacing={"wider"}
         >
@@ -73,7 +73,7 @@ export const MapCoordinates = () => {
 
         <P
           fontSize={"2xs"}
-          fontWeight={"bold"}
+          fontWeight={"semibold"}
           color={"neutral.500"}
           letterSpacing={"wider"}
         >

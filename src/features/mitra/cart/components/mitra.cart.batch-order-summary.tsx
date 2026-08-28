@@ -187,7 +187,7 @@ export const MitraCartBatchOrderSummary = (
           justify={"space-between"}
           color={isReadyToPay ? "blue.fg" : undefined}
         >
-          <P fontSize={"md"} fontWeight={"bold"}>
+          <P fontSize={"md"} fontWeight={"semibold"}>
             {"Total Tagihan"}
           </P>
           {isSelected ? (
@@ -196,7 +196,7 @@ export const MitraCartBatchOrderSummary = (
                 {"Menunggu penyiapan data..."}
               </P>
             ) : (
-              <P fontSize={"lg"} fontWeight={"bold"}>
+              <P fontSize={"lg"} fontWeight={"semibold"}>
                 <FormatNumber
                   value={activeBatch?.totalPrice ?? 0}
                   style={"currency"}
@@ -206,7 +206,7 @@ export const MitraCartBatchOrderSummary = (
               </P>
             )
           ) : (
-            <P fontSize={"lg"} fontWeight={"bold"}>
+            <P fontSize={"lg"} fontWeight={"semibold"}>
               {"-"}
             </P>
           )}

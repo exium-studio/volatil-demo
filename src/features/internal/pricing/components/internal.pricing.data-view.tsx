@@ -1,8 +1,6 @@
 // src/features/internal/pricing/components/internal.pricing.data-list.tsx
 
-import type {
-  FormattedTableHeader,
-} from "@/design-system/components/data-display/types/data-view-table.type";
+import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
@@ -25,7 +23,10 @@ import type {
   PricingItem,
   SpatialBasisType,
 } from "@/features/internal/pricing/types/internal.pricing.type";
-import { formatUtcDateTime, getPreferredUserTimezone } from "@/shared/utils/formatter/date.formatter";
+import {
+  formatUtcDateTime,
+  getPreferredUserTimezone,
+} from "@/shared/utils/formatter/date.formatter";
 import { Edit2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -33,7 +34,9 @@ export const InternalPricingDataView = () => {
   // States
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE_OPTIONS[0]);
+  const [pageSize, setPageSize] = useState<number>(
+    DEFAULT_PAGE_SIZE_OPTIONS[0],
+  );
   const [spatialBasis, setSpatialBasis] = useState<string>("all");
   const [selectedItem, setSelectedItem] = useState<PricingItem | null>(null);
 
@@ -52,7 +55,8 @@ export const InternalPricingDataView = () => {
     page,
     pageSize,
     search: search || undefined,
-    spatialBasis: spatialBasis !== "all" ? (spatialBasis as SpatialBasisType) : undefined,
+    spatialBasis:
+      spatialBasis !== "all" ? (spatialBasis as SpatialBasisType) : undefined,
   });
 
   // Derived Values
@@ -91,7 +95,12 @@ export const InternalPricingDataView = () => {
               <VStack align={"start"} gap={0} maxW={"280px"}>
                 <P fontWeight={"medium"}>{item.layerTitle ?? item.id}</P>
                 {item.description && (
-                  <P fontSize={"xs"} color={"fg.subtle"} truncate title={item.description}>
+                  <P
+                    fontSize={"xs"}
+                    color={"fg.subtle"}
+                    truncate
+                    title={item.description}
+                  >
                     {item.description}
                   </P>
                 )}
@@ -115,7 +124,7 @@ export const InternalPricingDataView = () => {
             value: item.unitPrice,
             td: (
               <VStack align={"end"} gap={0}>
-                <P fontWeight={"bold"} color={"teal.fg"}>
+                <P fontWeight={"semibold"} color={"teal.fg"}>
                   <FormatNumber
                     value={item.unitPrice}
                     style={"currency"}
@@ -182,7 +191,9 @@ export const InternalPricingDataView = () => {
           <VStack align={"start"} gap={0}>
             <Heading>{"Master Tarif & Pricing PNBP"}</Heading>
             <P fontSize={"xs"} color={"fg.subtle"}>
-              {"Konfigurasi tarif satuan layer IGT yang digunakan saat kalkulasi keranjang permohonan data mitra."}
+              {
+                "Konfigurasi tarif satuan layer IGT yang digunakan saat kalkulasi keranjang permohonan data mitra."
+              }
             </P>
           </VStack>
         </HeaderContainer>

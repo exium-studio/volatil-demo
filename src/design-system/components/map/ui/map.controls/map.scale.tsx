@@ -73,7 +73,7 @@ export const MapScale = (props: StackProps) => {
     <VStack gap={1} align={"start"} justify={"center"} w={"80px"} {...props}>
       <P
         fontSize={"2xs"}
-        fontWeight={"bold"}
+        fontWeight={"semibold"}
         color={"neutral.500"}
         lineHeight={1}
         textAlign={"center"}

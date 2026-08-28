@@ -346,7 +346,7 @@ const ActiveTears = ({ color }: { color: string }) => (
 const ZzzMark = ({ color }: { color: string }) => (
   <P
     fontSize={"2xl"}
-    fontWeight={"bold"}
+    fontWeight={"semibold"}
     pos={"absolute"}
     top={"4px"}
     right={"16px"}
@@ -361,7 +361,7 @@ const ZzzMark = ({ color }: { color: string }) => (
 const QuestionMark = ({ color }: { color: string }) => (
   <P
     fontSize={"4xl"}
-    fontWeight={"bold"}
+    fontWeight={"semibold"}
     pos={"absolute"}
     top={"2px"}
     right={"18px"}
@@ -376,7 +376,7 @@ const QuestionMark = ({ color }: { color: string }) => (
 const ExclamMark = ({ color }: { color: string }) => (
   <P
     fontSize={"4xl"}
-    fontWeight={"bold"}
+    fontWeight={"semibold"}
     pos={"absolute"}
     top={"2px"}
     right={"20px"}

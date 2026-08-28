@@ -37,9 +37,7 @@ const UserManagementStatsHeader = () => {
       px={"md"}
     >
       <VStack gap={1} align={"start"}>
-        <Heading>
-          {"Statistik Pengguna"}
-        </Heading>
+        <Heading>{"Statistik Pengguna"}</Heading>
 
         <P fontSize={"sm"} color={"fg.subtle"}>
           {"Ringkasan status dan tipe peran pengguna sistem."}

@@ -95,7 +95,7 @@ export const HelpCenterDetailPage = () => {
       <PanelContentContainer>
         <Container.Root withContext={true}>
           <Container.Body p={"lg"} align={"center"}>
-            <P fontSize={"lg"} fontWeight={"bold"} mb={2}>
+            <P fontSize={"lg"} fontWeight={"semibold"} mb={2}>
               {"Laporan Tidak Ditemukan"}
             </P>
             <P color={"fg.muted"} mb={4}>
@@ -115,10 +115,7 @@ export const HelpCenterDetailPage = () => {
   const reporterEmail = ticket.user?.email ?? "?";
 
   return (
-    <PanelContentContainer
-      overflowY={"auto"}
-      position={"relative"}
-    >
+    <PanelContentContainer overflowY={"auto"} position={"relative"}>
       <TopBarLoader isFetching={isFetching} />
 
       {/* Header container */}

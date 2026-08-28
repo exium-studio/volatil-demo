@@ -243,7 +243,7 @@ const DayView = memo(function DayView(props: DayViewProps) {
                   aria-disabled={disabled}
                 >
                   <P
-                    fontWeight={isToday || isSelected ? "bold" : "normal"}
+                    fontWeight={isToday || isSelected ? "semibold" : "normal"}
                     lineHeight={1}
                     py={1}
                     borderBottom={"2px solid"}
@@ -300,7 +300,7 @@ const MonthView = memo(function MonthView(props: MonthViewProps) {
               aria-label={name}
               aria-pressed={isActive}
             >
-              <P fontWeight={isActive ? "bold" : "normal"}>{name}</P>
+              <P fontWeight={isActive ? "semibold" : "normal"}>{name}</P>
             </Button>
           );
         })}
@@ -342,7 +342,7 @@ const YearView = memo(function YearView(props: YearViewProps) {
               aria-label={String(y)}
               aria-pressed={isActive}
             >
-              <P fontWeight={isActive ? "bold" : "normal"}>{y}</P>
+              <P fontWeight={isActive ? "semibold" : "normal"}>{y}</P>
             </Button>
           );
         })}
@@ -562,9 +562,7 @@ export const DatePickerTrigger = memo(function DatePickerTrigger(
       <Modal.Content>
         <Modal.Header>
           <VStack gap={1} mx={"auto"}>
-            <Modal.Title fontWeight={"semibold"}>
-              Select Date
-            </Modal.Title>
+            <Modal.Title fontWeight={"semibold"}>Select Date</Modal.Title>
 
             {/* TODO: make the subtitle dynamic based on props */}
             {datePickerSubtitle && (

@@ -9,9 +9,7 @@ import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { CART_BATCH_STATUS_CONFIG_MAP } from "@/features/mitra/cart/constants/cart.config";
-import type {
-  MitraCartBatchItemProps,
-} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import type { MitraCartBatchItemProps } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { memo } from "react";
 
 export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
@@ -112,7 +110,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
 
           <HStack justify={"space-between"} align={"center"}>
             <P color={"fg.muted"}>{"Total Estimasi:"}</P>
-            <P fontWeight={"bold"} color={"blue.fg"}>
+            <P fontWeight={"semibold"} color={"blue.fg"}>
               <FormatNumber
                 value={batch.totalPrice}
                 style={"currency"}
@@ -138,7 +136,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
 
             <Countdown
               finishedAt={batch.expiredAt}
-              fontWeight={"bold"}
+              fontWeight={"semibold"}
               color={"orange.fg"}
             />
           </HStack>

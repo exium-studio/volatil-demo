@@ -75,7 +75,7 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
               </HStack>
 
               <HStack gap={1} align={"baseline"}>
-                <P fontWeight={"bold"}>{String(item.count)}</P>
+                <P fontWeight={"semibold"}>{String(item.count)}</P>
                 <P color={"fg.muted"}>{item.unit}</P>
               </HStack>
             </HStack>

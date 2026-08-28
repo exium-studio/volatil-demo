@@ -285,7 +285,7 @@ export const Bold = createBooleanControl({
   label: "Bold",
   icon: BoldIcon,
   command: (editor) => editor.chain().focus().toggleBold().run(),
-  getVariant: (editor) => (editor.isActive("bold") ? "subtle" : "ghost"),
+  getVariant: (editor) => (editor.isActive("semibold") ? "subtle" : "ghost"),
 });
 
 export const Italic = createBooleanControl({
@@ -548,7 +548,7 @@ export const Highlight = createSwatchControl({
 //   renderValue: (value, option) => {
 //     const textStyle: Record<string, BoxProps> = {
 //       paragraph: { fontWeight: "normal", fontSize: "sm" },
-//       heading1: { fontWeight: "bold", fontSize: "lg" },
+//       heading1: { fontWeight: "semibold", fontSize: "lg" },
 //       heading2: { fontWeight: "semibold", fontSize: "md" },
 //       heading3: { fontWeight: "medium", fontSize: "sm" },
 //       blockquote: { fontStyle: "italic", fontSize: "sm" },

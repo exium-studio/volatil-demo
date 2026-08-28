@@ -206,7 +206,9 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
         <VStack flex={1} gap={"sm"}>
           <HStack justify={"space-between"}>
             <HStack gap={2} align={"center"}>
-              <P fontWeight={item.isRead ? "medium" : "bold"}>{item.title}</P>
+              <P fontWeight={item.isRead ? "medium" : "semibold"}>
+                {item.title}
+              </P>
 
               {!item.isRead && (
                 <Box w={"6px"} h={"6px"} rounded={"full"} bg={"blue.500"} />

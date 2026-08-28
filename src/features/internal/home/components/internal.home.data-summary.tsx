@@ -65,9 +65,7 @@ const InternalHomeDataSummaryHeader = (
       px={"md"}
     >
       <HStack gap={"xs"} align={"center"}>
-        <Heading>
-          {"Ringkasan Data"}
-        </Heading>
+        <Heading>{"Ringkasan Data"}</Heading>
 
         <InfoTip
           variant={"icon"}
@@ -232,7 +230,7 @@ const InternalHomeDataSummaryLegend = (
         </P>
       </HStack>
 
-      <P fontSize={"xl"} fontWeight={"bold"}>
+      <P fontSize={"xl"} fontWeight={"semibold"}>
         <FormatNumber value={value} />
         <Span fontSize={"xs"} color={"fg.subtle"} fontWeight={"normal"} ml={1}>
           {"Data"}

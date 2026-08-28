@@ -37,7 +37,7 @@ export const CountBadge = (props: CountBadgeProps) => {
       px={1.5}
       py={0.5}
       fontSize={"2xs"}
-      fontWeight={"bold"}
+      fontWeight={"semibold"}
       {...restProps}
     >
       {formattedCount}

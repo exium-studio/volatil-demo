@@ -161,7 +161,7 @@ export const FilterAdministrativeAreaTrigger = (
           <Alert.Root status={"info"} colorPalette={"blue"} w={"full"}>
             <Alert.Indicator />
             <Alert.Content>
-              <Alert.Title fontWeight={"bold"}>
+              <Alert.Title fontWeight={"semibold"}>
                 {"Informasi Filter Wilayah Administratif"}
               </Alert.Title>
 

@@ -236,7 +236,7 @@ export const TransactionDetailModalContent = (
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Total Nominal"}
                 </P>
-                <P fontSize={"lg"} fontWeight={"bold"}>
+                <P fontSize={"lg"} fontWeight={"semibold"}>
                   <FormatNumber
                     value={transaction.totalAmount}
                     style={"currency"}

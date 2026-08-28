@@ -12,6 +12,7 @@ import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/conf
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -202,12 +203,19 @@ export const InternalUserManagementDataView = () => {
           gap={"md"}
           p={"md"}
         >
-          <VStack gap={1} align={"start"}>
+          <HStack gap={"xs"} align={"center"}>
             <Heading>{"Daftar Pengguna"}</Heading>
-            <P fontSize={"sm"} color={"fg.subtle"}>
+
+            <InfoTip
+              variant={"icon"}
+              appIconProps={{
+                size: "xs",
+                color: "fg.subtle",
+              }}
+            >
               {"Kelola data akun pengguna internal dan mitra ATR/BPN."}
-            </P>
-          </VStack>
+            </InfoTip>
+          </HStack>
 
           <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
             <SearchInput

@@ -24,7 +24,7 @@ export const BrandWatermark = (props: BrandWatermarkProps) => {
       <ExternalLink
         href={APP_CONFIG.link}
         target={"_blank"}
-        fontWeight={"bold"}
+        fontWeight={"semibold"}
         _hover={{
           color: `${theme.colorPalette}.fg`,
         }}

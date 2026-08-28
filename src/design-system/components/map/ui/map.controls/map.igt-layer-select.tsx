@@ -240,7 +240,7 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
                 {"Opasitas Layer"}
               </P>
 
-              <P fontSize={"sm"} fontWeight={"bold"} color={"fg.muted"}>
+              <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
                 {`${Math.round(localOpacity * 100)}%`}
               </P>
             </HStack>

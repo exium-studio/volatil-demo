@@ -9,7 +9,7 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
     return (
       <ChakraHeading
         ref={ref}
-        fontSize={"xl"}
+        fontSize={"lg"}
         fontWeight={"semibold"}
         lineHeight={1}
         {...props}

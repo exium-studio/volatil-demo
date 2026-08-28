@@ -138,7 +138,7 @@ const proseMirrorBaseCss = defineStyle({
     "& a": { color: "blue.fg", textDecoration: "underline" },
     "& em": { fontStyle: "italic", fontSize: "inherit", fontWeight: "inherit" },
     "& strong": {
-      fontWeight: "bold",
+      fontWeight: "semibold",
       fontSize: "inherit",
       fontStyle: "inherit",
     },

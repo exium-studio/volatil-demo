@@ -193,10 +193,10 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         />
 
         <HStack justify={"space-between"} color={"blue.fg"}>
-          <P fontSize={"lg"} fontWeight={"bold"}>
+          <P fontSize={"lg"} fontWeight={"semibold"}>
             {"Sub Total"}
           </P>
-          <P fontSize={"lg"} fontWeight={"bold"}>
+          <P fontSize={"lg"} fontWeight={"semibold"}>
             <TNum>{formatCurrency(summary.grandTotal)}</TNum>
           </P>
         </HStack>

@@ -240,7 +240,7 @@ const ModalTitle = (props: ModalTitleProps) => {
   // Props
   const { ...restProps } = props;
 
-  return <P fontWeight={"bold"} textAlign={"center"} {...restProps} />;
+  return <P fontWeight={"semibold"} textAlign={"center"} {...restProps} />;
 };
 
 export const Modal = {
