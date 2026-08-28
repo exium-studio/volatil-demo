@@ -8,27 +8,25 @@ import type { InternalHomeServiceRateItem } from "@/features/internal/home/types
 import type { InternalHomeTrendItem } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 
-export type InternalHomeDataSummaryResponse = {
-  // Donut 1: perbandingan basis spasial
-  basisSpasial: {
-    bidang: number;
-    kawasan: number;
-  };
-  // Donut 2: status publikasi layer IGT
-  statusPublikasi: {
-    aktif: number;
-    nonAktif: number;
-  };
+export type IgtBasisSummary = {
+  field: number;
+  area: number;
 };
 
-export type InternalHomeMitraRegistrationResponse = {
+export type IgtPublicationStatusSummary = {
+  active: number;
+  inactive: number;
+};
+
+export type MitraRegistrationSummary = {
   active: number;
   pendingVerification: number;
 };
 
 export type InternalHomeDataResponse = {
-  dataSummary: InternalHomeDataSummaryResponse;
-  mitraRegistration: InternalHomeMitraRegistrationResponse;
+  igtBasis: IgtBasisSummary;
+  igtPublicationStatus: IgtPublicationStatusSummary;
+  mitraRegistration: MitraRegistrationSummary;
   serviceRates: InternalHomeServiceRateItem[];
   acquisitionTrends: Record<HomePeriod, InternalHomeTrendItem[]>;
   topMitraList: TopMitraAcquisitionItem[];

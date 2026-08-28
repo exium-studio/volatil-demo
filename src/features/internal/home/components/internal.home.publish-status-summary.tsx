@@ -18,24 +18,24 @@ import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 export const InternalHomePublishStatusSummary = (
   props: InternalHomePublishStatusSummaryProps,
 ) => {
-  const { dataSummary } = useInternalHomeData();
+  const { igtPublicationStatus } = useInternalHomeData();
 
   const totalPublikasi =
-    dataSummary.statusPublikasi.aktif + dataSummary.statusPublikasi.nonAktif;
+    igtPublicationStatus.active + igtPublicationStatus.inactive;
   const activePercent =
     totalPublikasi > 0
-      ? Math.round((dataSummary.statusPublikasi.aktif / totalPublikasi) * 100)
+      ? Math.round((igtPublicationStatus.active / totalPublikasi) * 100)
       : 0;
   const statusData = [
     {
       name: "Aktif",
-      value: dataSummary.statusPublikasi.aktif,
+      value: igtPublicationStatus.active,
       color: "var(--chakra-colors-green-solid, #38a169)",
       fill: "var(--chakra-colors-green-solid, #38a169)",
     },
     {
       name: "Non-aktif",
-      value: dataSummary.statusPublikasi.nonAktif,
+      value: igtPublicationStatus.inactive,
       color: "var(--chakra-colors-border-emphasized, #a0aec0)",
       fill: "var(--chakra-colors-border-emphasized, #a0aec0)",
     },
@@ -111,7 +111,7 @@ export const InternalHomePublishStatusSummary = (
                 {"Aktif:"}
               </P>
               <P fontSize={"xs"} fontWeight={"semibold"}>
-                <FormatNumber value={dataSummary.statusPublikasi.aktif} />
+                <FormatNumber value={igtPublicationStatus.active} />
               </P>
             </HStack>
 
@@ -121,7 +121,7 @@ export const InternalHomePublishStatusSummary = (
                 {"Non-aktif:"}
               </P>
               <P fontSize={"xs"} fontWeight={"semibold"}>
-                <FormatNumber value={dataSummary.statusPublikasi.nonAktif} />
+                <FormatNumber value={igtPublicationStatus.inactive} />
               </P>
             </HStack>
           </HStack>

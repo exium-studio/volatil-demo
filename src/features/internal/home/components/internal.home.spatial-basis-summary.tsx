@@ -18,20 +18,19 @@ import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 export const InternalHomeSpatialBasisSummary = (
   props: InternalHomeSpatialBasisSummaryProps,
 ) => {
-  const { dataSummary } = useInternalHomeData();
+  const { igtBasis } = useInternalHomeData();
 
-  const totalLayer =
-    dataSummary.basisSpasial.bidang + dataSummary.basisSpasial.kawasan;
+  const totalLayer = igtBasis.field + igtBasis.area;
   const basisData = [
     {
       name: "Bidang",
-      value: dataSummary.basisSpasial.bidang,
+      value: igtBasis.field,
       color: "var(--chakra-colors-blue-solid, #3182ce)",
       fill: "var(--chakra-colors-blue-solid, #3182ce)",
     },
     {
       name: "Kawasan",
-      value: dataSummary.basisSpasial.kawasan,
+      value: igtBasis.area,
       color: "var(--chakra-colors-orange-solid, #dd6b20)",
       fill: "var(--chakra-colors-orange-solid, #dd6b20)",
     },
@@ -107,7 +106,7 @@ export const InternalHomeSpatialBasisSummary = (
                 {"Bidang:"}
               </P>
               <P fontSize={"xs"} fontWeight={"semibold"}>
-                <FormatNumber value={dataSummary.basisSpasial.bidang} />
+                <FormatNumber value={igtBasis.field} />
               </P>
             </HStack>
 
@@ -117,7 +116,7 @@ export const InternalHomeSpatialBasisSummary = (
                 {"Kawasan:"}
               </P>
               <P fontSize={"xs"} fontWeight={"semibold"}>
-                <FormatNumber value={dataSummary.basisSpasial.kawasan} />
+                <FormatNumber value={igtBasis.area} />
               </P>
             </HStack>
           </HStack>

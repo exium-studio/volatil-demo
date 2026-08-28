@@ -1,9 +1,12 @@
+// src/features/internal/home/hooks/use-internal-home.query.ts
+
 import type { InternalHomeDataResponse } from "@/features/internal/home/types/internal.home.api.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import { getInternalHomeData } from "@/features/internal/home/services/internal.home.service";
 import {
-  dummyInternalDataSummary,
-  dummyInternalMitraRegistration,
+  dummyIgtBasis,
+  dummyIgtPublicationStatus,
+  dummyMitraRegistration,
   dummyInternalServiceRates,
   dummyInternalTrends,
   dummyTopMitraList,
@@ -13,8 +16,9 @@ import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";
 
 const fallbackInternalHomeData: InternalHomeDataResponse = {
-  dataSummary: dummyInternalDataSummary,
-  mitraRegistration: dummyInternalMitraRegistration,
+  igtBasis: dummyIgtBasis,
+  igtPublicationStatus: dummyIgtPublicationStatus,
+  mitraRegistration: dummyMitraRegistration,
   serviceRates: dummyInternalServiceRates,
   acquisitionTrends: dummyInternalTrends,
   topMitraList: dummyTopMitraList,
@@ -32,7 +36,8 @@ export const useInternalHomeData = (period: HomePeriod = "all") => {
   return {
     ...query,
     homeData,
-    dataSummary: homeData.dataSummary,
+    igtBasis: homeData.igtBasis,
+    igtPublicationStatus: homeData.igtPublicationStatus,
     mitraRegistration: homeData.mitraRegistration,
     serviceRates: homeData.serviceRates,
     acquisitionTrends: homeData.acquisitionTrends[period] ?? [],

@@ -1,12 +1,12 @@
+// src/features/internal/home/services/internal.home.service.ts
+
 import { fetchInternalHomeDataApi } from "@/features/internal/home/api/internal.home.api";
-import type {
-  InternalHomeDataResponse,
-  InternalHomeDataSummaryResponse,
-} from "@/features/internal/home/types/internal.home.api.type";
+import type { InternalHomeDataResponse } from "@/features/internal/home/types/internal.home.api.type";
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import {
-  dummyInternalDataSummary,
-  dummyInternalMitraRegistration,
+  dummyIgtBasis,
+  dummyIgtPublicationStatus,
+  dummyMitraRegistration,
   dummyInternalServiceRates,
   dummyInternalTrends,
   dummyTopMitraList,
@@ -15,21 +15,18 @@ import {
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const fallbackInternalHomeData: InternalHomeDataResponse = {
-  dataSummary: dummyInternalDataSummary,
-  mitraRegistration: dummyInternalMitraRegistration,
+  igtBasis: dummyIgtBasis,
+  igtPublicationStatus: dummyIgtPublicationStatus,
+  mitraRegistration: dummyMitraRegistration,
   serviceRates: dummyInternalServiceRates,
   acquisitionTrends: dummyInternalTrends,
   topMitraList: dummyTopMitraList,
   topIgtLayers: dummyTopIgtLayers,
 };
 
-const EMPTY_INTERNAL_SUMMARY: InternalHomeDataSummaryResponse = {
-  basisSpasial: { bidang: 0, kawasan: 0 },
-  statusPublikasi: { aktif: 0, nonAktif: 0 },
-};
-
 const emptyInternalHomeData: InternalHomeDataResponse = {
-  dataSummary: EMPTY_INTERNAL_SUMMARY,
+  igtBasis: { field: 0, area: 0 },
+  igtPublicationStatus: { active: 0, inactive: 0 },
   mitraRegistration: { active: 0, pendingVerification: 0 },
   serviceRates: [],
   acquisitionTrends: {

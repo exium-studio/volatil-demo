@@ -1012,7 +1012,7 @@ type UserManagementStatsResponse = {
 
 ## 14. Internal - Dashboard & Statistik Sistem
 
-Modul agregasi metrik operasional IGT, tren perolehan PNBP spasial, leaderboard mitra & layer terpopuler, serta spesifikasi utilisasi server untuk admin internal ATR/BPN.
+Modul agregasi metrik operasional IGT (basis spasial, status publikasi, registrasi mitra), tren perolehan PNBP spasial, leaderboard mitra & layer terpopuler untuk admin internal ATR/BPN.
 
 ### 14.1 Internal Dashboard Overview
 
@@ -1021,15 +1021,13 @@ Modul agregasi metrik operasional IGT, tren perolehan PNBP spasial, leaderboard 
 
 ```typescript
 type InternalHomeDataResponse = {
-  dataSummary: {
-    basisSpasial: {
-      bidang: number;
-      kawasan: number;
-    };
-    statusPublikasi: {
-      aktif: number;
-      nonAktif: number;
-    };
+  igtBasis: {
+    field: number;
+    area: number;
+  };
+  igtPublicationStatus: {
+    active: number;
+    inactive: number;
   };
   mitraRegistration: {
     active: number;
@@ -1072,14 +1070,6 @@ type InternalHomeDataResponse = {
     totalVolume: number;
     unit: "bidang" | "ha";
     totalPnbpRevenue: number;
-  }>;
-  systemHealth: Array<{
-    key: string;
-    title: string; // "Beban CPU Cluster", "Penggunaan Memori (RAM)", "Kapasitas Storage Spasial (NVMe)", "Bandwidth & Throughput WFS"
-    status: "healthy" | "warning" | "critical";
-    value: string;
-    subValue: string;
-    colorPalette: string;
   }>;
 };
 ```

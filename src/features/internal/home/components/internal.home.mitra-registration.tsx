@@ -20,17 +20,19 @@ export const InternalHomeMitraRegistration = (
 
   const chartData = [
     {
-      category: "Status",
-      active: mitraRegistration.active,
-      pending: mitraRegistration.pendingVerification,
+      status: "Mitra Aktif",
+      count: mitraRegistration.active,
+    },
+    {
+      status: "Pending Verifikasi",
+      count: mitraRegistration.pendingVerification,
     },
   ];
 
   const chart = useChart({
     data: chartData,
     series: [
-      { name: "active", label: "Mitra Aktif", color: "teal.solid" },
-      { name: "pending", label: "Pending Verifikasi", color: "orange.solid" },
+      { name: "count", label: "Jumlah", color: "teal.solid" },
     ],
   });
 
@@ -63,12 +65,11 @@ export const InternalHomeMitraRegistration = (
                 vertical={false}
               />
               <XAxis
-                dataKey={chart.key("category")}
+                dataKey={chart.key("status")}
                 axisLine={false}
                 stroke={chart.color("border")}
                 tickLine={false}
                 tickMargin={10}
-                hide
               />
               <YAxis
                 axisLine={false}
@@ -82,17 +83,13 @@ export const InternalHomeMitraRegistration = (
                 animationDuration={0}
                 content={<Chart.Tooltip />}
               />
-              {chart.series.map((item) => (
-                <Bar
-                  isAnimationActive={false}
-                  key={item.name}
-                  dataKey={chart.key(item.name)}
-                  name={String(item.label ?? item.name)}
-                  fill={chart.color(item.color)}
-                  radius={[4, 4, 0, 0]}
-                  barSize={32}
-                />
-              ))}
+              <Bar
+                isAnimationActive={false}
+                dataKey={chart.key("count")}
+                fill={chart.color("teal.solid")}
+                radius={[4, 4, 0, 0]}
+                barSize={32}
+              />
             </BarChart>
           </Chart.Root>
 
