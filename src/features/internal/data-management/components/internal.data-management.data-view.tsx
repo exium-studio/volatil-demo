@@ -1,11 +1,12 @@
 import { Button } from "@/design-system/components/button/ui/button";
-import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -30,13 +31,12 @@ import type {
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { SpatialBasisSelect } from "@/shared/components/select/ui/spatial-basis-select";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { IconLayersOff } from "@tabler/icons-react";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { EditIcon, PlusIcon } from "lucide-react";
+import { IconLayersOff } from "@tabler/icons-react";
+import { PencilIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
@@ -199,7 +199,7 @@ export const InternalDataManagementDataView = () => {
       {
         key: "edit-layer",
         label: "Ubah Layer",
-        icon: EditIcon,
+        icon: PencilIcon,
         modal: {
           triggerComponent: (layer: MasterIgtLayerItem) => (
             <InternalDataManagementEditTrigger
