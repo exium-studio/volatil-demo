@@ -43,8 +43,7 @@ const ContainerRoot = (props: ContainerRootProps) => {
 
   // Derived Values
   const isValidDimension = dimension.width > 0 && dimension.height > 0;
-  const isSmContainer =
-    dimension.width < parseInt("720px");
+  const isSmContainer = dimension.width < parseInt("720px");
 
   const contextValue = useMemo(
     () => ({ dimension, isValidDimension, isSmContainer }),

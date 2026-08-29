@@ -315,13 +315,7 @@ export const InternalDataManagementDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <VStack
-          flex={1}
-          gap={"sm"}
-          bg={"bg.canvas"}
-          w={"full"}
-          position={"relative"}
-        >
+        <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
           {isLoading && <Skeleton p={"md"} rounded={0} h={"320px"} />}
 
           {!isLoading && (
