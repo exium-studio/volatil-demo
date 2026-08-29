@@ -196,7 +196,10 @@ export const fetchWfs = async (
   }
 
   // When resultType=hits, some GeoServer versions return XML FeatureCollection instead of JSON
-  if (trimmedText.startsWith("<?xml") || trimmedText.startsWith("<wfs:FeatureCollection")) {
+  if (
+    trimmedText.startsWith("<?xml") ||
+    trimmedText.startsWith("<wfs:FeatureCollection")
+  ) {
     const numberMatchedMatch = /numberMatched="(\d+)"/i.exec(text);
     const numberOfFeaturesMatch = /numberOfFeatures="(\d+)"/i.exec(text);
     const totalFeaturesMatch = /totalFeatures="(\d+)"/i.exec(text);

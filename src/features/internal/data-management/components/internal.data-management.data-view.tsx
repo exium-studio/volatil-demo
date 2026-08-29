@@ -124,12 +124,7 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.typeName || item.id,
             td: (
-              <P
-                fontSize={"xs"}
-                color={"fg.subtle"}
-                fontFamily={"mono"}
-                whiteSpace={"nowrap"}
-              >
+              <P fontSize={"xs"} color={"fg.subtle"} whiteSpace={"nowrap"}>
                 {item.typeName || item.id}
               </P>
             ),
