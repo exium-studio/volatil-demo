@@ -180,7 +180,7 @@ export const InternalMasterGeoserverDataView = () => {
             <ConfirmationTrigger
               modalKey={`delete-geoserver-${server.id}`}
               title={"Hapus Master GeoServer?"}
-              description={`Apakah Anda yakin ingin menghapus server "${server.name}"? Data server akan diarsipkan (soft delete) sehingga proses batch yang sedang berjalan tetap aman.`}
+              description={`Apakah Anda yakin ingin menghapus server "${server.name}"? Server akan diarsipkan terlebih dahulu agar permohonan data yang sedang diproses tidak terganggu, lalu dihapus permanen secara otomatis setelah 30 hari.`}
               confirmLabel={"Hapus Server"}
               colorPalette={"red"}
               onConfirm={() => {
