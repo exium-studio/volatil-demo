@@ -106,7 +106,9 @@ const StatGridValue = (props: StatGridValueProps) => {
     value,
     suffix,
     isCurrency,
+    isCompact,
     currency = "IDR",
+    format,
     color,
     children,
     ...restProps
@@ -122,16 +124,25 @@ const StatGridValue = (props: StatGridValueProps) => {
     >
       {children ? (
         children
+      ) : format && value !== undefined ? (
+        format(value)
       ) : typeof value === "number" ? (
         isCurrency ? (
           <FormatNumber
             value={value}
             style={"currency"}
             currency={currency}
-            maximumFractionDigits={0}
+            notation={isCompact ? "compact" : undefined}
+            compactDisplay={"short"}
+            maximumFractionDigits={isCompact ? 1 : 0}
           />
         ) : (
-          <FormatNumber value={value} />
+          <FormatNumber
+            value={value}
+            notation={isCompact ? "compact" : undefined}
+            compactDisplay={"short"}
+            maximumFractionDigits={isCompact ? 1 : undefined}
+          />
         )
       ) : (
         value

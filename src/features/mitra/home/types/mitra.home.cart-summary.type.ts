@@ -19,4 +19,5 @@ export type MitraHomeCartStatConfig = {
   value: number;
   suffix?: string;
   color?: string;
+  isCompact?: boolean;
 };

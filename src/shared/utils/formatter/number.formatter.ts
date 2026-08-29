@@ -143,6 +143,23 @@ export function formatCompact(
   return formatNumber(value, { locale, notation: "compact", compactDisplay });
 }
 
+/** 15000000 → "Rp 15 jt" */
+export function formatCompactCurrency(
+  value: number,
+  currency = "IDR",
+  compactDisplay: FormatNumberCompactDisplay = "short",
+  locale = DEFAULT_LOCALE,
+): string {
+  return formatNumber(value, {
+    locale,
+    style: "currency",
+    currency,
+    notation: "compact",
+    compactDisplay,
+    maximumFractionDigits: 1,
+  });
+}
+
 /** 1500 → "1,5rb" or "1,5 ribu" */
 export function formatCompactLong(
   value: number,

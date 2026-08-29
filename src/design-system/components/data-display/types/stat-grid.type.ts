@@ -34,7 +34,9 @@ export type StatGridValueProps = PProps & {
   value?: number | string;
   suffix?: string;
   isCurrency?: boolean;
+  isCompact?: boolean;
   currency?: string;
+  format?: (val: number | string) => ReactNode;
   children?: ReactNode;
 };
 

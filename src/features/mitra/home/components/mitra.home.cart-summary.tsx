@@ -94,6 +94,7 @@ const MitraHomeCartStats = () => {
       icon: ReceiptTextIcon,
       label: "Subtotal Harga",
       value: subtotalPrice,
+      isCompact: true,
     },
   ];
 
@@ -113,6 +114,7 @@ const MitraHomeCartStats = () => {
               value={stat.value}
               suffix={stat.suffix}
               isCurrency={isCurrency}
+              isCompact={stat.isCompact}
               color={stat.color}
             />
           </StatGrid.Item>
