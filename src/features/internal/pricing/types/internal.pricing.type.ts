@@ -18,14 +18,12 @@ export type PricingItem = {
   minUnit?: string;
   effectiveDate: string;
   description?: string;
-  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
 export type PricingQueryParams = PaginatedParams & {
   spatialBasis?: SpatialBasisType;
-  isActive?: boolean;
 };
 
 export type PricingListResponse = {
@@ -38,7 +36,6 @@ export type UpdatePricingPayload = {
   unitPrice: number;
   kodePnbp?: string;
   minPurchase?: number;
-  isActive?: boolean;
   description?: string;
 };
 
@@ -50,5 +47,4 @@ export type CreatePricingPayload = {
   unitLabel: string;
   effectiveDate: string;
   description?: string;
-  isActive: boolean;
 };

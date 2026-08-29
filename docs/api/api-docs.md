@@ -848,40 +848,76 @@ Modul pengelolaan tarif PNBP layer IGT (tarif per bidang objek spasial, tarif pe
 ### 11.1 List Master Tarif
 
 - **Endpoint**: `GET /api/internal/pricing`
+- **Params**:
+  - `page?: number`
+  - `pageSize?: number`
+  - `search?: string`
+  - `spatialBasis?: "bidang" | "kawasan"`
 - **Response**:
 
 ```typescript
 type PricingListResponse = {
-  items: Array<TarifItem>;
+  items: Array<PricingItem>;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
 };
 
-type TarifItem = {
+type PricingItem = {
   id: string;
+  layerId?: string;
+  layerTitle?: string;
+  kodePnbp?: string; // Kode akun / klasifikasi PNBP resmi ATR/BPN
   spatialBasis: "bidang" | "kawasan";
-  kodePnbp: string; // Kode akun / klasifikasi PNBP resmi ATR/BPN per basis spasial
   unitPrice: number; // Nilai tarif nominal (IDR)
-  unitLabel: string; // "Bidang" | "Ha"
-  minPurchase: number; // Batas minimal pembelian (misal: 1000 bidang / 1000 ha)
-  minUnit: string; // "Bidang" | "Ha"
+  unitLabel: string; // misal: "per bidang" | "per hektar"
+  minPurchase?: number; // Batas minimal pembelian kuota
+  minUnit?: string; // "Bidang" | "Ha"
   effectiveDate: string;
+  description?: string;
+  createdAt: string;
   updatedAt: string;
-  updatedBy: string;
 };
 ```
 
-### 11.2 Update / Set Tarif Layer
+### 11.2 Create Master Tarif
+
+- **Endpoint**: `POST /api/internal/pricing`
+- **Payload**:
+
+```typescript
+type CreatePricingPayload = {
+  layerId?: string;
+  layerTitle?: string;
+  spatialBasis: "bidang" | "kawasan";
+  unitPrice: number;
+  unitLabel: string;
+  effectiveDate: string;
+  description?: string;
+};
+```
+
+- **Response**: `201 Created` / `{ success: true, message: "Tarif berhasil ditambahkan" }`
+
+### 11.3 Update / Set Tarif Layer
 
 - **Endpoint**: `PUT /api/internal/pricing/{id}`
 - **Payload**:
 
 ```typescript
-type UpdateTarifRequest = {
+type UpdatePricingPayload = {
+  id: string;
   unitPrice: number;
-  kodePnbp: string; // Wajib diisi saat update tarif
-  minPurchase?: number; // Nilai ambang batas minimal pembelian yang diperbarui
-  effectiveDate?: string;
+  kodePnbp?: string;
+  minPurchase?: number;
+  description?: string;
 };
 ```
+
+- **Response**: `200 OK` / `{ success: true, message: "Tarif berhasil diperbarui" }`
 
 ---
 

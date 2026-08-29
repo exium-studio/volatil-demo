@@ -2,6 +2,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Circle } from "@/design-system/components/layout/ui/box";
 import {
   Container,
   useContainerContext,
@@ -9,12 +10,11 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { InternalHomeServiceRateModalTrigger } from "@/features/internal/home/components/internal.home.service-rate-modal";
 import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
-import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { EditIcon } from "lucide-react";
-import { Circle } from "@/design-system/components/layout/ui/box";
+import { PencilIcon } from "lucide-react";
 
 export const InternalHomeServiceRate = (
   props: InternalHomeServiceRateProps,
@@ -91,7 +91,7 @@ const InternalHomeServiceRateStats = () => {
                 variant={"ghost"}
                 aria-label={`Ubah tarif ${rate.title}`}
               >
-                <AppIcon icon={EditIcon} />
+                <AppIcon icon={PencilIcon} />
               </IconButton>
             </InternalHomeServiceRateModalTrigger>
           </StatGrid.Header>

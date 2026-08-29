@@ -24,7 +24,6 @@ export const fetchInternalPricingListApi = async (
           pageSize: params?.pageSize,
           search: params?.search,
           spatialBasis: params?.spatialBasis,
-          isActive: params?.isActive,
         },
         signal,
       },

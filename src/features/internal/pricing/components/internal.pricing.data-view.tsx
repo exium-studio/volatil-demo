@@ -79,7 +79,6 @@ export const InternalPricingDataView = () => {
       { th: "Layer / Komponen Tarif", sortable: false, align: "start" },
       { th: "Basis IGT", sortable: false, align: "start" },
       { th: "Tarif Satuan (PNBP)", sortable: false, align: "end" },
-      { th: "Status", sortable: false, align: "center" },
       { th: "Terakhir Diperbarui", sortable: false, align: "start" },
     ];
 
@@ -130,18 +129,6 @@ export const InternalPricingDataView = () => {
               </VStack>
             ),
             align: "end" as const,
-          },
-          {
-            value: item.isActive ? "active" : "inactive",
-            td: (
-              <Badge
-                colorPalette={item.isActive ? "green" : "gray"}
-                variant={"subtle"}
-              >
-                {item.isActive ? "Aktif" : "Non-Aktif"}
-              </Badge>
-            ),
-            align: "center" as const,
           },
           {
             value: item.updatedAt,

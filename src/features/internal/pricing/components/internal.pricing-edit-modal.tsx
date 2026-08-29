@@ -4,7 +4,6 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Input } from "@/design-system/components/input/ui/input";
 import { NumberInput } from "@/design-system/components/input/ui/number-input";
-import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -71,7 +70,6 @@ const InternalPricingEditModalContent = (
   const [description, setDescription] = useState<string>(
     () => item.description ?? "",
   );
-  const [isActive, setIsActive] = useState<boolean>(() => item.isActive);
 
   // Mutations
   const updateMutation = useUpdateInternalPricing();
@@ -82,7 +80,6 @@ const InternalPricingEditModalContent = (
         id: item.id,
         unitPrice,
         description,
-        isActive,
       },
       {
         onSuccess: () => {
@@ -156,22 +153,6 @@ const InternalPricingEditModalContent = (
                 />
               </Field>
             </VStack>
-
-            {/* Toggle Status Aktif */}
-            <HStack justify={"space-between"} align={"center"} py={1}>
-              <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"} fontWeight={"medium"}>
-                  {"Status Tarif"}
-                </P>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Aktifkan untuk kalkulasi di keranjang mitra"}
-                </P>
-              </VStack>
-              <Switch
-                checked={isActive}
-                onCheckedChange={(e) => setIsActive(Boolean(e.checked))}
-              />
-            </HStack>
           </VStack>
         </Modal.Body>
 
