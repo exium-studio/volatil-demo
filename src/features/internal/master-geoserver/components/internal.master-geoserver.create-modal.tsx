@@ -144,7 +144,7 @@ const InternalMasterGeoserverCreateModalContent = (
             disabled={!isFormValid || createMutation.isPending}
             loading={createMutation.isPending}
           >
-            {"Daftarkan Server"}
+            {"Tambahkan Server"}
           </Button>
 
           <Button onClick={close}>{t["action.cancel"]()}</Button>

@@ -200,6 +200,7 @@ type NotificationType =
 Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production fisik. Seluruh akses layer spasial (baik eksplorasi IGT maupun provisioning) dialihkan melalui endpoint proxy Backend.
 
 ### Skema Akses & Autentikasi:
+
 1. **Internal & Web Client (Browser Session)**:
    - Autentikasi dikelola penuh oleh Backend melalui **Session / JWT via `httpOnly` Cookie**.
    - Frontend tidak perlu menyimpan/mengirim kredensial server ataupun `apiKey`.

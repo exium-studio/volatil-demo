@@ -138,7 +138,7 @@ export const InternalMasterGeoserverDataView = () => {
           {
             value: item.description ?? "-",
             td: (
-              <ClampedP fontSize={"xs"} color={"fg.subtle"} w={"200px"}>
+              <ClampedP fontSize={"sm"} color={"fg.subtle"} w={"200px"}>
                 {item.description || "-"}
               </ClampedP>
             ),
