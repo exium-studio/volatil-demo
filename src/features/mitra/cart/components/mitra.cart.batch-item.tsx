@@ -52,19 +52,30 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
     >
       <VStack align={"stretch"} gap={"sm"}>
         {/* Header: Batch Number, Status & Radio Indicator */}
-        <HStack justify={"space-between"} align={"center"} w={"full"}>
-          <HStack gap={"sm"} align={"center"}>
+        <HStack
+          wrap={"wrap"}
+          justify={"space-between"}
+          align={"center"}
+          gapX={"md"}
+          gapY={"xs"}
+          w={"full"}
+        >
+          <HStack gap={"md"} align={"center"}>
             <AppIcon
               icon={statusConfig.icon}
               color={statusConfig.iconColor}
-              className={statusConfig.isSpinning ? "animate-spin" : undefined}
+              size={"lg"}
             />
-            <P fontWeight={"semibold"} fontSize={"sm"}>
-              {`Batch #${index + 1}`}
-            </P>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {`(${batch.batchId})`}
-            </P>
+
+            <VStack>
+              <P fontWeight={"semibold"} fontSize={"sm"}>
+                {`Batch #${index + 1}`}
+              </P>
+
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {`(${batch.batchId})`}
+              </P>
+            </VStack>
           </HStack>
 
           <HStack gap={"sm"} align={"center"}>

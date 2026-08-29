@@ -29,9 +29,8 @@ export type CartBatchStatus = BatchStatus | "ready";
 export type CartBatchStatusConfig = {
   label: string;
   colorPalette: "green" | "blue" | "red" | "gray";
-  icon: typeof import("lucide-react")["CheckCircle2Icon"];
+  icon: (typeof import("lucide-react"))["CheckCircle2Icon"];
   iconColor: string;
-  isSpinning?: boolean;
 };
 
 export type MitraCartBatchItemProps = {
