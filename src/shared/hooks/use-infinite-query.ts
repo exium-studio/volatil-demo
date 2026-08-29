@@ -1,6 +1,5 @@
-// src/shared/hooks/use-infinite-query.ts
-
 import type { PaginatedParams } from "@/shared/types/common-response.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import type {
   InfiniteData,
   QueryKey,
@@ -78,7 +77,7 @@ export const useInfiniteQuery = <
         (sum, page) => sum + (page.items?.length ?? 0),
         0,
       );
-      if (loadedCount >= lastPage.total || lastPage.items.length === 0) {
+      if (loadedCount >= lastPage.total || isEmptyArray(lastPage.items)) {
         return undefined;
       }
       return allPages.length + initialPage;

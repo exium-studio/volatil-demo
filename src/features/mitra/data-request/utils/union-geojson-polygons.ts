@@ -1,5 +1,4 @@
-// src/features/mitra/data-request/utils/union-geojson-polygons.ts
-
+import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 
 /**
@@ -26,7 +25,7 @@ export const unionGeoJsonPolygons = (
     }
   }
 
-  if (rings.length === 0) return null;
+  if (isEmptyArray(rings)) return null;
 
   // Flatten semua koordinat dari semua rings
   const allCoords = rings.flat();

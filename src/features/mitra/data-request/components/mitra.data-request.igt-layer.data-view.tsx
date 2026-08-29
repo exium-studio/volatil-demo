@@ -31,6 +31,7 @@ import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -75,7 +76,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         .map((item) => item.data as IgtLayerItem)
         .filter((layer) => Boolean(layer?.wfs?.wfsTypeName));
 
-      if (validLayers.length === 0) return;
+      if (isEmptyArray(validLayers)) return;
 
       addToCartMultipleMutation.mutate({
         layers: validLayers.map((layer) => ({
@@ -319,12 +320,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
             <Button
               primary
               w={"full"}
-              disabled={selectedItems.length === 0}
+              disabled={isEmptyArray(selectedItems)}
               onClick={handleAddSelectedToCart}
             >
               <AppIcon icon={IconShoppingCartPlus} />
               {"Tambah yang dipilih"}
-              {selectedItems.length > 0 && ` (${selectedItems.length} IGT)`}
+              {!isEmptyArray(selectedItems) && ` (${selectedItems.length} IGT)`}
             </Button>
           </HStack>
         </Box>

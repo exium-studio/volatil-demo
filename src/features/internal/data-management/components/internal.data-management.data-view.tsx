@@ -7,11 +7,13 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -31,6 +33,7 @@ import type {
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { SpatialBasisSelect } from "@/shared/components/select/ui/spatial-basis-select";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -74,6 +77,18 @@ export const InternalDataManagementDataView = () => {
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+  const isSearching = Boolean(
+    search.trim() || spatialBasis !== "all" || publishStatus !== "all",
+  );
+  const searchQuery = useMemo(() => {
+    if (search.trim()) return search;
+    if (spatialBasis !== "all" && publishStatus !== "all") {
+      return `${spatialBasis}, ${publishStatus}`;
+    }
+    if (spatialBasis !== "all") return spatialBasis;
+    if (publishStatus !== "all") return publishStatus;
+    return "...";
+  }, [search, spatialBasis, publishStatus]);
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -128,12 +143,11 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.zIndex ?? 0,
             td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
-            align: "center" as const,
           },
           {
             value: item.wfs.wfsUrl,
             td: (
-              <HStack gap={1} align={"center"} maxW={"260px"}>
+              <HStack gap={"xs"} align={"center"} maxW={"260px"}>
                 <ExternalLink
                   href={item.wfs.wfsUrl}
                   display={"inline-flex"}
@@ -145,9 +159,9 @@ export const InternalDataManagementDataView = () => {
                     {item.wfs.wfsUrl}
                   </ClampedP>
                 </ExternalLink>
+
                 <ClipboardButton
                   value={item.wfs.wfsUrl}
-                  size={"2xs"}
                   variant={"ghost"}
                   aria-label={"Salin URL WFS"}
                   flexShrink={0}
@@ -159,7 +173,7 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.wms.wmsUrl,
             td: (
-              <HStack gap={1} align={"center"} maxW={"260px"}>
+              <HStack gap={"xs"} align={"center"} maxW={"260px"}>
                 <ExternalLink
                   href={item.wms.wmsUrl}
                   display={"inline-flex"}
@@ -171,9 +185,9 @@ export const InternalDataManagementDataView = () => {
                     {item.wms.wmsUrl}
                   </ClampedP>
                 </ExternalLink>
+
                 <ClipboardButton
                   value={item.wms.wmsUrl}
-                  size={"2xs"}
                   variant={"ghost"}
                   aria-label={"Salin URL WMS"}
                   flexShrink={0}
@@ -220,8 +234,8 @@ export const InternalDataManagementDataView = () => {
   }, [rawItems, preferredTimezone]);
 
   return (
-    <Container.Root withContext={true}>
-      <Container.Body>
+    <Container.Root withContext={true} flex={1}>
+      <Container.Body overflowY={"auto"}>
         <HeaderContainer>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
@@ -312,23 +326,23 @@ export const InternalDataManagementDataView = () => {
 
           {!isLoading && (
             <>
-              {rawItems.length === 0 && (
-                <Box p={"xl"} w={"full"}>
-                  <NoDataState
-                    icon={IconLayersOff}
-                    title={"Layer IGT Tidak Ditemukan"}
-                    description={
-                      search ||
-                      spatialBasis !== "all" ||
-                      publishStatus !== "all"
-                        ? "Tidak ada layer master IGT yang sesuai dengan kriteria filter pencarian."
-                        : "Belum ada layer IGT terdaftar. Silakan tambahkan layer baru."
-                    }
-                  />
-                </Box>
+              {isEmptyArray(rawItems) && (
+                <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
+                  {isSearching ? (
+                    <NoResultState query={searchQuery} />
+                  ) : (
+                    <NoDataState
+                      icon={IconLayersOff}
+                      title={"Layer IGT Kosong"}
+                      description={
+                        "Belum ada layer IGT terdaftar. Silakan tambahkan layer baru."
+                      }
+                    />
+                  )}
+                </Center>
               )}
 
-              {rawItems.length > 0 && (
+              {!isEmptyArray(rawItems) && (
                 <Box w={"full"} position={"relative"}>
                   <TopBarLoader isFetching={isFetching} />
 

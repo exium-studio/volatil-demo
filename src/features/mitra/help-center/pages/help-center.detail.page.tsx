@@ -27,6 +27,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useParams, useRouter } from "@tanstack/react-router";
 import {
@@ -265,7 +266,7 @@ export const HelpCenterDetailPage = () => {
 
             <Separator borderColor={"bg.canvas"} />
 
-            {replies.length === 0 ? (
+            {isEmptyArray(replies) ? (
               <Box p={"xl"} textAlign={"center"}>
                 <P color={"fg.subtle"}>
                   {

@@ -1,7 +1,6 @@
-// src/features/mitra/data-request/utils/build-igt-cql-filter.ts
-
 import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 
 /**
  * Resolves a target attribute field key against sample properties in a case-insensitive manner.
@@ -30,7 +29,7 @@ export const adaptCqlFilterToLayerAttributes = (
   cqlFilter?: string,
   availableAttributes?: string[],
 ): string | undefined => {
-  if (!cqlFilter || !availableAttributes || availableAttributes.length === 0) {
+  if (!cqlFilter || !availableAttributes || isEmptyArray(availableAttributes)) {
     return cqlFilter;
   }
 

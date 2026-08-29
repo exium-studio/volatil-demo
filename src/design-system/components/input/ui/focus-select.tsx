@@ -18,6 +18,7 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
@@ -279,7 +280,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                   />
                 ))}
               </VStack>
-            ) : filteredOptions.length === 0 ? (
+            ) : isEmptyArray(filteredOptions) ? (
               <NoResultState query={searchQuery || "..."} />
             ) : (
               <VStack gap={1} w={"full"}>

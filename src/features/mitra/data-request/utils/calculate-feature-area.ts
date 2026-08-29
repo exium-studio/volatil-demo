@@ -1,5 +1,4 @@
-// src/features/mitra/data-request/utils/calculate-feature-area.ts
-
+import { isEmptyArray } from "@/shared/utils/data/array";
 import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
 
@@ -43,7 +42,7 @@ export function extractAoiPolygonsFromCql(
   try {
     // Match all POLYGON((...)) inside the CQL filter
     const polygonMatches = cqlFilter.match(/POLYGON\s*\(\s*\(([^)]+)\)\s*\)/gi);
-    if (!polygonMatches || polygonMatches.length === 0) return null;
+    if (!polygonMatches || isEmptyArray(polygonMatches)) return null;
 
     const parsedPolygons: GeoJSON.Feature<GeoJSON.Polygon>[] = [];
 
@@ -76,7 +75,7 @@ export function extractAoiPolygonsFromCql(
       }
     }
 
-    if (parsedPolygons.length === 0) return null;
+    if (isEmptyArray(parsedPolygons)) return null;
     if (parsedPolygons.length === 1) return parsedPolygons[0];
 
     // If multiple AOIs, combine them into a MultiPolygon or union

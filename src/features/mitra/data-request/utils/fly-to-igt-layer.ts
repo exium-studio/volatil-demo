@@ -3,6 +3,7 @@
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 import type { Map as MapLibreMap } from "maplibre-gl";
 
@@ -19,7 +20,7 @@ export const computeGeoJsonBbox = (
   let hasCoords = false;
 
   const traverse = (coords: unknown) => {
-    if (!Array.isArray(coords) || coords.length === 0) return;
+    if (!Array.isArray(coords) || isEmptyArray(coords)) return;
     if (typeof coords[0] === "number" && typeof coords[1] === "number") {
       const lng = coords[0];
       const lat = coords[1];

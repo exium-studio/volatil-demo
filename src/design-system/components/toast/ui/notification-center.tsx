@@ -9,6 +9,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Button } from "@/design-system/components/button/ui/button";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { isEmptyArray } from "@/shared/utils/data/array";
 
 function ToastHistoryItem({
   entry,
@@ -63,7 +64,7 @@ export function NotificationCenter() {
   const { groups, deleteOne, deleteMany, markAllRead } = useToastHistory();
   const { maxVisiblePerGroup } = getToastConfig();
 
-  if (groups.length === 0) {
+  if (isEmptyArray(groups)) {
     return (
       <P fontSize={"sm"} color={"fg.muted"}>
         {"No notifications yet"}

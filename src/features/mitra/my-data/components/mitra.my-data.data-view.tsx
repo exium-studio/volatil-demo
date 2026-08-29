@@ -34,6 +34,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
 import { DatabaseIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -108,7 +109,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           {
             value: item.wfsUrl ?? "",
             td: item.wfsUrl ? (
-              <HStack gap={1} align={"center"} maxW={"240px"}>
+              <HStack gap={"xs"} align={"center"} maxW={"240px"}>
                 <ExternalLink
                   href={item.wfsUrl}
                   display={"inline-flex"}
@@ -120,9 +121,9 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                     {item.wfsUrl}
                   </ClampedP>
                 </ExternalLink>
+
                 <ClipboardButton
                   value={item.wfsUrl}
-                  size={"2xs"}
                   variant={"ghost"}
                   aria-label={"Salin URL WFS"}
                   flexShrink={0}
@@ -136,7 +137,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           {
             value: item.wmsUrl ?? "",
             td: item.wmsUrl ? (
-              <HStack gap={1} align={"center"} maxW={"240px"}>
+              <HStack gap={"xs"} align={"center"} maxW={"240px"}>
                 <ExternalLink
                   href={item.wmsUrl}
                   display={"inline-flex"}
@@ -148,9 +149,9 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                     {item.wmsUrl}
                   </ClampedP>
                 </ExternalLink>
+
                 <ClipboardButton
                   value={item.wmsUrl}
-                  size={"2xs"}
                   variant={"ghost"}
                   aria-label={"Salin URL WMS"}
                   flexShrink={0}
@@ -255,7 +256,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       >
         {isLoading ? (
           <Skeleton p={"md"} rounded={0} />
-        ) : myData.items.length === 0 ? (
+        ) : isEmptyArray(myData.items) ? (
           <VStack
             flex={1}
             display={"flex"}

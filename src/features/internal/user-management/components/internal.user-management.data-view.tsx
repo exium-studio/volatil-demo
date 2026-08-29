@@ -170,8 +170,12 @@ export const InternalUserManagementDataView = () => {
                   : "Aktifkan Pengguna?"
               }
               description={`Apakah Anda yakin ingin mengubah status akun ${user.name}?`}
-              confirmLabel={user.status === "active" ? "Nonaktifkan" : "Aktifkan"}
-              colorPalette={user.status === "active" ? "red" : theme.colorPalette}
+              confirmLabel={
+                user.status === "active" ? "Nonaktifkan" : "Aktifkan"
+              }
+              colorPalette={
+                user.status === "active" ? "red" : theme.colorPalette
+              }
               onConfirm={() => {
                 updateStatusMutation.mutate({
                   id: user.id,
@@ -193,7 +197,7 @@ export const InternalUserManagementDataView = () => {
   }, [users, preferredTimezone, updateStatusMutation, theme.colorPalette]);
 
   return (
-    <Container.Root withContext={true}>
+    <Container.Root flex={1} withContext={true}>
       <Container.Body overflow={"clip"}>
         {/* Header Actions */}
         <HStack

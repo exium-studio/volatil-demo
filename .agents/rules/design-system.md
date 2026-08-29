@@ -28,6 +28,7 @@ const { theme } = useThemeStore();
 - **Import Alias**: Import di dalam `src/` WAJIB menggunakan alias `@/`.
 - **Komentar Section**: Wajib menambahkan komentar section di komponen (`// Contexts`, `// States`, `// Derived Values`, `// Hooks (Queries & Mutations)`, dll).
 - **Default Props**: DILARANG menuliskan prop yang nilainya sama dengan default komponen (misal: `VStack` default `align` adalah `stretch`, tidak perlu ditulis `align={"stretch"}`).
+- **Array Empty Checks (MUTLAK)**: DILARANG menggunakan `.length === 0` untuk pengecekan array kosong. WAJIB menggunakan helper `isEmptyArray(arr)` dari `@/shared/utils/data/array`.
 - **Input Width (MUTLAK)**: Seluruh komponen input (`Input`, `NumberInput`, `SearchInput`, `Select`, `Field`, dll) WAJIB selalu berukuran width 100% / `w={"full"}` di dalam container/form.
 - **Button & Component Sizes**: DILARANG asal mengecilkan `size` (misal sembarangan menambah `size={"xs"}` atau `size={"sm"}`) jika tidak diinstruksikan secara spesifik. Gunakan ukuran default komponen design system.
 - **Conditional Rendering (Eksplisit & Anti-Ternary Kompleks)**: DILARANG menggunakan nested/kompleks ternary operator (`a ? b : c ? d : e`). Ternary maksimal hanya untuk 2 kondisi sederhana (misal simple styling/variant). Untuk rendering blok view, state utama (loading, empty, error, content), WAJIB menggunakan kondisi eksplisit (`isLoading && <Skeleton />` dan nested eksplisit `!isLoading && (<>{isEmpty && <NoDataState />}{hasData && <DataView />}</>)`) atau early return eksplisit (`if (condition) return <... />;`).

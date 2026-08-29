@@ -336,13 +336,13 @@ export const MapSearch = () => {
                 </Box>
               )}
 
-              {!showLoader && !isError && results.length === 0 && (
+              {!showLoader && !isError && isEmptyArray(results) && (
                 <Box px={3} py={3}>
                   <NoResultState query={debouncedQuery} />
                 </Box>
               )}
 
-              {!showLoader && !isError && results.length > 0 && (
+              {!showLoader && !isError && !isEmptyArray(results) && (
                 <Box px={1}>
                   {results.map((item) => (
                     <Button

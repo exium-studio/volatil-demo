@@ -26,6 +26,7 @@ import type {
   InboxCategory,
 } from "@/features/notification/types/inbox.type";
 import { t } from "@/shared/libs/i18n";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -82,7 +83,7 @@ export const NotificationInboxDataView = memo(() => {
     );
   }
 
-  if (items.length === 0) {
+  if (isEmptyArray(items)) {
     return (
       <NoDataState
         icon={InboxIcon}

@@ -21,6 +21,7 @@ import {
 import type { CartBatch } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -134,7 +135,7 @@ const MitraCartExpiredBatchesModalContent = (
 
         {!isLoading && (
           <>
-            {expiredBatches.length === 0 && (
+            {isEmptyArray(expiredBatches) && (
               <NoDataState
                 icon={HistoryIcon}
                 title={"Tidak Ada Batch Kadaluwarsa"}

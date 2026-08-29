@@ -18,6 +18,7 @@ import type { MitraCartTableProps } from "@/features/mitra/cart/types/cart.type"
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { IconShoppingCartOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
@@ -129,7 +130,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
             />
           )}
 
-          {!isLoading && features.length === 0 && (
+          {!isLoading && isEmptyArray(features) && (
             <Box
               flex={1}
               display={"flex"}

@@ -178,7 +178,7 @@ const FocusSearchBody = () => {
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (items.length === 0) return;
+    if (isEmptyArray(items)) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIdx((prev) => (prev + 1) % items.length);

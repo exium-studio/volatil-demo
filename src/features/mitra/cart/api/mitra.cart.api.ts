@@ -6,6 +6,7 @@ import type { FetchWfsCatalogResult } from "@/features/mitra/data-request/api/mi
 import type { CheckoutResponse } from "@/features/mitra/cart/types/cart.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 
 const WFS_ID_FIELD = "gid";
@@ -41,7 +42,7 @@ export async function fetchCartWfsPageApi(params: {
   const { ids, page, pageSize, typeName, wfsUrl, search, cqlFilter, signal } =
     params;
 
-  if (ids.length === 0 || !typeName || !wfsUrl) {
+  if (isEmptyArray(ids) || !typeName || !wfsUrl) {
     return {
       features: [],
       totalFeatures: 0,

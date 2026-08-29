@@ -14,7 +14,6 @@ import { NotificationToastHistoryDataView } from "@/features/notification/compon
 import { useInboxQuery } from "@/features/notification/hooks/use-inbox.query";
 import { useNotifications } from "@/features/notification/hooks/use-notifications";
 import type {
-  NotificationHeaderProps,
   NotificationTabsProps,
   NotificationTabValue,
 } from "@/features/notification/types/notification.type";
@@ -68,11 +67,7 @@ export const NotificationPage = () => {
     <PanelContentContainer overflowY={"auto"}>
       <Container.Root flex={1} overflowY={"auto"} withContext={true}>
         <Container.Body flex={1} overflowY={"auto"}>
-          <NotificationHeader
-            activeTab={activeTab}
-            totalNotifications={totalNotifications}
-            unreadCount={unreadCount ?? 0}
-          />
+          <NotificationHeader />
 
           <Separator borderColor={"bg.canvas"} />
 
@@ -95,26 +90,11 @@ export const NotificationPage = () => {
   );
 };
 
-const NotificationHeader = memo((props: NotificationHeaderProps) => {
-  // Props
-  const { activeTab, totalNotifications, unreadCount } = props;
-
+const NotificationHeader = memo(() => {
   return (
     <HStack align={"center"} justify={"space-between"} gap={"md"} pr={2}>
       <HStack align={"center"}>
         <AppNavTitle />
-
-        {activeTab === "notifications" && totalNotifications > 0 && (
-          <Badge colorPalette={"blue"} variant={"subtle"} size={"sm"}>
-            {`${totalNotifications} Notifikasi`}
-          </Badge>
-        )}
-
-        {activeTab === "inbox" && unreadCount > 0 && (
-          <Badge colorPalette={"blue"} variant={"subtle"} size={"sm"}>
-            {`${unreadCount} Baru`}
-          </Badge>
-        )}
       </HStack>
     </HStack>
   );

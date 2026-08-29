@@ -15,6 +15,7 @@ import {
   DEFAULT_TOAST_GROUP,
   getToastConfig,
 } from "@/design-system/components/toast/core/toast.config";
+import { isEmptyArray } from "@/shared/utils/data/array";
 
 // ---------------------------------------------------------------------------
 // Timer scheduling. Kept as module-scoped state (not a store, not React) so
@@ -141,7 +142,7 @@ function nextHistoryVersion(toastId: string): number {
     .getAll({ includeDeleted: true })
     .filter((entry) => entry.toastId === toastId)
     .map((entry) => entry.version);
-  return versions.length === 0 ? 1 : Math.max(...versions) + 1;
+  return isEmptyArray(versions) ? 1 : Math.max(...versions) + 1;
 }
 
 function recordHistorySnapshot(

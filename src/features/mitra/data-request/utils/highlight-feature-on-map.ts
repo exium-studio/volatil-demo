@@ -5,6 +5,7 @@ import {
   fitBoundsSafe,
   flyToSafe,
 } from "@/design-system/components/map/utils/map-camera";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 
@@ -69,7 +70,7 @@ export const getGeometryBounds = (
 
   processCoords((geom as unknown as { coordinates?: unknown }).coordinates);
 
-  if (coords.length === 0) return null;
+  if (isEmptyArray(coords)) return null;
 
   let minLng = Infinity;
   let minLat = Infinity;

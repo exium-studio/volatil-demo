@@ -580,7 +580,7 @@ const DataListTableBody = () => {
   const virtualItems = virtualizer.getVirtualItems();
 
   // Fallback to direct rendering if virtualized is false or if virtualizer returned no items despite items existing
-  if (!virtualized || (virtualItems.length === 0 && sortedItems.length > 0)) {
+  if (!virtualized || (isEmptyArray(virtualItems) && sortedItems.length > 0)) {
     return (
       <>
         {sortedItems.map((item, index) => {

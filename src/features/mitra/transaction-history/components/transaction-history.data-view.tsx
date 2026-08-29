@@ -37,6 +37,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
 import { EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -257,7 +258,7 @@ export const TransactionHistoryDataView = () => {
       >
         {isLoading ? (
           <Skeleton p={"md"} rounded={0} />
-        ) : transactionHistory.items.length === 0 ? (
+        ) : isEmptyArray(transactionHistory.items) ? (
           <Box
             flex={1}
             display={"flex"}

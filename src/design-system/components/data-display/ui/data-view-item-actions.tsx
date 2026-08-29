@@ -16,6 +16,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { updateClickOrigin } from "@/design-system/components/overlay/stores/dialog-animation-store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
 import {
   cloneElement,
@@ -113,7 +114,7 @@ export function DataViewSpreadActions<
     return true;
   });
 
-  if (visibleRowActions.length === 0) return null;
+  if (isEmptyArray(visibleRowActions)) return null;
 
   return (
     <HStack gap={"2xs"} align={"center"} onClick={(e) => e.stopPropagation()}>
@@ -201,14 +202,10 @@ export function DataViewStickyActions<
     return true;
   });
 
-  if (stickyActions.length === 0) return null;
+  if (isEmptyArray(stickyActions)) return null;
 
   return (
-    <HStack
-      gap={"2xs"}
-      align={"center"}
-      onClick={(e) => e.stopPropagation()}
-    >
+    <HStack gap={"2xs"} align={"center"} onClick={(e) => e.stopPropagation()}>
       {stickyActions.map((action, index) => {
         const key = action.key ?? `sticky-action-${index}`;
         const isDisabled = Boolean(action.disabled?.(item.data, item));

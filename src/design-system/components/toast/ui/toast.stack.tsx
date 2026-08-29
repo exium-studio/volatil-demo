@@ -9,6 +9,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { Box } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -38,7 +39,7 @@ export function ToastStack<TItem>({
   useFirstMountEffect(
     {
       onUpdate: () => {
-        if (items.length === 0) {
+        if (isEmptyArray(items)) {
           setExpanded(false);
         }
       },

@@ -15,6 +15,7 @@ import type {
   SpatialFeaturesDataViewContentProps,
   SpatialFeaturesDataViewProps,
 } from "@/features/shared/types/spatial-features-data-view.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { MapPinIcon } from "lucide-react";
 import { memo, useMemo } from "react";
 
@@ -65,7 +66,7 @@ export const SpatialFeaturesDataView = memo((props: SpatialFeaturesDataViewProps
   const hasPagination =
     page != null && pageSize != null && totalFeatures != null;
 
-  if (!isMounted || isLoading || (isFetching && wfsFeatures.length === 0)) {
+  if (!isMounted || isLoading || (isFetching && isEmptyArray(wfsFeatures))) {
     return (
       <Skeleton h={"full"} w={"full"} flex={1} roundedTop={0} p={"md"} />
     );

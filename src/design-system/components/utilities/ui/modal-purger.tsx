@@ -1,7 +1,4 @@
-// src/design-system/components/utilities/ui/modal-purger.tsx
-
-"use client";
-
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
@@ -15,7 +12,7 @@ export function ModalPurger() {
   useEffect(() => {
     const navigationEntries = performance.getEntriesByType("navigation");
 
-    if (navigationEntries.length === 0) {
+    if (isEmptyArray(navigationEntries)) {
       return;
     }
 
