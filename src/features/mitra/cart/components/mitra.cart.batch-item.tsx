@@ -60,7 +60,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
           gapY={"xs"}
           w={"full"}
         >
-          <HStack gap={"md"} align={"center"}>
+          <HStack gap={"sm"} align={"center"}>
             <AppIcon
               icon={statusConfig.icon}
               color={statusConfig.iconColor}
