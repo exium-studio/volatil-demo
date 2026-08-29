@@ -202,7 +202,6 @@ const SpatialFeaturesDataViewContent = memo(
         }}
         flex={"undefined"}
         rounded={0}
-        shadow={"none"}
       >
         <DataView.Table.Header />
         <DataView.Table.Body />

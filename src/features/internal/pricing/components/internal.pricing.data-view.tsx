@@ -272,7 +272,6 @@ export const InternalPricingDataView = () => {
                 pageSize={pageSize}
                 rounded={0}
                 pb={0}
-                shadow={"none"}
               >
                 <DataView.Table.Header />
                 <DataView.Table.Body />
@@ -292,7 +291,6 @@ export const InternalPricingDataView = () => {
                 totalData={pagination?.totalItems ?? filteredItems.length}
                 totalPage={pagination?.totalPages ?? 1}
                 roundedBottom={0}
-                shadow={"none"}
               />
             </Box>
           )}

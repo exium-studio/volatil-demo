@@ -310,7 +310,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               pageSize={pageSize}
               rounded={0}
               pb={0}
-              shadow={"none"}
             >
               <DataView.Table.Header />
               <DataView.Table.Body />
@@ -330,7 +329,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               totalData={myData.pagination.totalItems}
               totalPage={myData.pagination.totalPages}
               roundedBottom={0}
-              shadow={"none"}
             />
           </Box>
         )}

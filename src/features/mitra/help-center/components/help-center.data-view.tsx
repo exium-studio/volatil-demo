@@ -341,7 +341,6 @@ export const HelpCenterDataView = () => {
                 page={page}
                 pageSize={pageSize}
                 roundedTop={0}
-                shadow={"none"}
               >
                 <DataView.Table.Header />
                 <DataView.Table.Body />
@@ -360,7 +359,6 @@ export const HelpCenterDataView = () => {
                 currentDataLength={tickets.length}
                 totalData={pagination.totalItems}
                 totalPage={pagination.totalPages}
-                shadow={"none"}
               />
             </Box>
           )}

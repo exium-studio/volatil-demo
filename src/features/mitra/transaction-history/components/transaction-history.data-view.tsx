@@ -304,7 +304,6 @@ export const TransactionHistoryDataView = () => {
               pageSize={pageSize}
               rounded={0}
               pb={0}
-              shadow={"none"}
             >
               <DataView.Table.Header />
               <DataView.Table.Body />
@@ -324,7 +323,6 @@ export const TransactionHistoryDataView = () => {
               totalData={transactionHistory.pagination.totalItems}
               totalPage={transactionHistory.pagination.totalPages}
               roundedBottom={0}
-              shadow={"none"}
             />
           </Box>
         )}

@@ -51,7 +51,7 @@ export const TransactionDetailTrigger = (
   const isMounted = useMountTimeout({
     isOpen,
     mountDelay: 0,
-    unmountDelay: 250,
+    unmountDelay: 300,
   });
 
   return (
@@ -87,11 +87,11 @@ export const TransactionDetailModalContent = (
 
   const orderItemHeaders: FormattedTableHeader[] = useMemo(
     () => [
-      { th: "Layer IGT", sortable: false, align: "start" },
-      { th: "Basis Spasial", sortable: false, align: "start" },
-      { th: "Metode Seleksi", sortable: false, align: "start" },
-      { th: "Jumlah / Luas", sortable: false, align: "start" },
-      { th: "Subtotal", sortable: false, align: "end" },
+      { th: "Layer IGT", sortable: true },
+      { th: "Basis Spasial", sortable: true },
+      { th: "Metode Seleksi", sortable: true },
+      { th: "Jumlah / Luas", sortable: true },
+      { th: "Subtotal", sortable: true, align: "end" },
     ],
     [],
   );
@@ -338,7 +338,6 @@ export const TransactionDetailModalContent = (
                   items={orderItemsData}
                   withNumbering={false}
                   pb={0}
-                  shadow={"none"}
                 >
                   <DataView.Table.Header />
                   <DataView.Table.Body />

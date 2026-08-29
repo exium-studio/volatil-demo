@@ -38,13 +38,9 @@ import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { tintAlpha } from "@/shared/utils/style/color";
 import { Box, Center } from "@chakra-ui/react";
-import {
-  IconCaretDownFilled,
-  IconCaretUpFilled,
-  IconListCheck,
-} from "@tabler/icons-react";
+import { IconListCheck } from "@tabler/icons-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { EllipsisIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, EllipsisIcon } from "lucide-react";
 import {
   memo,
   useCallback,
@@ -243,17 +239,14 @@ const DataListTableRootInternal = <
         // flex={1}
         w={"full"}
         maxH={"full"}
-        pb={"4px"}
         roundedTop={theme.radii.container}
-        bg={"bg.canvas"}
-        shadow={"sm"}
+        bg={"bg.body"}
         {...restProps}
       >
         <Grid
           role={"table"}
           gridTemplateColumns={gridCols}
           w={headersList.length > 1 ? "full" : "fit"}
-          rowGap={"4px"}
         >
           {children}
         </Grid>
@@ -309,7 +302,8 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
       left={0}
       zIndex={10}
       bg={"bg.body"}
-      shadow={"sm"}
+      borderBottom={"1px solid"}
+      borderColor={"border.subtle"}
       {...props}
     >
       {canBatchSelect && (
@@ -344,7 +338,7 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
           onClick={header.sortable ? () => toggleSort(index) : undefined}
           {...header?.headerCellProps}
         >
-          <P fontWeight={"semibold"} color={"fg.subtle"}>
+          <P fontSize={"sm"} fontWeight={"medium"} color={"fg.subtle"}>
             {header.th}
           </P>
 
@@ -405,7 +399,14 @@ const DataListTableRow = memo(
         overflow={"clip"}
         minH={"56px"}
         bg={"bg.body"}
-        shadow={isItemSelected ? "md" : "none"}
+        borderBottom={"1px solid"}
+        borderColor={"bg.canvas"}
+        transition={"background-color 0.1s ease"}
+        _hover={{
+          bg: isItemSelected
+            ? tintAlpha(`${theme.colorPalette}.subtle`, 50)
+            : "bg.subtle",
+        }}
         {...styleProps}
       >
         {canBatchSelect && (
@@ -514,7 +515,7 @@ const DataListTableBody = () => {
   } = useDataViewTableContext();
 
   const rowHeight = useMemo(() => parseInt("56px", 10), []);
-  const rowGap = useMemo(() => parseInt("4px", 10), []);
+  const rowGap = useMemo(() => 0, []);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
@@ -630,17 +631,19 @@ const DataListTableSortIcon = ({
   const isDescActive = active && direction === "desc";
 
   return (
-    <VStack align={"center"}>
+    <VStack align={"center"} gap={0}>
       <AppIcon
-        icon={IconCaretUpFilled}
-        boxSize={"11px"}
-        color={isAscActive ? primaryFg : "fg.subtle"}
+        icon={ChevronUpIcon}
+        boxSize={"12px"}
+        strokeWidth={2.5}
+        color={isAscActive ? primaryFg : "an3"}
         mb={"-6px"}
       />
       <AppIcon
-        icon={IconCaretDownFilled}
-        boxSize={"11px"}
-        color={isDescActive ? primaryFg : "fg.subtle"}
+        icon={ChevronDownIcon}
+        boxSize={"12px"}
+        strokeWidth={2.5}
+        color={isDescActive ? primaryFg : "an3"}
       />
     </VStack>
   );
@@ -657,4 +660,3 @@ const DataViewTableInternal = {
 export const DataView = {
   Table: DataViewTableInternal,
 };
-

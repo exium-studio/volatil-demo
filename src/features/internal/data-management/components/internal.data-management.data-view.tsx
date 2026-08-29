@@ -349,7 +349,6 @@ export const InternalDataManagementDataView = () => {
                     pageSize={pageSize}
                     pb={0}
                     rounded={0}
-                    shadow={"none"}
                   >
                     <DataView.Table.Header />
                     <DataView.Table.Body />
@@ -368,7 +367,6 @@ export const InternalDataManagementDataView = () => {
                     currentDataLength={rawItems.length}
                     totalData={pagination?.totalItems ?? rawItems.length}
                     totalPage={pagination?.totalPages ?? 1}
-                    shadow={"none"}
                   />
                 </Box>
               )}

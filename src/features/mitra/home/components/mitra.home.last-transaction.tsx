@@ -241,7 +241,6 @@ const MitraHomeLastTransactionDataView = () => {
         headers={headers}
         items={items}
         roundedTop={0}
-        shadow={"none"}
       >
         <DataView.Table.Header />
         <DataView.Table.Body />

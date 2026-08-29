@@ -38,7 +38,6 @@ export const DataViewFooter = (props: DataViewFooterProps) => {
       zIndex={4}
       bg={"bg.body"}
       roundedBottom={theme.radii.container}
-      shadow={"sm"}
       {...restProps}
     >
       <HStack

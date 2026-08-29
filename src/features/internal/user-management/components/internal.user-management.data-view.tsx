@@ -271,7 +271,6 @@ export const InternalUserManagementDataView = () => {
                 page={page}
                 pageSize={pageSize}
                 roundedTop={0}
-                shadow={"none"}
               >
                 <DataView.Table.Header />
                 <DataView.Table.Body />
@@ -291,7 +290,6 @@ export const InternalUserManagementDataView = () => {
                 totalData={total}
                 totalPage={totalPages}
                 roundedBottom={0}
-                shadow={"none"}
               />
             </Box>
           )}

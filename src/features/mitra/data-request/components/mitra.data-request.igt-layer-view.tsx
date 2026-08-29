@@ -334,7 +334,6 @@ export const MitraDataRequestIgtLayerView = memo(
               virtualized={true}
               withNumbering={true}
               roundedTop={0}
-              shadow={"none"}
             >
               <DataView.Table.Header />
               <DataView.Table.Body />
