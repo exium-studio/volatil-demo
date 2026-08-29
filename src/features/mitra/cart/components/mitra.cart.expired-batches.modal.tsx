@@ -4,6 +4,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -24,7 +25,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { HistoryIcon, RotateCcwIcon } from "lucide-react";
+import { AlertCircleIcon, HistoryIcon, RotateCcwIcon } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 
 export type MitraCartExpiredBatchesTriggerProps = {
@@ -154,113 +155,133 @@ const MitraCartExpiredBatchesModalContent = (
                     .filter((i) => i.spatialBasis === "kawasan")
                     .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
 
+                  const layerTitles = batch.items
+                    .map((i) => i.sourceLayerTitle)
+                    .join(", ");
+
                   const isThisReordering =
                     reorderMutation.isPending &&
                     reorderingBatchId === batch.batchId;
 
                   return (
-                    <VStack
+                    <Box
                       key={batch.batchId}
+                      w={"full"}
                       p={"md"}
-                      bg={"bg.subtle"}
-                      border={"1px solid"}
-                      borderColor={"border"}
-                      rounded={theme.radii.component}
-                      align={"stretch"}
-                      gap={"sm"}
+                      bg={"bg.body"}
+                      rounded={theme.radii.container}
+                      border={"1.5px solid"}
+                      borderColor={"border.subtle"}
                     >
-                      {/* Header Row: Batch Index & Expired Time */}
-                      <HStack
-                        justify={"space-between"}
-                        align={"center"}
-                        wrap={"wrap"}
-                      >
-                        <HStack gap={"xs"} align={"center"}>
-                          <Badge colorPalette={"red"} variant={"subtle"}>
-                            {"Kadaluwarsa"}
-                          </Badge>
-                          <P fontWeight={"semibold"}>{`Batch #${index + 1}`}</P>
-                        </HStack>
+                      <VStack align={"stretch"} gap={"sm"}>
+                        {/* Header: Status Icon, Batch Number, Badge & Reorder Action */}
+                        <HStack
+                          wrap={"wrap"}
+                          justify={"space-between"}
+                          align={"center"}
+                          gapX={"md"}
+                          gapY={"xs"}
+                          w={"full"}
+                        >
+                          <HStack gap={"sm"} align={"center"}>
+                            <AppIcon
+                              icon={AlertCircleIcon}
+                              color={"red.fg"}
+                              size={"lg"}
+                            />
 
-                        {batch.expiredAt && (
-                          <P fontSize={"xs"} color={"fg.subtle"}>
-                            {`Kadaluwarsa: ${formatUtcDateTime(batch.expiredAt, preferredTimezone)}`}
-                          </P>
-                        )}
-                      </HStack>
+                            <VStack>
+                              <P fontWeight={"semibold"} fontSize={"sm"}>
+                                {`Batch #${index + 1}`}
+                              </P>
 
-                      <Separator borderColor={"border"} />
+                              <P fontSize={"xs"} color={"fg.subtle"}>
+                                {`(${batch.batchId})`}
+                              </P>
+                            </VStack>
+                          </HStack>
 
-                      {/* List of Layers */}
-                      <VStack align={"stretch"} gap={"xs"}>
-                        {batch.items.map((item) => (
-                          <HStack
-                            key={item.id}
-                            justify={"space-between"}
-                            align={"center"}
-                          >
-                            <ClampedP fontSize={"sm"} maxW={"340px"}>
-                              {item.sourceLayerTitle}
-                            </ClampedP>
+                          <HStack gap={"sm"} align={"center"}>
                             <Badge
-                              size={"xs"}
-                              colorPalette={
-                                item.spatialBasis === "bidang"
-                                  ? "blue"
-                                  : "orange"
-                              }
+                              size={"sm"}
                               variant={"subtle"}
+                              colorPalette={"red"}
                             >
-                              {item.spatialBasis === "bidang"
-                                ? `${item.featuresCount} bidang`
-                                : `${item.areaHa ?? 0} ha`}
+                              {"Kadaluwarsa"}
                             </Badge>
                           </HStack>
-                        ))}
-                      </VStack>
+                        </HStack>
 
-                      <Separator borderColor={"border"} />
+                        <Separator />
 
-                      {/* Footer Row: Total Summary & Re-order Action */}
-                      <HStack justify={"space-between"} align={"center"} pt={1}>
-                        <VStack align={"start"} gap={0}>
-                          <HStack gap={"xs"}>
-                            {totalBidang > 0 && (
-                              <P fontSize={"xs"} color={"fg.muted"}>
-                                {`${totalBidang} Bidang`}
-                              </P>
-                            )}
-                            {totalBidang > 0 && totalKawasanHa > 0 && (
-                              <P fontSize={"xs"} color={"fg.muted"}>
-                                {"•"}
-                              </P>
-                            )}
-                            {totalKawasanHa > 0 && (
-                              <P fontSize={"xs"} color={"fg.muted"}>
-                                {`${totalKawasanHa} ha Kawasan`}
-                              </P>
-                            )}
+                        {/* Content Details */}
+                        <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
+                          <HStack justify={"space-between"} align={"center"}>
+                            <P color={"fg.muted"}>{"Daftar Layer IGT:"}</P>
+                            <ClampedP
+                              maxW={"65%"}
+                              textAlign={"end"}
+                              color={"fg.default"}
+                            >
+                              {layerTitles || "-"}
+                            </ClampedP>
                           </HStack>
-                          <TNum fontWeight={"semibold"} fontSize={"sm"}>
-                            <FormatNumber
-                              value={batch.totalPrice}
-                              style={"currency"}
-                              currency={"IDR"}
-                            />
-                          </TNum>
+
+                          <HStack justify={"space-between"} align={"center"}>
+                            <P color={"fg.muted"}>{"Volume Spasial:"}</P>
+                            <P fontWeight={"medium"}>
+                              {totalBidang > 0 && (
+                                <>
+                                  <TNum>{totalBidang}</TNum> {"bidang"}
+                                </>
+                              )}
+                              {totalBidang > 0 && totalKawasanHa > 0 && " • "}
+                              {totalKawasanHa > 0 && (
+                                <>
+                                  <TNum>{totalKawasanHa}</TNum> {"ha"}
+                                </>
+                              )}
+                            </P>
+                          </HStack>
+
+                          <HStack justify={"space-between"} align={"center"}>
+                            <P color={"fg.muted"}>{"Total Estimasi:"}</P>
+                            <P fontWeight={"semibold"} color={"blue.fg"}>
+                              <FormatNumber
+                                value={batch.totalPrice}
+                                style={"currency"}
+                                currency={"IDR"}
+                                maximumFractionDigits={0}
+                              />
+                            </P>
+                          </HStack>
+
+                          {batch.expiredAt && (
+                            <HStack justify={"space-between"} align={"center"}>
+                              <P color={"fg.muted"}>{"Waktu Kadaluwarsa:"}</P>
+                              <P color={"fg.subtle"}>
+                                {formatUtcDateTime(
+                                  batch.expiredAt,
+                                  preferredTimezone,
+                                )}
+                              </P>
+                            </HStack>
+                          )}
                         </VStack>
 
                         <Button
                           primary
-                          size={"xs"}
+                          size={"sm"}
+                          w={"full"}
                           loading={isThisReordering}
+                          mt={"sm"}
                           onClick={() => handleReorder(batch.batchId)}
                         >
                           <AppIcon icon={RotateCcwIcon} />
                           {"Pesan Ulang"}
                         </Button>
-                      </HStack>
-                    </VStack>
+                      </VStack>
+                    </Box>
                   );
                 })}
               </VStack>

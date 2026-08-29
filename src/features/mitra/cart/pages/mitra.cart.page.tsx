@@ -18,7 +18,7 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { MitraCartBatchItem } from "@/features/mitra/cart/components/mitra.cart.batch-item";
 import { MitraCartBatchOrderSummary } from "@/features/mitra/cart/components/mitra.cart.batch-order-summary";
-import { MitraCartExpiredBatchesTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-batches";
+import { MitraCartExpiredBatchesTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-batches.modal";
 import {
   useCancelActiveCartBatch,
   useCartBatchDetailQuery,
