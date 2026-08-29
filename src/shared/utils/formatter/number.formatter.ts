@@ -1,8 +1,4 @@
-// src/shared/utils/formatter/number.formatter.ts
-
-// src/shared/utils/format/number.ts
-
-const DEFAULT_LOCALE = "id-ID";
+import { getLocale } from "@/paraglide/runtime";
 
 export type FormatNumberStyle = "decimal" | "currency" | "percent" | "unit";
 export type FormatNumberNotation =
@@ -41,8 +37,18 @@ export type FormatNumberOptions = {
   useGrouping?: boolean;
 };
 
+function getActiveLocale(locale?: string): string {
+  if (locale) return locale;
+  try {
+    const current = getLocale();
+    return current === "en" ? "en-US" : "id-ID";
+  } catch {
+    return "id-ID";
+  }
+}
+
 /**
- * Format a number using Intl.NumberFormat with sensible defaults for Indonesian locale.
+ * Format a number using Intl.NumberFormat with dynamic active locale.
  * Supports decimal, currency (IDR), percent, unit, compact, and scientific notations.
  */
 export function formatNumber(
@@ -50,7 +56,7 @@ export function formatNumber(
   options: FormatNumberOptions = {},
 ): string {
   const {
-    locale = DEFAULT_LOCALE,
+    locale,
     style = "decimal",
     currency = "IDR",
     currencyDisplay = "symbol",
@@ -96,22 +102,24 @@ export function formatNumber(
   if (maximumSignificantDigits !== undefined)
     intlOptions.maximumSignificantDigits = maximumSignificantDigits;
 
-  return new Intl.NumberFormat(locale, intlOptions).format(value);
+  return new Intl.NumberFormat(getActiveLocale(locale), intlOptions).format(
+    value,
+  );
 }
 
 // ---------------------------------------------------------------------------
 // Shorthand helpers
 
-/** 1500000 → "1.500.000" */
-export function formatDecimal(value: number, locale = DEFAULT_LOCALE): string {
+/** 1500000 → "1.500.000" (id) / "1,500,000" (en) */
+export function formatDecimal(value: number, locale?: string): string {
   return formatNumber(value, { locale });
 }
 
-/** 1500000 → "Rp1.500.000" */
+/** 1500000 → "Rp1.500.000" (id) / "IDR 1,500,000" (en) */
 export function formatCurrency(
   value: number,
   currency = "IDR",
-  locale = DEFAULT_LOCALE,
+  locale?: string,
 ): string {
   return formatNumber(value, {
     locale,
@@ -125,7 +133,7 @@ export function formatCurrency(
 export function formatPercent(
   value: number,
   maximumFractionDigits = 1,
-  locale = DEFAULT_LOCALE,
+  locale?: string,
 ): string {
   return formatNumber(value, {
     locale,
@@ -134,21 +142,21 @@ export function formatPercent(
   });
 }
 
-/** 1500000 → "1,5 jt" (id-ID compact) */
+/** 1500000 → "1,5 jt" (id) / "1.5M" (en) */
 export function formatCompact(
   value: number,
   compactDisplay: FormatNumberCompactDisplay = "short",
-  locale = DEFAULT_LOCALE,
+  locale?: string,
 ): string {
   return formatNumber(value, { locale, notation: "compact", compactDisplay });
 }
 
-/** 15000000 → "Rp 15 jt" */
+/** 15000000 → "Rp 15 jt" (id) / "IDR 15M" (en) */
 export function formatCompactCurrency(
   value: number,
   currency = "IDR",
   compactDisplay: FormatNumberCompactDisplay = "short",
-  locale = DEFAULT_LOCALE,
+  locale?: string,
 ): string {
   return formatNumber(value, {
     locale,
@@ -161,22 +169,16 @@ export function formatCompactCurrency(
 }
 
 /** 1500 → "1,5rb" or "1,5 ribu" */
-export function formatCompactLong(
-  value: number,
-  locale = DEFAULT_LOCALE,
-): string {
+export function formatCompactLong(value: number, locale?: string): string {
   return formatCompact(value, "long", locale);
 }
 
 /** 75 → "+75" / "-75" */
-export function formatSigned(value: number, locale = DEFAULT_LOCALE): string {
+export function formatSigned(value: number, locale?: string): string {
   return formatNumber(value, { locale, signDisplay: "always" });
 }
 
 /** 1234.5678 → "1,23E3" */
-export function formatScientific(
-  value: number,
-  locale = DEFAULT_LOCALE,
-): string {
+export function formatScientific(value: number, locale?: string): string {
   return formatNumber(value, { locale, notation: "scientific" });
 }
