@@ -116,7 +116,7 @@ export function DataViewSpreadActions<
   if (visibleRowActions.length === 0) return null;
 
   return (
-    <HStack gap={1} align={"center"} onClick={(e) => e.stopPropagation()}>
+    <HStack gap={"2xs"} align={"center"} onClick={(e) => e.stopPropagation()}>
       {visibleRowActions.map((action, index) => {
         const key = action.key ?? `spread-action-${index}`;
         const isDisabled = Boolean(action.disabled?.(item.data, item));
@@ -204,7 +204,11 @@ export function DataViewStickyActions<
   if (stickyActions.length === 0) return null;
 
   return (
-    <HStack gap={1} align={"center"} onClick={(e) => e.stopPropagation()}>
+    <HStack
+      gap={"2xs"}
+      align={"center"}
+      onClick={(e) => e.stopPropagation()}
+    >
       {stickyActions.map((action, index) => {
         const key = action.key ?? `sticky-action-${index}`;
         const isDisabled = Boolean(action.disabled?.(item.data, item));
@@ -357,7 +361,9 @@ export function DataListItemActionsTrigger<
                           };
                           const targetKey =
                             triggerProps?.modalKey ??
-                            (action.key ? `${action.key}-${item.id}` : undefined);
+                            (action.key
+                              ? `${action.key}-${item.id}`
+                              : undefined);
                           if (targetKey) {
                             navigate({
                               to: ".",

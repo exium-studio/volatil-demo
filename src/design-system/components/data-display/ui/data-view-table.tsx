@@ -35,7 +35,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { tintAlpha } from "@/shared/utils/style/color";
 import { Box, Center } from "@chakra-ui/react";
@@ -217,16 +216,20 @@ const DataListTableRootInternal = <
 
     if (!isEmptyArray(itemActionsList)) {
       const actions = itemActionsList ?? [];
-      // 1 normal column for spread action buttons
-      cols.push("auto");
-      // 1 sticky column for sticky actions + menu trigger
-      const hasStickyAction = actions.some(
+      const hasSpreadAction = actions.some(
         (action) =>
           typeof action === "object" &&
           action !== null &&
-          "sticky" in action &&
-          action.sticky,
+          !("sticky" in action && action.sticky) &&
+          (!("showInRow" in action) || action.showInRow !== false),
       );
+
+      if (hasSpreadAction) {
+        // Normal column for spread action buttons
+        cols.push("auto");
+      }
+
+      // Sticky column for sticky actions + menu trigger (never shrinks, sizing based on sticky items + padding)
       const stickyActionsCount = actions.filter(
         (action) =>
           typeof action === "object" &&
@@ -235,9 +238,10 @@ const DataListTableRootInternal = <
           action.sticky,
       ).length;
 
-      const stickyWidth = hasStickyAction
-        ? `${56 + stickyActionsCount * 36}px`
-        : "56px";
+      const stickyWidth =
+        stickyActionsCount > 0
+          ? `${56 + stickyActionsCount * 36 + 8}px`
+          : "56px";
 
       cols.push(stickyWidth);
     }
@@ -374,13 +378,21 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
 
       {!isEmptyArray(itemActions) && (
         <>
-          {/* Normal column header for spread action buttons */}
-          <DataListTableCell justify={"center"}>
-            <P fontWeight={"semibold"} color={"fg.subtle"}>
-              {t["action.actions"]()}
-            </P>
-          </DataListTableCell>
-          {/* Sticky column header for sticky menu */}
+          {/* Normal column header for spread action buttons (only if present) */}
+          {Boolean(
+            itemActions?.some(
+              (action) =>
+                typeof action === "object" &&
+                action !== null &&
+                !("sticky" in action && action.sticky) &&
+                (!("showInRow" in action) || action.showInRow !== false),
+            ),
+          ) && (
+            <DataListTableCell justify={"center"}>
+              <P fontWeight={"semibold"} color={"fg.subtle"}></P>
+            </DataListTableCell>
+          )}
+          {/* Sticky column header for sticky menu & sticky actions */}
           <DataListTableCell pos={"sticky"} top={0} right={0} zIndex={11} />
         </>
       )}
@@ -482,31 +494,45 @@ const DataListTableRow = memo(
 
         {!isEmptyArray(itemActions) && (
           <>
-            {/* Normal column cell for spread action buttons */}
-            <HStack
-              justify={"center"}
-              align={"center"}
-              px={4}
-              py={2}
-              bg={cellBg}
-              gap={1}
-            >
-              <DataViewSpreadActions item={item} itemActions={itemActions} />
-            </HStack>
+            {/* Normal column cell for spread action buttons (only if present) */}
+            {itemActions.some(
+              (action) =>
+                typeof action === "object" &&
+                action !== null &&
+                !("sticky" in action && action.sticky) &&
+                (!("showInRow" in action) || action.showInRow !== false),
+            ) && (
+              <HStack
+                justify={"center"}
+                align={"center"}
+                pl={"md"}
+                bg={cellBg}
+                gap={1}
+              >
+                <DataViewSpreadActions item={item} itemActions={itemActions} />
+              </HStack>
+            )}
 
             {/* Sticky column cell for sticky menu trigger and sticky actions */}
-            <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
+            <Center
+              pos={"sticky"}
+              right={0}
+              zIndex={2}
+              w={"max"}
+              bg={"bg.body"}
+            >
               <HStack
-                w={"full"}
+                w={"max"}
                 h={"full"}
                 px={"10px"}
-                gap={1}
+                gap={"2xs"}
                 align={"center"}
                 justify={"end"}
                 bg={cellBg}
                 onClick={(e) => e.stopPropagation()}
               >
                 <DataViewStickyActions itemActions={itemActions} item={item} />
+
                 <DataListItemActionsTrigger
                   itemActions={itemActions}
                   item={item}
