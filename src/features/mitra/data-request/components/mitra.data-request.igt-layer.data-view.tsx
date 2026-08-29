@@ -180,6 +180,23 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       const itemActions = [
         {
+          key: "add-to-cart",
+          label: "Masukkan ke keranjang",
+          icon: IconShoppingCartPlus,
+          sticky: true,
+          showInMenu: true,
+          colorPalette: "blue",
+          onClick: (layer: IgtLayerItem) => {
+            if (layer?.wfs?.wfsTypeName) {
+              addToCartAllMutation.mutate({
+                layerId: layer.id,
+                cqlFilter: combinedCqlFilter,
+                typeName: layer.wfs.wfsTypeName,
+              });
+            }
+          },
+        },
+        {
           key: "fly-to-map",
           label: "Lihat di Peta",
           icon: MapPinIcon,
@@ -195,22 +212,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
           icon: TablePropertiesIcon,
           onClick: (layer: IgtLayerItem) => {
             onSelectIgtLayer(layer);
-          },
-        },
-        {
-          key: "add-to-cart",
-          label: "Masukkan ke keranjang",
-          icon: IconShoppingCartPlus,
-          sticky: true,
-          showInMenu: true,
-          onClick: (layer: IgtLayerItem) => {
-            if (layer?.wfs?.wfsTypeName) {
-              addToCartAllMutation.mutate({
-                layerId: layer.id,
-                cqlFilter: combinedCqlFilter,
-                typeName: layer.wfs.wfsTypeName,
-              });
-            }
           },
         },
       ];
