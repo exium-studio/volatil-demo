@@ -16,13 +16,13 @@ import type {
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { findActivePath } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 
 const NAV_CHILD_ITEM_HEIGHT = 46;
 const NAV_INDICATOR_HEIGHT = 16;
@@ -193,9 +193,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
                   <AppIcon
                     icon={childNav.icon}
                     color={
-                      isChildActive
-                        ? `${theme.colorPalette}.fg`
-                        : "fg.muted"
+                      isChildActive ? `${theme.colorPalette}.fg` : "fg.muted"
                     }
                   />
                 )}
@@ -221,7 +219,9 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
         <NavButton
           aria-label={navTitle}
           variant={"ghost"}
-          color={isActive && depth === 0 ? `${theme.colorPalette}.fg` : undefined}
+          color={
+            isActive && depth === 0 ? `${theme.colorPalette}.fg` : undefined
+          }
           h={"40px"}
           w={"full"}
           rounded={isSmallViewport ? 0 : theme.radii.component}
@@ -230,22 +230,18 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           <NavIcon
             nav={nav}
             color={
-              isActive && depth === 0
-                ? `${theme.colorPalette}.fg`
-                : "fg.muted"
+              isActive && depth === 0 ? `${theme.colorPalette}.fg` : "fg.muted"
             }
           />
 
-          <ClampedP
+          <P
             fontWeight={isActive && depth === 0 ? "semibold" : "medium"}
             color={
-              isActive && depth === 0
-                ? `${theme.colorPalette}.fg`
-                : undefined
+              isActive && depth === 0 ? `${theme.colorPalette}.fg` : undefined
             }
           >
             {navTitle}
-          </ClampedP>
+          </P>
         </NavButton>
       </Tooltip>
     );
@@ -255,6 +251,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   const activeChildIndex = node.children!.findIndex(
     (child) => child.key === activeKey || activePathKeys.has(child.key),
   );
+
   return (
     <Collapsible.Root
       opened={opened}
@@ -296,10 +293,8 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
               }
             />
 
-            <ClampedP
-              fontWeight={
-                isActive || isAncestorActive ? "semibold" : "medium"
-              }
+            <P
+              fontWeight={isActive || isAncestorActive ? "semibold" : "medium"}
               color={
                 isActive || isAncestorActive
                   ? `${theme.colorPalette}.fg`
@@ -307,7 +302,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
               }
             >
               {navTitle}
-            </ClampedP>
+            </P>
 
             <AppIcon
               icon={ChevronDownIcon}
