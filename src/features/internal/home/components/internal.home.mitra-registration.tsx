@@ -8,7 +8,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
+import { useInternalMitraRegistrationQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomeMitraRegistrationProps } from "@/features/internal/home/types/internal.home.mitra-registration.type";
 import { Chart, useChart } from "@chakra-ui/charts";
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
@@ -16,7 +16,7 @@ import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 export const InternalHomeMitraRegistration = (
   props: InternalHomeMitraRegistrationProps,
 ) => {
-  const { mitraRegistration } = useInternalHomeData();
+  const { mitraRegistration } = useInternalMitraRegistrationQuery();
 
   const chartData = [
     {

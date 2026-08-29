@@ -9,7 +9,7 @@ import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
+import { useInternalAcquisitionTrendsQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type {
   InternalHomeTrendChartProps,
   InternalHomeTrendHeaderProps,
@@ -95,7 +95,7 @@ const InternalHomeTrendChartContent = (props: InternalHomeTrendChartProps) => {
   const { period } = props;
 
   // Queries / Data
-  const { acquisitionTrends } = useInternalHomeData(period);
+  const { acquisitionTrends } = useInternalAcquisitionTrendsQuery(period);
 
   // Derived Values / Hooks
   const chart = useChart({

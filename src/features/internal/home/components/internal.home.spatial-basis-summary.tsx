@@ -11,14 +11,14 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
+import { useInternalSpatialBasisQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomeSpatialBasisSummaryProps } from "@/features/internal/home/types/internal.home.spatial-basis-summary.type";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 export const InternalHomeSpatialBasisSummary = (
   props: InternalHomeSpatialBasisSummaryProps,
 ) => {
-  const { igtBasis } = useInternalHomeData();
+  const { igtBasis } = useInternalSpatialBasisQuery();
 
   const totalLayer = igtBasis.field + igtBasis.area;
   const basisData = [

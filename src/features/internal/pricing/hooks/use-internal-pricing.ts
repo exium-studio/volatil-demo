@@ -1,10 +1,10 @@
 // src/features/internal/pricing/hooks/use-internal-pricing.ts
 
 import {
-  createInternalPricingApi,
-  fetchInternalPricingListApi,
-  updateInternalPricingApi,
-} from "@/features/internal/pricing/api/internal.pricing.api";
+  createPricing,
+  getPricingList,
+  updatePricing,
+} from "@/features/internal/pricing/services/internal.pricing.service";
 import type {
   CreatePricingPayload,
   PricingQueryParams,
@@ -17,7 +17,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const useInternalPricingListQuery = (params?: PricingQueryParams) => {
   const query = useQuery({
     queryKey: queryKeys.internal.pricing.list(params as Record<string, unknown>),
-    queryFn: ({ signal }) => fetchInternalPricingListApi(params, signal),
+    queryFn: ({ signal }) => getPricingList(params, signal),
   });
 
   return {
@@ -44,7 +44,7 @@ export const useUpdateInternalPricing = () => {
 
   return useMutation({
     mutationFn: (payload: UpdatePricingPayload) =>
-      updateInternalPricingApi(payload),
+      updatePricing(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
@@ -76,7 +76,7 @@ export const useCreateInternalPricing = () => {
 
   return useMutation({
     mutationFn: (payload: CreatePricingPayload) =>
-      createInternalPricingApi(payload),
+      createPricing(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();

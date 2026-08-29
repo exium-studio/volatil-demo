@@ -12,9 +12,13 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { InternalHomeServiceRateModalTrigger } from "@/features/internal/home/components/internal.home.service-rate-modal";
-import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
-import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
-import { PencilIcon } from "lucide-react";
+import type {
+  InternalHomeServiceRateItem,
+  InternalHomeServiceRateProps,
+} from "@/features/internal/home/types/internal.home.service-rate.type";
+import { useInternalPricingListQuery } from "@/features/internal/pricing/hooks/use-internal-pricing";
+import { Layers2Icon, PencilIcon, TreesIcon } from "lucide-react";
+import { useMemo } from "react";
 
 export const InternalHomeServiceRate = (
   props: InternalHomeServiceRateProps,
@@ -64,8 +68,50 @@ const InternalHomeServiceRateStats = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Queries / Data
-  const { serviceRates } = useInternalHomeData();
+  // Queries / Data — directly hit dedicated pricing API
+  const { items: pricingItems } = useInternalPricingListQuery();
+
+  // Derived Values - transform pricing items directly from response
+  const serviceRates = useMemo<InternalHomeServiceRateItem[]>(() => {
+    if (!pricingItems || pricingItems.length === 0) {
+      return [];
+    }
+
+    const bidangRate = pricingItems.find((p) => p.spatialBasis === "bidang");
+    const kawasanRate = pricingItems.find((p) => p.spatialBasis === "kawasan");
+
+    const result: InternalHomeServiceRateItem[] = [];
+
+    if (bidangRate) {
+      result.push({
+        id: bidangRate.id,
+        title: "IGT Berbasis Bidang",
+        icon: Layers2Icon,
+        price: bidangRate.unitPrice,
+        unit: "Bidang",
+        kodePnbp: bidangRate.kodePnbp ?? "PNBP-IGT-01",
+        minPurchase: bidangRate.minPurchase ?? 1000,
+        minUnit: bidangRate.minUnit ?? "Bidang",
+        colorPalette: "blue",
+      });
+    }
+
+    if (kawasanRate) {
+      result.push({
+        id: kawasanRate.id,
+        title: "IGT Berbasis Kawasan",
+        icon: TreesIcon,
+        price: kawasanRate.unitPrice,
+        unit: "Ha",
+        kodePnbp: kawasanRate.kodePnbp ?? "PNBP-IGT-02",
+        minPurchase: kawasanRate.minPurchase ?? 1000,
+        minUnit: kawasanRate.minUnit ?? "Ha",
+        colorPalette: "orange",
+      });
+    }
+
+    return result;
+  }, [pricingItems]);
 
   const cols = isSmContainer ? 1 : 2;
 

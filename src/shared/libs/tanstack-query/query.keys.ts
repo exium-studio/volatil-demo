@@ -16,11 +16,8 @@ export const queryKeys = {
     cart: {
       all: ["mitra", "cart"] as const,
       summary: () => [...queryKeys.mitra.cart.all, "summary"] as const,
-      items: (params: {
-        page: number;
-        pageSize: number;
-        search?: string;
-      }) => [...queryKeys.mitra.cart.all, "items", params] as const,
+      items: (params: { page: number; pageSize: number; search?: string }) =>
+        [...queryKeys.mitra.cart.all, "items", params] as const,
     },
     dataRequest: {
       all: ["mitra", "data-request"] as const,
@@ -54,8 +51,18 @@ export const queryKeys = {
   internal: {
     home: {
       all: ["internal", "home"] as const,
-      data: (period?: string) =>
-        [...queryKeys.internal.home.all, "data", period] as const,
+      spatialBasis: () =>
+        [...queryKeys.internal.home.all, "spatial-basis"] as const,
+      publishStatus: () =>
+        [...queryKeys.internal.home.all, "publish-status"] as const,
+      mitraRegistration: () =>
+        [...queryKeys.internal.home.all, "mitra-registration"] as const,
+      trends: (period?: string) =>
+        [...queryKeys.internal.home.all, "trends", period] as const,
+      leaderboardMitra: () =>
+        [...queryKeys.internal.home.all, "leaderboard", "mitra"] as const,
+      leaderboardLayers: () =>
+        [...queryKeys.internal.home.all, "leaderboard", "layers"] as const,
     },
     userManagement: {
       all: ["internal", "user-management"] as const,

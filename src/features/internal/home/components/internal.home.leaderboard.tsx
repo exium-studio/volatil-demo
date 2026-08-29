@@ -7,7 +7,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
+import { useInternalLeaderboardQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type {
   InternalHomeLeaderboardProps,
   TopIgtLayerItem,
@@ -28,7 +28,7 @@ export const InternalHomeLeaderboard = (
 
 const TopMitraLeaderboardCard = (props: { flex?: string | number }) => {
   const { flex } = props;
-  const { topMitraList } = useInternalHomeData();
+  const { topMitraList } = useInternalLeaderboardQuery();
 
   return (
     <Container.Root flex={flex} withContext={true}>
@@ -103,7 +103,7 @@ const TopMitraLeaderboardCard = (props: { flex?: string | number }) => {
 
 const TopIgtLayersLeaderboardCard = (props: { flex?: string | number }) => {
   const { flex } = props;
-  const { topIgtLayers } = useInternalHomeData();
+  const { topIgtLayers } = useInternalLeaderboardQuery();
 
   return (
     <Container.Root flex={flex} withContext={true}>

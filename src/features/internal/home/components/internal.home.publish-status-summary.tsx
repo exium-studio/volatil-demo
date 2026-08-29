@@ -11,14 +11,14 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { useInternalHomeData } from "@/features/internal/home/hooks/use-internal-home.query";
+import { useInternalPublishStatusQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomePublishStatusSummaryProps } from "@/features/internal/home/types/internal.home.publish-status-summary.type";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 export const InternalHomePublishStatusSummary = (
   props: InternalHomePublishStatusSummaryProps,
 ) => {
-  const { igtPublicationStatus } = useInternalHomeData();
+  const { igtPublicationStatus } = useInternalPublishStatusQuery();
 
   const totalPublikasi =
     igtPublicationStatus.active + igtPublicationStatus.inactive;

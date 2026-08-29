@@ -87,14 +87,8 @@ const InternalHomeServiceRateModalContent = (
 
   const handleFormSubmit = async (values: ServiceRateFormValues) => {
     try {
-      const targetId = rate.id.startsWith("rate-")
-        ? rate.unit.toLowerCase().includes("bidang")
-          ? "price-bidang-default"
-          : "price-kawasan-default"
-        : rate.id;
-
       await updateMutation.mutateAsync({
-        id: targetId,
+        id: rate.id,
         unitPrice: values.price,
         minPurchase: values.minPurchase,
         kodePnbp: values.kodePnbp,
