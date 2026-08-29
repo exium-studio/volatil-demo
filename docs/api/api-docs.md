@@ -197,16 +197,35 @@ type NotificationType =
 
 ## 4. GeoServer Proxy Endpoints
 
-Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production fisik. Seluruh akses layer spasial (baik eksplorasi IGT maupun provisioning) dialihkan melalui endpoint proxy Backend.
+Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production fisik. Seluruh akses layer spasial dialihkan melalui endpoint proxy Backend.
+
+### Ada 2 Endpoint Proxy Utama (WFS & WMS)
+
+- `GET /api/proxy/geoserver/wms` (Stream Binary Tiles/Image)
+- `GET /api/proxy/geoserver/wfs` (Stream GeoJSON Features)
 
 ### Skema Akses & Autentikasi:
 
-1. **Internal & Web Client (Browser Session)**:
-   - Autentikasi dikelola penuh oleh Backend melalui **Session / JWT via `httpOnly` Cookie**.
-   - Frontend tidak perlu menyimpan/mengirim kredensial server ataupun `apiKey`.
-   - Frontend cukup mengirimkan parameter **`geoserverId`** (ID master geoserver yang terdaftar) dan **`typeName`** (atau `layers` pada WMS). Backend yang membaca kredensial dari database Master GeoServer dan menyuntikkan basic auth saat forward ke server fisik.
-2. **Mitra Service URL (Direct / Eksternal / QGIS)**:
-   - Khusus data/layer hasil provisioning yang sudah dibeli dan lunas oleh Mitra (`settled`), sistem menyediakan URL service berotentikasi **`apiKey`** (misal: `?apiKey=mtr_xyz...` atau header `X-API-Key`) untuk integrasi di luar browser (GIS desktop, script external).
+1. **Master IGT / Katalog Data IGT (Web Client & Internal)**:
+   - **Konteks**: Digunakan saat eksplorasi data katalog IGT di modul Mitra (_Data Request_) dan modul Internal (_Manajemen Data IGT_).
+   - **Mekanisme Auth**: Dikelola penuh oleh Backend melalui **Session / JWT via `httpOnly` Cookie**.
+   - **Parameter FE**: Frontend **tidak perlu** mengirim kredensial ataupun `apiKey`. Frontend cukup mengirimkan parameter **`geoserverId`** (ID master geoserver terdaftar) dan **`typeName`** (atau `layers` pada WMS).
+   - **Peran Backend**: Backend mencocokkan `geoserverId` ke tabel Master GeoServer, membaca kredensial terenkripsi di server, menyuntikkan basic auth secara internal, lalu meneruskan request ke GeoServer fisik.
+   - contoh url : https://domain-be/proxy/geoserver/wms?geoserverId=alskjdasldkjasldkj;typeName=kontoltempur
+
+2. **Mitra Service URL (Layer Hasil Pembelian / Provisioning)**:
+   - **Konteks**: Khusus data/layer hasil provisioning yang sudah dibeli dan berstatus lunas (`settled`) oleh Mitra.
+   - **Mekanisme Auth**: Menggunakan **`apiKey`** unik milik Mitra (misal: `?apiKey=mtr_live_xyz...` atau header `X-API-Key`).
+   - **Peruntukan**: Disediakan bagi Mitra untuk mengintegrasikan layer yang telah dibeli ke software GIS eksternal (seperti QGIS, ArcGIS, atau script automasi data) di luar aplikasi web browser Volatil.
+   - contoh url : https://domain-be/proxy/geoserver/wms?geoserverId=alskjdasldkjasldkj;typeName=kontoltempur;apiKey=mtr_live_xyz
+
+   Akses geoserver mitra hardcode by system, config di env aja, karna memang termasuk desain arsitektur system, ada 1 geoserver esential untuk mitra volatil
+
+   # GeoServer Mitra Volatil
+
+   VITE_GEOSERVER_MITRA_VOLATIL_URL=https://geoserver-volatil.exium.web.id/geoserver
+   VITE_GEOSERVER_MITRA_VOLATIL_CREDENTIAL_USERNAME=admin
+   VITE_GEOSERVER_MITRA_VOLATIL_CREDENTIAL_PASSWORD=geoserver
 
 ---
 
@@ -779,6 +798,41 @@ type CreateMasterIgtLayerPayload = {
 
 - **Endpoint**: `DELETE /api/internal/igt-layers/{id}`
 - **Response**: `200 OK` / `{ success: true }`
+
+### 9.5 Get GeoServer Workspaces (Dropdown Helper)
+
+Mengambil daftar workspace dari GeoServer yang dipilih untuk kebutuhan dropdown form registrasi layer IGT baru. List GeoServer itu sendiri diambil via `GET /api/internal/master-geoserver` (Modul 10.1).
+
+- **Endpoint**: `GET /api/internal/master-geoserver/{geoserverId}/workspaces`
+- **Response**:
+
+```typescript
+type GeoServerWorkspacesResponse = {
+  workspaces: string[]; // Contoh: ["testing_workspace", "volatil_staging", "atr_kawasan"]
+};
+```
+
+### 9.6 Get GeoServer Layers by Workspace (Dropdown Helper)
+
+Mengambil daftar layer/featuretype yang tersedia di dalam workspace yang dipilih beserta metadata spasialnya (bounding box, spatial basis) agar form registrasi layer IGT dapat terisi otomatis.
+
+- **Endpoint**: `GET /api/internal/master-geoserver/{geoserverId}/workspaces/{workspaceName}/layers`
+- **Response**:
+
+```typescript
+type GeoServerWorkspaceLayersResponse = {
+  layers: Array<{
+    name: string; // "TEST_BIDANG_TANAH"
+    title: string; // "Bidang Tanah UAT Badung"
+    typeName: string; // "testing_workspace:TEST_BIDANG_TANAH"
+    abstract?: string;
+    srs: string; // "EPSG:4326"
+    geometryType?: "Polygon" | "MultiPolygon" | "Point" | "LineString";
+    spatialBasis?: "bidang" | "kawasan"; // Auto-detected by Backend
+    bbox?: [number, number, number, number]; // [minX, minY, maxX, maxY]
+  }>;
+};
+```
 
 ---
 
