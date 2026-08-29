@@ -9,6 +9,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { useUserManagementStatsQuery } from "@/features/internal/user-management/hooks/use-user-management.query";
 import type {
   UserManagementStatsLegendProps,
@@ -36,13 +37,19 @@ const UserManagementStatsHeader = () => {
       gap={"md"}
       px={"md"}
     >
-      <VStack gap={1} align={"start"}>
+      <HStack gap={"xs"} align={"center"}>
         <Heading>{"Statistik Pengguna"}</Heading>
 
-        <P fontSize={"sm"} color={"fg.subtle"}>
+        <InfoTip
+          variant={"icon"}
+          appIconProps={{
+            size: "xs",
+            color: "fg.subtle",
+          }}
+        >
           {"Ringkasan status dan tipe peran pengguna sistem."}
-        </P>
-      </VStack>
+        </InfoTip>
+      </HStack>
     </HStack>
   );
 };
