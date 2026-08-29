@@ -32,7 +32,6 @@ export type AddToCartItemPayload = {
   /** MultiPolygon / Polygon coordinate geometry in EPSG:4326 lon/lat order */
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   cqlFilter?: string;
-  selectedFeatureIds?: string[];
 };
 
 export type AddToCartRequest = {
@@ -51,7 +50,6 @@ export type CartItemDto = {
   selectionType: SelectionType;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   cqlFilter?: string;
-  selectedFeatureIds?: string[];
   estimatedFeaturesCount: number;
   estimatedAreaHa?: number;
   unitPrice: number;

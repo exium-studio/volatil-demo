@@ -284,7 +284,6 @@ type AddToCartBatchRequest = {
     };
     aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
     cqlFilter?: string;
-    selectedFeatureIds?: string[];
   }>;
 };
 ```

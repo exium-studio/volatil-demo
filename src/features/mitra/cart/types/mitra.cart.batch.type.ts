@@ -58,7 +58,6 @@ export type CartBatchItemPayload = {
   };
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   cqlFilter?: string;
-  selectedFeatureIds?: string[];
 };
 
 export type AddToCartBatchRequest = {

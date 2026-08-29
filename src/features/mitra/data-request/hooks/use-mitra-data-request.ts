@@ -67,68 +67,6 @@ export const useFetchIgtByUploadedAoi = () => {
   });
 };
 
-/** Add selected WFS features to cart (by their IDs). Dynamic toast ID per item/row. */
-export const useAddToCartSelected = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (params: { layerId: string; featureIds: string[] }) => {
-      const payload: AddToCartBatchRequest = {
-        items: [
-          {
-            sourceLayerId: params.layerId,
-            selectionType: "catalog",
-            selectedFeatureIds: params.featureIds,
-          },
-        ],
-      };
-      return createCartBatch(payload);
-    },
-    onMutate: (params) => {
-      const itemKey =
-        params.featureIds.length === 1
-          ? params.featureIds[0]
-          : `batch-${Date.now()}`;
-      const toastId = `add-to-cart-${itemKey}`;
-
-      const title =
-        params.featureIds.length === 1
-          ? `Menambahkan item "${params.featureIds[0]}" ke keranjang...`
-          : `Menambahkan ${params.featureIds.length} item terpilih ke keranjang...`;
-
-      toast.loading(title, { id: toastId, group: "Keranjang" });
-      return { toastId, featureIds: params.featureIds };
-    },
-    onSuccess: (_, params, context) => {
-      const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
-
-      const title =
-        params.featureIds.length === 1
-          ? `Item "${params.featureIds[0]}" berhasil ditambahkan ke keranjang`
-          : `Berhasil menambahkan ${params.featureIds.length} item ke keranjang`;
-
-      toast.success(title, { id: toastId, group: "Keranjang" });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "batches"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.mitra.cart.all,
-      });
-    },
-    onError: (error, _params, context) => {
-      const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Gagal menambahkan ke keranjang";
-      toast.error(message, { id: toastId, group: "Keranjang" });
-    },
-  });
-};
-
 /**
  * Add ALL WFS features matching the given filter/AOI to cart.
  * Unique dynamic toast ID per layer typeName & action execution.
