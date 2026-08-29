@@ -88,30 +88,35 @@ const InternalDataManagementEditModalContent = (
     () => item.spatialBasis,
   );
   const [zIndex, setZIndex] = useState<number>(() => item.zIndex ?? 1);
-  const [wfsUrl, setWfsUrl] = useState<string>(() => item.wfs.wfsUrl);
-  const [wmsUrl, setWmsUrl] = useState<string>(() => item.wms.wmsUrl);
+  const [geoserverBaseUrl, setGeoserverBaseUrl] = useState<string>(
+    () => item.geoserverBaseUrl ?? "",
+  );
+  const [typeName, setTypeName] = useState<string>(
+    () => item.typeName ?? item.id ?? "",
+  );
   const [isActive, setIsActive] = useState<boolean>(() => item.isActive);
 
   // Mutations
   const updateMutation = useUpdateMasterIgtLayer();
 
   const handleSubmit = () => {
+    if (!title.trim() || !geoserverBaseUrl.trim() || !typeName.trim()) return;
+
+    const wfsUrl = `${geoserverBaseUrl.trim()}/ows`;
+    const wmsUrl = `${geoserverBaseUrl.trim()}/wms`;
+
     updateMutation.mutate(
       {
         id: item.id,
-        title,
-        description,
+        title: title.trim(),
+        description: description.trim(),
         spatialBasis,
         zIndex,
         isActive,
-        wfs: {
-          wfsUrl,
-          wfsTypeName: item.wfs.wfsTypeName,
-        },
-        wms: {
-          wmsUrl,
-          layers: item.wms.layers,
-        },
+        geoserverBaseUrl: geoserverBaseUrl.trim(),
+        typeName: typeName.trim(),
+        wfsUrl,
+        wmsUrl,
       },
       {
         onSuccess: () => {
@@ -126,12 +131,7 @@ const InternalDataManagementEditModalContent = (
       <Modal.Header>
         <Modal.CloseButton />
 
-        <VStack gap={"2xs"}>
-          <Modal.Title>{"Ubah Konfigurasi Layer IGT"}</Modal.Title>
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
-            {item.id}
-          </P>
-        </VStack>
+        <Modal.Title>{"Ubah Konfigurasi Layer IGT"}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -254,28 +254,57 @@ const InternalDataManagementEditModalContent = (
             </VStack>
           </Fieldset>
 
-          {/* Grup 3: Endpoint Layanan OGC */}
-          <Fieldset legend={"Endpoint Layanan OGC"} containeredContent>
+          {/* Grup 3: Konfigurasi GeoServer */}
+          <Fieldset legend={"Konfigurasi GeoServer"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
-              {/* Input WFS Endpoint */}
-              <Field label={"WFS Endpoint URL"}>
-                <Textarea
-                  rows={2}
-                  value={wfsUrl}
-                  onChange={(e) => setWfsUrl(e.target.value)}
-                  placeholder={"https://.../geoserver/.../ows"}
+              {/* GeoServer Base URL */}
+              <Field
+                label={"GeoServer Base URL"}
+                helperText={
+                  "Contoh: https://igtpr.atrbpn.go.id/geoserver/testing_workspace"
+                }
+              >
+                <Input
+                  value={geoserverBaseUrl}
+                  onChange={(e) => setGeoserverBaseUrl(e.target.value)}
+                  placeholder={"https://.../geoserver/workspace"}
+                  fontFamily={"mono"}
                 />
               </Field>
 
-              {/* Input WMS Endpoint */}
-              <Field label={"WMS Endpoint URL"}>
-                <Textarea
-                  rows={2}
-                  value={wmsUrl}
-                  onChange={(e) => setWmsUrl(e.target.value)}
-                  placeholder={"https://.../geoserver/.../wms"}
+              {/* Typename */}
+              <Field
+                label={"Typename"}
+                helperText={
+                  "Format: workspace:layerName — contoh: testing_workspace:TEST_BIDANG_TANAH"
+                }
+              >
+                <Input
+                  value={typeName}
+                  onChange={(e) => setTypeName(e.target.value)}
+                  placeholder={"workspace:layerName"}
+                  fontFamily={"mono"}
                 />
               </Field>
+
+              {/* Generated URLs — readonly, for reference */}
+              <VStack align={"stretch"} gap={"xs"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"WFS URL"}
+                </P>
+                <P fontSize={"xs"} fontFamily={"mono"} color={"fg.muted"}>
+                  {item.wfsUrl}
+                </P>
+              </VStack>
+
+              <VStack align={"stretch"} gap={"xs"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"WMS URL"}
+                </P>
+                <P fontSize={"xs"} fontFamily={"mono"} color={"fg.muted"}>
+                  {item.wmsUrl}
+                </P>
+              </VStack>
             </VStack>
           </Fieldset>
         </VStack>
@@ -286,6 +315,9 @@ const InternalDataManagementEditModalContent = (
           <Button
             primary
             loading={updateMutation.isPending}
+            disabled={
+              !title.trim() || !geoserverBaseUrl.trim() || !typeName.trim()
+            }
             onClick={handleSubmit}
           >
             {"Simpan"}

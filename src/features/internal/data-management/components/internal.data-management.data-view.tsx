@@ -122,7 +122,7 @@ export const InternalDataManagementDataView = () => {
             align: "center" as const,
           },
           {
-            value: item.wfs.wfsTypeName || item.id,
+            value: item.typeName || item.id,
             td: (
               <P
                 fontSize={"xs"}
@@ -130,7 +130,7 @@ export const InternalDataManagementDataView = () => {
                 fontFamily={"mono"}
                 whiteSpace={"nowrap"}
               >
-                {item.wfs.wfsTypeName || item.id}
+                {item.typeName || item.id}
               </P>
             ),
             align: "start" as const,
@@ -145,23 +145,23 @@ export const InternalDataManagementDataView = () => {
             td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
           },
           {
-            value: item.wfs.wfsUrl,
+            value: item.wfsUrl,
             td: (
               <HStack gap={"xs"} align={"center"} maxW={"260px"}>
                 <ExternalLink
-                  href={item.wfs.wfsUrl}
+                  href={item.wfsUrl}
                   display={"inline-flex"}
                   alignItems={"center"}
                   minW={0}
                   flex={1}
                 >
                   <ClampedP fontSize={"sm"} truncate>
-                    {item.wfs.wfsUrl}
+                    {item.wfsUrl}
                   </ClampedP>
                 </ExternalLink>
 
                 <ClipboardButton
-                  value={item.wfs.wfsUrl}
+                  value={item.wfsUrl}
                   variant={"ghost"}
                   aria-label={"Salin URL WFS"}
                   flexShrink={0}
@@ -171,23 +171,23 @@ export const InternalDataManagementDataView = () => {
             align: "start" as const,
           },
           {
-            value: item.wms.wmsUrl,
+            value: item.wmsUrl,
             td: (
               <HStack gap={"xs"} align={"center"} maxW={"260px"}>
                 <ExternalLink
-                  href={item.wms.wmsUrl}
+                  href={item.wmsUrl}
                   display={"inline-flex"}
                   alignItems={"center"}
                   minW={0}
                   flex={1}
                 >
                   <ClampedP fontSize={"sm"} truncate>
-                    {item.wms.wmsUrl}
+                    {item.wmsUrl}
                   </ClampedP>
                 </ExternalLink>
 
                 <ClipboardButton
-                  value={item.wms.wmsUrl}
+                  value={item.wmsUrl}
                   variant={"ghost"}
                   aria-label={"Salin URL WMS"}
                   flexShrink={0}
@@ -316,7 +316,7 @@ export const InternalDataManagementDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
-          {isLoading && <Skeleton p={"md"} rounded={0} h={"320px"} />}
+          {isLoading && <Skeleton p={"md"} rounded={0} />}
 
           {!isLoading && (
             <>

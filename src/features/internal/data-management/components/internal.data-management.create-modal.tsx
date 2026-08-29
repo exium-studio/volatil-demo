@@ -66,17 +66,20 @@ const InternalDataManagementCreateModalContent = (
   const [description, setDescription] = useState<string>("");
   const [spatialBasis, setSpatialBasis] = useState<SpatialBasisType>("kawasan");
   const [zIndex, setZIndex] = useState<number>(1);
-  const [wfsUrl, setWfsUrl] = useState<string>("");
-  const [wmsUrl, setWmsUrl] = useState<string>("");
+  const [geoserverBaseUrl, setGeoserverBaseUrl] = useState<string>("");
+  const [typeName, setTypeName] = useState<string>("");
   const [isActive, setIsActive] = useState<boolean>(true);
 
   // Mutations
   const createMutation = useCreateMasterIgtLayer();
 
   const handleSubmit = () => {
-    if (!title.trim()) return;
+    if (!title.trim() || !geoserverBaseUrl.trim() || !typeName.trim()) return;
 
-    const layerId = id.trim() || `layer_${Date.now()}`;
+    const layerId = id.trim() || typeName.trim() || `layer_${Date.now()}`;
+    const wfsUrl = `${geoserverBaseUrl.trim()}/ows`;
+    const wmsUrl = `${geoserverBaseUrl.trim()}/wms`;
+
     createMutation.mutate(
       {
         id: layerId,
@@ -86,14 +89,10 @@ const InternalDataManagementCreateModalContent = (
         zIndex,
         isActive,
         bbox: [115.083839, -8.850039, 115.251389, -8.239441],
-        wfs: {
-          wfsUrl: wfsUrl.trim(),
-          wfsTypeName: layerId,
-        },
-        wms: {
-          wmsUrl: wmsUrl.trim(),
-          layers: layerId,
-        },
+        geoserverBaseUrl: geoserverBaseUrl.trim(),
+        typeName: typeName.trim(),
+        wfsUrl,
+        wmsUrl,
       },
       {
         onSuccess: () => {
@@ -253,26 +252,36 @@ const InternalDataManagementCreateModalContent = (
             </VStack>
           </Fieldset>
 
-          {/* Grup 3: Endpoint Layanan OGC */}
-          <Fieldset legend={"Endpoint Layanan OGC"} containeredContent>
+          {/* Grup 3: Konfigurasi GeoServer */}
+          <Fieldset legend={"Konfigurasi GeoServer"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
-              {/* Input WFS Endpoint */}
-              <Field label={"WFS Endpoint URL"}>
-                <Textarea
-                  rows={2}
-                  value={wfsUrl}
-                  onChange={(e) => setWfsUrl(e.target.value)}
-                  placeholder={"https://.../geoserver/.../ows"}
+              {/* GeoServer Base URL */}
+              <Field
+                label={"GeoServer Base URL"}
+                helperText={
+                  "Contoh: https://igtpr.atrbpn.go.id/geoserver/testing_workspace"
+                }
+              >
+                <Input
+                  value={geoserverBaseUrl}
+                  onChange={(e) => setGeoserverBaseUrl(e.target.value)}
+                  placeholder={"https://.../geoserver/workspace"}
+                  fontFamily={"mono"}
                 />
               </Field>
 
-              {/* Input WMS Endpoint */}
-              <Field label={"WMS Endpoint URL"}>
-                <Textarea
-                  rows={2}
-                  value={wmsUrl}
-                  onChange={(e) => setWmsUrl(e.target.value)}
-                  placeholder={"https://.../geoserver/.../wms"}
+              {/* Typename */}
+              <Field
+                label={"Typename"}
+                helperText={
+                  "Format: workspace:layerName — contoh: testing_workspace:TEST_BIDANG_TANAH"
+                }
+              >
+                <Input
+                  value={typeName}
+                  onChange={(e) => setTypeName(e.target.value)}
+                  placeholder={"workspace:layerName"}
+                  fontFamily={"mono"}
                 />
               </Field>
             </VStack>
@@ -285,7 +294,9 @@ const InternalDataManagementCreateModalContent = (
           <Button
             primary
             loading={createMutation.isPending}
-            disabled={!title.trim()}
+            disabled={
+              !title.trim() || !geoserverBaseUrl.trim() || !typeName.trim()
+            }
             onClick={handleSubmit}
           >
             {"Tambah Layer"}
