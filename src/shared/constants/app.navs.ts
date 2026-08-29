@@ -9,6 +9,7 @@ import {
   HistoryIcon,
   HouseIcon,
   ReceiptTextIcon,
+  ServerIcon,
   SquarePen,
   UsersIcon,
 } from "lucide-react";
@@ -62,6 +63,11 @@ export const INTERNAL_APP_NAVS_MAP = {
     icon: UsersIcon,
     titleKey: "app.admin_navs.user_management",
     pathname: "/internal/user-management",
+  },
+  master_geoserver: {
+    icon: ServerIcon,
+    titleKey: "app.admin_navs.master_geoserver",
+    pathname: "/internal/master-geoserver",
   },
   data_management: {
     icon: DatabaseIcon,

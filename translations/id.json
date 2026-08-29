@@ -17,6 +17,7 @@
     "admin_navs": {
       "home": "Home",
       "user_management": "Manajemen Pengguna",
+      "master_geoserver": "Master Geoserver",
       "data_management": "Manajemen Data",
       "order_statistic": "Statistik Pesanan",
       "help": "Tiket Laporan",

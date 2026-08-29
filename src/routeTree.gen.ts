@@ -24,6 +24,7 @@ import { Route as PrivateInternalWelcomeRouteImport } from './routes/_private/in
 import { Route as PrivateInternalUserManagementRouteImport } from './routes/_private/internal/user-management'
 import { Route as PrivateInternalOrderStatisticRouteImport } from './routes/_private/internal/order-statistic'
 import { Route as PrivateInternalNotificationRouteImport } from './routes/_private/internal/notification'
+import { Route as PrivateInternalMasterGeoserverRouteImport } from './routes/_private/internal/master-geoserver'
 import { Route as PrivateInternalHomeRouteImport } from './routes/_private/internal/home'
 import { Route as PrivateInternalHelpCenterRouteImport } from './routes/_private/internal/help-center'
 import { Route as PrivateInternalDataManagementRouteImport } from './routes/_private/internal/data-management'
@@ -110,6 +111,12 @@ const PrivateInternalNotificationRoute =
     path: '/internal/notification',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
+const PrivateInternalMasterGeoserverRoute =
+  PrivateInternalMasterGeoserverRouteImport.update({
+    id: '/internal/master-geoserver',
+    path: '/internal/master-geoserver',
+    getParentRoute: () => PrivateRouteRoute,
+  } as any)
 const PrivateInternalHomeRoute = PrivateInternalHomeRouteImport.update({
   id: '/internal/home',
   path: '/internal/home',
@@ -153,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/internal/home': typeof PrivateInternalHomeRoute
+  '/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
   '/internal/notification': typeof PrivateInternalNotificationRoute
   '/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
   '/internal/user-management': typeof PrivateInternalUserManagementRoute
@@ -175,6 +183,7 @@ export interface FileRoutesByTo {
   '/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/internal/home': typeof PrivateInternalHomeRoute
+  '/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
   '/internal/notification': typeof PrivateInternalNotificationRoute
   '/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
   '/internal/user-management': typeof PrivateInternalUserManagementRoute
@@ -199,6 +208,7 @@ export interface FileRoutesById {
   '/_private/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/_private/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/_private/internal/home': typeof PrivateInternalHomeRoute
+  '/_private/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
   '/_private/internal/notification': typeof PrivateInternalNotificationRoute
   '/_private/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
   '/_private/internal/user-management': typeof PrivateInternalUserManagementRoute
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/internal/data-management'
     | '/internal/help-center'
     | '/internal/home'
+    | '/internal/master-geoserver'
     | '/internal/notification'
     | '/internal/order-statistic'
     | '/internal/user-management'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/internal/data-management'
     | '/internal/help-center'
     | '/internal/home'
+    | '/internal/master-geoserver'
     | '/internal/notification'
     | '/internal/order-statistic'
     | '/internal/user-management'
@@ -268,6 +280,7 @@ export interface FileRouteTypes {
     | '/_private/internal/data-management'
     | '/_private/internal/help-center'
     | '/_private/internal/home'
+    | '/_private/internal/master-geoserver'
     | '/_private/internal/notification'
     | '/_private/internal/order-statistic'
     | '/_private/internal/user-management'
@@ -398,6 +411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInternalNotificationRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/internal/master-geoserver': {
+      id: '/_private/internal/master-geoserver'
+      path: '/internal/master-geoserver'
+      fullPath: '/internal/master-geoserver'
+      preLoaderRoute: typeof PrivateInternalMasterGeoserverRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
     '/_private/internal/home': {
       id: '/_private/internal/home'
       path: '/internal/home'
@@ -447,6 +467,7 @@ interface PrivateRouteRouteChildren {
   PrivateInternalDataManagementRoute: typeof PrivateInternalDataManagementRoute
   PrivateInternalHelpCenterRoute: typeof PrivateInternalHelpCenterRoute
   PrivateInternalHomeRoute: typeof PrivateInternalHomeRoute
+  PrivateInternalMasterGeoserverRoute: typeof PrivateInternalMasterGeoserverRoute
   PrivateInternalNotificationRoute: typeof PrivateInternalNotificationRoute
   PrivateInternalOrderStatisticRoute: typeof PrivateInternalOrderStatisticRoute
   PrivateInternalUserManagementRoute: typeof PrivateInternalUserManagementRoute
@@ -467,6 +488,7 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateInternalDataManagementRoute: PrivateInternalDataManagementRoute,
   PrivateInternalHelpCenterRoute: PrivateInternalHelpCenterRoute,
   PrivateInternalHomeRoute: PrivateInternalHomeRoute,
+  PrivateInternalMasterGeoserverRoute: PrivateInternalMasterGeoserverRoute,
   PrivateInternalNotificationRoute: PrivateInternalNotificationRoute,
   PrivateInternalOrderStatisticRoute: PrivateInternalOrderStatisticRoute,
   PrivateInternalUserManagementRoute: PrivateInternalUserManagementRoute,

@@ -92,6 +92,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             ref={mergeRefs(ref, inputRef)}
             type={visible ? "text" : "password"}
             onChange={handleChange}
+            placeholder={"••••••••"}
           />
         </InputGroup>
 

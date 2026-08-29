@@ -87,7 +87,7 @@ export const MitraSignin = (props: StackProps) => {
           invalid={Boolean(errors.password)}
           errorText={errors.password?.message}
         >
-          <PasswordInput placeholder={"••••••••"} {...register("password")} />
+          <PasswordInput {...register("password")} />
         </Field>
 
         <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink>
@@ -174,7 +174,7 @@ export const InternalSignin = (props: StackProps) => {
           invalid={Boolean(errors.password)}
           errorText={errors.password?.message}
         >
-          <PasswordInput placeholder={"••••••••"} {...register("password")} />
+          <PasswordInput {...register("password")} />
         </Field>
 
         <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink>

@@ -259,7 +259,7 @@ const InternalDataManagementCreateModalContent = (
               <Field
                 label={"GeoServer Base URL"}
                 helperText={
-                  "Contoh: https://igtpr.atrbpn.go.id/geoserver/testing_workspace"
+                  "https://igtpr.atrbpn.go.id/geoserver/testing_workspace"
                 }
               >
                 <Input
@@ -273,7 +273,7 @@ const InternalDataManagementCreateModalContent = (
               <Field
                 label={"Typename"}
                 helperText={
-                  "Format: workspace:layerName — contoh: testing_workspace:TEST_BIDANG_TANAH"
+                  "Format: workspace:layerName (testing_workspace:TEST_BIDANG_TANAH)"
                 }
               >
                 <Input

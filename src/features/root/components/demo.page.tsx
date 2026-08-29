@@ -603,11 +603,7 @@ export const Inputs = () => {
             </FieldTemplate>
 
             <FieldTemplate invalid={invalid}>
-              <PasswordInput
-                placeholder={"Password input..."}
-                w={"200px"}
-                withPasswordStrength
-              />
+              <PasswordInput w={"200px"} withPasswordStrength />
             </FieldTemplate>
 
             <FieldTemplate invalid={invalid}>

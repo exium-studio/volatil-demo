@@ -17,6 +17,7 @@
     "admin_navs": {
       "home": "Home",
       "user_management": "User Management",
+      "master_geoserver": "Master Geoserver",
       "data_management": "Data Management",
       "order_statistic": "Order Statistic",
       "help": "Support Tickets",

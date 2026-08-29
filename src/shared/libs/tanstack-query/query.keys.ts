@@ -83,6 +83,13 @@ export const queryKeys = {
       layers: (params?: Record<string, unknown>) =>
         [...queryKeys.internal.dataManagement.all, "layers", params] as const,
     },
+    masterGeoserver: {
+      all: ["internal", "master-geoserver"] as const,
+      list: (params?: Record<string, unknown>) =>
+        [...queryKeys.internal.masterGeoserver.all, "list", params] as const,
+      detail: (id: string) =>
+        [...queryKeys.internal.masterGeoserver.all, "detail", id] as const,
+    },
   },
   map: {
     all: ["map"] as const,
