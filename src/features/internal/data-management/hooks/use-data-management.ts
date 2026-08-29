@@ -1,11 +1,13 @@
 // src/features/internal/data-management/hooks/use-data-management.ts
 
 import {
-  createMasterIgtLayerApi,
-  deleteMasterIgtLayerApi,
-  fetchMasterIgtLayersApi,
-  updateMasterIgtLayerApi,
-} from "@/features/internal/data-management/api/data-management.api";
+  createMasterIgtLayer,
+  deleteMasterIgtLayer,
+  getGeoServerWorkspaceLayers,
+  getGeoServerWorkspaces,
+  getMasterIgtLayers,
+  updateMasterIgtLayer,
+} from "@/features/internal/data-management/services/data-management.service";
 import type {
   CreateMasterIgtLayerPayload,
   MasterIgtLayersQueryParams,
@@ -20,13 +22,48 @@ export const useMasterIgtLayersQuery = (params?: MasterIgtLayersQueryParams) => 
     queryKey: queryKeys.internal.dataManagement.layers(
       params as Record<string, unknown>,
     ),
-    queryFn: ({ signal }) => fetchMasterIgtLayersApi(params, signal),
+    queryFn: ({ signal }) => getMasterIgtLayers(params, signal),
   });
 
   return {
     ...query,
     items: query.data?.items ?? [],
     pagination: query.data?.pagination,
+  };
+};
+
+export const useGeoServerWorkspacesQuery = (geoserverId?: string) => {
+  const query = useQuery({
+    queryKey: queryKeys.internal.dataManagement.workspaces(geoserverId || ""),
+    queryFn: ({ signal }) => getGeoServerWorkspaces(geoserverId || "", signal),
+    enabled: Boolean(geoserverId),
+    staleTime: 60 * 1000,
+  });
+
+  return {
+    ...query,
+    workspaces: query.data?.workspaces ?? [],
+  };
+};
+
+export const useGeoServerWorkspaceLayersQuery = (
+  geoserverId?: string,
+  workspaceName?: string,
+) => {
+  const query = useQuery({
+    queryKey: queryKeys.internal.dataManagement.workspaceLayers(
+      geoserverId || "",
+      workspaceName || "",
+    ),
+    queryFn: ({ signal }) =>
+      getGeoServerWorkspaceLayers(geoserverId || "", workspaceName || "", signal),
+    enabled: Boolean(geoserverId && workspaceName),
+    staleTime: 60 * 1000,
+  });
+
+  return {
+    ...query,
+    layers: query.data?.layers ?? [],
   };
 };
 
@@ -47,7 +84,7 @@ export const useUpdateMasterIgtLayer = () => {
 
   return useMutation({
     mutationFn: (payload: UpdateMasterIgtLayerPayload) =>
-      updateMasterIgtLayerApi(payload),
+      updateMasterIgtLayer(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
@@ -79,7 +116,7 @@ export const useCreateMasterIgtLayer = () => {
 
   return useMutation({
     mutationFn: (payload: CreateMasterIgtLayerPayload) =>
-      createMasterIgtLayerApi(payload),
+      createMasterIgtLayer(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
@@ -110,7 +147,7 @@ export const useDeleteMasterIgtLayer = () => {
   });
 
   return useMutation({
-    mutationFn: (id: string) => deleteMasterIgtLayerApi(id),
+    mutationFn: (id: string) => deleteMasterIgtLayer(id),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();

@@ -13,11 +13,16 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
+import { GeoserverCascadeSelect } from "@/features/internal/data-management/components/geoserver-cascade-select";
 import { useCreateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
-import type { SpatialBasisType } from "@/features/internal/data-management/types/data-management.type";
+import type {
+  GeoServerWorkspaceLayerOption,
+  SpatialBasisType,
+} from "@/features/internal/data-management/types/data-management.type";
+import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { t } from "@/shared/libs/i18n";
 import { Layers2Icon, TreesIcon } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
 export type InternalDataManagementCreateTriggerProps = {
   modalKey?: string;
@@ -35,30 +40,33 @@ export const InternalDataManagementCreateTrigger = (
   });
 
   return (
-    <>
-      <Modal.Root
-        modalKey={modalKey}
-        opened={isOpen}
-        open={open}
-        close={close}
-        size={"md"}
-      >
-        <Modal.Trigger>{children}</Modal.Trigger>
+    <Modal.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      size={"md"}
+    >
+      <Modal.Trigger>{children}</Modal.Trigger>
 
-        <InternalDataManagementCreateModalContent close={close} />
-      </Modal.Root>
-    </>
+      <InternalDataManagementCreateModalContent
+        modalKey={modalKey}
+        close={close}
+      />
+    </Modal.Root>
   );
 };
 
 type InternalDataManagementCreateModalContentProps = {
+  modalKey: string;
   close: () => void;
 };
 
 const InternalDataManagementCreateModalContent = (
   props: InternalDataManagementCreateModalContentProps,
 ) => {
-  const { close } = props;
+  // Props
+  const { modalKey, close } = props;
 
   // States
   const [id, setId] = useState<string>("");
@@ -66,19 +74,56 @@ const InternalDataManagementCreateModalContent = (
   const [description, setDescription] = useState<string>("");
   const [spatialBasis, setSpatialBasis] = useState<SpatialBasisType>("kawasan");
   const [zIndex, setZIndex] = useState<number>(1);
-  const [geoserverBaseUrl, setGeoserverBaseUrl] = useState<string>("");
-  const [typeName, setTypeName] = useState<string>("");
+  const [selectedGeoserverId, setSelectedGeoserverId] = useState<string>("");
+  const [selectedWorkspace, setSelectedWorkspace] = useState<string>("");
+  const [selectedTypeName, setSelectedTypeName] = useState<string>("");
+  const [bbox, setBbox] = useState<[number, number, number, number]>([
+    115.083839, -8.850039, 115.251389, -8.239441,
+  ]);
   const [isActive, setIsActive] = useState<boolean>(true);
 
-  // Mutations
+  // Hooks
+  const { items: geoserverList } = useMasterGeoserverQuery();
   const createMutation = useCreateMasterIgtLayer();
 
-  const handleSubmit = () => {
-    if (!title.trim() || !geoserverBaseUrl.trim() || !typeName.trim()) return;
+  // Derived Values
+  const selectedGeoserver = useMemo(
+    () => geoserverList.find((g) => g.id === selectedGeoserverId),
+    [geoserverList, selectedGeoserverId],
+  );
 
-    const layerId = id.trim() || typeName.trim() || `layer_${Date.now()}`;
-    const wfsUrl = `${geoserverBaseUrl.trim()}/ows`;
-    const wmsUrl = `${geoserverBaseUrl.trim()}/wms`;
+  const handleLayerChange = (
+    typeName: string,
+    layerDetail?: GeoServerWorkspaceLayerOption,
+  ) => {
+    setSelectedTypeName(typeName);
+    if (layerDetail) {
+      if (!title) {
+        setTitle(layerDetail.title || layerDetail.name);
+      }
+      if (!description && layerDetail.abstract) {
+        setDescription(layerDetail.abstract);
+      }
+      if (layerDetail.spatialBasis) {
+        setSpatialBasis(layerDetail.spatialBasis);
+      }
+      if (layerDetail.bbox) {
+        setBbox(layerDetail.bbox);
+      }
+      if (!id) {
+        setId(layerDetail.typeName);
+      }
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!title.trim() || !selectedGeoserver || !selectedTypeName.trim()) return;
+
+    const layerId =
+      id.trim() || selectedTypeName.trim() || `layer_${Date.now()}`;
+    const baseUrl = selectedGeoserver.baseUrl;
+    const wfsUrl = `${baseUrl}/ows`;
+    const wmsUrl = `${baseUrl}/wms`;
 
     createMutation.mutate(
       {
@@ -88,9 +133,10 @@ const InternalDataManagementCreateModalContent = (
         spatialBasis,
         zIndex,
         isActive,
-        bbox: [115.083839, -8.850039, 115.251389, -8.239441],
-        geoserverBaseUrl: geoserverBaseUrl.trim(),
-        typeName: typeName.trim(),
+        bbox,
+        geoserverId: selectedGeoserver.id,
+        geoserverBaseUrl: baseUrl,
+        typeName: selectedTypeName.trim(),
         wfsUrl,
         wmsUrl,
       },
@@ -101,6 +147,10 @@ const InternalDataManagementCreateModalContent = (
       },
     );
   };
+
+  const isFormValid = Boolean(
+    title.trim() && selectedGeoserverId && selectedTypeName.trim(),
+  );
 
   return (
     <Modal.Content>
@@ -119,14 +169,14 @@ const InternalDataManagementCreateModalContent = (
 
       <Modal.Body>
         <VStack align={"stretch"} gap={"xl"}>
-          {/* Grup 1: Informasi Dasar */}
+          {/* Grup 1: Informasi Dasar Layer */}
           <Fieldset legend={"Informasi Dasar"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
-              {/* Input ID / Workspace Layer */}
+              {/* Input ID / Identifier Layer */}
               <Field
                 label={"ID / Identifier Layer"}
                 helperText={
-                  ": testing_workspace:TEST_RTRW_BADUNG (opsional, otomatis dibuat jika kosong)"
+                  "testing_workspace:TEST_RTRW_BADUNG (opsional, otomatis dari layer)"
                 }
                 optional
               >
@@ -183,7 +233,20 @@ const InternalDataManagementCreateModalContent = (
             </VStack>
           </Fieldset>
 
-          {/* Grup 2: Konfigurasi Spasial */}
+          {/* Grup 2: Sumber GeoServer & Layer (Dedicated Component) */}
+          <Fieldset legend={"Konfigurasi GeoServer & Layer"} containeredContent>
+            <GeoserverCascadeSelect
+              parentModalKey={modalKey}
+              selectedGeoserverId={selectedGeoserverId}
+              onGeoserverChange={setSelectedGeoserverId}
+              selectedWorkspace={selectedWorkspace}
+              onWorkspaceChange={setSelectedWorkspace}
+              selectedTypeName={selectedTypeName}
+              onLayerChange={handleLayerChange}
+            />
+          </Fieldset>
+
+          {/* Grup 3: Konfigurasi Spasial */}
           <Fieldset legend={"Konfigurasi Spasial"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
               {/* Select Basis IGT via RadioCardInput */}
@@ -251,39 +314,6 @@ const InternalDataManagementCreateModalContent = (
               </Field>
             </VStack>
           </Fieldset>
-
-          {/* Grup 3: Konfigurasi GeoServer */}
-          <Fieldset legend={"Konfigurasi GeoServer"} containeredContent>
-            <VStack align={"stretch"} gap={"md"}>
-              {/* GeoServer Base URL */}
-              <Field
-                label={"GeoServer Base URL"}
-                helperText={
-                  "https://igtpr.atrbpn.go.id/geoserver/testing_workspace"
-                }
-              >
-                <Input
-                  value={geoserverBaseUrl}
-                  onChange={(e) => setGeoserverBaseUrl(e.target.value)}
-                  placeholder={"https://.../geoserver/workspace"}
-                />
-              </Field>
-
-              {/* Typename */}
-              <Field
-                label={"Typename"}
-                helperText={
-                  "Format: workspace:layerName (testing_workspace:TEST_BIDANG_TANAH)"
-                }
-              >
-                <Input
-                  value={typeName}
-                  onChange={(e) => setTypeName(e.target.value)}
-                  placeholder={"workspace:layerName"}
-                />
-              </Field>
-            </VStack>
-          </Fieldset>
         </VStack>
       </Modal.Body>
 
@@ -292,9 +322,7 @@ const InternalDataManagementCreateModalContent = (
           <Button
             primary
             loading={createMutation.isPending}
-            disabled={
-              !title.trim() || !geoserverBaseUrl.trim() || !typeName.trim()
-            }
+            disabled={!isFormValid || createMutation.isPending}
             onClick={handleSubmit}
           >
             {"Tambah Layer"}

@@ -205,7 +205,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         <Modal.Header>
           <Modal.Title fontWeight={"semibold"}>
             {label
-              ? `${t["action.select"]()} ${label}`
+              ? label
+                  .toLowerCase()
+                  .startsWith(t["action.select"]().toLowerCase())
+                ? label
+                : `${t["action.select"]()} ${label}`
               : t["common.select_option"]()}
           </Modal.Title>
 
@@ -264,12 +268,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           )}
 
           {/* Clean options list container */}
-          <VScrollContainer
-            w={"full"}
-            maxH={"300px"}
-            px={"md"}
-            pb={"md"}
-          >
+          <VScrollContainer w={"full"} maxH={"300px"} px={"md"} pb={"md"}>
             {isFetching ? (
               <VStack gap={"sm"} w={"full"}>
                 {Array.from({ length: SKELETON_LIST_COUNT }).map((_, index) => (

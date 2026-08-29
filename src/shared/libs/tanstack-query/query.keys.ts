@@ -82,6 +82,19 @@ export const queryKeys = {
       all: ["internal", "data-management"] as const,
       layers: (params?: Record<string, unknown>) =>
         [...queryKeys.internal.dataManagement.all, "layers", params] as const,
+      workspaces: (geoserverId: string) =>
+        [
+          ...queryKeys.internal.dataManagement.all,
+          "workspaces",
+          geoserverId,
+        ] as const,
+      workspaceLayers: (geoserverId: string, workspaceName: string) =>
+        [
+          ...queryKeys.internal.dataManagement.all,
+          "workspace-layers",
+          geoserverId,
+          workspaceName,
+        ] as const,
     },
     masterGeoserver: {
       all: ["internal", "master-geoserver"] as const,
