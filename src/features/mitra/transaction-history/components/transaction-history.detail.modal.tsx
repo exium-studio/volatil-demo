@@ -8,7 +8,6 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -163,8 +162,6 @@ export const TransactionDetailModalContent = (
         </VStack>
       </Modal.Header>
 
-      <Separator borderColor={"bg.canvas"} />
-
       <Modal.Body p={0}>
         <VStack gap={"md"}>
           {/* Transaction Status Summary Box */}
@@ -223,13 +220,13 @@ export const TransactionDetailModalContent = (
           </Skeleton>
 
           {/* Transaction Metadata Grid */}
-          <Skeleton loaded={isMounted}>
+          <Skeleton loaded={isMounted} px={"md"}>
             <VStack
               align={"stretch"}
               gap={"xs"}
-              px={"md"}
               bg={"bg.body"}
               rounded={"md"}
+              px={"md"}
             >
               <HStack
                 align={"center"}
@@ -249,7 +246,7 @@ export const TransactionDetailModalContent = (
               >
                 <P color={"fg.subtle"}>{"Kode Billing (MPN)"}</P>
 
-                <HStack gap={1} align={"center"} mr={"-2px"}>
+                <HStack gap={1} align={"center"} mr={"-4px"}>
                   <P fontWeight={"medium"}>
                     <TNum>{transaction.billingCode}</TNum>
                   </P>
@@ -294,7 +291,7 @@ export const TransactionDetailModalContent = (
           </Skeleton>
 
           {/* Order Items Table */}
-          <Skeleton loaded={isMounted}>
+          <Skeleton loaded={isMounted} px={"md"} pb={"md"}>
             <VStack align={"stretch"} gap={"xs"} pt={"md"}>
               <Box px={"md"}>
                 <P fontSize={"sm"} fontWeight={"semibold"}>
