@@ -46,7 +46,7 @@ export const ChartTooltipContent = (props: ChartTooltipContentProps) => {
       p={"sm"}
       rounded={theme.radii.component}
       bg={"bg.body"}
-      shadow={"sm"}
+      shadow={"md"}
       zIndex={2}
     >
       {label && (
