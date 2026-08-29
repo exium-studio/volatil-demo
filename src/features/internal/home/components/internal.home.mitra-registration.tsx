@@ -1,5 +1,9 @@
 // src/features/internal/home/components/internal.home.mitra-registration.tsx
 
+import {
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/design-system/components/charts/ui/chart-tooltip";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -11,7 +15,7 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { useInternalMitraRegistrationQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomeMitraRegistrationProps } from "@/features/internal/home/types/internal.home.mitra-registration.type";
 import { Chart, useChart } from "@chakra-ui/charts";
-import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 export const InternalHomeMitraRegistration = (
   props: InternalHomeMitraRegistrationProps,
@@ -22,18 +26,18 @@ export const InternalHomeMitraRegistration = (
     {
       status: "Mitra Aktif",
       count: mitraRegistration.active,
+      color: "teal.solid",
     },
     {
       status: "Pending Verifikasi",
       count: mitraRegistration.pendingVerification,
+      color: "orange.solid",
     },
   ];
 
   const chart = useChart({
     data: chartData,
-    series: [
-      { name: "count", label: "Jumlah", color: "teal.solid" },
-    ],
+    series: [{ name: "count", label: "Jumlah", color: "teal.solid" }],
   });
 
   return (
@@ -78,18 +82,17 @@ export const InternalHomeMitraRegistration = (
                 tickMargin={10}
                 allowDecimals={false}
               />
-              <Tooltip
-                cursor={{ fill: chart.color("bg.muted") }}
-                animationDuration={0}
-                content={<Chart.Tooltip />}
-              />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
               <Bar
                 isAnimationActive={false}
                 dataKey={chart.key("count")}
-                fill={chart.color("teal.solid")}
                 radius={[4, 4, 0, 0]}
                 barSize={32}
-              />
+              >
+                {chartData.map((item) => (
+                  <Cell key={item.status} fill={chart.color(item.color)} />
+                ))}
+              </Bar>
             </BarChart>
           </Chart.Root>
 
