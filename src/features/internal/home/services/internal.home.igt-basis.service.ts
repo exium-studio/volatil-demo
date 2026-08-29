@@ -14,13 +14,12 @@ export const getIgtBasis = async (
   try {
     const response = await fetchIgtBasisApi(signal);
     if (response?.data) return response.data;
-    return isDummyDataEnabled() ? dummyIgtBasis : EMPTY;
+    return EMPTY;
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return dummyIgtBasis;
     }
-    console.warn("getIgtBasis error, returning empty", error);
-    return isDummyDataEnabled() ? dummyIgtBasis : EMPTY;
+    return EMPTY;
   }
 };

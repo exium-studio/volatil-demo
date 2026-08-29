@@ -74,7 +74,9 @@ export const useInternalMitraRegistrationQuery = () => {
 };
 
 // 4. Hook Tren Akuisisi
-export const useInternalAcquisitionTrendsQuery = (period: HomePeriod = "all") => {
+export const useInternalAcquisitionTrendsQuery = (
+  period: HomePeriod = "all",
+) => {
   const query = useQuery({
     queryKey: queryKeys.internal.home.trends(period),
     queryFn: ({ signal }) => getInternalTrend(period, signal),
@@ -103,5 +105,3 @@ export const useInternalLeaderboardQuery = (period?: HomePeriod) => {
     topIgtLayers: (query.data?.topIgtLayers ?? []) as TopIgtLayerItem[],
   };
 };
-
-

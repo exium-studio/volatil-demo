@@ -36,7 +36,13 @@ export const getPricingList = async (
     const raw = await fetchInternalPricingListApi(params, signal);
 
     // Case 1: Backend returns { success: true, data: { items: [...] } }
-    if (raw && "data" in raw && raw.data && "items" in raw.data && Array.isArray(raw.data.items)) {
+    if (
+      raw &&
+      "data" in raw &&
+      raw.data &&
+      "items" in raw.data &&
+      Array.isArray(raw.data.items)
+    ) {
       return raw.data;
     }
 
@@ -76,7 +82,7 @@ export const getPricingList = async (
     }
 
     console.warn("getPricingList: unhandled response format", raw);
-    return isDummyDataEnabled() ? DUMMY_PRICING_RESPONSE : EMPTY_PRICING_RESPONSE;
+    return EMPTY_PRICING_RESPONSE;
   } catch (error) {
     // Do NOT fallback on AbortError — request was intentionally cancelled
     if ((error as { name?: string }).name === "AbortError") {
@@ -89,7 +95,6 @@ export const getPricingList = async (
       error instanceof ApiError &&
       error.statusCode === 404
     ) {
-      console.warn("getPricingList: 404 fallback to dummy data", error);
       return DUMMY_PRICING_RESPONSE;
     }
 

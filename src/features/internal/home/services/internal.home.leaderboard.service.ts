@@ -23,13 +23,12 @@ export const getInternalLeaderboard = async (
   try {
     const response = await fetchInternalLeaderboardApi(period, signal);
     if (response?.data) return response.data;
-    return isDummyDataEnabled() ? DUMMY : EMPTY;
+    return EMPTY;
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return DUMMY;
     }
-    console.warn("getInternalLeaderboard error, returning empty", error);
-    return isDummyDataEnabled() ? DUMMY : EMPTY;
+    return EMPTY;
   }
 };

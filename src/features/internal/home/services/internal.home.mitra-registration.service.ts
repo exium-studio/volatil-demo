@@ -14,13 +14,12 @@ export const getMitraRegistration = async (
   try {
     const response = await fetchMitraRegistrationApi(signal);
     if (response?.data) return response.data;
-    return isDummyDataEnabled() ? dummyMitraRegistration : EMPTY;
+    return EMPTY;
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return dummyMitraRegistration;
     }
-    console.warn("getMitraRegistration error, returning empty", error);
-    return isDummyDataEnabled() ? dummyMitraRegistration : EMPTY;
+    return EMPTY;
   }
 };

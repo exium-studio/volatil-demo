@@ -14,13 +14,12 @@ export const getInternalTrend = async (
   try {
     const response = await fetchInternalTrendApi(period, signal);
     if (response?.data) return response.data;
-    return isDummyDataEnabled() ? (dummyInternalTrends[period] ?? []) : [];
+    return [];
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return dummyInternalTrends[period] ?? [];
     }
-    console.warn("getInternalTrend error, returning empty", error);
-    return isDummyDataEnabled() ? (dummyInternalTrends[period] ?? []) : [];
+    return [];
   }
 };

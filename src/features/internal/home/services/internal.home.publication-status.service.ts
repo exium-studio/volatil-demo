@@ -14,13 +14,12 @@ export const getPublicationStatus = async (
   try {
     const response = await fetchPublicationStatusApi(signal);
     if (response?.data) return response.data;
-    return isDummyDataEnabled() ? dummyIgtPublicationStatus : EMPTY;
+    return EMPTY;
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return dummyIgtPublicationStatus;
     }
-    console.warn("getPublicationStatus error, returning empty", error);
-    return isDummyDataEnabled() ? dummyIgtPublicationStatus : EMPTY;
+    return EMPTY;
   }
 };
