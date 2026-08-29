@@ -66,6 +66,7 @@ export const InternalHomeSpatialBasisSummary = (
                   outerRadius={66}
                   paddingAngle={3}
                   stroke={"none"}
+                  isAnimationActive={false}
                 >
                   {basisData.map((entry) => (
                     <Cell key={entry.name} fill={entry.color} />

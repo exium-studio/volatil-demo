@@ -134,7 +134,7 @@ const InternalDataManagementEditModalContent = (
         </VStack>
       </Modal.Header>
 
-      <Modal.Body p={"md"}>
+      <Modal.Body p={"md"} bg={"bg.canvas"}>
         <VStack align={"stretch"} gap={"xl"}>
           {/* Grup 1: Informasi Dasar */}
           <Fieldset legend={"Informasi Dasar"} containeredContent>

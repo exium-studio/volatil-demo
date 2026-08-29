@@ -71,6 +71,7 @@ export const InternalHomePublishStatusSummary = (
                   outerRadius={66}
                   paddingAngle={3}
                   stroke={"none"}
+                  isAnimationActive={false}
                 >
                   {statusData.map((entry) => (
                     <Cell key={entry.name} fill={entry.color} />
