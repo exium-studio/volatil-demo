@@ -20,7 +20,7 @@ export type MasterIgtLayerItem = {
   title: string;
   description?: string;
   spatialBasis: SpatialBasisType;
-  bbox: [number, number, number, number];
+  bbox?: [number, number, number, number];
   isActive: boolean;
   zIndex?: number;
   geoserverId?: string;
@@ -44,14 +44,13 @@ export type MasterIgtLayersResponse = {
 };
 
 export type CreateMasterIgtLayerPayload = {
-  id: string;
+  id?: string;
   title: string;
   description?: string;
   spatialBasis: SpatialBasisType;
-  bbox: [number, number, number, number];
   isActive: boolean;
   zIndex?: number;
-  geoserverId?: string;
+  geoserverId: string;
   geoserverBaseUrl: string;
   typeName: string;
   wfsUrl: string;

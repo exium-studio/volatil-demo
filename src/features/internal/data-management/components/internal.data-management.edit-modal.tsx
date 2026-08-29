@@ -16,6 +16,10 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { GeoserverCascadeSelect } from "@/features/internal/data-management/components/geoserver-cascade-select";
 import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
+import {
+  masterIgtLayerFormSchema,
+  type MasterIgtLayerFormValues,
+} from "@/features/internal/data-management/types/data-management.schema";
 import type {
   GeoServerWorkspaceLayerOption,
   MasterIgtLayerItem,
@@ -23,8 +27,10 @@ import type {
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { t } from "@/shared/libs/i18n";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Layers2Icon, TreesIcon } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 export type InternalDataManagementEditTriggerProps = {
   modalKey?: string;
@@ -93,53 +99,74 @@ const InternalDataManagementEditModalContent = (
     return "";
   }, [item]);
 
-  // States initialized from item props (no setState in useEffect)
-  const [title, setTitle] = useState<string>(() => item.title);
-  const [description, setDescription] = useState<string>(
-    () => item.description ?? "",
-  );
-  const [spatialBasis, setSpatialBasis] = useState<SpatialBasisType>(
-    () => item.spatialBasis,
-  );
-  const [zIndex, setZIndex] = useState<number>(() => item.zIndex ?? 1);
-  const [selectedGeoserverId, setSelectedGeoserverId] = useState<string>(
-    () => item.geoserverId ?? "gs_prod_01",
-  );
-  const [selectedWorkspace, setSelectedWorkspace] = useState<string>(
-    () => initialWorkspace,
-  );
-  const [selectedTypeName, setSelectedTypeName] = useState<string>(
-    () => item.typeName ?? item.id ?? "",
-  );
-  const [isActive, setIsActive] = useState<boolean>(() => item.isActive);
-
   // Hooks (Queries & Mutations)
   const { items: geoserverList } = useMasterGeoserverQuery();
   const updateMutation = useUpdateMasterIgtLayer();
 
+  // Form (RHF + Zod)
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { isValid },
+  } = useForm<MasterIgtLayerFormValues>({
+    resolver: zodResolver(masterIgtLayerFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      id: item.id,
+      title: item.title,
+      description: item.description ?? "",
+      spatialBasis: item.spatialBasis,
+      zIndex: item.zIndex ?? 1,
+      geoserverId: item.geoserverId ?? "gs_prod_01",
+      workspace: initialWorkspace,
+      typeName: item.typeName ?? item.id ?? "",
+      isActive: item.isActive,
+    },
+  });
+
+  // Watch Form Values
+  const geoserverId = useWatch({ control, name: "geoserverId" });
+  const workspace = useWatch({ control, name: "workspace" });
+  const typeName = useWatch({ control, name: "typeName" });
+
   // Derived Values
   const selectedGeoserver = useMemo(
     () =>
-      geoserverList.find((g) => g.id === selectedGeoserverId) ?? {
-        id: selectedGeoserverId,
+      geoserverList.find((g) => g.id === geoserverId) ?? {
+        id: geoserverId,
         baseUrl: item.geoserverBaseUrl,
       },
-    [geoserverList, selectedGeoserverId, item.geoserverBaseUrl],
+    [geoserverList, geoserverId, item.geoserverBaseUrl],
   );
 
+  const previewUrls = useMemo(() => {
+    const baseUrl = selectedGeoserver?.baseUrl || item.geoserverBaseUrl;
+    if (!baseUrl || !typeName) {
+      return {
+        wfsUrl: item.wfsUrl || "-",
+        wmsUrl: item.wmsUrl || "-",
+      };
+    }
+    return {
+      wfsUrl: `${baseUrl}/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=${typeName}`,
+      wmsUrl: `${baseUrl}/wms?service=WMS&version=1.3.0&request=GetMap&layers=${typeName}`,
+    };
+  }, [selectedGeoserver, typeName, item.geoserverBaseUrl, item.wfsUrl, item.wmsUrl]);
+
   const handleLayerChange = (
-    typeName: string,
+    selectedTypeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => {
-    setSelectedTypeName(typeName);
+    setValue("typeName", selectedTypeName, { shouldValidate: true });
     if (layerDetail?.spatialBasis) {
-      setSpatialBasis(layerDetail.spatialBasis);
+      setValue("spatialBasis", layerDetail.spatialBasis, {
+        shouldValidate: true,
+      });
     }
   };
 
-  const handleSubmit = () => {
-    if (!title.trim() || !selectedTypeName.trim()) return;
-
+  const onSubmit = (data: MasterIgtLayerFormValues) => {
     const baseUrl = selectedGeoserver.baseUrl || item.geoserverBaseUrl;
     const wfsUrl = `${baseUrl}/ows`;
     const wmsUrl = `${baseUrl}/wms`;
@@ -147,14 +174,14 @@ const InternalDataManagementEditModalContent = (
     updateMutation.mutate(
       {
         id: item.id,
-        title: title.trim(),
-        description: description.trim(),
-        spatialBasis,
-        zIndex,
-        isActive,
+        title: data.title.trim(),
+        description: data.description?.trim(),
+        spatialBasis: data.spatialBasis,
+        zIndex: data.zIndex,
+        isActive: data.isActive,
         geoserverId: selectedGeoserver.id,
         geoserverBaseUrl: baseUrl,
-        typeName: selectedTypeName.trim(),
+        typeName: data.typeName.trim(),
         wfsUrl,
         wmsUrl,
       },
@@ -165,8 +192,6 @@ const InternalDataManagementEditModalContent = (
       },
     );
   };
-
-  const isFormValid = Boolean(title.trim() && selectedTypeName.trim());
 
   return (
     <Modal.Content>
@@ -182,61 +207,94 @@ const InternalDataManagementEditModalContent = (
           <Fieldset legend={"Informasi Dasar"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
               {/* Input Judul Layer */}
-              <Field label={"Nama / Judul Layer"}>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder={"RTRW Kabupaten Badung"}
-                />
-              </Field>
+              <Controller
+                control={control}
+                name={"title"}
+                render={({ field, fieldState }) => (
+                  <Field
+                    label={"Nama / Judul Layer"}
+                    errorText={fieldState.error?.message}
+                    invalid={Boolean(fieldState.error)}
+                  >
+                    <Input
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder={"RTRW Kabupaten Badung"}
+                    />
+                  </Field>
+                )}
+              />
 
               {/* Input Deskripsi */}
-              <Field label={"Deskripsi"} optional>
-                <Textarea
-                  rows={2}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder={"Deskripsi data layer..."}
-                />
-              </Field>
+              <Controller
+                control={control}
+                name={"description"}
+                render={({ field }) => (
+                  <Field label={"Deskripsi"} optional>
+                    <Textarea
+                      rows={2}
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      placeholder={"Deskripsi data layer..."}
+                    />
+                  </Field>
+                )}
+              />
 
               {/* Toggle Status Aktif (Publish) */}
-              <Field label={"Status Publikasi"}>
-                <HStack
-                  justify={"space-between"}
-                  align={"center"}
-                  w={"full"}
-                  py={1}
-                >
-                  <VStack align={"start"} gap={0}>
-                    <P fontSize={"sm"} fontWeight={"medium"}>
-                      {isActive ? "Publik (Aktif)" : "Draft (Nonaktif)"}
-                    </P>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {
-                        "Layer yang aktif dapat dilihat & dipesan di katalog Mitra"
-                      }
-                    </P>
-                  </VStack>
-                  <Switch
-                    checked={isActive}
-                    onCheckedChange={(e) => setIsActive(Boolean(e.checked))}
-                  />
-                </HStack>
-              </Field>
+              <Controller
+                control={control}
+                name={"isActive"}
+                render={({ field }) => (
+                  <Field label={"Status Publikasi"}>
+                    <HStack
+                      justify={"space-between"}
+                      align={"center"}
+                      w={"full"}
+                      py={1}
+                    >
+                      <VStack align={"start"} gap={0}>
+                        <P fontSize={"sm"} fontWeight={"medium"}>
+                          {field.value ? "Publik (Aktif)" : "Draft (Nonaktif)"}
+                        </P>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {
+                            "Layer yang aktif dapat dilihat & dipesan di katalog Mitra"
+                          }
+                        </P>
+                      </VStack>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(e) =>
+                          field.onChange(Boolean(e.checked))
+                        }
+                      />
+                    </HStack>
+                  </Field>
+                )}
+              />
             </VStack>
           </Fieldset>
 
-          {/* Grup 2: Sumber GeoServer & Layer (Dedicated Component) */}
+          {/* Grup 2: Sumber GeoServer & Layer (Dedicated Component dengan URL Live Preview) */}
           <Fieldset legend={"Konfigurasi GeoServer & Layer"} containeredContent>
             <GeoserverCascadeSelect
               parentModalKey={modalKey}
-              selectedGeoserverId={selectedGeoserverId}
-              onGeoserverChange={setSelectedGeoserverId}
-              selectedWorkspace={selectedWorkspace}
-              onWorkspaceChange={setSelectedWorkspace}
-              selectedTypeName={selectedTypeName}
+              selectedGeoserverId={geoserverId}
+              onGeoserverChange={(val) => {
+                setValue("geoserverId", val, { shouldValidate: true });
+                setValue("workspace", "", { shouldValidate: true });
+                setValue("typeName", "", { shouldValidate: true });
+              }}
+              selectedWorkspace={workspace}
+              onWorkspaceChange={(val) => {
+                setValue("workspace", val, { shouldValidate: true });
+                setValue("typeName", "", { shouldValidate: true });
+              }}
+              selectedTypeName={typeName}
               onLayerChange={handleLayerChange}
+              previewWfsUrl={previewUrls.wfsUrl}
+              previewWmsUrl={previewUrls.wmsUrl}
             />
           </Fieldset>
 
@@ -244,87 +302,80 @@ const InternalDataManagementEditModalContent = (
           <Fieldset legend={"Konfigurasi Spasial"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
               {/* Select Basis IGT via RadioCardInput */}
-              <Field label={"Basis IGT"}>
-                <RadioCardInput.Root
-                  value={spatialBasis}
-                  onValueChange={({ value }) => {
-                    if (value) {
-                      setSpatialBasis(value as SpatialBasisType);
-                    }
-                  }}
-                  w={"full"}
-                >
-                  <HStack gap={"sm"} w={"full"}>
-                    <RadioCardInput.Item value={"bidang"} flex={1} p={3}>
-                      <HStack
-                        justify={"space-between"}
-                        align={"center"}
-                        w={"full"}
-                      >
-                        <HStack gap={"xs"} align={"center"}>
-                          <AppIcon icon={Layers2Icon} color={"blue.fg"} />
-                          <RadioCardInput.ItemText fontSize={"sm"}>
-                            {"Bidang"}
-                          </RadioCardInput.ItemText>
-                        </HStack>
-                        <RadioCardInput.ItemIndicator />
-                      </HStack>
-                    </RadioCardInput.Item>
+              <Controller
+                control={control}
+                name={"spatialBasis"}
+                render={({ field }) => (
+                  <Field label={"Basis IGT"}>
+                    <RadioCardInput.Root
+                      value={field.value}
+                      onValueChange={({ value }) => {
+                        if (value) {
+                          field.onChange(value as SpatialBasisType);
+                        }
+                      }}
+                      w={"full"}
+                    >
+                      <HStack gap={"sm"} w={"full"}>
+                        <RadioCardInput.Item value={"bidang"} flex={1} p={3}>
+                          <HStack
+                            justify={"space-between"}
+                            align={"center"}
+                            w={"full"}
+                          >
+                            <HStack gap={"xs"} align={"center"}>
+                              <AppIcon icon={Layers2Icon} color={"blue.fg"} />
+                              <RadioCardInput.ItemText fontSize={"sm"}>
+                                {"Bidang"}
+                              </RadioCardInput.ItemText>
+                            </HStack>
+                            <RadioCardInput.ItemIndicator />
+                          </HStack>
+                        </RadioCardInput.Item>
 
-                    <RadioCardInput.Item value={"kawasan"} flex={1} p={3}>
-                      <HStack
-                        justify={"space-between"}
-                        align={"center"}
-                        w={"full"}
-                      >
-                        <HStack gap={"xs"} align={"center"}>
-                          <AppIcon icon={TreesIcon} color={"orange.fg"} />
-                          <RadioCardInput.ItemText fontSize={"sm"}>
-                            {"Kawasan"}
-                          </RadioCardInput.ItemText>
-                        </HStack>
-                        <RadioCardInput.ItemIndicator />
+                        <RadioCardInput.Item value={"kawasan"} flex={1} p={3}>
+                          <HStack
+                            justify={"space-between"}
+                            align={"center"}
+                            w={"full"}
+                          >
+                            <HStack gap={"xs"} align={"center"}>
+                              <AppIcon icon={TreesIcon} color={"orange.fg"} />
+                              <RadioCardInput.ItemText fontSize={"sm"}>
+                                {"Kawasan"}
+                              </RadioCardInput.ItemText>
+                            </HStack>
+                            <RadioCardInput.ItemIndicator />
+                          </HStack>
+                        </RadioCardInput.Item>
                       </HStack>
-                    </RadioCardInput.Item>
-                  </HStack>
-                </RadioCardInput.Root>
-              </Field>
+                    </RadioCardInput.Root>
+                  </Field>
+                )}
+              />
 
               {/* Input Urutan Z-Index */}
-              <Field
-                label={"Urutan Tumpukan Layer (Z-Index)"}
-                helperText={
-                  "Angka lebih kecil = di bawah, angka lebih besar = di atas"
-                }
-              >
-                <NumberInput
-                  w={"full"}
-                  min={1}
-                  max={100}
-                  value={String(zIndex)}
-                  onValueChange={({ value }) => setZIndex(value || 1)}
-                  placeholder={"1"}
-                />
-              </Field>
-
-              {/* Generated URLs — readonly, for reference */}
-              <VStack align={"stretch"} gap={"xs"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"WFS URL"}
-                </P>
-                <P fontSize={"xs"} fontFamily={"mono"} color={"fg.muted"}>
-                  {item.wfsUrl || "-"}
-                </P>
-              </VStack>
-
-              <VStack align={"stretch"} gap={"xs"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"WMS URL"}
-                </P>
-                <P fontSize={"xs"} fontFamily={"mono"} color={"fg.muted"}>
-                  {item.wmsUrl || "-"}
-                </P>
-              </VStack>
+              <Controller
+                control={control}
+                name={"zIndex"}
+                render={({ field }) => (
+                  <Field
+                    label={"Urutan Tumpukan Layer (Z-Index)"}
+                    helperText={
+                      "Angka lebih kecil = di bawah, angka lebih besar = di atas"
+                    }
+                  >
+                    <NumberInput
+                      w={"full"}
+                      min={1}
+                      max={100}
+                      value={String(field.value ?? 1)}
+                      onValueChange={({ value }) => field.onChange(value || 1)}
+                      placeholder={"1"}
+                    />
+                  </Field>
+                )}
+              />
             </VStack>
           </Fieldset>
         </VStack>
@@ -335,8 +386,8 @@ const InternalDataManagementEditModalContent = (
           <Button
             primary
             loading={updateMutation.isPending}
-            disabled={!isFormValid || updateMutation.isPending}
-            onClick={handleSubmit}
+            disabled={!isValid || updateMutation.isPending}
+            onClick={handleSubmit(onSubmit)}
           >
             {"Simpan"}
           </Button>

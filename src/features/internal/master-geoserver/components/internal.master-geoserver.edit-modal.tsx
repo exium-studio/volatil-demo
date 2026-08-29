@@ -10,9 +10,15 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useUpdateMasterGeoserver } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
+import {
+  masterGeoserverFormSchema,
+  type MasterGeoserverFormValues,
+} from "@/features/internal/master-geoserver/types/master-geoserver.schema";
 import type { MasterGeoserverItem } from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { t } from "@/shared/libs/i18n";
-import { useState, type ReactNode } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { ReactNode } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 export type InternalMasterGeoserverEditTriggerProps = {
   modalKey?: string;
@@ -68,29 +74,35 @@ const InternalMasterGeoserverEditModalContent = (
   // Props
   const { item, close } = props;
 
-  // States
-  const [name, setName] = useState<string>(item.name);
-  const [baseUrl, setBaseUrl] = useState<string>(item.baseUrl);
-  const [username, setUsername] = useState<string>(item.username);
-  const [password, setPassword] = useState<string>("");
-  const [description, setDescription] = useState<string>(
-    item.description ?? "",
-  );
-
   // Mutations
   const updateMutation = useUpdateMasterGeoserver();
 
-  const handleSubmit = () => {
-    if (!name.trim() || !baseUrl.trim() || !username.trim()) return;
+  // Form (RHF + Zod)
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<MasterGeoserverFormValues>({
+    resolver: zodResolver(masterGeoserverFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: item.name,
+      baseUrl: item.baseUrl,
+      username: item.username,
+      password: "",
+      description: item.description ?? "",
+    },
+  });
 
+  const onSubmit = (data: MasterGeoserverFormValues) => {
     updateMutation.mutate(
       {
         id: item.id,
-        name: name.trim(),
-        baseUrl: baseUrl.trim(),
-        username: username.trim(),
-        password: password.trim() ? password.trim() : undefined,
-        description: description.trim() || undefined,
+        name: data.name.trim(),
+        baseUrl: data.baseUrl.trim(),
+        username: data.username.trim(),
+        password: data.password?.trim() ? data.password.trim() : undefined,
+        description: data.description?.trim() || undefined,
       },
       {
         onSuccess: () => {
@@ -100,62 +112,101 @@ const InternalMasterGeoserverEditModalContent = (
     );
   };
 
-  const isFormValid = Boolean(name.trim() && baseUrl.trim() && username.trim());
-
   return (
     <Modal.Content>
       <Modal.Header>
         <Modal.Title>{"Ubah Master GeoServer"}</Modal.Title>
-
         <Modal.CloseButton />
       </Modal.Header>
 
       <Modal.Body>
         <VStack align={"stretch"} gap={"md"}>
-          <Field label={"Nama Server"}>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={"GeoServer Produksi ATR/BPN"}
-            />
-          </Field>
+          <Controller
+            control={control}
+            name={"name"}
+            render={({ field, fieldState }) => (
+              <Field
+                label={"Nama Server"}
+                errorText={fieldState.error?.message}
+                invalid={Boolean(fieldState.error)}
+              >
+                <Input
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder={"GeoServer Produksi ATR/BPN"}
+                />
+              </Field>
+            )}
+          />
 
-          <Field label={"Base URL GeoServer"}>
-            <Textarea
-              value={baseUrl}
-              onChange={(e) => setBaseUrl(e.target.value)}
-              placeholder={"https://.../geoserver"}
-              rows={2}
-            />
-          </Field>
+          <Controller
+            control={control}
+            name={"baseUrl"}
+            render={({ field, fieldState }) => (
+              <Field
+                label={"Base URL GeoServer"}
+                errorText={fieldState.error?.message}
+                invalid={Boolean(fieldState.error)}
+              >
+                <Textarea
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder={"https://.../geoserver"}
+                  rows={2}
+                />
+              </Field>
+            )}
+          />
 
-          <Field label={"Username"}>
-            <Input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder={"admin_spatial"}
-            />
-          </Field>
+          <Controller
+            control={control}
+            name={"username"}
+            render={({ field, fieldState }) => (
+              <Field
+                label={"Username"}
+                errorText={fieldState.error?.message}
+                invalid={Boolean(fieldState.error)}
+              >
+                <Input
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder={"admin_spatial"}
+                />
+              </Field>
+            )}
+          />
 
-          <Field
-            label={"Password Baru"}
-            optional
-            helperText={"Kosongkan jika tidak ubah"}
-          >
-            <PasswordInput
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Field>
+          <Controller
+            control={control}
+            name={"password"}
+            render={({ field }) => (
+              <Field
+                label={"Password Baru"}
+                optional
+                helperText={"Kosongkan jika tidak ubah"}
+              >
+                <PasswordInput
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                />
+              </Field>
+            )}
+          />
 
-          <Field label={"Deskripsi"} optional>
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={"Keterangan peruntukan GeoServer (opsional)..."}
-              rows={2}
-            />
-          </Field>
+          <Controller
+            control={control}
+            name={"description"}
+            render={({ field }) => (
+              <Field label={"Deskripsi"} optional>
+                <Textarea
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  placeholder={"Keterangan peruntukan GeoServer (opsional)..."}
+                  rows={2}
+                />
+              </Field>
+            )}
+          />
         </VStack>
       </Modal.Body>
 
@@ -163,8 +214,8 @@ const InternalMasterGeoserverEditModalContent = (
         <VStack gap={"xs"} w={"full"}>
           <Button
             primary
-            onClick={handleSubmit}
-            disabled={!isFormValid || updateMutation.isPending}
+            onClick={handleSubmit(onSubmit)}
+            disabled={!isValid || updateMutation.isPending}
             loading={updateMutation.isPending}
           >
             {"Simpan Perubahan"}

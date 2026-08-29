@@ -28,6 +28,7 @@ const { theme } = useThemeStore();
 - **Import Alias**: Import di dalam `src/` WAJIB menggunakan alias `@/`.
 - **Komentar Section**: Wajib menambahkan komentar section di komponen (`// Contexts`, `// States`, `// Derived Values`, `// Hooks (Queries & Mutations)`, dll).
 - **Default Props**: DILARANG menuliskan prop yang nilainya sama dengan default komponen (misal: `VStack` default `align` adalah `stretch`, tidak perlu ditulis `align={"stretch"}`).
+- **Forms & Validation (MUTLAK RHF + Zod)**: Seluruh form input di aplikasi WAJIB menggunakan **React Hook Form (RHF)** dipadukan dengan **Zod Schema Resolver** (`@hookform/resolvers/zod`). DILARANG membuat form dengan kumpulan `useState` terpisah-pisah untuk field form.
 - **Array Empty Checks (MUTLAK)**: DILARANG menggunakan `.length === 0` untuk pengecekan array kosong. WAJIB menggunakan helper `isEmptyArray(arr)` dari `@/shared/utils/data/array`.
 - **Input Width (MUTLAK)**: Seluruh komponen input (`Input`, `NumberInput`, `SearchInput`, `Select`, `Field`, dll) WAJIB selalu berukuran width 100% / `w={"full"}` di dalam container/form.
 - **Dilarang Prefix 'contoh:' (MUTLAK)**: DILARANG menyertakan prefix `"contoh:"` atau `"Contoh:"` di dalam `placeholder` maupun `helperText` input field manapun. Langsung tuliskan nilai contohnya secara ringkas dan profesional (misal: `placeholder={"admin_spatial"}` bukan `placeholder={"contoh: admin_spatial"}`).

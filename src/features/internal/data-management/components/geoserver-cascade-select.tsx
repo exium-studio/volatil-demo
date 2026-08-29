@@ -1,7 +1,9 @@
 // src/features/internal/data-management/components/geoserver-cascade-select.tsx
 
+import { Field } from "@/design-system/components/input/ui/field";
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
+import { Input } from "@/design-system/components/input/ui/input";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import {
   useGeoServerWorkspaceLayersQuery,
@@ -22,6 +24,8 @@ export type GeoserverCascadeSelectProps = {
     typeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => void;
+  previewWfsUrl?: string;
+  previewWmsUrl?: string;
 };
 
 export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
@@ -34,6 +38,8 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     onWorkspaceChange,
     selectedTypeName,
     onLayerChange,
+    previewWfsUrl,
+    previewWmsUrl,
   } = props;
 
   // Hooks (Queries)
@@ -114,7 +120,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
         isFetching={isLoadingWorkspaces}
       />
 
-      {/* 3. Select Layer / Feature Type */}
+      {/* 3. Select Layer */}
       <FocusSelectInput
         modalKey={`${parentModalKey}.layer`}
         label={"Layer"}
@@ -129,6 +135,29 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
         disabled={!selectedWorkspace}
         isFetching={isLoadingLayers}
       />
+
+      {/* WFS & WMS Generated URLs */}
+      {selectedTypeName && (
+        <VStack align={"stretch"} gap={"sm"} pt={"2xs"}>
+          <Field label={"WFS Service URL (Otomatis)"}>
+            <Input
+              value={previewWfsUrl ?? "-"}
+              readOnly
+              fontFamily={"mono"}
+              fontSize={"xs"}
+            />
+          </Field>
+
+          <Field label={"WMS Service URL (Otomatis)"}>
+            <Input
+              value={previewWmsUrl ?? "-"}
+              readOnly
+              fontFamily={"mono"}
+              fontSize={"xs"}
+            />
+          </Field>
+        </VStack>
+      )}
     </VStack>
   );
 };
