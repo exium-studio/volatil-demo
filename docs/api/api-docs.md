@@ -23,11 +23,12 @@ Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, 
 ### C. Role: Internal (Admin / Verifikator)
 
 9. [Internal - Master IGT Layers & Data Management](#9-internal---master-igt-layers--data-management)
-10. [Internal - Interop Batch Review](#10-internal---interop-batch-review)
-11. [Internal - Tarif & Pricing Management](#11-internal---tarif--pricing-management)
-12. [Internal - Purchase Limit Configuration](#12-internal---purchase-limit-configuration)
-13. [Internal - User Management](#13-internal---user-management)
-14. [Internal - Dashboard & Statistik Sistem](#14-internal---dashboard--statistik-sistem)
+10. [Internal - Master GeoServer](#10-internal---master-geoserver)
+11. [Internal - Interop Batch Review](#11-internal---interop-batch-review)
+12. [Internal - Tarif & Pricing Management](#12-internal---tarif--pricing-management)
+13. [Internal - Purchase Limit Configuration](#13-internal---purchase-limit-configuration)
+14. [Internal - User Management](#14-internal---user-management)
+15. [Internal - Dashboard & Statistik Sistem](#15-internal---dashboard--statistik-sistem)
 
 ---
 
@@ -196,53 +197,55 @@ type NotificationType =
 
 ## 4. GeoServer Proxy Endpoints
 
-Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production. Seluruh akses GeoServer dialihkan melalui endpoint proxy Backend.
+Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production fisik. Seluruh akses layer spasial (baik eksplorasi IGT maupun provisioning) dialihkan melalui endpoint proxy Backend.
 
-**Autentikasi**: Menggunakan Session / JWT via `httpOnly` cookie yang otomatis disertakan pada setiap request. Frontend tidak menyimpan atau mengirimkan kredensial GeoServer apapun.
+### Skema Akses & Autentikasi:
+1. **Internal & Web Client (Browser Session)**:
+   - Autentikasi dikelola penuh oleh Backend melalui **Session / JWT via `httpOnly` Cookie**.
+   - Frontend tidak perlu menyimpan/mengirim kredensial server ataupun `apiKey`.
+   - Frontend cukup mengirimkan parameter **`geoserverId`** (ID master geoserver yang terdaftar) dan **`typeName`** (atau `layers` pada WMS). Backend yang membaca kredensial dari database Master GeoServer dan menyuntikkan basic auth saat forward ke server fisik.
+2. **Mitra Service URL (Direct / Eksternal / QGIS)**:
+   - Khusus data/layer hasil provisioning yang sudah dibeli dan lunas oleh Mitra (`settled`), sistem menyediakan URL service berotentikasi **`apiKey`** (misal: `?apiKey=mtr_xyz...` atau header `X-API-Key`) untuk integrasi di luar browser (GIS desktop, script external).
 
-**Resolusi GeoServer Internal**:
-Backend melakukan resolusi `layerId` secara otomatis berdasarkan status order Mitra:
-
-- **Belum Beli / Permohonan**: Forward request ke **GeoServer Master** (hanya data geometri dasar).
-- **Sudah Beli & Lunas (`settled`)**: Forward request ke **GeoServer Provisioned** (tabel PostGIS `igt_provisioned_{mitraId}_{sourceLayerId}` milik mitra).
+---
 
 ### 4.1 WMS Proxy
 
 - **Endpoint**: `GET /api/proxy/wms`
 - **Query Params**:
-  - Standar WMS: `SERVICE`, `REQUEST`, `LAYERS`, `BBOX`, `WIDTH`, `HEIGHT`, `FORMAT`, `SRS` / `CRS`, `TRANSPARENT`, `STYLES`, `VERSION`, dll.
-  - Wajib: `layerId` (digunakan Backend untuk resolve layer & validasi akses).
+  - **Identifikasi Server & Layer**:
+    - `geoserverId`: ID Master GeoServer target (wajib).
+    - `layers` / `typeName`: Nama workspace dan layer target (contoh: `testing_workspace:TEST_BIDANG_TANAH` atau `volatil:igt_provisioned_mitra1_bidang`).
+  - **Standar OGC WMS**: `SERVICE=WMS`, `REQUEST=GetMap`, `BBOX`, `WIDTH`, `HEIGHT`, `FORMAT=image/png`, `SRS` / `CRS=EPSG:4326`, `TRANSPARENT=TRUE`, `STYLES`, `VERSION=1.3.0`, dll.
 - **Backend Behavior**:
-  1. Validasi session cookie $\rightarrow$ resolve `mitraId`.
-  2. Cek apakah Mitra memiliki order berstatus `settled` untuk `layerId` tersebut:
-     - **Belum Lunas**: Forward ke **GeoServer Master**.
-     - **Lunas (`settled`)**: Forward ke **GeoServer Provisioned**.
-  3. Override parameter `LAYERS` dengan nama layer GeoServer yang sesuai.
-  4. Stream response binary gambar (`image/png`, `image/jpeg`) langsung ke Frontend.
+  1. Validasi session cookie $\rightarrow$ resolve user/mitra.
+  2. Ambil metadata server fisik dari tabel Master GeoServer berdasarkan `geoserverId`.
+  3. Teruskan request ke server target dengan kredensial tersimpan secara aman.
+  4. Stream response binary gambar tile (`image/png`, `image/jpeg`) langsung ke browser FE.
 - **Response**: Raw image tile stream dari GeoServer.
 
 ### 4.2 WFS Proxy
 
 - **Endpoint**: `GET /api/proxy/wfs`
 - **Query Params**:
-  - Standar WFS: `SERVICE`, `REQUEST`, `TYPENAMES` / `TYPENAME`, `CQL_FILTER`, `SRSNAME`, `OUTPUTFORMAT`, `MAXFEATURES`, `RESULTTYPE`, `VERSION`, dll.
-  - Wajib: `layerId`.
+  - **Identifikasi Server & Layer**:
+    - `geoserverId`: ID Master GeoServer target (wajib).
+    - `typeName` / `typeNames`: Nama workspace dan feature type target.
+  - **Standar OGC WFS**: `SERVICE=WFS`, `REQUEST=GetFeature`, `CQL_FILTER`, `SRSNAME=EPSG:4326`, `OUTPUTFORMAT=application/json`, `MAXFEATURES`, `RESULTTYPE`, `VERSION=2.0.0` / `1.1.0`, dll.
 - **Backend Behavior**:
-  1. Validasi session cookie $\rightarrow$ resolve `mitraId`.
-  2. Cek hak akses & status kepemilikan layer Mitra:
-     - **Belum Lunas**: Forward ke **GeoServer Master**.
-     - **Lunas (`settled`)**: Forward ke **GeoServer Provisioned** (tabel `igt_provisioned_{mitraId}_{sourceLayerId}`).
-  3. Override parameter `TYPENAMES` dengan nama layer yang sesuai.
-  4. Stream GeoJSON response (`application/json`) ke Frontend.
+  1. Validasi session cookie $\rightarrow$ resolve user/mitra.
+  2. Ambil konfigurasi server dari Master GeoServer via `geoserverId`.
+  3. Eksekusi query WFS ke GeoServer target.
+  4. Stream data GeoJSON (`application/json`) ke browser FE.
 - **Response**: `GeoJSON.FeatureCollection`
 
 ### 4.3 Security Rules (Wajib Implementasi Backend)
 
-1. **Zero Credential Exposure**: Kredensial GeoServer (Basic Auth / Master Token) **tidak boleh pernah dikirimkan ke Frontend** dalam format apapun.
+1. **Zero Credential Exposure**: Kredensial GeoServer (Basic Auth / Master Password) **tidak boleh pernah dikirimkan ke Frontend** dalam format apapun.
 2. **Session Verification**: Backend wajib memvalidasi token JWT / session pengguna sebelum meneruskan (_forward_) request ke GeoServer.
-3. **Prevent Horizontal Access**: Backend memvalidasi bahwa `TYPENAMES` / `LAYERS` yang diminta adalah layer milik mitra yang sedang login. Mitra A tidak dapat mengakses layer hasil provisioning milik Mitra B (`403 Forbidden`).
-4. **Rate Limiting**: Penerapan rate limit per `mitraId` per endpoint untuk menjaga stabilitas GeoServer.
-5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `mitraId`, `layerId`, `timestamp`, `params`, `ipAddress`).
+3. **Prevent Horizontal Access**: Backend memvalidasi bahwa layer hasil provisioning hanya dapat diakses oleh mitra pemilik order atau pengguna internal yang berwenang (`403 Forbidden`).
+4. **Rate Limiting**: Penerapan rate limit per user/session untuk menjaga stabilitas instance GeoServer.
+5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `userId`/`mitraId`, `geoserverId`, `typeName`, `timestamp`, `ipAddress`).
 
 ---
 
@@ -778,11 +781,87 @@ type CreateMasterIgtLayerPayload = {
 
 ---
 
-## 10. Internal - Interop Batch Review
+## 10. Internal - Master GeoServer
+
+Modul pengelolaan master kredensial dan endpoint GeoServer utama di lingkungan internal ATR/BPN. Endpoint ini digunakan untuk registrasi server penyedia layer spasial serta provisioning auto-publishing layer PostGIS.
+
+Pengahapusan data GeoServer menerapkan **Soft Delete (`deletedAt`)** dengan masa retensi otomatis 30 hari sebelum dihapus permanen oleh background cron job, agar batch transaksi permohonan data mitra yang sedang dalam antrean pemrosesan tidak terganggu.
+
+### 10.1 List Master GeoServer
+
+- **Endpoint**: `GET /api/internal/master-geoserver`
+- **Query Params**:
+  - `page?: number` (Default: `1`)
+  - `pageSize?: number` (Default: `10`)
+  - `search?: string` (Pencarian nama server, URL, atau username)
+- **Response**:
+
+```typescript
+type MasterGeoserverListResponse = {
+  items: Array<{
+    id: string;
+    name: string;
+    baseUrl: string;
+    username: string;
+    password?: string;
+    description?: string;
+    deletedAt?: string | null;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+};
+```
+
+### 10.2 Detail Master GeoServer
+
+- **Endpoint**: `GET /api/internal/master-geoserver/{id}`
+- **Response**: `MasterGeoserverItem`
+
+### 10.3 Create Master GeoServer
+
+- **Endpoint**: `POST /api/internal/master-geoserver`
+- **Payload**:
+
+```typescript
+type CreateMasterGeoserverPayload = {
+  name: string;
+  baseUrl: string;
+  username: string;
+  password?: string;
+  description?: string;
+};
+```
+
+- **Response**: `MasterGeoserverItem`
+
+### 10.4 Update Master GeoServer
+
+- **Endpoint**: `PUT /api/internal/master-geoserver/{id}`
+- **Payload**: `Partial<CreateMasterGeoserverPayload>`
+- **Response**: `MasterGeoserverItem`
+
+### 10.5 Delete Master GeoServer (Soft Delete)
+
+Menandai server sebagai terarsip / terhapus secara logis (`deletedAt` terisi timestamp).
+
+- **Endpoint**: `DELETE /api/internal/master-geoserver/{id}`
+- **Response**: `200 OK` / `{ success: true, deletedAt: string }`
+
+---
+
+## 11. Internal - Interop Batch Review
 
 Modul bagi Internal User untuk mereview dan memberikan keputusan persetujuan (_approval_) terhadap permohonan data spasial batch yang telah selesai diproses oleh Interop Engine (`pending_review`).
 
-### 10.1 List Batches Pending Review
+### 11.1 List Batches Pending Review
 
 - **Endpoint**: `GET /api/internal/interop/batches`
 - **Response**:
@@ -809,12 +888,12 @@ type InternalBatchListResponse = {
 };
 ```
 
-### 10.2 Detail Batch Review
+### 11.2 Detail Batch Review
 
 - **Endpoint**: `GET /api/internal/interop/batches/{batchId}`
 - **Response**: `CartBatchDetailResponse`
 
-### 10.3 Approve Batch
+### 11.3 Approve Batch
 
 Menyetujui batch permohonan data. Status batch berubah menjadi `approved` dan masa tenggang TTL 24 jam (`expiredAt`) mulai dihitung aktif.
 
@@ -823,7 +902,7 @@ Menyetujui batch permohonan data. Status batch berubah menjadi `approved` dan ma
 - **Response**: `200 OK` / `{ success: true, message: "Batch berhasil disetujui" }`
 - **Side Effect**: Notifikasi inbox (`BATCH_APPROVED`) otomatis dikirimkan ke akun Mitra terkait.
 
-### 10.4 Reject Batch
+### 11.4 Reject Batch
 
 Menolak batch permohonan data dengan alasan penolakan yang wajib diisi.
 
@@ -841,11 +920,11 @@ type RejectBatchRequest = {
 
 ---
 
-## 11. Internal - Tarif & Pricing Management
+## 12. Internal - Tarif & Pricing Management
 
 Modul pengelolaan tarif PNBP layer IGT (tarif per bidang objek spasial, tarif per hektar kawasan, ambang batas minimal pembelian, serta kode PNBP resmi ATR/BPN). Nilai tarif dan batas minimal ini digunakan oleh Interop Engine saat validasi keranjang dan kalkulasi total harga batch di keranjang mitra.
 
-### 11.1 List Master Tarif
+### 12.1 List Master Tarif
 
 - **Endpoint**: `GET /api/internal/pricing`
 - **Params**:
@@ -921,11 +1000,11 @@ type UpdatePricingPayload = {
 
 ---
 
-## 12. Internal - Purchase Limit Configuration
+## 13. Internal - Purchase Limit Configuration
 
 Modul pengelolaan ambang batas minimum pemesanan data spasial IGT (_purchase limit rules_) untuk mencegah permohonan data di bawah kuota minimum.
 
-### 12.1 Get Purchase Limits
+### 13.1 Get Purchase Limits
 
 - **Endpoint**: `GET /api/internal/purchase-limits`
 - **Response**:
@@ -943,7 +1022,7 @@ type PurchaseLimitsResponse = {
 };
 ```
 
-### 12.2 Update Purchase Limit
+### 13.2 Update Purchase Limit
 
 - **Endpoint**: `PUT /api/internal/purchase-limits/{id}`
 - **Payload**:
@@ -958,11 +1037,11 @@ type UpdatePurchaseLimitRequest = {
 
 ---
 
-## 13. Internal - User Management
+## 14. Internal - User Management
 
 Modul pengelolaan akun pengguna sistem, aktivasi status (aktif/nonaktif), penugasan peran (`mitra` vs `internal`), dan statistik agregat pengguna.
 
-### 13.1 List Users
+### 14.1 List Users
 
 - **Endpoint**: `GET /api/internal/user-management`
 - **Params**:
@@ -1001,7 +1080,7 @@ type BackendAdminUserItem = {
 };
 ```
 
-### 13.2 User Detail
+### 14.2 User Detail
 
 - **Endpoint**: `GET /api/internal/user-management/{id}`
 - **Response**:
@@ -1012,7 +1091,7 @@ type AdminUserDetailApiResponse = {
 };
 ```
 
-### 13.3 Update Status User
+### 14.3 Update Status User
 
 - **Endpoint**: `PATCH /api/internal/user-management/{id}/status`
 - **Payload**:
@@ -1025,7 +1104,7 @@ type UpdateUserStatusPayload = {
 
 - **Response**: `200 OK` / `AdminUserDetailApiResponse`
 
-### 13.4 Statistik Pengguna
+### 14.4 Statistik Pengguna
 
 - **Endpoint**: `GET /api/internal/user-management/statistics`
 - **Response**:
@@ -1046,11 +1125,11 @@ type AdminUsersStatisticsApiResponse = {
 
 ---
 
-## 14. Internal - Dashboard & Statistik Sistem
+## 15. Internal - Dashboard & Statistik Sistem
 
 Modul agregasi metrik operasional IGT (basis spasial, status publikasi, registrasi mitra), tren perolehan PNBP spasial, leaderboard mitra & layer terpopuler untuk admin internal ATR/BPN.
 
-### 14.1 Internal Dashboard Overview
+### 15.1 Internal Dashboard Overview
 
 - **Endpoint**: `GET /api/internal/home?period={1d|1w|1m|1y|all}`
 - **Response**:
