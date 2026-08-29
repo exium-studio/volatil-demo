@@ -69,7 +69,6 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       workspaceLayers.map((lyr) => ({
         label: lyr.title || lyr.name,
         value: lyr.typeName,
-        description: lyr.typeName,
       })),
     [workspaceLayers],
   );
@@ -118,7 +117,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       {/* 3. Select Layer / Feature Type */}
       <FocusSelectInput
         modalKey={`${parentModalKey}.layer`}
-        label={"Layer / Feature Type"}
+        label={"Layer"}
         placeholder={
           selectedWorkspace
             ? "Pilih layer..."

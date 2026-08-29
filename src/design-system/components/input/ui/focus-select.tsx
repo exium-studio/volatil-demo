@@ -291,11 +291,12 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                       key={opt.value}
                       variant={isSelected ? "subtle" : "ghost"}
                       w={"full"}
-                      py={"sm"}
+                      minH={"40px"}
+                      h={"max"}
                       px={3}
-                      justifyContent={"space-between"}
+                      py={"xs"}
                       alignItems={"center"}
-                      fontWeight={"normal"}
+                      justifyContent={"start"}
                       onClick={() => handleOptionSelect(opt.value, opt)}
                     >
                       <HStack
@@ -306,15 +307,20 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                         justify={"start"}
                       >
                         {opt.icon && <AppIcon icon={opt.icon} size={"sm"} />}
-                        <VStack align={"start"} gap={0} minW={0} flex={1}>
+                        <VStack align={"start"}>
                           <ClampedP
                             fontWeight={isSelected ? "semibold" : "normal"}
+                            textAlign={"start"}
                           >
                             {opt.label}
                           </ClampedP>
 
                           {opt.description && (
-                            <ClampedP fontSize={"xs"} color={"fg.subtle"}>
+                            <ClampedP
+                              fontSize={"xs"}
+                              textAlign={"start"}
+                              color={"fg.subtle"}
+                            >
                               {opt.description}
                             </ClampedP>
                           )}

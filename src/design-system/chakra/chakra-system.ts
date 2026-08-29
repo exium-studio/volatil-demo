@@ -2454,7 +2454,7 @@ export const chakraConfig = defineConfig({
       spacing: {
         "2xs": { value: "4px" },
         xs: { value: "8px" },
-        sm: { value: "10px" },
+        sm: { value: "12px" },
         md: { value: "16px" },
         lg: { value: "24px" },
         xl: { value: "32px" },
