@@ -197,7 +197,7 @@ export const TransactionDetailModalContent = (
           <Skeleton loaded={isMounted} w={"full"} px={"md"}>
             <HStack
               p={"md"}
-              bg={"bg.canvas"}
+              bg={"bg.subtle"}
               justify={"space-between"}
               align={"center"}
               wrap={"wrap"}
@@ -274,13 +274,15 @@ export const TransactionDetailModalContent = (
                 fontSize={"sm"}
               >
                 <P color={"fg.subtle"}>{"Kode Billing (MPN)"}</P>
-                <HStack gap={1} align={"center"}>
+
+                <HStack gap={1} align={"center"} mr={"-2px"}>
                   <P fontWeight={"medium"}>
                     <TNum>{transaction.billingCode}</TNum>
                   </P>
+
                   <ClipboardButton
                     value={transaction.billingCode}
-                    size={"xs"}
+                    size={"2xs"}
                   />
                 </HStack>
               </HStack>
@@ -292,9 +294,13 @@ export const TransactionDetailModalContent = (
                 fontSize={"sm"}
               >
                 <P color={"fg.subtle"}>{"Metode Pembayaran"}</P>
-                <Badge variant={"subtle"} colorPalette={"gray"}>
-                  {transaction.paymentMethod}
-                </Badge>
+                {transaction.paymentMethod ? (
+                  <Badge variant={"subtle"} colorPalette={"gray"}>
+                    {transaction.paymentMethod}
+                  </Badge>
+                ) : (
+                  <P>-</P>
+                )}
               </HStack>
 
               {transaction.paidAt && (
@@ -325,7 +331,6 @@ export const TransactionDetailModalContent = (
               <Box
                 rounded={"md"}
                 overflow={"hidden"}
-                border={"1px solid"}
                 borderColor={"border.subtle"}
               >
                 <DataView.Table.Root

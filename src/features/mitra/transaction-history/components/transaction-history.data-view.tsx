@@ -26,7 +26,7 @@ import {
   TRANSACTION_STATUS_BADGE_MAP,
   TRANSACTION_STATUS_OPTIONS,
 } from "@/features/mitra/transaction-history/constants/transaction-history.config";
-import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail-modal";
+import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail.modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
   TransactionRecord,
