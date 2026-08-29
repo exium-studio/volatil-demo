@@ -268,7 +268,6 @@ const InternalDataManagementEditModalContent = (
                   value={geoserverBaseUrl}
                   onChange={(e) => setGeoserverBaseUrl(e.target.value)}
                   placeholder={"https://.../geoserver/workspace"}
-                  fontFamily={"mono"}
                 />
               </Field>
 
@@ -283,7 +282,6 @@ const InternalDataManagementEditModalContent = (
                   value={typeName}
                   onChange={(e) => setTypeName(e.target.value)}
                   placeholder={"workspace:layerName"}
-                  fontFamily={"mono"}
                 />
               </Field>
 
