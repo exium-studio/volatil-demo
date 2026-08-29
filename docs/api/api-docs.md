@@ -11,12 +11,12 @@ Dokumentasi endpoint API, Data Transfer Object (DTO), request/response payload, 
 1. [Auth & Session](#1-auth--session)
 2. [Pusat Bantuan (Help Center)](#2-pusat-bantuan-help-center)
 3. [Notifikasi & Inbox](#3-notifikasi--inbox)
+4. [GeoServer Proxy Endpoints](#4-geoserver-proxy-endpoints)
 
 ### B. Role: Mitra
 
-4. [Mitra - Data Request & IGT Spasial](#4-mitra---data-request--igt-spasial)
-5. [Mitra - Keranjang & Order Provisioning Spasial](#5-mitra---keranjang--order-provisioning-spasial)
-6. [GeoServer Proxy Endpoints](#6-geoserver-proxy-endpoints)
+5. [Mitra - Data Request & IGT Spasial](#5-mitra---data-request--igt-spasial)
+6. [Mitra - Keranjang & Order Provisioning Spasial](#6-mitra---keranjang--order-provisioning-spasial)
 7. [Mitra - My Data & Transaksi](#7-mitra---my-data--transaksi)
 8. [Mitra - Dashboard & Statistik](#8-mitra---dashboard--statistik)
 
@@ -194,13 +194,65 @@ type NotificationType =
 
 ---
 
+## 4. GeoServer Proxy Endpoints
+
+Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production. Seluruh akses GeoServer dialihkan melalui endpoint proxy Backend.
+
+**Autentikasi**: Menggunakan Session / JWT via `httpOnly` cookie yang otomatis disertakan pada setiap request. Frontend tidak menyimpan atau mengirimkan kredensial GeoServer apapun.
+
+**Resolusi GeoServer Internal**:
+Backend melakukan resolusi `layerId` secara otomatis berdasarkan status order Mitra:
+
+- **Belum Beli / Permohonan**: Forward request ke **GeoServer Master** (hanya data geometri dasar).
+- **Sudah Beli & Lunas (`settled`)**: Forward request ke **GeoServer Provisioned** (tabel PostGIS `igt_provisioned_{mitraId}_{sourceLayerId}` milik mitra).
+
+### 4.1 WMS Proxy
+
+- **Endpoint**: `GET /api/proxy/wms`
+- **Query Params**:
+  - Standar WMS: `SERVICE`, `REQUEST`, `LAYERS`, `BBOX`, `WIDTH`, `HEIGHT`, `FORMAT`, `SRS` / `CRS`, `TRANSPARENT`, `STYLES`, `VERSION`, dll.
+  - Wajib: `layerId` (digunakan Backend untuk resolve layer & validasi akses).
+- **Backend Behavior**:
+  1. Validasi session cookie $\rightarrow$ resolve `mitraId`.
+  2. Cek apakah Mitra memiliki order berstatus `settled` untuk `layerId` tersebut:
+     - **Belum Lunas**: Forward ke **GeoServer Master**.
+     - **Lunas (`settled`)**: Forward ke **GeoServer Provisioned**.
+  3. Override parameter `LAYERS` dengan nama layer GeoServer yang sesuai.
+  4. Stream response binary gambar (`image/png`, `image/jpeg`) langsung ke Frontend.
+- **Response**: Raw image tile stream dari GeoServer.
+
+### 4.2 WFS Proxy
+
+- **Endpoint**: `GET /api/proxy/wfs`
+- **Query Params**:
+  - Standar WFS: `SERVICE`, `REQUEST`, `TYPENAMES` / `TYPENAME`, `CQL_FILTER`, `SRSNAME`, `OUTPUTFORMAT`, `MAXFEATURES`, `RESULTTYPE`, `VERSION`, dll.
+  - Wajib: `layerId`.
+- **Backend Behavior**:
+  1. Validasi session cookie $\rightarrow$ resolve `mitraId`.
+  2. Cek hak akses & status kepemilikan layer Mitra:
+     - **Belum Lunas**: Forward ke **GeoServer Master**.
+     - **Lunas (`settled`)**: Forward ke **GeoServer Provisioned** (tabel `igt_provisioned_{mitraId}_{sourceLayerId}`).
+  3. Override parameter `TYPENAMES` dengan nama layer yang sesuai.
+  4. Stream GeoJSON response (`application/json`) ke Frontend.
+- **Response**: `GeoJSON.FeatureCollection`
+
+### 4.3 Security Rules (Wajib Implementasi Backend)
+
+1. **Zero Credential Exposure**: Kredensial GeoServer (Basic Auth / Master Token) **tidak boleh pernah dikirimkan ke Frontend** dalam format apapun.
+2. **Session Verification**: Backend wajib memvalidasi token JWT / session pengguna sebelum meneruskan (_forward_) request ke GeoServer.
+3. **Prevent Horizontal Access**: Backend memvalidasi bahwa `TYPENAMES` / `LAYERS` yang diminta adalah layer milik mitra yang sedang login. Mitra A tidak dapat mengakses layer hasil provisioning milik Mitra B (`403 Forbidden`).
+4. **Rate Limiting**: Penerapan rate limit per `mitraId` per endpoint untuk menjaga stabilitas GeoServer.
+5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `mitraId`, `layerId`, `timestamp`, `params`, `ipAddress`).
+
+---
+
 # B. Role: Mitra
 
-## 4. Mitra - Data Request & IGT Spasial
+## 5. Mitra - Data Request & IGT Spasial
 
 Modul eksplorasi layer IGT aktif, filter spasial wilayah administrasi, serta query feature via WFS/AOI untuk pengajuan data mitra.
 
-### 4.1 List IGT Layers (Public / Active Layers)
+### 5.1 List IGT Layers (Public / Active Layers)
 
 Dedicated endpoint bagi Mitra untuk mengambil daftar layer IGT yang berstatus aktif/publik. Digunakan untuk rendering layer WMS di peta dan pemilihan layer pada form permohonan data (WFS).
 
@@ -244,7 +296,7 @@ type MitraIgtLayersResponse = {
 };
 ```
 
-### 4.2 Query IGT by AOI (Polygon / Upload SHP/GeoJSON)
+### 5.2 Query IGT by AOI (Polygon / Upload SHP/GeoJSON)
 
 - **By AOI Polygon**: `POST /api/mitra/data-request/by-aoi`
   - **Payload**: GeoJSON Polygon (`{ geometry: GeoJSON.Polygon }`)
@@ -253,7 +305,7 @@ type MitraIgtLayersResponse = {
 - **Get Catalog**: `GET /api/mitra/data-request/catalog`
   - **Params**: `page?: number`, `pageSize?: number`, `search?: string`
 
-### 4.3 Filter Options Wilayah & Tema
+### 5.3 Filter Options Wilayah & Tema
 
 - `GET /api/mitra/data-request/filter-options/basis`
 - `GET /api/mitra/data-request/filter-options/tema`
@@ -262,7 +314,7 @@ type MitraIgtLayersResponse = {
 
 ---
 
-## 5. Mitra - Keranjang & Order Batch Provisioning Spasial
+## 6. Mitra - Keranjang & Order Batch Provisioning Spasial
 
 Modul transaksi data IGT berbasis **Batch Interop Spasial**. Setelah mitra memasukkan layer ke keranjang, sistem membentuk 1 batch transaksi dan mengeksekusi pemotongan/penyiapan data via **INTEROP Engine** di background. Setelah data layer WFS/WMS siap (`ready`), berlaku masa tenggang **TTL 24 Jam** (`expiredAt`) bagi mitra untuk melakukan checkout/pembayaran.
 
@@ -524,58 +576,6 @@ type OrderPaymentStatusResponse = {
   paidAt?: string;
 };
 ```
-
----
-
-## 6. GeoServer Proxy Endpoints
-
-Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production. Seluruh akses GeoServer dialihkan melalui endpoint proxy Backend.
-
-**Autentikasi**: Menggunakan Session / JWT via `httpOnly` cookie yang otomatis disertakan pada setiap request. Frontend tidak menyimpan atau mengirimkan kredensial GeoServer apapun.
-
-**Resolusi GeoServer Internal**:
-Backend melakukan resolusi `layerId` secara otomatis berdasarkan status order Mitra:
-
-- **Belum Beli / Permohonan**: Forward request ke **GeoServer Master** (hanya data geometri dasar).
-- **Sudah Beli & Lunas (`settled`)**: Forward request ke **GeoServer Provisioned** (tabel PostGIS `igt_provisioned_{mitraId}_{sourceLayerId}` milik mitra).
-
-### 6.1 WMS Proxy
-
-- **Endpoint**: `GET /api/proxy/wms`
-- **Query Params**:
-  - Standar WMS: `SERVICE`, `REQUEST`, `LAYERS`, `BBOX`, `WIDTH`, `HEIGHT`, `FORMAT`, `SRS` / `CRS`, `TRANSPARENT`, `STYLES`, `VERSION`, dll.
-  - Wajib: `layerId` (digunakan Backend untuk resolve layer & validasi akses).
-- **Backend Behavior**:
-  1. Validasi session cookie $\rightarrow$ resolve `mitraId`.
-  2. Cek apakah Mitra memiliki order berstatus `settled` untuk `layerId` tersebut:
-     - **Belum Lunas**: Forward ke **GeoServer Master**.
-     - **Lunas (`settled`)**: Forward ke **GeoServer Provisioned**.
-  3. Override parameter `LAYERS` dengan nama layer GeoServer yang sesuai.
-  4. Stream response binary gambar (`image/png`, `image/jpeg`) langsung ke Frontend.
-- **Response**: Raw image tile stream dari GeoServer.
-
-### 6.2 WFS Proxy
-
-- **Endpoint**: `GET /api/proxy/wfs`
-- **Query Params**:
-  - Standar WFS: `SERVICE`, `REQUEST`, `TYPENAMES` / `TYPENAME`, `CQL_FILTER`, `SRSNAME`, `OUTPUTFORMAT`, `MAXFEATURES`, `RESULTTYPE`, `VERSION`, dll.
-  - Wajib: `layerId`.
-- **Backend Behavior**:
-  1. Validasi session cookie $\rightarrow$ resolve `mitraId`.
-  2. Cek hak akses & status kepemilikan layer Mitra:
-     - **Belum Lunas**: Forward ke **GeoServer Master**.
-     - **Lunas (`settled`)**: Forward ke **GeoServer Provisioned** (tabel `igt_provisioned_{mitraId}_{sourceLayerId}`).
-  3. Override parameter `TYPENAMES` dengan nama layer yang sesuai.
-  4. Stream GeoJSON response (`application/json`) ke Frontend.
-- **Response**: `GeoJSON.FeatureCollection`
-
-### 6.3 Security Rules (Wajib Implementasi Backend)
-
-1. **Zero Credential Exposure**: Kredensial GeoServer (Basic Auth / Master Token) **tidak boleh pernah dikirimkan ke Frontend** dalam format apapun.
-2. **Session Verification**: Backend wajib memvalidasi token JWT / session pengguna sebelum meneruskan (_forward_) request ke GeoServer.
-3. **Prevent Horizontal Access**: Backend memvalidasi bahwa `TYPENAMES` / `LAYERS` yang diminta adalah layer milik mitra yang sedang login. Mitra A tidak dapat mengakses layer hasil provisioning milik Mitra B (`403 Forbidden`).
-4. **Rate Limiting**: Penerapan rate limit per `mitraId` per endpoint untuk menjaga stabilitas GeoServer.
-5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `mitraId`, `layerId`, `timestamp`, `params`, `ipAddress`).
 
 ---
 
@@ -936,19 +936,19 @@ Modul pengelolaan akun pengguna sistem, aktivasi status (aktif/nonaktif), penuga
 
 ### 13.1 List Users
 
-- **Endpoint**: `GET /api/internal/users`
+- **Endpoint**: `GET /api/internal/user-management`
 - **Params**:
   - `page?: number`
-  - `pageSize?: number`
+  - `limit?: number` (atau `pageSize`)
   - `search?: string`
   - `role?: "internal" | "mitra"`
   - `status?: "active" | "inactive"`
 - **Response**:
 
 ```typescript
-type UserManagementListResponse = {
-  items: Array<UserManagementItem>;
-  pagination: {
+type AdminUsersApiResponse = {
+  data: Array<BackendAdminUserItem>;
+  pagination?: {
     totalItems: number;
     totalPages: number;
     currentPage: number;
@@ -956,53 +956,62 @@ type UserManagementListResponse = {
   };
 };
 
-type UserManagementItem = {
-  id: string;
+type BackendAdminUserItem = {
+  id: number;
   name: string;
   email: string;
   role: "internal" | "mitra";
-  agencyOrCompany: string;
   status: "active" | "inactive";
-  phoneNumber?: string;
-  lastLoginAt?: string;
-  createdAt: string;
+  organizationName: string | null;
+  joinedAt: string;
+  updatedAt?: string;
+  totalPurchases?: number;
+  totalPlotsPurchased?: number;
+  totalAreaPurchasedHa?: number;
+  totalIgtDataCount?: number;
+  lastTotalSpending?: string | number;
 };
 ```
 
 ### 13.2 User Detail
 
-- **Endpoint**: `GET /api/internal/users/{id}`
-- **Response**: `UserManagementItem`
+- **Endpoint**: `GET /api/internal/user-management/{id}`
+- **Response**:
 
-### 13.3 Update Status / Role User
+```typescript
+type AdminUserDetailApiResponse = {
+  data: BackendAdminUserItem;
+};
+```
 
-- **Endpoint**: `PUT /api/internal/users/{id}`
+### 13.3 Update Status User
+
+- **Endpoint**: `PATCH /api/internal/user-management/{id}/status`
 - **Payload**:
 
 ```typescript
 type UpdateUserStatusPayload = {
   status: "active" | "inactive";
-  role?: "internal" | "mitra";
 };
 ```
 
-- **Response**: `200 OK` / `{ success: true, message: "Status pengguna berhasil diperbarui" }`
+- **Response**: `200 OK` / `AdminUserDetailApiResponse`
 
 ### 13.4 Statistik Pengguna
 
-- **Endpoint**: `GET /api/internal/users/statistics`
+- **Endpoint**: `GET /api/internal/user-management/statistics`
 - **Response**:
 
 ```typescript
-type UserManagementStatsResponse = {
-  totalUsers: number;
-  statusStats: {
-    active: number;
-    inactive: number;
-  };
-  roleStats: {
-    internal: number;
-    mitra: number;
+type AdminUsersStatisticsApiResponse = {
+  data: {
+    totalUsers: number;
+    activeUsers: number;
+    inactiveUsers: number;
+    breakdownByRole: {
+      internal: number;
+      mitra: number;
+    };
   };
 };
 ```
