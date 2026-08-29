@@ -9,6 +9,10 @@ export const Badge = (props: BadgeProps) => {
   const { theme } = useThemeStore();
 
   return (
-    <ChakraBadge fontSize={"sm"} rounded={theme.radii.component} {...props} />
+    <ChakraBadge
+      fontSize={"sm"}
+      rounded={`calc(${theme.radii.component} - 2px)`}
+      {...props}
+    />
   );
 };
