@@ -293,7 +293,7 @@ const InternalDataManagementEditModalContent = (
                   {"WFS URL"}
                 </P>
                 <P fontSize={"xs"} fontFamily={"mono"} color={"fg.muted"}>
-                  {item.wfsUrl}
+                  {item.wfsUrl || "-"}
                 </P>
               </VStack>
 
@@ -302,7 +302,7 @@ const InternalDataManagementEditModalContent = (
                   {"WMS URL"}
                 </P>
                 <P fontSize={"xs"} fontFamily={"mono"} color={"fg.muted"}>
-                  {item.wmsUrl}
+                  {item.wmsUrl || "-"}
                 </P>
               </VStack>
             </VStack>

@@ -240,8 +240,8 @@ const DataListTableRootInternal = <
 
       const stickyWidth =
         stickyActionsCount > 0
-          ? `${56 + stickyActionsCount * 36 + 8}px`
-          : "56px";
+          ? `${60 + stickyActionsCount * 36 + 8}px`
+          : "60px";
 
       cols.push(stickyWidth);
     }
@@ -518,11 +518,11 @@ const DataListTableRow = memo(
               pos={"sticky"}
               right={0}
               zIndex={2}
-              w={"max"}
+              minW={"60px"}
               bg={"bg.body"}
             >
               <HStack
-                w={"max"}
+                w={"full"}
                 h={"full"}
                 px={"10px"}
                 gap={"2xs"}

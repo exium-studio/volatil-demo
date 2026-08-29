@@ -145,8 +145,8 @@ export const InternalDataManagementDataView = () => {
             td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
           },
           {
-            value: item.wfsUrl,
-            td: (
+            value: item.wfsUrl || "-",
+            td: item.wfsUrl ? (
               <HStack gap={"xs"} align={"center"} maxW={"260px"}>
                 <ExternalLink
                   href={item.wfsUrl}
@@ -167,12 +167,14 @@ export const InternalDataManagementDataView = () => {
                   flexShrink={0}
                 />
               </HStack>
+            ) : (
+              <P color={"fg.subtle"}>{"-"}</P>
             ),
             align: "start" as const,
           },
           {
-            value: item.wmsUrl,
-            td: (
+            value: item.wmsUrl || "-",
+            td: item.wmsUrl ? (
               <HStack gap={"xs"} align={"center"} maxW={"260px"}>
                 <ExternalLink
                   href={item.wmsUrl}
@@ -193,6 +195,8 @@ export const InternalDataManagementDataView = () => {
                   flexShrink={0}
                 />
               </HStack>
+            ) : (
+              <P color={"fg.subtle"}>{"-"}</P>
             ),
             align: "start" as const,
           },
