@@ -15,15 +15,13 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
-import {
-  SELECTION_TYPE_CONFIG_MAP,
-  SPATIAL_BASIS_CONFIG_MAP,
-} from "@/features/mitra/cart/constants/cart.config";
 import type {
   TransactionDetailModalContentProps,
   TransactionDetailTriggerProps,
 } from "@/features/mitra/transaction-history/types/transaction-history.modal.type";
 import type { TransactionOrderItem } from "@/features/mitra/transaction-history/types/transaction-history.type";
+import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import {
@@ -88,7 +86,7 @@ export const TransactionDetailModalContent = (
   const orderItemHeaders: FormattedTableHeader[] = useMemo(
     () => [
       { th: "Layer IGT", sortable: true },
-      { th: "Basis Spasial", sortable: true },
+      { th: "Basis IGT", sortable: true },
       { th: "Metode Seleksi", sortable: true },
       { th: "Jumlah / Luas", sortable: true },
       { th: "Subtotal", sortable: true, align: "end" },
@@ -116,36 +114,12 @@ export const TransactionDetailModalContent = (
           },
           {
             value: item.spatialBasis,
-            td: (
-              <Badge
-                colorPalette={
-                  SPATIAL_BASIS_CONFIG_MAP[item.spatialBasis]?.colorPalette ??
-                  "gray"
-                }
-                variant={"subtle"}
-              >
-                {SPATIAL_BASIS_CONFIG_MAP[item.spatialBasis]?.label ??
-                  item.spatialBasis}
-              </Badge>
-            ),
+            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
             align: "start" as const,
           },
           {
             value: item.selectionType,
-            td: (
-              <Badge
-                colorPalette={
-                  SELECTION_TYPE_CONFIG_MAP[item.selectionType]?.colorPalette
-                }
-                variant={
-                  SELECTION_TYPE_CONFIG_MAP[item.selectionType]?.variant ??
-                  "outline"
-                }
-              >
-                {SELECTION_TYPE_CONFIG_MAP[item.selectionType]?.label ??
-                  item.selectionType}
-              </Badge>
-            ),
+            td: <SelectionTypeBadge>{item.selectionType}</SelectionTypeBadge>,
             align: "start" as const,
           },
           {

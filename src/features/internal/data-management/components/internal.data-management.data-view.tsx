@@ -27,6 +27,7 @@ import type {
   MasterIgtLayerItem,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
+import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { SpatialBasisSelect } from "@/shared/components/select/ui/spatial-basis-select";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -79,7 +80,7 @@ export const InternalDataManagementDataView = () => {
       { th: "Nama Layer IGT", sortable: true },
       { th: "Status", sortable: true, align: "center" },
       { th: "Workspace / Typename", sortable: true },
-      { th: "Basis Spasial", sortable: true },
+      { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
       { th: "WFS URL" },
       { th: "WMS URL" },
@@ -87,8 +88,6 @@ export const InternalDataManagementDataView = () => {
     ];
 
     const items = rawItems.map((item) => {
-      const isBidang = item.spatialBasis === "bidang";
-
       return {
         id: item.id,
         data: item,
@@ -123,14 +122,7 @@ export const InternalDataManagementDataView = () => {
           },
           {
             value: item.spatialBasis,
-            td: (
-              <Badge
-                colorPalette={isBidang ? "blue" : "orange"}
-                variant={"subtle"}
-              >
-                {isBidang ? "Bidang" : "Kawasan"}
-              </Badge>
-            ),
+            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
             align: "start" as const,
           },
           {

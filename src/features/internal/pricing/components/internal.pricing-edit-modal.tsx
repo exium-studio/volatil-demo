@@ -119,7 +119,7 @@ const InternalPricingEditModalContent = (
             {/* Metadata Badges */}
             <HStack justify={"space-between"} align={"center"}>
               <P fontSize={"sm"} color={"fg.subtle"}>
-                {"Basis Spasial"}
+                {"Basis IGT"}
               </P>
               <Badge
                 colorPalette={

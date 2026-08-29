@@ -645,7 +645,7 @@ type TransactionHistoryResponse = {
 Berikut adalah ringkasan seluruh enum/konstanta yang digunakan di modul transaksi, keranjang, dan order:
 
 ```typescript
-// 1. Basis Spasial Data IGT
+// 1. Basis IGT Data IGT
 export type SpatialBasisType = "bidang" | "kawasan";
 
 // 2. Tipe Seleksi Area Pemotongan Data

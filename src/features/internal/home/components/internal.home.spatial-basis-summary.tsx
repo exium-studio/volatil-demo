@@ -41,7 +41,7 @@ export const InternalHomeSpatialBasisSummary = (
       <Container.Body gap={"md"} py={"md"}>
         <HStack justify={"space-between"} align={"center"} px={"md"}>
           <HStack gap={"xs"} align={"center"}>
-            <Heading>{"Basis Spasial"}</Heading>
+            <Heading>{"Basis IGT"}</Heading>
             <InfoTip
               variant={"icon"}
               appIconProps={{ size: "xs", color: "fg.subtle" }}

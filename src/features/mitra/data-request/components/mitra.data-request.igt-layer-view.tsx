@@ -16,7 +16,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -29,6 +28,7 @@ import {
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { MitraDataRequestIgtLayerViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
+import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -153,7 +153,6 @@ export const MitraDataRequestIgtLayerView = memo(
 
       const items: FormattedListItem<IgtLayerItem>[] = filteredLayers.map(
         (layer: IgtLayerItem) => {
-          const isBidang = layer.spatialBasis === "bidang";
           const layerDisplayName =
             layer.title ||
             layer.id.split(":")[1] ||
@@ -173,15 +172,7 @@ export const MitraDataRequestIgtLayerView = memo(
               },
               {
                 value: layer.spatialBasis,
-                td: isBidang ? (
-                  <Badge colorPalette={"blue"} variant={"subtle"}>
-                    {"Bidang"}
-                  </Badge>
-                ) : (
-                  <Badge colorPalette={"orange"} variant={"subtle"}>
-                    {"Kawasan"}
-                  </Badge>
-                ),
+                td: <BasisIgtBadge>{layer.spatialBasis}</BasisIgtBadge>,
                 align: "start",
               },
               {

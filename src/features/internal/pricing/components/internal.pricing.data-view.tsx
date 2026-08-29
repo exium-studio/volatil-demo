@@ -23,6 +23,7 @@ import type {
   PricingItem,
   SpatialBasisType,
 } from "@/features/internal/pricing/types/internal.pricing.type";
+import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -76,15 +77,13 @@ export const InternalPricingDataView = () => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer / Komponen Tarif", sortable: false, align: "start" },
-      { th: "Basis Spasial", sortable: false, align: "start" },
+      { th: "Basis IGT", sortable: false, align: "start" },
       { th: "Tarif Satuan (PNBP)", sortable: false, align: "end" },
       { th: "Status", sortable: false, align: "center" },
       { th: "Terakhir Diperbarui", sortable: false, align: "start" },
     ];
 
     const items = filteredItems.map((item) => {
-      const isBidang = item.spatialBasis === "bidang";
-
       return {
         id: item.id,
         data: item,
@@ -110,14 +109,7 @@ export const InternalPricingDataView = () => {
           },
           {
             value: item.spatialBasis,
-            td: (
-              <Badge
-                colorPalette={isBidang ? "blue" : "orange"}
-                variant={"subtle"}
-              >
-                {isBidang ? "Objek Bidang" : "Luas Kawasan"}
-              </Badge>
-            ),
+            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
             align: "start" as const,
           },
           {

@@ -28,6 +28,7 @@ import type {
   MyDataItem,
   MyDataStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
+import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
 import {
   formatUtcDateTime,
@@ -83,7 +84,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     ];
 
     const items: FormattedListItem[] = myData.items.map((item: MyDataItem) => {
-      const isBidang = item.spatialBasis === "bidang";
       const isActive = item.status === "active";
       const layerDisplayName = item.title || item.id.replace(/_/g, " ");
 
@@ -102,15 +102,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           },
           {
             value: item.spatialBasis,
-            td: isBidang ? (
-              <Badge colorPalette={"blue"} variant={"subtle"}>
-                {"Bidang"}
-              </Badge>
-            ) : (
-              <Badge colorPalette={"orange"} variant={"subtle"}>
-                {"Kawasan"}
-              </Badge>
-            ),
+            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
             align: "start" as const,
           },
           {

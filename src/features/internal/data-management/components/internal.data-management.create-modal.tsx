@@ -187,8 +187,8 @@ const InternalDataManagementCreateModalContent = (
           {/* Grup 2: Konfigurasi Spasial */}
           <Fieldset legend={"Konfigurasi Spasial"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
-              {/* Select Basis Spasial via RadioCardInput */}
-              <Field label={"Basis Spasial"}>
+              {/* Select Basis IGT via RadioCardInput */}
+              <Field label={"Basis IGT"}>
                 <RadioCardInput.Root
                   value={spatialBasis}
                   onValueChange={({ value }) => {

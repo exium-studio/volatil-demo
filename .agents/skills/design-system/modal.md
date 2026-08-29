@@ -134,7 +134,7 @@ const EditModalContent = (props: EditModalContentProps) => {
       </Modal.Header>
       <Modal.Body>
         <Fieldset>
-          <Field label={"Basis Spasial"}>
+          <Field label={"Basis IGT"}>
             <SpatialBasisSelect
               modalKey={`${modalKey}.spatial-basis`}
               value={spatialBasis}
