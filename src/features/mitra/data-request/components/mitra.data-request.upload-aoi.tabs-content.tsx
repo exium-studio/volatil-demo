@@ -30,7 +30,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
-import { MitraDataRequestIgtLayerView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-view";
+import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import {
   MitraDataRequestUploadAoiContext,
   useMitraDataRequestUploadAoiContext,
@@ -544,7 +544,7 @@ const UploadAoiAttributeList = memo(
 
           <Separator borderColor={"bg.canvas"} />
 
-          <MitraDataRequestIgtLayerView
+          <MitraDataRequestIgtLayerDataView
             cqlFilter={aoiCqlFilter}
             showFilter={false}
             onSelectIgtLayer={(layer) => {

@@ -17,7 +17,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
-import { MitraDataRequestIgtLayerView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer-view";
+import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
@@ -304,7 +304,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <MitraDataRequestIgtLayerView
+        <MitraDataRequestIgtLayerDataView
           cqlFilter={aoiCqlFilter}
           showFilter={false}
           onSelectIgtLayer={(layer) => {

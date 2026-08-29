@@ -26,6 +26,7 @@ import {
 import {
   DataListItemActionsTrigger,
   DataViewSpreadActions,
+  DataViewStickyActions,
 } from "@/design-system/components/data-display/ui/data-view-item-actions";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
@@ -215,10 +216,30 @@ const DataListTableRootInternal = <
     headersList.forEach(() => cols.push("auto"));
 
     if (!isEmptyArray(itemActionsList)) {
+      const actions = itemActionsList ?? [];
       // 1 normal column for spread action buttons
       cols.push("auto");
-      // 1 sticky column for sticky menu trigger
-      cols.push("56px");
+      // 1 sticky column for sticky actions + menu trigger
+      const hasStickyAction = actions.some(
+        (action) =>
+          typeof action === "object" &&
+          action !== null &&
+          "sticky" in action &&
+          action.sticky,
+      );
+      const stickyActionsCount = actions.filter(
+        (action) =>
+          typeof action === "object" &&
+          action !== null &&
+          "sticky" in action &&
+          action.sticky,
+      ).length;
+
+      const stickyWidth = hasStickyAction
+        ? `${56 + stickyActionsCount * 36}px`
+        : "56px";
+
+      cols.push(stickyWidth);
     }
 
     return cols.join(" ");
@@ -473,15 +494,19 @@ const DataListTableRow = memo(
               <DataViewSpreadActions item={item} itemActions={itemActions} />
             </HStack>
 
-            {/* Sticky column cell for sticky menu trigger */}
+            {/* Sticky column cell for sticky menu trigger and sticky actions */}
             <Center pos={"sticky"} right={0} zIndex={2} bg={"bg.body"}>
-              <Center
+              <HStack
                 w={"full"}
                 h={"full"}
                 px={"10px"}
+                gap={1}
+                align={"center"}
+                justify={"end"}
                 bg={cellBg}
                 onClick={(e) => e.stopPropagation()}
               >
+                <DataViewStickyActions itemActions={itemActions} item={item} />
                 <DataListItemActionsTrigger
                   itemActions={itemActions}
                   item={item}
@@ -490,7 +515,7 @@ const DataListTableRow = memo(
                     <AppIcon icon={EllipsisIcon} />
                   </IconButton>
                 </DataListItemActionsTrigger>
-              </Center>
+              </HStack>
             </Center>
           </>
         )}

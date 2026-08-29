@@ -4,7 +4,7 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 
-export type MitraDataRequestIgtLayerViewProps = {
+export type MitraDataRequestIgtLayerDataViewProps = {
   cqlFilter?: string;
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
   onApplyFilter?: (filters: FilterAdministrativeAreaValues) => void;

@@ -107,6 +107,7 @@ export function DataViewSpreadActions<
 
   const declarativeActions = itemActions.filter(isDeclarativeAction);
   const visibleRowActions = declarativeActions.filter((action) => {
+    if (action.sticky) return false;
     if (action.showInRow === false) return false;
     if (action.hidden?.(item.data, item)) return false;
     return true;
@@ -118,6 +119,94 @@ export function DataViewSpreadActions<
     <HStack gap={1} align={"center"} onClick={(e) => e.stopPropagation()}>
       {visibleRowActions.map((action, index) => {
         const key = action.key ?? `spread-action-${index}`;
+        const isDisabled = Boolean(action.disabled?.(item.data, item));
+        const resolvedLabel = resolveLabel(action.label, item.data);
+        const resolvedIcon = resolveIcon(action.icon, item.data);
+        const resolvedColorPalette = resolveColorPalette(
+          action.colorPalette,
+          item.data,
+        );
+        const iconNode = renderIcon(resolvedIcon);
+        const triggerElement = resolveTriggerElement(action.modal, item);
+
+        const rawButton = resolvedIcon ? (
+          <IconButton
+            variant={action.variant ?? "ghost"}
+            colorPalette={resolvedColorPalette}
+            disabled={isDisabled}
+            aria-label={resolvedLabel}
+            onClick={
+              triggerElement ? undefined : () => executeItemAction(action, item)
+            }
+          >
+            {iconNode}
+          </IconButton>
+        ) : (
+          <Button
+            variant={action.variant ?? "outline"}
+            colorPalette={resolvedColorPalette}
+            disabled={isDisabled}
+            onClick={
+              triggerElement ? undefined : () => executeItemAction(action, item)
+            }
+          >
+            {resolvedLabel}
+          </Button>
+        );
+
+        if (triggerElement) {
+          const buttonWithTrigger = cloneElement(
+            triggerElement,
+            { key: `trigger-${key}` },
+            rawButton,
+          );
+
+          if (resolvedIcon) {
+            return (
+              <Tooltip key={key} content={resolvedLabel}>
+                {buttonWithTrigger}
+              </Tooltip>
+            );
+          }
+
+          return buttonWithTrigger;
+        }
+
+        if (resolvedIcon) {
+          return (
+            <Tooltip key={key} content={resolvedLabel}>
+              {rawButton}
+            </Tooltip>
+          );
+        }
+
+        return <span key={key}>{rawButton}</span>;
+      })}
+    </HStack>
+  );
+}
+
+export function DataViewStickyActions<
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(props: {
+  item: FormattedListItem<T>;
+  itemActions?: DataViewItemActionsGenerator<T>[];
+}) {
+  const { item, itemActions = [] } = props;
+
+  const declarativeActions = itemActions.filter(isDeclarativeAction);
+  const stickyActions = declarativeActions.filter((action) => {
+    if (!action.sticky) return false;
+    if (action.hidden?.(item.data, item)) return false;
+    return true;
+  });
+
+  if (stickyActions.length === 0) return null;
+
+  return (
+    <HStack gap={1} align={"center"} onClick={(e) => e.stopPropagation()}>
+      {stickyActions.map((action, index) => {
+        const key = action.key ?? `sticky-action-${index}`;
         const isDisabled = Boolean(action.disabled?.(item.data, item));
         const resolvedLabel = resolveLabel(action.label, item.data);
         const resolvedIcon = resolveIcon(action.icon, item.data);

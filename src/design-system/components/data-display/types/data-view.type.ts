@@ -38,6 +38,7 @@ export type DataViewDeclarativeItemAction<T = Record<string, unknown>> = {
   disabled?: (item: T, formattedItem: FormattedListItem<T>) => boolean;
   showInRow?: boolean; // If true, render in spread action column (default: true)
   showInMenu?: boolean; // If true, render in sticky dropdown menu (default: true)
+  sticky?: boolean; // If true, render as sticky action button pinned to the left of the menu trigger
 
   /**
    * Modal trigger configuration (e.g. `modal: { triggerComponent: <ConfirmationTrigger ... /> }`).

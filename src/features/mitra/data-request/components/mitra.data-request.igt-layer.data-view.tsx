@@ -15,7 +15,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -26,7 +25,7 @@ import {
   useAddToCartMultipleLayers,
 } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import type { MitraDataRequestIgtLayerViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
+import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
@@ -41,8 +40,8 @@ import {
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
-export const MitraDataRequestIgtLayerView = memo(
-  (props: MitraDataRequestIgtLayerViewProps) => {
+export const MitraDataRequestIgtLayerDataView = memo(
+  (props: MitraDataRequestIgtLayerDataViewProps) => {
     // Props
     const {
       cqlFilter: baseCqlFilter,
@@ -138,17 +137,6 @@ export const MitraDataRequestIgtLayerView = memo(
         { th: "Layer IGT", sortable: true, align: "start" },
         { th: "Basis IGT", sortable: true, align: "start" },
         { th: "Jumlah / Luas", sortable: false, align: "start" },
-        {
-          th: "",
-          sortable: false,
-          align: "center",
-          headerCellProps: {
-            pos: "sticky",
-            right: "48px",
-            zIndex: 11,
-            justify: "center",
-          },
-        },
       ];
 
       const items: FormattedListItem<IgtLayerItem>[] = filteredLayers.map(
@@ -185,45 +173,28 @@ export const MitraDataRequestIgtLayerView = memo(
                 ),
                 align: "start",
               },
-              {
-                value: layer.id,
-                td: (
-                  <Tooltip content={"Masukkan ke keranjang"}>
-                    <IconButton
-                      primary
-                      variant={"outline"}
-                      aria-label={"Masukkan ke keranjang"}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (layer?.wfs?.wfsTypeName) {
-                          addToCartAllMutation.mutate({
-                            layerId: layer.id,
-                            cqlFilter: combinedCqlFilter,
-                            typeName: layer.wfs.wfsTypeName,
-                          });
-                        }
-                      }}
-                    >
-                      <AppIcon icon={IconShoppingCartPlus} />
-                    </IconButton>
-                  </Tooltip>
-                ),
-                align: "center",
-                bodyCellProps: {
-                  pos: "sticky",
-                  right: "56px",
-                  zIndex: 2,
-                  px: "10px",
-                  justify: "center",
-                  onClick: (e: React.MouseEvent) => e.stopPropagation(),
-                },
-              },
             ],
           };
         },
       );
 
       const itemActions = [
+        {
+          key: "add-to-cart",
+          label: "Masukkan ke keranjang",
+          icon: IconShoppingCartPlus,
+          sticky: true,
+          showInMenu: true,
+          onClick: (layer: IgtLayerItem) => {
+            if (layer?.wfs?.wfsTypeName) {
+              addToCartAllMutation.mutate({
+                layerId: layer.id,
+                cqlFilter: combinedCqlFilter,
+                typeName: layer.wfs.wfsTypeName,
+              });
+            }
+          },
+        },
         {
           key: "fly-to-map",
           label: "Lihat di Peta",
