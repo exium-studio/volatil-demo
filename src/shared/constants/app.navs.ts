@@ -9,6 +9,7 @@ import {
   HeadsetIcon,
   HistoryIcon,
   HouseIcon,
+  LayersIcon,
   ReceiptTextIcon,
   ServerIcon,
   SquarePen,
@@ -71,7 +72,7 @@ export const INTERNAL_APP_NAVS_MAP = {
     pathname: "/internal/master-geoserver",
   },
   data_management: {
-    icon: DatabaseIcon,
+    icon: LayersIcon,
     titleKey: "app.admin_navs.data_management",
     pathname: "/internal/data-management",
   },
