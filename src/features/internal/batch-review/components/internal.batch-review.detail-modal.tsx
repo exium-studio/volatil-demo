@@ -1,6 +1,5 @@
 // src/features/internal/batch-review/components/internal.batch-review.detail-modal.tsx
 
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -9,6 +8,8 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { InternalBatchReviewRejectTrigger } from "@/features/internal/batch-review/components/internal.batch-review.reject-modal";
 import { useApproveBatch } from "@/features/internal/batch-review/hooks/use-batch-review";
@@ -92,22 +93,7 @@ const InternalBatchReviewDetailModalContent = (
             <VStack align={"end"} gap={0}>
               <P fontSize={"xs"} color={"fg.subtle"}>{"Waktu Pengajuan"}</P>
               <P fontSize={"xs"}>{formatUtcDateTime(batch.createdAt, preferredTimezone)}</P>
-              <Badge
-                colorPalette={
-                  batch.status === "approved"
-                    ? "green"
-                    : batch.status === "rejected"
-                      ? "red"
-                      : "blue"
-                }
-                mt={"xs"}
-              >
-                {batch.status === "pending_review"
-                  ? "Menunggu Persetujuan"
-                  : batch.status === "approved"
-                    ? "Disetujui"
-                    : "Ditolak"}
-              </Badge>
+              <BatchStatusBadge mt={"xs"}>{batch.status}</BatchStatusBadge>
             </VStack>
           </HStack>
 
@@ -128,7 +114,7 @@ const InternalBatchReviewDetailModalContent = (
                   <P fontWeight={"medium"} fontSize={"sm"}>{item.sourceLayerTitle}</P>
                   <HStack gap={"xs"} mt={"2xs"}>
                     <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>
-                    <Badge variant={"outline"} size={"xs"}>{item.selectionType}</Badge>
+                    <SelectionTypeBadge size={"xs"}>{item.selectionType}</SelectionTypeBadge>
                   </HStack>
                 </VStack>
 

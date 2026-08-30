@@ -20,7 +20,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { InternalBatchReviewRejectTrigger } from "@/features/internal/batch-review/components/internal.batch-review.reject-modal";
@@ -32,6 +31,7 @@ import type { BatchLayerDataViewProps } from "@/features/internal/batch-review/t
 import type { CartBatchItem } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
@@ -169,21 +169,7 @@ export const InternalBatchReviewDetailPage = () => {
                   {"Status"}
                 </P>
 
-                <Badge
-                  colorPalette={
-                    batch.status === "approved"
-                      ? "green"
-                      : batch.status === "rejected"
-                        ? "red"
-                        : "blue"
-                  }
-                >
-                  {batch.status === "pending_review"
-                    ? "Menunggu Review"
-                    : batch.status === "approved"
-                      ? "Disetujui"
-                      : "Ditolak"}
-                </Badge>
+                <BatchStatusBadge>{batch.status}</BatchStatusBadge>
               </VStack>
 
               <VStack gap={"xs"}>

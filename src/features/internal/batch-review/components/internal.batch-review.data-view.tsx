@@ -16,7 +16,6 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalBatchReviewDetailTrigger } from "@/features/internal/batch-review/components/internal.batch-review.detail-modal";
@@ -27,6 +26,7 @@ import {
 } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
 import type { CartBatchStatus } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
@@ -113,25 +113,7 @@ export const InternalBatchReviewDataView = () => {
           },
           {
             value: batch.status,
-            td: (
-              <Badge
-                colorPalette={
-                  batch.status === "approved"
-                    ? "green"
-                    : batch.status === "rejected"
-                      ? "red"
-                      : "blue"
-                }
-              >
-                {batch.status === "pending_review"
-                  ? "Menunggu Review"
-                  : batch.status === "approved"
-                    ? "Disetujui"
-                    : batch.status === "rejected"
-                      ? "Ditolak"
-                      : batch.status}
-              </Badge>
-            ),
+            td: <BatchStatusBadge>{batch.status}</BatchStatusBadge>,
           },
           {
             value: batch.items.length,
