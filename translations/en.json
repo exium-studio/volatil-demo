@@ -19,6 +19,7 @@
       "user_management": "User Management",
       "master_geoserver": "Master Geoserver",
       "data_management": "Data Management",
+      "batch_review": "Batch Review",
       "order_statistic": "Order Statistic",
       "help": "Support Tickets",
       "notification": "Notification",

@@ -28,6 +28,7 @@ export const INTERNAL_APP_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
       { key: "user_management" },
       { key: "master_geoserver" },
       { key: "data_management" },
+      { key: "batch_review" },
       { key: "order_statistic" },
       { key: "help" },
     ],

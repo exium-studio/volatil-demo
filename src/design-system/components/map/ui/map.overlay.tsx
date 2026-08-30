@@ -9,9 +9,11 @@ import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinate
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
-export type MapOverlayProps = {};
+export type MapOverlayProps = {
+  showIgtLayerSelect?: boolean;
+};
 
-export const MapOverlay = (_: MapOverlayProps) => {
+export const MapOverlay = ({ showIgtLayerSelect = true }: MapOverlayProps) => {
   return (
     <VStack
       justify={"space-between"}
@@ -35,7 +37,7 @@ export const MapOverlay = (_: MapOverlayProps) => {
 
         <HStack align={"start"} gap={2} pointerEvents={"none"}>
           <MapAttribution />
-          <MapIgtLayerSelect />
+          {showIgtLayerSelect && <MapIgtLayerSelect />}
         </HStack>
       </HStack>
 

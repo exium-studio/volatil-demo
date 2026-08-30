@@ -15,8 +15,12 @@ export const MapShell = ({
   layers,
   cqlFilter,
   onDrawFinish,
+  showIgtLayerSelect = true,
   children,
-}: Omit<MapProps, "styleUrl"> & { cqlFilter?: string }) => {
+}: Omit<MapProps, "styleUrl"> & {
+  cqlFilter?: string;
+  showIgtLayerSelect?: boolean;
+}) => {
   const map = useMapInstanceStore((state) => state.map);
 
   useMapLayers(map, layers, cqlFilter);
@@ -24,7 +28,7 @@ export const MapShell = ({
 
   return (
     <>
-      <MapOverlay />
+      <MapOverlay showIgtLayerSelect={showIgtLayerSelect} />
       {children}
     </>
   );

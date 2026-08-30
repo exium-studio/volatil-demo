@@ -1,0 +1,108 @@
+// src/shared/constants/dummy-data/dummy-internal-batch-review.ts
+
+import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
+
+const now = new Date();
+
+export const DUMMY_INTERNAL_BATCHES: InternalBatchItem[] = [
+  {
+    batchId: "btc-2026-0830-001",
+    mitraId: "mtr-001",
+    mitraName: "PT Graha Pembangunan Persada",
+    status: "pending_review",
+    createdAt: new Date(now.getTime() - 1000 * 60 * 45).toISOString(),
+    totalPrice: 1850000,
+    items: [
+      {
+        id: "cbi-001",
+        sourceLayerId: "testing_workspace:TEST_BIDANG_TANAH",
+        sourceLayerTitle: "Bidang Tanah Kadastral Badung",
+        spatialBasis: "bidang",
+        selectionType: "draw_aoi",
+        featuresCount: 24,
+        unitPrice: 50000,
+        subtotalPrice: 1200000,
+        wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
+        wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
+      },
+      {
+        id: "cbi-002",
+        sourceLayerId: "testing_workspace:TEST_RTRW_BADUNG",
+        sourceLayerTitle: "RTRW Kabupaten Badung",
+        spatialBasis: "kawasan",
+        selectionType: "catalog",
+        featuresCount: 2,
+        areaHa: 13,
+        unitPrice: 50000,
+        subtotalPrice: 650000,
+        wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
+        wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
+      },
+    ],
+  },
+  {
+    batchId: "btc-2026-0830-002",
+    mitraId: "mtr-002",
+    mitraName: "PT Nusantara Infrastruktur Utama",
+    status: "pending_review",
+    createdAt: new Date(now.getTime() - 1000 * 60 * 120).toISOString(),
+    totalPrice: 950000,
+    items: [
+      {
+        id: "cbi-003",
+        sourceLayerId: "testing_workspace:TEST_ZNT_BADUNG",
+        sourceLayerTitle: "Zona Nilai Tanah (ZNT) Badung",
+        spatialBasis: "bidang",
+        selectionType: "upload_aoi",
+        featuresCount: 19,
+        unitPrice: 50000,
+        subtotalPrice: 950000,
+        wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
+        wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_ZNT_BADUNG",
+      },
+    ],
+  },
+  {
+    batchId: "btc-2026-0829-003",
+    mitraId: "mtr-003",
+    mitraName: "CV Agraria Citra Mandiri",
+    status: "approved",
+    createdAt: new Date(now.getTime() - 1000 * 60 * 60 * 5).toISOString(),
+    readyAt: new Date(now.getTime() - 1000 * 60 * 60 * 4).toISOString(),
+    expiredAt: new Date(now.getTime() + 1000 * 60 * 60 * 20).toISOString(),
+    totalPrice: 500000,
+    items: [
+      {
+        id: "cbi-004",
+        sourceLayerId: "testing_workspace:TEST_RTRW_BADUNG",
+        sourceLayerTitle: "RTRW Kabupaten Badung",
+        spatialBasis: "kawasan",
+        selectionType: "draw_aoi",
+        featuresCount: 1,
+        areaHa: 10,
+        unitPrice: 50000,
+        subtotalPrice: 500000,
+      },
+    ],
+  },
+  {
+    batchId: "btc-2026-0828-004",
+    mitraId: "mtr-001",
+    mitraName: "PT Graha Pembangunan Persada",
+    status: "rejected",
+    createdAt: new Date(now.getTime() - 1000 * 60 * 60 * 24).toISOString(),
+    totalPrice: 750000,
+    items: [
+      {
+        id: "cbi-005",
+        sourceLayerId: "testing_workspace:TEST_BIDANG_TANAH",
+        sourceLayerTitle: "Bidang Tanah Kadastral Badung",
+        spatialBasis: "bidang",
+        selectionType: "catalog",
+        featuresCount: 15,
+        unitPrice: 50000,
+        subtotalPrice: 750000,
+      },
+    ],
+  },
+];

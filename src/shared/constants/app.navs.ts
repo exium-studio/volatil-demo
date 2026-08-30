@@ -4,6 +4,7 @@ import type { NavItem } from "@/shared/types/nav.type";
 import { IconShoppingCart } from "@tabler/icons-react";
 import {
   BellIcon,
+  CheckCircleIcon,
   DatabaseIcon,
   HeadsetIcon,
   HistoryIcon,
@@ -73,6 +74,11 @@ export const INTERNAL_APP_NAVS_MAP = {
     icon: DatabaseIcon,
     titleKey: "app.admin_navs.data_management",
     pathname: "/internal/data-management",
+  },
+  batch_review: {
+    icon: CheckCircleIcon,
+    titleKey: "app.admin_navs.batch_review",
+    pathname: "/internal/batch-review",
   },
   order_statistic: {
     icon: ReceiptTextIcon,

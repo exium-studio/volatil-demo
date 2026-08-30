@@ -1,7 +1,6 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
-import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
@@ -12,13 +11,14 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Switch } from "@/design-system/components/input/ui/switch";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { ExternalLink } from "@/design-system/components/navigation/ui/link";
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -34,6 +34,7 @@ import type {
   MasterIgtLayerItem,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
+import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { SpatialBasisSelect } from "@/shared/components/select/ui/spatial-basis-select";
 import { StatusSelect } from "@/shared/components/select/ui/status-select";
@@ -43,7 +44,7 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { IconLayersOff } from "@tabler/icons-react";
-import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
@@ -97,19 +98,26 @@ export const InternalDataManagementDataView = () => {
     return "...";
   }, [search, spatialBasis, publishStatus]);
 
+  // Map Layer Store for toggling visibility
+  const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
+  const toggleLayerId = useMapLayerStore((s) => s.toggleLayerId);
+  const setLayerEnabled = useMapLayerStore((s) => s.setLayerEnabled);
+
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Layer IGT", sortable: true },
+      { th: "Lihat di Peta", align: "center" },
       { th: "Status", sortable: true, align: "center" },
       { th: "Workspace / Typename", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
-      { th: "WFS URL" },
-      { th: "WMS URL" },
       { th: "Terakhir Diperbarui", sortable: true },
     ];
 
     const items = rawItems.map((item) => {
+      const isVisibleOnMap =
+        enabledLayerIds[item.id] ?? (item.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+
       return {
         id: item.id,
         data: item,
@@ -118,6 +126,22 @@ export const InternalDataManagementDataView = () => {
             value: item.title,
             td: <ClampedP w={"200px"}>{item.title}</ClampedP>,
             align: "start" as const,
+          },
+          {
+            value: isVisibleOnMap ? "Tampil" : "Sembunyi",
+            td: (
+              <Center>
+                <Switch
+                  checked={isVisibleOnMap}
+                  onCheckedChange={() => {
+                    toggleLayerId(item.id);
+                  }}
+                  aria-label={`Toggle visibilitas peta untuk ${item.title}`}
+                  size={"sm"}
+                />
+              </Center>
+            ),
+            align: "center" as const,
           },
           {
             value: item.isActive ? "Publik" : "Draft",
@@ -145,62 +169,7 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.zIndex ?? 0,
             td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
-          },
-          {
-            value: item.wfsUrl || "-",
-            td: item.wfsUrl ? (
-              <HStack gap={"xs"} align={"center"} maxW={"260px"}>
-                <ExternalLink
-                  href={item.wfsUrl}
-                  display={"inline-flex"}
-                  alignItems={"center"}
-                  minW={0}
-                  flex={1}
-                >
-                  <ClampedP fontSize={"sm"} truncate>
-                    {item.wfsUrl}
-                  </ClampedP>
-                </ExternalLink>
-
-                <ClipboardButton
-                  value={item.wfsUrl}
-                  variant={"ghost"}
-                  aria-label={"Salin URL WFS"}
-                  flexShrink={0}
-                />
-              </HStack>
-            ) : (
-              <P color={"fg.subtle"}>{"-"}</P>
-            ),
-            align: "start" as const,
-          },
-          {
-            value: item.wmsUrl || "-",
-            td: item.wmsUrl ? (
-              <HStack gap={"xs"} align={"center"} maxW={"260px"}>
-                <ExternalLink
-                  href={item.wmsUrl}
-                  display={"inline-flex"}
-                  alignItems={"center"}
-                  minW={0}
-                  flex={1}
-                >
-                  <ClampedP fontSize={"sm"} truncate>
-                    {item.wmsUrl}
-                  </ClampedP>
-                </ExternalLink>
-
-                <ClipboardButton
-                  value={item.wmsUrl}
-                  variant={"ghost"}
-                  aria-label={"Salin URL WMS"}
-                  flexShrink={0}
-                />
-              </HStack>
-            ) : (
-              <P color={"fg.subtle"}>{"-"}</P>
-            ),
-            align: "start" as const,
+            align: "center" as const,
           },
           {
             value: item.updatedAt,
@@ -215,7 +184,61 @@ export const InternalDataManagementDataView = () => {
       };
     });
 
+    const batchActions = [
+      ({
+        selectedItemIds,
+        clearSelectedItems,
+      }: {
+        selectedItemIds: string[];
+        clearSelectedItems: () => void;
+      }) => (
+        <HStack key={"map-visibility-batch-actions"} gap={"xs"}>
+          <Button
+            size={"sm"}
+            variant={"outline"}
+            onClick={() => {
+              selectedItemIds.forEach((id) => setLayerEnabled(id, true));
+              clearSelectedItems();
+            }}
+          >
+            <AppIcon icon={EyeIcon} />
+            {"Tampilkan di Peta"}
+          </Button>
+
+          <Button
+            size={"sm"}
+            variant={"outline"}
+            onClick={() => {
+              selectedItemIds.forEach((id) => setLayerEnabled(id, false));
+              clearSelectedItems();
+            }}
+          >
+            <AppIcon icon={EyeOffIcon} />
+            {"Sembunyikan dari Peta"}
+          </Button>
+        </HStack>
+      ),
+    ];
+
     const itemActions: DataViewItemActionsGenerator<MasterIgtLayerItem>[] = [
+      {
+        key: "toggle-map-visibility",
+        label: (layer: MasterIgtLayerItem) => {
+          const isVisible =
+            enabledLayerIds[layer.id] ??
+            (layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+          return isVisible ? "Sembunyikan dari Peta" : "Tampilkan di Peta";
+        },
+        icon: (layer: MasterIgtLayerItem) => {
+          const isVisible =
+            enabledLayerIds[layer.id] ??
+            (layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+          return isVisible ? EyeOffIcon : EyeIcon;
+        },
+        onClick: (layer: MasterIgtLayerItem) => {
+          toggleLayerId(layer.id);
+        },
+      },
       {
         key: "edit-layer",
         label: "Ubah Layer",
@@ -254,10 +277,17 @@ export const InternalDataManagementDataView = () => {
     return {
       headers,
       items,
-      batchActions: [],
+      batchActions,
       itemActions,
     };
-  }, [rawItems, preferredTimezone, deleteMutation]);
+  }, [
+    rawItems,
+    preferredTimezone,
+    enabledLayerIds,
+    toggleLayerId,
+    setLayerEnabled,
+    deleteMutation,
+  ]);
 
   return (
     <Container.Root withContext={true} flex={1}>
@@ -369,7 +399,9 @@ export const InternalDataManagementDataView = () => {
                   <DataView.Table.Root<MasterIgtLayerItem>
                     headers={dataList.headers}
                     items={dataList.items}
+                    batchActions={dataList.batchActions}
                     itemActions={dataList.itemActions}
+                    canBatchSelect
                     withNumbering
                     page={page}
                     pageSize={pageSize}

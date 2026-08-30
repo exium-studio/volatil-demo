@@ -343,6 +343,7 @@ const Content = () => {
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
+  const pathname = useLocation().pathname;
 
   // Derived Values — Build layer config from fetched layer list
   const { data: fetchedLayers } = useQuery({
@@ -353,26 +354,40 @@ const Content = () => {
 
   const { enabledLayerIds, layerOpacities, cqlFilter } = useIgtLayerStore();
 
-  const mapLayers = useMemo<MapLayerConfig[]>(
-    () => {
-      const rawList = fetchedLayers?.items ?? fetchedLayers?.layers ?? [];
-      const sorted = [...rawList].sort(
-        (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
+  const userData = getUserSession();
+  const role = userData?.role ?? "mitra";
+  const isInternal = role === "internal";
+  const isDataManagementPage = pathname.includes("/internal/data-management");
+
+  const mapLayers = useMemo<MapLayerConfig[]>(() => {
+    // For internal admin, only render IGT layers if currently on data-management page
+    if (isInternal && !isDataManagementPage) {
+      return [];
+    }
+
+    const rawList = fetchedLayers?.items ?? fetchedLayers?.layers ?? [];
+    const sorted = [...rawList].sort(
+      (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
+    );
+    return sorted.map((layer: IgtLayerItem) => {
+      const isEnabled =
+        enabledLayerIds[layer.id] ??
+        (isInternal ? false : layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+      const opacity = layerOpacities[layer.id] ?? 1.0;
+      return getWmsRasterConfigFromIgtLayer(
+        layer,
+        wmsVisible && isEnabled,
+        opacity,
       );
-      return sorted.map((layer: IgtLayerItem) => {
-        const isEnabled =
-          enabledLayerIds[layer.id] ??
-          layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
-        const opacity = layerOpacities[layer.id] ?? 1.0;
-        return getWmsRasterConfigFromIgtLayer(
-          layer,
-          wmsVisible && isEnabled,
-          opacity,
-        );
-      });
-    },
-    [fetchedLayers, wmsVisible, enabledLayerIds, layerOpacities],
-  );
+    });
+  }, [
+    fetchedLayers,
+    wmsVisible,
+    enabledLayerIds,
+    layerOpacities,
+    isInternal,
+    isDataManagementPage,
+  ]);
 
   // Derived Values
   const sidebarPx = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
@@ -420,6 +435,7 @@ const Content = () => {
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
+          showIgtLayerSelect={!isInternal}
           onDrawFinish={(feature, originalPoints) => {
             console.log("draw finished", { feature, originalPoints });
           }}
