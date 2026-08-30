@@ -36,6 +36,8 @@ import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   CheckCircle2Icon,
+  EyeIcon,
+  EyeOffIcon,
   MapPinIcon,
   TablePropertiesIcon,
   XCircleIcon,
@@ -271,6 +273,21 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
     );
 
     const itemActions = [
+      {
+        key: "toggle-map-visibility",
+        label: (item: CartBatchItem) => {
+          const isVisible = enabledLayerIds[item.sourceLayerId] ?? false;
+          return isVisible ? "Sembunyikan dari Peta" : "Tampilkan di Peta";
+        },
+        icon: (item: CartBatchItem) => {
+          const isVisible = enabledLayerIds[item.sourceLayerId] ?? false;
+          return isVisible ? EyeOffIcon : EyeIcon;
+        },
+        onClick: (item: CartBatchItem) => {
+          const current = enabledLayerIds[item.sourceLayerId] ?? false;
+          setLayerEnabled(item.sourceLayerId, !current);
+        },
+      },
       {
         key: "detail-attribute",
         label: "Detail Atribut",
