@@ -49,26 +49,36 @@ const TopMitraLeaderboardCard = (props: { flex?: string | number }) => {
           {topMitraList.map((mitra: TopMitraAcquisitionItem, index: number) => (
             <HStack
               key={mitra.mitraId}
-              justify={"space-between"}
-              align={"center"}
+              align={"start"}
               p={"md"}
+              gap={"md"}
               borderBottom={
                 index < topMitraList.length - 1 ? "1px solid" : "none"
               }
               borderColor={"border.subtle"}
             >
-              <HStack gap={"md"} align={"center"} flex={1} minW={0}>
-                <P
-                  fontWeight={"bold"}
-                  color={mitra.rank <= 3 ? "fg" : "fg.subtle"}
-                  w={"20px"}
-                  textAlign={"center"}
-                  flexShrink={0}
-                >
-                  {mitra.rank}
-                </P>
+              {/* Ranking di paling kiri */}
+              <P
+                fontWeight={"bold"}
+                color={mitra.rank <= 3 ? "fg" : "fg.subtle"}
+                w={"20px"}
+                textAlign={"center"}
+                flexShrink={0}
+                pt={"xxs"}
+              >
+                {mitra.rank}
+              </P>
 
-                <VStack align={"start"} gap={"xs"} minW={0} flex={1}>
+              {/* Konten di kanan (wrap responsive antara info mitra & nominal/order) */}
+              <HStack
+                wrap={"wrap"}
+                justify={"space-between"}
+                align={"center"}
+                flex={1}
+                minW={0}
+                gap={"sm"}
+              >
+                <VStack align={"start"} gap={"xs"} flex={"1 1 200px"} minW={0}>
                   <ClampedP fontWeight={"medium"} w={"full"}>
                     {mitra.mitraName}
                   </ClampedP>
@@ -77,22 +87,29 @@ const TopMitraLeaderboardCard = (props: { flex?: string | number }) => {
                     {mitra.agencyOrCompany}
                   </P>
                 </VStack>
+
+                <VStack
+                  align={"start"}
+                  textAlign={"start"}
+                  gap={"xs"}
+                  flex={"1 1 160px"}
+                  alignSelf={"stretch"}
+                  justify={"center"}
+                >
+                  <P fontWeight={"semibold"}>
+                    <FormatNumber
+                      value={mitra.totalSpending}
+                      style={"currency"}
+                      currency={"IDR"}
+                      maximumFractionDigits={0}
+                    />
+                  </P>
+
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {`${mitra.totalOrders} Pesanan · ${mitra.totalVolume}`}
+                  </P>
+                </VStack>
               </HStack>
-
-              <VStack align={"end"} gap={"xs"} flexShrink={0} pl={"sm"}>
-                <P fontWeight={"semibold"}>
-                  <FormatNumber
-                    value={mitra.totalSpending}
-                    style={"currency"}
-                    currency={"IDR"}
-                    maximumFractionDigits={0}
-                  />
-                </P>
-
-                <P fontSize={"sm"} color={"fg.subtle"}>
-                  {`${mitra.totalOrders} Pesanan · ${mitra.totalVolume}`}
-                </P>
-              </VStack>
             </HStack>
           ))}
         </VStack>
@@ -128,26 +145,36 @@ const TopIgtLayersLeaderboardCard = (props: { flex?: string | number }) => {
             return (
               <HStack
                 key={layer.layerId}
-                justify={"space-between"}
-                align={"center"}
+                align={"start"}
                 p={"md"}
+                gap={"md"}
                 borderBottom={
                   index < topIgtLayers.length - 1 ? "1px solid" : "none"
                 }
                 borderColor={"border.subtle"}
               >
-                <HStack gap={"md"} align={"center"} flex={1} minW={0}>
-                  <P
-                    fontWeight={"bold"}
-                    color={layer.rank <= 3 ? "fg" : "fg.subtle"}
-                    w={"20px"}
-                    textAlign={"center"}
-                    flexShrink={0}
-                  >
-                    {layer.rank}
-                  </P>
+                {/* Ranking di paling kiri */}
+                <P
+                  fontWeight={"bold"}
+                  color={layer.rank <= 3 ? "fg" : "fg.subtle"}
+                  w={"20px"}
+                  textAlign={"center"}
+                  flexShrink={0}
+                  pt={"xxs"}
+                >
+                  {layer.rank}
+                </P>
 
-                  <VStack align={"start"} gap={"xs"} minW={0} flex={1}>
+                {/* Konten di kanan (wrap responsive antara info layer & pendapatan/volume) */}
+                <HStack
+                  wrap={"wrap"}
+                  justify={"space-between"}
+                  align={"center"}
+                  flex={1}
+                  minW={0}
+                  gap={"sm"}
+                >
+                  <VStack align={"start"} gap={"xs"} flex={"1 1 200px"} minW={0}>
                     <ClampedP fontWeight={"medium"} w={"full"}>
                       {layer.layerTitle}
                     </ClampedP>
@@ -169,23 +196,30 @@ const TopIgtLayersLeaderboardCard = (props: { flex?: string | number }) => {
                       </P>
                     </HStack>
                   </VStack>
+
+                  <VStack
+                    align={"start"}
+                    textAlign={"start"}
+                    gap={"xs"}
+                    flex={"1 1 160px"}
+                    alignSelf={"stretch"}
+                    justify={"center"}
+                  >
+                    <P fontWeight={"semibold"}>
+                      <FormatNumber
+                        value={layer.totalPnbpRevenue}
+                        style={"currency"}
+                        currency={"IDR"}
+                        maximumFractionDigits={0}
+                      />
+                    </P>
+
+                    <P fontSize={"sm"} color={"fg.subtle"}>
+                      <FormatNumber value={layer.totalVolume} />
+                      <Span ml={1}>{layer.unit}</Span>
+                    </P>
+                  </VStack>
                 </HStack>
-
-                <VStack align={"end"} gap={"xs"} flexShrink={0} pl={"sm"}>
-                  <P fontWeight={"semibold"}>
-                    <FormatNumber
-                      value={layer.totalPnbpRevenue}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </P>
-
-                  <P fontSize={"sm"} color={"fg.subtle"}>
-                    <FormatNumber value={layer.totalVolume} />
-                    <Span ml={1}>{layer.unit}</Span>
-                  </P>
-                </VStack>
               </HStack>
             );
           })}
