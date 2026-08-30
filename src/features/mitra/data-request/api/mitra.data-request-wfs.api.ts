@@ -1,10 +1,4 @@
-// src/features/mitra/data-request/api/mitra.data-request-wfs.api.ts
-
-import { getGisAuthHeader } from "@/design-system/components/map/utils/gis-auth-header";
-import {
-  fetchWfs,
-  normalizeWfsEndpointUrl,
-} from "@/design-system/components/map/utils/fetch-wfs";
+import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
 import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import {
@@ -81,20 +75,22 @@ export const getWfsStringAttributes = async (
   }
 
   try {
-    const baseUrl = normalizeWfsEndpointUrl(wfsUrl);
+    const baseUrl =
+      import.meta.env.VITE_API_BASE_URL &&
+      !import.meta.env.VITE_API_BASE_URL.endsWith("/")
+        ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wfs`
+        : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wfs`;
+
     const url = new URL(baseUrl);
+    url.searchParams.set("layerId", typeName);
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", "2.0.0");
     url.searchParams.set("request", "DescribeFeatureType");
     url.searchParams.set("typeName", typeName);
     url.searchParams.set("outputFormat", "application/json");
 
-    const authHeader = getGisAuthHeader();
     const res = await fetch(url.toString(), {
       signal,
-      headers: {
-        Authorization: authHeader,
-      },
     });
 
     if (res.ok) {

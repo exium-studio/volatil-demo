@@ -17,10 +17,15 @@ import { useEffect, useRef } from "react";
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
   if (layer.tileUrl) return layer.tileUrl;
 
-  if (!layer.wmsUrl) return "";
-  const baseUrl = layer.wmsUrl;
-  const layerName = layer.layers ?? "";
+  const baseUrl =
+    import.meta.env.VITE_API_BASE_URL &&
+    !import.meta.env.VITE_API_BASE_URL.endsWith("/")
+      ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wms`
+      : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wms`;
+
+  const layerName = layer.layers ?? layer.id ?? "";
   const queryParams: Record<string, string> = {
+    layerId: layer.id || layerName,
     service: "WMS",
     version: layer.version ?? "1.1.1",
     request: "GetMap",

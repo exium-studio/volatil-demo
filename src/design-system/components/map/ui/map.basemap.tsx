@@ -17,7 +17,6 @@ import { applyBasemapColorStyleOverride } from "@/design-system/components/map/u
 import { applyBasemapPlainDarkStyleOverride } from "@/design-system/components/map/utils/basemap-plain-dark-style-override";
 import { applyBasemapPlainLightStyleOverride } from "@/design-system/components/map/utils/basemap-plain-light-style-override";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
-import { getGisAuthHeader } from "@/design-system/components/map/utils/gis-auth-header";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
@@ -96,17 +95,6 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
       touchZoomRotate: true,
       pitchWithRotate: true,
       attributionControl: false,
-      transformRequest: (url) => {
-        if (url.includes("igtpr.atrbpn.go.id") || url.includes("geoserver")) {
-          return {
-            url,
-            headers: {
-              Authorization: getGisAuthHeader(),
-            },
-          };
-        }
-        return { url };
-      },
     });
 
     appliedStyleRef.current = {

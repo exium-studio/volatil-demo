@@ -201,31 +201,29 @@ Frontend **dilarang keras** melakukan request langsung ke URL GeoServer producti
 
 ### Ada 2 Endpoint Proxy Utama (WFS & WMS)
 
-- `GET /api/proxy/geoserver/wms` (Stream Binary Tiles/Image)
-- `GET /api/proxy/geoserver/wfs` (Stream GeoJSON Features)
+- `GET /api/proxy/wms` (Stream Binary Tiles/Image)
+- `GET /api/proxy/wfs` (Stream GeoJSON Features & DescribeFeatureType)
 
 ### Skema Akses & Autentikasi:
 
 1. **Master IGT / Katalog Data IGT (Web Client & Internal)**:
    - **Konteks**: Digunakan saat eksplorasi data katalog IGT di modul Mitra (_Data Request_) dan modul Internal (_Manajemen Data IGT_).
-   - **Mekanisme Auth**: Dikelola penuh oleh Backend melalui **Session / JWT via `httpOnly` Cookie**.
-   - **Parameter FE**: Frontend **tidak perlu** mengirim kredensial ataupun `apiKey`. Frontend cukup mengirimkan parameter **`geoserverId`** (ID master geoserver terdaftar) dan **`typeName`** (atau `layers` pada WMS).
-   - **Peran Backend**: Backend mencocokkan `geoserverId` ke tabel Master GeoServer, membaca kredensial terenkripsi di server, menyuntikkan basic auth secara internal, lalu meneruskan request ke GeoServer fisik.
-   - contoh url : https://domain-be/proxy/geoserver/wms?geoserverId=alskjdasldkjasldkj;typeName=kontoltempur
+   - **Mekanisme Auth**: Dikelola penuh oleh Backend melalui **Session / JWT via `httpOnly` Cookie** (browser otomatis mengirim cookie ke backend proxy).
+   - **Parameter FE**: Frontend **tidak perlu** mengirim kredensial ataupun `apiKey`. Frontend cukup mengirimkan parameter **`layerId`** (ID master layer IGT, contoh: `layerId=testing_workspace:TEST_BIDANG_TANAH`).
+   - **Peran Backend**: 
+     1. Backend memvalidasi session user via `httpOnly` cookie.
+     2. Backend mengambil `geoserverId` dan `typeName` dari tabel `master_igt_layers` berdasarkan `layerId`.
+     3. Backend membaca kredensial terenkripsi dari tabel `master_geoserver` berdasarkan `geoserverId`.
+     4. Backend menyuntikkan basic auth secara internal server-to-server, lalu meneruskan request ke GeoServer fisik.
+   - **Contoh URL**: 
+     - WMS: `GET /api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH&service=WMS&version=1.1.1&request=GetMap&layers=testing_workspace:TEST_BIDANG_TANAH&styles=&format=image/png&transparent=true&srs=EPSG:3857&width=256&height=256&bbox=...`
+     - WFS: `GET /api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH&service=WFS&version=2.0.0&request=GetFeature&outputFormat=application/json&typeNames=testing_workspace:TEST_BIDANG_TANAH&count=10`
 
 2. **Mitra Service URL (Layer Hasil Pembelian / Provisioning)**:
    - **Konteks**: Khusus data/layer hasil provisioning yang sudah dibeli dan berstatus lunas (`settled`) oleh Mitra.
    - **Mekanisme Auth**: Menggunakan **`apiKey`** unik milik Mitra (misal: `?apiKey=mtr_live_xyz...` atau header `X-API-Key`).
    - **Peruntukan**: Disediakan bagi Mitra untuk mengintegrasikan layer yang telah dibeli ke software GIS eksternal (seperti QGIS, ArcGIS, atau script automasi data) di luar aplikasi web browser Volatil.
-   - contoh url : https://domain-be/proxy/geoserver/wms?geoserverId=alskjdasldkjasldkj;typeName=kontoltempur;apiKey=mtr_live_xyz
-
-   Akses geoserver mitra hardcode by system, config di env aja, karna memang termasuk desain arsitektur system, ada 1 geoserver esential untuk mitra volatil
-
-   # GeoServer Mitra Volatil
-
-   VITE_GEOSERVER_MITRA_VOLATIL_URL=https://geoserver-volatil.exium.web.id/geoserver
-   VITE_GEOSERVER_MITRA_VOLATIL_CREDENTIAL_USERNAME=admin
-   VITE_GEOSERVER_MITRA_VOLATIL_CREDENTIAL_PASSWORD=geoserver
+   - **Contoh URL**: `GET /api/proxy/wms?layerId=volatil_mitra1_batch123&apiKey=mtr_live_xyz&service=WMS...`
 
 ---
 
@@ -233,36 +231,36 @@ Frontend **dilarang keras** melakukan request langsung ke URL GeoServer producti
 
 - **Endpoint**: `GET /api/proxy/wms`
 - **Query Params**:
-  - **Identifikasi Server & Layer**:
-    - `geoserverId`: ID Master GeoServer target (wajib).
-    - `layers` / `typeName`: Nama workspace dan layer target (contoh: `testing_workspace:TEST_BIDANG_TANAH` atau `volatil:igt_provisioned_mitra1_bidang`).
-  - **Standar OGC WMS**: `SERVICE=WMS`, `REQUEST=GetMap`, `BBOX`, `WIDTH`, `HEIGHT`, `FORMAT=image/png`, `SRS` / `CRS=EPSG:4326`, `TRANSPARENT=TRUE`, `STYLES`, `VERSION=1.3.0`, dll.
+  - `layerId` _(string, required)_: ID layer target (contoh: `testing_workspace:TEST_BIDANG_TANAH` atau `volatil:igt_provisioned_mitra1_bidang`).
+  - **Standar OGC WMS**: `SERVICE=WMS`, `REQUEST=GetMap`, `BBOX`, `WIDTH`, `HEIGHT`, `FORMAT=image/png`, `SRS` / `CRS=EPSG:3857`, `TRANSPARENT=TRUE`, `STYLES`, `VERSION=1.1.1` / `1.3.0`, dll.
 - **Backend Behavior**:
-  1. Validasi session cookie $\rightarrow$ resolve user/mitra.
-  2. Ambil metadata server fisik dari tabel Master GeoServer berdasarkan `geoserverId`.
-  3. Teruskan request ke server target dengan kredensial tersimpan secara aman.
-  4. Stream response binary gambar tile (`image/png`, `image/jpeg`) langsung ke browser FE.
+  1. Validasi session cookie (`httpOnly`) $\rightarrow$ resolve user.
+  2. Query tabel `master_igt_layers` via `layerId` untuk mendapatkan `geoserverId` dan `typeName`.
+  3. Ambil endpoint fisik dan kredensial dari `master_geoserver`.
+  4. Teruskan request ke server target dengan kredensial tersimpan secara aman.
+  5. Stream response binary gambar tile (`image/png`, `image/jpeg`) langsung ke browser FE.
 - **Response**: Raw image tile stream dari GeoServer.
 
 ### 4.2 WFS Proxy
 
 - **Endpoint**: `GET /api/proxy/wfs`
 - **Query Params**:
-  - **Identifikasi Server & Layer**:
-    - `geoserverId`: ID Master GeoServer target (wajib).
-    - `typeName` / `typeNames`: Nama workspace dan feature type target.
-  - **Standar OGC WFS**: `SERVICE=WFS`, `REQUEST=GetFeature`, `CQL_FILTER`, `SRSNAME=EPSG:4326`, `OUTPUTFORMAT=application/json`, `MAXFEATURES`, `RESULTTYPE`, `VERSION=2.0.0` / `1.1.0`, dll.
+  - `layerId` _(string, required)_: ID layer target (contoh: `testing_workspace:TEST_BIDANG_TANAH`).
+  - **Standar OGC WFS**: `SERVICE=WFS`, `REQUEST=GetFeature` / `DescribeFeatureType`, `CQL_FILTER`, `SRSNAME=EPSG:4326`, `OUTPUTFORMAT=application/json`, `MAXFEATURES` / `COUNT`, `STARTINDEX`, `RESULTTYPE`, `VERSION=2.0.0` / `1.1.0`, dll.
 - **Backend Behavior**:
-  1. Validasi session cookie $\rightarrow$ resolve user/mitra.
-  2. Ambil konfigurasi server dari Master GeoServer via `geoserverId`.
+  1. Validasi session cookie (`httpOnly`) $\rightarrow$ resolve user.
+  2. Ambil konfigurasi server dari `master_igt_layers` dan `master_geoserver`.
   3. Eksekusi query WFS ke GeoServer target.
   4. Stream data GeoJSON (`application/json`) ke browser FE.
-- **Response**: `GeoJSON.FeatureCollection`
+- **Response**: `GeoJSON.FeatureCollection` / JSON Schema.
 
 ### 4.3 Security Rules (Wajib Implementasi Backend)
 
 1. **Zero Credential Exposure**: Kredensial GeoServer (Basic Auth / Master Password) **tidak boleh pernah dikirimkan ke Frontend** dalam format apapun.
-2. **Session Verification**: Backend wajib memvalidasi token JWT / session pengguna sebelum meneruskan (_forward_) request ke GeoServer.
+2. **Session Verification via Cookie**: Backend wajib memvalidasi token JWT / session pengguna yang disimpan di **`httpOnly` cookie** sebelum meneruskan (_forward_) request ke GeoServer.
+3. **Prevent Horizontal Access**: Backend memvalidasi bahwa layer hasil provisioning hanya dapat diakses oleh mitra pemilik order atau pengguna internal yang berwenang (`403 Forbidden`).
+4. **Rate Limiting**: Penerapan rate limit per user/session untuk menjaga stabilitas instance GeoServer.
+5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `userId`/`mitraId`, `geoserverId`, `typeName`, `timestamp`, `ipAddress`).
 3. **Prevent Horizontal Access**: Backend memvalidasi bahwa layer hasil provisioning hanya dapat diakses oleh mitra pemilik order atau pengguna internal yang berwenang (`403 Forbidden`).
 4. **Rate Limiting**: Penerapan rate limit per user/session untuk menjaga stabilitas instance GeoServer.
 5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `userId`/`mitraId`, `geoserverId`, `typeName`, `timestamp`, `ipAddress`).
@@ -729,7 +727,7 @@ export type HelpCenterStatus =
 
 ## 9. Internal - Master IGT Layers & Data Management
 
-Modul master pengelolaan konfigurasi layer IGT spasial (GeoServer WMS/WFS, metadata spasial, spatial basis bidang/kawasan, dan status publikasi layer).
+Modul master pengelolaan konfigurasi layer IGT spasial. Mengaitkan identifier layer dengan `geoserverId` terdaftar dan `typeName`. Seluruh akses render WMS maupun query WFS ke GeoServer fisik dikelola via Backend Proxy dengan otentikasi session `httpOnly` cookie.
 
 ### 9.1 List Master IGT Layers
 
@@ -745,17 +743,15 @@ Modul master pengelolaan konfigurasi layer IGT spasial (GeoServer WMS/WFS, metad
 ```typescript
 type MasterIgtLayersResponse = {
   items: Array<{
-    id: string;
+    id: string; // Identifier layer (contoh: "testing_workspace:TEST_BIDANG_TANAH")
     title: string;
     description?: string;
     spatialBasis: "bidang" | "kawasan";
-    bbox: [number, number, number, number]; // [minX, minY, maxX, maxY] EPSG:4326
+    bbox: [number, number, number, number]; // [minX, minY, maxX, maxY] EPSG:4326 (auto-cached dari GeoServer)
     isActive: boolean;
     zIndex?: number; // Layer stacking order index (1 = bawah, 2 = tengah, 3 = atas)
-    geoserverBaseUrl: string; // Base URL GeoServer workspace
+    geoserverId: string; // ID master geoserver tempat layer berada (FK ke master_geoserver)
     typeName: string; // Format: workspace:layerName
-    wfsUrl: string; // Generated by BE: {geoserverBaseUrl}/ows
-    wmsUrl: string; // Generated by BE: {geoserverBaseUrl}/wms
     createdAt: string;
     updatedAt: string;
   }>;
@@ -770,7 +766,7 @@ type MasterIgtLayersResponse = {
 
 ### 9.2 Create Master IGT Layer
 
-Mendaftarkan layer IGT baru ke katalog internal. Metadata teknis spasial seperti `bbox` (Bounding Box) dan ekstensi layer otomatis diambil dan di-cache oleh Backend dari GeoServer REST API, sehingga Frontend tidak perlu mengirimkan `bbox`.
+Mendaftarkan layer IGT baru ke katalog internal. Frontend **hanya mengirim `geoserverId` dan `typeName`** beserta atribut metadata. Backend otomatis meng-query metadata teknis spasial (seperti `bbox`, geometry type, dan projection) dari REST API GeoServer yang bersangkutan dan menyimpannya ke database.
 
 - **Endpoint**: `POST /api/internal/igt-layers`
 - **Payload**:
@@ -778,16 +774,13 @@ Mendaftarkan layer IGT baru ke katalog internal. Metadata teknis spasial seperti
 ```typescript
 type CreateMasterIgtLayerPayload = {
   id?: string; // Opsional (jika kosong, auto-generate dari typeName)
-  title: string;
+  geoserverId: string; // ID master geoserver yang dipilih (wajib)
+  typeName: string; // Format: workspace:layerName — contoh: testing_workspace:TEST_BIDANG_TANAH (wajib)
+  title: string; // Nama tampilan layer di katalog
   description?: string;
   spatialBasis: "bidang" | "kawasan";
-  isActive: boolean;
+  isActive: boolean; // Default: true
   zIndex?: number; // Default: 1
-  geoserverId: string; // ID master geoserver yang dipilih
-  geoserverBaseUrl: string; // Base URL GeoServer
-  typeName: string; // Format: workspace:layerName — contoh: testing_workspace:TEST_BIDANG_TANAH
-  wfsUrl: string; // Generated: {geoserverBaseUrl}/ows
-  wmsUrl: string; // Generated: {geoserverBaseUrl}/wms
 };
 ```
 

@@ -1,7 +1,4 @@
-// src/design-system/components/map/utils/fetch-wfs.ts
-
 import type GeoJSON from "geojson";
-import { getGisAuthHeader } from "@/design-system/components/map/utils/gis-auth-header";
 
 export type WfsBbox = [number, number, number, number];
 
@@ -61,7 +58,6 @@ export const normalizeWfsEndpointUrl = (urlStr: string): string => {
 const buildWfsUrl = (
   {
     typeName,
-    wfsUrl,
     bbox,
     cqlFilter,
     version = "2.0.0",
@@ -72,14 +68,15 @@ const buildWfsUrl = (
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
-  if (!wfsUrl) {
-    throw new Error(
-      "wfsUrl parameter is required for fetchWfs and cannot be empty.",
-    );
-  }
-  const baseUrl = normalizeWfsEndpointUrl(wfsUrl);
+  const baseUrl =
+    import.meta.env.VITE_API_BASE_URL &&
+    !import.meta.env.VITE_API_BASE_URL.endsWith("/")
+      ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wfs`
+      : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wfs`;
+
   const url = new URL(baseUrl);
 
+  url.searchParams.set("layerId", typeName);
   url.searchParams.set("service", "WFS");
   url.searchParams.set("version", version);
   url.searchParams.set("request", "GetFeature");
@@ -144,14 +141,10 @@ export const fetchWfs = async (
   params: FetchWfsParams,
 ): Promise<GeoServerFeatureCollection> => {
   const { version = "2.0.0", signal, startIndex = 0, maxFeatures } = params;
-  const authHeader = getGisAuthHeader();
 
   let url = buildWfsUrl(params, true);
   let res = await fetch(url.toString(), {
     signal,
-    headers: {
-      Authorization: authHeader,
-    },
   });
 
   // If server throws 400 Bad Request due to GeoServer startIndex NullPointerException bug, retry without startIndex
@@ -162,9 +155,6 @@ export const fetchWfs = async (
     url = buildWfsUrl({ ...params, maxFeatures: undefined }, false);
     res = await fetch(url.toString(), {
       signal,
-      headers: {
-        Authorization: authHeader,
-      },
     });
   }
 
