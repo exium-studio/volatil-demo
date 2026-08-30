@@ -29,7 +29,7 @@ import type {
   MyDataStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
-import { StatusSelect } from "@/shared/components/select/ui/status-select";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -227,7 +227,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
         />
 
         <HStack wrap={"wrap"} gap={"sm"}>
-          <StatusSelect
+          <StatusFilterSelect
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
             options={MY_DATA_STATUS_OPTIONS}

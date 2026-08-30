@@ -48,8 +48,8 @@ const ROLE_MAP: Record<UserRole, { label: string; color: string }> = {
 };
 
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { RoleSelect } from "@/shared/components/select/ui/role-select";
-import { StatusSelect } from "@/shared/components/select/ui/status-select";
+import { RoleFilterSelect } from "@/features/shared/components/role-filter.select";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 
 export const InternalUserManagementDataView = () => {
   // Stores
@@ -234,7 +234,7 @@ export const InternalUserManagementDataView = () => {
               maxW={"220px"}
             />
 
-            <StatusSelect
+            <StatusFilterSelect
               modalKey={"user-management-status-filter"}
               value={selectedStatus}
               onValueChange={(val) =>
@@ -246,7 +246,7 @@ export const InternalUserManagementDataView = () => {
               w={"150px"}
             />
 
-            <RoleSelect
+            <RoleFilterSelect
               modalKey={"user-management-role-filter"}
               value={selectedRole}
               onValueChange={(val) =>

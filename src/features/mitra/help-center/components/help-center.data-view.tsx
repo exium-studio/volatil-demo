@@ -31,7 +31,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { StatusSelect } from "@/shared/components/select/ui/status-select";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
@@ -287,7 +287,7 @@ export const HelpCenterDataView = () => {
               maxW={"240px"}
             />
 
-            <StatusSelect
+            <StatusFilterSelect
               modalKey={"help-center-status-filter"}
               options={HELP_CENTER_STATUS_OPTIONS}
               value={selectedStatus}

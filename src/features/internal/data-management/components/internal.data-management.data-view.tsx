@@ -36,8 +36,8 @@ import type {
 } from "@/features/internal/data-management/types/data-management.type";
 import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
-import { SpatialBasisSelect } from "@/shared/components/select/ui/spatial-basis-select";
-import { StatusSelect } from "@/shared/components/select/ui/status-select";
+import { SpatialBasisFilterSelect } from "@/features/shared/components/spatial-basis-filter.select";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -342,7 +342,7 @@ export const InternalDataManagementDataView = () => {
             maxW={"280px"}
           />
 
-          <SpatialBasisSelect
+          <SpatialBasisFilterSelect
             modalKey={"data-management-spatial-basis-filter"}
             value={spatialBasis}
             onValueChange={(val) =>
@@ -354,7 +354,7 @@ export const InternalDataManagementDataView = () => {
             w={"150px"}
           />
 
-          <StatusSelect
+          <StatusFilterSelect
             modalKey={"data-management-publish-status-filter"}
             options={PUBLISH_STATUS_OPTIONS}
             placeholder={"Semua Status"}

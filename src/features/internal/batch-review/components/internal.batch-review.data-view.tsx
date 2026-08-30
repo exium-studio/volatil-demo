@@ -27,7 +27,7 @@ import {
 import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
 import type { CartBatchStatus } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
-import { StatusSelect } from "@/shared/components/select/ui/status-select";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import {
@@ -265,7 +265,7 @@ export const InternalBatchReviewDataView = () => {
             maxW={"280px"}
           />
 
-          <StatusSelect
+          <StatusFilterSelect
             modalKey={"batch-review-status-filter"}
             options={BATCH_STATUS_OPTIONS}
             placeholder={"Semua Status"}

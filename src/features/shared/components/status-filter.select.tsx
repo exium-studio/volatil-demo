@@ -1,7 +1,8 @@
-// src/shared/components/select/ui/status-select.tsx
+// src/features/shared/components/status-filter.select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
+import type { StatusFilterSelectProps } from "@/features/shared/types/status-filter-select.type";
 
 export const DEFAULT_GENERIC_STATUS_OPTIONS: FocusSelectOption[] = [
   { value: "all", label: "Semua Status" },
@@ -9,19 +10,7 @@ export const DEFAULT_GENERIC_STATUS_OPTIONS: FocusSelectOption[] = [
   { value: "inactive", label: "Tidak Aktif" },
 ];
 
-export type StatusSelectProps = {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
-  options?: FocusSelectOption[];
-  placeholder?: string;
-  modalKey?: string;
-  w?: string | number;
-  disabled?: boolean;
-  clearable?: boolean;
-};
-
-export const StatusSelect = (props: StatusSelectProps) => {
+export const StatusFilterSelect = (props: StatusFilterSelectProps) => {
   // Props
   const {
     value,

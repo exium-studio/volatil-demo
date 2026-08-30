@@ -32,7 +32,7 @@ import type {
   TransactionRecord,
   TransactionStatus,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
-import { StatusSelect } from "@/shared/components/select/ui/status-select";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -229,7 +229,7 @@ export const TransactionHistoryDataView = () => {
         />
 
         <HStack wrap={"wrap"} gap={"sm"}>
-          <StatusSelect
+          <StatusFilterSelect
             modalKey={"transaction-history-status-filter"}
             placeholder={"Status"}
             options={TRANSACTION_STATUS_OPTIONS}

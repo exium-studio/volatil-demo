@@ -1,33 +1,22 @@
-// src/shared/components/select/ui/role-select.tsx
+// src/features/shared/components/role-filter.select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
+import type { RoleFilterSelectProps } from "@/features/shared/types/role-filter-select.type";
 
-export const DEFAULT_ROLE_OPTIONS: FocusSelectOption[] = [
+export const DEFAULT_ROLE_FILTER_OPTIONS: FocusSelectOption[] = [
   { value: "all", label: "Semua Role" },
   { value: "internal", label: "Internal" },
   { value: "mitra", label: "Mitra" },
 ];
 
-export type RoleSelectProps = {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
-  options?: FocusSelectOption[];
-  placeholder?: string;
-  modalKey?: string;
-  w?: string | number;
-  disabled?: boolean;
-  clearable?: boolean;
-};
-
-export const RoleSelect = (props: RoleSelectProps) => {
+export const RoleFilterSelect = (props: RoleFilterSelectProps) => {
   // Props
   const {
     value,
     defaultValue = "all",
     onValueChange,
-    options = DEFAULT_ROLE_OPTIONS,
+    options = DEFAULT_ROLE_FILTER_OPTIONS,
     placeholder = "Semua Role",
     modalKey = "role-filter-modal",
     w = "140px",
