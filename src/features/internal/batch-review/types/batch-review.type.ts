@@ -4,7 +4,14 @@ import type {
   CartBatchItem,
   CartBatchStatus,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
-import type { PaginatedParams, PaginationMeta } from "@/shared/types/common-response.type";
+import type {
+  PaginatedParams,
+  PaginationMeta,
+} from "@/shared/types/common-response.type";
+
+export type InternalBatchReviewRejectModalContentProps = {
+  batch: InternalBatchItem;
+};
 
 export type InternalBatchItem = {
   batchId: string;

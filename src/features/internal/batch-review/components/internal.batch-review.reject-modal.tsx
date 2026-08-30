@@ -9,10 +9,14 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useRejectBatch } from "@/features/internal/batch-review/hooks/use-batch-review";
-import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
+import type {
+  InternalBatchItem,
+  InternalBatchReviewRejectModalContentProps,
+} from "@/features/internal/batch-review/types/batch-review.type";
 import { XCircleIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { P } from "@/design-system/components/typography/ui/p";
+import { back } from "@/shared/utils/client/navigation";
 
 export type InternalBatchReviewRejectTriggerProps = {
   modalKey?: string;
@@ -40,20 +44,15 @@ export const InternalBatchReviewRejectTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalBatchReviewRejectModalContent batch={batch} close={close} />
+      <InternalBatchReviewRejectModalContent batch={batch} />
     </Modal.Root>
   );
-};
-
-type InternalBatchReviewRejectModalContentProps = {
-  batch: InternalBatchItem;
-  close: () => void;
 };
 
 const InternalBatchReviewRejectModalContent = (
   props: InternalBatchReviewRejectModalContentProps,
 ) => {
-  const { batch, close } = props;
+  const { batch } = props;
   const [reason, setReason] = useState("");
   const rejectMutation = useRejectBatch();
 
@@ -66,7 +65,7 @@ const InternalBatchReviewRejectModalContent = (
       },
       {
         onSuccess: () => {
-          close();
+          back();
         },
       },
     );
@@ -116,7 +115,7 @@ const InternalBatchReviewRejectModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <VStack gap={"sm"} w={"full"}>
+        <VStack gap={"xs"} w={"full"}>
           <Button
             variant={"solid"}
             colorPalette={"red"}
@@ -128,9 +127,7 @@ const InternalBatchReviewRejectModalContent = (
             {"Tolak Batch"}
           </Button>
 
-          <Button variant={"outline"} onClick={close}>
-            {"Batal"}
-          </Button>
+          <Button onClick={back}>{"Batal"}</Button>
         </VStack>
       </Modal.Footer>
     </Modal.Content>
