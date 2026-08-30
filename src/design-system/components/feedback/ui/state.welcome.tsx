@@ -128,7 +128,7 @@ export const WelcomeState = (props: WelcomeStateProps) => {
         </VStack>
 
         {/* 3 Last / Suggested Navigations in clean neutral outline VStack */}
-        <VStack w={"full"} maxW={"360px"} gap={"xs"} pt={"xs"}>
+        <VStack w={"full"} maxW={"360px"} gap={"xs"} mt={"xs"}>
           {displayNavItems.map((nav) => (
             <Button
               key={nav.pathname}
@@ -152,7 +152,7 @@ export const WelcomeState = (props: WelcomeStateProps) => {
           ))}
         </VStack>
 
-        <Separator borderColor={"border.subtle"} w={"60px"} />
+        <Separator w={"60px"} />
 
         <P fontSize={"xs"} color={"fg.subtle"}>
           {"Pilih menu pada bilah samping untuk mulai bernavigasi."}
