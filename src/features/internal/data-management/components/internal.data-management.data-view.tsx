@@ -44,7 +44,13 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { IconLayersOff } from "@tabler/icons-react";
-import { EyeIcon, EyeOffIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  PencilIcon,
+  PlusIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
@@ -95,8 +101,8 @@ export const InternalDataManagementDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const isSearching = Boolean(
     params.search.trim() ||
-      params.spatialBasis !== "all" ||
-      params.publishStatus !== "all",
+    params.spatialBasis !== "all" ||
+    params.publishStatus !== "all",
   );
   const searchQuery = useMemo(() => {
     if (params.search.trim()) return params.search;
@@ -116,17 +122,17 @@ export const InternalDataManagementDataView = () => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Layer IGT", sortable: true },
-      { th: "Lihat di Peta", align: "center" },
       { th: "Status", sortable: true, align: "center" },
       { th: "Workspace / Typename", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
       { th: "Terakhir Diperbarui", sortable: true },
+      { th: "Lihat di Peta", align: "center" },
     ];
 
     const items = rawItems.map((item) => {
       const isVisibleOnMap =
-        enabledLayerIds[item.id] ?? (item.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+        enabledLayerIds[item.id] ?? item.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
 
       return {
         id: item.id,
@@ -136,22 +142,6 @@ export const InternalDataManagementDataView = () => {
             value: item.title,
             td: <ClampedP w={"200px"}>{item.title}</ClampedP>,
             align: "start" as const,
-          },
-          {
-            value: isVisibleOnMap ? "Tampil" : "Sembunyi",
-            td: (
-              <Center>
-                <Switch
-                  checked={isVisibleOnMap}
-                  onCheckedChange={() => {
-                    toggleLayerId(item.id);
-                  }}
-                  aria-label={`Toggle visibilitas peta untuk ${item.title}`}
-                  size={"sm"}
-                />
-              </Center>
-            ),
-            align: "center" as const,
           },
           {
             value: item.isActive ? "Publik" : "Draft",
@@ -189,6 +179,22 @@ export const InternalDataManagementDataView = () => {
               </P>
             ),
             align: "start" as const,
+          },
+          {
+            value: isVisibleOnMap ? "Tampil" : "Sembunyi",
+            td: (
+              <Center>
+                <Switch
+                  checked={isVisibleOnMap}
+                  onCheckedChange={() => {
+                    toggleLayerId(item.id);
+                  }}
+                  aria-label={`Toggle visibilitas peta untuk ${item.title}`}
+                  size={"sm"}
+                />
+              </Center>
+            ),
+            align: "center" as const,
           },
         ],
       };
@@ -236,13 +242,13 @@ export const InternalDataManagementDataView = () => {
         label: (layer: MasterIgtLayerItem) => {
           const isVisible =
             enabledLayerIds[layer.id] ??
-            (layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+            layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
           return isVisible ? "Sembunyikan dari Peta" : "Tampilkan di Peta";
         },
         icon: (layer: MasterIgtLayerItem) => {
           const isVisible =
             enabledLayerIds[layer.id] ??
-            (layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+            layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
           return isVisible ? EyeOffIcon : EyeIcon;
         },
         onClick: (layer: MasterIgtLayerItem) => {
