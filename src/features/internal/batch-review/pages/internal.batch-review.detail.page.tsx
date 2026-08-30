@@ -73,11 +73,11 @@ export const InternalBatchReviewDetailPage = () => {
   }
 
   return (
-    <PanelContentContainer h={"auto"} position={"relative"}>
-      <Container.Root withContext>
-        <Container.Body>
+    <PanelContentContainer flex={1} position={"relative"}>
+      <Container.Root withContext flex={1}>
+        <Container.Body overflowY={"auto"}>
           {/* Header */}
-          <HeaderContainer>
+          <HeaderContainer px={"xs"}>
             <HStack
               justify={"space-between"}
               align={"center"}
@@ -90,17 +90,11 @@ export const InternalBatchReviewDetailPage = () => {
                   onClick={() => navigate({ to: "/internal/batch-review" })}
                 />
 
-                <VStack gap={"2xs"}>
-                  <Heading>{"Detail Batch Interop"}</Heading>
-
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {batch.batchId}
-                  </P>
-                </VStack>
+                <Heading>{"Detail Batch Interop"}</Heading>
               </HStack>
 
               {batch.status === "pending_review" && (
-                <HStack gap={"sm"}>
+                <HStack gap={"xs"}>
                   <InternalBatchReviewRejectTrigger
                     batch={batch}
                     modalKey={`reject-detail-${batch.batchId}`}
@@ -149,7 +143,7 @@ export const InternalBatchReviewDetailPage = () => {
           <Separator borderColor={"bg.canvas"} />
 
           {/* Batch Metadata */}
-          <HStack justify={"space-between"} p={"md"} wrap={"wrap"} gap={"sm"}>
+          <VStack gap={"md"} p={"md"}>
             <VStack align={"start"} gap={"xs"}>
               <P fontSize={"xs"} color={"fg.subtle"}>
                 {"Pemohon / Mitra"}
@@ -182,7 +176,7 @@ export const InternalBatchReviewDetailPage = () => {
                 </P>
               </VStack>
             </HStack>
-          </HStack>
+          </VStack>
 
           <Separator borderColor={"bg.canvas"} />
 

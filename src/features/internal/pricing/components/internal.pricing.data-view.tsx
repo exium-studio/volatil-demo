@@ -21,7 +21,7 @@ import { InternalPricingEditModal } from "@/features/internal/pricing/components
 import { useInternalPricingListQuery } from "@/features/internal/pricing/hooks/use-internal-pricing";
 import type {
   PricingItem,
-  SpatialBasisType,
+  PricingQueryParams,
 } from "@/features/internal/pricing/types/internal.pricing.type";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import {
@@ -32,13 +32,13 @@ import { Edit2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export const InternalPricingDataView = () => {
-  // States
-  const [search, setSearch] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
-  const [spatialBasis, setSpatialBasis] = useState<string>("all");
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<PricingQueryParams>({
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    search: "",
+    spatialBasis: undefined,
+  });
   const [selectedItem, setSelectedItem] = useState<PricingItem | null>(null);
 
   // Stores & Hooks
@@ -53,26 +53,25 @@ export const InternalPricingDataView = () => {
     isLoading,
     isFetching,
   } = useInternalPricingListQuery({
-    page,
-    pageSize,
-    search: search || undefined,
-    spatialBasis:
-      spatialBasis !== "all" ? (spatialBasis as SpatialBasisType) : undefined,
+    page: params.page,
+    pageSize: params.pageSize,
+    search: params.search || undefined,
+    spatialBasis: params.spatialBasis,
   });
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   const filteredItems = useMemo(() => {
-    if (!search) return rawItems;
-    const lower = search.toLowerCase();
+    if (!params.search) return rawItems;
+    const lower = params.search.toLowerCase();
     return rawItems.filter(
       (item) =>
         item.layerTitle?.toLowerCase().includes(lower) ||
         item.description?.toLowerCase().includes(lower) ||
         item.id.toLowerCase().includes(lower),
     );
-  }, [rawItems, search]);
+  }, [rawItems, params.search]);
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -190,10 +189,9 @@ export const InternalPricingDataView = () => {
           bg={"bg.body"}
         >
           <SearchInput
-            value={search}
+            value={params.search}
             onValueChange={(val) => {
-              setSearch(val);
-              setPage(1);
+              setParams((prev) => ({ ...prev, search: val, page: 1 }));
             }}
             placeholder={"Cari layer / keterangan tarif..."}
             maxW={"300px"}
@@ -202,25 +200,43 @@ export const InternalPricingDataView = () => {
           <HStack gap={"xs"}>
             <Badge
               cursor={"pointer"}
-              variant={spatialBasis === "all" ? "solid" : "outline"}
+              variant={!params.spatialBasis ? "solid" : "outline"}
               colorPalette={"teal"}
-              onClick={() => setSpatialBasis("all")}
+              onClick={() =>
+                setParams((prev) => ({
+                  ...prev,
+                  spatialBasis: undefined,
+                  page: 1,
+                }))
+              }
             >
               {"Semua Basis"}
             </Badge>
             <Badge
               cursor={"pointer"}
-              variant={spatialBasis === "bidang" ? "solid" : "outline"}
+              variant={params.spatialBasis === "bidang" ? "solid" : "outline"}
               colorPalette={"blue"}
-              onClick={() => setSpatialBasis("bidang")}
+              onClick={() =>
+                setParams((prev) => ({
+                  ...prev,
+                  spatialBasis: "bidang",
+                  page: 1,
+                }))
+              }
             >
               {"Bidang"}
             </Badge>
             <Badge
               cursor={"pointer"}
-              variant={spatialBasis === "kawasan" ? "solid" : "outline"}
+              variant={params.spatialBasis === "kawasan" ? "solid" : "outline"}
               colorPalette={"orange"}
-              onClick={() => setSpatialBasis("kawasan")}
+              onClick={() =>
+                setParams((prev) => ({
+                  ...prev,
+                  spatialBasis: "kawasan",
+                  page: 1,
+                }))
+              }
             >
               {"Kawasan"}
             </Badge>
@@ -247,8 +263,8 @@ export const InternalPricingDataView = () => {
                 items={dataList.items}
                 itemActions={dataList.itemActions}
                 withNumbering={true}
-                page={page}
-                pageSize={pageSize}
+                page={params.page}
+                pageSize={params.pageSize}
                 rounded={0}
                 pb={0}
               >
@@ -259,12 +275,17 @@ export const InternalPricingDataView = () => {
               <TopBarLoader isFetching={isFetching} />
 
               <DataViewFooter
-                page={page}
-                pageSize={pageSize}
-                setPage={(nextPage: number) => setPage(nextPage)}
+                page={params.page ?? 1}
+                pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+                setPage={(nextPage: number) =>
+                  setParams((prev) => ({ ...prev, page: nextPage }))
+                }
                 setPageSize={(nextSize: number) => {
-                  setPageSize(nextSize);
-                  setPage(1);
+                  setParams((prev) => ({
+                    ...prev,
+                    pageSize: nextSize,
+                    page: 1,
+                  }));
                 }}
                 currentDataLength={filteredItems.length}
                 totalData={pagination?.totalItems ?? filteredItems.length}

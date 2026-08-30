@@ -26,6 +26,7 @@ import {
 } from "@/features/internal/user-management/hooks/use-user-management.query";
 import type {
   UserManagementItem,
+  UserManagementQueryParams,
   UserStatus,
 } from "@/features/internal/user-management/types/user-management.type";
 import { t } from "@/shared/libs/i18n";
@@ -55,14 +56,14 @@ export const InternalUserManagementDataView = () => {
   // Stores
   const { theme } = useThemeStore();
 
-  // States
-  const [search, setSearch] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [selectedRole, setSelectedRole] = useState<string>("all");
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<UserManagementQueryParams>({
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    search: "",
+    status: undefined,
+    role: undefined,
+  });
 
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
@@ -72,12 +73,11 @@ export const InternalUserManagementDataView = () => {
   // Queries
   const { users, total, totalPages, isLoading, isFetching } =
     useUserManagementUsersQuery({
-      search: search.trim() || undefined,
-      page,
-      pageSize,
-      status:
-        selectedStatus === "all" ? undefined : (selectedStatus as UserStatus),
-      role: selectedRole === "all" ? undefined : (selectedRole as UserRole),
+      search: params.search?.trim() || undefined,
+      page: params.page,
+      pageSize: params.pageSize,
+      status: params.status,
+      role: params.role,
     });
 
   // Derived Values - Headers, Items, BatchActions, ItemActions in 1 useMemo
@@ -224,11 +224,10 @@ export const InternalUserManagementDataView = () => {
           <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
             <SearchInput
               placeholder={t["action.search"]()}
-              value={search}
+              value={params.search}
               onValueChange={(val) =>
                 startTransition(() => {
-                  setSearch(val);
-                  setPage(1);
+                  setParams((prev) => ({ ...prev, search: val, page: 1 }));
                 })
               }
               maxW={"220px"}
@@ -236,11 +235,14 @@ export const InternalUserManagementDataView = () => {
 
             <StatusFilterSelect
               modalKey={"user-management-status-filter"}
-              value={selectedStatus}
+              value={params.status ?? "all"}
               onValueChange={(val) =>
                 startTransition(() => {
-                  setSelectedStatus(val);
-                  setPage(1);
+                  setParams((prev) => ({
+                    ...prev,
+                    status: val === "all" ? undefined : (val as UserStatus),
+                    page: 1,
+                  }));
                 })
               }
               w={"150px"}
@@ -248,11 +250,14 @@ export const InternalUserManagementDataView = () => {
 
             <RoleFilterSelect
               modalKey={"user-management-role-filter"}
-              value={selectedRole}
+              value={params.role ?? "all"}
               onValueChange={(val) =>
                 startTransition(() => {
-                  setSelectedRole(val);
-                  setPage(1);
+                  setParams((prev) => ({
+                    ...prev,
+                    role: val === "all" ? undefined : (val as UserRole),
+                    page: 1,
+                  }));
                 })
               }
               w={"140px"}
@@ -272,8 +277,8 @@ export const InternalUserManagementDataView = () => {
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
-                page={page}
-                pageSize={pageSize}
+                page={params.page}
+                pageSize={params.pageSize}
                 roundedTop={0}
               >
                 <DataView.Table.Header />
@@ -283,12 +288,17 @@ export const InternalUserManagementDataView = () => {
               <TopBarLoader isFetching={isFetching} />
 
               <DataViewFooter
-                page={page}
-                pageSize={pageSize}
-                setPage={setPage}
+                page={params.page ?? 1}
+                pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+                setPage={(newPage: number) =>
+                  setParams((prev) => ({ ...prev, page: newPage }))
+                }
                 setPageSize={(newSize: number) => {
-                  setPageSize(newSize);
-                  setPage(1);
+                  setParams((prev) => ({
+                    ...prev,
+                    pageSize: newSize,
+                    page: 1,
+                  }));
                 }}
                 currentDataLength={users.length}
                 totalData={total}

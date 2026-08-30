@@ -24,6 +24,7 @@ import { CreateHelpCenterTrigger } from "@/features/mitra/help-center/components
 import { useHelpCenterTicketsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type {
   HelpCenterItem,
+  HelpCenterQueryParams,
   HelpCenterResponse,
   HelpCenterStatus,
 } from "@/features/mitra/help-center/types/help-center.type";
@@ -71,26 +72,23 @@ export const HelpCenterDataView = () => {
   // Navigation
   const navigate = useNavigate();
 
-  // States
-  const [search, setSearch] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<HelpCenterQueryParams>({
+    page: 1,
+    limit: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    search: "",
+    status: undefined,
+  });
 
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
   const { tickets, pagination, isLoading, isFetching } =
     useHelpCenterTicketsQuery({
-      search: search.trim() || undefined,
-      page,
-      limit: pageSize,
-      status:
-        selectedStatus === "all"
-          ? undefined
-          : (selectedStatus as HelpCenterStatus),
+      search: params.search?.trim() || undefined,
+      page: params.page,
+      limit: params.limit,
+      status: params.status,
     });
 
   // Derived Values - DataList headers, items, itemActions
@@ -277,11 +275,10 @@ export const HelpCenterDataView = () => {
           <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
             <SearchInput
               placeholder={t["action.search"]()}
-              value={search}
+              value={params.search}
               onValueChange={(val) =>
                 startTransition(() => {
-                  setSearch(val);
-                  setPage(1);
+                  setParams((prev) => ({ ...prev, search: val, page: 1 }));
                 })
               }
               maxW={"240px"}
@@ -290,11 +287,15 @@ export const HelpCenterDataView = () => {
             <StatusFilterSelect
               modalKey={"help-center-status-filter"}
               options={HELP_CENTER_STATUS_OPTIONS}
-              value={selectedStatus}
+              value={params.status ?? "all"}
               onValueChange={(val) =>
                 startTransition(() => {
-                  setSelectedStatus(val);
-                  setPage(1);
+                  setParams((prev) => ({
+                    ...prev,
+                    status:
+                      val === "all" ? undefined : (val as HelpCenterStatus),
+                    page: 1,
+                  }));
                 })
               }
             />
@@ -324,7 +325,7 @@ export const HelpCenterDataView = () => {
                 icon={InboxIcon}
                 title={"Belum Ada Laporan"}
                 description={
-                  search
+                  params.search
                     ? "Tidak ditemukan laporan yang sesuai dengan kata kunci pencarian Anda."
                     : "Belum ada laporan atau tiket yang diajukan."
                 }
@@ -338,8 +339,8 @@ export const HelpCenterDataView = () => {
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
-                page={page}
-                pageSize={pageSize}
+                page={params.page}
+                pageSize={params.limit}
                 roundedTop={0}
               >
                 <DataView.Table.Header />
@@ -349,12 +350,17 @@ export const HelpCenterDataView = () => {
               <TopBarLoader isFetching={isFetching} />
 
               <DataViewFooter
-                page={page}
-                pageSize={pageSize}
-                setPage={setPage}
+                page={params.page ?? 1}
+                pageSize={params.limit ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+                setPage={(newPage: number) =>
+                  setParams((prev) => ({ ...prev, page: newPage }))
+                }
                 setPageSize={(newSize: number) => {
-                  setPageSize(newSize);
-                  setPage(1);
+                  setParams((prev) => ({
+                    ...prev,
+                    limit: newSize,
+                    page: 1,
+                  }));
                 }}
                 currentDataLength={tickets.length}
                 totalData={pagination.totalItems}

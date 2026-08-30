@@ -51,14 +51,20 @@ export const InternalDataManagementDataView = () => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
-  // States
-  const [search, setSearch] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
-  const [spatialBasis, setSpatialBasis] = useState<string>("all");
-  const [publishStatus, setPublishStatus] = useState<string>("all");
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<{
+    page: number;
+    pageSize: number;
+    search: string;
+    spatialBasis: string;
+    publishStatus: string;
+  }>({
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    search: "",
+    spatialBasis: "all",
+    publishStatus: "all",
+  });
 
   // Mutations
   const deleteMutation = useDeleteMasterIgtLayer();
@@ -70,15 +76,17 @@ export const InternalDataManagementDataView = () => {
     isLoading,
     isFetching,
   } = useMasterIgtLayersQuery({
-    page,
-    pageSize,
-    search: search || undefined,
+    page: params.page,
+    pageSize: params.pageSize,
+    search: params.search || undefined,
     spatialBasis:
-      spatialBasis !== "all" ? (spatialBasis as SpatialBasisType) : undefined,
+      params.spatialBasis !== "all"
+        ? (params.spatialBasis as SpatialBasisType)
+        : undefined,
     isActive:
-      publishStatus === "published"
+      params.publishStatus === "published"
         ? true
-        : publishStatus === "draft"
+        : params.publishStatus === "draft"
           ? false
           : undefined,
   });
@@ -86,17 +94,19 @@ export const InternalDataManagementDataView = () => {
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const isSearching = Boolean(
-    search.trim() || spatialBasis !== "all" || publishStatus !== "all",
+    params.search.trim() ||
+      params.spatialBasis !== "all" ||
+      params.publishStatus !== "all",
   );
   const searchQuery = useMemo(() => {
-    if (search.trim()) return search;
-    if (spatialBasis !== "all" && publishStatus !== "all") {
-      return `${spatialBasis}, ${publishStatus}`;
+    if (params.search.trim()) return params.search;
+    if (params.spatialBasis !== "all" && params.publishStatus !== "all") {
+      return `${params.spatialBasis}, ${params.publishStatus}`;
     }
-    if (spatialBasis !== "all") return spatialBasis;
-    if (publishStatus !== "all") return publishStatus;
+    if (params.spatialBasis !== "all") return params.spatialBasis;
+    if (params.publishStatus !== "all") return params.publishStatus;
     return "...";
-  }, [search, spatialBasis, publishStatus]);
+  }, [params.search, params.spatialBasis, params.publishStatus]);
 
   // Map Layer Store for toggling visibility
   const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
@@ -292,7 +302,7 @@ export const InternalDataManagementDataView = () => {
   return (
     <Container.Root withContext={true} flex={1}>
       <Container.Body overflowY={"auto"}>
-        <HeaderContainer>
+        <HeaderContainer pr={"xs"}>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
               <Heading>{"Manajemen Data IGT"}</Heading>
@@ -311,7 +321,7 @@ export const InternalDataManagementDataView = () => {
             </HStack>
 
             <InternalDataManagementCreateTrigger>
-              <Button primary variant={"ghost"} pl={1.5}>
+              <Button primary variant={"ghost"}>
                 <AppIcon icon={PlusIcon} />
                 {"Tambah Layer"}
               </Button>
@@ -331,11 +341,10 @@ export const InternalDataManagementDataView = () => {
           bg={"bg.body"}
         >
           <SearchInput
-            value={search}
+            value={params.search}
             onValueChange={(val) =>
               startTransition(() => {
-                setSearch(val);
-                setPage(1);
+                setParams((prev) => ({ ...prev, search: val, page: 1 }));
               })
             }
             placeholder={"Cari nama layer, ID, endpoint..."}
@@ -344,11 +353,10 @@ export const InternalDataManagementDataView = () => {
 
           <SpatialBasisFilterSelect
             modalKey={"data-management-spatial-basis-filter"}
-            value={spatialBasis}
+            value={params.spatialBasis}
             onValueChange={(val) =>
               startTransition(() => {
-                setSpatialBasis(val);
-                setPage(1);
+                setParams((prev) => ({ ...prev, spatialBasis: val, page: 1 }));
               })
             }
             w={"150px"}
@@ -358,11 +366,14 @@ export const InternalDataManagementDataView = () => {
             modalKey={"data-management-publish-status-filter"}
             options={PUBLISH_STATUS_OPTIONS}
             placeholder={"Semua Status"}
-            value={publishStatus}
+            value={params.publishStatus}
             onValueChange={(val) =>
               startTransition(() => {
-                setPublishStatus(val);
-                setPage(1);
+                setParams((prev) => ({
+                  ...prev,
+                  publishStatus: val,
+                  page: 1,
+                }));
               })
             }
             w={"150px"}
@@ -403,8 +414,8 @@ export const InternalDataManagementDataView = () => {
                     itemActions={dataList.itemActions}
                     canBatchSelect
                     withNumbering
-                    page={page}
-                    pageSize={pageSize}
+                    page={params.page}
+                    pageSize={params.pageSize}
                     pb={0}
                     rounded={0}
                   >
@@ -415,12 +426,17 @@ export const InternalDataManagementDataView = () => {
                   <Separator borderColor={"bg.canvas"} />
 
                   <DataViewFooter
-                    page={page}
-                    pageSize={pageSize}
-                    setPage={(nextPage: number) => setPage(nextPage)}
+                    page={params.page}
+                    pageSize={params.pageSize}
+                    setPage={(nextPage: number) =>
+                      setParams((prev) => ({ ...prev, page: nextPage }))
+                    }
                     setPageSize={(nextSize: number) => {
-                      setPageSize(nextSize);
-                      setPage(1);
+                      setParams((prev) => ({
+                        ...prev,
+                        pageSize: nextSize,
+                        page: 1,
+                      }));
                     }}
                     currentDataLength={rawItems.length}
                     totalData={pagination?.totalItems ?? rawItems.length}

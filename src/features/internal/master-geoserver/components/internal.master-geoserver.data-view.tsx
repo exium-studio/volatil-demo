@@ -30,7 +30,10 @@ import {
   useDeleteMasterGeoserver,
   useMasterGeoserverQuery,
 } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
-import type { MasterGeoserverItem } from "@/features/internal/master-geoserver/types/master-geoserver.type";
+import type {
+  MasterGeoserverItem,
+  MasterGeoserverQueryParams,
+} from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -43,12 +46,12 @@ export const InternalMasterGeoserverDataView = () => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
-  // States
-  const [search, setSearch] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<MasterGeoserverQueryParams>({
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    search: "",
+  });
 
   // Queries
   const {
@@ -57,9 +60,9 @@ export const InternalMasterGeoserverDataView = () => {
     isLoading,
     isFetching,
   } = useMasterGeoserverQuery({
-    page,
-    pageSize,
-    search: search || undefined,
+    page: params.page,
+    pageSize: params.pageSize,
+    search: params.search || undefined,
   });
 
   // Mutations
@@ -67,11 +70,11 @@ export const InternalMasterGeoserverDataView = () => {
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
-  const isSearching = Boolean(search.trim());
+  const isSearching = Boolean(params.search?.trim());
   const searchQuery = useMemo(() => {
-    if (search.trim()) return search;
+    if (params.search?.trim()) return params.search;
     return "...";
-  }, [search]);
+  }, [params.search]);
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -204,7 +207,7 @@ export const InternalMasterGeoserverDataView = () => {
   return (
     <Container.Root withContext={true} flex={1}>
       <Container.Body overflowY={"auto"}>
-        <HeaderContainer>
+        <HeaderContainer pr={"xs"}>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
               <Heading>{"Master GeoServer"}</Heading>
@@ -223,7 +226,7 @@ export const InternalMasterGeoserverDataView = () => {
             </HStack>
 
             <InternalMasterGeoserverCreateTrigger>
-              <Button primary variant={"ghost"} pl={1.5}>
+              <Button primary variant={"ghost"}>
                 <AppIcon icon={PlusIcon} />
                 {"Tambah GeoServer"}
               </Button>
@@ -243,11 +246,10 @@ export const InternalMasterGeoserverDataView = () => {
           bg={"bg.body"}
         >
           <SearchInput
-            value={search}
+            value={params.search}
             onValueChange={(val) =>
               startTransition(() => {
-                setSearch(val);
-                setPage(1);
+                setParams((prev) => ({ ...prev, search: val, page: 1 }));
               })
             }
             placeholder={"Cari nama server, URL, username..."}
@@ -287,8 +289,8 @@ export const InternalMasterGeoserverDataView = () => {
                     items={dataList.items}
                     itemActions={dataList.itemActions}
                     withNumbering
-                    page={page}
-                    pageSize={pageSize}
+                    page={params.page}
+                    pageSize={params.pageSize}
                     pb={0}
                     rounded={0}
                   >
@@ -299,12 +301,17 @@ export const InternalMasterGeoserverDataView = () => {
                   <Separator borderColor={"bg.canvas"} />
 
                   <DataViewFooter
-                    page={page}
-                    pageSize={pageSize}
-                    setPage={(nextPage: number) => setPage(nextPage)}
+                    page={params.page ?? 1}
+                    pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+                    setPage={(nextPage: number) =>
+                      setParams((prev) => ({ ...prev, page: nextPage }))
+                    }
                     setPageSize={(nextSize: number) => {
-                      setPageSize(nextSize);
-                      setPage(1);
+                      setParams((prev) => ({
+                        ...prev,
+                        pageSize: nextSize,
+                        page: 1,
+                      }));
                     }}
                     currentDataLength={rawItems.length}
                     totalData={pagination?.totalItems ?? rawItems.length}

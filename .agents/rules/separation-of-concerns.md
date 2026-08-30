@@ -64,6 +64,24 @@ src/features/<feature-name>/
 
 ---
 
+## 5. DataView & Table State Patterns (Centralized Query State)
+
+1. **Centralized Query & Filter State (Wajib 1 State Object)**:
+   - State untuk pagination, searching, dan filter dropdown pada komponen `DataView` **wajib disatukan ke dalam 1 single state object** (misal: `params` / `filterState`).
+   - DILARANG memecah `search`, `page`, `pageSize`, dan `filter` ke dalam multiple `useState` terpisah.
+   - **Tujuan**: Memastikan atomic updates dan reset `page: 1` otomatis saat filter/search berubah tanpa memicu multiple re-renders.
+   ```typescript
+   // CONTOH BENAR
+   const [params, setParams] = useState<FeatureListQueryParams>({
+     page: 1,
+     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+     search: "",
+     status: "all",
+   });
+   ```
+
+---
+
 ## 5. Map & GIS Modularity (MapLibre + GeoServer)
 
 1. **Single Source of Truth untuk Layer Management**:

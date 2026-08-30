@@ -90,7 +90,7 @@ const MitraCartContent = () => {
           minH={isSmContainer ? undefined : 0}
           overflowY={isSmContainer ? undefined : "auto"}
         >
-          <HeaderContainer>
+          <HeaderContainer pr={"xs"}>
             <Heading>{"Keranjang Transaksi"}</Heading>
 
             {hasBatches && (
@@ -118,7 +118,7 @@ const MitraCartContent = () => {
                   }
                 }}
               >
-                <Button colorPalette={"red"} size={"xs"} pl={1.5}>
+                <Button colorPalette={"red"} size={"xs"}>
                   <AppIcon icon={Trash2Icon} />
                   {"Kosongkan keranjang"}
                 </Button>

@@ -29,6 +29,7 @@ import {
 import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail.modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
+  TransactionHistoryQueryParams,
   TransactionRecord,
   TransactionStatus,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
@@ -49,28 +50,26 @@ export const TransactionHistoryDataView = () => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
-  // States
-  const [searchRaw, setSearchRaw] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
-  const [status, setStatus] = useState<string>("");
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<TransactionHistoryQueryParams>({
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    search: "",
+    status: undefined,
+  });
 
   // Derived Values
-  const debouncedSearch = useDebouncedValue(searchRaw);
+  const debouncedSearch = useDebouncedValue(params.search ?? "");
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
   const { transactionHistory, isLoading, isFetching } =
     useTransactionHistoryQuery({
-      page,
-      pageSize,
+      page: params.page,
+      pageSize: params.pageSize,
       search: debouncedSearch || undefined,
-      status: (status as TransactionStatus) || undefined,
+      status: params.status,
     });
-
-  console.log(transactionHistory);
 
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
@@ -219,10 +218,9 @@ export const TransactionHistoryDataView = () => {
         bg={"bg.body"}
       >
         <SearchInput
-          value={searchRaw}
+          value={params.search}
           onValueChange={(val) => {
-            setSearchRaw(val);
-            setPage(1);
+            setParams((prev) => ({ ...prev, search: val, page: 1 }));
           }}
           placeholder={"Cari no. transaksi / order / billing..."}
           maxW={"300px"}
@@ -233,11 +231,14 @@ export const TransactionHistoryDataView = () => {
             modalKey={"transaction-history-status-filter"}
             placeholder={"Status"}
             options={TRANSACTION_STATUS_OPTIONS}
-            value={status}
+            value={params.status ?? ""}
             onValueChange={(value) => {
               startTransition(() => {
-                setStatus(value);
-                setPage(1);
+                setParams((prev) => ({
+                  ...prev,
+                  status: (value as TransactionStatus) || undefined,
+                  page: 1,
+                }));
               });
             }}
             w={"200px"}
@@ -267,7 +268,7 @@ export const TransactionHistoryDataView = () => {
             w={"full"}
             py={"xl"}
           >
-            {debouncedSearch || status ? (
+            {debouncedSearch || params.status ? (
               <NoResultState
                 description={
                   "Tidak ada transaksi yang sesuai dengan kata kunci atau filter yang Anda pilih."
@@ -301,8 +302,8 @@ export const TransactionHistoryDataView = () => {
               items={dataList.items}
               itemActions={dataList.itemActions}
               withNumbering={true}
-              page={page}
-              pageSize={pageSize}
+              page={params.page}
+              pageSize={params.pageSize}
               rounded={0}
               pb={0}
             >
@@ -313,12 +314,17 @@ export const TransactionHistoryDataView = () => {
             <TopBarLoader isFetching={isFetching} />
 
             <DataViewFooter
-              page={page}
-              pageSize={pageSize}
-              setPage={(nextPage: number) => setPage(nextPage)}
+              page={params.page}
+              pageSize={params.pageSize}
+              setPage={(nextPage: number) =>
+                setParams((prev) => ({ ...prev, page: nextPage }))
+              }
               setPageSize={(nextSize: number) => {
-                setPageSize(nextSize);
-                setPage(1);
+                setParams((prev) => ({
+                  ...prev,
+                  pageSize: nextSize,
+                  page: 1,
+                }));
               }}
               currentDataLength={transactionHistory.items.length}
               totalData={transactionHistory.pagination.totalItems}

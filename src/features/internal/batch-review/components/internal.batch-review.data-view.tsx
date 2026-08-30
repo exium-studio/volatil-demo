@@ -24,19 +24,28 @@ import {
   useApproveBatch,
   useInternalBatchesQuery,
 } from "@/features/internal/batch-review/hooks/use-batch-review";
-import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
+import type {
+  InternalBatchItem,
+  InternalBatchListQueryParams,
+} from "@/features/internal/batch-review/types/batch-review.type";
 import type { CartBatchStatus } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { CheckCircle2Icon, EyeIcon, FolderOpenIcon, InboxIcon, XCircleIcon } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
+import {
+  CheckCircle2Icon,
+  EyeIcon,
+  InboxIcon,
+  LayersIcon,
+  XCircleIcon,
+} from "lucide-react";
+import { useMemo, useState, useTransition } from "react";
 
 const BATCH_STATUS_OPTIONS = [
   { value: "all", label: "Semua Status" },
@@ -52,13 +61,13 @@ export const InternalBatchReviewDataView = () => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
-  // States
-  const [search, setSearch] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
-  const [status, setStatus] = useState<string>("all");
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<InternalBatchListQueryParams>({
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    search: "",
+    status: "all",
+  });
 
   // Queries
   const {
@@ -67,10 +76,10 @@ export const InternalBatchReviewDataView = () => {
     isLoading,
     isFetching,
   } = useInternalBatchesQuery({
-    page,
-    pageSize,
-    search: search || undefined,
-    status: status as CartBatchStatus | "all",
+    page: params.page,
+    pageSize: params.pageSize,
+    search: params.search || undefined,
+    status: params.status as CartBatchStatus | "all",
   });
 
   // Mutations
@@ -78,12 +87,12 @@ export const InternalBatchReviewDataView = () => {
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
-  const isSearching = Boolean(search.trim() || status !== "all");
+  const isSearching = Boolean(params.search?.trim() || params.status !== "all");
   const searchQuery = useMemo(() => {
-    if (search.trim()) return search;
-    if (status !== "all") return status;
+    if (params.search?.trim()) return params.search;
+    if (params.status !== "all") return params.status ?? "...";
     return "...";
-  }, [search, status]);
+  }, [params.search, params.status]);
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -117,11 +126,7 @@ export const InternalBatchReviewDataView = () => {
           },
           {
             value: batch.items.length,
-            td: (
-              <P textAlign={"center"}>
-                {`${batch.items.length} Layer`}
-              </P>
-            ),
+            td: <P textAlign={"center"}>{`${batch.items.length} Layer`}</P>,
             align: "center" as const,
           },
           {
@@ -149,8 +154,8 @@ export const InternalBatchReviewDataView = () => {
     const itemActions: DataViewItemActionsGenerator<InternalBatchItem>[] = [
       {
         key: "open-detail-batch",
-        label: "Buka Halaman Detail",
-        icon: FolderOpenIcon,
+        label: "Buka detail IGT",
+        icon: LayersIcon,
         sticky: true,
         showInMenu: true,
         onClick: (batch: InternalBatchItem) => {
@@ -254,11 +259,10 @@ export const InternalBatchReviewDataView = () => {
           bg={"bg.body"}
         >
           <SearchInput
-            value={search}
+            value={params.search}
             onValueChange={(val) =>
               startTransition(() => {
-                setSearch(val);
-                setPage(1);
+                setParams((prev) => ({ ...prev, search: val, page: 1 }));
               })
             }
             placeholder={"Cari ID batch, nama pemohon..."}
@@ -269,11 +273,14 @@ export const InternalBatchReviewDataView = () => {
             modalKey={"batch-review-status-filter"}
             options={BATCH_STATUS_OPTIONS}
             placeholder={"Semua Status"}
-            value={status}
+            value={params.status}
             onValueChange={(val) =>
               startTransition(() => {
-                setStatus(val);
-                setPage(1);
+                setParams((prev) => ({
+                  ...prev,
+                  status: val as CartBatchStatus | "all",
+                  page: 1,
+                }));
               })
             }
             w={"180px"}
@@ -312,8 +319,8 @@ export const InternalBatchReviewDataView = () => {
                     items={dataList.items}
                     itemActions={dataList.itemActions}
                     withNumbering
-                    page={page}
-                    pageSize={pageSize}
+                    page={params.page}
+                    pageSize={params.pageSize}
                     pb={0}
                     rounded={0}
                   >
@@ -324,13 +331,18 @@ export const InternalBatchReviewDataView = () => {
                   <Separator borderColor={"bg.canvas"} />
 
                   <DataViewFooter
-                    page={page}
-                    pageSize={pageSize}
-                    setPage={(nextPage: number) => setPage(nextPage)}
-                    setPageSize={(nextSize: number) => {
-                      setPageSize(nextSize);
-                      setPage(1);
-                    }}
+                    page={params.page ?? 1}
+                    pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+                    setPage={(nextPage: number) =>
+                      setParams((prev) => ({ ...prev, page: nextPage }))
+                    }
+                    setPageSize={(nextSize: number) =>
+                      setParams((prev) => ({
+                        ...prev,
+                        pageSize: nextSize,
+                        page: 1,
+                      }))
+                    }
                     currentDataLength={rawItems.length}
                     totalData={pagination?.totalItems ?? rawItems.length}
                     totalPage={pagination?.totalPages ?? 1}

@@ -26,6 +26,7 @@ import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my
 import type {
   MitraMyDataViewProps,
   MyDataItem,
+  MyDataQueryParams,
   MyDataStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
@@ -52,24 +53,24 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
-  // States
-  const [searchRaw, setSearchRaw] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    DEFAULT_PAGE_SIZE_OPTIONS[0],
-  );
-  const [status, setStatus] = useState<string>("");
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<MyDataQueryParams>({
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    search: "",
+    status: undefined,
+  });
 
   // Derived Values
-  const debouncedSearch = useDebouncedValue(searchRaw);
+  const debouncedSearch = useDebouncedValue(params.search ?? "");
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
   const { myData, isLoading, isFetching } = useMitraMyDataQuery({
-    page,
-    pageSize,
+    page: params.page,
+    pageSize: params.pageSize,
     search: debouncedSearch || undefined,
-    status: (status as MyDataStatus) || undefined,
+    status: params.status,
   });
 
   // Derived Values - DataList headers & items
@@ -217,10 +218,9 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
         bg={"bg.body"}
       >
         <SearchInput
-          value={searchRaw}
+          value={params.search}
           onValueChange={(val) => {
-            setSearchRaw(val);
-            setPage(1);
+            setParams((prev) => ({ ...prev, search: val, page: 1 }));
           }}
           placeholder={"Cari layer IGT / tema..."}
           maxW={"280px"}
@@ -231,11 +231,14 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
             options={MY_DATA_STATUS_OPTIONS}
-            value={status}
+            value={params.status ?? ""}
             onValueChange={(value) => {
               startTransition(() => {
-                setStatus(value);
-                setPage(1);
+                setParams((prev) => ({
+                  ...prev,
+                  status: (value as MyDataStatus) || undefined,
+                  page: 1,
+                }));
               });
             }}
             w={"180px"}
@@ -266,7 +269,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             py={"xl"}
             bg={"bg.body"}
           >
-            {debouncedSearch || status ? (
+            {debouncedSearch || params.status ? (
               <NoResultState
                 description={
                   "Tidak ada layer IGT yang sesuai dengan kata kunci atau filter yang Anda pilih."
@@ -299,8 +302,8 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               headers={dataList.headers}
               items={dataList.items}
               withNumbering={true}
-              page={page}
-              pageSize={pageSize}
+              page={params.page}
+              pageSize={params.pageSize}
               rounded={0}
               pb={0}
             >
@@ -311,12 +314,17 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             <TopBarLoader isFetching={isFetching} />
 
             <DataViewFooter
-              page={page}
-              pageSize={pageSize}
-              setPage={(nextPage: number) => setPage(nextPage)}
+              page={params.page}
+              pageSize={params.pageSize}
+              setPage={(nextPage: number) =>
+                setParams((prev) => ({ ...prev, page: nextPage }))
+              }
               setPageSize={(nextSize: number) => {
-                setPageSize(nextSize);
-                setPage(1);
+                setParams((prev) => ({
+                  ...prev,
+                  pageSize: nextSize,
+                  page: 1,
+                }));
               }}
               currentDataLength={myData.items.length}
               totalData={myData.pagination.totalItems}
