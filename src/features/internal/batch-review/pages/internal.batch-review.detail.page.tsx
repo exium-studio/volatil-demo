@@ -90,7 +90,7 @@ export const InternalBatchReviewDetailPage = () => {
                   onClick={() => navigate({ to: "/internal/batch-review" })}
                 />
 
-                <VStack align={"start"}>
+                <VStack gap={"2xs"}>
                   <Heading>{"Detail Batch Interop"}</Heading>
 
                   <P fontSize={"xs"} color={"fg.subtle"}>
@@ -217,7 +217,7 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT", sortable: true },
       { th: "Basis IGT", sortable: true },
-      { th: "Volume / Luas", sortable: true, align: "center" },
+      { th: "Jumlah / Luas", sortable: true, align: "center" },
       { th: "Estimasi Biaya", sortable: true, align: "end" },
       { th: "Lihat di Peta", align: "center" },
     ];
@@ -257,11 +257,7 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
           },
           {
             value: item.subtotalPrice,
-            td: (
-              <P fontWeight={"semibold"} color={"green.600"}>
-                {formatCurrency(item.subtotalPrice)}
-              </P>
-            ),
+            td: <P>{formatCurrency(item.subtotalPrice)}</P>,
             align: "end" as const,
           },
           {

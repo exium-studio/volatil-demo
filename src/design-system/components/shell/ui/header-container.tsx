@@ -8,13 +8,7 @@ export const HeaderContainer = (props: StackProps) => {
   const { children, ...restProps } = props;
 
   return (
-    <HStack
-      align={"center"}
-      justify={"space-between"}
-      minH={"headerH"}
-      px={"md"}
-      {...restProps}
-    >
+    <HStack align={"center"} justify={"space-between"} p={"md"} {...restProps}>
       {children}
     </HStack>
   );
