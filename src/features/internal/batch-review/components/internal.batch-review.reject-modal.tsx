@@ -2,16 +2,17 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { P } from "@/design-system/components/typography/ui/p";
 import { useRejectBatch } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
 import { XCircleIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { P } from "@/design-system/components/typography/ui/p";
 
 export type InternalBatchReviewRejectTriggerProps = {
   modalKey?: string;
@@ -87,11 +88,16 @@ const InternalBatchReviewRejectModalContent = (
 
       <Modal.Body>
         <VStack align={"stretch"} gap={"md"}>
-          <P fontSize={"sm"} color={"fg.muted"}>
-            {
-              "Berikan alasan penolakan yang jelas. Catatan ini akan dikirimkan langsung ke kotak masuk notifikasi mitra pemohon."
-            }
-          </P>
+          <Alert.Root status={"warning"} size={"sm"}>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Description>
+                {
+                  "Alasan penolakan ini akan langsung masuk ke inbox notifikasi mitra pemohon. Pastikan alasan ditulis secara jelas dan akurat."
+                }
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
 
           <Field
             label={"Alasan Penolakan"}
