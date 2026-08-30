@@ -11,6 +11,7 @@ import type {
 
 export type InternalBatchReviewRejectModalContentProps = {
   batch: InternalBatchItem;
+  isOpen: boolean;
 };
 
 export type InternalBatchItem = {

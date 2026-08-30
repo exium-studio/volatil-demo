@@ -44,7 +44,7 @@ export const InternalBatchReviewRejectTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalBatchReviewRejectModalContent batch={batch} />
+      <InternalBatchReviewRejectModalContent batch={batch} isOpen={isOpen} />
     </Modal.Root>
   );
 };
@@ -52,7 +52,7 @@ export const InternalBatchReviewRejectTrigger = (
 const InternalBatchReviewRejectModalContent = (
   props: InternalBatchReviewRejectModalContentProps,
 ) => {
-  const { batch } = props;
+  const { batch, isOpen } = props;
   const [reason, setReason] = useState("");
   const rejectMutation = useRejectBatch();
 
@@ -65,7 +65,7 @@ const InternalBatchReviewRejectModalContent = (
       },
       {
         onSuccess: () => {
-          back();
+          if (isOpen) back();
         },
       },
     );
