@@ -5,6 +5,7 @@ import { ClipboardButton } from "@/design-system/components/data-display/ui/clip
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
@@ -25,7 +26,10 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalDataManagementCreateTrigger } from "@/features/internal/data-management/components/internal.data-management.create-modal";
 import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
 import { PUBLISH_STATUS_OPTIONS } from "@/features/internal/data-management/constants/data-management.config";
-import { useMasterIgtLayersQuery } from "@/features/internal/data-management/hooks/use-data-management";
+import {
+  useDeleteMasterIgtLayer,
+  useMasterIgtLayersQuery,
+} from "@/features/internal/data-management/hooks/use-data-management";
 import type {
   MasterIgtLayerItem,
   SpatialBasisType,
@@ -39,7 +43,7 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { IconLayersOff } from "@tabler/icons-react";
-import { PencilIcon, PlusIcon } from "lucide-react";
+import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
@@ -54,6 +58,9 @@ export const InternalDataManagementDataView = () => {
   );
   const [spatialBasis, setSpatialBasis] = useState<string>("all");
   const [publishStatus, setPublishStatus] = useState<string>("all");
+
+  // Mutations
+  const deleteMutation = useDeleteMasterIgtLayer();
 
   // Queries
   const {
@@ -222,6 +229,26 @@ export const InternalDataManagementDataView = () => {
           ),
         },
       },
+      {
+        key: "delete-layer",
+        label: "Hapus Layer",
+        icon: Trash2Icon,
+        colorPalette: "red",
+        modal: {
+          triggerComponent: (layer: MasterIgtLayerItem) => (
+            <ConfirmationTrigger
+              modalKey={`delete-layer-${layer.id}`}
+              title={"Hapus Layer IGT?"}
+              description={`Apakah Anda yakin ingin menghapus layer "${layer.title}"? Layer akan diarsipkan terlebih dahulu agar permohonan data yang sedang diproses tidak terganggu, lalu dihapus permanen secara otomatis setelah 30 hari.`}
+              confirmLabel={"Hapus Layer"}
+              colorPalette={"red"}
+              onConfirm={() => {
+                deleteMutation.mutate(layer.id);
+              }}
+            />
+          ),
+        },
+      },
     ];
 
     return {
@@ -230,7 +257,7 @@ export const InternalDataManagementDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [rawItems, preferredTimezone]);
+  }, [rawItems, preferredTimezone, deleteMutation]);
 
   return (
     <Container.Root withContext={true} flex={1}>

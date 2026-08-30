@@ -210,12 +210,12 @@ Frontend **dilarang keras** melakukan request langsung ke URL GeoServer producti
    - **Konteks**: Digunakan saat eksplorasi data katalog IGT di modul Mitra (_Data Request_) dan modul Internal (_Manajemen Data IGT_).
    - **Mekanisme Auth**: Dikelola penuh oleh Backend melalui **Session / JWT via `httpOnly` Cookie** (browser otomatis mengirim cookie ke backend proxy).
    - **Parameter FE**: Frontend **tidak perlu** mengirim kredensial ataupun `apiKey`. Frontend cukup mengirimkan parameter **`layerId`** (ID master layer IGT, contoh: `layerId=testing_workspace:TEST_BIDANG_TANAH`).
-   - **Peran Backend**: 
+   - **Peran Backend**:
      1. Backend memvalidasi session user via `httpOnly` cookie.
      2. Backend mengambil `geoserverId` dan `typeName` dari tabel `master_igt_layers` berdasarkan `layerId`.
      3. Backend membaca kredensial terenkripsi dari tabel `master_geoserver` berdasarkan `geoserverId`.
      4. Backend menyuntikkan basic auth secara internal server-to-server, lalu meneruskan request ke GeoServer fisik.
-   - **Contoh URL**: 
+   - **Contoh URL**:
      - WMS: `GET /api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH&service=WMS&version=1.1.1&request=GetMap&layers=testing_workspace:TEST_BIDANG_TANAH&styles=&format=image/png&transparent=true&srs=EPSG:3857&width=256&height=256&bbox=...`
      - WFS: `GET /api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH&service=WFS&version=2.0.0&request=GetFeature&outputFormat=application/json&typeNames=testing_workspace:TEST_BIDANG_TANAH&count=10`
 
@@ -261,9 +261,9 @@ Frontend **dilarang keras** melakukan request langsung ke URL GeoServer producti
 3. **Prevent Horizontal Access**: Backend memvalidasi bahwa layer hasil provisioning hanya dapat diakses oleh mitra pemilik order atau pengguna internal yang berwenang (`403 Forbidden`).
 4. **Rate Limiting**: Penerapan rate limit per user/session untuk menjaga stabilitas instance GeoServer.
 5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `userId`/`mitraId`, `geoserverId`, `typeName`, `timestamp`, `ipAddress`).
-3. **Prevent Horizontal Access**: Backend memvalidasi bahwa layer hasil provisioning hanya dapat diakses oleh mitra pemilik order atau pengguna internal yang berwenang (`403 Forbidden`).
-4. **Rate Limiting**: Penerapan rate limit per user/session untuk menjaga stabilitas instance GeoServer.
-5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `userId`/`mitraId`, `geoserverId`, `typeName`, `timestamp`, `ipAddress`).
+6. **Prevent Horizontal Access**: Backend memvalidasi bahwa layer hasil provisioning hanya dapat diakses oleh mitra pemilik order atau pengguna internal yang berwenang (`403 Forbidden`).
+7. **Rate Limiting**: Penerapan rate limit per user/session untuk menjaga stabilitas instance GeoServer.
+8. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `userId`/`mitraId`, `geoserverId`, `typeName`, `timestamp`, `ipAddress`).
 
 ---
 
@@ -791,8 +791,10 @@ type CreateMasterIgtLayerPayload = {
 
 ### 9.4 Delete Master IGT Layer
 
+Penghapusan data layer IGT menerapkan mekanisme **Soft Delete (`deletedAt`)** dengan masa retensi otomatis **30 hari** sebelum dihapus secara permanen oleh background worker / cron job. Hal ini bertujuan agar permohonan data mitra atau batch transaksi yang sedang dalam antrean pemrosesan / review tidak mengalami broken reference.
+
 - **Endpoint**: `DELETE /api/internal/igt-layers/{id}`
-- **Response**: `200 OK` / `{ success: true }`
+- **Response**: `200 OK` / `{ success: true, message: "Layer IGT berhasil dihapus (retensi 30 hari)" }`
 
 ### 9.5 Get GeoServer Workspaces (Dropdown Helper)
 
