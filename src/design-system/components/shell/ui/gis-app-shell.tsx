@@ -57,8 +57,10 @@ import {
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { recordRecentNav } from "@/shared/utils/navigation/recent-nav.utils";
 import { UserIcon } from "lucide-react";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
+
 
 // -------------------------------------------------------------------------------------
 
@@ -73,6 +75,24 @@ export const GisAppShell = (props: GisAppShellProps) => {
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
+  const pathname = useLocation().pathname;
+
+  // Effects
+  useEffect(() => {
+    const userData = getUserSession();
+    const role = userData?.role ?? "mitra";
+    const navsMap = (role === "internal"
+      ? INTERNAL_APP_NAVS_MAP
+      : APP_NAVS_MAP) as Record<string, NavItem>;
+    const navKey = getNavKeyFromPathname(navsMap, pathname);
+    const navItem = navKey ? navsMap[navKey] : undefined;
+    if (navItem?.pathname && navItem?.titleKey) {
+      recordRecentNav({
+        pathname: navItem.pathname,
+        titleKey: navItem.titleKey,
+      });
+    }
+  }, [pathname]);
 
   return (
     <AppPageContainer
