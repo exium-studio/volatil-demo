@@ -6,6 +6,7 @@ import {
   BellIcon,
   CheckCircleIcon,
   DatabaseIcon,
+  HandshakeIcon,
   HeadsetIcon,
   HistoryIcon,
   HouseIcon,
@@ -80,6 +81,11 @@ export const INTERNAL_APP_NAVS_MAP = {
     icon: CheckCircleIcon,
     titleKey: "app.admin_navs.batch_review",
     pathname: "/internal/batch-review",
+  },
+  mitra_registration: {
+    icon: HandshakeIcon,
+    titleKey: "app.admin_navs.mitra_registration",
+    pathname: "/internal/mitra-registration",
   },
   order_statistic: {
     icon: ReceiptTextIcon,

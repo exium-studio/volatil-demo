@@ -18,6 +18,7 @@ import {
 } from "@/features/auth/schemas/signin.schema";
 import { HandshakeIcon, ShieldCheckIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { Link } from "@tanstack/react-router";
 
 export const MitraSignin = (props: StackProps) => {
   // Hooks
@@ -97,11 +98,55 @@ export const MitraSignin = (props: StackProps) => {
         primary={true}
         type={"submit"}
         w={"full"}
-        mt={8}
+        mt={4}
         loading={signinMutation.isPending}
       >
         {"Masuk"}
       </Button>
+
+      <VStack gap={2} mt={2} align={"center"} w={"full"}>
+        <P
+          fontSize={"sm"}
+          color={"fg.muted"}
+          as={"div"}
+          display={"flex"}
+          gap={"1"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          {"Belum bermitra dengan ATR/BPN? "}
+          <Link
+            to={"/register"}
+            style={{
+              color: "var(--chakra-colors-blue-600)",
+              textDecoration: "underline",
+            }}
+          >
+            {"Daftar Mitra Baru"}
+          </Link>
+        </P>
+
+        <P
+          fontSize={"sm"}
+          color={"fg.muted"}
+          as={"div"}
+          display={"flex"}
+          gap={"1"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          {"Sudah mendaftar? "}
+          <Link
+            to={"/registration-status"}
+            style={{
+              color: "var(--chakra-colors-blue-600)",
+              textDecoration: "underline",
+            }}
+          >
+            {"Cek Status Pengajuan"}
+          </Link>
+        </P>
+      </VStack>
     </VStack>
   );
 };

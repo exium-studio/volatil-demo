@@ -105,6 +105,13 @@ export const queryKeys = {
       detail: (id: string) =>
         [...queryKeys.internal.masterGeoserver.all, "detail", id] as const,
     },
+    mitraRegistration: {
+      all: ["internal", "mitra-registration"] as const,
+      list: (params?: Record<string, unknown>) =>
+        [...queryKeys.internal.mitraRegistration.all, "list", params] as const,
+      detail: (id: string | number) =>
+        [...queryKeys.internal.mitraRegistration.all, "detail", id] as const,
+    },
   },
   map: {
     all: ["map"] as const,
