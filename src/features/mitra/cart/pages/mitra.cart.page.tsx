@@ -20,6 +20,7 @@ import { MitraCartBatchItem } from "@/features/mitra/cart/components/mitra.cart.
 import { MitraCartBatchOrderSummary } from "@/features/mitra/cart/components/mitra.cart.batch-order-summary";
 import { MitraCartExpiredBatchesTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-batches.modal";
 import {
+  useCancelActiveCartBatch,
   useClearAllCartBatches,
   useCartBatchDetailQuery,
   useCartBatchesQuery,
@@ -47,6 +48,7 @@ const MitraCartContent = () => {
     isFetching: isBatchesFetching,
   } = useCartBatchesQuery();
   const clearAllBatchesMutation = useClearAllCartBatches();
+  const deleteBatchMutation = useCancelActiveCartBatch();
 
   // States — initial load has NO selected batch
   const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
@@ -61,6 +63,16 @@ const MitraCartContent = () => {
   // Handlers — once selected, user cannot unselect (only switch to another batch)
   const handleSelectBatch = (batchId: string) => {
     setSelectedBatchId(batchId);
+  };
+
+  const handleDeleteBatch = (batchId: string) => {
+    deleteBatchMutation.mutate(batchId, {
+      onSuccess: () => {
+        if (selectedBatchId === batchId) {
+          setSelectedBatchId(null);
+        }
+      },
+    });
   };
 
   // Derived Values
@@ -79,16 +91,17 @@ const MitraCartContent = () => {
 
       <HStack
         flex={1}
-        flexDir={isSmContainer ? "column-reverse" : "row"}
+        flexDir={isSmContainer ? "column" : "row"}
         gap={"sm"}
         minH={isSmContainer ? undefined : 0}
         w={"full"}
       >
         {/* Batches List Container */}
         <Container.Body
-          flex={isSmContainer ? 1 : 2}
+          flex={isSmContainer ? undefined : 2}
           minH={isSmContainer ? undefined : 0}
           overflowY={isSmContainer ? undefined : "auto"}
+          w={"full"}
         >
           <HeaderContainer pr={"xs"}>
             <Heading>{"Keranjang Transaksi"}</Heading>
@@ -125,7 +138,12 @@ const MitraCartContent = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <VStack flex={1} p={"md"} overflowY={"auto"}>
+          <VStack
+            flex={isSmContainer ? undefined : 1}
+            p={"md"}
+            overflowY={isSmContainer ? undefined : "auto"}
+            w={"full"}
+          >
             {isBatchesLoading && <Skeleton w={"full"} rounded={0} />}
 
             {!isBatchesLoading && (
@@ -149,6 +167,11 @@ const MitraCartContent = () => {
                         index={index}
                         isSelected={batch.batchId === selectedBatchId}
                         onSelect={handleSelectBatch}
+                        onDelete={handleDeleteBatch}
+                        isDeleting={
+                          deleteBatchMutation.isPending &&
+                          deleteBatchMutation.variables === batch.batchId
+                        }
                       />
                     ))}
                   </VStack>
@@ -160,7 +183,7 @@ const MitraCartContent = () => {
           <Separator borderColor={"bg.canvas"} />
 
           {/* Bottom Actions: Expired Batches Shortcut */}
-          <HStack p={"md"} align={"center"} justify={"center"}>
+          <HStack p={"md"} align={"center"} justify={"center"} w={"full"}>
             <MitraCartExpiredBatchesTrigger>
               <Button flex={1}>
                 <AppIcon icon={HistoryIcon} />
@@ -174,10 +197,11 @@ const MitraCartContent = () => {
         <Container.Body
           flex={isSmContainer ? undefined : 1}
           alignSelf={isSmContainer ? undefined : "start"}
-          minW={"320px"}
-          maxH={"full"}
+          minW={isSmContainer ? "full" : "320px"}
+          maxH={isSmContainer ? undefined : "full"}
           minH={isSmContainer ? undefined : 0}
           overflowY={isSmContainer ? undefined : "auto"}
+          w={"full"}
         >
           <HeaderContainer>
             <HStack align={"center"} gap={"sm"}>

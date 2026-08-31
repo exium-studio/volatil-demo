@@ -1,4 +1,6 @@
+import { Button } from "@/design-system/components/button/ui/button";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { RadioIndicator } from "@/design-system/components/input/ui/radio-indicator";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -10,11 +12,19 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { CART_BATCH_STATUS_CONFIG_MAP } from "@/features/mitra/cart/constants/cart.config";
 import type { MitraCartBatchItemProps } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { Trash2Icon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
   // Props
-  const { batch, index, isSelected, onSelect } = props;
+  const {
+    batch,
+    index,
+    isSelected,
+    onSelect,
+    onDelete,
+    isDeleting = false,
+  } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -194,6 +204,36 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
           >
             <P>{`Alasan penolakan: ${batch.rejectionReason}`}</P>
           </HStack>
+        )}
+
+        {/* Selected Batch Actions: Individual Delete */}
+        {isSelected && onDelete && (
+          <>
+            <Separator />
+
+            <HStack
+              w={"full"}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <ConfirmationTrigger
+                modalKey={`delete-batch-${batch.batchId}`}
+                title={"Hapus Batch Pesanan?"}
+                description={`Batch #${index + 1} (${batch.batchId}) akan dihapus dari keranjang transaksi.`}
+                confirmLabel={"Hapus batch"}
+                colorPalette={"red"}
+                onConfirm={() => {
+                  onDelete(batch.batchId);
+                }}
+              >
+                <Button colorPalette={"red"} w={"full"} loading={isDeleting}>
+                  <AppIcon icon={Trash2Icon} />
+                  {"Hapus batch ini"}
+                </Button>
+              </ConfirmationTrigger>
+            </HStack>
+          </>
         )}
       </VStack>
     </Box>

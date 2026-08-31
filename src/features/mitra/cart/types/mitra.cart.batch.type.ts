@@ -38,6 +38,8 @@ export type MitraCartBatchItemProps = {
   index: number;
   isSelected: boolean;
   onSelect: (batchId: string) => void;
+  onDelete?: (batchId: string) => void;
+  isDeleting?: boolean;
 };
 
 export type PaymentMethod =
