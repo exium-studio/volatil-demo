@@ -266,110 +266,118 @@ export const InternalMitraRegistrationDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Filter Bar */}
-        <Box p={"md"}>
-          <HStack
-            justify={"space-between"}
-            align={"center"}
-            wrap={"wrap"}
-            gap={"md"}
-          >
-            <HStack gap={"sm"} flex={1} minW={"260px"} maxW={"420px"}>
-              <SearchInput
-                placeholder={"Cari instansi, no registrasi, NIB..."}
-                value={params.search ?? ""}
-                onValueChange={(val) => {
-                  startTransition(() => {
-                    setParams((prev) => ({
-                      ...prev,
-                      search: val,
-                      page: 1,
-                    }));
-                  });
-                }}
-              />
-            </HStack>
+        <HStack
+          wrap={"wrap"}
+          align={"center"}
+          justify={"start"}
+          gap={"sm"}
+          w={"full"}
+          p={"md"}
+          bg={"bg.body"}
+        >
+          <SearchInput
+            placeholder={"Cari instansi, no registrasi, NIB..."}
+            value={params.search ?? ""}
+            onValueChange={(val) => {
+              startTransition(() => {
+                setParams((prev) => ({
+                  ...prev,
+                  search: val,
+                  page: 1,
+                }));
+              });
+            }}
+            maxW={"280px"}
+          />
 
-            <HStack gap={"sm"}>
-              <StatusFilterSelect
-                options={REGISTRATION_STATUS_OPTIONS}
-                value={params.status ?? "all"}
-                onValueChange={(val) => {
-                  startTransition(() => {
-                    setParams((prev) => ({
-                      ...prev,
-                      status: (val || "all") as MitraRegistrationStatus | "all",
-                      page: 1,
-                    }));
-                  });
-                }}
-                placeholder={"Semua Status"}
-                modalKey={"mitra-reg-status-filter"}
-              />
-            </HStack>
-          </HStack>
-        </Box>
+          <StatusFilterSelect
+            options={REGISTRATION_STATUS_OPTIONS}
+            value={params.status ?? "all"}
+            onValueChange={(val) => {
+              startTransition(() => {
+                setParams((prev) => ({
+                  ...prev,
+                  status: (val || "all") as MitraRegistrationStatus | "all",
+                  page: 1,
+                }));
+              });
+            }}
+            placeholder={"Semua Status"}
+            modalKey={"mitra-reg-status-filter"}
+            w={"180px"}
+          />
+        </HStack>
 
         <Separator borderColor={"bg.canvas"} />
 
         {/* Table Content with Loading / Empty States */}
-        {isFetching && !isLoading && <TopBarLoader />}
+        <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
+          {isLoading && <Skeleton p={"md"} rounded={0} />}
 
-        {isLoading ? (
-          <Skeleton h={"320px"} w={"full"} />
-        ) : isEmptyArray(dataList.items) ? (
-          <Center flex={1} p={"xl"}>
-            {isSearching ? (
-              <NoResultState query={searchQuery} />
-            ) : (
-              <NoDataState
-                title={"Belum Ada Permohonan Mitra"}
-                description={
-                  "Daftar permohonan kemitraan dari calon mitra luar akan muncul di sini."
-                }
-                icon={HandshakeIcon}
-              />
-            )}
-          </Center>
-        ) : (
-          <Box w={"full"} position={"relative"}>
-            <DataView.Table.Root
-              headers={dataList.headers}
-              items={dataList.items}
-              itemActions={dataList.itemActions}
-              page={params.page}
-              pageSize={params.pageSize}
-              roundedTop={0}
-            >
-              <DataView.Table.Header />
-              <DataView.Table.Body />
-            </DataView.Table.Root>
+          {!isLoading && (
+            <>
+              {isEmptyArray(rawItems) && (
+                <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
+                  {isSearching ? (
+                    <NoResultState query={searchQuery} />
+                  ) : (
+                    <NoDataState
+                      title={"Belum Ada Permohonan Mitra"}
+                      description={
+                        "Daftar permohonan kemitraan dari calon mitra luar akan muncul di sini."
+                      }
+                      icon={HandshakeIcon}
+                    />
+                  )}
+                </Center>
+              )}
 
-            <TopBarLoader isFetching={isFetching} />
+              {!isEmptyArray(rawItems) && (
+                <Box w={"full"} position={"relative"}>
+                  <TopBarLoader isFetching={isFetching} />
 
-            <DataViewFooter
-              page={params.page ?? 1}
-              pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
-              setPage={(newPage: number) => {
-                startTransition(() => {
-                  setParams((prev) => ({ ...prev, page: newPage }));
-                });
-              }}
-              setPageSize={(newSize: number) => {
-                startTransition(() => {
-                  setParams((prev) => ({
-                    ...prev,
-                    pageSize: newSize,
-                    page: 1,
-                  }));
-                });
-              }}
-              currentDataLength={rawItems.length}
-              totalData={pagination?.totalItems ?? rawItems.length}
-              totalPage={pagination?.totalPages ?? 1}
-              roundedBottom={0}
-            />
-          </Box>
-        )}
+                  <DataView.Table.Root<InternalMitraRegistrationItem>
+                    headers={dataList.headers}
+                    items={dataList.items}
+                    itemActions={dataList.itemActions}
+                    withNumbering
+                    page={params.page}
+                    pageSize={params.pageSize}
+                    pb={0}
+                    rounded={0}
+                  >
+                    <DataView.Table.Header />
+                    <DataView.Table.Body />
+                  </DataView.Table.Root>
+
+                  <Separator borderColor={"bg.canvas"} />
+
+                  <DataViewFooter
+                    page={params.page ?? 1}
+                    pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+                    setPage={(newPage: number) => {
+                      startTransition(() => {
+                        setParams((prev) => ({ ...prev, page: newPage }));
+                      });
+                    }}
+                    setPageSize={(newSize: number) => {
+                      startTransition(() => {
+                        setParams((prev) => ({
+                          ...prev,
+                          pageSize: newSize,
+                          page: 1,
+                        }));
+                      });
+                    }}
+                    currentDataLength={rawItems.length}
+                    totalData={pagination?.totalItems ?? rawItems.length}
+                    totalPage={pagination?.totalPages ?? 1}
+                  />
+                </Box>
+              )}
+            </>
+          )}
+        </VStack>
       </Container.Body>
     </Container.Root>
   );
