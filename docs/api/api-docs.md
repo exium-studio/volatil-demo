@@ -333,6 +333,33 @@ type MitraIgtLayersResponse = {
 - `GET /api/igt/filter-options/kecamatan?kabupatenId={id}`
 - `GET /api/igt/filter-options/kelurahan?kecamatanId={id}`
 
+### 5.4 Kebijakan Tarif & Batas Pembelian (Pricing & Purchase Policies)
+
+Endpoint bagi Mitra untuk mengambil konfigurasi tarif dasar PNBP dan batas minimum pembelian (*minimum purchase limit*) per basis spasial (`bidang` dan `kawasan`). Digunakan untuk kalkulasi estimasi harga dan validasi client-side sebelum memasukkan data ke keranjang (*Add to Cart*).
+
+- **Endpoint**: `GET /api/mitra/data-request/policies`
+- **Response**:
+
+```typescript
+type MitraPricingPolicyResponse = {
+  policies: Array<{
+    id: string;
+    spatialBasis: "bidang" | "kawasan";
+    unitPrice: number;
+    unitLabel: string; // "per bidang" | "per hektar"
+    minPurchase: number; // 5 untuk bidang, 20000 untuk kawasan
+    minUnit: string; // "bidang" | "ha"
+    description?: string;
+  }>;
+  config: {
+    minimumBidangCount: number; // 5
+    minimumKawasanHa: number; // 20000
+    pricePerBidang: number; // 50000
+    pricePerKawasanHa: number; // 150000
+  };
+};
+```
+
 ---
 
 ## 6. Mitra - Keranjang & Order Batch Provisioning Spasial

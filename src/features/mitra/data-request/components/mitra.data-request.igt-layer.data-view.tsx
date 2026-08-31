@@ -25,6 +25,7 @@ import {
   type LayerCountSummary,
 } from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
@@ -69,6 +70,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
+
+    // Hooks & Policies
+    const pricingPolicy = usePricingPolicy();
 
     // Mutations
     const addToCartMultipleMutation = useAddToCartMultipleLayers();
@@ -295,8 +299,31 @@ export const MitraDataRequestIgtLayerDataView = memo(
       };
     }, [filteredLayers, combinedCqlFilter, map, onSelectIgtLayer]);
 
+    // Client Validation — Minimum limits & empty data checks
+    const isBidangBelowMin =
+      summaryData.hasBidangLayers &&
+      (summaryData.totalBidangCount === 0 ||
+        summaryData.totalBidangCount < pricingPolicy.minBidangCount);
+
+    const isKawasanBelowMin =
+      summaryData.hasKawasanLayers &&
+      (summaryData.totalKawasanAreaHa === 0 ||
+        summaryData.totalKawasanAreaHa < pricingPolicy.minKawasanHa);
+
+    const hasAnyData =
+      summaryData.totalBidangCount > 0 || summaryData.totalKawasanAreaHa > 0;
+
     const isCartDisabled =
-      isEmptyArray(filteredLayers) || addToCartMultipleMutation.isPending;
+      isEmptyArray(filteredLayers) ||
+      addToCartMultipleMutation.isPending ||
+      summaryData.isAnySummaryLoading ||
+      !hasAnyData;
+
+    const isBidangOnlyDisabled =
+      isCartDisabled || !summaryData.hasBidangLayers || isBidangBelowMin;
+
+    const isKawasanOnlyDisabled =
+      isCartDisabled || !summaryData.hasKawasanLayers || isKawasanBelowMin;
 
     return (
       <VStack
@@ -423,24 +450,24 @@ export const MitraDataRequestIgtLayerDataView = memo(
               <Menu.Content>
                 <Menu.Item
                   value={"add-cart-bidang-only"}
-                  disabled={isCartDisabled || !summaryData.hasBidangLayers}
+                  disabled={isBidangOnlyDisabled}
                   onClick={handleAddToCartBidangOnly}
                 >
                   <AppIcon icon={Layers2Icon} />
                   {"Tambah keranjang bidang saja"}
                   {summaryData.totalBidangCount > 0 &&
-                    ` (${formatNumber(summaryData.totalBidangCount)} bidang)`}
+                    ` (${formatNumber(summaryData.totalBidangCount)} / min. ${pricingPolicy.minBidangCount} bidang)`}
                 </Menu.Item>
 
                 <Menu.Item
                   value={"add-cart-kawasan-only"}
-                  disabled={isCartDisabled || !summaryData.hasKawasanLayers}
+                  disabled={isKawasanOnlyDisabled}
                   onClick={handleAddToCartKawasanOnly}
                 >
                   <AppIcon icon={TreesIcon} />
                   {"Tambah keranjang kawasan saja"}
                   {summaryData.totalKawasanAreaHa > 0 &&
-                    ` (${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
+                    ` (${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 2 })} / min. ${pricingPolicy.minKawasanHa} ha)`}
                 </Menu.Item>
               </Menu.Content>
             </Menu.Root>

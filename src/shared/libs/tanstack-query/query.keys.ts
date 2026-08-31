@@ -23,6 +23,8 @@ export const queryKeys = {
       all: ["mitra", "data-request"] as const,
       catalog: (params?: Record<string, unknown>) =>
         [...queryKeys.mitra.dataRequest.all, "catalog", params] as const,
+      policies: () =>
+        [...queryKeys.mitra.dataRequest.all, "policies"] as const,
       byAoi: (geometry: GeoJSON.Polygon) =>
         [...queryKeys.mitra.dataRequest.all, "by-aoi", geometry] as const,
       uploadedAoi: (fileName: string) =>
