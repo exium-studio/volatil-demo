@@ -7,20 +7,88 @@ import type {
   InternalBatchListResponse,
   RejectBatchPayload,
 } from "@/features/internal/batch-review/types/batch-review.type";
+import type { CartBatchItem } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { DUMMY_INTERNAL_BATCHES } from "@/shared/constants/dummy-data/dummy-internal-batch-review";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeCartBatchItem = (raw: any): CartBatchItem => {
+  if (!raw || typeof raw !== "object") return raw;
+  return {
+    id: raw.id ?? raw._id ?? "",
+    sourceLayerId:
+      raw.sourceLayerId ??
+      raw.source_layer_id ??
+      raw.layerId ??
+      raw.layer_id ??
+      "",
+    sourceLayerTitle:
+      raw.sourceLayerTitle ??
+      raw.source_layer_title ??
+      raw.layerTitle ??
+      raw.title ??
+      raw.sourceLayerId ??
+      "",
+    spatialBasis: raw.spatialBasis ?? raw.spatial_basis ?? "bidang",
+    selectionType: raw.selectionType ?? raw.selection_type ?? "catalog",
+    featuresCount: Number(
+      raw.featuresCount ?? raw.features_count ?? raw.count ?? 0,
+    ),
+    areaHa:
+      raw.areaHa != null
+        ? Number(raw.areaHa)
+        : raw.area_ha != null
+          ? Number(raw.area_ha)
+          : undefined,
+    unitPrice: Number(raw.unitPrice ?? raw.unit_price ?? 0),
+    subtotalPrice: Number(
+      raw.subtotalPrice ??
+        raw.subtotal_price ??
+        raw.price ??
+        raw.total_price ??
+        0,
+    ),
+    wfsUrl: raw.wfsUrl ?? raw.wfs_url,
+    wmsUrl: raw.wmsUrl ?? raw.wms_url,
+  };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeInternalBatchItem = (raw: any): InternalBatchItem => {
+  if (!raw || typeof raw !== "object") return raw;
+  const rawItems = Array.isArray(raw.items) ? raw.items : [];
+  const items: CartBatchItem[] = rawItems.map(normalizeCartBatchItem);
+  const calculatedTotalPrice = items.reduce(
+    (acc: number, it: CartBatchItem) => acc + (it.subtotalPrice || 0),
+    0,
+  );
+
+  return {
+    batchId: raw.batchId ?? raw.batch_id ?? raw.id ?? "",
+    mitraId: String(raw.mitraId ?? raw.mitra_id ?? ""),
+    mitraName:
+      raw.mitraName ?? raw.mitra_name ?? raw.userName ?? raw.name ?? "Mitra",
+    status: raw.status ?? "pending_review",
+    createdAt: raw.createdAt ?? raw.created_at ?? new Date().toISOString(),
+    readyAt: raw.readyAt ?? raw.ready_at ?? undefined,
+    expiredAt: raw.expiredAt ?? raw.expired_at ?? undefined,
+    totalPrice: Number(
+      raw.totalPrice ?? raw.total_price ?? calculatedTotalPrice,
+    ),
+    items,
+  };
+};
+
 export const fetchInternalBatchesApi = async (
   params?: InternalBatchListQueryParams,
   signal?: AbortSignal,
 ): Promise<InternalBatchListResponse> => {
   try {
-    const response = await apiClient.get<
-      ApiResponse<InternalBatchListResponse> | InternalBatchListResponse
-    >("/api/internal/interop/batches", {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response: any = await apiClient.get("/api/internal/interop/batches", {
       params: {
         page: params?.page,
         pageSize: params?.pageSize,
@@ -30,13 +98,66 @@ export const fetchInternalBatchesApi = async (
       signal,
     });
 
-    const resultData =
-      response && "data" in response && response.data
-        ? response.data
-        : (response as InternalBatchListResponse);
+    let rawData = response;
+    if (
+      response &&
+      typeof response === "object" &&
+      "data" in response &&
+      response.data
+    ) {
+      rawData = response.data;
+    }
 
-    if (resultData && Array.isArray(resultData.items)) {
-      return resultData;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let rawBatches: any[] = [];
+    let totalItems = 0;
+
+    if (Array.isArray(rawData)) {
+      rawBatches = rawData;
+      totalItems = rawData.length;
+    } else if (rawData && typeof rawData === "object") {
+      if (Array.isArray(rawData.batches)) {
+        rawBatches = rawData.batches;
+        totalItems = Number(
+          rawData.total ?? rawData.totalItems ?? rawBatches.length,
+        );
+      } else if (Array.isArray(rawData.items)) {
+        rawBatches = rawData.items;
+        totalItems = Number(
+          rawData.total ?? rawData.totalItems ?? rawBatches.length,
+        );
+      } else if (Array.isArray(rawData.data)) {
+        rawBatches = rawData.data;
+        totalItems = Number(
+          rawData.total ?? rawData.totalItems ?? rawBatches.length,
+        );
+      }
+    } else if (response && Array.isArray(response.batches)) {
+      rawBatches = response.batches;
+      totalItems = Number(response.total ?? rawBatches.length);
+    } else if (response && Array.isArray(response.items)) {
+      rawBatches = response.items;
+      totalItems = Number(response.total ?? rawBatches.length);
+    }
+
+    if (
+      rawBatches.length > 0 ||
+      (rawData &&
+        typeof rawData === "object" &&
+        ("batches" in rawData || "items" in rawData))
+    ) {
+      const items = rawBatches.map(normalizeInternalBatchItem);
+      const page = params?.page ?? 1;
+      const pageSize = params?.pageSize ?? 10;
+
+      return {
+        items,
+        pagination: createPaginationMeta(
+          page,
+          pageSize,
+          totalItems || items.length,
+        ),
+      };
     }
 
     if (isDummyDataEnabled()) {
@@ -60,31 +181,32 @@ export const fetchInternalBatchDetailApi = async (
   signal?: AbortSignal,
 ): Promise<InternalBatchItem | null> => {
   try {
-    const response = await apiClient.get<
-      ApiResponse<InternalBatchItem> | InternalBatchItem
-    >(`/api/internal/interop/batches/${batchId}`, { signal });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response: any = await apiClient.get(
+      `/api/internal/interop/batches/${batchId}`,
+      { signal },
+    );
 
-    const resultData =
-      response && "data" in response && response.data
+    const rawData =
+      response &&
+      typeof response === "object" &&
+      "data" in response &&
+      response.data
         ? response.data
-        : (response as InternalBatchItem);
+        : response;
 
-    if (resultData && resultData.batchId) {
-      return resultData;
+    if (rawData && (rawData.batchId || rawData.batch_id || rawData.id)) {
+      return normalizeInternalBatchItem(rawData);
     }
 
     if (isDummyDataEnabled()) {
-      return (
-        DUMMY_INTERNAL_BATCHES.find((b) => b.batchId === batchId) ?? null
-      );
+      return DUMMY_INTERNAL_BATCHES.find((b) => b.batchId === batchId) ?? null;
     }
 
     return null;
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return (
-        DUMMY_INTERNAL_BATCHES.find((b) => b.batchId === batchId) ?? null
-      );
+      return DUMMY_INTERNAL_BATCHES.find((b) => b.batchId === batchId) ?? null;
     }
     throw error;
   }

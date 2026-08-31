@@ -101,7 +101,7 @@ const InternalBatchReviewDetailModalContent = (
           <P fontSize={"sm"} fontWeight={"semibold"}>{"Daftar Layer & Potongan Data"}</P>
 
           <VStack align={"stretch"} gap={"xs"}>
-            {batch.items.map((item, idx) => (
+            {(batch.items ?? []).map((item, idx) => (
               <HStack
                 key={item.id || idx}
                 justify={"space-between"}
@@ -125,7 +125,7 @@ const InternalBatchReviewDetailModalContent = (
                       : `${item.featuresCount} Bidang`}
                   </P>
                   <P fontWeight={"semibold"} fontSize={"sm"} color={"brand.fg"}>
-                    {formatCurrency(item.subtotalPrice)}
+                    {formatCurrency(item.subtotalPrice ?? 0)}
                   </P>
                 </VStack>
               </HStack>
@@ -137,7 +137,7 @@ const InternalBatchReviewDetailModalContent = (
           <HStack justify={"space-between"} px={"xs"}>
             <P fontWeight={"semibold"}>{"Total Estimasi PNBP"}</P>
             <P fontWeight={"bold"} fontSize={"md"} color={"green.500"}>
-              {formatCurrency(batch.totalPrice)}
+              {formatCurrency(batch.totalPrice ?? 0)}
             </P>
           </HStack>
         </VStack>

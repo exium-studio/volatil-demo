@@ -174,7 +174,7 @@ export const InternalBatchReviewDetailPage = () => {
                 </P>
 
                 <P fontWeight={"semibold"}>
-                  {formatCurrency(batch.totalPrice)}
+                  {formatCurrency(batch.totalPrice ?? 0)}
                 </P>
               </VStack>
             </HStack>
@@ -218,7 +218,7 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
       { th: "Lihat di Peta", align: "center" },
     ];
 
-    const items: FormattedListItem<CartBatchItem>[] = batch.items.map(
+    const items: FormattedListItem<CartBatchItem>[] = (batch.items ?? []).map(
       (item) => ({
         id: item.id,
         data: item,
@@ -252,8 +252,8 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
             align: "center" as const,
           },
           {
-            value: item.subtotalPrice,
-            td: <P>{formatCurrency(item.subtotalPrice)}</P>,
+            value: item.subtotalPrice ?? 0,
+            td: <P>{formatCurrency(item.subtotalPrice ?? 0)}</P>,
             align: "end" as const,
           },
           {

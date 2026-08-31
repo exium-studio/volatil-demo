@@ -125,15 +125,17 @@ export const InternalBatchReviewDataView = () => {
             td: <BatchStatusBadge>{batch.status}</BatchStatusBadge>,
           },
           {
-            value: batch.items.length,
-            td: <P textAlign={"center"}>{`${batch.items.length} Layer`}</P>,
+            value: batch.items?.length ?? 0,
+            td: (
+              <P textAlign={"center"}>{`${batch.items?.length ?? 0} Layer`}</P>
+            ),
             align: "center" as const,
           },
           {
-            value: batch.totalPrice,
+            value: batch.totalPrice ?? 0,
             td: (
               <P fontWeight={"semibold"} color={"green.600"}>
-                {formatCurrency(batch.totalPrice)}
+                {formatCurrency(batch.totalPrice ?? 0)}
               </P>
             ),
             align: "end" as const,
