@@ -453,7 +453,7 @@ const DataListTableRow = memo(
               toggleItemSelection(item);
             }}
           >
-            <Center w={"full"} h={"full"} px={"10px"} bg={cellBg}>
+            <Center w={"full"} h={"full"} px={"xs"} bg={cellBg}>
               <Checkbox
                 size={"sm"}
                 checked={isItemSelected}
@@ -524,7 +524,7 @@ const DataListTableRow = memo(
               <HStack
                 w={"full"}
                 h={"full"}
-                px={"10px"}
+                px={"xs"}
                 gap={"2xs"}
                 align={"center"}
                 justify={"end"}

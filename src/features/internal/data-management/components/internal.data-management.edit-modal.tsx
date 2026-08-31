@@ -134,14 +134,15 @@ const InternalDataManagementEditModalContent = (
   const selectedGeoserver = useMemo(
     () =>
       geoserverList.find((g) => g.id === geoserverId) ?? {
-        id: geoserverId,
-        baseUrl: item.geoserverBaseUrl,
+        id: item.geoserverId ?? geoserverId,
+        name: item.geoserver?.name ?? "",
+        baseUrl: item.geoserver?.baseUrl ?? "",
       },
-    [geoserverList, geoserverId, item.geoserverBaseUrl],
+    [geoserverList, geoserverId, item.geoserverId, item.geoserver],
   );
 
   const previewUrls = useMemo(() => {
-    const baseUrl = selectedGeoserver?.baseUrl || item.geoserverBaseUrl;
+    const baseUrl = selectedGeoserver?.baseUrl || item.geoserver?.baseUrl;
     if (!baseUrl || !typeName) {
       return {
         wfsUrl: item.wfsUrl || "-",
@@ -152,7 +153,7 @@ const InternalDataManagementEditModalContent = (
       wfsUrl: `${baseUrl}/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=${typeName}`,
       wmsUrl: `${baseUrl}/wms?service=WMS&version=1.3.0&request=GetMap&layers=${typeName}`,
     };
-  }, [selectedGeoserver, typeName, item.geoserverBaseUrl, item.wfsUrl, item.wmsUrl]);
+  }, [selectedGeoserver, typeName, item.geoserver, item.wfsUrl, item.wmsUrl]);
 
   const handleLayerChange = (
     selectedTypeName: string,
@@ -167,7 +168,7 @@ const InternalDataManagementEditModalContent = (
   };
 
   const onSubmit = (data: MasterIgtLayerFormValues) => {
-    const baseUrl = selectedGeoserver.baseUrl || item.geoserverBaseUrl;
+    const baseUrl = selectedGeoserver.baseUrl || item.geoserver?.baseUrl || "";
     const wfsUrl = `${baseUrl}/ows`;
     const wmsUrl = `${baseUrl}/wms`;
 

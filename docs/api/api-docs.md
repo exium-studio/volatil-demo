@@ -751,7 +751,15 @@ type MasterIgtLayersResponse = {
     isActive: boolean;
     zIndex?: number; // Layer stacking order index (1 = bawah, 2 = tengah, 3 = atas)
     geoserverId: string; // ID master geoserver tempat layer berada (FK ke master_geoserver)
+    geoserver: {
+      id: string;
+      name: string; // contoh: "GeoServer Ultama ATR/BPN"
+      baseUrl: string; // contoh: "https://geoserver.atrbpn.go.id/geoserver"
+    };
+    workspaceName: string; // contoh: "testing_workspace"
     typeName: string; // Format: workspace:layerName
+    wfsUrl: string; // URL WFS asli
+    wmsUrl: string; // URL WMS asli
     createdAt: string;
     updatedAt: string;
   }>;

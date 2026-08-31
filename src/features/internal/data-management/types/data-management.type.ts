@@ -23,12 +23,16 @@ export type MasterIgtLayerItem = {
   bbox?: [number, number, number, number];
   isActive: boolean;
   zIndex?: number;
-  geoserverId?: string;
-  geoserverBaseUrl?: string;
-  workspaceName?: string;
+  geoserverId: string;
+  geoserver: {
+    id: string;
+    name: string;
+    baseUrl: string;
+  };
+  workspaceName: string;
   typeName: string; // format: workspace:layerName
-  wfsUrl?: string;
-  wmsUrl?: string;
+  wfsUrl: string;
+  wmsUrl: string;
   createdAt: string;
   updatedAt: string;
 };
