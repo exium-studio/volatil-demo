@@ -109,9 +109,9 @@ export const InternalMitraRegistrationDataView = () => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "No. Registrasi & Instansi", sortable: true },
+      { th: "Status", sortable: true },
       { th: "Penanggung Jawab", sortable: true },
       { th: "Kontak / Email", sortable: true },
-      { th: "Status", sortable: true },
       { th: "Waktu Pengajuan", sortable: true },
     ];
 
@@ -128,15 +128,21 @@ export const InternalMitraRegistrationDataView = () => {
             td: (
               <VStack align={"start"} gap={0} w={"220px"}>
                 <ClampedP fontWeight={"medium"}>{reg.namaInstansi}</ClampedP>
-                <P fontSize={"xs"} color={"blue.600"} fontWeight={"semibold"}>
-                  {reg.registrationNumber}
-                </P>
-                <P fontSize={"2xs"} color={"fg.subtle"}>
+                <P fontWeight={"semibold"}>{reg.registrationNumber}</P>
+                <P fontSize={"sm"} color={"fg.subtle"}>
                   {`NIB: ${reg.nib}`}
                 </P>
               </VStack>
             ),
             align: "start" as const,
+          },
+          {
+            value: reg.status,
+            td: (
+              <Badge colorPalette={badgeConfig.colorPalette} variant={"subtle"}>
+                {badgeConfig.label}
+              </Badge>
+            ),
           },
           {
             value: reg.namaPenanggungJawab,
@@ -152,24 +158,10 @@ export const InternalMitraRegistrationDataView = () => {
           },
           {
             value: reg.email,
-            td: (
-              <VStack align={"start"} gap={0}>
-                <P fontSize={"xs"}>{reg.email}</P>
-                <P fontSize={"2xs"} color={"fg.subtle"}>
-                  {reg.nomorHp}
-                </P>
-              </VStack>
-            ),
+            td: <P>{reg.email}</P>,
             align: "start" as const,
           },
-          {
-            value: reg.status,
-            td: (
-              <Badge colorPalette={badgeConfig.colorPalette} variant={"subtle"}>
-                {badgeConfig.label}
-              </Badge>
-            ),
-          },
+
           {
             value: reg.createdAt,
             td: (
@@ -189,8 +181,6 @@ export const InternalMitraRegistrationDataView = () => {
           key: "open-detail",
           label: "Lihat Detail Berkas",
           icon: EyeIcon,
-          sticky: true,
-          showInMenu: true,
           onClick: (reg: InternalMitraRegistrationItem) => {
             void navigate({
               to: "/internal/mitra-registration/$registrationId",

@@ -268,7 +268,9 @@ export const MitraRegisterPage = () => {
                         errorText={errors.alamatKantor?.message}
                       >
                         <Input
-                          placeholder={"Jl. Jenderal Sudirman No. Kav 52-53, Jakarta Selatan"}
+                          placeholder={
+                            "Jl. Jenderal Sudirman No. Kav 52-53, Jakarta Selatan"
+                          }
                           {...register("alamatKantor")}
                         />
                       </Field>
@@ -314,7 +316,9 @@ export const MitraRegisterPage = () => {
                       label={"Email Resmi (Untuk Login / SSO)"}
                       invalid={Boolean(errors.email)}
                       errorText={errors.email?.message}
-                      helperText={"Email ini akan digunakan untuk aktivasi akun dan notifikasi."}
+                      helperText={
+                        "Email ini akan digunakan untuk aktivasi akun dan notifikasi."
+                      }
                     >
                       <Input
                         type={"email"}
@@ -385,7 +389,9 @@ export const MitraRegisterPage = () => {
                           <FileInput
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
-                            onFileAccept={(details) => field.onChange(details.files)}
+                            onFileAccept={(details) =>
+                              field.onChange(details.files)
+                            }
                           />
                         )}
                       />
@@ -404,7 +410,9 @@ export const MitraRegisterPage = () => {
                           <FileInput
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
-                            onFileAccept={(details) => field.onChange(details.files)}
+                            onFileAccept={(details) =>
+                              field.onChange(details.files)
+                            }
                           />
                         )}
                       />
@@ -423,7 +431,9 @@ export const MitraRegisterPage = () => {
                           <FileInput
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
-                            onFileAccept={(details) => field.onChange(details.files)}
+                            onFileAccept={(details) =>
+                              field.onChange(details.files)
+                            }
                           />
                         )}
                       />
@@ -442,7 +452,9 @@ export const MitraRegisterPage = () => {
                           <FileInput
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
-                            onFileAccept={(details) => field.onChange(details.files)}
+                            onFileAccept={(details) =>
+                              field.onChange(details.files)
+                            }
                           />
                         )}
                       />
@@ -461,7 +473,9 @@ export const MitraRegisterPage = () => {
                           <FileInput
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
-                            onFileAccept={(details) => field.onChange(details.files)}
+                            onFileAccept={(details) =>
+                              field.onChange(details.files)
+                            }
                           />
                         )}
                       />
@@ -480,7 +494,9 @@ export const MitraRegisterPage = () => {
                           <FileInput
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
-                            onFileAccept={(details) => field.onChange(details.files)}
+                            onFileAccept={(details) =>
+                              field.onChange(details.files)
+                            }
                           />
                         )}
                       />
@@ -492,11 +508,19 @@ export const MitraRegisterPage = () => {
 
             <Separator borderColor={"border.subtle"} />
 
-            <HStack justify={"space-between"} align={"center"} p={6} wrap={"wrap"} gap={3}>
+            <HStack
+              justify={"space-between"}
+              align={"center"}
+              p={6}
+              wrap={"wrap"}
+              gap={3}
+            >
               <HStack gap={2}>
                 <AppIcon icon={ShieldCheckIcon} color={"green.500"} />
                 <P fontSize={"xs"} color={"fg.muted"}>
-                  {"Data permohonan akan diproses secara resmi oleh Kementerian ATR/BPN."}
+                  {
+                    "Data permohonan akan diproses secara resmi oleh Kementerian ATR/BPN."
+                  }
                 </P>
               </HStack>
 
