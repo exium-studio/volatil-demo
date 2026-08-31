@@ -19,7 +19,6 @@ import { CountBadge } from "@/design-system/components/typography/ui/count-badge
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";
@@ -51,9 +50,7 @@ export const MapIgtLayerSelect = memo(() => {
   );
 
   const enabledCount = useMemo(() => {
-    return activeLayers.filter((l) => {
-      return enabledLayerIds[l.id] ?? l.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
-    }).length;
+    return activeLayers.filter((l) => Boolean(enabledLayerIds[l.id])).length;
   }, [activeLayers, enabledLayerIds]);
 
   return (
@@ -105,9 +102,7 @@ export const MapIgtLayerSelect = memo(() => {
           ) : (
             <VStack gap={"xs"} align={"stretch"}>
               {activeLayers.map((layer) => {
-                const isEnabled =
-                  enabledLayerIds[layer.id] ??
-                  layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
+                const isEnabled = Boolean(enabledLayerIds[layer.id]);
                 const opacity = layerOpacities[layer.id] ?? 1.0;
 
                 return (

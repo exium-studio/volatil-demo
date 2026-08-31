@@ -34,7 +34,6 @@ import type {
   MasterIgtLayerItem,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
-import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { SpatialBasisFilterSelect } from "@/features/shared/components/spatial-basis-filter.select";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
@@ -131,8 +130,7 @@ export const InternalDataManagementDataView = () => {
     ];
 
     const items = rawItems.map((item) => {
-      const isVisibleOnMap =
-        enabledLayerIds[item.id] ?? item.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
+      const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
 
       return {
         id: item.id,
@@ -240,15 +238,11 @@ export const InternalDataManagementDataView = () => {
       {
         key: "toggle-map-visibility",
         label: (layer: MasterIgtLayerItem) => {
-          const isVisible =
-            enabledLayerIds[layer.id] ??
-            layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
+          const isVisible = Boolean(enabledLayerIds[layer.id]);
           return isVisible ? "Sembunyikan dari Peta" : "Tampilkan di Peta";
         },
         icon: (layer: MasterIgtLayerItem) => {
-          const isVisible =
-            enabledLayerIds[layer.id] ??
-            layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID;
+          const isVisible = Boolean(enabledLayerIds[layer.id]);
           return isVisible ? EyeOffIcon : EyeIcon;
         },
         onClick: (layer: MasterIgtLayerItem) => {

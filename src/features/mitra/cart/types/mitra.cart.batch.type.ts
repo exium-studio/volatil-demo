@@ -28,7 +28,7 @@ export type CartBatchStatus = BatchStatus | "ready";
 
 export type CartBatchStatusConfig = {
   label: string;
-  colorPalette: "green" | "blue" | "red" | "gray";
+  colorPalette: "green" | "blue" | "red" | "gray" | "orange";
   icon: (typeof import("lucide-react"))["CheckCircle2Icon"];
   iconColor: string;
 };
@@ -58,6 +58,8 @@ export type CartBatchItemPayload = {
   };
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   cqlFilter?: string;
+  wfsUrl?: string;
+  wmsUrl?: string;
 };
 
 export type AddToCartBatchRequest = {
@@ -92,7 +94,9 @@ export type CartBatch = {
   status: CartBatchStatus;
   createdAt: string;
   readyAt?: string;
+  approvedAt?: string;
   expiredAt?: string;
+  rejectionReason?: string;
   totalPrice: number;
   items: CartBatchItem[];
 };

@@ -54,14 +54,14 @@ export const CART_BATCH_STATUS_CONFIG_MAP: Record<
   CartBatchStatus,
   CartBatchStatusConfig
 > = {
-  ready: {
-    label: "Siap bayar",
+  approved: {
+    label: "Disetujui (Siap Bayar)",
     colorPalette: "green",
     icon: CheckCircle2Icon,
     iconColor: "green.fg",
   },
-  approved: {
-    label: "Disetujui",
+  ready: {
+    label: "Disetujui (Siap Bayar)",
     colorPalette: "green",
     icon: CheckCircle2Icon,
     iconColor: "green.fg",
@@ -74,9 +74,9 @@ export const CART_BATCH_STATUS_CONFIG_MAP: Record<
   },
   pending_review: {
     label: "Menunggu review",
-    colorPalette: "blue",
+    colorPalette: "orange",
     icon: LoaderIcon,
-    iconColor: "blue.fg",
+    iconColor: "orange.fg",
   },
   rejected: {
     label: "Ditolak",

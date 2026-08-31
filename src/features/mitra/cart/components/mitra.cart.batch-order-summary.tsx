@@ -10,7 +10,13 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartBatch } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type { ActiveCartBatch } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { useNavigate } from "@tanstack/react-router";
-import { CreditCardIcon, InfoIcon, ShieldCheckIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  CreditCardIcon,
+  HourglassIcon,
+  InfoIcon,
+  ShieldCheckIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export type MitraCartBatchOrderSummaryProps = {
@@ -35,8 +41,11 @@ export const MitraCartBatchOrderSummary = (
 
   // Derived Values
   const isSelected = Boolean(activeBatch);
-  const isReadyToPay = activeBatch?.status === "ready";
+  const isApproved =
+    activeBatch?.status === "approved" || activeBatch?.status === "ready";
   const isPreparing = activeBatch?.status === "preparing";
+  const isPendingReview = activeBatch?.status === "pending_review";
+  const isRejected = activeBatch?.status === "rejected";
   const isExpired = activeBatch?.status === "expired";
   const hasItems = (activeBatch?.items.length ?? 0) > 0;
 
@@ -55,7 +64,7 @@ export const MitraCartBatchOrderSummary = (
   }, [activeBatch]);
 
   const handleCheckout = () => {
-    if (!activeBatch?.batchId || !isReadyToPay) return;
+    if (!activeBatch?.batchId || !isApproved) return;
 
     checkoutMutation.mutate(
       {
@@ -95,23 +104,29 @@ export const MitraCartBatchOrderSummary = (
           {isSelected ? (
             <Badge
               colorPalette={
-                isReadyToPay
+                isApproved
                   ? "green"
-                  : isPreparing
-                    ? "blue"
-                    : isExpired
-                      ? "red"
-                      : "gray"
+                  : isPendingReview
+                    ? "orange"
+                    : isPreparing
+                      ? "blue"
+                      : isRejected || isExpired
+                        ? "red"
+                        : "gray"
               }
               variant={"subtle"}
             >
-              {isReadyToPay
-                ? "Siap Dibayar"
-                : isPreparing
-                  ? "Menyiapkan Data"
-                  : isExpired
-                    ? "Kadaluwarsa"
-                    : "Draft"}
+              {isApproved
+                ? "Disetujui (Siap Bayar)"
+                : isPendingReview
+                  ? "Menunggu Review"
+                  : isPreparing
+                    ? "Menyiapkan Data"
+                    : isRejected
+                      ? "Ditolak"
+                      : isExpired
+                        ? "Kadaluwarsa"
+                        : "Draft"}
             </Badge>
           ) : (
             <Badge colorPalette={"gray"} variant={"subtle"}>
@@ -185,7 +200,7 @@ export const MitraCartBatchOrderSummary = (
 
         <HStack
           justify={"space-between"}
-          color={isReadyToPay ? "blue.fg" : undefined}
+          color={isApproved ? "blue.fg" : undefined}
         >
           <P fontSize={"md"} fontWeight={"semibold"}>
             {"Total Tagihan"}
@@ -230,7 +245,42 @@ export const MitraCartBatchOrderSummary = (
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
             {
-              "Tombol pembayaran akan aktif otomatis setelah Interop Engine selesai menyiapkan data."
+              "Data layer sedang dipersiapkan oleh Interop Engine. Mohon menunggu hingga selesai sebelum direview internal."
+            }
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isPendingReview && (
+        <Alert.Root
+          status={"warning"}
+          colorPalette={"orange"}
+          variant={"subtle"}
+        >
+          <AppIcon icon={HourglassIcon} />
+          <Alert.Title>
+            {
+              "Permohonan batch sedang dalam proses peninjauan (review) oleh admin internal. Tombol pembayaran akan terbuka setelah disetujui (Approved)."
+            }
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isRejected && (
+        <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"}>
+          <AppIcon icon={AlertCircleIcon} />
+          <Alert.Title>
+            {`Batch ditolak oleh Admin Internal: ${activeBatch?.rejectionReason || "Tidak memenuhi syarat."}`}
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isExpired && (
+        <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"}>
+          <AppIcon icon={AlertCircleIcon} />
+          <Alert.Title>
+            {
+              "Batch pesanan telah kadaluwarsa (TTL 24 jam berakhir). Silakan lakukan re-order data."
             }
           </Alert.Title>
         </Alert.Root>
@@ -242,7 +292,7 @@ export const MitraCartBatchOrderSummary = (
         w={"full"}
         disabled={
           !isSelected ||
-          !isReadyToPay ||
+          !isApproved ||
           !hasItems ||
           checkoutMutation.isPending ||
           isLoading
@@ -255,10 +305,14 @@ export const MitraCartBatchOrderSummary = (
         {!isSelected
           ? "Pilih Batch Terlebih Dahulu"
           : isPreparing
-            ? "Menunggu Interop..."
-            : isExpired
-              ? "Batch Kadaluwarsa"
-              : "Bayar Sekarang"}
+            ? "Menyiapkan Data..."
+            : isPendingReview
+              ? "Menunggu Review Internal"
+              : isRejected
+                ? "Batch Ditolak"
+                : isExpired
+                  ? "Batch Kadaluwarsa"
+                  : "Bayar Sekarang"}
       </Button>
 
       <HStack align={"center"} justify={"center"} gap={1}>

@@ -33,7 +33,6 @@ import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import { DEFAULT_ACTIVE_IGT_LAYER_ID } from "@/features/mitra/data-request/constants/igt.config";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import {
   APP_NAV_GROUPS_LIST,
@@ -363,9 +362,9 @@ const Content = () => {
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
-  const pathname = useLocation().pathname;
 
   // Derived Values — Build layer config from fetched layer list
+  const isInternal = getUserSession()?.role === "internal";
   const { data: fetchedLayers } = useQuery({
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
@@ -374,28 +373,15 @@ const Content = () => {
 
   const { enabledLayerIds, layerOpacities, cqlFilter } = useIgtLayerStore();
 
-  const userData = getUserSession();
-  const role = userData?.role ?? "mitra";
-  const isInternal = role === "internal";
-  const isDataManagementPage = pathname.includes("/internal/data-management");
-  const isBatchReviewPage = pathname.includes("/internal/batch-review");
-
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
-    // For internal admin, only render IGT layers if currently on data-management or batch-review page
-    if (isInternal && !isDataManagementPage && !isBatchReviewPage) {
-      return [];
-    }
-
     const rawList = fetchedLayers?.items ?? fetchedLayers?.layers ?? [];
     const sorted = [...rawList].sort(
       (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
     );
-    return sorted
+    const configs: MapLayerConfig[] = sorted
       .filter((layer: IgtLayerItem) => Boolean(layer.wms))
       .map((layer: IgtLayerItem) => {
-        const isEnabled =
-          enabledLayerIds[layer.id] ??
-          (isInternal ? false : layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+        const isEnabled = Boolean(enabledLayerIds[layer.id]);
         const opacity = layerOpacities[layer.id] ?? 1.0;
         return getWmsRasterConfigFromIgtLayer(
           layer,
@@ -403,14 +389,28 @@ const Content = () => {
           opacity,
         );
       });
+
+    // Also include any active layer from enabledLayerIds that might not be in the catalog list yet
+    Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
+      if (isEnabled && !configs.some((c) => c.id === layerId)) {
+        configs.push({
+          id: layerId,
+          type: "wms-raster",
+          spatialBasis: "bidang",
+          visible: wmsVisible,
+          opacity: layerOpacities[layerId] ?? 1.0,
+          wmsUrl: "",
+          layers: layerId,
+        });
+      }
+    });
+
+    return configs;
   }, [
     fetchedLayers,
     wmsVisible,
     enabledLayerIds,
     layerOpacities,
-    isInternal,
-    isDataManagementPage,
-    isBatchReviewPage,
   ]);
 
   // Derived Values

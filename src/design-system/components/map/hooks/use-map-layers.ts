@@ -11,7 +11,7 @@ import type {
 } from "@/design-system/components/map/types/map.type";
 
 import type maplibregl from "maplibre-gl";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 /** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
@@ -92,28 +92,21 @@ export const useMapLayers = (
     cqlFilterRef.current = cqlFilter;
   }, [layers, cqlFilter]);
 
-  useEffect(() => {
-    if (!map) return;
-
-    const controller = new AbortController();
-
-    const safeAddSource = (
-      id: string,
-      sourceSpec: maplibregl.SourceSpecification,
-    ) => {
-      if (map.getSource(id)) return;
+  const safeAddSource = useCallback(
+    (id: string, sourceSpec: maplibregl.SourceSpecification) => {
+      if (!map || map.getSource(id)) return;
       try {
         map.addSource(id, sourceSpec);
       } catch (err) {
         console.error(`Failed to add source "${id}"`, err);
       }
-    };
+    },
+    [map],
+  );
 
-    const safeAddLayer = (
-      spec: maplibregl.LayerSpecification,
-      beforeId?: string,
-    ) => {
-      if (map.getLayer(spec.id)) return;
+  const safeAddLayer = useCallback(
+    (spec: maplibregl.LayerSpecification, beforeId?: string) => {
+      if (!map || map.getLayer(spec.id)) return;
       const targetBeforeId =
         beforeId && map.getLayer(beforeId) ? beforeId : undefined;
       try {
@@ -129,9 +122,13 @@ export const useMapLayers = (
           console.error(`Failed to add layer "${spec.id}"`, e);
         }
       }
-    };
+    },
+    [map],
+  );
 
-    const addLayer = async (layer: MapLayerConfig) => {
+  const addLayer = useCallback(
+    async (layer: MapLayerConfig) => {
+      if (!map) return;
       const beforeId = getCustomLayerBeforeId(map);
       const visibility = resolveVisibility(layer);
       const opacity = resolveOpacity(layer);
@@ -199,9 +196,13 @@ export const useMapLayers = (
           break;
         }
       }
-    };
+    },
+    [map, safeAddSource, safeAddLayer],
+  );
 
-    const removeLayers = (configs: MapLayerConfig[]) => {
+  const removeLayers = useCallback(
+    (configs: MapLayerConfig[]) => {
+      if (!map) return;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(map as any).style) return;
 
@@ -209,46 +210,57 @@ export const useMapLayers = (
         if (map.getLayer(layer.id)) map.removeLayer(layer.id);
         if (map.getSource(layer.id)) map.removeSource(layer.id);
       });
-    };
+    },
+    [map],
+  );
 
-    let setupSeq = 0;
+  const setupLayers = useCallback(async () => {
+    if (!map) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(map as any).style) return;
 
-    const setupLayers = async () => {
-      const seq = ++setupSeq;
-      removeLayers(layersRef.current);
-
-      const configs = layersRef.current;
-      for (const layer of configs) {
-        if (seq !== setupSeq || controller.signal.aborted) return;
-        try {
+    const configs = layersRef.current;
+    for (const layer of configs) {
+      try {
+        if (!map.getSource(layer.id) || !map.getLayer(layer.id)) {
           await addLayer(layer);
-        } catch (error: unknown) {
-          console.error(`Failed to add layer "${layer.id}"`, error);
         }
+      } catch (error: unknown) {
+        console.error(`Failed to add layer "${layer.id}"`, error);
       }
+    }
+    map.fire(MAP_EVENTS_MAP.layersReady);
+  }, [map, addLayer]);
 
-      if (seq === setupSeq && !controller.signal.aborted) {
-        map.fire(MAP_EVENTS_MAP.layersReady);
-      }
+  // Setup on map-style-ready
+  useEffect(() => {
+    if (!map) return;
+
+    const handleStyleReady = () => {
+      removeLayers(layersRef.current);
+      void setupLayers();
     };
 
-    map.on(MAP_EVENTS_MAP.styleReady as string, setupLayers);
+    map.on(MAP_EVENTS_MAP.styleReady as string, handleStyleReady);
     void setupLayers();
 
     return () => {
-      controller.abort();
-      map.off(MAP_EVENTS_MAP.styleReady as string, setupLayers);
-      removeLayers(layersRef.current);
+      map.off(MAP_EVENTS_MAP.styleReady as string, handleStyleReady);
     };
-  }, [map]);
+  }, [map, setupLayers, removeLayers]);
 
-  // Respond to layer config & cqlFilter changes dynamically
+  // Respond to dynamic changes in layers array, visibility, and opacity
   useEffect(() => {
     if (!map) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(map as any).style) return;
 
-    layers.forEach((layer) => {
+    layers.forEach(async (layer) => {
+      if (!map.getSource(layer.id) || !map.getLayer(layer.id)) {
+        await addLayer(layer);
+        return;
+      }
+
       if (layer.type === "wms-raster") {
         const newTileUrl = resolveWmsTileUrl(layer);
         const source = map.getSource(
@@ -288,5 +300,5 @@ export const useMapLayers = (
         }
       }
     });
-  }, [map, layers, cqlFilter]);
+  }, [map, layers, cqlFilter, addLayer]);
 };

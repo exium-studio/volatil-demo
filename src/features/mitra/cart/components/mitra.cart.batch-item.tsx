@@ -133,23 +133,38 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
         </VStack>
 
         {/* Dynamic Status Notices */}
-        {batch.status === "ready" && batch.expiredAt && (
+        {(batch.status === "approved" || batch.status === "ready") &&
+          batch.expiredAt && (
+            <HStack
+              justify={"space-between"}
+              align={"center"}
+              gap={"md"}
+              bg={"bg.subtle"}
+              p={2}
+              rounded={"md"}
+              fontSize={"xs"}
+            >
+              <P color={"fg.muted"}>{"Sisa Waktu Pembayaran (TTL):"}</P>
+
+              <Countdown
+                finishedAt={batch.expiredAt}
+                fontWeight={"semibold"}
+                color={"orange.fg"}
+              />
+            </HStack>
+          )}
+
+        {batch.status === "pending_review" && (
           <HStack
-            justify={"space-between"}
             align={"center"}
-            gap={"md"}
-            bg={"an0"}
+            gap={"xs"}
+            bg={"orange.subtle"}
             p={2}
             rounded={"md"}
             fontSize={"xs"}
+            color={"orange.fg"}
           >
-            <P color={"fg.muted"}>{"Sisa Waktu Pembayaran (TTL):"}</P>
-
-            <Countdown
-              finishedAt={batch.expiredAt}
-              fontWeight={"semibold"}
-              color={"orange.fg"}
-            />
+            <P>{"Menunggu review & persetujuan Admin Internal..."}</P>
           </HStack>
         )}
 
@@ -164,6 +179,20 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
             color={"blue.fg"}
           >
             <P>{"Interop Engine sedang memproses & memotong data layer..."}</P>
+          </HStack>
+        )}
+
+        {batch.status === "rejected" && batch.rejectionReason && (
+          <HStack
+            align={"center"}
+            gap={"xs"}
+            bg={"red.subtle"}
+            p={2}
+            rounded={"md"}
+            fontSize={"xs"}
+            color={"red.fg"}
+          >
+            <P>{`Alasan penolakan: ${batch.rejectionReason}`}</P>
           </HStack>
         )}
       </VStack>
