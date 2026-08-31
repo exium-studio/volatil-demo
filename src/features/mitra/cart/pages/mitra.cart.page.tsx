@@ -43,10 +43,9 @@ const MitraCartContent = () => {
   // Queries & Mutations
   const {
     batches,
-    // isLoading: isBatchesLoading,
+    isLoading: isBatchesLoading,
     isFetching: isBatchesFetching,
   } = useCartBatchesQuery();
-  const isBatchesLoading = true;
   const clearAllBatchesMutation = useClearAllCartBatches();
 
   // States — initial load has NO selected batch
