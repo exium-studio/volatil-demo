@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/api/mitra.data-request-igt-layers.api.ts
+
 import type {
   IgtLayerItem,
   IgtLayersResponse,
@@ -20,8 +22,7 @@ const normalizeIgtLayer = (raw: any): IgtLayerItem => {
   );
   const wmsUrl = String(raw.wms?.wmsUrl ?? raw.wmsUrl ?? raw.wms_url ?? "");
   const wfsUrl = String(raw.wfs?.wfsUrl ?? raw.wfsUrl ?? raw.wfs_url ?? "");
-  const spatialBasis =
-    raw.spatialBasis ?? raw.spatial_basis === "kawasan" ? "kawasan" : "bidang";
+  const spatialBasis = raw.spatialBasis ?? raw.spatial_basis ?? "bidang";
 
   return {
     id,
@@ -44,8 +45,7 @@ const normalizeIgtLayer = (raw: any): IgtLayerItem => {
       wfsTypeName: raw.wfs?.wfsTypeName ?? typeName ?? id,
       wfsUrl,
       type:
-        raw.wfs?.type ??
-        (spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill"),
+        raw.wfs?.type ?? (spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill"),
       version: raw.wfs?.version ?? "2.0.0",
       srsName: raw.wfs?.srsName ?? "EPSG:4326",
     },
@@ -98,11 +98,11 @@ export async function getIgtLayers(
   } catch (error) {
     if (isDummyDataEnabled()) {
       console.warn(
-        "getIgtLayers API error, falling back to dummy data:",
+        "Failed to fetch IGT layers from API, fallback to dummy data",
         error,
       );
       return DUMMY_IGT_LAYERS;
     }
-    return EMPTY_LAYERS_RESPONSE;
+    throw error;
   }
 }
