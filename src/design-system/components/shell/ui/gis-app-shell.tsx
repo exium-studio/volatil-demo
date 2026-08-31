@@ -389,17 +389,19 @@ const Content = () => {
     const sorted = [...rawList].sort(
       (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
     );
-    return sorted.map((layer: IgtLayerItem) => {
-      const isEnabled =
-        enabledLayerIds[layer.id] ??
-        (isInternal ? false : layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
-      const opacity = layerOpacities[layer.id] ?? 1.0;
-      return getWmsRasterConfigFromIgtLayer(
-        layer,
-        wmsVisible && isEnabled,
-        opacity,
-      );
-    });
+    return sorted
+      .filter((layer: IgtLayerItem) => Boolean(layer.wms))
+      .map((layer: IgtLayerItem) => {
+        const isEnabled =
+          enabledLayerIds[layer.id] ??
+          (isInternal ? false : layer.id === DEFAULT_ACTIVE_IGT_LAYER_ID);
+        const opacity = layerOpacities[layer.id] ?? 1.0;
+        return getWmsRasterConfigFromIgtLayer(
+          layer,
+          wmsVisible && isEnabled,
+          opacity,
+        );
+      });
   }, [
     fetchedLayers,
     wmsVisible,

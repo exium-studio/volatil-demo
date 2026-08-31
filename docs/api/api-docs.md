@@ -197,12 +197,14 @@ type NotificationType =
 
 ## 4. GeoServer Proxy Endpoints
 
-Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production fisik. Seluruh akses layer spasial dialihkan melalui endpoint proxy Backend.
+Frontend **dilarang keras** melakukan request langsung ke URL GeoServer production fisik. Seluruh akses layer spasial dialihkan melalui 4 endpoint proxy Backend berikut.
 
-### Ada 2 Endpoint Proxy Utama (WFS & WMS)
+### Ada 4 Endpoint Proxy Utama
 
-- `GET /api/proxy/wms` (Stream Binary Tiles/Image)
-- `GET /api/proxy/wfs` (Stream GeoJSON Features & DescribeFeatureType)
+1. `GET /api/proxy/wms` (Stream Binary Tiles/Image)
+2. `GET /api/proxy/wfs` (Stream GeoJSON Features & DescribeFeatureType)
+3. `GET /api/internal/master-geoserver/{geoserverId}/workspaces` (Proxy List Workspace GeoServer)
+4. `GET /api/internal/master-geoserver/{geoserverId}/workspaces/{workspaceName}/layers` (Proxy List Layer / TypeName by Workspace)
 
 ### Skema Akses & Autentikasi:
 
@@ -254,16 +256,58 @@ Frontend **dilarang keras** melakukan request langsung ke URL GeoServer producti
   4. Stream data GeoJSON (`application/json`) ke browser FE.
 - **Response**: `GeoJSON.FeatureCollection` / JSON Schema.
 
-### 4.3 Security Rules (Wajib Implementasi Backend)
+### 4.3 GeoServer Workspaces Proxy
+
+Mengambil daftar workspace dari GeoServer fisik target melalui Backend Proxy untuk kebutuhan dropdown form registrasi & edit layer IGT.
+
+- **Endpoint**: `GET /api/internal/master-geoserver/{geoserverId}/workspaces`
+- **Mekanisme Auth**: Session Cookie (`httpOnly`) untuk Internal Admin.
+- **Backend Behavior**:
+  1. Ambil `baseUrl` dan kredensial dari database `master_geoserver` berdasarkan `geoserverId`.
+  2. Proxy request ke REST API GeoServer (`/geoserver/rest/workspaces.json`).
+  3. Mengembalikan daftar nama workspace yang tersedia di GeoServer fisik.
+- **Response**:
+
+```typescript
+type GeoServerWorkspacesResponse = {
+  workspaces: string[]; // Contoh: ["testing_workspace", "atr_kawasan", "volatil_staging"]
+};
+```
+
+### 4.4 GeoServer Workspace Layers Proxy
+
+Mengambil daftar layer (`typeName`) beserta metadata spasial dari workspace GeoServer fisik yang dipilih melalui Backend Proxy untuk kebutuhan dropdown form registrasi & edit layer IGT.
+
+- **Endpoint**: `GET /api/internal/master-geoserver/{geoserverId}/workspaces/{workspaceName}/layers`
+- **Mekanisme Auth**: Session Cookie (`httpOnly`) untuk Internal Admin.
+- **Backend Behavior**:
+  1. Ambil `baseUrl` dan kredensial dari database `master_geoserver` berdasarkan `geoserverId`.
+  2. Proxy request ke REST API GeoServer (`/geoserver/rest/workspaces/{workspaceName}/featuretypes.json` / WFS `GetCapabilities`).
+  3. Mengambil metadata spasial layer (nama, title, typeName, srs, spatial basis, bbox).
+- **Response**:
+
+```typescript
+type GeoServerWorkspaceLayersResponse = {
+  layers: Array<{
+    name: string; // "TEST_BIDANG_TANAH"
+    title: string; // "Bidang Tanah Persil"
+    typeName: string; // "testing_workspace:TEST_BIDANG_TANAH"
+    abstract?: string;
+    srs: string; // "EPSG:4326"
+    geometryType?: "Polygon" | "MultiPolygon" | "Point" | "LineString";
+    spatialBasis?: "bidang" | "kawasan"; // Auto-detected by Backend
+    bbox?: [number, number, number, number]; // [minX, minY, maxX, maxY]
+  }>;
+};
+```
+
+### 4.5 Security Rules (Wajib Implementasi Backend)
 
 1. **Zero Credential Exposure**: Kredensial GeoServer (Basic Auth / Master Password) **tidak boleh pernah dikirimkan ke Frontend** dalam format apapun.
 2. **Session Verification via Cookie**: Backend wajib memvalidasi token JWT / session pengguna yang disimpan di **`httpOnly` cookie** sebelum meneruskan (_forward_) request ke GeoServer.
 3. **Prevent Horizontal Access**: Backend memvalidasi bahwa layer hasil provisioning hanya dapat diakses oleh mitra pemilik order atau pengguna internal yang berwenang (`403 Forbidden`).
 4. **Rate Limiting**: Penerapan rate limit per user/session untuk menjaga stabilitas instance GeoServer.
 5. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `userId`/`mitraId`, `geoserverId`, `typeName`, `timestamp`, `ipAddress`).
-6. **Prevent Horizontal Access**: Backend memvalidasi bahwa layer hasil provisioning hanya dapat diakses oleh mitra pemilik order atau pengguna internal yang berwenang (`403 Forbidden`).
-7. **Rate Limiting**: Penerapan rate limit per user/session untuk menjaga stabilitas instance GeoServer.
-8. **Audit Logging**: Mencatat log akses WFS/WMS setiap kali request dieksekusi (parameter: `userId`/`mitraId`, `geoserverId`, `typeName`, `timestamp`, `ipAddress`).
 
 ---
 
@@ -335,7 +379,7 @@ type MitraIgtLayersResponse = {
 
 ### 5.4 Kebijakan Tarif & Batas Pembelian (Pricing & Purchase Policies)
 
-Endpoint bagi Mitra untuk mengambil konfigurasi tarif dasar PNBP dan batas minimum pembelian (*minimum purchase limit*) per basis spasial (`bidang` dan `kawasan`). Digunakan untuk kalkulasi estimasi harga dan validasi client-side sebelum memasukkan data ke keranjang (*Add to Cart*).
+Endpoint bagi Mitra untuk mengambil konfigurasi tarif dasar PNBP dan batas minimum pembelian (_minimum purchase limit_) per basis spasial (`bidang` dan `kawasan`). Digunakan untuk kalkulasi estimasi harga dan validasi client-side sebelum memasukkan data ke keranjang (_Add to Cart_).
 
 - **Endpoint**: `GET /api/mitra/data-request/policies`
 - **Response**:

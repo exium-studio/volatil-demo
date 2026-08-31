@@ -141,20 +141,6 @@ const InternalDataManagementEditModalContent = (
     [geoserverList, geoserverId, item.geoserverId, item.geoserver],
   );
 
-  const previewUrls = useMemo(() => {
-    const baseUrl = selectedGeoserver?.baseUrl || item.geoserver?.baseUrl;
-    if (!baseUrl || !typeName) {
-      return {
-        wfsUrl: item.wfsUrl || "-",
-        wmsUrl: item.wmsUrl || "-",
-      };
-    }
-    return {
-      wfsUrl: `${baseUrl}/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=${typeName}`,
-      wmsUrl: `${baseUrl}/wms?service=WMS&version=1.3.0&request=GetMap&layers=${typeName}`,
-    };
-  }, [selectedGeoserver, typeName, item.geoserver, item.wfsUrl, item.wmsUrl]);
-
   const handleLayerChange = (
     selectedTypeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
@@ -287,8 +273,6 @@ const InternalDataManagementEditModalContent = (
               }}
               selectedTypeName={typeName}
               onLayerChange={handleLayerChange}
-              previewWfsUrl={previewUrls.wfsUrl}
-              previewWmsUrl={previewUrls.wmsUrl}
             />
           </Fieldset>
 

@@ -2,6 +2,7 @@
 
 import type {
   CreateMasterIgtLayerPayload,
+  GeoServerWorkspaceLayerOption,
   GeoServerWorkspaceLayersResponse,
   GeoServerWorkspacesResponse,
   MasterIgtLayersQueryParams,
@@ -9,9 +10,9 @@ import type {
   UpdateMasterIgtLayerPayload,
 } from "@/features/internal/data-management/types/data-management.type";
 import {
-  DUMMY_GEOSERVER_WORKSPACE_LAYERS,
   DUMMY_GEOSERVER_WORKSPACES,
   DUMMY_MASTER_IGT_LAYERS_RESPONSE,
+  getGeoServerWorkspaceLayersFallback,
 } from "@/shared/constants/dummy-data/dummy-master-igt-layers";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
@@ -74,22 +75,33 @@ export const fetchGeoServerWorkspacesApi = async (
 ): Promise<GeoServerWorkspacesResponse> => {
   try {
     const response = await apiClient.get<
-      ApiResponse<GeoServerWorkspacesResponse> | GeoServerWorkspacesResponse
+      | ApiResponse<GeoServerWorkspacesResponse | string[]>
+      | GeoServerWorkspacesResponse
+      | string[]
     >(`/api/internal/master-geoserver/${geoserverId}/workspaces`, { signal });
 
     const resultData =
       response && "data" in response && response.data
         ? response.data
-        : (response as GeoServerWorkspacesResponse);
+        : response;
 
-    if (resultData && Array.isArray(resultData.workspaces)) {
-      return resultData;
+    if (Array.isArray(resultData)) {
+      return { workspaces: resultData };
+    }
+
+    if (
+      resultData &&
+      typeof resultData === "object" &&
+      "workspaces" in resultData &&
+      Array.isArray(resultData.workspaces)
+    ) {
+      return resultData as GeoServerWorkspacesResponse;
     }
 
     if (isDummyDataEnabled()) {
       return (
         DUMMY_GEOSERVER_WORKSPACES[geoserverId] ?? {
-          workspaces: ["testing_workspace", "volatil_staging"],
+          workspaces: ["testing_workspace", "atr_kawasan", "volatil_staging"],
         }
       );
     }
@@ -99,7 +111,7 @@ export const fetchGeoServerWorkspacesApi = async (
     if (isDummyDataEnabled()) {
       return (
         DUMMY_GEOSERVER_WORKSPACES[geoserverId] ?? {
-          workspaces: ["testing_workspace", "volatil_staging"],
+          workspaces: ["testing_workspace", "atr_kawasan", "volatil_staging"],
         }
       );
     }
@@ -124,50 +136,29 @@ export const fetchGeoServerWorkspaceLayersApi = async (
     const resultData =
       response && "data" in response && response.data
         ? response.data
-        : (response as GeoServerWorkspaceLayersResponse);
+        : response;
 
-    if (resultData && Array.isArray(resultData.layers)) {
-      return resultData;
+    if (Array.isArray(resultData)) {
+      return { layers: resultData as GeoServerWorkspaceLayerOption[] };
     }
 
-    const key = `${geoserverId}:${workspaceName}`;
+    if (
+      resultData &&
+      typeof resultData === "object" &&
+      "layers" in resultData &&
+      Array.isArray(resultData.layers)
+    ) {
+      return resultData as GeoServerWorkspaceLayersResponse;
+    }
+
     if (isDummyDataEnabled()) {
-      return (
-        DUMMY_GEOSERVER_WORKSPACE_LAYERS[key] ?? {
-          layers: [
-            {
-              name: "SAMPLE_LAYER",
-              title: `${workspaceName} Sample Layer`,
-              typeName: `${workspaceName}:SAMPLE_LAYER`,
-              srs: "EPSG:4326",
-              geometryType: "MultiPolygon",
-              spatialBasis: "kawasan",
-              bbox: [115.08, -8.85, 115.25, -8.23],
-            },
-          ],
-        }
-      );
+      return getGeoServerWorkspaceLayersFallback(geoserverId, workspaceName);
     }
 
     return { layers: [] };
   } catch (error) {
-    const key = `${geoserverId}:${workspaceName}`;
     if (isDummyDataEnabled()) {
-      return (
-        DUMMY_GEOSERVER_WORKSPACE_LAYERS[key] ?? {
-          layers: [
-            {
-              name: "SAMPLE_LAYER",
-              title: `${workspaceName} Sample Layer`,
-              typeName: `${workspaceName}:SAMPLE_LAYER`,
-              srs: "EPSG:4326",
-              geometryType: "MultiPolygon",
-              spatialBasis: "kawasan",
-              bbox: [115.08, -8.85, 115.25, -8.23],
-            },
-          ],
-        }
-      );
+      return getGeoServerWorkspaceLayersFallback(geoserverId, workspaceName);
     }
     throw error;
   }

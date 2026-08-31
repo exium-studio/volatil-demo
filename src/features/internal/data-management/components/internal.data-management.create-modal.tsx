@@ -114,17 +114,6 @@ const InternalDataManagementCreateModalContent = (
     [geoserverList, geoserverId],
   );
 
-  const previewUrls = useMemo(() => {
-    if (!selectedGeoserver?.baseUrl || !typeName) {
-      return { wfsUrl: "-", wmsUrl: "-" };
-    }
-    const baseUrl = selectedGeoserver.baseUrl;
-    return {
-      wfsUrl: `${baseUrl}/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=${typeName}`,
-      wmsUrl: `${baseUrl}/wms?service=WMS&version=1.3.0&request=GetMap&layers=${typeName}`,
-    };
-  }, [selectedGeoserver, typeName]);
-
   const handleLayerChange = (
     selectedTypeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
@@ -289,7 +278,7 @@ const InternalDataManagementCreateModalContent = (
             </VStack>
           </Fieldset>
 
-          {/* Grup 2: Sumber GeoServer & Layer (Dedicated Component dengan URL Live Preview) */}
+          {/* Grup 2: Sumber GeoServer & Layer */}
           <Fieldset legend={"Konfigurasi GeoServer & Layer"} containeredContent>
             <GeoserverCascadeSelect
               parentModalKey={modalKey}
@@ -306,8 +295,6 @@ const InternalDataManagementCreateModalContent = (
               }}
               selectedTypeName={typeName}
               onLayerChange={handleLayerChange}
-              previewWfsUrl={previewUrls.wfsUrl}
-              previewWmsUrl={previewUrls.wmsUrl}
             />
           </Fieldset>
 

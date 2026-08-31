@@ -100,6 +100,26 @@ export const DUMMY_GEOSERVER_WORKSPACE_LAYERS: Record<
   "gs_prod_01:testing_workspace": {
     layers: [
       {
+        name: "LBS2024_BADUNG",
+        title: "Lahan Baku Sawah (LBS) Badung 2024",
+        typeName: "testing_workspace:LBS2024_BADUNG",
+        abstract: "Peta Lahan Baku Sawah Kabupaten Badung",
+        srs: "EPSG:3975",
+        geometryType: "MultiPolygon",
+        spatialBasis: "kawasan",
+        bbox: [115.0838, -8.8500, 115.2513, -8.2394],
+      },
+      {
+        name: "TEST_BIDANG_TANAH",
+        title: "Bidang Tanah Persil",
+        typeName: "testing_workspace:TEST_BIDANG_TANAH",
+        abstract: "Peta Pendaftaran Tanah Kadastral Bidang Persil Terdaftar",
+        srs: "EPSG:4326",
+        geometryType: "Polygon",
+        spatialBasis: "bidang",
+        bbox: [115.134102, -8.685009, 115.183136, -8.622203],
+      },
+      {
         name: "TEST_RTRW_BADUNG",
         title: "RTRW Kabupaten Badung",
         typeName: "testing_workspace:TEST_RTRW_BADUNG",
@@ -118,16 +138,6 @@ export const DUMMY_GEOSERVER_WORKSPACE_LAYERS: Record<
         geometryType: "MultiPolygon",
         spatialBasis: "kawasan",
         bbox: [115.083839, -8.849308, 115.251534, -8.239852],
-      },
-      {
-        name: "TEST_BIDANG_TANAH",
-        title: "Bidang Tanah Persil",
-        typeName: "testing_workspace:TEST_BIDANG_TANAH",
-        abstract: "Peta Pendaftaran Tanah Kadastral Bidang Persil Terdaftar",
-        srs: "EPSG:4326",
-        geometryType: "Polygon",
-        spatialBasis: "bidang",
-        bbox: [115.134102, -8.685009, 115.183136, -8.622203],
       },
     ],
   },
@@ -159,4 +169,67 @@ export const DUMMY_GEOSERVER_WORKSPACE_LAYERS: Record<
       },
     ],
   },
+};
+
+export const getGeoServerWorkspaceLayersFallback = (
+  geoserverId: string,
+  workspaceName: string,
+): GeoServerWorkspaceLayersResponse => {
+  const exactKey = `${geoserverId}:${workspaceName}`;
+  if (DUMMY_GEOSERVER_WORKSPACE_LAYERS[exactKey]) {
+    return DUMMY_GEOSERVER_WORKSPACE_LAYERS[exactKey];
+  }
+  const matchByWorkspace = Object.keys(DUMMY_GEOSERVER_WORKSPACE_LAYERS).find(
+    (key) => key.endsWith(`:${workspaceName}`),
+  );
+  if (matchByWorkspace) {
+    return DUMMY_GEOSERVER_WORKSPACE_LAYERS[matchByWorkspace];
+  }
+  if (workspaceName === "testing_workspace") {
+    return (
+      DUMMY_GEOSERVER_WORKSPACE_LAYERS["gs_prod_01:testing_workspace"] ?? {
+        layers: [],
+      }
+    );
+  }
+  return {
+    layers: [
+      {
+        name: "LBS2024_BADUNG",
+        title: "Lahan Baku Sawah (LBS) Badung 2024",
+        typeName: `${workspaceName}:LBS2024_BADUNG`,
+        srs: "EPSG:3975",
+        geometryType: "MultiPolygon",
+        spatialBasis: "kawasan",
+        bbox: [115.08, -8.85, 115.25, -8.23],
+      },
+      {
+        name: "TEST_BIDANG_TANAH",
+        title: "Bidang Tanah Persil",
+        typeName: `${workspaceName}:TEST_BIDANG_TANAH`,
+        srs: "EPSG:4326",
+        geometryType: "Polygon",
+        spatialBasis: "bidang",
+        bbox: [115.134, -8.685, 115.183, -8.622],
+      },
+      {
+        name: "TEST_RTRW_BADUNG",
+        title: "RTRW Kabupaten Badung",
+        typeName: `${workspaceName}:TEST_RTRW_BADUNG`,
+        srs: "EPSG:4326",
+        geometryType: "MultiPolygon",
+        spatialBasis: "kawasan",
+        bbox: [115.083, -8.85, 115.251, -8.239],
+      },
+      {
+        name: "TEST_ZNT_BADUNG",
+        title: "Zona Nilai Tanah Badung",
+        typeName: `${workspaceName}:TEST_ZNT_BADUNG`,
+        srs: "EPSG:4326",
+        geometryType: "MultiPolygon",
+        spatialBasis: "kawasan",
+        bbox: [115.083, -8.849, 115.251, -8.239],
+      },
+    ],
+  };
 };
