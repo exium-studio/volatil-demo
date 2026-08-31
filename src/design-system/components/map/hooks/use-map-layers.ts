@@ -86,6 +86,7 @@ export const useMapLayers = (
 ) => {
   const layersRef = useRef(layers);
   const cqlFilterRef = useRef(cqlFilter);
+  const registeredLayerIdsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     layersRef.current = layers;
@@ -210,6 +211,7 @@ export const useMapLayers = (
         if (map.getLayer(layer.id)) map.removeLayer(layer.id);
         if (map.getSource(layer.id)) map.removeSource(layer.id);
       });
+      registeredLayerIdsRef.current.clear();
     },
     [map],
   );
@@ -222,6 +224,7 @@ export const useMapLayers = (
     const configs = layersRef.current;
     for (const layer of configs) {
       try {
+        registeredLayerIdsRef.current.add(layer.id);
         if (!map.getSource(layer.id) || !map.getLayer(layer.id)) {
           await addLayer(layer);
         }
@@ -255,7 +258,20 @@ export const useMapLayers = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!(map as any).style) return;
 
+    const currentLayerIds = new Set(layers.map((l) => l.id));
+
+    // Handle any previously registered layers that are no longer in the layers array
+    registeredLayerIdsRef.current.forEach((prevId) => {
+      if (!currentLayerIds.has(prevId)) {
+        if (map.getLayer(prevId)) {
+          map.setLayoutProperty(prevId, "visibility", "none");
+        }
+      }
+    });
+
     layers.forEach(async (layer) => {
+      registeredLayerIdsRef.current.add(layer.id);
+
       if (!map.getSource(layer.id) || !map.getLayer(layer.id)) {
         await addLayer(layer);
         return;

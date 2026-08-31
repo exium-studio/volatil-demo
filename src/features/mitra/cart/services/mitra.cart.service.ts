@@ -378,6 +378,24 @@ export async function cancelActiveCartBatch(
   }
 }
 
+export async function clearAllCartBatches(
+  batchIds: string[],
+  signal?: AbortSignal,
+): Promise<void> {
+  try {
+    await Promise.all(batchIds.map((id) => deleteCartBatchApi(id, signal)));
+    if (isDummyDataEnabled()) {
+      localDummyBatches = [];
+    }
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      localDummyBatches = [];
+      return;
+    }
+    throw error;
+  }
+}
+
 export async function checkoutCartBatch(
   batchId: string,
   payload?: CheckoutBatchRequest,

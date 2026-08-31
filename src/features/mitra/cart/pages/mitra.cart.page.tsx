@@ -20,7 +20,7 @@ import { MitraCartBatchItem } from "@/features/mitra/cart/components/mitra.cart.
 import { MitraCartBatchOrderSummary } from "@/features/mitra/cart/components/mitra.cart.batch-order-summary";
 import { MitraCartExpiredBatchesTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-batches.modal";
 import {
-  useCancelActiveCartBatch,
+  useClearAllCartBatches,
   useCartBatchDetailQuery,
   useCartBatchesQuery,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
@@ -43,10 +43,11 @@ const MitraCartContent = () => {
   // Queries & Mutations
   const {
     batches,
-    isLoading: isBatchesLoading,
+    // isLoading: isBatchesLoading,
     isFetching: isBatchesFetching,
   } = useCartBatchesQuery();
-  const cancelBatchMutation = useCancelActiveCartBatch();
+  const isBatchesLoading = true;
+  const clearAllBatchesMutation = useClearAllCartBatches();
 
   // States — initial load has NO selected batch
   const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
@@ -103,22 +104,19 @@ const MitraCartContent = () => {
                 confirmLabel={"Kosongkan keranjang"}
                 colorPalette={"red"}
                 onConfirm={() => {
-                  if (selectedBatch?.batchId) {
-                    cancelBatchMutation.mutate(selectedBatch.batchId, {
-                      onSuccess: () => {
-                        setSelectedBatchId(null);
-                      },
-                    });
-                  } else if (batches[0]?.batchId) {
-                    cancelBatchMutation.mutate(batches[0].batchId, {
-                      onSuccess: () => {
-                        setSelectedBatchId(null);
-                      },
-                    });
-                  }
+                  const allBatchIds = batches.map((b) => b.batchId);
+                  clearAllBatchesMutation.mutate(allBatchIds, {
+                    onSuccess: () => {
+                      setSelectedBatchId(null);
+                    },
+                  });
                 }}
               >
-                <Button colorPalette={"red"} size={"xs"}>
+                <Button
+                  colorPalette={"red"}
+                  size={"xs"}
+                  loading={clearAllBatchesMutation.isPending}
+                >
                   <AppIcon icon={Trash2Icon} />
                   {"Kosongkan keranjang"}
                 </Button>
@@ -129,12 +127,7 @@ const MitraCartContent = () => {
           <Separator borderColor={"bg.canvas"} />
 
           <VStack flex={1} p={"md"} overflowY={"auto"}>
-            {isBatchesLoading && (
-              <VStack gap={"md"} w={"full"}>
-                <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
-                <Skeleton w={"full"} h={"120px"} rounded={"lg"} />
-              </VStack>
-            )}
+            {isBatchesLoading && <Skeleton w={"full"} rounded={0} />}
 
             {!isBatchesLoading && (
               <>

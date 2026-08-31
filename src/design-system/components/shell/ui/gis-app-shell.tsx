@@ -390,14 +390,14 @@ const Content = () => {
         );
       });
 
-    // Also include any active layer from enabledLayerIds that might not be in the catalog list yet
+    // Also include any layer in enabledLayerIds (even if not in catalog list yet)
     Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
-      if (isEnabled && !configs.some((c) => c.id === layerId)) {
+      if (!configs.some((c) => c.id === layerId)) {
         configs.push({
           id: layerId,
           type: "wms-raster",
           spatialBasis: "bidang",
-          visible: wmsVisible,
+          visible: wmsVisible && Boolean(isEnabled),
           opacity: layerOpacities[layerId] ?? 1.0,
           wmsUrl: "",
           layers: layerId,

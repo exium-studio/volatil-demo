@@ -14,6 +14,7 @@ import {
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type GeoJSON from "geojson";
 
@@ -31,55 +32,62 @@ export const useIgtCatalog = (params?: MitraDataRequestGetCatalogParams) => {
   };
 };
 
-export const useFetchIgtByAoi = () => {
-  const toastHandlers = mutationToastHandlers("igt-fetch-by-aoi", {
-    loadingMessage: {
-      title: "Mengambil data IGT di area AOI Anda...",
-    },
-    successMessage: {
-      title: "Berhasil memuat data IGT untuk area AOI",
-    },
+export const useIgtByAoi = () => {
+  const toastHandlers = mutationToastHandlers("igt-by-aoi", {
+    group: "Pencarian AOI",
+    loadingMessage: { title: "Mencari data spasial berdasarkan AOI..." },
+    successMessage: { title: "Data spasial berhasil ditemukan!" },
+    errorMessage: { title: "Gagal mengambil data berdasarkan AOI" },
   });
 
   return useMutation({
     mutationFn: (geometry: GeoJSON.Polygon) => getIgtByAoi(geometry),
     onMutate: toastHandlers.onLoading,
-    onSuccess: toastHandlers.onSuccess,
+    onSuccess: (data) => {
+      toastHandlers.onSuccess();
+      return data;
+    },
     onError: toastHandlers.onError,
   });
 };
 
-export const useFetchIgtByUploadedAoi = () => {
-  const toastHandlers = mutationToastHandlers("igt-fetch-by-uploaded-aoi", {
-    loadingMessage: {
-      title: "Memproses berkas AOI dan mengambil data IGT...",
-    },
-    successMessage: {
-      title: "Berhasil memproses berkas AOI",
-    },
+export const useIgtByUploadedAoi = () => {
+  const toastHandlers = mutationToastHandlers("igt-by-uploaded-aoi", {
+    group: "Upload AOI",
+    loadingMessage: { title: "Mengunggah file AOI dan memproses..." },
+    successMessage: { title: "File AOI berhasil diproses!" },
+    errorMessage: { title: "Gagal memproses file AOI" },
   });
 
   return useMutation({
     mutationFn: (file: File) => getIgtByUploadedAoi(file),
     onMutate: toastHandlers.onLoading,
-    onSuccess: toastHandlers.onSuccess,
+    onSuccess: (data) => {
+      toastHandlers.onSuccess();
+      return data;
+    },
     onError: toastHandlers.onError,
   });
 };
 
+export type AddToCartLayerParam = {
+  layerId: string;
+  typeName: string;
+  title?: string;
+  spatialBasis?: "bidang" | "kawasan";
+  featuresCount?: number;
+  areaHa?: number;
+  cqlFilter?: string;
+};
+
 /**
  * Add ALL WFS features matching the given filter/AOI to cart.
- * Unique dynamic toast ID per layer typeName & action execution.
  */
 export const useAddToCartAll = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: {
-      layerId: string;
-      typeName: string;
-      cqlFilter?: string;
-    }) => {
+    mutationFn: (params: AddToCartLayerParam) => {
       const payload: AddToCartBatchRequest = {
         items: [
           {
@@ -92,8 +100,12 @@ export const useAddToCartAll = () => {
       return createCartBatch(payload);
     },
     onMutate: (params) => {
-      const toastId = `add-to-cart-${params.typeName}-${Date.now()}`;
-      toast.loading(`Memproses penyiapan batch data ${params.typeName}...`, {
+      const layerDisplayName =
+        params.title ||
+        params.typeName.split(":")[1]?.replace(/_/g, " ") ||
+        params.typeName;
+      const toastId = `add-to-cart-${params.layerId}-${Date.now()}`;
+      toast.loading(`Memproses penyiapan batch data "${layerDisplayName}"...`, {
         id: toastId,
         group: "Keranjang",
       });
@@ -101,12 +113,30 @@ export const useAddToCartAll = () => {
     },
     onSuccess: (_, params, context) => {
       const toastId = context?.toastId;
+      const layerDisplayName =
+        params.title ||
+        params.typeName.split(":")[1]?.replace(/_/g, " ") ||
+        params.typeName;
+
+      let countDetail = "";
+      if (params.spatialBasis === "bidang" && (params.featuresCount ?? 0) > 0) {
+        countDetail = ` (${formatNumber(params.featuresCount ?? 0)} bidang)`;
+      } else if (
+        params.spatialBasis === "kawasan" &&
+        (params.areaHa ?? 0) > 0
+      ) {
+        countDetail = ` (${formatNumber(params.areaHa ?? 0, { maximumFractionDigits: 2 })} ha)`;
+      }
+
       toast.success(
-        `Batch ${params.typeName} berhasil dibuat! Sistem Interop sedang menyiapkan data.`,
+        `Batch "${layerDisplayName}"${countDetail} berhasil dibuat! Sistem Interop sedang menyiapkan data.`,
         { id: toastId, group: "Keranjang" },
       );
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "active-batch"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "batches"],
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
@@ -130,13 +160,7 @@ export const useAddToCartMultipleLayers = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: {
-      layers: Array<{
-        layerId: string;
-        typeName: string;
-        cqlFilter?: string;
-      }>;
-    }) => {
+    mutationFn: (params: { layers: AddToCartLayerParam[] }) => {
       const payload: AddToCartBatchRequest = {
         items: params.layers.map((l) => ({
           sourceLayerId: l.layerId,
@@ -149,9 +173,14 @@ export const useAddToCartMultipleLayers = () => {
     onMutate: (params) => {
       const count = params.layers.length;
       const toastId = `add-to-cart-multi-${Date.now()}`;
+      const firstLayerTitle =
+        params.layers[0]?.title ||
+        params.layers[0]?.typeName.split(":")[1]?.replace(/_/g, " ") ||
+        params.layers[0]?.typeName;
+
       const title =
         count === 1
-          ? `Menambahkan ${params.layers[0]?.typeName} ke keranjang...`
+          ? `Menambahkan layer "${firstLayerTitle}" ke keranjang...`
           : `Menambahkan ${count} Layer IGT ke keranjang...`;
 
       toast.loading(title, { id: toastId, group: "Keranjang" });
@@ -160,10 +189,39 @@ export const useAddToCartMultipleLayers = () => {
     onSuccess: (_, params, context) => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
       const count = params.layers.length;
+
+      let totalBidang = 0;
+      let totalKawasanHa = 0;
+
+      params.layers.forEach((l) => {
+        if (l.spatialBasis === "bidang") {
+          totalBidang += l.featuresCount ?? 0;
+        } else if (l.spatialBasis === "kawasan") {
+          totalKawasanHa += l.areaHa ?? 0;
+        }
+      });
+
+      const countParts: string[] = [];
+      if (totalBidang > 0) {
+        countParts.push(`${formatNumber(totalBidang)} bidang`);
+      }
+      if (totalKawasanHa > 0) {
+        countParts.push(
+          `${formatNumber(totalKawasanHa, { maximumFractionDigits: 2 })} ha`,
+        );
+      }
+      const countDetail =
+        countParts.length > 0 ? ` (${countParts.join(", ")})` : "";
+
+      const firstLayerTitle =
+        params.layers[0]?.title ||
+        params.layers[0]?.typeName.split(":")[1]?.replace(/_/g, " ") ||
+        params.layers[0]?.typeName;
+
       const title =
         count === 1
-          ? `Layer ${params.layers[0]?.typeName} berhasil ditambahkan ke keranjang`
-          : `Berhasil menambahkan ${count} Layer IGT ke keranjang`;
+          ? `Layer "${firstLayerTitle}"${countDetail} berhasil ditambahkan ke keranjang`
+          : `Berhasil menambahkan ${count} Layer IGT${countDetail} ke keranjang`;
 
       toast.success(title, { id: toastId, group: "Keranjang" });
       void queryClient.invalidateQueries({

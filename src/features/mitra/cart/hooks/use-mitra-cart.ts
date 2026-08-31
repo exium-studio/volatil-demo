@@ -3,11 +3,20 @@
 import {
   addAllToCartFromWfs,
   addSelectedToCart,
+  cancelActiveCartBatch,
   checkout,
+  checkoutCartBatch,
+  clearAllCartBatches,
   clearCart,
+  createCartBatch,
+  getActiveCartBatch,
+  getCartBatchDetail,
+  getCartBatches,
   getCartSummaryLocal,
   getCartWfsPage,
+  getExpiredCartBatches,
   removeFromCart,
+  reorderCartBatch,
 } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { CartSummaryResponse } from "@/features/mitra/cart/types/cart.type";
 import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
@@ -177,16 +186,6 @@ export const useAddAllToCartFromWfs = (
 // Batch Interop Query & Mutation Hooks
 // -------------------------------------------------------------------------------------
 
-import {
-  cancelActiveCartBatch,
-  checkoutCartBatch,
-  createCartBatch,
-  getActiveCartBatch,
-  getCartBatchDetail,
-  getCartBatches,
-  getExpiredCartBatches,
-  reorderCartBatch,
-} from "@/features/mitra/cart/services/mitra.cart.service";
 import type {
   ActiveCartBatch,
   AddToCartBatchRequest,
@@ -268,6 +267,37 @@ export const useCancelActiveCartBatch = () => {
   const toastHandlers = mutationToastHandlers("cancel-cart-batch", {
     group: "Keranjang",
     loadingMessage: {
+      title: "Menghapus batch...",
+    },
+    successMessage: {
+      title: "Batch berhasil dihapus",
+    },
+    errorMessage: {
+      title: "Gagal menghapus batch",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (batchId: string) => cancelActiveCartBatch(batchId),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "batches"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useClearAllCartBatches = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("clear-all-cart-batches", {
+    group: "Keranjang",
+    loadingMessage: {
       title: "Mengosongkan keranjang...",
     },
     successMessage: {
@@ -279,7 +309,7 @@ export const useCancelActiveCartBatch = () => {
   });
 
   return useMutation({
-    mutationFn: (batchId: string) => cancelActiveCartBatch(batchId),
+    mutationFn: (batchIds: string[]) => clearAllCartBatches(batchIds),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
