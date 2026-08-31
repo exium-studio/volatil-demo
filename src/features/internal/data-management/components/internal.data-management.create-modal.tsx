@@ -158,9 +158,6 @@ const InternalDataManagementCreateModalContent = (
     if (!selectedGeoserver) return;
 
     const layerId = data.id?.trim() || data.typeName.trim();
-    const baseUrl = selectedGeoserver.baseUrl;
-    const wfsUrl = `${baseUrl}/ows`;
-    const wmsUrl = `${baseUrl}/wms`;
 
     createMutation.mutate(
       {
@@ -171,10 +168,7 @@ const InternalDataManagementCreateModalContent = (
         zIndex: data.zIndex,
         isActive: data.isActive,
         geoserverId: selectedGeoserver.id,
-        geoserverBaseUrl: baseUrl,
         typeName: data.typeName.trim(),
-        wfsUrl,
-        wmsUrl,
       },
       {
         onSuccess: () => {

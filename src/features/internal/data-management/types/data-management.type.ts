@@ -56,9 +56,6 @@ export type CreateMasterIgtLayerPayload = {
   spatialBasis: SpatialBasisType;
   isActive: boolean;
   zIndex?: number;
-  geoserverBaseUrl?: string;
-  wfsUrl?: string;
-  wmsUrl?: string;
 };
 
 export type UpdateMasterIgtLayerPayload =

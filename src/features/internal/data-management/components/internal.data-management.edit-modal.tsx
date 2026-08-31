@@ -168,10 +168,6 @@ const InternalDataManagementEditModalContent = (
   };
 
   const onSubmit = (data: MasterIgtLayerFormValues) => {
-    const baseUrl = selectedGeoserver.baseUrl || item.geoserver?.baseUrl || "";
-    const wfsUrl = `${baseUrl}/ows`;
-    const wmsUrl = `${baseUrl}/wms`;
-
     updateMutation.mutate(
       {
         id: item.id,
@@ -181,10 +177,7 @@ const InternalDataManagementEditModalContent = (
         zIndex: data.zIndex,
         isActive: data.isActive,
         geoserverId: selectedGeoserver.id,
-        geoserverBaseUrl: baseUrl,
         typeName: data.typeName.trim(),
-        wfsUrl,
-        wmsUrl,
       },
       {
         onSuccess: () => {
