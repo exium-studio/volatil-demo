@@ -511,7 +511,12 @@ const UploadAoiAttributeList = memo(
             bg={"bg.body"}
             w={"full"}
           >
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
+            <HStack
+              wrap={"wrap"}
+              justify={"space-between"}
+              align={"center"}
+              w={"full"}
+            >
               <P fontWeight={"semibold"} fontSize={"md"}>
                 {`Hasil query spasial AOI`}
               </P>

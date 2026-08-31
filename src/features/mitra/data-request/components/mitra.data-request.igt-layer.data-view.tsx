@@ -69,7 +69,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
-    const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
 
     // Mutations
     const addToCartMultipleMutation = useAddToCartMultipleLayers();
@@ -354,11 +353,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
               headers={dataList.headers}
               items={dataList.items}
               itemActions={dataList.itemActions}
-              canBatchSelect={true}
-              selectedItems={selectedItems as FormattedListItem<IgtLayerItem>[]}
-              onSelectedItemChange={({ selectedItems: next }) =>
-                setSelectedItems(next as FormattedListItem[])
-              }
               virtualized={true}
               withNumbering={true}
               roundedTop={0}

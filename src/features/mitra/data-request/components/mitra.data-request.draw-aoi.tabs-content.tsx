@@ -270,7 +270,13 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
           bg={"bg.body"}
           w={"full"}
         >
-          <HStack justify={"space-between"} align={"center"} w={"full"}>
+          <HStack
+            wrap={"wrap"}
+            justify={"space-between"}
+            align={"center"}
+            gap={"sm"}
+            w={"full"}
+          >
             <P fontWeight={"semibold"} fontSize={"md"}>
               {"Hasil query spasial gambar AOI"}
             </P>
