@@ -378,10 +378,11 @@ const Content = () => {
   const role = userData?.role ?? "mitra";
   const isInternal = role === "internal";
   const isDataManagementPage = pathname.includes("/internal/data-management");
+  const isBatchReviewPage = pathname.includes("/internal/batch-review");
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
-    // For internal admin, only render IGT layers if currently on data-management page
-    if (isInternal && !isDataManagementPage) {
+    // For internal admin, only render IGT layers if currently on data-management or batch-review page
+    if (isInternal && !isDataManagementPage && !isBatchReviewPage) {
       return [];
     }
 
@@ -409,6 +410,7 @@ const Content = () => {
     layerOpacities,
     isInternal,
     isDataManagementPage,
+    isBatchReviewPage,
   ]);
 
   // Derived Values

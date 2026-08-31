@@ -29,10 +29,14 @@ import {
 } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type { BatchLayerDataViewProps } from "@/features/internal/batch-review/types/batch-review.type";
 import type { CartBatchItem } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
+import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   CheckCircle2Icon,
@@ -208,7 +212,18 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
   const { enabledLayerIds, setLayerEnabled } = useMapLayerStore();
   const { map } = useMapInstanceStore();
 
+  // Queries — master IGT layers from catalog
+  const { data: layersData } = useQuery({
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
+  });
+
   // Derived Values
+  const fetchedLayersList = useMemo(() => {
+    return layersData?.items ?? layersData?.layers ?? [];
+  }, [layersData]);
+
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT", sortable: true },
@@ -301,20 +316,28 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
         label: "Lihat di Peta",
         icon: MapPinIcon,
         onClick: (item: CartBatchItem) => {
-          if (!map || !item.wmsUrl) return;
-          // Fly to layer bounding box via map — cast as minimal IgtLayerItem shape
+          if (!map) return;
+          const matchedLayer = fetchedLayersList.find(
+            (l) => l.id === item.sourceLayerId,
+          );
+          setLayerEnabled(item.sourceLayerId, true);
           void flyToIgtLayer(
             map,
-            {
-              id: item.sourceLayerId,
-              title: item.sourceLayerTitle,
-              spatialBasis: item.spatialBasis,
-              wfs: {
-                wfsUrl: item.wfsUrl ?? "",
-                wfsTypeName: item.sourceLayerId,
-              },
-              bbox: undefined,
-            } as Parameters<typeof flyToIgtLayer>[1],
+            matchedLayer ??
+              ({
+                id: item.sourceLayerId,
+                title: item.sourceLayerTitle,
+                spatialBasis: item.spatialBasis,
+                bbox: undefined,
+                wms: {
+                  layers: item.sourceLayerId,
+                  wmsUrl: item.wmsUrl ?? "",
+                },
+                wfs: {
+                  wfsTypeName: item.sourceLayerId,
+                  wfsUrl: item.wfsUrl ?? "",
+                },
+              } as IgtLayerItem),
             {},
           );
         },
@@ -322,7 +345,14 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
     ];
 
     return { headers, items, itemActions };
-  }, [batch.items, enabledLayerIds, setLayerEnabled, map, onDetailAttribute]);
+  }, [
+    batch.items,
+    enabledLayerIds,
+    setLayerEnabled,
+    map,
+    onDetailAttribute,
+    fetchedLayersList,
+  ]);
 
   return (
     <VStack flex={1} w={"full"}>
