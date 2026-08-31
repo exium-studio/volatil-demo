@@ -443,24 +443,19 @@ const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
           ))}
         </Modal.Body>
 
-        <Modal.Footer gap={"sm"}>
-          <Button
-            flex={1}
-            w={"full"}
-            variant={"outline"}
-            colorPalette={"red"}
-            onClick={onClearAll}
-          >
-            <AppIcon icon={TrashIcon} />
-            {"Hapus semua"}
-          </Button>
+        <Modal.Footer>
+          <VStack gap={"xs"} w={"full"}>
+            <UploadAoiAddFileButton
+              w={"full"}
+              onFilesAdded={onFilesAdded}
+              variant={"outline"}
+            />
 
-          <UploadAoiAddFileButton
-            flex={1}
-            w={"full"}
-            onFilesAdded={onFilesAdded}
-            variant={"outline"}
-          />
+            <Button w={"full"} colorPalette={"red"} onClick={onClearAll}>
+              <AppIcon icon={TrashIcon} />
+              {"Hapus semua"}
+            </Button>
+          </VStack>
         </Modal.Footer>
       </Modal.Content>
     </Modal.Root>
