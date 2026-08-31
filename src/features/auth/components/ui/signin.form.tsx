@@ -9,16 +9,16 @@ import { PasswordInput } from "@/design-system/components/input/ui/password-inpu
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P, PLink } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useSigninMutation } from "@/features/auth/hooks/use-signin.mutation";
 import {
   createSigninSchema,
   type SigninFormValues,
   zodResolver,
 } from "@/features/auth/schemas/signin.schema";
+import { Link } from "@tanstack/react-router";
 import { HandshakeIcon, ShieldCheckIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Link } from "@tanstack/react-router";
 
 export const MitraSignin = (props: StackProps) => {
   // Hooks
@@ -91,7 +91,7 @@ export const MitraSignin = (props: StackProps) => {
           <PasswordInput {...register("password")} />
         </Field>
 
-        <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink>
+        {/* <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink> */}
       </Fieldset>
 
       <Button
@@ -222,7 +222,7 @@ export const InternalSignin = (props: StackProps) => {
           <PasswordInput {...register("password")} />
         </Field>
 
-        <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink>
+        {/* <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink> */}
       </Fieldset>
 
       <Button
