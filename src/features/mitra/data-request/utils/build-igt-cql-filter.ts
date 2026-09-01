@@ -2,9 +2,52 @@ import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 
+const ATTRIBUTE_SYNONYMS: Record<string, string[]> = {
+  WADMPR: [
+    "WADMPR",
+    "wadmpr",
+    "provinsi",
+    "prov",
+    "propinsi",
+    "nm_prov",
+    "nama_provinsi",
+    "nama_prov",
+  ],
+  WADMKK: [
+    "WADMKK",
+    "wadmkk",
+    "kabupaten",
+    "kab_kota",
+    "kab",
+    "kota",
+    "nm_kab",
+    "nama_kabupaten",
+    "nama_kab",
+  ],
+  WADMKC: [
+    "WADMKC",
+    "wadmkc",
+    "kecamatan",
+    "kec",
+    "nm_kec",
+    "nama_kecamatan",
+    "nama_kec",
+  ],
+  WADMKD: [
+    "WADMKD",
+    "wadmkd",
+    "kelurahan",
+    "desa",
+    "des_kel",
+    "nm_desa",
+    "nama_kelurahan",
+    "nama_desa",
+  ],
+};
+
 /**
  * Resolves a target attribute field key against sample properties in a case-insensitive manner.
- * E.g., if sample properties contain 'wadmpr', it resolves 'WADMPR' to 'wadmpr'.
+ * Also checks known synonyms (e.g. WADMKK -> kabupaten).
  */
 export const resolveAttributeKey = (
   targetKey: string,
@@ -15,15 +58,28 @@ export const resolveAttributeKey = (
     ? sampleProperties
     : Object.keys(sampleProperties);
 
-  const matchedKey = keys.find(
+  // 1. Direct case-insensitive match
+  const directMatch = keys.find(
     (k) => k.toUpperCase() === targetKey.toUpperCase(),
   );
-  return matchedKey ?? targetKey;
+  if (directMatch) return directMatch;
+
+  // 2. Check synonyms
+  const upperTarget = targetKey.toUpperCase();
+  const synonyms = ATTRIBUTE_SYNONYMS[upperTarget] ?? [];
+  for (const syn of synonyms) {
+    const synMatch = keys.find((k) => k.toUpperCase() === syn.toUpperCase());
+    if (synMatch) return synMatch;
+  }
+
+  return targetKey;
 };
 
 /**
  * Adapts property field names in a CQL filter string to match actual layer attributes available on GeoServer.
- * E.g., transforms "WADMPR ILIKE '%BALI%'" -> "wadmpr ILIKE '%BALI%'" if layer has lowercase 'wadmpr'.
+ * - Maps standard keys (e.g. WADMKK) to available layer column names (e.g. kabupaten).
+ * - Strips clauses for properties that do NOT exist on the layer (e.g. WADMPR on layers without a province column)
+ *   to avoid GeoServer 400 "Illegal property name" errors.
  */
 export const adaptCqlFilterToLayerAttributes = (
   cqlFilter?: string,
@@ -33,16 +89,56 @@ export const adaptCqlFilterToLayerAttributes = (
     return cqlFilter;
   }
 
-  let adapted = cqlFilter;
-  for (const attr of availableAttributes) {
-    if (adapted.includes(attr)) continue;
-
-    const upperAttr = attr.toUpperCase();
-    const regex = new RegExp(`\\b${upperAttr}\\b`, "gi");
-    adapted = adapted.replace(regex, attr);
+  // If filter is pure spatial predicate (INTERSECTS, BBOX, DWITHIN), preserve as is
+  if (
+    cqlFilter.startsWith("INTERSECTS(") ||
+    cqlFilter.startsWith("BBOX(") ||
+    cqlFilter.startsWith("DWITHIN(")
+  ) {
+    return cqlFilter;
   }
 
-  return adapted;
+  const clauses = cqlFilter.split(/\s+AND\s+/i);
+  const adaptedClauses: string[] = [];
+
+  for (const clause of clauses) {
+    const trimmed = clause.trim();
+    if (!trimmed) continue;
+
+    // Preserve complex/spatial or nested clauses
+    if (
+      trimmed.startsWith("INTERSECTS(") ||
+      trimmed.startsWith("BBOX(") ||
+      trimmed.startsWith("DWITHIN(") ||
+      trimmed.startsWith("(")
+    ) {
+      adaptedClauses.push(trimmed);
+      continue;
+    }
+
+    // Match attribute comparison e.g. "WADMPR ILIKE '%BALI%'" or "WADMKK = 'BADUNG'"
+    const match = trimmed.match(/^("?[a-zA-Z0-9_]+"?)(\s+.*)$/);
+    if (!match || !match[1] || !match[2]) {
+      adaptedClauses.push(trimmed);
+      continue;
+    }
+
+    const rawProp = match[1].replace(/"/g, "");
+    const restOfClause = match[2];
+
+    // Check if property or synonym exists on the layer
+    const actualProp = resolveAttributeKey(rawProp, availableAttributes);
+    const propExists = availableAttributes.some(
+      (attr) => attr.toUpperCase() === actualProp.toUpperCase(),
+    );
+
+    if (propExists) {
+      adaptedClauses.push(`${actualProp}${restOfClause}`);
+    }
+    // If property does not exist on this layer, omit clause to prevent GeoServer 400 error
+  }
+
+  return adaptedClauses.length > 0 ? adaptedClauses.join(" AND ") : undefined;
 };
 
 /**

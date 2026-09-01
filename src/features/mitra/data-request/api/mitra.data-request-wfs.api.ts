@@ -25,6 +25,36 @@ export const getWfsDynamicAttributes = async (
     return cachedAttributes[cacheKey];
   }
   try {
+    const baseUrl =
+      import.meta.env.VITE_API_BASE_URL &&
+      !import.meta.env.VITE_API_BASE_URL.endsWith("/")
+        ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wfs`
+        : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wfs`;
+
+    const url = new URL(baseUrl);
+    url.searchParams.set("layerId", typeName);
+    url.searchParams.set("service", "WFS");
+    url.searchParams.set("version", "2.0.0");
+    url.searchParams.set("request", "DescribeFeatureType");
+    url.searchParams.set("typeName", typeName);
+    url.searchParams.set("outputFormat", "application/json");
+
+    const descRes = await fetch(url.toString(), { signal });
+    if (descRes.ok) {
+      const schema = await descRes.json();
+      const properties: WfsSchemaProperty[] =
+        schema.featureTypes?.[0]?.properties ?? [];
+      const allKeys = properties.map((prop) => prop.name);
+      if (allKeys.length > 0) {
+        cachedAttributes[cacheKey] = allKeys;
+        return allKeys;
+      }
+    }
+  } catch {
+    // Fallback to GetFeature if DescribeFeatureType fails
+  }
+
+  try {
     const res = await fetchWfs({
       typeName,
       wfsUrl,
