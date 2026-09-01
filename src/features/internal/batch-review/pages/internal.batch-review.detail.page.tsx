@@ -198,7 +198,7 @@ export function InternalBatchReviewDetailPage() {
       </Container.Root>
     </PanelContentContainer>
   );
-};
+}
 
 const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
   const { batch, onDetailAttribute } = props;

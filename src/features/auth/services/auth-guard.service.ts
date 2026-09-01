@@ -22,7 +22,7 @@ export const ensureAuthenticatedUser = async (): Promise<User> => {
     const user = await queryClient.fetchQuery({
       queryKey: queryKeys.auth.me(),
       queryFn: ({ signal }) => authService.verifyMe(signal),
-      staleTime: 30 * 1000,
+      staleTime: 5 * 60 * 1000,
     });
 
     if (!user) {

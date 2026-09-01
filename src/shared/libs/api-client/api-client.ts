@@ -76,23 +76,30 @@ export const apiClient = {
           // Fallback if response is not JSON
         }
 
-        if (response.status === 401 || response.status === 403) {
+        const isAuthEndpoint =
+          endpoint.includes("/auth/me") || endpoint.includes("/auth/verify");
+
+        if (response.status === 401 || (response.status === 403 && isAuthEndpoint)) {
           if (typeof window !== "undefined") {
             localStorage.removeItem("auth_token");
             localStorage.removeItem("user");
             sessionStorage.removeItem("user");
 
             // If we are on private pages or not already on login root, navigate to root
-            const isPublicPage = window.location.pathname === "/" || window.location.pathname === "/admin";
+            const isPublicPage =
+              window.location.pathname === "/" ||
+              window.location.pathname === "/admin";
             if (!isPublicPage) {
               toast.error(
                 response.status === 401
                   ? "Sesi Anda telah berakhir"
-                  : "Akses Ditolak",
+                  : "Akses Akun Ditolak",
                 {
                   id: "auth-session-expired-toast",
                   group: "Sistem",
-                  description: errorMessage || "Akun Anda tidak memiliki akses atau telah dinonaktifkan.",
+                  description:
+                    errorMessage ||
+                    "Akun Anda tidak memiliki akses atau telah dinonaktifkan.",
                 },
               );
 

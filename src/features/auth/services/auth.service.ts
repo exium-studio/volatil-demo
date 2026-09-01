@@ -87,18 +87,21 @@ export const authService = {
         setStorage("user", JSON.stringify(response.data));
         return response.data;
       }
-      return null;
+      return getUserSession();
     } catch (error) {
       if (error instanceof ApiError) {
-        localStorage.removeItem("auth_token");
-        removeStorage("user");
-        return null;
+        // Only clear auth on 401 Unauthorized or 403 Forbidden (account banned/disabled)
+        if (error.statusCode === 401 || error.statusCode === 403) {
+          localStorage.removeItem("auth_token");
+          removeStorage("user");
+          return null;
+        }
+
+        // For server errors (500, 502, 503, 504) or other non-auth errors, keep user session
+        return getUserSession();
       }
-      if (!isDummyDataEnabled()) {
-        localStorage.removeItem("auth_token");
-        removeStorage("user");
-        return null;
-      }
+
+      // For network errors / offline / aborted requests, do not clear token, fallback to cached user session
       return getUserSession();
     }
   },
