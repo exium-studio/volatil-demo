@@ -104,7 +104,7 @@ const InternalMitraRegistrationApproveModalContent = (
           <Modal.Title>{"Setujui Permohonan Mitra"}</Modal.Title>
 
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
-            {`${registration.namaInstansi} (${registration.registrationNumber})`}
+            {`${registration.organizationName ?? registration.namaInstansi} (${registration.registrationNumber})`}
           </P>
         </VStack>
       </Modal.Header>

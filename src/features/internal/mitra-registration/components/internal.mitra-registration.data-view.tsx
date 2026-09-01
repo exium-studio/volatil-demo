@@ -108,7 +108,8 @@ export const InternalMitraRegistrationDataView = () => {
   // Derived Values - Headers, Items, BatchActions, ItemActions in 1 useMemo
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "No. Registrasi & Instansi", sortable: true },
+      { th: "No. Registrasi", sortable: true },
+      { th: "Instansi", sortable: true },
       { th: "Status", sortable: true },
       { th: "Penanggung Jawab", sortable: true },
       { th: "Kontak / Email", sortable: true },
@@ -125,16 +126,20 @@ export const InternalMitraRegistrationDataView = () => {
         columns: [
           {
             value: reg.registrationNumber,
+            td: <P fontWeight={"semibold"}>{reg.registrationNumber}</P>,
+          },
+          {
+            value: reg.organizationName ?? reg.namaInstansi,
             td: (
-              <VStack align={"start"} gap={0} w={"220px"}>
-                <ClampedP fontWeight={"medium"}>{reg.namaInstansi}</ClampedP>
-                <P fontWeight={"semibold"}>{reg.registrationNumber}</P>
+              <VStack gap={"2xs"}>
+                <ClampedP fontWeight={"medium"}>
+                  {reg.organizationName ?? reg.namaInstansi}
+                </ClampedP>
                 <P fontSize={"sm"} color={"fg.subtle"}>
                   {`NIB: ${reg.nib}`}
                 </P>
               </VStack>
             ),
-            align: "start" as const,
           },
           {
             value: reg.status,
@@ -145,12 +150,12 @@ export const InternalMitraRegistrationDataView = () => {
             ),
           },
           {
-            value: reg.namaPenanggungJawab,
+            value: reg.picName ?? reg.namaPenanggungJawab,
             td: (
               <VStack align={"start"} gap={0}>
-                <P>{reg.namaPenanggungJawab ?? "-"}</P>
+                <P>{reg.picName ?? reg.namaPenanggungJawab ?? "-"}</P>
                 <P fontSize={"sm"} color={"fg.subtle"}>
-                  {reg.jabatan ?? "-"}
+                  {reg.position ?? reg.jabatan ?? "-"}
                 </P>
               </VStack>
             ),

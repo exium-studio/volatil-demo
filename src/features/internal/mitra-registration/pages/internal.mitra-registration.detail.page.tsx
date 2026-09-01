@@ -39,6 +39,7 @@ import {
   FileTextIcon,
   MailIcon,
   PhoneIcon,
+  SquareArrowUpRightIcon,
   UserCheckIcon,
   XCircleIcon,
 } from "lucide-react";
@@ -81,42 +82,71 @@ export function InternalMitraRegistrationDetailPage() {
 
   const documents: MitraRegistrationDocumentItem[] = useMemo(() => {
     if (!registration) return [];
+    const docs = registration.documents;
     return [
       {
         title: "1. Surat Permohonan Kemitraan",
-        url: registration.suratPermohonan,
-        desc: "Surat resmi pengajuan kerjasama kemitraan",
-        mimeType: "application/pdf",
+        url: docs?.suratPermohonan?.url ?? registration.suratPermohonan,
+        desc:
+          docs?.suratPermohonan?.originalName ??
+          "Surat resmi pengajuan kerjasama kemitraan",
+        mimeType: docs?.suratPermohonan?.mimeType ?? "application/pdf",
+        fileName: docs?.suratPermohonan?.fileName,
+        size: docs?.suratPermohonan?.size,
       },
       {
         title: "2. Dokumen DIK",
-        url: registration.dokumenDik,
-        desc: "Dokumen Informasi Kebutuhan Data",
-        mimeType: "application/pdf",
+        url: docs?.dokumenDik?.url ?? registration.dokumenDik,
+        desc:
+          docs?.dokumenDik?.originalName ?? "Dokumen Informasi Kebutuhan Data",
+        mimeType: docs?.dokumenDik?.mimeType ?? "application/pdf",
+        fileName: docs?.dokumenDik?.fileName,
+        size: docs?.dokumenDik?.size,
       },
       {
         title: "3. Surat Pernyataan Hukum",
-        url: registration.suratPernyataanHukum,
-        desc: "Surat pernyataan tunduk pada ketentuan hukum",
-        mimeType: "application/pdf",
+        url:
+          docs?.suratPernyataanHukum?.url ?? registration.suratPernyataanHukum,
+        desc:
+          docs?.suratPernyataanHukum?.originalName ??
+          "Surat pernyataan tunduk pada ketentuan hukum",
+        mimeType: docs?.suratPernyataanHukum?.mimeType ?? "application/pdf",
+        fileName: docs?.suratPernyataanHukum?.fileName,
+        size: docs?.suratPernyataanHukum?.size,
       },
       {
         title: "4. Surat Komitmen Evaluasi (Lampiran III)",
-        url: registration.suratKomitmenEvaluasi,
-        desc: "Komitmen evaluasi berkala pemanfaatan IGT",
-        mimeType: "application/pdf",
+        url:
+          docs?.suratKomitmenEvaluasi?.url ??
+          registration.suratKomitmenEvaluasi,
+        desc:
+          docs?.suratKomitmenEvaluasi?.originalName ??
+          "Komitmen evaluasi berkala pemanfaatan IGT",
+        mimeType: docs?.suratKomitmenEvaluasi?.mimeType ?? "application/pdf",
+        fileName: docs?.suratKomitmenEvaluasi?.fileName,
+        size: docs?.suratKomitmenEvaluasi?.size,
       },
       {
         title: "5. Surat Komitmen Perbaikan (Lampiran IV)",
-        url: registration.suratKomitmenPerbaikan,
-        desc: "Komitmen perbaikan mutu & kepatuhan data",
-        mimeType: "application/pdf",
+        url:
+          docs?.suratKomitmenPerbaikan?.url ??
+          registration.suratKomitmenPerbaikan,
+        desc:
+          docs?.suratKomitmenPerbaikan?.originalName ??
+          "Komitmen perbaikan mutu & kepatuhan data",
+        mimeType: docs?.suratKomitmenPerbaikan?.mimeType ?? "application/pdf",
+        fileName: docs?.suratKomitmenPerbaikan?.fileName,
+        size: docs?.suratKomitmenPerbaikan?.size,
       },
       {
         title: "6. Proposal Teknis Pemanfaatan IGT",
-        url: registration.proposalTeknis,
-        desc: "Proposal teknis rencana pemanfaatan spasial",
-        mimeType: "application/pdf",
+        url: docs?.proposalTeknis?.url ?? registration.proposalTeknis,
+        desc:
+          docs?.proposalTeknis?.originalName ??
+          "Proposal teknis rencana pemanfaatan spasial",
+        mimeType: docs?.proposalTeknis?.mimeType ?? "application/pdf",
+        fileName: docs?.proposalTeknis?.fileName,
+        size: docs?.proposalTeknis?.size,
       },
     ];
   }, [registration]);
@@ -164,7 +194,9 @@ export function InternalMitraRegistrationDetailPage() {
                 />
 
                 <VStack align={"start"} gap={"2xs"}>
-                  <Heading size={"md"}>{registration.namaInstansi}</Heading>
+                  <Heading size={"md"}>
+                    {registration.organizationName ?? registration.namaInstansi}
+                  </Heading>
 
                   <HStack gap={2} align={"center"}>
                     <P fontSize={"xs"} color={"fg.muted"} mb={"3px"}>
@@ -312,7 +344,9 @@ export function InternalMitraRegistrationDetailPage() {
                     {"Nama Instansi / Perusahaan"}
                   </P>
                   <P fontWeight={"medium"}>
-                    {registration.namaInstansi || "-"}
+                    {registration.organizationName ??
+                      registration.namaInstansi ??
+                      "-"}
                   </P>
                 </VStack>
 
@@ -365,7 +399,9 @@ export function InternalMitraRegistrationDetailPage() {
                     {"Alamat Kantor Operasional"}
                   </P>
                   <P fontWeight={"medium"}>
-                    {registration.alamatKantor || "-"}
+                    {registration.officeAddress ??
+                      registration.alamatKantor ??
+                      "-"}
                   </P>
                 </VStack>
               </SimpleGrid>
@@ -386,7 +422,9 @@ export function InternalMitraRegistrationDetailPage() {
                     {"Nama Penanggung Jawab"}
                   </P>
                   <P fontWeight={"medium"}>
-                    {registration.namaPenanggungJawab || "-"}
+                    {registration.picName ??
+                      registration.namaPenanggungJawab ??
+                      "-"}
                   </P>
                 </VStack>
 
@@ -394,7 +432,9 @@ export function InternalMitraRegistrationDetailPage() {
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Jabatan"}
                   </P>
-                  <P fontWeight={"medium"}>{registration.jabatan || "-"}</P>
+                  <P fontWeight={"medium"}>
+                    {registration.position ?? registration.jabatan ?? "-"}
+                  </P>
                 </VStack>
 
                 <VStack align={"start"} gap={"2xs"}>
@@ -414,7 +454,9 @@ export function InternalMitraRegistrationDetailPage() {
                   </P>
                   <HStack gap={1.5}>
                     <AppIcon icon={PhoneIcon} size={"xs"} color={"fg.muted"} />
-                    <P fontWeight={"medium"}>{registration.nomorHp || "-"}</P>
+                    <P fontWeight={"medium"}>
+                      {registration.phoneNumber ?? registration.nomorHp ?? "-"}
+                    </P>
                   </HStack>
                 </VStack>
               </SimpleGrid>
@@ -473,8 +515,8 @@ export function InternalMitraRegistrationDetailPage() {
                     {doc.url ? (
                       <ExternalLink href={doc.url} download={true}>
                         <Button size={"xs"} variant={"outline"}>
-                          <AppIcon icon={DownloadIcon} />
-                          {"Unduh"}
+                          <AppIcon icon={SquareArrowUpRightIcon} />
+                          {"Tinjau Dokumen"}
                         </Button>
                       </ExternalLink>
                     ) : (

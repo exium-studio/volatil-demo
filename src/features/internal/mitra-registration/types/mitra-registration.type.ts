@@ -8,32 +8,58 @@ import type {
 
 export type { MitraRegistrationStatus };
 
+export type MitraRegistrationDocumentFile = {
+  url: string;
+  size?: number;
+  fileName?: string;
+  mimeType?: string;
+  originalName?: string;
+};
+
+export type MitraRegistrationDocumentsMap = {
+  suratPermohonan?: MitraRegistrationDocumentFile | null;
+  dokumenDik?: MitraRegistrationDocumentFile | null;
+  suratPernyataanHukum?: MitraRegistrationDocumentFile | null;
+  suratKomitmenEvaluasi?: MitraRegistrationDocumentFile | null;
+  suratKomitmenPerbaikan?: MitraRegistrationDocumentFile | null;
+  proposalTeknis?: MitraRegistrationDocumentFile | null;
+};
+
 export type InternalMitraRegistrationItem = {
-  id: string | number;
+  id: string;
   registrationNumber: string;
-  namaInstansi: string;
-  alamatKantor: string;
+  userId?: number;
+  organizationName: string;
+  officeAddress: string;
   nib: string;
   npwp: string;
   website?: string | null;
-  namaPenanggungJawab: string;
-  jabatan: string;
+  picName: string;
+  position: string;
   email: string;
-  nomorHp: string;
+  phoneNumber: string;
   status: MitraRegistrationStatus;
   statusDescription?: string;
-  suratPermohonan?: string | null;
-  dokumenDik?: string | null;
-  suratPernyataanHukum?: string | null;
-  suratKomitmenEvaluasi?: string | null;
-  suratKomitmenPerbaikan?: string | null;
-  proposalTeknis?: string | null;
+  documents?: MitraRegistrationDocumentsMap | null;
   contractDocument?: string | null;
   rejectionReason?: string | null;
   verifiedAt?: string | null;
   verifiedBy?: string | null;
   createdAt: string;
   updatedAt?: string;
+
+  // Compatibility aliases
+  namaInstansi?: string;
+  alamatKantor?: string;
+  namaPenanggungJawab?: string;
+  jabatan?: string;
+  nomorHp?: string;
+  suratPermohonan?: string | null;
+  dokumenDik?: string | null;
+  suratPernyataanHukum?: string | null;
+  suratKomitmenEvaluasi?: string | null;
+  suratKomitmenPerbaikan?: string | null;
+  proposalTeknis?: string | null;
 };
 
 export type InternalMitraRegistrationQueryParams = PaginatedParams & {
@@ -60,5 +86,9 @@ export type MitraRegistrationDocumentItem = {
   url?: string | null;
   desc: string;
   mimeType?: string;
+  fileName?: string;
+  originalName?: string;
+  size?: number;
 };
+
 

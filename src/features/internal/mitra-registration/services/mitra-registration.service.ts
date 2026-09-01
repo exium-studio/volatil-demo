@@ -17,53 +17,124 @@ import type {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const normalizeMitraRegistrationItem = (raw: any): InternalMitraRegistrationItem => {
   if (!raw || typeof raw !== "object") return raw;
+
+  const organizationName =
+    raw.organizationName ??
+    raw.namaInstansi ??
+    raw.nama_instansi ??
+    raw.instansi ??
+    "";
+  const officeAddress =
+    raw.officeAddress ??
+    raw.alamatKantor ??
+    raw.alamat_kantor ??
+    raw.alamat ??
+    "";
+  const picName =
+    raw.picName ??
+    raw.namaPenanggungJawab ??
+    raw.nama_penanggung_jawab ??
+    raw.penanggungJawab ??
+    raw.penanggung_jawab ??
+    "";
+  const position = raw.position ?? raw.jabatan ?? "";
+  const phoneNumber =
+    raw.phoneNumber ??
+    raw.nomorHp ??
+    raw.nomor_hp ??
+    raw.noHp ??
+    raw.no_hp ??
+    raw.phone ??
+    "";
+
+  const documents = raw.documents ?? null;
+
+  const suratPermohonan =
+    (typeof documents?.suratPermohonan === "object"
+      ? documents?.suratPermohonan?.url
+      : documents?.suratPermohonan) ??
+    raw.suratPermohonan ??
+    raw.surat_permohonan ??
+    null;
+  const dokumenDik =
+    (typeof documents?.dokumenDik === "object"
+      ? documents?.dokumenDik?.url
+      : documents?.dokumenDik) ??
+    raw.dokumenDik ??
+    raw.dokumen_dik ??
+    null;
+  const suratPernyataanHukum =
+    (typeof documents?.suratPernyataanHukum === "object"
+      ? documents?.suratPernyataanHukum?.url
+      : documents?.suratPernyataanHukum) ??
+    raw.suratPernyataanHukum ??
+    raw.surat_pernyataan_hukum ??
+    null;
+  const suratKomitmenEvaluasi =
+    (typeof documents?.suratKomitmenEvaluasi === "object"
+      ? documents?.suratKomitmenEvaluasi?.url
+      : documents?.suratKomitmenEvaluasi) ??
+    raw.suratKomitmenEvaluasi ??
+    raw.surat_komitmen_evaluasi ??
+    null;
+  const suratKomitmenPerbaikan =
+    (typeof documents?.suratKomitmenPerbaikan === "object"
+      ? documents?.suratKomitmenPerbaikan?.url
+      : documents?.suratKomitmenPerbaikan) ??
+    raw.suratKomitmenPerbaikan ??
+    raw.surat_komitmen_perbaikan ??
+    null;
+  const proposalTeknis =
+    (typeof documents?.proposalTeknis === "object"
+      ? documents?.proposalTeknis?.url
+      : documents?.proposalTeknis) ??
+    raw.proposalTeknis ??
+    raw.proposal_teknis ??
+    null;
+
   return {
-    id: raw.id ?? raw._id ?? "",
+    id: String(raw.id ?? raw._id ?? ""),
     registrationNumber:
       raw.registrationNumber ??
       raw.registration_number ??
       raw.noRegistrasi ??
       raw.no_registrasi ??
       "",
-    namaInstansi: raw.namaInstansi ?? raw.nama_instansi ?? raw.instansi ?? "",
-    alamatKantor: raw.alamatKantor ?? raw.alamat_kantor ?? raw.alamat ?? "",
-    nib: raw.nib ?? "",
-    npwp: raw.npwp ?? "",
+    userId: raw.userId ?? raw.user_id ?? undefined,
+    organizationName,
+    officeAddress,
+    nib: String(raw.nib ?? ""),
+    npwp: String(raw.npwp ?? ""),
     website: raw.website ?? null,
-    namaPenanggungJawab:
-      raw.namaPenanggungJawab ??
-      raw.nama_penanggung_jawab ??
-      raw.penanggungJawab ??
-      raw.penanggung_jawab ??
-      "",
-    jabatan: raw.jabatan ?? "",
+    picName,
+    position,
     email: raw.email ?? "",
-    nomorHp:
-      raw.nomorHp ??
-      raw.nomor_hp ??
-      raw.noHp ??
-      raw.no_hp ??
-      raw.phone ??
-      "",
+    phoneNumber,
     status: raw.status ?? "pending_verification",
     statusDescription: raw.statusDescription ?? raw.status_description ?? null,
-    suratPermohonan: raw.suratPermohonan ?? raw.surat_permohonan ?? null,
-    dokumenDik: raw.dokumenDik ?? raw.dokumen_dik ?? null,
-    suratPernyataanHukum:
-      raw.suratPernyataanHukum ?? raw.surat_pernyataan_hukum ?? null,
-    suratKomitmenEvaluasi:
-      raw.suratKomitmenEvaluasi ?? raw.surat_komitmen_evaluasi ?? null,
-    suratKomitmenPerbaikan:
-      raw.suratKomitmenPerbaikan ?? raw.surat_komitmen_perbaikan ?? null,
-    proposalTeknis: raw.proposalTeknis ?? raw.proposal_teknis ?? null,
+    documents,
     contractDocument: raw.contractDocument ?? raw.contract_document ?? null,
     rejectionReason: raw.rejectionReason ?? raw.rejection_reason ?? null,
     verifiedAt: raw.verifiedAt ?? raw.verified_at ?? null,
     verifiedBy: raw.verifiedBy ?? raw.verified_by ?? null,
     createdAt: raw.createdAt ?? raw.created_at ?? new Date().toISOString(),
     updatedAt: raw.updatedAt ?? raw.updated_at ?? undefined,
+
+    // Aliases
+    namaInstansi: organizationName,
+    alamatKantor: officeAddress,
+    namaPenanggungJawab: picName,
+    jabatan: position,
+    nomorHp: phoneNumber,
+    suratPermohonan,
+    dokumenDik,
+    suratPernyataanHukum,
+    suratKomitmenEvaluasi,
+    suratKomitmenPerbaikan,
+    proposalTeknis,
   };
 };
+
 
 export const getInternalMitraRegistrationsList = async (
   params?: InternalMitraRegistrationQueryParams,
