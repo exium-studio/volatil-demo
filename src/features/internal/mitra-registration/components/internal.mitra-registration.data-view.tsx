@@ -148,9 +148,9 @@ export const InternalMitraRegistrationDataView = () => {
             value: reg.namaPenanggungJawab,
             td: (
               <VStack align={"start"} gap={0}>
-                <P fontWeight={"medium"}>{reg.namaPenanggungJawab}</P>
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {reg.jabatan}
+                <P>{reg.namaPenanggungJawab ?? "-"}</P>
+                <P fontSize={"sm"} color={"fg.subtle"}>
+                  {reg.jabatan ?? "-"}
                 </P>
               </VStack>
             ),

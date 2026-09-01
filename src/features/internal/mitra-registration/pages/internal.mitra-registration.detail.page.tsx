@@ -167,7 +167,7 @@ export function InternalMitraRegistrationDetailPage() {
                   <Heading size={"md"}>{registration.namaInstansi}</Heading>
 
                   <HStack gap={2} align={"center"}>
-                    <P fontSize={"xs"} color={"fg.muted"}>
+                    <P fontSize={"xs"} color={"fg.muted"} mb={"3px"}>
                       {"No. Registrasi:"}
                     </P>
 
@@ -212,14 +212,7 @@ export function InternalMitraRegistrationDetailPage() {
           <Separator borderColor={"bg.canvas"} />
 
           {/* Status & Metadata Bar */}
-          <HStack
-            gap={"md"}
-            wrap={"wrap"}
-            align={"center"}
-            px={"md"}
-            py={"sm"}
-            mb={"sm"}
-          >
+          <HStack gap={"md"} wrap={"wrap"} align={"center"} px={"md"} py={"sm"}>
             <Badge
               size={"sm"}
               colorPalette={statusConfig.colorPalette}
