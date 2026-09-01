@@ -2,9 +2,10 @@
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { FileIcon } from "@/design-system/components/data-display/ui/file-item";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -12,14 +13,18 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMitraRegistrationApproveTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal";
 import { InternalMitraRegistrationRejectTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal";
 import { useInternalMitraRegistrationDetailQuery } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
-import type { MitraRegistrationStatus } from "@/features/internal/mitra-registration/types/mitra-registration.type";
+import type {
+  MitraRegistrationDocumentItem,
+  MitraRegistrationStatus,
+} from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -30,8 +35,8 @@ import {
   CheckCircle2Icon,
   ClockIcon,
   DownloadIcon,
+  ExternalLinkIcon,
   FileTextIcon,
-  GlobeIcon,
   MailIcon,
   PhoneIcon,
   UserCheckIcon,
@@ -60,7 +65,7 @@ const STATUS_CONFIG: Record<
   },
 };
 
-export const InternalMitraRegistrationDetailPage = () => {
+export function InternalMitraRegistrationDetailPage() {
   // Hooks
   const { registrationId } = useParams({ strict: false }) as {
     registrationId: string;
@@ -73,6 +78,48 @@ export const InternalMitraRegistrationDetailPage = () => {
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  const documents: MitraRegistrationDocumentItem[] = useMemo(() => {
+    if (!registration) return [];
+    return [
+      {
+        title: "1. Surat Permohonan Kemitraan",
+        url: registration.suratPermohonan,
+        desc: "Surat resmi pengajuan kerjasama kemitraan",
+        mimeType: "application/pdf",
+      },
+      {
+        title: "2. Dokumen DIK",
+        url: registration.dokumenDik,
+        desc: "Dokumen Informasi Kebutuhan Data",
+        mimeType: "application/pdf",
+      },
+      {
+        title: "3. Surat Pernyataan Hukum",
+        url: registration.suratPernyataanHukum,
+        desc: "Surat pernyataan tunduk pada ketentuan hukum",
+        mimeType: "application/pdf",
+      },
+      {
+        title: "4. Surat Komitmen Evaluasi (Lampiran III)",
+        url: registration.suratKomitmenEvaluasi,
+        desc: "Komitmen evaluasi berkala pemanfaatan IGT",
+        mimeType: "application/pdf",
+      },
+      {
+        title: "5. Surat Komitmen Perbaikan (Lampiran IV)",
+        url: registration.suratKomitmenPerbaikan,
+        desc: "Komitmen perbaikan mutu & kepatuhan data",
+        mimeType: "application/pdf",
+      },
+      {
+        title: "6. Proposal Teknis Pemanfaatan IGT",
+        url: registration.proposalTeknis,
+        desc: "Proposal teknis rencana pemanfaatan spasial",
+        mimeType: "application/pdf",
+      },
+    ];
+  }, [registration]);
 
   if (isLoading) {
     return (
@@ -96,57 +143,38 @@ export const InternalMitraRegistrationDetailPage = () => {
   const statusConfig =
     STATUS_CONFIG[registration.status] || STATUS_CONFIG.pending_verification;
 
-  const documents = [
-    {
-      title: "1. Surat Permohonan Kemitraan",
-      url: registration.suratPermohonan,
-      desc: "Surat resmi pengajuan kerjasama kemitraan",
-    },
-    {
-      title: "2. Dokumen DIK",
-      url: registration.dokumenDik,
-      desc: "Dokumen Informasi Kebutuhan Data",
-    },
-    {
-      title: "3. Surat Pernyataan Hukum",
-      url: registration.suratPernyataanHukum,
-      desc: "Surat pernyataan tunduk pada ketentuan hukum",
-    },
-    {
-      title: "4. Surat Komitmen Evaluasi (Lampiran III)",
-      url: registration.suratKomitmenEvaluasi,
-      desc: "Komitmen evaluasi berkala pemanfaatan IGT",
-    },
-    {
-      title: "5. Surat Komitmen Perbaikan (Lampiran IV)",
-      url: registration.suratKomitmenPerbaikan,
-      desc: "Komitmen perbaikan mutu & kepatuhan data",
-    },
-    {
-      title: "6. Proposal Teknis Pemanfaatan IGT",
-      url: registration.proposalTeknis,
-      desc: "Proposal teknis rencana pemanfaatan spasial",
-    },
-  ];
-
   return (
     <PanelContentContainer flex={1} position={"relative"}>
       <Container.Root withContext flex={1}>
         <Container.Body overflowY={"auto"}>
           {/* Header Bar */}
-          <HeaderContainer>
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
-              <HStack gap={3}>
+          <HeaderContainer pl={"xs"}>
+            <HStack
+              justify={"space-between"}
+              align={"center"}
+              w={"full"}
+              wrap={"wrap"}
+              gap={"sm"}
+            >
+              <HStack gap={3} align={"center"}>
                 <BackButton
                   onClick={() => {
                     void navigate({ to: "/internal/mitra-registration" });
                   }}
                 />
-                <VStack align={"start"} gap={0}>
+
+                <VStack align={"start"} gap={"2xs"}>
                   <Heading size={"md"}>{registration.namaInstansi}</Heading>
-                  <P fontSize={"xs"} color={"blue.600"} fontWeight={"semibold"}>
-                    {registration.registrationNumber}
-                  </P>
+
+                  <HStack gap={2} align={"center"}>
+                    <P fontSize={"xs"} color={"fg.muted"}>
+                      {"No. Registrasi:"}
+                    </P>
+
+                    <Badge size={"xs"} variant={"surface"}>
+                      {registration.registrationNumber}
+                    </Badge>
+                  </HStack>
                 </VStack>
               </HStack>
 
@@ -183,243 +211,295 @@ export const InternalMitraRegistrationDetailPage = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          {/* Status Bar */}
-          <Box p={"md"} bg={"bg.subtle"}>
-            <HStack justify={"space-between"} align={"center"} wrap={"wrap"} gap={"md"}>
-              <HStack gap={3}>
-                <Badge
-                  size={"lg"}
-                  colorPalette={statusConfig.colorPalette}
-                  variant={"subtle"}
-                >
-                  <AppIcon icon={statusConfig.icon} />
-                  {statusConfig.label}
-                </Badge>
+          {/* Status & Metadata Bar */}
+          <HStack
+            gap={"md"}
+            wrap={"wrap"}
+            align={"center"}
+            px={"md"}
+            py={"sm"}
+            mb={"sm"}
+          >
+            <Badge
+              size={"sm"}
+              colorPalette={statusConfig.colorPalette}
+              variant={"subtle"}
+            >
+              {statusConfig.label}
+            </Badge>
 
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {`Diajukan pada: ${formatUtcDateTime(registration.createdAt, preferredTimezone)}`}
-                </P>
-              </HStack>
+            <P fontSize={"xs"} color={"fg.muted"}>
+              {`Diajukan: ${formatUtcDateTime(registration.createdAt, preferredTimezone)}`}
+            </P>
 
-              {registration.verifiedAt && (
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {`Diverifikasi pada: ${formatUtcDateTime(registration.verifiedAt, preferredTimezone)}`}
-                </P>
-              )}
-            </HStack>
-          </Box>
-
-          {/* If Rejected Alert */}
-          {registration.status === "rejected" && registration.rejectionReason && (
-            <Box p={"md"}>
-              <Alert.Root status={"error"} size={"sm"}>
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>{"Alasan Penolakan Permohonan:"}</Alert.Title>
-                  <Alert.Description>
-                    {registration.rejectionReason}
-                  </Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
-            </Box>
-          )}
-
-          {/* If Approved & Has Contract */}
-          {registration.status === "approved" && registration.contractDocument && (
-            <Box p={"md"}>
-              <Alert.Root status={"success"} size={"sm"}>
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>{"Berkas Kontrak Kemitraan Resmi Telah Terbit"}</Alert.Title>
-                  <Alert.Description>
-                    <HStack justify={"space-between"} align={"center"} w={"full"} mt={1}>
-                      <P fontSize={"xs"}>{"Salinan kontrak kerjasama telah diunggah dan dikirimkan ke mitra."}</P>
-                      <a
-                        href={registration.contractDocument}
-                        target={"_blank"}
-                        rel={"noreferrer"}
-                        download
-                      >
-                        <Button size={"xs"} colorPalette={"green"}>
-                          <AppIcon icon={DownloadIcon} />
-                          {"Unduh Kontrak"}
-                        </Button>
-                      </a>
-                    </HStack>
-                  </Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
-            </Box>
-          )}
+            {registration.verifiedAt && (
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {`Diverifikasi: ${formatUtcDateTime(registration.verifiedAt, preferredTimezone)}`}
+              </P>
+            )}
+          </HStack>
 
           <Separator borderColor={"bg.canvas"} />
 
-          {/* Main Info Columns */}
+          {/* If Rejected Alert */}
+          {registration.status === "rejected" &&
+            registration.rejectionReason && (
+              <Box p={"md"}>
+                <Alert.Root status={"error"} size={"sm"}>
+                  <Alert.Indicator />
+
+                  <Alert.Content>
+                    <Alert.Title>{"Alasan Penolakan Permohonan:"}</Alert.Title>
+                    <Alert.Description>
+                      {registration.rejectionReason}
+                    </Alert.Description>
+                  </Alert.Content>
+                </Alert.Root>
+              </Box>
+            )}
+
+          {/* If Approved & Has Contract */}
+          {registration.status === "approved" &&
+            registration.contractDocument && (
+              <Box p={"md"} pb={0}>
+                <Alert.Root status={"success"} size={"sm"}>
+                  <Alert.Indicator />
+
+                  <Alert.Content>
+                    <Alert.Title>
+                      {"Berkas Kontrak Kemitraan Resmi Telah Terbit"}
+                    </Alert.Title>
+
+                    <Alert.Description>
+                      <HStack
+                        justify={"space-between"}
+                        align={"center"}
+                        w={"full"}
+                        mt={2}
+                        wrap={"wrap"}
+                        gap={2}
+                      >
+                        <P fontSize={"xs"}>
+                          {
+                            "Salinan kontrak kerjasama telah diunggah dan dikirimkan ke mitra."
+                          }
+                        </P>
+                        <ExternalLink
+                          href={registration.contractDocument}
+                          download={true}
+                        >
+                          <Button
+                            size={"xs"}
+                            variant={"outline"}
+                            colorPalette={"green"}
+                          >
+                            <AppIcon icon={DownloadIcon} />
+                            {"Unduh Kontrak"}
+                          </Button>
+                        </ExternalLink>
+                      </HStack>
+                    </Alert.Description>
+                  </Alert.Content>
+                </Alert.Root>
+              </Box>
+            )}
+
+          {/* Main Info Sections */}
           <VStack p={"md"} gap={"lg"} align={"stretch"}>
             {/* Section 1: Data Perusahaan */}
-            <Box>
-              <HStack gap={2} mb={3} color={"blue.600"}>
-                <AppIcon icon={Building2Icon} />
-                <Heading size={"sm"}>{"Informasi Instansi / Perusahaan"}</Heading>
+            <VStack align={"stretch"} gap={"md"}>
+              <HStack align={"center"} gap={2}>
+                <AppIcon icon={Building2Icon} color={"fg.muted"} />
+                <Heading>{"Informasi Instansi / Perusahaan"}</Heading>
               </HStack>
 
-              <SimpleGrid columns={[1, null, 2]} gap={4}>
-                <Box p={3} bg={"bg.subtle"} rounded={"md"}>
+              <SimpleGrid columns={[1, null, 2]} gap={"md"}>
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Nama Instansi / Perusahaan"}
                   </P>
-                  <P fontWeight={"semibold"}>{registration.namaInstansi}</P>
-                </Box>
+                  <P fontWeight={"medium"}>
+                    {registration.namaInstansi || "-"}
+                  </P>
+                </VStack>
 
-                <Box p={3} bg={"bg.subtle"} rounded={"md"}>
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Nomor Induk Berusaha (NIB)"}
                   </P>
-                  <P fontWeight={"semibold"}>{registration.nib}</P>
-                </Box>
+                  <P fontWeight={"medium"}>{registration.nib || "-"}</P>
+                </VStack>
 
-                <Box p={3} bg={"bg.subtle"} rounded={"md"}>
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Nomor Pokok Wajib Pajak (NPWP)"}
                   </P>
-                  <P fontWeight={"semibold"}>{registration.npwp}</P>
-                </Box>
+                  <P fontWeight={"medium"}>{registration.npwp || "-"}</P>
+                </VStack>
 
-                <Box p={3} bg={"bg.subtle"} rounded={"md"}>
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Situs Web"}
                   </P>
                   {registration.website ? (
-                    <HStack gap={1}>
-                      <AppIcon icon={GlobeIcon} size={"xs"} color={"fg.muted"} />
-                      <a
-                        href={
-                          registration.website.startsWith("http")
-                            ? registration.website
-                            : `https://${registration.website}`
-                        }
-                        target={"_blank"}
-                        rel={"noreferrer"}
-                      >
-                        <P color={"blue.600"} fontWeight={"medium"}>
-                          {registration.website}
-                        </P>
-                      </a>
-                    </HStack>
+                    <ExternalLink
+                      href={
+                        registration.website.startsWith("http")
+                          ? registration.website
+                          : `https://${registration.website}`
+                      }
+                    >
+                      <HStack gap={1} align={"center"}>
+                        <P fontWeight={"medium"}>{registration.website}</P>
+                        <AppIcon
+                          icon={ExternalLinkIcon}
+                          size={"xs"}
+                          color={"fg.muted"}
+                        />
+                      </HStack>
+                    </ExternalLink>
                   ) : (
                     <P color={"fg.muted"}>{"-"}</P>
                   )}
-                </Box>
+                </VStack>
 
-                <Box gridColumn={[null, null, "span 2"]} p={3} bg={"bg.subtle"} rounded={"md"}>
+                <VStack
+                  align={"start"}
+                  gap={"2xs"}
+                  gridColumn={[null, null, "span 2"]}
+                >
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Alamat Kantor Operasional"}
                   </P>
-                  <P fontWeight={"medium"}>{registration.alamatKantor}</P>
-                </Box>
+                  <P fontWeight={"medium"}>
+                    {registration.alamatKantor || "-"}
+                  </P>
+                </VStack>
               </SimpleGrid>
-            </Box>
+            </VStack>
 
-            <Separator borderColor={"border.subtle"} />
+            <Separator borderColor={"bg.canvas"} />
 
             {/* Section 2: Penanggung Jawab */}
-            <Box>
-              <HStack gap={2} mb={3} color={"purple.600"}>
-                <AppIcon icon={UserCheckIcon} />
-                <Heading size={"sm"}>{"Penanggung Jawab & Kontak"}</Heading>
+            <VStack align={"stretch"} gap={"md"}>
+              <HStack align={"center"} gap={2}>
+                <AppIcon icon={UserCheckIcon} color={"fg.muted"} />
+                <Heading>{"Penanggung Jawab & Kontak"}</Heading>
               </HStack>
 
-              <SimpleGrid columns={[1, null, 2]} gap={4}>
-                <Box p={3} bg={"bg.subtle"} rounded={"md"}>
+              <SimpleGrid columns={[1, null, 2]} gap={"md"}>
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Nama Penanggung Jawab"}
                   </P>
-                  <P fontWeight={"semibold"}>{registration.namaPenanggungJawab}</P>
-                </Box>
+                  <P fontWeight={"medium"}>
+                    {registration.namaPenanggungJawab || "-"}
+                  </P>
+                </VStack>
 
-                <Box p={3} bg={"bg.subtle"} rounded={"md"}>
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Jabatan"}
                   </P>
-                  <P fontWeight={"semibold"}>{registration.jabatan}</P>
-                </Box>
+                  <P fontWeight={"medium"}>{registration.jabatan || "-"}</P>
+                </VStack>
 
-                <Box p={3} bg={"bg.subtle"} rounded={"md"}>
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Email Resmi (SSO)"}
                   </P>
-                  <HStack gap={1}>
-                    <AppIcon icon={MailIcon} size={"xs"} color={"fg.muted"} />
-                    <P fontWeight={"semibold"}>{registration.email}</P>
-                  </HStack>
-                </Box>
 
-                <Box p={3} bg={"bg.subtle"} rounded={"md"}>
+                  <HStack align={"center"} gap={1.5}>
+                    <AppIcon icon={MailIcon} size={"xs"} color={"fg.muted"} />
+                    <P fontWeight={"medium"}>{registration.email || "-"}</P>
+                  </HStack>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Nomor HP / WhatsApp"}
                   </P>
-                  <HStack gap={1}>
+                  <HStack gap={1.5}>
                     <AppIcon icon={PhoneIcon} size={"xs"} color={"fg.muted"} />
-                    <P fontWeight={"semibold"}>{registration.nomorHp}</P>
+                    <P fontWeight={"medium"}>{registration.nomorHp || "-"}</P>
                   </HStack>
-                </Box>
+                </VStack>
               </SimpleGrid>
-            </Box>
+            </VStack>
 
-            <Separator borderColor={"border.subtle"} />
+            <Separator borderColor={"bg.canvas"} />
 
-            {/* Section 3: 6 Berkas Dokumen */}
-            <Box>
-              <HStack gap={2} mb={3} color={"orange.600"}>
-                <AppIcon icon={FileTextIcon} />
-                <Heading size={"sm"}>{"Verifikasi 6 Berkas Dokumen Persyaratan"}</Heading>
+            {/* Section 3: 6 Berkas Dokumen Persyaratan */}
+            <VStack align={"stretch"} gap={"md"}>
+              <HStack align={"center"} gap={2}>
+                <AppIcon icon={FileTextIcon} color={"fg.muted"} />
+                <Heading>{"Berkas Dokumen Persyaratan"}</Heading>
               </HStack>
 
-              <SimpleGrid columns={[1, null, 2]} gap={4}>
+              <VStack gap={0} w={"full"} align={"stretch"}>
                 {documents.map((doc, idx) => (
-                  <Box
-                    key={idx}
-                    p={4}
-                    borderWidth={"1px"}
+                  <HStack
+                    key={doc.title}
+                    w={"full"}
+                    py={3}
+                    justify={"space-between"}
+                    align={"center"}
+                    gap={"md"}
+                    borderBottom={
+                      idx < documents.length - 1 ? "1px solid" : "none"
+                    }
                     borderColor={"border.subtle"}
-                    rounded={"md"}
-                    bg={"bg.panel"}
                   >
-                    <HStack justify={"space-between"} align={"start"}>
-                      <VStack align={"start"} gap={1} flex={1} mr={2}>
-                        <P fontWeight={"semibold"} fontSize={"sm"}>
-                          {doc.title}
-                        </P>
-                        <P fontSize={"xs"} color={"fg.muted"}>
-                          {doc.desc}
-                        </P>
-                      </VStack>
+                    <HStack gap={3} flex={1} minW={0} align={"center"}>
+                      <FileIcon
+                        mimeType={doc.mimeType ?? "application/pdf"}
+                        size={"lg"}
+                        color={"fg.muted"}
+                        flexShrink={0}
+                      />
 
-                      {doc.url ? (
-                        <a
-                          href={doc.url}
-                          target={"_blank"}
-                          rel={"noreferrer"}
-                          download
+                      <VStack align={"start"} gap={"2xs"} flex={1} minW={0}>
+                        <ClampedP
+                          fontWeight={"medium"}
+                          fontSize={"sm"}
+                          title={doc.title}
                         >
-                          <Button size={"xs"} variant={"outline"}>
-                            <AppIcon icon={DownloadIcon} />
-                            {"Unduh"}
-                          </Button>
-                        </a>
-                      ) : (
-                        <Badge colorPalette={"gray"} size={"xs"}>
-                          {"Tersedia"}
-                        </Badge>
-                      )}
+                          {doc.title}
+                        </ClampedP>
+
+                        <ClampedP
+                          fontSize={"xs"}
+                          color={"fg.muted"}
+                          title={doc.desc}
+                        >
+                          {doc.desc}
+                        </ClampedP>
+                      </VStack>
                     </HStack>
-                  </Box>
+
+                    {doc.url ? (
+                      <ExternalLink href={doc.url} download={true}>
+                        <Button size={"xs"} variant={"outline"}>
+                          <AppIcon icon={DownloadIcon} />
+                          {"Unduh"}
+                        </Button>
+                      </ExternalLink>
+                    ) : (
+                      <Badge
+                        colorPalette={"gray"}
+                        variant={"subtle"}
+                        size={"xs"}
+                      >
+                        {"Belum Diunggah"}
+                      </Badge>
+                    )}
+                  </HStack>
                 ))}
-              </SimpleGrid>
-            </Box>
+              </VStack>
+            </VStack>
           </VStack>
         </Container.Body>
       </Container.Root>
     </PanelContentContainer>
   );
-};
+}

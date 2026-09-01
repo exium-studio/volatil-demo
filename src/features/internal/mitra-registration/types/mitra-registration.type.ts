@@ -54,3 +54,11 @@ export type RejectMitraRegistrationPayload = {
   id: string | number;
   rejectionReason: string;
 };
+
+export type MitraRegistrationDocumentItem = {
+  title: string;
+  url?: string | null;
+  desc: string;
+  mimeType?: string;
+};
+

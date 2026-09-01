@@ -10,5 +10,10 @@ export const Route = createFileRoute(
   beforeLoad: async () => {
     await requireRoleGuard("internal");
   },
-  component: InternalMitraRegistrationDetailPage,
+  component: RouteComponent,
 });
+
+function RouteComponent() {
+  return <InternalMitraRegistrationDetailPage />;
+}
+

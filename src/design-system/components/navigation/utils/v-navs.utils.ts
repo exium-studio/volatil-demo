@@ -26,7 +26,10 @@ export function getNavKeyFromPathname<TNavKey extends string>(
 ): TNavKey | undefined {
   const entries = Object.entries(navsMap) as [TNavKey, NavItem][];
 
-  const found = entries.find(([, item]) => item.pathname === pathname);
+  const matches = entries
+    .filter(([, item]) => Boolean(item.pathname && pathname.startsWith(item.pathname)))
+    .sort(([, a], [, b]) => (b.pathname?.length ?? 0) - (a.pathname?.length ?? 0));
 
-  return found?.[0];
+  return matches[0]?.[0];
 }
+
