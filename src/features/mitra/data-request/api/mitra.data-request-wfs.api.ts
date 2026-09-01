@@ -1,6 +1,5 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
-import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
@@ -209,17 +208,10 @@ export const fetchWfsCatalog = async ({
           .join(" OR ")
       : undefined;
 
-  const unadaptedCqlFilter =
+  const mergedCqlFilter =
     [cqlFilter, searchCql ? `(${searchCql})` : undefined]
       .filter(Boolean)
       .join(" AND ") || undefined;
-
-  // Dynamically adapt CQL filter property names (e.g. WADMPR -> wadmpr) based on actual layer attributes
-  const dynamicAttrs = await getWfsDynamicAttributes(typeName, wfsUrl, signal);
-  const mergedCqlFilter = adaptCqlFilterToLayerAttributes(
-    unadaptedCqlFilter,
-    dynamicAttrs.length > 0 ? dynamicAttrs : stringAttributes,
-  );
 
   try {
     // Fetch current page of actual features using WFS 2.0.0

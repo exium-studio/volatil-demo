@@ -22,6 +22,7 @@ export type FilterAdministrativeAreaSelectProps = {
     value: string,
   ) => void;
   disabled?: boolean;
+  customOption?: boolean;
 };
 
 export type FilterAdministrativeAreaTriggerProps = {

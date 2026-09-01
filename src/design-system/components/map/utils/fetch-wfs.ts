@@ -158,6 +158,31 @@ export const fetchWfs = async (
     });
   }
 
+  // If server throws 400 Bad Request due to GeoServer "Illegal property name" in CQL_FILTER
+  if (!res.ok && res.status === 400 && params.cqlFilter) {
+    const errorText = await res.text().catch(() => "");
+    const matchIllegalProp =
+      /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(errorText);
+
+    if (matchIllegalProp && matchIllegalProp[1]) {
+      const illegalProp = matchIllegalProp[1];
+      console.warn(
+        `GeoServer layer "${params.typeName}" does not have property "${illegalProp}". Retrying with adapted filter.`,
+      );
+
+      // Remove clauses containing the illegal property
+      const clauses = params.cqlFilter.split(/\s+AND\s+/i);
+      const filteredClauses = clauses.filter(
+        (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
+      );
+      const adaptedFilter =
+        filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
+
+      url = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
+      res = await fetch(url.toString(), { signal });
+    }
+  }
+
   if (!res.ok) {
     const errorText = await res.text().catch(() => "");
     console.error(

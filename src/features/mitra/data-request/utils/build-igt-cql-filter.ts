@@ -1,188 +1,71 @@
+// src/features/mitra/data-request/utils/build-igt-cql-filter.ts
+
 import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
-import { isEmptyArray } from "@/shared/utils/data/array";
-
-const ATTRIBUTE_SYNONYMS: Record<string, string[]> = {
-  WADMPR: [
-    "WADMPR",
-    "wadmpr",
-    "provinsi",
-    "prov",
-    "propinsi",
-    "nm_prov",
-    "nama_provinsi",
-    "nama_prov",
-  ],
-  WADMKK: [
-    "WADMKK",
-    "wadmkk",
-    "kabupaten",
-    "kab_kota",
-    "kab",
-    "kota",
-    "nm_kab",
-    "nama_kabupaten",
-    "nama_kab",
-  ],
-  WADMKC: [
-    "WADMKC",
-    "wadmkc",
-    "kecamatan",
-    "kec",
-    "nm_kec",
-    "nama_kecamatan",
-    "nama_kec",
-  ],
-  WADMKD: [
-    "WADMKD",
-    "wadmkd",
-    "kelurahan",
-    "desa",
-    "des_kel",
-    "nm_desa",
-    "nama_kelurahan",
-    "nama_desa",
-  ],
-};
 
 /**
- * Resolves a target attribute field key against sample properties in a case-insensitive manner.
- * Also checks known synonyms (e.g. WADMKK -> kabupaten).
+ * Strips common administrative prefix prefixes (e.g. "KABUPATEN BADUNG" -> "BADUNG")
+ * and escapes single quotes so that ILIKE '%value%' partial matching matches any DB naming format.
  */
-export const resolveAttributeKey = (
-  targetKey: string,
-  sampleProperties?: Record<string, unknown> | string[],
-): string => {
-  if (!sampleProperties) return targetKey;
-  const keys = Array.isArray(sampleProperties)
-    ? sampleProperties
-    : Object.keys(sampleProperties);
+export const cleanAdministrativeValue = (raw: string): string => {
+  if (!raw) return "";
+  let cleaned = raw.trim();
 
-  // 1. Direct case-insensitive match
-  const directMatch = keys.find(
-    (k) => k.toUpperCase() === targetKey.toUpperCase(),
-  );
-  if (directMatch) return directMatch;
+  // Strip common administrative prefix keywords to maximize partial match flexibility
+  cleaned = cleaned
+    .replace(/^PROVINSI\s+/i, "")
+    .replace(/^KABUPATEN\s+/i, "")
+    .replace(/^KAB\.\s+/i, "")
+    .replace(/^KOTA\s+/i, "")
+    .replace(/^KECAMATAN\s+/i, "")
+    .replace(/^KEC\.\s+/i, "")
+    .replace(/^KELURAHAN\s+/i, "")
+    .replace(/^KEL\.\s+/i, "")
+    .replace(/^DESA\s+/i, "")
+    .trim();
 
-  // 2. Check synonyms
-  const upperTarget = targetKey.toUpperCase();
-  const synonyms = ATTRIBUTE_SYNONYMS[upperTarget] ?? [];
-  for (const syn of synonyms) {
-    const synMatch = keys.find((k) => k.toUpperCase() === syn.toUpperCase());
-    if (synMatch) return synMatch;
-  }
-
-  return targetKey;
+  // Escape single quotes for GeoServer CQL
+  return cleaned.replace(/'/g, "''");
 };
 
 /**
- * Adapts property field names in a CQL filter string to match actual layer attributes available on GeoServer.
- * - Maps standard keys (e.g. WADMKK) to available layer column names (e.g. kabupaten).
- * - Strips clauses for properties that do NOT exist on the layer (e.g. WADMPR on layers without a province column)
- *   to avoid GeoServer 400 "Illegal property name" errors.
- */
-export const adaptCqlFilterToLayerAttributes = (
-  cqlFilter?: string,
-  availableAttributes?: string[],
-): string | undefined => {
-  if (!cqlFilter || !availableAttributes || isEmptyArray(availableAttributes)) {
-    return cqlFilter;
-  }
-
-  // If filter is pure spatial predicate (INTERSECTS, BBOX, DWITHIN), preserve as is
-  if (
-    cqlFilter.startsWith("INTERSECTS(") ||
-    cqlFilter.startsWith("BBOX(") ||
-    cqlFilter.startsWith("DWITHIN(")
-  ) {
-    return cqlFilter;
-  }
-
-  const clauses = cqlFilter.split(/\s+AND\s+/i);
-  const adaptedClauses: string[] = [];
-
-  for (const clause of clauses) {
-    const trimmed = clause.trim();
-    if (!trimmed) continue;
-
-    // Preserve complex/spatial or nested clauses
-    if (
-      trimmed.startsWith("INTERSECTS(") ||
-      trimmed.startsWith("BBOX(") ||
-      trimmed.startsWith("DWITHIN(") ||
-      trimmed.startsWith("(")
-    ) {
-      adaptedClauses.push(trimmed);
-      continue;
-    }
-
-    // Match attribute comparison e.g. "WADMPR ILIKE '%BALI%'" or "WADMKK = 'BADUNG'"
-    const match = trimmed.match(/^("?[a-zA-Z0-9_]+"?)(\s+.*)$/);
-    if (!match || !match[1] || !match[2]) {
-      adaptedClauses.push(trimmed);
-      continue;
-    }
-
-    const rawProp = match[1].replace(/"/g, "");
-    const restOfClause = match[2];
-
-    // Check if property or synonym exists on the layer
-    const actualProp = resolveAttributeKey(rawProp, availableAttributes);
-    const propExists = availableAttributes.some(
-      (attr) => attr.toUpperCase() === actualProp.toUpperCase(),
-    );
-
-    if (propExists) {
-      adaptedClauses.push(`${actualProp}${restOfClause}`);
-    }
-    // If property does not exist on this layer, omit clause to prevent GeoServer 400 error
-  }
-
-  return adaptedClauses.length > 0 ? adaptedClauses.join(" AND ") : undefined;
-};
-
-/**
- * Converts IgtFilterValues into a GeoServer CQL_FILTER string.
- * Filters out properties that don't exist on the target layer (e.g. basis).
- * Adapts field names dynamically based on sampleProperties (lowercase vs uppercase).
- * Uses ILIKE '%value%' partial matching so API values like "BALI" match DB values like "Provinsi Bali".
+ * Converts administrative filter values into a GeoServer CQL_FILTER string using hardcoded standard column names (WADMPR, WADMKK, WADMKC, WADMKD).
+ * Uses ILIKE '%value%' partial matching on cleaned core keywords.
+ * If no administrative filters are applied or all fields are empty, returns undefined (no CQL filter).
  */
 export const buildIgtCqlFilter = (
-  filters: FilterAdministrativeAreaValues,
-  sampleProperties?: Record<string, unknown> | string[],
+  filters?: FilterAdministrativeAreaValues,
 ): string | undefined => {
+  if (!filters || typeof filters !== "object" || Object.keys(filters).length === 0) {
+    return undefined;
+  }
+
   const clauses: string[] = [];
 
-  const addEqClause = (standardKey: string) => {
-    // Skip 'basis' as it's not a GeoServer layer property
-    if (standardKey === IGT_FILTER_KEYS_MAP.BASIS) return;
-
-    // Resolve key from filters object (user filter input)
+  const addClause = (columnKey: string) => {
     const detail =
-      filters[standardKey] ??
-      filters[standardKey.toLowerCase()] ??
-      filters[standardKey.toUpperCase()];
+      filters[columnKey] ??
+      filters[columnKey.toLowerCase()] ??
+      filters[columnKey.toUpperCase()];
 
-    if (detail?.value) {
-      const safeValue = detail.value.replace(/'/g, "''");
-      const actualFieldName = resolveAttributeKey(
-        standardKey,
-        sampleProperties,
-      );
-      // Use ILIKE '%value%' for case-insensitive & partial matching (e.g. "BALI" matches "Provinsi Bali")
-      clauses.push(`${actualFieldName} ILIKE '%${safeValue}%'`);
+    if (detail?.value && detail.value.trim() !== "") {
+      const cleanVal = cleanAdministrativeValue(detail.value);
+      if (cleanVal) {
+        clauses.push(`${columnKey} ILIKE '%${cleanVal}%'`);
+      }
     }
   };
 
-  // addEqClause(IGT_FILTER_KEYS_MAP.BASIS);
-  // addEqClause(IGT_FILTER_KEYS_MAP.TEMA);
-  addEqClause(IGT_FILTER_KEYS_MAP.PROVINSI);
-  addEqClause(IGT_FILTER_KEYS_MAP.KABUPATEN);
-  addEqClause(IGT_FILTER_KEYS_MAP.KECAMATAN);
-  addEqClause(IGT_FILTER_KEYS_MAP.KELURAHAN);
+  addClause(IGT_FILTER_KEYS_MAP.PROVINSI); // WADMPR
+  addClause(IGT_FILTER_KEYS_MAP.KABUPATEN); // WADMKK
+  addClause(IGT_FILTER_KEYS_MAP.KECAMATAN); // WADMKC
+  addClause(IGT_FILTER_KEYS_MAP.KELURAHAN); // WADMKD
 
   return clauses.length > 0 ? clauses.join(" AND ") : undefined;
 };
 
 // Aliases for compatibility
 export const buildWfsCqlFilter = buildIgtCqlFilter;
+export const adaptCqlFilterToLayerAttributes = (cqlFilter?: string) => cqlFilter;
+
+

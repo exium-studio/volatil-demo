@@ -190,7 +190,6 @@ export const FilterAdministrativeAreaTrigger = (
               value={
                 localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value ?? ""
               }
-              disabled={!localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
               onValueChange={(details) =>
                 handleFieldChange(IGT_FILTER_KEYS_MAP.KABUPATEN, details)
               }
@@ -204,9 +203,6 @@ export const FilterAdministrativeAreaTrigger = (
               value={
                 localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ?? ""
               }
-              disabled={
-                !localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
-              }
               onValueChange={(details) =>
                 handleFieldChange(IGT_FILTER_KEYS_MAP.KECAMATAN, details)
               }
@@ -219,9 +215,6 @@ export const FilterAdministrativeAreaTrigger = (
               }
               value={
                 localDraftFilters[IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ?? ""
-              }
-              disabled={
-                !localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
               }
               onValueChange={(details) =>
                 handleFieldChange(IGT_FILTER_KEYS_MAP.KELURAHAN, details)

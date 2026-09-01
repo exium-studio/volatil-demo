@@ -1,13 +1,9 @@
-// src/features/mitra/data-request/api/mitra.data-request-wfs-summary.api.ts
-
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
-import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
-import { getWfsDynamicAttributes } from "@/features/mitra/data-request/api/mitra.data-request-wfs.api";
 
 export type LayerCountSummary = {
   spatialBasis: "bidang" | "kawasan";
@@ -40,20 +36,7 @@ export const getLayerCountSummary = async (params: {
   }
 
   try {
-    let mergedCqlFilter = cqlFilter;
-    if (cqlFilter) {
-      const dynamicAttrs = await getWfsDynamicAttributes(
-        typeName,
-        wfsUrl,
-        signal,
-      );
-      if (dynamicAttrs.length > 0) {
-        mergedCqlFilter = adaptCqlFilterToLayerAttributes(
-          cqlFilter,
-          dynamicAttrs,
-        );
-      }
-    }
+    const mergedCqlFilter = cqlFilter;
 
     if (spatialBasis === "bidang") {
       try {

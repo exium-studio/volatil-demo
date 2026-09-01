@@ -26,6 +26,7 @@ export const FilterAdministrativeAreaDistrictSelect = (
     defaultValue = "",
     onValueChange,
     disabled = false,
+    customOption = true,
   } = props;
 
   // States
@@ -66,6 +67,7 @@ export const FilterAdministrativeAreaDistrictSelect = (
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}
+      customOption={customOption}
       onValueChange={(val, optionDetail) =>
         handleValueChange(
           val,
