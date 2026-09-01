@@ -46,7 +46,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
     <Box
       w={"full"}
       p={"md"}
-      bg={isSelected ? "bg.subtle" : "bg.body"}
+      bg={"bg.body"}
       rounded={theme.radii.container}
       border={"1.5px solid"}
       borderColor={isSelected ? `${theme.colorPalette}.solid` : "border.subtle"}
