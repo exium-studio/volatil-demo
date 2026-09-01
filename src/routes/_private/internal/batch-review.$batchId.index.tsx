@@ -8,5 +8,10 @@ export const Route = createFileRoute("/_private/internal/batch-review/$batchId/"
   beforeLoad: async () => {
     await requireRoleGuard("internal");
   },
-  component: InternalBatchReviewDetailPage,
+  component: RouteComponent,
 });
+
+function RouteComponent() {
+  return <InternalBatchReviewDetailPage />;
+}
+

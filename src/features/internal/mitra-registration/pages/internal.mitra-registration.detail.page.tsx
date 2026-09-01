@@ -39,7 +39,7 @@ import {
   FileTextIcon,
   MailIcon,
   PhoneIcon,
-  SquareArrowUpRightIcon,
+  SquareArrowOutUpRightIcon,
   UserCheckIcon,
   XCircleIcon,
 } from "lucide-react";
@@ -515,7 +515,7 @@ export function InternalMitraRegistrationDetailPage() {
                     {doc.url ? (
                       <ExternalLink href={doc.url} download={true}>
                         <Button size={"xs"} variant={"outline"}>
-                          <AppIcon icon={SquareArrowUpRightIcon} />
+                          <AppIcon icon={SquareArrowOutUpRightIcon} />
                           {"Tinjau Dokumen"}
                         </Button>
                       </ExternalLink>

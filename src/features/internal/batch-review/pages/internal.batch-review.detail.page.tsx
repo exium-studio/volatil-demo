@@ -1,7 +1,7 @@
 // src/features/internal/batch-review/pages/internal.batch-review.detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
-import { IconButton } from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -11,7 +11,6 @@ import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/conf
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -48,7 +47,7 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 
-export const InternalBatchReviewDetailPage = () => {
+export function InternalBatchReviewDetailPage() {
   // Hooks
   const { batchId } = useParams({ strict: false }) as { batchId: string };
   const navigate = useNavigate();
@@ -100,19 +99,15 @@ export const InternalBatchReviewDetailPage = () => {
               </HStack>
 
               {batch.status === "pending_review" && (
-                <HStack gap={"xs"}>
+                <HStack gap={2}>
                   <InternalBatchReviewRejectTrigger
                     batch={batch}
                     modalKey={`reject-detail-${batch.batchId}`}
                   >
-                    <Box>
-                      <IconButton
-                        colorPalette={"red"}
-                        aria-label={"Tolak Batch"}
-                      >
-                        <AppIcon icon={XCircleIcon} />
-                      </IconButton>
-                    </Box>
+                    <Button variant={"outline"} colorPalette={"red"}>
+                      <AppIcon icon={XCircleIcon} />
+                      {"Tolak"}
+                    </Button>
                   </InternalBatchReviewRejectTrigger>
 
                   <ConfirmationTrigger
@@ -132,14 +127,14 @@ export const InternalBatchReviewDetailPage = () => {
                       );
                     }}
                   >
-                    <Box>
-                      <IconButton
-                        colorPalette={"green"}
-                        aria-label={"Setujui Batch"}
-                      >
-                        <AppIcon icon={CheckCircle2Icon} />
-                      </IconButton>
-                    </Box>
+                    <Button
+                      primary={true}
+                      colorPalette={"green"}
+                      loading={approveMutation.isPending}
+                    >
+                      <AppIcon icon={CheckCircle2Icon} />
+                      {"Setujui"}
+                    </Button>
                   </ConfirmationTrigger>
                 </HStack>
               )}

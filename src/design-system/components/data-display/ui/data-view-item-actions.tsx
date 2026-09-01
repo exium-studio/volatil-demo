@@ -155,33 +155,23 @@ export function DataViewSpreadActions<
           </Button>
         );
 
+        const buttonWithTooltip = resolvedLabel ? (
+          <Tooltip content={resolvedLabel}>
+            {rawButton}
+          </Tooltip>
+        ) : (
+          rawButton
+        );
+
         if (triggerElement) {
-          const buttonWithTrigger = cloneElement(
+          return cloneElement(
             triggerElement,
             { key: `trigger-${key}` },
-            rawButton,
-          );
-
-          if (resolvedIcon) {
-            return (
-              <Tooltip key={key} content={resolvedLabel}>
-                {buttonWithTrigger}
-              </Tooltip>
-            );
-          }
-
-          return buttonWithTrigger;
-        }
-
-        if (resolvedIcon) {
-          return (
-            <Tooltip key={key} content={resolvedLabel}>
-              {rawButton}
-            </Tooltip>
+            buttonWithTooltip,
           );
         }
 
-        return <span key={key}>{rawButton}</span>;
+        return <span key={key}>{buttonWithTooltip}</span>;
       })}
     </HStack>
   );
@@ -243,33 +233,23 @@ export function DataViewStickyActions<
           </Button>
         );
 
+        const buttonWithTooltip = resolvedLabel ? (
+          <Tooltip content={resolvedLabel}>
+            {rawButton}
+          </Tooltip>
+        ) : (
+          rawButton
+        );
+
         if (triggerElement) {
-          const buttonWithTrigger = cloneElement(
+          return cloneElement(
             triggerElement,
             { key: `trigger-${key}` },
-            rawButton,
-          );
-
-          if (resolvedIcon) {
-            return (
-              <Tooltip key={key} content={resolvedLabel}>
-                {buttonWithTrigger}
-              </Tooltip>
-            );
-          }
-
-          return buttonWithTrigger;
-        }
-
-        if (resolvedIcon) {
-          return (
-            <Tooltip key={key} content={resolvedLabel}>
-              {rawButton}
-            </Tooltip>
+            buttonWithTooltip,
           );
         }
 
-        return <span key={key}>{rawButton}</span>;
+        return <span key={key}>{buttonWithTooltip}</span>;
       })}
     </HStack>
   );
