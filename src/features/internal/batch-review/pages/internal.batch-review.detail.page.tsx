@@ -103,6 +103,9 @@ export function InternalBatchReviewDetailPage() {
                   <InternalBatchReviewRejectTrigger
                     batch={batch}
                     modalKey={`reject-detail-${batch.batchId}`}
+                    onSuccessRedirect={() => {
+                      void navigate({ to: "/internal/batch-review" });
+                    }}
                   >
                     <Button variant={"outline"} colorPalette={"red"}>
                       <AppIcon icon={XCircleIcon} />

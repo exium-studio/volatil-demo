@@ -22,14 +22,22 @@ export type InternalBatchReviewRejectTriggerProps = {
   modalKey?: string;
   batch: InternalBatchItem;
   children?: ReactNode;
+  onSuccessRedirect?: () => void;
 };
 
 export const InternalBatchReviewRejectTrigger = (
   props: InternalBatchReviewRejectTriggerProps,
 ) => {
-  const { modalKey: customModalKey, batch, children } = props;
+  // Props
+  const {
+    modalKey: customModalKey,
+    batch,
+    children,
+    onSuccessRedirect,
+  } = props;
   const key = customModalKey || `reject-batch-${batch.batchId}`;
 
+  // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: key,
   });
@@ -44,7 +52,11 @@ export const InternalBatchReviewRejectTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalBatchReviewRejectModalContent batch={batch} isOpen={isOpen} />
+      <InternalBatchReviewRejectModalContent
+        batch={batch}
+        isOpen={isOpen}
+        onSuccessRedirect={onSuccessRedirect}
+      />
     </Modal.Root>
   );
 };
@@ -52,10 +64,16 @@ export const InternalBatchReviewRejectTrigger = (
 const InternalBatchReviewRejectModalContent = (
   props: InternalBatchReviewRejectModalContentProps,
 ) => {
-  const { batch, isOpen } = props;
+  // Props
+  const { batch, isOpen, onSuccessRedirect } = props;
+
+  // States
   const [reason, setReason] = useState("");
+
+  // Mutations
   const rejectMutation = useRejectBatch();
 
+  // Handlers
   const handleReject = () => {
     if (!reason.trim()) return;
     rejectMutation.mutate(
@@ -66,6 +84,7 @@ const InternalBatchReviewRejectModalContent = (
       {
         onSuccess: () => {
           if (isOpen) back();
+          onSuccessRedirect?.();
         },
       },
     );
