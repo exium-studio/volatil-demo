@@ -3,7 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
@@ -138,6 +138,7 @@ export const FilterAdministrativeAreaTrigger = (
       <Box
         as={"span"}
         display={"inline-flex"}
+        position={"relative"}
         onClick={() => {
           setLocalDraftFilters(currentAppliedFilters);
           open();
@@ -145,15 +146,14 @@ export const FilterAdministrativeAreaTrigger = (
         cursor={"pointer"}
       >
         {children}
+        {activeFilterCount > 0 && (
+          <CountBadge count={activeFilterCount} floating={true} />
+        )}
       </Box>
 
       <Modal.Content>
         <Modal.Header>
-          <HStack gap={"md"} align={"center"}>
-            <Modal.Title>{"Filter Wilayah Administratif"}</Modal.Title>
-
-            {activeFilterCount > 0 && <CountBadge count={activeFilterCount} />}
-          </HStack>
+          <Modal.Title>{"Filter Wilayah Administratif"}</Modal.Title>
           <Modal.CloseButton />
         </Modal.Header>
 
