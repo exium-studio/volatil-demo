@@ -563,16 +563,16 @@ const MobileBottomNav = () => {
               });
             }
           }}
-          pl={"sm"}
-          pr={"xs"}
+          px={"xs"}
+          // pr={"2xs"}
         />
       </Box>
 
-      <Separator
+      {/* <Separator
         orientation={"vertical"}
         h={"52px"}
         borderColor={"border.subtle"}
-      />
+      /> */}
 
       <UserProfilePopoverTrigger>
         <NavButton
@@ -581,7 +581,7 @@ const MobileBottomNav = () => {
           size={"sm"}
           h={"auto"}
           p={"xs"}
-          ml={"xs"}
+          // ml={"2xs"}
           mr={"sm"}
           flexShrink={0}
         >
