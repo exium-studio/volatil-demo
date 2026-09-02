@@ -23,7 +23,7 @@ export const useSidebarStore = create<SidebarState & SidebarActions>()(
         }));
       },
 
-      toggleExpanded: (key, defaultValue = true) => {
+      toggleExpanded: (key, defaultValue = false) => {
         const current = get().expandedByKey[key] ?? defaultValue;
         get().setExpanded(key, !current);
       },

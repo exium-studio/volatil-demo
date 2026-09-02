@@ -65,6 +65,8 @@ import { useEffect, useMemo, useRef } from "react";
 
 const DEFAULT_SIDEBAR_EXPANDED = false;
 const SIDE_BAR_KEY = "gis-app";
+const SIDEBAR_COLLAPSED_W = 64;
+const SIDEBAR_EXPANDED_W = 240;
 const DEFAULT_SPLITTER_SIZE = [50, 50];
 const SPLITTER_KEY = "gis-app";
 
@@ -123,7 +125,7 @@ const Sidebar = () => {
       className={"group"}
       pos={"relative"}
       zIndex={10}
-      w={expanded ? "240px" : `calc(40px + 24px)`}
+      w={expanded ? `${SIDEBAR_EXPANDED_W}px` : `${SIDEBAR_COLLAPSED_W}px`}
       h={"full"}
       transition={"200ms"}
       // transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
@@ -296,6 +298,12 @@ const SidebarToggleButton = (props: IconButtonProps) => {
   );
   const toggleExpanded = useSidebarStore((s) => s.toggleExpanded);
 
+  // Handlers
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleExpanded(SIDE_BAR_KEY, DEFAULT_SIDEBAR_EXPANDED);
+  };
+
   return (
     <Tooltip
       content={expanded ? t["action.collapse"]() : t["action.expand"]()}
@@ -314,11 +322,12 @@ const SidebarToggleButton = (props: IconButtonProps) => {
         cursor={"pointer"}
         _groupHover={{ opacity: 1 }}
         transition={"200ms"}
-        onClick={() => {
-          toggleExpanded(SIDE_BAR_KEY);
-        }}
+        onClick={handleToggle}
       >
         <IconButton
+          aria-label={
+            expanded ? t["action.collapse"]() : t["action.expand"]()
+          }
           variant={"blend"}
           size={"2xs"}
           minW={"16px"}
@@ -328,6 +337,7 @@ const SidebarToggleButton = (props: IconButtonProps) => {
           rounded={"full"}
           border={"1px solid"}
           borderColor={"border.subtle"}
+          onClick={handleToggle}
           {...props}
         >
           <AppIcon
@@ -341,9 +351,6 @@ const SidebarToggleButton = (props: IconButtonProps) => {
 };
 
 // -------------------------------------------------------------------------------------
-
-const SIDEBAR_COLLAPSED_W = 64;
-const SIDEBAR_EXPANDED_W = 300;
 
 const Content = () => {
   // Refs
