@@ -70,7 +70,7 @@ export type AddToCartBatchRequest = {
 
 export type AddToCartBatchResponse = {
   batchId: string;
-  status: "preparing";
+  status: CartBatchStatus;
   estimatedTotalPrice: number;
   createdAt: string;
 };

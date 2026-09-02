@@ -161,7 +161,7 @@ const InternalBatchReviewDetailModalContent = (
               <ConfirmationTrigger
                 modalKey={`approve-batch-${batch.batchId}`}
                 title={"Setujui Permohonan Batch?"}
-                description={`Apakah Anda yakin ingin menyetujui batch "${batch.batchId}" milik ${batch.mitraName}? Setelah disetujui, mitra dapat melanjutkan ke proses pembayaran dan layer hasil potong akan diaktifkan.`}
+                description={`Apakah Anda yakin ingin menyetujui batch "${batch.batchId}" milik ${batch.mitraName}? Setelah disetujui, layanan data spasial hasil pemotongan akan diaktifkan untuk akun mitra.`}
                 confirmLabel={"Setujui Batch"}
                 colorPalette={"green"}
                 onConfirm={() => {

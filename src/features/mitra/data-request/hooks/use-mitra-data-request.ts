@@ -105,7 +105,7 @@ export const useAddToCartAll = () => {
         params.typeName.split(":")[1]?.replace(/_/g, " ") ||
         params.typeName;
       const toastId = `add-to-cart-${params.layerId}-${Date.now()}`;
-      toast.loading(`Memproses penyiapan batch data "${layerDisplayName}"...`, {
+      toast.loading(`Menambahkan data layer "${layerDisplayName}" ke keranjang...`, {
         id: toastId,
         group: "Keranjang",
       });
@@ -129,7 +129,7 @@ export const useAddToCartAll = () => {
       }
 
       toast.success(
-        `Batch "${layerDisplayName}"${countDetail} berhasil dibuat! Sistem Interop sedang menyiapkan data.`,
+        `Batch "${layerDisplayName}"${countDetail} berhasil ditambahkan ke keranjang transaksi! Total tagihan siap dibayar.`,
         { id: toastId, group: "Keranjang" },
       );
       void queryClient.invalidateQueries({

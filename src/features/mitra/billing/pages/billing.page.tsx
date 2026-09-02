@@ -62,13 +62,13 @@ const BillingPageBillingCode = () => {
               focusAlert("payment-success", () => (
                 <FocusAlertItem
                   variant={"celebrate"}
-                  title={"Transaksi Berhasil!"}
+                  title={"Pembayaran Berhasil!"}
                   description={
-                    "Data yang Anda bayar sudah disimpan pada akun Anda!"
+                    "Pembayaran telah dikonfirmasi. Layanan WMS sedang disiapkan oleh sistem dan menunggu validasi Admin Internal ATR/BPN."
                   }
                   onDone={() => {
                     navigate({
-                      to: "/mitra/my-data",
+                      to: "/mitra/transaction-history",
                       from: "/",
                     });
                   }}

@@ -54,26 +54,26 @@ export const CART_BATCH_STATUS_CONFIG_MAP: Record<
   CartBatchStatus,
   CartBatchStatusConfig
 > = {
-  approved: {
-    label: "Disetujui (Siap Bayar)",
+  ready: {
+    label: "Siap Bayar",
     colorPalette: "green",
     icon: CheckCircle2Icon,
     iconColor: "green.fg",
   },
-  ready: {
-    label: "Disetujui (Siap Bayar)",
+  approved: {
+    label: "Disetujui Admin",
     colorPalette: "green",
     icon: CheckCircle2Icon,
     iconColor: "green.fg",
   },
   preparing: {
-    label: "Menyiapkan data",
+    label: "Menyiapkan Layanan WMS",
     colorPalette: "blue",
     icon: LoaderIcon,
     iconColor: "blue.fg",
   },
   pending_review: {
-    label: "Menunggu review",
+    label: "Menunggu Validasi Admin",
     colorPalette: "orange",
     icon: LoaderIcon,
     iconColor: "orange.fg",

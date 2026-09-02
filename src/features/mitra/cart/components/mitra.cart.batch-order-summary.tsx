@@ -41,8 +41,8 @@ export const MitraCartBatchOrderSummary = (
 
   // Derived Values
   const isSelected = Boolean(activeBatch);
-  const isApproved =
-    activeBatch?.status === "approved" || activeBatch?.status === "ready";
+  const isPayable =
+    activeBatch?.status === "ready" || activeBatch?.status === "approved";
   const isPreparing = activeBatch?.status === "preparing";
   const isPendingReview = activeBatch?.status === "pending_review";
   const isRejected = activeBatch?.status === "rejected";
@@ -64,7 +64,7 @@ export const MitraCartBatchOrderSummary = (
   }, [activeBatch]);
 
   const handleCheckout = () => {
-    if (!activeBatch?.batchId || !isApproved) return;
+    if (!activeBatch?.batchId || !isPayable) return;
 
     checkoutMutation.mutate(
       {
@@ -104,7 +104,7 @@ export const MitraCartBatchOrderSummary = (
           {isSelected ? (
             <Badge
               colorPalette={
-                isApproved
+                isPayable
                   ? "green"
                   : isPendingReview
                     ? "orange"
@@ -116,12 +116,12 @@ export const MitraCartBatchOrderSummary = (
               }
               variant={"subtle"}
             >
-              {isApproved
-                ? "Disetujui (Siap Bayar)"
+              {isPayable
+                ? "Siap Bayar"
                 : isPendingReview
-                  ? "Menunggu Review"
+                  ? "Menunggu Validasi"
                   : isPreparing
-                    ? "Menyiapkan Data"
+                    ? "Menyiapkan Layanan"
                     : isRejected
                       ? "Ditolak"
                       : isExpired
@@ -200,26 +200,20 @@ export const MitraCartBatchOrderSummary = (
 
         <HStack
           justify={"space-between"}
-          color={isApproved ? "blue.fg" : undefined}
+          color={isPayable ? "blue.fg" : undefined}
         >
           <P fontSize={"md"} fontWeight={"semibold"}>
             {"Total Tagihan"}
           </P>
           {isSelected ? (
-            isPreparing ? (
-              <P color={"fg.subtle"} fontSize={"sm"} fontStyle={"italic"}>
-                {"Menunggu penyiapan data..."}
-              </P>
-            ) : (
-              <P fontSize={"lg"} fontWeight={"semibold"}>
-                <FormatNumber
-                  value={activeBatch?.totalPrice ?? 0}
-                  style={"currency"}
-                  currency={"IDR"}
-                  maximumFractionDigits={0}
-                />
-              </P>
-            )
+            <P fontSize={"lg"} fontWeight={"semibold"}>
+              <FormatNumber
+                value={activeBatch?.totalPrice ?? 0}
+                style={"currency"}
+                currency={"IDR"}
+                maximumFractionDigits={0}
+              />
+            </P>
           ) : (
             <P fontSize={"lg"} fontWeight={"semibold"}>
               {"-"}
@@ -240,12 +234,23 @@ export const MitraCartBatchOrderSummary = (
         </Alert.Root>
       )}
 
+      {isSelected && isPayable && (
+        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+          <AppIcon icon={InfoIcon} />
+          <Alert.Title>
+            {
+              "Totalan tagihan telah dikalkulasi. Klik 'Bayar Sekarang' untuk menerbitkan kode billing dan menyelesaikan pembayaran."
+            }
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
       {isSelected && isPreparing && (
         <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
             {
-              "Data layer sedang dipersiapkan oleh Interop Engine. Mohon menunggu hingga selesai sebelum direview internal."
+              "Layanan WMS sedang dipersiapkan oleh Interop Engine."
             }
           </Alert.Title>
         </Alert.Root>
@@ -260,7 +265,7 @@ export const MitraCartBatchOrderSummary = (
           <AppIcon icon={HourglassIcon} />
           <Alert.Title>
             {
-              "Permohonan batch sedang dalam proses peninjauan (review) oleh admin internal. Tombol pembayaran akan terbuka setelah disetujui (Approved)."
+              "Permohonan data sedang dalam proses validasi oleh admin internal."
             }
           </Alert.Title>
         </Alert.Root>
@@ -292,7 +297,7 @@ export const MitraCartBatchOrderSummary = (
         w={"full"}
         disabled={
           !isSelected ||
-          !isApproved ||
+          !isPayable ||
           !hasItems ||
           checkoutMutation.isPending ||
           isLoading
@@ -305,9 +310,9 @@ export const MitraCartBatchOrderSummary = (
         {!isSelected
           ? "Pilih Batch Terlebih Dahulu"
           : isPreparing
-            ? "Menyiapkan Data..."
+            ? "Menyiapkan Layanan..."
             : isPendingReview
-              ? "Menunggu Review Internal"
+              ? "Menunggu Validasi Admin"
               : isRejected
                 ? "Batch Ditolak"
                 : isExpired

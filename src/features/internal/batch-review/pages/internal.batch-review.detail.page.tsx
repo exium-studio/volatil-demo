@@ -116,7 +116,7 @@ export function InternalBatchReviewDetailPage() {
                   <ConfirmationTrigger
                     modalKey={`approve-detail-${batch.batchId}`}
                     title={"Setujui Permohonan Batch?"}
-                    description={`Apakah Anda yakin ingin menyetujui batch "${batch.batchId}" milik ${batch.mitraName}?`}
+                    description={`Apakah Anda yakin ingin memvalidasi dan menyetujui batch "${batch.batchId}" milik ${batch.mitraName}? Layanan data spasial akan diaktifkan untuk akun mitra.`}
                     confirmLabel={"Setujui Batch"}
                     colorPalette={"green"}
                     onConfirm={() => {

@@ -249,11 +249,12 @@ export async function createCartBatch(
     const response = await postCreateCartBatchApi(payload, signal);
     if (response.data) return response.data;
     const newBatchId = `btc-${Date.now()}`;
+    const calculatedTotal = 1200000 * payload.items.length;
     const newBatch: CartBatch = {
       batchId: newBatchId,
-      status: "preparing",
+      status: "ready",
       createdAt: new Date().toISOString(),
-      totalPrice: 1200000 * payload.items.length,
+      totalPrice: calculatedTotal,
       items: payload.items.map((it, idx) => ({
         id: `cbi-${Date.now()}-${idx}`,
         sourceLayerId: it.sourceLayerId ?? "geonode:layer",
@@ -268,18 +269,19 @@ export async function createCartBatch(
     localDummyBatches = [newBatch, ...localDummyBatches];
     return {
       batchId: newBatchId,
-      status: "preparing",
-      estimatedTotalPrice: 1200000 * payload.items.length,
+      status: "ready",
+      estimatedTotalPrice: calculatedTotal,
       createdAt: newBatch.createdAt,
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
       const newBatchId = `btc-${Date.now()}`;
+      const calculatedTotal = 1200000 * payload.items.length;
       const newBatch: CartBatch = {
         batchId: newBatchId,
-        status: "preparing",
+        status: "ready",
         createdAt: new Date().toISOString(),
-        totalPrice: 1200000 * payload.items.length,
+        totalPrice: calculatedTotal,
         items: payload.items.map((it, idx) => ({
           id: `cbi-${Date.now()}-${idx}`,
           sourceLayerId: it.sourceLayerId ?? "geonode:layer",
@@ -294,8 +296,8 @@ export async function createCartBatch(
       localDummyBatches = [newBatch, ...localDummyBatches];
       return {
         batchId: newBatchId,
-        status: "preparing",
-        estimatedTotalPrice: 1200000,
+        status: "ready",
+        estimatedTotalPrice: calculatedTotal,
         createdAt: newBatch.createdAt,
       };
     }
@@ -468,7 +470,7 @@ export async function reorderCartBatch(
     const oldBatch = localDummyBatches.find((b) => b.batchId === batchId);
     const newBatch: CartBatch = {
       batchId: newBatchId,
-      status: "preparing",
+      status: "ready",
       createdAt: new Date().toISOString(),
       totalPrice: oldBatch?.totalPrice ?? 1200000,
       items: oldBatch?.items ?? [],
@@ -476,7 +478,7 @@ export async function reorderCartBatch(
     localDummyBatches = [newBatch, ...localDummyBatches];
     return {
       batchId: newBatchId,
-      status: "preparing",
+      status: "ready",
       estimatedTotalPrice: newBatch.totalPrice,
       createdAt: newBatch.createdAt,
     };
@@ -486,7 +488,7 @@ export async function reorderCartBatch(
       const oldBatch = localDummyBatches.find((b) => b.batchId === batchId);
       const newBatch: CartBatch = {
         batchId: newBatchId,
-        status: "preparing",
+        status: "ready",
         createdAt: new Date().toISOString(),
         totalPrice: oldBatch?.totalPrice ?? 1200000,
         items: oldBatch?.items ?? [],
@@ -494,7 +496,7 @@ export async function reorderCartBatch(
       localDummyBatches = [newBatch, ...localDummyBatches];
       return {
         batchId: newBatchId,
-        status: "preparing",
+        status: "ready",
         estimatedTotalPrice: newBatch.totalPrice,
         createdAt: newBatch.createdAt,
       };

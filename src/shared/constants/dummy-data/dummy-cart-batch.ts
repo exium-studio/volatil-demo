@@ -49,7 +49,7 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
   },
   {
     batchId: "btc-2026-0825-002",
-    status: "preparing",
+    status: "ready",
     createdAt: new Date(now.getTime() - 1000 * 60 * 10).toISOString(),
     totalPrice: 950000,
     items: [

@@ -242,7 +242,7 @@ export const InternalBatchReviewDataView = () => {
                 }}
               >
                 {
-                  "Verifikasi dan berikan persetujuan terhadap batch permohonan data spasial yang telah diproses oleh Interop Engine."
+                  "Verifikasi dan berikan validasi persetujuan terhadap permohonan data spasial yang telah dibayar dan disiapkan oleh Interop Engine."
                 }
               </InfoTip>
             </HStack>

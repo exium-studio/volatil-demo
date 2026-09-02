@@ -130,7 +130,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"Total Estimasi:"}</P>
+            <P color={"fg.muted"}>{"Total Tagihan:"}</P>
             <P fontWeight={"semibold"} color={"blue.fg"}>
               <FormatNumber
                 value={batch.totalPrice}
@@ -174,7 +174,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
             fontSize={"xs"}
             color={"orange.fg"}
           >
-            <P>{"Menunggu review & persetujuan Admin Internal..."}</P>
+            <P>{"Menunggu validasi Admin Internal..."}</P>
           </HStack>
         )}
 
@@ -188,7 +188,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
             fontSize={"xs"}
             color={"blue.fg"}
           >
-            <P>{"Interop Engine sedang memproses & memotong data layer..."}</P>
+            <P>{"Layanan WMS sedang dipersiapkan..."}</P>
           </HStack>
         )}
 
