@@ -45,7 +45,11 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         }, openDelay);
       }
       if (children && typeof children === "object" && "props" in children) {
-        (children.props as { onPointerEnter?: (e: React.PointerEvent<HTMLElement>) => void }).onPointerEnter?.(e);
+        (
+          children.props as {
+            onPointerEnter?: (e: React.PointerEvent<HTMLElement>) => void;
+          }
+        ).onPointerEnter?.(e);
       }
     };
 
@@ -54,7 +58,11 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       blockedRef.current = false;
       setOpen(false);
       if (children && typeof children === "object" && "props" in children) {
-        (children.props as { onPointerLeave?: (e: React.PointerEvent<HTMLElement>) => void }).onPointerLeave?.(e);
+        (
+          children.props as {
+            onPointerLeave?: (e: React.PointerEvent<HTMLElement>) => void;
+          }
+        ).onPointerLeave?.(e);
       }
     };
 
@@ -62,8 +70,35 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       clearOpenTimer();
       blockedRef.current = true;
       setOpen(false);
+      if (
+        "onPointerDown" in restProps &&
+        typeof restProps.onPointerDown === "function"
+      ) {
+        (
+          restProps.onPointerDown as (
+            e: React.PointerEvent<HTMLElement>,
+          ) => void
+        )(e);
+      }
       if (children && typeof children === "object" && "props" in children) {
-        (children.props as { onPointerDown?: (e: React.PointerEvent<HTMLElement>) => void }).onPointerDown?.(e);
+        (
+          children.props as {
+            onPointerDown?: (e: React.PointerEvent<HTMLElement>) => void;
+          }
+        ).onPointerDown?.(e);
+      }
+    };
+
+    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+      if ("onClick" in restProps && typeof restProps.onClick === "function") {
+        (restProps.onClick as (e: React.MouseEvent<HTMLElement>) => void)(e);
+      }
+      if (children && typeof children === "object" && "props" in children) {
+        (
+          children.props as {
+            onClick?: (e: React.MouseEvent<HTMLElement>) => void;
+          }
+        ).onClick?.(e);
       }
     };
 
@@ -83,6 +118,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
           onPointerDown={handlePointerDown}
+          onClick={handleClick}
         >
           {children}
         </ChakraTooltip.Trigger>

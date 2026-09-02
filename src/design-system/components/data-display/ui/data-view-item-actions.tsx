@@ -156,9 +156,7 @@ export function DataViewSpreadActions<
         );
 
         const buttonWithTooltip = resolvedLabel ? (
-          <Tooltip content={resolvedLabel}>
-            {rawButton}
-          </Tooltip>
+          <Tooltip content={resolvedLabel}>{rawButton}</Tooltip>
         ) : (
           rawButton
         );
@@ -234,9 +232,7 @@ export function DataViewStickyActions<
         );
 
         const buttonWithTooltip = resolvedLabel ? (
-          <Tooltip content={resolvedLabel}>
-            {rawButton}
-          </Tooltip>
+          <Tooltip content={resolvedLabel}>{rawButton}</Tooltip>
         ) : (
           rawButton
         );
