@@ -86,7 +86,6 @@ export const TransactionDetailModalContent = (
     () => [
       { th: "Layer IGT", sortable: true },
       { th: "Basis IGT", sortable: true },
-      { th: "Metode Seleksi", sortable: true },
       { th: "Jumlah / Luas", sortable: true },
       { th: "Subtotal", sortable: true, align: "end" },
     ],
@@ -114,11 +113,6 @@ export const TransactionDetailModalContent = (
           {
             value: item.spatialBasis,
             td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
-            align: "start" as const,
-          },
-          {
-            value: item.selectionType,
-            td: <SelectionTypeBadge>{item.selectionType}</SelectionTypeBadge>,
             align: "start" as const,
           },
           {
@@ -256,6 +250,18 @@ export const TransactionDetailModalContent = (
                     size={"2xs"}
                   />
                 </HStack>
+              </HStack>
+
+              <HStack
+                align={"center"}
+                justify={"space-between"}
+                h={"32px"}
+                fontSize={"sm"}
+              >
+                <P color={"fg.subtle"}>{"Metode Pengajuan"}</P>
+                <SelectionTypeBadge size={"xs"}>
+                  {transaction.selectionType}
+                </SelectionTypeBadge>
               </HStack>
 
               <HStack

@@ -9,6 +9,7 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartBatch } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type { ActiveCartBatch } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { useNavigate } from "@tanstack/react-router";
 import {
   AlertCircleIcon,
@@ -149,6 +150,17 @@ export const MitraCartBatchOrderSummary = (
 
       {/* Summary Breakdown */}
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
+        <HStack justify={"space-between"}>
+          <P color={"fg.muted"}>{"Metode Pengajuan"}</P>
+          {isSelected && activeBatch?.selectionType ? (
+            <SelectionTypeBadge size={"xs"}>
+              {activeBatch.selectionType}
+            </SelectionTypeBadge>
+          ) : (
+            <P fontWeight={"medium"}>{"-"}</P>
+          )}
+        </HStack>
+
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Total Layer IGT"}</P>
           <P fontWeight={"medium"}>

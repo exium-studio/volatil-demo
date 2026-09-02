@@ -75,6 +75,7 @@ export type AddToCartLayerParam = {
   typeName: string;
   title?: string;
   spatialBasis?: "bidang" | "kawasan";
+  selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
   featuresCount?: number;
   areaHa?: number;
   cqlFilter?: string;
@@ -89,10 +90,11 @@ export const useAddToCartAll = () => {
   return useMutation({
     mutationFn: (params: AddToCartLayerParam) => {
       const payload: AddToCartBatchRequest = {
+        selectionType: params.selectionType ?? "catalog",
+        cqlFilter: params.cqlFilter,
         items: [
           {
             sourceLayerId: params.layerId,
-            selectionType: "catalog",
             cqlFilter: params.cqlFilter,
           },
         ],
@@ -160,11 +162,19 @@ export const useAddToCartMultipleLayers = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: { layers: AddToCartLayerParam[] }) => {
+    mutationFn: (params: {
+      layers: AddToCartLayerParam[];
+      selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
+      cqlFilter?: string;
+    }) => {
       const payload: AddToCartBatchRequest = {
+        selectionType:
+          params.selectionType ??
+          params.layers[0]?.selectionType ??
+          "catalog",
+        cqlFilter: params.cqlFilter ?? params.layers[0]?.cqlFilter,
         items: params.layers.map((l) => ({
           sourceLayerId: l.layerId,
-          selectionType: "catalog",
           cqlFilter: l.cqlFilter,
         })),
       };

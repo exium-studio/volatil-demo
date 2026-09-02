@@ -27,17 +27,17 @@ Sistem Volatil memiliki 2 role pengguna:
 - [Pusat Bantuan (Help Center)](#pusat-bantuan-help-center)
 - [Notifikasi & Inbox](#notifikasi--inbox)
 - [GeoServer Proxy Endpoints](#geoserver-proxy-endpoints)
-- [Mitra - Data Request & IGT Spasial](#mitra---data-request--igt-spasial)
-- [Mitra - Keranjang & Order Provisioning Spasial](#mitra---keranjang--order-provisioning-spasial)
-- [Mitra - My Data & Riwayat Transaksi](#mitra---my-data--riwayat-transaksi)
-- [Mitra - Dashboard & Statistik](#mitra---dashboard--statistik)
-- [Internal - Master IGT Layers & Data Management](#internal---master-igt-layers--data-management)
-- [Internal - Master GeoServer](#internal---master-geoserver)
-- [Internal - Interop Batch Review](#internal---interop-batch-review)
-- [Internal - Tarif & Pricing Management](#internal---tarif--pricing-management)
-- [Internal - Purchase Limit Configuration](#internal---purchase-limit-configuration)
-- [Internal - User Management](#internal---user-management)
-- [Internal - Dashboard & Statistik Sistem](#internal---dashboard--statistik-sistem)
+- [Data Request & IGT Spasial](#data-request--igt-spasial)
+- [Keranjang & Order Provisioning Spasial](#keranjang--order-provisioning-spasial)
+- [My Data & Riwayat Transaksi](#my-data--riwayat-transaksi)
+- [Dashboard & Statistik Mitra](#dashboard--statistik-mitra)
+- [Master IGT Layers & Data Management](#master-igt-layers--data-management)
+- [Master GeoServer](#master-geoserver)
+- [Interop Batch Review](#interop-batch-review)
+- [Tarif & Pricing Management](#tarif--pricing-management)
+- [Purchase Limit Configuration](#purchase-limit-configuration)
+- [User Management](#user-management)
+- [Dashboard & Statistik Sistem](#dashboard--statistik-sistem)
 
 ---
 
@@ -285,7 +285,7 @@ type GeoServerWorkspaceLayersResponse = {
 
 ---
 
-# Mitra - Data Request & IGT Spasial
+# Data Request & IGT Spasial
 
 Modul eksplorasi layer IGT aktif, filter spasial wilayah administrasi, serta query feature via WFS/AOI untuk pengajuan data mitra.
 
@@ -377,7 +377,7 @@ type MitraPricingPolicyResponse = {
 
 ---
 
-# Mitra - Keranjang & Order Provisioning Spasial
+# Keranjang & Order Provisioning Spasial
 
 Modul transaksi data IGT berbasis **Batch Interop Spasial**.
 
@@ -397,16 +397,17 @@ Modul transaksi data IGT berbasis **Batch Interop Spasial**.
 
 ```typescript
 type AddToCartBatchRequest = {
+  selectionType: "catalog" | "upload_aoi" | "draw_aoi";
+  administrativeFilter?: {
+    kodeProvinsi?: string;
+    kodeKabupaten?: string;
+    kodeKecamatan?: string;
+    kodeDesa?: string;
+  };
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  cqlFilter?: string;
   items: Array<{
     sourceLayerId: string;
-    selectionType: "catalog" | "upload_aoi" | "draw_aoi";
-    administrativeFilter?: {
-      kodeProvinsi?: string;
-      kodeKabupaten?: string;
-      kodeKecamatan?: string;
-      kodeDesa?: string;
-    };
-    aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
     cqlFilter?: string;
   }>;
 };
@@ -435,6 +436,15 @@ type CartBatchListResponse = {
   batches: Array<{
     batchId: string;
     status: BatchStatus;
+    selectionType: "catalog" | "upload_aoi" | "draw_aoi";
+    administrativeFilter?: {
+      kodeProvinsi?: string;
+      kodeKabupaten?: string;
+      kodeKecamatan?: string;
+      kodeDesa?: string;
+    };
+    aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+    cqlFilter?: string;
     createdAt: string;
     readyAt?: string;
     approvedAt?: string;
@@ -446,7 +456,6 @@ type CartBatchListResponse = {
       sourceLayerId: string;
       sourceLayerTitle: string;
       spatialBasis: "bidang" | "kawasan";
-      selectionType: "catalog" | "upload_aoi" | "draw_aoi";
       featuresCount: number;
       areaHa?: number;
       unitPrice: number;
@@ -521,7 +530,7 @@ type OrderPaymentStatusResponse = {
 
 ---
 
-# Mitra - My Data & Riwayat Transaksi
+# My Data & Riwayat Transaksi
 
 ## My Data (Layer Aktif Mitra)
 
@@ -545,6 +554,7 @@ type TransactionHistoryResponse = {
     billingCode: string;
     paymentMethod: string;
     transactionStatus: "pending" | "settled" | "expired" | "failed";
+    selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     totalAmount: number;
     createdAt: string;
     paidAt?: string;
@@ -554,7 +564,6 @@ type TransactionHistoryResponse = {
       sourceLayerId: string;
       sourceLayerTitle: string;
       spatialBasis: "bidang" | "kawasan";
-      selectionType: "catalog" | "upload_aoi" | "draw_aoi";
       snapshotFeaturesCount: number;
       snapshotAreaHa?: number;
       unitPrice: number;
@@ -611,7 +620,7 @@ export type OrderProvisionStatus =
 
 ---
 
-# Mitra - Dashboard & Statistik
+# Dashboard & Statistik Mitra
 
 ## Mitra Home Summary
 
@@ -624,7 +633,7 @@ export type OrderProvisionStatus =
 
 ---
 
-# Internal - Master IGT Layers & Data Management
+# Master IGT Layers & Data Management
 
 Modul master pengelolaan konfigurasi layer IGT spasial. Mengaitkan identifier layer dengan `geoserverId` terdaftar dan `typeName`.
 
@@ -701,7 +710,7 @@ type CreateMasterIgtLayerPayload = {
 
 ---
 
-# Internal - Master GeoServer
+# Master GeoServer
 
 Modul pengelolaan master kredensial dan endpoint GeoServer utama di lingkungan internal ATR/BPN.
 
@@ -771,7 +780,7 @@ type CreateMasterGeoserverPayload = {
 
 ---
 
-# Internal - Interop Batch Review
+# Interop Batch Review
 
 Modul bagi Internal User untuk memvalidasi dan memberikan persetujuan terhadap permohonan data spasial yang telah dibayar oleh mitra dan diproses oleh Interop Engine (`pending_review`).
 
@@ -788,6 +797,7 @@ type InternalBatchListResponse = {
     mitraId: string;
     mitraName: string;
     status: "pending_review";
+    selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     createdAt: string;
     items: Array<{
       id: string;
@@ -796,7 +806,6 @@ type InternalBatchListResponse = {
       spatialBasis: "bidang" | "kawasan";
       featuresCount: number;
       areaHa?: number;
-      selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     }>;
   }>;
   total: number;
@@ -832,7 +841,7 @@ type RejectBatchRequest = {
 
 ---
 
-# Internal - Tarif & Pricing Management
+# Tarif & Pricing Management
 
 Modul pengelolaan tarif PNBP layer IGT.
 
@@ -897,7 +906,7 @@ type CreatePricingPayload = {
 
 ---
 
-# Internal - Purchase Limit Configuration
+# Purchase Limit Configuration
 
 Modul pengelolaan ambang batas minimum pemesanan data spasial IGT (_purchase limit rules_).
 
@@ -934,7 +943,7 @@ type UpdatePurchaseLimitRequest = {
 
 ---
 
-# Internal - User Management
+# User Management
 
 Modul pengelolaan akun pengguna sistem, aktivasi status, dan peranan pengguna.
 
@@ -1006,7 +1015,7 @@ type AdminUsersStatisticsApiResponse = {
 
 ---
 
-# Internal - Dashboard & Statistik Sistem
+# Dashboard & Statistik Sistem
 
 Modul agregasi metrik operasional IGT untuk admin internal ATR/BPN.
 

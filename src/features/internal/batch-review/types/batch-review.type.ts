@@ -3,6 +3,7 @@
 import type {
   CartBatchItem,
   CartBatchStatus,
+  SelectionType,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import type {
   PaginatedParams,
@@ -20,6 +21,7 @@ export type InternalBatchItem = {
   mitraId: string;
   mitraName: string;
   status: CartBatchStatus;
+  selectionType: SelectionType;
   createdAt: string;
   readyAt?: string;
   expiredAt?: string;

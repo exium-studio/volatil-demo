@@ -253,6 +253,10 @@ export async function createCartBatch(
     const newBatch: CartBatch = {
       batchId: newBatchId,
       status: "ready",
+      selectionType: payload.selectionType ?? "catalog",
+      administrativeFilter: payload.administrativeFilter,
+      aoiPolygon: payload.aoiPolygon,
+      cqlFilter: payload.cqlFilter,
       createdAt: new Date().toISOString(),
       totalPrice: calculatedTotal,
       items: payload.items.map((it, idx) => ({
@@ -260,7 +264,6 @@ export async function createCartBatch(
         sourceLayerId: it.sourceLayerId ?? "geonode:layer",
         sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
         spatialBasis: "bidang",
-        selectionType: it.selectionType ?? "catalog",
         featuresCount: 15,
         unitPrice: 50000,
         subtotalPrice: 1200000,
@@ -280,6 +283,10 @@ export async function createCartBatch(
       const newBatch: CartBatch = {
         batchId: newBatchId,
         status: "ready",
+        selectionType: payload.selectionType ?? "catalog",
+        administrativeFilter: payload.administrativeFilter,
+        aoiPolygon: payload.aoiPolygon,
+        cqlFilter: payload.cqlFilter,
         createdAt: new Date().toISOString(),
         totalPrice: calculatedTotal,
         items: payload.items.map((it, idx) => ({
@@ -287,7 +294,6 @@ export async function createCartBatch(
           sourceLayerId: it.sourceLayerId ?? "geonode:layer",
           sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
           spatialBasis: "bidang",
-          selectionType: it.selectionType ?? "catalog",
           featuresCount: 15,
           unitPrice: 50000,
           subtotalPrice: 1200000,
@@ -471,6 +477,10 @@ export async function reorderCartBatch(
     const newBatch: CartBatch = {
       batchId: newBatchId,
       status: "ready",
+      selectionType: oldBatch?.selectionType ?? "catalog",
+      administrativeFilter: oldBatch?.administrativeFilter,
+      aoiPolygon: oldBatch?.aoiPolygon,
+      cqlFilter: oldBatch?.cqlFilter,
       createdAt: new Date().toISOString(),
       totalPrice: oldBatch?.totalPrice ?? 1200000,
       items: oldBatch?.items ?? [],
@@ -489,6 +499,10 @@ export async function reorderCartBatch(
       const newBatch: CartBatch = {
         batchId: newBatchId,
         status: "ready",
+        selectionType: oldBatch?.selectionType ?? "catalog",
+        administrativeFilter: oldBatch?.administrativeFilter,
+        aoiPolygon: oldBatch?.aoiPolygon,
+        cqlFilter: oldBatch?.cqlFilter,
         createdAt: new Date().toISOString(),
         totalPrice: oldBatch?.totalPrice ?? 1200000,
         items: oldBatch?.items ?? [],

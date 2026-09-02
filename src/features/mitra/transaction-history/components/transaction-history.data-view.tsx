@@ -34,6 +34,7 @@ import type {
   TransactionStatus,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -42,6 +43,8 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
 import { EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
+
+const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
 
 export const TransactionHistoryDataView = () => {
   // Navigation
@@ -53,13 +56,13 @@ export const TransactionHistoryDataView = () => {
   // States — Centralized query/action parameters
   const [params, setParams] = useState<TransactionHistoryQueryParams>({
     page: 1,
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    pageSize: ITEMS_PER_PAGE_DEFAULT,
     search: "",
     status: undefined,
   });
 
   // Derived Values
-  const debouncedSearch = useDebouncedValue(params.search ?? "");
+  const debouncedSearch = useDebouncedValue(params.search ?? "", 300);
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
@@ -144,9 +147,14 @@ export const TransactionHistoryDataView = () => {
               td: (
                 <VStack align={"start"} w={"200px"}>
                   <ClampedP title={itemNames}>{itemNames || "-"}</ClampedP>
-                  <ClampedP fontSize={"sm"} color={"fg.subtle"}>
-                    {`${item.items.length} Layer IGT`}
-                  </ClampedP>
+                  <HStack gap={"xs"} align={"center"}>
+                    <ClampedP fontSize={"xs"} color={"fg.subtle"}>
+                      {`${item.items.length} Layer IGT`}
+                    </ClampedP>
+                    <SelectionTypeBadge size={"xs"}>
+                      {item.selectionType}
+                    </SelectionTypeBadge>
+                  </HStack>
                 </VStack>
               ),
               align: "start" as const,

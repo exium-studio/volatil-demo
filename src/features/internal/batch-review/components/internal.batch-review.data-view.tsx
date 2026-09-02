@@ -30,6 +30,7 @@ import type {
 } from "@/features/internal/batch-review/types/batch-review.type";
 import type { CartBatchStatus } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -97,6 +98,7 @@ export const InternalBatchReviewDataView = () => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "ID Batch & Pemohon", sortable: true },
+      { th: "Metode", sortable: true },
       { th: "Status", sortable: true },
       { th: "Jumlah Layer", sortable: true, align: "center" },
       { th: "Total Estimasi PNBP", sortable: true, align: "end" },
@@ -117,6 +119,15 @@ export const InternalBatchReviewDataView = () => {
                   {batch.batchId}
                 </P>
               </VStack>
+            ),
+            align: "start" as const,
+          },
+          {
+            value: batch.selectionType,
+            td: (
+              <SelectionTypeBadge size={"xs"}>
+                {batch.selectionType}
+              </SelectionTypeBadge>
             ),
             align: "start" as const,
           },

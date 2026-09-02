@@ -33,7 +33,6 @@ const normalizeCartBatchItem = (raw: any): CartBatchItem => {
       raw.sourceLayerId ??
       "",
     spatialBasis: raw.spatialBasis ?? raw.spatial_basis ?? "bidang",
-    selectionType: raw.selectionType ?? raw.selection_type ?? "catalog",
     featuresCount: Number(
       raw.featuresCount ?? raw.features_count ?? raw.count ?? 0,
     ),
@@ -72,6 +71,7 @@ const normalizeInternalBatchItem = (raw: any): InternalBatchItem => {
     mitraName:
       raw.mitraName ?? raw.mitra_name ?? raw.userName ?? raw.name ?? "Mitra",
     status: raw.status ?? "pending_review",
+    selectionType: raw.selectionType ?? raw.selection_type ?? "catalog",
     createdAt: raw.createdAt ?? raw.created_at ?? new Date().toISOString(),
     readyAt: raw.readyAt ?? raw.ready_at ?? undefined,
     expiredAt: raw.expiredAt ?? raw.expired_at ?? undefined,

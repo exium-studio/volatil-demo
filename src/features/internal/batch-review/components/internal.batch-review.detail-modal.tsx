@@ -93,7 +93,10 @@ const InternalBatchReviewDetailModalContent = (
             <VStack align={"end"} gap={0}>
               <P fontSize={"xs"} color={"fg.subtle"}>{"Waktu Pengajuan"}</P>
               <P fontSize={"xs"}>{formatUtcDateTime(batch.createdAt, preferredTimezone)}</P>
-              <BatchStatusBadge mt={"xs"}>{batch.status}</BatchStatusBadge>
+              <HStack gap={"xs"} mt={"xs"}>
+                <SelectionTypeBadge size={"xs"}>{batch.selectionType}</SelectionTypeBadge>
+                <BatchStatusBadge>{batch.status}</BatchStatusBadge>
+              </HStack>
             </VStack>
           </HStack>
 
@@ -114,7 +117,6 @@ const InternalBatchReviewDetailModalContent = (
                   <P fontWeight={"medium"} fontSize={"sm"}>{item.sourceLayerTitle}</P>
                   <HStack gap={"xs"} mt={"2xs"}>
                     <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>
-                    <SelectionTypeBadge size={"xs"}>{item.selectionType}</SelectionTypeBadge>
                   </HStack>
                 </VStack>
 

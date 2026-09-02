@@ -15,6 +15,7 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
   {
     batchId: "btc-2026-0825-001",
     status: "ready",
+    selectionType: "draw_aoi",
     createdAt: new Date(now.getTime() - 1000 * 60 * 35).toISOString(),
     readyAt: readyAt1.toISOString(),
     expiredAt: expiredAt1.toISOString(),
@@ -25,7 +26,6 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
         sourceLayerId: "geonode:bidang_tanah_rdtr",
         sourceLayerTitle: "Bidang Tanah RDTR Perkotaan",
         spatialBasis: "bidang",
-        selectionType: "draw_aoi",
         featuresCount: 24,
         unitPrice: 50000,
         subtotalPrice: 1200000,
@@ -37,7 +37,6 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
         sourceLayerId: "geonode:kawasan_lindung_geologi",
         sourceLayerTitle: "Kawasan Lindung Geologi Nasional",
         spatialBasis: "kawasan",
-        selectionType: "catalog",
         featuresCount: 2,
         areaHa: 13,
         unitPrice: 50000,
@@ -50,6 +49,7 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
   {
     batchId: "btc-2026-0825-002",
     status: "ready",
+    selectionType: "catalog",
     createdAt: new Date(now.getTime() - 1000 * 60 * 10).toISOString(),
     totalPrice: 950000,
     items: [
@@ -58,7 +58,6 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
         sourceLayerId: "geonode:zona_nilai_tanah_2026",
         sourceLayerTitle: "Zona Nilai Tanah (ZNT) 2026",
         spatialBasis: "bidang",
-        selectionType: "catalog",
         featuresCount: 19,
         unitPrice: 50000,
         subtotalPrice: 950000,
@@ -70,6 +69,7 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
   {
     batchId: "btc-2026-0825-003",
     status: "ready",
+    selectionType: "upload_aoi",
     createdAt: new Date(now.getTime() - 1000 * 60 * 130).toISOString(),
     readyAt: readyAt2.toISOString(),
     expiredAt: expiredAt2.toISOString(),
@@ -80,7 +80,6 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
         sourceLayerId: "geonode:peta_tematik_hutan",
         sourceLayerTitle: "Kawasan Hutan Produksi Terbatas",
         spatialBasis: "kawasan",
-        selectionType: "upload_aoi",
         featuresCount: 1,
         areaHa: 10,
         unitPrice: 50000,

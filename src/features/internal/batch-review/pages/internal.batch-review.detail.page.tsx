@@ -11,7 +11,6 @@ import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/conf
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
@@ -33,6 +32,7 @@ import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-la
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useQuery } from "@tanstack/react-query";
@@ -58,31 +58,26 @@ export function InternalBatchReviewDetailPage() {
   // Mutations
   const approveMutation = useApproveBatch();
 
-  if (isLoading) {
+  if (isLoading || !batch) {
     return (
-      <PanelContentContainer h={"auto"}>
-        <Skeleton h={"200px"} w={"full"} />
-        <Skeleton h={"400px"} w={"full"} />
-      </PanelContentContainer>
-    );
-  }
-
-  if (!batch) {
-    return (
-      <PanelContentContainer h={"auto"}>
-        <Center flex={1} p={"xl"}>
-          <P color={"fg.muted"}>{"Batch tidak ditemukan."}</P>
-        </Center>
+      <PanelContentContainer>
+        <Container.Root>
+          <Container.Body>
+            <VStack gap={"md"} p={"md"}>
+              <Skeleton h={"40px"} w={"full"} />
+              <Skeleton h={"200px"} w={"full"} />
+            </VStack>
+          </Container.Body>
+        </Container.Root>
       </PanelContentContainer>
     );
   }
 
   return (
-    <PanelContentContainer flex={1} position={"relative"}>
-      <Container.Root withContext flex={1}>
-        <Container.Body overflowY={"auto"}>
-          {/* Header */}
-          <HeaderContainer px={"xs"}>
+    <PanelContentContainer>
+      <Container.Root>
+        <Container.Body>
+          <HeaderContainer>
             <HStack
               justify={"space-between"}
               align={"center"}
@@ -162,6 +157,16 @@ export function InternalBatchReviewDetailPage() {
             </VStack>
 
             <HStack gap={"lg"} wrap={"wrap"}>
+              <VStack gap={"xs"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Metode Pengajuan"}
+                </P>
+
+                <SelectionTypeBadge size={"sm"}>
+                  {batch.selectionType}
+                </SelectionTypeBadge>
+              </VStack>
+
               <VStack gap={"xs"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Status"}

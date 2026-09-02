@@ -12,6 +12,7 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { CART_BATCH_STATUS_CONFIG_MAP } from "@/features/mitra/cart/constants/cart.config";
 import type { MitraCartBatchItemProps } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { Trash2Icon } from "lucide-react";
 import { memo } from "react";
 
@@ -61,7 +62,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
       onClick={() => onSelect(batch.batchId)}
     >
       <VStack align={"stretch"} gap={"sm"}>
-        {/* Header: Batch Number, Status & Radio Indicator */}
+        {/* Header: Batch Number, Selection Type, Status & Radio Indicator */}
         <HStack
           wrap={"wrap"}
           justify={"space-between"}
@@ -89,6 +90,10 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
           </HStack>
 
           <HStack gap={"sm"} align={"center"}>
+            <SelectionTypeBadge size={"sm"}>
+              {batch.selectionType}
+            </SelectionTypeBadge>
+
             <Badge
               size={"sm"}
               variant={"subtle"}
@@ -105,6 +110,13 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
 
         {/* Content Details */}
         <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
+          <HStack justify={"space-between"} align={"center"}>
+            <P color={"fg.muted"}>{"Metode Pengajuan:"}</P>
+            <SelectionTypeBadge size={"xs"}>
+              {batch.selectionType}
+            </SelectionTypeBadge>
+          </HStack>
+
           <HStack justify={"space-between"} align={"center"}>
             <P color={"fg.muted"}>{"Daftar Layer IGT:"}</P>
             <ClampedP maxW={"65%"} textAlign={"end"} color={"fg.default"}>

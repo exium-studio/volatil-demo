@@ -51,6 +51,12 @@ export type PaymentMethod =
 
 export type CartBatchItemPayload = {
   sourceLayerId: string;
+  cqlFilter?: string;
+  wfsUrl?: string;
+  wmsUrl?: string;
+};
+
+export type AddToCartBatchRequest = {
   selectionType: SelectionType;
   administrativeFilter?: {
     kodeProvinsi?: string;
@@ -60,11 +66,6 @@ export type CartBatchItemPayload = {
   };
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   cqlFilter?: string;
-  wfsUrl?: string;
-  wmsUrl?: string;
-};
-
-export type AddToCartBatchRequest = {
   items: CartBatchItemPayload[];
 };
 
@@ -82,7 +83,6 @@ export type CartBatchItem = {
   sourceLayerId: string;
   sourceLayerTitle: string;
   spatialBasis: SpatialBasisType;
-  selectionType: SelectionType;
   featuresCount: number;
   areaHa?: number;
   unitPrice: number;
@@ -94,6 +94,15 @@ export type CartBatchItem = {
 export type CartBatch = {
   batchId: string;
   status: CartBatchStatus;
+  selectionType: SelectionType;
+  administrativeFilter?: {
+    kodeProvinsi?: string;
+    kodeKabupaten?: string;
+    kodeKecamatan?: string;
+    kodeDesa?: string;
+  };
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  cqlFilter?: string;
   createdAt: string;
   readyAt?: string;
   approvedAt?: string;

@@ -22,7 +22,6 @@ export type TransactionOrderItem = {
   sourceLayerId: string;
   sourceLayerTitle: string;
   spatialBasis: SpatialBasisType;
-  selectionType: SelectionType;
   snapshotFeaturesCount: number;
   snapshotAreaHa?: number;
   unitPrice: number;
@@ -39,6 +38,7 @@ export type TransactionRecord = {
   billingCode: string;
   paymentMethod: string;
   transactionStatus: TransactionStatus;
+  selectionType: SelectionType;
   totalAmount: number;
   createdAt: string;
   paidAt?: string;
