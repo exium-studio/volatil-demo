@@ -126,27 +126,30 @@ const MitraHomeFinancialFlowChartContent = (
           />
 
           <defs>
-            {chart.series.map((item) => (
-              <linearGradient
-                key={item.name}
-                id={`gradient-${item.name}`}
-                x1={"0"}
-                y1={"0"}
-                x2={"0"}
-                y2={"1"}
-              >
-                <stop
-                  offset={"0%"}
-                  stopColor={chart.color(item.color)}
-                  stopOpacity={0.2}
-                />
-                <stop
-                  offset={"100%"}
-                  stopColor={chart.color(item.color)}
-                  stopOpacity={0}
-                />
-              </linearGradient>
-            ))}
+            {chart.series.map((item) => {
+              const seriesName = String(item.name);
+              return (
+                <linearGradient
+                  key={seriesName}
+                  id={`gradient-${seriesName}`}
+                  x1={"0"}
+                  y1={"0"}
+                  x2={"0"}
+                  y2={"1"}
+                >
+                  <stop
+                    offset={"0%"}
+                    stopColor={chart.color(item.color)}
+                    stopOpacity={0.2}
+                  />
+                  <stop
+                    offset={"100%"}
+                    stopColor={chart.color(item.color)}
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              );
+            })}
           </defs>
 
           <CartesianGrid stroke={chart.color("border")} vertical={false} />
@@ -170,19 +173,22 @@ const MitraHomeFinancialFlowChartContent = (
             stroke={chart.color("border")}
           />
 
-          {chart.series.map((item) => (
-            <Area
-              key={item.name}
-              type={"linear"}
-              isAnimationActive={false}
-              dataKey={chart.key(item.name)}
-              name={String(item.label ?? "Sale")}
-              stroke={chart.color(item.color)}
-              strokeWidth={2}
-              fill={`url(#gradient-${item.name})`}
-              dot={false}
-            />
-          ))}
+          {chart.series.map((item) => {
+            const seriesName = String(item.name);
+            return (
+              <Area
+                key={seriesName}
+                type={"linear"}
+                isAnimationActive={false}
+                dataKey={chart.key(seriesName)}
+                name={String(item.label ?? "Sale")}
+                stroke={chart.color(item.color)}
+                strokeWidth={2}
+                fill={`url(#gradient-${seriesName})`}
+                dot={false}
+              />
+            );
+          })}
         </AreaChart>
       </ResponsiveContainer>
     </Chart.Root>

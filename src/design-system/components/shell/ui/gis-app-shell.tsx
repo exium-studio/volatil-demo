@@ -60,7 +60,6 @@ import { recordRecentNav } from "@/shared/utils/navigation/recent-nav.utils";
 import { UserIcon } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 
-
 // -------------------------------------------------------------------------------------
 
 const DEFAULT_SIDEBAR_EXPANDED = false;
@@ -82,9 +81,9 @@ export const GisAppShell = (props: GisAppShellProps) => {
   useEffect(() => {
     const userData = getUserSession();
     const role = userData?.role ?? "mitra";
-    const navsMap = (role === "internal"
-      ? INTERNAL_APP_NAVS_MAP
-      : APP_NAVS_MAP) as Record<string, NavItem>;
+    const navsMap = (
+      role === "internal" ? INTERNAL_APP_NAVS_MAP : APP_NAVS_MAP
+    ) as Record<string, NavItem>;
     const navKey = getNavKeyFromPathname(navsMap, pathname);
     const navItem = navKey ? navsMap[navKey] : undefined;
     if (navItem?.pathname && navItem?.titleKey) {
@@ -325,9 +324,7 @@ const SidebarToggleButton = (props: IconButtonProps) => {
         onClick={handleToggle}
       >
         <IconButton
-          aria-label={
-            expanded ? t["action.collapse"]() : t["action.expand"]()
-          }
+          aria-label={expanded ? t["action.collapse"]() : t["action.expand"]()}
           variant={"blend"}
           size={"2xs"}
           minW={"16px"}
@@ -413,12 +410,7 @@ const Content = () => {
     });
 
     return configs;
-  }, [
-    fetchedLayers,
-    wmsVisible,
-    enabledLayerIds,
-    layerOpacities,
-  ]);
+  }, [fetchedLayers, wmsVisible, enabledLayerIds, layerOpacities]);
 
   // Derived Values
   const sidebarPx = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
@@ -550,7 +542,7 @@ const MobileBottomNav = () => {
       bg={"bg.body"}
       borderTop={"1px solid"}
       borderColor={"border.subtle"}
-      p={"sm"}
+      pt={"sm"}
       pb={"md"}
       align={"center"}
       zIndex={2}
@@ -571,6 +563,8 @@ const MobileBottomNav = () => {
               });
             }
           }}
+          pl={"sm"}
+          pr={"xs"}
         />
       </Box>
 
@@ -588,9 +582,10 @@ const MobileBottomNav = () => {
           h={"auto"}
           p={"xs"}
           ml={"xs"}
+          mr={"sm"}
           flexShrink={0}
         >
-          <VStack gap={"2xs"} align={"center"} justify={"center"}>
+          <VStack align={"center"} justify={"center"} gap={"2xs"} minW={"50px"}>
             <AppIcon icon={UserIcon} color={"fg.muted"} />
 
             <ClampedP

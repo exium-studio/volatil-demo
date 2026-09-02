@@ -160,7 +160,7 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
 
         <HStack gap={"xs"} w={"full"}>
           {FIELD_STATUSES.map((config) => {
-            const value = dataSummary.field[config.key];
+            const value = dataSummary?.field?.[config.key] ?? 0;
 
             return (
               <ProgressBar
@@ -176,7 +176,7 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
 
         <HStack wrap={"wrap"} gap={6}>
           {FIELD_STATUSES.map((config) => {
-            const value = dataSummary.field[config.key];
+            const value = dataSummary?.field?.[config.key] ?? 0;
             return (
               <MitraHomeDataSummaryLegend
                 key={config.key}
@@ -195,7 +195,7 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
 
         <HStack gap={"xs"} w={"full"}>
           {AREA_STATUSES.map((config) => {
-            const value = dataSummary.area[config.key];
+            const value = dataSummary?.area?.[config.key] ?? 0;
             return (
               <ProgressBar
                 key={config.key}
@@ -210,7 +210,7 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
 
         <HStack wrap={"wrap"} gap={6}>
           {AREA_STATUSES.map((config) => {
-            const value = dataSummary.area[config.key];
+            const value = dataSummary?.area?.[config.key] ?? 0;
             return (
               <MitraHomeDataSummaryLegend
                 key={config.key}
