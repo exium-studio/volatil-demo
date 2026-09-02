@@ -32,6 +32,7 @@ export const VScrollContainer = forwardRef<
     children,
     borderColor = "an1",
     showTopBorderOnScroll = true,
+    showBottomBorderOnScroll = false,
     showScrollButtons = false,
     enableScroll = false,
     ...restProps
@@ -137,8 +138,16 @@ export const VScrollContainer = forwardRef<
         ref={containerRef}
         tabIndex={-1}
         overflowY={"auto"}
-        borderTop={showTopBorderOnScroll ? "1px solid" : "none"}
-        borderColor={scrollTop !== 0 ? borderColor : "transparent"}
+        borderTop={showTopBorderOnScroll ? "1px solid" : undefined}
+        borderBottom={showBottomBorderOnScroll ? "1px solid" : undefined}
+        borderTopColor={
+          showTopBorderOnScroll && (scrollTop !== 0 || showUp)
+            ? borderColor
+            : "transparent"
+        }
+        borderBottomColor={
+          showBottomBorderOnScroll && showDown ? borderColor : "transparent"
+        }
         transition={"200ms"}
         h={"full"}
         w={"full"}
@@ -150,10 +159,16 @@ export const VScrollContainer = forwardRef<
   );
 });
 
-export const HScrollContainer = (props: HScrollContainerProps) => {
+export const HScrollContainer = forwardRef<
+  HTMLDivElement,
+  HScrollContainerProps
+>((props, ref) => {
   // Props
   const {
     children,
+    borderColor = "an1",
+    showLeftBorderOnScroll = false,
+    showRightBorderOnScroll = true,
     showScrollButtons = false,
     enableScroll = false,
     ...restProps
@@ -161,10 +176,12 @@ export const HScrollContainer = (props: HScrollContainerProps) => {
 
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
   const scrollVelocity = useRef(0);
   const rafId = useRef<number | null>(null);
 
   // States
+  const [scrollLeft, setScrollLeft] = useState<number>(0);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
 
@@ -172,9 +189,10 @@ export const HScrollContainer = (props: HScrollContainerProps) => {
     const el = containerRef.current;
     if (!el) return;
 
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    setShowLeft(scrollLeft > 5);
-    setShowRight(scrollLeft < scrollWidth - clientWidth - 5);
+    const { scrollLeft: currentScrollLeft, scrollWidth, clientWidth } = el;
+    setShowLeft(currentScrollLeft > 5);
+    setShowRight(currentScrollLeft < scrollWidth - clientWidth - 5);
+    setScrollLeft(currentScrollLeft);
   }, []);
 
   const ensureRaf = (el: HTMLDivElement) => {
@@ -304,6 +322,17 @@ export const HScrollContainer = (props: HScrollContainerProps) => {
         ref={containerRef}
         overflowX={"auto"}
         overflowY={"hidden"}
+        borderLeft={showLeftBorderOnScroll ? "1px solid" : undefined}
+        borderRight={showRightBorderOnScroll ? "1px solid" : undefined}
+        borderLeftColor={
+          showLeftBorderOnScroll && (showLeft || scrollLeft !== 0)
+            ? borderColor
+            : "transparent"
+        }
+        borderRightColor={
+          showRightBorderOnScroll && showRight ? borderColor : "transparent"
+        }
+        transition={"200ms"}
         w={"full"}
         {...restProps}
       >
@@ -311,4 +340,4 @@ export const HScrollContainer = (props: HScrollContainerProps) => {
       </HStack>
     </Box>
   );
-};
+});
