@@ -1,4 +1,4 @@
-// src/features/notification/components/notification.inbox-list.tsx
+// src/features/notification/components/notification.inbox.data-view.tsx
 
 import {
   Button,
@@ -63,7 +63,6 @@ export const NotificationInboxDataView = memo(() => {
   const {
     items,
     isLoading,
-    // total,
     unreadCount = 0,
     hasNextPage,
     isFetchingNextPage,
@@ -97,13 +96,25 @@ export const NotificationInboxDataView = memo(() => {
     <VStack
       flex={1}
       align={"stretch"}
-      // gap={"md"}
       overflowY={"auto"}
       p={"md"}
     >
       {/* Inbox Actions Bar */}
-      <HStack justify={"end"} align={"center"} mb={"md"}>
-        <HStack gap={2}>
+      <HStack
+        justify={"space-between"}
+        align={"center"}
+        wrap={"wrap"}
+        gap={"xs"}
+        mb={"md"}
+        w={"full"}
+      >
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {unreadCount > 0
+            ? `${unreadCount} pesan belum dibaca`
+            : "Semua pesan telah dibaca"}
+        </P>
+
+        <HStack gap={2} wrap={"wrap"}>
           {unreadCount > 0 && (
             <Button
               size={"xs"}
@@ -184,91 +195,124 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       align={"start"}
       justify={"space-between"}
       p={"sm"}
-      gap={"md"}
+      gap={["sm", null, "md"]}
       bg={item.isRead ? "bg.body" : "bg.subtle"}
       borderWidth={"1px"}
       borderColor={"border.subtle"}
       shadow={"sm"}
       rounded={theme.radii.container}
+      w={"full"}
     >
-      <HStack align={"start"} gap={"md"} flex={1}>
-        <Circle
-          aspectRatio={1}
-          w={"24px"}
-          h={"24px"}
-          p={1}
-          bg={item.isRead ? "bg.muted" : `${colorPalette}.muted`}
-          color={item.isRead ? "fg.muted" : `${colorPalette}.fg`}
-          flexShrink={0}
+      <Circle
+        aspectRatio={1}
+        w={"28px"}
+        h={"28px"}
+        p={1}
+        bg={item.isRead ? "bg.muted" : `${colorPalette}.muted`}
+        color={item.isRead ? "fg.muted" : `${colorPalette}.fg`}
+        flexShrink={0}
+        mt={"2px"}
+      >
+        <AppIcon icon={IconComponent} size={"sm"} />
+      </Circle>
+
+      <VStack flex={1} minW={0} gap={"xs"} align={"stretch"}>
+        {/* Header Row: Title, Dot, Badge, Date, Delete */}
+        <HStack
+          justify={"space-between"}
+          align={["start", null, "center"]}
+          wrap={"wrap"}
+          gap={"xs"}
+          w={"full"}
         >
-          <AppIcon icon={IconComponent} size={"sm"} />
-        </Circle>
+          {/* Left: Title + Dot + Badge */}
+          <HStack gap={"xs"} align={"center"} wrap={"wrap"} flex={1} minW={0}>
+            <P
+              fontWeight={item.isRead ? "medium" : "semibold"}
+              wordBreak={"break-word"}
+            >
+              {item.title}
+            </P>
 
-        <VStack flex={1} gap={"sm"}>
-          <HStack justify={"space-between"}>
-            <HStack gap={2} align={"center"}>
-              <P fontWeight={item.isRead ? "medium" : "semibold"}>
-                {item.title}
-              </P>
+            {!item.isRead && (
+              <Box
+                w={"6px"}
+                h={"6px"}
+                rounded={"full"}
+                bg={"blue.500"}
+                flexShrink={0}
+              />
+            )}
 
-              {!item.isRead && (
-                <Box w={"6px"} h={"6px"} rounded={"full"} bg={"blue.500"} />
-              )}
-
-              <Badge
-                variant={"subtle"}
-                colorPalette={colorPalette}
-                textTransform={"capitalize"}
-              >
-                {item.category}
-              </Badge>
-            </HStack>
-
-            <HStack gap={"md"} align={"center"}>
-              <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
-                {formatUtcDateTime(item.createdAt, preferredTimezone)}
-              </P>
-
-              <ConfirmationTrigger
-                modalKey={`delete-inbox-item-${item.id}`}
-                title={"Hapus Pesan?"}
-                description={"Pesan ini akan dihapus dari inbox Anda."}
-                confirmLabel={"Hapus"}
-                colorPalette={"red"}
-                onConfirm={() => onDelete(item.id)}
-              >
-                <IconButton
-                  size={"2xs"}
-                  variant={"subtle"}
-                  aria-label={"Hapus pesan"}
-                  rounded={"full"}
-                >
-                  <AppIcon icon={XIcon} size={"sm"} />
-                </IconButton>
-              </ConfirmationTrigger>
-            </HStack>
+            <Badge
+              variant={"subtle"}
+              colorPalette={colorPalette}
+              textTransform={"capitalize"}
+              size={"xs"}
+              flexShrink={0}
+            >
+              {item.category}
+            </Badge>
           </HStack>
 
-          <VStack align={"start"} gap={"sm"} flex={1}>
-            <P color={"fg.muted"} lineHeight={"tall"}>
-              {item.message}
+          {/* Right: Date + Delete Action */}
+          <HStack
+            gap={"xs"}
+            align={"center"}
+            flexShrink={0}
+            ml={["0", null, "auto"]}
+          >
+            <P fontSize={"2xs"} color={"fg.subtle"} whiteSpace={"nowrap"}>
+              {formatUtcDateTime(item.createdAt, preferredTimezone)}
             </P>
-          </VStack>
 
-          {!item.isRead && (
-            <HStack justify={"flex-end"}>
-              <Button
-                size={"xs"}
+            <ConfirmationTrigger
+              modalKey={`delete-inbox-item-${item.id}`}
+              title={"Hapus Pesan?"}
+              description={"Pesan ini akan dihapus dari inbox Anda."}
+              confirmLabel={"Hapus"}
+              colorPalette={"red"}
+              onConfirm={() => onDelete(item.id)}
+            >
+              <IconButton
+                size={"2xs"}
                 variant={"ghost"}
-                onClick={() => onMarkAsRead(item.id)}
+                aria-label={"Hapus pesan"}
+                rounded={"full"}
               >
-                <AppIcon icon={CheckCheckIcon} size={"xs"} />
-                {"Tandai dibaca"}
-              </Button>
-            </HStack>
-          )}
-        </VStack>
-      </HStack>
+                <AppIcon icon={XIcon} size={"xs"} />
+              </IconButton>
+            </ConfirmationTrigger>
+          </HStack>
+        </HStack>
+
+        {/* Message Content */}
+        <Box w={"full"} pt={"2xs"}>
+          <P
+            color={"fg.muted"}
+            lineHeight={"tall"}
+            fontSize={"sm"}
+            wordBreak={"break-word"}
+            whiteSpace={"pre-line"}
+          >
+            {item.message}
+          </P>
+        </Box>
+
+        {/* Action Button: Mark As Read */}
+        {!item.isRead && (
+          <HStack justify={"end"} pt={"2xs"}>
+            <Button
+              size={"xs"}
+              variant={"ghost"}
+              onClick={() => onMarkAsRead(item.id)}
+            >
+              <AppIcon icon={CheckCheckIcon} size={"xs"} />
+              {"Tandai dibaca"}
+            </Button>
+          </HStack>
+        )}
+      </VStack>
     </HStack>
   );
 });
