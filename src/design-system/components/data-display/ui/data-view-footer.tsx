@@ -43,7 +43,7 @@ export const DataViewFooter = (props: DataViewFooterProps) => {
       <HStack
         wrap={"wrap"}
         align={"center"}
-        justify={["center", null, "space-between"]}
+        justify={"space-between"}
         gapX={4}
         gapY={1}
         w={"full"}
