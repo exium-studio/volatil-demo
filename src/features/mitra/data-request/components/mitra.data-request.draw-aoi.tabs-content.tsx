@@ -312,6 +312,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
 
         <MitraDataRequestIgtLayerDataView
           cqlFilter={aoiCqlFilter}
+          selectionType={"draw_aoi"}
           showFilter={false}
           onSelectIgtLayer={(layer) => {
             selectLayer(layer.id);

@@ -52,6 +52,20 @@ const normalizeCartBatchItem = (raw: any): CartBatchItem => {
     ),
     wfsUrl: raw.wfsUrl ?? raw.wfs_url,
     wmsUrl: raw.wmsUrl ?? raw.wms_url,
+    previewWmsUrl:
+      raw.previewWmsUrl ??
+      raw.preview_wms_url ??
+      raw.wmsUrl ??
+      raw.wms_url ??
+      (raw.sourceLayerId ? `/api/proxy/wms?layerId=${raw.sourceLayerId}` : undefined),
+    previewWfsUrl:
+      raw.previewWfsUrl ??
+      raw.preview_wfs_url ??
+      raw.wfsUrl ??
+      raw.wfs_url ??
+      (raw.sourceLayerId ? `/api/proxy/wfs?layerId=${raw.sourceLayerId}` : undefined),
+    externalWfsUrl: raw.externalWfsUrl ?? raw.external_wfs_url ?? null,
+    externalWmsUrl: raw.externalWmsUrl ?? raw.external_wms_url ?? null,
   };
 };
 
@@ -218,7 +232,7 @@ export const approveBatchApi = async (
 ): Promise<ApiResponse<void>> => {
   return apiClient.put<ApiResponse<void>>(
     `/api/internal/interop/batches/${payload.batchId}/approve`,
-    {},
+    payload.items ? { items: payload.items } : {},
     { signal },
   );
 };

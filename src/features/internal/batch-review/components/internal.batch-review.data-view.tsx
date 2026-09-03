@@ -1,9 +1,9 @@
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
-import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
@@ -18,10 +18,9 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
 import { InternalBatchReviewDetailTrigger } from "@/features/internal/batch-review/components/internal.batch-review.detail-modal";
-import { InternalBatchReviewRejectTrigger } from "@/features/internal/batch-review/components/internal.batch-review.reject-modal";
 import {
-  useApproveBatch,
   useInternalBatchesQuery,
 } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type {
@@ -44,7 +43,6 @@ import {
   EyeIcon,
   InboxIcon,
   LayersIcon,
-  XCircleIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
@@ -83,9 +81,6 @@ export const InternalBatchReviewDataView = () => {
     status: params.status as CartBatchStatus | "all",
   });
 
-  // Mutations
-  const approveMutation = useApproveBatch();
-
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const isSearching = Boolean(params.search?.trim() || params.status !== "all");
@@ -100,12 +95,21 @@ export const InternalBatchReviewDataView = () => {
       { th: "ID Batch & Pemohon", sortable: true },
       { th: "Metode", sortable: true },
       { th: "Status", sortable: true },
+      { th: "WMS URL (Volatil)", sortable: false },
       { th: "Jumlah Layer", sortable: true, align: "center" },
       { th: "Total Estimasi PNBP", sortable: true, align: "end" },
       { th: "Waktu Pengajuan", sortable: true },
     ];
 
     const items = rawItems.map((batch) => {
+      const firstItem = batch.items?.[0];
+      const previewWmsUrl =
+        firstItem?.previewWmsUrl ||
+        firstItem?.wmsUrl ||
+        (firstItem?.sourceLayerId
+          ? `/api/proxy/wms?layerId=${firstItem.sourceLayerId}`
+          : "");
+
       return {
         id: batch.batchId,
         data: batch,
@@ -113,7 +117,7 @@ export const InternalBatchReviewDataView = () => {
           {
             value: batch.batchId,
             td: (
-              <VStack align={"start"} gap={0} w={"220px"}>
+              <VStack align={"start"} gap={0} w={"200px"}>
                 <ClampedP fontWeight={"medium"}>{batch.mitraName}</ClampedP>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {batch.batchId}
@@ -134,6 +138,27 @@ export const InternalBatchReviewDataView = () => {
           {
             value: batch.status,
             td: <BatchStatusBadge>{batch.status}</BatchStatusBadge>,
+          },
+          {
+            value: previewWmsUrl,
+            td: previewWmsUrl ? (
+              <HStack gap={"xs"} align={"center"} maxW={"220px"}>
+                <ClampedP fontSize={"xs"} fontFamily={"mono"} color={"fg.muted"} truncate>
+                  {previewWmsUrl}
+                </ClampedP>
+                <ClipboardButton
+                  value={previewWmsUrl}
+                  variant={"ghost"}
+                  size={"xs"}
+                  aria-label={"Salin WMS URL"}
+                />
+              </HStack>
+            ) : (
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {"-"}
+              </P>
+            ),
+            align: "start" as const,
           },
           {
             value: batch.items?.length ?? 0,
@@ -193,25 +218,21 @@ export const InternalBatchReviewDataView = () => {
       },
       {
         key: "approve-batch",
-        label: "Setujui Batch",
+        label: "Setujui Permohonan",
         icon: CheckCircle2Icon,
         colorPalette: "green",
         hidden: (batch: InternalBatchItem) => batch.status !== "pending_review",
         modal: {
           triggerComponent: (batch: InternalBatchItem) => (
-            <ConfirmationTrigger
+            <InternalBatchReviewApproveTrigger
               modalKey={`approve-batch-${batch.batchId}`}
-              title={"Setujui Permohonan Batch?"}
-              description={`Apakah Anda yakin ingin menyetujui batch permohonan data "${batch.batchId}" milik ${batch.mitraName}?`}
-              confirmLabel={"Setujui Batch"}
-              colorPalette={"green"}
-              onConfirm={() => {
-                approveMutation.mutate({ batchId: batch.batchId });
-              }}
+              batch={batch}
             />
           ),
         },
       },
+      // Action Tolak di-hide / di-comment sementara menunggu mekanisme rekber sebelum settle di SIMPONI
+      /*
       {
         key: "reject-batch",
         label: "Tolak Batch",
@@ -227,6 +248,7 @@ export const InternalBatchReviewDataView = () => {
           ),
         },
       },
+      */
     ];
 
     return {
@@ -235,7 +257,7 @@ export const InternalBatchReviewDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [rawItems, preferredTimezone, approveMutation, navigate]);
+  }, [rawItems, preferredTimezone, navigate]);
 
   return (
     <Container.Root withContext={true} flex={1}>
@@ -243,7 +265,7 @@ export const InternalBatchReviewDataView = () => {
         <HeaderContainer>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
-              <Heading>{"Review Batch Interop"}</Heading>
+              <Heading>{"Review Permohonan"}</Heading>
 
               <InfoTip
                 variant={"icon"}

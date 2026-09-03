@@ -114,11 +114,11 @@ const InternalMitraRegistrationApproveModalContent = (
           <Alert.Root status={"info"} size={"sm"}>
             <Alert.Indicator />
             <Alert.Content>
-              <Alert.Description>
+              <Alert.Title>
                 {
                   "Menyetujui permohonan ini akan otomatis mengaktifkan akun kemitraan di Volatil dan mengirimkan email pemberitahuan beserta Berkas Kontrak resmi ke mitra."
                 }
-              </Alert.Description>
+              </Alert.Title>
             </Alert.Content>
           </Alert.Root>
 

@@ -6,8 +6,8 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
-import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -19,10 +19,9 @@ import { useMapInstanceStore } from "@/design-system/components/map/stores/map.i
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { P } from "@/design-system/components/typography/ui/p";
-import { InternalBatchReviewRejectTrigger } from "@/features/internal/batch-review/components/internal.batch-review.reject-modal";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
 import {
-  useApproveBatch,
   useInternalBatchDetailQuery,
 } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type { BatchLayerDataViewProps } from "@/features/internal/batch-review/types/batch-review.type";
@@ -43,7 +42,6 @@ import {
   EyeOffIcon,
   MapPinIcon,
   TablePropertiesIcon,
-  XCircleIcon,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -54,9 +52,6 @@ export function InternalBatchReviewDetailPage() {
 
   // Queries
   const { data: batch, isLoading } = useInternalBatchDetailQuery(batchId);
-
-  // Mutations
-  const approveMutation = useApproveBatch();
 
   if (isLoading || !batch) {
     return (
@@ -90,50 +85,23 @@ export function InternalBatchReviewDetailPage() {
                   onClick={() => navigate({ to: "/internal/batch-review" })}
                 />
 
-                <Heading>{"Detail Batch Interop"}</Heading>
+                <Heading>{"Review Permohonan Detail"}</Heading>
               </HStack>
 
               {batch.status === "pending_review" && (
                 <HStack gap={2}>
-                  <InternalBatchReviewRejectTrigger
+                  <InternalBatchReviewApproveTrigger
                     batch={batch}
-                    modalKey={`reject-detail-${batch.batchId}`}
+                    modalKey={`approve-detail-${batch.batchId}`}
                     onSuccessRedirect={() => {
                       void navigate({ to: "/internal/batch-review" });
                     }}
                   >
-                    <Button variant={"outline"} colorPalette={"red"}>
-                      <AppIcon icon={XCircleIcon} />
-                      {"Tolak"}
-                    </Button>
-                  </InternalBatchReviewRejectTrigger>
-
-                  <ConfirmationTrigger
-                    modalKey={`approve-detail-${batch.batchId}`}
-                    title={"Setujui Permohonan Batch?"}
-                    description={`Apakah Anda yakin ingin memvalidasi dan menyetujui batch "${batch.batchId}" milik ${batch.mitraName}? Layanan data spasial akan diaktifkan untuk akun mitra.`}
-                    confirmLabel={"Setujui Batch"}
-                    colorPalette={"green"}
-                    onConfirm={() => {
-                      approveMutation.mutate(
-                        { batchId: batch.batchId },
-                        {
-                          onSuccess: () => {
-                            void navigate({ to: "/internal/batch-review" });
-                          },
-                        },
-                      );
-                    }}
-                  >
-                    <Button
-                      primary={true}
-                      colorPalette={"green"}
-                      loading={approveMutation.isPending}
-                    >
+                    <Button primary={true} colorPalette={"green"}>
                       <AppIcon icon={CheckCircle2Icon} />
-                      {"Setujui"}
+                      {"Setujui Permohonan"}
                     </Button>
-                  </ConfirmationTrigger>
+                  </InternalBatchReviewApproveTrigger>
                 </HStack>
               )}
             </HStack>
@@ -231,63 +199,97 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT", sortable: true },
       { th: "Basis IGT", sortable: true },
+      { th: "WMS URL (Volatil)", sortable: false },
       { th: "Jumlah / Luas", sortable: true, align: "center" },
       { th: "Estimasi Biaya", sortable: true, align: "end" },
       { th: "Lihat di Peta", align: "center" },
     ];
 
     const items: FormattedListItem<CartBatchItem>[] = (batch.items ?? []).map(
-      (item) => ({
-        id: item.id,
-        data: item,
-        columns: [
-          {
-            value: item.sourceLayerTitle,
-            td: (
-              <VStack align={"start"}>
-                <P fontWeight={"medium"}>{item.sourceLayerTitle}</P>
+      (item) => {
+        const previewUrl =
+          item.previewWmsUrl ||
+          item.wmsUrl ||
+          (item.sourceLayerId ? `/api/proxy/wms?layerId=${item.sourceLayerId}` : "");
+
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: item.sourceLayerTitle,
+              td: (
+                <VStack align={"start"}>
+                  <P fontWeight={"medium"}>{item.sourceLayerTitle}</P>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {item.sourceLayerId}
+                  </P>
+                </VStack>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.spatialBasis,
+              td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
+              align: "start" as const,
+            },
+            {
+              value: previewUrl,
+              td: previewUrl ? (
+                <HStack gap={"xs"} align={"center"} maxW={"220px"}>
+                  <ClampedP
+                    fontSize={"xs"}
+                    fontFamily={"mono"}
+                    color={"fg.muted"}
+                    truncate
+                  >
+                    {previewUrl}
+                  </ClampedP>
+                  <ClipboardButton
+                    value={previewUrl}
+                    variant={"ghost"}
+                    size={"xs"}
+                    aria-label={"Salin WMS URL"}
+                  />
+                </HStack>
+              ) : (
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {item.sourceLayerId}
+                  {"-"}
                 </P>
-              </VStack>
-            ),
-            align: "start" as const,
-          },
-          {
-            value: item.spatialBasis,
-            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
-            align: "start" as const,
-          },
-          {
-            value: item.featuresCount,
-            td: (
-              <P textAlign={"center"}>
-                {item.spatialBasis === "kawasan"
-                  ? `${item.areaHa ?? 0} Ha`
-                  : `${item.featuresCount} Bidang`}
-              </P>
-            ),
-            align: "center" as const,
-          },
-          {
-            value: item.subtotalPrice ?? 0,
-            td: <P>{formatCurrency(item.subtotalPrice ?? 0)}</P>,
-            align: "end" as const,
-          },
-          {
-            value: enabledLayerIds[item.sourceLayerId] ?? false,
-            td: (
-              <Switch
-                checked={enabledLayerIds[item.sourceLayerId] ?? false}
-                onCheckedChange={({ checked }) => {
-                  setLayerEnabled(item.sourceLayerId, checked);
-                }}
-              />
-            ),
-            align: "center" as const,
-          },
-        ],
-      }),
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.featuresCount,
+              td: (
+                <P textAlign={"center"}>
+                  {item.spatialBasis === "kawasan"
+                    ? `${item.areaHa ?? 0} Ha`
+                    : `${item.featuresCount} Bidang`}
+                </P>
+              ),
+              align: "center" as const,
+            },
+            {
+              value: item.subtotalPrice ?? 0,
+              td: <P>{formatCurrency(item.subtotalPrice ?? 0)}</P>,
+              align: "end" as const,
+            },
+            {
+              value: enabledLayerIds[item.sourceLayerId] ?? false,
+              td: (
+                <Switch
+                  checked={enabledLayerIds[item.sourceLayerId] ?? false}
+                  onCheckedChange={({ checked }) => {
+                    setLayerEnabled(item.sourceLayerId, checked);
+                  }}
+                />
+              ),
+              align: "center" as const,
+            },
+          ],
+        };
+      },
     );
 
     const itemActions = [

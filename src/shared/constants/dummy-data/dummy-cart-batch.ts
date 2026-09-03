@@ -14,7 +14,7 @@ const expiredAt2 = new Date(readyAt2.getTime() + 1000 * 60 * 60 * 24);
 export const DUMMY_CART_BATCHES: CartBatch[] = [
   {
     batchId: "btc-2026-0825-001",
-    status: "ready",
+    status: "pending_payment",
     selectionType: "draw_aoi",
     createdAt: new Date(now.getTime() - 1000 * 60 * 35).toISOString(),
     readyAt: readyAt1.toISOString(),
@@ -48,7 +48,7 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
   },
   {
     batchId: "btc-2026-0825-002",
-    status: "ready",
+    status: "pending_payment",
     selectionType: "catalog",
     createdAt: new Date(now.getTime() - 1000 * 60 * 10).toISOString(),
     totalPrice: 950000,
@@ -68,7 +68,7 @@ export const DUMMY_CART_BATCHES: CartBatch[] = [
   },
   {
     batchId: "btc-2026-0825-003",
-    status: "ready",
+    status: "pending_payment",
     selectionType: "upload_aoi",
     createdAt: new Date(now.getTime() - 1000 * 60 * 130).toISOString(),
     readyAt: readyAt2.toISOString(),

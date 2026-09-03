@@ -54,6 +54,12 @@ export const CART_BATCH_STATUS_CONFIG_MAP: Record<
   CartBatchStatus,
   CartBatchStatusConfig
 > = {
+  pending_payment: {
+    label: "Menunggu Pembayaran",
+    colorPalette: "orange",
+    icon: CheckCircle2Icon,
+    iconColor: "orange.fg",
+  },
   ready: {
     label: "Siap Bayar",
     colorPalette: "green",

@@ -546,6 +546,7 @@ const UploadAoiAttributeList = memo(
 
           <MitraDataRequestIgtLayerDataView
             cqlFilter={aoiCqlFilter}
+            selectionType={"upload_aoi"}
             showFilter={false}
             onSelectIgtLayer={(layer) => {
               selectLayer(layer.id);

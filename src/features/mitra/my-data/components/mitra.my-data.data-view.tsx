@@ -42,6 +42,8 @@ import { useMemo, useState, useTransition } from "react";
 
 const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Semua Status", value: "" },
+  { label: "Sedang Diproses", value: "processing" },
+  { label: "Menunggu Verifikasi", value: "pending_verification" },
   { label: "Aktif", value: "active" },
   { label: "Tidak Aktif", value: "expired" },
 ];
@@ -87,7 +89,29 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
 
     const items: FormattedListItem[] = myData.items.map((item: MyDataItem) => {
       const isActive = item.status === "active";
+      const isProcessing = item.status === "processing";
+      const isPendingVerification = item.status === "pending_verification";
       const layerDisplayName = item.title || item.id.replace(/_/g, " ");
+      const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
+      const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
+
+      const statusBadge = isProcessing ? (
+        <Badge colorPalette={"blue"} variant={"subtle"}>
+          {"Sedang Diproses"}
+        </Badge>
+      ) : isPendingVerification ? (
+        <Badge colorPalette={"orange"} variant={"subtle"}>
+          {"Menunggu Verifikasi"}
+        </Badge>
+      ) : isActive ? (
+        <Badge colorPalette={"green"} variant={"subtle"}>
+          {"Aktif"}
+        </Badge>
+      ) : (
+        <Badge colorPalette={"red"} variant={"subtle"}>
+          {"Tidak Aktif"}
+        </Badge>
+      );
 
       return {
         id: item.id,
@@ -108,23 +132,23 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             align: "start" as const,
           },
           {
-            value: item.wfsUrl ?? "",
-            td: item.wfsUrl ? (
+            value: effectiveWfsUrl ?? "",
+            td: effectiveWfsUrl ? (
               <HStack gap={"xs"} align={"center"} maxW={"240px"}>
                 <ExternalLink
-                  href={item.wfsUrl}
+                  href={effectiveWfsUrl}
                   display={"inline-flex"}
                   alignItems={"center"}
                   minW={0}
                   flex={1}
                 >
                   <ClampedP fontSize={"sm"} truncate>
-                    {item.wfsUrl}
+                    {effectiveWfsUrl}
                   </ClampedP>
                 </ExternalLink>
 
                 <ClipboardButton
-                  value={item.wfsUrl}
+                  value={effectiveWfsUrl}
                   variant={"ghost"}
                   aria-label={"Salin URL WFS"}
                   flexShrink={0}
@@ -136,23 +160,23 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             align: "start" as const,
           },
           {
-            value: item.wmsUrl ?? "",
-            td: item.wmsUrl ? (
+            value: effectiveWmsUrl ?? "",
+            td: effectiveWmsUrl ? (
               <HStack gap={"xs"} align={"center"} maxW={"240px"}>
                 <ExternalLink
-                  href={item.wmsUrl}
+                  href={effectiveWmsUrl}
                   display={"inline-flex"}
                   alignItems={"center"}
                   minW={0}
                   flex={1}
                 >
                   <ClampedP fontSize={"sm"} truncate>
-                    {item.wmsUrl}
+                    {effectiveWmsUrl}
                   </ClampedP>
                 </ExternalLink>
 
                 <ClipboardButton
-                  value={item.wmsUrl}
+                  value={effectiveWmsUrl}
                   variant={"ghost"}
                   aria-label={"Salin URL WMS"}
                   flexShrink={0}
@@ -165,14 +189,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           },
           {
             value: item.status,
-            td: (
-              <Badge
-                colorPalette={isActive ? "green" : "red"}
-                variant={"subtle"}
-              >
-                {isActive ? "Aktif" : "Tidak Aktif"}
-              </Badge>
-            ),
+            td: statusBadge,
             align: "start" as const,
           },
           {

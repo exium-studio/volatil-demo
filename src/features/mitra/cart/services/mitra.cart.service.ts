@@ -252,12 +252,13 @@ export async function createCartBatch(
     const calculatedTotal = 1200000 * payload.items.length;
     const newBatch: CartBatch = {
       batchId: newBatchId,
-      status: "ready",
+      status: "pending_payment",
       selectionType: payload.selectionType ?? "catalog",
       administrativeFilter: payload.administrativeFilter,
       aoiPolygon: payload.aoiPolygon,
       cqlFilter: payload.cqlFilter,
       createdAt: new Date().toISOString(),
+      expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
       totalPrice: calculatedTotal,
       items: payload.items.map((it, idx) => ({
         id: `cbi-${Date.now()}-${idx}`,
@@ -272,7 +273,7 @@ export async function createCartBatch(
     localDummyBatches = [newBatch, ...localDummyBatches];
     return {
       batchId: newBatchId,
-      status: "ready",
+      status: "pending_payment",
       estimatedTotalPrice: calculatedTotal,
       createdAt: newBatch.createdAt,
     };
@@ -282,12 +283,13 @@ export async function createCartBatch(
       const calculatedTotal = 1200000 * payload.items.length;
       const newBatch: CartBatch = {
         batchId: newBatchId,
-        status: "ready",
+        status: "pending_payment",
         selectionType: payload.selectionType ?? "catalog",
         administrativeFilter: payload.administrativeFilter,
         aoiPolygon: payload.aoiPolygon,
         cqlFilter: payload.cqlFilter,
         createdAt: new Date().toISOString(),
+        expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
         totalPrice: calculatedTotal,
         items: payload.items.map((it, idx) => ({
           id: `cbi-${Date.now()}-${idx}`,
@@ -302,7 +304,7 @@ export async function createCartBatch(
       localDummyBatches = [newBatch, ...localDummyBatches];
       return {
         batchId: newBatchId,
-        status: "ready",
+        status: "pending_payment",
         estimatedTotalPrice: calculatedTotal,
         createdAt: newBatch.createdAt,
       };

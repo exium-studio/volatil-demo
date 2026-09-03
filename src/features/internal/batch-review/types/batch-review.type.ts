@@ -38,8 +38,15 @@ export type InternalBatchListResponse = {
   pagination: PaginationMeta;
 };
 
+export type ApproveBatchItemPayload = {
+  id: string;
+  externalWmsUrl: string;
+  externalWfsUrl?: string;
+};
+
 export type ApproveBatchPayload = {
   batchId: string;
+  items?: ApproveBatchItemPayload[];
 };
 
 export type RejectBatchPayload = {

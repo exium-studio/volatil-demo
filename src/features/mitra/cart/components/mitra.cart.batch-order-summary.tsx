@@ -42,8 +42,9 @@ export const MitraCartBatchOrderSummary = (
 
   // Derived Values
   const isSelected = Boolean(activeBatch);
-  const isPayable =
-    activeBatch?.status === "ready" || activeBatch?.status === "approved";
+  const isPendingPayment = activeBatch?.status === "pending_payment";
+  const isPayable = isPendingPayment;
+  const isApproved = activeBatch?.status === "approved";
   const isPreparing = activeBatch?.status === "preparing";
   const isPendingReview = activeBatch?.status === "pending_review";
   const isRejected = activeBatch?.status === "rejected";
@@ -105,29 +106,33 @@ export const MitraCartBatchOrderSummary = (
           {isSelected ? (
             <Badge
               colorPalette={
-                isPayable
-                  ? "green"
-                  : isPendingReview
-                    ? "orange"
-                    : isPreparing
-                      ? "blue"
-                      : isRejected || isExpired
-                        ? "red"
-                        : "gray"
+                isPendingPayment
+                  ? "orange"
+                  : isApproved
+                    ? "green"
+                    : isPendingReview
+                      ? "orange"
+                      : isPreparing
+                        ? "blue"
+                        : isRejected || isExpired
+                          ? "red"
+                          : "gray"
               }
               variant={"subtle"}
             >
-              {isPayable
-                ? "Siap Bayar"
-                : isPendingReview
-                  ? "Menunggu Validasi"
-                  : isPreparing
-                    ? "Menyiapkan Layanan"
-                    : isRejected
-                      ? "Ditolak"
-                      : isExpired
-                        ? "Kadaluwarsa"
-                        : "Draft"}
+              {isPendingPayment
+                ? "Menunggu Pembayaran"
+                : isApproved
+                  ? "Disetujui Admin"
+                  : isPendingReview
+                    ? "Menunggu Validasi"
+                    : isPreparing
+                      ? "Menyiapkan Layanan"
+                      : isRejected
+                        ? "Ditolak"
+                        : isExpired
+                          ? "Kadaluwarsa"
+                          : "Draft"}
             </Badge>
           ) : (
             <Badge colorPalette={"gray"} variant={"subtle"}>
@@ -261,9 +266,7 @@ export const MitraCartBatchOrderSummary = (
         <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
-            {
-              "Layanan WMS sedang dipersiapkan oleh Interop Engine."
-            }
+            {"Layanan WMS sedang dipersiapkan oleh Interop Engine."}
           </Alert.Title>
         </Alert.Root>
       )}
@@ -303,6 +306,15 @@ export const MitraCartBatchOrderSummary = (
         </Alert.Root>
       )}
 
+      {isSelected && isApproved && (
+        <Alert.Root status={"success"} colorPalette={"green"} variant={"subtle"}>
+          <AppIcon icon={InfoIcon} />
+          <Alert.Title>
+            {"Batch permohonan telah disetujui oleh admin internal. Layanan data spasial dapat diakses melalui menu Data Saya."}
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
       {/* Action Button */}
       <Button
         primary={true}
@@ -321,15 +333,17 @@ export const MitraCartBatchOrderSummary = (
         <AppIcon icon={CreditCardIcon} />
         {!isSelected
           ? "Pilih Batch Terlebih Dahulu"
-          : isPreparing
-            ? "Menyiapkan Layanan..."
-            : isPendingReview
-              ? "Menunggu Validasi Admin"
-              : isRejected
-                ? "Batch Ditolak"
-                : isExpired
-                  ? "Batch Kadaluwarsa"
-                  : "Bayar Sekarang"}
+          : isApproved
+            ? "Batch Sudah Disetujui"
+            : isPreparing
+              ? "Menyiapkan Layanan..."
+              : isPendingReview
+                ? "Menunggu Validasi Admin"
+                : isRejected
+                  ? "Batch Ditolak"
+                  : isExpired
+                    ? "Batch Kadaluwarsa"
+                    : "Bayar Sekarang"}
       </Button>
 
       <HStack align={"center"} justify={"center"} gap={1}>

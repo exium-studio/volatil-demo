@@ -2,10 +2,12 @@
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import type { SelectionType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 
 export type MitraDataRequestIgtLayerDataViewProps = {
   cqlFilter?: string;
+  selectionType?: SelectionType;
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
   onApplyFilter?: (filters: FilterAdministrativeAreaValues) => void;
   showFilter?: boolean;

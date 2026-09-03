@@ -3,7 +3,11 @@
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PaginatedResponse } from "@/shared/types/common-response.type";
 
-export type MyDataStatus = "active" | "expired";
+export type MyDataStatus =
+  | "processing"
+  | "pending_verification"
+  | "active"
+  | "expired";
 export type MyDataSpatialBasis = "bidang" | "kawasan";
 
 export type MyDataItem = {
@@ -12,6 +16,8 @@ export type MyDataItem = {
   spatialBasis: MyDataSpatialBasis;
   wfsUrl: string | null;
   wmsUrl: string | null;
+  externalWfsUrl?: string | null;
+  externalWmsUrl?: string | null;
   wfsTypeName?: string;
   wmsLayers?: string;
   status: MyDataStatus;

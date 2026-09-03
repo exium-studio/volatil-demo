@@ -52,6 +52,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
     // Props
     const {
       cqlFilter: baseCqlFilter,
+      selectionType = "catalog",
       onSelectIgtLayer,
       onApplyFilter,
       showFilter = true,
@@ -178,6 +179,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
       if (isEmptyArray(validLayers)) return;
 
       addToCartMultipleMutation.mutate({
+        selectionType,
+        cqlFilter: combinedCqlFilter,
         layers: validLayers.map((layer) => {
           const idx = filteredLayers.findIndex((l) => l.id === layer.id);
           const summary = summaryQueries[idx]?.data as
@@ -188,6 +191,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             typeName: layer.wfs?.wfsTypeName ?? "",
             title: layer.title,
             spatialBasis: layer.spatialBasis,
+            selectionType,
             featuresCount: summary?.totalCount ?? 0,
             areaHa: summary?.totalAreaHa ?? 0,
             cqlFilter: combinedCqlFilter,
@@ -204,6 +208,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
       if (isEmptyArray(validLayers)) return;
 
       addToCartMultipleMutation.mutate({
+        selectionType,
+        cqlFilter: combinedCqlFilter,
         layers: validLayers.map((layer) => {
           const idx = filteredLayers.findIndex((l) => l.id === layer.id);
           const summary = summaryQueries[idx]?.data as
@@ -214,6 +220,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             typeName: layer.wfs?.wfsTypeName ?? "",
             title: layer.title,
             spatialBasis: layer.spatialBasis,
+            selectionType,
             featuresCount: summary?.totalCount ?? 0,
             areaHa: summary?.totalAreaHa ?? 0,
             cqlFilter: combinedCqlFilter,
@@ -230,6 +237,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
       if (isEmptyArray(validLayers)) return;
 
       addToCartMultipleMutation.mutate({
+        selectionType,
+        cqlFilter: combinedCqlFilter,
         layers: validLayers.map((layer) => {
           const idx = filteredLayers.findIndex((l) => l.id === layer.id);
           const summary = summaryQueries[idx]?.data as
@@ -240,6 +249,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             typeName: layer.wfs?.wfsTypeName ?? "",
             title: layer.title,
             spatialBasis: layer.spatialBasis,
+            selectionType,
             featuresCount: summary?.totalCount ?? 0,
             areaHa: summary?.totalAreaHa ?? 0,
             cqlFilter: combinedCqlFilter,

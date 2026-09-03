@@ -19,6 +19,7 @@ export const MitraDataRequestCatalogTabsContent = (props: TabsContentProps) => {
     <Tabs.Content p={0} flex={1} display={"flex"} {...props} value={"catalog"}>
       {!layerId || !selectedIgtLayer ? (
         <MitraDataRequestIgtLayerDataView
+          selectionType={"catalog"}
           onSelectIgtLayer={(layer) => {
             selectLayer(layer.id);
           }}

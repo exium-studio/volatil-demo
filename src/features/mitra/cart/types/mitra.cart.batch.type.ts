@@ -18,6 +18,7 @@ export type SpatialBasisTypeConfig = {
 };
 
 export type BatchStatus =
+  | "pending_payment"
   | "preparing"
   | "pending_review"
   | "approved"
@@ -99,6 +100,10 @@ export type CartBatchItem = {
   subtotalPrice: number;
   wfsUrl?: string;
   wmsUrl?: string;
+  previewWmsUrl?: string;
+  previewWfsUrl?: string;
+  externalWfsUrl?: string | null;
+  externalWmsUrl?: string | null;
 };
 
 export type CartBatch = {
