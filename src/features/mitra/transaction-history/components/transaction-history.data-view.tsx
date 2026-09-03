@@ -230,7 +230,7 @@ export const TransactionHistoryDataView = () => {
   }, [transactionHistory.items, preferredTimezone, navigate]);
 
   return (
-    <VStack w={"full"}>
+    <VStack flex={1} w={"full"}>
       {/* Header Controls */}
       <HStack
         wrap={"wrap"}
@@ -291,6 +291,7 @@ export const TransactionHistoryDataView = () => {
             justifyContent={"center"}
             w={"full"}
             py={"xl"}
+            bg={"bg.body"}
           >
             {debouncedSearch || params.status ? (
               <NoResultState
