@@ -134,7 +134,8 @@
     "measure": "Measure",
     "draw": "Draw",
     "show_less": "Show less",
-    "back_to_main_page": "Back to main page"
+    "back_to_main_page": "Back to main page",
+    "no_actions": "No actions available"
   },
   "auth": {
     "signin": {

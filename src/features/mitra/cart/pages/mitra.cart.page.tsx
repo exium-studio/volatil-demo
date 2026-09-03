@@ -155,7 +155,9 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
         w={"full"}
         p={"md"}
       >
-        {isBatchesLoading && <Skeleton flex={1} w={"full"} rounded={0} />}
+        {isBatchesLoading && (
+          <Skeleton flex={1} w={"full"} minH={"250px"} rounded={0} />
+        )}
 
         {!isBatchesLoading && (
           <>

@@ -181,7 +181,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
           </HStack>
         )}
 
-        {batch.status === "preparing" && (
+        {batch.status === "processing" && (
           <HStack
             align={"center"}
             gap={"xs"}

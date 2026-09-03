@@ -16,6 +16,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { updateClickOrigin } from "@/design-system/components/overlay/stores/dialog-animation-store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -266,6 +267,20 @@ export function DataListItemActionsTrigger<
   // Hooks
   const navigate = useNavigate();
 
+  // Derived Values
+  const visibleActions = itemActions.filter((action) => {
+    if (isDeclarativeAction(action)) {
+      if (action.showInMenu === false) return false;
+      if (action.hidden?.(item.data, item)) return false;
+      return true;
+    }
+    return true;
+  });
+
+  if (isEmptyArray(visibleActions)) {
+    return null;
+  }
+
   return (
     <Menu.Root
       lazyMount
@@ -288,87 +303,96 @@ export function DataListItemActionsTrigger<
 
       <Menu.Content minW={"160px"} zIndex={"dropdown"}>
         <VStack gap={1}>
-          {itemActions.map((action, index) => {
-            if (isDeclarativeAction(action)) {
-              if (action.showInMenu === false) return null;
-              if (action.hidden?.(item.data, item)) return null;
+          {isEmptyArray(visibleActions) && (
+            <Menu.Item
+              value={"no-action"}
+              disabled={true}
+              color={"fg.muted"}
+              cursor={"default"}
+            >
+              {t["action.no_actions"]?.() ?? "Tidak ada aksi"}
+            </Menu.Item>
+          )}
 
-              const key = action.key ?? `menu-action-${index}`;
-              const isDisabled = Boolean(action.disabled?.(item.data, item));
-              const resolvedLabel = resolveLabel(action.label, item.data);
-              const resolvedIcon = resolveIcon(action.icon, item.data);
-              const resolvedColorPalette = resolveColorPalette(
-                action.colorPalette,
-                item.data,
-              );
-              const iconNode = renderIcon(resolvedIcon);
-              const triggerElement = resolveTriggerElement(action.modal, item);
-              const shouldMountModalInMenu =
-                Boolean(triggerElement) && action.showInRow === false;
+          {!isEmptyArray(visibleActions) &&
+            visibleActions.map((action, index) => {
+              if (isDeclarativeAction(action)) {
+                const key = action.key ?? `menu-action-${index}`;
+                const isDisabled = Boolean(action.disabled?.(item.data, item));
+                const resolvedLabel = resolveLabel(action.label, item.data);
+                const resolvedIcon = resolveIcon(action.icon, item.data);
+                const resolvedColorPalette = resolveColorPalette(
+                  action.colorPalette,
+                  item.data,
+                );
+                const iconNode = renderIcon(resolvedIcon);
+                const triggerElement = resolveTriggerElement(action.modal, item);
+                const shouldMountModalInMenu =
+                  Boolean(triggerElement) && action.showInRow === false;
 
-              const menuItemNode = (
-                <Menu.Item
-                  value={key}
-                  disabled={isDisabled}
-                  color={
-                    resolvedColorPalette
-                      ? `${resolvedColorPalette}.fg`
-                      : undefined
-                  }
-                  onPointerDown={(e) => {
-                    const triggerProps = triggerElement?.props as
-                      | { modalKey?: string }
-                      | undefined;
-                    if (triggerProps?.modalKey) {
-                      updateClickOrigin(triggerProps.modalKey, {
-                        x: e.clientX,
-                        y: e.clientY,
-                      });
+                const menuItemNode = (
+                  <Menu.Item
+                    value={key}
+                    disabled={isDisabled}
+                    color={
+                      resolvedColorPalette
+                        ? `${resolvedColorPalette}.fg`
+                        : undefined
                     }
-                  }}
-                  onClick={
-                    triggerElement
-                      ? () => {
-                          const triggerProps = triggerElement.props as {
-                            modalKey?: string;
-                          };
-                          const targetKey =
-                            triggerProps?.modalKey ??
-                            (action.key
-                              ? `${action.key}-${item.id}`
-                              : undefined);
-                          if (targetKey) {
-                            navigate({
-                              to: ".",
-                              resetScroll: false,
-                              search: (old: Record<string, unknown>) => ({
-                                ...old,
-                                activeModalKey: targetKey,
-                              }),
-                            });
+                    onPointerDown={(e) => {
+                      const triggerProps = triggerElement?.props as
+                        | { modalKey?: string }
+                        | undefined;
+                      if (triggerProps?.modalKey) {
+                        updateClickOrigin(triggerProps.modalKey, {
+                          x: e.clientX,
+                          y: e.clientY,
+                        });
+                      }
+                    }}
+                    onClick={
+                      triggerElement
+                        ? () => {
+                            const triggerProps = triggerElement.props as {
+                              modalKey?: string;
+                            };
+                            const targetKey =
+                              triggerProps?.modalKey ??
+                              (action.key
+                                ? `${action.key}-${item.id}`
+                                : undefined);
+                            if (targetKey) {
+                              navigate({
+                                to: ".",
+                                resetScroll: false,
+                                search: (old: Record<string, unknown>) => ({
+                                  ...old,
+                                  activeModalKey: targetKey,
+                                }),
+                              });
+                            }
                           }
-                        }
-                      : () => executeItemAction(action, item)
-                  }
-                >
-                  {iconNode}
-                  {resolvedLabel}
-                </Menu.Item>
-              );
+                        : () => executeItemAction(action, item)
+                    }
+                  >
+                    {iconNode}
+                    {resolvedLabel}
+                  </Menu.Item>
+                );
 
-              if (shouldMountModalInMenu && triggerElement) {
-                return cloneElement(triggerElement, { key }, menuItemNode);
+                if (shouldMountModalInMenu && triggerElement) {
+                  return cloneElement(triggerElement, { key }, menuItemNode);
+                }
+
+                return <span key={key}>{menuItemNode}</span>;
               }
 
-              return <span key={key}>{menuItemNode}</span>;
-            }
+              // Legacy functional generator fallback
+              const node = action(item, index);
+              if (!node) return null;
 
-            // Legacy functional generator fallback
-            const node = action(item, index);
-            if (!node) return null;
-
-            return <span key={index}>{node}</span>;
-          })}
+              return <span key={index}>{node}</span>;
+            })}
         </VStack>
       </Menu.Content>
     </Menu.Root>

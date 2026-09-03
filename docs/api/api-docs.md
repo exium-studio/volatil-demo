@@ -806,8 +806,8 @@ Modul bagi Internal User untuk memproses permohonan data spasial yang telah diba
 
 ## Trigger Provisioning GeoServer (Create Service WMS)
 
-- **Endpoint**: `POST /api/internal/interop/batches/{batchId}/provision`
-- **Middleware / Akses**: `Internal Only`
+- **Endpoint**: `POST /api/mitra/orders/{orderId}/provision`
+- **Middleware / Akses**: `Internal / Mitra Auth Token`
 - **Kapan Dipanggil**: User internal menekan tombol "Create Service WMS" pada daftar Review Permohonan untuk batch berstatus `paid`.
 - **Deskripsi**:
   1. Memvalidasi bahwa order sudah berstatus `paid`.

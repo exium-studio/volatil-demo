@@ -45,7 +45,7 @@ export const MitraCartBatchOrderSummary = (
   const isPendingPayment = activeBatch?.status === "pending_payment";
   const isPayable = isPendingPayment;
   const isApproved = activeBatch?.status === "approved";
-  const isPreparing = activeBatch?.status === "preparing";
+  const isProcessing = activeBatch?.status === "processing";
   const isPendingReview = activeBatch?.status === "pending_review";
   const isRejected = activeBatch?.status === "rejected";
   const isExpired = activeBatch?.status === "expired";
@@ -113,7 +113,7 @@ export const MitraCartBatchOrderSummary = (
                     ? "green"
                     : isPendingReview
                       ? "orange"
-                      : isPreparing
+                      : isProcessing
                         ? "blue"
                         : isRejected || isExpired
                           ? "red"
@@ -127,7 +127,7 @@ export const MitraCartBatchOrderSummary = (
                   ? "Disetujui Admin"
                   : isPendingReview
                     ? "Menunggu Validasi"
-                    : isPreparing
+                    : isProcessing
                       ? "Menyiapkan Layanan"
                       : isRejected
                         ? "Ditolak"
@@ -263,7 +263,7 @@ export const MitraCartBatchOrderSummary = (
         </Alert.Root>
       )}
 
-      {isSelected && isPreparing && (
+      {isSelected && isProcessing && (
         <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
@@ -342,7 +342,7 @@ export const MitraCartBatchOrderSummary = (
           ? "Pilih Batch Terlebih Dahulu"
           : isApproved
             ? "Batch Sudah Disetujui"
-            : isPreparing
+            : isProcessing
               ? "Menyiapkan Layanan..."
               : isPendingReview
                 ? "Menunggu Validasi Admin"

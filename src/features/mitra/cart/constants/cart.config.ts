@@ -72,7 +72,7 @@ export const CART_BATCH_STATUS_CONFIG_MAP: Record<
     icon: CheckCircle2Icon,
     iconColor: "green.fg",
   },
-  preparing: {
+  processing: {
     label: "Menyiapkan Layanan WMS",
     colorPalette: "blue",
     icon: LoaderIcon,

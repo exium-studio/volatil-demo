@@ -133,7 +133,8 @@
     "measure": "Ukur",
     "draw": "Gambar",
     "show_less": "Tampilkan lebih sedikit",
-    "back_to_main_page": "Kembali ke halaman utama"
+    "back_to_main_page": "Kembali ke halaman utama",
+    "no_actions": "Tidak ada aksi tersedia"
   },
   "auth": {
     "signin": {

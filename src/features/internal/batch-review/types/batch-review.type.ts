@@ -44,8 +44,8 @@ export type ProvisionOrderPayload = {
 };
 
 export type ProvisionOrderResponse = {
-  batchId: string;
-  orderId?: string;
+  orderId: string;
+  batchId?: string;
   transactionStatus: string;
   batchStatus: string;
 };

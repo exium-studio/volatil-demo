@@ -20,7 +20,7 @@ export type SpatialBasisTypeConfig = {
 export type BatchStatus =
   | "pending_payment"
   | "paid"
-  | "preparing"
+  | "processing"
   | "pending_review"
   | "approved"
   | "rejected"

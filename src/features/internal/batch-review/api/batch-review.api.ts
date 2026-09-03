@@ -235,7 +235,7 @@ export const provisionOrderApi = async (
 ): Promise<ApiResponse<ProvisionOrderResponse>> => {
   try {
     return await apiClient.post<ApiResponse<ProvisionOrderResponse>>(
-      `/api/internal/interop/batches/${payload.batchId}/provision`,
+      `/api/mitra/orders/${payload.batchId}/provision`,
       {},
       { signal },
     );
@@ -250,7 +250,7 @@ export const provisionOrderApi = async (
       return {
         success: true,
         data: {
-          batchId: payload.batchId,
+          orderId: payload.batchId,
           transactionStatus: "processing",
           batchStatus: "pending_review",
         },

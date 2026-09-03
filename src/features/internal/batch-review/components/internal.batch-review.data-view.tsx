@@ -94,7 +94,7 @@ export const InternalBatchReviewDataView = () => {
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "ID Batch & Pemohon", sortable: true },
+      { th: "Pemohon & ID Batch", sortable: true },
       { th: "Metode", sortable: true },
       { th: "Status", sortable: true },
       { th: "WMS URL (Volatil)", sortable: false },
@@ -105,12 +105,18 @@ export const InternalBatchReviewDataView = () => {
 
     const items = rawItems.map((batch) => {
       const firstItem = batch.items?.[0];
-      const previewWmsUrl =
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
+      const rawWmsUrl =
         firstItem?.previewWmsUrl ||
         firstItem?.wmsUrl ||
         (firstItem?.sourceLayerId
           ? `/api/proxy/wms?layerId=${firstItem.sourceLayerId}`
           : "");
+      const previewWmsUrl = rawWmsUrl
+        ? rawWmsUrl.startsWith("http")
+          ? rawWmsUrl
+          : `${apiBaseUrl}${rawWmsUrl}`
+        : "";
 
       return {
         id: batch.batchId,
@@ -153,6 +159,7 @@ export const InternalBatchReviewDataView = () => {
                 >
                   {previewWmsUrl}
                 </ClampedP>
+
                 <ClipboardButton
                   value={previewWmsUrl}
                   variant={"ghost"}
@@ -212,7 +219,7 @@ export const InternalBatchReviewDataView = () => {
         key: "open-detail-batch",
         label: "Buka detail IGT",
         icon: LayersIcon,
-        hidden: (batch: InternalBatchItem) => batch.status === "paid",
+        hidden: (batch: InternalBatchItem) => batch.status !== "pending_review",
         onClick: (batch: InternalBatchItem) => {
           void navigate({
             to: "/internal/batch-review/$batchId",
