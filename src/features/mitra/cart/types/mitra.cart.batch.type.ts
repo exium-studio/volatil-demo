@@ -42,6 +42,16 @@ export type MitraCartBatchItemProps = {
   isDeleting?: boolean;
 };
 
+export type MitraCartOrderListProps = {
+  selectedBatchId: string | null;
+  onSelectBatch: (batchId: string) => void;
+};
+
+export type MitraCartOrderDetailProps = {
+  selectedBatchId: string | null;
+  selectedBatchIndex: number;
+};
+
 export type PaymentMethod =
   | "MPN_GEN2"
   | "VA_MANDIRI"

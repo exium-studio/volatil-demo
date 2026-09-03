@@ -63,47 +63,42 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
     >
       <VStack align={"stretch"} gap={"sm"}>
         {/* Header: Batch Number, Selection Type, Status & Radio Indicator */}
-        <HStack
-          wrap={"wrap"}
-          justify={"space-between"}
-          align={"center"}
-          gapX={"md"}
-          gapY={"xs"}
-          w={"full"}
-        >
-          <HStack gap={"sm"} align={"center"}>
-            <AppIcon
-              icon={statusConfig.icon}
-              color={statusConfig.iconColor}
-              size={"lg"}
-            />
+        <HStack justify={"space-between"} gapX={"md"} gapY={"xs"} w={"full"}>
+          <HStack wrap={"wrap"} justify={"space-between"} gap={"sm"} w={"full"}>
+            <HStack gap={"sm"} align={"center"}>
+              <AppIcon
+                icon={statusConfig.icon}
+                color={statusConfig.iconColor}
+                size={"lg"}
+              />
 
-            <VStack>
-              <P fontWeight={"semibold"} fontSize={"sm"}>
-                {`Batch #${index + 1}`}
-              </P>
+              <VStack>
+                <P fontWeight={"semibold"} fontSize={"sm"}>
+                  {`Batch #${index + 1}`}
+                </P>
 
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {`(${batch.batchId})`}
-              </P>
-            </VStack>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {`(${batch.batchId})`}
+                </P>
+              </VStack>
+            </HStack>
+
+            <HStack gap={"sm"} align={"center"}>
+              <SelectionTypeBadge size={"sm"}>
+                {batch.selectionType}
+              </SelectionTypeBadge>
+
+              <Badge
+                size={"sm"}
+                variant={"subtle"}
+                colorPalette={statusConfig.colorPalette}
+              >
+                {statusConfig.label}
+              </Badge>
+            </HStack>
           </HStack>
 
-          <HStack gap={"sm"} align={"center"}>
-            <SelectionTypeBadge size={"sm"}>
-              {batch.selectionType}
-            </SelectionTypeBadge>
-
-            <Badge
-              size={"sm"}
-              variant={"subtle"}
-              colorPalette={statusConfig.colorPalette}
-            >
-              {statusConfig.label}
-            </Badge>
-
-            <RadioIndicator checked={isSelected} />
-          </HStack>
+          <RadioIndicator checked={isSelected} mt={"10px"} />
         </HStack>
 
         <Separator />
