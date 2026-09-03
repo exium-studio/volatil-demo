@@ -344,9 +344,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
               p={4}
               bg={"bg.body"}
               border={"2px dashed"}
-              borderColor={dragging ? "transparent" : "border"}
-              outline={dragging ? "2px dashed currentColor" : "none"}
-              outlineOffset={"2px"}
+              borderColor={dragging ? "fg" : "border"}
               rounded={theme.radii.component}
               cursor={"pointer"}
               flex={isDropzoneFlex ? (dropzoneProps?.flex ?? 1) : undefined}
@@ -362,7 +360,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
                 transform={dragging ? "translateY(25%)" : ""}
                 transition={"200ms"}
               >
-                <VStack>
+                <VStack align={"center"}>
                   <AppIcon
                     icon={dragging ? ArrowDownIcon : UploadIcon}
                     size={"xl"}
@@ -381,7 +379,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
                   )}
                 </VStack>
 
-                <VStack gap={"md"} maxW={"360px"}>
+                <VStack gap={"xs"} maxW={"360px"}>
                   <P textAlign={"center"}>
                     {dragging ? t["common.drop_it_here"]() : dropzoneText}
                   </P>
