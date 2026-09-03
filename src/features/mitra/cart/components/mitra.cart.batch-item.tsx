@@ -69,16 +69,11 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
               <AppIcon
                 icon={statusConfig.icon}
                 color={statusConfig.iconColor}
-                size={"lg"}
               />
 
               <VStack>
                 <P fontWeight={"semibold"} fontSize={"sm"}>
                   {`Batch #${index + 1}`}
-                </P>
-
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {`(${batch.batchId})`}
                 </P>
               </VStack>
             </HStack>
@@ -94,13 +89,17 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
             </HStack>
           </HStack>
 
-          <RadioIndicator checked={isSelected} mt={"10px"} />
+          <RadioIndicator checked={isSelected} mt={"2px"} />
         </HStack>
 
         <Separator />
 
         {/* Content Details */}
         <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
+          <P fontSize={"xs"} color={"fg.subtle"} mb={"xs"}>
+            {`${batch.batchId}`}
+          </P>
+
           <HStack justify={"space-between"} align={"center"}>
             <P color={"fg.muted"}>{"Metode Pengajuan:"}</P>
             <SelectionTypeBadge size={"xs"}>
