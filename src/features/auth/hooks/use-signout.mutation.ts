@@ -1,5 +1,4 @@
-// src/features/auth/hooks/use-signout.mutation.ts
-
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { authService } from "@/features/auth/services/auth.service";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -31,6 +30,7 @@ export const useSignoutMutation = () => {
     onSuccess: ({ role }) => {
       toastHandlers.onSuccess();
       queryClient.clear();
+      useMapLayerStore.getState().resetLayers();
       if (role === "internal") {
         navigate({ to: "/admin" });
       } else {

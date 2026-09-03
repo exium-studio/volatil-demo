@@ -1,9 +1,8 @@
-// src/features/auth/hooks/use-signin.mutation.ts
-
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { authService } from "@/features/auth/services/auth.service";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
-import type { User } from "@/shared/types/common-response.type";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
+import type { User } from "@/shared/types/common-response.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -29,6 +28,7 @@ export const useSigninMutation = () => {
     onSuccess: (user) => {
       toastHandlers.onSuccess();
       queryClient.clear();
+      useMapLayerStore.getState().resetLayers();
       if (user.role === "mitra") {
         navigate({ to: "/mitra/welcome" });
       } else {

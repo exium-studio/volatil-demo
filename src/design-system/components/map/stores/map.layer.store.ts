@@ -11,6 +11,7 @@ export type MapLayerState = {
   toggleLayerId: (layerId: string) => void;
   setLayerEnabled: (layerId: string, enabled: boolean) => void;
   setLayerOpacity: (layerId: string, opacity: number) => void;
+  resetLayers: () => void;
 };
 
 // Clean up any legacy persisted map-layer-store from localStorage
@@ -48,4 +49,9 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
         [layerId]: opacity,
       },
     })),
+  resetLayers: () =>
+    set({
+      enabledLayerIds: {},
+      layerOpacities: {},
+    }),
 }));
