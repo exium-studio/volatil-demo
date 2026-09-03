@@ -35,12 +35,12 @@ import type { FilterAdministrativeAreaValues } from "@/features/shared/types/fil
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { IconShoppingCartPlus } from "@tabler/icons-react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
   Layers2Icon,
   MapPinIcon,
+  ShoppingCartIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
   TreesIcon,
@@ -466,7 +466,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
               disabled={isCartDisabled}
               onClick={handleAddToCartAll}
             >
-              <AppIcon icon={IconShoppingCartPlus} />
+              <AppIcon icon={ShoppingCartIcon} />
               {"Tambah semua ke keranjang"}
             </Button>
 

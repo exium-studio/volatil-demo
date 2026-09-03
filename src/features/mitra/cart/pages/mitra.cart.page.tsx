@@ -28,8 +28,7 @@ import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
-import { IconShoppingCartOff } from "@tabler/icons-react";
-import { HistoryIcon, Trash2Icon } from "lucide-react";
+import { HistoryIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 
 export const MitraCartPage = () => {
@@ -163,7 +162,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
           <>
             {!hasBatches && (
               <NoDataState
-                icon={IconShoppingCartOff}
+                icon={ShoppingCartIcon}
                 title={"Keranjang Kosong"}
                 description={
                   "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permohonan Data."

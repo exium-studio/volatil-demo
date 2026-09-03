@@ -19,9 +19,8 @@ import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-reque
 import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { IconShoppingCartOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { Trash2Icon } from "lucide-react";
+import { ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export const MitraCartDataView = (props: MitraCartTableProps) => {
@@ -111,7 +110,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
           bg={"bg.body"}
         >
           <NoDataState
-            icon={IconShoppingCartOff}
+            icon={ShoppingCartIcon}
             title={"Keranjang kosong"}
             description={"Tambahkan data IGT dari halaman Permohonan Data"}
           />
@@ -121,13 +120,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
       {hasLocalIds && (
         <>
           {isLoading && (
-            <Skeleton
-              flex={1}
-              w={"full"}
-              h={"full"}
-              rounded={0}
-              p={"md"}
-            />
+            <Skeleton flex={1} w={"full"} h={"full"} rounded={0} p={"md"} />
           )}
 
           {!isLoading && isEmptyArray(features) && (

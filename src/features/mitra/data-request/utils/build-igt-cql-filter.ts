@@ -4,8 +4,8 @@ import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 
 /**
- * Strips common administrative prefix prefixes (e.g. "KABUPATEN BADUNG" -> "BADUNG")
- * and escapes single quotes so that ILIKE '%value%' partial matching matches any DB naming format.
+ * Strips common administrative prefixes (e.g. "KABUPATEN BADUNG" -> "BADUNG", "PROVINSI BALI" -> "BALI")
+ * and escapes single quotes for GeoServer CQL.
  */
 export const cleanAdministrativeValue = (raw: string): string => {
   if (!raw) return "";
@@ -29,14 +29,19 @@ export const cleanAdministrativeValue = (raw: string): string => {
 };
 
 /**
- * Converts administrative filter values into a GeoServer CQL_FILTER string using hardcoded standard column names (WADMPR, WADMKK, WADMKC, WADMKD).
- * Uses ILIKE '%value%' partial matching on cleaned core keywords.
+ * Converts administrative filter values into a GeoServer CQL_FILTER string.
+ * Supports both uppercase (WADMKK) and lowercase (wadmkk) PostGIS column names.
+ * Uses ILIKE '%value%' for case-insensitive partial matching.
  * If no administrative filters are applied or all fields are empty, returns undefined (no CQL filter).
  */
 export const buildIgtCqlFilter = (
   filters?: FilterAdministrativeAreaValues,
 ): string | undefined => {
-  if (!filters || typeof filters !== "object" || Object.keys(filters).length === 0) {
+  if (
+    !filters ||
+    typeof filters !== "object" ||
+    Object.keys(filters).length === 0
+  ) {
     return undefined;
   }
 
@@ -51,21 +56,22 @@ export const buildIgtCqlFilter = (
     if (detail?.value && detail.value.trim() !== "") {
       const cleanVal = cleanAdministrativeValue(detail.value);
       if (cleanVal) {
-        clauses.push(`${columnKey} ILIKE '%${cleanVal}%'`);
+        // Use lowercase attribute name to match PostGIS table schema (e.g. wadmpr, wadmkk)
+        const col = columnKey.toLowerCase();
+        clauses.push(`${col} ILIKE '%${cleanVal}%'`);
       }
     }
   };
 
-  addClause(IGT_FILTER_KEYS_MAP.PROVINSI); // WADMPR
-  addClause(IGT_FILTER_KEYS_MAP.KABUPATEN); // WADMKK
-  addClause(IGT_FILTER_KEYS_MAP.KECAMATAN); // WADMKC
-  addClause(IGT_FILTER_KEYS_MAP.KELURAHAN); // WADMKD
+  addClause(IGT_FILTER_KEYS_MAP.PROVINSI); // wadmpr
+  addClause(IGT_FILTER_KEYS_MAP.KABUPATEN); // wadmkk
+  addClause(IGT_FILTER_KEYS_MAP.KECAMATAN); // wadmkc
+  addClause(IGT_FILTER_KEYS_MAP.KELURAHAN); // wadmkd
 
   return clauses.length > 0 ? clauses.join(" AND ") : undefined;
 };
 
 // Aliases for compatibility
 export const buildWfsCqlFilter = buildIgtCqlFilter;
-export const adaptCqlFilterToLayerAttributes = (cqlFilter?: string) => cqlFilter;
-
-
+export const adaptCqlFilterToLayerAttributes = (cqlFilter?: string) =>
+  cqlFilter;

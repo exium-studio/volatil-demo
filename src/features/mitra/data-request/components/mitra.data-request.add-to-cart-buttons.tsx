@@ -17,8 +17,12 @@ import {
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { IconShoppingCart } from "@tabler/icons-react";
-import { ChevronDownIcon, Layers2Icon, TreesIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  Layers2Icon,
+  ShoppingCartIcon,
+  TreesIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export const MitraDataRequestAddToCartButtons = (
@@ -84,9 +88,9 @@ export const MitraDataRequestAddToCartButtons = (
         );
         if (geomAreaHa > 0) return acc + geomAreaHa;
       }
-      const props = (data && "properties" in data
-        ? data.properties
-        : data ?? {}) as Record<string, unknown>;
+      const props = (
+        data && "properties" in data ? data.properties : (data ?? {})
+      ) as Record<string, unknown>;
       const key = Object.keys(props).find(
         (k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul",
       );
@@ -111,9 +115,9 @@ export const MitraDataRequestAddToCartButtons = (
         );
         if (geomAreaHa > 0) return acc + geomAreaHa;
       }
-      const props = (data && "properties" in data
-        ? data.properties
-        : data ?? {}) as Record<string, unknown>;
+      const props = (
+        data && "properties" in data ? data.properties : (data ?? {})
+      ) as Record<string, unknown>;
       const key = Object.keys(props).find(
         (k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul",
       );
@@ -227,7 +231,7 @@ export const MitraDataRequestAddToCartButtons = (
           disabled={isEmptyArray(selectedItems)}
           onClick={onAddSelectedClick}
         >
-          <AppIcon icon={IconShoppingCart} flexShrink={0} />
+          <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
           {"Tambah yang dipilih"}{" "}
           {!isEmptyArray(selectedItems) && selectedCountLabel}
         </Button>
@@ -248,7 +252,7 @@ export const MitraDataRequestAddToCartButtons = (
             disabled={totalItemCount === 0}
             onClick={onAddAllBothClick}
           >
-            <AppIcon icon={IconShoppingCart} flexShrink={0} />
+            <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
             {"Tambah semua"} {allCountLabel}
           </Button>
 

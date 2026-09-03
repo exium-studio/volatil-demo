@@ -1,7 +1,6 @@
 // src/shared/constants/app.navs.ts
 
 import type { NavItem } from "@/shared/types/nav.type";
-import { IconShoppingCart } from "@tabler/icons-react";
 import {
   BellIcon,
   CheckCircleIcon,
@@ -13,6 +12,7 @@ import {
   LayersIcon,
   ReceiptTextIcon,
   ServerIcon,
+  ShoppingCartIcon,
   SquarePen,
   UsersIcon,
 } from "lucide-react";
@@ -29,7 +29,7 @@ export const APP_NAVS_MAP = {
     pathname: "/mitra/data-request",
   },
   cart: {
-    icon: IconShoppingCart,
+    icon: ShoppingCartIcon,
     titleKey: "app.navs.cart",
     pathname: "/mitra/cart",
   },
