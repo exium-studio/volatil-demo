@@ -107,7 +107,7 @@ const FIELD_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
   {
     key: "expired",
-    label: "Kadaluwarsa",
+    label: "Kedaluwarsa",
     bg: "an2",
     legendColor: "an2",
     striped: false,
@@ -131,7 +131,7 @@ const AREA_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
   {
     key: "expired",
-    label: "Kadaluwarsa",
+    label: "Kedaluwarsa",
     bg: "an2",
     legendColor: "an2",
     striped: false,
@@ -149,11 +149,7 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
   const { dataSummary } = useMitraHomeData(period);
 
   return (
-    <SimpleGrid
-      columns={isSmContainer ? 1 : 2}
-      gap={"md"}
-      px={"md"}
-    >
+    <SimpleGrid columns={isSmContainer ? 1 : 2} gap={"md"} px={"md"}>
       {/* IGT Berbasis Bidang */}
       <VStack align={"start"} gap={"md"}>
         <P color={"fg.muted"}>{"IGT berbasis bidang"}</P>

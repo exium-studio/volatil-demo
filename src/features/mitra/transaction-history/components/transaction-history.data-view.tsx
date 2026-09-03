@@ -41,7 +41,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
-import { EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
+import { CreditCardIcon, EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
@@ -191,6 +191,21 @@ export const TransactionHistoryDataView = () => {
 
     const itemActions: DataViewItemActionsGenerator<TransactionRecord>[] = [
       {
+        key: "pay-order",
+        label: "Bayar",
+        icon: CreditCardIcon,
+        colorPalette: "blue",
+        hidden: (transaction: TransactionRecord) =>
+          transaction.transactionStatus !== "pending",
+        onClick: (transaction: TransactionRecord) => {
+          void navigate({
+            to: "/mitra/billing/$billingCode",
+            params: { billingCode: transaction.billingCode },
+            search: { orderId: transaction.id },
+          });
+        },
+      },
+      {
         key: "view-detail",
         label: "Detail",
         icon: EyeIcon,
@@ -211,7 +226,7 @@ export const TransactionHistoryDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [transactionHistory.items, preferredTimezone]);
+  }, [transactionHistory.items, preferredTimezone, navigate]);
 
   return (
     <VStack w={"full"}>

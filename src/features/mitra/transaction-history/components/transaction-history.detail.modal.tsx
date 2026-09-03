@@ -27,7 +27,8 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { CheckCircleIcon, ClockIcon, XCircleIcon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { CheckCircleIcon, ClockIcon, CreditCardIcon, XCircleIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const TransactionDetailTrigger = (
@@ -75,6 +76,7 @@ export const TransactionDetailModalContent = (
   const { transaction } = props;
 
   // Hooks
+  const navigate = useNavigate();
   const isMounted = useMountTimeout({
     mountDelay: 250,
   });
@@ -326,9 +328,29 @@ export const TransactionDetailModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <Button flex={1} onClick={back}>
-          {t["action.close"]()}
-        </Button>
+        <HStack gap={"sm"} w={"full"} justify={"end"}>
+          <Button variant={"outline"} flex={isPending ? undefined : 1} onClick={back}>
+            {t["action.close"]()}
+          </Button>
+
+          {isPending && (
+            <Button
+              primary={true}
+              colorPalette={"blue"}
+              onClick={() => {
+                back();
+                void navigate({
+                  to: "/mitra/billing/$billingCode",
+                  params: { billingCode: transaction.billingCode },
+                  search: { orderId: transaction.id },
+                });
+              }}
+            >
+              <AppIcon icon={CreditCardIcon} />
+              {"Bayar Sekarang"}
+            </Button>
+          )}
+        </HStack>
       </Modal.Footer>
     </Modal.Content>
   );

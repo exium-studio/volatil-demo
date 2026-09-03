@@ -91,7 +91,7 @@ export const CART_BATCH_STATUS_CONFIG_MAP: Record<
     iconColor: "red.fg",
   },
   expired: {
-    label: "Kadaluwarsa",
+    label: "Kedaluwarsa",
     colorPalette: "red",
     icon: AlertCircleIcon,
     iconColor: "red.fg",

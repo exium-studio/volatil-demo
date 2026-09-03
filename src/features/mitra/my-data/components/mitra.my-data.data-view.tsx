@@ -84,7 +84,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "WMS URL", sortable: false, align: "start" },
       { th: "Status Aktif", sortable: true, align: "start" },
       { th: "Sisa Waktu", sortable: true, align: "start" },
-      { th: "Tanggal Kadaluwarsa", sortable: true, align: "start" },
+      { th: "Tanggal Kedaluwarsa", sortable: true, align: "start" },
     ];
 
     const items: FormattedListItem[] = myData.items.map((item: MyDataItem) => {

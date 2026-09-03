@@ -121,7 +121,7 @@ const MitraCartExpiredBatchesModalContent = (
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>{"Batch Kadaluwarsa"}</Modal.Title>
+        <Modal.Title>{"Batch Kedaluwarsa"}</Modal.Title>
         <Modal.CloseButton />
       </Modal.Header>
 
@@ -138,7 +138,7 @@ const MitraCartExpiredBatchesModalContent = (
             {isEmptyArray(expiredBatches) && (
               <NoDataState
                 icon={HistoryIcon}
-                title={"Tidak Ada Batch Kadaluwarsa"}
+                title={"Tidak Ada Batch Kedaluwarsa"}
                 description={
                   "Semua permohonan data Anda aktif atau telah diselesaikan."
                 }
@@ -208,7 +208,7 @@ const MitraCartExpiredBatchesModalContent = (
                               variant={"subtle"}
                               colorPalette={"red"}
                             >
-                              {"Kadaluwarsa"}
+                              {"Kedaluwarsa"}
                             </Badge>
                           </HStack>
                         </HStack>
@@ -259,7 +259,7 @@ const MitraCartExpiredBatchesModalContent = (
 
                           {batch.expiredAt && (
                             <HStack justify={"space-between"} align={"center"}>
-                              <P color={"fg.muted"}>{"Waktu Kadaluwarsa:"}</P>
+                              <P color={"fg.muted"}>{"Waktu Kedaluwarsa:"}</P>
                               <P color={"fg.subtle"}>
                                 {formatUtcDateTime(
                                   batch.expiredAt,

@@ -198,7 +198,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
         <MitraCartExpiredBatchesTrigger>
           <Button flex={1}>
             <AppIcon icon={HistoryIcon} />
-            {"Batch Kadaluwarsa"}
+            {"Batch Kedaluwarsa"}
           </Button>
         </MitraCartExpiredBatchesTrigger>
       </HStack>

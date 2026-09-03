@@ -132,7 +132,7 @@ export const MitraCartBatchOrderSummary = (
                       : isRejected
                         ? "Ditolak"
                         : isExpired
-                          ? "Kadaluwarsa"
+                          ? "Kedaluwarsa"
                           : "Draft"}
             </Badge>
           ) : (
@@ -308,10 +308,16 @@ export const MitraCartBatchOrderSummary = (
       )}
 
       {isSelected && isApproved && (
-        <Alert.Root status={"success"} colorPalette={"green"} variant={"subtle"}>
+        <Alert.Root
+          status={"success"}
+          colorPalette={"green"}
+          variant={"subtle"}
+        >
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
-            {"Batch permohonan telah disetujui oleh admin internal. Layanan data spasial dapat diakses melalui menu Data Saya."}
+            {
+              "Batch permohonan telah disetujui oleh admin internal. Layanan data spasial dapat diakses melalui menu Data Saya."
+            }
           </Alert.Title>
         </Alert.Root>
       )}
@@ -343,7 +349,7 @@ export const MitraCartBatchOrderSummary = (
                 : isRejected
                   ? "Batch Ditolak"
                   : isExpired
-                    ? "Batch Kadaluwarsa"
+                    ? "Batch Kedaluwarsa"
                     : "Bayar Sekarang"}
       </Button>
 

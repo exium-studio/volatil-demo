@@ -493,7 +493,7 @@ type CartBatchListResponse = {
 - **Middleware / Akses**: `Mitra Only`
 - **Response**: `200 OK` / `{ success: true, message: "Batch keranjang berhasil dihapus" }`
 
-## Re-order Batch Kadaluwarsa
+## Re-order Batch Kedaluwarsa
 
 - **Endpoint**: `POST /api/mitra/cart/batches/{batchId}/reorder`
 - **Middleware / Akses**: `Mitra Only`

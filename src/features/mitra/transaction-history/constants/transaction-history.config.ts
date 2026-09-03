@@ -20,7 +20,7 @@ export const TRANSACTION_STATUS_BADGE_MAP: Record<
 > = {
   settled: { label: "Selesai", colorPalette: "green" },
   paid: { label: "Terbayar", colorPalette: "blue" },
-  pending: { label: "Menunggu", colorPalette: "orange" },
+  pending: { label: "Menunggu Pembayaran", colorPalette: "orange" },
   expired: { label: "Kedaluwarsa", colorPalette: "red" },
   failed: { label: "Gagal", colorPalette: "red" },
 };
