@@ -145,7 +145,7 @@ export const InternalBatchReviewDataView = () => {
           },
           {
             value: batch.status,
-            td: <BatchStatusBadge>{batch.status}</BatchStatusBadge>,
+            td: <BatchStatusBadge showIcon>{batch.status}</BatchStatusBadge>,
           },
           {
             value: previewWmsUrl,

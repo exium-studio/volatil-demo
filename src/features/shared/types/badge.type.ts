@@ -17,5 +17,5 @@ export type SelectionTypeBadgeProps = Omit<BadgeProps, "children"> & {
 
 export type BatchStatusBadgeProps = Omit<BadgeProps, "children"> & {
   children?: CartBatchStatus | (string & {});
+  showIcon?: boolean;
 };
-
