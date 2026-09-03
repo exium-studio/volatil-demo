@@ -18,6 +18,7 @@ import type {
   FilterAdministrativeAreaValues,
 } from "@/features/shared/types/filter.administrative-area.type";
 import { useEffect, useMemo, useState } from "react";
+import { t } from "@/shared/libs/i18n";
 
 export const FilterAdministrativeAreaTrigger = (
   props: FilterAdministrativeAreaTriggerProps,
@@ -229,7 +230,7 @@ export const FilterAdministrativeAreaTrigger = (
               {"Terapkan Filter"}
             </Button>
 
-            <Button onClick={handleReset}>{"Reset"}</Button>
+            <Button onClick={handleReset}>{t["action.reset"]()}</Button>
           </VStack>
         </Modal.Footer>
       </Modal.Content>

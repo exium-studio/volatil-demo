@@ -116,6 +116,14 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     onValueChange?.("", undefined);
   };
 
+  const handleResetSelection = () => {
+    if (!isControlled) {
+      setInternalValue("");
+    }
+    onValueChange?.("", undefined);
+    close();
+  };
+
   // Trigger Node
   const customTrigger = trigger ?? children;
 
@@ -341,6 +349,17 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
             )}
           </VScrollContainer>
         </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant={"ghost"}
+            w={"full"}
+            disabled={!currentValue}
+            onClick={handleResetSelection}
+          >
+            {t["action.reset"]()}
+          </Button>
+        </Modal.Footer>
       </Modal.Content>
     </Modal.Root>
   );

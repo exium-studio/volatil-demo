@@ -27,7 +27,7 @@ export const AlertIndicator = (props: AlertIndicatorProps) => {
 };
 
 export const AlertTitle = (props: AlertTitleProps) => {
-  return <ChakraAlert.Title {...props} />;
+  return <ChakraAlert.Title lineHeight={1.2} {...props} />;
 };
 
 export const AlertDescription = (props: AlertDescriptionProps) => {
@@ -35,7 +35,7 @@ export const AlertDescription = (props: AlertDescriptionProps) => {
 };
 
 export const AlertContent = (props: AlertContentProps) => {
-  return <ChakraAlert.Content {...props} />;
+  return <ChakraAlert.Content gap={"xs"} {...props} />;
 };
 
 export const Alert = {
