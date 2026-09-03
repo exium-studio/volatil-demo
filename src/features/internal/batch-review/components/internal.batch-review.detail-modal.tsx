@@ -12,10 +12,11 @@ import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
+import { useProvisionOrder } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
 import { formatUtcDateTime, getPreferredUserTimezone } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
-import { CheckCircle2Icon } from "lucide-react";
+import { CheckCircle2Icon, SparklesIcon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
 export type InternalBatchReviewDetailTriggerProps = {
@@ -63,6 +64,10 @@ const InternalBatchReviewDetailModalContent = (
   const { batch, close } = props;
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  // Mutations
+  const provisionMutation = useProvisionOrder();
+
+  const isPaid = batch.status === "paid";
   const isPending = batch.status === "pending_review";
 
   return (
@@ -80,28 +85,42 @@ const InternalBatchReviewDetailModalContent = (
 
       <Modal.Body>
         <VStack align={"stretch"} gap={"md"}>
-          {/* Metadata Mitra */}
-          <HStack justify={"space-between"} p={"sm"} bg={"bg.subtle"} rounded={"md"}>
-            <VStack align={"start"} gap={0}>
-              <P fontSize={"xs"} color={"fg.subtle"}>{"Pemohon / Mitra"}</P>
-              <P fontWeight={"semibold"}>{batch.mitraName}</P>
-              <P fontSize={"xs"} color={"fg.muted"}>{batch.mitraId}</P>
-            </VStack>
+          {/* Metadata */}
+          <VStack
+            align={"stretch"}
+            gap={"xs"}
+            p={"sm"}
+            bg={"bg.subtle"}
+            rounded={"md"}
+            border={"1px solid"}
+            borderColor={"border.subtle"}
+          >
+            <HStack justify={"space-between"}>
+              <P fontSize={"xs"} color={"fg.muted"}>{"Pemohon:"}</P>
+              <P fontWeight={"semibold"} fontSize={"xs"}>{batch.mitraName}</P>
+            </HStack>
+            <HStack justify={"space-between"}>
+              <P fontSize={"xs"} color={"fg.muted"}>{"Metode Seleksi:"}</P>
+              <SelectionTypeBadge size={"xs"}>{batch.selectionType}</SelectionTypeBadge>
+            </HStack>
+            <HStack justify={"space-between"}>
+              <P fontSize={"xs"} color={"fg.muted"}>{"Status:"}</P>
+              <BatchStatusBadge size={"xs"}>{batch.status}</BatchStatusBadge>
+            </HStack>
+            <HStack justify={"space-between"}>
+              <P fontSize={"xs"} color={"fg.muted"}>{"Diajukan Pada:"}</P>
+              <P fontSize={"xs"}>
+                {formatUtcDateTime(batch.createdAt, preferredTimezone)}
+              </P>
+            </HStack>
+          </VStack>
 
-            <VStack align={"end"} gap={0}>
-              <P fontSize={"xs"} color={"fg.subtle"}>{"Waktu Pengajuan"}</P>
-              <P fontSize={"xs"}>{formatUtcDateTime(batch.createdAt, preferredTimezone)}</P>
-              <HStack gap={"xs"} mt={"xs"}>
-                <SelectionTypeBadge size={"xs"}>{batch.selectionType}</SelectionTypeBadge>
-                <BatchStatusBadge>{batch.status}</BatchStatusBadge>
-              </HStack>
-            </VStack>
-          </HStack>
-
-          {/* List Layer Item */}
-          <P fontSize={"sm"} fontWeight={"semibold"}>{"Daftar Layer & Potongan Data"}</P>
-
+          {/* Layer List */}
           <VStack align={"stretch"} gap={"xs"}>
+            <P fontWeight={"semibold"} fontSize={"sm"}>
+              {`Daftar Layer Spasial (${batch.items.length})`}
+            </P>
+
             {(batch.items ?? []).map((item, idx) => {
               const previewUrl =
                 item.previewWmsUrl ||
@@ -180,6 +199,30 @@ const InternalBatchReviewDetailModalContent = (
           <Button variant={"outline"} onClick={close}>
             {"Tutup"}
           </Button>
+
+          {isPaid && (
+            <Button
+              primary={true}
+              colorPalette={"blue"}
+              loading={provisionMutation.isPending}
+              onClick={() => {
+                provisionMutation.mutate(
+                  {
+                    orderId: batch.orderId ?? batch.batchId,
+                    batchId: batch.batchId,
+                  },
+                  {
+                    onSuccess: () => {
+                      close();
+                    },
+                  },
+                );
+              }}
+            >
+              <AppIcon icon={SparklesIcon} />
+              {"Create Service WMS"}
+            </Button>
+          )}
 
           {isPending && (
             <InternalBatchReviewApproveTrigger

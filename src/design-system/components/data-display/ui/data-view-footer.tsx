@@ -60,7 +60,7 @@ export const DataViewFooter = (props: DataViewFooterProps) => {
           align={"center"}
           justify={"center"}
           gapX={3}
-          px={["10px", null, 0]}
+          // px={["10px", null, 0]}
         >
           <P color={"fg.subtle"} whiteSpace={"nowrap"} textAlign={"center"}>
             {dataLengthText}

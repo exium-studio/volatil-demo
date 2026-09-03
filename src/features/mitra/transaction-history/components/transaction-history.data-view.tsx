@@ -79,12 +79,12 @@ export const TransactionHistoryDataView = () => {
     const headers: FormattedTableHeader[] = [
       { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "No. Order", sortable: true, align: "start" },
+      { th: "Status", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Metode", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
-      { th: "Status", sortable: true, align: "start" },
     ];
 
     const items: FormattedListItem<TransactionRecord>[] =
@@ -111,6 +111,18 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.orderNumber,
               td: <P color={"fg.muted"}>{item.orderNumber}</P>,
+              align: "start" as const,
+            },
+            {
+              value: item.transactionStatus,
+              td: (
+                <Badge
+                  colorPalette={statusConfig.colorPalette}
+                  variant={"subtle"}
+                >
+                  {statusConfig.label}
+                </Badge>
+              ),
               align: "start" as const,
             },
             {
@@ -172,18 +184,6 @@ export const TransactionHistoryDataView = () => {
                 </P>
               ),
               align: "end" as const,
-            },
-            {
-              value: item.transactionStatus,
-              td: (
-                <Badge
-                  colorPalette={statusConfig.colorPalette}
-                  variant={"subtle"}
-                >
-                  {statusConfig.label}
-                </Badge>
-              ),
-              align: "start" as const,
             },
           ],
         };

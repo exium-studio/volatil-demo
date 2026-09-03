@@ -1,10 +1,14 @@
 // src/features/mitra/transaction-history/types/transaction-history.type.ts
 
-import type { SelectionType, SpatialBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import type {
+  SelectionType,
+  SpatialBasisType,
+} from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import type { PaginationMeta } from "@/shared/types/common-response.type";
 
 export type TransactionStatus =
   | "pending"
+  | "paid"
   | "settled"
   | "expired"
   | "failed";

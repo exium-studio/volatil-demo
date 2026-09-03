@@ -78,6 +78,7 @@ export const MitraCartBatchOrderSummary = (
             void navigate({
               to: "/mitra/billing/$billingCode",
               params: { billingCode: data.billingCode },
+              search: { orderId: data.orderId },
             });
           } else {
             void navigate({

@@ -84,10 +84,6 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
             </HStack>
 
             <HStack gap={"sm"} align={"center"}>
-              <SelectionTypeBadge size={"sm"}>
-                {batch.selectionType}
-              </SelectionTypeBadge>
-
               <Badge
                 size={"sm"}
                 variant={"subtle"}
@@ -150,8 +146,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
         </VStack>
 
         {/* Dynamic Status Notices */}
-        {(batch.status === "pending_payment" ||
-          batch.status === "approved") &&
+        {(batch.status === "pending_payment" || batch.status === "approved") &&
           batch.expiredAt && (
             <HStack
               justify={"space-between"}

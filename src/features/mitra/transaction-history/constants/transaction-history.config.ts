@@ -16,9 +16,10 @@ export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
 
 export const TRANSACTION_STATUS_BADGE_MAP: Record<
   TransactionStatus,
-  { label: string; colorPalette: "green" | "orange" | "red" }
+  { label: string; colorPalette: "green" | "orange" | "red" | "blue" }
 > = {
   settled: { label: "Selesai", colorPalette: "green" },
+  paid: { label: "Terbayar", colorPalette: "blue" },
   pending: { label: "Menunggu", colorPalette: "orange" },
   expired: { label: "Kedaluwarsa", colorPalette: "red" },
   failed: { label: "Gagal", colorPalette: "red" },

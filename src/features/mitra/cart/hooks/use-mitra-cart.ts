@@ -4,7 +4,7 @@ import {
   addAllToCartFromWfs,
   addSelectedToCart,
   cancelActiveCartBatch,
-  checkBillingPaymentStatus,
+  checkOrderPaymentStatus,
   checkout,
   checkoutCartBatch,
   clearAllCartBatches,
@@ -416,15 +416,16 @@ export const useReorderCartBatch = (onSuccessCallback?: () => void) => {
   });
 };
 
-export const useCheckBillingPaymentStatus = () => {
+export const useCheckOrderPaymentStatus = () => {
   const queryClient = useQueryClient();
-  const toastHandlers = mutationToastHandlers("check-billing-payment-status", {
+  const toastHandlers = mutationToastHandlers("check-order-payment-status", {
     group: "Pembayaran",
     loadingMessage: {
       title: "Memeriksa status pembayaran...",
     },
     successMessage: {
-      title: "Status pembayaran berhasil diperbarui",
+      title: "Status pembayaran berhasil dikonfirmasi (settled)",
+      description: "Pemotongan AOI dan pembuatan service layer sedang diproses.",
     },
     errorMessage: {
       title: "Gagal memeriksa status pembayaran",
@@ -432,7 +433,7 @@ export const useCheckBillingPaymentStatus = () => {
   });
 
   return useMutation({
-    mutationFn: (billingCode: string) => checkBillingPaymentStatus(billingCode),
+    mutationFn: (orderId: string) => checkOrderPaymentStatus(orderId),
     onMutate: toastHandlers.onLoading,
     onSuccess: (data) => {
       toastHandlers.onSuccess();
@@ -453,3 +454,5 @@ export const useCheckBillingPaymentStatus = () => {
     onError: toastHandlers.onError,
   });
 };
+
+export const useCheckBillingPaymentStatus = useCheckOrderPaymentStatus;

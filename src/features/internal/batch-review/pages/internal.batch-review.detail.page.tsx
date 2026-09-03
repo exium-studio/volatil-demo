@@ -23,6 +23,7 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
 import {
   useInternalBatchDetailQuery,
+  useProvisionOrder,
 } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type { BatchLayerDataViewProps } from "@/features/internal/batch-review/types/batch-review.type";
 import type { CartBatchItem } from "@/features/mitra/cart/types/mitra.cart.batch.type";
@@ -41,6 +42,7 @@ import {
   EyeIcon,
   EyeOffIcon,
   MapPinIcon,
+  SparklesIcon,
   TablePropertiesIcon,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -53,14 +55,18 @@ export function InternalBatchReviewDetailPage() {
   // Queries
   const { data: batch, isLoading } = useInternalBatchDetailQuery(batchId);
 
+  // Mutations
+  const provisionMutation = useProvisionOrder();
+
   if (isLoading || !batch) {
     return (
       <PanelContentContainer>
         <Container.Root>
           <Container.Body>
             <VStack gap={"md"} p={"md"}>
-              <Skeleton h={"40px"} w={"full"} />
-              <Skeleton h={"200px"} w={"full"} />
+              <Skeleton height={"40px"} width={"300px"} />
+              <Skeleton height={"200px"} width={"full"} />
+              <Skeleton height={"400px"} width={"full"} />
             </VStack>
           </Container.Body>
         </Container.Root>
@@ -70,17 +76,12 @@ export function InternalBatchReviewDetailPage() {
 
   return (
     <PanelContentContainer>
-      <Container.Root>
+      <Container.Root withContext={true}>
         <Container.Body>
+          {/* Header */}
           <HeaderContainer>
-            <HStack
-              justify={"space-between"}
-              align={"center"}
-              w={"full"}
-              wrap={"wrap"}
-              gap={"sm"}
-            >
-              <HStack gap={"sm"} align={"center"}>
+            <HStack justify={"space-between"} align={"center"} w={"full"}>
+              <HStack gap={"sm"}>
                 <BackButton
                   onClick={() => navigate({ to: "/internal/batch-review" })}
                 />
@@ -88,8 +89,25 @@ export function InternalBatchReviewDetailPage() {
                 <Heading>{"Review Permohonan Detail"}</Heading>
               </HStack>
 
-              {batch.status === "pending_review" && (
-                <HStack gap={2}>
+              <HStack gap={2}>
+                {batch.status === "paid" && (
+                  <Button
+                    primary={true}
+                    colorPalette={"blue"}
+                    loading={provisionMutation.isPending}
+                    onClick={() => {
+                      provisionMutation.mutate({
+                        orderId: batch.orderId ?? batch.batchId,
+                        batchId: batch.batchId,
+                      });
+                    }}
+                  >
+                    <AppIcon icon={SparklesIcon} />
+                    {"Create Service WMS"}
+                  </Button>
+                )}
+
+                {batch.status === "pending_review" && (
                   <InternalBatchReviewApproveTrigger
                     batch={batch}
                     modalKey={`approve-detail-${batch.batchId}`}
@@ -102,8 +120,8 @@ export function InternalBatchReviewDetailPage() {
                       {"Setujui Permohonan"}
                     </Button>
                   </InternalBatchReviewApproveTrigger>
-                </HStack>
-              )}
+                )}
+              </HStack>
             </HStack>
           </HeaderContainer>
 

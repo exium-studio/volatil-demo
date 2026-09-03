@@ -527,41 +527,22 @@ type CheckoutBatchResponse = {
 };
 ```
 
-## Cek Status Pembayaran Billing (Kode Billing)
-
-- **Endpoint**: `GET /api/mitra/billing/{billingCode}/status`
-- **Middleware / Akses**: `Mitra Only`
-- **Response**:
-
-```typescript
-type CheckPaymentStatusResponse = {
-  billingCode: string;
-  orderId?: string;
-  batchId?: string;
-  status:
-    | "pending_payment"
-    | "paid"
-    | "preparing"
-    | "pending_review"
-    | "approved"
-    | "rejected"
-    | "expired";
-  paidAt?: string;
-  message?: string;
-};
-```
-
-## Cek Status Pembayaran Order
+## Cek Status Pembayaran (Trigger Bayar)
 
 - **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
 - **Middleware / Akses**: `Mitra Only`
-- **Response**:
+- **Headers**: `Authorization: Bearer <TOKEN_MITRA>`
+- **Keterangan**: Dipanggil oleh mitra (misalnya tombol 'Cek status pembayaran' pada halaman billing) untuk memverifikasi pembayaran. Saat status `settled`, backend langsung mengeksekusi pemotongan AOI dan auto-publishing layer ke GeoServer internal.
+- **Response (200 OK)**:
 
 ```typescript
 type OrderPaymentStatusResponse = {
-  orderId: string;
-  transactionStatus: "pending" | "settled" | "paid" | "expired" | "failed";
-  paidAt?: string;
+  success: boolean;
+  data: {
+    orderId: string;
+    transactionStatus: "pending" | "settled" | "expired" | "failed";
+    paidAt?: string;
+  };
 };
 ```
 
@@ -817,23 +798,52 @@ type CreateMasterGeoserverPayload = {
 
 ---
 
-# Interop Batch Review
+# Review Permohonan (Internal Batch Review)
 
-Modul bagi Internal User untuk memvalidasi dan memberikan persetujuan terhadap permohonan data spasial yang telah dibayar oleh mitra dan diproses oleh Interop Engine (`pending_review`).
+Modul bagi Internal User untuk memproses permohonan data spasial yang telah dibayar mitra (`paid`), memicu pembuatan service GeoServer WMS/WFS (`provision`), serta memvalidasi dan memberikan persetujuan (`pending_review` $\rightarrow$ `approved`) setelah mendapatkan URL wrapper resmi INTEROP Pusdatin ATR/BPN.
 
-## List Batches Pending Review
+> Filter default pada halaman Review Permohonan hanya menampilkan data dengan status `paid` (perlu Create WMS) dan `pending_review` (WMS siap di-review).
+
+## Trigger Provisioning GeoServer (Create Service WMS)
+
+- **Endpoint**: `POST /api/mitra/orders/{orderId}/provision`
+- **Middleware / Akses**: `Internal / Mitra Auth Token`
+- **Kapan Dipanggil**: Setelah mitra membayar dan status permohonan menjadi `paid`.
+- **Deskripsi**:
+  1. Memvalidasi bahwa order sudah berstatus `paid`.
+  2. Mengubah status transaksi order & batch menjadi `processing`.
+  3. Menjalankan background worker `provisionOrderItems` untuk memotong AOI, membuat tabel PostGIS, dan mem-publish layer ke GeoServer internal beserta style SLD.
+  4. Setelah selesai, status batch otomatis berubah menjadi `pending_review` agar admin internal dapat meninjau dan menyalin link WMS internal Volatil.
+- **Response (200 OK)**:
+
+```typescript
+type ProvisionOrderResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    orderId: string;
+    batchId: string;
+    transactionStatus: "processing";
+    batchStatus: "processing";
+  };
+};
+```
+
+## List Batches Review Permohonan
 
 - **Endpoint**: `GET /api/internal/interop/batches`
 - **Middleware / Akses**: `Internal Only`
+- **Params**: `status?: "paid" | "pending_review" | "all"`
 - **Response**:
 
 ```typescript
 type InternalBatchListResponse = {
   batches: Array<{
     batchId: string;
+    orderId?: string;
     mitraId: string;
     mitraName: string;
-    status: "pending_review";
+    status: "paid" | "pending_review";
     selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     createdAt: string;
     items: Array<{

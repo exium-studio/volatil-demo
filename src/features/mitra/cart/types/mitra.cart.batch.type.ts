@@ -153,10 +153,11 @@ export type CheckoutBatchResponse = {
 };
 
 export type CheckPaymentStatusResponse = {
-  billingCode: string;
-  orderId?: string;
-  batchId?: string;
-  status: BatchStatus;
+  orderId: string;
+  transactionStatus: "pending" | "settled" | "paid" | "expired" | "failed";
   paidAt?: string;
-  message?: string;
+  batchId?: string;
+  billingCode?: string;
 };
+
+export type OrderPaymentStatusResponse = CheckPaymentStatusResponse;

@@ -5,6 +5,8 @@ import type {
   InternalBatchItem,
   InternalBatchListQueryParams,
   InternalBatchListResponse,
+  ProvisionOrderPayload,
+  ProvisionOrderResponse,
   RejectBatchPayload,
 } from "@/features/internal/batch-review/types/batch-review.type";
 import type { CartBatchItem } from "@/features/mitra/cart/types/mitra.cart.batch.type";
@@ -81,6 +83,7 @@ const normalizeInternalBatchItem = (raw: any): InternalBatchItem => {
 
   return {
     batchId: raw.batchId ?? raw.batch_id ?? raw.id ?? "",
+    orderId: raw.orderId ?? raw.order_id ?? undefined,
     mitraId: String(raw.mitraId ?? raw.mitra_id ?? ""),
     mitraName:
       raw.mitraName ?? raw.mitra_name ?? raw.userName ?? raw.name ?? "Mitra",
@@ -226,6 +229,40 @@ export const fetchInternalBatchDetailApi = async (
   }
 };
 
+export const provisionOrderApi = async (
+  payload: ProvisionOrderPayload,
+  signal?: AbortSignal,
+): Promise<ApiResponse<ProvisionOrderResponse>> => {
+  try {
+    return await apiClient.post<ApiResponse<ProvisionOrderResponse>>(
+      `/api/mitra/orders/${payload.orderId}/provision`,
+      {},
+      { signal },
+    );
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const targetBatch = DUMMY_INTERNAL_BATCHES.find(
+        (b) => b.orderId === payload.orderId || b.batchId === payload.batchId,
+      );
+      if (targetBatch) {
+        targetBatch.status = "pending_review";
+      }
+      return {
+        success: true,
+        data: {
+          orderId: payload.orderId,
+          batchId: payload.batchId,
+          transactionStatus: "processing",
+          batchStatus: "pending_review",
+        },
+        message: "Proses provisioning layer AOI ke GeoServer berhasil dimulai.",
+        timestamp: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
+};
+
 export const approveBatchApi = async (
   payload: ApproveBatchPayload,
   signal?: AbortSignal,
@@ -254,6 +291,11 @@ const getDummyBatchList = (
   let filtered = [...DUMMY_INTERNAL_BATCHES];
   if (params?.status && params.status !== "all") {
     filtered = filtered.filter((b) => b.status === params.status);
+  } else {
+    // Default: review permohonan hanya menampilkan status paid dan pending_review
+    filtered = filtered.filter(
+      (b) => b.status === "paid" || b.status === "pending_review",
+    );
   }
   if (params?.search) {
     const q = params.search.toLowerCase();

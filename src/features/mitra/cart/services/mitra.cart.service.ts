@@ -215,12 +215,12 @@ export async function checkout(
 // -------------------------------------------------------------------------------------
 
 import {
-  checkBillingPaymentStatusApi,
   deleteCartBatchApi,
   fetchActiveCartBatchApi,
   fetchCartBatchDetailApi,
   fetchCartBatchesApi,
   fetchExpiredCartBatchesApi,
+  fetchOrderPaymentStatusApi,
   postCheckoutBatchApi,
   postCreateCartBatchApi,
   postReorderCartBatchApi,
@@ -233,7 +233,7 @@ import type {
   CartBatchListResponse,
   CheckoutBatchRequest,
   CheckoutBatchResponse,
-  CheckPaymentStatusResponse,
+  OrderPaymentStatusResponse,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import {
   DUMMY_ACTIVE_CART_BATCH,
@@ -525,26 +525,24 @@ export async function reorderCartBatch(
   }
 }
 
-export async function checkBillingPaymentStatus(
-  billingCode: string,
+export async function checkOrderPaymentStatus(
+  orderId: string,
   signal?: AbortSignal,
-): Promise<CheckPaymentStatusResponse> {
+): Promise<OrderPaymentStatusResponse> {
   try {
-    const response = await checkBillingPaymentStatusApi(billingCode, signal);
+    const response = await fetchOrderPaymentStatusApi(orderId, signal);
     if (response.data) return response.data;
     return {
-      billingCode,
-      status: "paid",
+      orderId,
+      transactionStatus: "settled",
       paidAt: new Date().toISOString(),
-      message: "Pembayaran telah diverifikasi (status: paid)",
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
       return {
-        billingCode,
-        status: "paid",
+        orderId,
+        transactionStatus: "settled",
         paidAt: new Date().toISOString(),
-        message: "Pembayaran telah diverifikasi (status: paid)",
       };
     }
     throw error;

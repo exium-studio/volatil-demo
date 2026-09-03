@@ -18,6 +18,7 @@ export type InternalBatchReviewRejectModalContentProps = {
 
 export type InternalBatchItem = {
   batchId: string;
+  orderId?: string;
   mitraId: string;
   mitraName: string;
   status: CartBatchStatus;
@@ -36,6 +37,18 @@ export type InternalBatchListQueryParams = PaginatedParams & {
 export type InternalBatchListResponse = {
   items: InternalBatchItem[];
   pagination: PaginationMeta;
+};
+
+export type ProvisionOrderPayload = {
+  orderId: string;
+  batchId?: string;
+};
+
+export type ProvisionOrderResponse = {
+  orderId: string;
+  batchId?: string;
+  transactionStatus: string;
+  batchStatus: string;
 };
 
 export type ApproveBatchItemPayload = {

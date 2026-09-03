@@ -1,14 +1,14 @@
-// src/features/internal/batch-review/hooks/use-batch-review.ts
-
 import {
   approveBatchApi,
   fetchInternalBatchDetailApi,
   fetchInternalBatchesApi,
+  provisionOrderApi,
   rejectBatchApi,
 } from "@/features/internal/batch-review/api/batch-review.api";
 import type {
   ApproveBatchPayload,
   InternalBatchListQueryParams,
+  ProvisionOrderPayload,
   RejectBatchPayload,
 } from "@/features/internal/batch-review/types/batch-review.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -34,6 +34,39 @@ export const useInternalBatchDetailQuery = (batchId?: string) => {
     queryFn: ({ signal }) =>
       batchId ? fetchInternalBatchDetailApi(batchId, signal) : null,
     enabled: Boolean(batchId),
+  });
+};
+
+export const useProvisionOrder = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("provision-order", {
+    group: "Review Permohonan",
+    loadingMessage: {
+      title: "Membuat layanan WMS...",
+      description: "Memotong AOI dan mempublish layer ke GeoServer...",
+    },
+    successMessage: {
+      title: "Layanan WMS berhasil dibuat!",
+      description: "Status batch diperbarui menjadi pending review.",
+    },
+    errorMessage: {
+      title: "Gagal membuat layanan WMS",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: ProvisionOrderPayload) => provisionOrderApi(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "interop-batches"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.home.all,
+      });
+    },
+    onError: toastHandlers.onError,
   });
 };
 

@@ -22,6 +22,7 @@ import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-rev
 import { InternalBatchReviewDetailTrigger } from "@/features/internal/batch-review/components/internal.batch-review.detail-modal";
 import {
   useInternalBatchesQuery,
+  useProvisionOrder,
 } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type {
   InternalBatchItem,
@@ -43,14 +44,14 @@ import {
   EyeIcon,
   InboxIcon,
   LayersIcon,
+  SparklesIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const BATCH_STATUS_OPTIONS = [
-  { value: "all", label: "Semua Status" },
-  { value: "pending_review", label: "Menunggu Review" },
-  { value: "approved", label: "Disetujui" },
-  { value: "rejected", label: "Ditolak" },
+  { value: "all", label: "Semua Status (Paid & Review)" },
+  { value: "paid", label: "Terbayar (Perlu Create WMS)" },
+  { value: "pending_review", label: "Menunggu Review (WMS Siap)" },
 ];
 
 export const InternalBatchReviewDataView = () => {
@@ -80,6 +81,9 @@ export const InternalBatchReviewDataView = () => {
     search: params.search || undefined,
     status: params.status as CartBatchStatus | "all",
   });
+
+  // Mutations
+  const provisionMutation = useProvisionOrder();
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
@@ -191,6 +195,19 @@ export const InternalBatchReviewDataView = () => {
 
     const itemActions: DataViewItemActionsGenerator<InternalBatchItem>[] = [
       {
+        key: "provision-wms",
+        label: "Create Service WMS",
+        icon: SparklesIcon,
+        colorPalette: "blue",
+        hidden: (batch: InternalBatchItem) => batch.status !== "paid",
+        onClick: (batch: InternalBatchItem) => {
+          provisionMutation.mutate({
+            orderId: batch.orderId ?? batch.batchId,
+            batchId: batch.batchId,
+          });
+        },
+      },
+      {
         key: "open-detail-batch",
         label: "Buka detail IGT",
         icon: LayersIcon,
@@ -231,24 +248,6 @@ export const InternalBatchReviewDataView = () => {
           ),
         },
       },
-      // Action Tolak di-hide / di-comment sementara menunggu mekanisme rekber sebelum settle di SIMPONI
-      /*
-      {
-        key: "reject-batch",
-        label: "Tolak Batch",
-        icon: XCircleIcon,
-        colorPalette: "red",
-        hidden: (batch: InternalBatchItem) => batch.status !== "pending_review",
-        modal: {
-          triggerComponent: (batch: InternalBatchItem) => (
-            <InternalBatchReviewRejectTrigger
-              modalKey={`reject-batch-${batch.batchId}`}
-              batch={batch}
-            />
-          ),
-        },
-      },
-      */
     ];
 
     return {
@@ -257,7 +256,7 @@ export const InternalBatchReviewDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [rawItems, preferredTimezone, navigate]);
+  }, [rawItems, preferredTimezone, navigate, provisionMutation]);
 
   return (
     <Container.Root withContext={true} flex={1}>

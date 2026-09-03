@@ -17,7 +17,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
 
-import { useCheckBillingPaymentStatus } from "@/features/mitra/cart/hooks/use-mitra-cart";
+import { useCheckOrderPaymentStatus } from "@/features/mitra/cart/hooks/use-mitra-cart";
 
 export const BillingPage = () => {
   return (
@@ -35,22 +35,28 @@ const BillingPageBillingCode = () => {
 
   // Hooks
   const { billingCode } = BillingRoute.useParams();
+  const search = BillingRoute.useSearch();
   const navigate = useNavigate();
 
   // Mutations
-  const checkPaymentMutation = useCheckBillingPaymentStatus();
+  const checkPaymentMutation = useCheckOrderPaymentStatus();
 
   // Handlers
   const handleCheckStatus = () => {
-    checkPaymentMutation.mutate(billingCode, {
+    // Check order payment status via GET /api/mitra/orders/:orderId/status
+    const targetOrderId = search?.orderId || billingCode;
+    checkPaymentMutation.mutate(targetOrderId, {
       onSuccess: (res) => {
-        if (res.status === "paid" || res.status === "approved" || res.status === "preparing") {
+        if (
+          res.transactionStatus === "settled" ||
+          res.transactionStatus === "paid"
+        ) {
           focusAlert("payment-success", () => (
             <FocusAlertItem
               variant={"celebrate"}
               title={"Pembayaran Berhasil!"}
               description={
-                "Pembayaran telah terverifikasi dengan status 'paid'. Layanan data spasial sedang diproses dan menunggu verifikasi Admin Internal ATR/BPN."
+                "Pembayaran telah terverifikasi dengan status 'settled'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
               }
               onDone={() => {
                 void navigate({
@@ -64,10 +70,9 @@ const BillingPageBillingCode = () => {
           focusAlert("payment-status-info", () => (
             <FocusAlertItem
               variant={"info"}
-              title={`Status Pembayaran: ${res.status}`}
+              title={`Status Transaksi: ${res.transactionStatus}`}
               description={
-                res.message ??
-                "Pembayaran belum terkonfirmasi lunas. Silakan selesaikan pembayaran sebelum batas waktu berakhir."
+                "Pembayaran belum terkonfirmasi settled. Silakan selesaikan pembayaran sebelum batas waktu billing berakhir."
               }
             />
           ));

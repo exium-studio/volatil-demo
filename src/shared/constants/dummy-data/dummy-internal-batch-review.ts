@@ -7,9 +7,10 @@ const now = new Date();
 export const DUMMY_INTERNAL_BATCHES: InternalBatchItem[] = [
   {
     batchId: "btc-2026-0830-001",
+    orderId: "ord-2026-0830-001",
     mitraId: "mtr-001",
     mitraName: "PT Graha Pembangunan Persada",
-    status: "pending_review",
+    status: "paid",
     selectionType: "draw_aoi",
     createdAt: new Date(now.getTime() - 1000 * 60 * 45).toISOString(),
     totalPrice: 1850000,
@@ -45,6 +46,7 @@ export const DUMMY_INTERNAL_BATCHES: InternalBatchItem[] = [
   },
   {
     batchId: "btc-2026-0830-002",
+    orderId: "ord-2026-0830-002",
     mitraId: "mtr-002",
     mitraName: "PT Nusantara Infrastruktur Utama",
     status: "pending_review",
