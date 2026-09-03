@@ -147,7 +147,12 @@ export const InternalBatchReviewDataView = () => {
             value: previewWmsUrl,
             td: previewWmsUrl ? (
               <HStack gap={"xs"} align={"center"} maxW={"220px"}>
-                <ClampedP fontSize={"xs"} fontFamily={"mono"} color={"fg.muted"} truncate>
+                <ClampedP
+                  fontSize={"xs"}
+                  fontFamily={"mono"}
+                  color={"fg.muted"}
+                  truncate
+                >
                   {previewWmsUrl}
                 </ClampedP>
                 <ClipboardButton
@@ -198,7 +203,6 @@ export const InternalBatchReviewDataView = () => {
         key: "provision-wms",
         label: "Create Service WMS",
         icon: SparklesIcon,
-        colorPalette: "blue",
         hidden: (batch: InternalBatchItem) => batch.status !== "paid",
         onClick: (batch: InternalBatchItem) => {
           provisionMutation.mutate({

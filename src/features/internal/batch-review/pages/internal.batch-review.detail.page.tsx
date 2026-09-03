@@ -17,8 +17,9 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Heading } from "@/design-system/components/typography/ui/heading";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
 import {
@@ -29,7 +30,6 @@ import type { BatchLayerDataViewProps } from "@/features/internal/batch-review/t
 import type { CartBatchItem } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
@@ -81,12 +81,12 @@ export function InternalBatchReviewDetailPage() {
           {/* Header */}
           <HeaderContainer>
             <HStack justify={"space-between"} align={"center"} w={"full"}>
-              <HStack gap={"sm"}>
+              <HStack align={"center"} gap={"sm"}>
                 <BackButton
                   onClick={() => navigate({ to: "/internal/batch-review" })}
                 />
 
-                <Heading>{"Review Permohonan Detail"}</Heading>
+                <ClampedHeading>{"Review Permohonan Detail"}</ClampedHeading>
               </HStack>
 
               <HStack gap={2}>
@@ -228,7 +228,9 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
         const previewUrl =
           item.previewWmsUrl ||
           item.wmsUrl ||
-          (item.sourceLayerId ? `/api/proxy/wms?layerId=${item.sourceLayerId}` : "");
+          (item.sourceLayerId
+            ? `/api/proxy/wms?layerId=${item.sourceLayerId}`
+            : "");
 
         return {
           id: item.id,
