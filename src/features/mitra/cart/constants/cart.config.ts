@@ -50,7 +50,7 @@ export const SPATIAL_BASIS_CONFIG_MAP: Record<
   },
 };
 
-export const CART_BATCH_STATUS_CONFIG_MAP: Record<
+export const BATCH_STATUS_CONFIG: Record<
   CartBatchStatus,
   CartBatchStatusConfig
 > = {

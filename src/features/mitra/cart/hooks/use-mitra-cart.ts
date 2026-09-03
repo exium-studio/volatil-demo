@@ -243,7 +243,8 @@ export const useCreateCartBatch = () => {
     },
     successMessage: {
       title: "Data dimasukkan ke keranjang!",
-      description: "Sistem Interop sedang memproses penyiapan layer spasial Anda.",
+      description:
+        "Sistem Interop sedang memproses penyiapan layer spasial Anda.",
     },
     errorMessage: {
       title: "Gagal membuat batch keranjang",
@@ -425,7 +426,8 @@ export const useCheckOrderPaymentStatus = () => {
     },
     successMessage: {
       title: "Status pembayaran berhasil dikonfirmasi (settled)",
-      description: "Pemotongan AOI dan pembuatan service layer sedang diproses.",
+      description:
+        "Pemotongan AOI dan pembuatan service layer sedang diproses.",
     },
     errorMessage: {
       title: "Gagal memeriksa status pembayaran",

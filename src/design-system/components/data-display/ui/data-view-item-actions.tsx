@@ -277,10 +277,6 @@ export function DataListItemActionsTrigger<
     return true;
   });
 
-  if (isEmptyArray(visibleActions)) {
-    return null;
-  }
-
   return (
     <Menu.Root
       lazyMount
