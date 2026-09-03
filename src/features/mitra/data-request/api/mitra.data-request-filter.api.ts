@@ -126,13 +126,53 @@ export const fetchFilterOptionsKecamatanApi = async (
   const kabNameOrId = params.kabupatenId.trim().toUpperCase();
   let targetRegId: string | undefined;
 
+  // 1. Direct ID check or search in cached regencies
   for (const [, regList] of cachedRegencies.entries()) {
     const found = regList.find(
-      (r) => r.id === kabNameOrId || r.name.toUpperCase() === kabNameOrId,
+      (r) =>
+        r.id === kabNameOrId ||
+        r.name.toUpperCase() === kabNameOrId ||
+        r.name.toUpperCase().includes(kabNameOrId) ||
+        kabNameOrId.includes(r.name.toUpperCase()),
     );
     if (found) {
       targetRegId = found.id;
       break;
+    }
+  }
+
+  // 2. If not found in cache, fetch all regencies across cached/fetched provinces
+  if (!targetRegId) {
+    if (!cachedProvinces) {
+      cachedProvinces = await fetchWilayahJson<
+        Array<{ id: string; name: string }>
+      >("provinces.json", signal);
+    }
+
+    for (const prov of cachedProvinces) {
+      if (!cachedRegencies.has(prov.id)) {
+        try {
+          const regList = await fetchWilayahJson<
+            Array<{ id: string; province_id: string; name: string }>
+          >(`regencies/${prov.id}.json`, signal);
+          cachedRegencies.set(prov.id, regList);
+        } catch {
+          // Continue
+        }
+      }
+
+      const regList = cachedRegencies.get(prov.id) ?? [];
+      const found = regList.find(
+        (r) =>
+          r.id === kabNameOrId ||
+          r.name.toUpperCase() === kabNameOrId ||
+          r.name.toUpperCase().includes(kabNameOrId) ||
+          kabNameOrId.includes(r.name.toUpperCase()),
+      );
+      if (found) {
+        targetRegId = found.id;
+        break;
+      }
     }
   }
 
@@ -164,9 +204,14 @@ export const fetchFilterOptionsKelurahanApi = async (
   const kecNameOrId = params.kecamatanId.trim().toUpperCase();
   let targetDistId: string | undefined;
 
+  // Search in cached districts
   for (const [, distList] of cachedDistricts.entries()) {
     const found = distList.find(
-      (d) => d.id === kecNameOrId || d.name.toUpperCase() === kecNameOrId,
+      (d) =>
+        d.id === kecNameOrId ||
+        d.name.toUpperCase() === kecNameOrId ||
+        d.name.toUpperCase().includes(kecNameOrId) ||
+        kecNameOrId.includes(d.name.toUpperCase()),
     );
     if (found) {
       targetDistId = found.id;
