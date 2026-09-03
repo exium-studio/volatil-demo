@@ -159,10 +159,12 @@ export const TransactionHistoryDataView = () => {
               td: (
                 <VStack align={"start"} w={"200px"}>
                   <ClampedP title={itemNames}>{itemNames || "-"}</ClampedP>
+
                   <HStack gap={"xs"} align={"center"}>
                     <ClampedP fontSize={"xs"} color={"fg.subtle"}>
                       {`${item.items.length} Layer IGT`}
                     </ClampedP>
+
                     <SelectionTypeBadge size={"xs"}>
                       {item.selectionType}
                     </SelectionTypeBadge>
@@ -194,7 +196,6 @@ export const TransactionHistoryDataView = () => {
         key: "pay-order",
         label: "Bayar",
         icon: CreditCardIcon,
-        colorPalette: "blue",
         hidden: (transaction: TransactionRecord) =>
           transaction.transactionStatus !== "pending",
         onClick: (transaction: TransactionRecord) => {

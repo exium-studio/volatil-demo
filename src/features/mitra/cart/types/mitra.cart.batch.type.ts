@@ -30,7 +30,7 @@ export type CartBatchStatus = BatchStatus;
 
 export type CartBatchStatusConfig = {
   label: string;
-  colorPalette: "green" | "blue" | "red" | "gray" | "orange";
+  colorPalette: string;
   icon: (typeof import("lucide-react"))["CheckCircle2Icon"];
   iconColor: string;
 };

@@ -8,6 +8,7 @@ import type { PaginationMeta } from "@/shared/types/common-response.type";
 
 export type TransactionStatus =
   | "pending"
+  | "processing"
   | "paid"
   | "settled"
   | "expired"

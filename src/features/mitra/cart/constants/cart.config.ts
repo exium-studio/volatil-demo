@@ -62,7 +62,7 @@ export const BATCH_STATUS_CONFIG: Record<
   },
   paid: {
     label: "Terbayar",
-    colorPalette: "green",
+    colorPalette: "blue",
     icon: CheckCircle2Icon,
     iconColor: "green.fg",
   },
@@ -74,9 +74,9 @@ export const BATCH_STATUS_CONFIG: Record<
   },
   processing: {
     label: "Menyiapkan Layanan WMS",
-    colorPalette: "blue",
+    colorPalette: "purple",
     icon: LoaderIcon,
-    iconColor: "blue.fg",
+    iconColor: "purple.fg",
   },
   pending_review: {
     label: "Menunggu Validasi Admin",
@@ -92,9 +92,9 @@ export const BATCH_STATUS_CONFIG: Record<
   },
   expired: {
     label: "Kedaluwarsa",
-    colorPalette: "red",
+    colorPalette: "neutral",
     icon: AlertCircleIcon,
-    iconColor: "red.fg",
+    iconColor: "fg",
   },
 };
 
