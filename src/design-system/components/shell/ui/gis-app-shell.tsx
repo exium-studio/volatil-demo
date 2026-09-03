@@ -452,7 +452,12 @@ const Content = () => {
   // Right Splitter panel — holds MapShell (MapOverlay controls, layer management, draw toolbar)
   const spacerPanel = (
     <Splitter.Panel key={"spacer"} id={"spacer"} pointerEvents={"none"}>
-      <Box pos={"relative"} boxSize={"full"} pointerEvents={"none"}>
+      <VStack
+        pos={"relative"}
+        minH={"300px"}
+        boxSize={"full"}
+        pointerEvents={"none"}
+      >
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
@@ -461,7 +466,7 @@ const Content = () => {
             console.log("draw finished", { feature, originalPoints });
           }}
         />
-      </Box>
+      </VStack>
     </Splitter.Panel>
   );
 

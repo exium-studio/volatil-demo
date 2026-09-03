@@ -23,14 +23,46 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
 
     if (disabled) return children;
 
+    // Constants
+    const rootPropKeys = new Set([
+      "open",
+      "defaultOpen",
+      "onOpenChange",
+      "openDelay",
+      "closeDelay",
+      "closeOnPointerDown",
+      "closeOnScroll",
+      "closeOnClick",
+      "closeOnEscape",
+      "interactive",
+      "positioning",
+      "id",
+      "ids",
+      "lazyMount",
+      "unmountOnExit",
+      "present",
+      "navigate",
+    ]);
+
+    const rootProps: Record<string, unknown> = { openDelay };
+    const triggerProps: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(restProps)) {
+      if (rootPropKeys.has(key)) {
+        rootProps[key] = value;
+      } else {
+        triggerProps[key] = value;
+      }
+    }
+
     return (
       <ChakraTooltip.Root
-        openDelay={openDelay}
-        {...restProps}
+        {...rootProps}
       >
         <ChakraTooltip.Trigger
           asChild
           w={w ?? width}
+          {...triggerProps}
         >
           {children}
         </ChakraTooltip.Trigger>
