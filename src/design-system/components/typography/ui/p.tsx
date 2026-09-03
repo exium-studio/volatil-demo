@@ -64,7 +64,7 @@ export const PSerif = forwardRef<HTMLParagraphElement, PProps>(
   },
 );
 
-export const PLink = forwardRef<HTMLParagraphElement, PProps>(
+export const PLink = forwardRef<HTMLSpanElement, PProps>(
   function PLink(props, ref) {
     // Props
     const { children = "", ...restProps } = props;
@@ -73,7 +73,7 @@ export const PLink = forwardRef<HTMLParagraphElement, PProps>(
     const { theme } = useThemeStore();
 
     return (
-      <P
+      <Span
         ref={ref}
         color={`${theme.colorPalette}.fg`}
         cursor={"pointer"}
@@ -83,7 +83,7 @@ export const PLink = forwardRef<HTMLParagraphElement, PProps>(
         {...restProps}
       >
         {children}
-      </P>
+      </Span>
     );
   },
 );

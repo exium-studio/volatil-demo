@@ -2,12 +2,12 @@
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Input } from "@/design-system/components/input/ui/input";
-import { Box } from "@/design-system/components/layout/ui/box";
+import { ConstrainedContainer } from "@/design-system/components/layout/ui/constrained-container";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PageContainer } from "@/design-system/components/layout/ui/page-container";
@@ -30,28 +30,34 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { Box } from "@/design-system/components/layout/ui/box";
 
 const STATUS_CONFIG: Record<
   MitraRegistrationStatus,
-  { label: string; colorPalette: string; icon: typeof CheckCircle2Icon; desc: string }
+  {
+    label: string;
+    colorPalette: string;
+    icon: typeof CheckCircle2Icon;
+    desc: string;
+  }
 > = {
   pending_verification: {
     label: "Menunggu Verifikasi",
     colorPalette: "orange",
     icon: ClockIcon,
-    desc: "Berkas Anda sedang diperiksa dan diverifikasi oleh tim verifikator Kementerian ATR/BPN.",
+    desc: "Permohonan Anda sedang diverifikasi oleh Tim Teknis Kementerian ATR/BPN.",
   },
   approved: {
-    label: "Disetujui & Kontrak Terbit",
+    label: "Disetujui",
     colorPalette: "green",
     icon: CheckCircle2Icon,
-    desc: "Permohonan kemitraan Anda telah disetujui. Berkas kontrak telah diterbitkan dan akun SSO Anda aktif.",
+    desc: "Permohonan telah disetujui. Akun SSO telah diaktifkan dan dokumen kontrak dapat diunduh.",
   },
   rejected: {
-    label: "Permohonan Ditolak",
+    label: "Ditolak",
     colorPalette: "red",
     icon: XCircleIcon,
-    desc: "Permohonan kemitraan belum dapat disetujui karena berkas atau ketentuan belum memenuhi persyaratan.",
+    desc: "Permohonan tidak dapat disetujui. Silakan periksa alasan penolakan di bawah ini.",
   },
 };
 
@@ -60,8 +66,8 @@ export const MitraRegistrationStatusPage = () => {
   const { theme } = useThemeStore();
 
   // States
-  const [searchInput, setSearchInput] = useState("");
-  const [queryRegNumber, setQueryRegNumber] = useState("");
+  const [searchInput, setSearchInput] = useState<string>("");
+  const [queryRegNumber, setQueryRegNumber] = useState<string>("");
 
   // Queries
   const {
@@ -84,42 +90,28 @@ export const MitraRegistrationStatusPage = () => {
 
   return (
     <PageContainer p={[2, null, 6]} overflowY={"auto"}>
-      <Box maxW={"720px"} mx={"auto"} w={"full"} py={4}>
+      <ConstrainedContainer py={4}>
         {/* Header */}
-        <HStack justify={"space-between"} align={"center"} mb={6}>
-          <HStack gap={3}>
-            <BackButton
-              onClick={() => {
-                window.location.href = "/";
-              }}
-            />
-            <VStack align={"start"} gap={0}>
-              <Badge colorPalette={"blue"} size={"sm"}>
-                <AppIcon icon={FileCheckIcon} size={"xs"} />
-                {"STATUS PERMOHONAN"}
-              </Badge>
-              <Heading size={"lg"}>{"Cek Status Kemitraan"}</Heading>
-            </VStack>
-          </HStack>
+        <HStack align={"center"} justify={"space-between"} mb={8} w={"full"}>
+          <BackButton />
 
-          <Link to={"/register"}>
-            <Button variant={"outline"} size={"sm"}>
-              {"Daftar Baru"}
-            </Button>
-          </Link>
+          <Heading size={"2xl"} textAlign={"center"} flex={1} pr={"40px"}>
+            {"Cek Status Kemitraan"}
+          </Heading>
+
+          <Box w={"buttonH"} minW={"buttonH"} aria-hidden={true} />
         </HStack>
 
         <Container.Root
           borderColor={"border.subtle"}
           rounded={theme.radii.container}
-          bg={"bg.panel"}
         >
           <HeaderContainer p={6}>
-            <VStack align={"start"} gap={1}>
+            <VStack align={"center"} textAlign={"center"} w={"full"} gap={1}>
               <P fontWeight={"semibold"} fontSize={"md"}>
                 {"Pelacakan Pengajuan Kemitraan Publik"}
               </P>
-              <P fontSize={"sm"} color={"fg.muted"}>
+              <P fontSize={"sm"} color={"fg.muted"} maxW={"560px"}>
                 {
                   "Masukkan nomor registrasi permohonan yang Anda dapatkan saat pendaftaran (format: REG-2026-XXXXX)."
                 }
@@ -170,7 +162,9 @@ export const MitraRegistrationStatusPage = () => {
               <Alert.Root status={"error"} size={"sm"}>
                 <Alert.Indicator />
                 <Alert.Content>
-                  <Alert.Title>{"Nomor Registrasi Tidak Ditemukan"}</Alert.Title>
+                  <Alert.Title>
+                    {"Nomor Registrasi Tidak Ditemukan"}
+                  </Alert.Title>
                   <Alert.Description>
                     {error?.message ||
                       "Mohon pastikan nomor registrasi yang Anda masukkan sudah benar."}
@@ -188,7 +182,13 @@ export const MitraRegistrationStatusPage = () => {
                   borderWidth={"1px"}
                   borderColor={"border.subtle"}
                 >
-                  <HStack justify={"space-between"} align={"center"} mb={4} wrap={"wrap"} gap={2}>
+                  <HStack
+                    justify={"space-between"}
+                    align={"center"}
+                    mb={4}
+                    wrap={"wrap"}
+                    gap={2}
+                  >
                     <VStack align={"start"} gap={0}>
                       <P fontSize={"xs"} color={"fg.subtle"}>
                         {"Nomor Registrasi"}
@@ -222,52 +222,72 @@ export const MitraRegistrationStatusPage = () => {
                   </P>
 
                   {/* If Approved with Contract Document */}
-                  {statusData.status === "approved" && statusData.contractDocument && (
-                    <Box mt={4} p={3} bg={"green.50"} rounded={"md"} borderWidth={"1px"} borderColor={"green.200"}>
-                      <HStack justify={"space-between"} align={"center"}>
-                        <HStack gap={2}>
-                          <AppIcon icon={FileCheckIcon} color={"green.600"} />
-                          <VStack align={"start"} gap={0}>
-                            <P fontSize={"xs"} fontWeight={"bold"} color={"green.800"}>
-                              {"Dokumen Kontrak Kemitraan Resmi"}
-                            </P>
-                            <P fontSize={"xs"} color={"green.700"}>
-                              {"Silakan unduh salinan berkas kontrak"}
-                            </P>
-                          </VStack>
-                        </HStack>
+                  {statusData.status === "approved" &&
+                    statusData.contractDocument && (
+                      <Box
+                        mt={4}
+                        p={3}
+                        bg={"green.50"}
+                        rounded={"md"}
+                        borderWidth={"1px"}
+                        borderColor={"green.200"}
+                      >
+                        <HStack justify={"space-between"} align={"center"}>
+                          <HStack gap={2}>
+                            <AppIcon icon={FileCheckIcon} color={"green.600"} />
+                            <VStack align={"start"} gap={0}>
+                              <P
+                                fontSize={"xs"}
+                                fontWeight={"bold"}
+                                color={"green.800"}
+                              >
+                                {"Dokumen Kontrak Kemitraan Resmi"}
+                              </P>
+                              <P fontSize={"xs"} color={"green.700"}>
+                                {"Silakan unduh salinan berkas kontrak"}
+                              </P>
+                            </VStack>
+                          </HStack>
 
-                        <a
-                          href={statusData.contractDocument}
-                          target={"_blank"}
-                          rel={"noreferrer"}
-                          download
-                        >
-                          <Button size={"xs"} colorPalette={"green"}>
-                            <AppIcon icon={DownloadIcon} />
-                            {"Unduh Kontrak"}
-                          </Button>
-                        </a>
-                      </HStack>
-                    </Box>
-                  )}
+                          <a
+                            href={statusData.contractDocument}
+                            target={"_blank"}
+                            rel={"noreferrer"}
+                            download
+                          >
+                            <Button size={"xs"} colorPalette={"green"}>
+                              <AppIcon icon={DownloadIcon} />
+                              {"Unduh Kontrak"}
+                            </Button>
+                          </a>
+                        </HStack>
+                      </Box>
+                    )}
 
                   {/* If Rejected with Reason */}
-                  {statusData.status === "rejected" && statusData.rejectionReason && (
-                    <Box mt={4} p={3} bg={"red.50"} rounded={"md"} borderWidth={"1px"} borderColor={"red.200"}>
-                      <VStack align={"start"} gap={1}>
-                        <HStack gap={2} color={"red.700"}>
-                          <AppIcon icon={AlertCircleIcon} size={"sm"} />
-                          <P fontSize={"xs"} fontWeight={"bold"}>
-                            {"Alasan Penolakan Resmi:"}
+                  {statusData.status === "rejected" &&
+                    statusData.rejectionReason && (
+                      <Box
+                        mt={4}
+                        p={3}
+                        bg={"red.50"}
+                        rounded={"md"}
+                        borderWidth={"1px"}
+                        borderColor={"red.200"}
+                      >
+                        <VStack align={"start"} gap={1}>
+                          <HStack gap={2} color={"red.700"}>
+                            <AppIcon icon={AlertCircleIcon} size={"sm"} />
+                            <P fontSize={"xs"} fontWeight={"bold"}>
+                              {"Alasan Penolakan Resmi:"}
+                            </P>
+                          </HStack>
+                          <P fontSize={"sm"} color={"red.800"}>
+                            {statusData.rejectionReason}
                           </P>
-                        </HStack>
-                        <P fontSize={"sm"} color={"red.800"}>
-                          {statusData.rejectionReason}
-                        </P>
-                      </VStack>
-                    </Box>
-                  )}
+                        </VStack>
+                      </Box>
+                    )}
                 </Box>
               </VStack>
             )}
@@ -277,13 +297,20 @@ export const MitraRegistrationStatusPage = () => {
         {/* Footer Link */}
         <VStack align={"center"} mt={6} gap={2}>
           <P fontSize={"sm"} color={"fg.muted"}>
+            {"Belum mengajukan kemitraan? "}
+            <Link to={"/register"}>
+              <PLink fontWeight={"semibold"}>{"Daftar Kemitraan Baru"}</PLink>
+            </Link>
+          </P>
+
+          <P fontSize={"sm"} color={"fg.muted"}>
             {"Kembali ke halaman utama? "}
             <Link to={"/"}>
               <PLink fontWeight={"semibold"}>{"Halaman Masuk"}</PLink>
             </Link>
           </P>
         </VStack>
-      </Box>
+      </ConstrainedContainer>
     </PageContainer>
   );
 };

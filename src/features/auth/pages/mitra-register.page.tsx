@@ -2,43 +2,42 @@
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { ConstrainedContainer } from "@/design-system/components/layout/ui/constrained-container";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { PageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, PLink } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useMitraRegistrationMutation } from "@/features/auth/hooks/use-mitra-registration.mutation";
 import { createMitraRegistrationSchema } from "@/features/auth/schemas/mitra-registration.schema";
-import { zodResolver } from "@/features/auth/schemas/signin.schema";
 import type {
   MitraRegistrationCreatedData,
   MitraRegistrationFormValues,
 } from "@/features/auth/types/mitra-registration.type";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "@tanstack/react-router";
 import {
   Building2Icon,
   CheckCircle2Icon,
   FileCheckIcon,
   FileTextIcon,
-  HandshakeIcon,
   SendIcon,
   ShieldCheckIcon,
   UserCheckIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export const MitraRegisterPage = () => {
@@ -52,19 +51,22 @@ export const MitraRegisterPage = () => {
   // Mutations
   const registerMutation = useMitraRegistrationMutation();
 
-  // Form
+  // Schemas
+  const formSchema = useMemo(() => createMitraRegistrationSchema(), []);
+
+  // Forms
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<MitraRegistrationFormValues>({
-    resolver: zodResolver(createMitraRegistrationSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       namaInstansi: "",
-      alamatKantor: "",
       nib: "",
       npwp: "",
+      alamatKantor: "",
       website: "",
       namaPenanggungJawab: "",
       jabatan: "",
@@ -91,47 +93,34 @@ export const MitraRegisterPage = () => {
 
   return (
     <PageContainer p={[2, null, 6]} overflowY={"auto"}>
-      <Box maxW={"960px"} mx={"auto"} w={"full"} py={4}>
+      <ConstrainedContainer py={4}>
         {/* Header Bar */}
-        <HStack justify={"space-between"} align={"center"} mb={6}>
-          <HStack gap={3}>
-            <BackButton
-              onClick={() => {
-                window.location.href = "/";
-              }}
-            />
-            <VStack align={"start"} gap={0}>
-              <Badge colorPalette={"blue"} size={"sm"}>
-                <AppIcon icon={HandshakeIcon} size={"xs"} />
-                {"KEMITRAAN IGT"}
-              </Badge>
-              <Heading size={"lg"}>{"Pendaftaran Akun Kemitraan"}</Heading>
-            </VStack>
-          </HStack>
+        <HStack
+          align={"center"}
+          justify={"space-between"}
+          gap={"sm"}
+          mb={8}
+          w={"full"}
+        >
+          <BackButton />
 
-          <Link to={"/registration-status"}>
-            <Button variant={"outline"} size={"sm"}>
-              <AppIcon icon={FileCheckIcon} />
-              {"Cek Status Pengajuan"}
-            </Button>
-          </Link>
+          <Heading size={"2xl"} textAlign={"center"} flex={1} pr={"40px"}>
+            {"Pendaftaran Akun Kemitraan"}
+          </Heading>
+
+          <Box w={"buttonH"} minW={"buttonH"} aria-hidden={true} />
         </HStack>
 
         {successData ? (
           /* Success Screen */
-          <Container.Root
-            borderColor={"border.subtle"}
-            rounded={theme.radii.container}
-            bg={"bg.panel"}
-            p={[4, null, 8]}
-          >
+          <Container.Root rounded={theme.radii.container}>
             <VStack align={"center"} gap={"lg"} textAlign={"center"} py={8}>
-              <Box color={"green.500"}>
+              <Box color={"fg.muted"}>
                 <AppIcon icon={CheckCircle2Icon} size={"xl"} />
               </Box>
 
               <VStack gap={"xs"}>
-                <Heading size={"xl"}>{"Permohonan Berhasil Dikirim!"}</Heading>
+                <Heading size={"xl"}>{"Permohonan Berhasil Dikirim"}</Heading>
                 <P color={"fg.muted"} maxW={"600px"}>
                   {
                     "Terima kasih telah mengajukan permohonan kemitraan dengan Kementerian ATR/BPN. Berkas Anda akan diverifikasi oleh tim internal kami."
@@ -155,7 +144,6 @@ export const MitraRegisterPage = () => {
                   <P
                     fontSize={"2xl"}
                     fontWeight={"bold"}
-                    color={"blue.600"}
                     letterSpacing={"wider"}
                   >
                     {successData.registrationNumber}
@@ -186,16 +174,14 @@ export const MitraRegisterPage = () => {
           <Container.Root
             as={"form"}
             onSubmit={handleSubmit(onSubmit)}
-            borderColor={"border.subtle"}
             rounded={theme.radii.container}
-            bg={"bg.panel"}
           >
             <HeaderContainer p={6}>
-              <VStack align={"start"} gap={1}>
+              <VStack align={"center"} textAlign={"center"} w={"full"} gap={1}>
                 <P fontWeight={"semibold"} fontSize={"md"}>
-                  {"Formulir Permohonan & 6 Berkas Dokumen Kemitraan"}
+                  {"Formulir Permohonan & Berkas Dokumen Kemitraan"}
                 </P>
-                <P fontSize={"sm"} color={"fg.muted"}>
+                <P fontSize={"sm"} color={"fg.muted"} maxW={"560px"}>
                   {
                     "Lengkapi data identitas instansi pemohon serta unggah seluruh dokumen persyaratan sesuai ketentuan Kementerian ATR/BPN."
                   }
@@ -209,9 +195,9 @@ export const MitraRegisterPage = () => {
               <VStack align={"stretch"} gap={"xl"}>
                 {/* Section 1: Profil Instansi */}
                 <Fieldset>
-                  <HStack gap={2} mb={2} color={"blue.600"}>
+                  <HStack gap={2} mb={2} color={"fg.muted"}>
                     <AppIcon icon={Building2Icon} />
-                    <P fontWeight={"bold"} fontSize={"sm"}>
+                    <P fontWeight={"semibold"} fontSize={"sm"}>
                       {"1. DATA PROFIL INSTANSI / PERUSAHAAN"}
                     </P>
                   </HStack>
@@ -282,9 +268,9 @@ export const MitraRegisterPage = () => {
 
                 {/* Section 2: Penanggung Jawab */}
                 <Fieldset>
-                  <HStack gap={2} mb={2} color={"purple.600"}>
+                  <HStack gap={2} mb={2} color={"fg.muted"}>
                     <AppIcon icon={UserCheckIcon} />
-                    <P fontWeight={"bold"} fontSize={"sm"}>
+                    <P fontWeight={"semibold"} fontSize={"sm"}>
                       {"2. PENANGGUNG JAWAB & AKUN SSO"}
                     </P>
                   </HStack>
@@ -357,9 +343,9 @@ export const MitraRegisterPage = () => {
 
                 {/* Section 3: 6 Berkas Dokumen Wajib */}
                 <Fieldset>
-                  <HStack gap={2} mb={2} color={"orange.600"}>
+                  <HStack gap={2} mb={2} color={"fg.muted"}>
                     <AppIcon icon={FileTextIcon} />
-                    <P fontWeight={"bold"} fontSize={"sm"}>
+                    <P fontWeight={"semibold"} fontSize={"sm"}>
                       {"3. ENAM (6) BERKAS PERSYARATAN WAJIB"}
                     </P>
                   </HStack>
@@ -376,7 +362,6 @@ export const MitraRegisterPage = () => {
                   </Alert.Root>
 
                   <SimpleGrid columns={[1, null, 2]} gap={6}>
-                    {/* Dokumen 1 */}
                     <Field
                       label={"1. Surat Permohonan Kemitraan"}
                       invalid={Boolean(errors.suratPermohonan)}
@@ -397,7 +382,6 @@ export const MitraRegisterPage = () => {
                       />
                     </Field>
 
-                    {/* Dokumen 2 */}
                     <Field
                       label={"2. Dokumen DIK"}
                       invalid={Boolean(errors.dokumenDik)}
@@ -418,7 +402,6 @@ export const MitraRegisterPage = () => {
                       />
                     </Field>
 
-                    {/* Dokumen 3 */}
                     <Field
                       label={"3. Surat Pernyataan Hukum"}
                       invalid={Boolean(errors.suratPernyataanHukum)}
@@ -439,7 +422,6 @@ export const MitraRegisterPage = () => {
                       />
                     </Field>
 
-                    {/* Dokumen 4 */}
                     <Field
                       label={"4. Surat Komitmen Evaluasi (Lampiran III)"}
                       invalid={Boolean(errors.suratKomitmenEvaluasi)}
@@ -460,7 +442,6 @@ export const MitraRegisterPage = () => {
                       />
                     </Field>
 
-                    {/* Dokumen 5 */}
                     <Field
                       label={"5. Surat Komitmen Perbaikan (Lampiran IV)"}
                       invalid={Boolean(errors.suratKomitmenPerbaikan)}
@@ -481,7 +462,6 @@ export const MitraRegisterPage = () => {
                       />
                     </Field>
 
-                    {/* Dokumen 6 */}
                     <Field
                       label={"6. Proposal Teknis Pemanfaatan IGT"}
                       invalid={Boolean(errors.proposalTeknis)}
@@ -508,23 +488,14 @@ export const MitraRegisterPage = () => {
 
             <Separator borderColor={"border.subtle"} />
 
-            <HStack
-              justify={"space-between"}
+            <VStack
               align={"center"}
+              justify={"center"}
               p={6}
-              wrap={"wrap"}
-              gap={3}
+              gap={4}
+              w={"full"}
             >
-              <HStack gap={2}>
-                <AppIcon icon={ShieldCheckIcon} color={"green.500"} />
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {
-                    "Data permohonan akan diproses secara resmi oleh Kementerian ATR/BPN."
-                  }
-                </P>
-              </HStack>
-
-              <HStack gap={3}>
+              <HStack gap={3} justify={"center"} w={"full"}>
                 <Link to={"/"}>
                   <Button variant={"outline"}>{"Batal"}</Button>
                 </Link>
@@ -538,12 +509,32 @@ export const MitraRegisterPage = () => {
                   {"Kirim Permohonan Mitra"}
                 </Button>
               </HStack>
-            </HStack>
+
+              <HStack gap={2} justify={"center"}>
+                <AppIcon
+                  icon={ShieldCheckIcon}
+                  color={"fg.subtle"}
+                  size={"sm"}
+                />
+                <P fontSize={"xs"} color={"fg.muted"} textAlign={"center"}>
+                  {
+                    "Data permohonan akan diproses secara resmi oleh Kementerian ATR/BPN."
+                  }
+                </P>
+              </HStack>
+            </VStack>
           </Container.Root>
         )}
 
         {/* Footer Note */}
         <VStack align={"center"} mt={6} gap={2}>
+          <P fontSize={"sm"} color={"fg.muted"}>
+            {"Sudah mengajukan permohonan? "}
+            <Link to={"/registration-status"}>
+              <PLink fontWeight={"semibold"}>{"Cek Status Pengajuan"}</PLink>
+            </Link>
+          </P>
+
           <P fontSize={"sm"} color={"fg.muted"}>
             {"Sudah memiliki akun kemitraan aktif? "}
             <Link to={"/"}>
@@ -551,7 +542,7 @@ export const MitraRegisterPage = () => {
             </Link>
           </P>
         </VStack>
-      </Box>
+      </ConstrainedContainer>
     </PageContainer>
   );
 };
