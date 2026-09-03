@@ -215,6 +215,7 @@ export async function checkout(
 // -------------------------------------------------------------------------------------
 
 import {
+  checkBillingPaymentStatusApi,
   deleteCartBatchApi,
   fetchActiveCartBatchApi,
   fetchCartBatchDetailApi,
@@ -232,6 +233,7 @@ import type {
   CartBatchListResponse,
   CheckoutBatchRequest,
   CheckoutBatchResponse,
+  CheckPaymentStatusResponse,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import {
   DUMMY_ACTIVE_CART_BATCH,
@@ -478,19 +480,20 @@ export async function reorderCartBatch(
     const oldBatch = localDummyBatches.find((b) => b.batchId === batchId);
     const newBatch: CartBatch = {
       batchId: newBatchId,
-      status: "ready",
+      status: "pending_payment",
       selectionType: oldBatch?.selectionType ?? "catalog",
       administrativeFilter: oldBatch?.administrativeFilter,
       aoiPolygon: oldBatch?.aoiPolygon,
       cqlFilter: oldBatch?.cqlFilter,
       createdAt: new Date().toISOString(),
+      expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
       totalPrice: oldBatch?.totalPrice ?? 1200000,
       items: oldBatch?.items ?? [],
     };
     localDummyBatches = [newBatch, ...localDummyBatches];
     return {
       batchId: newBatchId,
-      status: "ready",
+      status: "pending_payment",
       estimatedTotalPrice: newBatch.totalPrice,
       createdAt: newBatch.createdAt,
     };
@@ -500,21 +503,48 @@ export async function reorderCartBatch(
       const oldBatch = localDummyBatches.find((b) => b.batchId === batchId);
       const newBatch: CartBatch = {
         batchId: newBatchId,
-        status: "ready",
+        status: "pending_payment",
         selectionType: oldBatch?.selectionType ?? "catalog",
         administrativeFilter: oldBatch?.administrativeFilter,
         aoiPolygon: oldBatch?.aoiPolygon,
         cqlFilter: oldBatch?.cqlFilter,
         createdAt: new Date().toISOString(),
+        expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
         totalPrice: oldBatch?.totalPrice ?? 1200000,
         items: oldBatch?.items ?? [],
       };
       localDummyBatches = [newBatch, ...localDummyBatches];
       return {
         batchId: newBatchId,
-        status: "ready",
+        status: "pending_payment",
         estimatedTotalPrice: newBatch.totalPrice,
         createdAt: newBatch.createdAt,
+      };
+    }
+    throw error;
+  }
+}
+
+export async function checkBillingPaymentStatus(
+  billingCode: string,
+  signal?: AbortSignal,
+): Promise<CheckPaymentStatusResponse> {
+  try {
+    const response = await checkBillingPaymentStatusApi(billingCode, signal);
+    if (response.data) return response.data;
+    return {
+      billingCode,
+      status: "paid",
+      paidAt: new Date().toISOString(),
+      message: "Pembayaran telah diverifikasi (status: paid)",
+    };
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return {
+        billingCode,
+        status: "paid",
+        paidAt: new Date().toISOString(),
+        message: "Pembayaran telah diverifikasi (status: paid)",
       };
     }
     throw error;

@@ -4,6 +4,7 @@ import {
   addAllToCartFromWfs,
   addSelectedToCart,
   cancelActiveCartBatch,
+  checkBillingPaymentStatus,
   checkout,
   checkoutCartBatch,
   clearAllCartBatches,
@@ -408,6 +409,44 @@ export const useReorderCartBatch = (onSuccessCallback?: () => void) => {
       });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "expired-batches"],
+      });
+      return data;
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useCheckBillingPaymentStatus = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("check-billing-payment-status", {
+    group: "Pembayaran",
+    loadingMessage: {
+      title: "Memeriksa status pembayaran...",
+    },
+    successMessage: {
+      title: "Status pembayaran berhasil diperbarui",
+    },
+    errorMessage: {
+      title: "Gagal memeriksa status pembayaran",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (billingCode: string) => checkBillingPaymentStatus(billingCode),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: (data) => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "batches"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "active-batch"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "transaction-history"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "my-data"],
       });
       return data;
     },

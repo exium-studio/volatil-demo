@@ -150,7 +150,18 @@ import type {
   CartBatchListResponse,
   CheckoutBatchRequest,
   CheckoutBatchResponse,
+  CheckPaymentStatusResponse,
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+
+export async function checkBillingPaymentStatusApi(
+  billingCode: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<CheckPaymentStatusResponse>> {
+  return apiClient.get<ApiResponse<CheckPaymentStatusResponse>>(
+    `/api/mitra/billing/${billingCode}/status`,
+    { signal },
+  );
+}
 
 export async function postCreateCartBatchApi(
   payload: AddToCartBatchRequest,

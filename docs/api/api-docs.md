@@ -383,11 +383,24 @@ Modul transaksi data IGT berbasis **Batch Interop Spasial**.
 
 ### Alur Final Transaksi:
 
-1. **Create Order (Add to Cart)**: Mitra memilih layer/fitur spasial dan memasukkan ke keranjang $\rightarrow$ status: `ready`.
+1. **Create Order (Add to Cart)**: Mitra memilih layer/fitur spasial dan memasukkan ke keranjang $\rightarrow$ status: `pending_payment` (TTL 24 jam).
 2. **Totalan**: Total tagihan dan rincian tarif PNBP dikalkulasi secara instan.
-3. **Bayar**: Mitra melakukan checkout $\rightarrow$ terbit Kode Billing PNBP ATR/BPN $\rightarrow$ bayar.
-4. **Create Service**: Setelah pembayaran terkonfirmasi (_settled_), **Interop Engine** mengeksekusi pemotongan data PostGIS dan auto-publishing GeoServer WMS/WFS.
-5. **Validasi Admin**: Admin Internal memvalidasi/memverifikasi layanan spasial yang telah disiapkan sebelum aktivasi penuh ke My Data.
+3. **Bayar**: Mitra melakukan checkout $\rightarrow$ terbit Kode Billing PNBP ATR/BPN $\rightarrow$ bayar. Status order berubah menjadi `paid`.
+4. **Create Service (Processing)**: Setelah status `paid`, **Interop Engine** otomatis mengeksekusi pemotongan data PostGIS dan auto-publishing GeoServer WMS/WFS (`processing` / `preparing`).
+5. **Validasi Admin**: Setelah data siap, status menjadi `pending_verification` / `pending_review`. Admin Internal memvalidasi/memverifikasi layanan spasial dengan menginput URL wrapper resmi INTEROP Pusdatin sebelum aktivasi penuh (`approved` / `active`) ke My Data.
+
+### SSOT Status Batch / Permohonan:
+
+```typescript
+type BatchStatus =
+  | "pending_payment" // Menunggu pembayaran mitra (TTL 24 jam)
+  | "paid" // Pembayaran telah terkonfirmasi
+  | "preparing" // Interop engine sedang menyiapkan/memotong layer data WMS/WFS
+  | "pending_review" // Menunggu validasi & input URL WMS INTEROP oleh admin internal
+  | "approved" // Disetujui admin dan layer aktif untuk mitra
+  | "rejected" // Ditolak admin (ditangguhkan sementara menunggu regulasi rekber)
+  | "expired"; // Masa berlaku pembayaran atau data kadaluwarsa
+```
 
 ## Add to Cart (Buat Batch Keranjang)
 
@@ -418,7 +431,7 @@ type AddToCartBatchRequest = {
 ```typescript
 type AddToCartBatchResponse = {
   batchId: string;
-  status: "ready";
+  status: "pending_payment";
   estimatedTotalPrice: number;
   createdAt: string;
 };
@@ -428,7 +441,7 @@ type AddToCartBatchResponse = {
 
 - **Endpoint**: `GET /api/mitra/cart/batches`
 - **Middleware / Akses**: `Mitra Only`
-- **Params**: `status?: "ready" | "preparing" | "pending_review" | "approved" | "rejected" | "expired"`
+- **Params**: `status?: "pending_payment" | "paid" | "preparing" | "pending_review" | "approved" | "rejected" | "expired"`
 - **Response**:
 
 ```typescript
@@ -514,6 +527,30 @@ type CheckoutBatchResponse = {
 };
 ```
 
+## Cek Status Pembayaran Billing (Kode Billing)
+
+- **Endpoint**: `GET /api/mitra/billing/{billingCode}/status`
+- **Middleware / Akses**: `Mitra Only`
+- **Response**:
+
+```typescript
+type CheckPaymentStatusResponse = {
+  billingCode: string;
+  orderId?: string;
+  batchId?: string;
+  status:
+    | "pending_payment"
+    | "paid"
+    | "preparing"
+    | "pending_review"
+    | "approved"
+    | "rejected"
+    | "expired";
+  paidAt?: string;
+  message?: string;
+};
+```
+
 ## Cek Status Pembayaran Order
 
 - **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
@@ -523,7 +560,7 @@ type CheckoutBatchResponse = {
 ```typescript
 type OrderPaymentStatusResponse = {
   orderId: string;
-  transactionStatus: "pending" | "settled" | "expired" | "failed";
+  transactionStatus: "pending" | "settled" | "paid" | "expired" | "failed";
   paidAt?: string;
 };
 ```

@@ -60,8 +60,8 @@ export const CART_BATCH_STATUS_CONFIG_MAP: Record<
     icon: CheckCircle2Icon,
     iconColor: "orange.fg",
   },
-  ready: {
-    label: "Siap Bayar",
+  paid: {
+    label: "Terbayar",
     colorPalette: "green",
     icon: CheckCircle2Icon,
     iconColor: "green.fg",

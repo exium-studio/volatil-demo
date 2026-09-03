@@ -17,6 +17,8 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
 
+import { useCheckBillingPaymentStatus } from "@/features/mitra/cart/hooks/use-mitra-cart";
+
 export const BillingPage = () => {
   return (
     <PanelContentContainer>
@@ -34,6 +36,45 @@ const BillingPageBillingCode = () => {
   // Hooks
   const { billingCode } = BillingRoute.useParams();
   const navigate = useNavigate();
+
+  // Mutations
+  const checkPaymentMutation = useCheckBillingPaymentStatus();
+
+  // Handlers
+  const handleCheckStatus = () => {
+    checkPaymentMutation.mutate(billingCode, {
+      onSuccess: (res) => {
+        if (res.status === "paid" || res.status === "approved" || res.status === "preparing") {
+          focusAlert("payment-success", () => (
+            <FocusAlertItem
+              variant={"celebrate"}
+              title={"Pembayaran Berhasil!"}
+              description={
+                "Pembayaran telah terverifikasi dengan status 'paid'. Layanan data spasial sedang diproses dan menunggu verifikasi Admin Internal ATR/BPN."
+              }
+              onDone={() => {
+                void navigate({
+                  to: "/mitra/transaction-history",
+                  from: "/",
+                });
+              }}
+            />
+          ));
+        } else {
+          focusAlert("payment-status-info", () => (
+            <FocusAlertItem
+              variant={"info"}
+              title={`Status Pembayaran: ${res.status}`}
+              description={
+                res.message ??
+                "Pembayaran belum terkonfirmasi lunas. Silakan selesaikan pembayaran sebelum batas waktu berakhir."
+              }
+            />
+          ));
+        }
+      },
+    });
+  };
 
   return (
     <Container.Root>
@@ -58,23 +99,8 @@ const BillingPageBillingCode = () => {
 
           <Button
             primary
-            onClick={() => {
-              focusAlert("payment-success", () => (
-                <FocusAlertItem
-                  variant={"celebrate"}
-                  title={"Pembayaran Berhasil!"}
-                  description={
-                    "Pembayaran telah dikonfirmasi. Layanan WMS sedang disiapkan oleh sistem dan menunggu validasi Admin Internal ATR/BPN."
-                  }
-                  onDone={() => {
-                    navigate({
-                      to: "/mitra/transaction-history",
-                      from: "/",
-                    });
-                  }}
-                />
-              ));
-            }}
+            loading={checkPaymentMutation.isPending}
+            onClick={handleCheckStatus}
           >
             Cek status pembayaran
           </Button>

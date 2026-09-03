@@ -151,8 +151,7 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
 
         {/* Dynamic Status Notices */}
         {(batch.status === "pending_payment" ||
-          batch.status === "approved" ||
-          batch.status === "ready") &&
+          batch.status === "approved") &&
           batch.expiredAt && (
             <HStack
               justify={"space-between"}

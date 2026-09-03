@@ -19,13 +19,14 @@ export type SpatialBasisTypeConfig = {
 
 export type BatchStatus =
   | "pending_payment"
+  | "paid"
   | "preparing"
   | "pending_review"
   | "approved"
   | "rejected"
   | "expired";
 
-export type CartBatchStatus = BatchStatus | "ready";
+export type CartBatchStatus = BatchStatus;
 
 export type CartBatchStatusConfig = {
   label: string;
@@ -149,4 +150,13 @@ export type CheckoutBatchResponse = {
   status: "pending";
   createdAt: string;
   billingExpiredAt: string;
+};
+
+export type CheckPaymentStatusResponse = {
+  billingCode: string;
+  orderId?: string;
+  batchId?: string;
+  status: BatchStatus;
+  paidAt?: string;
+  message?: string;
 };
