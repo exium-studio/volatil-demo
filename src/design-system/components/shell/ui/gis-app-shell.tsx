@@ -1,7 +1,6 @@
 // src/design-system/components/shell/ui/gis-app-shell.tsx
 
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
-import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -171,7 +170,7 @@ const SidebarHeader = () => {
     >
       <NavLink to={"/"}>
         <HStack align={"center"} gap={"sm"}>
-          <IgtLogo boxSize={"24px"} ml={1} />
+          <IgtLogo flexShrink={0} boxSize={"24px"} ml={1} />
 
           <ClampedP
             w={expanded ? "" : 0}
@@ -290,7 +289,7 @@ const SidebarFooter = () => {
   );
 };
 
-const SidebarToggleButton = (props: IconButtonProps) => {
+const SidebarToggleButton = () => {
   // Stores
   const expanded = useSidebarStore(
     (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
@@ -334,8 +333,7 @@ const SidebarToggleButton = (props: IconButtonProps) => {
           rounded={"full"}
           border={"1px solid"}
           borderColor={"border.subtle"}
-          onClick={handleToggle}
-          {...props}
+          pointerEvents={"none"}
         >
           <AppIcon
             icon={expanded ? IconChevronCompactLeft : IconChevronCompactRight}

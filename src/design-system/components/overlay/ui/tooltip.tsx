@@ -2,7 +2,7 @@
 
 import type { TooltipProps } from "@/design-system/components/overlay/types/tooltip.type";
 import { Tooltip as ChakraTooltip, Portal } from "@chakra-ui/react";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef } from "react";
 
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
   function Tooltip(props, ref) {
@@ -21,104 +21,16 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       ...restProps
     } = props;
 
-    // States
-    const [open, setOpen] = useState(false);
-
-    // Refs
-    const blockedRef = useRef(false);
-    const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-    const clearOpenTimer = () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = undefined;
-      }
-    };
-
-    useEffect(() => clearOpenTimer, []);
-
-    const handlePointerEnter = (e: React.PointerEvent<HTMLElement>) => {
-      if (!blockedRef.current) {
-        clearOpenTimer();
-        timeoutRef.current = setTimeout(() => {
-          setOpen(true);
-        }, openDelay);
-      }
-      if (children && typeof children === "object" && "props" in children) {
-        (
-          children.props as {
-            onPointerEnter?: (e: React.PointerEvent<HTMLElement>) => void;
-          }
-        ).onPointerEnter?.(e);
-      }
-    };
-
-    const handlePointerLeave = (e: React.PointerEvent<HTMLElement>) => {
-      clearOpenTimer();
-      blockedRef.current = false;
-      setOpen(false);
-      if (children && typeof children === "object" && "props" in children) {
-        (
-          children.props as {
-            onPointerLeave?: (e: React.PointerEvent<HTMLElement>) => void;
-          }
-        ).onPointerLeave?.(e);
-      }
-    };
-
-    const handlePointerDown = (e: React.PointerEvent<HTMLElement>) => {
-      clearOpenTimer();
-      blockedRef.current = true;
-      setOpen(false);
-      if (
-        "onPointerDown" in restProps &&
-        typeof restProps.onPointerDown === "function"
-      ) {
-        (
-          restProps.onPointerDown as (
-            e: React.PointerEvent<HTMLElement>,
-          ) => void
-        )(e);
-      }
-      if (children && typeof children === "object" && "props" in children) {
-        (
-          children.props as {
-            onPointerDown?: (e: React.PointerEvent<HTMLElement>) => void;
-          }
-        ).onPointerDown?.(e);
-      }
-    };
-
-    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-      if ("onClick" in restProps && typeof restProps.onClick === "function") {
-        (restProps.onClick as (e: React.MouseEvent<HTMLElement>) => void)(e);
-      }
-      if (children && typeof children === "object" && "props" in children) {
-        (
-          children.props as {
-            onClick?: (e: React.MouseEvent<HTMLElement>) => void;
-          }
-        ).onClick?.(e);
-      }
-    };
-
     if (disabled) return children;
 
     return (
       <ChakraTooltip.Root
+        openDelay={openDelay}
         {...restProps}
-        open={open}
-        onOpenChange={(e) => {
-          if (!e.open) setOpen(false);
-        }}
       >
         <ChakraTooltip.Trigger
           asChild
           w={w ?? width}
-          onPointerEnter={handlePointerEnter}
-          onPointerLeave={handlePointerLeave}
-          onPointerDown={handlePointerDown}
-          onClick={handleClick}
         >
           {children}
         </ChakraTooltip.Trigger>
