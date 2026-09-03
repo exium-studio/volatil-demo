@@ -19,100 +19,102 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { MapPinIcon } from "lucide-react";
 import { memo, useMemo } from "react";
 
-export const SpatialFeaturesDataView = memo((props: SpatialFeaturesDataViewProps) => {
-  // Props
-  const {
-    wfsFeatures,
-    page,
-    pageSize,
-    totalFeatures,
-    setPage,
-    setPageSize,
-    selectedItems,
-    onSelectedItemChange,
-    canBatchSelect = true,
-    batchActions,
-    extraItemActions,
-    isLoading = false,
-    isFetching = false,
-    ...restProps
-  } = props;
+export const SpatialFeaturesDataView = memo(
+  (props: SpatialFeaturesDataViewProps) => {
+    // Props
+    const {
+      wfsFeatures,
+      page,
+      pageSize,
+      totalFeatures,
+      setPage,
+      setPageSize,
+      selectedItems,
+      onSelectedItemChange,
+      canBatchSelect = false,
+      batchActions,
+      extraItemActions,
+      isLoading = false,
+      isFetching = false,
+      ...restProps
+    } = props;
 
-  // Stores
-  const { theme } = useThemeStore();
+    // Stores
+    const { theme } = useThemeStore();
 
-  // Hooks — Delay heavy table mounting to allow initial skeleton render
-  const isMounted = useMountTimeout(50);
+    // Hooks — Delay heavy table mounting to allow initial skeleton render
+    const isMounted = useMountTimeout(50);
 
-  // Derived Values — Dynamic Attribute Keys from WFS features
-  const attributeKeys = useMemo(() => {
-    if (wfsFeatures.length > 0 && wfsFeatures[0]?.properties) {
-      const keys = Object.keys(wfsFeatures[0].properties);
-      if (keys.length > 0) {
-        return keys.filter((key) => key !== "geom" && key !== "geometry");
+    // Derived Values — Dynamic Attribute Keys from WFS features
+    const attributeKeys = useMemo(() => {
+      if (wfsFeatures.length > 0 && wfsFeatures[0]?.properties) {
+        const keys = Object.keys(wfsFeatures[0].properties);
+        if (keys.length > 0) {
+          return keys.filter((key) => key !== "geom" && key !== "geometry");
+        }
       }
+      return [
+        "id",
+        "kodewilaya",
+        "kabupaten",
+        "kecamatan",
+        "kelurahan",
+        "nib",
+        "luastertul",
+      ];
+    }, [wfsFeatures]);
+
+    const hasPagination =
+      page != null && pageSize != null && totalFeatures != null;
+
+    if (!isMounted || isLoading || (isFetching && isEmptyArray(wfsFeatures))) {
+      return (
+        <Skeleton h={"full"} w={"full"} flex={1} roundedTop={0} p={"md"} />
+      );
     }
-    return [
-      "id",
-      "kodewilaya",
-      "kabupaten",
-      "kecamatan",
-      "kelurahan",
-      "nib",
-      "luastertul",
-    ];
-  }, [wfsFeatures]);
 
-  const hasPagination =
-    page != null && pageSize != null && totalFeatures != null;
-
-  if (!isMounted || isLoading || (isFetching && isEmptyArray(wfsFeatures))) {
     return (
-      <Skeleton h={"full"} w={"full"} flex={1} roundedTop={0} p={"md"} />
-    );
-  }
+      <>
+        <TopBarLoader isFetching={isFetching} />
 
-  return (
-    <>
-      <TopBarLoader isFetching={isFetching} />
-
-      <VStack
-        flex={1}
-        overflow={"hidden"}
-        bg={"bg.canvas"}
-        w={"full"}
-        h={"full"}
-        position={"relative"}
-        {...restProps}
-      >
-        <SpatialFeaturesDataViewContent
-          wfsFeatures={wfsFeatures}
-          attributeKeys={attributeKeys}
-          canBatchSelect={canBatchSelect}
-          batchActions={batchActions}
-          extraItemActions={extraItemActions}
-          page={page}
-          pageSize={pageSize}
-          selectedItems={selectedItems}
-          onSelectedItemChange={onSelectedItemChange}
-        />
-
-        {hasPagination && (
-          <DataViewFooter
+        <VStack
+          flex={1}
+          overflow={"hidden"}
+          bg={"bg.canvas"}
+          w={"full"}
+          h={"full"}
+          position={"relative"}
+          {...restProps}
+        >
+          <SpatialFeaturesDataViewContent
+            wfsFeatures={wfsFeatures}
+            attributeKeys={attributeKeys}
+            canBatchSelect={canBatchSelect}
+            batchActions={batchActions}
+            extraItemActions={extraItemActions}
             page={page}
             pageSize={pageSize}
-            currentDataLength={wfsFeatures.length}
-            totalData={totalFeatures}
-            totalPage={Math.ceil(totalFeatures / pageSize)}
-            setPage={setPage}
-            setPageSize={setPageSize}
-            roundedBottom={theme.radii.container}
+            selectedItems={selectedItems}
+            onSelectedItemChange={onSelectedItemChange}
           />
-        )}
-      </VStack>
-    </>
-  );
-});
+
+          {hasPagination && (
+            <DataViewFooter
+              page={page}
+              pageSize={pageSize}
+              currentDataLength={wfsFeatures.length}
+              totalData={totalFeatures}
+              totalPage={Math.ceil(totalFeatures / pageSize)}
+              setPage={setPage}
+              setPageSize={setPageSize}
+              roundedBottom={theme.radii.container}
+            />
+          )}
+        </VStack>
+      </>
+    );
+  },
+);
 
 const SpatialFeaturesDataViewContent = memo(
   (props: SpatialFeaturesDataViewContentProps) => {
