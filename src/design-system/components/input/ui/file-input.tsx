@@ -363,7 +363,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
                 <VStack align={"center"}>
                   <AppIcon
                     icon={dragging ? ArrowDownIcon : UploadIcon}
-                    size={"xl"}
+                    size={"lg"}
                     color={"fg.subtle"}
                     mb={dragging ? -2 : 0}
                     animation={dragging ? "bounce" : ""}
@@ -385,7 +385,7 @@ const FileInputInner = (props: FileinputInnerProps) => {
                   </P>
 
                   <P
-                    fontSize={"sm"}
+                    fontSize={"xs"}
                     textAlign={"center"}
                     color={"fg.subtle"}
                     opacity={dragging ? 0 : 1}

@@ -372,6 +372,7 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
+                            label={"Unggah Surat Permohonan Kerjasama (.pdf/.docx)"}
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
@@ -392,6 +393,7 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
+                            label={"Unggah Dokumen DIK (.pdf/.docx)"}
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
@@ -412,6 +414,7 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
+                            label={"Unggah Surat Pernyataan Hukum (.pdf/.docx)"}
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
@@ -432,6 +435,7 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
+                            label={"Unggah Surat Komitmen Evaluasi (.pdf/.docx)"}
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
@@ -452,6 +456,7 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
+                            label={"Unggah Surat Komitmen Perbaikan (.pdf/.docx)"}
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
@@ -472,6 +477,7 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
+                            label={"Unggah Proposal Teknis Pemanfaatan IGT (.pdf/.docx)"}
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
