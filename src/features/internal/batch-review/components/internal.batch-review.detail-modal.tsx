@@ -16,7 +16,7 @@ import { useProvisionOrder } from "@/features/internal/batch-review/hooks/use-ba
 import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
 import { formatUtcDateTime, getPreferredUserTimezone } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
-import { CheckCircle2Icon, SparklesIcon } from "lucide-react";
+import { CheckCircle2Icon, MapPlusIcon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
 export type InternalBatchReviewDetailTriggerProps = {
@@ -208,7 +208,6 @@ const InternalBatchReviewDetailModalContent = (
               onClick={() => {
                 provisionMutation.mutate(
                   {
-                    orderId: batch.orderId ?? batch.batchId,
                     batchId: batch.batchId,
                   },
                   {
@@ -219,7 +218,7 @@ const InternalBatchReviewDetailModalContent = (
                 );
               }}
             >
-              <AppIcon icon={SparklesIcon} />
+              <AppIcon icon={MapPlusIcon} />
               {"Create Service WMS"}
             </Button>
           )}

@@ -42,7 +42,7 @@ import {
   EyeIcon,
   EyeOffIcon,
   MapPinIcon,
-  SparklesIcon,
+  MapPlusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -97,12 +97,11 @@ export function InternalBatchReviewDetailPage() {
                     loading={provisionMutation.isPending}
                     onClick={() => {
                       provisionMutation.mutate({
-                        orderId: batch.orderId ?? batch.batchId,
                         batchId: batch.batchId,
                       });
                     }}
                   >
-                    <AppIcon icon={SparklesIcon} />
+                    <AppIcon icon={MapPlusIcon} />
                     {"Create Service WMS"}
                   </Button>
                 )}

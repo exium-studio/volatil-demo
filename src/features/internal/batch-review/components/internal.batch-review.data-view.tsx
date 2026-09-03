@@ -19,7 +19,6 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
-import { InternalBatchReviewDetailTrigger } from "@/features/internal/batch-review/components/internal.batch-review.detail-modal";
 import {
   useInternalBatchesQuery,
   useProvisionOrder,
@@ -41,10 +40,9 @@ import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircle2Icon,
-  EyeIcon,
   InboxIcon,
   LayersIcon,
-  SparklesIcon,
+  MapPlusIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
@@ -202,11 +200,10 @@ export const InternalBatchReviewDataView = () => {
       {
         key: "provision-wms",
         label: "Create Service WMS",
-        icon: SparklesIcon,
+        icon: MapPlusIcon,
         hidden: (batch: InternalBatchItem) => batch.status !== "paid",
         onClick: (batch: InternalBatchItem) => {
           provisionMutation.mutate({
-            orderId: batch.orderId ?? batch.batchId,
             batchId: batch.batchId,
           });
         },
@@ -215,26 +212,12 @@ export const InternalBatchReviewDataView = () => {
         key: "open-detail-batch",
         label: "Buka detail IGT",
         icon: LayersIcon,
-        sticky: true,
-        showInMenu: true,
+        hidden: (batch: InternalBatchItem) => batch.status === "paid",
         onClick: (batch: InternalBatchItem) => {
           void navigate({
             to: "/internal/batch-review/$batchId",
             params: { batchId: batch.batchId },
           });
-        },
-      },
-      {
-        key: "detail-batch",
-        label: "Lihat Detail (Modal)",
-        icon: EyeIcon,
-        modal: {
-          triggerComponent: (batch: InternalBatchItem) => (
-            <InternalBatchReviewDetailTrigger
-              modalKey={`detail-batch-${batch.batchId}`}
-              batch={batch}
-            />
-          ),
         },
       },
       {

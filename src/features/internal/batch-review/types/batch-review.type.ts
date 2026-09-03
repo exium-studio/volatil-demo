@@ -40,13 +40,12 @@ export type InternalBatchListResponse = {
 };
 
 export type ProvisionOrderPayload = {
-  orderId: string;
-  batchId?: string;
+  batchId: string;
 };
 
 export type ProvisionOrderResponse = {
-  orderId: string;
-  batchId?: string;
+  batchId: string;
+  orderId?: string;
   transactionStatus: string;
   batchStatus: string;
 };

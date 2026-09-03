@@ -235,14 +235,14 @@ export const provisionOrderApi = async (
 ): Promise<ApiResponse<ProvisionOrderResponse>> => {
   try {
     return await apiClient.post<ApiResponse<ProvisionOrderResponse>>(
-      `/api/mitra/orders/${payload.orderId}/provision`,
+      `/api/internal/interop/batches/${payload.batchId}/provision`,
       {},
       { signal },
     );
   } catch (error) {
     if (isDummyDataEnabled()) {
       const targetBatch = DUMMY_INTERNAL_BATCHES.find(
-        (b) => b.orderId === payload.orderId || b.batchId === payload.batchId,
+        (b) => b.batchId === payload.batchId,
       );
       if (targetBatch) {
         targetBatch.status = "pending_review";
@@ -250,7 +250,6 @@ export const provisionOrderApi = async (
       return {
         success: true,
         data: {
-          orderId: payload.orderId,
           batchId: payload.batchId,
           transactionStatus: "processing",
           batchStatus: "pending_review",
