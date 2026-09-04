@@ -28,7 +28,7 @@ import type {
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Layers2Icon, TreesIcon } from "lucide-react";
+import { Layers2Icon, Grid2X2Icon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
@@ -318,7 +318,7 @@ const InternalDataManagementEditModalContent = (
                             w={"full"}
                           >
                             <HStack gap={"xs"} align={"center"}>
-                              <AppIcon icon={TreesIcon} color={"orange.fg"} />
+                              <AppIcon icon={Grid2X2Icon} color={"orange.fg"} />
                               <RadioCardInput.ItemText fontSize={"sm"}>
                                 {"Kawasan"}
                               </RadioCardInput.ItemText>

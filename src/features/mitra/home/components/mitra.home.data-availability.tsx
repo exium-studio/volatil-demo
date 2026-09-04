@@ -11,7 +11,7 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { DatabaseIcon, Layers2Icon, TreesIcon } from "lucide-react";
+import { DatabaseIcon, Layers2Icon, Grid2X2Icon } from "lucide-react";
 
 export const MitraHomeDataAvailability = () => {
   return (
@@ -75,7 +75,7 @@ const MitraHomeDataAvailabilityStats = () => {
       colorPalette: "blue",
     },
     {
-      icon: TreesIcon,
+      icon: Grid2X2Icon,
       label: "IGT Berbasis Kawasan",
       value: 20,
       suffix: "layer",

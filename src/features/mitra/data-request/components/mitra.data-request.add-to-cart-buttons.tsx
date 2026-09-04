@@ -21,7 +21,7 @@ import {
   ChevronDownIcon,
   Layers2Icon,
   ShoppingCartIcon,
-  TreesIcon,
+  Grid2X2Icon,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -288,7 +288,7 @@ export const MitraDataRequestAddToCartButtons = (
                 disabled={kawasanCount === 0}
                 onClick={onAddAllKawasanClick}
               >
-                <AppIcon icon={TreesIcon} />
+                <AppIcon icon={Grid2X2Icon} />
                 {"Tambah semua kawasan"}{" "}
                 {allKawasanLuasTotal > 0
                   ? `(${formatNumber(allKawasanLuasTotal, { maximumFractionDigits: 2 })} ha)`

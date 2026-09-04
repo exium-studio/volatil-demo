@@ -13,7 +13,7 @@ import type {
   TopIgtLayerItem,
   TopMitraAcquisitionItem,
 } from "@/features/internal/home/types/internal.home.leaderboard.type";
-import { Layers2Icon, TreesIcon } from "lucide-react";
+import { Layers2Icon, Grid2X2Icon } from "lucide-react";
 
 export const InternalHomeLeaderboard = (
   props: InternalHomeLeaderboardProps,
@@ -174,7 +174,12 @@ const TopIgtLayersLeaderboardCard = (props: { flex?: string | number }) => {
                   minW={0}
                   gap={"sm"}
                 >
-                  <VStack align={"start"} gap={"xs"} flex={"1 1 200px"} minW={0}>
+                  <VStack
+                    align={"start"}
+                    gap={"xs"}
+                    flex={"1 1 200px"}
+                    minW={0}
+                  >
                     <ClampedP fontWeight={"medium"} w={"full"}>
                       {layer.layerTitle}
                     </ClampedP>
@@ -185,7 +190,7 @@ const TopIgtLayersLeaderboardCard = (props: { flex?: string | number }) => {
                         colorPalette={isBidang ? "blue" : "orange"}
                       >
                         <AppIcon
-                          icon={isBidang ? Layers2Icon : TreesIcon}
+                          icon={isBidang ? Layers2Icon : Grid2X2Icon}
                           size={"sm"}
                         />
                         {isBidang ? "Bidang" : "Kawasan"}

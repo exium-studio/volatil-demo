@@ -17,7 +17,7 @@ import type {
   InternalHomeServiceRateProps,
 } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useInternalPricingListQuery } from "@/features/internal/pricing/hooks/use-internal-pricing";
-import { Layers2Icon, PencilIcon, TreesIcon } from "lucide-react";
+import { Layers2Icon, PencilIcon, Grid2X2Icon } from "lucide-react";
 import { useMemo } from "react";
 
 export const InternalHomeServiceRate = (
@@ -100,7 +100,7 @@ const InternalHomeServiceRateStats = () => {
       result.push({
         id: kawasanRate.id,
         title: "IGT Berbasis Kawasan",
-        icon: TreesIcon,
+        icon: Grid2X2Icon,
         price: kawasanRate.unitPrice,
         unit: "Ha",
         kodePnbp: kawasanRate.kodePnbp ?? "PNBP-IGT-02",

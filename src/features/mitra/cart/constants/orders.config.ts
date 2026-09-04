@@ -24,7 +24,7 @@ import {
   RotateCcwIcon,
   ShieldAlertIcon,
   Layers2Icon,
-  TreesIcon,
+  Grid2X2Icon,
 } from "lucide-react";
 
 /**
@@ -64,7 +64,7 @@ export const SPATIAL_BASIS_CONFIG_MAP: Record<
   kawasan: {
     label: "Kawasan",
     colorPalette: "orange",
-    icon: TreesIcon,
+    icon: Grid2X2Icon,
   },
 };
 

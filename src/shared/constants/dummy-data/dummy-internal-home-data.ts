@@ -13,7 +13,7 @@ import type {
 import type { ServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
 import type { InternalHomeTrendItem } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { Layers2Icon, TreesIcon } from "lucide-react";
+import { Layers2Icon, Grid2X2Icon } from "lucide-react";
 
 export const dummyIgtBasis: IgtBasisSummary = {
   field: 325,
@@ -45,7 +45,7 @@ export const dummyInternalServiceRates: ServiceRateItem[] = [
   {
     id: "rate-kawasan",
     title: "IGT Berbasis Kawasan",
-    icon: TreesIcon,
+    icon: Grid2X2Icon,
     price: 15000,
     unit: "Ha",
     kodePnbp: "PNBP-IGT-02",
@@ -55,52 +55,53 @@ export const dummyInternalServiceRates: ServiceRateItem[] = [
   },
 ];
 
-export const dummyInternalTrends: Record<HomePeriod, InternalHomeTrendItem[]> = {
-  "1d": [
-    { label: "00:00", field: 120, area: 45, revenue: 1575000 },
-    { label: "04:00", field: 80, area: 30, revenue: 1050000 },
-    { label: "08:00", field: 450, area: 180, revenue: 6075000 },
-    { label: "12:00", field: 780, area: 320, revenue: 10650000 },
-    { label: "16:00", field: 620, area: 240, revenue: 8250000 },
-    { label: "20:00", field: 310, area: 110, revenue: 3975000 },
-  ],
-  "1w": [
-    { label: "Sen", field: 2400, area: 950, revenue: 32250000 },
-    { label: "Sel", field: 3100, area: 1200, revenue: 41250000 },
-    { label: "Rab", field: 2800, area: 1100, revenue: 37500000 },
-    { label: "Kam", field: 3500, area: 1450, revenue: 48000000 },
-    { label: "Jum", field: 4200, area: 1600, revenue: 55500000 },
-    { label: "Sab", field: 1800, area: 600, revenue: 22500000 },
-    { label: "Min", field: 1200, area: 450, revenue: 15750000 },
-  ],
-  "1m": [
-    { label: "Mgg 1", field: 14500, area: 5800, revenue: 195750000 },
-    { label: "Mgg 2", field: 18200, area: 7200, revenue: 244500000 },
-    { label: "Mgg 3", field: 16900, area: 6800, revenue: 228750000 },
-    { label: "Mgg 4", field: 21400, area: 8500, revenue: 288000000 },
-  ],
-  "1y": [
-    { label: "Jan", field: 65000, area: 25000, revenue: 862500000 },
-    { label: "Feb", field: 72000, area: 28000, revenue: 960000000 },
-    { label: "Mar", field: 81000, area: 32000, revenue: 1087500000 },
-    { label: "Apr", field: 78000, area: 31000, revenue: 1050000000 },
-    { label: "Mei", field: 92000, area: 36000, revenue: 1230000000 },
-    { label: "Jun", field: 88000, area: 34000, revenue: 1170000000 },
-    { label: "Jul", field: 95000, area: 38000, revenue: 1282500000 },
-    { label: "Agu", field: 102000, area: 41000, revenue: 1380000000 },
-    { label: "Sep", field: 98000, area: 39000, revenue: 1320000000 },
-    { label: "Okt", field: 110000, area: 44000, revenue: 1485000000 },
-    { label: "Nov", field: 105000, area: 42000, revenue: 1417500000 },
-    { label: "Des", field: 115000, area: 46000, revenue: 1552500000 },
-  ],
-  all: [
-    { label: "2022", field: 450000, area: 180000, revenue: 6075000000 },
-    { label: "2023", field: 720000, area: 290000, revenue: 9750000000 },
-    { label: "2024", field: 950000, area: 380000, revenue: 12825000000 },
-    { label: "2025", field: 1180000, area: 470000, revenue: 15900000000 },
-    { label: "2026", field: 1420000, area: 560000, revenue: 19050000000 },
-  ],
-};
+export const dummyInternalTrends: Record<HomePeriod, InternalHomeTrendItem[]> =
+  {
+    "1d": [
+      { label: "00:00", field: 120, area: 45, revenue: 1575000 },
+      { label: "04:00", field: 80, area: 30, revenue: 1050000 },
+      { label: "08:00", field: 450, area: 180, revenue: 6075000 },
+      { label: "12:00", field: 780, area: 320, revenue: 10650000 },
+      { label: "16:00", field: 620, area: 240, revenue: 8250000 },
+      { label: "20:00", field: 310, area: 110, revenue: 3975000 },
+    ],
+    "1w": [
+      { label: "Sen", field: 2400, area: 950, revenue: 32250000 },
+      { label: "Sel", field: 3100, area: 1200, revenue: 41250000 },
+      { label: "Rab", field: 2800, area: 1100, revenue: 37500000 },
+      { label: "Kam", field: 3500, area: 1450, revenue: 48000000 },
+      { label: "Jum", field: 4200, area: 1600, revenue: 55500000 },
+      { label: "Sab", field: 1800, area: 600, revenue: 22500000 },
+      { label: "Min", field: 1200, area: 450, revenue: 15750000 },
+    ],
+    "1m": [
+      { label: "Mgg 1", field: 14500, area: 5800, revenue: 195750000 },
+      { label: "Mgg 2", field: 18200, area: 7200, revenue: 244500000 },
+      { label: "Mgg 3", field: 16900, area: 6800, revenue: 228750000 },
+      { label: "Mgg 4", field: 21400, area: 8500, revenue: 288000000 },
+    ],
+    "1y": [
+      { label: "Jan", field: 65000, area: 25000, revenue: 862500000 },
+      { label: "Feb", field: 72000, area: 28000, revenue: 960000000 },
+      { label: "Mar", field: 81000, area: 32000, revenue: 1087500000 },
+      { label: "Apr", field: 78000, area: 31000, revenue: 1050000000 },
+      { label: "Mei", field: 92000, area: 36000, revenue: 1230000000 },
+      { label: "Jun", field: 88000, area: 34000, revenue: 1170000000 },
+      { label: "Jul", field: 95000, area: 38000, revenue: 1282500000 },
+      { label: "Agu", field: 102000, area: 41000, revenue: 1380000000 },
+      { label: "Sep", field: 98000, area: 39000, revenue: 1320000000 },
+      { label: "Okt", field: 110000, area: 44000, revenue: 1485000000 },
+      { label: "Nov", field: 105000, area: 42000, revenue: 1417500000 },
+      { label: "Des", field: 115000, area: 46000, revenue: 1552500000 },
+    ],
+    all: [
+      { label: "2022", field: 450000, area: 180000, revenue: 6075000000 },
+      { label: "2023", field: 720000, area: 290000, revenue: 9750000000 },
+      { label: "2024", field: 950000, area: 380000, revenue: 12825000000 },
+      { label: "2025", field: 1180000, area: 470000, revenue: 15900000000 },
+      { label: "2026", field: 1420000, area: 560000, revenue: 19050000000 },
+    ],
+  };
 
 export const dummyTopMitraList: TopMitraAcquisitionItem[] = [
   {

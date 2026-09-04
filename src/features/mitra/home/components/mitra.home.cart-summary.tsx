@@ -16,7 +16,7 @@ import type {
 import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import {
   DatabaseIcon,
-  TreesIcon,
+  Grid2X2Icon,
   Layers2Icon,
   ReceiptTextIcon,
 } from "lucide-react";
@@ -41,9 +41,7 @@ const MitraHomeCartSummaryHeader = () => {
   return (
     <HStack align={"center"} justify={"space-between"} px={"md"}>
       <HStack gap={"xs"} align={"center"}>
-        <Heading>
-          {"Ringkasan Keranjang Pembelian"}
-        </Heading>
+        <Heading>{"Ringkasan Keranjang Pembelian"}</Heading>
 
         <InfoTip
           variant={"icon"}
@@ -78,7 +76,7 @@ const MitraHomeCartStats = () => {
       color: "blue.fg",
     },
     {
-      icon: TreesIcon,
+      icon: Grid2X2Icon,
       label: "Total Kawasan",
       value: totalArea,
       suffix: "ha",

@@ -28,7 +28,7 @@ import {
   ChevronUpIcon,
   Layers2Icon,
   LayersIcon,
-  TreesIcon,
+  Grid2X2Icon,
 } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
 
@@ -173,7 +173,7 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
     layer.title || layer.id.split(":")[1] || layer.wfs.wfsTypeName;
   const isBidang = layer.spatialBasis === "bidang";
   const colorPalette = isBidang ? "blue" : "orange";
-  const LayerIcon = isBidang ? Layers2Icon : TreesIcon;
+  const LayerIcon = isBidang ? Layers2Icon : Grid2X2Icon;
 
   return (
     <VStack gap={1} align={"stretch"} w={"full"}>

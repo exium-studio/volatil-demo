@@ -2,7 +2,6 @@ import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
-import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -14,7 +13,6 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -38,13 +36,12 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import {
-  ChevronDownIcon,
   FocusIcon,
   Layers2Icon,
   ShoppingCartIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
-  TreesIcon,
+  Grid2X2Icon,
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
@@ -466,12 +463,11 @@ export const MitraDataRequestIgtLayerDataView = memo(
             </HStack>
           </HStack>
 
-          {/* Action Button Group */}
-          <ButtonGroup variant={"outline"} attached w={"full"}>
+          {/* Action Buttons */}
+          <VStack w={"full"} gap={"xs"}>
             <Button
               primary
-              flex={1}
-              minW={0}
+              w={"full"}
               disabled={isCartDisabled}
               onClick={handleAddToCartAll}
             >
@@ -479,48 +475,36 @@ export const MitraDataRequestIgtLayerDataView = memo(
               {"Tambah semua ke keranjang"}
             </Button>
 
-            <Menu.Root
-              positioning={{
-                placement: "top-end",
-              }}
-            >
-              <Menu.Trigger>
-                <IconButton
-                  primary
-                  aria-label={"Pilih opsi tambah ke keranjang"}
-                  roundedLeft={0}
-                  flexShrink={0}
-                  disabled={isCartDisabled}
-                >
-                  <AppIcon icon={ChevronDownIcon} />
-                </IconButton>
-              </Menu.Trigger>
+            <HStack w={"full"} gap={"xs"}>
+              <Button
+                primary
+                variant={"outline"}
+                flex={1}
+                minW={0}
+                disabled={isBidangOnlyDisabled}
+                onClick={handleAddToCartBidangOnly}
+              >
+                <AppIcon icon={Layers2Icon} />
+                {"Bidang saja"}
+                {summaryData.totalBidangCount > 0 &&
+                  ` (${formatNumber(summaryData.totalBidangCount)})`}
+              </Button>
 
-              <Menu.Content>
-                <Menu.Item
-                  value={"add-cart-bidang-only"}
-                  disabled={isBidangOnlyDisabled}
-                  onClick={handleAddToCartBidangOnly}
-                >
-                  <AppIcon icon={Layers2Icon} />
-                  {"Tambah keranjang bidang saja"}
-                  {summaryData.totalBidangCount > 0 &&
-                    ` (${formatNumber(summaryData.totalBidangCount)} / min. ${pricingPolicy.minBidangCount} bidang)`}
-                </Menu.Item>
-
-                <Menu.Item
-                  value={"add-cart-kawasan-only"}
-                  disabled={isKawasanOnlyDisabled}
-                  onClick={handleAddToCartKawasanOnly}
-                >
-                  <AppIcon icon={TreesIcon} />
-                  {"Tambah keranjang kawasan saja"}
-                  {summaryData.totalKawasanAreaHa > 0 &&
-                    ` (${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 2 })} / min. ${pricingPolicy.minKawasanHa} ha)`}
-                </Menu.Item>
-              </Menu.Content>
-            </Menu.Root>
-          </ButtonGroup>
+              <Button
+                primary
+                variant={"outline"}
+                flex={1}
+                minW={0}
+                disabled={isKawasanOnlyDisabled}
+                onClick={handleAddToCartKawasanOnly}
+              >
+                <AppIcon icon={Grid2X2Icon} />
+                {"Kawasan saja"}
+                {summaryData.totalKawasanAreaHa > 0 &&
+                  ` (${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 1 })} ha)`}
+              </Button>
+            </HStack>
+          </VStack>
         </VStack>
       </VStack>
     );
