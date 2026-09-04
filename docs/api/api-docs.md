@@ -654,7 +654,9 @@ type TransactionHistoryResponse = {
 ## Kamus Enum Status (2 SSOT Utama)
 
 ### 1. SSOT Status Transaksi & Pembayaran (`TransactionStatus`)
+
 Digunakan untuk status siklus pembayaran & billing transaksi:
+
 ```typescript
 export type TransactionStatus =
   | "pending" // Menunggu Pembayaran
@@ -666,7 +668,9 @@ export type TransactionStatus =
 ```
 
 ### 2. SSOT Status Order & Layanan Spasial (`OrderStatus`)
+
 Digunakan untuk status keranjang batch, permohonan, dan provisioning layanan spasial:
+
 ```typescript
 export type OrderStatus =
   | "pending_payment" // Menunggu Pembayaran
