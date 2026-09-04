@@ -456,13 +456,13 @@ export async function getExpiredCartBatches(
     const response = await fetchExpiredCartBatchesApi(signal);
     if (response.data) return response.data;
     if (isDummyDataEnabled()) {
-      const expired = localDummyBatches.filter((b) => b.status === "expired");
+      const expired = localDummyBatches.filter((b) => b.status === "rejected");
       return { batches: expired, total: expired.length };
     }
     return { batches: [], total: 0 };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      const expired = localDummyBatches.filter((b) => b.status === "expired");
+      const expired = localDummyBatches.filter((b) => b.status === "rejected");
       return { batches: expired, total: expired.length };
     }
     throw error;
@@ -534,14 +534,14 @@ export async function checkOrderPaymentStatus(
     if (response.data) return response.data;
     return {
       orderId,
-      transactionStatus: "settled",
+      transactionStatus: "paid",
       paidAt: new Date().toISOString(),
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
       return {
         orderId,
-        transactionStatus: "settled",
+        transactionStatus: "paid",
         paidAt: new Date().toISOString(),
       };
     }

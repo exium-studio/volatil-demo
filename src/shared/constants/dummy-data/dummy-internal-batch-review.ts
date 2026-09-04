@@ -73,7 +73,7 @@ export const DUMMY_INTERNAL_BATCHES: InternalBatchItem[] = [
     batchId: "btc-2026-0829-003",
     mitraId: "mtr-003",
     mitraName: "CV Agraria Citra Mandiri",
-    status: "approved",
+    status: "ready",
     selectionType: "draw_aoi",
     createdAt: new Date(now.getTime() - 1000 * 60 * 60 * 5).toISOString(),
     readyAt: new Date(now.getTime() - 1000 * 60 * 60 * 4).toISOString(),

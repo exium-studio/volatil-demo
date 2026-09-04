@@ -13,7 +13,6 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -32,6 +31,10 @@ import type {
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import {
+  MY_DATA_ORDER_STATUS_OPTIONS,
+  ORDER_STATUS_MAP,
+} from "@/shared/constants/status.config";
+import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
@@ -39,14 +42,6 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
 import { DatabaseIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
-
-const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
-  { label: "Semua Status", value: "" },
-  { label: "Sedang Diproses", value: "processing" },
-  { label: "Menunggu Verifikasi", value: "pending_verification" },
-  { label: "Aktif", value: "active" },
-  { label: "Tidak Aktif", value: "expired" },
-];
 
 export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Navigation
@@ -88,28 +83,18 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     ];
 
     const items: FormattedListItem[] = myData.items.map((item: MyDataItem) => {
-      const isActive = item.status === "active";
-      const isProcessing = item.status === "processing";
-      const isPendingVerification = item.status === "pending_verification";
+      const isReady = item.status === "ready";
       const layerDisplayName = item.title || item.id.replace(/_/g, " ");
       const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
       const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
+      const statusConfig = ORDER_STATUS_MAP[item.status] ?? {
+        label: item.status,
+        colorPalette: "gray" as const,
+      };
 
-      const statusBadge = isProcessing ? (
-        <Badge colorPalette={"blue"} variant={"subtle"}>
-          {"Sedang Diproses"}
-        </Badge>
-      ) : isPendingVerification ? (
-        <Badge colorPalette={"orange"} variant={"subtle"}>
-          {"Menunggu Verifikasi"}
-        </Badge>
-      ) : isActive ? (
-        <Badge colorPalette={"green"} variant={"subtle"}>
-          {"Aktif"}
-        </Badge>
-      ) : (
-        <Badge colorPalette={"red"} variant={"subtle"}>
-          {"Tidak Aktif"}
+      const statusBadge = (
+        <Badge colorPalette={statusConfig.colorPalette} variant={"subtle"}>
+          {statusConfig.label}
         </Badge>
       );
 
@@ -194,7 +179,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           },
           {
             value: item.expiresAt,
-            td: isActive ? (
+            td: isReady ? (
               <Countdown finishedAt={item.expiresAt} />
             ) : (
               <P color={"fg.subtle"}>{"-"}</P>
@@ -247,7 +232,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           <StatusFilterSelect
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
-            options={MY_DATA_STATUS_OPTIONS}
+            options={MY_DATA_ORDER_STATUS_OPTIONS}
             value={params.status ?? ""}
             onValueChange={(value) => {
               startTransition(() => {

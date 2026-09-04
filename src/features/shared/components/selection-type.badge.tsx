@@ -2,7 +2,7 @@
 
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SELECTION_TYPE_CONFIG_MAP } from "@/features/mitra/cart/constants/cart.config";
+import { SELECTION_TYPE_CONFIG_MAP } from "@/features/mitra/cart/constants/orders.config";
 import type { SelectionType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import type { SelectionTypeBadgeProps } from "@/features/shared/types/badge.type";
 

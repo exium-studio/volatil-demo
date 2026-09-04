@@ -379,42 +379,46 @@ type MitraPricingPolicyResponse = {
 
 # Keranjang & Order Provisioning Spasial
 
-Modul transaksi data IGT berbasis **Batch Interop Spasial**.
+Modul transaksi data IGT berbasis **Order & Interop Spasial**. Di database, transaksi dan order disimpan dalam **1 tabel `ORDER`** dengan 2 kolom status utama: `order_status` dan `transaction_status`.
 
-### Alur Final Transaksi:
+### Alur Transaksi:
 
-1. **Create Order (Add to Cart)**: Mitra memilih layer/fitur spasial dan memasukkan ke keranjang $\rightarrow$ status: `pending_payment` (TTL 24 jam).
+1. **Create Order (Add to Cart)**: Mitra memilih layer/fitur spasial dan memasukkan ke keranjang $\rightarrow$ `orderStatus: "pending_payment"`, `transactionStatus: undefined` (TTL 24 jam).
 2. **Totalan**: Total tagihan dan rincian tarif PNBP dikalkulasi secara instan.
-3. **Bayar**: Mitra melakukan checkout $\rightarrow$ terbit Kode Billing PNBP ATR/BPN $\rightarrow$ bayar. Status order berubah menjadi `paid`.
-4. **Create Service (Processing)**: Setelah status `paid`, **Interop Engine** otomatis mengeksekusi pemotongan data PostGIS dan auto-publishing GeoServer WMS/WFS (`processing` / `processing`).
-5. **Validasi Admin**: Setelah data siap, status menjadi `pending_verification` / `pending_review`. Admin Internal memvalidasi/memverifikasi layanan spasial dengan menginput URL wrapper resmi INTEROP Pusdatin sebelum aktivasi penuh (`approved` / `active`) ke My Data.
+3. **Bayar**: Mitra melakukan checkout $\rightarrow$ terbit Kode Billing PNBP ATR/BPN $\rightarrow$ bayar. Status order berubah menjadi `orderStatus: "paid"`, `transactionStatus: "paid"`.
+4. **Create Service (Processing)**: Setelah status `paid`, **Interop Engine** otomatis mengeksekusi pemotongan data PostGIS dan auto-publishing GeoServer WMS/WFS (`orderStatus: "processing"`).
+5. **Validasi Admin**: Setelah data siap, status menjadi `orderStatus: "pending_review"`. Admin Internal memvalidasi/memverifikasi layanan spasial dengan menginput URL wrapper resmi INTEROP Pusdatin sebelum aktivasi penuh (`orderStatus: "ready"`) ke My Data.
 
-### SSOT 2: Order & Provisioning Status (`OrderStatus` / `BatchStatus`):
+### SSOT 1: Status Transaksi & Pembayaran (`TransactionStatus`)
 
 ```typescript
-type OrderStatus =
+export type TransactionStatus =
+  | "expired" // Masa bayar tagihan kedaluwarsa
+  | "paid" // Pembayaran terkonfirmasi
+  | "failed" // Pembayaran gagal
+  | "refunded"; // Dana pembayaran dikembalikan
+```
+
+### SSOT 2: Status Order & Layanan Spasial (`OrderStatus`)
+
+```typescript
+export type OrderStatus =
   | "pending_payment" // Menunggu pembayaran mitra (TTL 24 jam)
   | "paid" // Pembayaran telah terkonfirmasi
   | "processing" // Interop engine sedang menyiapkan/memotong layer data WMS/WFS
   | "pending_review" // Menunggu validasi & input URL WMS INTEROP oleh admin internal
-  | "approved" // Disetujui admin dan layer aktif untuk mitra
   | "rejected" // Ditolak admin
-  | "expired" // Masa berlaku pembayaran atau akses data kedaluwarsa
-  | "queued" // Dalam antrean pemrosesan
-  | "provisioning" // Sedang dalam proses provisioning
-  | "ready" // Layanan data siap digunakan
-  | "revoked" // Akses layanan dicabut
-  | "failed"; // Pemrosesan atau provisioning gagal
+  | "ready"; // Layanan data siap digunakan
 ```
 
-## Add to Cart (Buat Batch Keranjang)
+## Add to Cart (Buat Order Keranjang)
 
-- **Endpoint**: `POST /api/mitra/cart/batches`
+- **Endpoint**: `POST /api/mitra/orders`
 - **Middleware / Akses**: `Mitra Only`
 - **Payload**:
 
 ```typescript
-type AddToCartBatchRequest = {
+type AddToCartOrderRequest = {
   selectionType: "catalog" | "upload_aoi" | "draw_aoi";
   administrativeFilter?: {
     kodeProvinsi?: string;
@@ -434,26 +438,26 @@ type AddToCartBatchRequest = {
 - **Response**:
 
 ```typescript
-type AddToCartBatchResponse = {
-  batchId: string;
-  status: "pending_payment";
+type AddToCartOrderResponse = {
+  orderId: string;
+  status: OrderStatus;
   estimatedTotalPrice: number;
   createdAt: string;
 };
 ```
 
-## Ambil Daftar Batch di Keranjang
+## Ambil Daftar Order di Keranjang
 
-- **Endpoint**: `GET /api/mitra/cart/batches`
+- **Endpoint**: `GET /api/mitra/orders`
 - **Middleware / Akses**: `Mitra Only`
-- **Params**: `status?: "pending_payment" | "paid" | "processing" | "pending_review" | "approved" | "rejected" | "expired"`
+- **Params**: `status?: OrderStatus`
 - **Response**:
 
 ```typescript
-type CartBatchListResponse = {
-  batches: Array<{
-    batchId: string;
-    status: BatchStatus;
+type OrderListResponse = {
+  orders: Array<{
+    orderId: string;
+    status: OrderStatus;
     selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     administrativeFilter?: {
       kodeProvinsi?: string;
@@ -465,7 +469,6 @@ type CartBatchListResponse = {
     cqlFilter?: string;
     createdAt: string;
     readyAt?: string;
-    approvedAt?: string;
     expiredAt?: string;
     rejectionReason?: string;
     totalPrice: number;
@@ -486,33 +489,33 @@ type CartBatchListResponse = {
 };
 ```
 
-## Ambil Detail Batch di Keranjang
+## Ambil Detail Order di Keranjang
 
-- **Endpoint**: `GET /api/mitra/cart/batches/{batchId}`
+- **Endpoint**: `GET /api/mitra/orders/{orderId}`
 - **Middleware / Akses**: `Mitra Only`
-- **Response**: `CartBatchDetailResponse`
+- **Response**: `OrderDetailResponse`
 
-## Hapus Batch dari Keranjang
+## Hapus Order dari Keranjang
 
-- **Endpoint**: `DELETE /api/mitra/cart/batches/{batchId}`
+- **Endpoint**: `DELETE /api/mitra/orders/{orderId}`
 - **Middleware / Akses**: `Mitra Only`
-- **Response**: `200 OK` / `{ success: true, message: "Batch keranjang berhasil dihapus" }`
+- **Response**: `200 OK` / `{ success: true, message: "Order keranjang berhasil dihapus" }`
 
-## Re-order Batch Kedaluwarsa
+## Re-order Pesanan
 
-- **Endpoint**: `POST /api/mitra/cart/batches/{batchId}/reorder`
+- **Endpoint**: `POST /api/mitra/orders/{orderId}/reorder`
 - **Middleware / Akses**: `Mitra Only`
 - **Payload**: `{}`
-- **Response**: `AddToCartBatchResponse`
+- **Response**: `AddToCartOrderResponse`
 
 ## Checkout & Request Kode Billing (Bayar)
 
-- **Endpoint**: `POST /api/mitra/cart/batches/{batchId}/checkout`
+- **Endpoint**: `POST /api/mitra/orders/{orderId}/checkout`
 - **Middleware / Akses**: `Mitra Only`
 - **Payload**:
 
 ```typescript
-type CheckoutBatchRequest = {
+type CheckoutOrderRequest = {
   paymentMethod?: "MPN_GEN2" | "VA_MANDIRI" | "VA_BRI" | "VA_BCA" | "QRIS";
 };
 ```
@@ -520,13 +523,13 @@ type CheckoutBatchRequest = {
 - **Response**:
 
 ```typescript
-type CheckoutBatchResponse = {
+type CheckoutOrderResponse = {
   orderId: string;
   transactionNumber: string;
   orderNumber: string;
   billingCode: string;
   totalAmount: number;
-  status: "pending";
+  orderStatus: OrderStatus;
   createdAt: string;
   billingExpiredAt: string;
 };
@@ -537,7 +540,7 @@ type CheckoutBatchResponse = {
 - **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
 - **Middleware / Akses**: `Mitra Only`
 - **Headers**: `Authorization: Bearer <TOKEN_MITRA>`
-- **Keterangan**: Dipanggil oleh mitra (misalnya tombol 'Cek status pembayaran' pada halaman billing) untuk memverifikasi pembayaran. Saat status `settled`, backend langsung mengeksekusi pemotongan AOI dan auto-publishing layer ke GeoServer internal.
+- **Keterangan**: Dipanggil oleh mitra untuk memverifikasi status pembayaran.
 - **Response (200 OK)**:
 
 ```typescript
@@ -545,7 +548,7 @@ type OrderPaymentStatusResponse = {
   success: boolean;
   data: {
     orderId: string;
-    transactionStatus: "pending" | "settled" | "expired" | "failed";
+    transactionStatus: TransactionStatus;
     paidAt?: string;
   };
 };
@@ -564,7 +567,7 @@ type OrderPaymentStatusResponse = {
   - `pageSize?: number`
   - `search?: string`
   - `basis?: "bidang" | "kawasan"`
-  - `status?: "processing" | "pending_verification" | "active" | "expired"`
+  - `status?: OrderStatus`
 - **Response**:
 
 ```typescript
@@ -582,7 +585,7 @@ type MyDataResponse = {
       externalWmsUrl?: string | null;
       wfsTypeName?: string;
       wmsLayers?: string;
-      status: "processing" | "pending_verification" | "active" | "expired";
+      status: OrderStatus;
       expiresAt: string;
       bbox?: [number, number, number, number];
     }>;
@@ -603,7 +606,7 @@ type MyDataResponse = {
 
 - **Endpoint**: `GET /api/mitra/transaction-history`
 - **Middleware / Akses**: `Mitra Only`
-- **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `status?: "pending" | "settled" | "expired" | "failed"`
+- **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `status?: TransactionStatus`
 - **Response**:
 
 ```typescript
@@ -614,7 +617,7 @@ type TransactionHistoryResponse = {
     orderNumber: string;
     billingCode: string;
     paymentMethod: string;
-    transactionStatus: "pending" | "settled" | "expired" | "failed";
+    transactionStatus: TransactionStatus;
     selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     totalAmount: number;
     createdAt: string;
@@ -629,13 +632,7 @@ type TransactionHistoryResponse = {
       snapshotAreaHa?: number;
       unitPrice: number;
       subtotalPrice: number;
-      provisionStatus:
-        | "queued"
-        | "provisioning"
-        | "ready"
-        | "failed"
-        | "expired"
-        | "revoked";
+      provisionStatus: OrderStatus;
       proxyWfsUrl?: string;
       proxyWmsUrl?: string;
     }>;
@@ -655,36 +652,28 @@ type TransactionHistoryResponse = {
 
 ### 1. SSOT Status Transaksi & Pembayaran (`TransactionStatus`)
 
-Digunakan untuk status siklus pembayaran & billing transaksi:
+Digunakan untuk status pembayaran & billing pada tabel `ORDER`:
 
 ```typescript
 export type TransactionStatus =
-  | "pending" // Menunggu Pembayaran
-  | "paid" // Terbayar
-  | "processing" // Sedang Diproses
-  | "settled" // Selesai (Lunas)
-  | "expired" // Kedaluwarsa
-  | "failed"; // Gagal
+  | "expired" // Masa bayar tagihan kedaluwarsa
+  | "paid" // Pembayaran terkonfirmasi
+  | "failed" // Pembayaran gagal
+  | "refunded"; // Dana pembayaran dikembalikan
 ```
 
 ### 2. SSOT Status Order & Layanan Spasial (`OrderStatus`)
 
-Digunakan untuk status keranjang batch, permohonan, dan provisioning layanan spasial:
+Digunakan untuk status operasional & provisioning data spasial pada tabel `ORDER`:
 
 ```typescript
 export type OrderStatus =
   | "pending_payment" // Menunggu Pembayaran
   | "paid" // Terbayar
-  | "processing" // Menyiapkan Layanan WMS
+  | "processing" // Sedang Diproses (Interop Engine)
   | "pending_review" // Menunggu Validasi Admin
-  | "approved" // Disetujui Admin
-  | "rejected" // Ditolak
-  | "expired" // Kedaluwarsa
-  | "queued" // Dalam Antrean
-  | "provisioning" // Menyiapkan Data
-  | "ready" // Siap Digunakan
-  | "revoked" // Dicabut
-  | "failed"; // Gagal
+  | "rejected" // Ditolak Admin
+  | "ready"; // Siap Digunakan
 ```
 
 ---
@@ -849,9 +838,9 @@ type CreateMasterGeoserverPayload = {
 
 ---
 
-# Review Permohonan (Internal Batch Review)
+# Review Permohonan (Internal Order Review)
 
-Modul bagi Internal User untuk memproses permohonan data spasial yang telah dibayar mitra (`paid`), memicu pembuatan service GeoServer WMS/WFS (`provision`), serta memvalidasi dan memberikan persetujuan (`pending_review` $\rightarrow$ `approved`) setelah mendapatkan URL wrapper resmi INTEROP Pusdatin ATR/BPN.
+Modul bagi Internal User untuk memproses permohonan data spasial yang telah dibayar mitra (`paid`), memicu pembuatan service GeoServer WMS/WFS (`provision`), serta memvalidasi dan memberikan persetujuan (`pending_review` $\rightarrow$ `ready`) setelah mendapatkan URL wrapper resmi INTEROP Pusdatin ATR/BPN.
 
 > Filter default pada halaman Review Permohonan hanya menampilkan data dengan status `paid` (perlu Create WMS) dan `pending_review` (WMS siap di-review).
 
@@ -859,12 +848,12 @@ Modul bagi Internal User untuk memproses permohonan data spasial yang telah diba
 
 - **Endpoint**: `POST /api/mitra/orders/{orderId}/provision`
 - **Middleware / Akses**: `Internal / Mitra Auth Token`
-- **Kapan Dipanggil**: User internal menekan tombol "Create Service WMS" pada daftar Review Permohonan untuk batch berstatus `paid`.
+- **Kapan Dipanggil**: User internal menekan tombol "Create Service WMS" pada daftar Review Permohonan untuk order berstatus `paid`.
 - **Deskripsi**:
   1. Memvalidasi bahwa order sudah berstatus `paid`.
-  2. Mengubah status transaksi order & batch menjadi `processing`.
+  2. Mengubah status operasional order menjadi `processing`.
   3. Menjalankan background worker `provisionOrderItems` untuk memotong AOI, membuat tabel PostGIS, dan mem-publish layer ke GeoServer internal beserta style SLD.
-  4. Setelah selesai, status batch otomatis berubah menjadi `pending_review` agar admin internal dapat meninjau dan menyalin link WMS internal Volatil.
+  4. Setelah selesai, status order otomatis berubah menjadi `pending_review` agar admin internal dapat meninjau dan menyalin link WMS internal Volatil.
 - **Response (200 OK)**:
 
 ```typescript
@@ -873,28 +862,26 @@ type ProvisionOrderResponse = {
   message: string;
   data: {
     orderId: string;
-    batchId: string;
-    transactionStatus: "processing";
-    batchStatus: "processing";
+    orderStatus: OrderStatus;
+    transactionStatus?: TransactionStatus;
   };
 };
 ```
 
-## List Batches Review Permohonan
+## List Orders Review Permohonan
 
-- **Endpoint**: `GET /api/internal/interop/batches`
+- **Endpoint**: `GET /api/internal/orders`
 - **Middleware / Akses**: `Internal Only`
 - **Params**: `status?: "paid" | "pending_review" | "all"`
 - **Response**:
 
 ```typescript
-type InternalBatchListResponse = {
-  batches: Array<{
-    batchId: string;
-    orderId?: string;
+type InternalOrderListResponse = {
+  orders: Array<{
+    orderId: string;
     mitraId: string;
     mitraName: string;
-    status: "paid" | "pending_review";
+    status: OrderStatus;
     selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     createdAt: string;
     items: Array<{
@@ -910,32 +897,32 @@ type InternalBatchListResponse = {
 };
 ```
 
-## Detail Batch Review
+## Detail Order Review
 
-- **Endpoint**: `GET /api/internal/interop/batches/{batchId}`
+- **Endpoint**: `GET /api/internal/orders/{orderId}`
 - **Middleware / Akses**: `Internal Only`
-- **Response**: `CartBatchDetailResponse`
+- **Response**: `OrderDetailResponse`
 
-## Approve Batch
+## Approve Order
 
-- **Endpoint**: `PUT /api/internal/interop/batches/{batchId}/approve`
+- **Endpoint**: `PUT /api/internal/orders/{orderId}/approve`
 - **Middleware / Akses**: `Internal Only`
 - **Payload**: `{}`
-- **Response**: `200 OK` / `{ success: true, message: "Batch berhasil divalidasi dan disetujui" }`
+- **Response**: `200 OK` / `{ success: true, message: "Order permohonan berhasil divalidasi dan disetujui" }`
 
-## Reject Batch
+## Reject Order
 
-- **Endpoint**: `PUT /api/internal/interop/batches/{batchId}/reject`
+- **Endpoint**: `PUT /api/internal/orders/{orderId}/reject`
 - **Middleware / Akses**: `Internal Only`
 - **Payload**:
 
 ```typescript
-type RejectBatchRequest = {
+type RejectOrderRequest = {
   reason: string;
 };
 ```
 
-- **Response**: `200 OK` / `{ success: true, message: "Batch berhasil ditolak" }`
+- **Response**: `200 OK` / `{ success: true, message: "Order permohonan berhasil ditolak" }`
 
 ---
 

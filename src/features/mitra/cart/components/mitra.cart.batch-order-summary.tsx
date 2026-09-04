@@ -44,11 +44,11 @@ export const MitraCartBatchOrderSummary = (
   const isSelected = Boolean(activeBatch);
   const isPendingPayment = activeBatch?.status === "pending_payment";
   const isPayable = isPendingPayment;
-  const isApproved = activeBatch?.status === "approved";
+  const isReady = activeBatch?.status === "ready";
   const isProcessing = activeBatch?.status === "processing";
   const isPendingReview = activeBatch?.status === "pending_review";
   const isRejected = activeBatch?.status === "rejected";
-  const isExpired = activeBatch?.status === "expired";
+  const isPaid = activeBatch?.status === "paid";
   const hasItems = (activeBatch?.items.length ?? 0) > 0;
 
   const totalBidang = useMemo(() => {
@@ -109,30 +109,32 @@ export const MitraCartBatchOrderSummary = (
               colorPalette={
                 isPendingPayment
                   ? "orange"
-                  : isApproved
+                  : isReady
                     ? "green"
                     : isPendingReview
                       ? "orange"
-                      : isProcessing
+                      : isPaid
                         ? "blue"
-                        : isRejected || isExpired
-                          ? "red"
-                          : "gray"
+                        : isProcessing
+                          ? "purple"
+                          : isRejected
+                            ? "red"
+                            : "gray"
               }
               variant={"subtle"}
             >
               {isPendingPayment
                 ? "Menunggu Pembayaran"
-                : isApproved
-                  ? "Disetujui Admin"
+                : isReady
+                  ? "Siap Digunakan"
                   : isPendingReview
                     ? "Menunggu Validasi"
-                    : isProcessing
-                      ? "Menyiapkan Layanan"
-                      : isRejected
-                        ? "Ditolak"
-                        : isExpired
-                          ? "Kedaluwarsa"
+                    : isPaid
+                      ? "Terbayar"
+                      : isProcessing
+                        ? "Sedang Diproses"
+                        : isRejected
+                          ? "Ditolak"
                           : "Draft"}
             </Badge>
           ) : (
@@ -264,7 +266,7 @@ export const MitraCartBatchOrderSummary = (
       )}
 
       {isSelected && isProcessing && (
-        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+        <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
             {"Layanan WMS sedang dipersiapkan oleh Interop Engine."}
@@ -296,18 +298,7 @@ export const MitraCartBatchOrderSummary = (
         </Alert.Root>
       )}
 
-      {isSelected && isExpired && (
-        <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"}>
-          <AppIcon icon={AlertCircleIcon} />
-          <Alert.Title>
-            {
-              "Batch pesanan telah kadaluwarsa (TTL 24 jam berakhir). Silakan lakukan re-order data."
-            }
-          </Alert.Title>
-        </Alert.Root>
-      )}
-
-      {isSelected && isApproved && (
+      {isSelected && isReady && (
         <Alert.Root
           status={"success"}
           colorPalette={"green"}
@@ -316,7 +307,7 @@ export const MitraCartBatchOrderSummary = (
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
             {
-              "Batch permohonan telah disetujui oleh admin internal. Layanan data spasial dapat diakses melalui menu Data Saya."
+              "Batch permohonan telah siap digunakan. Layanan data spasial dapat diakses melalui menu Data Saya."
             }
           </Alert.Title>
         </Alert.Root>
@@ -340,16 +331,16 @@ export const MitraCartBatchOrderSummary = (
         <AppIcon icon={CreditCardIcon} />
         {!isSelected
           ? "Pilih Batch Terlebih Dahulu"
-          : isApproved
-            ? "Batch Sudah Disetujui"
+          : isReady
+            ? "Batch Siap Digunakan"
             : isProcessing
               ? "Menyiapkan Layanan..."
               : isPendingReview
                 ? "Menunggu Validasi Admin"
                 : isRejected
                   ? "Batch Ditolak"
-                  : isExpired
-                    ? "Batch Kedaluwarsa"
+                  : isPaid
+                    ? "Batch Sudah Dibayar"
                     : "Bayar Sekarang"}
       </Button>
 

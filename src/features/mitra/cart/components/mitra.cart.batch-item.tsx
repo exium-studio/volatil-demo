@@ -145,26 +145,25 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
         </VStack>
 
         {/* Dynamic Status Notices */}
-        {(batch.status === "pending_payment" || batch.status === "approved") &&
-          batch.expiredAt && (
-            <HStack
-              justify={"space-between"}
-              align={"center"}
-              gap={"md"}
-              bg={"bg.subtle"}
-              p={2}
-              rounded={"md"}
-              fontSize={"xs"}
-            >
-              <P color={"fg.muted"}>{"Sisa Waktu Pembayaran (TTL):"}</P>
+        {batch.status === "pending_payment" && batch.expiredAt && (
+          <HStack
+            justify={"space-between"}
+            align={"center"}
+            gap={"md"}
+            bg={"bg.subtle"}
+            p={2}
+            rounded={"md"}
+            fontSize={"xs"}
+          >
+            <P color={"fg.muted"}>{"Sisa Waktu Pembayaran (TTL):"}</P>
 
-              <Countdown
-                finishedAt={batch.expiredAt}
-                fontWeight={"semibold"}
-                color={"orange.fg"}
-              />
-            </HStack>
-          )}
+            <Countdown
+              finishedAt={batch.expiredAt}
+              fontWeight={"semibold"}
+              color={"orange.fg"}
+            />
+          </HStack>
+        )}
 
         {batch.status === "pending_review" && (
           <HStack
@@ -184,13 +183,27 @@ export const MitraCartBatchItem = memo((props: MitraCartBatchItemProps) => {
           <HStack
             align={"center"}
             gap={"xs"}
-            bg={"blue.subtle"}
+            bg={"purple.subtle"}
             p={2}
             rounded={"md"}
             fontSize={"xs"}
-            color={"blue.fg"}
+            color={"purple.fg"}
           >
             <P>{"Layanan WMS sedang dipersiapkan..."}</P>
+          </HStack>
+        )}
+
+        {batch.status === "ready" && (
+          <HStack
+            align={"center"}
+            gap={"xs"}
+            bg={"green.subtle"}
+            p={2}
+            rounded={"md"}
+            fontSize={"xs"}
+            color={"green.fg"}
+          >
+            <P>{"Layanan data spasial siap digunakan."}</P>
           </HStack>
         )}
 

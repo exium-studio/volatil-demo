@@ -6,21 +6,9 @@ export type SpatialBasisType = "bidang" | "kawasan";
 
 export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
 
-export type OrderStatus =
-  | "draft"
-  | "pending_payment"
-  | "processing"
-  | "active"
-  | "expired"
-  | "rejected";
+import type { OrderStatus } from "@/shared/types/status.type";
 
-export type ProvisionStatus =
-  | "queued"
-  | "provisioning"
-  | "ready"
-  | "failed"
-  | "expired"
-  | "revoked";
+export type { OrderStatus };
 
 // ==========================================
 // 1. ADD TO CART & SELECTION PAYLOAD
@@ -111,7 +99,7 @@ export type ProvisionedLayerDto = {
    * Strictly undefined in standard list/detail endpoints.
    */
   rawApiKey?: string;
-  status: ProvisionStatus;
+  status: OrderStatus;
   retryCount: number;
   errorMessage?: string;
   lastAttemptedAt?: string;

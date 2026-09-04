@@ -1,7 +1,7 @@
 // src/features/shared/components/basis-igt.badge.tsx
 
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { SPATIAL_BASIS_CONFIG_MAP } from "@/features/mitra/cart/constants/cart.config";
+import { SPATIAL_BASIS_CONFIG_MAP } from "@/features/mitra/cart/constants/orders.config";
 import type { SpatialBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import type { SpatialBasisBadgeProps } from "@/features/shared/types/badge.type";
 

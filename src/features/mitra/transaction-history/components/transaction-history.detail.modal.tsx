@@ -27,8 +27,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { useNavigate } from "@tanstack/react-router";
-import { CheckCircleIcon, ClockIcon, CreditCardIcon, XCircleIcon } from "lucide-react";
+import { CheckCircleIcon, ClockIcon, XCircleIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const TransactionDetailTrigger = (
@@ -76,7 +75,6 @@ export const TransactionDetailModalContent = (
   const { transaction } = props;
 
   // Hooks
-  const navigate = useNavigate();
   const isMounted = useMountTimeout({
     mountDelay: 250,
   });
@@ -141,8 +139,9 @@ export const TransactionDetailModalContent = (
     });
   }, [transaction]);
 
-  const isSettled = transaction.transactionStatus === "settled";
-  const isPending = transaction.transactionStatus === "pending";
+  const isPaid = transaction.transactionStatus === "paid";
+  const isExpired = transaction.transactionStatus === "expired";
+  const isRefunded = transaction.transactionStatus === "refunded";
 
   return (
     <Modal.Content>
@@ -173,25 +172,33 @@ export const TransactionDetailModalContent = (
               <HStack gap={"md"} align={"center"}>
                 <AppIcon
                   icon={
-                    isSettled
+                    isPaid
                       ? CheckCircleIcon
-                      : isPending
+                      : isExpired
                         ? ClockIcon
                         : XCircleIcon
                   }
                   size={"lg"}
                   color={
-                    isSettled ? "green.fg" : isPending ? "orange.fg" : "red.fg"
+                    isPaid
+                      ? "green.fg"
+                      : isExpired
+                        ? "gray.fg"
+                        : isRefunded
+                          ? "purple.fg"
+                          : "red.fg"
                   }
                 />
 
                 <VStack align={"start"} gap={"2xs"}>
                   <P fontWeight={"semibold"}>
-                    {isSettled
+                    {isPaid
                       ? "Pembayaran Berhasil"
-                      : isPending
-                        ? "Menunggu Pembayaran"
-                        : "Transaksi Kedaluwarsa"}
+                      : isExpired
+                        ? "Transaksi Kedaluwarsa"
+                        : isRefunded
+                          ? "Pembayaran Dikembalikan"
+                          : "Transaksi Gagal"}
                   </P>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {`Dibuat: ${formatUtcDateTime(transaction.createdAt, preferredTimezone)}`}
@@ -328,29 +335,11 @@ export const TransactionDetailModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <HStack gap={"sm"} w={"full"} justify={"end"}>
-          <Button variant={"outline"} flex={isPending ? undefined : 1} onClick={back}>
+        <VStack gap={"xs"} w={"full"}>
+          <Button flex={1} onClick={back}>
             {t["action.close"]()}
           </Button>
-
-          {isPending && (
-            <Button
-              primary={true}
-              colorPalette={"blue"}
-              onClick={() => {
-                back();
-                void navigate({
-                  to: "/mitra/billing/$billingCode",
-                  params: { billingCode: transaction.billingCode },
-                  search: { orderId: transaction.id },
-                });
-              }}
-            >
-              <AppIcon icon={CreditCardIcon} />
-              {"Bayar Sekarang"}
-            </Button>
-          )}
-        </HStack>
+        </VStack>
       </Modal.Footer>
     </Modal.Content>
   );

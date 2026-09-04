@@ -6,12 +6,10 @@ import type { LucideIcon } from "lucide-react";
  * SSOT 1: Transaction Status Types (Billing & Payment)
  */
 export type TransactionStatus =
-  | "pending"
-  | "paid"
-  | "processing"
-  | "settled"
   | "expired"
-  | "failed";
+  | "paid"
+  | "failed"
+  | "refunded";
 
 export type TransactionStatusConfig = {
   label: string;
@@ -20,21 +18,15 @@ export type TransactionStatusConfig = {
 };
 
 /**
- * SSOT 2: Order & Provisioning Status Types (Cart Batch & Spatial Services)
+ * SSOT 2: Order & Provisioning Status Types (Order Table & Spatial Services)
  */
 export type OrderStatus =
   | "pending_payment"
   | "paid"
   | "processing"
   | "pending_review"
-  | "approved"
   | "rejected"
-  | "expired"
-  | "queued"
-  | "provisioning"
-  | "ready"
-  | "revoked"
-  | "failed";
+  | "ready";
 
 export type OrderProvisionStatus = OrderStatus;
 

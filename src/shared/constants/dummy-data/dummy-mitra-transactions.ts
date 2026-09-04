@@ -7,7 +7,7 @@ export const DUMMY_MITRA_TRANSACTIONS: MitraTransactionItem[] = [
     id: "ord-001-uuid",
     orderNumber: "ORD-2026-00192",
     billingCode: "82026031800192",
-    status: "active",
+    status: "ready",
     totalPrice: 15000000,
     orderedAt: "2026-03-18T10:30:00Z",
     items: [
@@ -52,7 +52,7 @@ export const DUMMY_MITRA_TRANSACTIONS: MitraTransactionItem[] = [
     id: "ord-004-uuid",
     orderNumber: "ORD-2026-00140",
     billingCode: "82026022800140",
-    status: "expired",
+    status: "rejected",
     totalPrice: 4800000,
     orderedAt: "2026-02-28T16:45:00Z",
     items: [

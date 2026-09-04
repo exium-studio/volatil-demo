@@ -20,6 +20,7 @@ export type SpatialBasisTypeConfig = {
 import type {
   OrderStatus,
   OrderStatusConfig,
+  TransactionStatus,
 } from "@/shared/types/status.type";
 
 export type BatchStatus = OrderStatus;
@@ -145,7 +146,7 @@ export type CheckoutBatchResponse = {
 
 export type CheckPaymentStatusResponse = {
   orderId: string;
-  transactionStatus: "pending" | "settled" | "paid" | "expired" | "failed";
+  transactionStatus: TransactionStatus;
   paidAt?: string;
   batchId?: string;
   billingCode?: string;

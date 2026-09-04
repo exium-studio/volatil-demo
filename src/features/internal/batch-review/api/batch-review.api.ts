@@ -59,13 +59,17 @@ const normalizeCartBatchItem = (raw: any): CartBatchItem => {
       raw.preview_wms_url ??
       raw.wmsUrl ??
       raw.wms_url ??
-      (raw.sourceLayerId ? `/api/proxy/wms?layerId=${raw.sourceLayerId}` : undefined),
+      (raw.sourceLayerId
+        ? `/api/proxy/wms?layerId=${raw.sourceLayerId}`
+        : undefined),
     previewWfsUrl:
       raw.previewWfsUrl ??
       raw.preview_wfs_url ??
       raw.wfsUrl ??
       raw.wfs_url ??
-      (raw.sourceLayerId ? `/api/proxy/wfs?layerId=${raw.sourceLayerId}` : undefined),
+      (raw.sourceLayerId
+        ? `/api/proxy/wfs?layerId=${raw.sourceLayerId}`
+        : undefined),
     externalWfsUrl: raw.externalWfsUrl ?? raw.external_wfs_url ?? null,
     externalWmsUrl: raw.externalWmsUrl ?? raw.external_wms_url ?? null,
   };
@@ -105,7 +109,7 @@ export const fetchInternalBatchesApi = async (
 ): Promise<InternalBatchListResponse> => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response: any = await apiClient.get("/api/internal/interop/batches", {
+    const response: any = await apiClient.get("/api/internal/orders", {
       params: {
         page: params?.page,
         pageSize: params?.pageSize,
@@ -143,6 +147,11 @@ export const fetchInternalBatchesApi = async (
         totalItems = Number(
           rawData.total ?? rawData.totalItems ?? rawBatches.length,
         );
+      } else if (Array.isArray(rawData.orders)) {
+        rawBatches = rawData.orders;
+        totalItems = Number(
+          rawData.total ?? rawData.totalItems ?? rawBatches.length,
+        );
       } else if (Array.isArray(rawData.data)) {
         rawBatches = rawData.data;
         totalItems = Number(
@@ -151,6 +160,9 @@ export const fetchInternalBatchesApi = async (
       }
     } else if (response && Array.isArray(response.batches)) {
       rawBatches = response.batches;
+      totalItems = Number(response.total ?? rawBatches.length);
+    } else if (response && Array.isArray(response.orders)) {
+      rawBatches = response.orders;
       totalItems = Number(response.total ?? rawBatches.length);
     } else if (response && Array.isArray(response.items)) {
       rawBatches = response.items;
@@ -161,7 +173,7 @@ export const fetchInternalBatchesApi = async (
       rawBatches.length > 0 ||
       (rawData &&
         typeof rawData === "object" &&
-        ("batches" in rawData || "items" in rawData))
+        ("batches" in rawData || "orders" in rawData || "items" in rawData))
     ) {
       const items = rawBatches.map(normalizeInternalBatchItem);
       const page = params?.page ?? 1;
@@ -200,7 +212,7 @@ export const fetchInternalBatchDetailApi = async (
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response: any = await apiClient.get(
-      `/api/internal/interop/batches/${batchId}`,
+      `/api/internal/orders/${batchId}`,
       { signal },
     );
 
@@ -212,7 +224,10 @@ export const fetchInternalBatchDetailApi = async (
         ? response.data
         : response;
 
-    if (rawData && (rawData.batchId || rawData.batch_id || rawData.id)) {
+    if (
+      rawData &&
+      (rawData.batchId || rawData.batch_id || rawData.orderId || rawData.id)
+    ) {
       return normalizeInternalBatchItem(rawData);
     }
 
@@ -267,7 +282,7 @@ export const approveBatchApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
   return apiClient.put<ApiResponse<void>>(
-    `/api/internal/interop/batches/${payload.batchId}/approve`,
+    `/api/internal/orders/${payload.batchId}/approve`,
     payload.items ? { items: payload.items } : {},
     { signal },
   );
@@ -278,7 +293,7 @@ export const rejectBatchApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
   return apiClient.put<ApiResponse<void>>(
-    `/api/internal/interop/batches/${payload.batchId}/reject`,
+    `/api/internal/orders/${payload.batchId}/reject`,
     { reason: payload.reason },
     { signal },
   );

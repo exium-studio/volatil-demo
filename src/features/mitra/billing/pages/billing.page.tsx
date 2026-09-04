@@ -47,16 +47,13 @@ const BillingPageBillingCode = () => {
     const targetOrderId = search?.orderId || billingCode;
     checkPaymentMutation.mutate(targetOrderId, {
       onSuccess: (res) => {
-        if (
-          res.transactionStatus === "settled" ||
-          res.transactionStatus === "paid"
-        ) {
+        if (res.transactionStatus === "paid") {
           focusAlert("payment-success", () => (
             <FocusAlertItem
               variant={"celebrate"}
               title={"Pembayaran Berhasil!"}
               description={
-                "Pembayaran telah terverifikasi dengan status 'settled'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
+                "Pembayaran telah terverifikasi dengan status 'paid'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
               }
               onDone={() => {
                 void navigate({
