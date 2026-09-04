@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 const COUNTDOWN_INTERVAL_MS = 1000;
 
 export const Countdown = (props: CountdownProps) => {
-  const { finishedAt, format, ...restProps } = props;
+  const { finishedAt, format, warningThresholdDays = 3, color, ...restProps } = props;
   const [countdown, setCountdown] = useState(() =>
     getCountdownParts(finishedAt),
   );
@@ -32,8 +32,27 @@ export const Countdown = (props: CountdownProps) => {
     return () => window.clearInterval(intervalId);
   }, [finishedAt]);
 
+  // Derived Values — Color based on remaining time threshold
+  const isNearExpiry =
+    !countdown.isFinished &&
+    warningThresholdDays > 0 &&
+    countdown.days < warningThresholdDays;
+
+  const dynamicColor =
+    color ??
+    (countdown.isFinished
+      ? "fg.error"
+      : isNearExpiry
+        ? "orange.fg"
+        : undefined);
+
   return (
-    <P whiteSpace={"nowrap"} {...restProps}>
+    <P
+      whiteSpace={"nowrap"}
+      color={dynamicColor}
+      fontWeight={isNearExpiry || countdown.isFinished ? "medium" : undefined}
+      {...restProps}
+    >
       <TNum>{formatCountdownParts(countdown, format)}</TNum>
     </P>
   );

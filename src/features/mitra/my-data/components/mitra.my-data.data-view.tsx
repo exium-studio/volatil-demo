@@ -79,7 +79,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     ];
 
     const items: FormattedListItem[] = myData.items.map((item: MyDataItem) => {
-      const isReady = item.status === "ready";
       const layerDisplayName = item.title || item.id.replace(/_/g, " ");
       // const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
       const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
@@ -120,7 +119,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           },
           {
             value: item.expiresAt,
-            td: isReady ? (
+            td: item.expiresAt ? (
               <Countdown finishedAt={item.expiresAt} />
             ) : (
               <P color={"fg.subtle"}>{"-"}</P>
