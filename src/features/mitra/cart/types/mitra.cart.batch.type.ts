@@ -17,23 +17,14 @@ export type SpatialBasisTypeConfig = {
   colorPalette: "blue" | "orange";
 };
 
-export type BatchStatus =
-  | "pending_payment"
-  | "paid"
-  | "processing"
-  | "pending_review"
-  | "approved"
-  | "rejected"
-  | "expired";
+import type {
+  OrderStatus,
+  OrderStatusConfig,
+} from "@/shared/types/status.type";
 
+export type BatchStatus = OrderStatus;
 export type CartBatchStatus = BatchStatus;
-
-export type CartBatchStatusConfig = {
-  label: string;
-  colorPalette: string;
-  icon: (typeof import("lucide-react"))["CheckCircle2Icon"];
-  iconColor: string;
-};
+export type CartBatchStatusConfig = OrderStatusConfig;
 
 export type MitraCartBatchItemProps = {
   batch: CartBatch;

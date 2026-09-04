@@ -389,17 +389,22 @@ Modul transaksi data IGT berbasis **Batch Interop Spasial**.
 4. **Create Service (Processing)**: Setelah status `paid`, **Interop Engine** otomatis mengeksekusi pemotongan data PostGIS dan auto-publishing GeoServer WMS/WFS (`processing` / `processing`).
 5. **Validasi Admin**: Setelah data siap, status menjadi `pending_verification` / `pending_review`. Admin Internal memvalidasi/memverifikasi layanan spasial dengan menginput URL wrapper resmi INTEROP Pusdatin sebelum aktivasi penuh (`approved` / `active`) ke My Data.
 
-### SSOT Status Batch / Permohonan:
+### SSOT 2: Order & Provisioning Status (`OrderStatus` / `BatchStatus`):
 
 ```typescript
-type BatchStatus =
+type OrderStatus =
   | "pending_payment" // Menunggu pembayaran mitra (TTL 24 jam)
   | "paid" // Pembayaran telah terkonfirmasi
   | "processing" // Interop engine sedang menyiapkan/memotong layer data WMS/WFS
   | "pending_review" // Menunggu validasi & input URL WMS INTEROP oleh admin internal
   | "approved" // Disetujui admin dan layer aktif untuk mitra
-  | "rejected" // Ditolak admin (ditangguhkan sementara menunggu regulasi rekber)
-  | "expired"; // Masa berlaku pembayaran atau data kadaluwarsa
+  | "rejected" // Ditolak admin
+  | "expired" // Masa berlaku pembayaran atau akses data kedaluwarsa
+  | "queued" // Dalam antrean pemrosesan
+  | "provisioning" // Sedang dalam proses provisioning
+  | "ready" // Layanan data siap digunakan
+  | "revoked" // Akses layanan dicabut
+  | "failed"; // Pemrosesan atau provisioning gagal
 ```
 
 ## Add to Cart (Buat Batch Keranjang)
@@ -554,7 +559,45 @@ type OrderPaymentStatusResponse = {
 
 - **Endpoint**: `GET /api/mitra/my-data`
 - **Middleware / Akses**: `Mitra Only`
-- **Response**: Daftar layer aktif hasil provisioning yang telah berstatus lunas (`settled`) dan disetujui validasi admin.
+- **Params**:
+  - `page?: number`
+  - `pageSize?: number`
+  - `search?: string`
+  - `basis?: "bidang" | "kawasan"`
+  - `status?: "processing" | "pending_verification" | "active" | "expired"`
+- **Response**:
+
+```typescript
+type MyDataResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    items: Array<{
+      id: string;
+      title: string;
+      spatialBasis: "bidang" | "kawasan";
+      wfsUrl: string | null;
+      wmsUrl: string | null;
+      externalWfsUrl?: string | null;
+      externalWmsUrl?: string | null;
+      wfsTypeName?: string;
+      wmsLayers?: string;
+      status: "processing" | "pending_verification" | "active" | "expired";
+      expiresAt: string;
+      bbox?: [number, number, number, number];
+    }>;
+    pagination: {
+      totalItems: number;
+      totalPages: number;
+      currentPage: number;
+      itemsPerPage: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
+  };
+  timestamp: string;
+};
+```
 
 ## Riwayat Transaksi Mitra
 
@@ -608,32 +651,36 @@ type TransactionHistoryResponse = {
 };
 ```
 
-## Kamus Enum Transaksi & Spasial
+## Kamus Enum Status (2 SSOT Utama)
 
+### 1. SSOT Status Transaksi & Pembayaran (`TransactionStatus`)
+Digunakan untuk status siklus pembayaran & billing transaksi:
 ```typescript
-export type SpatialBasisType = "bidang" | "kawasan";
-export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
-export type BatchStatus =
-  | "ready"
-  | "processing"
-  | "pending_review"
-  | "approved"
-  | "rejected"
-  | "expired";
-export type TransactionStatus = "pending" | "settled" | "expired" | "failed";
-export type PaymentMethod =
-  | "MPN_GEN2"
-  | "VA_MANDIRI"
-  | "VA_BRI"
-  | "VA_BCA"
-  | "QRIS";
-export type OrderProvisionStatus =
-  | "queued"
-  | "provisioning"
-  | "ready"
-  | "failed"
-  | "expired"
-  | "revoked";
+export type TransactionStatus =
+  | "pending" // Menunggu Pembayaran
+  | "paid" // Terbayar
+  | "processing" // Sedang Diproses
+  | "settled" // Selesai (Lunas)
+  | "expired" // Kedaluwarsa
+  | "failed"; // Gagal
+```
+
+### 2. SSOT Status Order & Layanan Spasial (`OrderStatus`)
+Digunakan untuk status keranjang batch, permohonan, dan provisioning layanan spasial:
+```typescript
+export type OrderStatus =
+  | "pending_payment" // Menunggu Pembayaran
+  | "paid" // Terbayar
+  | "processing" // Menyiapkan Layanan WMS
+  | "pending_review" // Menunggu Validasi Admin
+  | "approved" // Disetujui Admin
+  | "rejected" // Ditolak
+  | "expired" // Kedaluwarsa
+  | "queued" // Dalam Antrean
+  | "provisioning" // Menyiapkan Data
+  | "ready" // Siap Digunakan
+  | "revoked" // Dicabut
+  | "failed"; // Gagal
 ```
 
 ---

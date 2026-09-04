@@ -22,17 +22,17 @@ import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import {
-  TRANSACTION_STATUS_BADGE_MAP,
-  TRANSACTION_STATUS_OPTIONS,
-} from "@/features/mitra/transaction-history/constants/transaction-history.config";
 import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail.modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
   TransactionHistoryQueryParams,
   TransactionRecord,
-  TransactionStatus,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
+import {
+  TRANSACTION_STATUS_MAP,
+  TRANSACTION_STATUS_OPTIONS,
+} from "@/shared/constants/status.config";
+import type { TransactionStatus } from "@/shared/types/status.type";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import {
@@ -92,7 +92,7 @@ export const TransactionHistoryDataView = () => {
         const itemNames = item.items
           .map((it) => it.sourceLayerTitle)
           .join(", ");
-        const statusConfig = TRANSACTION_STATUS_BADGE_MAP[
+        const statusConfig = TRANSACTION_STATUS_MAP[
           item.transactionStatus
         ] ?? {
           label: item.transactionStatus,

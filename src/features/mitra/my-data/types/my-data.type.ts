@@ -29,7 +29,7 @@ export type MyDataQueryParams = {
   page: number;
   pageSize: number;
   search?: string;
-  basis?: string;
+  basis?: MyDataSpatialBasis;
   status?: MyDataStatus;
 };
 

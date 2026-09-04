@@ -6,21 +6,13 @@ import type {
 } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import type { PaginationMeta } from "@/shared/types/common-response.type";
 
-export type TransactionStatus =
-  | "pending"
-  | "processing"
-  | "paid"
-  | "settled"
-  | "expired"
-  | "failed";
+import type {
+  OrderStatus,
+  TransactionStatus,
+} from "@/shared/types/status.type";
 
-export type OrderProvisionStatus =
-  | "queued"
-  | "provisioning"
-  | "ready"
-  | "failed"
-  | "expired"
-  | "revoked";
+export type { TransactionStatus };
+export type OrderProvisionStatus = OrderStatus;
 
 export type TransactionOrderItem = {
   id: string;
