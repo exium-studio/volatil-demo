@@ -465,14 +465,3 @@ export const useCheckOrderPaymentStatus = () => {
 };
 
 export const useCheckBillingPaymentStatus = useCheckOrderPaymentStatus;
-
-// Backwards-compatible aliases
-export const useCartBatchesQuery = useCartOrdersQuery;
-export const useCartBatchDetailQuery = (batchId?: string) => useCartOrderDetailQuery(batchId);
-export const useActiveCartBatchQuery = useActiveCartOrderQuery;
-export const useCreateCartBatch = useCreateCartOrder;
-export const useCancelActiveCartBatch = useCancelActiveCartOrder;
-export const useClearAllCartBatches = useClearAllCartOrders;
-export const useCheckoutCartBatch = useCheckoutCartOrder;
-export const useExpiredCartBatchesQuery = useExpiredCartOrdersQuery;
-export const useReorderCartBatch = useReorderCartOrder;

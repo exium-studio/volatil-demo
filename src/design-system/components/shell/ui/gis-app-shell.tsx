@@ -380,7 +380,8 @@ const Content = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const { enabledLayerIds, layerOpacities, cqlFilter } = useIgtLayerStore();
+  const { enabledLayerIds, layerOpacities, customLayerConfigs, cqlFilter } =
+    useIgtLayerStore();
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
     const rawList = fetchedLayers?.items ?? fetchedLayers?.layers ?? [];
@@ -392,16 +393,27 @@ const Content = () => {
       .map((layer: IgtLayerItem) => {
         const isEnabled = Boolean(enabledLayerIds[layer.id]);
         const opacity = layerOpacities[layer.id] ?? 1.0;
-        return getWmsRasterConfigFromIgtLayer(
+        const baseConfig = getWmsRasterConfigFromIgtLayer(
           layer,
           wmsVisible && isEnabled,
           opacity,
         );
+        const customOverride = customLayerConfigs[layer.id];
+        if (customOverride) {
+          return {
+            ...baseConfig,
+            ...customOverride,
+            visible: wmsVisible && isEnabled,
+            opacity: layerOpacities[layer.id] ?? baseConfig.opacity,
+          };
+        }
+        return baseConfig;
       });
 
     // Also include any layer in enabledLayerIds (even if not in catalog list yet)
     Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
       if (!configs.some((c) => c.id === layerId)) {
+        const customOverride = customLayerConfigs[layerId];
         configs.push({
           id: layerId,
           type: "wms-raster",
@@ -410,12 +422,19 @@ const Content = () => {
           opacity: layerOpacities[layerId] ?? 1.0,
           wmsUrl: "",
           layers: layerId,
+          ...(customOverride ?? {}),
         });
       }
     });
 
     return configs;
-  }, [fetchedLayers, wmsVisible, enabledLayerIds, layerOpacities]);
+  }, [
+    fetchedLayers,
+    wmsVisible,
+    enabledLayerIds,
+    layerOpacities,
+    customLayerConfigs,
+  ]);
 
   // Derived Values
   const sidebarPx = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;

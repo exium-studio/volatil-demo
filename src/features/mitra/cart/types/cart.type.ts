@@ -3,7 +3,6 @@
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ReactNode } from "react";
 
-/** IDs stored in localStorage — single source of truth for cart. */
 export type CartStoredIds = string[];
 
 export type CartSummary = {

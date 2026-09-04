@@ -1,5 +1,4 @@
-// src/design-system/components/map/stores/map.layer.store.ts
-
+import type { WmsRasterLayerConfig } from "@/design-system/components/map/types/map.type";
 import { create } from "zustand";
 
 export type MapLayerState = {
@@ -8,9 +7,14 @@ export type MapLayerState = {
   setWmsVisible: (visible: boolean) => void;
   enabledLayerIds: Record<string, boolean>;
   layerOpacities: Record<string, number>;
+  customLayerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;
   toggleLayerId: (layerId: string) => void;
   setLayerEnabled: (layerId: string, enabled: boolean) => void;
   setLayerOpacity: (layerId: string, opacity: number) => void;
+  setCustomLayerConfig: (
+    layerId: string,
+    config: Partial<WmsRasterLayerConfig> | null,
+  ) => void;
   resetLayers: () => void;
 };
 
@@ -28,6 +32,7 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
   setWmsVisible: (wmsVisible) => set({ wmsVisible }),
   enabledLayerIds: {},
   layerOpacities: {},
+  customLayerConfigs: {},
   toggleLayerId: (layerId) =>
     set((state) => ({
       enabledLayerIds: {
@@ -49,9 +54,21 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
         [layerId]: opacity,
       },
     })),
+  setCustomLayerConfig: (layerId, config) =>
+    set((state) => {
+      const next = { ...state.customLayerConfigs };
+      if (!config) {
+        delete next[layerId];
+      } else {
+        next[layerId] = config;
+      }
+      return { customLayerConfigs: next };
+    }),
   resetLayers: () =>
     set({
       enabledLayerIds: {},
       layerOpacities: {},
+      customLayerConfigs: {},
     }),
 }));
+

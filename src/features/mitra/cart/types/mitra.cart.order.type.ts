@@ -150,20 +150,3 @@ export type CheckPaymentStatusResponse = {
 };
 
 export type OrderPaymentStatusResponse = CheckPaymentStatusResponse;
-
-// Backwards compatibility aliases if needed during transition
-export type BatchStatus = OrderStatus;
-export type CartBatchStatus = CartOrderStatus;
-export type CartBatchStatusConfig = CartOrderStatusConfig;
-export type MitraCartBatchItemProps = MitraCartOrderItemProps;
-export type CartBatchItemPayload = CartOrderItemPayload;
-export type AddToCartBatchRequest = AddToCartOrderRequest;
-export type AddToCartBatchResponse = AddToCartOrderResponse;
-export type CartBatchReorderResponse = CartOrderReorderResponse;
-export type CartBatchItem = CartOrderItem;
-export type CartBatch = CartOrder;
-export type ActiveCartBatch = ActiveCartOrder;
-export type ActiveCartBatchItem = ActiveCartOrderItem;
-export type CartBatchListResponse = CartOrderListResponse;
-export type CheckoutBatchRequest = CheckoutOrderRequest;
-export type CheckoutBatchResponse = CheckoutOrderResponse;

@@ -1,3 +1,5 @@
+// src/features/internal/order-review/components/internal.order-review.detail-modal.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -9,9 +11,9 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { InternalOrderReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
-import { useProvisionOrder } from "@/features/internal/batch-review/hooks/use-batch-review";
-import type { InternalOrderItem } from "@/features/internal/batch-review/types/order-review.type";
+import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
+import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-order-review";
+import type { InternalOrderItem } from "@/features/internal/order-review/types/order-review.type";
 import { formatUtcDateTime, getPreferredUserTimezone } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { CheckCircle2Icon, MapPlusIcon } from "lucide-react";
@@ -48,28 +50,6 @@ export const InternalOrderReviewDetailTrigger = (
         close={close}
       />
     </Modal.Root>
-  );
-};
-
-export type InternalBatchReviewDetailTriggerProps = {
-  modalKey?: string;
-  order?: InternalOrderItem;
-  batch?: InternalOrderItem;
-  children?: ReactNode;
-};
-
-export const InternalBatchReviewDetailTrigger = (
-  props: InternalBatchReviewDetailTriggerProps,
-) => {
-  const targetOrder = props.order ?? props.batch;
-  if (!targetOrder) return null;
-  return (
-    <InternalOrderReviewDetailTrigger
-      modalKey={props.modalKey}
-      order={targetOrder}
-    >
-      {props.children}
-    </InternalOrderReviewDetailTrigger>
   );
 };
 

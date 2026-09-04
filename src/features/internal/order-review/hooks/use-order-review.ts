@@ -1,16 +1,18 @@
+// src/features/internal/order-review/hooks/use-order-review.ts
+
 import {
   approveOrderApi,
   fetchInternalOrderDetailApi,
   fetchInternalOrdersApi,
   provisionOrderApi,
   rejectOrderApi,
-} from "@/features/internal/batch-review/api/batch-review.api";
+} from "@/features/internal/order-review/api/order-review.api";
 import type {
   ApproveOrderPayload,
   InternalOrderListQueryParams,
   ProvisionOrderPayload,
   RejectOrderPayload,
-} from "@/features/internal/batch-review/types/order-review.type";
+} from "@/features/internal/order-review/types/order-review.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -131,9 +133,3 @@ export const useRejectOrder = () => {
     onError: toastHandlers.onError,
   });
 };
-
-// Aliases
-export const useInternalBatchesQuery = useInternalOrdersQuery;
-export const useInternalBatchDetailQuery = (id?: string) => useInternalOrderDetailQuery(id);
-export const useApproveBatch = useApproveOrder;
-export const useRejectBatch = useRejectOrder;

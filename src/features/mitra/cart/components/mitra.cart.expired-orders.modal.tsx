@@ -79,8 +79,6 @@ export const MitraCartExpiredOrdersTrigger = (
   );
 };
 
-export const MitraCartExpiredBatchesTrigger = MitraCartExpiredOrdersTrigger;
-
 type MitraCartExpiredOrdersModalContentProps = {
   modalKey: string;
   close: () => void;

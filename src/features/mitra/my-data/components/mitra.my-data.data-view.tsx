@@ -34,11 +34,11 @@ import {
   MY_DATA_ORDER_STATUS_OPTIONS,
   ORDER_STATUS_MAP,
 } from "@/shared/constants/status.config";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
 import { DatabaseIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -75,8 +75,8 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT", sortable: true, align: "start" },
       { th: "Basis IGT", sortable: true, align: "start" },
-      { th: "WFS URL", sortable: false, align: "start" },
       { th: "WMS URL", sortable: false, align: "start" },
+      // { th: "WFS URL", sortable: false, align: "start" },
       { th: "Status Aktif", sortable: true, align: "start" },
       { th: "Sisa Waktu", sortable: true, align: "start" },
       { th: "Tanggal Kedaluwarsa", sortable: true, align: "start" },
@@ -85,7 +85,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     const items: FormattedListItem[] = myData.items.map((item: MyDataItem) => {
       const isReady = item.status === "ready";
       const layerDisplayName = item.title || item.id.replace(/_/g, " ");
-      const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
+      // const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
       const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
       const statusConfig = ORDER_STATUS_MAP[item.status] ?? {
         label: item.status,
@@ -117,34 +117,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             align: "start" as const,
           },
           {
-            value: effectiveWfsUrl ?? "",
-            td: effectiveWfsUrl ? (
-              <HStack gap={"xs"} align={"center"} maxW={"240px"}>
-                <ExternalLink
-                  href={effectiveWfsUrl}
-                  display={"inline-flex"}
-                  alignItems={"center"}
-                  minW={0}
-                  flex={1}
-                >
-                  <ClampedP fontSize={"sm"} truncate>
-                    {effectiveWfsUrl}
-                  </ClampedP>
-                </ExternalLink>
-
-                <ClipboardButton
-                  value={effectiveWfsUrl}
-                  variant={"ghost"}
-                  aria-label={"Salin URL WFS"}
-                  flexShrink={0}
-                />
-              </HStack>
-            ) : (
-              <P color={"fg.subtle"}>{"-"}</P>
-            ),
-            align: "start" as const,
-          },
-          {
             value: effectiveWmsUrl ?? "",
             td: effectiveWmsUrl ? (
               <HStack gap={"xs"} align={"center"} maxW={"240px"}>
@@ -172,6 +144,34 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             ),
             align: "start" as const,
           },
+          // {
+          //   value: effectiveWfsUrl ?? "",
+          //   td: effectiveWfsUrl ? (
+          //     <HStack gap={"xs"} align={"center"} maxW={"240px"}>
+          //       <ExternalLink
+          //         href={effectiveWfsUrl}
+          //         display={"inline-flex"}
+          //         alignItems={"center"}
+          //         minW={0}
+          //         flex={1}
+          //       >
+          //         <ClampedP fontSize={"sm"} truncate>
+          //           {effectiveWfsUrl}
+          //         </ClampedP>
+          //       </ExternalLink>
+
+          //       <ClipboardButton
+          //         value={effectiveWfsUrl}
+          //         variant={"ghost"}
+          //         aria-label={"Salin URL WFS"}
+          //         flexShrink={0}
+          //       />
+          //     </HStack>
+          //   ) : (
+          //     <P color={"fg.subtle"}>{"-"}</P>
+          //   ),
+          //   align: "start" as const,
+          // },
           {
             value: item.status,
             td: statusBadge,

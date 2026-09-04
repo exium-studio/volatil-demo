@@ -375,15 +375,11 @@ export async function cancelActiveCartOrder(
   try {
     await deleteCartOrderApi(orderId, signal);
     if (isDummyDataEnabled()) {
-      localDummyOrders = localDummyOrders.filter(
-        (b) => b.orderId !== orderId,
-      );
+      localDummyOrders = localDummyOrders.filter((b) => b.orderId !== orderId);
     }
   } catch (error) {
     if (isDummyDataEnabled()) {
-      localDummyOrders = localDummyOrders.filter(
-        (b) => b.orderId !== orderId,
-      );
+      localDummyOrders = localDummyOrders.filter((b) => b.orderId !== orderId);
       return;
     }
     throw error;

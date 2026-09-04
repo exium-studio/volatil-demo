@@ -55,7 +55,7 @@ const getDisplayNavItems = (isMitra: boolean) => {
 
   const defaultNavKeys = isMitra
     ? ["data_request", "my_data", "transaction_history"]
-    : ["data_management", "batch_review", "master_geoserver"];
+    : ["data_management", "order_review", "master_geoserver"];
 
   const fallbackItems = defaultNavKeys
     .map((key) => {

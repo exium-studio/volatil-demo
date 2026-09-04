@@ -1,74 +1,94 @@
-// src/features/mitra/cart/components/mitra.cart.order-summary.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
-import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { useCheckoutCart } from "@/features/mitra/cart/hooks/use-mitra-cart";
-import type { MitraCartOrderSummaryProps } from "@/features/mitra/cart/types/cart.type";
-import {
-  formatCurrency,
-  formatDecimal,
-} from "@/shared/utils/formatter/number.formatter";
-import { TriangleAlertIcon } from "lucide-react";
+import { useCheckoutCartOrder } from "@/features/mitra/cart/hooks/use-mitra-cart";
+import type { ActiveCartOrder } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { useNavigate } from "@tanstack/react-router";
+import {
+  AlertCircleIcon,
+  CreditCardIcon,
+  HourglassIcon,
+  InfoIcon,
+  ShieldCheckIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
-export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
+export type MitraCartOrderSummaryProps = {
+  activeOrder: ActiveCartOrder | null;
+  isLoading?: boolean;
+};
+
+export const MitraCartOrderSummary = (
+  props: MitraCartOrderSummaryProps,
+) => {
   // Props
-  const { summary, config, ...restProps } = props;
+  const { activeOrder, isLoading = false } = props;
 
   // Stores
   const { theme } = useThemeStore();
 
-  // Hooks
+  // Navigation
   const navigate = useNavigate();
-  const checkoutMutation = useCheckoutCart();
 
-  // Handlers
-  const handleCheckout = () => {
-    checkoutMutation.mutate(undefined, {
-      onSuccess: ({ billingCode }) => {
-        navigate({
-          to: "/mitra/billing/$billingCode",
-          params: { billingCode },
-        });
-      },
-    });
-  };
+  // Mutations
+  const checkoutMutation = useCheckoutCartOrder();
 
   // Derived Values
-  const totalBidang = summary.totalBidang ?? 0;
-  const totalKawasanHa = summary.totalKawasanHa ?? 0;
-  const hasCartItems = totalBidang > 0 || totalKawasanHa > 0;
+  const isSelected = Boolean(activeOrder);
+  const isPendingPayment = activeOrder?.status === "pending_payment";
+  const isPayable = isPendingPayment;
+  const isReady = activeOrder?.status === "ready";
+  const isProcessing = activeOrder?.status === "processing";
+  const isPendingReview = activeOrder?.status === "pending_review";
+  const isRejected = activeOrder?.status === "rejected";
+  const isPaid = activeOrder?.status === "paid";
+  const hasItems = (activeOrder?.items.length ?? 0) > 0;
 
-  const isBidangMinimumNotMet = totalBidang < config.minimumBidangCount;
-  const isKawasanMinimumNotMet = totalKawasanHa < config.minimumKawasanHa;
-  const isMinimumNotMet =
-    !hasCartItems || isBidangMinimumNotMet || isKawasanMinimumNotMet;
+  const totalBidang = useMemo(() => {
+    if (!activeOrder?.items) return 0;
+    return activeOrder.items
+      .filter((i) => i.spatialBasis === "bidang")
+      .reduce((sum, item) => sum + item.featuresCount, 0);
+  }, [activeOrder]);
 
-  const isCheckoutDisabled = isMinimumNotMet || checkoutMutation.isPending;
+  const totalKawasanHa = useMemo(() => {
+    if (!activeOrder?.items) return 0;
+    return activeOrder.items
+      .filter((i) => i.spatialBasis === "kawasan")
+      .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
+  }, [activeOrder]);
 
-  // Derived — Warning Message
-  const warningMessage = useMemo(() => {
-    if (!hasCartItems) {
-      return "Keranjang Anda kosong";
-    }
-    if (isBidangMinimumNotMet && isKawasanMinimumNotMet) {
-      return "Jumlah bidang dan kawasan (ha) belum memenuhi batas minimum pembelian";
-    }
-    if (isBidangMinimumNotMet) {
-      return "Jumlah bidang belum memenuhi batas minimum pembelian";
-    }
-    if (isKawasanMinimumNotMet) {
-      return "Jumlah kawasan (ha) belum memenuhi batas minimum pembelian";
-    }
-    return null;
-  }, [hasCartItems, isBidangMinimumNotMet, isKawasanMinimumNotMet]);
+  const handleCheckout = () => {
+    if (!activeOrder?.orderId || !isPayable) return;
+
+    checkoutMutation.mutate(
+      {
+        orderId: activeOrder.orderId,
+      },
+      {
+        onSuccess: (data) => {
+          if (data?.billingCode) {
+            void navigate({
+              to: "/mitra/billing/$billingCode",
+              params: { billingCode: data.billingCode },
+              search: { orderId: data.orderId },
+            });
+          } else {
+            void navigate({
+              to: "/mitra/transaction-history",
+            });
+          }
+        },
+      },
+    );
+  };
 
   return (
     <VStack
@@ -76,73 +96,56 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       p={"md"}
       rounded={theme.radii.container}
       bg={"bg.body"}
-      {...restProps}
+      align={"stretch"}
     >
-      {/* Top Warning Alert */}
-      {warningMessage && (
-        <Alert.Root
-          status={"warning"}
-          colorPalette={"orange"}
-          variant={"subtle"}
-        >
-          <AppIcon icon={TriangleAlertIcon} />
-
-          <Alert.Title>{warningMessage}</Alert.Title>
-        </Alert.Root>
-      )}
-
-      {/* Progress - Bidang */}
-      <VStack gap={2} align={"stretch"} mt={2}>
-        <Progress.Root
-          value={Math.min(100, (totalBidang / config.minimumBidangCount) * 100)}
-          colorPalette={"blue"}
-          size={"sm"}
-        >
-          <Progress.Track>
-            <Progress.Range />
-          </Progress.Track>
-        </Progress.Root>
-
-        <HStack justify={"space-between"} fontSize={"sm"}>
-          <P color={"fg.muted"}>{"Bidang"}</P>
-          <P fontWeight={"medium"}>
-            <strong style={{ fontWeight: 600 }}>
-              <TNum>{formatDecimal(totalBidang)}</TNum>
-            </strong>
-            {" / "}
-            <TNum>{formatDecimal(config.minimumBidangCount)}</TNum>
-            {" Bidang"}
+      {/* Order Metadata Header */}
+      <VStack align={"start"} gap={1}>
+        <HStack justify={"space-between"} w={"full"}>
+          <P fontSize={"xs"} color={"fg.subtle"}>
+            {"ID Pesanan"}
           </P>
-        </HStack>
-      </VStack>
-
-      {/* Progress - Kawasan */}
-      <VStack gap={2} align={"stretch"}>
-        <Progress.Root
-          value={Math.min(
-            100,
-            (totalKawasanHa / config.minimumKawasanHa) * 100,
+          {isSelected ? (
+            <Badge
+              colorPalette={
+                isPendingPayment
+                  ? "orange"
+                  : isReady
+                    ? "green"
+                    : isPendingReview
+                      ? "orange"
+                      : isPaid
+                        ? "blue"
+                        : isProcessing
+                          ? "purple"
+                          : isRejected
+                            ? "red"
+                            : "gray"
+              }
+              variant={"subtle"}
+            >
+              {isPendingPayment
+                ? "Menunggu Pembayaran"
+                : isReady
+                  ? "Siap Digunakan"
+                  : isPendingReview
+                    ? "Menunggu Validasi"
+                    : isPaid
+                      ? "Terbayar"
+                      : isProcessing
+                        ? "Sedang Diproses"
+                        : isRejected
+                          ? "Ditolak"
+                          : "Draft"}
+            </Badge>
+          ) : (
+            <Badge colorPalette={"gray"} variant={"subtle"}>
+              {"Belum Dipilih"}
+            </Badge>
           )}
-          colorPalette={"orange"}
-          size={"sm"}
-        >
-          <Progress.Track>
-            <Progress.Range />
-          </Progress.Track>
-        </Progress.Root>
-
-        <HStack justify={"space-between"} fontSize={"sm"}>
-          <P color={"fg.muted"}>{"Kawasan"}</P>
-
-          <P fontWeight={"medium"}>
-            <strong style={{ fontWeight: 600 }}>
-              <TNum>{formatDecimal(totalKawasanHa)}</TNum>
-            </strong>
-            {" / "}
-            <TNum>{formatDecimal(config.minimumKawasanHa)}</TNum>
-            {" ha"}
-          </P>
         </HStack>
+        <P fontSize={"sm"} fontWeight={"semibold"}>
+          {activeOrder?.orderId ?? "-"}
+        </P>
       </VStack>
 
       <Separator
@@ -150,22 +153,60 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         borderStyle={"dashed"}
         borderTopWidth={"2px"}
         borderColor={"border.emphasized"}
-        my={3}
+        my={1}
       />
 
-      {/* Ringkasan Details Section */}
+      {/* Summary Breakdown */}
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
         <HStack justify={"space-between"}>
-          <P color={"fg.muted"}>{"Total Bidang"}</P>
+          <P color={"fg.muted"}>{"Metode Pengajuan"}</P>
+          {isSelected && activeOrder?.selectionType ? (
+            <SelectionTypeBadge size={"xs"}>
+              {activeOrder.selectionType}
+            </SelectionTypeBadge>
+          ) : (
+            <P fontWeight={"medium"}>{"-"}</P>
+          )}
+        </HStack>
+
+        <HStack justify={"space-between"}>
+          <P color={"fg.muted"}>{"Total Layer IGT"}</P>
           <P fontWeight={"medium"}>
-            <TNum>{formatDecimal(totalBidang)}</TNum> {"bidang"}
+            {isSelected ? `${activeOrder?.items.length ?? 0} layer` : "-"}
           </P>
         </HStack>
 
         <HStack justify={"space-between"}>
-          <P color={"fg.muted"}>{"Total Kawasan"}</P>
+          <P color={"fg.muted"}>{"Total Objek Bidang"}</P>
           <P fontWeight={"medium"}>
-            <TNum>{formatDecimal(totalKawasanHa)}</TNum> {"ha"}
+            {isSelected ? (
+              totalBidang > 0 ? (
+                <>
+                  <TNum>{totalBidang}</TNum> {"bidang"}
+                </>
+              ) : (
+                "-"
+              )
+            ) : (
+              "-"
+            )}
+          </P>
+        </HStack>
+
+        <HStack justify={"space-between"}>
+          <P color={"fg.muted"}>{"Total Luas Kawasan"}</P>
+          <P fontWeight={"medium"}>
+            {isSelected ? (
+              totalKawasanHa > 0 ? (
+                <>
+                  <TNum>{totalKawasanHa}</TNum> {"ha"}
+                </>
+              ) : (
+                "-"
+              )
+            ) : (
+              "-"
+            )}
           </P>
         </HStack>
 
@@ -177,42 +218,139 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           my={3}
         />
 
-        <HStack justify={"space-between"}>
-          <P color={"fg.muted"}>{"Total Harga"}</P>
-          <P fontWeight={"medium"}>
-            <TNum>{formatCurrency(summary.grandTotal)}</TNum>
+        <HStack
+          justify={"space-between"}
+          color={isPayable ? "blue.fg" : undefined}
+        >
+          <P fontSize={"md"} fontWeight={"semibold"}>
+            {"Total Tagihan"}
           </P>
-        </HStack>
-
-        <Separator
-          variant={"dashed"}
-          borderStyle={"dashed"}
-          borderTopWidth={"2px"}
-          borderColor={"border.emphasized"}
-          my={3}
-        />
-
-        <HStack justify={"space-between"} color={"blue.fg"}>
-          <P fontSize={"lg"} fontWeight={"semibold"}>
-            {"Sub Total"}
-          </P>
-          <P fontSize={"lg"} fontWeight={"semibold"}>
-            <TNum>{formatCurrency(summary.grandTotal)}</TNum>
-          </P>
+          {isSelected ? (
+            <P fontSize={"lg"} fontWeight={"semibold"}>
+              <FormatNumber
+                value={activeOrder?.totalPrice ?? 0}
+                style={"currency"}
+                currency={"IDR"}
+                maximumFractionDigits={0}
+              />
+            </P>
+          ) : (
+            <P fontSize={"lg"} fontWeight={"semibold"}>
+              {"-"}
+            </P>
+          )}
         </HStack>
       </VStack>
 
-      {/* Beli Sekarang Button */}
+      {/* Notice States */}
+      {!isSelected && (
+        <Alert.Root status={"neutral"} colorPalette={"gray"} variant={"subtle"}>
+          <AppIcon icon={InfoIcon} />
+          <Alert.Title>
+            {
+              "Silakan pilih salah satu pesanan pada daftar keranjang untuk menampilkan rincian dan melakukan pembayaran."
+            }
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isPayable && (
+        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+          <AppIcon icon={InfoIcon} />
+          <Alert.Title>
+            {
+              "Totalan tagihan telah dikalkulasi. Klik 'Bayar Sekarang' untuk menerbitkan kode billing dan menyelesaikan pembayaran."
+            }
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isProcessing && (
+        <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
+          <AppIcon icon={InfoIcon} />
+          <Alert.Title>
+            {"Layanan WMS sedang dipersiapkan oleh sistem."}
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isPendingReview && (
+        <Alert.Root
+          status={"warning"}
+          colorPalette={"orange"}
+          variant={"subtle"}
+        >
+          <AppIcon icon={HourglassIcon} />
+          <Alert.Title>
+            {
+              "Permohonan data sedang dalam proses validasi oleh admin internal."
+            }
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isRejected && (
+        <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"}>
+          <AppIcon icon={AlertCircleIcon} />
+          <Alert.Title>
+            {`Pesanan ditolak oleh Admin Internal: ${activeOrder?.rejectionReason || "Tidak memenuhi syarat."}`}
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {isSelected && isReady && (
+        <Alert.Root
+          status={"success"}
+          colorPalette={"green"}
+          variant={"subtle"}
+        >
+          <AppIcon icon={InfoIcon} />
+          <Alert.Title>
+            {
+              "Pesanan permohonan telah siap digunakan. Layanan data spasial dapat diakses melalui menu Data Saya."
+            }
+          </Alert.Title>
+        </Alert.Root>
+      )}
+
+      {/* Action Button */}
       <Button
         primary={true}
         w={"full"}
-        disabled={isCheckoutDisabled}
+        disabled={
+          !isSelected ||
+          !isPayable ||
+          !hasItems ||
+          checkoutMutation.isPending ||
+          isLoading
+        }
         loading={checkoutMutation.isPending}
         onClick={handleCheckout}
-        mt={2}
+        mt={1}
       >
-        {"Bayar sekarang"}
+        <AppIcon icon={CreditCardIcon} />
+        {!isSelected
+          ? "Pilih Pesanan Terlebih Dahulu"
+          : isReady
+            ? "Pesanan Siap Digunakan"
+            : isProcessing
+              ? "Menyiapkan Layanan..."
+              : isPendingReview
+                ? "Menunggu Validasi Admin"
+                : isRejected
+                  ? "Pesanan Ditolak"
+                  : isPaid
+                    ? "Pesanan Sudah Dibayar"
+                    : "Bayar Sekarang"}
       </Button>
+
+      <HStack align={"center"} justify={"center"} gap={1}>
+        <AppIcon icon={ShieldCheckIcon} size={"xs"} color={"fg.subtle"} />
+
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {"Pembayaran Resmi PNBP ATR/BPN"}
+        </P>
+      </HStack>
     </VStack>
   );
 };

@@ -1,4 +1,4 @@
-// src/features/internal/batch-review/api/batch-review.api.ts
+// src/features/internal/order-review/api/order-review.api.ts
 
 import type {
   ApproveOrderPayload,
@@ -8,7 +8,7 @@ import type {
   ProvisionOrderPayload,
   ProvisionOrderResponse,
   RejectOrderPayload,
-} from "@/features/internal/batch-review/types/order-review.type";
+} from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { DUMMY_INTERNAL_ORDERS } from "@/shared/constants/dummy-data/dummy-internal-order-review";
 import { apiClient } from "@/shared/libs/api-client/api-client";
@@ -84,11 +84,10 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
     (acc: number, it: CartOrderItem) => acc + (it.subtotalPrice || 0),
     0,
   );
-  const idVal = raw.orderId ?? raw.order_id ?? raw.batchId ?? raw.batch_id ?? raw.id ?? "";
+  const idVal = raw.orderId ?? raw.order_id ?? raw.id ?? "";
 
   return {
     orderId: idVal,
-    batchId: idVal,
     mitraId: String(raw.mitraId ?? raw.mitra_id ?? ""),
     mitraName:
       raw.mitraName ?? raw.mitra_name ?? raw.userName ?? raw.name ?? "Mitra",
@@ -148,11 +147,6 @@ export const fetchInternalOrdersApi = async (
         totalItems = Number(
           rawData.total ?? rawData.totalItems ?? rawOrders.length,
         );
-      } else if (Array.isArray(rawData.batches)) {
-        rawOrders = rawData.batches;
-        totalItems = Number(
-          rawData.total ?? rawData.totalItems ?? rawOrders.length,
-        );
       } else if (Array.isArray(rawData.data)) {
         rawOrders = rawData.data;
         totalItems = Number(
@@ -165,16 +159,13 @@ export const fetchInternalOrdersApi = async (
     } else if (response && Array.isArray(response.items)) {
       rawOrders = response.items;
       totalItems = Number(response.total ?? rawOrders.length);
-    } else if (response && Array.isArray(response.batches)) {
-      rawOrders = response.batches;
-      totalItems = Number(response.total ?? rawOrders.length);
     }
 
     if (
       rawOrders.length > 0 ||
       (rawData &&
         typeof rawData === "object" &&
-        ("orders" in rawData || "items" in rawData || "batches" in rawData))
+        ("orders" in rawData || "items" in rawData))
     ) {
       const items = rawOrders.map(normalizeInternalOrderItem);
       const page = params?.page ?? 1;
@@ -227,20 +218,14 @@ export const fetchInternalOrderDetailApi = async (
 
     if (
       rawData &&
-      (rawData.orderId ||
-        rawData.order_id ||
-        rawData.batchId ||
-        rawData.batch_id ||
-        rawData.id)
+      (rawData.orderId || rawData.order_id || rawData.id)
     ) {
       return normalizeInternalOrderItem(rawData);
     }
 
     if (isDummyDataEnabled()) {
       return (
-        DUMMY_INTERNAL_ORDERS.find(
-          (b) => b.orderId === orderId || b.batchId === orderId,
-        ) ?? null
+        DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId) ?? null
       );
     }
 
@@ -248,9 +233,7 @@ export const fetchInternalOrderDetailApi = async (
   } catch (error) {
     if (isDummyDataEnabled()) {
       return (
-        DUMMY_INTERNAL_ORDERS.find(
-          (b) => b.orderId === orderId || b.batchId === orderId,
-        ) ?? null
+        DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId) ?? null
       );
     }
     throw error;
@@ -258,10 +241,10 @@ export const fetchInternalOrderDetailApi = async (
 };
 
 export const provisionOrderApi = async (
-  payload: ProvisionOrderPayload & { batchId?: string },
+  payload: ProvisionOrderPayload,
   signal?: AbortSignal,
 ): Promise<ApiResponse<ProvisionOrderResponse>> => {
-  const orderId = payload.orderId ?? payload.batchId ?? "";
+  const { orderId } = payload;
   try {
     return await apiClient.post<ApiResponse<ProvisionOrderResponse>>(
       `/api/mitra/orders/${orderId}/provision`,
@@ -271,7 +254,7 @@ export const provisionOrderApi = async (
   } catch (error) {
     if (isDummyDataEnabled()) {
       const targetOrder = DUMMY_INTERNAL_ORDERS.find(
-        (b) => b.orderId === orderId || b.batchId === orderId,
+        (b) => b.orderId === orderId,
       );
       if (targetOrder) {
         targetOrder.status = "pending_review";
@@ -292,25 +275,25 @@ export const provisionOrderApi = async (
 };
 
 export const approveOrderApi = async (
-  payload: ApproveOrderPayload & { batchId?: string },
+  payload: ApproveOrderPayload,
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
-  const orderId = payload.orderId ?? payload.batchId ?? "";
+  const { orderId, items } = payload;
   return apiClient.put<ApiResponse<void>>(
     `/api/internal/interop/orders/${orderId}/approve`,
-    payload.items ? { items: payload.items } : {},
+    items ? { items } : {},
     { signal },
   );
 };
 
 export const rejectOrderApi = async (
-  payload: RejectOrderPayload & { batchId?: string },
+  payload: RejectOrderPayload,
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
-  const orderId = payload.orderId ?? payload.batchId ?? "";
+  const { orderId, reason } = payload;
   return apiClient.put<ApiResponse<void>>(
     `/api/internal/interop/orders/${orderId}/reject`,
-    { reason: payload.reason },
+    { reason },
     { signal },
   );
 };
@@ -347,9 +330,3 @@ const getDummyOrderList = (
     pagination: createPaginationMeta(page, pageSize, filtered.length),
   };
 };
-
-// Aliases
-export const fetchInternalBatchesApi = fetchInternalOrdersApi;
-export const fetchInternalBatchDetailApi = fetchInternalOrderDetailApi;
-export const approveBatchApi = approveOrderApi;
-export const rejectBatchApi = rejectOrderApi;

@@ -77,10 +77,10 @@ export const INTERNAL_APP_NAVS_MAP = {
     titleKey: "app.admin_navs.data_management",
     pathname: "/internal/data-management",
   },
-  batch_review: {
+  order_review: {
     icon: CheckCircleIcon,
-    titleKey: "app.admin_navs.batch_review",
-    pathname: "/internal/batch-review",
+    titleKey: "app.admin_navs.order_review",
+    pathname: "/internal/order-review",
   },
   mitra_registration: {
     icon: HandshakeIcon,

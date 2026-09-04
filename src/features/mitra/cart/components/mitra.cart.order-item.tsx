@@ -10,7 +10,10 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import type { CartOrder, MitraCartOrderItemProps } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import type {
+  CartOrder,
+  MitraCartOrderItemProps,
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { ORDER_STATUS_MAP } from "@/shared/constants/status.config";
 import { Trash2Icon } from "lucide-react";

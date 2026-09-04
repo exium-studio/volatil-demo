@@ -1,13 +1,10 @@
-// src/shared/constants/dummy-data/dummy-internal-order-review.ts
-
-import type { InternalOrderItem } from "@/features/internal/batch-review/types/order-review.type";
+import type { InternalOrderItem } from "@/features/internal/order-review/types/order-review.type";
 
 const now = new Date();
 
 export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
   {
     orderId: "ord-2026-0830-001",
-    batchId: "ord-2026-0830-001",
     mitraId: "mtr-001",
     mitraName: "PT Graha Pembangunan Persada",
     status: "paid",
@@ -25,8 +22,10 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
         subtotalPrice: 1200000,
         wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
         wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
-        previewWfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
-        previewWmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
+        previewWfsUrl:
+          "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
+        previewWmsUrl:
+          "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
       },
       {
         id: "coi-002",
@@ -39,14 +38,15 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
         subtotalPrice: 650000,
         wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
         wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
-        previewWfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
-        previewWmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
+        previewWfsUrl:
+          "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
+        previewWmsUrl:
+          "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
       },
     ],
   },
   {
     orderId: "ord-2026-0830-002",
-    batchId: "ord-2026-0830-002",
     mitraId: "mtr-002",
     mitraName: "PT Nusantara Infrastruktur Utama",
     status: "pending_review",
@@ -64,14 +64,15 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
         subtotalPrice: 950000,
         wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
         wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_ZNT_BADUNG",
-        previewWfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
-        previewWmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_ZNT_BADUNG",
+        previewWfsUrl:
+          "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
+        previewWmsUrl:
+          "/api/proxy/wms?layerId=testing_workspace:TEST_ZNT_BADUNG",
       },
     ],
   },
   {
     orderId: "ord-2026-0829-003",
-    batchId: "ord-2026-0829-003",
     mitraId: "mtr-003",
     mitraName: "CV Agraria Citra Mandiri",
     status: "ready",
@@ -90,14 +91,15 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
         areaHa: 10,
         unitPrice: 50000,
         subtotalPrice: 500000,
-        previewWfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
-        previewWmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
+        previewWfsUrl:
+          "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
+        previewWmsUrl:
+          "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
       },
     ],
   },
   {
     orderId: "ord-2026-0828-004",
-    batchId: "ord-2026-0828-004",
     mitraId: "mtr-001",
     mitraName: "PT Graha Pembangunan Persada",
     status: "rejected",
@@ -113,11 +115,11 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
         featuresCount: 15,
         unitPrice: 50000,
         subtotalPrice: 750000,
-        previewWfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
-        previewWmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
+        previewWfsUrl:
+          "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
+        previewWmsUrl:
+          "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
       },
     ],
   },
 ];
-
-export const DUMMY_INTERNAL_BATCHES = DUMMY_INTERNAL_ORDERS;

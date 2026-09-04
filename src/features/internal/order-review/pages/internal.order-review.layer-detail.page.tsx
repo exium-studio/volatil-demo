@@ -1,4 +1,4 @@
-// src/features/internal/batch-review/pages/internal.batch-review.layer-detail.page.tsx
+// src/features/internal/order-review/pages/internal.order-review.layer-detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { IconButton } from "@/design-system/components/button/ui/button";
@@ -18,20 +18,19 @@ import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-reque
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
-import { useNavigate, useParams } from "@tanstack/react-router";
+import { useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { MapPinIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 
-export const InternalBatchReviewLayerDetailPage = () => {
+export const InternalOrderReviewLayerDetailPage = () => {
   // Hooks
-  const { batchId, layerId: encodedLayerId } = useParams({ strict: false }) as {
-    batchId: string;
+  const { orderId, layerId: encodedLayerId } = useParams({ strict: false }) as {
+    orderId: string;
     layerId: string;
   };
   const layerId = decodeURIComponent(encodedLayerId ?? "");
-  const navigate = useNavigate();
   const { map } = useMapInstanceStore();
 
   // States
@@ -58,95 +57,91 @@ export const InternalBatchReviewLayerDetailPage = () => {
     page: pageState.page,
     pageSize: pageState.pageSize,
     typeName: selectedIgtLayer?.wfs?.wfsTypeName ?? layerId,
-    wfsUrl: selectedIgtLayer?.wfs?.wfsUrl ?? "",
   });
 
-  // Derived Values
-  const layerTitle =
-    selectedIgtLayer?.title ??
-    layerId.split(":")[1]?.replace(/_/g, " ") ??
-    layerId;
+  // Handlers
+  const handlePageChange = (newPage: number) => {
+    setPageState((prev) => ({ ...prev, page: newPage }));
+  };
 
-  const hasData = !isEmptyArray(features);
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageState({ page: 1, pageSize: newPageSize });
+  };
 
   const handleFlyTo = () => {
-    if (!map || !selectedIgtLayer) return;
-    void flyToIgtLayer(map, selectedIgtLayer, {});
+    if (map && selectedIgtLayer) {
+      flyToIgtLayer(map, selectedIgtLayer);
+    }
   };
 
   return (
-    <PanelContentContainer h={"auto"} overflowY={"auto"}>
-      <VStack flex={1} gap={0} align={"stretch"} bg={"bg.canvas"} position={"relative"} overflow={"hidden"}>
-        {/* Header */}
-        <VStack gap={0} w={"full"}>
-          <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"}>
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
-              <HStack gap={"sm"} align={"center"}>
-                <BackButton
-                  onClick={() =>
-                    void navigate({
-                      to: "/internal/batch-review/$batchId",
-                      params: { batchId },
-                    })
-                  }
-                />
+    <PanelContentContainer h={"auto"}>
+      <VStack flex={1} w={"full"} align={"stretch"} gap={0}>
+        {/* Header Bar */}
+        <HStack
+          p={"md"}
+          justify={"space-between"}
+          align={"center"}
+          bg={"bg.body"}
+          borderBottom={"1px solid"}
+          borderColor={"border.subtle"}
+        >
+          <HStack gap={"sm"} align={"center"}>
+            <BackButton />
 
-                <P fontWeight={"medium"} fontSize={"md"}>
-                  {`Detail Atribut: ${layerTitle}`}
-                </P>
-              </HStack>
+            <VStack align={"start"} gap={0}>
+              <P fontWeight={"semibold"} fontSize={"md"}>
+                {selectedIgtLayer?.title ?? layerId}
+              </P>
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {`Layer ID: ${layerId} • Pesanan: ${orderId}`}
+              </P>
+            </VStack>
+          </HStack>
 
-              {selectedIgtLayer && (
-                <Tooltip content={"Lihat layer IGT di peta"}>
-                  <IconButton
-                    variant={"outline"}
-                    aria-label={"Lihat layer IGT di peta"}
-                    onClick={handleFlyTo}
-                  >
-                    <AppIcon icon={MapPinIcon} />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </HStack>
-          </VStack>
+          <HStack gap={"xs"}>
+            <Tooltip content={"Arahkan kamera peta ke layer ini"}>
+              <IconButton
+                aria-label={"Zoom to layer"}
+                variant={"outline"}
+                size={"sm"}
+                onClick={handleFlyTo}
+              >
+                <AppIcon icon={MapPinIcon} />
+              </IconButton>
+            </Tooltip>
+          </HStack>
+        </HStack>
 
-          <Separator borderColor={"bg.canvas"} />
-        </VStack>
+        <Separator borderColor={"bg.canvas"} />
 
-        {/* Feature Attribute Table */}
-        {isLoading && (
-          <VStack flex={1} p={"md"} bg={"bg.body"} minH={0}>
-            <Skeleton flex={1} w={"full"} h={"full"} rounded={0} />
-          </VStack>
-        )}
-
-        {!isLoading && !hasData && (
-          <VStack flex={1} align={"center"} justify={"center"} p={"md"} bg={"bg.body"} minH={0}>
-            <NoResultState />
-          </VStack>
-        )}
-
-        {!isLoading && hasData && (
-          <VStack flex={1} gap={0} bg={"bg.body"} minH={0}>
+        {/* Content Body: Features Table */}
+        <VStack flex={1} w={"full"} p={"md"} bg={"bg.canvas"}>
+          {isLoading ? (
+            <Skeleton h={"350px"} rounded={"md"} w={"full"} />
+          ) : isEmptyArray(features) ? (
+            <NoResultState
+              title={"Data Fitur Tidak Tersedia"}
+              description={
+                "Tidak dapat memuat atribut fitur spasial dari endpoint WFS layer ini."
+              }
+            />
+          ) : (
             <SpatialFeaturesDataView
               wfsFeatures={features}
               totalFeatures={totalFeatures}
-              isLoading={isLoading}
-              isFetching={isFetching}
               page={pageState.page}
               pageSize={pageState.pageSize}
-              setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-              setPageSize={(pageSize) =>
-                setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-              }
+              isFetching={isFetching}
               selectedItems={selectedItems}
-              onSelectedItemChange={({ selectedItems: items }) =>
-                setSelectedItems(items)
-              }
-              canBatchSelect={false}
+              onSelectedItemChange={({ selectedItems: newItems }) => {
+                setSelectedItems(newItems);
+              }}
+              setPage={handlePageChange}
+              setPageSize={handlePageSizeChange}
             />
-          </VStack>
-        )}
+          )}
+        </VStack>
       </VStack>
     </PanelContentContainer>
   );

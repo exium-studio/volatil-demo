@@ -24,5 +24,3 @@ export type TransactionStatusBadgeProps = Omit<BadgeProps, "children"> & {
   children?: TransactionStatus | (string & {});
   showIcon?: boolean;
 };
-
-export type BatchStatusBadgeProps = OrderStatusBadgeProps;

@@ -16,7 +16,7 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.order-item";
-import { MitraCartBatchOrderSummary } from "@/features/mitra/cart/components/mitra.cart.batch-order-summary";
+import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
 import { MitraCartExpiredOrdersTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-orders.modal";
 import {
   useCancelActiveCartOrder,
@@ -240,7 +240,7 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <MitraCartBatchOrderSummary
+      <MitraCartOrderSummary
         activeOrder={selectedOrder}
         isLoading={isDetailLoading}
       />

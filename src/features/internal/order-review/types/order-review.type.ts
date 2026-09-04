@@ -1,4 +1,4 @@
-// src/features/internal/batch-review/types/order-review.type.ts
+// src/features/internal/order-review/types/order-review.type.ts
 
 import type {
   CartOrderItem,
@@ -18,7 +18,6 @@ export type InternalOrderReviewRejectModalContentProps = {
 
 export type InternalOrderItem = {
   orderId: string;
-  batchId?: string; // backwards compatibility alias
   mitraId: string;
   mitraName: string;
   status: CartOrderStatus;
@@ -69,13 +68,3 @@ export type OrderLayerDataViewProps = {
   order: InternalOrderItem;
   onDetailAttribute: (item: CartOrderItem) => void;
 };
-
-// Backwards-compatible aliases
-export type InternalBatchReviewRejectModalContentProps = InternalOrderReviewRejectModalContentProps;
-export type InternalBatchItem = InternalOrderItem;
-export type InternalBatchListQueryParams = InternalOrderListQueryParams;
-export type InternalBatchListResponse = InternalOrderListResponse;
-export type ApproveBatchItemPayload = ApproveOrderItemPayload;
-export type ApproveBatchPayload = ApproveOrderPayload;
-export type RejectBatchPayload = RejectOrderPayload;
-export type BatchLayerDataViewProps = OrderLayerDataViewProps;

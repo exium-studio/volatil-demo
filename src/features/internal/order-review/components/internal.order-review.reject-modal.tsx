@@ -1,3 +1,5 @@
+// src/features/internal/order-review/components/internal.order-review.reject-modal.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
@@ -6,11 +8,11 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { useRejectOrder } from "@/features/internal/batch-review/hooks/use-batch-review";
+import { useRejectOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import type {
   InternalOrderItem,
   InternalOrderReviewRejectModalContentProps,
-} from "@/features/internal/batch-review/types/order-review.type";
+} from "@/features/internal/order-review/types/order-review.type";
 import { XCircleIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -56,30 +58,6 @@ export const InternalOrderReviewRejectTrigger = (
         onSuccessRedirect={onSuccessRedirect}
       />
     </Modal.Root>
-  );
-};
-
-export type InternalBatchReviewRejectTriggerProps = {
-  modalKey?: string;
-  order?: InternalOrderItem;
-  batch?: InternalOrderItem;
-  children?: ReactNode;
-  onSuccessRedirect?: () => void;
-};
-
-export const InternalBatchReviewRejectTrigger = (
-  props: InternalBatchReviewRejectTriggerProps,
-) => {
-  const targetOrder = props.order ?? props.batch;
-  if (!targetOrder) return null;
-  return (
-    <InternalOrderReviewRejectTrigger
-      modalKey={props.modalKey}
-      order={targetOrder}
-      onSuccessRedirect={props.onSuccessRedirect}
-    >
-      {props.children}
-    </InternalOrderReviewRejectTrigger>
   );
 };
 

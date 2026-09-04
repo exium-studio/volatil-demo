@@ -1,4 +1,4 @@
-// src/features/internal/batch-review/pages/internal.batch-review.detail.page.tsx
+// src/features/internal/order-review/pages/internal.order-review.detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
@@ -21,12 +21,12 @@ import type { IgtLayerItem } from "@/design-system/components/map/types/map.type
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { InternalOrderReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
+import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import {
   useInternalOrderDetailQuery,
   useProvisionOrder,
-} from "@/features/internal/batch-review/hooks/use-batch-review";
-import type { OrderLayerDataViewProps } from "@/features/internal/batch-review/types/order-review.type";
+} from "@/features/internal/order-review/hooks/use-order-review";
+import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
@@ -45,12 +45,11 @@ import {
   MapPlusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
-export function InternalBatchReviewDetailPage() {
+export function InternalOrderReviewDetailPage() {
   // Hooks
-  const { batchId } = useParams({ strict: false }) as { batchId: string };
-  const orderId = batchId;
+  const { orderId } = useParams({ strict: false }) as { orderId: string };
   const navigate = useNavigate();
 
   // Queries
@@ -78,13 +77,13 @@ export function InternalBatchReviewDetailPage() {
   return (
     <PanelContentContainer>
       <Container.Root withContext={true}>
-        <Container.Body>
+        <Container.Body overflowY={"auto"}>
           {/* Header */}
-          <HeaderContainer>
+          <HeaderContainer px={"xs"}>
             <HStack justify={"space-between"} align={"center"} w={"full"}>
               <HStack align={"center"} gap={"sm"}>
                 <BackButton
-                  onClick={() => navigate({ to: "/internal/batch-review" })}
+                  onClick={() => navigate({ to: "/internal/order-review" })}
                 />
 
                 <ClampedHeading>{"Review Permohonan Detail"}</ClampedHeading>
@@ -112,7 +111,7 @@ export function InternalBatchReviewDetailPage() {
                     order={order}
                     modalKey={`approve-detail-${order.orderId}`}
                     onSuccessRedirect={() => {
-                      void navigate({ to: "/internal/batch-review" });
+                      void navigate({ to: "/internal/order-review" });
                     }}
                   >
                     <Button primary={true} colorPalette={"green"}>
@@ -127,14 +126,14 @@ export function InternalBatchReviewDetailPage() {
 
           <Separator borderColor={"bg.canvas"} />
 
-          {/* Order Metadata */}
-          <VStack gap={"md"} p={"md"}>
-            <VStack align={"start"} gap={"xs"}>
+          {/* Metadata Detail */}
+          <VStack gap={"md"} p={"md"} align={"stretch"}>
+            <VStack gap={"xs"} align={"start"}>
               <P fontSize={"xs"} color={"fg.subtle"}>
                 {"Pemohon / Mitra"}
               </P>
 
-              <VStack gap={"2xs"}>
+              <VStack gap={"2xs"} align={"start"}>
                 <P fontWeight={"semibold"}>{order.mitraName}</P>
                 <P fontSize={"xs"} color={"fg.muted"}>
                   {order.mitraId}
@@ -143,7 +142,7 @@ export function InternalBatchReviewDetailPage() {
             </VStack>
 
             <HStack gap={"lg"} wrap={"wrap"}>
-              <VStack gap={"xs"}>
+              <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Metode Pengajuan"}
                 </P>
@@ -153,7 +152,7 @@ export function InternalBatchReviewDetailPage() {
                 </SelectionTypeBadge>
               </VStack>
 
-              <VStack gap={"xs"}>
+              <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Status"}
                 </P>
@@ -161,7 +160,7 @@ export function InternalBatchReviewDetailPage() {
                 <OrderStatusBadge>{order.status}</OrderStatusBadge>
               </VStack>
 
-              <VStack gap={"xs"}>
+              <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Total Estimasi PNBP"}
                 </P>
@@ -180,10 +179,10 @@ export function InternalBatchReviewDetailPage() {
             order={order}
             onDetailAttribute={(item) => {
               void navigate({
-                to: "/internal/batch-review/$batchId/layer/$layerId",
+                to: "/internal/order-review/$orderId/layer/$layerId",
                 params: {
-                  batchId: order.orderId,
-                  layerId: encodeURIComponent(item.sourceLayerId),
+                  orderId: order.orderId,
+                  layerId: encodeURIComponent(item.sourceLayerId || item.id),
                 },
               });
             }}
@@ -198,7 +197,8 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
   const { order, onDetailAttribute } = props;
 
   // Stores
-  const { enabledLayerIds, setLayerEnabled } = useMapLayerStore();
+  const { enabledLayerIds, setLayerEnabled, setCustomLayerConfig } =
+    useMapLayerStore();
   const { map } = useMapInstanceStore();
 
   // Queries — master IGT layers from catalog
@@ -212,6 +212,32 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
   const fetchedLayersList = useMemo(() => {
     return layersData?.items ?? layersData?.layers ?? [];
   }, [layersData]);
+
+  const handleToggleLayer = useCallback(
+    (item: CartOrderItem, enabled: boolean) => {
+      const previewUrl =
+        item.previewWmsUrl ||
+        item.wmsUrl ||
+        (item.sourceLayerId
+          ? `/api/proxy/wms?layerId=${item.sourceLayerId}`
+          : "");
+
+      if (enabled) {
+        if (previewUrl) {
+          setCustomLayerConfig(item.sourceLayerId, {
+            wmsUrl: previewUrl,
+            layers: item.sourceLayerId,
+            spatialBasis: item.spatialBasis,
+          });
+        }
+        setLayerEnabled(item.sourceLayerId, true);
+      } else {
+        setLayerEnabled(item.sourceLayerId, false);
+        setCustomLayerConfig(item.sourceLayerId, null);
+      }
+    },
+    [setCustomLayerConfig, setLayerEnabled],
+  );
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -301,7 +327,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
                 <Switch
                   checked={enabledLayerIds[item.sourceLayerId] ?? false}
                   onCheckedChange={({ checked }) => {
-                    setLayerEnabled(item.sourceLayerId, checked);
+                    handleToggleLayer(item, checked);
                   }}
                 />
               ),
@@ -325,7 +351,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
         },
         onClick: (item: CartOrderItem) => {
           const current = enabledLayerIds[item.sourceLayerId] ?? false;
-          setLayerEnabled(item.sourceLayerId, !current);
+          handleToggleLayer(item, !current);
         },
       },
       {
@@ -345,7 +371,14 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
           const matchedLayer = fetchedLayersList.find(
             (l) => l.id === item.sourceLayerId,
           );
-          setLayerEnabled(item.sourceLayerId, true);
+          const previewUrl =
+            item.previewWmsUrl ||
+            item.wmsUrl ||
+            (item.sourceLayerId
+              ? `/api/proxy/wms?layerId=${item.sourceLayerId}`
+              : "");
+
+          handleToggleLayer(item, true);
           void flyToIgtLayer(
             map,
             matchedLayer ??
@@ -356,13 +389,13 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
                 bbox: undefined,
                 wms: {
                   layers: item.sourceLayerId,
-                  wmsUrl: item.wmsUrl ?? "",
+                  wmsUrl: previewUrl,
                 },
                 wfs: {
                   wfsTypeName: item.sourceLayerId,
-                  wfsUrl: item.wfsUrl ?? "",
+                  wfsUrl: item.previewWfsUrl || item.wfsUrl || "",
                 },
-              } as IgtLayerItem),
+              } as unknown as IgtLayerItem),
             {},
           );
         },
@@ -373,7 +406,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
   }, [
     order.items,
     enabledLayerIds,
-    setLayerEnabled,
+    handleToggleLayer,
     map,
     onDetailAttribute,
     fetchedLayersList,
