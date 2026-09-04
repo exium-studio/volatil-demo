@@ -613,8 +613,9 @@ type MyDataResponse = {
 type TransactionHistoryResponse = {
   items: Array<{
     id: string;
+    orderId: string;
     transactionNumber: string;
-    orderNumber: string;
+    orderNumber?: string;
     billingCode: string;
     paymentMethod: string;
     transactionStatus: TransactionStatus;
@@ -623,6 +624,7 @@ type TransactionHistoryResponse = {
     createdAt: string;
     paidAt?: string;
     expiredAt?: string;
+    billingExpiredAt?: string;
     items: Array<{
       id: string;
       sourceLayerId: string;

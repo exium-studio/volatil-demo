@@ -30,8 +30,9 @@ export type TransactionOrderItem = {
 
 export type TransactionRecord = {
   id: string;
+  orderId: string;
   transactionNumber: string;
-  orderNumber: string;
+  orderNumber?: string;
   billingCode: string;
   paymentMethod: string;
   transactionStatus: TransactionStatus;
@@ -40,6 +41,7 @@ export type TransactionRecord = {
   createdAt: string;
   paidAt?: string;
   expiredAt?: string;
+  billingExpiredAt?: string;
   items: TransactionOrderItem[];
 };
 

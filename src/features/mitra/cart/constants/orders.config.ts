@@ -76,6 +76,11 @@ export const TRANSACTION_STATUS_MAP: Record<
   TransactionStatus,
   TransactionStatusConfig
 > = {
+  pending: {
+    label: "Menunggu Pembayaran",
+    colorPalette: "orange",
+    icon: ClockIcon,
+  },
   paid: {
     label: "Terbayar",
     colorPalette: "green",

@@ -5,6 +5,7 @@ import type { TransactionRecord } from "@/features/mitra/transaction-history/typ
 export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
   {
     id: "trx-001",
+    orderId: "ord-001",
     transactionNumber: "TRX-2026-0825-001",
     orderNumber: "ORD-2026-0825-001",
     billingCode: "8202608250001",
@@ -15,6 +16,7 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
     createdAt: "2026-08-25T08:30:00Z",
     paidAt: "2026-08-25T08:45:12Z",
     expiredAt: "2026-08-27T08:30:00Z",
+    billingExpiredAt: "2026-08-27T08:30:00Z",
     items: [
       {
         id: "item-001",
@@ -45,6 +47,7 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
   },
   {
     id: "trx-002",
+    orderId: "ord-002",
     transactionNumber: "TRX-2026-0824-002",
     orderNumber: "ORD-2026-0824-002",
     billingCode: "8202608240002",
@@ -54,6 +57,7 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
     totalAmount: 950000,
     createdAt: "2026-08-24T14:15:00Z",
     expiredAt: "2026-08-26T14:15:00Z",
+    billingExpiredAt: "2026-08-26T14:15:00Z",
     items: [
       {
         id: "item-003",
@@ -71,6 +75,7 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
   },
   {
     id: "trx-003",
+    orderId: "ord-003",
     transactionNumber: "TRX-2026-0820-003",
     orderNumber: "ORD-2026-0820-003",
     billingCode: "8202608200003",
@@ -80,6 +85,7 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
     totalAmount: 500000,
     createdAt: "2026-08-20T09:00:00Z",
     expiredAt: "2026-08-21T09:00:00Z",
+    billingExpiredAt: "2026-08-21T09:00:00Z",
     items: [
       {
         id: "item-004",

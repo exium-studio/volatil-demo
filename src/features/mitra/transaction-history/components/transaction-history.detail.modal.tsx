@@ -27,7 +27,14 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { CheckCircleIcon, ClockIcon, XCircleIcon } from "lucide-react";
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  CheckCircleIcon,
+  ClockIcon,
+  CreditCardIcon,
+  XCircleIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export const TransactionDetailTrigger = (
@@ -73,6 +80,9 @@ export const TransactionDetailModalContent = (
 ) => {
   // Props
   const { transaction } = props;
+
+  // Navigation
+  const navigate = useNavigate();
 
   // Hooks
   const isMounted = useMountTimeout({
@@ -142,6 +152,20 @@ export const TransactionDetailModalContent = (
   const isPaid = transaction.transactionStatus === "paid";
   const isExpired = transaction.transactionStatus === "expired";
   const isRefunded = transaction.transactionStatus === "refunded";
+  const isFailed = transaction.transactionStatus === "failed";
+  const isPayable = !isPaid && !isRefunded && !isExpired;
+  const targetExpiry = transaction.billingExpiredAt || transaction.expiredAt;
+
+  const handleGoToBilling = () => {
+    if (transaction.billingCode) {
+      back();
+      void navigate({
+        to: "/mitra/billing/$billingCode",
+        params: { billingCode: transaction.billingCode },
+        search: { orderId: transaction.orderId || transaction.id },
+      });
+    }
+  };
 
   return (
     <Modal.Content>
@@ -198,7 +222,9 @@ export const TransactionDetailModalContent = (
                         ? "Transaksi Kedaluwarsa"
                         : isRefunded
                           ? "Pembayaran Dikembalikan"
-                          : "Transaksi Gagal"}
+                          : isFailed
+                            ? "Transaksi Gagal"
+                            : "Menunggu Pembayaran"}
                   </P>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {`Dibuat: ${formatUtcDateTime(transaction.createdAt, preferredTimezone)}`}
@@ -260,6 +286,22 @@ export const TransactionDetailModalContent = (
                   />
                 </HStack>
               </HStack>
+
+              {targetExpiry && !isPaid && !isRefunded && (
+                <HStack
+                  align={"center"}
+                  justify={"space-between"}
+                  h={"32px"}
+                  fontSize={"sm"}
+                >
+                  <P color={"fg.subtle"}>{"Sisa Waktu Pembayaran"}</P>
+                  <Countdown
+                    finishedAt={targetExpiry}
+                    fontWeight={"medium"}
+                    color={isExpired ? "fg.subtle" : "orange.fg"}
+                  />
+                </HStack>
+              )}
 
               <HStack
                 align={"center"}
@@ -335,11 +377,18 @@ export const TransactionDetailModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <VStack gap={"xs"} w={"full"}>
+        <HStack gap={"sm"} w={"full"}>
           <Button flex={1} onClick={back}>
             {t["action.close"]()}
           </Button>
-        </VStack>
+
+          {isPayable && (
+            <Button primary={true} flex={1} onClick={handleGoToBilling}>
+              <AppIcon icon={CreditCardIcon} />
+              {"Bayar Sekarang"}
+            </Button>
+          )}
+        </HStack>
       </Modal.Footer>
     </Modal.Content>
   );

@@ -29,11 +29,11 @@ import type {
   TransactionRecord,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import {
-  TRANSACTION_STATUS_MAP,
   TRANSACTION_STATUS_OPTIONS,
 } from "@/shared/constants/status.config";
 import type { TransactionStatus } from "@/shared/types/status.type";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { TransactionStatusBadge } from "@/features/shared/components/transaction-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import {
   formatUtcDateTime,
@@ -41,8 +41,10 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
-import { EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
+import { CreditCardIcon, EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
+
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 
 const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
 
@@ -82,6 +84,7 @@ export const TransactionHistoryDataView = () => {
       { th: "Status", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
+      { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
@@ -92,12 +95,7 @@ export const TransactionHistoryDataView = () => {
         const itemNames = item.items
           .map((it) => it.sourceLayerTitle)
           .join(", ");
-        const statusConfig = TRANSACTION_STATUS_MAP[
-          item.transactionStatus
-        ] ?? {
-          label: item.transactionStatus,
-          colorPalette: "gray" as const,
-        };
+        const targetExpiry = item.billingExpiredAt || item.expiredAt;
 
         return {
           id: item.id,
@@ -116,12 +114,9 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.transactionStatus,
               td: (
-                <Badge
-                  colorPalette={statusConfig.colorPalette}
-                  variant={"subtle"}
-                >
-                  {statusConfig.label}
-                </Badge>
+                <TransactionStatusBadge showIcon={true}>
+                  {item.transactionStatus}
+                </TransactionStatusBadge>
               ),
               align: "start" as const,
             },
@@ -141,6 +136,26 @@ export const TransactionHistoryDataView = () => {
                   {formatUtcDateTime(item.createdAt, preferredTimezone)}
                 </P>
               ),
+              align: "start" as const,
+            },
+            {
+              value: targetExpiry ?? "",
+              td:
+                item.transactionStatus !== "paid" &&
+                item.transactionStatus !== "refunded" &&
+                targetExpiry ? (
+                  <Countdown
+                    finishedAt={targetExpiry}
+                    fontWeight={"medium"}
+                    color={
+                      item.transactionStatus === "expired"
+                        ? "fg.subtle"
+                        : "orange.fg"
+                    }
+                  />
+                ) : (
+                  <P color={"fg.subtle"}>{"-"}</P>
+                ),
               align: "start" as const,
             },
             {
@@ -193,6 +208,23 @@ export const TransactionHistoryDataView = () => {
 
     const itemActions: DataViewItemActionsGenerator<TransactionRecord>[] = [
       {
+        key: "pay-billing",
+        label: "Bayar",
+        icon: CreditCardIcon,
+        hidden: (transaction: TransactionRecord) =>
+          transaction.transactionStatus === "paid" ||
+          transaction.transactionStatus === "refunded",
+        onClick: (transaction: TransactionRecord) => {
+          if (transaction.billingCode) {
+            void navigate({
+              to: "/mitra/billing/$billingCode",
+              params: { billingCode: transaction.billingCode },
+              search: { orderId: transaction.orderId || transaction.id },
+            });
+          }
+        },
+      },
+      {
         key: "view-detail",
         label: "Detail",
         icon: EyeIcon,
@@ -213,7 +245,7 @@ export const TransactionHistoryDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [transactionHistory.items, preferredTimezone]);
+  }, [transactionHistory.items, preferredTimezone, navigate]);
 
   return (
     <VStack flex={1} w={"full"}>

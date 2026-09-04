@@ -5,7 +5,7 @@ import type {
   SelectionType,
   SpatialBasisType,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
-import type { OrderStatus } from "@/shared/types/status.type";
+import type { OrderStatus, TransactionStatus } from "@/shared/types/status.type";
 
 export type SpatialBasisBadgeProps = Omit<BadgeProps, "children"> & {
   children?: SpatialBasisType | (string & {});
@@ -17,6 +17,11 @@ export type SelectionTypeBadgeProps = Omit<BadgeProps, "children"> & {
 
 export type OrderStatusBadgeProps = Omit<BadgeProps, "children"> & {
   children?: OrderStatus | (string & {});
+  showIcon?: boolean;
+};
+
+export type TransactionStatusBadgeProps = Omit<BadgeProps, "children"> & {
+  children?: TransactionStatus | (string & {});
   showIcon?: boolean;
 };
 
