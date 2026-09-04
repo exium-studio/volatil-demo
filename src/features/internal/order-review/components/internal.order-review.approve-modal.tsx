@@ -1,20 +1,26 @@
-// src/features/internal/order-review/components/internal.order-review.approve-modal.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
+import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
+import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useApproveOrder } from "@/features/internal/order-review/hooks/use-order-review";
-import type { InternalOrderItem } from "@/features/internal/order-review/types/order-review.type";
+import {
+  approveOrderFormSchema,
+  type ApproveOrderFormValues,
+  type InternalOrderItem,
+} from "@/features/internal/order-review/types/order-review.type";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "@tanstack/react-router";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 export type InternalOrderReviewApproveTriggerProps = {
   modalKey?: string;
@@ -73,69 +79,39 @@ const InternalOrderReviewApproveModalContent = (
   // Props
   const { order, onSuccessRedirect, close } = props;
 
+  // Hooks
+  const navigate = useNavigate();
+
   // Mutations
   const approveMutation = useApproveOrder();
 
-  // States: Map of itemId -> { externalWmsUrl, externalWfsUrl }
-  const [urls, setUrls] = useState<
-    Record<string, { externalWmsUrl: string; externalWfsUrl: string }>
-  >(() => {
-    const initial: Record<
-      string,
-      { externalWmsUrl: string; externalWfsUrl: string }
-    > = {};
-    for (const item of order.items ?? []) {
-      initial[item.id] = {
+  // Forms
+  const {
+    control,
+    handleSubmit,
+    // formState: { errors },
+  } = useForm<ApproveOrderFormValues>({
+    resolver: zodResolver(approveOrderFormSchema),
+    defaultValues: {
+      items: (order.items ?? []).map((item) => ({
+        id: item.id,
         externalWmsUrl: item.externalWmsUrl ?? "",
         externalWfsUrl: item.externalWfsUrl ?? "",
-      };
-    }
-    return initial;
+      })),
+    },
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { fields } = useFieldArray({
+    control,
+    name: "items",
+  });
 
   // Handlers
-  const handleUrlChange = (
-    itemId: string,
-    field: "externalWmsUrl" | "externalWfsUrl",
-    value: string,
-  ) => {
-    setUrls((prev) => ({
-      ...prev,
-      [itemId]: {
-        ...prev[itemId],
-        [field]: value,
-      },
-    }));
-    if (errors[itemId]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[itemId];
-        return next;
-      });
-    }
-  };
-
-  const handleApprove = () => {
-    // Validation: WMS URL is required for every layer
-    const newErrors: Record<string, string> = {};
-    for (const item of order.items ?? []) {
-      const itemUrls = urls[item.id];
-      if (!itemUrls?.externalWmsUrl?.trim()) {
-        newErrors[item.id] = "URL WMS dari INTEROP wajib diisi";
-      }
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const payloadItems = (order.items ?? []).map((item) => ({
+  const onSubmit = (values: ApproveOrderFormValues) => {
+    const payloadItems = values.items.map((item) => ({
       id: item.id,
-      externalWmsUrl: urls[item.id]?.externalWmsUrl.trim() ?? "",
-      externalWfsUrl: urls[item.id]?.externalWfsUrl.trim() || undefined,
+      externalWmsUrl: item.externalWmsUrl.trim(),
+      externalWfsUrl: item.externalWfsUrl?.trim() || undefined,
     }));
 
     approveMutation.mutate(
@@ -146,7 +122,11 @@ const InternalOrderReviewApproveModalContent = (
       {
         onSuccess: () => {
           close();
-          onSuccessRedirect?.();
+          if (onSuccessRedirect) {
+            onSuccessRedirect();
+          } else {
+            void navigate({ to: "/internal/order-review" });
+          }
         },
       },
     );
@@ -160,137 +140,138 @@ const InternalOrderReviewApproveModalContent = (
       </Modal.Header>
 
       <Modal.Body>
-        <VStack align={"stretch"} gap={"md"}>
-          <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
-            <AppIcon icon={InfoIcon} />
-            <Alert.Title>
-              {
-                "Salin URL WMS internal Volatil di bawah, buka aplikasi INTEROP Pusdatin ATR/BPN untuk mendaftarkan layer dan mendapatkan link wrapper resmi, lalu masukkan link tersebut ke formulir di bawah ini."
-              }
-            </Alert.Title>
-          </Alert.Root>
+        <Fieldset
+          as={"form"}
+          id={"approve-order-form"}
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <VStack align={"stretch"} gap={"md"}>
+            <Alert.Root
+              status={"info"}
+              colorPalette={"blue"}
+              variant={"subtle"}
+            >
+              <AppIcon icon={InfoIcon} />
 
-          <VStack align={"stretch"} gap={"sm"}>
-            {(order.items ?? []).map((item, index) => {
-              const previewUrl =
-                item.previewWmsUrl ||
-                item.wmsUrl ||
-                buildWmsProxyUrl(
-                  `/api/proxy/wms?layerId=${item.sourceLayerId}`,
-                );
-              const itemError = errors[item.id];
+              <Alert.Title>
+                {
+                  "Salin URL WMS internal Volatil di bawah, buka aplikasi INTEROP Pusdatin ATR/BPN untuk mendaftarkan layer dan mendapatkan link wrapper resmi, lalu masukkan link tersebut ke formulir di bawah ini."
+                }
+              </Alert.Title>
+            </Alert.Root>
 
-              return (
-                <VStack
-                  key={item.id || index}
-                  align={"stretch"}
-                  p={"sm"}
-                  border={"1px solid"}
-                  borderColor={itemError ? "red.subtle" : "border.subtle"}
-                  rounded={"md"}
-                  bg={"bg.subtle"}
-                  gap={"xs"}
-                >
-                  <HStack justify={"space-between"} align={"center"}>
-                    <P fontWeight={"semibold"} fontSize={"sm"}>
-                      {item.sourceLayerTitle}
-                    </P>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {item.sourceLayerId}
-                    </P>
-                  </HStack>
+            <Fieldset>
+              {fields.map((field, index) => {
+                const item = order.items?.[index];
+                if (!item) return null;
 
-                  {/* Volatil GeoServer WMS URL */}
-                  <VStack align={"stretch"} gap={1} mt={1}>
-                    <P fontSize={"xs"} color={"fg.muted"}>
-                      {"URL WMS GeoServer Volatil (Internal):"}
-                    </P>
-                    <HStack
-                      gap={"xs"}
-                      bg={"bg.panel"}
-                      p={1.5}
-                      rounded={"sm"}
-                      border={"1px solid"}
-                      borderColor={"border.subtle"}
-                    >
-                      <P
-                        fontSize={"xs"}
-                        fontFamily={"mono"}
-                        flex={1}
-                        truncate
-                        color={"fg.default"}
-                      >
-                        {previewUrl}
+                const previewUrl =
+                  item.previewWmsUrl ||
+                  item.wmsUrl ||
+                  buildWmsProxyUrl(
+                    `/api/proxy/wms?layerId=${item.sourceLayerId}`,
+                  );
+
+                return (
+                  <VStack key={field.id} align={"stretch"} gap={"xs"}>
+                    {/* Volatil GeoServer WMS URL */}
+                    <VStack align={"stretch"} gap={1} mt={1}>
+                      <P fontSize={"xs"} color={"fg.muted"}>
+                        {"URL WMS GeoServer Volatil (Internal):"}
                       </P>
-                      <ClipboardButton
-                        value={previewUrl}
-                        variant={"ghost"}
-                        size={"xs"}
-                        aria-label={"Salin URL WMS"}
-                      />
-                    </HStack>
+
+                      <HStack
+                        align={"center"}
+                        gap={"xs"}
+                        bg={"bg.panel"}
+                        pl={"md"}
+                        pr={"2xs"}
+                        rounded={"sm"}
+                        border={"1px solid"}
+                        borderColor={"border.subtle"}
+                      >
+                        <ClampedP
+                          fontFamily={"mono"}
+                          flex={1}
+                          color={"fg.default"}
+                        >
+                          {previewUrl}
+                        </ClampedP>
+
+                        <ClipboardButton
+                          value={previewUrl}
+                          variant={"ghost"}
+                          size={"xs"}
+                          aria-label={"Salin URL WMS"}
+                        />
+                      </HStack>
+                    </VStack>
+
+                    {/* Input INTEROP WMS */}
+                    <Controller
+                      control={control}
+                      name={`items.${index}.externalWmsUrl`}
+                      render={({ field: inputField, fieldState }) => (
+                        <Field
+                          label={"URL WMS Resmi (INTEROP Pusdatin)"}
+                          errorText={fieldState.error?.message}
+                          invalid={Boolean(fieldState.error)}
+                          mt={2}
+                        >
+                          <Input
+                            placeholder={
+                              "https://geoportal.atrbpn.go.id/wms?layers=..."
+                            }
+                            value={inputField.value ?? ""}
+                            onChange={inputField.onChange}
+                            onBlur={inputField.onBlur}
+                          />
+                        </Field>
+                      )}
+                    />
+
+                    {/* Input INTEROP WFS (Optional) */}
+                    <Controller
+                      control={control}
+                      name={`items.${index}.externalWfsUrl`}
+                      render={({ field: inputField }) => (
+                        <Field
+                          label={"URL WFS Resmi (INTEROP Pusdatin - Opsional)"}
+                        >
+                          <Input
+                            placeholder={
+                              "https://geoportal.atrbpn.go.id/wfs?typename=..."
+                            }
+                            value={inputField.value ?? ""}
+                            onChange={inputField.onChange}
+                            onBlur={inputField.onBlur}
+                          />
+                        </Field>
+                      )}
+                    />
                   </VStack>
-
-                  {/* Input INTEROP WMS */}
-                  <Field
-                    label={"URL WMS Resmi (INTEROP Pusdatin)"}
-                    errorText={itemError}
-                    invalid={Boolean(itemError)}
-                    mt={2}
-                  >
-                    <Input
-                      placeholder={
-                        "https://geoportal.atrbpn.go.id/wms?layers=..."
-                      }
-                      value={urls[item.id]?.externalWmsUrl ?? ""}
-                      onChange={(e) =>
-                        handleUrlChange(
-                          item.id,
-                          "externalWmsUrl",
-                          e.target.value,
-                        )
-                      }
-                    />
-                  </Field>
-
-                  {/* Input INTEROP WFS (Optional) */}
-                  <Field label={"URL WFS Resmi (INTEROP Pusdatin - Opsional)"}>
-                    <Input
-                      placeholder={
-                        "https://geoportal.atrbpn.go.id/wfs?typename=..."
-                      }
-                      value={urls[item.id]?.externalWfsUrl ?? ""}
-                      onChange={(e) =>
-                        handleUrlChange(
-                          item.id,
-                          "externalWfsUrl",
-                          e.target.value,
-                        )
-                      }
-                    />
-                  </Field>
-                </VStack>
-              );
-            })}
+                );
+              })}
+            </Fieldset>
           </VStack>
-        </VStack>
+        </Fieldset>
       </Modal.Body>
 
       <Modal.Footer>
-        <HStack justify={"end"} gap={"sm"} w={"full"}>
-          <Button variant={"outline"} onClick={close}>
-            {"Batal"}
-          </Button>
-
+        <VStack gap={"xs"} w={"full"}>
           <Button
+            primary
+            form={"approve-order-form"}
+            type={"submit"}
             colorPalette={"green"}
             loading={approveMutation.isPending}
-            onClick={handleApprove}
           >
             <AppIcon icon={CheckCircle2Icon} />
             {"Simpan & Setujui"}
           </Button>
-        </HStack>
+
+          <Button onClick={close}>{"Batal"}</Button>
+        </VStack>
       </Modal.Footer>
     </Modal.Content>
   );

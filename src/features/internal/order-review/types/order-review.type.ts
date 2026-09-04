@@ -48,11 +48,29 @@ export type ProvisionOrderResponse = {
   orderStatus: string;
 };
 
+import { z } from "zod";
+
 export type ApproveOrderItemPayload = {
   id: string;
   externalWmsUrl: string;
   externalWfsUrl?: string;
 };
+
+export const approveOrderItemSchema = z.object({
+  id: z.string(),
+  externalWmsUrl: z
+    .string()
+    .trim()
+    .min(1, "URL WMS dari INTEROP wajib diisi"),
+  externalWfsUrl: z.string().optional(),
+});
+
+export const approveOrderFormSchema = z.object({
+  items: z.array(approveOrderItemSchema),
+});
+
+export type ApproveOrderItemFormValues = z.infer<typeof approveOrderItemSchema>;
+export type ApproveOrderFormValues = z.infer<typeof approveOrderFormSchema>;
 
 export type ApproveOrderPayload = {
   orderId: string;
