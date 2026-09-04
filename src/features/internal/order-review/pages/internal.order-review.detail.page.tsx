@@ -6,7 +6,6 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
-import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -19,7 +18,7 @@ import { useMapLayerStore } from "@/design-system/components/map/stores/map.laye
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import {
   useInternalOrderDetailQuery,
@@ -31,6 +30,7 @@ import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-la
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { UrlDataView } from "@/features/shared/components/url.data-view";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
@@ -297,27 +297,13 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
             },
             {
               value: previewUrl,
-              td: previewUrl ? (
-                <HStack gap={"xs"} align={"center"} maxW={"220px"}>
-                  <ClampedP
-                    fontSize={"xs"}
-                    fontFamily={"mono"}
-                    color={"fg.muted"}
-                    truncate
-                  >
-                    {previewUrl}
-                  </ClampedP>
-                  <ClipboardButton
-                    value={previewUrl}
-                    variant={"ghost"}
-                    size={"xs"}
-                    aria-label={"Salin WMS URL"}
-                  />
-                </HStack>
-              ) : (
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"-"}
-                </P>
+              td: (
+                <UrlDataView
+                  url={previewUrl}
+                  label={"Salin WMS URL"}
+                  isExternalLink={false}
+                  maxW={"240px"}
+                />
               ),
               align: "start" as const,
             },

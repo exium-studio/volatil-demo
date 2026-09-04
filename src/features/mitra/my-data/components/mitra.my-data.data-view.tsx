@@ -3,7 +3,6 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
-import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
@@ -17,10 +16,10 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { ExternalLink } from "@/design-system/components/navigation/ui/link";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
+import { UrlDataView } from "@/features/shared/components/url.data-view";
 import type {
   MitraMyDataViewProps,
   MyDataItem,
@@ -105,28 +104,12 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           },
           {
             value: effectiveWmsUrl ?? "",
-            td: effectiveWmsUrl ? (
-              <HStack gap={"xs"} align={"center"}>
-                <ExternalLink
-                  href={effectiveWmsUrl}
-                  display={"inline-flex"}
-                  alignItems={"center"}
-                  flex={1}
-                >
-                  <ClampedP fontSize={"sm"} minW={"260px"}>
-                    {effectiveWmsUrl}
-                  </ClampedP>
-                </ExternalLink>
-
-                <ClipboardButton
-                  value={effectiveWmsUrl}
-                  variant={"ghost"}
-                  aria-label={"Salin URL WMS"}
-                  flexShrink={0}
-                />
-              </HStack>
-            ) : (
-              <P color={"fg.subtle"}>{"-"}</P>
+            td: (
+              <UrlDataView
+                url={effectiveWmsUrl}
+                label={"Salin URL WMS"}
+                maxW={"320px"}
+              />
             ),
             align: "start" as const,
           },
