@@ -128,8 +128,7 @@ const MitraCartExpiredOrdersModalContent = (
       <Modal.Body p={"md"}>
         {isLoading && (
           <VStack gap={"md"} align={"stretch"}>
-            <Skeleton h={"100px"} rounded={"md"} />
-            <Skeleton h={"100px"} rounded={"md"} />
+            <Skeleton h={"250px"} rounded={"md"} />
           </VStack>
         )}
 

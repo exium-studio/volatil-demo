@@ -25,9 +25,7 @@ export type MitraCartOrderSummaryProps = {
   isLoading?: boolean;
 };
 
-export const MitraCartOrderSummary = (
-  props: MitraCartOrderSummaryProps,
-) => {
+export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
   const { activeOrder, isLoading = false } = props;
 
@@ -246,31 +244,31 @@ export const MitraCartOrderSummary = (
       {!isSelected && (
         <Alert.Root status={"neutral"} colorPalette={"gray"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
-          <Alert.Title>
+          <Alert.Description>
             {
               "Silakan pilih salah satu pesanan pada daftar keranjang untuk menampilkan rincian dan melakukan pembayaran."
             }
-          </Alert.Title>
+          </Alert.Description>
         </Alert.Root>
       )}
 
       {isSelected && isPayable && (
         <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
-          <Alert.Title>
+          <Alert.Description>
             {
               "Totalan tagihan telah dikalkulasi. Klik 'Bayar Sekarang' untuk menerbitkan kode billing dan menyelesaikan pembayaran."
             }
-          </Alert.Title>
+          </Alert.Description>
         </Alert.Root>
       )}
 
       {isSelected && isProcessing && (
         <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
-          <Alert.Title>
+          <Alert.Description>
             {"Layanan WMS sedang dipersiapkan oleh sistem."}
-          </Alert.Title>
+          </Alert.Description>
         </Alert.Root>
       )}
 
@@ -281,20 +279,20 @@ export const MitraCartOrderSummary = (
           variant={"subtle"}
         >
           <AppIcon icon={HourglassIcon} />
-          <Alert.Title>
+          <Alert.Description>
             {
               "Permohonan data sedang dalam proses validasi oleh admin internal."
             }
-          </Alert.Title>
+          </Alert.Description>
         </Alert.Root>
       )}
 
       {isSelected && isRejected && (
         <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"}>
           <AppIcon icon={AlertCircleIcon} />
-          <Alert.Title>
+          <Alert.Description>
             {`Pesanan ditolak oleh Admin Internal: ${activeOrder?.rejectionReason || "Tidak memenuhi syarat."}`}
-          </Alert.Title>
+          </Alert.Description>
         </Alert.Root>
       )}
 
@@ -305,11 +303,11 @@ export const MitraCartOrderSummary = (
           variant={"subtle"}
         >
           <AppIcon icon={InfoIcon} />
-          <Alert.Title>
+          <Alert.Description>
             {
               "Pesanan permohonan telah siap digunakan. Layanan data spasial dapat diakses melalui menu Data Saya."
             }
-          </Alert.Title>
+          </Alert.Description>
         </Alert.Root>
       )}
 
