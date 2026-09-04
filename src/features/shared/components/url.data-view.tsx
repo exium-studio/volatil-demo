@@ -109,7 +109,7 @@ export const UrlDataView = memo((props: UrlDataViewProps) => {
             display={"inline-block"}
             maxW={"full"}
             verticalAlign={"middle"}
-            ml={"xs"}
+            mx={"sm"}
           >
             {linkContent}
           </ExternalLink>

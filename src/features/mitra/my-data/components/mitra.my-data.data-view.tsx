@@ -3,6 +3,7 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
@@ -13,13 +14,19 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
+import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
-import { UrlDataView } from "@/features/shared/components/url.data-view";
 import type {
   MitraMyDataViewProps,
   MyDataItem,
@@ -29,15 +36,24 @@ import type {
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { UrlDataView } from "@/features/shared/components/url.data-view";
 import { MY_DATA_STATUS_OPTIONS } from "@/shared/constants/status.config";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { useNavigate } from "@tanstack/react-router";
-import { DatabaseIcon, SquarePen } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import {
+  DatabaseIcon,
+  EyeIcon,
+  EyeOffIcon,
+  MapPinIcon,
+  SquarePen,
+  TablePropertiesIcon,
+} from "lucide-react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 
 export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Navigation
@@ -46,6 +62,14 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
+  // Stores
+  const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
+  const setLayerEnabled = useMapLayerStore((s) => s.setLayerEnabled);
+  const setCustomLayerConfig = useMapLayerStore((s) => s.setCustomLayerConfig);
+
+  // Hooks
+  const { flyTo } = useFlyToLayer();
+
   // States — Centralized query/action parameters
   const [params, setParams] = useState<MyDataQueryParams>({
     page: 1,
@@ -53,6 +77,8 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     search: "",
     status: undefined,
   });
+  const [selectedAttributeLayer, setSelectedAttributeLayer] =
+    useState<MyDataItem | null>(null);
 
   // Derived Values
   const debouncedSearch = useDebouncedValue(params.search ?? "");
@@ -66,6 +92,38 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     status: params.status,
   });
 
+  // Handlers
+  const handleToggleLayer = useCallback(
+    (item: MyDataItem, checked: boolean) => {
+      const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
+
+      if (checked) {
+        if (effectiveWmsUrl) {
+          setCustomLayerConfig(item.id, {
+            wmsUrl: buildWmsProxyUrl(effectiveWmsUrl),
+            layers: item.wmsLayers || item.id,
+            spatialBasis: item.spatialBasis,
+          });
+        }
+        setLayerEnabled(item.id, true);
+        void flyTo({
+          id: item.id,
+          title: item.title,
+          spatialBasis: item.spatialBasis,
+          bbox: item.bbox,
+          wfs: {
+            wfsTypeName: item.wfsTypeName || item.id,
+            wfsUrl: item.wfsUrl || "",
+          },
+        });
+      } else {
+        setLayerEnabled(item.id, false);
+        setCustomLayerConfig(item.id, null);
+      }
+    },
+    [flyTo, setCustomLayerConfig, setLayerEnabled],
+  );
+
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -76,76 +134,158 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "Status Aktif", sortable: true, align: "start" },
       { th: "Sisa Waktu", sortable: true, align: "start" },
       { th: "Tanggal Kedaluwarsa", sortable: true, align: "start" },
+      { th: "Lihat di Peta", sortable: false, align: "center" },
     ];
 
-    const items: FormattedListItem[] = myData.items.map((item: MyDataItem) => {
-      const layerDisplayName = item.title || item.id.replace(/_/g, " ");
-      // const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
-      const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
+    const items: FormattedListItem<MyDataItem>[] = myData.items.map(
+      (item: MyDataItem) => {
+        const layerDisplayName = item.title || item.id.replace(/_/g, " ");
+        // const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
+        const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
+        const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
 
-      return {
-        id: item.id,
-        data: item,
-        columns: [
-          {
-            value: layerDisplayName,
-            td: (
-              <P fontSize={"sm"} fontWeight={"medium"}>
-                {layerDisplayName}
-              </P>
-            ),
-            align: "start" as const,
-          },
-          {
-            value: item.spatialBasis,
-            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
-            align: "start" as const,
-          },
-          {
-            value: effectiveWmsUrl ?? "",
-            td: (
-              <UrlDataView
-                url={effectiveWmsUrl}
-                label={"Salin URL WMS"}
-                maxW={"320px"}
-              />
-            ),
-            align: "start" as const,
-          },
-          {
-            value: item.status,
-            td: <MyDataStatusBadge>{item.status}</MyDataStatusBadge>,
-            align: "start" as const,
-          },
-          {
-            value: item.expiresAt,
-            td: item.expiresAt ? (
-              <Countdown finishedAt={item.expiresAt} />
-            ) : (
-              <P color={"fg.subtle"}>{"-"}</P>
-            ),
-            align: "start" as const,
-          },
-          {
-            value: item.expiresAt,
-            td: (
-              <P whiteSpace={"nowrap"}>
-                {formatUtcDateTime(item.expiresAt, preferredTimezone)}
-              </P>
-            ),
-            align: "start" as const,
-          },
-        ],
-      };
-    });
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: layerDisplayName,
+              td: (
+                <P fontSize={"sm"} fontWeight={"medium"}>
+                  {layerDisplayName}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.spatialBasis,
+              td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
+              align: "start" as const,
+            },
+            {
+              value: effectiveWmsUrl ?? "",
+              td: (
+                <UrlDataView
+                  url={effectiveWmsUrl}
+                  label={"Salin URL WMS"}
+                  maxW={"320px"}
+                />
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.status,
+              td: <MyDataStatusBadge>{item.status}</MyDataStatusBadge>,
+              align: "start" as const,
+            },
+            {
+              value: item.expiresAt,
+              td: item.expiresAt ? (
+                <Countdown finishedAt={item.expiresAt} />
+              ) : (
+                <P color={"fg.subtle"}>{"-"}</P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.expiresAt,
+              td: (
+                <P whiteSpace={"nowrap"}>
+                  {formatUtcDateTime(item.expiresAt, preferredTimezone)}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: isVisibleOnMap ? "Tampil" : "Sembunyi",
+              td: (
+                <Center>
+                  <Switch
+                    checked={isVisibleOnMap}
+                    onCheckedChange={({ checked }) => {
+                      handleToggleLayer(item, checked);
+                    }}
+                    aria-label={`Toggle visibilitas peta untuk ${layerDisplayName}`}
+                    size={"sm"}
+                  />
+                </Center>
+              ),
+              align: "center" as const,
+            },
+          ],
+        };
+      },
+    );
+
+    const itemActions: DataViewItemActionsGenerator<MyDataItem>[] = [
+      {
+        key: "toggle-map-visibility",
+        label: (item: MyDataItem) => {
+          const isVisible = Boolean(enabledLayerIds[item.id]);
+          return isVisible ? "Sembunyikan dari Peta" : "Tampilkan di Peta";
+        },
+        icon: (item: MyDataItem) => {
+          const isVisible = Boolean(enabledLayerIds[item.id]);
+          return isVisible ? EyeOffIcon : EyeIcon;
+        },
+        onClick: (item: MyDataItem) => {
+          const willEnable = !enabledLayerIds[item.id];
+          handleToggleLayer(item, willEnable);
+        },
+      },
+      {
+        key: "fly-to-map",
+        label: "Lihat di Peta",
+        icon: MapPinIcon,
+        onClick: (item: MyDataItem) => {
+          if (!enabledLayerIds[item.id]) {
+            handleToggleLayer(item, true);
+          } else {
+            void flyTo({
+              id: item.id,
+              title: item.title,
+              spatialBasis: item.spatialBasis,
+              bbox: item.bbox,
+              wfs: {
+                wfsTypeName: item.wfsTypeName || item.id,
+                wfsUrl: item.wfsUrl || "",
+              },
+            });
+          }
+        },
+      },
+      {
+        key: "detail-attribute",
+        label: "Detail Atribut",
+        icon: TablePropertiesIcon,
+        onClick: (item: MyDataItem) => {
+          setSelectedAttributeLayer(item);
+        },
+      },
+    ];
 
     return {
       headers,
       items,
       batchActions: [],
-      itemActions: [],
+      itemActions,
     };
-  }, [myData.items, preferredTimezone]);
+  }, [
+    myData.items,
+    preferredTimezone,
+    enabledLayerIds,
+    handleToggleLayer,
+    flyTo,
+  ]);
+
+  if (selectedAttributeLayer) {
+    return (
+      <MyDataDetailAttributeList
+        item={selectedAttributeLayer}
+        onBack={() => setSelectedAttributeLayer(null)}
+      />
+    );
+  }
 
   return (
     <VStack flex={1} w={"full"}>
@@ -243,6 +383,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             <DataView.Table.Root
               headers={dataList.headers}
               items={dataList.items}
+              itemActions={dataList.itemActions}
               withNumbering={true}
               page={params.page}
               pageSize={params.pageSize}
@@ -277,5 +418,86 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
         )}
       </VStack>
     </VStack>
+  );
+};
+
+type MyDataDetailAttributeListProps = {
+  item: MyDataItem;
+  onBack: () => void;
+};
+
+const MyDataDetailAttributeList = (props: MyDataDetailAttributeListProps) => {
+  // Props
+  const { item, onBack } = props;
+
+  // Stores
+  const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
+
+  // States
+  const [pageState, setPageState] = useState({
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+    page: 1,
+  });
+  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
+
+  // Derived Values
+  const igtLayerTarget = useMemo((): IgtLayerItem => {
+    const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl || "";
+    const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl || "";
+    const typeName = item.wfsTypeName || item.id;
+
+    return {
+      id: item.id,
+      title: item.title,
+      spatialBasis: item.spatialBasis,
+      bbox: item.bbox,
+      visible: Boolean(enabledLayerIds[item.id]),
+      zIndex: 1,
+      wms: {
+        layers: item.wmsLayers || item.id,
+        wmsUrl: effectiveWmsUrl,
+        format: "image/png",
+        transparent: true,
+        tileSize: 512,
+        styles: "",
+        version: "1.1.1",
+        srs: "EPSG:3857",
+      },
+      wfs: {
+        wfsTypeName: typeName,
+        wfsUrl: effectiveWfsUrl,
+        type: item.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
+        version: "2.0.0",
+        srsName: "EPSG:4326",
+      },
+    };
+  }, [item, enabledLayerIds]);
+
+  // Queries — server-side WFS pagination
+  const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
+    page: pageState.page,
+    pageSize: pageState.pageSize,
+    typeName: item.wfsTypeName || item.id,
+    wfsUrl: item.externalWfsUrl || item.wfsUrl || "",
+  });
+
+  return (
+    <MitraDataRequestDetailAttributeView
+      layer={igtLayerTarget}
+      features={features}
+      totalFeatures={totalFeatures}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      page={pageState.page}
+      pageSize={pageState.pageSize}
+      setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
+      setPageSize={(pageSize) =>
+        setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
+      }
+      selectedItems={selectedItems}
+      setSelectedItems={setSelectedItems}
+      showActions={false}
+      onBack={onBack}
+    />
   );
 };

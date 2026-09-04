@@ -25,6 +25,7 @@ export type MitraDataRequestDetailAttributeViewProps = {
   selectedItems: FormattedListItem[];
   setSelectedItems: (items: FormattedListItem[]) => void;
   showActions?: boolean;
+  onBack?: () => void;
 };
 
 export const MitraDataRequestDetailAttributeView = memo(
@@ -44,6 +45,7 @@ export const MitraDataRequestDetailAttributeView = memo(
       selectedItems,
       setSelectedItems,
       showActions = true,
+      onBack,
     } = props;
 
     // Derived Values
@@ -62,6 +64,7 @@ export const MitraDataRequestDetailAttributeView = memo(
           layer={layer}
           cqlFilter={cqlFilter}
           showActions={showActions}
+          onBack={onBack}
         />
 
         {isLoading && (

@@ -26,7 +26,7 @@ export const MitraDataRequestDetailAttributeHeader = memo(
     const { layer, cqlFilter, onBack, showActions = true } = props;
 
     // Hooks
-    const { selectLayer } = useSelectedIgtLayer();
+    const { layerId, selectLayer } = useSelectedIgtLayer();
 
     // Derived Values
     const layerTitle =
@@ -37,7 +37,9 @@ export const MitraDataRequestDetailAttributeHeader = memo(
 
     // Handlers
     const handleBackClick = () => {
-      selectLayer(undefined);
+      if (layerId) {
+        selectLayer(undefined);
+      }
       onBack?.();
     };
 
