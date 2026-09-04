@@ -13,6 +13,7 @@ import type {
 
 export type SpatialBasisBadgeProps = Omit<BadgeProps, "children"> & {
   children?: SpatialBasisType | (string & {});
+  showIcon?: boolean;
 };
 
 export type SelectionTypeBadgeProps = Omit<BadgeProps, "children"> & {

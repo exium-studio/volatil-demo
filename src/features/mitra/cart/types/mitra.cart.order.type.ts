@@ -6,6 +6,7 @@ import type {
   OrderStatusConfig,
   TransactionStatus,
 } from "@/shared/types/status.type";
+import type { LucideIcon } from "lucide-react";
 
 export type SpatialBasisType = "bidang" | "kawasan";
 
@@ -20,6 +21,7 @@ export type SelectionTypeConfig = {
 export type SpatialBasisTypeConfig = {
   label: string;
   colorPalette: "blue" | "orange";
+  icon?: LucideIcon;
 };
 
 export type CartOrderStatus = OrderStatus;
