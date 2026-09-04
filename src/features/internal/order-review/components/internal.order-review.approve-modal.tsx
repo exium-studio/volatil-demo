@@ -12,6 +12,7 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useApproveOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import type { InternalOrderItem } from "@/features/internal/order-review/types/order-review.type";
+import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
@@ -174,7 +175,9 @@ const InternalOrderReviewApproveModalContent = (
               const previewUrl =
                 item.previewWmsUrl ||
                 item.wmsUrl ||
-                `/api/proxy/wms?layerId=${item.sourceLayerId}`;
+                buildWmsProxyUrl(
+                  `/api/proxy/wms?layerId=${item.sourceLayerId}`,
+                );
               const itemError = errors[item.id];
 
               return (

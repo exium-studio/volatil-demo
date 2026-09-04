@@ -171,9 +171,7 @@ export const InternalOrderReviewDataView = () => {
           {
             value: order.totalPrice,
             td: (
-              <P fontWeight={"semibold"} color={"blue.fg"}>
-                {formatCurrency(order.totalPrice)}
-              </P>
+              <P fontWeight={"semibold"}>{formatCurrency(order.totalPrice)}</P>
             ),
             align: "end" as const,
           },

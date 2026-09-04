@@ -15,6 +15,7 @@ import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
+import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const normalizeCartOrderItem = (raw: any): CartOrderItem => {
@@ -54,14 +55,15 @@ const normalizeCartOrderItem = (raw: any): CartOrderItem => {
     ),
     wfsUrl: raw.wfsUrl ?? raw.wfs_url,
     wmsUrl: raw.wmsUrl ?? raw.wms_url,
-    previewWmsUrl:
+    previewWmsUrl: buildWmsProxyUrl(
       raw.previewWmsUrl ??
-      raw.preview_wms_url ??
-      raw.wmsUrl ??
-      raw.wms_url ??
-      (raw.sourceLayerId
-        ? `/api/proxy/wms?layerId=${raw.sourceLayerId}`
-        : undefined),
+        raw.preview_wms_url ??
+        raw.wmsUrl ??
+        raw.wms_url ??
+        (raw.sourceLayerId
+          ? `/api/proxy/wms?layerId=${raw.sourceLayerId}`
+          : undefined),
+    ),
     previewWfsUrl:
       raw.previewWfsUrl ??
       raw.preview_wfs_url ??
@@ -71,7 +73,7 @@ const normalizeCartOrderItem = (raw: any): CartOrderItem => {
         ? `/api/proxy/wfs?layerId=${raw.sourceLayerId}`
         : undefined),
     externalWfsUrl: raw.externalWfsUrl ?? raw.external_wfs_url ?? null,
-    externalWmsUrl: raw.externalWmsUrl ?? raw.external_wfs_url ?? null,
+    externalWmsUrl: raw.externalWmsUrl ?? raw.external_wms_url ?? null,
   };
 };
 

@@ -294,3 +294,12 @@ import { IconMapPin } from "@tabler/icons-react";
 <AppNavTitle navsMap={APP_NAVS_MAP} />
 <AppIcon icon={IconMapPin} boxSize={5} />
 ```
+
+---
+
+## 9. API Data & Dummy Fallback Rules
+
+- **Strict Real Data by Default**: Seluruh service dan API query WAJIB mengonsumsi response data asli dari backend jika resource/endpoint tersedia.
+- **Dummy Fallback Condition**: Dummy data HANYA boleh digunakan sebagai fallback ketika endpoint belum ada / return 404 DAN environment variable `VITE_ENABLE_DUMMY_RESPONSE_FALLBACK=true` (dicek via `isDummyDataEnabled()`). DILARANG keras meng-override data real dari backend dengan dummy data jika endpoint backend mengembalikan data valid.
+- **WMS Proxy URLs**: URL proxy internal Volatil WAJIB dibangun menggunakan helper `buildWmsProxyUrl()` dari `@/shared/utils/url/wms-proxy.utils` yang mengacu pada `VITE_API_BASE_WMS_PROXY_URL`.
+

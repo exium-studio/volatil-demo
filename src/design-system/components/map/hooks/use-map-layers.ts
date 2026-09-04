@@ -9,6 +9,7 @@ import type {
   MapLayerConfig,
   WmsRasterLayerConfig,
 } from "@/design-system/components/map/types/map.type";
+import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 
 import type maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
@@ -17,13 +18,13 @@ import { useCallback, useEffect, useRef } from "react";
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
   if (layer.tileUrl) return layer.tileUrl;
 
-  const baseUrl =
-    import.meta.env.VITE_API_BASE_URL &&
-    !import.meta.env.VITE_API_BASE_URL.endsWith("/")
-      ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wms`
-      : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wms`;
+  const rawBase = layer.wmsUrl
+    ? buildWmsProxyUrl(layer.wmsUrl)
+    : buildWmsProxyUrl("/api/proxy/wms");
 
+  const [baseUrl, existingSearch] = rawBase.split("?");
   const layerName = layer.layers ?? layer.id ?? "";
+
   const queryParams: Record<string, string> = {
     layerId: layer.id || layerName,
     service: "WMS",
@@ -37,7 +38,14 @@ const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
     width: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
     height: String(layer.tileSize ?? MAP_CONFIG.raster.tileSize),
   };
-  const params = new URLSearchParams(queryParams);
+
+  const params = new URLSearchParams(existingSearch || "");
+  Object.entries(queryParams).forEach(([k, v]) => {
+    if (!params.has(k)) {
+      params.set(k, v);
+    }
+  });
+
   return `${baseUrl}?${params.toString()}&bbox={bbox-epsg-3857}`;
 };
 

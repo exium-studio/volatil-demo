@@ -16,6 +16,7 @@ import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-or
 import type { InternalOrderItem } from "@/features/internal/order-review/types/order-review.type";
 import { formatUtcDateTime, getPreferredUserTimezone } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
+import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { CheckCircle2Icon, MapPlusIcon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
@@ -125,7 +126,11 @@ const InternalOrderReviewDetailModalContent = (
               const previewUrl =
                 item.previewWmsUrl ||
                 item.wmsUrl ||
-                (item.sourceLayerId ? `/api/proxy/wms?layerId=${item.sourceLayerId}` : "");
+                (item.sourceLayerId
+                  ? buildWmsProxyUrl(
+                      `/api/proxy/wms?layerId=${item.sourceLayerId}`,
+                    )
+                  : "");
 
               return (
                 <VStack

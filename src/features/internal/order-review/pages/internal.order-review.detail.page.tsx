@@ -35,6 +35,7 @@ import { OrderStatusBadge } from "@/features/shared/components/order-status.badg
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
+import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
@@ -76,7 +77,7 @@ export function InternalOrderReviewDetailPage() {
 
   return (
     <PanelContentContainer>
-      <Container.Root withContext={true}>
+      <Container.Root withContext={true} flex={1}>
         <Container.Body overflowY={"auto"}>
           {/* Header */}
           <HeaderContainer px={"xs"}>
@@ -219,7 +220,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
         item.previewWmsUrl ||
         item.wmsUrl ||
         (item.sourceLayerId
-          ? `/api/proxy/wms?layerId=${item.sourceLayerId}`
+          ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
           : "");
 
       if (enabled) {
@@ -255,7 +256,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
           item.previewWmsUrl ||
           item.wmsUrl ||
           (item.sourceLayerId
-            ? `/api/proxy/wms?layerId=${item.sourceLayerId}`
+            ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
             : "");
 
         return {
@@ -375,7 +376,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
             item.previewWmsUrl ||
             item.wmsUrl ||
             (item.sourceLayerId
-              ? `/api/proxy/wms?layerId=${item.sourceLayerId}`
+              ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
               : "");
 
           handleToggleLayer(item, true);
