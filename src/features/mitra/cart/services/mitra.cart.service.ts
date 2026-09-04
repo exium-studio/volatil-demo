@@ -211,49 +211,49 @@ export async function checkout(
 }
 
 // -------------------------------------------------------------------------------------
-// Batch Interop Workflow Services
+// Order Workflow Services
 // -------------------------------------------------------------------------------------
 
 import {
-  deleteCartBatchApi,
-  fetchActiveCartBatchApi,
-  fetchCartBatchDetailApi,
-  fetchCartBatchesApi,
-  fetchExpiredCartBatchesApi,
+  deleteCartOrderApi,
+  fetchActiveCartOrderApi,
+  fetchCartOrderDetailApi,
+  fetchCartOrdersApi,
+  fetchExpiredCartOrdersApi,
   fetchOrderPaymentStatusApi,
-  postCheckoutBatchApi,
-  postCreateCartBatchApi,
-  postReorderCartBatchApi,
+  postCheckoutOrderApi,
+  postCreateCartOrderApi,
+  postReorderCartOrderApi,
 } from "@/features/mitra/cart/api/mitra.cart.api";
 import type {
-  ActiveCartBatch,
-  AddToCartBatchRequest,
-  AddToCartBatchResponse,
-  CartBatch,
-  CartBatchListResponse,
-  CheckoutBatchRequest,
-  CheckoutBatchResponse,
+  ActiveCartOrder,
+  AddToCartOrderRequest,
+  AddToCartOrderResponse,
+  CartOrder,
+  CartOrderListResponse,
+  CheckoutOrderRequest,
+  CheckoutOrderResponse,
   OrderPaymentStatusResponse,
-} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 import {
-  DUMMY_ACTIVE_CART_BATCH,
-  DUMMY_CART_BATCHES,
-} from "@/shared/constants/dummy-data/dummy-cart-batch";
+  DUMMY_ACTIVE_CART_ORDER,
+  DUMMY_CART_ORDERS,
+} from "@/shared/constants/dummy-data/dummy-cart-order";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
-let localDummyBatches = [...DUMMY_CART_BATCHES];
+let localDummyOrders = [...DUMMY_CART_ORDERS];
 
-export async function createCartBatch(
-  payload: AddToCartBatchRequest,
+export async function createCartOrder(
+  payload: AddToCartOrderRequest,
   signal?: AbortSignal,
-): Promise<AddToCartBatchResponse> {
+): Promise<AddToCartOrderResponse> {
   try {
-    const response = await postCreateCartBatchApi(payload, signal);
+    const response = await postCreateCartOrderApi(payload, signal);
     if (response.data) return response.data;
-    const newBatchId = `btc-${Date.now()}`;
+    const newOrderId = `ord-${Date.now()}`;
     const calculatedTotal = 1200000 * payload.items.length;
-    const newBatch: CartBatch = {
-      batchId: newBatchId,
+    const newOrder: CartOrder = {
+      orderId: newOrderId,
       status: "pending_payment",
       selectionType: payload.selectionType ?? "catalog",
       administrativeFilter: payload.administrativeFilter,
@@ -263,7 +263,7 @@ export async function createCartBatch(
       expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
       totalPrice: calculatedTotal,
       items: payload.items.map((it, idx) => ({
-        id: `cbi-${Date.now()}-${idx}`,
+        id: `coi-${Date.now()}-${idx}`,
         sourceLayerId: it.sourceLayerId ?? "geonode:layer",
         sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
         spatialBasis: "bidang",
@@ -272,19 +272,19 @@ export async function createCartBatch(
         subtotalPrice: 1200000,
       })),
     };
-    localDummyBatches = [newBatch, ...localDummyBatches];
+    localDummyOrders = [newOrder, ...localDummyOrders];
     return {
-      batchId: newBatchId,
+      orderId: newOrderId,
       status: "pending_payment",
       estimatedTotalPrice: calculatedTotal,
-      createdAt: newBatch.createdAt,
+      createdAt: newOrder.createdAt,
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      const newBatchId = `btc-${Date.now()}`;
+      const newOrderId = `ord-${Date.now()}`;
       const calculatedTotal = 1200000 * payload.items.length;
-      const newBatch: CartBatch = {
-        batchId: newBatchId,
+      const newOrder: CartOrder = {
+        orderId: newOrderId,
         status: "pending_payment",
         selectionType: payload.selectionType ?? "catalog",
         administrativeFilter: payload.administrativeFilter,
@@ -294,7 +294,7 @@ export async function createCartBatch(
         expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
         totalPrice: calculatedTotal,
         items: payload.items.map((it, idx) => ({
-          id: `cbi-${Date.now()}-${idx}`,
+          id: `coi-${Date.now()}-${idx}`,
           sourceLayerId: it.sourceLayerId ?? "geonode:layer",
           sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
           spatialBasis: "bidang",
@@ -303,86 +303,86 @@ export async function createCartBatch(
           subtotalPrice: 1200000,
         })),
       };
-      localDummyBatches = [newBatch, ...localDummyBatches];
+      localDummyOrders = [newOrder, ...localDummyOrders];
       return {
-        batchId: newBatchId,
+        orderId: newOrderId,
         status: "pending_payment",
         estimatedTotalPrice: calculatedTotal,
-        createdAt: newBatch.createdAt,
+        createdAt: newOrder.createdAt,
       };
     }
     throw error;
   }
 }
 
-export async function getCartBatches(
+export async function getCartOrders(
   signal?: AbortSignal,
-): Promise<CartBatchListResponse> {
+): Promise<CartOrderListResponse> {
   try {
-    const response = await fetchCartBatchesApi(undefined, signal);
+    const response = await fetchCartOrdersApi(undefined, signal);
     if (response.data) return response.data;
     return isDummyDataEnabled()
-      ? { batches: localDummyBatches, total: localDummyBatches.length }
-      : { batches: [], total: 0 };
+      ? { orders: localDummyOrders, total: localDummyOrders.length }
+      : { orders: [], total: 0 };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return { batches: localDummyBatches, total: localDummyBatches.length };
+      return { orders: localDummyOrders, total: localDummyOrders.length };
     }
     throw error;
   }
 }
 
-export async function getCartBatchDetail(
-  batchId: string,
+export async function getCartOrderDetail(
+  orderId: string,
   signal?: AbortSignal,
-): Promise<CartBatch | null> {
+): Promise<CartOrder | null> {
   try {
-    const response = await fetchCartBatchDetailApi(batchId, signal);
+    const response = await fetchCartOrderDetailApi(orderId, signal);
     if (response.data !== undefined) return response.data;
     if (isDummyDataEnabled()) {
-      return localDummyBatches.find((b) => b.batchId === batchId) ?? null;
+      return localDummyOrders.find((b) => b.orderId === orderId) ?? null;
     }
     return null;
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return localDummyBatches.find((b) => b.batchId === batchId) ?? null;
+      return localDummyOrders.find((b) => b.orderId === orderId) ?? null;
     }
     throw error;
   }
 }
 
-export async function getActiveCartBatch(
+export async function getActiveCartOrder(
   signal?: AbortSignal,
-): Promise<ActiveCartBatch | null> {
+): Promise<ActiveCartOrder | null> {
   try {
-    const response = await fetchActiveCartBatchApi(signal);
+    const response = await fetchActiveCartOrderApi(signal);
     if (response.data !== undefined) return response.data;
     return isDummyDataEnabled()
-      ? (localDummyBatches[0] ?? DUMMY_ACTIVE_CART_BATCH)
+      ? (localDummyOrders[0] ?? DUMMY_ACTIVE_CART_ORDER)
       : null;
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return localDummyBatches[0] ?? DUMMY_ACTIVE_CART_BATCH;
+      return localDummyOrders[0] ?? DUMMY_ACTIVE_CART_ORDER;
     }
     throw error;
   }
 }
 
-export async function cancelActiveCartBatch(
-  batchId: string,
+export async function cancelActiveCartOrder(
+  orderId: string,
   signal?: AbortSignal,
 ): Promise<void> {
   try {
-    await deleteCartBatchApi(batchId, signal);
+    await deleteCartOrderApi(orderId, signal);
     if (isDummyDataEnabled()) {
-      localDummyBatches = localDummyBatches.filter(
-        (b) => b.batchId !== batchId,
+      localDummyOrders = localDummyOrders.filter(
+        (b) => b.orderId !== orderId,
       );
     }
   } catch (error) {
     if (isDummyDataEnabled()) {
-      localDummyBatches = localDummyBatches.filter(
-        (b) => b.batchId !== batchId,
+      localDummyOrders = localDummyOrders.filter(
+        (b) => b.orderId !== orderId,
       );
       return;
     }
@@ -390,31 +390,31 @@ export async function cancelActiveCartBatch(
   }
 }
 
-export async function clearAllCartBatches(
-  batchIds: string[],
+export async function clearAllCartOrders(
+  orderIds: string[],
   signal?: AbortSignal,
 ): Promise<void> {
   try {
-    await Promise.all(batchIds.map((id) => deleteCartBatchApi(id, signal)));
+    await Promise.all(orderIds.map((id) => deleteCartOrderApi(id, signal)));
     if (isDummyDataEnabled()) {
-      localDummyBatches = [];
+      localDummyOrders = [];
     }
   } catch (error) {
     if (isDummyDataEnabled()) {
-      localDummyBatches = [];
+      localDummyOrders = [];
       return;
     }
     throw error;
   }
 }
 
-export async function checkoutCartBatch(
-  batchId: string,
-  payload?: CheckoutBatchRequest,
+export async function checkoutCartOrder(
+  orderId: string,
+  payload?: CheckoutOrderRequest,
   signal?: AbortSignal,
-): Promise<CheckoutBatchResponse> {
+): Promise<CheckoutOrderResponse> {
   try {
-    const response = await postCheckoutBatchApi(batchId, payload, signal);
+    const response = await postCheckoutOrderApi(orderId, payload, signal);
     if (response.data) return response.data;
     return {
       orderId: `ord-${Date.now()}`,
@@ -449,76 +449,76 @@ export async function checkoutCartBatch(
   }
 }
 
-export async function getExpiredCartBatches(
+export async function getExpiredCartOrders(
   signal?: AbortSignal,
-): Promise<CartBatchListResponse> {
+): Promise<CartOrderListResponse> {
   try {
-    const response = await fetchExpiredCartBatchesApi(signal);
+    const response = await fetchExpiredCartOrdersApi(signal);
     if (response.data) return response.data;
     if (isDummyDataEnabled()) {
-      const expired = localDummyBatches.filter((b) => b.status === "rejected");
-      return { batches: expired, total: expired.length };
+      const expired = localDummyOrders.filter((b) => b.status === "rejected");
+      return { orders: expired, total: expired.length };
     }
-    return { batches: [], total: 0 };
+    return { orders: [], total: 0 };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      const expired = localDummyBatches.filter((b) => b.status === "rejected");
-      return { batches: expired, total: expired.length };
+      const expired = localDummyOrders.filter((b) => b.status === "rejected");
+      return { orders: expired, total: expired.length };
     }
     throw error;
   }
 }
 
-export async function reorderCartBatch(
-  batchId: string,
+export async function reorderCartOrder(
+  orderId: string,
   signal?: AbortSignal,
-): Promise<AddToCartBatchResponse> {
+): Promise<AddToCartOrderResponse> {
   try {
-    const response = await postReorderCartBatchApi(batchId, signal);
+    const response = await postReorderCartOrderApi(orderId, signal);
     if (response.data) return response.data;
-    const newBatchId = `btc-${Date.now()}`;
-    const oldBatch = localDummyBatches.find((b) => b.batchId === batchId);
-    const newBatch: CartBatch = {
-      batchId: newBatchId,
+    const newOrderId = `ord-${Date.now()}`;
+    const oldOrder = localDummyOrders.find((b) => b.orderId === orderId);
+    const newOrder: CartOrder = {
+      orderId: newOrderId,
       status: "pending_payment",
-      selectionType: oldBatch?.selectionType ?? "catalog",
-      administrativeFilter: oldBatch?.administrativeFilter,
-      aoiPolygon: oldBatch?.aoiPolygon,
-      cqlFilter: oldBatch?.cqlFilter,
+      selectionType: oldOrder?.selectionType ?? "catalog",
+      administrativeFilter: oldOrder?.administrativeFilter,
+      aoiPolygon: oldOrder?.aoiPolygon,
+      cqlFilter: oldOrder?.cqlFilter,
       createdAt: new Date().toISOString(),
       expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
-      totalPrice: oldBatch?.totalPrice ?? 1200000,
-      items: oldBatch?.items ?? [],
+      totalPrice: oldOrder?.totalPrice ?? 1200000,
+      items: oldOrder?.items ?? [],
     };
-    localDummyBatches = [newBatch, ...localDummyBatches];
+    localDummyOrders = [newOrder, ...localDummyOrders];
     return {
-      batchId: newBatchId,
+      orderId: newOrderId,
       status: "pending_payment",
-      estimatedTotalPrice: newBatch.totalPrice,
-      createdAt: newBatch.createdAt,
+      estimatedTotalPrice: newOrder.totalPrice,
+      createdAt: newOrder.createdAt,
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      const newBatchId = `btc-${Date.now()}`;
-      const oldBatch = localDummyBatches.find((b) => b.batchId === batchId);
-      const newBatch: CartBatch = {
-        batchId: newBatchId,
+      const newOrderId = `ord-${Date.now()}`;
+      const oldOrder = localDummyOrders.find((b) => b.orderId === orderId);
+      const newOrder: CartOrder = {
+        orderId: newOrderId,
         status: "pending_payment",
-        selectionType: oldBatch?.selectionType ?? "catalog",
-        administrativeFilter: oldBatch?.administrativeFilter,
-        aoiPolygon: oldBatch?.aoiPolygon,
-        cqlFilter: oldBatch?.cqlFilter,
+        selectionType: oldOrder?.selectionType ?? "catalog",
+        administrativeFilter: oldOrder?.administrativeFilter,
+        aoiPolygon: oldOrder?.aoiPolygon,
+        cqlFilter: oldOrder?.cqlFilter,
         createdAt: new Date().toISOString(),
         expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
-        totalPrice: oldBatch?.totalPrice ?? 1200000,
-        items: oldBatch?.items ?? [],
+        totalPrice: oldOrder?.totalPrice ?? 1200000,
+        items: oldOrder?.items ?? [],
       };
-      localDummyBatches = [newBatch, ...localDummyBatches];
+      localDummyOrders = [newOrder, ...localDummyOrders];
       return {
-        batchId: newBatchId,
+        orderId: newOrderId,
         status: "pending_payment",
-        estimatedTotalPrice: newBatch.totalPrice,
-        createdAt: newBatch.createdAt,
+        estimatedTotalPrice: newOrder.totalPrice,
+        createdAt: newOrder.createdAt,
       };
     }
     throw error;
@@ -548,3 +548,14 @@ export async function checkOrderPaymentStatus(
     throw error;
   }
 }
+
+// Aliases
+export const createCartBatch = createCartOrder;
+export const getCartBatches = getCartOrders;
+export const getCartBatchDetail = getCartOrderDetail;
+export const getActiveCartBatch = getActiveCartOrder;
+export const cancelActiveCartBatch = cancelActiveCartOrder;
+export const clearAllCartBatches = clearAllCartOrders;
+export const checkoutCartBatch = checkoutCartOrder;
+export const getExpiredCartBatches = getExpiredCartOrders;
+export const reorderCartBatch = reorderCartOrder;

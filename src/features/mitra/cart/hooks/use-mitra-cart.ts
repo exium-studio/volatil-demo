@@ -3,21 +3,21 @@
 import {
   addAllToCartFromWfs,
   addSelectedToCart,
-  cancelActiveCartBatch,
+  cancelActiveCartOrder,
   checkOrderPaymentStatus,
   checkout,
-  checkoutCartBatch,
-  clearAllCartBatches,
+  checkoutCartOrder,
+  clearAllCartOrders,
   clearCart,
-  createCartBatch,
-  getActiveCartBatch,
-  getCartBatchDetail,
-  getCartBatches,
+  createCartOrder,
+  getActiveCartOrder,
+  getCartOrderDetail,
+  getCartOrders,
   getCartSummaryLocal,
   getCartWfsPage,
-  getExpiredCartBatches,
+  getExpiredCartOrders,
   removeFromCart,
-  reorderCartBatch,
+  reorderCartOrder,
 } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { CartSummaryResponse } from "@/features/mitra/cart/types/cart.type";
 import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
@@ -184,120 +184,126 @@ export const useAddAllToCartFromWfs = (
 };
 
 // -------------------------------------------------------------------------------------
-// Batch Interop Query & Mutation Hooks
+// Order Query & Mutation Hooks
 // -------------------------------------------------------------------------------------
 
 import type {
-  ActiveCartBatch,
-  AddToCartBatchRequest,
-  CartBatch,
-  CartBatchListResponse,
-  CheckoutBatchRequest,
-} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+  ActiveCartOrder,
+  AddToCartOrderRequest,
+  CartOrder,
+  CartOrderListResponse,
+  CheckoutOrderRequest,
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 
-export const useCartBatchesQuery = () => {
-  const query = useQuery<CartBatchListResponse>({
-    queryKey: ["mitra", "cart", "batches"],
-    queryFn: ({ signal }) => getCartBatches(signal),
+export const useCartOrdersQuery = () => {
+  const query = useQuery<CartOrderListResponse>({
+    queryKey: ["mitra", "cart", "orders"],
+    queryFn: ({ signal }) => getCartOrders(signal),
   });
 
   return {
     ...query,
-    batches: query.data?.batches ?? [],
+    orders: query.data?.orders ?? [],
+    batches: query.data?.orders ?? [],
     total: query.data?.total ?? 0,
   };
 };
 
-export const useCartBatchDetailQuery = (batchId?: string) => {
-  const query = useQuery<CartBatch | null>({
-    queryKey: ["mitra", "cart", "batch-detail", batchId],
+export const useCartOrderDetailQuery = (orderId?: string) => {
+  const query = useQuery<CartOrder | null>({
+    queryKey: ["mitra", "cart", "order-detail", orderId],
     queryFn: ({ signal }) =>
-      batchId ? getCartBatchDetail(batchId, signal) : Promise.resolve(null),
-    enabled: Boolean(batchId),
+      orderId ? getCartOrderDetail(orderId, signal) : Promise.resolve(null),
+    enabled: Boolean(orderId),
   });
 
   return {
     ...query,
+    orderDetail: query.data ?? null,
     batchDetail: query.data ?? null,
   };
 };
 
-export const useActiveCartBatchQuery = () => {
-  const query = useQuery<ActiveCartBatch | null>({
-    queryKey: ["mitra", "cart", "active-batch"],
-    queryFn: ({ signal }) => getActiveCartBatch(signal),
+export const useActiveCartOrderQuery = () => {
+  const query = useQuery<ActiveCartOrder | null>({
+    queryKey: ["mitra", "cart", "active-order"],
+    queryFn: ({ signal }) => getActiveCartOrder(signal),
   });
 
   return {
     ...query,
+    activeOrder: query.data ?? null,
     activeBatch: query.data ?? null,
   };
 };
 
-export const useCreateCartBatch = () => {
+export const useCreateCartOrder = () => {
   const queryClient = useQueryClient();
-  const toastHandlers = mutationToastHandlers("create-cart-batch", {
+  const toastHandlers = mutationToastHandlers("create-cart-order", {
     group: "Keranjang",
     loadingMessage: {
-      title: "Membuat batch keranjang...",
+      title: "Membuat pesanan keranjang...",
     },
     successMessage: {
       title: "Data dimasukkan ke keranjang!",
       description:
-        "Sistem Interop sedang memproses penyiapan layer spasial Anda.",
+        "Sistem sedang memproses penyiapan layer spasial Anda.",
     },
     errorMessage: {
-      title: "Gagal membuat batch keranjang",
+      title: "Gagal membuat pesanan keranjang",
     },
   });
 
   return useMutation({
-    mutationFn: (payload: AddToCartBatchRequest) => createCartBatch(payload),
+    mutationFn: (payload: AddToCartOrderRequest) => createCartOrder(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
+        queryKey: ["mitra", "cart", "active-order"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "orders"],
       });
     },
     onError: toastHandlers.onError,
   });
 };
 
-export const useCancelActiveCartBatch = () => {
+export const useCancelActiveCartOrder = () => {
   const queryClient = useQueryClient();
-  const toastHandlers = mutationToastHandlers("cancel-cart-batch", {
+  const toastHandlers = mutationToastHandlers("cancel-cart-order", {
     group: "Keranjang",
     loadingMessage: {
-      title: "Menghapus batch...",
+      title: "Menghapus pesanan...",
     },
     successMessage: {
-      title: "Batch berhasil dihapus",
+      title: "Pesanan berhasil dihapus",
     },
     errorMessage: {
-      title: "Gagal menghapus batch",
+      title: "Gagal menghapus pesanan",
     },
   });
 
   return useMutation({
-    mutationFn: (batchId: string) => cancelActiveCartBatch(batchId),
+    mutationFn: (orderId: string) => cancelActiveCartOrder(orderId),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "batches"],
+        queryKey: ["mitra", "cart", "orders"],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
+        queryKey: ["mitra", "cart", "active-order"],
       });
     },
     onError: toastHandlers.onError,
   });
 };
 
-export const useClearAllCartBatches = () => {
+export const useClearAllCartOrders = () => {
   const queryClient = useQueryClient();
-  const toastHandlers = mutationToastHandlers("clear-all-cart-batches", {
+  const toastHandlers = mutationToastHandlers("clear-all-cart-orders", {
     group: "Keranjang",
     loadingMessage: {
       title: "Mengosongkan keranjang...",
@@ -311,24 +317,24 @@ export const useClearAllCartBatches = () => {
   });
 
   return useMutation({
-    mutationFn: (batchIds: string[]) => clearAllCartBatches(batchIds),
+    mutationFn: (orderIds: string[]) => clearAllCartOrders(orderIds),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "batches"],
+        queryKey: ["mitra", "cart", "orders"],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
+        queryKey: ["mitra", "cart", "active-order"],
       });
     },
     onError: toastHandlers.onError,
   });
 };
 
-export const useCheckoutCartBatch = () => {
+export const useCheckoutCartOrder = () => {
   const queryClient = useQueryClient();
-  const toastHandlers = mutationToastHandlers("checkout-cart-batch", {
+  const toastHandlers = mutationToastHandlers("checkout-cart-order", {
     group: "Pembayaran",
     loadingMessage: {
       title: "Membuat kode billing...",
@@ -343,16 +349,16 @@ export const useCheckoutCartBatch = () => {
   });
 
   return useMutation({
-    mutationFn: (params: { batchId: string; payload?: CheckoutBatchRequest }) =>
-      checkoutCartBatch(params.batchId, params.payload),
+    mutationFn: (params: { orderId: string; payload?: CheckoutOrderRequest }) =>
+      checkoutCartOrder(params.orderId, params.payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: (data) => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "batches"],
+        queryKey: ["mitra", "cart", "orders"],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
+        queryKey: ["mitra", "cart", "active-order"],
       });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "billing"],
@@ -366,30 +372,31 @@ export const useCheckoutCartBatch = () => {
   });
 };
 
-export const useExpiredCartBatchesQuery = (options?: { enabled?: boolean }) => {
-  const query = useQuery<CartBatchListResponse>({
-    queryKey: ["mitra", "cart", "expired-batches"],
-    queryFn: ({ signal }) => getExpiredCartBatches(signal),
+export const useExpiredCartOrdersQuery = (options?: { enabled?: boolean }) => {
+  const query = useQuery<CartOrderListResponse>({
+    queryKey: ["mitra", "cart", "expired-orders"],
+    queryFn: ({ signal }) => getExpiredCartOrders(signal),
     enabled: options?.enabled ?? false,
   });
 
   return {
     ...query,
-    expiredBatches: query.data?.batches ?? [],
+    expiredOrders: query.data?.orders ?? [],
+    expiredBatches: query.data?.orders ?? [],
     total: query.data?.total ?? 0,
   };
 };
 
-export const useReorderCartBatch = (onSuccessCallback?: () => void) => {
+export const useReorderCartOrder = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
-  const toastHandlers = mutationToastHandlers("reorder-cart-batch", {
+  const toastHandlers = mutationToastHandlers("reorder-cart-order", {
     group: "Keranjang",
     loadingMessage: {
       title: "Membuat permohonan ulang...",
     },
     successMessage: {
       title: "Permohonan ulang berhasil dibuat!",
-      description: "Batch baru telah masuk ke keranjang dan sedang disiapkan.",
+      description: "Pesanan baru telah masuk ke keranjang dan sedang disiapkan.",
     },
     errorMessage: {
       title: "Gagal membuat permohonan ulang",
@@ -397,19 +404,19 @@ export const useReorderCartBatch = (onSuccessCallback?: () => void) => {
   });
 
   return useMutation({
-    mutationFn: (batchId: string) => reorderCartBatch(batchId),
+    mutationFn: (orderId: string) => reorderCartOrder(orderId),
     onMutate: toastHandlers.onLoading,
     onSuccess: (data) => {
       toastHandlers.onSuccess();
       onSuccessCallback?.();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "batches"],
+        queryKey: ["mitra", "cart", "orders"],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
+        queryKey: ["mitra", "cart", "active-order"],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "expired-batches"],
+        queryKey: ["mitra", "cart", "expired-orders"],
       });
       return data;
     },
@@ -440,10 +447,10 @@ export const useCheckOrderPaymentStatus = () => {
     onSuccess: (data) => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "batches"],
+        queryKey: ["mitra", "cart", "orders"],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
+        queryKey: ["mitra", "cart", "active-order"],
       });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "transaction-history"],
@@ -458,3 +465,14 @@ export const useCheckOrderPaymentStatus = () => {
 };
 
 export const useCheckBillingPaymentStatus = useCheckOrderPaymentStatus;
+
+// Backwards-compatible aliases
+export const useCartBatchesQuery = useCartOrdersQuery;
+export const useCartBatchDetailQuery = (batchId?: string) => useCartOrderDetailQuery(batchId);
+export const useActiveCartBatchQuery = useActiveCartOrderQuery;
+export const useCreateCartBatch = useCreateCartOrder;
+export const useCancelActiveCartBatch = useCancelActiveCartOrder;
+export const useClearAllCartBatches = useClearAllCartOrders;
+export const useCheckoutCartBatch = useCheckoutCartOrder;
+export const useExpiredCartBatchesQuery = useExpiredCartOrdersQuery;
+export const useReorderCartBatch = useReorderCartOrder;

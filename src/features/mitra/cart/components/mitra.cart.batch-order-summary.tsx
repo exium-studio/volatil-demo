@@ -7,8 +7,8 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { useCheckoutCartBatch } from "@/features/mitra/cart/hooks/use-mitra-cart";
-import type { ActiveCartBatch } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { useCheckoutCartOrder } from "@/features/mitra/cart/hooks/use-mitra-cart";
+import type { ActiveCartOrder } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -20,16 +20,17 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 
-export type MitraCartBatchOrderSummaryProps = {
-  activeBatch: ActiveCartBatch | null;
+export type MitraCartOrderSummaryProps = {
+  activeOrder: ActiveCartOrder | null;
   isLoading?: boolean;
 };
 
 export const MitraCartBatchOrderSummary = (
-  props: MitraCartBatchOrderSummaryProps,
+  props: MitraCartOrderSummaryProps & { activeBatch?: ActiveCartOrder | null },
 ) => {
   // Props
-  const { activeBatch, isLoading = false } = props;
+  const { activeOrder: rawActiveOrder, activeBatch, isLoading = false } = props;
+  const activeOrder = rawActiveOrder ?? activeBatch ?? null;
 
   // Stores
   const { theme } = useThemeStore();
@@ -38,39 +39,39 @@ export const MitraCartBatchOrderSummary = (
   const navigate = useNavigate();
 
   // Mutations
-  const checkoutMutation = useCheckoutCartBatch();
+  const checkoutMutation = useCheckoutCartOrder();
 
   // Derived Values
-  const isSelected = Boolean(activeBatch);
-  const isPendingPayment = activeBatch?.status === "pending_payment";
+  const isSelected = Boolean(activeOrder);
+  const isPendingPayment = activeOrder?.status === "pending_payment";
   const isPayable = isPendingPayment;
-  const isReady = activeBatch?.status === "ready";
-  const isProcessing = activeBatch?.status === "processing";
-  const isPendingReview = activeBatch?.status === "pending_review";
-  const isRejected = activeBatch?.status === "rejected";
-  const isPaid = activeBatch?.status === "paid";
-  const hasItems = (activeBatch?.items.length ?? 0) > 0;
+  const isReady = activeOrder?.status === "ready";
+  const isProcessing = activeOrder?.status === "processing";
+  const isPendingReview = activeOrder?.status === "pending_review";
+  const isRejected = activeOrder?.status === "rejected";
+  const isPaid = activeOrder?.status === "paid";
+  const hasItems = (activeOrder?.items.length ?? 0) > 0;
 
   const totalBidang = useMemo(() => {
-    if (!activeBatch?.items) return 0;
-    return activeBatch.items
+    if (!activeOrder?.items) return 0;
+    return activeOrder.items
       .filter((i) => i.spatialBasis === "bidang")
       .reduce((sum, item) => sum + item.featuresCount, 0);
-  }, [activeBatch]);
+  }, [activeOrder]);
 
   const totalKawasanHa = useMemo(() => {
-    if (!activeBatch?.items) return 0;
-    return activeBatch.items
+    if (!activeOrder?.items) return 0;
+    return activeOrder.items
       .filter((i) => i.spatialBasis === "kawasan")
       .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
-  }, [activeBatch]);
+  }, [activeOrder]);
 
   const handleCheckout = () => {
-    if (!activeBatch?.batchId || !isPayable) return;
+    if (!activeOrder?.orderId || !isPayable) return;
 
     checkoutMutation.mutate(
       {
-        batchId: activeBatch.batchId,
+        orderId: activeOrder.orderId,
       },
       {
         onSuccess: (data) => {
@@ -98,11 +99,11 @@ export const MitraCartBatchOrderSummary = (
       bg={"bg.body"}
       align={"stretch"}
     >
-      {/* Batch Metadata Header */}
+      {/* Order Metadata Header */}
       <VStack align={"start"} gap={1}>
         <HStack justify={"space-between"} w={"full"}>
           <P fontSize={"xs"} color={"fg.subtle"}>
-            {"ID Batch Transaksi"}
+            {"ID Pesanan"}
           </P>
           {isSelected ? (
             <Badge
@@ -144,7 +145,7 @@ export const MitraCartBatchOrderSummary = (
           )}
         </HStack>
         <P fontSize={"sm"} fontWeight={"semibold"}>
-          {activeBatch?.batchId ?? "-"}
+          {activeOrder?.orderId ?? "-"}
         </P>
       </VStack>
 
@@ -160,9 +161,9 @@ export const MitraCartBatchOrderSummary = (
       <VStack gap={2} align={"stretch"} fontSize={"sm"}>
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Metode Pengajuan"}</P>
-          {isSelected && activeBatch?.selectionType ? (
+          {isSelected && activeOrder?.selectionType ? (
             <SelectionTypeBadge size={"xs"}>
-              {activeBatch.selectionType}
+              {activeOrder.selectionType}
             </SelectionTypeBadge>
           ) : (
             <P fontWeight={"medium"}>{"-"}</P>
@@ -172,7 +173,7 @@ export const MitraCartBatchOrderSummary = (
         <HStack justify={"space-between"}>
           <P color={"fg.muted"}>{"Total Layer IGT"}</P>
           <P fontWeight={"medium"}>
-            {isSelected ? `${activeBatch?.items.length ?? 0} layer` : "-"}
+            {isSelected ? `${activeOrder?.items.length ?? 0} layer` : "-"}
           </P>
         </HStack>
 
@@ -228,7 +229,7 @@ export const MitraCartBatchOrderSummary = (
           {isSelected ? (
             <P fontSize={"lg"} fontWeight={"semibold"}>
               <FormatNumber
-                value={activeBatch?.totalPrice ?? 0}
+                value={activeOrder?.totalPrice ?? 0}
                 style={"currency"}
                 currency={"IDR"}
                 maximumFractionDigits={0}
@@ -248,7 +249,7 @@ export const MitraCartBatchOrderSummary = (
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
             {
-              "Silakan pilih salah satu batch pesanan pada daftar keranjang untuk menampilkan rincian dan melakukan pembayaran."
+              "Silakan pilih salah satu pesanan pada daftar keranjang untuk menampilkan rincian dan melakukan pembayaran."
             }
           </Alert.Title>
         </Alert.Root>
@@ -269,7 +270,7 @@ export const MitraCartBatchOrderSummary = (
         <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
-            {"Layanan WMS sedang dipersiapkan oleh Interop Engine."}
+            {"Layanan WMS sedang dipersiapkan oleh sistem."}
           </Alert.Title>
         </Alert.Root>
       )}
@@ -293,7 +294,7 @@ export const MitraCartBatchOrderSummary = (
         <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"}>
           <AppIcon icon={AlertCircleIcon} />
           <Alert.Title>
-            {`Batch ditolak oleh Admin Internal: ${activeBatch?.rejectionReason || "Tidak memenuhi syarat."}`}
+            {`Pesanan ditolak oleh Admin Internal: ${activeOrder?.rejectionReason || "Tidak memenuhi syarat."}`}
           </Alert.Title>
         </Alert.Root>
       )}
@@ -307,7 +308,7 @@ export const MitraCartBatchOrderSummary = (
           <AppIcon icon={InfoIcon} />
           <Alert.Title>
             {
-              "Batch permohonan telah siap digunakan. Layanan data spasial dapat diakses melalui menu Data Saya."
+              "Pesanan permohonan telah siap digunakan. Layanan data spasial dapat diakses melalui menu Data Saya."
             }
           </Alert.Title>
         </Alert.Root>
@@ -330,17 +331,17 @@ export const MitraCartBatchOrderSummary = (
       >
         <AppIcon icon={CreditCardIcon} />
         {!isSelected
-          ? "Pilih Batch Terlebih Dahulu"
+          ? "Pilih Pesanan Terlebih Dahulu"
           : isReady
-            ? "Batch Siap Digunakan"
+            ? "Pesanan Siap Digunakan"
             : isProcessing
               ? "Menyiapkan Layanan..."
               : isPendingReview
                 ? "Menunggu Validasi Admin"
                 : isRejected
-                  ? "Batch Ditolak"
+                  ? "Pesanan Ditolak"
                   : isPaid
-                    ? "Batch Sudah Dibayar"
+                    ? "Pesanan Sudah Dibayar"
                     : "Bayar Sekarang"}
       </Button>
 

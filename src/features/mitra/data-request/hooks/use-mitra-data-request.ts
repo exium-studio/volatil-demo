@@ -2,8 +2,8 @@
 
 import { toast } from "@/design-system/components/toast";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { createCartBatch } from "@/features/mitra/cart/services/mitra.cart.service";
-import type { AddToCartBatchRequest } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import { createCartOrder } from "@/features/mitra/cart/services/mitra.cart.service";
+import type { AddToCartOrderRequest } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import {
   getIgtByAoi,
   getIgtByUploadedAoi,
@@ -89,7 +89,7 @@ export const useAddToCartAll = () => {
 
   return useMutation({
     mutationFn: (params: AddToCartLayerParam) => {
-      const payload: AddToCartBatchRequest = {
+      const payload: AddToCartOrderRequest = {
         selectionType: params.selectionType ?? "catalog",
         cqlFilter: params.cqlFilter,
         items: [
@@ -99,7 +99,7 @@ export const useAddToCartAll = () => {
           },
         ],
       };
-      return createCartBatch(payload);
+      return createCartOrder(payload);
     },
     onMutate: (params) => {
       const layerDisplayName =
@@ -131,14 +131,14 @@ export const useAddToCartAll = () => {
       }
 
       toast.success(
-        `Batch "${layerDisplayName}"${countDetail} berhasil ditambahkan ke keranjang transaksi! Total tagihan siap dibayar.`,
+        `Pesanan "${layerDisplayName}"${countDetail} berhasil ditambahkan ke keranjang transaksi! Total tagihan siap dibayar.`,
         { id: toastId, group: "Keranjang" },
       );
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
+        queryKey: ["mitra", "cart", "active-order"],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "batches"],
+        queryKey: ["mitra", "cart", "orders"],
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
@@ -149,7 +149,7 @@ export const useAddToCartAll = () => {
       const message =
         error instanceof Error
           ? error.message
-          : "Gagal membuat batch transaksi";
+          : "Gagal membuat pesanan transaksi";
       toast.error(message, { id: toastId, group: "Keranjang" });
     },
   });
@@ -167,7 +167,7 @@ export const useAddToCartMultipleLayers = () => {
       selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
       cqlFilter?: string;
     }) => {
-      const payload: AddToCartBatchRequest = {
+      const payload: AddToCartOrderRequest = {
         selectionType:
           params.selectionType ??
           params.layers[0]?.selectionType ??
@@ -178,7 +178,7 @@ export const useAddToCartMultipleLayers = () => {
           cqlFilter: l.cqlFilter,
         })),
       };
-      return createCartBatch(payload);
+      return createCartOrder(payload);
     },
     onMutate: (params) => {
       const count = params.layers.length;
@@ -235,10 +235,10 @@ export const useAddToCartMultipleLayers = () => {
 
       toast.success(title, { id: toastId, group: "Keranjang" });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "batches"],
+        queryKey: ["mitra", "cart", "orders"],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-batch"],
+        queryKey: ["mitra", "cart", "active-order"],
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,

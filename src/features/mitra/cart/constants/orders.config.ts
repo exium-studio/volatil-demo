@@ -7,7 +7,7 @@ import type {
   SelectionTypeConfig,
   SpatialBasisType,
   SpatialBasisTypeConfig,
-} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
   OrderStatus,
   OrderStatusConfig,

@@ -21,17 +21,17 @@ import type { IgtLayerItem } from "@/design-system/components/map/types/map.type
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
+import { InternalOrderReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
 import {
-  useInternalBatchDetailQuery,
+  useInternalOrderDetailQuery,
   useProvisionOrder,
 } from "@/features/internal/batch-review/hooks/use-batch-review";
-import type { BatchLayerDataViewProps } from "@/features/internal/batch-review/types/batch-review.type";
-import type { CartBatchItem } from "@/features/mitra/cart/types/mitra.cart.batch.type";
+import type { OrderLayerDataViewProps } from "@/features/internal/batch-review/types/order-review.type";
+import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
-import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
@@ -50,15 +50,16 @@ import { useMemo } from "react";
 export function InternalBatchReviewDetailPage() {
   // Hooks
   const { batchId } = useParams({ strict: false }) as { batchId: string };
+  const orderId = batchId;
   const navigate = useNavigate();
 
   // Queries
-  const { data: batch, isLoading } = useInternalBatchDetailQuery(batchId);
+  const { data: order, isLoading } = useInternalOrderDetailQuery(orderId);
 
   // Mutations
   const provisionMutation = useProvisionOrder();
 
-  if (isLoading || !batch) {
+  if (isLoading || !order) {
     return (
       <PanelContentContainer>
         <Container.Root>
@@ -90,14 +91,14 @@ export function InternalBatchReviewDetailPage() {
               </HStack>
 
               <HStack gap={2}>
-                {batch.status === "paid" && (
+                {order.status === "paid" && (
                   <Button
                     primary={true}
                     colorPalette={"blue"}
                     loading={provisionMutation.isPending}
                     onClick={() => {
                       provisionMutation.mutate({
-                        batchId: batch.batchId,
+                        orderId: order.orderId,
                       });
                     }}
                   >
@@ -106,10 +107,10 @@ export function InternalBatchReviewDetailPage() {
                   </Button>
                 )}
 
-                {batch.status === "pending_review" && (
-                  <InternalBatchReviewApproveTrigger
-                    batch={batch}
-                    modalKey={`approve-detail-${batch.batchId}`}
+                {order.status === "pending_review" && (
+                  <InternalOrderReviewApproveTrigger
+                    order={order}
+                    modalKey={`approve-detail-${order.orderId}`}
                     onSuccessRedirect={() => {
                       void navigate({ to: "/internal/batch-review" });
                     }}
@@ -118,7 +119,7 @@ export function InternalBatchReviewDetailPage() {
                       <AppIcon icon={CheckCircle2Icon} />
                       {"Setujui Permohonan"}
                     </Button>
-                  </InternalBatchReviewApproveTrigger>
+                  </InternalOrderReviewApproveTrigger>
                 )}
               </HStack>
             </HStack>
@@ -126,7 +127,7 @@ export function InternalBatchReviewDetailPage() {
 
           <Separator borderColor={"bg.canvas"} />
 
-          {/* Batch Metadata */}
+          {/* Order Metadata */}
           <VStack gap={"md"} p={"md"}>
             <VStack align={"start"} gap={"xs"}>
               <P fontSize={"xs"} color={"fg.subtle"}>
@@ -134,9 +135,9 @@ export function InternalBatchReviewDetailPage() {
               </P>
 
               <VStack gap={"2xs"}>
-                <P fontWeight={"semibold"}>{batch.mitraName}</P>
+                <P fontWeight={"semibold"}>{order.mitraName}</P>
                 <P fontSize={"xs"} color={"fg.muted"}>
-                  {batch.mitraId}
+                  {order.mitraId}
                 </P>
               </VStack>
             </VStack>
@@ -148,7 +149,7 @@ export function InternalBatchReviewDetailPage() {
                 </P>
 
                 <SelectionTypeBadge size={"sm"}>
-                  {batch.selectionType}
+                  {order.selectionType}
                 </SelectionTypeBadge>
               </VStack>
 
@@ -157,7 +158,7 @@ export function InternalBatchReviewDetailPage() {
                   {"Status"}
                 </P>
 
-                <BatchStatusBadge>{batch.status}</BatchStatusBadge>
+                <OrderStatusBadge>{order.status}</OrderStatusBadge>
               </VStack>
 
               <VStack gap={"xs"}>
@@ -166,7 +167,7 @@ export function InternalBatchReviewDetailPage() {
                 </P>
 
                 <P fontWeight={"semibold"}>
-                  {formatCurrency(batch.totalPrice ?? 0)}
+                  {formatCurrency(order.totalPrice ?? 0)}
                 </P>
               </VStack>
             </HStack>
@@ -175,13 +176,13 @@ export function InternalBatchReviewDetailPage() {
           <Separator borderColor={"bg.canvas"} />
 
           {/* Layer List */}
-          <BatchLayerDataView
-            batch={batch}
+          <OrderLayerDataView
+            order={order}
             onDetailAttribute={(item) => {
               void navigate({
                 to: "/internal/batch-review/$batchId/layer/$layerId",
                 params: {
-                  batchId: batch.batchId,
+                  batchId: order.orderId,
                   layerId: encodeURIComponent(item.sourceLayerId),
                 },
               });
@@ -193,8 +194,8 @@ export function InternalBatchReviewDetailPage() {
   );
 }
 
-const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
-  const { batch, onDetailAttribute } = props;
+const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
+  const { order, onDetailAttribute } = props;
 
   // Stores
   const { enabledLayerIds, setLayerEnabled } = useMapLayerStore();
@@ -222,7 +223,7 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
       { th: "Lihat di Peta", align: "center" },
     ];
 
-    const items: FormattedListItem<CartBatchItem>[] = (batch.items ?? []).map(
+    const items: FormattedListItem<CartOrderItem>[] = (order.items ?? []).map(
       (item) => {
         const previewUrl =
           item.previewWmsUrl ||
@@ -314,15 +315,15 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
     const itemActions = [
       {
         key: "toggle-map-visibility",
-        label: (item: CartBatchItem) => {
+        label: (item: CartOrderItem) => {
           const isVisible = enabledLayerIds[item.sourceLayerId] ?? false;
           return isVisible ? "Sembunyikan dari Peta" : "Tampilkan di Peta";
         },
-        icon: (item: CartBatchItem) => {
+        icon: (item: CartOrderItem) => {
           const isVisible = enabledLayerIds[item.sourceLayerId] ?? false;
           return isVisible ? EyeOffIcon : EyeIcon;
         },
-        onClick: (item: CartBatchItem) => {
+        onClick: (item: CartOrderItem) => {
           const current = enabledLayerIds[item.sourceLayerId] ?? false;
           setLayerEnabled(item.sourceLayerId, !current);
         },
@@ -331,7 +332,7 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
         key: "detail-attribute",
         label: "Detail Atribut",
         icon: TablePropertiesIcon,
-        onClick: (item: CartBatchItem) => {
+        onClick: (item: CartOrderItem) => {
           onDetailAttribute(item);
         },
       },
@@ -339,7 +340,7 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
         key: "fly-to-map",
         label: "Lihat di Peta",
         icon: MapPinIcon,
-        onClick: (item: CartBatchItem) => {
+        onClick: (item: CartOrderItem) => {
           if (!map) return;
           const matchedLayer = fetchedLayersList.find(
             (l) => l.id === item.sourceLayerId,
@@ -370,7 +371,7 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
 
     return { headers, items, itemActions };
   }, [
-    batch.items,
+    order.items,
     enabledLayerIds,
     setLayerEnabled,
     map,
@@ -380,7 +381,7 @@ const BatchLayerDataView = (props: BatchLayerDataViewProps) => {
 
   return (
     <VStack flex={1} w={"full"}>
-      <DataView.Table.Root<CartBatchItem>
+      <DataView.Table.Root<CartOrderItem>
         headers={dataList.headers}
         items={dataList.items}
         itemActions={dataList.itemActions}

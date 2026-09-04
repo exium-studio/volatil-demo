@@ -15,19 +15,19 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { MitraCartBatchItem } from "@/features/mitra/cart/components/mitra.cart.batch-item";
+import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.order-item";
 import { MitraCartBatchOrderSummary } from "@/features/mitra/cart/components/mitra.cart.batch-order-summary";
-import { MitraCartExpiredBatchesTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-batches.modal";
+import { MitraCartExpiredOrdersTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-orders.modal";
 import {
-  useCancelActiveCartBatch,
-  useClearAllCartBatches,
-  useCartBatchDetailQuery,
-  useCartBatchesQuery,
+  useCancelActiveCartOrder,
+  useClearAllCartOrders,
+  useCartOrderDetailQuery,
+  useCartOrdersQuery,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
-} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { HistoryIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 
@@ -43,15 +43,15 @@ const MitraCartContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Queries (for derived index between batches and selected batch)
-  const { batches } = useCartBatchesQuery();
+  // Queries (for derived index between orders and selected order)
+  const { orders } = useCartOrdersQuery();
 
-  // States — initial load has NO selected batch
-  const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
+  // States — initial load has NO selected order
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   // Derived Values
-  const selectedBatchIndex = batches.findIndex(
-    (b) => b.batchId === selectedBatchId,
+  const selectedOrderIndex = orders.findIndex(
+    (b) => b.orderId === selectedOrderId,
   );
 
   return (
@@ -67,13 +67,13 @@ const MitraCartContent = () => {
         w={"full"}
       >
         <MitraCartOrderList
-          selectedBatchId={selectedBatchId}
-          onSelectBatch={setSelectedBatchId}
+          selectedOrderId={selectedOrderId}
+          onSelectOrder={setSelectedOrderId}
         />
 
         <MitraCartOrderDetail
-          selectedBatchId={selectedBatchId}
-          selectedBatchIndex={selectedBatchIndex}
+          selectedOrderId={selectedOrderId}
+          selectedOrderIndex={selectedOrderIndex}
         />
       </HStack>
     </PanelContentContainer>
@@ -82,29 +82,29 @@ const MitraCartContent = () => {
 
 export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
   // Props
-  const { selectedBatchId, onSelectBatch } = props;
+  const { selectedOrderId, onSelectOrder } = props;
 
   // Contexts
   const { isSmContainer } = useContainerContext();
 
   // Queries & Mutations
-  const { batches, isLoading: isBatchesLoading } = useCartBatchesQuery();
-  const clearAllBatchesMutation = useClearAllCartBatches();
-  const deleteBatchMutation = useCancelActiveCartBatch();
+  const { orders, isLoading: isOrdersLoading } = useCartOrdersQuery();
+  const clearAllOrdersMutation = useClearAllCartOrders();
+  const deleteOrderMutation = useCancelActiveCartOrder();
 
   // Handlers
-  const handleDeleteBatch = (batchId: string) => {
-    deleteBatchMutation.mutate(batchId, {
+  const handleDeleteOrder = (orderId: string) => {
+    deleteOrderMutation.mutate(orderId, {
       onSuccess: () => {
-        if (selectedBatchId === batchId) {
-          onSelectBatch("");
+        if (selectedOrderId === orderId) {
+          onSelectOrder("");
         }
       },
     });
   };
 
   // Derived Values
-  const hasBatches = batches.length > 0;
+  const hasOrders = orders.length > 0;
 
   return (
     <Container.Body
@@ -116,20 +116,20 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
       <HeaderContainer pr={"xs"}>
         <Heading>{"Keranjang Pesanan"}</Heading>
 
-        {hasBatches && (
+        {hasOrders && (
           <ConfirmationTrigger
             modalKey={"clear-cart-confirmation"}
             title={"Kosongkan Keranjang?"}
             description={
-              "Semua daftar batch pesanan layer spasial di keranjang akan dihapus."
+              "Semua daftar pesanan layer spasial di keranjang akan dihapus."
             }
             confirmLabel={"Kosongkan keranjang"}
             colorPalette={"red"}
             onConfirm={() => {
-              const allBatchIds = batches.map((b) => b.batchId);
-              clearAllBatchesMutation.mutate(allBatchIds, {
+              const allOrderIds = orders.map((b) => b.orderId);
+              clearAllOrdersMutation.mutate(allOrderIds, {
                 onSuccess: () => {
-                  onSelectBatch("");
+                  onSelectOrder("");
                 },
               });
             }}
@@ -137,7 +137,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
             <Button
               colorPalette={"red"}
               size={"xs"}
-              loading={clearAllBatchesMutation.isPending}
+              loading={clearAllOrdersMutation.isPending}
             >
               <AppIcon icon={Trash2Icon} />
               {"Kosongkan keranjang"}
@@ -154,13 +154,13 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
         w={"full"}
         p={"md"}
       >
-        {isBatchesLoading && (
+        {isOrdersLoading && (
           <Skeleton flex={1} w={"full"} minH={"250px"} rounded={0} />
         )}
 
-        {!isBatchesLoading && (
+        {!isOrdersLoading && (
           <>
-            {!hasBatches && (
+            {!hasOrders && (
               <NoDataState
                 icon={ShoppingCartIcon}
                 title={"Keranjang Kosong"}
@@ -170,19 +170,19 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
               />
             )}
 
-            {hasBatches && (
+            {hasOrders && (
               <VStack gap={"sm"} align={"stretch"} w={"full"}>
-                {batches.map((batch, index) => (
-                  <MitraCartBatchItem
-                    key={batch.batchId}
-                    batch={batch}
+                {orders.map((order, index) => (
+                  <MitraCartOrderItem
+                    key={order.orderId}
+                    order={order}
                     index={index}
-                    isSelected={batch.batchId === selectedBatchId}
-                    onSelect={onSelectBatch}
-                    onDelete={handleDeleteBatch}
+                    isSelected={order.orderId === selectedOrderId}
+                    onSelect={onSelectOrder}
+                    onDelete={handleDeleteOrder}
                     isDeleting={
-                      deleteBatchMutation.isPending &&
-                      deleteBatchMutation.variables === batch.batchId
+                      deleteOrderMutation.isPending &&
+                      deleteOrderMutation.variables === order.orderId
                     }
                   />
                 ))}
@@ -194,14 +194,14 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      {/* Bottom Actions: Expired Batches Shortcut */}
+      {/* Bottom Actions: Expired Orders Shortcut */}
       <HStack p={"md"} align={"center"} justify={"center"} w={"full"}>
-        <MitraCartExpiredBatchesTrigger>
+        <MitraCartExpiredOrdersTrigger>
           <Button flex={1}>
             <AppIcon icon={HistoryIcon} />
-            {"Batch Kedaluwarsa"}
+            {"Pesanan Kedaluwarsa"}
           </Button>
-        </MitraCartExpiredBatchesTrigger>
+        </MitraCartExpiredOrdersTrigger>
       </HStack>
     </Container.Body>
   );
@@ -209,14 +209,14 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
 
 export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
   // Props
-  const { selectedBatchId, selectedBatchIndex } = props;
+  const { selectedOrderId, selectedOrderIndex } = props;
 
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Queries — detail of selected batch
-  const { batchDetail: selectedBatch, isLoading: isDetailLoading } =
-    useCartBatchDetailQuery(selectedBatchId || undefined);
+  // Queries — detail of selected order
+  const { orderDetail: selectedOrder, isLoading: isDetailLoading } =
+    useCartOrderDetailQuery(selectedOrderId || undefined);
 
   return (
     <Container.Body
@@ -232,8 +232,8 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
         <HStack align={"center"} gap={"sm"}>
           <Heading>{"Rincian Pesanan"}</Heading>
 
-          {selectedBatchIndex !== -1 && (
-            <Badge>{`Batch #${selectedBatchIndex + 1}`}</Badge>
+          {selectedOrderIndex !== -1 && (
+            <Badge>{`Pesanan #${selectedOrderIndex + 1}`}</Badge>
           )}
         </HStack>
       </HeaderContainer>
@@ -241,7 +241,7 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
       <Separator borderColor={"bg.canvas"} />
 
       <MitraCartBatchOrderSummary
-        activeBatch={selectedBatch}
+        activeOrder={selectedOrder}
         isLoading={isDetailLoading}
       />
     </Container.Body>

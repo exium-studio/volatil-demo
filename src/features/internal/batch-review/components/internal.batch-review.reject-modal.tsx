@@ -1,5 +1,3 @@
-// src/features/internal/batch-review/components/internal.batch-review.reject-modal.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
@@ -8,34 +6,34 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { useRejectBatch } from "@/features/internal/batch-review/hooks/use-batch-review";
+import { useRejectOrder } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type {
-  InternalBatchItem,
-  InternalBatchReviewRejectModalContentProps,
-} from "@/features/internal/batch-review/types/batch-review.type";
+  InternalOrderItem,
+  InternalOrderReviewRejectModalContentProps,
+} from "@/features/internal/batch-review/types/order-review.type";
 import { XCircleIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { P } from "@/design-system/components/typography/ui/p";
 import { back } from "@/shared/utils/client/navigation";
 
-export type InternalBatchReviewRejectTriggerProps = {
+export type InternalOrderReviewRejectTriggerProps = {
   modalKey?: string;
-  batch: InternalBatchItem;
+  order: InternalOrderItem;
   children?: ReactNode;
   onSuccessRedirect?: () => void;
 };
 
-export const InternalBatchReviewRejectTrigger = (
-  props: InternalBatchReviewRejectTriggerProps,
+export const InternalOrderReviewRejectTrigger = (
+  props: InternalOrderReviewRejectTriggerProps,
 ) => {
   // Props
   const {
     modalKey: customModalKey,
-    batch,
+    order,
     children,
     onSuccessRedirect,
   } = props;
-  const key = customModalKey || `reject-batch-${batch.batchId}`;
+  const key = customModalKey || `reject-order-${order.orderId}`;
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -52,8 +50,8 @@ export const InternalBatchReviewRejectTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalBatchReviewRejectModalContent
-        batch={batch}
+      <InternalOrderReviewRejectModalContent
+        order={order}
         isOpen={isOpen}
         onSuccessRedirect={onSuccessRedirect}
       />
@@ -61,24 +59,48 @@ export const InternalBatchReviewRejectTrigger = (
   );
 };
 
-const InternalBatchReviewRejectModalContent = (
-  props: InternalBatchReviewRejectModalContentProps,
+export type InternalBatchReviewRejectTriggerProps = {
+  modalKey?: string;
+  order?: InternalOrderItem;
+  batch?: InternalOrderItem;
+  children?: ReactNode;
+  onSuccessRedirect?: () => void;
+};
+
+export const InternalBatchReviewRejectTrigger = (
+  props: InternalBatchReviewRejectTriggerProps,
+) => {
+  const targetOrder = props.order ?? props.batch;
+  if (!targetOrder) return null;
+  return (
+    <InternalOrderReviewRejectTrigger
+      modalKey={props.modalKey}
+      order={targetOrder}
+      onSuccessRedirect={props.onSuccessRedirect}
+    >
+      {props.children}
+    </InternalOrderReviewRejectTrigger>
+  );
+};
+
+const InternalOrderReviewRejectModalContent = (
+  props: InternalOrderReviewRejectModalContentProps,
 ) => {
   // Props
-  const { batch, isOpen, onSuccessRedirect } = props;
+  const { order, isOpen, onSuccessRedirect } = props;
 
   // States
   const [reason, setReason] = useState("");
 
   // Mutations
-  const rejectMutation = useRejectBatch();
+  const rejectMutation = useRejectOrder();
 
   // Handlers
   const handleReject = () => {
     if (!reason.trim()) return;
     rejectMutation.mutate(
       {
-        batchId: batch.batchId,
+        orderId: order.orderId,
         reason: reason.trim(),
       },
       {
@@ -96,10 +118,10 @@ const InternalBatchReviewRejectModalContent = (
         <Modal.CloseButton />
 
         <VStack gap={"xs"}>
-          <Modal.Title>{"Tolak Permohonan Batch"}</Modal.Title>
+          <Modal.Title>{"Tolak Permohonan Pesanan"}</Modal.Title>
 
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
-            {`Batch ID: ${batch.batchId} (${batch.mitraName})`}
+            {`ID Pesanan: ${order.orderId} (${order.mitraName})`}
           </P>
         </VStack>
       </Modal.Header>
@@ -143,7 +165,7 @@ const InternalBatchReviewRejectModalContent = (
             onClick={handleReject}
           >
             <AppIcon icon={XCircleIcon} />
-            {"Tolak Batch"}
+            {"Tolak Pesanan"}
           </Button>
 
           <Button onClick={back}>{"Batal"}</Button>

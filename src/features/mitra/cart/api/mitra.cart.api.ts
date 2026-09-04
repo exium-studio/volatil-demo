@@ -86,7 +86,11 @@ export async function postAddSelectedToCartApi(
   featureIds: string[],
   signal?: AbortSignal,
 ): Promise<void> {
-  await apiClient.post("/api/mitra/cart/add-selected", { featureIds }, { signal });
+  await apiClient.post(
+    "/api/mitra/cart/add-selected",
+    { featureIds },
+    { signal },
+  );
 }
 
 /** Add ALL features matching the given WFS params to cart via WFS. */
@@ -140,18 +144,18 @@ export async function postCheckoutApi(
 }
 
 // -------------------------------------------------------------
-// Batch Interop Cart & Checkout API Endpoints (No /v1)
+// Order Cart & Checkout API Endpoints (No /v1)
 // -------------------------------------------------------------
 
 import type {
-  AddToCartBatchRequest,
-  AddToCartBatchResponse,
-  CartBatch,
-  CartBatchListResponse,
-  CheckoutBatchRequest,
-  CheckoutBatchResponse,
+  AddToCartOrderRequest,
+  AddToCartOrderResponse,
+  CartOrder,
+  CartOrderListResponse,
+  CheckoutOrderRequest,
+  CheckoutOrderResponse,
   OrderPaymentStatusResponse,
-} from "@/features/mitra/cart/types/mitra.cart.batch.type";
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 
 export async function fetchOrderPaymentStatusApi(
   orderId: string,
@@ -163,22 +167,22 @@ export async function fetchOrderPaymentStatusApi(
   );
 }
 
-export async function postCreateCartBatchApi(
-  payload: AddToCartBatchRequest,
+export async function postCreateCartOrderApi(
+  payload: AddToCartOrderRequest,
   signal?: AbortSignal,
-): Promise<ApiResponse<AddToCartBatchResponse>> {
-  return apiClient.post<ApiResponse<AddToCartBatchResponse>>(
+): Promise<ApiResponse<AddToCartOrderResponse>> {
+  return apiClient.post<ApiResponse<AddToCartOrderResponse>>(
     "/api/mitra/orders",
     payload,
     { signal },
   );
 }
 
-export async function fetchCartBatchesApi(
+export async function fetchCartOrdersApi(
   params?: { status?: string },
   signal?: AbortSignal,
-): Promise<ApiResponse<CartBatchListResponse>> {
-  return apiClient.get<ApiResponse<CartBatchListResponse>>(
+): Promise<ApiResponse<CartOrderListResponse>> {
+  return apiClient.get<ApiResponse<CartOrderListResponse>>(
     "/api/mitra/orders",
     {
       params,
@@ -187,10 +191,10 @@ export async function fetchCartBatchesApi(
   );
 }
 
-export async function fetchExpiredCartBatchesApi(
+export async function fetchExpiredCartOrdersApi(
   signal?: AbortSignal,
-): Promise<ApiResponse<CartBatchListResponse>> {
-  return apiClient.get<ApiResponse<CartBatchListResponse>>(
+): Promise<ApiResponse<CartOrderListResponse>> {
+  return apiClient.get<ApiResponse<CartOrderListResponse>>(
     "/api/mitra/orders",
     {
       params: { status: "expired" },
@@ -199,54 +203,63 @@ export async function fetchExpiredCartBatchesApi(
   );
 }
 
-export async function postReorderCartBatchApi(
+export async function postReorderCartOrderApi(
   orderId: string,
   signal?: AbortSignal,
-): Promise<ApiResponse<AddToCartBatchResponse>> {
-  return apiClient.post<ApiResponse<AddToCartBatchResponse>>(
+): Promise<ApiResponse<AddToCartOrderResponse>> {
+  return apiClient.post<ApiResponse<AddToCartOrderResponse>>(
     `/api/mitra/orders/${orderId}/reorder`,
     {},
     { signal },
   );
 }
 
-export async function fetchCartBatchDetailApi(
+export async function fetchCartOrderDetailApi(
   orderId: string,
   signal?: AbortSignal,
-): Promise<ApiResponse<CartBatch | null>> {
-  return apiClient.get<ApiResponse<CartBatch | null>>(
+): Promise<ApiResponse<CartOrder | null>> {
+  return apiClient.get<ApiResponse<CartOrder | null>>(
     `/api/mitra/orders/${orderId}`,
     { signal },
   );
 }
 
-export async function fetchActiveCartBatchApi(
+export async function fetchActiveCartOrderApi(
   signal?: AbortSignal,
-): Promise<ApiResponse<CartBatch | null>> {
-  return apiClient.get<ApiResponse<CartBatch | null>>(
+): Promise<ApiResponse<CartOrder | null>> {
+  return apiClient.get<ApiResponse<CartOrder | null>>(
     "/api/mitra/orders/active",
     { signal },
   );
 }
 
-export async function deleteCartBatchApi(
+export async function deleteCartOrderApi(
   orderId: string,
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> {
-  return apiClient.delete<ApiResponse<void>>(
-    `/api/mitra/orders/${orderId}`,
-    { signal },
-  );
+  return apiClient.delete<ApiResponse<void>>(`/api/mitra/orders/${orderId}`, {
+    signal,
+  });
 }
 
-export async function postCheckoutBatchApi(
+export async function postCheckoutOrderApi(
   orderId: string,
-  payload?: CheckoutBatchRequest,
+  payload?: CheckoutOrderRequest,
   signal?: AbortSignal,
-): Promise<ApiResponse<CheckoutBatchResponse>> {
-  return apiClient.post<ApiResponse<CheckoutBatchResponse>>(
+): Promise<ApiResponse<CheckoutOrderResponse>> {
+  return apiClient.post<ApiResponse<CheckoutOrderResponse>>(
     `/api/mitra/orders/${orderId}/checkout`,
     payload ?? {},
     { signal },
   );
 }
+
+// Backwards-compatible aliases
+export const postCreateCartBatchApi = postCreateCartOrderApi;
+export const fetchCartBatchesApi = fetchCartOrdersApi;
+export const fetchExpiredCartBatchesApi = fetchExpiredCartOrdersApi;
+export const postReorderCartBatchApi = postReorderCartOrderApi;
+export const fetchCartBatchDetailApi = fetchCartOrderDetailApi;
+export const fetchActiveCartBatchApi = fetchActiveCartOrderApi;
+export const deleteCartBatchApi = deleteCartOrderApi;
+export const postCheckoutBatchApi = postCheckoutOrderApi;

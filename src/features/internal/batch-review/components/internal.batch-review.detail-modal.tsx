@@ -1,5 +1,3 @@
-// src/features/internal/batch-review/components/internal.batch-review.detail-modal.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -9,27 +7,27 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
-import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
+import { InternalOrderReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
 import { useProvisionOrder } from "@/features/internal/batch-review/hooks/use-batch-review";
-import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
+import type { InternalOrderItem } from "@/features/internal/batch-review/types/order-review.type";
 import { formatUtcDateTime, getPreferredUserTimezone } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { CheckCircle2Icon, MapPlusIcon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
-export type InternalBatchReviewDetailTriggerProps = {
+export type InternalOrderReviewDetailTriggerProps = {
   modalKey?: string;
-  batch: InternalBatchItem;
+  order: InternalOrderItem;
   children?: ReactNode;
 };
 
-export const InternalBatchReviewDetailTrigger = (
-  props: InternalBatchReviewDetailTriggerProps,
+export const InternalOrderReviewDetailTrigger = (
+  props: InternalOrderReviewDetailTriggerProps,
 ) => {
-  const { modalKey: customModalKey, batch, children } = props;
-  const key = customModalKey || `detail-batch-${batch.batchId}`;
+  const { modalKey: customModalKey, order, children } = props;
+  const key = customModalKey || `detail-order-${order.orderId}`;
 
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: key,
@@ -45,30 +43,52 @@ export const InternalBatchReviewDetailTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalBatchReviewDetailModalContent
-        batch={batch}
+      <InternalOrderReviewDetailModalContent
+        order={order}
         close={close}
       />
     </Modal.Root>
   );
 };
 
-type InternalBatchReviewDetailModalContentProps = {
-  batch: InternalBatchItem;
+export type InternalBatchReviewDetailTriggerProps = {
+  modalKey?: string;
+  order?: InternalOrderItem;
+  batch?: InternalOrderItem;
+  children?: ReactNode;
+};
+
+export const InternalBatchReviewDetailTrigger = (
+  props: InternalBatchReviewDetailTriggerProps,
+) => {
+  const targetOrder = props.order ?? props.batch;
+  if (!targetOrder) return null;
+  return (
+    <InternalOrderReviewDetailTrigger
+      modalKey={props.modalKey}
+      order={targetOrder}
+    >
+      {props.children}
+    </InternalOrderReviewDetailTrigger>
+  );
+};
+
+type InternalOrderReviewDetailModalContentProps = {
+  order: InternalOrderItem;
   close: () => void;
 };
 
-const InternalBatchReviewDetailModalContent = (
-  props: InternalBatchReviewDetailModalContentProps,
+const InternalOrderReviewDetailModalContent = (
+  props: InternalOrderReviewDetailModalContentProps,
 ) => {
-  const { batch, close } = props;
+  const { order, close } = props;
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Mutations
   const provisionMutation = useProvisionOrder();
 
-  const isPaid = batch.status === "paid";
-  const isPending = batch.status === "pending_review";
+  const isPaid = order.status === "paid";
+  const isPending = order.status === "pending_review";
 
   return (
     <Modal.Content>
@@ -76,9 +96,9 @@ const InternalBatchReviewDetailModalContent = (
         <Modal.CloseButton />
 
         <VStack gap={"2xs"}>
-          <Modal.Title>{"Detail Permohonan Batch Interop"}</Modal.Title>
+          <Modal.Title>{"Detail Permohonan Pesanan"}</Modal.Title>
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
-            {`ID Batch: ${batch.batchId}`}
+            {`ID Pesanan: ${order.orderId}`}
           </P>
         </VStack>
       </Modal.Header>
@@ -97,20 +117,20 @@ const InternalBatchReviewDetailModalContent = (
           >
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>{"Pemohon:"}</P>
-              <P fontWeight={"semibold"} fontSize={"xs"}>{batch.mitraName}</P>
+              <P fontWeight={"semibold"} fontSize={"xs"}>{order.mitraName}</P>
             </HStack>
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>{"Metode Seleksi:"}</P>
-              <SelectionTypeBadge size={"xs"}>{batch.selectionType}</SelectionTypeBadge>
+              <SelectionTypeBadge size={"xs"}>{order.selectionType}</SelectionTypeBadge>
             </HStack>
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>{"Status:"}</P>
-              <BatchStatusBadge size={"xs"}>{batch.status}</BatchStatusBadge>
+              <OrderStatusBadge size={"xs"}>{order.status}</OrderStatusBadge>
             </HStack>
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>{"Diajukan Pada:"}</P>
               <P fontSize={"xs"}>
-                {formatUtcDateTime(batch.createdAt, preferredTimezone)}
+                {formatUtcDateTime(order.createdAt, preferredTimezone)}
               </P>
             </HStack>
           </VStack>
@@ -118,10 +138,10 @@ const InternalBatchReviewDetailModalContent = (
           {/* Layer List */}
           <VStack align={"stretch"} gap={"xs"}>
             <P fontWeight={"semibold"} fontSize={"sm"}>
-              {`Daftar Layer Spasial (${batch.items.length})`}
+              {`Daftar Layer Spasial (${order.items.length})`}
             </P>
 
-            {(batch.items ?? []).map((item, idx) => {
+            {(order.items ?? []).map((item, idx) => {
               const previewUrl =
                 item.previewWmsUrl ||
                 item.wmsUrl ||
@@ -188,7 +208,7 @@ const InternalBatchReviewDetailModalContent = (
           <HStack justify={"space-between"} px={"xs"}>
             <P fontWeight={"semibold"}>{"Total Estimasi PNBP"}</P>
             <P fontWeight={"bold"} fontSize={"md"} color={"green.500"}>
-              {formatCurrency(batch.totalPrice ?? 0)}
+              {formatCurrency(order.totalPrice ?? 0)}
             </P>
           </HStack>
         </VStack>
@@ -208,7 +228,7 @@ const InternalBatchReviewDetailModalContent = (
               onClick={() => {
                 provisionMutation.mutate(
                   {
-                    batchId: batch.batchId,
+                    orderId: order.orderId,
                   },
                   {
                     onSuccess: () => {
@@ -224,16 +244,16 @@ const InternalBatchReviewDetailModalContent = (
           )}
 
           {isPending && (
-            <InternalBatchReviewApproveTrigger
-              batch={batch}
-              modalKey={`approve-from-detail-${batch.batchId}`}
+            <InternalOrderReviewApproveTrigger
+              order={order}
+              modalKey={`approve-from-detail-${order.orderId}`}
               onSuccessRedirect={close}
             >
               <Button colorPalette={"green"}>
                 <AppIcon icon={CheckCircle2Icon} />
                 {"Setujui Permohonan"}
               </Button>
-            </InternalBatchReviewApproveTrigger>
+            </InternalOrderReviewApproveTrigger>
           )}
         </HStack>
       </Modal.Footer>

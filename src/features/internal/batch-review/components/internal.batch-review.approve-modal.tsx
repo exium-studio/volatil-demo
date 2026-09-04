@@ -1,5 +1,3 @@
-// src/features/internal/batch-review/components/internal.batch-review.approve-modal.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
@@ -10,29 +8,29 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useApproveBatch } from "@/features/internal/batch-review/hooks/use-batch-review";
-import type { InternalBatchItem } from "@/features/internal/batch-review/types/batch-review.type";
+import { useApproveOrder } from "@/features/internal/batch-review/hooks/use-batch-review";
+import type { InternalOrderItem } from "@/features/internal/batch-review/types/order-review.type";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
-export type InternalBatchReviewApproveTriggerProps = {
+export type InternalOrderReviewApproveTriggerProps = {
   modalKey?: string;
-  batch: InternalBatchItem;
+  order: InternalOrderItem;
   children?: ReactNode;
   onSuccessRedirect?: () => void;
 };
 
-export const InternalBatchReviewApproveTrigger = (
-  props: InternalBatchReviewApproveTriggerProps,
+export const InternalOrderReviewApproveTrigger = (
+  props: InternalOrderReviewApproveTriggerProps,
 ) => {
   // Props
   const {
     modalKey: customModalKey,
-    batch,
+    order,
     children,
     onSuccessRedirect,
   } = props;
-  const key = customModalKey || `approve-modal-${batch.batchId}`;
+  const key = customModalKey || `approve-modal-${order.orderId}`;
 
   // Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -49,8 +47,8 @@ export const InternalBatchReviewApproveTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalBatchReviewApproveModalContent
-        batch={batch}
+      <InternalOrderReviewApproveModalContent
+        order={order}
         isOpen={isOpen}
         onSuccessRedirect={onSuccessRedirect}
         close={close}
@@ -59,21 +57,45 @@ export const InternalBatchReviewApproveTrigger = (
   );
 };
 
-type InternalBatchReviewApproveModalContentProps = {
-  batch: InternalBatchItem;
+export type InternalBatchReviewApproveTriggerProps = {
+  modalKey?: string;
+  order?: InternalOrderItem;
+  batch?: InternalOrderItem;
+  children?: ReactNode;
+  onSuccessRedirect?: () => void;
+};
+
+export const InternalBatchReviewApproveTrigger = (
+  props: InternalBatchReviewApproveTriggerProps,
+) => {
+  const targetOrder = props.order ?? props.batch;
+  if (!targetOrder) return null;
+  return (
+    <InternalOrderReviewApproveTrigger
+      modalKey={props.modalKey}
+      order={targetOrder}
+      onSuccessRedirect={props.onSuccessRedirect}
+    >
+      {props.children}
+    </InternalOrderReviewApproveTrigger>
+  );
+};
+
+type InternalOrderReviewApproveModalContentProps = {
+  order: InternalOrderItem;
   isOpen: boolean;
   onSuccessRedirect?: () => void;
   close: () => void;
 };
 
-const InternalBatchReviewApproveModalContent = (
-  props: InternalBatchReviewApproveModalContentProps,
+const InternalOrderReviewApproveModalContent = (
+  props: InternalOrderReviewApproveModalContentProps,
 ) => {
   // Props
-  const { batch, onSuccessRedirect, close } = props;
+  const { order, onSuccessRedirect, close } = props;
 
   // Mutations
-  const approveMutation = useApproveBatch();
+  const approveMutation = useApproveOrder();
 
   // States: Map of itemId -> { externalWmsUrl, externalWfsUrl }
   const [urls, setUrls] = useState<
@@ -83,7 +105,7 @@ const InternalBatchReviewApproveModalContent = (
       string,
       { externalWmsUrl: string; externalWfsUrl: string }
     > = {};
-    for (const item of batch.items ?? []) {
+    for (const item of order.items ?? []) {
       initial[item.id] = {
         externalWmsUrl: item.externalWmsUrl ?? "",
         externalWfsUrl: item.externalWfsUrl ?? "",
@@ -119,7 +141,7 @@ const InternalBatchReviewApproveModalContent = (
   const handleApprove = () => {
     // Validation: WMS URL is required for every layer
     const newErrors: Record<string, string> = {};
-    for (const item of batch.items ?? []) {
+    for (const item of order.items ?? []) {
       const itemUrls = urls[item.id];
       if (!itemUrls?.externalWmsUrl?.trim()) {
         newErrors[item.id] = "URL WMS dari INTEROP wajib diisi";
@@ -131,7 +153,7 @@ const InternalBatchReviewApproveModalContent = (
       return;
     }
 
-    const payloadItems = (batch.items ?? []).map((item) => ({
+    const payloadItems = (order.items ?? []).map((item) => ({
       id: item.id,
       externalWmsUrl: urls[item.id]?.externalWmsUrl.trim() ?? "",
       externalWfsUrl: urls[item.id]?.externalWfsUrl.trim() || undefined,
@@ -139,7 +161,7 @@ const InternalBatchReviewApproveModalContent = (
 
     approveMutation.mutate(
       {
-        batchId: batch.batchId,
+        orderId: order.orderId,
         items: payloadItems,
       },
       {
@@ -170,7 +192,7 @@ const InternalBatchReviewApproveModalContent = (
           </Alert.Root>
 
           <VStack align={"stretch"} gap={"sm"}>
-            {(batch.items ?? []).map((item, index) => {
+            {(order.items ?? []).map((item, index) => {
               const previewUrl =
                 item.previewWmsUrl ||
                 item.wmsUrl ||

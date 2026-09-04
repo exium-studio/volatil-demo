@@ -1,23 +1,23 @@
 // src/features/internal/batch-review/api/batch-review.api.ts
 
 import type {
-  ApproveBatchPayload,
-  InternalBatchItem,
-  InternalBatchListQueryParams,
-  InternalBatchListResponse,
+  ApproveOrderPayload,
+  InternalOrderItem,
+  InternalOrderListQueryParams,
+  InternalOrderListResponse,
   ProvisionOrderPayload,
   ProvisionOrderResponse,
-  RejectBatchPayload,
-} from "@/features/internal/batch-review/types/batch-review.type";
-import type { CartBatchItem } from "@/features/mitra/cart/types/mitra.cart.batch.type";
-import { DUMMY_INTERNAL_BATCHES } from "@/shared/constants/dummy-data/dummy-internal-batch-review";
+  RejectOrderPayload,
+} from "@/features/internal/batch-review/types/order-review.type";
+import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { DUMMY_INTERNAL_ORDERS } from "@/shared/constants/dummy-data/dummy-internal-order-review";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const normalizeCartBatchItem = (raw: any): CartBatchItem => {
+const normalizeCartOrderItem = (raw: any): CartOrderItem => {
   if (!raw || typeof raw !== "object") return raw;
   return {
     id: raw.id ?? raw._id ?? "",
@@ -76,18 +76,19 @@ const normalizeCartBatchItem = (raw: any): CartBatchItem => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const normalizeInternalBatchItem = (raw: any): InternalBatchItem => {
+const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
   if (!raw || typeof raw !== "object") return raw;
   const rawItems = Array.isArray(raw.items) ? raw.items : [];
-  const items: CartBatchItem[] = rawItems.map(normalizeCartBatchItem);
+  const items: CartOrderItem[] = rawItems.map(normalizeCartOrderItem);
   const calculatedTotalPrice = items.reduce(
-    (acc: number, it: CartBatchItem) => acc + (it.subtotalPrice || 0),
+    (acc: number, it: CartOrderItem) => acc + (it.subtotalPrice || 0),
     0,
   );
+  const idVal = raw.orderId ?? raw.order_id ?? raw.batchId ?? raw.batch_id ?? raw.id ?? "";
 
   return {
-    batchId: raw.batchId ?? raw.batch_id ?? raw.id ?? "",
-    orderId: raw.orderId ?? raw.order_id ?? undefined,
+    orderId: idVal,
+    batchId: idVal,
     mitraId: String(raw.mitraId ?? raw.mitra_id ?? ""),
     mitraName:
       raw.mitraName ?? raw.mitra_name ?? raw.userName ?? raw.name ?? "Mitra",
@@ -103,10 +104,10 @@ const normalizeInternalBatchItem = (raw: any): InternalBatchItem => {
   };
 };
 
-export const fetchInternalBatchesApi = async (
-  params?: InternalBatchListQueryParams,
+export const fetchInternalOrdersApi = async (
+  params?: InternalOrderListQueryParams,
   signal?: AbortSignal,
-): Promise<InternalBatchListResponse> => {
+): Promise<InternalOrderListResponse> => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response: any = await apiClient.get("/api/internal/orders", {
@@ -130,52 +131,52 @@ export const fetchInternalBatchesApi = async (
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let rawBatches: any[] = [];
+    let rawOrders: any[] = [];
     let totalItems = 0;
 
     if (Array.isArray(rawData)) {
-      rawBatches = rawData;
+      rawOrders = rawData;
       totalItems = rawData.length;
     } else if (rawData && typeof rawData === "object") {
-      if (Array.isArray(rawData.batches)) {
-        rawBatches = rawData.batches;
+      if (Array.isArray(rawData.orders)) {
+        rawOrders = rawData.orders;
         totalItems = Number(
-          rawData.total ?? rawData.totalItems ?? rawBatches.length,
+          rawData.total ?? rawData.totalItems ?? rawOrders.length,
         );
       } else if (Array.isArray(rawData.items)) {
-        rawBatches = rawData.items;
+        rawOrders = rawData.items;
         totalItems = Number(
-          rawData.total ?? rawData.totalItems ?? rawBatches.length,
+          rawData.total ?? rawData.totalItems ?? rawOrders.length,
         );
-      } else if (Array.isArray(rawData.orders)) {
-        rawBatches = rawData.orders;
+      } else if (Array.isArray(rawData.batches)) {
+        rawOrders = rawData.batches;
         totalItems = Number(
-          rawData.total ?? rawData.totalItems ?? rawBatches.length,
+          rawData.total ?? rawData.totalItems ?? rawOrders.length,
         );
       } else if (Array.isArray(rawData.data)) {
-        rawBatches = rawData.data;
+        rawOrders = rawData.data;
         totalItems = Number(
-          rawData.total ?? rawData.totalItems ?? rawBatches.length,
+          rawData.total ?? rawData.totalItems ?? rawOrders.length,
         );
       }
-    } else if (response && Array.isArray(response.batches)) {
-      rawBatches = response.batches;
-      totalItems = Number(response.total ?? rawBatches.length);
     } else if (response && Array.isArray(response.orders)) {
-      rawBatches = response.orders;
-      totalItems = Number(response.total ?? rawBatches.length);
+      rawOrders = response.orders;
+      totalItems = Number(response.total ?? rawOrders.length);
     } else if (response && Array.isArray(response.items)) {
-      rawBatches = response.items;
-      totalItems = Number(response.total ?? rawBatches.length);
+      rawOrders = response.items;
+      totalItems = Number(response.total ?? rawOrders.length);
+    } else if (response && Array.isArray(response.batches)) {
+      rawOrders = response.batches;
+      totalItems = Number(response.total ?? rawOrders.length);
     }
 
     if (
-      rawBatches.length > 0 ||
+      rawOrders.length > 0 ||
       (rawData &&
         typeof rawData === "object" &&
-        ("batches" in rawData || "orders" in rawData || "items" in rawData))
+        ("orders" in rawData || "items" in rawData || "batches" in rawData))
     ) {
-      const items = rawBatches.map(normalizeInternalBatchItem);
+      const items = rawOrders.map(normalizeInternalOrderItem);
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
 
@@ -190,7 +191,7 @@ export const fetchInternalBatchesApi = async (
     }
 
     if (isDummyDataEnabled()) {
-      return getDummyBatchList(params);
+      return getDummyOrderList(params);
     }
 
     return {
@@ -199,20 +200,20 @@ export const fetchInternalBatchesApi = async (
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return getDummyBatchList(params);
+      return getDummyOrderList(params);
     }
     throw error;
   }
 };
 
-export const fetchInternalBatchDetailApi = async (
-  batchId: string,
+export const fetchInternalOrderDetailApi = async (
+  orderId: string,
   signal?: AbortSignal,
-): Promise<InternalBatchItem | null> => {
+): Promise<InternalOrderItem | null> => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response: any = await apiClient.get(
-      `/api/internal/orders/${batchId}`,
+      `/api/internal/orders/${orderId}`,
       { signal },
     );
 
@@ -226,48 +227,49 @@ export const fetchInternalBatchDetailApi = async (
 
     if (
       rawData &&
-      (rawData.batchId || rawData.batch_id || rawData.orderId || rawData.id)
+      (rawData.orderId || rawData.order_id || rawData.batchId || rawData.batch_id || rawData.id)
     ) {
-      return normalizeInternalBatchItem(rawData);
+      return normalizeInternalOrderItem(rawData);
     }
 
     if (isDummyDataEnabled()) {
-      return DUMMY_INTERNAL_BATCHES.find((b) => b.batchId === batchId) ?? null;
+      return DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId || b.batchId === orderId) ?? null;
     }
 
     return null;
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return DUMMY_INTERNAL_BATCHES.find((b) => b.batchId === batchId) ?? null;
+      return DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId || b.batchId === orderId) ?? null;
     }
     throw error;
   }
 };
 
 export const provisionOrderApi = async (
-  payload: ProvisionOrderPayload,
+  payload: ProvisionOrderPayload & { batchId?: string },
   signal?: AbortSignal,
 ): Promise<ApiResponse<ProvisionOrderResponse>> => {
+  const orderId = payload.orderId ?? payload.batchId ?? "";
   try {
     return await apiClient.post<ApiResponse<ProvisionOrderResponse>>(
-      `/api/mitra/orders/${payload.batchId}/provision`,
+      `/api/mitra/orders/${orderId}/provision`,
       {},
       { signal },
     );
   } catch (error) {
     if (isDummyDataEnabled()) {
-      const targetBatch = DUMMY_INTERNAL_BATCHES.find(
-        (b) => b.batchId === payload.batchId,
+      const targetOrder = DUMMY_INTERNAL_ORDERS.find(
+        (b) => b.orderId === orderId || b.batchId === orderId,
       );
-      if (targetBatch) {
-        targetBatch.status = "pending_review";
+      if (targetOrder) {
+        targetOrder.status = "pending_review";
       }
       return {
         success: true,
         data: {
-          orderId: payload.batchId,
+          orderId,
           transactionStatus: "processing",
-          batchStatus: "pending_review",
+          orderStatus: "pending_review",
         },
         message: "Proses provisioning layer AOI ke GeoServer berhasil dimulai.",
         timestamp: new Date().toISOString(),
@@ -277,32 +279,34 @@ export const provisionOrderApi = async (
   }
 };
 
-export const approveBatchApi = async (
-  payload: ApproveBatchPayload,
+export const approveOrderApi = async (
+  payload: ApproveOrderPayload & { batchId?: string },
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
+  const orderId = payload.orderId ?? payload.batchId ?? "";
   return apiClient.put<ApiResponse<void>>(
-    `/api/internal/orders/${payload.batchId}/approve`,
+    `/api/internal/orders/${orderId}/approve`,
     payload.items ? { items: payload.items } : {},
     { signal },
   );
 };
 
-export const rejectBatchApi = async (
-  payload: RejectBatchPayload,
+export const rejectOrderApi = async (
+  payload: RejectOrderPayload & { batchId?: string },
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
+  const orderId = payload.orderId ?? payload.batchId ?? "";
   return apiClient.put<ApiResponse<void>>(
-    `/api/internal/orders/${payload.batchId}/reject`,
+    `/api/internal/orders/${orderId}/reject`,
     { reason: payload.reason },
     { signal },
   );
 };
 
-const getDummyBatchList = (
-  params?: InternalBatchListQueryParams,
-): InternalBatchListResponse => {
-  let filtered = [...DUMMY_INTERNAL_BATCHES];
+const getDummyOrderList = (
+  params?: InternalOrderListQueryParams,
+): InternalOrderListResponse => {
+  let filtered = [...DUMMY_INTERNAL_ORDERS];
   if (params?.status && params.status !== "all") {
     filtered = filtered.filter((b) => b.status === params.status);
   } else {
@@ -315,7 +319,7 @@ const getDummyBatchList = (
     const q = params.search.toLowerCase();
     filtered = filtered.filter(
       (b) =>
-        b.batchId.toLowerCase().includes(q) ||
+        b.orderId.toLowerCase().includes(q) ||
         b.mitraName.toLowerCase().includes(q) ||
         b.items.some((it) => it.sourceLayerTitle.toLowerCase().includes(q)),
     );
@@ -331,3 +335,9 @@ const getDummyBatchList = (
     pagination: createPaginationMeta(page, pageSize, filtered.length),
   };
 };
+
+// Aliases
+export const fetchInternalBatchesApi = fetchInternalOrdersApi;
+export const fetchInternalBatchDetailApi = fetchInternalOrderDetailApi;
+export const approveBatchApi = approveOrderApi;
+export const rejectBatchApi = rejectOrderApi;

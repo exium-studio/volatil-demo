@@ -18,17 +18,17 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { InternalBatchReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
+import { InternalOrderReviewApproveTrigger } from "@/features/internal/batch-review/components/internal.batch-review.approve-modal";
 import {
-  useInternalBatchesQuery,
+  useInternalOrdersQuery,
   useProvisionOrder,
 } from "@/features/internal/batch-review/hooks/use-batch-review";
 import type {
-  InternalBatchItem,
-  InternalBatchListQueryParams,
-} from "@/features/internal/batch-review/types/batch-review.type";
-import type { CartBatchStatus } from "@/features/mitra/cart/types/mitra.cart.batch.type";
-import { BatchStatusBadge } from "@/features/shared/components/batch-status.badge";
+  InternalOrderItem,
+  InternalOrderListQueryParams,
+} from "@/features/internal/batch-review/types/order-review.type";
+import type { CartOrderStatus } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -40,13 +40,13 @@ import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircle2Icon,
-  InboxIcon,
+  CheckCircleIcon,
   LayersIcon,
   MapPlusIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
-const BATCH_STATUS_OPTIONS = [
+const ORDER_STATUS_OPTIONS = [
   { value: "all", label: "Semua Status (Paid & Review)" },
   { value: "paid", label: "Terbayar (Perlu Create WMS)" },
   { value: "pending_review", label: "Menunggu Review (WMS Siap)" },
@@ -60,7 +60,7 @@ export const InternalBatchReviewDataView = () => {
   const [_isPending, startTransition] = useTransition();
 
   // States — Centralized query/action parameters
-  const [params, setParams] = useState<InternalBatchListQueryParams>({
+  const [params, setParams] = useState<InternalOrderListQueryParams>({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
@@ -73,11 +73,11 @@ export const InternalBatchReviewDataView = () => {
     pagination,
     isLoading,
     isFetching,
-  } = useInternalBatchesQuery({
+  } = useInternalOrdersQuery({
     page: params.page,
     pageSize: params.pageSize,
     search: params.search || undefined,
-    status: params.status as CartBatchStatus | "all",
+    status: params.status as CartOrderStatus | "all",
   });
 
   // Mutations
@@ -94,7 +94,7 @@ export const InternalBatchReviewDataView = () => {
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "Pemohon & ID Batch", sortable: true },
+      { th: "Pemohon & ID Pesanan", sortable: true },
       { th: "Metode", sortable: true },
       { th: "Status", sortable: true },
       { th: "WMS URL (Volatil)", sortable: false },
@@ -103,8 +103,8 @@ export const InternalBatchReviewDataView = () => {
       { th: "Waktu Pengajuan", sortable: true },
     ];
 
-    const items = rawItems.map((batch) => {
-      const firstItem = batch.items?.[0];
+    const items = rawItems.map((order) => {
+      const firstItem = order.items?.[0];
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
       const rawWmsUrl =
         firstItem?.previewWmsUrl ||
@@ -119,33 +119,33 @@ export const InternalBatchReviewDataView = () => {
         : "";
 
       return {
-        id: batch.batchId,
-        data: batch,
+        id: order.orderId,
+        data: order,
         columns: [
           {
-            value: batch.batchId,
+            value: order.orderId,
             td: (
               <VStack align={"start"} gap={0} w={"200px"}>
-                <ClampedP fontWeight={"medium"}>{batch.mitraName}</ClampedP>
+                <ClampedP fontWeight={"medium"}>{order.mitraName}</ClampedP>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {batch.batchId}
+                  {order.orderId}
                 </P>
               </VStack>
             ),
             align: "start" as const,
           },
           {
-            value: batch.selectionType,
+            value: order.selectionType,
             td: (
               <SelectionTypeBadge size={"xs"}>
-                {batch.selectionType}
+                {order.selectionType}
               </SelectionTypeBadge>
             ),
             align: "start" as const,
           },
           {
-            value: batch.status,
-            td: <BatchStatusBadge showIcon>{batch.status}</BatchStatusBadge>,
+            value: order.status,
+            td: <OrderStatusBadge showIcon>{order.status}</OrderStatusBadge>,
           },
           {
             value: previewWmsUrl,
@@ -175,26 +175,26 @@ export const InternalBatchReviewDataView = () => {
             align: "start" as const,
           },
           {
-            value: batch.items?.length ?? 0,
+            value: order.items?.length ?? 0,
             td: (
-              <P textAlign={"center"}>{`${batch.items?.length ?? 0} Layer`}</P>
+              <P textAlign={"center"}>{`${order.items?.length ?? 0} Layer`}</P>
             ),
             align: "center" as const,
           },
           {
-            value: batch.totalPrice ?? 0,
+            value: order.totalPrice ?? 0,
             td: (
               <P fontWeight={"semibold"} color={"green.600"}>
-                {formatCurrency(batch.totalPrice ?? 0)}
+                {formatCurrency(order.totalPrice ?? 0)}
               </P>
             ),
             align: "end" as const,
           },
           {
-            value: batch.createdAt,
+            value: order.createdAt,
             td: (
               <P fontSize={"sm"} color={"fg.muted"} whiteSpace={"nowrap"}>
-                {formatUtcDateTime(batch.createdAt, preferredTimezone)}
+                {formatUtcDateTime(order.createdAt, preferredTimezone)}
               </P>
             ),
             align: "start" as const,
@@ -203,41 +203,41 @@ export const InternalBatchReviewDataView = () => {
       };
     });
 
-    const itemActions: DataViewItemActionsGenerator<InternalBatchItem>[] = [
+    const itemActions: DataViewItemActionsGenerator<InternalOrderItem>[] = [
       {
         key: "provision-wms",
         label: "Create Service WMS",
         icon: MapPlusIcon,
-        hidden: (batch: InternalBatchItem) => batch.status !== "paid",
-        onClick: (batch: InternalBatchItem) => {
+        hidden: (order: InternalOrderItem) => order.status !== "paid",
+        onClick: (order: InternalOrderItem) => {
           provisionMutation.mutate({
-            batchId: batch.batchId,
+            orderId: order.orderId,
           });
         },
       },
       {
-        key: "open-detail-batch",
+        key: "open-detail-order",
         label: "Buka detail IGT",
         icon: LayersIcon,
-        hidden: (batch: InternalBatchItem) => batch.status !== "pending_review",
-        onClick: (batch: InternalBatchItem) => {
+        hidden: (order: InternalOrderItem) => order.status !== "pending_review",
+        onClick: (order: InternalOrderItem) => {
           void navigate({
             to: "/internal/batch-review/$batchId",
-            params: { batchId: batch.batchId },
+            params: { batchId: order.orderId },
           });
         },
       },
       {
-        key: "approve-batch",
+        key: "approve-order",
         label: "Setujui Permohonan",
         icon: CheckCircle2Icon,
         colorPalette: "green",
-        hidden: (batch: InternalBatchItem) => batch.status !== "pending_review",
+        hidden: (order: InternalOrderItem) => order.status !== "pending_review",
         modal: {
-          triggerComponent: (batch: InternalBatchItem) => (
-            <InternalBatchReviewApproveTrigger
-              modalKey={`approve-batch-${batch.batchId}`}
-              batch={batch}
+          triggerComponent: (order: InternalOrderItem) => (
+            <InternalOrderReviewApproveTrigger
+              modalKey={`approve-order-${order.orderId}`}
+              order={order}
             />
           ),
         },
@@ -268,7 +268,7 @@ export const InternalBatchReviewDataView = () => {
                 }}
               >
                 {
-                  "Verifikasi dan berikan validasi persetujuan terhadap permohonan data spasial yang telah dibayar dan disiapkan oleh Interop Engine."
+                  "Verifikasi dan berikan validasi persetujuan terhadap pesanan permohonan data spasial yang telah dibayar dan disiapkan oleh sistem."
                 }
               </InfoTip>
             </HStack>
@@ -293,20 +293,20 @@ export const InternalBatchReviewDataView = () => {
                 setParams((prev) => ({ ...prev, search: val, page: 1 }));
               })
             }
-            placeholder={"Cari ID batch, nama pemohon..."}
+            placeholder={"Cari ID pesanan, nama pemohon..."}
             maxW={"280px"}
           />
 
           <StatusFilterSelect
-            modalKey={"batch-review-status-filter"}
-            options={BATCH_STATUS_OPTIONS}
+            modalKey={"order-review-status-filter"}
+            options={ORDER_STATUS_OPTIONS}
             placeholder={"Semua Status"}
             value={params.status}
             onValueChange={(val) =>
               startTransition(() => {
                 setParams((prev) => ({
                   ...prev,
-                  status: val as CartBatchStatus | "all",
+                  status: val as CartOrderStatus | "all",
                   page: 1,
                 }));
               })
@@ -328,10 +328,10 @@ export const InternalBatchReviewDataView = () => {
                     <NoResultState query={searchQuery} />
                   ) : (
                     <NoDataState
-                      icon={InboxIcon}
-                      title={"Tidak Ada Permohonan Batch"}
+                      icon={CheckCircleIcon}
+                      title={"Tidak Ada Permohonan Pesanan"}
                       description={
-                        "Saat ini belum ada batch permohonan data yang perlu direview."
+                        "Saat ini belum ada pesanan permohonan data yang perlu direview."
                       }
                     />
                   )}
@@ -342,7 +342,7 @@ export const InternalBatchReviewDataView = () => {
                 <Box w={"full"} position={"relative"}>
                   <TopBarLoader isFetching={isFetching} />
 
-                  <DataView.Table.Root<InternalBatchItem>
+                  <DataView.Table.Root<InternalOrderItem>
                     headers={dataList.headers}
                     items={dataList.items}
                     itemActions={dataList.itemActions}
