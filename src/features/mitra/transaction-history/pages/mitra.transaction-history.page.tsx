@@ -10,12 +10,10 @@ import { TransactionHistoryDataView } from "@/features/mitra/transaction-history
 export const MitraTransactionHistoryPage = () => {
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
-      <PanelContentContainer>
+      <PanelContentContainer overflowY={"auto"}>
         <Container.Body flex={1} minH={0} overflowY={"auto"}>
           <HeaderContainer>
-            <Heading>
-              {"Riwayat Transaksi"}
-            </Heading>
+            <Heading>{"Riwayat Transaksi"}</Heading>
           </HeaderContainer>
 
           <Separator borderColor={"bg.canvas"} />

@@ -15,7 +15,6 @@ import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loa
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -288,7 +287,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   }
 
   return (
-    <VStack flex={1} w={"full"}>
+    <VStack flex={1} overflowY={"auto"} w={"full"}>
       {/* Header Controls */}
       <HStack
         wrap={"wrap"}
@@ -379,8 +378,9 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             )}
           </VStack>
         ) : (
-          <Box w={"full"} position={"relative"} overflowY={"auto"}>
+          <VStack flex={1} w={"full"} position={"relative"} overflowY={"auto"}>
             <DataView.Table.Root
+              flex={1}
               headers={dataList.headers}
               items={dataList.items}
               itemActions={dataList.itemActions}
@@ -414,7 +414,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               totalPage={myData.pagination.totalPages}
               roundedBottom={0}
             />
-          </Box>
+          </VStack>
         )}
       </VStack>
     </VStack>

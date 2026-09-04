@@ -28,9 +28,7 @@ import type {
   TransactionHistoryQueryParams,
   TransactionRecord,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
-import {
-  TRANSACTION_STATUS_OPTIONS,
-} from "@/shared/constants/status.config";
+import { TRANSACTION_STATUS_OPTIONS } from "@/shared/constants/status.config";
 import type { TransactionStatus } from "@/shared/types/status.type";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionStatusBadge } from "@/features/shared/components/transaction-status.badge";
@@ -248,7 +246,7 @@ export const TransactionHistoryDataView = () => {
   }, [transactionHistory.items, preferredTimezone, navigate]);
 
   return (
-    <VStack flex={1} w={"full"}>
+    <VStack flex={1} overflowY={"auto"} w={"full"}>
       {/* Header Controls */}
       <HStack
         wrap={"wrap"}
@@ -294,10 +292,10 @@ export const TransactionHistoryDataView = () => {
       <VStack
         flex={1}
         gap={"sm"}
+        position={"relative"}
         overflowY={"auto"}
         bg={"bg.canvas"}
         w={"full"}
-        position={"relative"}
       >
         {isLoading ? (
           <Skeleton p={"md"} rounded={0} />
@@ -339,7 +337,7 @@ export const TransactionHistoryDataView = () => {
             )}
           </Box>
         ) : (
-          <Box w={"full"} position={"relative"} overflowY={"auto"}>
+          <VStack w={"full"} position={"relative"} overflowY={"auto"}>
             <DataView.Table.Root<TransactionRecord>
               headers={dataList.headers}
               items={dataList.items}
@@ -374,7 +372,7 @@ export const TransactionHistoryDataView = () => {
               totalPage={transactionHistory.pagination.totalPages}
               roundedBottom={0}
             />
-          </Box>
+          </VStack>
         )}
       </VStack>
     </VStack>

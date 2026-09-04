@@ -7,7 +7,7 @@ import { MitraMyDataDataView } from "@/features/mitra/my-data/components/mitra.m
 
 export const MitraMyDataPage = () => (
   <Container.Root flex={1} minH={0} withContext={true}>
-    <PanelContentContainer>
+    <PanelContentContainer overflowY={"auto"}>
       <Container.Body flex={1} minH={0} overflowY={"auto"}>
         <HeaderContainer>
           <Heading>{"Data Saya"}</Heading>
