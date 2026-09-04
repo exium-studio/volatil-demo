@@ -33,7 +33,7 @@ Sistem Volatil memiliki 2 role pengguna:
 - [Dashboard & Statistik Mitra](#dashboard--statistik-mitra)
 - [Master IGT Layers & Data Management](#master-igt-layers--data-management)
 - [Master GeoServer](#master-geoserver)
-- [Interop Batch Review](#interop-batch-review)
+- [Review Permohonan (Internal Order Review)](#review-permohonan-internal-order-review)
 - [Tarif & Pricing Management](#tarif--pricing-management)
 - [Purchase Limit Configuration](#purchase-limit-configuration)
 - [User Management](#user-management)
@@ -208,10 +208,10 @@ type NotificationsResponse = {
 
 type NotificationType =
   | "PAYMENT_SETTLED" // → Notifikasi ke mitra: pembayaran berhasil, layanan WMS disiapkan
-  | "BATCH_PENDING_REVIEW" // → Notifikasi ke internal: ada layanan baru yang perlu divalidasi
-  | "BATCH_APPROVED" // → Notifikasi ke mitra: layanan WMS disetujui & aktif di My Data
-  | "BATCH_REJECTED" // → Notifikasi ke mitra: permohonan layanan ditolak + reason penolakan
-  | "BATCH_EXPIRED"; // → Notifikasi ke mitra: batch transaksi kadaluwarsa
+  | "ORDER_PENDING_REVIEW" // → Notifikasi ke internal: ada layanan baru yang perlu divalidasi
+  | "ORDER_APPROVED" // → Notifikasi ke mitra: layanan WMS disetujui & aktif di My Data
+  | "ORDER_REJECTED" // → Notifikasi ke mitra: permohonan layanan ditolak + reason penolakan
+  | "ORDER_EXPIRED"; // → Notifikasi ke mitra: pesanan transaksi kadaluwarsa
 ```
 
 ## Tandai Notifikasi Telah Dibaca
@@ -413,7 +413,7 @@ export type OrderStatus =
 
 ## Add to Cart (Buat Order Keranjang)
 
-- **Endpoint**: `POST /api/mitra/orders`
+- **Endpoint**: `POST /api/mitra/cart/orders`
 - **Middleware / Akses**: `Mitra Only`
 - **Payload**:
 
@@ -448,7 +448,7 @@ type AddToCartOrderResponse = {
 
 ## Ambil Daftar Order di Keranjang
 
-- **Endpoint**: `GET /api/mitra/orders`
+- **Endpoint**: `GET /api/mitra/cart/orders`
 - **Middleware / Akses**: `Mitra Only`
 - **Params**: `status?: OrderStatus`
 - **Response**:
@@ -491,26 +491,26 @@ type OrderListResponse = {
 
 ## Ambil Detail Order di Keranjang
 
-- **Endpoint**: `GET /api/mitra/orders/{orderId}`
+- **Endpoint**: `GET /api/mitra/cart/orders/{orderId}`
 - **Middleware / Akses**: `Mitra Only`
 - **Response**: `OrderDetailResponse`
 
 ## Hapus Order dari Keranjang
 
-- **Endpoint**: `DELETE /api/mitra/orders/{orderId}`
+- **Endpoint**: `DELETE /api/mitra/cart/orders/{orderId}`
 - **Middleware / Akses**: `Mitra Only`
 - **Response**: `200 OK` / `{ success: true, message: "Order keranjang berhasil dihapus" }`
 
 ## Re-order Pesanan
 
-- **Endpoint**: `POST /api/mitra/orders/{orderId}/reorder`
+- **Endpoint**: `POST /api/mitra/cart/orders/{orderId}/reorder`
 - **Middleware / Akses**: `Mitra Only`
 - **Payload**: `{}`
 - **Response**: `AddToCartOrderResponse`
 
 ## Checkout & Request Kode Billing (Bayar)
 
-- **Endpoint**: `POST /api/mitra/orders/{orderId}/checkout`
+- **Endpoint**: `POST /api/mitra/cart/orders/{orderId}/checkout`
 - **Middleware / Akses**: `Mitra Only`
 - **Payload**:
 
@@ -537,7 +537,7 @@ type CheckoutOrderResponse = {
 
 ## Cek Status Pembayaran (Trigger Bayar)
 
-- **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
+- **Endpoint**: `GET /api/mitra/cart/orders/{orderId}/status`
 - **Middleware / Akses**: `Mitra Only`
 - **Headers**: `Authorization: Bearer <TOKEN_MITRA>`
 - **Keterangan**: Dipanggil oleh mitra untuk memverifikasi status pembayaran.
@@ -846,7 +846,7 @@ Modul bagi Internal User untuk memproses permohonan data spasial yang telah diba
 
 ## Trigger Provisioning GeoServer (Create Service WMS)
 
-- **Endpoint**: `POST /api/mitra/orders/{orderId}/provision`
+- **Endpoint**: `POST /api/mitra/cart/orders/{orderId}/provision`
 - **Middleware / Akses**: `Internal / Mitra Auth Token`
 - **Kapan Dipanggil**: User internal menekan tombol "Create Service WMS" pada daftar Review Permohonan untuk order berstatus `paid`.
 - **Deskripsi**:

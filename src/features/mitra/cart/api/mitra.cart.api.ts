@@ -162,7 +162,7 @@ export async function fetchOrderPaymentStatusApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<OrderPaymentStatusResponse>> {
   return apiClient.get<ApiResponse<OrderPaymentStatusResponse>>(
-    `/api/mitra/orders/${orderId}/status`,
+    `/api/mitra/cart/orders/${orderId}/status`,
     { signal },
   );
 }
@@ -172,7 +172,7 @@ export async function postCreateCartOrderApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<AddToCartOrderResponse>> {
   return apiClient.post<ApiResponse<AddToCartOrderResponse>>(
-    "/api/mitra/orders",
+    "/api/mitra/cart/orders",
     payload,
     { signal },
   );
@@ -183,7 +183,7 @@ export async function fetchCartOrdersApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartOrderListResponse>> {
   return apiClient.get<ApiResponse<CartOrderListResponse>>(
-    "/api/mitra/orders",
+    "/api/mitra/cart/orders",
     {
       params,
       signal,
@@ -195,7 +195,7 @@ export async function fetchExpiredCartOrdersApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartOrderListResponse>> {
   return apiClient.get<ApiResponse<CartOrderListResponse>>(
-    "/api/mitra/orders",
+    "/api/mitra/cart/orders",
     {
       params: { status: "expired" },
       signal,
@@ -208,7 +208,7 @@ export async function postReorderCartOrderApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<AddToCartOrderResponse>> {
   return apiClient.post<ApiResponse<AddToCartOrderResponse>>(
-    `/api/mitra/orders/${orderId}/reorder`,
+    `/api/mitra/cart/orders/${orderId}/reorder`,
     {},
     { signal },
   );
@@ -219,7 +219,7 @@ export async function fetchCartOrderDetailApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartOrder | null>> {
   return apiClient.get<ApiResponse<CartOrder | null>>(
-    `/api/mitra/orders/${orderId}`,
+    `/api/mitra/cart/orders/${orderId}`,
     { signal },
   );
 }
@@ -228,7 +228,7 @@ export async function fetchActiveCartOrderApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartOrder | null>> {
   return apiClient.get<ApiResponse<CartOrder | null>>(
-    "/api/mitra/orders/active",
+    "/api/mitra/cart/orders/active",
     { signal },
   );
 }
@@ -237,9 +237,12 @@ export async function deleteCartOrderApi(
   orderId: string,
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> {
-  return apiClient.delete<ApiResponse<void>>(`/api/mitra/orders/${orderId}`, {
-    signal,
-  });
+  return apiClient.delete<ApiResponse<void>>(
+    `/api/mitra/cart/orders/${orderId}`,
+    {
+      signal,
+    },
+  );
 }
 
 export async function postCheckoutOrderApi(
@@ -248,7 +251,7 @@ export async function postCheckoutOrderApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CheckoutOrderResponse>> {
   return apiClient.post<ApiResponse<CheckoutOrderResponse>>(
-    `/api/mitra/orders/${orderId}/checkout`,
+    `/api/mitra/cart/orders/${orderId}/checkout`,
     payload ?? {},
     { signal },
   );

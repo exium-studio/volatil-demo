@@ -43,7 +43,7 @@ const BillingPageBillingCode = () => {
 
   // Handlers
   const handleCheckStatus = () => {
-    // Check order payment status via GET /api/mitra/orders/:orderId/status
+    // Check order payment status via GET /api/mitra/cart/orders/:orderId/status
     const targetOrderId = search?.orderId || billingCode;
     checkPaymentMutation.mutate(targetOrderId, {
       onSuccess: (res) => {
@@ -81,12 +81,7 @@ const BillingPageBillingCode = () => {
   return (
     <Container.Root>
       <Container.Body>
-        <HStack
-          align={"center"}
-          justify={"space-between"}
-          gap={"md"}
-          p={"md"}
-        >
+        <HStack align={"center"} justify={"space-between"} gap={"md"} p={"md"}>
           <VStack gap={1}>
             <Heading>Kode Billing </Heading>
 

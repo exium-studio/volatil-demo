@@ -84,7 +84,8 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
     (acc: number, it: CartOrderItem) => acc + (it.subtotalPrice || 0),
     0,
   );
-  const idVal = raw.orderId ?? raw.order_id ?? raw.batchId ?? raw.batch_id ?? raw.id ?? "";
+  const idVal =
+    raw.orderId ?? raw.order_id ?? raw.batchId ?? raw.batch_id ?? raw.id ?? "";
 
   return {
     orderId: idVal,
@@ -227,19 +228,31 @@ export const fetchInternalOrderDetailApi = async (
 
     if (
       rawData &&
-      (rawData.orderId || rawData.order_id || rawData.batchId || rawData.batch_id || rawData.id)
+      (rawData.orderId ||
+        rawData.order_id ||
+        rawData.batchId ||
+        rawData.batch_id ||
+        rawData.id)
     ) {
       return normalizeInternalOrderItem(rawData);
     }
 
     if (isDummyDataEnabled()) {
-      return DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId || b.batchId === orderId) ?? null;
+      return (
+        DUMMY_INTERNAL_ORDERS.find(
+          (b) => b.orderId === orderId || b.batchId === orderId,
+        ) ?? null
+      );
     }
 
     return null;
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId || b.batchId === orderId) ?? null;
+      return (
+        DUMMY_INTERNAL_ORDERS.find(
+          (b) => b.orderId === orderId || b.batchId === orderId,
+        ) ?? null
+      );
     }
     throw error;
   }
@@ -252,7 +265,7 @@ export const provisionOrderApi = async (
   const orderId = payload.orderId ?? payload.batchId ?? "";
   try {
     return await apiClient.post<ApiResponse<ProvisionOrderResponse>>(
-      `/api/mitra/orders/${orderId}/provision`,
+      `/api/mitra/cart/orders/${orderId}/provision`,
       {},
       { signal },
     );
