@@ -36,7 +36,7 @@ import type {
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
-import { SpatialBasisFilterSelect } from "@/features/shared/components/spatial-basis-filter.select";
+import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-filter.select";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -361,8 +361,8 @@ export const InternalDataManagementDataView = () => {
             maxW={"280px"}
           />
 
-          <SpatialBasisFilterSelect
-            modalKey={"data-management-spatial-basis-filter"}
+          <IgtBasisFilterSelect
+            modalKey={"data-management-igt-basis-filter"}
             value={params.spatialBasis}
             onValueChange={(val) =>
               startTransition(() => {

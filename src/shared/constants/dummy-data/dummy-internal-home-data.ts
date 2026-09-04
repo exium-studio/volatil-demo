@@ -13,7 +13,7 @@ import type {
 import type { ServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
 import type { InternalHomeTrendItem } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { Layers2Icon, Grid2X2Icon } from "lucide-react";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
 
 export const dummyIgtBasis: IgtBasisSummary = {
   field: 325,
@@ -33,25 +33,25 @@ export const dummyMitraRegistration: MitraRegistrationSummary = {
 export const dummyInternalServiceRates: ServiceRateItem[] = [
   {
     id: "rate-bidang",
-    title: "IGT Berbasis Bidang",
-    icon: Layers2Icon,
+    title: `IGT Berbasis ${IGT_BASIS_MAP.bidang.label}`,
+    icon: IGT_BASIS_MAP.bidang.icon,
     price: 7500,
     unit: "Bidang",
     kodePnbp: "PNBP-IGT-01",
     minPurchase: 1000,
     minUnit: "Bidang",
-    colorPalette: "blue",
+    colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
   },
   {
     id: "rate-kawasan",
-    title: "IGT Berbasis Kawasan",
-    icon: Grid2X2Icon,
+    title: `IGT Berbasis ${IGT_BASIS_MAP.kawasan.label}`,
+    icon: IGT_BASIS_MAP.kawasan.icon,
     price: 15000,
     unit: "Ha",
     kodePnbp: "PNBP-IGT-02",
     minPurchase: 1000,
     minUnit: "Ha",
-    colorPalette: "orange",
+    colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,
   },
 ];
 

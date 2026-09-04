@@ -2,7 +2,9 @@
 
 import type { PaginatedParams, PaginationMeta } from "@/shared/types/common-response.type";
 
-export type SpatialBasisType = "bidang" | "kawasan";
+export type IgtBasisType = "bidang" | "kawasan";
+/** @deprecated alias for IgtBasisType */
+export type SpatialBasisType = IgtBasisType;
 
 export type PricingTierType = "standard" | "premium" | "enterprise";
 

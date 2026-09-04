@@ -5,8 +5,8 @@ import type {
   PaymentMethod,
   SelectionType,
   SelectionTypeConfig,
-  SpatialBasisType,
-  SpatialBasisTypeConfig,
+  IgtBasisType,
+  IgtBasisTypeConfig,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
   MyDataStatus,
@@ -52,10 +52,7 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
   },
 };
 
-export const SPATIAL_BASIS_CONFIG_MAP: Record<
-  SpatialBasisType,
-  SpatialBasisTypeConfig
-> = {
+export const IGT_BASIS_MAP: Record<IgtBasisType, IgtBasisTypeConfig> = {
   bidang: {
     label: "Bidang",
     colorPalette: "blue",
@@ -67,6 +64,32 @@ export const SPATIAL_BASIS_CONFIG_MAP: Record<
     icon: Grid2X2Icon,
   },
 };
+
+/** @deprecated alias for IGT_BASIS_MAP */
+export const SPATIAL_BASIS_CONFIG_MAP = IGT_BASIS_MAP;
+
+export const IGT_BASIS_OPTIONS: {
+  value: IgtBasisType;
+  label: string;
+  colorPalette: "blue" | "orange";
+  icon: typeof Layers2Icon;
+}[] = [
+  {
+    value: "bidang",
+    label: IGT_BASIS_MAP.bidang.label,
+    colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
+    icon: IGT_BASIS_MAP.bidang.icon,
+  },
+  {
+    value: "kawasan",
+    label: IGT_BASIS_MAP.kawasan.label,
+    colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,
+    icon: IGT_BASIS_MAP.kawasan.icon,
+  },
+];
+
+/** @deprecated alias for IGT_BASIS_OPTIONS */
+export const SPATIAL_BASIS_OPTIONS = IGT_BASIS_OPTIONS;
 
 export const PAYMENT_METHOD_LABEL_MAP: Record<PaymentMethod, string> = {
   MPN_GEN2: "MPN Gen 2 (Simponi / BPN)",

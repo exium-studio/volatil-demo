@@ -2,11 +2,11 @@
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { SPATIAL_BASIS_CONFIG_MAP } from "@/features/mitra/cart/constants/orders.config";
-import type { SpatialBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
-import type { SpatialBasisBadgeProps } from "@/features/shared/types/badge.type";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import type { IgtBasisBadgeProps } from "@/features/shared/types/badge.type";
+import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 
-export const BasisIgtBadge = (props: SpatialBasisBadgeProps) => {
+export const BasisIgtBadge = (props: IgtBasisBadgeProps) => {
   // Props
   const {
     children,
@@ -16,8 +16,8 @@ export const BasisIgtBadge = (props: SpatialBasisBadgeProps) => {
   } = props;
 
   // Derived Values
-  const basisKey = (children ?? "") as SpatialBasisType;
-  const config = SPATIAL_BASIS_CONFIG_MAP[basisKey];
+  const basisKey = (children ?? "") as IgtBasisType;
+  const config = IGT_BASIS_MAP[basisKey];
 
   return (
     <Badge

@@ -8,7 +8,9 @@ import type {
 } from "@/shared/types/status.type";
 import type { LucideIcon } from "lucide-react";
 
-export type SpatialBasisType = "bidang" | "kawasan";
+export type IgtBasisType = "bidang" | "kawasan";
+/** @deprecated alias for IgtBasisType */
+export type SpatialBasisType = IgtBasisType;
 
 export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
 
@@ -18,11 +20,13 @@ export type SelectionTypeConfig = {
   colorPalette?: "blue" | "teal" | "purple" | "orange" | "gray";
 };
 
-export type SpatialBasisTypeConfig = {
+export type IgtBasisTypeConfig = {
   label: string;
   colorPalette: "blue" | "orange";
-  icon?: LucideIcon;
+  icon: LucideIcon;
 };
+/** @deprecated alias for IgtBasisTypeConfig */
+export type SpatialBasisTypeConfig = IgtBasisTypeConfig;
 
 export type CartOrderStatus = OrderStatus;
 export type CartOrderStatusConfig = OrderStatusConfig;

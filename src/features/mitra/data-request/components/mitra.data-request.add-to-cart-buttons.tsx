@@ -17,11 +17,10 @@ import {
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
 import {
   ChevronDownIcon,
-  Layers2Icon,
   ShoppingCartIcon,
-  Grid2X2Icon,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -279,7 +278,9 @@ export const MitraDataRequestAddToCartButtons = (
                 disabled={bidangCount === 0}
                 onClick={onAddAllBidangClick}
               >
-                <AppIcon icon={Layers2Icon} />
+                {IGT_BASIS_MAP.bidang.icon && (
+                  <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
+                )}
                 {"Tambah semua bidang"} ({formatNumber(bidangCount)})
               </Menu.Item>
 
@@ -288,7 +289,9 @@ export const MitraDataRequestAddToCartButtons = (
                 disabled={kawasanCount === 0}
                 onClick={onAddAllKawasanClick}
               >
-                <AppIcon icon={Grid2X2Icon} />
+                {IGT_BASIS_MAP.kawasan.icon && (
+                  <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
+                )}
                 {"Tambah semua kawasan"}{" "}
                 {allKawasanLuasTotal > 0
                   ? `(${formatNumber(allKawasanLuasTotal, { maximumFractionDigits: 2 })} ha)`

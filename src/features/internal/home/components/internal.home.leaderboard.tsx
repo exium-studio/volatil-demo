@@ -13,7 +13,7 @@ import type {
   TopIgtLayerItem,
   TopMitraAcquisitionItem,
 } from "@/features/internal/home/types/internal.home.leaderboard.type";
-import { Layers2Icon, Grid2X2Icon } from "lucide-react";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
 
 export const InternalHomeLeaderboard = (
   props: InternalHomeLeaderboardProps,
@@ -141,7 +141,7 @@ const TopIgtLayersLeaderboardCard = (props: { flex?: string | number }) => {
 
         <VStack align={"stretch"} gap={"2xs"}>
           {topIgtLayers.map((layer: TopIgtLayerItem, index: number) => {
-            const isBidang = layer.spatialBasis === "bidang";
+            const basisConfig = IGT_BASIS_MAP[layer.spatialBasis];
             return (
               <HStack
                 key={layer.layerId}
@@ -187,13 +187,12 @@ const TopIgtLayersLeaderboardCard = (props: { flex?: string | number }) => {
                     <HStack gap={"xs"} align={"center"}>
                       <Badge
                         variant={"subtle"}
-                        colorPalette={isBidang ? "blue" : "orange"}
+                        colorPalette={basisConfig?.colorPalette ?? "gray"}
                       >
-                        <AppIcon
-                          icon={isBidang ? Layers2Icon : Grid2X2Icon}
-                          size={"sm"}
-                        />
-                        {isBidang ? "Bidang" : "Kawasan"}
+                        {basisConfig?.icon && (
+                          <AppIcon icon={basisConfig.icon} size={"sm"} />
+                        )}
+                        {basisConfig?.label ?? layer.spatialBasis}
                       </Badge>
 
                       <P fontSize={"xs"} color={"fg.subtle"}>

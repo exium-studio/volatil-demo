@@ -28,8 +28,8 @@ const defaultBasis: IgtBasisSummary = dummyIgtBasis;
 const defaultPublish: IgtPublicationStatusSummary = dummyIgtPublicationStatus;
 const defaultMitraReg: MitraRegistrationSummary = dummyMitraRegistration;
 
-// 1. Hook Basis Spasial (Bidang vs Kawasan)
-export const useInternalSpatialBasisQuery = () => {
+// 1. Hook Basis IGT (Bidang vs Kawasan)
+export const useInternalIgtBasisQuery = () => {
   const query = useQuery({
     queryKey: queryKeys.internal.home.spatialBasis(),
     queryFn: ({ signal }) => getIgtBasis(signal),
@@ -42,6 +42,9 @@ export const useInternalSpatialBasisQuery = () => {
     igtBasis: query.data ?? defaultBasis,
   };
 };
+
+/** @deprecated alias for useInternalIgtBasisQuery */
+export const useInternalSpatialBasisQuery = useInternalIgtBasisQuery;
 
 // 2. Hook Status Publikasi
 export const useInternalPublishStatusQuery = () => {

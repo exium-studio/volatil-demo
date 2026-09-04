@@ -26,9 +26,9 @@ import type {
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
+import { SPATIAL_BASIS_OPTIONS } from "@/shared/constants/status.config";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Layers2Icon, Grid2X2Icon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
@@ -295,37 +295,31 @@ const InternalDataManagementEditModalContent = (
                       w={"full"}
                     >
                       <HStack gap={"sm"} w={"full"}>
-                        <RadioCardInput.Item value={"bidang"} flex={1} p={3}>
-                          <HStack
-                            justify={"space-between"}
-                            align={"center"}
-                            w={"full"}
+                        {SPATIAL_BASIS_OPTIONS.map((opt) => (
+                          <RadioCardInput.Item
+                            key={opt.value}
+                            value={opt.value}
+                            flex={1}
+                            p={3}
                           >
-                            <HStack gap={"xs"} align={"center"}>
-                              <AppIcon icon={Layers2Icon} color={"blue.fg"} />
-                              <RadioCardInput.ItemText fontSize={"sm"}>
-                                {"Bidang"}
-                              </RadioCardInput.ItemText>
+                            <HStack
+                              justify={"space-between"}
+                              align={"center"}
+                              w={"full"}
+                            >
+                              <HStack gap={"xs"} align={"center"}>
+                                <AppIcon
+                                  icon={opt.icon}
+                                  color={`${opt.colorPalette}.fg`}
+                                />
+                                <RadioCardInput.ItemText fontSize={"sm"}>
+                                  {opt.label}
+                                </RadioCardInput.ItemText>
+                              </HStack>
+                              <RadioCardInput.ItemIndicator />
                             </HStack>
-                            <RadioCardInput.ItemIndicator />
-                          </HStack>
-                        </RadioCardInput.Item>
-
-                        <RadioCardInput.Item value={"kawasan"} flex={1} p={3}>
-                          <HStack
-                            justify={"space-between"}
-                            align={"center"}
-                            w={"full"}
-                          >
-                            <HStack gap={"xs"} align={"center"}>
-                              <AppIcon icon={Grid2X2Icon} color={"orange.fg"} />
-                              <RadioCardInput.ItemText fontSize={"sm"}>
-                                {"Kawasan"}
-                              </RadioCardInput.ItemText>
-                            </HStack>
-                            <RadioCardInput.ItemIndicator />
-                          </HStack>
-                        </RadioCardInput.Item>
+                          </RadioCardInput.Item>
+                        ))}
                       </HStack>
                     </RadioCardInput.Root>
                   </Field>

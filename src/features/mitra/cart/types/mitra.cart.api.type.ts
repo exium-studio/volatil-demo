@@ -2,7 +2,9 @@
 
 import type GeoJSON from "geojson";
 
-export type SpatialBasisType = "bidang" | "kawasan";
+export type IgtBasisType = "bidang" | "kawasan";
+/** @deprecated alias for IgtBasisType */
+export type SpatialBasisType = IgtBasisType;
 
 export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
 

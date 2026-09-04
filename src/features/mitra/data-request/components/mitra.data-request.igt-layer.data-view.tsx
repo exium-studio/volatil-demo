@@ -32,16 +32,15 @@ import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   FocusIcon,
-  Layers2Icon,
   ShoppingCartIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
-  Grid2X2Icon,
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
@@ -484,7 +483,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 disabled={isBidangOnlyDisabled}
                 onClick={handleAddToCartBidangOnly}
               >
-                <AppIcon icon={Layers2Icon} />
+                {IGT_BASIS_MAP.bidang.icon && (
+                  <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
+                )}
                 {"Bidang saja"}
                 {summaryData.totalBidangCount > 0 &&
                   ` (${formatNumber(summaryData.totalBidangCount)})`}
@@ -498,7 +499,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 disabled={isKawasanOnlyDisabled}
                 onClick={handleAddToCartKawasanOnly}
               >
-                <AppIcon icon={Grid2X2Icon} />
+                {IGT_BASIS_MAP.kawasan.icon && (
+                  <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
+                )}
                 {"Kawasan saja"}
                 {summaryData.totalKawasanAreaHa > 0 &&
                   ` (${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 1 })} ha)`}

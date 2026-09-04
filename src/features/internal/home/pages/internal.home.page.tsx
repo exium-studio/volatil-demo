@@ -5,8 +5,8 @@ import { PanelContentContainer } from "@/design-system/components/layout/ui/page
 import { InternalHomeLeaderboard } from "@/features/internal/home/components/internal.home.leaderboard";
 import { InternalHomeMitraRegistration } from "@/features/internal/home/components/internal.home.mitra-registration";
 import { InternalHomePublishStatusSummary } from "@/features/internal/home/components/internal.home.publish-status-summary";
+import { InternalHomeIgtBasisSummary } from "@/features/internal/home/components/internal.home.igt-basis-summary";
 import { InternalHomeServiceRate } from "@/features/internal/home/components/internal.home.service-rate";
-import { InternalHomeSpatialBasisSummary } from "@/features/internal/home/components/internal.home.spatial-basis-summary";
 import { InternalHomeTrend } from "@/features/internal/home/components/internal.home.trend";
 
 export const InternalHomePage = () => {
@@ -14,7 +14,7 @@ export const InternalHomePage = () => {
     <PanelContentContainer h={"auto"} position={"relative"}>
       {/* Row 1: 3 Dedicated Summary Cards + Tarif Jasa Akses */}
       <HStack wrap={"wrap"} gap={"sm"} align={"stretch"} w={"full"}>
-        <InternalHomeSpatialBasisSummary />
+        <InternalHomeIgtBasisSummary />
         <InternalHomePublishStatusSummary />
         <InternalHomeMitraRegistration />
         <InternalHomeServiceRate />

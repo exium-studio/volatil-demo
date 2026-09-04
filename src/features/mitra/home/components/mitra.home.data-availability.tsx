@@ -11,7 +11,8 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { DatabaseIcon, Layers2Icon, Grid2X2Icon } from "lucide-react";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import { DatabaseIcon } from "lucide-react";
 
 export const MitraHomeDataAvailability = () => {
   return (
@@ -67,20 +68,20 @@ const MitraHomeDataAvailabilityStats = () => {
       colorPalette: "neutral",
     },
     {
-      icon: Layers2Icon,
-      label: "IGT Berbasis Bidang",
+      icon: IGT_BASIS_MAP.bidang.icon,
+      label: `IGT Berbasis ${IGT_BASIS_MAP.bidang.label}`,
       value: 10,
       suffix: "layer",
       description: "Peta spasial berorientasi bidang tanah/persil",
-      colorPalette: "blue",
+      colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
     },
     {
-      icon: Grid2X2Icon,
-      label: "IGT Berbasis Kawasan",
+      icon: IGT_BASIS_MAP.kawasan.icon,
+      label: `IGT Berbasis ${IGT_BASIS_MAP.kawasan.label}`,
       value: 20,
       suffix: "layer",
       description: "Peta spasial penataan ruang & zonasi wilayah",
-      colorPalette: "orange",
+      colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,
     },
   ];
 

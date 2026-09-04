@@ -14,10 +14,9 @@ import type {
   MitraHomeCartSummaryProps,
 } from "@/features/mitra/home/types/mitra.home.cart-summary.type";
 import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
 import {
   DatabaseIcon,
-  Grid2X2Icon,
-  Layers2Icon,
   ReceiptTextIcon,
 } from "lucide-react";
 
@@ -69,18 +68,18 @@ const MitraHomeCartStats = () => {
   const cols = isSmContainer ? 2 : 4;
   const STATS: MitraHomeCartStatConfig[] = [
     {
-      icon: Layers2Icon,
-      label: "Total Bidang",
+      icon: IGT_BASIS_MAP.bidang.icon,
+      label: `Total ${IGT_BASIS_MAP.bidang.label}`,
       value: totalField,
       suffix: "bidang",
-      color: "blue.fg",
+      color: `${IGT_BASIS_MAP.bidang.colorPalette}.fg`,
     },
     {
-      icon: Grid2X2Icon,
-      label: "Total Kawasan",
+      icon: IGT_BASIS_MAP.kawasan.icon,
+      label: `Total ${IGT_BASIS_MAP.kawasan.label}`,
       value: totalArea,
       suffix: "ha",
-      color: "orange.fg",
+      color: `${IGT_BASIS_MAP.kawasan.colorPalette}.fg`,
     },
     {
       icon: DatabaseIcon,

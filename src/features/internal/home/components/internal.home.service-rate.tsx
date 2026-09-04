@@ -17,7 +17,8 @@ import type {
   InternalHomeServiceRateProps,
 } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useInternalPricingListQuery } from "@/features/internal/pricing/hooks/use-internal-pricing";
-import { Layers2Icon, PencilIcon, Grid2X2Icon } from "lucide-react";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import { PencilIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const InternalHomeServiceRate = (
@@ -85,28 +86,28 @@ const InternalHomeServiceRateStats = () => {
     if (bidangRate) {
       result.push({
         id: bidangRate.id,
-        title: "IGT Berbasis Bidang",
-        icon: Layers2Icon,
+        title: `IGT Berbasis ${IGT_BASIS_MAP.bidang.label}`,
+        icon: IGT_BASIS_MAP.bidang.icon,
         price: bidangRate.unitPrice,
         unit: "Bidang",
         kodePnbp: bidangRate.kodePnbp ?? "PNBP-IGT-01",
         minPurchase: bidangRate.minPurchase ?? 1000,
-        minUnit: bidangRate.minUnit ?? "Bidang",
-        colorPalette: "blue",
+        minUnit: "Bidang",
+        colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
       });
     }
 
     if (kawasanRate) {
       result.push({
         id: kawasanRate.id,
-        title: "IGT Berbasis Kawasan",
-        icon: Grid2X2Icon,
+        title: `IGT Berbasis ${IGT_BASIS_MAP.kawasan.label}`,
+        icon: IGT_BASIS_MAP.kawasan.icon,
         price: kawasanRate.unitPrice,
         unit: "Ha",
         kodePnbp: kawasanRate.kodePnbp ?? "PNBP-IGT-02",
         minPurchase: kawasanRate.minPurchase ?? 1000,
-        minUnit: kawasanRate.minUnit ?? "Ha",
-        colorPalette: "orange",
+        minUnit: "Ha",
+        colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,
       });
     }
 

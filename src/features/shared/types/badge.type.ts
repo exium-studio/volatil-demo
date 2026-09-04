@@ -3,7 +3,7 @@
 import type { BadgeProps } from "@/design-system/components/typography/types/badge.type";
 import type {
   SelectionType,
-  SpatialBasisType,
+  IgtBasisType,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
   MyDataStatus,
@@ -11,10 +11,13 @@ import type {
   TransactionStatus,
 } from "@/shared/types/status.type";
 
-export type SpatialBasisBadgeProps = Omit<BadgeProps, "children"> & {
-  children?: SpatialBasisType | (string & {});
+export type IgtBasisBadgeProps = Omit<BadgeProps, "children"> & {
+  children?: IgtBasisType | (string & {});
   showIcon?: boolean;
 };
+
+/** @deprecated alias for IgtBasisBadgeProps */
+export type SpatialBasisBadgeProps = IgtBasisBadgeProps;
 
 export type SelectionTypeBadgeProps = Omit<BadgeProps, "children"> & {
   children?: SelectionType | (string & {});

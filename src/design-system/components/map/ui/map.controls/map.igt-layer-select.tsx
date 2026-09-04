@@ -21,14 +21,13 @@ import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
-  Layers2Icon,
   LayersIcon,
-  Grid2X2Icon,
 } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
 
@@ -171,9 +170,9 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
   // Derived Values
   const displayName =
     layer.title || layer.id.split(":")[1] || layer.wfs.wfsTypeName;
-  const isBidang = layer.spatialBasis === "bidang";
-  const colorPalette = isBidang ? "blue" : "orange";
-  const LayerIcon = isBidang ? Layers2Icon : Grid2X2Icon;
+  const basisConfig = IGT_BASIS_MAP[layer.spatialBasis];
+  const colorPalette = basisConfig?.colorPalette ?? "gray";
+  const LayerIcon = basisConfig?.icon;
 
   return (
     <VStack gap={1} align={"stretch"} w={"full"}>
