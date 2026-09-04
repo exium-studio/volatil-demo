@@ -4,11 +4,11 @@ import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
-import { Input } from "@/design-system/components/input/ui/input";
+import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useApproveOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import {
   approveOrderFormSchema,
@@ -52,7 +52,7 @@ export const InternalOrderReviewApproveTrigger = (
       opened={isOpen}
       open={open}
       close={close}
-      size={"lg"}
+      size={"md"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
@@ -181,28 +181,24 @@ const InternalOrderReviewApproveModalContent = (
                       </P>
 
                       <HStack
-                        align={"center"}
-                        gap={"xs"}
+                        gap={"md"}
                         bg={"bg.panel"}
-                        pl={"md"}
-                        pr={"2xs"}
+                        p={"md"}
                         rounded={"sm"}
                         border={"1px solid"}
                         borderColor={"border.subtle"}
                       >
-                        <ClampedP
-                          fontFamily={"mono"}
-                          flex={1}
-                          color={"fg.default"}
-                        >
+                        <P fontFamily={"mono"} flex={1} color={"fg.default"}>
                           {previewUrl}
-                        </ClampedP>
+                        </P>
 
                         <ClipboardButton
                           value={previewUrl}
                           variant={"ghost"}
                           size={"xs"}
                           aria-label={"Salin URL WMS"}
+                          mt={-2}
+                          mr={-2}
                         />
                       </HStack>
                     </VStack>
@@ -218,7 +214,7 @@ const InternalOrderReviewApproveModalContent = (
                           invalid={Boolean(fieldState.error)}
                           mt={2}
                         >
-                          <Input
+                          <Textarea
                             placeholder={
                               "https://geoportal.atrbpn.go.id/wms?layers=..."
                             }
@@ -238,7 +234,7 @@ const InternalOrderReviewApproveModalContent = (
                         <Field
                           label={"URL WFS Resmi (INTEROP Pusdatin - Opsional)"}
                         >
-                          <Input
+                          <Textarea
                             placeholder={
                               "https://geoportal.atrbpn.go.id/wfs?typename=..."
                             }
