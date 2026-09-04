@@ -78,7 +78,7 @@ export const UrlDataView = memo((props: UrlDataViewProps) => {
       gap={"xs"}
       align={"center"}
       rounded={theme.radii.component}
-      bg={"bg.subtle"}
+      // bg={"bg.subtle"}
       pr={"2xs"}
       maxW={maxW}
       w={"full"}
