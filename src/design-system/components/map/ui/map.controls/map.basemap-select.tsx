@@ -2,6 +2,7 @@
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
@@ -73,14 +74,19 @@ export const MapBasemapSelect = () => {
               />
 
               {isActiveStylePlainAdaptive && (
-                <AppIcon
-                  icon={plainAdaptiveProps[colorMode].icon}
-                  size={"sm"}
+                <Circle
+                  bg={"bg.body"}
                   pos={"absolute"}
-                  left={1}
-                  bottom={1}
-                  color={"fg.inverted"}
-                />
+                  left={-2}
+                  bottom={-2}
+                  p={"2xs"}
+                >
+                  <AppIcon
+                    icon={plainAdaptiveProps[colorMode].icon}
+                    size={"xs"}
+                    color={"fg.muted"}
+                  />
+                </Circle>
               )}
             </Center>
           </Tooltip>
@@ -133,14 +139,28 @@ export const MapBasemapSelect = () => {
                     />
 
                     {isPlainAdaptive && (
-                      <AppIcon
-                        icon={plainAdaptiveProps[colorMode].icon}
-                        size={"lg"}
+                      // <AppIcon
+                      //   icon={plainAdaptiveProps[colorMode].icon}
+                      //   size={"lg"}
+                      //   pos={"absolute"}
+                      //   left={1}
+                      //   bottom={1}
+                      //   color={"fg.inverted"}
+                      // />
+
+                      <Circle
+                        bg={"bg.body"}
                         pos={"absolute"}
-                        left={1}
-                        bottom={1}
-                        color={"fg.inverted"}
-                      />
+                        left={-2}
+                        bottom={-2}
+                        p={"2xs"}
+                      >
+                        <AppIcon
+                          icon={plainAdaptiveProps[colorMode].icon}
+                          size={"sm"}
+                          color={"fg.muted"}
+                        />
+                      </Circle>
                     )}
                   </Center>
 
