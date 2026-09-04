@@ -49,7 +49,7 @@ import {
   DatabaseIcon,
   EyeIcon,
   EyeOffIcon,
-  MapPinIcon,
+  FocusIcon,
   SquarePen,
   TablePropertiesIcon,
 } from "lucide-react";
@@ -134,7 +134,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "Status Aktif", sortable: true, align: "start" },
       { th: "Sisa Waktu", sortable: true, align: "start" },
       { th: "Tanggal Kedaluwarsa", sortable: true, align: "start" },
-      { th: "Lihat di Peta", sortable: false, align: "center" },
+      { th: "Tampilkan di Peta", sortable: false, align: "center" },
     ];
 
     const items: FormattedListItem<MyDataItem>[] = myData.items.map(
@@ -235,8 +235,8 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       },
       {
         key: "fly-to-map",
-        label: "Lihat di Peta",
-        icon: MapPinIcon,
+        label: "Zoom ke Layer",
+        icon: FocusIcon,
         onClick: (item: MyDataItem) => {
           if (!enabledLayerIds[item.id]) {
             handleToggleLayer(item, true);

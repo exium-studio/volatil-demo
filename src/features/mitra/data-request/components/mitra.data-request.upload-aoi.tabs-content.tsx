@@ -52,7 +52,7 @@ import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { useSearch } from "@tanstack/react-router";
-import { FilePlusIcon, FilesIcon, MapPinIcon, TrashIcon } from "lucide-react";
+import { FilePlusIcon, FilesIcon, FocusIcon, TrashIcon } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 // -------------------------------------------------------------------------------------
@@ -423,16 +423,16 @@ const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
                   layer.status === "done" &&
                   layer.polygon &&
                   map && (
-                    <Tooltip content={"Lihat AOI di peta"}>
+                    <Tooltip content={"Zoom ke Area (AOI)"}>
                       <IconButton
-                        aria-label={"Lihat di Peta"}
+                        aria-label={"Zoom ke Area (AOI)"}
                         size={"xs"}
                         onClick={() => {
                           highlightFeatureOnMap(map, layer.polygon);
                           close();
                         }}
                       >
-                        <AppIcon icon={MapPinIcon} />
+                        <AppIcon icon={FocusIcon} />
                       </IconButton>
                     </Tooltip>
                   )

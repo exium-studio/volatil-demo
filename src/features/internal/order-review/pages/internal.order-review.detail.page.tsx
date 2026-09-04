@@ -40,7 +40,7 @@ import {
   CheckCircle2Icon,
   EyeIcon,
   EyeOffIcon,
-  MapPinIcon,
+  FocusIcon,
   MapPlusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
@@ -262,7 +262,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
       { th: "WMS URL (Volatil)", sortable: false },
       { th: "Jumlah / Luas", sortable: true, align: "center" },
       { th: "Estimasi Biaya", sortable: true, align: "end" },
-      { th: "Lihat di Peta", align: "center" },
+      { th: "Tampilkan di Peta", align: "center" },
     ];
 
     const items: FormattedListItem<CartOrderItem>[] = (order.items ?? []).map(
@@ -366,8 +366,8 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
       },
       {
         key: "fly-to-map",
-        label: "Lihat di Peta",
-        icon: MapPinIcon,
+        label: "Zoom ke Layer",
+        icon: FocusIcon,
         onClick: (item: CartOrderItem) => {
           const matchedLayer = fetchedLayersList.find(
             (l) => l.id === item.sourceLayerId,

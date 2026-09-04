@@ -39,8 +39,8 @@ import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
+  FocusIcon,
   Layers2Icon,
-  MapPinIcon,
   ShoppingCartIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
@@ -322,8 +322,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
       const itemActions = [
         {
           key: "fly-to-map",
-          label: "Lihat di Peta",
-          icon: MapPinIcon,
+          label: "Zoom ke Layer",
+          icon: FocusIcon,
           onClick: (layer: IgtLayerItem) => {
             void flyTo(layer, {
               cqlFilter: combinedCqlFilter,

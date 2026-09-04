@@ -16,7 +16,7 @@ import type {
   SpatialFeaturesDataViewProps,
 } from "@/features/shared/types/spatial-features-data-view.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { MapPinIcon } from "lucide-react";
+import { FocusIcon } from "lucide-react";
 import { memo, useMemo } from "react";
 
 export const SpatialFeaturesDataView = memo(
@@ -164,8 +164,8 @@ const SpatialFeaturesDataViewContent = memo(
         itemActions: [
           {
             key: "fly-to-feature",
-            label: "Lihat di Peta",
-            icon: MapPinIcon,
+            label: "Zoom ke Fitur",
+            icon: FocusIcon,
             onClick: (
               _data: Record<string, unknown>,
               formattedItem: FormattedListItem,

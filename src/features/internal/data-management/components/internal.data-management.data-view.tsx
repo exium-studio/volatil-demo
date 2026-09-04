@@ -128,7 +128,7 @@ export const InternalDataManagementDataView = () => {
       { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
       { th: "Terakhir Diperbarui", sortable: true },
-      { th: "Lihat di Peta", align: "center" },
+      { th: "Tampilkan di Peta", align: "center" },
     ];
 
     const items = rawItems.map((item) => {

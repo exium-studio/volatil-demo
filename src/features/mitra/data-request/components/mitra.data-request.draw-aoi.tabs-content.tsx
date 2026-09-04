@@ -29,8 +29,8 @@ import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highl
 import { IconPolygonOff } from "@tabler/icons-react";
 import {
   CheckIcon,
+  FocusIcon,
   InfoIcon,
-  MapPinIcon,
   PencilIcon,
   XIcon,
 } from "lucide-react";
@@ -283,14 +283,14 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
 
             <HStack align={"center"} gap={"sm"}>
               {confirmedPolygon && map && (
-                <Tooltip content={"Lihat di Peta"}>
+                <Tooltip content={"Zoom ke Area (AOI)"}>
                   <IconButton
                     variant={"outline"}
                     onClick={() => {
                       highlightFeatureOnMap(map, confirmedPolygon);
                     }}
                   >
-                    <AppIcon icon={MapPinIcon} />
+                    <AppIcon icon={FocusIcon} />
                   </IconButton>
                 </Tooltip>
               )}
