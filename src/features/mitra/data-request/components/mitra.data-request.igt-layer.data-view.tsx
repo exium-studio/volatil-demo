@@ -26,8 +26,10 @@ import {
 } from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
-import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+// Uncomment below if persistent filter store is needed again:
+// import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
+import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
@@ -61,16 +63,20 @@ export const MitraDataRequestIgtLayerDataView = memo(
     // Stores
     const { theme } = useThemeStore();
     const { map } = useMapInstanceStore();
-    const appliedAdministrativeFilters = useAdministrativeFilterStore(
-      (s) => s.appliedAdministrativeFilters,
-    );
-    const setAppliedAdministrativeFilters = useAdministrativeFilterStore(
-      (s) => s.setAppliedAdministrativeFilters,
-    );
-    const storeCqlFilter = useAdministrativeFilterStore((s) => s.cqlFilter);
+    // [PERSISTENT FILTER STORE - COMMENTED OUT]
+    // Uncomment below if client requests administrative filter to persist across page/tabs again
+    // const appliedAdministrativeFilters = useAdministrativeFilterStore(
+    //   (s) => s.appliedAdministrativeFilters,
+    // );
+    // const setAppliedAdministrativeFilters = useAdministrativeFilterStore(
+    //   (s) => s.setAppliedAdministrativeFilters,
+    // );
+    // const storeCqlFilter = useAdministrativeFilterStore((s) => s.cqlFilter);
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
+    const [appliedAdministrativeFilters, setAppliedAdministrativeFilters] =
+      useState<FilterAdministrativeAreaValues>({});
 
     // Hooks & Policies
     const pricingPolicy = usePricingPolicy();
@@ -80,15 +86,19 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // Derived Values
     const debouncedSearch = useDebouncedValue(searchRaw);
+    const localCqlFilter = useMemo(
+      () => buildIgtCqlFilter(appliedAdministrativeFilters),
+      [appliedAdministrativeFilters],
+    );
     const combinedCqlFilter = useMemo(() => {
-      // Administrative filter from useIgtFilterStore is only applied when showFilter is true (Catalog tab)
-      const activeStoreCql = showFilter ? storeCqlFilter : undefined;
+      // Administrative filter is only applied when showFilter is true (Catalog tab)
+      const activeStoreCql = showFilter ? localCqlFilter : undefined;
 
       if (baseCqlFilter && activeStoreCql) {
         return `${baseCqlFilter} AND ${activeStoreCql}`;
       }
       return baseCqlFilter ?? activeStoreCql ?? undefined;
-    }, [baseCqlFilter, storeCqlFilter, showFilter]);
+    }, [baseCqlFilter, localCqlFilter, showFilter]);
 
     // Queries — list of all active IGT layers
     const isLoadingLayers = false;

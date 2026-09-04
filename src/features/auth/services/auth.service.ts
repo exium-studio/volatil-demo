@@ -1,11 +1,11 @@
-// src/features/auth/services/auth.service.ts
-
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import {
   getAuthMeApi,
   postLoginApi,
   postLogoutApi,
 } from "@/features/auth/api/auth.api";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
+import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { ApiError } from "@/shared/libs/api-client/api-error";
 import type {
   InternalUser,
@@ -114,6 +114,8 @@ export const authService = {
     } finally {
       localStorage.removeItem("auth_token");
       removeStorage("user");
+      useMapLayerStore.getState().resetLayers();
+      useAdministrativeFilterStore.getState().setAppliedAdministrativeFilters({});
     }
   },
 

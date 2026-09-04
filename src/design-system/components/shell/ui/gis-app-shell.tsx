@@ -93,11 +93,12 @@ export const GisAppShell = (props: GisAppShellProps) => {
     }
   }, [pathname]);
 
-  // Reset all active map layers when user/role changes
-  const currentRole = getUserSession()?.role;
+  // Reset all active map layers and filters when user/role changes
+  const userSession = getUserSession();
+  const currentUserId = userSession?.id;
   useEffect(() => {
     useMapLayerStore.getState().resetLayers();
-  }, [currentRole]);
+  }, [currentUserId]);
 
   return (
     <AppPageContainer
