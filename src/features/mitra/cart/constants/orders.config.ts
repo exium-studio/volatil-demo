@@ -9,6 +9,8 @@ import type {
   SpatialBasisTypeConfig,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
+  MyDataStatus,
+  MyDataStatusConfig,
   OrderStatus,
   OrderStatusConfig,
   TransactionStatus,
@@ -20,6 +22,7 @@ import {
   ClockIcon,
   LoaderIcon,
   RotateCcwIcon,
+  ShieldAlertIcon,
 } from "lucide-react";
 
 /**
@@ -153,9 +156,57 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   },
 };
 
-export const MY_DATA_ORDER_STATUS_OPTIONS: FocusSelectOption[] = [
+/**
+ * SSOT 4: My Data Active Status Map (Mitra Data Saya)
+ */
+export const MY_DATA_STATUS_MAP: Record<MyDataStatus, MyDataStatusConfig> = {
+  queued: {
+    label: "Dalam Antrean",
+    colorPalette: "gray",
+    icon: ClockIcon,
+    iconColor: "gray.fg",
+  },
+  provisioning: {
+    label: "Sedang Diproses",
+    colorPalette: "purple",
+    icon: LoaderIcon,
+    iconColor: "purple.fg",
+  },
+  ready: {
+    label: "Aktif",
+    colorPalette: "green",
+    icon: CheckCircle2Icon,
+    iconColor: "green.fg",
+  },
+  failed: {
+    label: "Gagal",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+  },
+  expired: {
+    label: "Kedaluwarsa",
+    colorPalette: "orange",
+    icon: ClockIcon,
+    iconColor: "orange.fg",
+  },
+  revoked: {
+    label: "Dicabut",
+    colorPalette: "red",
+    icon: ShieldAlertIcon,
+    iconColor: "red.fg",
+  },
+};
+
+export const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Semua Status", value: "" },
-  { label: "Terbayar", value: "paid" },
-  { label: "Sedang Diproses", value: "processing" },
-  { label: "Menunggu Validasi Admin", value: "pending_review" },
+  { label: "Aktif", value: "ready" },
+  { label: "Dalam Antrean", value: "queued" },
+  { label: "Sedang Diproses", value: "provisioning" },
+  { label: "Gagal", value: "failed" },
+  { label: "Kedaluwarsa", value: "expired" },
+  { label: "Dicabut", value: "revoked" },
 ];
+
+/** @deprecated alias for backward compatibility */
+export const MY_DATA_ORDER_STATUS_OPTIONS = MY_DATA_STATUS_OPTIONS;

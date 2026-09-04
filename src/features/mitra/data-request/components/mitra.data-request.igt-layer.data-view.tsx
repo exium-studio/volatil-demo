@@ -13,7 +13,6 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -30,7 +29,7 @@ import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricin
 // import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
-import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
@@ -62,7 +61,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // Stores
     const { theme } = useThemeStore();
-    const { map } = useMapInstanceStore();
+    const { flyTo } = useFlyToLayer();
     // [PERSISTENT FILTER STORE - COMMENTED OUT]
     // Uncomment below if client requests administrative filter to persist across page/tabs again
     // const appliedAdministrativeFilters = useAdministrativeFilterStore(
@@ -326,7 +325,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           label: "Lihat di Peta",
           icon: MapPinIcon,
           onClick: (layer: IgtLayerItem) => {
-            void flyToIgtLayer(map, layer, {
+            void flyTo(layer, {
               cqlFilter: combinedCqlFilter,
             });
           },
@@ -347,7 +346,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         batchActions: [],
         itemActions,
       };
-    }, [filteredLayers, combinedCqlFilter, map, onSelectIgtLayer]);
+    }, [filteredLayers, combinedCqlFilter, flyTo, onSelectIgtLayer]);
 
     // Client Validation — Minimum limits & empty data checks
     const isBidangBelowMin =

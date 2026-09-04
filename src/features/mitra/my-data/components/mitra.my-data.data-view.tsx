@@ -18,7 +18,6 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
@@ -29,11 +28,9 @@ import type {
   MyDataStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
-import {
-  MY_DATA_ORDER_STATUS_OPTIONS,
-  ORDER_STATUS_MAP,
-} from "@/shared/constants/status.config";
+import { MY_DATA_STATUS_OPTIONS } from "@/shared/constants/status.config";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -87,16 +84,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       const layerDisplayName = item.title || item.id.replace(/_/g, " ");
       // const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
       const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
-      const statusConfig = ORDER_STATUS_MAP[item.status] ?? {
-        label: item.status,
-        colorPalette: "gray" as const,
-      };
-
-      const statusBadge = (
-        <Badge colorPalette={statusConfig.colorPalette} variant={"subtle"}>
-          {statusConfig.label}
-        </Badge>
-      );
 
       return {
         id: item.id,
@@ -119,15 +106,14 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           {
             value: effectiveWmsUrl ?? "",
             td: effectiveWmsUrl ? (
-              <HStack gap={"xs"} align={"center"} maxW={"240px"}>
+              <HStack gap={"xs"} align={"center"}>
                 <ExternalLink
                   href={effectiveWmsUrl}
                   display={"inline-flex"}
                   alignItems={"center"}
-                  minW={0}
                   flex={1}
                 >
-                  <ClampedP fontSize={"sm"} truncate>
+                  <ClampedP fontSize={"sm"} minW={"260px"}>
                     {effectiveWmsUrl}
                   </ClampedP>
                 </ExternalLink>
@@ -144,37 +130,9 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             ),
             align: "start" as const,
           },
-          // {
-          //   value: effectiveWfsUrl ?? "",
-          //   td: effectiveWfsUrl ? (
-          //     <HStack gap={"xs"} align={"center"} maxW={"240px"}>
-          //       <ExternalLink
-          //         href={effectiveWfsUrl}
-          //         display={"inline-flex"}
-          //         alignItems={"center"}
-          //         minW={0}
-          //         flex={1}
-          //       >
-          //         <ClampedP fontSize={"sm"} truncate>
-          //           {effectiveWfsUrl}
-          //         </ClampedP>
-          //       </ExternalLink>
-
-          //       <ClipboardButton
-          //         value={effectiveWfsUrl}
-          //         variant={"ghost"}
-          //         aria-label={"Salin URL WFS"}
-          //         flexShrink={0}
-          //       />
-          //     </HStack>
-          //   ) : (
-          //     <P color={"fg.subtle"}>{"-"}</P>
-          //   ),
-          //   align: "start" as const,
-          // },
           {
             value: item.status,
-            td: statusBadge,
+            td: <MyDataStatusBadge>{item.status}</MyDataStatusBadge>,
             align: "start" as const,
           },
           {
@@ -232,7 +190,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           <StatusFilterSelect
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
-            options={MY_DATA_ORDER_STATUS_OPTIONS}
+            options={MY_DATA_STATUS_OPTIONS}
             value={params.status ?? ""}
             onValueChange={(value) => {
               startTransition(() => {

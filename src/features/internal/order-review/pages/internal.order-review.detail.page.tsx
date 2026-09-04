@@ -15,9 +15,8 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -27,9 +26,8 @@ import {
   useProvisionOrder,
 } from "@/features/internal/order-review/hooks/use-order-review";
 import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
-import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
@@ -200,7 +198,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
   // Stores
   const { enabledLayerIds, setLayerEnabled, setCustomLayerConfig } =
     useMapLayerStore();
-  const { map } = useMapInstanceStore();
+  const { flyTo } = useFlyToLayer();
 
   // Queries — master IGT layers from catalog
   const { data: layersData } = useQuery({
@@ -232,12 +230,29 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
           });
         }
         setLayerEnabled(item.sourceLayerId, true);
+
+        const matchedLayer = fetchedLayersList.find(
+          (l) => l.id === item.sourceLayerId,
+        );
+        void flyTo(
+          matchedLayer ?? {
+            id: item.sourceLayerId,
+            title: item.sourceLayerTitle,
+            spatialBasis: item.spatialBasis,
+            bbox: undefined,
+            wfs: {
+              wfsTypeName: item.sourceLayerId,
+              wfsUrl: item.previewWfsUrl || item.wfsUrl || "",
+            },
+          },
+          {},
+        );
       } else {
         setLayerEnabled(item.sourceLayerId, false);
         setCustomLayerConfig(item.sourceLayerId, null);
       }
     },
-    [setCustomLayerConfig, setLayerEnabled],
+    [fetchedLayersList, flyTo, setCustomLayerConfig, setLayerEnabled],
   );
 
   const dataList = useMemo(() => {
@@ -368,7 +383,6 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
         label: "Lihat di Peta",
         icon: MapPinIcon,
         onClick: (item: CartOrderItem) => {
-          if (!map) return;
           const matchedLayer = fetchedLayersList.find(
             (l) => l.id === item.sourceLayerId,
           );
@@ -380,23 +394,21 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
               : "");
 
           handleToggleLayer(item, true);
-          void flyToIgtLayer(
-            map,
-            matchedLayer ??
-              ({
-                id: item.sourceLayerId,
-                title: item.sourceLayerTitle,
-                spatialBasis: item.spatialBasis,
-                bbox: undefined,
-                wms: {
-                  layers: item.sourceLayerId,
-                  wmsUrl: previewUrl,
-                },
-                wfs: {
-                  wfsTypeName: item.sourceLayerId,
-                  wfsUrl: item.previewWfsUrl || item.wfsUrl || "",
-                },
-              } as unknown as IgtLayerItem),
+          void flyTo(
+            matchedLayer ?? {
+              id: item.sourceLayerId,
+              title: item.sourceLayerTitle,
+              spatialBasis: item.spatialBasis,
+              bbox: undefined,
+              wms: {
+                layers: item.sourceLayerId,
+                wmsUrl: previewUrl,
+              },
+              wfs: {
+                wfsTypeName: item.sourceLayerId,
+                wfsUrl: item.previewWfsUrl || item.wfsUrl || "",
+              },
+            },
             {},
           );
         },
@@ -408,7 +420,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
     order.items,
     enabledLayerIds,
     handleToggleLayer,
-    map,
+    flyTo,
     onDetailAttribute,
     fetchedLayersList,
   ]);

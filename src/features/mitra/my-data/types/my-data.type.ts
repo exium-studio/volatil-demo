@@ -3,9 +3,9 @@
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PaginatedResponse } from "@/shared/types/common-response.type";
 
-import type { OrderStatus } from "@/shared/types/status.type";
+import type { MyDataStatus } from "@/shared/types/status.type";
 
-export type MyDataStatus = OrderStatus;
+export type { MyDataStatus };
 export type MyDataSpatialBasis = "bidang" | "kawasan";
 
 export type MyDataItem = {

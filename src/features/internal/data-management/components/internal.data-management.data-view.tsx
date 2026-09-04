@@ -19,6 +19,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -117,6 +118,7 @@ export const InternalDataManagementDataView = () => {
   const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
   const toggleLayerId = useMapLayerStore((s) => s.toggleLayerId);
   const setLayerEnabled = useMapLayerStore((s) => s.setLayerEnabled);
+  const { flyTo } = useFlyToLayer();
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -184,8 +186,11 @@ export const InternalDataManagementDataView = () => {
               <Center>
                 <Switch
                   checked={isVisibleOnMap}
-                  onCheckedChange={() => {
+                  onCheckedChange={({ checked }) => {
                     toggleLayerId(item.id);
+                    if (checked) {
+                      void flyTo(item);
+                    }
                   }}
                   aria-label={`Toggle visibilitas peta untuk ${item.title}`}
                   size={"sm"}
@@ -246,7 +251,11 @@ export const InternalDataManagementDataView = () => {
           return isVisible ? EyeOffIcon : EyeIcon;
         },
         onClick: (layer: MasterIgtLayerItem) => {
+          const willEnable = !enabledLayerIds[layer.id];
           toggleLayerId(layer.id);
+          if (willEnable) {
+            void flyTo(layer);
+          }
         },
       },
       {
@@ -297,6 +306,7 @@ export const InternalDataManagementDataView = () => {
     toggleLayerId,
     setLayerEnabled,
     deleteMutation,
+    flyTo,
   ]);
 
   return (

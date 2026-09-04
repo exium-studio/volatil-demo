@@ -20,6 +20,7 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -138,6 +139,16 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
 
   // Stores
   const { theme } = useThemeStore();
+  const { flyTo } = useFlyToLayer();
+
+  // Handlers
+  const handleToggle = () => {
+    const nextState = !isEnabled;
+    onToggle(layer.id);
+    if (nextState) {
+      void flyTo(layer);
+    }
+  };
 
   // States
   const [isOpacityOpen, setIsOpacityOpen] = useState<boolean>(false);
@@ -174,7 +185,7 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
         colorPalette={colorPalette}
         rounded={theme.radii.component}
         cursor={"pointer"}
-        onClick={() => onToggle(layer.id)}
+        onClick={handleToggle}
         _hover={{ bg: "bg.subtle" }}
       >
         <HStack gap={"md"} align={"center"} flex={1}>

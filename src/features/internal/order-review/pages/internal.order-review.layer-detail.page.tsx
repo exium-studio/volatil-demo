@@ -9,11 +9,10 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
-import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
@@ -31,7 +30,7 @@ export const InternalOrderReviewLayerDetailPage = () => {
     layerId: string;
   };
   const layerId = decodeURIComponent(encodedLayerId ?? "");
-  const { map } = useMapInstanceStore();
+  const { flyTo } = useFlyToLayer();
 
   // States
   const [pageState, setPageState] = useState({
@@ -69,8 +68,8 @@ export const InternalOrderReviewLayerDetailPage = () => {
   };
 
   const handleFlyTo = () => {
-    if (map && selectedIgtLayer) {
-      flyToIgtLayer(map, selectedIgtLayer);
+    if (selectedIgtLayer) {
+      void flyTo(selectedIgtLayer);
     }
   };
 

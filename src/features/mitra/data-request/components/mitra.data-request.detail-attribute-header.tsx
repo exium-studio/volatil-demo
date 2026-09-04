@@ -9,8 +9,7 @@ import type { IgtLayerItem } from "@/design-system/components/map/types/map.type
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { MapPinIcon } from "lucide-react";
 import { memo } from "react";
 
@@ -42,11 +41,11 @@ export const MitraDataRequestDetailAttributeHeader = memo(
       onBack?.();
     };
 
-    const { map } = useMapInstanceStore();
+    const { flyTo } = useFlyToLayer();
 
     const handleFlyToLayer = () => {
       if (!layer) return;
-      void flyToIgtLayer(map, layer, { cqlFilter });
+      void flyTo(layer, { cqlFilter });
     };
 
     return (

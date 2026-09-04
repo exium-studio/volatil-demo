@@ -1,11 +1,17 @@
 // src/features/mitra/data-request/utils/fly-to-igt-layer.ts
 
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import type {
+  FlyToIgtLayerOptions,
+  FlyToLayerTarget,
+} from "@/features/mitra/data-request/types/fly-to-layer.type";
+import { toast } from "@/design-system/components/toast";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 import type { Map as MapLibreMap } from "maplibre-gl";
+
+export type { FlyToIgtLayerOptions, FlyToLayerTarget };
 
 /**
  * Computes a bounding box [minLng, minLat, maxLng, maxLat] from GeoJSON FeatureCollection.
@@ -76,18 +82,13 @@ export const fetchLayerDynamicBbox = async (
   return null;
 };
 
-export type FlyToIgtLayerOptions = {
-  cqlFilter?: string;
-  fetchBoundary?: boolean;
-};
-
 /**
  * Flies map viewport to fit the bounding box (bbox) of an IGT layer.
- * Uses the exact `bbox` property from the layer response, with dynamic fallback if unavailable.
+ * Warns via toast if bounding box is not provided and cannot be dynamically resolved.
  */
 export const flyToIgtLayer = async (
   map: MapLibreMap | null,
-  layer: IgtLayerItem,
+  layer: FlyToLayerTarget,
   options?: FlyToIgtLayerOptions,
 ) => {
   if (!map) return;
@@ -130,9 +131,10 @@ export const flyToIgtLayer = async (
     );
   }
 
-  // Fallback default
+  // If still no bbox, notify user with warning toast
   if (!bbox) {
-    bbox = [115.099352, -8.822746, 115.251131, -8.30164];
+    toast.warning("Informasi batas wilayah (bbox) tidak disediakan untuk layer ini");
+    return;
   }
 
   const [minLng, minLat, maxLng, maxLat] = bbox;

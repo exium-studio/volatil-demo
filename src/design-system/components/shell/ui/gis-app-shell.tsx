@@ -93,12 +93,12 @@ export const GisAppShell = (props: GisAppShellProps) => {
     }
   }, [pathname]);
 
-  // Reset all active map layers and filters when user/role changes
+  // Reset all active map layers and filters when pathname or user/role changes
   const userSession = getUserSession();
   const currentUserId = userSession?.id;
   useEffect(() => {
     useMapLayerStore.getState().resetLayers();
-  }, [currentUserId]);
+  }, [pathname, currentUserId]);
 
   return (
     <AppPageContainer
@@ -371,9 +371,9 @@ const Content = () => {
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
+  const { pathname } = useLocation();
 
   // Derived Values — Build layer config from fetched layer list
-  const isInternal = getUserSession()?.role === "internal";
   const { data: fetchedLayers } = useQuery({
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
@@ -487,7 +487,7 @@ const Content = () => {
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
-          showIgtLayerSelect={!isInternal}
+          showIgtLayerSelect={pathname.startsWith("/mitra/data-request")}
           onDrawFinish={(feature, originalPoints) => {
             console.log("draw finished", { feature, originalPoints });
           }}

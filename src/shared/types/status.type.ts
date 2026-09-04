@@ -44,3 +44,28 @@ export type OrderStatusConfig = {
   icon?: LucideIcon;
   iconColor?: string;
 };
+
+/**
+ * SSOT 3: My Data Active Status Types (Mitra Data Saya)
+ */
+export type MyDataStatus =
+  | "queued"
+  | "provisioning"
+  | "ready"
+  | "failed"
+  | "expired"
+  | "revoked";
+
+export type MyDataStatusConfig = {
+  label: string;
+  colorPalette:
+    | "orange"
+    | "blue"
+    | "purple"
+    | "green"
+    | "red"
+    | "neutral"
+    | "gray";
+  icon?: LucideIcon;
+  iconColor?: string;
+};

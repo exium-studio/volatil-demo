@@ -36,8 +36,8 @@ export const MapOverlay = ({ showIgtLayerSelect = true }: MapOverlayProps) => {
         <MapSearch />
 
         <HStack align={"start"} gap={2} pointerEvents={"none"}>
-          <MapAttribution />
           {showIgtLayerSelect && <MapIgtLayerSelect />}
+          <MapAttribution />
         </HStack>
       </HStack>
 
