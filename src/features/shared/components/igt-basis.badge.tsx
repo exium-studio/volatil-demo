@@ -6,14 +6,9 @@ import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
 import type { IgtBasisBadgeProps } from "@/features/shared/types/badge.type";
 import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 
-export const BasisIgtBadge = (props: IgtBasisBadgeProps) => {
+export const IgtBasisBadge = (props: IgtBasisBadgeProps) => {
   // Props
-  const {
-    children,
-    showIcon = true,
-    variant = "subtle",
-    ...restProps
-  } = props;
+  const { children, showIcon = true, variant = "subtle", ...restProps } = props;
 
   // Derived Values
   const basisKey = (children ?? "") as IgtBasisType;

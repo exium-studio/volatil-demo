@@ -14,5 +14,4 @@ export {
   SPATIAL_BASIS_OPTIONS,
   TRANSACTION_STATUS_MAP,
   TRANSACTION_STATUS_OPTIONS,
-} from "@/features/mitra/cart/constants/orders.config";
-
+} from "@/features/shared/constants/app.config";

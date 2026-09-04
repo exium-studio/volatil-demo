@@ -6,6 +6,7 @@ import type {
   OrderStatusConfig,
   TransactionStatus,
 } from "@/shared/types/status.type";
+import type { Icon as TablerIcon } from "@tabler/icons-react";
 import type { LucideIcon } from "lucide-react";
 
 export type IgtBasisType = "bidang" | "kawasan";
@@ -18,6 +19,7 @@ export type SelectionTypeConfig = {
   label: string;
   variant: "subtle" | "outline" | "solid";
   colorPalette?: "blue" | "teal" | "purple" | "orange" | "gray";
+  icon?: LucideIcon | TablerIcon;
 };
 
 export type IgtBasisTypeConfig = {

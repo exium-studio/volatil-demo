@@ -16,15 +16,18 @@ import type {
   TransactionStatus,
   TransactionStatusConfig,
 } from "@/shared/types/status.type";
+import { IconPolygon } from "@tabler/icons-react";
 import {
   AlertCircleIcon,
   CheckCircle2Icon,
   ClockIcon,
+  FolderArchiveIcon,
+  Grid2X2Icon,
+  Layers2Icon,
+  ListIcon,
   LoaderIcon,
   RotateCcwIcon,
   ShieldAlertIcon,
-  Layers2Icon,
-  Grid2X2Icon,
 } from "lucide-react";
 
 /**
@@ -39,16 +42,19 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
     label: "Katalog",
     variant: "subtle",
     colorPalette: "gray",
+    icon: ListIcon,
   },
   upload_aoi: {
     label: "Upload AOI",
     variant: "subtle",
     colorPalette: "orange",
+    icon: FolderArchiveIcon,
   },
   draw_aoi: {
     label: "Draw AOI",
     variant: "subtle",
     colorPalette: "blue",
+    icon: IconPolygon,
   },
 };
 
@@ -158,7 +164,7 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "blue.fg",
   },
   processing: {
-    label: "Sedang Diproses",
+    label: "Menyiapkan Layanan WMS",
     colorPalette: "purple",
     icon: LoaderIcon,
     iconColor: "purple.fg",
@@ -194,10 +200,16 @@ export const MY_DATA_STATUS_MAP: Record<MyDataStatus, MyDataStatusConfig> = {
     iconColor: "gray.fg",
   },
   provisioning: {
-    label: "Sedang Diproses",
+    label: "Menyiapkan Layanan WMS",
     colorPalette: "purple",
     icon: LoaderIcon,
     iconColor: "purple.fg",
+  },
+  active: {
+    label: "Aktif",
+    colorPalette: "green",
+    icon: CheckCircle2Icon,
+    iconColor: "green.fg",
   },
   ready: {
     label: "Aktif",

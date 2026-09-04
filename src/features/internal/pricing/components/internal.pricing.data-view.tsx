@@ -23,7 +23,7 @@ import type {
   PricingItem,
   PricingQueryParams,
 } from "@/features/internal/pricing/types/internal.pricing.type";
-import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -107,7 +107,7 @@ export const InternalPricingDataView = () => {
           },
           {
             value: item.spatialBasis,
-            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
+            td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
             align: "start" as const,
           },
           {

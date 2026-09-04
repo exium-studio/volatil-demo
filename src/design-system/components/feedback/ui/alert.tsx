@@ -16,6 +16,7 @@ export const AlertRoot = (props: AlertRootProps) => {
 
   return (
     <ChakraAlert.Root
+      colorPalette={"neutral"}
       rounded={props.rounded ?? theme.radii.component}
       {...props}
     />

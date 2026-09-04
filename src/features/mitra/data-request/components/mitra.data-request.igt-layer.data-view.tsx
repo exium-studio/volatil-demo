@@ -28,7 +28,7 @@ import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricin
 import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
-import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -297,7 +297,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
               },
               {
                 value: layer.spatialBasis,
-                td: <BasisIgtBadge>{layer.spatialBasis}</BasisIgtBadge>,
+                td: <IgtBasisBadge>{layer.spatialBasis}</IgtBasisBadge>,
                 align: "start",
               },
               {

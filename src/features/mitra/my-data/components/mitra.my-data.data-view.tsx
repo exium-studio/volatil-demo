@@ -32,7 +32,7 @@ import type {
   MyDataQueryParams,
   MyDataStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
-import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { UrlDataView } from "@/features/shared/components/url.data-view";
@@ -95,7 +95,9 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   const handleToggleLayer = useCallback(
     (item: MyDataItem, checked: boolean) => {
       if (checked) {
-        const proxyWmsUrl = buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.id}`);
+        const proxyWmsUrl = buildWmsProxyUrl(
+          `/api/proxy/wms?layerId=${item.id}`,
+        );
         const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
 
         setCustomLayerConfig(item.id, {
@@ -157,7 +159,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             },
             {
               value: item.spatialBasis,
-              td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
+              td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
               align: "start" as const,
             },
             {

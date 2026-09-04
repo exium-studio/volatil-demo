@@ -8,13 +8,16 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import type { InternalOrderItem } from "@/features/internal/order-review/types/order-review.type";
-import { formatUtcDateTime, getPreferredUserTimezone } from "@/shared/utils/formatter/date.formatter";
+import {
+  formatUtcDateTime,
+  getPreferredUserTimezone,
+} from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { CheckCircle2Icon, MapPlusIcon } from "lucide-react";
@@ -46,10 +49,7 @@ export const InternalOrderReviewDetailTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalOrderReviewDetailModalContent
-        order={order}
-        close={close}
-      />
+      <InternalOrderReviewDetailModalContent order={order} close={close} />
     </Modal.Root>
   );
 };
@@ -97,19 +97,31 @@ const InternalOrderReviewDetailModalContent = (
             borderColor={"border.subtle"}
           >
             <HStack justify={"space-between"}>
-              <P fontSize={"xs"} color={"fg.muted"}>{"Pemohon:"}</P>
-              <P fontWeight={"semibold"} fontSize={"xs"}>{order.mitraName}</P>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Pemohon:"}
+              </P>
+              <P fontWeight={"semibold"} fontSize={"xs"}>
+                {order.mitraName}
+              </P>
             </HStack>
             <HStack justify={"space-between"}>
-              <P fontSize={"xs"} color={"fg.muted"}>{"Metode Seleksi:"}</P>
-              <SelectionTypeBadge size={"xs"}>{order.selectionType}</SelectionTypeBadge>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Metode Seleksi:"}
+              </P>
+              <SelectionTypeBadge size={"xs"}>
+                {order.selectionType}
+              </SelectionTypeBadge>
             </HStack>
             <HStack justify={"space-between"}>
-              <P fontSize={"xs"} color={"fg.muted"}>{"Status:"}</P>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Status:"}
+              </P>
               <OrderStatusBadge size={"xs"}>{order.status}</OrderStatusBadge>
             </HStack>
             <HStack justify={"space-between"}>
-              <P fontSize={"xs"} color={"fg.muted"}>{"Diajukan Pada:"}</P>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Diajukan Pada:"}
+              </P>
               <P fontSize={"xs"}>
                 {formatUtcDateTime(order.createdAt, preferredTimezone)}
               </P>
@@ -144,9 +156,11 @@ const InternalOrderReviewDetailModalContent = (
                 >
                   <HStack justify={"space-between"}>
                     <VStack align={"start"} gap={0}>
-                      <P fontWeight={"medium"} fontSize={"sm"}>{item.sourceLayerTitle}</P>
+                      <P fontWeight={"medium"} fontSize={"sm"}>
+                        {item.sourceLayerTitle}
+                      </P>
                       <HStack gap={"xs"} mt={"2xs"}>
-                        <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>
+                        <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>
                       </HStack>
                     </VStack>
 
@@ -156,7 +170,11 @@ const InternalOrderReviewDetailModalContent = (
                           ? `${item.areaHa ?? 0} Ha (${item.featuresCount} fitur)`
                           : `${item.featuresCount} Bidang`}
                       </P>
-                      <P fontWeight={"semibold"} fontSize={"sm"} color={"brand.fg"}>
+                      <P
+                        fontWeight={"semibold"}
+                        fontSize={"sm"}
+                        color={"brand.fg"}
+                      >
                         {formatCurrency(item.subtotalPrice ?? 0)}
                       </P>
                     </VStack>
@@ -171,8 +189,16 @@ const InternalOrderReviewDetailModalContent = (
                       border={"1px solid"}
                       borderColor={"border.subtle"}
                     >
-                      <P fontSize={"xs"} color={"fg.muted"}>{"WMS Volatil:"}</P>
-                      <P fontSize={"xs"} fontFamily={"mono"} flex={1} truncate color={"fg.default"}>
+                      <P fontSize={"xs"} color={"fg.muted"}>
+                        {"WMS Volatil:"}
+                      </P>
+                      <P
+                        fontSize={"xs"}
+                        fontFamily={"mono"}
+                        flex={1}
+                        truncate
+                        color={"fg.default"}
+                      >
                         {previewUrl}
                       </P>
                       <ClipboardButton

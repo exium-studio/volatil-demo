@@ -1,14 +1,15 @@
 // src/features/shared/components/selection-type.badge.tsx
 
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SELECTION_TYPE_CONFIG_MAP } from "@/features/mitra/cart/constants/orders.config";
+import { SELECTION_TYPE_CONFIG_MAP } from "@/features/shared/constants/app.config";
 import type { SelectionType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import type { SelectionTypeBadgeProps } from "@/features/shared/types/badge.type";
 
 export const SelectionTypeBadge = (props: SelectionTypeBadgeProps) => {
   // Props
-  const { children, ...restProps } = props;
+  const { children, showIcon = true, variant = "subtle", ...restProps } = props;
 
   // Derived Values
   const typeKey = (children ?? "") as SelectionType;
@@ -19,9 +20,11 @@ export const SelectionTypeBadge = (props: SelectionTypeBadgeProps) => {
   return (
     <Badge
       colorPalette={config?.colorPalette ?? "gray"}
-      variant={config?.variant ?? "subtle"}
+      variant={variant}
       {...restProps}
     >
+      {showIcon && config?.icon && <AppIcon icon={config.icon} size={"xs"} />}
+
       {config?.label}
     </Badge>
   );

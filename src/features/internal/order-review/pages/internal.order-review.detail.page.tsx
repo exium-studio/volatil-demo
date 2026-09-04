@@ -27,7 +27,7 @@ import {
 import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
-import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { UrlDataView } from "@/features/shared/components/url.data-view";
@@ -292,7 +292,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
             },
             {
               value: item.spatialBasis,
-              td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
+              td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
               align: "start" as const,
             },
             {

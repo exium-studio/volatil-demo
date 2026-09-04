@@ -21,6 +21,7 @@ export type SpatialBasisBadgeProps = IgtBasisBadgeProps;
 
 export type SelectionTypeBadgeProps = Omit<BadgeProps, "children"> & {
   children?: SelectionType | (string & {});
+  showIcon?: boolean;
 };
 
 export type OrderStatusBadgeProps = Omit<BadgeProps, "children"> & {

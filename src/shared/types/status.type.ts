@@ -52,6 +52,7 @@ export type MyDataStatus =
   | "queued"
   | "provisioning"
   | "ready"
+  | "active"
   | "failed"
   | "expired"
   | "revoked";

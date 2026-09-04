@@ -153,11 +153,11 @@ const InternalOrderReviewApproveModalContent = (
             >
               <AppIcon icon={InfoIcon} />
 
-              <Alert.Title>
+              <Alert.Description>
                 {
                   "Salin URL WMS internal Volatil di bawah, buka aplikasi INTEROP Pusdatin ATR/BPN untuk mendaftarkan layer dan mendapatkan link wrapper resmi, lalu masukkan link tersebut ke formulir di bawah ini."
                 }
-              </Alert.Title>
+              </Alert.Description>
             </Alert.Root>
 
             <Fieldset>

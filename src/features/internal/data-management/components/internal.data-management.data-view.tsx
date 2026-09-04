@@ -35,7 +35,7 @@ import type {
   MasterIgtLayerItem,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
-import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-filter.select";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -128,7 +128,9 @@ export const InternalDataManagementDataView = () => {
         setLayerEnabled(item.id, false);
         setCustomLayerConfig(item.id, null);
       } else {
-        const proxyWmsUrl = buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.id}`);
+        const proxyWmsUrl = buildWmsProxyUrl(
+          `/api/proxy/wms?layerId=${item.id}`,
+        );
         const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
 
         setCustomLayerConfig(item.id, {
@@ -196,7 +198,7 @@ export const InternalDataManagementDataView = () => {
           },
           {
             value: item.spatialBasis,
-            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
+            td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
             align: "start" as const,
           },
           {

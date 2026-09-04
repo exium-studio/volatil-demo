@@ -242,7 +242,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
       {/* Notice States */}
       {!isSelected && (
-        <Alert.Root status={"neutral"} colorPalette={"gray"} variant={"subtle"}>
+        <Alert.Root status={"neutral"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Description>
             {
@@ -253,7 +253,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       )}
 
       {isSelected && isPayable && (
-        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+        <Alert.Root status={"info"} colorPalette={"blue"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Description>
             {
@@ -264,7 +264,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       )}
 
       {isSelected && isProcessing && (
-        <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
+        <Alert.Root status={"info"} colorPalette={"purple"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Description>
             {"Layanan WMS sedang dipersiapkan oleh sistem."}

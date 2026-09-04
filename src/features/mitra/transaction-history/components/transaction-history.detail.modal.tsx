@@ -19,7 +19,7 @@ import type {
   TransactionDetailTriggerProps,
 } from "@/features/mitra/transaction-history/types/transaction-history.modal.type";
 import type { TransactionOrderItem } from "@/features/mitra/transaction-history/types/transaction-history.type";
-import { BasisIgtBadge } from "@/features/shared/components/basis-igt.badge";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
@@ -122,7 +122,7 @@ export const TransactionDetailModalContent = (
           },
           {
             value: item.spatialBasis,
-            td: <BasisIgtBadge>{item.spatialBasis}</BasisIgtBadge>,
+            td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
             align: "start" as const,
           },
           {
