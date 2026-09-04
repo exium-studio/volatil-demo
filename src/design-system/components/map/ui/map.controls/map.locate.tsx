@@ -34,7 +34,7 @@ export const MapLocate = (props: StackProps) => {
           size={"sm"}
           loading={isLocating}
           onClick={toggle}
-          color={isActive ? `${theme.colorPalette}.300` : undefined}
+          color={isActive ? `${theme.colorPalette}.fg` : undefined}
         >
           <AppIcon
             icon={isActive ? IconCurrentLocationFilled : IconCurrentLocation}
