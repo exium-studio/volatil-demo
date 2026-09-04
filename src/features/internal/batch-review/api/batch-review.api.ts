@@ -71,7 +71,7 @@ const normalizeCartOrderItem = (raw: any): CartOrderItem => {
         ? `/api/proxy/wfs?layerId=${raw.sourceLayerId}`
         : undefined),
     externalWfsUrl: raw.externalWfsUrl ?? raw.external_wfs_url ?? null,
-    externalWmsUrl: raw.externalWmsUrl ?? raw.external_wms_url ?? null,
+    externalWmsUrl: raw.externalWmsUrl ?? raw.external_wfs_url ?? null,
   };
 };
 
@@ -84,8 +84,7 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
     (acc: number, it: CartOrderItem) => acc + (it.subtotalPrice || 0),
     0,
   );
-  const idVal =
-    raw.orderId ?? raw.order_id ?? raw.batchId ?? raw.batch_id ?? raw.id ?? "";
+  const idVal = raw.orderId ?? raw.order_id ?? raw.batchId ?? raw.batch_id ?? raw.id ?? "";
 
   return {
     orderId: idVal,
@@ -111,7 +110,7 @@ export const fetchInternalOrdersApi = async (
 ): Promise<InternalOrderListResponse> => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response: any = await apiClient.get("/api/internal/orders", {
+    const response: any = await apiClient.get("/api/internal/interop/orders", {
       params: {
         page: params?.page,
         pageSize: params?.pageSize,
@@ -214,7 +213,7 @@ export const fetchInternalOrderDetailApi = async (
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response: any = await apiClient.get(
-      `/api/internal/orders/${orderId}`,
+      `/api/internal/interop/orders/${orderId}`,
       { signal },
     );
 
@@ -265,7 +264,7 @@ export const provisionOrderApi = async (
   const orderId = payload.orderId ?? payload.batchId ?? "";
   try {
     return await apiClient.post<ApiResponse<ProvisionOrderResponse>>(
-      `/api/mitra/cart/orders/${orderId}/provision`,
+      `/api/mitra/orders/${orderId}/provision`,
       {},
       { signal },
     );
@@ -298,7 +297,7 @@ export const approveOrderApi = async (
 ): Promise<ApiResponse<void>> => {
   const orderId = payload.orderId ?? payload.batchId ?? "";
   return apiClient.put<ApiResponse<void>>(
-    `/api/internal/orders/${orderId}/approve`,
+    `/api/internal/interop/orders/${orderId}/approve`,
     payload.items ? { items: payload.items } : {},
     { signal },
   );
@@ -310,7 +309,7 @@ export const rejectOrderApi = async (
 ): Promise<ApiResponse<void>> => {
   const orderId = payload.orderId ?? payload.batchId ?? "";
   return apiClient.put<ApiResponse<void>>(
-    `/api/internal/orders/${orderId}/reject`,
+    `/api/internal/interop/orders/${orderId}/reject`,
     { reason: payload.reason },
     { signal },
   );

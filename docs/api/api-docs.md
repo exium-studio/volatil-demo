@@ -537,7 +537,7 @@ type CheckoutOrderResponse = {
 
 ## Cek Status Pembayaran (Trigger Bayar)
 
-- **Endpoint**: `GET /api/mitra/cart/orders/{orderId}/status`
+- **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
 - **Middleware / Akses**: `Mitra Only`
 - **Headers**: `Authorization: Bearer <TOKEN_MITRA>`
 - **Keterangan**: Dipanggil oleh mitra untuk memverifikasi status pembayaran.

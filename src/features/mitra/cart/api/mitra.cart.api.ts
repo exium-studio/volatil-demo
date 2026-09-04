@@ -162,7 +162,7 @@ export async function fetchOrderPaymentStatusApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<OrderPaymentStatusResponse>> {
   return apiClient.get<ApiResponse<OrderPaymentStatusResponse>>(
-    `/api/mitra/cart/orders/${orderId}/status`,
+    `/api/mitra/orders/${orderId}/status`,
     { signal },
   );
 }
