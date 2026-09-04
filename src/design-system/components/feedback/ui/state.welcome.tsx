@@ -133,6 +133,7 @@ export const WelcomeState = (props: WelcomeStateProps) => {
             <Button
               key={nav.pathname}
               variant={"outline"}
+              borderColor={"an1"}
               w={"full"}
               justifyContent={"space-between"}
               onClick={() => {

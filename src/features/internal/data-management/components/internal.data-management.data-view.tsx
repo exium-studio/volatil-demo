@@ -43,6 +43,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { IconLayersOff } from "@tabler/icons-react";
 import {
   EyeIcon,
@@ -51,7 +52,7 @@ import {
   PlusIcon,
   Trash2Icon,
 } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
   // Transitions
@@ -116,9 +117,41 @@ export const InternalDataManagementDataView = () => {
 
   // Map Layer Store for toggling visibility
   const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
-  const toggleLayerId = useMapLayerStore((s) => s.toggleLayerId);
   const setLayerEnabled = useMapLayerStore((s) => s.setLayerEnabled);
+  const setCustomLayerConfig = useMapLayerStore((s) => s.setCustomLayerConfig);
   const { flyTo } = useFlyToLayer();
+
+  // Handlers
+  const handleToggleLayer = useCallback(
+    (item: MasterIgtLayerItem, checked: boolean) => {
+      if (!checked) {
+        setLayerEnabled(item.id, false);
+        setCustomLayerConfig(item.id, null);
+      } else {
+        const proxyWmsUrl = buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.id}`);
+        const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
+
+        setCustomLayerConfig(item.id, {
+          wmsUrl: proxyWmsUrl,
+          layers: item.typeName || item.id,
+          spatialBasis: item.spatialBasis,
+        });
+        setLayerEnabled(item.id, true);
+
+        void flyTo({
+          id: item.id,
+          title: item.title,
+          spatialBasis: item.spatialBasis,
+          bbox: item.bbox,
+          wfs: {
+            wfsTypeName: item.typeName || item.id,
+            wfsUrl: proxyWfsUrl,
+          },
+        });
+      }
+    },
+    [flyTo, setCustomLayerConfig, setLayerEnabled],
+  );
 
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -187,10 +220,7 @@ export const InternalDataManagementDataView = () => {
                 <Switch
                   checked={isVisibleOnMap}
                   onCheckedChange={({ checked }) => {
-                    toggleLayerId(item.id);
-                    if (checked) {
-                      void flyTo(item);
-                    }
+                    handleToggleLayer(item, checked);
                   }}
                   aria-label={`Toggle visibilitas peta untuk ${item.title}`}
                   size={"sm"}
@@ -216,7 +246,14 @@ export const InternalDataManagementDataView = () => {
             size={"sm"}
             variant={"outline"}
             onClick={() => {
-              selectedItemIds.forEach((id) => setLayerEnabled(id, true));
+              selectedItemIds.forEach((id) => {
+                const target = rawItems.find((it) => it.id === id);
+                if (target) {
+                  handleToggleLayer(target, true);
+                } else {
+                  setLayerEnabled(id, true);
+                }
+              });
               clearSelectedItems();
             }}
           >
@@ -228,7 +265,15 @@ export const InternalDataManagementDataView = () => {
             size={"sm"}
             variant={"outline"}
             onClick={() => {
-              selectedItemIds.forEach((id) => setLayerEnabled(id, false));
+              selectedItemIds.forEach((id) => {
+                const target = rawItems.find((it) => it.id === id);
+                if (target) {
+                  handleToggleLayer(target, false);
+                } else {
+                  setLayerEnabled(id, false);
+                  setCustomLayerConfig(id, null);
+                }
+              });
               clearSelectedItems();
             }}
           >
@@ -252,10 +297,7 @@ export const InternalDataManagementDataView = () => {
         },
         onClick: (layer: MasterIgtLayerItem) => {
           const willEnable = !enabledLayerIds[layer.id];
-          toggleLayerId(layer.id);
-          if (willEnable) {
-            void flyTo(layer);
-          }
+          handleToggleLayer(layer, willEnable);
         },
       },
       {
@@ -303,10 +345,10 @@ export const InternalDataManagementDataView = () => {
     rawItems,
     preferredTimezone,
     enabledLayerIds,
-    toggleLayerId,
+    handleToggleLayer,
     setLayerEnabled,
+    setCustomLayerConfig,
     deleteMutation,
-    flyTo,
   ]);
 
   return (

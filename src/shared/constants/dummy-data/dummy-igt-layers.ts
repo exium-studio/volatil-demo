@@ -14,11 +14,11 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       zIndex: 3,
       wfs: {
         wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
-        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
+        wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
       },
       wms: {
         layers: "testing_workspace:TEST_BIDANG_TANAH",
-        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+        wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
       },
     },
     {
@@ -30,11 +30,11 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       zIndex: 1,
       wfs: {
         wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
-        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
+        wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
       },
       wms: {
         layers: "testing_workspace:TEST_RTRW_BADUNG",
-        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+        wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
       },
     },
     {
@@ -46,11 +46,11 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       zIndex: 2,
       wfs: {
         wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
-        wfsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/ows",
+        wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
       },
       wms: {
         layers: "testing_workspace:TEST_ZNT_BADUNG",
-        wmsUrl: "https://igtpr.atrbpn.go.id/geoserver/testing_workspace/wms",
+        wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_ZNT_BADUNG",
       },
     },
   ],

@@ -94,16 +94,15 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Handlers
   const handleToggleLayer = useCallback(
     (item: MyDataItem, checked: boolean) => {
-      const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
-
       if (checked) {
-        if (effectiveWmsUrl) {
-          setCustomLayerConfig(item.id, {
-            wmsUrl: buildWmsProxyUrl(effectiveWmsUrl),
-            layers: item.wmsLayers || item.id,
-            spatialBasis: item.spatialBasis,
-          });
-        }
+        const proxyWmsUrl = buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.id}`);
+        const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
+
+        setCustomLayerConfig(item.id, {
+          wmsUrl: proxyWmsUrl,
+          layers: item.wmsLayers || item.id,
+          spatialBasis: item.spatialBasis,
+        });
         setLayerEnabled(item.id, true);
         void flyTo({
           id: item.id,
@@ -112,7 +111,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           bbox: item.bbox,
           wfs: {
             wfsTypeName: item.wfsTypeName || item.id,
-            wfsUrl: item.wfsUrl || "",
+            wfsUrl: proxyWfsUrl,
           },
         });
       } else {
