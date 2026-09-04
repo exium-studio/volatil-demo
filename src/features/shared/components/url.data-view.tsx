@@ -66,7 +66,7 @@ export const UrlDataView = memo((props: UrlDataViewProps) => {
           : "translateX(0px)"
       }
       _hover={{
-        color: "fg.info",
+        color: "fg",
       }}
     >
       {url}
