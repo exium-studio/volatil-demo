@@ -5,7 +5,7 @@ import {
   IconButton,
 } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
-import { Loader } from "@/design-system/components/feedback/ui/loader";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box, Circle } from "@/design-system/components/layout/ui/box";
@@ -75,11 +75,7 @@ export const NotificationInboxDataView = memo(() => {
   const deleteInboxMutation = useDeleteInboxItem();
 
   if (isLoading) {
-    return (
-      <Center flex={1} py={12}>
-        <Loader />
-      </Center>
-    );
+    return <Skeleton p={"md"} />;
   }
 
   if (isEmptyArray(items)) {
@@ -93,12 +89,7 @@ export const NotificationInboxDataView = memo(() => {
   }
 
   return (
-    <VStack
-      flex={1}
-      align={"stretch"}
-      overflowY={"auto"}
-      p={"md"}
-    >
+    <VStack flex={1} align={"stretch"} overflowY={"auto"} p={"md"}>
       {/* Inbox Actions Bar */}
       <HStack
         justify={"space-between"}
@@ -262,7 +253,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
             flexShrink={0}
             ml={["0", null, "auto"]}
           >
-            <P fontSize={"2xs"} color={"fg.subtle"} whiteSpace={"nowrap"}>
+            <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
               {formatUtcDateTime(item.createdAt, preferredTimezone)}
             </P>
 
@@ -276,7 +267,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
             >
               <IconButton
                 size={"2xs"}
-                variant={"ghost"}
+                variant={"subtle"}
                 aria-label={"Hapus pesan"}
                 rounded={"full"}
               >
