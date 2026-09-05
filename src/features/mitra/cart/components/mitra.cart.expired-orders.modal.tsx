@@ -29,7 +29,7 @@ import {
 import { AlertCircleIcon, HistoryIcon, RotateCcwIcon } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 
-export type MitraCartExpiredOrdersTriggerProps = {
+type MitraCartExpiredOrdersTriggerProps = {
   modalKey?: string;
   children: ReactNode;
 };

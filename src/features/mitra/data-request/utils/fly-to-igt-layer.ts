@@ -11,8 +11,6 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 import type { Map as MapLibreMap } from "maplibre-gl";
 
-export type { FlyToIgtLayerOptions, FlyToLayerTarget };
-
 /**
  * Computes a bounding box [minLng, minLat, maxLng, maxLat] from GeoJSON FeatureCollection.
  */

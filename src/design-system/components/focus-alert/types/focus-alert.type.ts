@@ -36,3 +36,7 @@ export type FocusAlertContentProps = {
   close: () => void;
   onDone?: () => void;
 };
+
+export type FocusAlertContextValue = {
+  modalKey: string;
+};

@@ -3,7 +3,7 @@
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { SELECTION_TYPE_CONFIG_MAP } from "@/features/shared/constants/app.config";
+import { SELECTION_TYPE_CONFIG_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import type { SelectionType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import type { SelectionTypeBadgeProps } from "@/features/shared/types/badge.type";
 

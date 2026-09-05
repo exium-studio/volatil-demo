@@ -15,3 +15,7 @@ export type MapProps = BaseMapProps & {
     originalPoints: { lng: number; lat: number }[],
   ) => void;
 };
+
+export type BaseMapContextValue = {
+  map: import("maplibre-gl").Map | null;
+};

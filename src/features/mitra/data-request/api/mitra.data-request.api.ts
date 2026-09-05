@@ -2,16 +2,13 @@
 
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
-import type { MitraDataRequestIgtDataResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
+import type {
+  MitraDataRequestGetCatalogParams,
+  MitraDataRequestIgtDataResponse,
+} from "@/features/mitra/data-request/types/mitra.data-request.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import type GeoJSON from "geojson";
-
-export type MitraDataRequestGetCatalogParams = {
-  page?: number;
-  pageSize?: number;
-  search?: string;
-};
 
 export async function fetchIgtCatalogApi(
   params?: MitraDataRequestGetCatalogParams,

@@ -4,16 +4,11 @@ import type { FocusSelectOption } from "@/design-system/components/input/types/f
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type {
   FilterAdministrativeAreaOptionDetail,
-  FilterAdministrativeAreaSelectProps,
+  FilterAdministrativeAreaSubdistrictSelectProps,
 } from "@/features/shared/types/filter.administrative-area.type";
 import { useFilterOptionsKelurahan } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
-
-export type FilterAdministrativeAreaSubdistrictSelectProps =
-  FilterAdministrativeAreaSelectProps & {
-    districtId?: string;
-  };
 
 export const FilterAdministrativeAreaSubdistrictSelect = (
   props: FilterAdministrativeAreaSubdistrictSelectProps,

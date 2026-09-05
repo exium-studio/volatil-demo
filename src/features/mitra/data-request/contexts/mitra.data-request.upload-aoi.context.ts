@@ -8,7 +8,7 @@ import {
   type SetStateAction,
 } from "react";
 
-export type MitraDataRequestUploadAoiContextValue = {
+type MitraDataRequestUploadAoiContextValue = {
   aoiLayers: MitraDataRequestUploadAoiLayer[];
   setAoiLayers: Dispatch<SetStateAction<MitraDataRequestUploadAoiLayer[]>>;
 };

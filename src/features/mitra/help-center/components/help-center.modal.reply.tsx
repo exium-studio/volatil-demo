@@ -11,7 +11,7 @@ import { useReplyHelpCenterTicket } from "@/features/mitra/help-center/hooks/use
 import type React from "react";
 import { useState } from "react";
 
-export type HelpCenterModalReplyTriggerProps = {
+type HelpCenterModalReplyTriggerProps = {
   ticketId: number | string;
   children: React.ReactNode;
 };

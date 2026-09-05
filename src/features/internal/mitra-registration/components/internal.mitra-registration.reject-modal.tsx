@@ -15,7 +15,7 @@ import { back } from "@/shared/utils/client/navigation";
 import { XCircleIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
-export type InternalMitraRegistrationRejectTriggerProps = {
+type InternalMitraRegistrationRejectTriggerProps = {
   modalKey?: string;
   registration: InternalMitraRegistrationItem;
   children?: ReactNode;

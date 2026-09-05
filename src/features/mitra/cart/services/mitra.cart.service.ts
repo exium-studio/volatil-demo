@@ -8,7 +8,7 @@ import {
   postClearCartApi,
   postRemoveFromCartApi,
 } from "@/features/mitra/cart/api/mitra.cart.api";
-import type { FetchWfsCatalogResult } from "@/features/mitra/cart/api/mitra.cart.api";
+import type { FetchWfsCatalogResult } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
 import type {
   CartStoredIds,

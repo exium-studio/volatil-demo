@@ -16,6 +16,7 @@ import {
 import type {
   DialogCloseButtonProps,
   DialogContentProps,
+  DialogContextValue,
   DialogRootProps,
 } from "@/design-system/components/overlay/types/dialog.type";
 import {
@@ -37,22 +38,8 @@ import {
   useRef,
   useState,
   type CSSProperties,
-  type Dispatch,
   type MouseEvent,
-  type SetStateAction,
 } from "react";
-
-export type DialogContextValue = {
-  modalKey: string;
-  opened: boolean;
-  open?: () => void;
-  close?: () => void;
-  fullscreen: boolean;
-  setFullscreen: Dispatch<SetStateAction<boolean>>;
-  clickOriginAnimation: boolean;
-  size: ChakraDialog.RootProps["size"];
-  closeOnInteractOutside?: boolean;
-};
 
 export const DialogContext = createContext<DialogContextValue | null>(null);
 

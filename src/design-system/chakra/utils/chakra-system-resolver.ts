@@ -1,7 +1,7 @@
 // src/design-system/chakra/utils/chakra-system-resolver.ts
 
 import { chakraConfig } from "@/design-system/chakra/chakra-system";
-import type { ColorMode } from "@/design-system/hooks/use-color-mode";
+import type { ColorMode } from "@/design-system/hooks/types/use-color-mode.type";
 
 type TokenValue =
   | string

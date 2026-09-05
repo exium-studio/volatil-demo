@@ -206,17 +206,14 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
               {displayName.replace(/_/g, " ")}
             </ClampedP>
 
-            <ClampedP
-              fontSize={"sm"}
-              color={isEnabled ? `fg.muted` : "fg.subtle"}
-            >
-              {layer.wfs.wfsTypeName}
+            <ClampedP fontSize={"sm"} color={"fg.subtle"}>
+              {IGT_BASIS_MAP[layer.spatialBasis].label}
             </ClampedP>
           </VStack>
         </HStack>
 
-        <HStack gap={1} align={"center"}>
-          <Switch checked={isEnabled} pointerEvents={"none"} />
+        <HStack gap={"xs"} align={"center"}>
+          <Switch checked={isEnabled} pointerEvents={"none"} mr={"xs"} />
 
           <Tooltip content={"Zoom ke Layer"}>
             <IconButton size={"xs"} variant={"ghost"} onClick={handleFlyTo}>

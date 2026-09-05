@@ -15,12 +15,10 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { GeoserverCascadeSelect } from "@/features/internal/data-management/components/geoserver-cascade-select";
 import { useCreateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
-import {
-  masterIgtLayerFormSchema,
-  type MasterIgtLayerFormValues,
-} from "@/features/internal/data-management/types/data-management.schema";
+import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
 import type {
   GeoServerWorkspaceLayerOption,
+  MasterIgtLayerFormValues,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
@@ -30,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, type ReactNode } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
-export type InternalDataManagementCreateTriggerProps = {
+type InternalDataManagementCreateTriggerProps = {
   modalKey?: string;
   children?: ReactNode;
 };

@@ -15,3 +15,8 @@ export type ClipboardContextProps = ComponentProps<
 >;
 export type ClipboardValueTextProps = ChakraClipboard.ValueTextProps;
 export type ClipboardCopyTextProps = ChakraClipboard.IndicatorProps;
+
+export type ClipboardButtonProps = import("@/design-system/components/button/types/button.type").ButtonProps & {
+  value?: string;
+  isIconButton?: boolean;
+};

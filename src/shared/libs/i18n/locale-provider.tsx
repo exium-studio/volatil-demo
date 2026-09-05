@@ -13,8 +13,11 @@ import {
   type Locale,
 } from "@/paraglide/runtime";
 import type { LocaleContextValue } from "@/shared/types/locale.type";
+<<<<<<< HEAD
 
 export type { LocaleContextValue };
+=======
+>>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 

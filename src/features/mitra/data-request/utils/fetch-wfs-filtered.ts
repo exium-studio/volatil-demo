@@ -3,7 +3,7 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type GeoJSON from "geojson";
 
-export type WfsFilterParams = {
+type WfsFilterParams = {
   typeName: string;
   wfsUrl: string;
   filters?: Record<string, string | undefined>;

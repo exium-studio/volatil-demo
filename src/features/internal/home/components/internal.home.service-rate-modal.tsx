@@ -9,15 +9,14 @@ import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import {
   serviceRateFormSchema,
   zodResolver,
-  type ServiceRateFormValues,
 } from "@/features/internal/home/schemas/service-rate.schema";
-import type { InternalHomeServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
+import type { InternalHomeServiceRateItem, ServiceRateFormValues } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useUpdateInternalPricing } from "@/features/internal/pricing/hooks/use-internal-pricing";
 import { t } from "@/shared/libs/i18n";
 import type React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-export type InternalHomeServiceRateModalTriggerProps = {
+type InternalHomeServiceRateModalTriggerProps = {
   modalKey?: string;
   rate: InternalHomeServiceRateItem;
   children: React.ReactNode;

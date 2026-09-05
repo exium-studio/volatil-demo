@@ -11,7 +11,7 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import type GeoJSON from "geojson";
 import { memo } from "react";
 
-export type MitraDataRequestDetailAttributeViewProps = {
+type MitraDataRequestDetailAttributeViewProps = {
   layer: IgtLayerItem | null;
   cqlFilter?: string;
   features: GeoJSON.Feature[];

@@ -15,7 +15,7 @@ import {
 import type React from "react";
 import { useState } from "react";
 
-export type HelpCenterModalResolveRejectTriggerProps = {
+type HelpCenterModalResolveRejectTriggerProps = {
   ticketId: number | string;
   actionType: "resolve" | "reject";
   children: React.ReactNode;

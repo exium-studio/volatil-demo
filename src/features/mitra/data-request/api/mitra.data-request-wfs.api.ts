@@ -4,7 +4,6 @@ import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
-import type GeoJSON from "geojson";
 
 const cachedAttributes: Record<string, string[]> = {};
 const cachedStringAttributes: Record<string, string[]> = {};
@@ -151,23 +150,10 @@ export const getWfsStringAttributes = async (
   return [];
 };
 
-export type FetchWfsCatalogParams = {
-  typeName?: string;
-  wfsUrl?: string;
-  page: number;
-  pageSize: number;
-  cqlFilter?: string;
-  search?: string;
-  signal?: AbortSignal;
-};
-
-export type FetchWfsCatalogResult = {
-  features: GeoJSON.Feature[];
-  totalFeatures: number;
-  totalLuas: number;
-  bidangCount: number;
-  kawasanCount: number;
-};
+import type {
+  FetchWfsCatalogParams,
+  FetchWfsCatalogResult,
+} from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 
 /**
  * Fetches WFS features for catalog display with automatic total count and fallback handling.

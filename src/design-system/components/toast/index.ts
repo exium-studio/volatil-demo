@@ -17,6 +17,7 @@ export {
 export { Toaster } from "@/design-system/components/toast/ui/toaster";
 export { NotificationCenter } from "@/design-system/components/toast/ui/notification-center";
 
+<<<<<<< HEAD
 export type {
   ToastOptions,
   ToastItemData,
@@ -30,3 +31,5 @@ export type {
   ToastEngineConfig,
   ToastPlacement,
 } from "@/design-system/components/toast/types/toast.type";
+=======
+>>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)

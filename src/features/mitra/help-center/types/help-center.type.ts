@@ -140,3 +140,7 @@ export type CreateHelpCenterTriggerProps = {
 };
 
 export type CreateHelpCenterModalProps = CreateHelpCenterTriggerProps;
+
+import { createHelpCenterSchema } from "@/features/mitra/help-center/schemas/help-center.schema";
+import type { z } from "zod";
+export type CreateHelpCenterFormValues = z.infer<ReturnType<typeof createHelpCenterSchema>>;

@@ -3,7 +3,11 @@ import { toast } from "@/design-system/components/toast";
 import { ApiError } from "@/shared/libs/api-client/api-error";
 import type { RequestOptions } from "@/shared/types/api-client.type";
 
+<<<<<<< HEAD
 export type { RequestOptions };
+=======
+import type { RequestOptions } from "@/shared/types/api-client.type";
+>>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 
 const getAuthToken = (): string | null => {
   if (typeof window === "undefined") return null;

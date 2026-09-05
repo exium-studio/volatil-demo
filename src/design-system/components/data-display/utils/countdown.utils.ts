@@ -1,12 +1,6 @@
 // src/design-system/components/data-display/utils/countdown.utils.ts
 
-export type CountdownParts = {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-  isFinished: boolean;
-};
+import type { CountdownParts } from "@/design-system/components/data-display/types/countdown.type";
 
 const SECOND_IN_MS = 1000;
 const MINUTE_IN_SECONDS = 60;

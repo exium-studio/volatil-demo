@@ -26,7 +26,7 @@ import {
   type SetStateAction,
 } from "react";
 
-export type SettingsActivePageContextValue = {
+type SettingsActivePageContextValue = {
   activeSettingNavKey: SettingNavKey | undefined;
   setActiveSettingNavKey: Dispatch<SetStateAction<SettingNavKey | undefined>>;
 };

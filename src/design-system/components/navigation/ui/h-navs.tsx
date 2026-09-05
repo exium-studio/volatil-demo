@@ -1,21 +1,13 @@
 // src/design-system/components/navigation/ui/h-navs.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
+import type { HNavsProps } from "@/design-system/components/navigation/types/h-navs.type";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
-import type { NavItem } from "@/shared/types/nav.type";
-
-export type HNavsProps<TNavKey extends string = string> = StackProps & {
-  navs: Record<TNavKey, NavItem>;
-  navKeys: TNavKey[];
-  activeKey?: TNavKey | null;
-  onNavClick?: (key: TNavKey) => void;
-};
 
 export const HNavs = <TNavKey extends string>(props: HNavsProps<TNavKey>) => {
   // Props

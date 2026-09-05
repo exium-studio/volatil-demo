@@ -3,17 +3,12 @@
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type {
+  FilterAdministrativeAreaDistrictSelectProps,
   FilterAdministrativeAreaOptionDetail,
-  FilterAdministrativeAreaSelectProps,
 } from "@/features/shared/types/filter.administrative-area.type";
 import { useFilterOptionsKecamatan } from "@/features/mitra/data-request/queries/use-mitra-data-request-filter.query";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
-
-export type FilterAdministrativeAreaDistrictSelectProps =
-  FilterAdministrativeAreaSelectProps & {
-    regencyId?: string;
-  };
 
 export const FilterAdministrativeAreaDistrictSelect = (
   props: FilterAdministrativeAreaDistrictSelectProps,

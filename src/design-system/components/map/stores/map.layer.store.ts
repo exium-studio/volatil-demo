@@ -1,7 +1,7 @@
 import type { WmsRasterLayerConfig } from "@/design-system/components/map/types/map.type";
 import { create } from "zustand";
 
-export type MapLayerState = {
+type MapLayerState = {
   /** Whether the WMS raster overlay is visible on the map. */
   wmsVisible: boolean;
   setWmsVisible: (visible: boolean) => void;

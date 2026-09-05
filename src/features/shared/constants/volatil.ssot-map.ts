@@ -20,6 +20,7 @@ import { IconPolygon } from "@tabler/icons-react";
 import {
   AlertCircleIcon,
   CheckCircle2Icon,
+  CheckCircleIcon,
   ClockIcon,
   FolderArchiveIcon,
   Grid2X2Icon,
@@ -28,6 +29,7 @@ import {
   LoaderIcon,
   RotateCcwIcon,
   ShieldAlertIcon,
+  TimerOffIcon,
 } from "lucide-react";
 
 /**
@@ -125,7 +127,7 @@ export const TRANSACTION_STATUS_MAP: Record<
   expired: {
     label: "Kedaluwarsa",
     colorPalette: "gray",
-    icon: ClockIcon,
+    icon: TimerOffIcon,
   },
   failed: {
     label: "Gagal",
@@ -208,13 +210,13 @@ export const MY_DATA_STATUS_MAP: Record<MyDataStatus, MyDataStatusConfig> = {
   active: {
     label: "Aktif",
     colorPalette: "green",
-    icon: CheckCircle2Icon,
+    icon: CheckCircleIcon,
     iconColor: "green.fg",
   },
   ready: {
     label: "Aktif",
     colorPalette: "green",
-    icon: CheckCircle2Icon,
+    icon: CheckCircleIcon,
     iconColor: "green.fg",
   },
   failed: {
@@ -226,7 +228,7 @@ export const MY_DATA_STATUS_MAP: Record<MyDataStatus, MyDataStatusConfig> = {
   expired: {
     label: "Kedaluwarsa",
     colorPalette: "orange",
-    icon: ClockIcon,
+    icon: TimerOffIcon,
     iconColor: "orange.fg",
   },
   revoked: {

@@ -1,11 +1,11 @@
 // src/design-system/components/utilities/ui/portal.tsx
 
-import { type ReactNode } from "react";
+import type { PortalProps } from "@/design-system/components/utilities/types/portal.type";
 import { Portal as ChakraPortal } from "@chakra-ui/react";
-import type { PortalProps as ChakraPortalProps } from "@chakra-ui/react";
 
-export type PortalProps = ChakraPortalProps & { children?: ReactNode };
+export const Portal = (props: PortalProps) => {
+  // Props
+  const { children, ...restProps } = props;
 
-export const Portal = ({ children, ...props }: PortalProps) => {
-  return <ChakraPortal {...props}>{children}</ChakraPortal>;
+  return <ChakraPortal {...restProps}>{children}</ChakraPortal>;
 };

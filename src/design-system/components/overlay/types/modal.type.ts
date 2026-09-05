@@ -69,3 +69,14 @@ export type ModalFooterProps = (
 ) & {};
 
 export type ModalTitleProps = PProps & {};
+
+export type ModalContextValue = {
+  modalKey: string;
+  opened: boolean;
+  open?: () => void;
+  close?: () => void;
+  fullscreen: boolean;
+  setFullscreen: import("react").Dispatch<import("react").SetStateAction<boolean>>;
+  isSmallViewport: boolean;
+  closeOnInteractOutside?: boolean;
+};

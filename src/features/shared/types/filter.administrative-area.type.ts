@@ -25,6 +25,21 @@ export type FilterAdministrativeAreaSelectProps = {
   customOption?: boolean;
 };
 
+export type FilterAdministrativeAreaRegencySelectProps =
+  FilterAdministrativeAreaSelectProps & {
+    provinceId?: string;
+  };
+
+export type FilterAdministrativeAreaDistrictSelectProps =
+  FilterAdministrativeAreaSelectProps & {
+    regencyId?: string;
+  };
+
+export type FilterAdministrativeAreaSubdistrictSelectProps =
+  FilterAdministrativeAreaSelectProps & {
+    districtId?: string;
+  };
+
 export type FilterAdministrativeAreaTriggerProps = {
   children: React.ReactNode;
   modalKey?: string;

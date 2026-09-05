@@ -11,7 +11,15 @@ import { useEffect, useState } from "react";
 const COUNTDOWN_INTERVAL_MS = 1000;
 
 export const Countdown = (props: CountdownProps) => {
-  const { finishedAt, format, warningThresholdDays = 3, color, ...restProps } = props;
+  const {
+    finishedAt,
+    format,
+    warningThresholdDays = 3,
+    warningThresholdHours,
+    color,
+    finishColor = "fg.error",
+    ...restProps
+  } = props;
   const [countdown, setCountdown] = useState(() =>
     getCountdownParts(finishedAt),
   );
@@ -35,13 +43,14 @@ export const Countdown = (props: CountdownProps) => {
   // Derived Values — Color based on remaining time threshold
   const isNearExpiry =
     !countdown.isFinished &&
-    warningThresholdDays > 0 &&
-    countdown.days < warningThresholdDays;
+    ((warningThresholdHours !== undefined
+      ? countdown.days === 0 && countdown.hours < warningThresholdHours
+      : warningThresholdDays > 0 && countdown.days < warningThresholdDays));
 
   const dynamicColor =
     color ??
     (countdown.isFinished
-      ? "fg.error"
+      ? finishColor
       : isNearExpiry
         ? "orange.fg"
         : undefined);

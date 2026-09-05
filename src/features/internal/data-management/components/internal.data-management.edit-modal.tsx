@@ -16,12 +16,10 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { GeoserverCascadeSelect } from "@/features/internal/data-management/components/geoserver-cascade-select";
 import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
-import {
-  masterIgtLayerFormSchema,
-  type MasterIgtLayerFormValues,
-} from "@/features/internal/data-management/types/data-management.schema";
+import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
 import type {
   GeoServerWorkspaceLayerOption,
+  MasterIgtLayerFormValues,
   MasterIgtLayerItem,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
@@ -32,7 +30,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, type ReactNode } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
-export type InternalDataManagementEditTriggerProps = {
+type InternalDataManagementEditTriggerProps = {
   modalKey?: string;
   item: MasterIgtLayerItem;
   children?: ReactNode;

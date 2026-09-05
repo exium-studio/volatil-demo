@@ -1,7 +1,6 @@
 // src/design-system/components/data-display/ui/data-list-table.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
-import type { DataViewTableContextValue } from "@/design-system/components/data-display/contexts/data-view-table.context";
 import {
   DataViewTableContext,
   useDataViewTableContext,
@@ -9,6 +8,7 @@ import {
 import { useDataViewSelection } from "@/design-system/components/data-display/hooks/use-data-view-selection";
 import { useDataViewSort } from "@/design-system/components/data-display/hooks/use-data-view-sort";
 import type {
+  DataViewTableContextValue,
   DataViewTableHeaderProps,
   DataViewTableOnSelectedItemChange,
   DataViewTableRootProps,

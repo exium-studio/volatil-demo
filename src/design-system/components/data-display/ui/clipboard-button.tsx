@@ -1,16 +1,11 @@
 // src/design-system/components/data-display/ui/clipboard-button.tsx
 
-import type { ButtonProps } from "@/design-system/components/button/types/button.type";
+import type { ClipboardButtonProps } from "@/design-system/components/data-display/types/clipboard.type";
 import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
 import { Clipboard } from "@/design-system/components/data-display/ui/clipboard";
-
-export type ClipboardButtonProps = ButtonProps & {
-  value?: string;
-  isIconButton?: boolean;
-};
 
 export const ClipboardButton = (props: ClipboardButtonProps) => {
   // Props

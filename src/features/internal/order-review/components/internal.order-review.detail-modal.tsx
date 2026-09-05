@@ -23,7 +23,7 @@ import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { CheckCircle2Icon, MapPlusIcon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
-export type InternalOrderReviewDetailTriggerProps = {
+type InternalOrderReviewDetailTriggerProps = {
   modalKey?: string;
   order: InternalOrderItem;
   children?: ReactNode;

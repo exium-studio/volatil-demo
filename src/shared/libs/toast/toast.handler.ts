@@ -1,12 +1,16 @@
 // src/shared/libs/toast/toast.handler.ts
 
 import { toast } from "@/design-system/components/toast";
+<<<<<<< HEAD
 import type {
   ToastMessageConfig,
   MutationToastOptions,
 } from "@/shared/types/toast-handler.type";
 
 export type { ToastMessageConfig, MutationToastOptions };
+=======
+import type { MutationToastOptions } from "@/shared/types/toast-handler.type";
+>>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 
 /**
  * Mutation Toast Handler Helper

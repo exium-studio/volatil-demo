@@ -34,3 +34,8 @@ export type SystemHealthMetricItem = {
   subValue: string;
   colorPalette: string;
 };
+
+export type InternalLeaderboardResponse = {
+  topMitraList: TopMitraAcquisitionItem[];
+  topIgtLayers: TopIgtLayerItem[];
+};

@@ -7,7 +7,7 @@ import { ToastStack } from "@/design-system/components/toast/ui/toast.stack";
 import type { NotificationCategoryGroup } from "@/features/notification/types/notification.type";
 import { memo } from "react";
 
-export type NotificationGroupStackCardProps = {
+type NotificationGroupStackCardProps = {
   group: NotificationCategoryGroup;
   onDeleteGroup?: (toasts: ToastItemData[]) => void;
   onDeleteNotification?: (id: string) => void;

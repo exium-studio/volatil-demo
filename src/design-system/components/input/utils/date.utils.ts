@@ -113,11 +113,11 @@ export function getTodayDate(timezone: string): CalendarDate {
 // Validation
 // -------------------------------------------------------------------------------------
 
-export type ValidationResult =
+type ValidationResult =
   | { valid: true }
   | { valid: false; reason: string };
 
-export type ValidationOptions = {
+type ValidationOptions = {
   min?: string;
   max?: string;
   disabledDates?: string[];
@@ -199,7 +199,7 @@ export function validateFromFields(
 // Calendar grid generation
 // -------------------------------------------------------------------------------------
 
-export type CalendarDay = {
+type CalendarDay = {
   date: CalendarDate;
   isCurrentMonth: boolean;
 };
@@ -279,7 +279,7 @@ export function buildYearPage(pageStart: number): number[] {
 // Format order
 // -------------------------------------------------------------------------------------
 
-export type FieldOrder = [
+type FieldOrder = [
   "day" | "month" | "year",
   "day" | "month" | "year",
   "day" | "month" | "year",

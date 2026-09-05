@@ -116,3 +116,35 @@ export type FormattedTableColumn = {
   dim?: boolean;
   bodyCellProps?: StackProps;
 };
+
+export type DataViewTableContextValue = {
+  headers: FormattedTableHeader[];
+  items: FormattedListItem[];
+  page?: number;
+  pageSize?: number;
+  initialSortColumnIndex?: number;
+  initialSortOrder?: "asc" | "desc";
+  batchActions?: DataViewBatchActionsGenerator[];
+  itemActions?: DataViewItemActionsGenerator[];
+  withNumbering?: boolean;
+  virtualized?: boolean;
+  fixedItemHeight?: boolean;
+  tableContainerRef: import("react").RefObject<HTMLDivElement | null>;
+  tableContainerEl: HTMLDivElement | null;
+
+  sortConfig: DataViewTableSortConfig;
+  toggleSort: (columnIndex: number) => void;
+  sortedItems: FormattedListItem[];
+  selectedItemIds: string[];
+  selectedItems: FormattedListItem[];
+  isAllItemsSelected: boolean;
+  toggleItemSelection: (item: FormattedListItem) => void;
+  selectAllItems: (isChecked: boolean) => void;
+  clearSelectedItems: () => void;
+  canBatchSelect: boolean;
+  renderTdCell?: (
+    column: FormattedTableColumn,
+    item: FormattedListItem,
+    columnIndex: number,
+  ) => ReactNode;
+};

@@ -2,6 +2,7 @@
 
 import type {
   ContainerBodyProps,
+  ContainerContextValue,
   ContainerHeaderProps,
   ContainerRootProps,
 } from "@/design-system/components/layout/types/container.type";
@@ -9,15 +10,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useRefDimension } from "@/design-system/hooks/use-ref-dimenssion";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { createContext, useContext, useMemo, useRef } from "react";
-
-export type ContainerContextValue = {
-  dimension: {
-    width: number;
-    height: number;
-  };
-  isValidDimension: boolean;
-  isSmContainer: boolean;
-};
 
 const ContainerContext = createContext<ContainerContextValue | null>(null);
 

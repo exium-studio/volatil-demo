@@ -60,6 +60,7 @@ export default defineConfig([
     },
   },
 
+<<<<<<< HEAD
   // Custom linter rule: all type and interface declarations must be in .type.ts files
   {
     files: ["src/**/*.{ts,tsx}"],
@@ -107,6 +108,55 @@ export default defineConfig([
                     messageId: "typeMustBeInTypeFile",
                     data: { kind: "interface", name: node.id.name },
                   });
+=======
+  // Disallow export type in any file that is not a .type.ts or .d.ts file
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["**/*.type.ts", "**/*.type.tsx", "**/*.d.ts", "src/routeTree.gen.ts"],
+    plugins: {
+      custom: {
+        rules: {
+          "no-export-type": {
+            create(context) {
+              return {
+                ExportNamedDeclaration(node) {
+                  if (node.exportKind === "type") {
+                    context.report({
+                      node,
+                      message:
+                        "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix.",
+                    });
+                    return;
+                  }
+
+                  if (node.declaration?.type === "TSTypeAliasDeclaration") {
+                    context.report({
+                      node: node.declaration,
+                      message:
+                        "Exporting type aliases is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix.",
+                    });
+                    return;
+                  }
+
+                  if (node.declaration?.type === "TSInterfaceDeclaration") {
+                    context.report({
+                      node: node.declaration,
+                      message:
+                        "Exporting interfaces is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix.",
+                    });
+                    return;
+                  }
+
+                  for (const specifier of node.specifiers || []) {
+                    if (specifier.exportKind === "type") {
+                      context.report({
+                        node: specifier,
+                        message:
+                          "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix.",
+                      });
+                    }
+                  }
+>>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
                 },
               };
             },
@@ -115,7 +165,11 @@ export default defineConfig([
       },
     },
     rules: {
+<<<<<<< HEAD
       "custom/type-file-suffix": "error",
+=======
+      "custom/no-export-type": "error",
+>>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
     },
   },
 ]);

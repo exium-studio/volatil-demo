@@ -22,7 +22,7 @@ import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
-export type InternalOrderReviewApproveTriggerProps = {
+type InternalOrderReviewApproveTriggerProps = {
   modalKey?: string;
   order: InternalOrderItem;
   children?: ReactNode;

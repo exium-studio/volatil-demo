@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 
-export type MitraCartOrderSummaryProps = {
+type MitraCartOrderSummaryProps = {
   activeOrder: ActiveCartOrder | null;
   isLoading?: boolean;
 };

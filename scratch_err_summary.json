@@ -1,0 +1,832 @@
+[
+  {
+    "file": "src/design-system/components/data-display/contexts/data-view-table.context.ts",
+    "errors": [
+      {
+        "line": 16,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/data-display/ui/clipboard-button.tsx",
+    "errors": [
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/data-display/utils/countdown.utils.ts",
+    "errors": [
+      {
+        "line": 3,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/focus-alert/ui/focus-alert-key-context.ts",
+    "errors": [
+      {
+        "line": 5,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/input/ui/date-picker.tsx",
+    "errors": [
+      {
+        "line": 522,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/input/utils/date.utils.ts",
+    "errors": [
+      {
+        "line": 116,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 120,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 202,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 282,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/layout/ui/container.tsx",
+    "errors": [
+      {
+        "line": 13,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/map/contexts/map.basemap.context.ts",
+    "errors": [
+      {
+        "line": 6,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/map/stores/map.layer.store.ts",
+    "errors": [
+      {
+        "line": 4,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/map/ui/map.overlay.tsx",
+    "errors": [
+      {
+        "line": 12,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/map/utils/fetch-wfs.ts",
+    "errors": [
+      {
+        "line": 3,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 6,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 14,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 19,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/map/utils/map-camera.ts",
+    "errors": [
+      {
+        "line": 5,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 13,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/navigation/ui/h-navs.tsx",
+    "errors": [
+      {
+        "line": 13,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/overlay/ui/dialog.tsx",
+    "errors": [
+      {
+        "line": 45,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/overlay/ui/modal.tsx",
+    "errors": [
+      {
+        "line": 33,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/toast/hooks/use-toast-history.ts",
+    "errors": [
+      {
+        "line": 7,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/toast/hooks/use-visible-toasts.ts",
+    "errors": [
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/toast/index.ts",
+    "errors": [
+      {
+        "line": 20,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/toast/stores/toast-history.store.ts",
+    "errors": [
+      {
+        "line": 28,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/toast/stores/toast-visible.store.ts",
+    "errors": [
+      {
+        "line": 20,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/components/utilities/ui/portal.tsx",
+    "errors": [
+      {
+        "line": 7,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/design-system/hooks/use-color-mode.ts",
+    "errors": [
+      {
+        "line": 5,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 7,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/auth/schemas/signin.schema.ts",
+    "errors": [
+      {
+        "line": 19,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/branding/components/ui/features-carousel.tsx",
+    "errors": [
+      {
+        "line": 37,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/data-management/components/geoserver-cascade-select.tsx",
+    "errors": [
+      {
+        "line": 12,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/data-management/components/internal.data-management.create-modal.tsx",
+    "errors": [
+      {
+        "line": 33,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/data-management/components/internal.data-management.edit-modal.tsx",
+    "errors": [
+      {
+        "line": 35,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/data-management/types/data-management.schema.ts",
+    "errors": [
+      {
+        "line": 17,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/home/api/internal.home.leaderboard.api.ts",
+    "errors": [
+      {
+        "line": 8,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/home/components/internal.home.service-rate-modal.tsx",
+    "errors": [
+      {
+        "line": 20,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/home/schemas/service-rate.schema.ts",
+    "errors": [
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/master-geoserver/components/internal.master-geoserver.create-modal.tsx",
+    "errors": [
+      {
+        "line": 21,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/master-geoserver/components/internal.master-geoserver.edit-modal.tsx",
+    "errors": [
+      {
+        "line": 23,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/master-geoserver/types/master-geoserver.schema.ts",
+    "errors": [
+      {
+        "line": 16,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal.tsx",
+    "errors": [
+      {
+        "line": 19,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal.tsx",
+    "errors": [
+      {
+        "line": 18,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/order-review/components/internal.order-review.approve-modal.tsx",
+    "errors": [
+      {
+        "line": 25,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/order-review/components/internal.order-review.detail-modal.tsx",
+    "errors": [
+      {
+        "line": 26,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/order-review/components/internal.order-review.reject-modal.tsx",
+    "errors": [
+      {
+        "line": 21,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/internal/pricing/components/internal.pricing-edit-modal.tsx",
+    "errors": [
+      {
+        "line": 18,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/cart/api/mitra.cart.api.ts",
+    "errors": [
+      {
+        "line": 14,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/cart/components/mitra.cart.expired-orders.modal.tsx",
+    "errors": [
+      {
+        "line": 32,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/cart/components/mitra.cart.order-item.tsx",
+    "errors": [
+      {
+        "line": 261,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/cart/components/mitra.cart.order-summary.tsx",
+    "errors": [
+      {
+        "line": 23,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/cart/hooks/use-mitra-cart.ts",
+    "errors": [
+      {
+        "line": 28,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/api/mitra.data-request-wfs-summary.api.ts",
+    "errors": [
+      {
+        "line": 8,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/api/mitra.data-request-wfs.api.ts",
+    "errors": [
+      {
+        "line": 154,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 164,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/api/mitra.data-request.api.ts",
+    "errors": [
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/components/mitra.data-request.detail-attribute-view.tsx",
+    "errors": [
+      {
+        "line": 14,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/constants/igt.config.ts",
+    "errors": [
+      {
+        "line": 12,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 17,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 30,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context.ts",
+    "errors": [
+      {
+        "line": 11,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/hooks/use-mitra-data-request.ts",
+    "errors": [
+      {
+        "line": 73,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/services/mitra.data-request.service.ts",
+    "errors": [
+      {
+        "line": 21,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/stores/igt-layer.store.ts",
+    "errors": [
+      {
+        "line": 8,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/utils/fetch-wfs-filtered.ts",
+    "errors": [
+      {
+        "line": 6,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/data-request/utils/fly-to-igt-layer.ts",
+    "errors": [
+      {
+        "line": 14,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/help-center/components/help-center.attachment-item.tsx",
+    "errors": [
+      {
+        "line": 18,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/help-center/components/help-center.modal.reply.tsx",
+    "errors": [
+      {
+        "line": 14,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/help-center/components/help-center.modal.resolve-reject.tsx",
+    "errors": [
+      {
+        "line": 18,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/help-center/components/help-center.summary.tsx",
+    "errors": [
+      {
+        "line": 12,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/help-center/components/help-center.transaction-select.tsx",
+    "errors": [
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/mitra/help-center/schemas/help-center.schema.ts",
+    "errors": [
+      {
+        "line": 14,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/notification/components/notification.item.tsx",
+    "errors": [
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/settings/components/settings.active-page.tsx",
+    "errors": [
+      {
+        "line": 29,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/features/settings/hooks/use-settings-search-index.ts",
+    "errors": [
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/shared/hooks/use-infinite-query.ts",
+    "errors": [
+      {
+        "line": 11,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 19,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/shared/hooks/use-paginated-query.ts",
+    "errors": [
+      {
+        "line": 15,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/shared/libs/api-client/api-client.ts",
+    "errors": [
+      {
+        "line": 5,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/shared/libs/i18n/locale-provider.tsx",
+    "errors": [
+      {
+        "line": 16,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/shared/libs/toast/toast.handler.ts",
+    "errors": [
+      {
+        "line": 5,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/shared/utils/formatter/byte.formatter.ts",
+    "errors": [
+      {
+        "line": 3,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 14,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/shared/utils/formatter/number.formatter.ts",
+    "errors": [
+      {
+        "line": 3,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 4,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 9,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 10,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 15,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 16,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      },
+      {
+        "line": 22,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  },
+  {
+    "file": "src/shared/utils/navigation/recent-nav.utils.ts",
+    "errors": [
+      {
+        "line": 8,
+        "rule": "custom/no-export-type",
+        "msg": "Exporting types is forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix."
+      }
+    ]
+  }
+]

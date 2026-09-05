@@ -9,8 +9,8 @@ import {
   getIgtByUploadedAoi,
   getIgtCatalog,
   getIgtGeometryById,
-  type MitraDataRequestGetCatalogParams,
 } from "@/features/mitra/data-request/services/mitra.data-request.service";
+import type { MitraDataRequestGetCatalogParams } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
@@ -70,7 +70,7 @@ export const useIgtByUploadedAoi = () => {
   });
 };
 
-export type AddToCartLayerParam = {
+type AddToCartLayerParam = {
   layerId: string;
   typeName: string;
   title?: string;

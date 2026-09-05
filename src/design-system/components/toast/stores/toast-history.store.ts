@@ -25,7 +25,7 @@ type HistoryActions = {
   getAll: (options?: { includeDeleted?: boolean }) => HistoryEntry[];
 };
 
-export type HistoryStore = HistoryState & HistoryActions;
+type HistoryStore = HistoryState & HistoryActions;
 
 function isExpired(entry: HistoryEntry, ttl: number | null): boolean {
   if (ttl === null) return false;

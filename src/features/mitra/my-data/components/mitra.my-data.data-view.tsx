@@ -42,7 +42,6 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { useNavigate } from "@tanstack/react-router";
 import {
   DatabaseIcon,
@@ -95,10 +94,11 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   const handleToggleLayer = useCallback(
     (item: MyDataItem, checked: boolean) => {
       if (checked) {
-        const proxyWmsUrl = buildWmsProxyUrl(
-          `/api/proxy/wms?layerId=${item.id}`,
-        );
-        const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
+        // const proxyWmsUrl = buildWmsProxyUrl(
+        //   `/api/proxy/wms?layerId=${item.id}`,
+        // );
+        // const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
+        const proxyWmsUrl = item.externalWmsUrl;
 
         setCustomLayerConfig(item.id, {
           wmsUrl: proxyWmsUrl,
@@ -111,10 +111,10 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           title: item.title,
           spatialBasis: item.spatialBasis,
           bbox: item.bbox,
-          wfs: {
-            wfsTypeName: item.wfsTypeName || item.id,
-            wfsUrl: proxyWfsUrl,
-          },
+          // wfs: {
+          //   wfsTypeName: item.wfsTypeName || item.id,
+          //   wfsUrl: proxyWfsUrl,
+          // },
         });
       } else {
         setLayerEnabled(item.id, false);

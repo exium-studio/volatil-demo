@@ -79,7 +79,7 @@ export const TransactionHistoryDataView = () => {
     const headers: FormattedTableHeader[] = [
       { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "No. Order", sortable: true, align: "start" },
-      { th: "Status", sortable: true, align: "start" },
+      { th: "Status Transaksi", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
@@ -145,11 +145,8 @@ export const TransactionHistoryDataView = () => {
                   <Countdown
                     finishedAt={targetExpiry}
                     fontWeight={"medium"}
-                    color={
-                      item.transactionStatus === "expired"
-                        ? "fg.subtle"
-                        : "orange.fg"
-                    }
+                    warningThresholdHours={1}
+                    finishColor={"fg.subtle"}
                   />
                 ) : (
                   <P color={"fg.subtle"}>{"-"}</P>
@@ -210,8 +207,7 @@ export const TransactionHistoryDataView = () => {
         label: "Bayar",
         icon: CreditCardIcon,
         hidden: (transaction: TransactionRecord) =>
-          transaction.transactionStatus === "paid" ||
-          transaction.transactionStatus === "refunded",
+          transaction.transactionStatus !== "pending",
         onClick: (transaction: TransactionRecord) => {
           if (transaction.billingCode) {
             void navigate({

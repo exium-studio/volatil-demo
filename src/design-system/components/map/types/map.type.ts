@@ -67,7 +67,7 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
   type: "wms-raster";
   /** Full tile URL template, or constructed dynamically using wmsUrl & layers */
   tileUrl?: string;
-  wmsUrl?: string;
+  wmsUrl?: string | null;
   layers?: string;
   tileSize?: number;
   srs?: string;

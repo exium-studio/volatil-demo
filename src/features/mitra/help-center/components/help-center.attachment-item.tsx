@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { memo } from "react";
 
-export type HelpCenterAttachmentItemProps = {
+type HelpCenterAttachmentItemProps = {
   attachment: HelpCenterAttachment;
   index?: number;
 };

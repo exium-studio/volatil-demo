@@ -12,10 +12,9 @@ import { HelpCenterTransactionSelect } from "@/features/mitra/help-center/compon
 import { useCreateHelpCenterTicket } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import {
   createHelpCenterSchema,
-  type CreateHelpCenterFormValues,
   zodResolver,
 } from "@/features/mitra/help-center/schemas/help-center.schema";
-import type { CreateHelpCenterTriggerProps } from "@/features/mitra/help-center/types/help-center.type";
+import type { CreateHelpCenterFormValues, CreateHelpCenterTriggerProps } from "@/features/mitra/help-center/types/help-center.type";
 import { Controller, useForm } from "react-hook-form";
 
 export const CreateHelpCenterTrigger = (

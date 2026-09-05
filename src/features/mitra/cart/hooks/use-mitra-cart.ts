@@ -25,7 +25,7 @@ import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export type CartItemsQueryParams = {
+type CartItemsQueryParams = {
   page: number;
   pageSize: number;
   typeName: string;

@@ -34,7 +34,7 @@ const CAROUSEL_ITEMS_LIST = [
   },
 ];
 
-export type FeaturesCarouselProps = StackProps & {};
+type FeaturesCarouselProps = StackProps & {};
 
 export const FeaturesCarousel = (props: FeaturesCarouselProps) => {
   // Props

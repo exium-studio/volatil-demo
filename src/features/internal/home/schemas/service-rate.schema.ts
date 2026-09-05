@@ -7,7 +7,6 @@ export const serviceRateFormSchema = z.object({
   kodePnbp: z.string().min(1, "Kode akun PNBP wajib diisi"),
 });
 
-export type ServiceRateFormValues = z.infer<typeof serviceRateFormSchema>;
 
 export const zodResolver = <T extends z.ZodTypeAny>(schema: T) => {
   return async (values: Record<string, unknown>) => {

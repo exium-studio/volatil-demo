@@ -10,6 +10,7 @@ import type {
   ModalCloseButtonProps,
   ModalCloseTriggerProps,
   ModalContentProps,
+  ModalContextValue,
   ModalFooterProps,
   ModalHeaderProps,
   ModalRootProps,
@@ -26,20 +27,7 @@ import {
   useContext,
   useMemo,
   useState,
-  type Dispatch,
-  type SetStateAction,
 } from "react";
-
-export type ModalContextValue = {
-  modalKey: string;
-  opened: boolean;
-  open?: () => void;
-  close?: () => void;
-  fullscreen: boolean;
-  setFullscreen: Dispatch<SetStateAction<boolean>>;
-  isSmallViewport: boolean;
-  closeOnInteractOutside?: boolean;
-};
 
 export const ModalContext = createContext<ModalContextValue | null>(null);
 

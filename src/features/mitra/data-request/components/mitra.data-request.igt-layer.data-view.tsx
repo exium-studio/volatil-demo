@@ -17,10 +17,8 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import {
-  getLayerCountSummary,
-  type LayerCountSummary,
-} from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
+import { getLayerCountSummary } from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
+import type { LayerCountSummary } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 // Uncomment below if persistent filter store is needed again:

@@ -8,6 +8,11 @@ export type { RecentNavItem };
 const RECENT_NAVS_STORAGE_KEY = "volatil_recent_navs";
 const MAX_RECENT_NAVS = 3;
 
+<<<<<<< HEAD
+=======
+import type { RecentNavItem } from "@/shared/types/recent-nav.type";
+
+>>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 export const getRecentNavs = (): RecentNavItem[] => {
   const raw = getStorage(RECENT_NAVS_STORAGE_KEY);
   if (!raw) return [];

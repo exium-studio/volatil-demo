@@ -7,7 +7,7 @@ import { t } from "@/shared/libs/i18n";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useMemo, useState } from "react";
 
-export type HelpCenterTransactionSelectProps = {
+type HelpCenterTransactionSelectProps = {
   modalKey?: string;
   value?: string;
   defaultValue?: string;

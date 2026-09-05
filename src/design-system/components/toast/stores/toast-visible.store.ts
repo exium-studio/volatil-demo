@@ -17,7 +17,7 @@ type VisibleToastActions = {
   find: (id: string) => ToastItemData | undefined;
 };
 
-export type VisibleToastStore = VisibleToastState & VisibleToastActions;
+type VisibleToastStore = VisibleToastState & VisibleToastActions;
 
 export const useToastVisibleStore = create<VisibleToastStore>((set, get) => ({
   entries: {},

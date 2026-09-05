@@ -16,7 +16,6 @@ export const createSigninSchema = () =>
       .min(6, t["validation.password_too_short"]({ min: 6 })),
   });
 
-export type SigninFormValues = z.infer<ReturnType<typeof createSigninSchema>>;
 
 export const zodResolver = <T extends z.ZodTypeAny>(getSchema: () => T) => {
   return async (values: Record<string, unknown>) => {

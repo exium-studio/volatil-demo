@@ -9,7 +9,7 @@ import type { HelpCenterStatistics } from "@/features/mitra/help-center/types/he
 import { CheckCircle2Icon, ClockIcon, FileTextIcon } from "lucide-react";
 import { memo } from "react";
 
-export type HelpCenterSummaryProps = {
+type HelpCenterSummaryProps = {
   statistics?: HelpCenterStatistics;
   scope?: "my" | "all";
 };

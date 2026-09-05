@@ -21,3 +21,15 @@ export type DialogContentProps = ChakraDialog.ContentProps & {
 export type DialogCloseButtonProps = IconButtonProps & {
   closeTriggerProps?: ChakraDialog.CloseTriggerProps;
 };
+
+export type DialogContextValue = {
+  modalKey: string;
+  opened: boolean;
+  open?: () => void;
+  close?: () => void;
+  fullscreen: boolean;
+  setFullscreen: import("react").Dispatch<import("react").SetStateAction<boolean>>;
+  clickOriginAnimation: boolean;
+  size: ChakraDialog.RootProps["size"];
+  closeOnInteractOutside?: boolean;
+};

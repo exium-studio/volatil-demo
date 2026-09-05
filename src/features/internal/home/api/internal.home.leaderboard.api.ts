@@ -1,14 +1,9 @@
 // src/features/internal/home/api/internal.home.leaderboard.api.ts
 
-import type { TopMitraAcquisitionItem, TopIgtLayerItem } from "@/features/internal/home/types/internal.home.leaderboard.type";
+import type { InternalLeaderboardResponse } from "@/features/internal/home/types/internal.home.leaderboard.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
-
-export type InternalLeaderboardResponse = {
-  topMitraList: TopMitraAcquisitionItem[];
-  topIgtLayers: TopIgtLayerItem[];
-};
 
 export const fetchInternalLeaderboardApi = async (
   period?: HomePeriod,

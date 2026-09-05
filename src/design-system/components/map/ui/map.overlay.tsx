@@ -9,7 +9,7 @@ import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinate
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
-export type MapOverlayProps = {
+type MapOverlayProps = {
   showIgtLayerSelect?: boolean;
 };
 

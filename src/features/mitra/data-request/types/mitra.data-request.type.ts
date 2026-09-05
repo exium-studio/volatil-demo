@@ -18,3 +18,10 @@ export type MitraIgtDataViewTableProps = Omit<
   igtItems: MitraDataRequestIgtDataItem[];
   children?: ReactNode;
 };
+
+export type MitraDataRequestGetCatalogParams = {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+};
+

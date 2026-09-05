@@ -16,7 +16,7 @@ import { back } from "@/shared/utils/client/navigation";
 import { CheckCircle2Icon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
-export type InternalMitraRegistrationApproveTriggerProps = {
+type InternalMitraRegistrationApproveTriggerProps = {
   modalKey?: string;
   registration: InternalMitraRegistrationItem;
   children?: ReactNode;

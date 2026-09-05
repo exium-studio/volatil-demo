@@ -9,7 +9,7 @@ import type { GeoServerWorkspaceLayerOption } from "@/features/internal/data-man
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { useMemo } from "react";
 
-export type GeoserverCascadeSelectProps = {
+type GeoserverCascadeSelectProps = {
   parentModalKey: string;
   selectedGeoserverId: string;
   onGeoserverChange: (geoserverId: string) => void;

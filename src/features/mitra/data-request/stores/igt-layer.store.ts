@@ -5,7 +5,7 @@ import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { create } from "zustand";
 
-export type AdministrativeFilterState = {
+type AdministrativeFilterState = {
   appliedAdministrativeFilters: FilterAdministrativeAreaValues;
   cqlFilter: string | undefined;
   setAppliedAdministrativeFilters: (

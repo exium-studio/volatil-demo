@@ -11,10 +11,6 @@ export const createHelpCenterSchema = () =>
     files: z.array(z.custom<File>()).default([]),
   });
 
-export type CreateHelpCenterFormValues = z.infer<
-  ReturnType<typeof createHelpCenterSchema>
->;
-
 export const zodResolver = <T extends z.ZodTypeAny>(getSchema: () => T) => {
   return async (values: Record<string, unknown>) => {
     const schema = getSchema();

@@ -1,9 +1,9 @@
 import type GeoJSON from "geojson";
 
-export type WfsBbox = [number, number, number, number];
+type WfsBbox = [number, number, number, number];
 
 /** Supported WFS specification versions. */
-export type WfsVersion = "1.0.0" | "1.1.0" | "2.0.0";
+type WfsVersion = "1.0.0" | "1.1.0" | "2.0.0";
 
 /**
  * GeoServer returns a non-standard JSON extension for FeatureCollection.
@@ -11,12 +11,12 @@ export type WfsVersion = "1.0.0" | "1.1.0" | "2.0.0";
  * - v2.0.0: `numberMatched`, `totalFeatures`
  * All are normalized to `totalFeatures` on the return type.
  */
-export type GeoServerFeatureCollection = GeoJSON.FeatureCollection & {
+type GeoServerFeatureCollection = GeoJSON.FeatureCollection & {
   /** Normalized total matched features count (across all pages). */
   totalFeatures: number;
 };
 
-export type FetchWfsParams = {
+type FetchWfsParams = {
   typeName: string;
   wfsUrl: string;
   bbox?: WfsBbox;

@@ -83,3 +83,7 @@ export type GeoServerWorkspaceLayerOption = {
 export type GeoServerWorkspaceLayersResponse = {
   layers: GeoServerWorkspaceLayerOption[];
 };
+
+import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
+import type { z } from "zod";
+export type MasterIgtLayerFormValues = z.infer<typeof masterIgtLayerFormSchema>;

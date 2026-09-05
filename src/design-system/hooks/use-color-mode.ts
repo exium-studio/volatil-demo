@@ -1,14 +1,10 @@
 // src/design-system/hooks/use-color-mode.ts
 
 import { useTheme } from "next-themes";
-
-export type ColorMode = "light" | "dark";
-
-export type UseColorMode = {
-  colorMode: ColorMode;
-  setColorMode: (colorMode: ColorMode) => void;
-  toggleColorMode: () => void;
-};
+import type {
+  ColorMode,
+  UseColorMode,
+} from "@/design-system/hooks/types/use-color-mode.type";
 
 export function useColorMode(): UseColorMode {
   const { resolvedTheme, setTheme } = useTheme();

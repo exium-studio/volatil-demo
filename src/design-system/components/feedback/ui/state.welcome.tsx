@@ -15,10 +15,8 @@ import {
 } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { NavItem } from "@/shared/types/nav.type";
-import {
-  getRecentNavs,
-  type RecentNavItem,
-} from "@/shared/utils/navigation/recent-nav.utils";
+import type { RecentNavItem } from "@/shared/types/recent-nav.type";
+import { getRecentNavs } from "@/shared/utils/navigation/recent-nav.utils";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpRightIcon } from "lucide-react";

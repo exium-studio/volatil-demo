@@ -258,7 +258,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
   );
 });
 
-export type MitraCartBatchItemProps = {
+type MitraCartBatchItemProps = {
   batch?: CartOrder;
   order?: CartOrder;
   index: number;

@@ -4,12 +4,14 @@ import {
   fetchIgtCatalogApi,
   fetchIgtGeometryByIdApi,
 } from "@/features/mitra/data-request/api/mitra.data-request.api";
-import type { MitraDataRequestGetCatalogParams } from "@/features/mitra/data-request/api/mitra.data-request.api";
 import type {
   IgtDataItem,
   MitraDataRequestIgtDataItem,
 } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
-import type { MitraDataRequestIgtDataResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
+import type {
+  MitraDataRequestGetCatalogParams,
+  MitraDataRequestIgtDataResponse,
+} from "@/features/mitra/data-request/types/mitra.data-request.type";
 import {
   DUMMY_IGT_ITEMS,
   dummyIgtData,
@@ -18,7 +20,6 @@ import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 import type GeoJSON from "geojson";
 
-export type { MitraDataRequestGetCatalogParams };
 
 const EMPTY_CATALOG_RESPONSE: MitraDataRequestIgtDataResponse = {
   items: [],

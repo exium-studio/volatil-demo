@@ -13,9 +13,9 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useSigninMutation } from "@/features/auth/hooks/use-signin.mutation";
 import {
   createSigninSchema,
-  type SigninFormValues,
   zodResolver,
 } from "@/features/auth/schemas/signin.schema";
+import type { SigninFormValues } from "@/features/auth/types/signin.type";
 import { Link } from "@tanstack/react-router";
 import { HandshakeIcon, ShieldCheckIcon } from "lucide-react";
 import { useForm } from "react-hook-form";

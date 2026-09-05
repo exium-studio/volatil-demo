@@ -97,11 +97,11 @@ export const UrlDataView = memo((props: UrlDataViewProps) => {
         minW={0}
         overflow={"hidden"}
         position={"relative"}
-        maskImage={
-          overflowOffset > 0
-            ? "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)"
-            : undefined
-        }
+        // maskImage={
+        //   overflowOffset > 0
+        //     ? "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)"
+        //     : undefined
+        // }
       >
         {isExternalLink ? (
           <ExternalLink
@@ -109,7 +109,6 @@ export const UrlDataView = memo((props: UrlDataViewProps) => {
             display={"inline-block"}
             maxW={"full"}
             verticalAlign={"middle"}
-            mx={"sm"}
           >
             {linkContent}
           </ExternalLink>

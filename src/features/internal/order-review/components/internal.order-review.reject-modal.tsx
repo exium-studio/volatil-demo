@@ -18,7 +18,7 @@ import { useState, type ReactNode } from "react";
 import { P } from "@/design-system/components/typography/ui/p";
 import { back } from "@/shared/utils/client/navigation";
 
-export type InternalOrderReviewRejectTriggerProps = {
+type InternalOrderReviewRejectTriggerProps = {
   modalKey?: string;
   order: InternalOrderItem;
   children?: ReactNode;

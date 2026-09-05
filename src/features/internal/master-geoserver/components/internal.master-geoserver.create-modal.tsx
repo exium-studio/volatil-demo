@@ -9,16 +9,14 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useCreateMasterGeoserver } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
-import {
-  masterGeoserverFormSchema,
-  type MasterGeoserverFormValues,
-} from "@/features/internal/master-geoserver/types/master-geoserver.schema";
+import { masterGeoserverFormSchema } from "@/features/internal/master-geoserver/types/master-geoserver.schema";
+import type { MasterGeoserverFormValues } from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-export type InternalMasterGeoserverCreateTriggerProps = {
+type InternalMasterGeoserverCreateTriggerProps = {
   modalKey?: string;
   children?: ReactNode;
 };

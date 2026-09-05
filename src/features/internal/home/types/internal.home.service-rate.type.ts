@@ -24,3 +24,7 @@ export type InternalHomeServiceRateCardProps = StackProps & {
 
 // Aliases for compatibility
 export type ServiceRateItem = InternalHomeServiceRateItem;
+
+import { serviceRateFormSchema } from "@/features/internal/home/schemas/service-rate.schema";
+import type { z } from "zod";
+export type ServiceRateFormValues = z.infer<typeof serviceRateFormSchema>;

@@ -9,3 +9,29 @@ export type WfsFeatureItem = GeoJSON.Feature<
   GeoJSON.Geometry,
   WfsBidangProperties
 >;
+
+export type LayerCountSummary = {
+  spatialBasis: "bidang" | "kawasan";
+  totalCount: number;
+  totalAreaHa: number;
+  label: string;
+};
+
+export type FetchWfsCatalogParams = {
+  typeName?: string;
+  wfsUrl?: string;
+  page: number;
+  pageSize: number;
+  cqlFilter?: string;
+  search?: string;
+  signal?: AbortSignal;
+};
+
+export type FetchWfsCatalogResult = {
+  features: GeoJSON.Feature[];
+  totalFeatures: number;
+  totalLuas: number;
+  bidangCount: number;
+  kawasanCount: number;
+};
+

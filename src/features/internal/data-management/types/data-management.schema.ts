@@ -14,4 +14,3 @@ export const masterIgtLayerFormSchema = z.object({
   zIndex: z.number().min(1).max(100),
 });
 
-export type MasterIgtLayerFormValues = z.infer<typeof masterIgtLayerFormSchema>;

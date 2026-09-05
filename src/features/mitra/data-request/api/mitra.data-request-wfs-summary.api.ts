@@ -1,16 +1,10 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
+import type { LayerCountSummary } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
-
-export type LayerCountSummary = {
-  spatialBasis: "bidang" | "kawasan";
-  totalCount: number;
-  totalAreaHa: number;
-  label: string;
-};
 
 /**
  * Fetches hit count / geometry area summary for an IGT layer based on its spatialBasis.

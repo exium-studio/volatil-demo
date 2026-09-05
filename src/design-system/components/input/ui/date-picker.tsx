@@ -7,7 +7,6 @@ import {
   useMemo,
   useState,
   type KeyboardEvent,
-  type ReactNode,
 } from "react";
 
 import {
@@ -18,6 +17,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type {
   DatePickerMode,
   DatePickerProps,
+  DatePickerTriggerProps,
   DayViewProps,
   MonthViewProps,
   NavHeaderProps,
@@ -519,11 +519,6 @@ export const DatePicker = memo(function DatePicker(props: DatePickerProps) {
 // DatePickerTrigger (public)
 // -------------------------------------------------------------------------------------
 
-export type DatePickerTriggerProps = DatePickerProps & {
-  children: ReactNode;
-  modalKey: string;
-  datePickerSubtitle?: string;
-};
 
 export const DatePickerTrigger = memo(function DatePickerTrigger(
   props: DatePickerTriggerProps,

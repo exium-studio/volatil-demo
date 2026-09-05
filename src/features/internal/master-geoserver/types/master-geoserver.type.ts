@@ -36,3 +36,7 @@ export type UpdateMasterGeoserverPayload =
   Partial<CreateMasterGeoserverPayload> & {
     id: string;
   };
+
+import { masterGeoserverFormSchema } from "@/features/internal/master-geoserver/types/master-geoserver.schema";
+import type { z } from "zod";
+export type MasterGeoserverFormValues = z.infer<typeof masterGeoserverFormSchema>;

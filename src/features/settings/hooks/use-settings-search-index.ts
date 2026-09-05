@@ -7,7 +7,7 @@ import type { SettingNavKey } from "@/features/settings/types/settings-navs.type
 import { useMemo } from "react";
 import type { NavItem } from "@/shared/types/nav.type";
 
-export type SettingsNavSearchData = {
+type SettingsNavSearchData = {
   navKey: SettingNavKey;
 };
 

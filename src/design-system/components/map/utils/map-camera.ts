@@ -2,7 +2,7 @@
 
 import type maplibregl from "maplibre-gl";
 
-export type FlyToSafeOptions = {
+type FlyToSafeOptions = {
   center: [number, number];
   zoom?: number;
   duration?: number;
@@ -10,7 +10,7 @@ export type FlyToSafeOptions = {
   bearing?: number;
 };
 
-export type FitBoundsSafeOptions = {
+type FitBoundsSafeOptions = {
   padding?:
     | number
     | { top: number; bottom: number; left: number; right: number };

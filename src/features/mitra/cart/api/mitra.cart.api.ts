@@ -2,7 +2,7 @@
 
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { fetchWfsCatalog } from "@/features/mitra/data-request/api/mitra.data-request-wfs.api";
-import type { FetchWfsCatalogResult } from "@/features/mitra/data-request/api/mitra.data-request-wfs.api";
+import type { FetchWfsCatalogResult } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 import type { CheckoutResponse } from "@/features/mitra/cart/types/cart.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
@@ -11,7 +11,6 @@ import type GeoJSON from "geojson";
 
 const WFS_ID_FIELD = "gid";
 
-export type { FetchWfsCatalogResult };
 
 function getPaginatedIds(ids: string[], page: number, pageSize: number) {
   const total = ids.length;

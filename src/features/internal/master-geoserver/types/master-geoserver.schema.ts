@@ -13,6 +13,3 @@ export const masterGeoserverFormSchema = z.object({
   description: z.string().optional(),
 });
 
-export type MasterGeoserverFormValues = z.infer<
-  typeof masterGeoserverFormSchema
->;

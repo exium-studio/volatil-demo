@@ -15,7 +15,7 @@ import type { PricingItem } from "@/features/internal/pricing/types/internal.pri
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
 
-export type InternalPricingEditModalProps = {
+type InternalPricingEditModalProps = {
   modalKey?: string;
   item: PricingItem | null;
   onClose: () => void;
