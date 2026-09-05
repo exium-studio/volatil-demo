@@ -19,7 +19,9 @@ export type MitraDataRequestUploadAoiLayer = {
 
 export type AoiLayer = MitraDataRequestUploadAoiLayer;
 
-export type MitraDataRequestUploadAoiTabsContentProps = TabsContentProps;
+export type MitraDataRequestUploadAoiTabsContentProps = TabsContentProps & {
+  isActive?: boolean;
+};
 
 export type MitraDataRequestUploadAoiDataViewProps = {
   aoiCqlFilter: string;

@@ -8,6 +8,7 @@ import type { FormattedListItem } from "@/design-system/components/data-display/
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
@@ -29,6 +30,7 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import {
@@ -92,7 +94,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
   props: MitraDataRequestUploadAoiTabsContentProps,
 ) => {
   // Props
-  const { ...restProps } = props;
+  const { isActive = false, ...restProps } = props;
 
   // Stores
   const map = useMapInstanceStore((state) => state.map);
@@ -105,6 +107,10 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
   // Hooks
   useMitraUploadAoi(map, aoiLayers);
+  const isMounted = useMountTimeout({
+    isOpen: isActive,
+    mountDelay: 250,
+  });
 
   // Search Params
   const search = useSearch({ strict: false }) as Record<
@@ -312,7 +318,11 @@ export const MitraDataRequestUploadAoiTabsContent = (
           </Box>
         )}
 
-        {hasLayers && aoiCqlFilter && (
+        {hasLayers && (!isActive || !isMounted) && (
+          <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
+        )}
+
+        {hasLayers && isActive && isMounted && aoiCqlFilter && (
           <UploadAoiAttributeList
             aoiCqlFilter={aoiCqlFilter}
             aoiLayers={aoiLayers}

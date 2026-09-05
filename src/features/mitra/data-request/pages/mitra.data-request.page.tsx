@@ -124,12 +124,11 @@ export const MitraDataRequestPage = () => {
                 const TabsContent = method.content;
                 const isActive = activeTab === method.value;
 
-                if (!isActive) return null;
-
                 return (
                   <TabsContent
                     key={method.value}
                     value={method.value}
+                    isActive={isActive}
                     overflowY={"auto"}
                   />
                 );

@@ -6,8 +6,8 @@ import {
 } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -15,6 +15,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
@@ -24,6 +25,7 @@ import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-sel
 import type {
   DrawAoiAttributeViewProps,
   DrawAoiGuideAlertProps,
+  MitraDataRequestDrawAoiTabsContentProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { IconPolygonOff } from "@tabler/icons-react";
@@ -37,7 +39,10 @@ import {
 import { memo, useState } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
-  (props: TabsContentProps) => {
+  (props: MitraDataRequestDrawAoiTabsContentProps) => {
+    // Props
+    const { isActive = false, ...restProps } = props;
+
     // Hooks
     const { selectedIgtLayer } = useSelectedIgtLayer();
 
@@ -58,6 +63,13 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
       handleConfirmAndFetch,
     } = useMitraDrawAoi();
 
+    const isMounted = useMountTimeout({
+      isOpen: isActive,
+      mountDelay: 250,
+    });
+
+    const hasAoi = isDone && Boolean(aoiCqlFilter);
+
     return (
       <Tabs.Content
         display={"flex"}
@@ -65,9 +77,9 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
         flexDir={"column"}
         overflowY={"auto"}
         p={0}
-        {...props}
+        {...restProps}
       >
-        {!isDone && !isLoading && (
+        {!hasAoi && !isDone && !isLoading && (
           <>
             <GuideAlert
               isLoading={isLoading}
@@ -147,7 +159,11 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
           </VStack>
         )}
 
-        {isDone && aoiCqlFilter && (
+        {hasAoi && (!isActive || !isMounted) && (
+          <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
+        )}
+
+        {hasAoi && isActive && isMounted && aoiCqlFilter && (
           <DrawAoiAttributeList
             aoiCqlFilter={aoiCqlFilter}
             confirmedPolygon={confirmedPolygon}

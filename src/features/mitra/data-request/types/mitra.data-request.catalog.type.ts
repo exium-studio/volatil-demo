@@ -3,7 +3,9 @@
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
 
-export type MitraDataRequestCatalogTabsContentProps = TabsContentProps;
+export type MitraDataRequestCatalogTabsContentProps = TabsContentProps & {
+  isActive?: boolean;
+};
 
 export type CatalogDataViewProps = {
   page: number;
