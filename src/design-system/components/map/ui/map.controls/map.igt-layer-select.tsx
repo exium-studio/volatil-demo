@@ -27,6 +27,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
+  FocusIcon,
   LayersIcon,
 } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
@@ -78,7 +79,7 @@ export const MapIgtLayerSelect = memo(() => {
         </MapOverlayContainer>
       </Popover.Trigger>
 
-      <Popover.Content width={"320px"}>
+      <Popover.Content width={"380px"}>
         <Popover.Header
           p={3}
           borderBottom={"1px solid"}
@@ -142,11 +143,12 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
 
   // Handlers
   const handleToggle = () => {
-    const nextState = !isEnabled;
     onToggle(layer.id);
-    if (nextState) {
-      void flyTo(layer);
-    }
+  };
+
+  const handleFlyTo = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    void flyTo(layer);
   };
 
   // States
@@ -215,6 +217,12 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
 
         <HStack gap={1} align={"center"}>
           <Switch checked={isEnabled} pointerEvents={"none"} />
+
+          <Tooltip content={"Zoom ke Layer"}>
+            <IconButton size={"xs"} variant={"ghost"} onClick={handleFlyTo}>
+              <AppIcon icon={FocusIcon} />
+            </IconButton>
+          </Tooltip>
 
           <Tooltip content={"Atur Opasitas"}>
             <IconButton
