@@ -4,7 +4,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
 import { toastTimerControls } from "@/design-system/components/toast/core/toast.manager";
-import type { ToastStackProps } from "@/design-system/components/toast/types/toast.types";
+import type { ToastStackProps } from "@/design-system/components/toast/types/toast.type";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";

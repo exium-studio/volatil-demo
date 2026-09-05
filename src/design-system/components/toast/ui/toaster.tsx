@@ -5,7 +5,7 @@ import { getToastConfig } from "@/design-system/components/toast/core/toast.conf
 import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { usePageVisibility } from "@/design-system/components/toast/hooks/use-page-visibility";
 import { useToastVisibleStore } from "@/design-system/components/toast/stores/toast-visible.store";
-import type { ToastPlacement } from "@/design-system/components/toast/types/toast.types";
+import type { ToastPlacement } from "@/design-system/components/toast/types/toast.type";
 import { ToastItem } from "@/design-system/components/toast/ui/toast.item";
 import { ToastStack } from "@/design-system/components/toast/ui/toast.stack";
 import { Portal } from "@chakra-ui/react";

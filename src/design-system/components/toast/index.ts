@@ -29,4 +29,4 @@ export type {
   ToastEventMap,
   ToastEngineConfig,
   ToastPlacement,
-} from "@/design-system/components/toast/types/toast.types";
+} from "@/design-system/components/toast/types/toast.type";

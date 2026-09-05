@@ -1,7 +1,7 @@
 // src/features/notification/components/notification.item.tsx
 
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
-import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.type";
 import { ToastItem } from "@/design-system/components/toast/ui/toast.item";
 import { ToastStack } from "@/design-system/components/toast/ui/toast.stack";
 import type { NotificationCategoryGroup } from "@/features/notification/types/notification.type";

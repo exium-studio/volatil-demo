@@ -1,20 +1,11 @@
 // src/shared/utils/formatter/byte.formatter.ts
 
-export type ByteUnit =
-  | "B"
-  | "KB"
-  | "MB"
-  | "GB"
-  | "TB"
-  | "PB"
-  | "EB"
-  | "ZB"
-  | "YB";
+import type {
+  ByteUnit,
+  FormatByteOptions,
+} from "@/shared/types/byte.formatter.type";
 
-export interface FormatByteOptions {
-  unit?: ByteUnit;
-  decimals?: number;
-}
+export type { ByteUnit, FormatByteOptions };
 
 const UNITS: ByteUnit[] = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 

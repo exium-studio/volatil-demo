@@ -1,16 +1,11 @@
 // src/shared/hooks/use-first-mount-effect.ts
 
+import type { UseFirstMountEffectOptions } from "@/shared/types/use-first-mount-effect.type";
 import {
   useEffect,
   useRef,
   type DependencyList,
-  type EffectCallback,
 } from "react";
-
-type UseFirstMountEffectOptions = {
-  onFirstMount?: EffectCallback;
-  onUpdate?: EffectCallback;
-};
 
 /**
  * Runs a different effect callback on first mount versus subsequent updates.

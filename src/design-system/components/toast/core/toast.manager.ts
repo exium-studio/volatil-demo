@@ -6,7 +6,7 @@ import type {
   ToastItemData,
   ToastVariant,
   UpdateToastOptions,
-} from "@/design-system/components/toast/types/toast.types";
+} from "@/design-system/components/toast/types/toast.type";
 import { useToastVisibleStore } from "@/design-system/components/toast/stores/toast-visible.store";
 import { useToastHistoryStore } from "@/design-system/components/toast/stores/toast-history.store";
 import { toastEventBus } from "@/design-system/components/toast/core/toast.event-bus";

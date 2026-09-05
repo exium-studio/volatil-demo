@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { HistoryEntry } from "@/design-system/components/toast/types/toast.types";
+import type { HistoryEntry } from "@/design-system/components/toast/types/toast.type";
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
 import { useToastVisibleStore } from "@/design-system/components/toast/stores/toast-visible.store";
 

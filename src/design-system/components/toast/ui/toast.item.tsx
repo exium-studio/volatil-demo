@@ -19,7 +19,7 @@ import type {
   ToastItemProps,
   ToastItemData,
   ToastVariantMap,
-} from "@/design-system/components/toast/types/toast.types";
+} from "@/design-system/components/toast/types/toast.type";
 import { ToastIcon } from "@/design-system/components/toast/ui/toast.icon";
 import { ToastProgressBar } from "@/design-system/components/toast/ui/toast.progress-bar";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";

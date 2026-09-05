@@ -1,18 +1,12 @@
 // src/shared/libs/toast/toast.handler.ts
 
 import { toast } from "@/design-system/components/toast";
+import type {
+  ToastMessageConfig,
+  MutationToastOptions,
+} from "@/shared/types/toast-handler.type";
 
-export type ToastMessageConfig = {
-  title: string;
-  description?: string;
-};
-
-export type MutationToastOptions = {
-  group?: string;
-  loadingMessage?: ToastMessageConfig;
-  successMessage?: ToastMessageConfig;
-  errorMessage?: ToastMessageConfig;
-};
+export type { ToastMessageConfig, MutationToastOptions };
 
 /**
  * Mutation Toast Handler Helper

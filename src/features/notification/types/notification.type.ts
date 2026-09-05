@@ -3,7 +3,7 @@
 import type {
   ToastItemData,
   ToastVariant,
-} from "@/design-system/components/toast/types/toast.types";
+} from "@/design-system/components/toast/types/toast.type";
 import type { ReactNode } from "react";
 
 export type NotificationSourceType = "toast" | "system";

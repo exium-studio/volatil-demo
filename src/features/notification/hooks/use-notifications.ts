@@ -2,7 +2,7 @@
 
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
 import { useToastHistory } from "@/design-system/components/toast/hooks/use-toast-history";
-import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.type";
 import { mapToastHistoryToNotificationItem } from "@/features/notification/services/notification.service";
 import type {
   NotificationCategoryGroup,

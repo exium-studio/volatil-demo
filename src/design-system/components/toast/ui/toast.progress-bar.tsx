@@ -1,7 +1,7 @@
 // src/design-system/components/toast/ui/toast.progress-bar.tsx
 
 import { Box } from "@/design-system/components/layout/ui/box";
-import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.type";
 import { useColorModeValue } from "@/design-system/hooks/use-color-mode";
 
 export function ToastProgressBar({ toast }: { toast: ToastItemData }) {

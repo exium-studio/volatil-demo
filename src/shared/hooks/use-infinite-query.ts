@@ -1,44 +1,15 @@
 import type { PaginatedParams } from "@/shared/types/common-response.type";
-import { isEmptyArray } from "@/shared/utils/data/array";
 import type {
-  InfiniteData,
-  QueryKey,
-  UseInfiniteQueryOptions as TanStackInfiniteQueryOptions,
-} from "@tanstack/react-query";
+  InfiniteQueryFetcherResponse,
+  UseInfiniteQueryOptions,
+} from "@/shared/types/use-infinite-query.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { useInfiniteQuery as useTanStackInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-export type InfiniteQueryFetcherResponse<TItem> = {
-  items: TItem[];
-  total: number;
-  page?: number;
-  pageSize?: number;
-  unreadCount?: number;
-};
-
-export type UseInfiniteQueryOptions<
-  TItem,
-  TParams extends PaginatedParams = PaginatedParams,
-> = {
-  queryKey: QueryKey;
-  fetcher: (
-    params: TParams & { page: number; pageSize: number; signal?: AbortSignal },
-  ) => Promise<InfiniteQueryFetcherResponse<TItem>>;
-  params?: TParams;
-  pageSize?: number;
-  initialPage?: number;
-  staleTime?: number;
-  enabled?: boolean;
-  queryOptions?: Omit<
-    TanStackInfiniteQueryOptions<
-      InfiniteQueryFetcherResponse<TItem>,
-      Error,
-      InfiniteData<InfiniteQueryFetcherResponse<TItem>, number>,
-      QueryKey,
-      number
-    >,
-    "queryKey" | "queryFn" | "initialPageParam" | "getNextPageParam"
-  >;
+export type {
+  InfiniteQueryFetcherResponse,
+  UseInfiniteQueryOptions,
 };
 
 export const useInfiniteQuery = <

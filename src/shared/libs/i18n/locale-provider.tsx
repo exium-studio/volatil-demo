@@ -12,11 +12,9 @@ import {
   getLocale,
   type Locale,
 } from "@/paraglide/runtime";
+import type { LocaleContextValue } from "@/shared/types/locale.type";
 
-export type LocaleContextValue = {
-  locale: Locale;
-  setLocale: (locale: Locale) => void;
-};
+export type { LocaleContextValue };
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 

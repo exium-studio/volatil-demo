@@ -5,7 +5,7 @@
 
 import { useToastVisibleStore } from "@/design-system/components/toast/stores/toast-visible.store";
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
-import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.type";
 
 export type ToastGroupStack = {
   group: string;

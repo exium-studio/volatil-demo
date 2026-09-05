@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import { useToastHistory } from "@/design-system/components/toast/hooks/use-toast-history";
-import type { HistoryEntry } from "@/design-system/components/toast/types/toast.types";
+import type { HistoryEntry } from "@/design-system/components/toast/types/toast.type";
 import { ToastStack } from "@/design-system/components/toast/ui/toast.stack";
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
 import { P } from "@/design-system/components/typography/ui/p";

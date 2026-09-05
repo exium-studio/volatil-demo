@@ -1,13 +1,9 @@
 import { router } from "@/app/router";
 import { toast } from "@/design-system/components/toast";
 import { ApiError } from "@/shared/libs/api-client/api-error";
+import type { RequestOptions } from "@/shared/types/api-client.type";
 
-export type RequestOptions = Omit<RequestInit, "body"> & {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body?: any;
-  params?: Record<string, string | number | boolean | undefined>;
-  toastId?: string;
-};
+export type { RequestOptions };
 
 const getAuthToken = (): string | null => {
   if (typeof window === "undefined") return null;

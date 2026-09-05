@@ -1,7 +1,7 @@
 // src/design-system/components/toast/stores/toast-visible.store.ts
 
 import { create } from "zustand";
-import type { ToastItemData } from "@/design-system/components/toast/types/toast.types";
+import type { ToastItemData } from "@/design-system/components/toast/types/toast.type";
 
 type VisibleToastState = {
   /** group -> toasts belonging to that group, items by `createdAt` ascending. */
