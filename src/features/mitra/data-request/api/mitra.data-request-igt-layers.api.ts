@@ -10,6 +10,8 @@ import type { ApiResponse } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
+import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
+
 const EMPTY_LAYERS_RESPONSE: IgtLayersResponse = {
   items: [],
 };
@@ -20,8 +22,8 @@ const normalizeIgtLayer = (raw: any): IgtLayerItem => {
   const typeName = String(
     raw.typeName ?? raw.type_name ?? raw.wfsTypeName ?? id,
   );
-  const wmsUrl = String(raw.wms?.wmsUrl ?? raw.wmsUrl ?? raw.wms_url ?? "");
-  const wfsUrl = String(raw.wfs?.wfsUrl ?? raw.wfsUrl ?? raw.wfs_url ?? "");
+  const wmsUrl = buildWmsProxyUrl(`/api/proxy/wms?layerId=${id}`);
+  const wfsUrl = `/api/proxy/wfs?layerId=${id}`;
   const spatialBasis = raw.spatialBasis ?? raw.spatial_basis ?? "bidang";
 
   return {
