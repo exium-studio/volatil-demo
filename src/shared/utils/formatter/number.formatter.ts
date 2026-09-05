@@ -1,30 +1,8 @@
 import { getLocale } from "@/paraglide/runtime";
 import type {
-  FormatNumberStyle,
-  FormatNumberNotation,
-  FormatNumberCompactDisplay,
-  FormatNumberCurrencyDisplay,
-  FormatNumberUnitDisplay,
-  FormatNumberSignDisplay,
-  FormatNumberOptions,
-} from "@/shared/types/number.formatter.type";
-
-<<<<<<< HEAD
-export type {
-  FormatNumberStyle,
-  FormatNumberNotation,
-  FormatNumberCompactDisplay,
-  FormatNumberCurrencyDisplay,
-  FormatNumberUnitDisplay,
-  FormatNumberSignDisplay,
-  FormatNumberOptions,
-};
-=======
-import type {
   FormatNumberCompactDisplay,
   FormatNumberOptions,
 } from "@/shared/types/number.formatter.type";
->>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 
 function getActiveLocale(locale?: string): string {
   if (locale) return locale;

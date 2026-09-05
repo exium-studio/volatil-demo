@@ -1,26 +1,11 @@
 // src/shared/hooks/use-infinite-query.ts
 
 import type { PaginatedParams } from "@/shared/types/common-response.type";
-<<<<<<< HEAD
-import type {
-  InfiniteQueryFetcherResponse,
-  UseInfiniteQueryOptions,
-} from "@/shared/types/use-infinite-query.type";
-=======
 import type { UseInfiniteQueryOptions } from "@/shared/types/use-infinite-query.type";
->>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useInfiniteQuery as useTanStackInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-<<<<<<< HEAD
-export type {
-  InfiniteQueryFetcherResponse,
-  UseInfiniteQueryOptions,
-};
-
-=======
->>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 export const useInfiniteQuery = <
   TItem,
   TParams extends PaginatedParams = PaginatedParams,

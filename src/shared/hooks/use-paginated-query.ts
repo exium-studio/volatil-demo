@@ -2,20 +2,9 @@
 
 import type { PaginatedParams } from "@/shared/types/common-response.type";
 import type { UsePaginatedQueryOptions } from "@/shared/types/use-paginated-query.type";
-<<<<<<< HEAD
-import {
-  keepPreviousData,
-  useQuery,
-} from "@tanstack/react-query";
-import { useState } from "react";
-
-export type { UsePaginatedQueryOptions };
-
-=======
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
->>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 export const usePaginatedQuery = <
   TItem,
   TParams extends PaginatedParams = PaginatedParams,

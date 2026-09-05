@@ -60,55 +60,6 @@ export default defineConfig([
     },
   },
 
-<<<<<<< HEAD
-  // Custom linter rule: all type and interface declarations must be in .type.ts files
-  {
-    files: ["src/**/*.{ts,tsx}"],
-    ignores: ["src/routeTree.gen.ts"],
-    plugins: {
-      custom: {
-        rules: {
-          "type-file-suffix": {
-            meta: {
-              type: "problem",
-              docs: {
-                description:
-                  "Enforce all type and interface declarations to be in .type.ts files",
-              },
-              messages: {
-                typeMustBeInTypeFile:
-                  "Type and interface declarations must be in a file with .type.ts suffix. Found {{kind}} \"{{name}}\".",
-              },
-            },
-            create(context) {
-              const filename = (
-                context.filename || context.getFilename()
-              ).replace(/\\/g, "/");
-
-              if (
-                filename.endsWith(".type.ts") ||
-                filename.endsWith(".type.tsx") ||
-                filename.endsWith(".d.ts") ||
-                filename.endsWith("app/router.ts")
-              ) {
-                return {};
-              }
-
-              return {
-                TSTypeAliasDeclaration(node) {
-                  context.report({
-                    node,
-                    messageId: "typeMustBeInTypeFile",
-                    data: { kind: "type", name: node.id.name },
-                  });
-                },
-                TSInterfaceDeclaration(node) {
-                  context.report({
-                    node,
-                    messageId: "typeMustBeInTypeFile",
-                    data: { kind: "interface", name: node.id.name },
-                  });
-=======
   // Disallow export type in any file that is not a .type.ts or .d.ts file
   {
     files: ["src/**/*.{ts,tsx}"],
@@ -156,7 +107,6 @@ export default defineConfig([
                       });
                     }
                   }
->>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
                 },
               };
             },
@@ -165,12 +115,7 @@ export default defineConfig([
       },
     },
     rules: {
-<<<<<<< HEAD
-      "custom/type-file-suffix": "error",
-=======
       "custom/no-export-type": "error",
->>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
     },
   },
 ]);
-

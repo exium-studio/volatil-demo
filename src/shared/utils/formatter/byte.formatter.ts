@@ -4,11 +4,6 @@ import type {
   ByteUnit,
   FormatByteOptions,
 } from "@/shared/types/byte.formatter.type";
-<<<<<<< HEAD
-
-export type { ByteUnit, FormatByteOptions };
-=======
->>>>>>> fd4996e3 (refactor: overhaul design system toast architecture, introduce shared utility types, and refine component interfaces across features)
 
 const UNITS: ByteUnit[] = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
