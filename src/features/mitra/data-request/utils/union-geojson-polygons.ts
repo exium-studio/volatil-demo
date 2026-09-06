@@ -1,57 +1,68 @@
 import { isEmptyArray } from "@/shared/utils/data/array";
+import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
 
 /**
- * Union semua polygon dari FeatureCollection menjadi satu polygon.
- * Simple approach: ambil semua exterior rings dan jadikan MultiPolygon,
- * lalu wrap jadi single Polygon via convex-hull-like bounding.
- * Untuk AOI use case, union koordinat semua rings sudah cukup.
+ * Union all Polygon and MultiPolygon features from a FeatureCollection into a single Polygon or MultiPolygon feature.
+ * Preserves the exact geometry shape without bounding box approximation.
  */
 export const unionGeoJsonPolygons = (
   fc: GeoJSON.FeatureCollection,
-): GeoJSON.Feature<GeoJSON.Polygon> | null => {
-  const rings: number[][][] = [];
+): GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null => {
+  const polygonFeatures: GeoJSON.Feature<
+    GeoJSON.Polygon | GeoJSON.MultiPolygon
+  >[] = [];
 
   for (const feature of fc.features) {
     const geom = feature.geometry;
     if (!geom) continue;
 
-    if (geom.type === "Polygon") {
-      rings.push(geom.coordinates[0]);
-    } else if (geom.type === "MultiPolygon") {
-      for (const poly of geom.coordinates) {
-        rings.push(poly[0]);
-      }
+    if (geom.type === "Polygon" || geom.type === "MultiPolygon") {
+      polygonFeatures.push(
+        feature as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+      );
     }
   }
 
-  if (isEmptyArray(rings)) return null;
+  if (isEmptyArray(polygonFeatures)) return null;
 
-  // Flatten semua koordinat dari semua rings
-  const allCoords = rings.flat();
+  if (polygonFeatures.length === 1) {
+    return polygonFeatures[0];
+  }
 
-  // Convex hull sederhana via bounding box untuk union AOI
-  const lngs = allCoords.map((c) => c[0]);
-  const lats = allCoords.map((c) => c[1]);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
+  try {
+    const unionResult = turf.union(turf.featureCollection(polygonFeatures));
+    if (
+      unionResult &&
+      (unionResult.geometry.type === "Polygon" ||
+        unionResult.geometry.type === "MultiPolygon")
+    ) {
+      return unionResult as GeoJSON.Feature<
+        GeoJSON.Polygon | GeoJSON.MultiPolygon
+      >;
+    }
+  } catch (error) {
+    console.warn("turf.union failed, falling back to MultiPolygon combine:", error);
+  }
+
+  // Fallback: combine all polygons into a single MultiPolygon if turf.union fails
+  const allCoordinates: GeoJSON.Position[][][] = [];
+  for (const feat of polygonFeatures) {
+    if (feat.geometry.type === "Polygon") {
+      allCoordinates.push(feat.geometry.coordinates);
+    } else if (feat.geometry.type === "MultiPolygon") {
+      for (const polyCoords of feat.geometry.coordinates) {
+        allCoordinates.push(polyCoords);
+      }
+    }
+  }
 
   return {
     type: "Feature",
     properties: {},
     geometry: {
-      type: "Polygon",
-      coordinates: [
-        [
-          [minLng, minLat],
-          [maxLng, minLat],
-          [maxLng, maxLat],
-          [minLng, maxLat],
-          [minLng, minLat],
-        ],
-      ],
+      type: "MultiPolygon",
+      coordinates: allCoordinates,
     },
   };
 };

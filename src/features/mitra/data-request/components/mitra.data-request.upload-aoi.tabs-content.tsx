@@ -59,10 +59,10 @@ import { memo, useCallback, useMemo, useState } from "react";
 
 // -------------------------------------------------------------------------------------
 
-/** Parses a GeoJSON/JSON file and returns a Polygon Feature, or null. */
+/** Parses a GeoJSON/JSON file and returns a Polygon or MultiPolygon Feature, or null. */
 const parseGeoJsonFile = async (
   file: File,
-): Promise<GeoJSON.Feature<GeoJSON.Polygon> | null> => {
+): Promise<GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null> => {
   const text = await file.text();
   const parsed = JSON.parse(text) as GeoJSON.GeoJsonObject;
 
@@ -72,16 +72,19 @@ const parseGeoJsonFile = async (
 
   if (parsed.type === "Feature") {
     const feat = parsed as GeoJSON.Feature;
-    if (feat.geometry?.type === "Polygon") {
-      return feat as GeoJSON.Feature<GeoJSON.Polygon>;
+    if (
+      feat.geometry?.type === "Polygon" ||
+      feat.geometry?.type === "MultiPolygon"
+    ) {
+      return feat as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
     }
   }
 
-  if (parsed.type === "Polygon") {
+  if (parsed.type === "Polygon" || parsed.type === "MultiPolygon") {
     return {
       type: "Feature",
       properties: {},
-      geometry: parsed as GeoJSON.Polygon,
+      geometry: parsed as GeoJSON.Polygon | GeoJSON.MultiPolygon,
     };
   }
 
@@ -162,7 +165,9 @@ export const MitraDataRequestUploadAoiTabsContent = (
     setAoiLayers((prev) => [...prev, placeholder]);
 
     try {
-      let polygon: GeoJSON.Feature<GeoJSON.Polygon> | null = null;
+      let polygon: GeoJSON.Feature<
+        GeoJSON.Polygon | GeoJSON.MultiPolygon
+      > | null = null;
 
       if (isShpOrZip) {
         const fc = await parseShpFile(file);

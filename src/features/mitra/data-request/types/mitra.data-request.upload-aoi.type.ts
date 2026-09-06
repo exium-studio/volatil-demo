@@ -11,7 +11,7 @@ export type MitraDataRequestUploadAoiLayer = {
   id: string;
   fileName: string;
   fileSize: number;
-  polygon: GeoJSON.Feature<GeoJSON.Polygon>;
+  polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
   /** Processing state: parsing is async (worker), done means polygon is ready. */
   status: "parsing" | "done" | "error";
   errorMessage?: string;

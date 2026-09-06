@@ -11,8 +11,24 @@ import type GeoJSON from "geojson";
  * Example output: `POLYGON((-8.66 115.15, -8.66 115.17, -8.68 115.17, -8.68 115.15, -8.66 115.15))`
  */
 export const geojsonPolygonToWkt = (
-  polygon: GeoJSON.Feature<GeoJSON.Polygon>,
+  polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
 ): string => {
+  if (polygon.geometry.type === "MultiPolygon") {
+    const polys = polygon.geometry.coordinates
+      .map((poly) => {
+        const rings = poly
+          .map(
+            (ring) =>
+              `(${ring.map((coord) => `${coord[1]} ${coord[0]}`).join(", ")})`,
+          )
+          .join(", ");
+        return `(${rings})`;
+      })
+      .join(", ");
+
+    return `MULTIPOLYGON(${polys})`;
+  }
+
   const rings = polygon.geometry.coordinates
     .map(
       (ring) =>
