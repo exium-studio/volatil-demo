@@ -147,7 +147,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       (item: MyDataItem) => {
         const layerDisplayName = item.title || item.id.replace(/_/g, " ");
         // const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
-        const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
+        const effectiveWmsUrl = item.externalWmsUrl;
         const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
 
         return {
