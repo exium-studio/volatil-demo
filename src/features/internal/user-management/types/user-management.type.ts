@@ -70,7 +70,7 @@ export type UserManagementStatsHeaderProps = {
 };
 
 export type UserManagementStatsChartsProps = {
-  period: MitraHomePeriod;
+  stats: UserManagementStatsResponse;
 };
 
 export type UserManagementStatsLegendProps = StackProps & {

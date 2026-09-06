@@ -1,6 +1,9 @@
 // src/features/internal/user-management/components/internal.user-management.stats.tsx
 
 import { Progress } from "@/design-system/components/feedback/ui/progress";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -9,20 +12,29 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { useUserManagementStatsQuery } from "@/features/internal/user-management/hooks/use-user-management.query";
 import type {
+  UserManagementStatsChartsProps,
   UserManagementStatsLegendProps,
   UserManagementStatsRoleConfig,
   UserManagementStatsStatusConfig,
 } from "@/features/internal/user-management/types/user-management.type";
 
 export const InternalUserManagementStats = () => {
+  // Queries
+  const { stats, isLoading, isFetching } = useUserManagementStatsQuery();
+
+  if (isLoading) {
+    return <Skeleton h={"220px"} w={"full"} />;
+  }
+
   return (
-    <Container.Root withContext={true}>
+    <Container.Root withContext={true} position={"relative"}>
+      <TopBarLoader isFetching={isFetching} />
+
       <Container.Body gap={4} py={"md"}>
         <UserManagementStatsHeader />
-        <UserManagementStatsCharts />
+        <UserManagementStatsCharts stats={stats} />
       </Container.Body>
     </Container.Root>
   );
@@ -54,7 +66,7 @@ const UserManagementStatsHeader = () => {
   );
 };
 
-const STATUS_CONFIGS: UserManagementStatsStatusConfig[] = [
+const STATUS_CONFIG: UserManagementStatsStatusConfig[] = [
   {
     key: "active",
     label: "Pengguna Aktif",
@@ -71,7 +83,7 @@ const STATUS_CONFIGS: UserManagementStatsStatusConfig[] = [
   },
 ];
 
-const ROLE_CONFIGS: UserManagementStatsRoleConfig[] = [
+const ROLE_CONFIG: UserManagementStatsRoleConfig[] = [
   {
     key: "internal",
     label: "Pengguna Internal",
@@ -88,9 +100,9 @@ const ROLE_CONFIGS: UserManagementStatsRoleConfig[] = [
   },
 ];
 
-const UserManagementStatsCharts = () => {
-  // Queries
-  const { stats } = useUserManagementStatsQuery();
+const UserManagementStatsCharts = (props: UserManagementStatsChartsProps) => {
+  // Props
+  const { stats } = props;
 
   return (
     <SimpleGrid columns={[1, 1, 2]} gap={"md"} px={"md"}>
@@ -99,7 +111,7 @@ const UserManagementStatsCharts = () => {
         <P color={"fg.muted"}>{"Kategori Status Pengguna"}</P>
 
         <HStack gap={"xs"} w={"full"}>
-          {STATUS_CONFIGS.map((config) => {
+          {STATUS_CONFIG.map((config) => {
             const value = stats.statusStats[config.key];
 
             return (
@@ -120,7 +132,7 @@ const UserManagementStatsCharts = () => {
         </HStack>
 
         <HStack wrap={"wrap"} gap={6} w={"full"}>
-          {STATUS_CONFIGS.map((config) => {
+          {STATUS_CONFIG.map((config) => {
             const value = stats.statusStats[config.key];
             return (
               <UserManagementStatsLegend
@@ -139,7 +151,7 @@ const UserManagementStatsCharts = () => {
         <P color={"fg.muted"}>{"Kategori Tipe Pengguna (Role)"}</P>
 
         <HStack gap={"xs"} w={"full"}>
-          {ROLE_CONFIGS.map((config) => {
+          {ROLE_CONFIG.map((config) => {
             const value = stats.roleStats[config.key];
 
             return (
@@ -160,7 +172,7 @@ const UserManagementStatsCharts = () => {
         </HStack>
 
         <HStack wrap={"wrap"} gap={6} w={"full"}>
-          {ROLE_CONFIGS.map((config) => {
+          {ROLE_CONFIG.map((config) => {
             const value = stats.roleStats[config.key];
             return (
               <UserManagementStatsLegend

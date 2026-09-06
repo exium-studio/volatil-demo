@@ -195,8 +195,14 @@ export const InternalUserManagementDataView = () => {
     };
   }, [users, preferredTimezone, updateStatusMutation, theme.colorPalette]);
 
+  if (isLoading) {
+    return <Skeleton flex={1} w={"full"} />;
+  }
+
   return (
-    <Container.Root flex={1} withContext={true}>
+    <Container.Root flex={1} withContext={true} position={"relative"}>
+      <TopBarLoader isFetching={isFetching} />
+
       <Container.Body overflow={"clip"}>
         {/* Header Actions */}
         <HStack
@@ -266,46 +272,38 @@ export const InternalUserManagementDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
-          {isLoading ? (
-            <Skeleton h={"280px"} w={"full"} p={"md"} roundedTop={0} />
-          ) : (
-            <VStack flex={1} w={"full"} position={"relative"}>
-              <TopBarLoader isFetching={isFetching} />
+        <VStack flex={1} w={"full"} position={"relative"}>
+          <DataViewTable.Root
+            headers={dataList.headers}
+            items={dataList.items}
+            itemActions={dataList.itemActions}
+            page={params.page}
+            pageSize={params.pageSize}
+            roundedTop={0}
+          >
+            <DataViewTable.Header />
+            <DataViewTable.Body />
+          </DataViewTable.Root>
 
-              <DataViewTable.Root
-                headers={dataList.headers}
-                items={dataList.items}
-                itemActions={dataList.itemActions}
-                page={params.page}
-                pageSize={params.pageSize}
-                roundedTop={0}
-              >
-                <DataViewTable.Header />
-                <DataViewTable.Body />
-              </DataViewTable.Root>
+          <Separator borderColor={"bg.canvas"} />
 
-              <Separator borderColor={"bg.canvas"} />
-
-              <DataViewFooter
-                page={params.page ?? 1}
-                pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
-                setPage={(newPage: number) =>
-                  setParams((prev) => ({ ...prev, page: newPage }))
-                }
-                setPageSize={(newSize: number) => {
-                  setParams((prev) => ({
-                    ...prev,
-                    pageSize: newSize,
-                    page: 1,
-                  }));
-                }}
-                currentDataLength={users.length}
-                totalData={total}
-                totalPage={totalPages}
-              />
-            </VStack>
-          )}
+          <DataViewFooter
+            page={params.page ?? 1}
+            pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+            setPage={(newPage: number) =>
+              setParams((prev) => ({ ...prev, page: newPage }))
+            }
+            setPageSize={(newSize: number) => {
+              setParams((prev) => ({
+                ...prev,
+                pageSize: newSize,
+                page: 1,
+              }));
+            }}
+            currentDataLength={users.length}
+            totalData={total}
+            totalPage={totalPages}
+          />
         </VStack>
       </Container.Body>
     </Container.Root>

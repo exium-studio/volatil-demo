@@ -153,9 +153,9 @@ export function InternalMitraRegistrationDetailPage() {
 
   if (isLoading) {
     return (
-      <PanelContentContainer h={"auto"}>
+      <PanelContentContainer>
         <Skeleton h={"200px"} w={"full"} />
-        <Skeleton h={"400px"} w={"full"} />
+        <Skeleton w={"full"} />
       </PanelContentContainer>
     );
   }
