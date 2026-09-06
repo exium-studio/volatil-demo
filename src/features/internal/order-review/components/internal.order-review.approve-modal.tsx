@@ -9,6 +9,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useApproveOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import {
   approveOrderFormSchema,
@@ -78,6 +79,9 @@ const InternalOrderReviewApproveModalContent = (
 ) => {
   // Props
   const { order, onSuccessRedirect, close } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
 
   // Hooks
   const navigate = useNavigate();
@@ -184,7 +188,7 @@ const InternalOrderReviewApproveModalContent = (
                         gap={"md"}
                         bg={"bg.panel"}
                         p={"md"}
-                        rounded={"sm"}
+                        rounded={theme.radii.component}
                         border={"1px solid"}
                         borderColor={"border.subtle"}
                       >
