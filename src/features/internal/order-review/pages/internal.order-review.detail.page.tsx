@@ -214,12 +214,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
 
   const handleToggleLayer = useCallback(
     (item: CartOrderItem, enabled: boolean) => {
-      const previewUrl =
-        item.previewWmsUrl ||
-        item.wmsUrl ||
-        (item.sourceLayerId
-          ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
-          : "");
+      const previewUrl = item.previewWmsUrl;
 
       if (enabled) {
         if (previewUrl) {

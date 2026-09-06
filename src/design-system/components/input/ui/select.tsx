@@ -138,7 +138,7 @@ export default function SelectInput(props: SelectProps) {
                 {item.label}
 
                 <ChakraSelect.ItemIndicator
-                  color={`${theme.colorPalette}.solid`}
+                  color={`${theme.colorPalette}.fg`}
                 />
               </ChakraSelect.Item>
             ))}

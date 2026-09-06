@@ -338,7 +338,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                       {isSelected && (
                         <AppIcon
                           icon={CheckIcon}
-                          color={`${theme.colorPalette}.solid`}
+                          color={`${theme.colorPalette}.fg`}
                           mr={"-2px"}
                         />
                       )}
