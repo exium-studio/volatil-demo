@@ -4,7 +4,6 @@
 
 import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Image } from "@/design-system/components/media/ui/image";
@@ -12,6 +11,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { PATH_CONFIG } from "@/shared/constants/paths";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import type { FeaturesCarouselProps } from "@/features/branding/types/branding.type";
 
 const CAROUSEL_ITEMS_LIST = [
   {
@@ -33,8 +33,6 @@ const CAROUSEL_ITEMS_LIST = [
       "Tiket Laporan memudahkan pengguna untuk mengirim laporan, melampirkan dokumen pendukung, serta memantau proses penanganan dan tanggapan dari administrator dalam satu platform terintegrasi.",
   },
 ];
-
-type FeaturesCarouselProps = StackProps & {};
 
 export const FeaturesCarousel = (props: FeaturesCarouselProps) => {
   // Props

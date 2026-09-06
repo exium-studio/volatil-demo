@@ -1,15 +1,11 @@
 // src/design-system/stores/splitter-store.ts
 
+import type {
+  SplitterActions,
+  SplitterState,
+} from "@/design-system/stores/types/splitter-store.type";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-
-type SplitterState = {
-  sizesByKey: Record<string, number[]>;
-};
-
-type SplitterActions = {
-  setSize: (key: string, size: number[]) => void;
-};
 
 let persistTimeoutId: ReturnType<typeof setTimeout> | null = null;
 

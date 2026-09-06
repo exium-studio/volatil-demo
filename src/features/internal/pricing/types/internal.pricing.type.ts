@@ -50,3 +50,19 @@ export type CreatePricingPayload = {
   effectiveDate: string;
   description?: string;
 };
+
+export type InternalPricingEditModalProps = {
+  modalKey?: string;
+  item: PricingItem | null;
+  onClose: () => void;
+};
+
+export type InternalPricingEditModalContentProps = {
+  modalKey: string;
+  item: PricingItem;
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+};
+
+

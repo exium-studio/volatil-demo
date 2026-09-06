@@ -1,32 +1,13 @@
 // src/design-system/components/overlay/stores/dialog-animation-store.ts
 
+import type {
+  DialogAnimationStore,
+  Point,
+} from "@/design-system/components/overlay/types/dialog.type";
 import { create } from "zustand";
 
 export const DIALOG_OFFSET_X_VAR = "--dialog-offset-x";
 export const DIALOG_OFFSET_Y_VAR = "--dialog-offset-y";
-
-type Point = {
-  x: number;
-  y: number;
-};
-
-type DialogAnimationState = {
-  clickOrigin: Point;
-  dialogOffset: Point;
-};
-
-type DialogAnimationStore = {
-  dialogs: Record<string, DialogAnimationState>;
-  zIndexCounter: number;
-
-  setClickOrigin: (modalKey: string, clickOrigin: Point) => void;
-  setDialogOffset: (modalKey: string, dialogOffset: Point) => void;
-
-  getClickOrigin: (modalKey: string) => Point;
-  getDialogOffset: (modalKey: string) => Point;
-
-  clear: (modalKey: string) => void;
-};
 
 const DEFAULT_POINT: Point = { x: 0, y: 0 };
 

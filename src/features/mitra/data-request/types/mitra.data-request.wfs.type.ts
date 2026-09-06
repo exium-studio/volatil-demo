@@ -35,3 +35,26 @@ export type FetchWfsCatalogResult = {
   kawasanCount: number;
 };
 
+export type UseIgtWfsCatalogParams = Omit<FetchWfsCatalogParams, "signal">;
+
+export type WfsFilterParams = {
+  typeName: string;
+  wfsUrl: string;
+  filters?: Record<string, string | undefined>;
+  startIndex?: number;
+  count?: number;
+  signal?: AbortSignal;
+};
+
+export type WfsSchemaProperty = {
+  name: string;
+  type: string;
+  localType?: string;
+};
+
+
+
+
+
+
+

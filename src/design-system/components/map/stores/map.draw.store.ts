@@ -4,17 +4,8 @@ import { create } from "zustand";
 import type {
   DrawGeometryType,
   DrawPoint,
+  MapDrawStore,
 } from "@/design-system/components/map/types/map.type";
-
-interface MapDrawStore {
-  geometryType: DrawGeometryType;
-  isDrawing: boolean;
-  points: DrawPoint[];
-  start: (geometryType: DrawGeometryType) => void;
-  addPoint: (point: DrawPoint) => void;
-  finish: () => void;
-  cancel: () => void;
-}
 
 const initialState = {
   geometryType: "polygon" as DrawGeometryType,

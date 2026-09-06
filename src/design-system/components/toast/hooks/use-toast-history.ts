@@ -2,12 +2,10 @@
 
 import { useMemo } from "react";
 import { useToastHistoryStore } from "@/design-system/components/toast/stores/toast-history.store";
-import type { HistoryEntry } from "@/design-system/components/toast/types/toast.type";
-
-type HistoryGroupStack = {
-  group: string;
-  entries: HistoryEntry[];
-};
+import type {
+  HistoryEntry,
+  HistoryGroupStack,
+} from "@/design-system/components/toast/types/toast.type";
 
 export function useToastHistory() {
   // Subscribing to `entries` keeps this reactive; `getAll()` (not the raw

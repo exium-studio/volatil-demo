@@ -8,7 +8,7 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartOrder } from "@/features/mitra/cart/hooks/use-mitra-cart";
-import type { ActiveCartOrder } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import type { MitraCartOrderSummaryProps } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -19,11 +19,6 @@ import {
   ShieldCheckIcon,
 } from "lucide-react";
 import { useMemo } from "react";
-
-type MitraCartOrderSummaryProps = {
-  activeOrder: ActiveCartOrder | null;
-  isLoading?: boolean;
-};
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props

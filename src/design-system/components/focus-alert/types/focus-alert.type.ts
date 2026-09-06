@@ -40,3 +40,15 @@ export type FocusAlertContentProps = {
 export type FocusAlertContextValue = {
   modalKey: string;
 };
+
+export type FocusAlertEntry = {
+  key: string;
+  render: FocusAlertRenderFn;
+};
+
+export type FocusAlerterStore = {
+  alerts: FocusAlertEntry[];
+  open: (key: string, render: FocusAlertRenderFn) => void;
+  close: (key: string) => void;
+};
+

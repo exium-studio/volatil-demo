@@ -13,6 +13,7 @@ import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport"
 import { SettingsSearchButton } from "@/features/settings/components/settings.search";
 import { SETTINGS_PAGES_MAP } from "@/features/settings/constants/settings.pages";
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
+import type { SettingsActivePageContextValue } from "@/features/settings/types/settings.type";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import { useSearch } from "@tanstack/react-router";
@@ -22,14 +23,7 @@ import {
   useContext,
   useEffect,
   useState,
-  type Dispatch,
-  type SetStateAction,
 } from "react";
-
-type SettingsActivePageContextValue = {
-  activeSettingNavKey: SettingNavKey | undefined;
-  setActiveSettingNavKey: Dispatch<SetStateAction<SettingNavKey | undefined>>;
-};
 
 const SettingsActivePageContext =
   createContext<SettingsActivePageContextValue | null>(null);

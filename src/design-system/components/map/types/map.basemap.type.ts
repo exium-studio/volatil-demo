@@ -19,3 +19,14 @@ export type MapProps = BaseMapProps & {
 export type BaseMapContextValue = {
   map: import("maplibre-gl").Map | null;
 };
+
+export type MapBaseMapState = {
+  activeStyleKey: import("@/design-system/components/map/types/map.basemap-select.type").BasemapKey;
+  setActiveStyleKey: (
+    styleKey: import("@/design-system/components/map/types/map.basemap-select.type").BasemapKey,
+  ) => void;
+  is3D: boolean;
+  setIs3D: (is3D: boolean) => void;
+  toggle3D: () => void;
+};
+

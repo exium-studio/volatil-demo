@@ -11,7 +11,7 @@ import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
-  CartOrder,
+  MitraCartBatchItemProps,
   MitraCartOrderItemProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
@@ -257,16 +257,6 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
     </Box>
   );
 });
-
-type MitraCartBatchItemProps = {
-  batch?: CartOrder;
-  order?: CartOrder;
-  index: number;
-  isSelected: boolean;
-  onSelect: (id: string) => void;
-  onDelete?: (id: string) => void;
-  isDeleting?: boolean;
-};
 
 export const MitraCartBatchItem = (props: MitraCartBatchItemProps) => {
   const targetOrder = props.order ?? props.batch;

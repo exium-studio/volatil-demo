@@ -5,7 +5,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import type { HelpCenterAttachment } from "@/features/mitra/help-center/types/help-center.type";
+import type { HelpCenterAttachmentItemProps } from "@/features/mitra/help-center/types/help-center.type";
 import {
   DownloadIcon,
   ExternalLinkIcon,
@@ -14,11 +14,6 @@ import {
   VideoIcon,
 } from "lucide-react";
 import { memo } from "react";
-
-type HelpCenterAttachmentItemProps = {
-  attachment: HelpCenterAttachment;
-  index?: number;
-};
 
 export const HelpCenterAttachmentItem = memo(
   (props: HelpCenterAttachmentItemProps) => {

@@ -12,6 +12,7 @@ import {
   MAP_CONFIG,
   MAP_EVENTS_MAP,
 } from "@/design-system/components/map/constants/map.config";
+import type { DrawPoint } from "@/design-system/components/map/types/map.type";
 
 const DRAW_SOURCE_ID = "map-draw-source";
 
@@ -20,8 +21,6 @@ export const DRAW_FILL_LAYER_ID = "map-draw-fill";
 
 const DRAW_LINE_LAYER_ID = "map-draw-line";
 const DRAW_VERTEX_LAYER_ID = "map-draw-vertex";
-
-type DrawPoint = { lng: number; lat: number };
 
 const buildSourceData = (
   pts: DrawPoint[],

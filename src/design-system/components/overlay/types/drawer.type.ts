@@ -21,3 +21,19 @@ export type DrawerContentProps = ChakraDrawer.ContentProps & {
 export type DrawerCloseButtonProps = IconButtonProps & {
   closeTriggerProps?: ChakraDrawer.CloseTriggerProps;
 };
+
+export type GestureMode = "drag" | "scroll" | null;
+
+export type DrawerContextValue = {
+  modalKey: string;
+  opened: boolean;
+  open?: () => void;
+  close?: () => void;
+  fullscreen: boolean;
+  setFullscreen: import("react").Dispatch<import("react").SetStateAction<boolean>>;
+  swipeToDismiss: boolean;
+  placement: ChakraDrawer.RootProps["placement"];
+  size: ChakraDrawer.RootProps["size"];
+  closeOnInteractOutside?: boolean;
+};
+

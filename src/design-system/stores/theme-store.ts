@@ -2,23 +2,14 @@
 
 import { COLOR_PALETTES_LIST } from "@/design-system/constants/colors";
 import { ROUNDED_PRESETS_LIST } from "@/design-system/constants/presets";
+import type {
+  ThemeConfigStore,
+  ThemeStore,
+} from "@/design-system/stores/types/theme-store.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const STORAGE_KEY = "theme-config";
-
-type ThemeStore = {
-  colorPalette: string;
-  primaryColor: string;
-  primaryColorHex: string;
-  radii: {
-    label: string;
-    component: string;
-    container: string;
-  };
-  ambienceColor: boolean;
-  // currency: string
-};
 
 export const DEFAULT: ThemeStore = {
   colorPalette: COLOR_PALETTES_LIST[21].palette,
@@ -26,13 +17,6 @@ export const DEFAULT: ThemeStore = {
   primaryColorHex: COLOR_PALETTES_LIST[0].primaryHex,
   radii: ROUNDED_PRESETS_LIST[4],
   ambienceColor: false,
-};
-
-type ThemeConfigStore = {
-  theme: ThemeStore;
-  setTheme: (
-    config: Partial<ThemeStore> | ((prev: ThemeStore) => Partial<ThemeStore>),
-  ) => void;
 };
 
 export const useThemeStore = create<ThemeConfigStore>()(

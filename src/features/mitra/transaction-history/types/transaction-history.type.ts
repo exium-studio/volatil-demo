@@ -19,8 +19,8 @@ export type TransactionOrderItem = {
   sourceLayerId: string;
   sourceLayerTitle: string;
   spatialBasis: SpatialBasisType;
-  snapshotFeaturesCount: number;
-  snapshotAreaHa?: number;
+  featuresCount: number;
+  areaHa?: number;
   unitPrice: number;
   subtotalPrice: number;
   provisionStatus: OrderProvisionStatus;

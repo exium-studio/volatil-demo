@@ -2,8 +2,9 @@
 
 import type {
   DismissedReason,
-  ToastOptions,
+  TimerEntry,
   ToastItemData,
+  ToastOptions,
   ToastVariant,
   UpdateToastOptions,
 } from "@/design-system/components/toast/types/toast.type";
@@ -25,14 +26,6 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 // (hover, unmount) can fire in unexpected orders and must never leave a
 // timer permanently stuck.
 // ---------------------------------------------------------------------------
-
-type TimerEntry = {
-  timeoutId: ReturnType<typeof setTimeout>;
-  remaining: number;
-  startedAt: number;
-  paused: boolean;
-  onExpire: () => void;
-};
 
 const timers = new Map<string, TimerEntry>();
 const leaveTimeouts = new Map<string, ReturnType<typeof setTimeout>>();

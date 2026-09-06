@@ -5,12 +5,10 @@
 
 import { useToastVisibleStore } from "@/design-system/components/toast/stores/toast-visible.store";
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
-import type { ToastItemData } from "@/design-system/components/toast/types/toast.type";
-
-type ToastGroupStack = {
-  group: string;
-  items: ToastItemData[];
-};
+import type {
+  ToastGroupStack,
+  ToastItemData,
+} from "@/design-system/components/toast/types/toast.type";
 
 function orderRecords(
   records: ToastItemData[],

@@ -1,10 +1,7 @@
 // src/design-system/hooks/use-ref-dimenssion.ts
 
+import type { UseContainerDimensionOptions } from "@/design-system/hooks/types/use-ref-dimenssion.type";
 import { useEffect, useRef, useState, type RefObject } from "react";
-
-type UseContainerDimensionOptions = {
-  debounceDelay?: number;
-};
 
 export function useRefDimension(
   ref: RefObject<HTMLDivElement | null> | null,

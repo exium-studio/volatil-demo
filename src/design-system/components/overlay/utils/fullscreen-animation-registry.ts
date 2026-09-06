@@ -1,6 +1,4 @@
-// src/design-system/components/overlay/utils/fullscreen-animation-registry.ts
-
-type FullscreenAnimator = (next: boolean) => void;
+import type { FullscreenAnimator } from "@/design-system/components/overlay/types/modal.type";
 
 const registry = new Map<string, FullscreenAnimator>();
 

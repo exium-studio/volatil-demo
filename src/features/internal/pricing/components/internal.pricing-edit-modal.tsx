@@ -11,15 +11,12 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useUpdateInternalPricing } from "@/features/internal/pricing/hooks/use-internal-pricing";
-import type { PricingItem } from "@/features/internal/pricing/types/internal.pricing.type";
+import type {
+  InternalPricingEditModalContentProps,
+  InternalPricingEditModalProps,
+} from "@/features/internal/pricing/types/internal.pricing.type";
 import { t } from "@/shared/libs/i18n";
 import { useState } from "react";
-
-type InternalPricingEditModalProps = {
-  modalKey?: string;
-  item: PricingItem | null;
-  onClose: () => void;
-};
 
 export const InternalPricingEditModal = (
   props: InternalPricingEditModalProps,
@@ -49,14 +46,6 @@ export const InternalPricingEditModal = (
       close={handleClose}
     />
   );
-};
-
-type InternalPricingEditModalContentProps = {
-  modalKey: string;
-  item: PricingItem;
-  isOpen: boolean;
-  open: () => void;
-  close: () => void;
 };
 
 const InternalPricingEditModalContent = (

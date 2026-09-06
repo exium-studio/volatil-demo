@@ -19,7 +19,7 @@ function getActiveLocale(locale?: string): string {
  * Supports decimal, currency (IDR), percent, unit, compact, and scientific notations.
  */
 export function formatNumber(
-  value: number,
+  value: number | null | undefined,
   options: FormatNumberOptions = {},
 ): string {
   const {
@@ -39,6 +39,8 @@ export function formatNumber(
     signDisplay = "auto",
     useGrouping = true,
   } = options;
+
+  if (!value) return "";
 
   const intlOptions: Intl.NumberFormatOptions = {
     style,

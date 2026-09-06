@@ -1,15 +1,9 @@
 // src/design-system/components/map/hooks/use-map-geolocation.ts
 
+import type { UseGeolocationResult } from "@/design-system/components/map/types/map.type";
 import { toast } from "@/design-system/components/toast";
 import maplibregl from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
-
-interface UseGeolocationResult {
-  isActive: boolean;
-  isLocating: boolean;
-  locationError: string | null;
-  toggle: () => void;
-}
 
 const GEOLOCATION_FLY_TO_ZOOM = 14;
 

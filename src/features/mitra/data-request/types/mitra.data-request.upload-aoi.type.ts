@@ -1,10 +1,9 @@
 // src/features/mitra/data-request/types/mitra.data-request.upload-aoi.type.ts
 
-import type { ReactNode } from "react";
-import type GeoJSON from "geojson";
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
+import type GeoJSON from "geojson";
 
 /** Single uploaded AOI file with its parsed GeoJSON polygon — source of truth. */
 export type MitraDataRequestUploadAoiLayer = {
@@ -46,8 +45,18 @@ export type UploadAoiAddFileButtonProps = ButtonProps & {
 };
 
 export type UploadAoiFileListTriggerProps = {
-  children: ReactNode;
+  children: import("react").ReactNode;
   onFilesAdded: (files: File[]) => void;
   onDeleteLayer: (id: string) => void;
   onClearAll: () => void;
 };
+
+
+
+import type { Dispatch, SetStateAction } from "react";
+
+export type MitraDataRequestUploadAoiContextValue = {
+  aoiLayers: MitraDataRequestUploadAoiLayer[];
+  setAoiLayers: Dispatch<SetStateAction<MitraDataRequestUploadAoiLayer[]>>;
+};
+

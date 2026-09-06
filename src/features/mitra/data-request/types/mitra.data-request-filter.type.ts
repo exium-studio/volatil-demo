@@ -20,3 +20,14 @@ export type FilterKecamatanParams = {
 export type FilterKelurahanParams = {
   kecamatanId?: string;
 };
+
+import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
+
+export type AdministrativeFilterState = {
+  appliedAdministrativeFilters: FilterAdministrativeAreaValues;
+  cqlFilter: string | undefined;
+  setAppliedAdministrativeFilters: (
+    filters: FilterAdministrativeAreaValues,
+  ) => void;
+};
+

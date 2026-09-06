@@ -44,3 +44,16 @@ export type MitraDataRequestAddToCartButtonsProps = StackProps & {
   onAddAllBothClick?: () => void;
   onAddSelectedClick?: () => void;
 };
+
+export type AddToCartLayerParam = {
+  layerId: string;
+  typeName: string;
+  title?: string;
+  spatialBasis?: "bidang" | "kawasan";
+  selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
+  featuresCount?: number;
+  areaHa?: number;
+  cqlFilter?: string;
+};
+
+

@@ -5,20 +5,13 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
+import type { MitraDataRequestDetailAttributeHeaderProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { MapPinIcon } from "lucide-react";
 import { memo } from "react";
-
-type MitraDataRequestDetailAttributeHeaderProps = {
-  layer: IgtLayerItem | null;
-  cqlFilter?: string;
-  onBack?: () => void;
-  showActions?: boolean;
-};
 
 export const MitraDataRequestDetailAttributeHeader = memo(
   (props: MitraDataRequestDetailAttributeHeaderProps) => {

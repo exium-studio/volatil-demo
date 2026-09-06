@@ -22,3 +22,11 @@ export type FocusSearchResultItemProps = StackProps & {
   selectedIdx: number;
   setSelectedIdx: (idx: number) => void;
 };
+
+export type FocusTriggerContextValue = {
+  modalKey: string;
+  queryKey: string;
+  searchIndex: SearchIndex;
+  onResultSelect?: (result: SearchIndexItem) => void;
+};
+

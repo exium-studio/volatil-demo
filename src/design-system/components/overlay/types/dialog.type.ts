@@ -33,3 +33,27 @@ export type DialogContextValue = {
   size: ChakraDialog.RootProps["size"];
   closeOnInteractOutside?: boolean;
 };
+
+export type Point = {
+  x: number;
+  y: number;
+};
+
+export type DialogAnimationState = {
+  clickOrigin: Point;
+  dialogOffset: Point;
+};
+
+export type DialogAnimationStore = {
+  dialogs: Record<string, DialogAnimationState>;
+  zIndexCounter: number;
+
+  setClickOrigin: (modalKey: string, clickOrigin: Point) => void;
+  setDialogOffset: (modalKey: string, dialogOffset: Point) => void;
+
+  getClickOrigin: (modalKey: string) => Point;
+  getDialogOffset: (modalKey: string) => Point;
+
+  clear: (modalKey: string) => void;
+};
+

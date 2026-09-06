@@ -85,5 +85,42 @@ export type GeoServerWorkspaceLayersResponse = {
 };
 
 import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
+import type { ReactNode } from "react";
 import type { z } from "zod";
 export type MasterIgtLayerFormValues = z.infer<typeof masterIgtLayerFormSchema>;
+
+export type GeoserverCascadeSelectProps = {
+  parentModalKey: string;
+  selectedGeoserverId: string;
+  onGeoserverChange: (geoserverId: string) => void;
+  selectedWorkspace: string;
+  onWorkspaceChange: (workspace: string) => void;
+  selectedTypeName: string;
+  onLayerChange: (
+    typeName: string,
+    layerDetail?: GeoServerWorkspaceLayerOption,
+  ) => void;
+};
+
+export type InternalDataManagementCreateTriggerProps = {
+  modalKey?: string;
+  children?: ReactNode;
+};
+
+export type InternalDataManagementCreateModalContentProps = {
+  modalKey: string;
+  close: () => void;
+};
+
+export type InternalDataManagementEditTriggerProps = {
+  modalKey?: string;
+  item: MasterIgtLayerItem;
+  children?: ReactNode;
+};
+
+export type InternalDataManagementEditModalContentProps = {
+  modalKey: string;
+  item: MasterIgtLayerItem;
+  close: () => void;
+};
+

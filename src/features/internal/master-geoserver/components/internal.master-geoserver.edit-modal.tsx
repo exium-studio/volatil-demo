@@ -11,17 +11,14 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useUpdateMasterGeoserver } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { masterGeoserverFormSchema } from "@/features/internal/master-geoserver/types/master-geoserver.schema";
-import type { MasterGeoserverFormValues, MasterGeoserverItem } from "@/features/internal/master-geoserver/types/master-geoserver.type";
+import type {
+  InternalMasterGeoserverEditModalContentProps,
+  InternalMasterGeoserverEditTriggerProps,
+  MasterGeoserverFormValues,
+} from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
-
-type InternalMasterGeoserverEditTriggerProps = {
-  modalKey?: string;
-  item: MasterGeoserverItem;
-  children?: ReactNode;
-};
 
 export const InternalMasterGeoserverEditTrigger = (
   props: InternalMasterGeoserverEditTriggerProps,
@@ -58,11 +55,6 @@ export const InternalMasterGeoserverEditTrigger = (
       )}
     </Modal.Root>
   );
-};
-
-type InternalMasterGeoserverEditModalContentProps = {
-  item: MasterGeoserverItem;
-  close: () => void;
 };
 
 const InternalMasterGeoserverEditModalContent = (

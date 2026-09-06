@@ -29,6 +29,7 @@ import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wf
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraMyDataViewProps,
+  MyDataDetailAttributeListProps,
   MyDataItem,
   MyDataQueryParams,
   MyDataStatus,
@@ -129,13 +130,14 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "Layer IGT", sortable: true, align: "start" },
-      { th: "Basis IGT", sortable: true, align: "start" },
-      { th: "WMS URL", sortable: false, align: "start" },
-      // { th: "WFS URL", sortable: false, align: "start" },
-      { th: "Status Aktif", sortable: true, align: "start" },
-      { th: "Sisa Waktu", sortable: true, align: "start" },
-      { th: "Tanggal Kedaluwarsa", sortable: true, align: "start" },
+      { th: "Label", sortable: true },
+      { th: "Layer IGT", sortable: true },
+      { th: "Basis IGT", sortable: true },
+      { th: "WMS URL", sortable: false },
+      // { th: "WFS URL", sortable: false,  },
+      { th: "Status Aktif", sortable: true },
+      { th: "Sisa Waktu", sortable: true },
+      { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },
     ];
 
@@ -150,6 +152,15 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           id: item.id,
           data: item,
           columns: [
+            {
+              value: item.label || layerDisplayName,
+              td: (
+                <P fontSize={"sm"} fontWeight={"medium"}>
+                  {item.label || layerDisplayName}
+                </P>
+              ),
+              align: "start" as const,
+            },
             {
               value: layerDisplayName,
               td: (
@@ -417,11 +428,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       </VStack>
     </VStack>
   );
-};
-
-type MyDataDetailAttributeListProps = {
-  item: MyDataItem;
-  onBack: () => void;
 };
 
 const MyDataDetailAttributeList = (props: MyDataDetailAttributeListProps) => {

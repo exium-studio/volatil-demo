@@ -80,3 +80,12 @@ export type ModalContextValue = {
   isSmallViewport: boolean;
   closeOnInteractOutside?: boolean;
 };
+
+export type UsePopModalOptions = {
+  modalKey: string;
+  depth?: number;
+};
+
+export type FullscreenAnimator = (next: boolean) => void;
+
+

@@ -1,16 +1,8 @@
 // src/design-system/components/map/stores/map.base-map.store.ts
 
-import type { BasemapKey } from "@/design-system/components/map/types/map.basemap-select.type";
+import type { MapBaseMapState } from "@/design-system/components/map/types/map.basemap.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-interface MapBaseMapState {
-  activeStyleKey: BasemapKey;
-  setActiveStyleKey: (styleKey: BasemapKey) => void;
-  is3D: boolean;
-  setIs3D: (is3D: boolean) => void;
-  toggle3D: () => void;
-}
 
 export const useMapBaseMapStore = create<MapBaseMapState>()(
   persist(

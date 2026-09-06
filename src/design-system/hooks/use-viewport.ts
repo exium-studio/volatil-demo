@@ -1,15 +1,10 @@
 // src/design-system/hooks/use-viewport.ts
 
+import type {
+  UseViewportOptions,
+  Viewport,
+} from "@/design-system/hooks/types/use-viewport.type";
 import { useEffect, useRef, useState } from "react";
-
-type Viewport = {
-  width: number;
-  height: number;
-};
-
-type UseViewportOptions = {
-  onChange?: (viewport: Viewport) => void;
-};
 
 function getViewport(): Viewport {
   return {

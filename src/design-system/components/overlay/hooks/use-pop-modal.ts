@@ -1,12 +1,8 @@
 // src/design-system/components/overlay/hooks/use-pop-modal.ts
 
+import type { UsePopModalOptions } from "@/design-system/components/overlay/types/modal.type";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-
-type UsePopModalOptions = {
-  modalKey: string;
-  depth?: number;
-};
 
 export const MODAL_SEARCH_PARAM_KEY = "activeModalKey";
 

@@ -2,11 +2,7 @@
 
 "use client";
 
-import { type LucideIcon, type LucideProps } from "lucide-react";
-
-type LucideIconProps = {
-  icon?: LucideIcon;
-} & LucideProps;
+import type { LucideIconProps } from "@/design-system/components/icon/types/icon.type";
 
 export function LucideIcon(props: LucideIconProps) {
   // Props

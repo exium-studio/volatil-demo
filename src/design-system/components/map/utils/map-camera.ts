@@ -1,22 +1,10 @@
 // src/design-system/components/map/utils/map-camera.ts
 
+import type {
+  FitBoundsSafeOptions,
+  FlyToSafeOptions,
+} from "@/design-system/components/map/types/map.utils.type";
 import type maplibregl from "maplibre-gl";
-
-type FlyToSafeOptions = {
-  center: [number, number];
-  zoom?: number;
-  duration?: number;
-  pitch?: number;
-  bearing?: number;
-};
-
-type FitBoundsSafeOptions = {
-  padding?:
-    | number
-    | { top: number; bottom: number; left: number; right: number };
-  maxZoom?: number;
-  duration?: number;
-};
 
 /**
  * Safely navigates the map camera to a target center coordinate.

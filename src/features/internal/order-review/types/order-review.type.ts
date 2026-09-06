@@ -10,10 +10,44 @@ import type {
   PaginationMeta,
 } from "@/shared/types/common-response.type";
 
+import type { ReactNode } from "react";
+
+export type InternalOrderReviewRejectTriggerProps = {
+  modalKey?: string;
+  order: InternalOrderItem;
+  children?: ReactNode;
+  onSuccessRedirect?: () => void;
+};
+
 export type InternalOrderReviewRejectModalContentProps = {
   order: InternalOrderItem;
   isOpen: boolean;
   onSuccessRedirect?: () => void;
+};
+
+export type InternalOrderReviewApproveTriggerProps = {
+  modalKey?: string;
+  order: InternalOrderItem;
+  children?: ReactNode;
+  onSuccessRedirect?: () => void;
+};
+
+export type InternalOrderReviewApproveModalContentProps = {
+  order: InternalOrderItem;
+  isOpen: boolean;
+  onSuccessRedirect?: () => void;
+  close: () => void;
+};
+
+export type InternalOrderReviewDetailTriggerProps = {
+  modalKey?: string;
+  order: InternalOrderItem;
+  children?: ReactNode;
+};
+
+export type InternalOrderReviewDetailModalContentProps = {
+  order: InternalOrderItem;
+  close: () => void;
 };
 
 export type InternalOrderItem = {

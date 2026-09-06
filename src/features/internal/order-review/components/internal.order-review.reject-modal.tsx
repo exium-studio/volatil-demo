@@ -8,22 +8,15 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useRejectOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import type {
-  InternalOrderItem,
   InternalOrderReviewRejectModalContentProps,
+  InternalOrderReviewRejectTriggerProps,
 } from "@/features/internal/order-review/types/order-review.type";
-import { XCircleIcon } from "lucide-react";
-import { useState, type ReactNode } from "react";
-import { P } from "@/design-system/components/typography/ui/p";
 import { back } from "@/shared/utils/client/navigation";
-
-type InternalOrderReviewRejectTriggerProps = {
-  modalKey?: string;
-  order: InternalOrderItem;
-  children?: ReactNode;
-  onSuccessRedirect?: () => void;
-};
+import { XCircleIcon } from "lucide-react";
+import { useState } from "react";
 
 export const InternalOrderReviewRejectTrigger = (
   props: InternalOrderReviewRejectTriggerProps,

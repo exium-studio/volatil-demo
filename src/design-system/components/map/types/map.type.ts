@@ -139,3 +139,61 @@ export const getWmsRasterConfigFromIgtLayer = (
   transparent: igtLayer.wms?.transparent,
   styles: igtLayer.wms?.styles,
 });
+
+export type UseGeolocationResult = {
+  isActive: boolean;
+  isLocating: boolean;
+  locationError: string | null;
+  toggle: () => void;
+};
+
+export type MapViewPaddingOptions = {
+  contentPanelRef: import("react").RefObject<HTMLDivElement | null>;
+  sidebarPx: number;
+  isVertical: boolean;
+};
+
+export type MapDrawStore = {
+  geometryType: DrawGeometryType;
+  isDrawing: boolean;
+  points: DrawPoint[];
+  start: (geometryType: DrawGeometryType) => void;
+  addPoint: (point: DrawPoint) => void;
+  finish: () => void;
+  cancel: () => void;
+};
+
+export type MapInstanceState = {
+  map: import("maplibre-gl").Map | null;
+  setMap: (map: import("maplibre-gl").Map | null) => void;
+};
+
+export type MapInteractionStore = {
+  isRotationLocked: boolean;
+  toggleRotationLock: () => void;
+  setRotationLocked: (locked: boolean) => void;
+};
+
+export type MapLayerState = {
+  wmsVisible: boolean;
+  setWmsVisible: (visible: boolean) => void;
+  enabledLayerIds: Record<string, boolean>;
+  layerOpacities: Record<string, number>;
+  customLayerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;
+  toggleLayerId: (layerId: string) => void;
+  setLayerEnabled: (layerId: string, enabled: boolean) => void;
+  setLayerOpacity: (layerId: string, opacity: number) => void;
+  setCustomLayerConfig: (
+    layerId: string,
+    config: Partial<WmsRasterLayerConfig> | null,
+  ) => void;
+  resetLayers: () => void;
+};
+
+export type MapOverlayProps = {
+  showIgtLayerSelect?: boolean;
+};
+
+
+
+

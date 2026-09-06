@@ -14,3 +14,6 @@ export type IconButtonProps = ChakraIconButtonProps &
   ButtonProps & {
     primary?: boolean;
   };
+
+export type ColorModeToggleButtonProps = IconButtonProps;
+

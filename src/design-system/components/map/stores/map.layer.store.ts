@@ -1,22 +1,5 @@
-import type { WmsRasterLayerConfig } from "@/design-system/components/map/types/map.type";
+import type { MapLayerState } from "@/design-system/components/map/types/map.type";
 import { create } from "zustand";
-
-type MapLayerState = {
-  /** Whether the WMS raster overlay is visible on the map. */
-  wmsVisible: boolean;
-  setWmsVisible: (visible: boolean) => void;
-  enabledLayerIds: Record<string, boolean>;
-  layerOpacities: Record<string, number>;
-  customLayerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;
-  toggleLayerId: (layerId: string) => void;
-  setLayerEnabled: (layerId: string, enabled: boolean) => void;
-  setLayerOpacity: (layerId: string, opacity: number) => void;
-  setCustomLayerConfig: (
-    layerId: string,
-    config: Partial<WmsRasterLayerConfig> | null,
-  ) => void;
-  resetLayers: () => void;
-};
 
 // Clean up any legacy persisted map-layer-store from localStorage
 if (typeof window !== "undefined") {

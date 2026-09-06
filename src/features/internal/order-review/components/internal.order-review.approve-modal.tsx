@@ -11,24 +11,17 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useApproveOrder } from "@/features/internal/order-review/hooks/use-order-review";
-import {
-  approveOrderFormSchema,
-  type ApproveOrderFormValues,
-  type InternalOrderItem,
+import { approveOrderFormSchema } from "@/features/internal/order-review/types/order-review.type";
+import type {
+  ApproveOrderFormValues,
+  InternalOrderReviewApproveModalContentProps,
+  InternalOrderReviewApproveTriggerProps,
 } from "@/features/internal/order-review/types/order-review.type";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { CheckCircleIcon, InfoIcon } from "lucide-react";
-import type { ReactNode } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-
-type InternalOrderReviewApproveTriggerProps = {
-  modalKey?: string;
-  order: InternalOrderItem;
-  children?: ReactNode;
-  onSuccessRedirect?: () => void;
-};
 
 export const InternalOrderReviewApproveTrigger = (
   props: InternalOrderReviewApproveTriggerProps,
@@ -65,13 +58,6 @@ export const InternalOrderReviewApproveTrigger = (
       />
     </Modal.Root>
   );
-};
-
-type InternalOrderReviewApproveModalContentProps = {
-  order: InternalOrderItem;
-  isOpen: boolean;
-  onSuccessRedirect?: () => void;
-  close: () => void;
 };
 
 const InternalOrderReviewApproveModalContent = (

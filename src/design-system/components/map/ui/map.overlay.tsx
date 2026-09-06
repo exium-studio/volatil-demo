@@ -7,11 +7,10 @@ import { MapControls } from "@/design-system/components/map/ui/map.controls";
 import { MapIgtLayerSelect } from "@/design-system/components/map/ui/map.controls/map.igt-layer-select";
 import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinates";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
+import type {
+  MapOverlayProps,
+} from "@/design-system/components/map/types/map.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-
-type MapOverlayProps = {
-  showIgtLayerSelect?: boolean;
-};
 
 export const MapOverlay = ({ showIgtLayerSelect = true }: MapOverlayProps) => {
   return (

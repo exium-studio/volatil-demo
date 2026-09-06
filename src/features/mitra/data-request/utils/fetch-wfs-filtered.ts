@@ -1,16 +1,8 @@
 // src/features/mitra/data-request/utils/fetch-wfs-filtered.ts
 
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import type { WfsFilterParams } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 import type GeoJSON from "geojson";
-
-type WfsFilterParams = {
-  typeName: string;
-  wfsUrl: string;
-  filters?: Record<string, string | undefined>;
-  startIndex?: number;
-  count?: number;
-  signal?: AbortSignal;
-};
 
 /**
  * Builds a CQL filter string from a filters object (skipping undefined/empty values)

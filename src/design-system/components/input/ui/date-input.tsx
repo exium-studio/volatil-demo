@@ -22,6 +22,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type {
   DateInputProps,
+  FieldInputProps,
   FieldKey,
   FieldValues,
 } from "@/design-system/components/input/types/date-input.type";
@@ -87,18 +88,6 @@ function fieldsToCalendarDate(fields: FieldValues): CalendarDate | null {
 // -------------------------------------------------------------------------------------
 // FieldInput — a single numeric input part
 // -------------------------------------------------------------------------------------
-
-type FieldInputProps = {
-  id: string;
-  fieldKey: FieldKey;
-  value: string;
-  disabled?: boolean;
-  onValueChange: (field: FieldKey, value: string) => void;
-  onAutoAdvance: (fromField: FieldKey) => void;
-  onArrowNavigate: (fromField: FieldKey, direction: "left" | "right") => void;
-  onBlur: (e: FocusEvent<HTMLInputElement>) => void;
-  inputRef: RefObject<HTMLInputElement | null>;
-};
 
 const FieldInput = memo(function FieldInput(props: FieldInputProps) {
   // Props

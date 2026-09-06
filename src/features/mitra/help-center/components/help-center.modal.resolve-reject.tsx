@@ -12,14 +12,8 @@ import {
   useRejectHelpCenterTicket,
   useResolveHelpCenterTicket,
 } from "@/features/mitra/help-center/hooks/use-help-center.query";
-import type React from "react";
+import type { HelpCenterModalResolveRejectTriggerProps } from "@/features/mitra/help-center/types/help-center.type";
 import { useState } from "react";
-
-type HelpCenterModalResolveRejectTriggerProps = {
-  ticketId: number | string;
-  actionType: "resolve" | "reject";
-  children: React.ReactNode;
-};
 
 export const HelpCenterModalResolveRejectTrigger = (
   props: HelpCenterModalResolveRejectTriggerProps,

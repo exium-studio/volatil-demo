@@ -1,11 +1,7 @@
 // src/design-system/hooks/use-merge-refs.ts
 
-import type { Ref } from "react";
+import type { UseMergedRefsOptions } from "@/design-system/hooks/types/use-merge-refs.type";
 import { useCallback, useRef } from "react";
-
-type UseMergedRefsOptions<T> = {
-  refs: Ref<T>[];
-};
 
 export const useMergedRefs = <T>(options: UseMergedRefsOptions<T>) => {
   // Options

@@ -148,3 +148,10 @@ export type DataViewTableContextValue = {
     columnIndex: number,
   ) => ReactNode;
 };
+
+export type UseDataListSortOptions = {
+  formattedItems: FormattedListItem[];
+  initialColumnIndex?: number;
+  initialDirection?: "asc" | "desc";
+};
+

@@ -13,7 +13,10 @@ import { OrderStatusBadge } from "@/features/shared/components/order-status.badg
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-order-review";
-import type { InternalOrderItem } from "@/features/internal/order-review/types/order-review.type";
+import type {
+  InternalOrderReviewDetailModalContentProps,
+  InternalOrderReviewDetailTriggerProps,
+} from "@/features/internal/order-review/types/order-review.type";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -21,13 +24,7 @@ import {
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { CheckCircleIcon, MapPlusIcon } from "lucide-react";
-import { useMemo, type ReactNode } from "react";
-
-type InternalOrderReviewDetailTriggerProps = {
-  modalKey?: string;
-  order: InternalOrderItem;
-  children?: ReactNode;
-};
+import { useMemo } from "react";
 
 export const InternalOrderReviewDetailTrigger = (
   props: InternalOrderReviewDetailTriggerProps,
@@ -52,11 +49,6 @@ export const InternalOrderReviewDetailTrigger = (
       <InternalOrderReviewDetailModalContent order={order} close={close} />
     </Modal.Root>
   );
-};
-
-type InternalOrderReviewDetailModalContentProps = {
-  order: InternalOrderItem;
-  close: () => void;
 };
 
 const InternalOrderReviewDetailModalContent = (

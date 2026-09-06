@@ -1,13 +1,7 @@
 // src/design-system/components/map/stores/map.interaction.store.ts
 
+import type { MapInteractionStore } from "@/design-system/components/map/types/map.type";
 import { create } from "zustand";
-
-interface MapInteractionStore {
-  /** Whether map rotation (drag-rotate / touch-rotate) is locked. Free (false) by default. */
-  isRotationLocked: boolean;
-  toggleRotationLock: () => void;
-  setRotationLocked: (locked: boolean) => void;
-}
 
 export const useMapInteractionStore = create<MapInteractionStore>((set) => ({
   isRotationLocked: false,

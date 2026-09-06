@@ -1,8 +1,6 @@
 import { fetchWfsCatalog } from "@/features/mitra/data-request/api/mitra.data-request-wfs.api";
-import type { FetchWfsCatalogParams } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
+import type { UseIgtWfsCatalogParams } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 import { useQuery } from "@tanstack/react-query";
-
-type UseIgtWfsCatalogParams = Omit<FetchWfsCatalogParams, "signal">;
 
 /** TanStack Query wrapper for paginated WFS catalog fetch with parallel bidang/kawasan hit counts and in-memory caching. */
 export const useIgtWfsCatalog = (params: UseIgtWfsCatalogParams) => {

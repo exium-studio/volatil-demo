@@ -1,0 +1,170 @@
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/components/data-display/hooks/use-data-view-sort.ts
+  7:3  warning  'FormattedListItem' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/components/input/hooks/use-existing-files.ts
+  4:3  warning  'FileInputExistingItem' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/components/map/utils/fetch-wfs.ts
+  7:13  warning  'GeoJSON' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/components/overlay/ui/drawer.tsx
+  30:8  warning  'Dispatch' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
+  31:8  warning  'SetStateAction' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/hooks/use-click-outside.ts
+  5:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/hooks/use-is-small-viewport.ts
+  5:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/hooks/use-merge-refs.ts
+  6:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/hooks/use-ref-dimenssion.ts
+  5:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/hooks/use-viewport.ts
+   5:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  10:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/stores/layout-store.ts
+   8:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  16:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/stores/sidebar-store.ts
+   6:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  10:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/stores/splitter-store.ts
+   6:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  10:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/design-system/stores/theme-store.ts
+  10:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  31:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/branding/components/ui/features-carousel.tsx
+  37:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/data-management/components/geoserver-cascade-select.tsx
+  12:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/data-management/components/internal.data-management.create-modal.tsx
+  31:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  64:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/data-management/components/internal.data-management.edit-modal.tsx
+  33:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  80:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/home/components/internal.home.service-rate-modal.tsx
+  19:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  58:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/master-geoserver/components/internal.master-geoserver.create-modal.tsx
+  19:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  49:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/master-geoserver/components/internal.master-geoserver.edit-modal.tsx
+  20:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  63:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal.tsx
+  19:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  62:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal.tsx
+  18:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  61:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/order-review/components/internal.order-review.approve-modal.tsx
+  26:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  70:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/order-review/components/internal.order-review.detail-modal.tsx
+  26:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  57:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/order-review/components/internal.order-review.reject-modal.tsx
+  21:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/internal/pricing/components/internal.pricing-edit-modal.tsx
+  18:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  54:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/cart/components/mitra.cart.expired-orders.modal.tsx
+  32:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+  82:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/cart/components/mitra.cart.order-item.tsx
+  261:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/cart/components/mitra.cart.order-summary.tsx
+  23:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/cart/hooks/use-mitra-cart.ts
+  28:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/data-request/api/mitra.data-request-wfs.api.ts
+  84:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/data-request/components/mitra.data-request.detail-attribute-header.tsx
+  16:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/data-request/components/mitra.data-request.detail-attribute-view.tsx
+  14:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context.ts
+  11:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/data-request/hooks/use-igt-wfs-catalog.ts
+  5:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/data-request/hooks/use-mitra-data-request.ts
+  73:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/data-request/stores/igt-layer.store.ts
+  8:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/data-request/utils/fetch-wfs-filtered.ts
+  6:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/help-center/components/help-center.attachment-item.tsx
+  18:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/help-center/components/help-center.modal.reply.tsx
+  14:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/help-center/components/help-center.modal.resolve-reject.tsx
+  18:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/help-center/components/help-center.summary.tsx
+  12:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/help-center/components/help-center.transaction-select.tsx
+  10:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/mitra/my-data/components/mitra.my-data.data-view.tsx
+  422:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/notification/components/notification.item.tsx
+  10:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/settings/components/settings.active-page.tsx
+  29:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/settings/components/settings.search.tsx
+  14:1  error  Interface declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/settings/hooks/use-settings-search-index.ts
+  10:1  error  Type declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/settings/pages/appearance/appearance.settings-page.tsx
+  8:1  error  Interface declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+/home/sulenq/-_-/Works/ATR-BPN/Volatil/volatil-frontend/src/features/settings/pages/profile/profile.settings-page.tsx
+  8:1  error  Interface declarations are forbidden outside of .type.ts files. Move type to nearest types/ folder with .type.ts suffix  custom/no-inline-type
+
+✖ 67 problems (62 errors, 5 warnings)
+

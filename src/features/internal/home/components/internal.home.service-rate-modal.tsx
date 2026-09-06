@@ -10,17 +10,14 @@ import {
   serviceRateFormSchema,
   zodResolver,
 } from "@/features/internal/home/schemas/service-rate.schema";
-import type { InternalHomeServiceRateItem, ServiceRateFormValues } from "@/features/internal/home/types/internal.home.service-rate.type";
+import type {
+  InternalHomeServiceRateModalContentProps,
+  InternalHomeServiceRateModalTriggerProps,
+  ServiceRateFormValues,
+} from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useUpdateInternalPricing } from "@/features/internal/pricing/hooks/use-internal-pricing";
 import { t } from "@/shared/libs/i18n";
-import type React from "react";
 import { Controller, useForm } from "react-hook-form";
-
-type InternalHomeServiceRateModalTriggerProps = {
-  modalKey?: string;
-  rate: InternalHomeServiceRateItem;
-  children: React.ReactNode;
-};
 
 export const InternalHomeServiceRateModalTrigger = (
   props: InternalHomeServiceRateModalTriggerProps,
@@ -53,12 +50,6 @@ export const InternalHomeServiceRateModalTrigger = (
       )}
     </Modal.Root>
   );
-};
-
-type InternalHomeServiceRateModalContentProps = {
-  modalKey?: string;
-  rate: InternalHomeServiceRateItem;
-  close: () => void;
 };
 
 const InternalHomeServiceRateModalContent = (

@@ -18,6 +18,8 @@ import { useCreateMasterIgtLayer } from "@/features/internal/data-management/hoo
 import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
 import type {
   GeoServerWorkspaceLayerOption,
+  InternalDataManagementCreateModalContentProps,
+  InternalDataManagementCreateTriggerProps,
   MasterIgtLayerFormValues,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
@@ -25,13 +27,8 @@ import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/ho
 import { SPATIAL_BASIS_OPTIONS } from "@/shared/constants/status.config";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, type ReactNode } from "react";
+import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-
-type InternalDataManagementCreateTriggerProps = {
-  modalKey?: string;
-  children?: ReactNode;
-};
 
 export const InternalDataManagementCreateTrigger = (
   props: InternalDataManagementCreateTriggerProps,
@@ -59,11 +56,6 @@ export const InternalDataManagementCreateTrigger = (
       />
     </Modal.Root>
   );
-};
-
-type InternalDataManagementCreateModalContentProps = {
-  modalKey: string;
-  close: () => void;
 };
 
 const InternalDataManagementCreateModalContent = (

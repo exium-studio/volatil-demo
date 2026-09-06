@@ -4,6 +4,7 @@ import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
+import type { WfsSchemaProperty } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 
 const cachedAttributes: Record<string, string[]> = {};
 const cachedStringAttributes: Record<string, string[]> = {};
@@ -79,12 +80,6 @@ export const getWfsDynamicAttributes = async (
     console.warn("Failed to fetch WFS attributes dynamically:", error);
   }
   return [];
-};
-
-type WfsSchemaProperty = {
-  name: string;
-  type: string;
-  localType?: string;
 };
 
 /**

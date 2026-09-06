@@ -10,6 +10,7 @@ export type MyDataSpatialBasis = "bidang" | "kawasan";
 
 export type MyDataItem = {
   id: string;
+  label: string | null;
   title: string;
   spatialBasis: MyDataSpatialBasis;
   wfsUrl: string | null;
@@ -33,3 +34,8 @@ export type MyDataQueryParams = {
 
 export type MyDataResponse = PaginatedResponse<MyDataItem>;
 export type MitraMyDataViewProps = StackProps;
+
+export type MyDataDetailAttributeListProps = {
+  item: MyDataItem;
+  onBack: () => void;
+};

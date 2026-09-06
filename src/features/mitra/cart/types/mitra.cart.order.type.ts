@@ -59,6 +59,44 @@ export type PaymentMethod =
   | "VA_BCA"
   | "QRIS";
 
+
+export type CartItemsQueryParams = {
+  page: number;
+  pageSize: number;
+  typeName: string;
+  wfsUrl: string;
+  search?: string;
+  cqlFilter?: string;
+};
+
+export type MitraCartExpiredOrdersTriggerProps = {
+  modalKey?: string;
+  children: import("react").ReactNode;
+};
+
+export type MitraCartExpiredOrdersModalContentProps = {
+  modalKey: string;
+  close: () => void;
+  expiredOrders: CartOrder[];
+  isLoading: boolean;
+};
+
+export type MitraCartBatchItemProps = {
+  batch?: CartOrder;
+  order?: CartOrder;
+  index: number;
+  isSelected: boolean;
+  onSelect: (id: string) => void;
+  onDelete?: (id: string) => void;
+  isDeleting?: boolean;
+};
+
+export type MitraCartOrderSummaryProps = {
+  activeOrder: ActiveCartOrder | null;
+  isLoading?: boolean;
+};
+
+
 export type CartOrderItemPayload = {
   sourceLayerId: string;
   cqlFilter?: string;

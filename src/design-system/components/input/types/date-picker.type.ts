@@ -71,3 +71,25 @@ export type DatePickerTriggerProps = DatePickerProps & {
   modalKey: string;
   datePickerSubtitle?: string;
 };
+
+export type ValidationResult =
+  | { valid: true }
+  | { valid: false; reason: string };
+
+export type ValidationOptions = {
+  min?: string;
+  max?: string;
+  disabledDates?: string[];
+};
+
+export type CalendarDay = {
+  date: CalendarDate;
+  isCurrentMonth: boolean;
+};
+
+export type FieldOrder = [
+  "day" | "month" | "year",
+  "day" | "month" | "year",
+  "day" | "month" | "year",
+];
+

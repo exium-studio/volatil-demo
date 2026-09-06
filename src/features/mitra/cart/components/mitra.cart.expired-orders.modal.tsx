@@ -18,7 +18,10 @@ import {
   useExpiredCartOrdersQuery,
   useReorderCartOrder,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
-import type { CartOrder } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import type {
+  MitraCartExpiredOrdersModalContentProps,
+  MitraCartExpiredOrdersTriggerProps,
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -27,12 +30,7 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { AlertCircleIcon, HistoryIcon, RotateCcwIcon } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
-
-type MitraCartExpiredOrdersTriggerProps = {
-  modalKey?: string;
-  children: ReactNode;
-};
+import { useMemo, useState } from "react";
 
 export const MitraCartExpiredOrdersTrigger = (
   props: MitraCartExpiredOrdersTriggerProps,
@@ -77,13 +75,6 @@ export const MitraCartExpiredOrdersTrigger = (
       )}
     </Modal.Root>
   );
-};
-
-type MitraCartExpiredOrdersModalContentProps = {
-  modalKey: string;
-  close: () => void;
-  expiredOrders: CartOrder[];
-  isLoading: boolean;
 };
 
 const MitraCartExpiredOrdersModalContent = (

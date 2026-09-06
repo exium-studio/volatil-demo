@@ -6,6 +6,7 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import type {
   FocusSearchResultItemProps,
   FocusSearchTriggerProps,
+  FocusTriggerContextValue,
 } from "@/design-system/components/input/types/focus-search.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -31,13 +32,6 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-
-type FocusTriggerContextValue = {
-  modalKey: string;
-  queryKey: string;
-  searchIndex: SearchIndex;
-  onResultSelect?: (result: SearchIndexItem) => void;
-};
 
 const FocusTriggerContext = createContext<FocusTriggerContextValue | undefined>(
   undefined,

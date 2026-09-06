@@ -19,22 +19,17 @@ import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hoo
 import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
 import type {
   GeoServerWorkspaceLayerOption,
+  InternalDataManagementEditModalContentProps,
+  InternalDataManagementEditTriggerProps,
   MasterIgtLayerFormValues,
-  MasterIgtLayerItem,
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { SPATIAL_BASIS_OPTIONS } from "@/shared/constants/status.config";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, type ReactNode } from "react";
+import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-
-type InternalDataManagementEditTriggerProps = {
-  modalKey?: string;
-  item: MasterIgtLayerItem;
-  children?: ReactNode;
-};
 
 export const InternalDataManagementEditTrigger = (
   props: InternalDataManagementEditTriggerProps,
@@ -75,12 +70,6 @@ export const InternalDataManagementEditTrigger = (
       )}
     </Modal.Root>
   );
-};
-
-type InternalDataManagementEditModalContentProps = {
-  modalKey: string;
-  item: MasterIgtLayerItem;
-  close: () => void;
 };
 
 const InternalDataManagementEditModalContent = (

@@ -1,16 +1,11 @@
 // src/design-system/stores/sidebar-store.ts
 
+import type {
+  SidebarActions,
+  SidebarState,
+} from "@/design-system/stores/types/sidebar-store.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
-type SidebarState = {
-  expandedByKey: Record<string, boolean>;
-};
-
-type SidebarActions = {
-  setExpanded: (key: string, value: boolean) => void;
-  toggleExpanded: (key: string, defaultValue?: boolean) => void;
-};
 
 export const useSidebarStore = create<SidebarState & SidebarActions>()(
   persist(

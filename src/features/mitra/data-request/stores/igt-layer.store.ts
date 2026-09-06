@@ -1,17 +1,9 @@
 // src/features/mitra/data-request/stores/igt-layer.store.ts
 
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import type { AdministrativeFilterState } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
-import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { create } from "zustand";
-
-type AdministrativeFilterState = {
-  appliedAdministrativeFilters: FilterAdministrativeAreaValues;
-  cqlFilter: string | undefined;
-  setAppliedAdministrativeFilters: (
-    filters: FilterAdministrativeAreaValues,
-  ) => void;
-};
 
 export const useAdministrativeFilterStore = create<AdministrativeFilterState>()(
   (set) => ({

@@ -2,10 +2,8 @@
 
 "use client";
 
-import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-
-interface ProfileSettingsPageProps extends StackProps {}
+import type { ProfileSettingsPageProps } from "@/features/settings/types/settings.type";
 
 export const ProfileSettingsPage = (props: ProfileSettingsPageProps) => {
   // Props

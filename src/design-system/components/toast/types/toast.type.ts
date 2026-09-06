@@ -185,3 +185,54 @@ export type ToastEngineConfig = {
   placement: ToastPlacement;
   showProgressBar: boolean;
 };
+
+export type TimerEntry = {
+  timeoutId: ReturnType<typeof setTimeout>;
+  remaining: number;
+  startedAt: number;
+  paused: boolean;
+  onExpire: () => void;
+};
+
+export type HistoryGroupStack = {
+  group: string;
+  entries: HistoryEntry[];
+};
+
+export type ToastGroupStack = {
+  group: string;
+  items: ToastItemData[];
+};
+
+export type HistoryState = {
+  entries: HistoryEntry[];
+};
+
+export type HistoryActions = {
+  add: (entry: HistoryEntry) => void;
+  markRead: (historyEntryId: string) => void;
+  markAllRead: () => void;
+  deleteOne: (historyEntryId: string) => void;
+  deleteMany: (historyEntryIds: string[]) => void;
+  clear: () => void;
+  getAll: (options?: { includeDeleted?: boolean }) => HistoryEntry[];
+};
+
+export type HistoryStore = HistoryState & HistoryActions;
+
+export type VisibleToastState = {
+  entries: Record<string, ToastItemData[]>;
+};
+
+export type VisibleToastActions = {
+  add: (toast: ToastItemData) => void;
+  update: (id: string, patch: Partial<ToastItemData>) => void;
+  remove: (id: string) => void;
+  removeAll: () => void;
+  markDeletedFromHistory: (toastId: string) => void;
+  find: (id: string) => ToastItemData | undefined;
+};
+
+export type VisibleToastStore = VisibleToastState & VisibleToastActions;
+
+

@@ -1,27 +1,16 @@
 // src/design-system/stores/layout-store.ts
 
+import type {
+  LayoutConfig,
+  LayoutStore,
+} from "@/design-system/stores/types/layout-store.type";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const STORAGE_KEY = "layout-config";
 
-type LayoutConfig = {
-  maxW: string | number;
-};
-
 export const DEFAULT_LAYOUT_CONFIG: LayoutConfig = {
   maxW: "720px",
-};
-
-type LayoutStore = {
-  layout: LayoutConfig;
-  setLayout: (
-    config:
-      | Partial<LayoutConfig>
-      | ((prev: LayoutConfig) => Partial<LayoutConfig>),
-  ) => void;
-  setMaxW: (maxW: string | number) => void;
-  resetLayout: () => void;
 };
 
 export const useLayoutStore = create<LayoutStore>()(

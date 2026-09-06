@@ -1,14 +1,12 @@
 // src/design-system/components/button/ui/color-mode.tsx
 
-import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
+import type { ColorModeToggleButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { EclipseIcon, SunIcon } from "lucide-react";
-
-type ColorModeToggleButtonProps = IconButtonProps;
 
 export const ColorModeToggleButton = (props: ColorModeToggleButtonProps) => {
   // Hooks

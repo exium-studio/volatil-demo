@@ -20,19 +20,11 @@ import {
   reorderCartOrder,
 } from "@/features/mitra/cart/services/mitra.cart.service";
 import type { CartSummaryResponse } from "@/features/mitra/cart/types/cart.type";
+import type { CartItemsQueryParams } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-type CartItemsQueryParams = {
-  page: number;
-  pageSize: number;
-  typeName: string;
-  wfsUrl: string;
-  search?: string;
-  cqlFilter?: string;
-};
 
 const EMPTY_CART_SUMMARY: CartSummaryResponse = {
   summary: {

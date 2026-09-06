@@ -2,30 +2,12 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { HistoryEntry } from "@/design-system/components/toast/types/toast.type";
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
 import { useToastVisibleStore } from "@/design-system/components/toast/stores/toast-visible.store";
-
-type HistoryState = {
-  entries: HistoryEntry[];
-};
-
-type HistoryActions = {
-  add: (entry: HistoryEntry) => void;
-  markRead: (historyEntryId: string) => void;
-  markAllRead: () => void;
-  /** Soft-deletes one entry and flags the still-visible toast (if any) as removed-from-history. */
-  deleteOne: (historyEntryId: string) => void;
-  deleteMany: (historyEntryIds: string[]) => void;
-  clear: () => void;
-  /**
-   * Filters expired + soft-deleted entries out AND prunes expired ones from
-   * state (lazy delete on read). Pass `{ includeDeleted: true }` for audit views.
-   */
-  getAll: (options?: { includeDeleted?: boolean }) => HistoryEntry[];
-};
-
-type HistoryStore = HistoryState & HistoryActions;
+import type {
+  HistoryEntry,
+  HistoryStore,
+} from "@/design-system/components/toast/types/toast.type";
 
 function isExpired(entry: HistoryEntry, ttl: number | null): boolean {
   if (ttl === null) return false;

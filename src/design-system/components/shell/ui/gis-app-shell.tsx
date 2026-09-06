@@ -93,12 +93,20 @@ export const GisAppShell = (props: GisAppShellProps) => {
     }
   }, [pathname]);
 
-  // Reset all active map layers and filters when pathname or user/role changes
+  // Reset all active map layers and filters when pathname or user/role changes (except within internal routes)
   const userSession = getUserSession();
   const currentUserId = userSession?.id;
+  const isInternal = userSession?.role === "internal" || pathname.startsWith("/internal");
+
+  useEffect(() => {
+    if (!isInternal) {
+      useMapLayerStore.getState().resetLayers();
+    }
+  }, [pathname, isInternal]);
+
   useEffect(() => {
     useMapLayerStore.getState().resetLayers();
-  }, [pathname, currentUserId]);
+  }, [currentUserId]);
 
   return (
     <AppPageContainer
@@ -487,7 +495,10 @@ const Content = () => {
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
-          showIgtLayerSelect={pathname.startsWith("/mitra/data-request")}
+          showIgtLayerSelect={
+            pathname.startsWith("/mitra/data-request") ||
+            pathname.startsWith("/internal")
+          }
           onDrawFinish={(feature, originalPoints) => {
             console.log("draw finished", { feature, originalPoints });
           }}

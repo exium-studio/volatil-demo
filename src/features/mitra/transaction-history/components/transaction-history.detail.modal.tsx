@@ -36,6 +36,7 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import { useMemo } from "react";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 
 export const TransactionDetailTrigger = (
   props: TransactionDetailTriggerProps,
@@ -107,9 +108,9 @@ export const TransactionDetailModalContent = (
 
     return transaction.items.map((item: TransactionOrderItem) => {
       const isBidang = item.spatialBasis === "bidang";
-      const quantityText = isBidang
-        ? `${item.snapshotFeaturesCount} bidang`
-        : `${item.snapshotAreaHa ?? 0} ha`;
+      const qty = isBidang
+        ? `${formatNumber(item.featuresCount)} bidang`
+        : `${formatNumber(item.areaHa) ?? 0} ha`;
 
       return {
         id: item.id,
@@ -126,8 +127,8 @@ export const TransactionDetailModalContent = (
             align: "start" as const,
           },
           {
-            value: quantityText,
-            td: <P>{quantityText}</P>,
+            value: qty,
+            td: <P>{qty}</P>,
             align: "start" as const,
           },
           {

@@ -44,7 +44,7 @@ const MenuContent = (props: MenuContentProps) => {
         <ChakraMenu.Content
           display={"flex"}
           flexDir={"column"}
-          gap={1}
+          gap={"2xs"}
           p={1}
           bg={"bg.body"}
           rounded={theme.radii.container}

@@ -10,7 +10,9 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import type {
   DrawerCloseButtonProps,
   DrawerContentProps,
+  DrawerContextValue,
   DrawerRootProps,
+  GestureMode,
 } from "@/design-system/components/overlay/types/drawer.type";
 import { Portal } from "@/design-system/components/utilities/ui/portal";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -25,27 +27,10 @@ import {
   useMemo,
   useRef,
   useState,
-  type Dispatch,
-  type SetStateAction,
   type TouchEvent,
 } from "react";
 
-type GestureMode = "drag" | "scroll" | null;
-
-type DrawerContextValue = {
-  modalKey: string;
-  opened: boolean;
-  open?: () => void;
-  close?: () => void;
-  fullscreen: boolean;
-  setFullscreen: Dispatch<SetStateAction<boolean>>;
-  swipeToDismiss: boolean;
-  placement: ChakraDrawer.RootProps["placement"];
-  size: ChakraDrawer.RootProps["size"];
-  closeOnInteractOutside?: boolean;
-};
-
-const DrawerContext = createContext<DrawerContextValue | null>(null);
+const DrawerContext = createContext<DrawerContextValue | undefined>(undefined);
 
 export function useDrawerContext(): DrawerContextValue {
   const ctx = useContext(DrawerContext);

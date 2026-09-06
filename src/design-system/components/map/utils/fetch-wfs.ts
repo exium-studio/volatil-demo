@@ -1,41 +1,9 @@
-import type GeoJSON from "geojson";
-
-type WfsBbox = [number, number, number, number];
-
-/** Supported WFS specification versions. */
-type WfsVersion = "1.0.0" | "1.1.0" | "2.0.0";
-
-/**
- * GeoServer returns a non-standard JSON extension for FeatureCollection.
- * - v1.0.0 / v1.1.0: `totalFeatures`, `numberOfFeatures`
- * - v2.0.0: `numberMatched`, `totalFeatures`
- * All are normalized to `totalFeatures` on the return type.
- */
-type GeoServerFeatureCollection = GeoJSON.FeatureCollection & {
-  /** Normalized total matched features count (across all pages). */
-  totalFeatures: number;
-};
-
-type FetchWfsParams = {
-  typeName: string;
-  wfsUrl: string;
-  bbox?: WfsBbox;
-  /** GeoServer CQL filter expression, e.g. `INTERSECTS(geom, POLYGON(...))`. */
-  cqlFilter?: string;
-  /** WFS spec version. Defaults to "2.0.0". */
-  version?: WfsVersion;
-  srsName?: string;
-  /** Max features per page. Maps to `count` (v2.0.0) or `maxFeatures` (v1.x). */
-  maxFeatures?: number;
-  /** Zero-based page offset. Supported in v1.1.0 and v2.0.0. */
-  startIndex?: number;
-  /**
-   * `hits` → fast count query.
-   * `results` → actual features (default).
-   */
-  resultType?: "results" | "hits";
-  signal?: AbortSignal;
-};
+import type {
+  FetchWfsParams,
+  GeoServerFeatureCollection,
+  RawGeoServerResponse,
+  WfsVersion,
+} from "@/design-system/components/map/types/map.fetch-wfs.type";
 
 /** Normalizes a WFS URL endpoint by replacing `/wms` path suffix with `/wfs` */
 export const normalizeWfsEndpointUrl = (urlStr: string): string => {
@@ -116,12 +84,6 @@ const buildWfsUrl = (
   }
 
   return url;
-};
-
-type RawGeoServerResponse = GeoJSON.FeatureCollection & {
-  totalFeatures?: number;
-  numberMatched?: number;
-  numberOfFeatures?: number;
 };
 
 const normalizeTotalFeatures = (

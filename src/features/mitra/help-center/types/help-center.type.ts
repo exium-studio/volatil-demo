@@ -141,6 +141,40 @@ export type CreateHelpCenterTriggerProps = {
 
 export type CreateHelpCenterModalProps = CreateHelpCenterTriggerProps;
 
+export type HelpCenterAttachmentItemProps = {
+  attachment: HelpCenterAttachment;
+  index?: number;
+};
+
+export type HelpCenterModalReplyTriggerProps = {
+  ticketId: number | string;
+  children: ReactNode;
+};
+
+export type HelpCenterModalResolveRejectTriggerProps = {
+  ticketId: number | string;
+  actionType: "resolve" | "reject";
+  children: ReactNode;
+};
+
+export type HelpCenterSummaryProps = {
+  statistics?: HelpCenterStatistics;
+  scope?: "my" | "all";
+};
+
+import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
+
+export type HelpCenterTransactionSelectProps = {
+  modalKey?: string;
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (val: string, option?: FocusSelectOption) => void;
+  disabled?: boolean;
+};
+
 import { createHelpCenterSchema } from "@/features/mitra/help-center/schemas/help-center.schema";
 import type { z } from "zod";
 export type CreateHelpCenterFormValues = z.infer<ReturnType<typeof createHelpCenterSchema>>;
+
+
+

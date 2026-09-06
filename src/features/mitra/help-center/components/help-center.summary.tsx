@@ -5,14 +5,9 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useHelpCenterStatisticsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
-import type { HelpCenterStatistics } from "@/features/mitra/help-center/types/help-center.type";
+import type { HelpCenterSummaryProps } from "@/features/mitra/help-center/types/help-center.type";
 import { CheckCircleIcon, ClockIcon, FileTextIcon } from "lucide-react";
 import { memo } from "react";
-
-type HelpCenterSummaryProps = {
-  statistics?: HelpCenterStatistics;
-  scope?: "my" | "all";
-};
 
 export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
   // Props

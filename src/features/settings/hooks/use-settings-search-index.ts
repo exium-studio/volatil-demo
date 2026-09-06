@@ -4,12 +4,9 @@ import { SETTINGS_NAVS_MAP } from "@/features/settings/constants/settings.navs";
 import { t } from "@/shared/libs/i18n";
 import type { SearchIndex } from "@/design-system/types/search.type";
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
-import { useMemo } from "react";
+import type { SettingsNavSearchData } from "@/features/settings/types/settings.type";
 import type { NavItem } from "@/shared/types/nav.type";
-
-type SettingsNavSearchData = {
-  navKey: SettingNavKey;
-};
+import { useMemo } from "react";
 
 export function useSettingsSearchIndex(): SearchIndex<SettingsNavSearchData> {
   return useMemo(

@@ -130,7 +130,7 @@ export const InternalDataManagementDataView = () => {
         setCustomLayerConfig(item.id, null);
       } else {
         const proxyWmsUrl = buildWmsProxyUrl(
-          `/api/proxy/wms?layerId=${item.id}`,
+          `/api/proxy/wms?layerId=${item.typeName}`,
         );
         // const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
 

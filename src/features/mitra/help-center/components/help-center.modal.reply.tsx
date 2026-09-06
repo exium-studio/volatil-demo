@@ -8,13 +8,8 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useReplyHelpCenterTicket } from "@/features/mitra/help-center/hooks/use-help-center.query";
-import type React from "react";
+import type { HelpCenterModalReplyTriggerProps } from "@/features/mitra/help-center/types/help-center.type";
 import { useState } from "react";
-
-type HelpCenterModalReplyTriggerProps = {
-  ticketId: number | string;
-  children: React.ReactNode;
-};
 
 export const HelpCenterModalReplyTrigger = (
   props: HelpCenterModalReplyTriggerProps,

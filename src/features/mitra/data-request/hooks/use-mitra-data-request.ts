@@ -10,6 +10,7 @@ import {
   getIgtCatalog,
   getIgtGeometryById,
 } from "@/features/mitra/data-request/services/mitra.data-request.service";
+import type { AddToCartLayerParam } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestGetCatalogParams } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
@@ -68,17 +69,6 @@ export const useIgtByUploadedAoi = () => {
     },
     onError: toastHandlers.onError,
   });
-};
-
-type AddToCartLayerParam = {
-  layerId: string;
-  typeName: string;
-  title?: string;
-  spatialBasis?: "bidang" | "kawasan";
-  selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
-  featuresCount?: number;
-  areaHa?: number;
-  cqlFilter?: string;
 };
 
 /**

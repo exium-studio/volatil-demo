@@ -1,23 +1,10 @@
 // src/design-system/components/toast/stores/toast-visible.store.ts
 
+import type {
+  ToastItemData,
+  VisibleToastStore,
+} from "@/design-system/components/toast/types/toast.type";
 import { create } from "zustand";
-import type { ToastItemData } from "@/design-system/components/toast/types/toast.type";
-
-type VisibleToastState = {
-  /** group -> toasts belonging to that group, items by `createdAt` ascending. */
-  entries: Record<string, ToastItemData[]>;
-};
-
-type VisibleToastActions = {
-  add: (toast: ToastItemData) => void;
-  update: (id: string, patch: Partial<ToastItemData>) => void;
-  remove: (id: string) => void;
-  removeAll: () => void;
-  markDeletedFromHistory: (toastId: string) => void;
-  find: (id: string) => ToastItemData | undefined;
-};
-
-type VisibleToastStore = VisibleToastState & VisibleToastActions;
 
 export const useToastVisibleStore = create<VisibleToastStore>((set, get) => ({
   entries: {},

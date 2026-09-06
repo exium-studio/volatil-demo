@@ -81,6 +81,34 @@ export type RejectMitraRegistrationPayload = {
   rejectionReason: string;
 };
 
+import type { ReactNode } from "react";
+
+export type InternalMitraRegistrationApproveTriggerProps = {
+  modalKey?: string;
+  registration: InternalMitraRegistrationItem;
+  children?: ReactNode;
+  onSuccessRedirect?: () => void;
+};
+
+export type InternalMitraRegistrationApproveModalContentProps = {
+  registration: InternalMitraRegistrationItem;
+  isOpen: boolean;
+  onSuccessRedirect?: () => void;
+};
+
+export type InternalMitraRegistrationRejectTriggerProps = {
+  modalKey?: string;
+  registration: InternalMitraRegistrationItem;
+  children?: ReactNode;
+  onSuccessRedirect?: () => void;
+};
+
+export type InternalMitraRegistrationRejectModalContentProps = {
+  registration: InternalMitraRegistrationItem;
+  isOpen: boolean;
+  onSuccessRedirect?: () => void;
+};
+
 export type MitraRegistrationDocumentItem = {
   title: string;
   url?: string | null;
@@ -90,5 +118,7 @@ export type MitraRegistrationDocumentItem = {
   originalName?: string;
   size?: number;
 };
+
+
 
 

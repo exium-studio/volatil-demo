@@ -38,5 +38,27 @@ export type UpdateMasterGeoserverPayload =
   };
 
 import { masterGeoserverFormSchema } from "@/features/internal/master-geoserver/types/master-geoserver.schema";
+import type { ReactNode } from "react";
 import type { z } from "zod";
 export type MasterGeoserverFormValues = z.infer<typeof masterGeoserverFormSchema>;
+
+export type InternalMasterGeoserverCreateTriggerProps = {
+  modalKey?: string;
+  children?: ReactNode;
+};
+
+export type InternalMasterGeoserverCreateModalContentProps = {
+  close: () => void;
+};
+
+export type InternalMasterGeoserverEditTriggerProps = {
+  modalKey?: string;
+  item: MasterGeoserverItem;
+  children?: ReactNode;
+};
+
+export type InternalMasterGeoserverEditModalContentProps = {
+  item: MasterGeoserverItem;
+  close: () => void;
+};
+

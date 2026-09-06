@@ -10,16 +10,14 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useCreateMasterGeoserver } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { masterGeoserverFormSchema } from "@/features/internal/master-geoserver/types/master-geoserver.schema";
-import type { MasterGeoserverFormValues } from "@/features/internal/master-geoserver/types/master-geoserver.type";
+import type {
+  InternalMasterGeoserverCreateModalContentProps,
+  InternalMasterGeoserverCreateTriggerProps,
+  MasterGeoserverFormValues,
+} from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
-
-type InternalMasterGeoserverCreateTriggerProps = {
-  modalKey?: string;
-  children?: ReactNode;
-};
 
 export const InternalMasterGeoserverCreateTrigger = (
   props: InternalMasterGeoserverCreateTriggerProps,
@@ -44,10 +42,6 @@ export const InternalMasterGeoserverCreateTrigger = (
       <InternalMasterGeoserverCreateModalContent close={close} />
     </Modal.Root>
   );
-};
-
-type InternalMasterGeoserverCreateModalContentProps = {
-  close: () => void;
 };
 
 const InternalMasterGeoserverCreateModalContent = (

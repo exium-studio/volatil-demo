@@ -1,16 +1,8 @@
 // src/design-system/components/map/hooks/use-map-view-padding.ts
 
-import { useEffect, useRef, type RefObject } from "react";
+import type { MapViewPaddingOptions } from "@/design-system/components/map/types/map.type";
 import type maplibregl from "maplibre-gl";
-
-type MapViewPaddingOptions = {
-  /** Ref to the content panel element, used to measure its live width/height. */
-  contentPanelRef: RefObject<HTMLDivElement | null>;
-  /** Sidebar width in pixels. */
-  sidebarPx: number;
-  /** True when layout is stacked vertically (mobile). */
-  isVertical: boolean;
-};
+import { useEffect, useRef } from "react";
 
 /**
  * Shifts the MapLibre camera's visual center to account for overlaying UI panels

@@ -10,7 +10,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import type { MapIgtLayerItemProps } from "@/design-system/components/map/types/map.igt-layer-select.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
@@ -93,7 +93,7 @@ export const MapIgtLayerSelect = memo(() => {
           <Badge colorPalette={"blue"}>{enabledCount} aktif</Badge>
         </Popover.Header>
 
-        <Popover.Body p={2}>
+        <Popover.Body p={2} maxH={"500px"} overflowY={"auto"}>
           {isLoading ? (
             <HStack align={"center"} justify={"center"} gap={"md"} p={"md"}>
               <Loader />
@@ -101,7 +101,7 @@ export const MapIgtLayerSelect = memo(() => {
               <P color={"fg.muted"}>{"Memuat layer..."}</P>
             </HStack>
           ) : (
-            <VStack gap={"xs"} align={"stretch"}>
+            <VStack gap={"2xs"} align={"stretch"}>
               {activeLayers.map((layer) => {
                 const isEnabled = Boolean(enabledLayerIds[layer.id]);
                 const opacity = layerOpacities[layer.id] ?? 1.0;
@@ -124,14 +124,6 @@ export const MapIgtLayerSelect = memo(() => {
     </Popover.Root>
   );
 });
-
-type MapIgtLayerItemProps = {
-  layer: IgtLayerItem;
-  isEnabled: boolean;
-  opacity: number;
-  onToggle: (id: string) => void;
-  onOpacityChange: (id: string, opacity: number) => void;
-};
 
 const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
   // Props
@@ -177,12 +169,12 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
   const LayerIcon = basisConfig?.icon;
 
   return (
-    <VStack gap={1} align={"stretch"} w={"full"}>
+    <VStack gap={isOpacityOpen ? "2xs" : 0} align={"stretch"} w={"full"}>
       <HStack
         align={"center"}
         justify={"space-between"}
         gap={"md"}
-        p={2}
+        p={"2xs"}
         colorPalette={colorPalette}
         rounded={theme.radii.component}
         cursor={"pointer"}
@@ -191,7 +183,7 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
       >
         <HStack gap={"md"} align={"center"} flex={1}>
           <Center
-            p={"sm"}
+            p={"xs"}
             bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
             rounded={theme.radii.component}
           >
@@ -213,7 +205,12 @@ const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
         </HStack>
 
         <HStack gap={"xs"} align={"center"}>
-          <Switch checked={isEnabled} pointerEvents={"none"} mr={"xs"} />
+          <Switch
+            size={"sm"}
+            checked={isEnabled}
+            pointerEvents={"none"}
+            mr={"xs"}
+          />
 
           <Tooltip content={"Zoom ke Layer"}>
             <IconButton size={"xs"} variant={"ghost"} onClick={handleFlyTo}>

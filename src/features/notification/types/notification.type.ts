@@ -60,3 +60,10 @@ export type NotificationToastHistoryContentProps = {
   onClearAllHistory: () => void;
 };
 
+export type NotificationGroupStackCardProps = {
+  group: NotificationCategoryGroup;
+  onDeleteGroup?: (toasts: ToastItemData[]) => void;
+  onDeleteNotification?: (id: string) => void;
+};
+
+

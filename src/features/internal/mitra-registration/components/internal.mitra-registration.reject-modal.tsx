@@ -10,17 +10,13 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useRejectMitraRegistration } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
-import type { InternalMitraRegistrationItem } from "@/features/internal/mitra-registration/types/mitra-registration.type";
+import type {
+  InternalMitraRegistrationRejectModalContentProps,
+  InternalMitraRegistrationRejectTriggerProps,
+} from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { back } from "@/shared/utils/client/navigation";
 import { XCircleIcon } from "lucide-react";
-import { useState, type ReactNode } from "react";
-
-type InternalMitraRegistrationRejectTriggerProps = {
-  modalKey?: string;
-  registration: InternalMitraRegistrationItem;
-  children?: ReactNode;
-  onSuccessRedirect?: () => void;
-};
+import { useState } from "react";
 
 export const InternalMitraRegistrationRejectTrigger = (
   props: InternalMitraRegistrationRejectTriggerProps,
@@ -56,12 +52,6 @@ export const InternalMitraRegistrationRejectTrigger = (
       />
     </Modal.Root>
   );
-};
-
-type InternalMitraRegistrationRejectModalContentProps = {
-  registration: InternalMitraRegistrationItem;
-  isOpen: boolean;
-  onSuccessRedirect?: () => void;
 };
 
 const InternalMitraRegistrationRejectModalContent = (

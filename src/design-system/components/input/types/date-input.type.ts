@@ -21,3 +21,16 @@ export type FieldValues = {
   month: string;
   year: string;
 };
+
+export type FieldInputProps = {
+  id: string;
+  fieldKey: FieldKey;
+  value: string;
+  disabled?: boolean;
+  onValueChange: (field: FieldKey, value: string) => void;
+  onAutoAdvance: (fromField: FieldKey) => void;
+  onArrowNavigate: (fromField: FieldKey, direction: "left" | "right") => void;
+  onBlur: (e: FocusEvent<HTMLInputElement>) => void;
+  inputRef: import("react").RefObject<HTMLInputElement | null>;
+};
+

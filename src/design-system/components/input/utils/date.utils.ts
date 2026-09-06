@@ -1,8 +1,12 @@
 // src/design-system/components/input/utils/date.utils.ts
 
 import type {
+  CalendarDay,
   DateFormat,
   DateValue,
+  FieldOrder,
+  ValidationOptions,
+  ValidationResult,
 } from "@/design-system/components/input/types/date-picker.type";
 import {
   CalendarDate,
@@ -113,16 +117,6 @@ export function getTodayDate(timezone: string): CalendarDate {
 // Validation
 // -------------------------------------------------------------------------------------
 
-type ValidationResult =
-  | { valid: true }
-  | { valid: false; reason: string };
-
-type ValidationOptions = {
-  min?: string;
-  max?: string;
-  disabledDates?: string[];
-};
-
 /**
  * Layer 1 + 2: Validate individual numeric fields and real calendar date.
  */
@@ -199,11 +193,6 @@ export function validateFromFields(
 // Calendar grid generation
 // -------------------------------------------------------------------------------------
 
-type CalendarDay = {
-  date: CalendarDate;
-  isCurrentMonth: boolean;
-};
-
 /**
  * Generate a 6-row × 7-col calendar grid for the given month/year.
  * Row starts on Sunday (index 0).
@@ -278,12 +267,6 @@ export function buildYearPage(pageStart: number): number[] {
 // -------------------------------------------------------------------------------------
 // Format order
 // -------------------------------------------------------------------------------------
-
-type FieldOrder = [
-  "day" | "month" | "year",
-  "day" | "month" | "year",
-  "day" | "month" | "year",
-];
 
 export function getFieldOrder(format: DateFormat): FieldOrder {
   switch (format) {

@@ -26,5 +26,19 @@ export type InternalHomeServiceRateCardProps = StackProps & {
 export type ServiceRateItem = InternalHomeServiceRateItem;
 
 import { serviceRateFormSchema } from "@/features/internal/home/schemas/service-rate.schema";
+import type { ReactNode } from "react";
 import type { z } from "zod";
 export type ServiceRateFormValues = z.infer<typeof serviceRateFormSchema>;
+
+export type InternalHomeServiceRateModalTriggerProps = {
+  modalKey?: string;
+  rate: InternalHomeServiceRateItem;
+  children: ReactNode;
+};
+
+export type InternalHomeServiceRateModalContentProps = {
+  modalKey?: string;
+  rate: InternalHomeServiceRateItem;
+  close: () => void;
+};
+

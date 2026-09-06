@@ -68,13 +68,18 @@ export type FileItemProps = StackProps & {
   onDelete?: () => void;
 };
 
-export interface FileInputExistingItem {
+export type FileInputExistingItem = {
   id: string;
   name: string;
   size?: number;
   url?: string;
   mimeType?: string;
   markedForDelete?: boolean;
-}
+};
 
 export type FileInputVariant = "auto" | "button" | "dropzone";
+
+export type UseExistingFilesOptions = {
+  initialExistingFiles: FileInputExistingItem[];
+};
+

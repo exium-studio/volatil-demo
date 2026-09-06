@@ -1,12 +1,7 @@
 // src/design-system/components/map/stores/map.instance.store.ts
 
-import type maplibregl from "maplibre-gl";
+import type { MapInstanceState } from "@/design-system/components/map/types/map.type";
 import { create } from "zustand";
-
-type MapInstanceState = {
-  map: maplibregl.Map | null;
-  setMap: (map: maplibregl.Map | null) => void;
-};
 
 export const useMapInstanceStore = create<MapInstanceState>((set) => ({
   map: null,

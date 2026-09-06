@@ -5,22 +5,9 @@ import {
   useGeoServerWorkspaceLayersQuery,
   useGeoServerWorkspacesQuery,
 } from "@/features/internal/data-management/hooks/use-data-management";
-import type { GeoServerWorkspaceLayerOption } from "@/features/internal/data-management/types/data-management.type";
+import type { GeoserverCascadeSelectProps } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { useMemo } from "react";
-
-type GeoserverCascadeSelectProps = {
-  parentModalKey: string;
-  selectedGeoserverId: string;
-  onGeoserverChange: (geoserverId: string) => void;
-  selectedWorkspace: string;
-  onWorkspaceChange: (workspace: string) => void;
-  selectedTypeName: string;
-  onLayerChange: (
-    typeName: string,
-    layerDetail?: GeoServerWorkspaceLayerOption,
-  ) => void;
-};
 
 export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
   // Props
