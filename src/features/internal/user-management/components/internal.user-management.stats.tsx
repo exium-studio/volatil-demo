@@ -25,7 +25,7 @@ export const InternalUserManagementStats = () => {
   const { stats, isLoading, isFetching } = useUserManagementStatsQuery();
 
   if (isLoading) {
-    return <Skeleton h={"220px"} w={"full"} />;
+    return <Skeleton h={"182px"} w={"full"} p={"md"} />;
   }
 
   return (
