@@ -96,7 +96,8 @@ export const GisAppShell = (props: GisAppShellProps) => {
   // Reset all active map layers and filters when pathname or user/role changes (except within internal routes)
   const userSession = getUserSession();
   const currentUserId = userSession?.id;
-  const isInternal = userSession?.role === "internal" || pathname.startsWith("/internal");
+  const isInternal =
+    userSession?.role === "internal" || pathname.startsWith("/internal");
 
   useEffect(() => {
     if (!isInternal) {
