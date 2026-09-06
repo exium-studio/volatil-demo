@@ -17,6 +17,7 @@ import type { DataViewItemActionsGenerator } from "@/design-system/components/da
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -244,8 +245,7 @@ export const TransactionHistoryDataView = () => {
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"}>
       {/* Header Controls */}
-      <HStack
-        wrap={"wrap"}
+      <HScrollContainer
         align={"center"}
         justify={"start"}
         gap={"sm"}
@@ -262,7 +262,7 @@ export const TransactionHistoryDataView = () => {
           maxW={"300px"}
         />
 
-        <HStack wrap={"wrap"} gap={"sm"}>
+        <HStack gap={"sm"}>
           <StatusFilterSelect
             modalKey={"transaction-history-status-filter"}
             placeholder={"Status"}
@@ -280,7 +280,7 @@ export const TransactionHistoryDataView = () => {
             w={"200px"}
           />
         </HStack>
-      </HStack>
+      </HScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />
 

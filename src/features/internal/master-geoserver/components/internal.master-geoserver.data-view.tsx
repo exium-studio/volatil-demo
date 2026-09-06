@@ -18,6 +18,7 @@ import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
@@ -235,8 +236,7 @@ export const InternalMasterGeoserverDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <HStack
-          wrap={"wrap"}
+        <HScrollContainer
           align={"center"}
           justify={"start"}
           gap={"sm"}
@@ -254,7 +254,7 @@ export const InternalMasterGeoserverDataView = () => {
             placeholder={"Cari nama server, URL, username..."}
             maxW={"280px"}
           />
-        </HStack>
+        </HScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

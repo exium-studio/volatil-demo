@@ -17,6 +17,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
@@ -287,8 +288,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"}>
       {/* Header Controls */}
-      <HStack
-        wrap={"wrap"}
+      <HScrollContainer
         align={"center"}
         justify={"start"}
         gap={"sm"}
@@ -305,7 +305,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           maxW={"280px"}
         />
 
-        <HStack wrap={"wrap"} gap={"sm"}>
+        <HStack gap={"sm"}>
           <StatusFilterSelect
             modalKey={"my-data-status-filter"}
             placeholder={"Status"}
@@ -323,7 +323,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             w={"180px"}
           />
         </HStack>
-      </HStack>
+      </HScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />
 

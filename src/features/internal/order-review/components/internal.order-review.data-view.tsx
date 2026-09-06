@@ -15,6 +15,7 @@ import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -252,8 +253,7 @@ export const InternalOrderReviewDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Filter Controls */}
-        <HStack
-          wrap={"wrap"}
+        <HScrollContainer
           align={"center"}
           gap={"sm"}
           w={"full"}
@@ -269,7 +269,7 @@ export const InternalOrderReviewDataView = () => {
             maxW={"300px"}
           />
 
-          <HStack wrap={"wrap"} gap={"sm"}>
+          <HStack gap={"sm"}>
             <StatusFilterSelect
               modalKey={"internal-order-review-status-filter"}
               placeholder={"Status Permohonan"}
@@ -287,7 +287,7 @@ export const InternalOrderReviewDataView = () => {
               w={"240px"}
             />
           </HStack>
-        </HStack>
+        </HScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

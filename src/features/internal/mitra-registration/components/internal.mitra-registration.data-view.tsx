@@ -14,6 +14,7 @@ import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -260,8 +261,7 @@ export const InternalMitraRegistrationDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Filter Bar */}
-        <HStack
-          wrap={"wrap"}
+        <HScrollContainer
           align={"center"}
           justify={"start"}
           gap={"sm"}
@@ -300,7 +300,7 @@ export const InternalMitraRegistrationDataView = () => {
             modalKey={"mitra-reg-status-filter"}
             w={"180px"}
           />
-        </HStack>
+        </HScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

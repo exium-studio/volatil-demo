@@ -9,6 +9,7 @@ import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loa
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
@@ -178,8 +179,7 @@ export const InternalPricingDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Controls */}
-        <HStack
-          wrap={"wrap"}
+        <HScrollContainer
           align={"center"}
           justify={"start"}
           gap={"sm"}
@@ -240,7 +240,7 @@ export const InternalPricingDataView = () => {
               {"Kawasan"}
             </Badge>
           </HStack>
-        </HStack>
+        </HScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

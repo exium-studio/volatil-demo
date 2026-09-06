@@ -11,6 +11,7 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -378,8 +379,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         roundedBottom={theme.radii.container}
       >
         {/* Header Action Bar */}
-        <HStack
-          wrap={"wrap"}
+        <HScrollContainer
           align={"center"}
           justify={"space-between"}
           gap={"sm"}
@@ -407,10 +407,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
             )}
           </HStack>
 
-          <P fontSize={"sm"} color={"fg.muted"}>
+          <P fontSize={"sm"} color={"fg.muted"} whiteSpace={"nowrap"}>
             {`Menampilkan ${debouncedSearch ? filteredLayers.length : activeLayers.length} dari ${activeLayers.length} Layer IGT`}
           </P>
-        </HStack>
+        </HScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

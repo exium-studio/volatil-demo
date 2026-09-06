@@ -15,6 +15,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -225,8 +226,7 @@ export const InternalUserManagementDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Filter Bar */}
-        <HStack
-          wrap={"wrap"}
+        <HScrollContainer
           align={"center"}
           justify={"start"}
           gap={"sm"}
@@ -274,7 +274,7 @@ export const InternalUserManagementDataView = () => {
             }
             w={"140px"}
           />
-        </HStack>
+        </HScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

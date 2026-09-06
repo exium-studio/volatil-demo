@@ -17,6 +17,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -270,14 +271,13 @@ export const HelpCenterDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <HStack
-          wrap={"wrap"}
+        <HScrollContainer
           align={"center"}
           justify={"space-between"}
           gap={"sm"}
           p={"md"}
         >
-          <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
+          <HStack gap={"sm"}>
             <SearchInput
               placeholder={t["action.search"]()}
               value={params.search}
@@ -314,7 +314,7 @@ export const HelpCenterDataView = () => {
               </Button>
             </CreateHelpCenterTrigger>
           )}
-        </HStack>
+        </HScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 
