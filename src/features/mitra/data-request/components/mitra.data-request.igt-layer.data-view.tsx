@@ -11,7 +11,6 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -19,19 +18,19 @@ import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { getLayerCountSummary } from "@/features/mitra/data-request/api/mitra.data-request-wfs-summary.api";
-import type { LayerCountSummary } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
+import type { LayerCountSummary } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 // Uncomment below if persistent filter store is needed again:
 // import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
-import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
-import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
-import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useQueries, useQuery } from "@tanstack/react-query";
@@ -379,7 +378,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
         roundedBottom={theme.radii.container}
       >
         {/* Header Action Bar */}
-        <HScrollContainer
+        <HStack
+          wrap={"wrap"}
           align={"center"}
           justify={"space-between"}
           gap={"sm"}
@@ -410,7 +410,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           <P fontSize={"sm"} color={"fg.muted"} whiteSpace={"nowrap"}>
             {`Menampilkan ${debouncedSearch ? filteredLayers.length : activeLayers.length} dari ${activeLayers.length} Layer IGT`}
           </P>
-        </HScrollContainer>
+        </HStack>
 
         <Separator borderColor={"bg.canvas"} />
 

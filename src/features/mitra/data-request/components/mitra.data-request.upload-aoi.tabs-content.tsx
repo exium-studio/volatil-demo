@@ -528,8 +528,9 @@ const UploadAoiAttributeList = memo(
           >
             <HStack
               wrap={"wrap"}
-              justify={"space-between"}
               align={"center"}
+              justify={"space-between"}
+              gap={"sm"}
               w={"full"}
             >
               <P fontWeight={"semibold"} fontSize={"md"}>
