@@ -19,6 +19,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import {
   useUpdateUserStatus,
   useUserManagementUsersQuery,
@@ -204,14 +205,8 @@ export const InternalUserManagementDataView = () => {
       <TopBarLoader isFetching={isFetching} />
 
       <Container.Body overflow={"clip"}>
-        {/* Header Actions */}
-        <HStack
-          wrap={"wrap"}
-          align={"center"}
-          justify={"space-between"}
-          gap={"md"}
-          p={"md"}
-        >
+        {/* Title Header */}
+        <HeaderContainer>
           <HStack gap={"xs"} align={"center"}>
             <Heading>{"Daftar Pengguna"}</Heading>
 
@@ -225,49 +220,60 @@ export const InternalUserManagementDataView = () => {
               {"Kelola data akun pengguna internal dan mitra ATR/BPN."}
             </InfoTip>
           </HStack>
+        </HeaderContainer>
 
-          <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
-            <SearchInput
-              placeholder={t["action.search"]()}
-              value={params.search}
-              onValueChange={(val) =>
-                startTransition(() => {
-                  setParams((prev) => ({ ...prev, search: val, page: 1 }));
-                })
-              }
-              maxW={"220px"}
-            />
+        <Separator borderColor={"bg.canvas"} />
 
-            <StatusFilterSelect
-              modalKey={"user-management-status-filter"}
-              value={params.status ?? "all"}
-              onValueChange={(val) =>
-                startTransition(() => {
-                  setParams((prev) => ({
-                    ...prev,
-                    status: val === "all" ? undefined : (val as UserStatus),
-                    page: 1,
-                  }));
-                })
-              }
-              w={"150px"}
-            />
+        {/* Filter Bar */}
+        <HStack
+          wrap={"wrap"}
+          align={"center"}
+          justify={"start"}
+          gap={"sm"}
+          w={"full"}
+          p={"md"}
+          bg={"bg.body"}
+        >
+          <SearchInput
+            placeholder={t["action.search"]()}
+            value={params.search}
+            onValueChange={(val) =>
+              startTransition(() => {
+                setParams((prev) => ({ ...prev, search: val, page: 1 }));
+              })
+            }
+            maxW={"240px"}
+          />
 
-            <RoleFilterSelect
-              modalKey={"user-management-role-filter"}
-              value={params.role ?? "all"}
-              onValueChange={(val) =>
-                startTransition(() => {
-                  setParams((prev) => ({
-                    ...prev,
-                    role: val === "all" ? undefined : (val as UserRole),
-                    page: 1,
-                  }));
-                })
-              }
-              w={"140px"}
-            />
-          </HStack>
+          <StatusFilterSelect
+            modalKey={"user-management-status-filter"}
+            value={params.status ?? "all"}
+            onValueChange={(val) =>
+              startTransition(() => {
+                setParams((prev) => ({
+                  ...prev,
+                  status: val === "all" ? undefined : (val as UserStatus),
+                  page: 1,
+                }));
+              })
+            }
+            w={"150px"}
+          />
+
+          <RoleFilterSelect
+            modalKey={"user-management-role-filter"}
+            value={params.role ?? "all"}
+            onValueChange={(val) =>
+              startTransition(() => {
+                setParams((prev) => ({
+                  ...prev,
+                  role: val === "all" ? undefined : (val as UserRole),
+                  page: 1,
+                }));
+              })
+            }
+            w={"140px"}
+          />
         </HStack>
 
         <Separator borderColor={"bg.canvas"} />
