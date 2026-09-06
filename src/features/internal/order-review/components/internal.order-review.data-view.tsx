@@ -255,7 +255,6 @@ export const InternalOrderReviewDataView = () => {
         <HStack
           wrap={"wrap"}
           align={"center"}
-          justify={"space-between"}
           gap={"sm"}
           w={"full"}
           p={"md"}
