@@ -328,7 +328,7 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
       zIndex={10}
       bg={"bg.body"}
       borderBottom={"1px solid"}
-      borderColor={"border.subtle"}
+      borderColor={"bg.canvas"}
       {...props}
     >
       {canBatchSelect && (

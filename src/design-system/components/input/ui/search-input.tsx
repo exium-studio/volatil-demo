@@ -103,10 +103,13 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           ) : undefined
         }
         w={w || "fit"}
+        minW={restProps.minW ?? "200px"}
+        flexShrink={0}
         {...inputGroupProps}
       >
         <Input
           {...restProps}
+          minW={restProps.minW ?? "200px"}
           ref={(node) => {
             internalRef.current = node;
             if (typeof ref === "function") ref(node);
