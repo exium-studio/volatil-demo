@@ -197,9 +197,6 @@ export const InternalUserManagementDataView = () => {
     };
   }, [users, preferredTimezone, updateStatusMutation, theme.colorPalette]);
 
-  if (isLoading) {
-    return <Skeleton flex={1} w={"full"} />;
-  }
 
   return (
     <Container.Root flex={1} withContext={true} position={"relative"}>
@@ -279,37 +276,43 @@ export const InternalUserManagementDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         <VStack flex={1} w={"full"} position={"relative"}>
-          <DataViewTable.Root
-            headers={dataList.headers}
-            items={dataList.items}
-            itemActions={dataList.itemActions}
-            page={params.page}
-            pageSize={params.pageSize}
-            roundedTop={0}
-          >
-            <DataViewTable.Header />
-            <DataViewTable.Body />
-          </DataViewTable.Root>
+          {isLoading && <Skeleton flex={1} w={"full"} rounded={0} />}
 
-          <Separator borderColor={"bg.canvas"} />
+          {!isLoading && (
+            <>
+              <DataViewTable.Root
+                headers={dataList.headers}
+                items={dataList.items}
+                itemActions={dataList.itemActions}
+                page={params.page}
+                pageSize={params.pageSize}
+                roundedTop={0}
+              >
+                <DataViewTable.Header />
+                <DataViewTable.Body />
+              </DataViewTable.Root>
 
-          <DataViewFooter
-            page={params.page ?? 1}
-            pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
-            setPage={(newPage: number) =>
-              setParams((prev) => ({ ...prev, page: newPage }))
-            }
-            setPageSize={(newSize: number) => {
-              setParams((prev) => ({
-                ...prev,
-                pageSize: newSize,
-                page: 1,
-              }));
-            }}
-            currentDataLength={users.length}
-            totalData={total}
-            totalPage={totalPages}
-          />
+              <Separator borderColor={"bg.canvas"} />
+
+              <DataViewFooter
+                page={params.page ?? 1}
+                pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+                setPage={(newPage: number) =>
+                  setParams((prev) => ({ ...prev, page: newPage }))
+                }
+                setPageSize={(newSize: number) => {
+                  setParams((prev) => ({
+                    ...prev,
+                    pageSize: newSize,
+                    page: 1,
+                  }));
+                }}
+                currentDataLength={users.length}
+                totalData={total}
+                totalPage={totalPages}
+              />
+            </>
+          )}
         </VStack>
       </Container.Body>
     </Container.Root>

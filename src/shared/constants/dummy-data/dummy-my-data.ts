@@ -5,6 +5,7 @@ import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 export const dummyMitraMyDataItems: MyDataItem[] = [
   {
     id: "testing_workspace:TEST_RTRW_BADUNG",
+    label: null,
     title: "RTRW Badung",
     spatialBasis: "kawasan",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
@@ -17,6 +18,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
   },
   {
     id: "testing_workspace:TEST_ZNT_BADUNG",
+    label: null,
     title: "ZNT Badung",
     spatialBasis: "kawasan",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
@@ -29,6 +31,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
   },
   {
     id: "testing_workspace:TEST_BIDANG_TANAH",
+    label: null,
     title: "Bidang Tanah",
     spatialBasis: "bidang",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
@@ -41,6 +44,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
   },
   {
     id: "testing_workspace:TEST_BIDANG_DENPASAR",
+    label: null,
     title: "Bidang Tanah Denpasar Timur",
     spatialBasis: "bidang",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_DENPASAR",
@@ -51,6 +55,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
   },
   {
     id: "testing_workspace:TEST_KAWASAN_SANUR",
+    label: null,
     title: "Kawasan Pesisir Sanur",
     spatialBasis: "kawasan",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_KAWASAN_SANUR",
@@ -61,6 +66,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
   },
   {
     id: "testing_workspace:TEST_RDTR_KUTA",
+    label: null,
     title: "RDTR Kuta",
     spatialBasis: "kawasan",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RDTR_KUTA",
