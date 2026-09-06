@@ -1,15 +1,15 @@
-// src/features/shared/components/url.data-view.tsx
+// src/design-system/components/typography/ui/url.tsx
 
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { P } from "@/design-system/components/typography/ui/p";
+import type { UrlProps } from "@/design-system/components/typography/types/url.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import type { UrlDataViewProps } from "@/features/shared/types/url.data-view.type";
 import { memo, useEffect, useRef, useState } from "react";
 
-export const UrlDataView = memo((props: UrlDataViewProps) => {
+export const Url = memo((props: UrlProps) => {
   // Props
   const {
     url,

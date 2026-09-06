@@ -30,7 +30,7 @@ import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-la
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { UrlDataView } from "@/features/shared/components/url.data-view";
+import { Url } from "@/design-system/components/typography/ui/url";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
@@ -298,7 +298,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
             {
               value: previewUrl,
               td: (
-                <UrlDataView
+                <Url
                   url={previewUrl}
                   label={"Salin WMS URL"}
                   isExternalLink={false}

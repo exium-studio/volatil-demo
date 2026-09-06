@@ -35,7 +35,7 @@ import type {
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
-import { UrlDataView } from "@/features/shared/components/url.data-view";
+import { Url } from "@/design-system/components/typography/ui/url";
 import { MY_DATA_STATUS_OPTIONS } from "@/shared/constants/status.config";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -166,7 +166,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             {
               value: effectiveWmsUrl ?? "",
               td: (
-                <UrlDataView
+                <Url
                   url={effectiveWmsUrl}
                   label={"Salin URL WMS"}
                   maxW={"320px"}
