@@ -59,13 +59,11 @@ export function InternalOrderReviewDetailPage() {
 
   if (isLoading || !order) {
     return (
-      <PanelContentContainer>
-        <Container.Root>
-          <Container.Body>
-            <VStack gap={"md"} p={"md"}>
-              <Skeleton height={"40px"} width={"300px"} />
-              <Skeleton height={"200px"} width={"full"} />
-              <Skeleton height={"400px"} width={"full"} />
+      <PanelContentContainer flex={1}>
+        <Container.Root flex={1}>
+          <Container.Body flex={1}>
+            <VStack flex={1} gap={"md"} p={"md"}>
+              <Skeleton width={"300px"} />
             </VStack>
           </Container.Body>
         </Container.Root>
