@@ -45,7 +45,10 @@ export type DataViewDeclarativeItemAction<T = Record<string, unknown>> = {
    */
   modal?:
     | DataViewModalActionConfig<T>
-    | ((item: T, formattedItem: FormattedListItem<T>) => DataViewModalActionConfig<T> | null | undefined);
+    | ((
+        item: T,
+        formattedItem: FormattedListItem<T>,
+      ) => DataViewModalActionConfig<T> | null | undefined);
 };
 
 export type DataViewItemActionsGenerator<T = Record<string, unknown>> =

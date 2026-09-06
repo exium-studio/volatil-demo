@@ -26,6 +26,7 @@ import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
+import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraMyDataViewProps,
@@ -47,6 +48,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import {
   DatabaseIcon,
+  Edit3Icon,
   EyeIcon,
   EyeOffIcon,
   FocusIcon,
@@ -156,7 +158,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               value: item.label || layerDisplayName,
               td: (
                 <P fontSize={"sm"} fontWeight={"medium"}>
-                  {item.label || layerDisplayName}
+                  {item.label || "-"}
                 </P>
               ),
               align: "start" as const,
@@ -261,6 +263,19 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               wfsUrl: item.wfsUrl || "",
             },
           });
+        },
+      },
+      {
+        key: "edit-label",
+        label: "Ubah Label",
+        icon: Edit3Icon,
+        modal: {
+          triggerComponent: (item: MyDataItem) => (
+            <MitraMyDataEditTrigger
+              modalKey={`my-data-edit-${item.id}`}
+              item={item}
+            />
+          ),
         },
       },
       {

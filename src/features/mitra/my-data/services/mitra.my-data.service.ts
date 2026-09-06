@@ -1,10 +1,14 @@
 // src/features/mitra/my-data/services/mitra.my-data.service.ts
 
-import { fetchMyDataApi } from "@/features/mitra/my-data/api/mitra.my-data.api";
+import {
+  fetchMyDataApi,
+  updateMyDataItemApi,
+} from "@/features/mitra/my-data/api/mitra.my-data.api";
 import type {
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
+  UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { dummyMitraMyDataItems } from "@/shared/constants/dummy-data/dummy-my-data";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
@@ -67,3 +71,30 @@ export const getMyData = async (
     throw error;
   }
 };
+
+export const updateMyData = async (
+  id: string,
+  payload: UpdateMyDataItemPayload,
+): Promise<MyDataItem> => {
+  try {
+    const response = await updateMyDataItemApi(id, payload);
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error("No data returned from updateMyDataItemApi");
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const existing = dummyMitraMyDataItems.find((item) => item.id === id);
+      if (!existing) {
+        throw new Error(`Data layer dengan ID ${id} tidak ditemukan`, {
+          cause: error,
+        });
+      }
+      existing.label = payload.label;
+      return existing;
+    }
+    throw error;
+  }
+};
+
+

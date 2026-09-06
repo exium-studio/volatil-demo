@@ -39,3 +39,18 @@ export type MyDataDetailAttributeListProps = {
   item: MyDataItem;
   onBack: () => void;
 };
+
+export type UpdateMyDataItemPayload = {
+  label: string | null;
+};
+
+export type MitraMyDataEditTriggerProps = {
+  item: MyDataItem;
+  children?: React.ReactNode;
+  modalKey?: string;
+};
+
+export type MitraMyDataEditModalContentProps = {
+  item: MyDataItem;
+  close: () => void;
+};
