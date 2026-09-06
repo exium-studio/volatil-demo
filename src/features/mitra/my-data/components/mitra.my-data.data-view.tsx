@@ -21,7 +21,7 @@ import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-co
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
@@ -157,9 +157,9 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.label || layerDisplayName,
               td: (
-                <P fontSize={"sm"} fontWeight={"medium"}>
+                <ClampedP fontSize={"sm"} fontWeight={"medium"} w={"200px"}>
                   {item.label || "-"}
-                </P>
+                </ClampedP>
               ),
               align: "start" as const,
             },
