@@ -5,14 +5,13 @@ import type { DataViewItemActionsGenerator } from "@/design-system/components/da
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -323,8 +322,10 @@ export const InternalOrderReviewDataView = () => {
               )}
             </Center>
           ) : (
-            <Box w={"full"} position={"relative"} overflowY={"auto"}>
-              <DataView.Table.Root<InternalOrderItem>
+            <VStack flex={1} w={"full"} position={"relative"}>
+              <TopBarLoader isFetching={isFetching} />
+
+              <DataViewTable.Root<InternalOrderItem>
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
@@ -334,11 +335,11 @@ export const InternalOrderReviewDataView = () => {
                 rounded={0}
                 pb={0}
               >
-                <DataView.Table.Header />
-                <DataView.Table.Body />
-              </DataView.Table.Root>
+                <DataViewTable.Header />
+                <DataViewTable.Body />
+              </DataViewTable.Root>
 
-              <TopBarLoader isFetching={isFetching} />
+              <Separator borderColor={"bg.canvas"} />
 
               <DataViewFooter
                 page={params.page ?? 1}
@@ -356,9 +357,8 @@ export const InternalOrderReviewDataView = () => {
                 currentDataLength={orders.length}
                 totalData={pagination?.totalItems ?? orders.length}
                 totalPage={pagination?.totalPages ?? 1}
-                roundedBottom={0}
               />
-            </Box>
+            </VStack>
           )}
         </VStack>
       </Container.Body>

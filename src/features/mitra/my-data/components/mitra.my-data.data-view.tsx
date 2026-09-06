@@ -7,7 +7,7 @@ import type { DataViewItemActionsGenerator } from "@/design-system/components/da
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
@@ -379,9 +379,10 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             )}
           </VStack>
         ) : (
-          <VStack flex={1} w={"full"} position={"relative"} overflowY={"auto"}>
-            <DataView.Table.Root
-              flex={1}
+          <VStack flex={1} w={"full"} position={"relative"}>
+            <TopBarLoader isFetching={isFetching} />
+
+            <DataViewTable.Root
               headers={dataList.headers}
               items={dataList.items}
               itemActions={dataList.itemActions}
@@ -391,11 +392,11 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               rounded={0}
               pb={0}
             >
-              <DataView.Table.Header />
-              <DataView.Table.Body />
-            </DataView.Table.Root>
+              <DataViewTable.Header />
+              <DataViewTable.Body />
+            </DataViewTable.Root>
 
-            <TopBarLoader isFetching={isFetching} />
+            <Separator borderColor={"bg.canvas"} />
 
             <DataViewFooter
               page={params.page}
@@ -413,7 +414,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               currentDataLength={myData.items.length}
               totalData={myData.pagination.totalItems}
               totalPage={myData.pagination.totalPages}
-              roundedBottom={0}
             />
           </VStack>
         )}

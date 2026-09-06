@@ -3,7 +3,7 @@
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -189,7 +189,7 @@ const SpatialFeaturesDataViewContent = memo(
     );
 
     return (
-      <DataView.Table.Root
+      <DataViewTable.Root
         headers={dataList.headers}
         items={dataList.items}
         batchActions={dataList.batchActions}
@@ -203,12 +203,11 @@ const SpatialFeaturesDataViewContent = memo(
             selectedItems: next as FormattedListItem[],
           });
         }}
-        flex={"undefined"}
         rounded={0}
       >
-        <DataView.Table.Header />
-        <DataView.Table.Body />
-      </DataView.Table.Root>
+        <DataViewTable.Header />
+        <DataViewTable.Body />
+      </DataViewTable.Root>
     );
   },
 );

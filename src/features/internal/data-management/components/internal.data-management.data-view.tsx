@@ -3,7 +3,7 @@ import type { FormattedTableHeader } from "@/design-system/components/data-displ
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -13,7 +13,6 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -458,10 +457,10 @@ export const InternalDataManagementDataView = () => {
               )}
 
               {!isEmptyArray(rawItems) && (
-                <Box w={"full"} position={"relative"}>
+                <VStack flex={1} w={"full"} position={"relative"}>
                   <TopBarLoader isFetching={isFetching} />
 
-                  <DataView.Table.Root<MasterIgtLayerItem>
+                  <DataViewTable.Root<MasterIgtLayerItem>
                     headers={dataList.headers}
                     items={dataList.items}
                     batchActions={dataList.batchActions}
@@ -473,9 +472,9 @@ export const InternalDataManagementDataView = () => {
                     pb={0}
                     rounded={0}
                   >
-                    <DataView.Table.Header />
-                    <DataView.Table.Body />
-                  </DataView.Table.Root>
+                    <DataViewTable.Header />
+                    <DataViewTable.Body />
+                  </DataViewTable.Root>
 
                   <Separator borderColor={"bg.canvas"} />
 
@@ -496,7 +495,7 @@ export const InternalDataManagementDataView = () => {
                     totalData={pagination?.totalItems ?? rawItems.length}
                     totalPage={pagination?.totalPages ?? 1}
                   />
-                </Box>
+                </VStack>
               )}
             </>
           )}

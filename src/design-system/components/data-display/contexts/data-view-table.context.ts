@@ -10,7 +10,7 @@ export const useDataViewTableContext = () => {
   const ctx = useContext(DataViewTableContext);
   if (!ctx) {
     throw new Error(
-      "DataView.Table compound components must be used within <DataView.Table.Root>",
+      "DataViewTable compound components must be used within <DataViewTable.Root>",
     );
   }
   return ctx;

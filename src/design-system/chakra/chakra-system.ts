@@ -126,10 +126,10 @@ export const chakraConfig = defineConfig({
     tokens: {
       colors: {
         canvasLight: { value: "#f5f6f8" },
-        canvasDark: { value: "#161616" },
+        canvasDark: { value: "#161717" },
 
         bodyLight: { value: "#ffffff" },
-        bodyDark: { value: "#1a1a1a" },
+        bodyDark: { value: "#191a1a" },
 
         frostedLight: { value: "rgba(250, 249, 255, 0.75)" },
         frostedDark: { value: "rgba(40, 40, 40, 0.75)" },

@@ -7,7 +7,7 @@ import type {
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
@@ -106,126 +106,131 @@ export const HelpCenterDataView = () => {
 
     const items: FormattedListItem<HelpCenterItem>[] = tickets.map(
       (ticket: HelpCenterItem) => {
-      const repliesList: HelpCenterResponse[] =
-        ticket.responses ?? ticket.replies ?? [];
-      const latestReply =
-        repliesList.length > 0
-          ? repliesList[repliesList.length - 1]
-          : undefined;
+        const repliesList: HelpCenterResponse[] =
+          ticket.responses ?? ticket.replies ?? [];
+        const latestReply =
+          repliesList.length > 0
+            ? repliesList[repliesList.length - 1]
+            : undefined;
 
-      const totalAttachments =
-        ticket.attachmentsCount ?? ticket.attachments?.length ?? 0;
+        const totalAttachments =
+          ticket.attachmentsCount ?? ticket.attachments?.length ?? 0;
 
-      const statusConfig = STATUS_CONFIG_MAP[ticket.status] ?? {
-        label: ticket.status,
-        color: "gray",
-      };
+        const statusConfig = STATUS_CONFIG_MAP[ticket.status] ?? {
+          label: ticket.status,
+          color: "gray",
+        };
 
-      const hasTransaction = Boolean(
-        ticket.orderNumber || ticket.transactionId,
-      );
+        const hasTransaction = Boolean(
+          ticket.orderNumber || ticket.transactionId,
+        );
 
-      return {
-        id: String(ticket.id),
-        data: ticket,
-        columns: [
-          {
-            value: ticket.title,
-            td: <P fontWeight={"medium"}>{ticket.title}</P>,
-          },
-          {
-            value: ticket.title,
-            td: (
-              <ClampedP color={"fg.subtle"} w={"200px"}>
-                {ticket.description}
-              </ClampedP>
-            ),
-          },
-          {
-            value: ticket.status,
-            td: (
-              <Badge colorPalette={statusConfig.color} variant={"subtle"}>
-                {statusConfig.label}
-              </Badge>
-            ),
-            align: "start",
-          },
-          {
-            value: ticket.user?.name,
-            td: (
-              <VStack align={"start"} gap={0} minW={"140px"}>
-                <P>{ticket.user?.name || "?"}</P>
-
-                <P fontSize={"sm"} color={"fg.subtle"}>
-                  {ticket.user?.email || "?"}
-                </P>
-              </VStack>
-            ),
-          },
-          {
-            value: latestReply?.message ?? "-",
-            td: latestReply ? (
-              <VStack align={"start"} gap={0} minW={"200px"}>
-                <HStack gap={1} align={"center"}>
-                  <AppIcon
-                    icon={MessageSquareIcon}
-                    size={"sm"}
-                    color={"fg.subtle"}
-                  />
-
-                  <P fontSize={"sm"} fontWeight={"medium"} color={"fg.subtle"}>
-                    {latestReply.admin?.name ?? latestReply.user?.name ?? "?"}
-                  </P>
-                </HStack>
-
-                <ClampedP color={"fg.muted"} lineClamp={1} maxW={"260px"}>
-                  {latestReply.message}
+        return {
+          id: String(ticket.id),
+          data: ticket,
+          columns: [
+            {
+              value: ticket.title,
+              td: <P fontWeight={"medium"}>{ticket.title}</P>,
+            },
+            {
+              value: ticket.title,
+              td: (
+                <ClampedP color={"fg.subtle"} w={"200px"}>
+                  {ticket.description}
                 </ClampedP>
-              </VStack>
-            ) : (
-              <P color={"fg.subtle"} fontSize={"sm"}>
-                {"Belum ada balasan"}
-              </P>
-            ),
-          },
-          {
-            value: ticket.orderNumber ?? ticket.transactionId ?? "-",
-            td: (
-              <P
-                color={hasTransaction ? "fg.muted" : "fg.subtle"}
-                fontSize={"sm"}
-              >
-                {ticket.orderNumber ?? ticket.transactionId ?? "-"}
-              </P>
-            ),
-            align: "start",
-          },
-          {
-            value: totalAttachments,
-            td:
-              totalAttachments > 0 ? (
-                <Badge variant={"outline"} colorPalette={"gray"}>
-                  <AppIcon icon={PaperclipIcon} />
-                  {String(totalAttachments)}
+              ),
+            },
+            {
+              value: ticket.status,
+              td: (
+                <Badge colorPalette={statusConfig.color} variant={"subtle"}>
+                  {statusConfig.label}
                 </Badge>
+              ),
+              align: "start",
+            },
+            {
+              value: ticket.user?.name,
+              td: (
+                <VStack align={"start"} gap={0} minW={"140px"}>
+                  <P>{ticket.user?.name || "?"}</P>
+
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {ticket.user?.email || "?"}
+                  </P>
+                </VStack>
+              ),
+            },
+            {
+              value: latestReply?.message ?? "-",
+              td: latestReply ? (
+                <VStack align={"start"} gap={0} minW={"200px"}>
+                  <HStack gap={1} align={"center"}>
+                    <AppIcon
+                      icon={MessageSquareIcon}
+                      size={"sm"}
+                      color={"fg.subtle"}
+                    />
+
+                    <P
+                      fontSize={"sm"}
+                      fontWeight={"medium"}
+                      color={"fg.subtle"}
+                    >
+                      {latestReply.admin?.name ?? latestReply.user?.name ?? "?"}
+                    </P>
+                  </HStack>
+
+                  <ClampedP color={"fg.muted"} lineClamp={1} maxW={"260px"}>
+                    {latestReply.message}
+                  </ClampedP>
+                </VStack>
               ) : (
                 <P color={"fg.subtle"} fontSize={"sm"}>
-                  {"-"}
+                  {"Belum ada balasan"}
                 </P>
               ),
-            align: "start",
-          },
-          {
-            value: ticket.createdAt,
-            td: (
-              <P whiteSpace={"nowrap"} color={"fg.muted"} fontSize={"sm"}>
-                {formatUtcDateTime(ticket.createdAt, preferredTimezone)}
-              </P>
-            ),
-          },
-        ],
-      };
-    });
+            },
+            {
+              value: ticket.orderNumber ?? ticket.transactionId ?? "-",
+              td: (
+                <P
+                  color={hasTransaction ? "fg.muted" : "fg.subtle"}
+                  fontSize={"sm"}
+                >
+                  {ticket.orderNumber ?? ticket.transactionId ?? "-"}
+                </P>
+              ),
+              align: "start",
+            },
+            {
+              value: totalAttachments,
+              td:
+                totalAttachments > 0 ? (
+                  <Badge variant={"outline"} colorPalette={"gray"}>
+                    <AppIcon icon={PaperclipIcon} />
+                    {String(totalAttachments)}
+                  </Badge>
+                ) : (
+                  <P color={"fg.subtle"} fontSize={"sm"}>
+                    {"-"}
+                  </P>
+                ),
+              align: "start",
+            },
+            {
+              value: ticket.createdAt,
+              td: (
+                <P whiteSpace={"nowrap"} color={"fg.muted"} fontSize={"sm"}>
+                  {formatUtcDateTime(ticket.createdAt, preferredTimezone)}
+                </P>
+              ),
+            },
+          ],
+        };
+      },
+    );
 
     const itemActions = [
       {
@@ -313,8 +318,7 @@ export const HelpCenterDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        {/* Table & Footer Content */}
-        <VStack position={"relative"} w={"full"} bg={"bg.canvas"}>
+        <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
           {isLoading && (
             <Skeleton w={"full"} h={"300px"} p={"md"} roundedTop={0} />
           )}
@@ -334,8 +338,10 @@ export const HelpCenterDataView = () => {
           )}
 
           {!isLoading && !isEmptyArray(tickets) && (
-            <Box w={"full"} position={"relative"}>
-              <DataView.Table.Root
+            <VStack flex={1} w={"full"} position={"relative"}>
+              <TopBarLoader isFetching={isFetching} />
+
+              <DataViewTable.Root
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
@@ -343,11 +349,11 @@ export const HelpCenterDataView = () => {
                 pageSize={params.limit}
                 roundedTop={0}
               >
-                <DataView.Table.Header />
-                <DataView.Table.Body />
-              </DataView.Table.Root>
+                <DataViewTable.Header />
+                <DataViewTable.Body />
+              </DataViewTable.Root>
 
-              <TopBarLoader isFetching={isFetching} />
+              <Separator borderColor={"bg.canvas"} />
 
               <DataViewFooter
                 page={params.page ?? 1}
@@ -366,7 +372,7 @@ export const HelpCenterDataView = () => {
                 totalData={pagination.totalItems}
                 totalPage={pagination.totalPages}
               />
-            </Box>
+            </VStack>
           )}
         </VStack>
       </Container.Body>

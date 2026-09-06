@@ -3,11 +3,10 @@
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -257,8 +256,10 @@ export const InternalPricingDataView = () => {
           {isLoading ? (
             <Skeleton p={"md"} rounded={0} h={"320px"} />
           ) : (
-            <Box w={"full"} position={"relative"} overflowY={"auto"}>
-              <DataView.Table.Root<PricingItem>
+            <VStack flex={1} w={"full"} position={"relative"}>
+              <TopBarLoader isFetching={isFetching} />
+
+              <DataViewTable.Root<PricingItem>
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
@@ -268,11 +269,11 @@ export const InternalPricingDataView = () => {
                 rounded={0}
                 pb={0}
               >
-                <DataView.Table.Header />
-                <DataView.Table.Body />
-              </DataView.Table.Root>
+                <DataViewTable.Header />
+                <DataViewTable.Body />
+              </DataViewTable.Root>
 
-              <TopBarLoader isFetching={isFetching} />
+              <Separator borderColor={"bg.canvas"} />
 
               <DataViewFooter
                 page={params.page ?? 1}
@@ -290,9 +291,8 @@ export const InternalPricingDataView = () => {
                 currentDataLength={filteredItems.length}
                 totalData={pagination?.totalItems ?? filteredItems.length}
                 totalPage={pagination?.totalPages ?? 1}
-                roundedBottom={0}
               />
-            </Box>
+            </VStack>
           )}
         </VStack>
 

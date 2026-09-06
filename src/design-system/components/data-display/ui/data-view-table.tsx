@@ -260,8 +260,8 @@ const DataListTableRootInternal = <
       <VStack
         className={"table-container"}
         ref={setTableContainerRef}
-        overflow={"auto"}
-        // flex={1}
+        overflowY={"auto"}
+        flex={1}
         w={"full"}
         maxH={"full"}
         roundedTop={theme.radii.container}
@@ -702,12 +702,12 @@ const DataListTableSortIcon = ({
 
 // -------------------------------------------------------------------------------------
 
-const DataViewTableInternal = {
+export const DataViewTable = {
   Root: DataListTableRoot,
   Header: DataListTableHeader,
   Body: DataListTableBody,
 };
 
-export const DataView = {
-  Table: DataViewTableInternal,
-};
+// export const DataView = {
+//   Table: DataViewTableInternal,
+// };

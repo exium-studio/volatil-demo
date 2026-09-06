@@ -6,7 +6,7 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -413,7 +413,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
 
   return (
     <VStack flex={1} w={"full"}>
-      <DataView.Table.Root<CartOrderItem>
+      <DataViewTable.Root<CartOrderItem>
         headers={dataList.headers}
         items={dataList.items}
         itemActions={dataList.itemActions}
@@ -421,9 +421,9 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
         pb={0}
         rounded={0}
       >
-        <DataView.Table.Header />
-        <DataView.Table.Body />
-      </DataView.Table.Root>
+        <DataViewTable.Header />
+        <DataViewTable.Body />
+      </DataViewTable.Root>
     </VStack>
   );
 };

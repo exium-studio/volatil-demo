@@ -3,7 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -361,15 +361,15 @@ export const TransactionDetailModalContent = (
                 overflow={"hidden"}
                 borderColor={"border.subtle"}
               >
-                <DataView.Table.Root
+                <DataViewTable.Root
                   headers={orderItemHeaders}
                   items={orderItemsData}
                   withNumbering={false}
                   pb={0}
                 >
-                  <DataView.Table.Header />
-                  <DataView.Table.Body />
-                </DataView.Table.Root>
+                  <DataViewTable.Header />
+                  <DataViewTable.Body />
+                </DataViewTable.Root>
               </Box>
             </VStack>
           </Skeleton>

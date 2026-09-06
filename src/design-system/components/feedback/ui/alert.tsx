@@ -28,11 +28,13 @@ export const AlertIndicator = (props: AlertIndicatorProps) => {
 };
 
 export const AlertTitle = (props: AlertTitleProps) => {
-  return <ChakraAlert.Title lineHeight={1.2} {...props} />;
+  return <ChakraAlert.Title lineHeight={"1.5em"} {...props} />;
 };
 
 export const AlertDescription = (props: AlertDescriptionProps) => {
-  return <ChakraAlert.Description fontSize={"sm"} {...props} />;
+  return (
+    <ChakraAlert.Description fontSize={"sm"} lineHeight={"1.5em"} {...props} />
+  );
 };
 
 export const AlertContent = (props: AlertContentProps) => {

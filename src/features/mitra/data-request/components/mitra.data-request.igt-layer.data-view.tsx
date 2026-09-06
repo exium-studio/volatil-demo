@@ -6,7 +6,7 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -419,7 +419,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           {isLoadingLayers && <Skeleton flex={1} p={"md"} rounded={0} />}
 
           {!isLoadingLayers && (
-            <DataView.Table.Root<IgtLayerItem>
+            <DataViewTable.Root<IgtLayerItem>
               headers={dataList.headers}
               items={dataList.items}
               itemActions={dataList.itemActions}
@@ -427,9 +427,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
               withNumbering={true}
               roundedTop={0}
             >
-              <DataView.Table.Header />
-              <DataView.Table.Body />
-            </DataView.Table.Root>
+              <DataViewTable.Header />
+              <DataViewTable.Body />
+            </DataViewTable.Root>
           )}
         </VStack>
 

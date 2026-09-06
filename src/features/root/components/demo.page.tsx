@@ -13,7 +13,7 @@ import type {
   DataViewItemActionsGenerator,
 } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Breadcrumb } from "@/design-system/components/disclosure/ui/breadcrumb";
 import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
@@ -1741,17 +1741,17 @@ export const DataDisplay = () => {
           </HStack>
 
           <VStack>
-            <DataView.Table.Root
+            <DataViewTable.Root
               headers={dataList.fields}
               items={dataList.items}
               batchActions={dataList.batchActions}
               itemActions={dataList.itemActions}
               // maxH={"500px"}
             >
-              <DataView.Table.Header />
+              <DataViewTable.Header />
 
-              <DataView.Table.Body />
-            </DataView.Table.Root>
+              <DataViewTable.Body />
+            </DataViewTable.Root>
 
             <DataViewFooter
               pageSize={pageSize}

@@ -4,14 +4,13 @@ import type { FormattedTableHeader } from "@/design-system/components/data-displ
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -328,10 +327,10 @@ export const InternalMitraRegistrationDataView = () => {
               )}
 
               {!isEmptyArray(rawItems) && (
-                <Box w={"full"} position={"relative"}>
+                <VStack flex={1} w={"full"} position={"relative"}>
                   <TopBarLoader isFetching={isFetching} />
 
-                  <DataView.Table.Root<InternalMitraRegistrationItem>
+                  <DataViewTable.Root<InternalMitraRegistrationItem>
                     headers={dataList.headers}
                     items={dataList.items}
                     itemActions={dataList.itemActions}
@@ -341,9 +340,9 @@ export const InternalMitraRegistrationDataView = () => {
                     pb={0}
                     rounded={0}
                   >
-                    <DataView.Table.Header />
-                    <DataView.Table.Body />
-                  </DataView.Table.Root>
+                    <DataViewTable.Header />
+                    <DataViewTable.Body />
+                  </DataViewTable.Root>
 
                   <Separator borderColor={"bg.canvas"} />
 
@@ -368,7 +367,7 @@ export const InternalMitraRegistrationDataView = () => {
                     totalData={pagination?.totalItems ?? rawItems.length}
                     totalPage={pagination?.totalPages ?? 1}
                   />
-                </Box>
+                </VStack>
               )}
             </>
           )}

@@ -120,7 +120,6 @@ export const UrlDataView = memo((props: UrlDataViewProps) => {
       <ClipboardButton
         value={url}
         variant={"ghost"}
-        size={"xs"}
         aria-label={label}
         flexShrink={0}
       />

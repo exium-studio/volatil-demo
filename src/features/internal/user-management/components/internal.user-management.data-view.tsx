@@ -7,13 +7,12 @@ import type {
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -267,13 +266,14 @@ export const InternalUserManagementDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        {/* Table & Footer Content */}
-        <VStack bg={"bg.canvas"} w={"full"} position={"relative"} gap={0}>
+        <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
           {isLoading ? (
             <Skeleton h={"280px"} w={"full"} p={"md"} roundedTop={0} />
           ) : (
-            <Box w={"full"} position={"relative"}>
-              <DataView.Table.Root
+            <VStack flex={1} w={"full"} position={"relative"}>
+              <TopBarLoader isFetching={isFetching} />
+
+              <DataViewTable.Root
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
@@ -281,11 +281,11 @@ export const InternalUserManagementDataView = () => {
                 pageSize={params.pageSize}
                 roundedTop={0}
               >
-                <DataView.Table.Header />
-                <DataView.Table.Body />
-              </DataView.Table.Root>
+                <DataViewTable.Header />
+                <DataViewTable.Body />
+              </DataViewTable.Root>
 
-              <TopBarLoader isFetching={isFetching} />
+              <Separator borderColor={"bg.canvas"} />
 
               <DataViewFooter
                 page={params.page ?? 1}
@@ -303,9 +303,8 @@ export const InternalUserManagementDataView = () => {
                 currentDataLength={users.length}
                 totalData={total}
                 totalPage={totalPages}
-                roundedBottom={0}
               />
-            </Box>
+            </VStack>
           )}
         </VStack>
       </Container.Body>

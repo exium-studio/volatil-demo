@@ -174,11 +174,11 @@ export function InternalMitraRegistrationDetailPage() {
     STATUS_CONFIG[registration.status] || STATUS_CONFIG.pending_verification;
 
   return (
-    <PanelContentContainer flex={1} position={"relative"}>
-      <Container.Root withContext flex={1}>
+    <PanelContentContainer flex={1} position={"relative"} overflowY={"auto"}>
+      <Container.Root withContext flex={1} overflowY={"auto"}>
         <Container.Body overflowY={"auto"}>
           {/* Header Bar */}
-          <HeaderContainer pl={"xs"}>
+          <HeaderContainer px={"xs"}>
             <HStack
               justify={"space-between"}
               align={"center"}
@@ -233,293 +233,313 @@ export function InternalMitraRegistrationDetailPage() {
 
           <Separator borderColor={"bg.canvas"} />
 
-          {/* Status & Metadata Bar */}
-          <HStack gap={"md"} wrap={"wrap"} align={"center"} px={"md"} py={"sm"}>
-            <Badge
-              size={"sm"}
-              colorPalette={statusConfig.colorPalette}
-              variant={"subtle"}
+          <VStack overflowY={"auto"}>
+            {/* Status & Metadata Bar */}
+            <HStack
+              gap={"md"}
+              wrap={"wrap"}
+              align={"center"}
+              px={"md"}
+              py={"sm"}
             >
-              {statusConfig.label}
-            </Badge>
+              <Badge
+                size={"sm"}
+                colorPalette={statusConfig.colorPalette}
+                variant={"subtle"}
+              >
+                {statusConfig.label}
+              </Badge>
 
-            <P fontSize={"xs"} color={"fg.muted"}>
-              {`Diajukan: ${formatUtcDateTime(registration.createdAt, preferredTimezone)}`}
-            </P>
-
-            {registration.verifiedAt && (
               <P fontSize={"xs"} color={"fg.muted"}>
-                {`Diverifikasi: ${formatUtcDateTime(registration.verifiedAt, preferredTimezone)}`}
+                {`Diajukan: ${formatUtcDateTime(registration.createdAt, preferredTimezone)}`}
               </P>
-            )}
-          </HStack>
 
-          <Separator borderColor={"bg.canvas"} />
+              {registration.verifiedAt && (
+                <P fontSize={"xs"} color={"fg.muted"}>
+                  {`Diverifikasi: ${formatUtcDateTime(registration.verifiedAt, preferredTimezone)}`}
+                </P>
+              )}
+            </HStack>
 
-          {/* If Rejected Alert */}
-          {registration.status === "rejected" &&
-            registration.rejectionReason && (
-              <Box p={"md"}>
-                <Alert.Root status={"error"} size={"sm"}>
-                  <Alert.Indicator />
+            <Separator borderColor={"bg.canvas"} />
 
-                  <Alert.Content>
-                    <Alert.Title>{"Alasan Penolakan Permohonan:"}</Alert.Title>
-                    <Alert.Description>
-                      {registration.rejectionReason}
-                    </Alert.Description>
-                  </Alert.Content>
-                </Alert.Root>
-              </Box>
-            )}
+            {/* If Rejected Alert */}
+            {registration.status === "rejected" &&
+              registration.rejectionReason && (
+                <Box p={"md"}>
+                  <Alert.Root status={"error"} size={"sm"}>
+                    <Alert.Indicator />
 
-          {/* If Approved & Has Contract */}
-          {registration.status === "approved" &&
-            registration.contractDocument && (
-              <Box p={"md"} pb={0}>
-                <Alert.Root status={"success"} size={"sm"}>
-                  <Alert.Indicator />
+                    <Alert.Content>
+                      <Alert.Title>
+                        {"Alasan Penolakan Permohonan:"}
+                      </Alert.Title>
+                      <Alert.Description>
+                        {registration.rejectionReason}
+                      </Alert.Description>
+                    </Alert.Content>
+                  </Alert.Root>
+                </Box>
+              )}
 
-                  <Alert.Content>
-                    <Alert.Title>
-                      {"Berkas Kontrak Kemitraan Resmi Telah Terbit"}
-                    </Alert.Title>
+            {/* If Approved & Has Contract */}
+            {registration.status === "approved" &&
+              registration.contractDocument && (
+                <Box p={"md"} pb={0}>
+                  <Alert.Root status={"success"} size={"sm"}>
+                    <Alert.Indicator />
 
-                    <Alert.Description>
-                      <HStack
-                        justify={"space-between"}
-                        align={"center"}
-                        w={"full"}
-                        mt={2}
-                        wrap={"wrap"}
-                        gap={2}
-                      >
-                        <P fontSize={"xs"}>
-                          {
-                            "Salinan kontrak kerjasama telah diunggah dan dikirimkan ke mitra."
-                          }
-                        </P>
-                        <ExternalLink
-                          href={registration.contractDocument}
-                          download={true}
+                    <Alert.Content>
+                      <Alert.Title>
+                        {"Berkas Kontrak Kemitraan Resmi Telah Terbit"}
+                      </Alert.Title>
+
+                      <Alert.Description>
+                        <HStack
+                          justify={"space-between"}
+                          align={"center"}
+                          w={"full"}
+                          mt={2}
+                          wrap={"wrap"}
+                          gap={2}
                         >
-                          <Button
-                            size={"xs"}
-                            variant={"outline"}
-                            colorPalette={"green"}
+                          <P fontSize={"xs"}>
+                            {
+                              "Salinan kontrak kerjasama telah diunggah dan dikirimkan ke mitra."
+                            }
+                          </P>
+                          <ExternalLink
+                            href={registration.contractDocument}
+                            download={true}
                           >
-                            <AppIcon icon={DownloadIcon} />
-                            {"Unduh Kontrak"}
-                          </Button>
-                        </ExternalLink>
-                      </HStack>
-                    </Alert.Description>
-                  </Alert.Content>
-                </Alert.Root>
-              </Box>
-            )}
+                            <Button
+                              size={"xs"}
+                              variant={"outline"}
+                              colorPalette={"green"}
+                            >
+                              <AppIcon icon={DownloadIcon} />
+                              {"Unduh Kontrak"}
+                            </Button>
+                          </ExternalLink>
+                        </HStack>
+                      </Alert.Description>
+                    </Alert.Content>
+                  </Alert.Root>
+                </Box>
+              )}
 
-          {/* Main Info Sections */}
-          <VStack p={"md"} gap={"lg"} align={"stretch"}>
-            {/* Section 1: Data Perusahaan */}
-            <VStack align={"stretch"} gap={"md"}>
-              <HStack align={"center"} gap={2}>
-                <AppIcon icon={Building2Icon} color={"fg.muted"} />
-                <Heading>{"Informasi Instansi / Perusahaan"}</Heading>
-              </HStack>
+            {/* Main Info Sections */}
+            <VStack p={"md"} gap={"lg"} align={"stretch"}>
+              {/* Section 1: Data Perusahaan */}
+              <VStack align={"stretch"} gap={"md"}>
+                <HStack align={"center"} gap={2}>
+                  <AppIcon icon={Building2Icon} color={"fg.muted"} />
+                  <Heading>{"Informasi Instansi / Perusahaan"}</Heading>
+                </HStack>
 
-              <SimpleGrid columns={[1, null, 2]} gap={"md"}>
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Nama Instansi / Perusahaan"}
-                  </P>
-                  <P fontWeight={"medium"}>
-                    {registration.organizationName ??
-                      registration.namaInstansi ??
-                      "-"}
-                  </P>
-                </VStack>
-
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Nomor Induk Berusaha (NIB)"}
-                  </P>
-                  <P fontWeight={"medium"}>{registration.nib || "-"}</P>
-                </VStack>
-
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Nomor Pokok Wajib Pajak (NPWP)"}
-                  </P>
-                  <P fontWeight={"medium"}>{registration.npwp || "-"}</P>
-                </VStack>
-
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Situs Web"}
-                  </P>
-                  {registration.website ? (
-                    <ExternalLink
-                      href={
-                        registration.website.startsWith("http")
-                          ? registration.website
-                          : `https://${registration.website}`
-                      }
-                    >
-                      <HStack gap={1} align={"center"}>
-                        <P fontWeight={"medium"}>{registration.website}</P>
-                        <AppIcon
-                          icon={ExternalLinkIcon}
-                          size={"xs"}
-                          color={"fg.muted"}
-                        />
-                      </HStack>
-                    </ExternalLink>
-                  ) : (
-                    <P color={"fg.muted"}>{"-"}</P>
-                  )}
-                </VStack>
-
-                <VStack
-                  align={"start"}
-                  gap={"2xs"}
-                  gridColumn={[null, null, "span 2"]}
-                >
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Alamat Kantor Operasional"}
-                  </P>
-                  <P fontWeight={"medium"}>
-                    {registration.officeAddress ??
-                      registration.alamatKantor ??
-                      "-"}
-                  </P>
-                </VStack>
-              </SimpleGrid>
-            </VStack>
-
-            <Separator borderColor={"bg.canvas"} />
-
-            {/* Section 2: Penanggung Jawab */}
-            <VStack align={"stretch"} gap={"md"}>
-              <HStack align={"center"} gap={2}>
-                <AppIcon icon={UserCheckIcon} color={"fg.muted"} />
-                <Heading>{"Penanggung Jawab & Kontak"}</Heading>
-              </HStack>
-
-              <SimpleGrid columns={[1, null, 2]} gap={"md"}>
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Nama Penanggung Jawab"}
-                  </P>
-                  <P fontWeight={"medium"}>
-                    {registration.picName ??
-                      registration.namaPenanggungJawab ??
-                      "-"}
-                  </P>
-                </VStack>
-
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Jabatan"}
-                  </P>
-                  <P fontWeight={"medium"}>
-                    {registration.position ?? registration.jabatan ?? "-"}
-                  </P>
-                </VStack>
-
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Email Resmi (SSO)"}
-                  </P>
-
-                  <HStack align={"center"} gap={1.5}>
-                    <AppIcon icon={MailIcon} size={"xs"} color={"fg.muted"} />
-                    <P fontWeight={"medium"}>{registration.email || "-"}</P>
-                  </HStack>
-                </VStack>
-
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Nomor HP / WhatsApp"}
-                  </P>
-                  <HStack gap={1.5}>
-                    <AppIcon icon={PhoneIcon} size={"xs"} color={"fg.muted"} />
-                    <P fontWeight={"medium"}>
-                      {registration.phoneNumber ?? registration.nomorHp ?? "-"}
+                <SimpleGrid columns={[1, null, 2]} gap={"md"}>
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Nama Instansi / Perusahaan"}
                     </P>
-                  </HStack>
-                </VStack>
-              </SimpleGrid>
-            </VStack>
+                    <P fontWeight={"medium"}>
+                      {registration.organizationName ??
+                        registration.namaInstansi ??
+                        "-"}
+                    </P>
+                  </VStack>
 
-            <Separator borderColor={"bg.canvas"} />
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Nomor Induk Berusaha (NIB)"}
+                    </P>
+                    <P fontWeight={"medium"}>{registration.nib || "-"}</P>
+                  </VStack>
 
-            {/* Section 3: 6 Berkas Dokumen Persyaratan */}
-            <VStack align={"stretch"} gap={"md"}>
-              <HStack align={"center"} gap={2}>
-                <AppIcon icon={FileTextIcon} color={"fg.muted"} />
-                <Heading>{"Berkas Dokumen Persyaratan"}</Heading>
-              </HStack>
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Nomor Pokok Wajib Pajak (NPWP)"}
+                    </P>
+                    <P fontWeight={"medium"}>{registration.npwp || "-"}</P>
+                  </VStack>
 
-              <VStack gap={0} w={"full"} align={"stretch"}>
-                {documents.map((doc, idx) => (
-                  <HStack
-                    key={doc.title}
-                    w={"full"}
-                    py={3}
-                    justify={"space-between"}
-                    align={"center"}
-                    gap={"md"}
-                    borderBottom={
-                      idx < documents.length - 1 ? "1px solid" : "none"
-                    }
-                    borderColor={"border.subtle"}
-                  >
-                    <HStack gap={3} flex={1} minW={0} align={"center"}>
-                      <FileIcon
-                        mimeType={doc.mimeType ?? "application/pdf"}
-                        size={"lg"}
-                        color={"fg.muted"}
-                        flexShrink={0}
-                      />
-
-                      <VStack align={"start"} gap={"2xs"} flex={1} minW={0}>
-                        <ClampedP
-                          fontWeight={"medium"}
-                          fontSize={"sm"}
-                          title={doc.title}
-                        >
-                          {doc.title}
-                        </ClampedP>
-
-                        <ClampedP
-                          fontSize={"xs"}
-                          color={"fg.muted"}
-                          title={doc.desc}
-                        >
-                          {doc.desc}
-                        </ClampedP>
-                      </VStack>
-                    </HStack>
-
-                    {doc.url ? (
-                      <ExternalLink href={doc.url} download={true}>
-                        <Button size={"xs"} variant={"outline"}>
-                          <AppIcon icon={SquareArrowOutUpRightIcon} />
-                          {"Tinjau Dokumen"}
-                        </Button>
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Situs Web"}
+                    </P>
+                    {registration.website ? (
+                      <ExternalLink
+                        href={
+                          registration.website.startsWith("http")
+                            ? registration.website
+                            : `https://${registration.website}`
+                        }
+                      >
+                        <HStack gap={1} align={"center"}>
+                          <P fontWeight={"medium"}>{registration.website}</P>
+                          <AppIcon
+                            icon={ExternalLinkIcon}
+                            size={"xs"}
+                            color={"fg.muted"}
+                          />
+                        </HStack>
                       </ExternalLink>
                     ) : (
-                      <Badge
-                        colorPalette={"gray"}
-                        variant={"subtle"}
-                        size={"xs"}
-                      >
-                        {"Belum Diunggah"}
-                      </Badge>
+                      <P color={"fg.muted"}>{"-"}</P>
                     )}
-                  </HStack>
-                ))}
+                  </VStack>
+
+                  <VStack
+                    align={"start"}
+                    gap={"2xs"}
+                    gridColumn={[null, null, "span 2"]}
+                  >
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Alamat Kantor Operasional"}
+                    </P>
+                    <P fontWeight={"medium"}>
+                      {registration.officeAddress ??
+                        registration.alamatKantor ??
+                        "-"}
+                    </P>
+                  </VStack>
+                </SimpleGrid>
+              </VStack>
+
+              <Separator borderColor={"bg.canvas"} />
+
+              {/* Section 2: Penanggung Jawab */}
+              <VStack align={"stretch"} gap={"md"}>
+                <HStack align={"center"} gap={2}>
+                  <AppIcon icon={UserCheckIcon} color={"fg.muted"} />
+                  <Heading>{"Penanggung Jawab & Kontak"}</Heading>
+                </HStack>
+
+                <SimpleGrid columns={[1, null, 2]} gap={"md"}>
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Nama Penanggung Jawab"}
+                    </P>
+
+                    <P fontWeight={"medium"}>
+                      {registration.picName ??
+                        registration.namaPenanggungJawab ??
+                        "-"}
+                    </P>
+                  </VStack>
+
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Jabatan"}
+                    </P>
+
+                    <P fontWeight={"medium"}>
+                      {registration.position ?? registration.jabatan ?? "-"}
+                    </P>
+                  </VStack>
+
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Email Resmi (SSO)"}
+                    </P>
+
+                    <HStack align={"center"} gap={1.5}>
+                      <AppIcon icon={MailIcon} size={"xs"} color={"fg.muted"} />
+
+                      <P fontWeight={"medium"}>{registration.email || "-"}</P>
+                    </HStack>
+                  </VStack>
+
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Nomor HP / WhatsApp"}
+                    </P>
+
+                    <HStack align={"center"} gap={1.5}>
+                      <AppIcon
+                        icon={PhoneIcon}
+                        size={"xs"}
+                        color={"fg.muted"}
+                      />
+                      <P fontWeight={"medium"}>
+                        {registration.phoneNumber ??
+                          registration.nomorHp ??
+                          "-"}
+                      </P>
+                    </HStack>
+                  </VStack>
+                </SimpleGrid>
+              </VStack>
+
+              <Separator borderColor={"bg.canvas"} />
+
+              {/* Section 3: 6 Berkas Dokumen Persyaratan */}
+              <VStack align={"stretch"} gap={"md"}>
+                <HStack align={"center"} gap={2}>
+                  <AppIcon icon={FileTextIcon} color={"fg.muted"} />
+                  <Heading>{"Berkas Dokumen Persyaratan"}</Heading>
+                </HStack>
+
+                <VStack gap={0} w={"full"} align={"stretch"}>
+                  {documents.map((doc, idx) => (
+                    <HStack
+                      key={doc.title}
+                      w={"full"}
+                      py={3}
+                      justify={"space-between"}
+                      align={"center"}
+                      gap={"md"}
+                      borderBottom={
+                        idx < documents.length - 1 ? "1px solid" : "none"
+                      }
+                      borderColor={"border.subtle"}
+                    >
+                      <HStack gap={3} flex={1} minW={0} align={"center"}>
+                        <FileIcon
+                          mimeType={doc.mimeType ?? "application/pdf"}
+                          size={"lg"}
+                          color={"fg.muted"}
+                          flexShrink={0}
+                        />
+
+                        <VStack align={"start"} gap={"2xs"} flex={1} minW={0}>
+                          <ClampedP
+                            fontWeight={"medium"}
+                            fontSize={"sm"}
+                            title={doc.title}
+                          >
+                            {doc.title}
+                          </ClampedP>
+
+                          <ClampedP
+                            fontSize={"xs"}
+                            color={"fg.muted"}
+                            title={doc.desc}
+                          >
+                            {doc.desc}
+                          </ClampedP>
+                        </VStack>
+                      </HStack>
+
+                      {doc.url ? (
+                        <ExternalLink href={doc.url} download={true}>
+                          <Button size={"xs"} variant={"outline"}>
+                            <AppIcon icon={SquareArrowOutUpRightIcon} />
+                            {"Tinjau Dokumen"}
+                          </Button>
+                        </ExternalLink>
+                      ) : (
+                        <Badge
+                          colorPalette={"gray"}
+                          variant={"subtle"}
+                          size={"xs"}
+                        >
+                          {"Belum Diunggah"}
+                        </Badge>
+                      )}
+                    </HStack>
+                  ))}
+                </VStack>
               </VStack>
             </VStack>
           </VStack>

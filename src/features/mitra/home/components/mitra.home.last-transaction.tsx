@@ -4,7 +4,7 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
-import { DataView } from "@/design-system/components/data-display/ui/data-view-table";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -78,9 +78,7 @@ const MitraHomeLastTransactionHeader = () => {
       p={"md"}
     >
       <HStack gap={"xs"} align={"center"}>
-        <Heading>
-          {"Transaksi Terakhir"}
-        </Heading>
+        <Heading>{"Transaksi Terakhir"}</Heading>
 
         <InfoTip
           variant={"icon"}
@@ -237,14 +235,10 @@ const MitraHomeLastTransactionDataView = () => {
 
   return (
     <VStack bg={"bg.canvas"} w={"full"}>
-      <DataView.Table.Root
-        headers={headers}
-        items={items}
-        roundedTop={0}
-      >
-        <DataView.Table.Header />
-        <DataView.Table.Body />
-      </DataView.Table.Root>
+      <DataViewTable.Root headers={headers} items={items} roundedTop={0}>
+        <DataViewTable.Header />
+        <DataViewTable.Body />
+      </DataViewTable.Root>
     </VStack>
   );
 };
