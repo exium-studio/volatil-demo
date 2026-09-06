@@ -32,7 +32,7 @@ import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useParams, useRouter } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
-  CheckCircle2Icon,
+  CheckCircleIcon,
   MessageSquarePlusIcon,
   ShieldCheckIcon,
   UserIcon,
@@ -181,7 +181,7 @@ export const HelpCenterDetailPage = () => {
                         variant={"outline"}
                         flex={1}
                       >
-                        <AppIcon icon={CheckCircle2Icon} />
+                        <AppIcon icon={CheckCircleIcon} />
                         {"Selesaikan Laporan"}
                       </Button>
                     </HelpCenterModalResolveRejectTrigger>

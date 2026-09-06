@@ -36,7 +36,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
-  CheckCircle2Icon,
+  CheckCircleIcon,
   EyeIcon,
   HandshakeIcon,
   XCircleIcon,
@@ -196,7 +196,7 @@ export const InternalMitraRegistrationDataView = () => {
         {
           key: "approve-registration",
           label: "Setujui Permohonan",
-          icon: CheckCircle2Icon,
+          icon: CheckCircleIcon,
           colorPalette: "green",
           hidden: (reg: InternalMitraRegistrationItem) =>
             reg.status !== "pending_verification",

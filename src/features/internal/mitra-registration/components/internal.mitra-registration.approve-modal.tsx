@@ -13,7 +13,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useApproveMitraRegistration } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
 import type { InternalMitraRegistrationItem } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { back } from "@/shared/utils/client/navigation";
-import { CheckCircle2Icon } from "lucide-react";
+import { CheckCircleIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
 type InternalMitraRegistrationApproveTriggerProps = {
@@ -114,11 +114,11 @@ const InternalMitraRegistrationApproveModalContent = (
           <Alert.Root status={"info"} size={"sm"}>
             <Alert.Indicator />
             <Alert.Content>
-              <Alert.Title>
+              <Alert.Description>
                 {
                   "Menyetujui permohonan ini akan otomatis mengaktifkan akun kemitraan di Volatil dan mengirimkan email pemberitahuan beserta Berkas Kontrak resmi ke mitra."
                 }
-              </Alert.Title>
+              </Alert.Description>
             </Alert.Content>
           </Alert.Root>
 
@@ -146,7 +146,7 @@ const InternalMitraRegistrationApproveModalContent = (
             loading={approveMutation.isPending}
             onClick={handleApprove}
           >
-            <AppIcon icon={CheckCircle2Icon} />
+            <AppIcon icon={CheckCircleIcon} />
             {"Setujui & Terbitkan Kontrak"}
           </Button>
 

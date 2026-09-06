@@ -37,7 +37,7 @@ import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
-  CheckCircle2Icon,
+  CheckCircleIcon,
   EyeIcon,
   EyeOffIcon,
   FocusIcon,
@@ -114,7 +114,7 @@ export function InternalOrderReviewDetailPage() {
                     }}
                   >
                     <Button primary={true} colorPalette={"green"}>
-                      <AppIcon icon={CheckCircle2Icon} />
+                      <AppIcon icon={CheckCircleIcon} />
                       {"Setujui Permohonan"}
                     </Button>
                   </InternalOrderReviewApproveTrigger>

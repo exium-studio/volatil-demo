@@ -40,12 +40,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
-import {
-  CheckCircle2Icon,
-  CheckCircleIcon,
-  LayersIcon,
-  MapPlusIcon,
-} from "lucide-react";
+import { CheckCircleIcon, LayersIcon, MapPlusIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ORDER_STATUS_OPTIONS = [
@@ -215,7 +210,7 @@ export const InternalOrderReviewDataView = () => {
       {
         key: "approve-order",
         label: "Setujui Permohonan",
-        icon: CheckCircle2Icon,
+        icon: CheckCircleIcon,
         colorPalette: "green",
         hidden: (order: InternalOrderItem) => order.status !== "pending_review",
         modal: {

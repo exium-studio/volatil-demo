@@ -6,7 +6,7 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useHelpCenterStatisticsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type { HelpCenterStatistics } from "@/features/mitra/help-center/types/help-center.type";
-import { CheckCircle2Icon, ClockIcon, FileTextIcon } from "lucide-react";
+import { CheckCircleIcon, ClockIcon, FileTextIcon } from "lucide-react";
 import { memo } from "react";
 
 type HelpCenterSummaryProps = {
@@ -45,7 +45,7 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
       label: "Laporan Selesai",
       count: stats.resolvedTickets,
       unit: "Laporan",
-      icon: CheckCircle2Icon,
+      icon: CheckCircleIcon,
       colorPalette: "green",
     },
   ];

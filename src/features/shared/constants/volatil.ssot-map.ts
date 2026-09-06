@@ -19,7 +19,6 @@ import type {
 import { IconPolygon } from "@tabler/icons-react";
 import {
   AlertCircleIcon,
-  CheckCircle2Icon,
   CheckCircleIcon,
   ClockIcon,
   FolderArchiveIcon,
@@ -122,7 +121,7 @@ export const TRANSACTION_STATUS_MAP: Record<
   paid: {
     label: "Terbayar",
     colorPalette: "green",
-    icon: CheckCircle2Icon,
+    icon: CheckCircleIcon,
   },
   expired: {
     label: "Kedaluwarsa",
@@ -162,7 +161,7 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   paid: {
     label: "Terbayar",
     colorPalette: "blue",
-    icon: CheckCircle2Icon,
+    icon: CheckCircleIcon,
     iconColor: "blue.fg",
   },
   processing: {
@@ -186,7 +185,7 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   ready: {
     label: "Siap Digunakan",
     colorPalette: "green",
-    icon: CheckCircle2Icon,
+    icon: CheckCircleIcon,
     iconColor: "green.fg",
   },
 };

@@ -22,7 +22,7 @@ import type { MitraRegistrationStatus } from "@/features/auth/types/mitra-regist
 import { Link } from "@tanstack/react-router";
 import {
   AlertCircleIcon,
-  CheckCircle2Icon,
+  CheckCircleIcon,
   ClockIcon,
   DownloadIcon,
   FileCheckIcon,
@@ -37,7 +37,7 @@ const STATUS_CONFIG: Record<
   {
     label: string;
     colorPalette: string;
-    icon: typeof CheckCircle2Icon;
+    icon: typeof CheckCircleIcon;
     desc: string;
   }
 > = {
@@ -50,7 +50,7 @@ const STATUS_CONFIG: Record<
   approved: {
     label: "Disetujui",
     colorPalette: "green",
-    icon: CheckCircle2Icon,
+    icon: CheckCircleIcon,
     desc: "Permohonan telah disetujui. Akun SSO telah diaktifkan dan dokumen kontrak dapat diunduh.",
   },
   rejected: {

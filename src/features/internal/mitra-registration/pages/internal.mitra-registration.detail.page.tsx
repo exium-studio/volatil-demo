@@ -32,7 +32,7 @@ import {
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   Building2Icon,
-  CheckCircle2Icon,
+  CheckCircleIcon,
   ClockIcon,
   DownloadIcon,
   ExternalLinkIcon,
@@ -47,7 +47,7 @@ import { useMemo } from "react";
 
 const STATUS_CONFIG: Record<
   MitraRegistrationStatus,
-  { label: string; colorPalette: string; icon: typeof CheckCircle2Icon }
+  { label: string; colorPalette: string; icon: typeof CheckCircleIcon }
 > = {
   pending_verification: {
     label: "Menunggu Verifikasi",
@@ -57,7 +57,7 @@ const STATUS_CONFIG: Record<
   approved: {
     label: "Disetujui",
     colorPalette: "green",
-    icon: CheckCircle2Icon,
+    icon: CheckCircleIcon,
   },
   rejected: {
     label: "Ditolak",
@@ -195,18 +195,8 @@ export function InternalMitraRegistrationDetailPage() {
 
                 <VStack align={"start"} gap={"2xs"}>
                   <Heading size={"md"}>
-                    {registration.organizationName ?? registration.namaInstansi}
+                    {registration.registrationNumber}
                   </Heading>
-
-                  <HStack gap={2} align={"center"}>
-                    <P fontSize={"xs"} color={"fg.muted"} mb={"3px"}>
-                      {"No. Registrasi:"}
-                    </P>
-
-                    <Badge size={"xs"} variant={"surface"}>
-                      {registration.registrationNumber}
-                    </Badge>
-                  </HStack>
                 </VStack>
               </HStack>
 
@@ -232,7 +222,7 @@ export function InternalMitraRegistrationDetailPage() {
                     }}
                   >
                     <Button primary={true} colorPalette={"green"}>
-                      <AppIcon icon={CheckCircle2Icon} />
+                      <AppIcon icon={CheckCircleIcon} />
                       {"Setujui & Unggah Kontrak"}
                     </Button>
                   </InternalMitraRegistrationApproveTrigger>

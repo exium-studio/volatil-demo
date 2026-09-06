@@ -30,7 +30,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "@tanstack/react-router";
 import {
   Building2Icon,
-  CheckCircle2Icon,
+  CheckCircleIcon,
   FileCheckIcon,
   FileTextIcon,
   SendIcon,
@@ -116,7 +116,7 @@ export const MitraRegisterPage = () => {
           <Container.Root rounded={theme.radii.container}>
             <VStack align={"center"} gap={"lg"} textAlign={"center"} py={8}>
               <Box color={"fg.muted"}>
-                <AppIcon icon={CheckCircle2Icon} size={"xl"} />
+                <AppIcon icon={CheckCircleIcon} size={"xl"} />
               </Box>
 
               <VStack gap={"xs"}>
@@ -372,7 +372,9 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
-                            label={"Unggah Surat Permohonan Kerjasama (.pdf/.docx)"}
+                            label={
+                              "Unggah Surat Permohonan Kerjasama (.pdf/.docx)"
+                            }
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
@@ -435,7 +437,9 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
-                            label={"Unggah Surat Komitmen Evaluasi (.pdf/.docx)"}
+                            label={
+                              "Unggah Surat Komitmen Evaluasi (.pdf/.docx)"
+                            }
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
@@ -456,7 +460,9 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
-                            label={"Unggah Surat Komitmen Perbaikan (.pdf/.docx)"}
+                            label={
+                              "Unggah Surat Komitmen Perbaikan (.pdf/.docx)"
+                            }
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>
@@ -477,7 +483,9 @@ export const MitraRegisterPage = () => {
                         control={control}
                         render={({ field }) => (
                           <FileInput
-                            label={"Unggah Proposal Teknis Pemanfaatan IGT (.pdf/.docx)"}
+                            label={
+                              "Unggah Proposal Teknis Pemanfaatan IGT (.pdf/.docx)"
+                            }
                             accept={[".pdf", ".doc", ".docx", ".jpg", ".png"]}
                             maxFiles={1}
                             onFileAccept={(details) =>

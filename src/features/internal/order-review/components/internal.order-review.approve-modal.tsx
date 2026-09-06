@@ -18,7 +18,7 @@ import {
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
-import { CheckCircle2Icon, InfoIcon } from "lucide-react";
+import { CheckCircleIcon, InfoIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
@@ -262,7 +262,7 @@ const InternalOrderReviewApproveModalContent = (
             colorPalette={"green"}
             loading={approveMutation.isPending}
           >
-            <AppIcon icon={CheckCircle2Icon} />
+            <AppIcon icon={CheckCircleIcon} />
             {"Simpan & Setujui"}
           </Button>
 

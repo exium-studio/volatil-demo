@@ -20,7 +20,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
-import { CheckCircle2Icon, MapPlusIcon } from "lucide-react";
+import { CheckCircleIcon, MapPlusIcon } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 
 type InternalOrderReviewDetailTriggerProps = {
@@ -261,7 +261,7 @@ const InternalOrderReviewDetailModalContent = (
               onSuccessRedirect={close}
             >
               <Button colorPalette={"green"}>
-                <AppIcon icon={CheckCircle2Icon} />
+                <AppIcon icon={CheckCircleIcon} />
                 {"Setujui Permohonan"}
               </Button>
             </InternalOrderReviewApproveTrigger>

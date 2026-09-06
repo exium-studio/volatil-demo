@@ -33,7 +33,7 @@ import {
 import { tintDark } from "@/shared/utils/style/color";
 import {
   AlertCircleIcon,
-  CheckCircle2Icon,
+  CheckCircleIcon,
   ChevronDownIcon,
   InfoIcon,
   XCircleIcon,
@@ -42,7 +42,7 @@ import { memo, useMemo, useState } from "react";
 
 export const TOAST_VARIANT_MAP: ToastVariantMap = {
   success: {
-    icon: <AppIcon icon={CheckCircle2Icon} size={"sm"} />,
+    icon: <AppIcon icon={CheckCircleIcon} size={"sm"} />,
     bg: "bg.success",
     color: "fg.success",
   },
@@ -103,7 +103,8 @@ export const ToastItem = memo(function ToastItem(
   // Derived Values
   const isFirstIndex = index === 0;
   const hasExpandableContent = Boolean(
-    toastData.description || (toastData.actions && !isEmptyArray(toastData.actions)),
+    toastData.description ||
+    (toastData.actions && !isEmptyArray(toastData.actions)),
   );
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
@@ -339,11 +340,12 @@ export const ToastItem = memo(function ToastItem(
             </Collapsible.Root>
 
             {/* Removed from history flag */}
-            {showDeletedFromHistoryIndicator && toastData.isDeletedFromHistory && (
-              <P fontSize={"xs"} color={"fg.muted"} mt={1}>
-                {"Removed from history"}
-              </P>
-            )}
+            {showDeletedFromHistoryIndicator &&
+              toastData.isDeletedFromHistory && (
+                <P fontSize={"xs"} color={"fg.muted"} mt={1}>
+                  {"Removed from history"}
+                </P>
+              )}
           </VStack>
         </VStack>
       </HStack>
