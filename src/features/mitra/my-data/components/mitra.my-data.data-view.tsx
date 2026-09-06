@@ -95,7 +95,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     (item: MyDataItem, checked: boolean) => {
       if (checked) {
         const proxyWmsUrl = item.externalWmsUrl;
-        const proxyWfsUrl = item.externalWfsUrl;
+        // const proxyWfsUrl = item.externalWfsUrl;
 
         setCustomLayerConfig(item.id, {
           wmsUrl: proxyWmsUrl,
@@ -103,22 +103,26 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           spatialBasis: item.spatialBasis,
         });
         setLayerEnabled(item.id, true);
-        void flyTo({
-          id: item.id,
-          title: item.title,
-          spatialBasis: item.spatialBasis,
-          bbox: item.bbox,
-          wfs: {
-            wfsTypeName: item.wfsTypeName || item.id,
-            wfsUrl: proxyWfsUrl,
-          },
-        });
+        // void flyTo({
+        //   id: item.id,
+        //   title: item.title,
+        //   spatialBasis: item.spatialBasis,
+        //   bbox: item.bbox,
+        //   wfs: {
+        //     wfsTypeName: item.wfsTypeName || item.id,
+        //     wfsUrl: proxyWfsUrl,
+        //   },
+        // });
       } else {
         setLayerEnabled(item.id, false);
         setCustomLayerConfig(item.id, null);
       }
     },
-    [flyTo, setCustomLayerConfig, setLayerEnabled],
+    [
+      // flyTo,
+      setCustomLayerConfig,
+      setLayerEnabled,
+    ],
   );
 
   // Derived Values - DataList headers & items

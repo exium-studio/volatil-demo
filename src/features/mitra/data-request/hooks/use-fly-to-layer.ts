@@ -5,7 +5,7 @@ import type {
   FlyToIgtLayerOptions,
   FlyToLayerTarget,
 } from "@/features/mitra/data-request/types/fly-to-layer.type";
-import { flyToIgtLayer } from "@/features/mitra/data-request/utils/fly-to-igt-layer";
+import { flyToLayer } from "@/features/mitra/data-request/utils/fly-to-layer";
 import { useCallback } from "react";
 
 /**
@@ -19,7 +19,7 @@ export const useFlyToLayer = () => {
   const flyTo = useCallback(
     async (layer: FlyToLayerTarget, options?: FlyToIgtLayerOptions) => {
       if (!map) return;
-      await flyToIgtLayer(map, layer, options);
+      await flyToLayer(map, layer, options);
     },
     [map],
   );

@@ -47,6 +47,7 @@ import { IconLayersOff } from "@tabler/icons-react";
 import {
   EyeIcon,
   EyeOffIcon,
+  FocusIcon,
   PencilIcon,
   PlusIcon,
   Trash2Icon,
@@ -130,7 +131,7 @@ export const InternalDataManagementDataView = () => {
         const proxyWmsUrl = buildWmsProxyUrl(
           `/api/proxy/wms?layerId=${item.id}`,
         );
-        const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
+        // const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
 
         setCustomLayerConfig(item.id, {
           wmsUrl: proxyWmsUrl,
@@ -139,19 +140,23 @@ export const InternalDataManagementDataView = () => {
         });
         setLayerEnabled(item.id, true);
 
-        void flyTo({
-          id: item.id,
-          title: item.title,
-          spatialBasis: item.spatialBasis,
-          bbox: item.bbox,
-          wfs: {
-            wfsTypeName: item.typeName || item.id,
-            wfsUrl: proxyWfsUrl,
-          },
-        });
+        // void flyTo({
+        //   id: item.id,
+        //   title: item.title,
+        //   spatialBasis: item.spatialBasis,
+        //   bbox: item.bbox,
+        //   wfs: {
+        //     wfsTypeName: item.typeName || item.id,
+        //     wfsUrl: proxyWfsUrl,
+        //   },
+        // });
       }
     },
-    [flyTo, setCustomLayerConfig, setLayerEnabled],
+    [
+      // flyTo,
+      setCustomLayerConfig,
+      setLayerEnabled,
+    ],
   );
 
   const dataList = useMemo(() => {
@@ -302,6 +307,27 @@ export const InternalDataManagementDataView = () => {
         },
       },
       {
+        key: "fly-to-map",
+        label: "Zoom ke Layer",
+        icon: FocusIcon,
+        onClick: (item: MasterIgtLayerItem) => {
+          if (!enabledLayerIds[item.id]) {
+            handleToggleLayer(item, true);
+          } else {
+            flyTo({
+              id: item.id,
+              title: item.title,
+              spatialBasis: item.spatialBasis,
+              bbox: item.bbox,
+              wfs: {
+                wfsTypeName: item.typeName,
+                wfsUrl: item.wfsUrl || "",
+              },
+            });
+          }
+        },
+      },
+      {
         key: "edit-layer",
         label: "Ubah Layer",
         icon: PencilIcon,
@@ -343,6 +369,7 @@ export const InternalDataManagementDataView = () => {
       itemActions,
     };
   }, [
+    flyTo,
     rawItems,
     preferredTimezone,
     enabledLayerIds,

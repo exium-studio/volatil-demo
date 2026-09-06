@@ -14,8 +14,8 @@ export type FlyToLayerTarget =
       title?: string;
       bbox?: [number, number, number, number] | null;
       wfs?: {
-        wfsTypeName?: string;
-        wfsUrl?: string | null;
+        wfsTypeName: string;
+        wfsUrl: string | null;
       };
       spatialBasis?: "bidang" | "kawasan";
     };

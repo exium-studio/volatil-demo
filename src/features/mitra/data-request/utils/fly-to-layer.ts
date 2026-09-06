@@ -84,7 +84,7 @@ export const fetchLayerDynamicBbox = async (
  * Flies map viewport to fit the bounding box (bbox) of an IGT layer.
  * Warns via toast if bounding box is not provided and cannot be dynamically resolved.
  */
-export const flyToIgtLayer = async (
+export const flyToLayer = async (
   map: MapLibreMap | null,
   layer: FlyToLayerTarget,
   options?: FlyToIgtLayerOptions,
@@ -131,7 +131,9 @@ export const flyToIgtLayer = async (
 
   // If still no bbox, notify user with warning toast
   if (!bbox) {
-    toast.warning("Informasi batas wilayah (bbox) tidak disediakan untuk layer ini");
+    toast.warning(
+      "Informasi batas wilayah (bbox) tidak disediakan untuk layer ini",
+    );
     return;
   }
 
