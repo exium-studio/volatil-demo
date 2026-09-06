@@ -239,20 +239,16 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
         label: "Zoom ke Layer",
         icon: FocusIcon,
         onClick: (item: MyDataItem) => {
-          if (!enabledLayerIds[item.id]) {
-            handleToggleLayer(item, true);
-          } else {
-            void flyTo({
-              id: item.id,
-              title: item.title,
-              spatialBasis: item.spatialBasis,
-              bbox: item.bbox,
-              wfs: {
-                wfsTypeName: item.wfsTypeName || item.id,
-                wfsUrl: item.wfsUrl || "",
-              },
-            });
-          }
+          void flyTo({
+            id: item.id,
+            title: item.title,
+            spatialBasis: item.spatialBasis,
+            bbox: item.bbox,
+            wfs: {
+              wfsTypeName: item.wfsTypeName || item.id,
+              wfsUrl: item.wfsUrl || "",
+            },
+          });
         },
       },
       {

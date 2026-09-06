@@ -311,20 +311,16 @@ export const InternalDataManagementDataView = () => {
         label: "Zoom ke Layer",
         icon: FocusIcon,
         onClick: (item: MasterIgtLayerItem) => {
-          if (!enabledLayerIds[item.id]) {
-            handleToggleLayer(item, true);
-          } else {
-            flyTo({
-              id: item.id,
-              title: item.title,
-              spatialBasis: item.spatialBasis,
-              bbox: item.bbox,
-              wfs: {
-                wfsTypeName: item.typeName,
-                wfsUrl: item.wfsUrl || "",
-              },
-            });
-          }
+          void flyTo({
+            id: item.id,
+            title: item.title,
+            spatialBasis: item.spatialBasis,
+            bbox: item.bbox,
+            wfs: {
+              wfsTypeName: item.typeName,
+              wfsUrl: item.wfsUrl || "",
+            },
+          });
         },
       },
       {
@@ -369,7 +365,6 @@ export const InternalDataManagementDataView = () => {
       itemActions,
     };
   }, [
-    flyTo,
     rawItems,
     preferredTimezone,
     enabledLayerIds,
@@ -377,6 +372,7 @@ export const InternalDataManagementDataView = () => {
     setLayerEnabled,
     setCustomLayerConfig,
     deleteMutation,
+    flyTo,
   ]);
 
   return (

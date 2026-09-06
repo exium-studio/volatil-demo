@@ -231,28 +231,33 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
         }
         setLayerEnabled(item.sourceLayerId, true);
 
-        const matchedLayer = fetchedLayersList.find(
-          (l) => l.id === item.sourceLayerId,
-        );
-        void flyTo(
-          matchedLayer ?? {
-            id: item.sourceLayerId,
-            title: item.sourceLayerTitle,
-            spatialBasis: item.spatialBasis,
-            bbox: undefined,
-            wfs: {
-              wfsTypeName: item.sourceLayerId,
-              wfsUrl: item.previewWfsUrl || item.wfsUrl || "",
-            },
-          },
-          {},
-        );
+        // const matchedLayer = fetchedLayersList.find(
+        //   (l) => l.id === item.sourceLayerId,
+        // );
+        // void flyTo(
+        //   matchedLayer ?? {
+        //     id: item.sourceLayerId,
+        //     title: item.sourceLayerTitle,
+        //     spatialBasis: item.spatialBasis,
+        //     bbox: undefined,
+        //     wfs: {
+        //       wfsTypeName: item.sourceLayerId,
+        //       wfsUrl: item.previewWfsUrl || item.wfsUrl || "",
+        //     },
+        //   },
+        //   {},
+        // );
       } else {
         setLayerEnabled(item.sourceLayerId, false);
         setCustomLayerConfig(item.sourceLayerId, null);
       }
     },
-    [fetchedLayersList, flyTo, setCustomLayerConfig, setLayerEnabled],
+    [
+      // fetchedLayersList,
+      // flyTo,
+      setCustomLayerConfig,
+      setLayerEnabled,
+    ],
   );
 
   const dataList = useMemo(() => {
@@ -357,14 +362,6 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
         },
       },
       {
-        key: "detail-attribute",
-        label: "Detail Atribut",
-        icon: TablePropertiesIcon,
-        onClick: (item: CartOrderItem) => {
-          onDetailAttribute(item);
-        },
-      },
-      {
         key: "fly-to-map",
         label: "Zoom ke Layer",
         icon: FocusIcon,
@@ -379,7 +376,6 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
               ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
               : "");
 
-          handleToggleLayer(item, true);
           void flyTo(
             matchedLayer ?? {
               id: item.sourceLayerId,
@@ -397,6 +393,14 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
             },
             {},
           );
+        },
+      },
+      {
+        key: "detail-attribute",
+        label: "Detail Atribut",
+        icon: TablePropertiesIcon,
+        onClick: (item: CartOrderItem) => {
+          onDetailAttribute(item);
         },
       },
     ];
