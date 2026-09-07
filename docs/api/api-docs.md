@@ -34,6 +34,7 @@ Sistem Volatil memiliki 2 role pengguna:
 - [Master IGT Layers & Data Management](#master-igt-layers--data-management)
 - [Master GeoServer](#master-geoserver)
 - [Review Permohonan (Internal Order Review)](#review-permohonan-internal-order-review)
+- [Statistik & Monitoring Transaksi Internal](#statistik--monitoring-transaksi-internal)
 - [Tarif & Pricing Management](#tarif--pricing-management)
 - [Purchase Limit Configuration](#purchase-limit-configuration)
 - [User Management](#user-management)
@@ -1037,6 +1038,102 @@ type RejectOrderRequest = {
 ```
 
 - **Response**: `200 OK` / `{ success: true, message: "Order permohonan berhasil ditolak" }`
+
+---
+
+# Statistik & Monitoring Transaksi Internal
+
+Modul monitoring metrik pesanan dan riwayat seluruh transaksi mitra untuk admin internal ATR/BPN.
+
+## Ringkasan Statistik Transaksi & Pesanan
+
+Mengambil ringkasan metrik statistik pesanan di seluruh mitra untuk ditampilkan pada section card atas (pesanan aktif, pesanan selesai, dan total pendapatan/networth PNBP).
+
+- **Endpoint**: `GET /api/internal/transactions/statistics`
+- **Middleware / Akses**: `Internal Only`
+- **Response**:
+
+```typescript
+type InternalTransactionStatisticsResponse = {
+  activeOrders: number; // Total pesanan aktif / service yang sudah dibeli mitra dengan status aktif (ready / processing / pending_review)
+  settledTransactions: number; // Total transaksi yang berhasil / settled (transactionStatus: "paid" & orderStatus: "ready")
+  netWorth: number; // Total akumulasi pendapatan PNBP dari transaksi yang telah settled (dalam Rupiah)
+};
+```
+
+## Daftar Transaksi Global Internal
+
+Mengambil daftar seluruh transaksi dari seluruh mitra dengan fitur pagination, pencarian (nomor transaksi, nama mitra, kode billing), dan filter status pembayaran maupun tipe seleksi.
+
+- **Endpoint**: `GET /api/internal/transactions`
+- **Middleware / Akses**: `Internal Only`
+- **Params**:
+  - `page?: number` (default: `1`)
+  - `pageSize?: number` (default: `10`)
+  - `search?: string` (pencarian nomor transaksi, nama mitra, email, atau kode billing)
+  - `transactionStatus?: TransactionStatus` (`"paid"` | `"expired"` | `"failed"` | `"refunded"`)
+  - `orderStatus?: OrderStatus` (`"pending_payment"` | `"paid"` | `"processing"` | `"pending_review"` | `"ready"` | `"rejected"`)
+  - `selectionType?: "catalog" | "upload_aoi" | "draw_aoi"`
+  - `startDate?: string` (ISO format, filter rentang tanggal mulai)
+  - `endDate?: string` (ISO format, filter rentang tanggal selesai)
+- **Response**:
+
+```typescript
+type InternalTransactionItem = {
+  id: string; // ID transaksi internal
+  orderId: string; // ID order
+  transactionNumber: string; // Nomor transaksi unik (e.g. "TRX-2026-00123")
+  orderNumber?: string; // Nomor order permohonan (e.g. "ORD-2026-00192")
+  billingCode: string; // Kode Billing Simponi / PNBP ATR/BPN
+  paymentMethod: string; // Metode pembayaran (e.g. "QRIS", "Virtual Account Mandiri")
+  transactionStatus: TransactionStatus; // "paid" | "expired" | "failed" | "refunded"
+  orderStatus: OrderStatus; // "pending_payment" | "paid" | "processing" | "pending_review" | "ready" | "rejected"
+  selectionType: "catalog" | "upload_aoi" | "draw_aoi";
+  totalAmount: number; // Total nominal tagihan (IDR)
+  mitra: {
+    id: string;
+    name: string;
+    email: string;
+    agencyOrCompany?: string;
+  };
+  createdAt: string; // ISO 8601 Timestamp
+  paidAt?: string; // ISO 8601 Timestamp saat pembayaran terkonfirmasi
+  expiredAt?: string; // ISO 8601 Timestamp masa berlaku layanan spasial
+  billingExpiredAt?: string; // ISO 8601 Timestamp batas waktu pembayaran billing
+  itemsCount: number; // Jumlah layer IGT dalam transaksi
+  items: Array<{
+    id: string;
+    sourceLayerId: string;
+    sourceLayerTitle: string;
+    spatialBasis: "bidang" | "kawasan";
+    snapshotFeaturesCount: number;
+    snapshotAreaHa?: number;
+    unitPrice: number;
+    subtotalPrice: number;
+    provisionStatus: OrderStatus;
+  }>;
+};
+
+type InternalTransactionListResponse = {
+  items: InternalTransactionItem[];
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+};
+```
+
+## Detail Transaksi Internal
+
+Mengambil detail lengkap transaksi per id termasuk data layer spasial dan informasi mitra.
+
+- **Endpoint**: `GET /api/internal/transactions/{id}`
+- **Middleware / Akses**: `Internal Only`
+- **Response**: `InternalTransactionItem`
 
 ---
 
