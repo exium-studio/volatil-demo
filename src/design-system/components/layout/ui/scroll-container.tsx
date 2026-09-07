@@ -4,6 +4,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type {
   HScrollContainerProps,
+  ScrollButtonProps,
   VScrollContainerProps,
 } from "@/design-system/components/layout/types/scroll-container.type";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -97,41 +98,27 @@ export const VScrollContainer = forwardRef<
   return (
     <Box position={"relative"} h={"full"} w={"full"} role={"group"}>
       {showScrollButtons && showUp && (
-        <Box
+        <ScrollButton
+          direction={"up"}
           position={"absolute"}
           top={2}
           left={"50%"}
           transform={"translateX(-50%)"}
           zIndex={2}
-        >
-          <IconButton
-            size={"xs"}
-            variant={"frosted"}
-            rounded={"full"}
-            onClick={() => scroll("up")}
-          >
-            <AppIcon icon={ChevronUp} />
-          </IconButton>
-        </Box>
+          onClick={() => scroll("up")}
+        />
       )}
 
       {showScrollButtons && showDown && (
-        <Box
+        <ScrollButton
+          direction={"down"}
           position={"absolute"}
           bottom={2}
           left={"50%"}
           transform={"translateX(-50%)"}
           zIndex={2}
-        >
-          <IconButton
-            size={"xs"}
-            variant={"frosted"}
-            rounded={"full"}
-            onClick={() => scroll("down")}
-          >
-            <AppIcon icon={ChevronDown} />
-          </IconButton>
-        </Box>
+          onClick={() => scroll("down")}
+        />
       )}
 
       <VStack
@@ -281,41 +268,27 @@ export const HScrollContainer = forwardRef<
   return (
     <Box position={"relative"} w={"full"} role={"group"}>
       {showScrollButtons && showLeft && (
-        <Box
+        <ScrollButton
+          direction={"left"}
           position={"absolute"}
           left={2}
           top={"50%"}
           transform={"translateY(-50%)"}
           zIndex={2}
-        >
-          <IconButton
-            size={"xs"}
-            variant={"frosted"}
-            rounded={"full"}
-            onClick={() => scroll("left")}
-          >
-            <AppIcon icon={ChevronLeft} />
-          </IconButton>
-        </Box>
+          onClick={() => scroll("left")}
+        />
       )}
 
       {showScrollButtons && showRight && (
-        <Box
+        <ScrollButton
+          direction={"right"}
           position={"absolute"}
           right={2}
           top={"50%"}
           transform={"translateY(-50%)"}
           zIndex={2}
-        >
-          <IconButton
-            size={"xs"}
-            variant={"frosted"}
-            rounded={"full"}
-            onClick={() => scroll("right")}
-          >
-            <AppIcon icon={ChevronRight} />
-          </IconButton>
-        </Box>
+          onClick={() => scroll("right")}
+        />
       )}
 
       <HStack
@@ -341,3 +314,31 @@ export const HScrollContainer = forwardRef<
     </Box>
   );
 });
+
+const DIRECTION_ICON_MAP = {
+  left: ChevronLeft,
+  right: ChevronRight,
+  up: ChevronUp,
+  down: ChevronDown,
+} as const;
+
+export const ScrollButton = (props: ScrollButtonProps) => {
+  const { direction, ...restProps } = props;
+
+  const IconComponent = DIRECTION_ICON_MAP[direction];
+
+  return (
+    <IconButton
+      size={"xs"}
+      variant={"frosted"}
+      rounded={"full"}
+      aria-label={`Scroll ${direction}`}
+      border={"1px solid"}
+      borderColor={"border.subtle"}
+      shadow={"sm"}
+      {...restProps}
+    >
+      <AppIcon icon={IconComponent} />
+    </IconButton>
+  );
+};

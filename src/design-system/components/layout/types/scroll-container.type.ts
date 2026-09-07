@@ -15,3 +15,11 @@ export type HScrollContainerProps = StackProps & {
   showScrollButtons?: boolean;
   enableScroll?: boolean;
 };
+
+import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
+
+export type ScrollDirection = "left" | "right" | "up" | "down";
+
+export type ScrollButtonProps = Omit<IconButtonProps, "direction" | "aria-label"> & {
+  direction: ScrollDirection;
+};
