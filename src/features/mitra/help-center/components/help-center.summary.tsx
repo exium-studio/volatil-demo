@@ -2,7 +2,11 @@
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useHelpCenterStatisticsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
 import type { HelpCenterSummaryProps } from "@/features/mitra/help-center/types/help-center.type";
@@ -46,37 +50,47 @@ export const HelpCenterSummary = memo((props: HelpCenterSummaryProps) => {
   ];
 
   return (
-    <HStack wrap={"wrap"} gap={"md"} w={"full"} p={"md"}>
-      {summaryItems.map((item) => {
-        return (
-          <Box key={item.id} flex={"1 1 240px"} bg={"bg.body"}>
-            <HStack align={"center"} gap={"sm"} w={"full"}>
-              <HStack gap={2} align={"center"}>
-                <Box
-                  p={1.5}
-                  rounded={"full"}
-                  bg={`${item.colorPalette}.subtle`}
-                  color={`${item.colorPalette}.fg`}
-                  display={"flex"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
-                >
-                  <AppIcon icon={item.icon} size={"xs"} />
-                </Box>
+    <Container.Root withContext={true}>
+      <Container.Body p={0}>
+        <HeaderContainer>
+          <Heading>{"Ringkasan Laporan"}</Heading>
+        </HeaderContainer>
 
-                <P fontWeight={"medium"} color={"fg.muted"}>
-                  {item.label}:
-                </P>
-              </HStack>
+        <Separator borderColor={"bg.canvas"} />
 
-              <HStack gap={1} align={"baseline"}>
-                <P fontWeight={"semibold"}>{String(item.count)}</P>
-                <P color={"fg.muted"}>{item.unit}</P>
-              </HStack>
-            </HStack>
-          </Box>
-        );
-      })}
-    </HStack>
+        <HStack wrap={"wrap"} gap={"md"} w={"full"} p={"md"}>
+          {summaryItems.map((item) => {
+            return (
+              <Box key={item.id} flex={"1 1 240px"} bg={"bg.body"}>
+                <HStack align={"center"} gap={"sm"} w={"full"}>
+                  <HStack gap={2} align={"center"}>
+                    <Box
+                      p={1.5}
+                      rounded={"full"}
+                      bg={`${item.colorPalette}.subtle`}
+                      color={`${item.colorPalette}.fg`}
+                      display={"flex"}
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                    >
+                      <AppIcon icon={item.icon} size={"xs"} />
+                    </Box>
+
+                    <P fontWeight={"medium"} color={"fg.muted"}>
+                      {item.label}:
+                    </P>
+                  </HStack>
+
+                  <HStack gap={1} align={"baseline"}>
+                    <P fontWeight={"semibold"}>{String(item.count)}</P>
+                    <P color={"fg.muted"}>{item.unit}</P>
+                  </HStack>
+                </HStack>
+              </Box>
+            );
+          })}
+        </HStack>
+      </Container.Body>
+    </Container.Root>
   );
 });

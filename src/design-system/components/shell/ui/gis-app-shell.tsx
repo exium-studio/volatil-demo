@@ -381,6 +381,9 @@ const Content = () => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
   const { pathname } = useLocation();
+  const userSession = getUserSession();
+  const isInternal =
+    userSession?.role === "internal" || pathname.startsWith("/internal");
 
   // Derived Values — Build layer config from fetched layer list
   const { data: fetchedLayers } = useQuery({
@@ -476,6 +479,7 @@ const Content = () => {
         w={"full"}
         minH={"300px"}
         bg={"bg.canvas"}
+        // bg={"bg.body"}
         shadow={"md"}
         pointerEvents={"auto"}
       >
@@ -497,8 +501,7 @@ const Content = () => {
           layers={mapLayers}
           cqlFilter={cqlFilter}
           showIgtLayerSelect={
-            pathname.startsWith("/mitra/data-request") ||
-            pathname.startsWith("/internal")
+            isInternal || pathname.startsWith("/mitra/data-request")
           }
           onDrawFinish={(feature, originalPoints) => {
             console.log("draw finished", { feature, originalPoints });

@@ -7,7 +7,7 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
@@ -74,7 +74,7 @@ export const InternalOrderReviewLayerDetailPage = () => {
   };
 
   return (
-    <PanelContentContainer h={"auto"}>
+    <AppContentContainer h={"auto"}>
       <VStack flex={1} w={"full"} align={"stretch"} gap={0}>
         {/* Header Bar */}
         <HStack
@@ -142,6 +142,6 @@ export const InternalOrderReviewLayerDetailPage = () => {
           )}
         </VStack>
       </VStack>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 };

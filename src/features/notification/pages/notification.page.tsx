@@ -4,7 +4,7 @@ import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -64,7 +64,7 @@ export const NotificationPage = () => {
   );
 
   return (
-    <PanelContentContainer overflowY={"auto"}>
+    <AppContentContainer overflowY={"auto"}>
       <Container.Root flex={1} overflowY={"auto"} withContext={true}>
         <Container.Body flex={1} overflowY={"auto"}>
           <NotificationHeader />
@@ -86,7 +86,7 @@ export const NotificationPage = () => {
           />
         </Container.Body>
       </Container.Root>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 };
 

@@ -8,8 +8,9 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box, Circle } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -83,18 +84,16 @@ export const HelpCenterDetailPage = () => {
 
   if (isLoading) {
     return (
-      <PanelContentContainer>
-        <Skeleton h={"80px"} w={"full"} />
-        <Skeleton h={"260px"} w={"full"} />
-        <Skeleton h={"300px"} w={"full"} />
-      </PanelContentContainer>
+      <AppContentContainer>
+        <Skeleton w={"full"} p={"md"} />
+      </AppContentContainer>
     );
   }
 
   if (!ticket) {
     return (
-      <PanelContentContainer>
-        <Container.Root withContext={true}>
+      <AppContentContainer h={"auto"}>
+        <Container.Root withContext={true} flex={1}>
           <Container.Body p={"lg"} align={"center"}>
             <P fontSize={"lg"} fontWeight={"semibold"} mb={2}>
               {"Laporan Tidak Ditemukan"}
@@ -108,7 +107,7 @@ export const HelpCenterDetailPage = () => {
             </Button>
           </Container.Body>
         </Container.Root>
-      </PanelContentContainer>
+      </AppContentContainer>
     );
   }
 
@@ -116,55 +115,59 @@ export const HelpCenterDetailPage = () => {
   const reporterEmail = ticket.user?.email ?? "?";
 
   return (
-    <PanelContentContainer overflowY={"auto"} position={"relative"}>
+    <AppContentContainer flex={1} overflowY={"auto"} position={"relative"}>
       <TopBarLoader isFetching={isFetching} />
 
-      {/* Header container */}
-      <Container.Root withContext={true}>
-        <Container.Body>
-          <VStack w={"full"}>
-            <HStack gap={"md"} align={"center"} p={"md"}>
-              <BackButton />
+      <Container.Root withContext={true} flex={1} overflowY={"auto"}>
+        <Container.Body overflowY={"auto"}>
+          {/* Header Bar */}
+          <HeaderContainer px={"xs"}>
+            <HStack
+              justify={"space-between"}
+              align={"center"}
+              w={"full"}
+              wrap={"wrap"}
+              gap={"sm"}
+            >
+              <HStack gap={3} align={"center"}>
+                <BackButton />
 
-              <VStack align={"start"}>
-                <HStack gap={2} align={"center"}>
-                  <Heading>{ticket.title}</Heading>
+                <VStack align={"start"} gap={"2xs"}>
+                  <HStack gap={2} align={"center"}>
+                    <Heading>{ticket.title}</Heading>
 
-                  <Badge colorPalette={statusConfig.color} variant={"subtle"}>
-                    {statusConfig.label}
-                  </Badge>
-
-                  {ticket.priority && (
-                    <Badge variant={"outline"} colorPalette={"gray"}>
-                      {`Prioritas: ${ticket.priority.toUpperCase()}`}
+                    <Badge colorPalette={statusConfig.color} variant={"subtle"}>
+                      {statusConfig.label}
                     </Badge>
-                  )}
-                </HStack>
 
-                <P fontSize={"sm"} color={"fg.subtle"}>
-                  {[
-                    `ID Laporan: #${ticket.id}`,
-                    ticket.orderNumber || ticket.transactionId
-                      ? `Transaksi: ${ticket.orderNumber ?? ticket.transactionId}`
-                      : null,
-                  ]
-                    .filter(Boolean)
-                    .join(" • ")}
-                </P>
-              </VStack>
-            </HStack>
+                    {ticket.priority && (
+                      <Badge variant={"outline"} colorPalette={"gray"}>
+                        {`Prioritas: ${ticket.priority.toUpperCase()}`}
+                      </Badge>
+                    )}
+                  </HStack>
 
-            {ticket.status !== "resolved" && ticket.status !== "rejected" && (
-              <>
-                <Separator borderColor={"bg.canvas"} />
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {[
+                      `ID Laporan: #${ticket.id}`,
+                      ticket.orderNumber || ticket.transactionId
+                        ? `Transaksi: ${ticket.orderNumber ?? ticket.transactionId}`
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" • ")}
+                  </P>
+                </VStack>
+              </HStack>
 
-                <HStack align={"center"} gap={2} p={"md"}>
+              {ticket.status !== "resolved" && ticket.status !== "rejected" && (
+                <HStack align={"center"} gap={2}>
                   {isInternalAdmin && (
                     <HelpCenterModalResolveRejectTrigger
                       ticketId={ticket.id}
                       actionType={"reject"}
                     >
-                      <Button colorPalette={"red"} variant={"outline"} flex={1}>
+                      <Button colorPalette={"red"} variant={"outline"}>
                         <AppIcon icon={XCircleIcon} />
                         {"Tolak Laporan"}
                       </Button>
@@ -176,11 +179,7 @@ export const HelpCenterDetailPage = () => {
                       ticketId={ticket.id}
                       actionType={"resolve"}
                     >
-                      <Button
-                        colorPalette={"green"}
-                        variant={"outline"}
-                        flex={1}
-                      >
+                      <Button colorPalette={"green"} variant={"outline"}>
                         <AppIcon icon={CheckCircleIcon} />
                         {"Selesaikan Laporan"}
                       </Button>
@@ -188,22 +187,20 @@ export const HelpCenterDetailPage = () => {
                   )}
 
                   <HelpCenterModalReplyTrigger ticketId={ticket.id}>
-                    <Button primary={true} flex={1}>
+                    <Button primary={true}>
                       <AppIcon icon={MessageSquarePlusIcon} />
                       {"Balas Laporan"}
                     </Button>
                   </HelpCenterModalReplyTrigger>
                 </HStack>
-              </>
-            )}
-          </VStack>
-        </Container.Body>
-      </Container.Root>
+              )}
+            </HStack>
+          </HeaderContainer>
 
-      {/* Original issue content - from Mitra */}
-      <Container.Root withContext={true}>
-        <Container.Body>
-          <VStack>
+          <Separator borderColor={"bg.canvas"} />
+
+          {/* Original issue content - from Reporter */}
+          <VStack align={"stretch"} gap={0} w={"full"}>
             <HStack justify={"space-between"} align={"center"} p={"md"}>
               <HStack gap={"md"} align={"center"}>
                 <Circle
@@ -251,13 +248,11 @@ export const HelpCenterDetailPage = () => {
               )}
             </VStack>
           </VStack>
-        </Container.Body>
-      </Container.Root>
 
-      {/* Replies */}
-      <Container.Root withContext={true}>
-        <Container.Body>
-          <VStack>
+          <Separator borderColor={"bg.canvas"} />
+
+          {/* Replies */}
+          <VStack align={"stretch"} gap={0} w={"full"}>
             <HStack p={"md"} justify={"space-between"} align={"center"}>
               <P fontSize={"md"} fontWeight={"semibold"}>
                 {`Riwayat Tanggapan & Balasan (${replies.length})`}
@@ -360,6 +355,6 @@ export const HelpCenterDetailPage = () => {
           </VStack>
         </Container.Body>
       </Container.Root>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 };

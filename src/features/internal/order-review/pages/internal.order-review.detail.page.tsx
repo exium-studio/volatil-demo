@@ -12,7 +12,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
@@ -62,7 +62,7 @@ export function InternalOrderReviewDetailPage() {
 
   if (isLoading || !order) {
     return (
-      <PanelContentContainer flex={1}>
+      <AppContentContainer flex={1}>
         <Container.Root flex={1}>
           <Container.Body flex={1}>
             <VStack flex={1} gap={"md"} p={"md"}>
@@ -70,12 +70,12 @@ export function InternalOrderReviewDetailPage() {
             </VStack>
           </Container.Body>
         </Container.Root>
-      </PanelContentContainer>
+      </AppContentContainer>
     );
   }
 
   return (
-    <PanelContentContainer>
+    <AppContentContainer>
       <Container.Root withContext={true} flex={1}>
         <Container.Body overflowY={"auto"}>
           {/* Header */}
@@ -189,7 +189,7 @@ export function InternalOrderReviewDetailPage() {
           />
         </Container.Body>
       </Container.Root>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 }
 

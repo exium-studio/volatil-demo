@@ -11,7 +11,9 @@ export type SplitterRootProps = ChakraSplitterRootProps & {};
 
 export type SplitterPanelProps = ChakraSplitterPanelProps & {};
 
-export type SplitterResizeTriggerProps = ChakraSplitterResizeTriggerProps & {};
+export type SplitterResizeTriggerProps = ChakraSplitterResizeTriggerProps & {
+  transparentTrigger?: boolean;
+};
 
 export type SplitterResizeTriggerIndicatorProps =
   ChakraSplitterResizeTriggerIndicatorProps & {};

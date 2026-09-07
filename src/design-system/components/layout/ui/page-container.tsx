@@ -12,7 +12,7 @@ export const AppPageContainer = (props: PageContainerProps) => {
   return <VStack h={"100dvh"} overflowY={"auto"} pos={"relative"} {...props} />;
 };
 
-export const PanelContentContainer = (props: StackProps) => {
+export const AppContentContainer = (props: StackProps) => {
   return (
     <VStack
       flex={1}

@@ -8,6 +8,11 @@ import { PATH_CONFIG } from "@/shared/constants/paths";
 
 export const IgtLogo = (props: ImageProps) => {
   return (
-    <Image src={`${PATH_CONFIG.images}/atr_logo.png`} boxSize={12} {...props} />
+    <Image
+      src={`${PATH_CONFIG.images}/atr_logo.png`}
+      boxSize={12}
+      withSkeleton={false}
+      {...props}
+    />
   );
 };

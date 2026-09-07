@@ -30,6 +30,7 @@ const ImageImpl = (props: ImageProps) => {
     srcSet,
     sizes,
     fallback,
+    withSkeleton = true,
     // AspectRatio props
     aspectRatio,
     ...aspectRatioProps
@@ -62,7 +63,9 @@ const ImageImpl = (props: ImageProps) => {
   return (
     <AspectRatio {...aspectRatioProps} ratio={aspectRatio} overflow={"clip"}>
       <Box position={"relative"} w={"100%"} h={"100%"}>
-        {status === "loading" && <Skeleton position={"absolute"} inset={0} />}
+        {withSkeleton && status === "loading" && (
+          <Skeleton position={"absolute"} inset={0} />
+        )}
 
         <ChakraImage
           src={src}
@@ -78,7 +81,7 @@ const ImageImpl = (props: ImageProps) => {
           sizes={sizes}
           onLoad={handleLoad}
           onError={handleError}
-          display={status === "loading" ? "none" : undefined}
+          display={withSkeleton && status === "loading" ? "none" : undefined}
         />
       </Box>
     </AspectRatio>

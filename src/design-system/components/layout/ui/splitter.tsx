@@ -36,7 +36,7 @@ const SplitterResizeTrigger = forwardRef<
   HTMLButtonElement,
   SplitterResizeTriggerProps
 >((props, ref) => {
-  const { ...restProps } = props;
+  const { transparentTrigger = false, ...restProps } = props;
 
   return (
     <ChakraSplitter.Context>
@@ -59,7 +59,7 @@ const SplitterResizeTrigger = forwardRef<
               minH={isVertical ? "8px" : "full"}
               h={isVertical ? "8px" : "full"}
               _hover={{
-                bg: "border",
+                bg: transparentTrigger ? "transparent" : "border",
               }}
               onDoubleClick={() => {
                 context.resetSizes();

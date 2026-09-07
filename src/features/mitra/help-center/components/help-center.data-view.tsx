@@ -48,6 +48,7 @@ import { startTransition, useMemo, useState } from "react";
 
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
+import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 
 const STATUS_CONFIG_MAP: Record<
   HelpCenterStatus,
@@ -259,15 +260,15 @@ export const HelpCenterDataView = () => {
   const isInternalAdmin = currentUser?.role === "internal";
 
   return (
-    <Container.Root withContext={true}>
+    <Container.Root withContext={true} flex={1}>
       <Container.Body overflowY={"auto"}>
-        <VStack align={"start"} gap={1} p={"md"}>
+        <HStack align={"center"} gap={"sm"} p={"md"}>
           <Heading>{"Daftar Laporan Kendala"}</Heading>
 
-          <P fontSize={"sm"} color={"fg.subtle"}>
+          <InfoTip>
             {"Pantau perkembangan status tiket kendala dan riwayat balasan."}
-          </P>
-        </VStack>
+          </InfoTip>
+        </HStack>
 
         <Separator borderColor={"bg.canvas"} />
 
@@ -314,9 +315,7 @@ export const HelpCenterDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
-          {isLoading && (
-            <Skeleton w={"full"} h={"300px"} p={"md"} roundedTop={0} />
-          )}
+          {isLoading && <Skeleton w={"full"} p={"md"} roundedTop={0} />}
 
           {!isLoading && isEmptyArray(tickets) && (
             <Box py={"xl"} w={"full"} bg={"bg.body"}>

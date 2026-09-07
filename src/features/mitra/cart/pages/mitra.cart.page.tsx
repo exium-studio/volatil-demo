@@ -10,7 +10,7 @@ import {
   useContainerContext,
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -56,7 +56,7 @@ const MitraCartContent = () => {
   );
 
   return (
-    <PanelContentContainer
+    <AppContentContainer
       overflowY={isSmContainer ? "auto" : undefined}
       position={"relative"}
     >
@@ -77,7 +77,7 @@ const MitraCartContent = () => {
           selectedOrderIndex={selectedOrderIndex}
         />
       </HStack>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 };
 

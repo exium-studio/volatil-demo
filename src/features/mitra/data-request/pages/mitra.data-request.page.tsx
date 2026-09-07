@@ -5,7 +5,7 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
@@ -76,7 +76,7 @@ export const MitraDataRequestPage = () => {
       : "catalog";
 
   return (
-    <PanelContentContainer overflowY={"auto"}>
+    <AppContentContainer overflowY={"auto"}>
       <Container.Root flex={1} overflowY={"auto"}>
         <Container.Body flex={1} overflowY={"auto"}>
           <HStack wrap={"wrap"} justify={"space-between"} align={"center"}>
@@ -137,6 +137,6 @@ export const MitraDataRequestPage = () => {
           </Tabs.Root>
         </Container.Body>
       </Container.Root>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 };

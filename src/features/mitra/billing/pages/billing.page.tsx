@@ -8,7 +8,7 @@ import { focusAlert } from "@/design-system/components/focus-alert/utils/focus-a
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { List } from "@/design-system/components/typography/ui/list";
@@ -21,11 +21,11 @@ import { useCheckOrderPaymentStatus } from "@/features/mitra/cart/hooks/use-mitr
 
 export const BillingPage = () => {
   return (
-    <PanelContentContainer>
+    <AppContentContainer>
       <BillingPageBillingCode />
 
       <BillingPagePaymentMethods />
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 };
 

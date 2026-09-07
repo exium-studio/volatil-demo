@@ -5,7 +5,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import type { WelcomeStateProps } from "@/design-system/components/feedback/types/state.welcome.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -97,7 +97,7 @@ export const WelcomeState = (props: WelcomeStateProps) => {
   const displayNavItems = useMemo(() => getDisplayNavItems(isMitra), [isMitra]);
 
   return (
-    <PanelContentContainer
+    <AppContentContainer
       align={"center"}
       justify={"center"}
       p={"xl"}
@@ -157,6 +157,6 @@ export const WelcomeState = (props: WelcomeStateProps) => {
           {"Pilih menu pada bilah samping untuk mulai bernavigasi."}
         </P>
       </VStack>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 };

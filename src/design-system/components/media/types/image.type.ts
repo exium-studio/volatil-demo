@@ -6,4 +6,5 @@ import type { ReactNode } from "react";
 export type ImageProps = Omit<ChakraImageProps, "aspectRatio"> & {
   fallback?: ReactNode;
   aspectRatio?: number;
+  withSkeleton?: boolean;
 };

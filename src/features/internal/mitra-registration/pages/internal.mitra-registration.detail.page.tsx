@@ -11,7 +11,7 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
@@ -153,20 +153,19 @@ export function InternalMitraRegistrationDetailPage() {
 
   if (isLoading) {
     return (
-      <PanelContentContainer>
-        <Skeleton h={"200px"} w={"full"} />
-        <Skeleton w={"full"} />
-      </PanelContentContainer>
+      <AppContentContainer>
+        <Skeleton w={"full"} p={"md"} />
+      </AppContentContainer>
     );
   }
 
   if (!registration) {
     return (
-      <PanelContentContainer h={"auto"}>
+      <AppContentContainer h={"auto"}>
         <Center flex={1} p={"xl"}>
           <P color={"fg.muted"}>{"Data permohonan mitra tidak ditemukan."}</P>
         </Center>
-      </PanelContentContainer>
+      </AppContentContainer>
     );
   }
 
@@ -174,7 +173,7 @@ export function InternalMitraRegistrationDetailPage() {
     STATUS_CONFIG[registration.status] || STATUS_CONFIG.pending_verification;
 
   return (
-    <PanelContentContainer flex={1} position={"relative"} overflowY={"auto"}>
+    <AppContentContainer flex={1} position={"relative"} overflowY={"auto"}>
       <Container.Root withContext flex={1} overflowY={"auto"}>
         <Container.Body overflowY={"auto"}>
           {/* Header Bar */}
@@ -545,6 +544,6 @@ export function InternalMitraRegistrationDetailPage() {
           </VStack>
         </Container.Body>
       </Container.Root>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 }

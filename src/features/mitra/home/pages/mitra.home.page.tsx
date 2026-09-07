@@ -2,7 +2,7 @@
 
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { PanelContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { MitraHomeCartSummary } from "@/features/mitra/home/components/mitra.home.cart-summary";
 import { MitraHomeDataAvailability } from "@/features/mitra/home/components/mitra.home.data-availability";
 import { MitraHomeDataSummary } from "@/features/mitra/home/components/mitra.home.data-summary";
@@ -16,7 +16,7 @@ export const MitraHomePage = () => {
 
   if (isLoading) {
     return (
-      <PanelContentContainer h={"auto"}>
+      <AppContentContainer h={"auto"}>
         <Skeleton h={"140px"} w={"full"} />
         <Skeleton h={"233px"} w={"full"} />
 
@@ -25,15 +25,12 @@ export const MitraHomePage = () => {
           <Skeleton h={"353px"} flex={"1 1 500px"} />
           <Skeleton h={"353px"} flex={"1 1 100%"} />
         </HStack>
-      </PanelContentContainer>
+      </AppContentContainer>
     );
   }
 
   return (
-    <PanelContentContainer
-      h={"auto"}
-      position={"relative"}
-    >
+    <AppContentContainer h={"auto"} position={"relative"}>
       <MitraHomeDataAvailability />
 
       <MitraHomeDataSummary />
@@ -43,7 +40,7 @@ export const MitraHomePage = () => {
         <MitraHomeFinancialFlow flex={"1 1 500px"} />
         <MitraHomeLastTransaction flex={"1 1 100%"} />
       </HStack>
-    </PanelContentContainer>
+    </AppContentContainer>
   );
 };
 
