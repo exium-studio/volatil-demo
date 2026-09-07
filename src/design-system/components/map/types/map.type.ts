@@ -183,6 +183,7 @@ export type MapLayerState = {
   toggleLayerId: (layerId: string) => void;
   setLayerEnabled: (layerId: string, enabled: boolean) => void;
   setLayerOpacity: (layerId: string, opacity: number) => void;
+  setAllLayersEnabled: (layerIds: string[], enabled: boolean) => void;
   setCustomLayerConfig: (
     layerId: string,
     config: Partial<WmsRasterLayerConfig> | null,

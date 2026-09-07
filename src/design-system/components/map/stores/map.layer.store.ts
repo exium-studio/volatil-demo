@@ -37,6 +37,14 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
         [layerId]: opacity,
       },
     })),
+  setAllLayersEnabled: (layerIds, enabled) =>
+    set((state) => {
+      const next = { ...state.enabledLayerIds };
+      for (const id of layerIds) {
+        next[id] = enabled;
+      }
+      return { enabledLayerIds: next };
+    }),
   setCustomLayerConfig: (layerId, config) =>
     set((state) => {
       const next = { ...state.customLayerConfigs };

@@ -30,12 +30,17 @@ import {
   FocusIcon,
   LayersIcon,
 } from "lucide-react";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 export const MapIgtLayerSelect = memo(() => {
   // Stores
-  const { enabledLayerIds, layerOpacities, toggleLayerId, setLayerOpacity } =
-    useMapLayerStore();
+  const {
+    enabledLayerIds,
+    layerOpacities,
+    toggleLayerId,
+    setLayerOpacity,
+    setAllLayersEnabled,
+  } = useMapLayerStore();
 
   // Queries — list of all active IGT layers
   const { data: layersData, isLoading } = useQuery({
@@ -53,6 +58,19 @@ export const MapIgtLayerSelect = memo(() => {
   const enabledCount = useMemo(() => {
     return activeLayers.filter((l) => Boolean(enabledLayerIds[l.id])).length;
   }, [activeLayers, enabledLayerIds]);
+
+  const isAllEnabled = useMemo(() => {
+    return activeLayers.length > 0 && enabledCount === activeLayers.length;
+  }, [activeLayers.length, enabledCount]);
+
+  // Handlers
+  const handleToggleAll = useCallback(
+    (checked: boolean) => {
+      const layerIds = activeLayers.map((l) => l.id);
+      setAllLayersEnabled(layerIds, checked);
+    },
+    [activeLayers, setAllLayersEnabled],
+  );
 
   return (
     <Popover.Root
@@ -88,9 +106,32 @@ export const MapIgtLayerSelect = memo(() => {
           alignItems={"center"}
           justifyContent={"space-between"}
         >
-          <P fontWeight={"medium"}>{"Toggle Layer IGT"}</P>
+          <HStack gap={"xs"} align={"center"}>
+            <P fontWeight={"medium"}>{"Toggle Layer IGT"}</P>
 
-          <Badge colorPalette={"blue"}>{enabledCount} aktif</Badge>
+            <Badge colorPalette={"blue"}>{enabledCount} aktif</Badge>
+          </HStack>
+
+          {activeLayers.length > 0 && (
+            <HStack
+              align={"center"}
+              gap={"sm"}
+              cursor={"pointer"}
+              onClick={() => {
+                handleToggleAll(!isAllEnabled);
+              }}
+            >
+              <P fontSize={"sm"} color={"fg.muted"} userSelect={"none"}>
+                {"Tampilkan semua"}
+              </P>
+
+              <Switch
+                size={"sm"}
+                checked={isAllEnabled}
+                pointerEvents={"none"}
+              />
+            </HStack>
+          )}
         </Popover.Header>
 
         <Popover.Body p={2} maxH={"500px"} overflowY={"auto"}>
