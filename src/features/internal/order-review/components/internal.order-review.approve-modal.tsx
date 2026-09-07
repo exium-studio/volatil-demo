@@ -163,7 +163,9 @@ const InternalOrderReviewApproveModalContent = (
                   );
 
                 const layerName =
-                  item.sourceLayerTitle || item.sourceLayerId || `Layer #${index + 1}`;
+                  item.sourceLayerTitle ||
+                  item.sourceLayerId ||
+                  `Layer #${index + 1}`;
 
                 return (
                   <Fieldset
