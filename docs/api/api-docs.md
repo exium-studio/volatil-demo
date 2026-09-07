@@ -346,23 +346,31 @@ type MitraIgtLayersResponse = {
 
 - `GET /api/mitra/data-request/filter-options/basis` — **Middleware / Akses**: `Mitra Only`
 - `GET /api/mitra/data-request/filter-options/tema` — **Middleware / Akses**: `Mitra Only`
-- `GET /api/igt/filter-options/kecamatan?kabupatenId={id}` — **Middleware / Akses**: `Mitra Only`
-- `GET /api/igt/filter-options/kelurahan?kecamatanId={id}` — **Middleware / Akses**: `Mitra Only`
+- **Hierarchical Wilayah Indonesia API**:
+  - `Provinsi`: `provinces.json` (via API Wilayah Indonesia / EMSIFA static API with caching)
+  - `Kabupaten`: `regencies/{provinceId}.json`
+  - `Kecamatan`: `districts/{regencyId}.json`
+  - `Kelurahan`: `villages/{districtId}.json`
 
 ### WFS Batas Wilayah Administrasi (AOI Resolver)
 
 Digunakan untuk mengambil GeoJSON polygon geometri batas wilayah administrasi terdalam yang dipilih user (Provinsi / Kabupaten / Kecamatan / Kelurahan) via GeoServer WFS Proxy:
 
 - **Endpoint**: `GET /api/proxy/wfs`
+- **Hierarchical Configuration Layer & Attribute Key**:
+  - `provinsi`: layer `administrative_workspace:BATAS_PROVINSI`, attribute filter: `WADMPR`
+  - `kabupaten`: layer `administrative_workspace:BATAS_KABUPATEN`, attribute filter: `WADMKK`
+  - `kecamatan`: layer `administrative_workspace:BATAS_KECAMATAN`, attribute filter: `WADMKC`
+  - `kelurahan`: layer `administrative_workspace:BATAS_DESA_KELURAHAN`, attribute filter: `WADMKD`
 - **Params**:
-  - `layerId`: Nama layer batas administrasi (default: `administrative_workspace:BATAS_ADMINISTRASI` atau layer per level, e.g. `administrative_workspace:BATAS_PROVINSI`, `BATAS_KABUPATEN`, `BATAS_KECAMATAN`, `BATAS_DESA_KELURAHAN`)
+  - `layerId`: Nama layer batas administrasi sesuai level
   - `service`: `WFS`
   - `version`: `2.0.0`
   - `request`: `GetFeature`
   - `outputFormat`: `application/json`
   - `srsName`: `EPSG:4326`
-  - `CQL_FILTER`: Filter nama/kode wilayah terdalam, e.g. `KAB_KOTA = 'BALI'` atau `DESA_KELURAHAN = 'TEMBALANG'`
-- **Output**: `GeoJSON.FeatureCollection` (Polygon / MultiPolygon) yang di-resolve oleh FE menjadi single `aoiPolygon`.
+  - `cql_filter`: Filter nama/kode wilayah terdalam, e.g. `WADMKD ILIKE '%TEMBALANG%'` atau `WADMPR ILIKE '%BALI%'`
+- **Output**: `GeoJSON.FeatureCollection` (Polygon / MultiPolygon) yang di-resolve oleh FE menjadi single `aoiPolygon` (melalui Turf.js unary union jika terdapat multi-features/islands).
 
 ## Kebijakan Tarif & Batas Pembelian (Pricing & Policies)
 
@@ -433,6 +441,13 @@ export type OrderStatus =
 - **Payload**:
 
 ```typescript
+type CartOrderItemPayload = {
+  sourceLayerId: string;
+  cqlFilter?: string;
+  wfsUrl?: string;
+  wmsUrl?: string;
+};
+
 type AddToCartOrderRequest = {
   selectionType: "catalog" | "upload_aoi" | "draw_aoi";
   /** AOI Polygon boundary input user (wajib terisi untuk semua metode: Draw, Upload, Wilayah Administrasi/Catalog). Disimpan di DB sebagai referensi permanen provisioning */
@@ -440,10 +455,7 @@ type AddToCartOrderRequest = {
   /** Coverage Polygon hasil clip ke boundary AOI dan unary union (Turf.js). Menjadi basis perhitungan luas kawasan (ha) oleh BE */
   coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   /** Snapshot list layer IGT aktif yang dimasukkan ke keranjang */
-  items: Array<{
-    sourceLayerId: string;
-    cqlFilter?: string;
-  }>;
+  items: CartOrderItemPayload[];
   /** @deprecated Tidak lagi digunakan sebagai filter utama karena semua metode kini di-resolve langsung ke GeoJSON AOI Polygon di FE. Tetap dipertahankan untuk backward compatibility */
   administrativeFilter?: {
     kodeProvinsi?: string;
