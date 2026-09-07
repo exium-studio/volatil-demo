@@ -131,6 +131,9 @@ export const chakraConfig = defineConfig({
         bodyLight: { value: "#ffffff" },
         bodyDark: { value: "#191a1a" },
 
+        bodyLightAlpha: { value: "rgba(255, 255, 255, 0.8)" },
+        bodyDarkAlpha: { value: "rgba(25, 26, 26, 0.8)" },
+
         frostedLight: { value: "rgba(250, 249, 255, 0.75)" },
         frostedDark: { value: "rgba(40, 40, 40, 0.75)" },
 
@@ -779,6 +782,12 @@ export const chakraConfig = defineConfig({
             value: {
               base: "{colors.bodyLight}",
               _dark: "{colors.bodyDark}",
+            },
+          },
+          bodyAlpha: {
+            value: {
+              base: "{colors.bodyLightAlpha}",
+              _dark: "{colors.bodyDarkAlpha}",
             },
           },
           inverted: {

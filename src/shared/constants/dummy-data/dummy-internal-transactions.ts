@@ -8,7 +8,7 @@ import type {
 export const DUMMY_INTERNAL_TRANSACTION_STATISTICS: InternalTransactionStatistics = {
   activeOrders: 14,
   settledTransactions: 86,
-  netWorth: 184500000,
+  netWorth: 1845000000,
 };
 
 export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
@@ -22,7 +22,7 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     transactionStatus: "paid",
     orderStatus: "ready",
     selectionType: "draw_aoi",
-    totalAmount: 1850000,
+    totalAmount: 235000000,
     mitra: {
       id: "mitra-001",
       name: "PT Agraria Sentosa",
@@ -37,23 +37,23 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     items: [
       {
         id: "item-001",
-        sourceLayerId: "geonode:bidang_tanah_rdtr",
+        sourceLayerId: "testing_workspace:TEST_BIDANG_TANAH",
         sourceLayerTitle: "Bidang Tanah RDTR Perkotaan",
         spatialBasis: "bidang",
-        snapshotFeaturesCount: 24,
+        snapshotFeaturesCount: 1200,
         unitPrice: 50000,
-        subtotalPrice: 1200000,
+        subtotalPrice: 60000000,
         provisionStatus: "ready",
       },
       {
         id: "item-002",
-        sourceLayerId: "geonode:kawasan_lindung_geologi",
+        sourceLayerId: "testing_workspace:TEST_RTRW_BADUNG",
         sourceLayerTitle: "Kawasan Lindung Geologi Nasional",
         spatialBasis: "kawasan",
-        snapshotFeaturesCount: 2,
-        snapshotAreaHa: 13,
-        unitPrice: 50000,
-        subtotalPrice: 650000,
+        snapshotFeaturesCount: 15,
+        snapshotAreaHa: 1166.67,
+        unitPrice: 150000,
+        subtotalPrice: 175000000,
         provisionStatus: "ready",
       },
     ],
@@ -68,7 +68,7 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     transactionStatus: "paid",
     orderStatus: "processing",
     selectionType: "catalog",
-    totalAmount: 950000,
+    totalAmount: 75000000,
     mitra: {
       id: "mitra-002",
       name: "Bappeda Kabupaten Badung",
@@ -83,12 +83,12 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     items: [
       {
         id: "item-003",
-        sourceLayerId: "geonode:zona_nilai_tanah_2026",
+        sourceLayerId: "testing_workspace:TEST_BIDANG_TANAH",
         sourceLayerTitle: "Zona Nilai Tanah (ZNT) 2026",
         spatialBasis: "bidang",
-        snapshotFeaturesCount: 19,
+        snapshotFeaturesCount: 1500,
         unitPrice: 50000,
-        subtotalPrice: 950000,
+        subtotalPrice: 75000000,
         provisionStatus: "processing",
       },
     ],
@@ -103,7 +103,7 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     transactionStatus: "paid",
     orderStatus: "pending_review",
     selectionType: "upload_aoi",
-    totalAmount: 3500000,
+    totalAmount: 225000000,
     mitra: {
       id: "mitra-003",
       name: "CV Geomatika Nusantara",
@@ -118,13 +118,13 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     items: [
       {
         id: "item-004",
-        sourceLayerId: "geonode:peta_tata_ruang_bali",
+        sourceLayerId: "testing_workspace:TEST_RTRW_BADUNG",
         sourceLayerTitle: "RTRW Provinsi Bali 2023-2043",
         spatialBasis: "kawasan",
-        snapshotFeaturesCount: 1,
-        snapshotAreaHa: 70,
-        unitPrice: 50000,
-        subtotalPrice: 3500000,
+        snapshotFeaturesCount: 8,
+        snapshotAreaHa: 1500,
+        unitPrice: 150000,
+        subtotalPrice: 225000000,
         provisionStatus: "pending_review",
       },
     ],
@@ -139,7 +139,7 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     transactionStatus: "expired",
     orderStatus: "pending_payment",
     selectionType: "upload_aoi",
-    totalAmount: 500000,
+    totalAmount: 180000000,
     mitra: {
       id: "mitra-004",
       name: "Universitas Udayana",
@@ -153,13 +153,13 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     items: [
       {
         id: "item-005",
-        sourceLayerId: "geonode:peta_tematik_hutan",
+        sourceLayerId: "testing_workspace:TEST_ZNT_BADUNG",
         sourceLayerTitle: "Kawasan Hutan Produksi Terbatas",
         spatialBasis: "kawasan",
-        snapshotFeaturesCount: 1,
-        snapshotAreaHa: 10,
-        unitPrice: 50000,
-        subtotalPrice: 500000,
+        snapshotFeaturesCount: 4,
+        snapshotAreaHa: 1200,
+        unitPrice: 150000,
+        subtotalPrice: 180000000,
         provisionStatus: "rejected",
       },
     ],
@@ -174,7 +174,7 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     transactionStatus: "refunded",
     orderStatus: "rejected",
     selectionType: "catalog",
-    totalAmount: 1200000,
+    totalAmount: 55000000,
     mitra: {
       id: "mitra-005",
       name: "PT Nusantara Citra Mandiri",
@@ -189,12 +189,12 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     items: [
       {
         id: "item-006",
-        sourceLayerId: "geonode:bidang_tanah_rdtr",
+        sourceLayerId: "testing_workspace:TEST_BIDANG_TANAH",
         sourceLayerTitle: "Bidang Tanah RDTR Perkotaan",
         spatialBasis: "bidang",
-        snapshotFeaturesCount: 24,
+        snapshotFeaturesCount: 1100,
         unitPrice: 50000,
-        subtotalPrice: 1200000,
+        subtotalPrice: 55000000,
         provisionStatus: "rejected",
       },
     ],
