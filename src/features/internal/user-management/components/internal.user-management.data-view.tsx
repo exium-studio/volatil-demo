@@ -197,7 +197,6 @@ export const InternalUserManagementDataView = () => {
     };
   }, [users, preferredTimezone, updateStatusMutation, theme.colorPalette]);
 
-
   return (
     <Container.Root flex={1} withContext={true} position={"relative"}>
       <TopBarLoader isFetching={isFetching} />
@@ -276,7 +275,7 @@ export const InternalUserManagementDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         <VStack flex={1} w={"full"} position={"relative"}>
-          {isLoading && <Skeleton flex={1} w={"full"} rounded={0} />}
+          {isLoading && <Skeleton flex={1} w={"full"} p={"md"} rounded={0} />}
 
           {!isLoading && (
             <>
