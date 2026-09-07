@@ -16,8 +16,8 @@ import type { FocusSelectOption } from "@/design-system/components/input/types/f
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -271,12 +271,7 @@ export const HelpCenterDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <HScrollContainer
-          align={"center"}
-          justify={"space-between"}
-          gap={"sm"}
-          p={"md"}
-        >
+        <ActionHeaderScrollContainer justify={"space-between"}>
           <HStack gap={"sm"}>
             <SearchInput
               placeholder={t["action.search"]()}
@@ -314,7 +309,7 @@ export const HelpCenterDataView = () => {
               </Button>
             </CreateHelpCenterTrigger>
           )}
-        </HScrollContainer>
+        </ActionHeaderScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

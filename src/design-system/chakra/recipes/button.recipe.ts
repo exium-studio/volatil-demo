@@ -26,13 +26,13 @@ export const buttonRecipe = defineRecipe({
       },
 
       frosted: {
-        bg: "an1",
+        bg: "an0",
         backdropFilter: `blur(10px)`,
         _hover: {
-          bg: "an2",
+          bg: "an1",
         },
         _active: {
-          bg: "an3",
+          bg: "an2",
         },
       },
 

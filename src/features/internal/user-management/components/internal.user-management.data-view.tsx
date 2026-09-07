@@ -14,8 +14,8 @@ import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loa
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -222,14 +222,7 @@ export const InternalUserManagementDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Filter Bar */}
-        <HScrollContainer
-          align={"center"}
-          justify={"start"}
-          gap={"sm"}
-          w={"full"}
-          p={"md"}
-          bg={"bg.body"}
-        >
+        <ActionHeaderScrollContainer>
           <SearchInput
             placeholder={t["action.search"]()}
             value={params.search}
@@ -270,7 +263,7 @@ export const InternalUserManagementDataView = () => {
             }
             w={"140px"}
           />
-        </HScrollContainer>
+        </ActionHeaderScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

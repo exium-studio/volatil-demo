@@ -16,8 +16,8 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -245,14 +245,7 @@ export const TransactionHistoryDataView = () => {
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"}>
       {/* Header Controls */}
-      <HScrollContainer
-        align={"center"}
-        justify={"start"}
-        gap={"sm"}
-        w={"full"}
-        p={"md"}
-        bg={"bg.body"}
-      >
+      <ActionHeaderScrollContainer>
         <SearchInput
           value={params.search}
           onValueChange={(val) => {
@@ -280,7 +273,7 @@ export const TransactionHistoryDataView = () => {
             w={"200px"}
           />
         </HStack>
-      </HScrollContainer>
+      </ActionHeaderScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />
 

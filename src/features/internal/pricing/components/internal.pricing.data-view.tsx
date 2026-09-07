@@ -8,8 +8,8 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Container } from "@/design-system/components/layout/ui/container";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
@@ -179,14 +179,7 @@ export const InternalPricingDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Controls */}
-        <HScrollContainer
-          align={"center"}
-          justify={"start"}
-          gap={"sm"}
-          w={"full"}
-          p={"md"}
-          bg={"bg.body"}
-        >
+        <ActionHeaderScrollContainer>
           <SearchInput
             value={params.search}
             onValueChange={(val) => {
@@ -240,7 +233,7 @@ export const InternalPricingDataView = () => {
               {"Kawasan"}
             </Badge>
           </HStack>
-        </HScrollContainer>
+        </ActionHeaderScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

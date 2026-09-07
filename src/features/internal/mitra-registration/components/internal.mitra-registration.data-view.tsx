@@ -13,8 +13,8 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -261,14 +261,7 @@ export const InternalMitraRegistrationDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Filter Bar */}
-        <HScrollContainer
-          align={"center"}
-          justify={"start"}
-          gap={"sm"}
-          w={"full"}
-          p={"md"}
-          bg={"bg.body"}
-        >
+        <ActionHeaderScrollContainer>
           <SearchInput
             placeholder={"Cari instansi, no registrasi, NIB..."}
             value={params.search ?? ""}
@@ -300,7 +293,7 @@ export const InternalMitraRegistrationDataView = () => {
             modalKey={"mitra-reg-status-filter"}
             w={"180px"}
           />
-        </HScrollContainer>
+        </ActionHeaderScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 

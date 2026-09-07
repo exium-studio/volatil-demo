@@ -15,8 +15,8 @@ import { Switch } from "@/design-system/components/input/ui/switch";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { HScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
@@ -408,14 +408,7 @@ export const InternalDataManagementDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <HScrollContainer
-          align={"center"}
-          justify={"start"}
-          gap={"sm"}
-          w={"full"}
-          p={"md"}
-          bg={"bg.body"}
-        >
+        <ActionHeaderScrollContainer>
           <SearchInput
             value={params.search}
             onValueChange={(val) =>
@@ -454,7 +447,7 @@ export const InternalDataManagementDataView = () => {
             }
             w={"150px"}
           />
-        </HScrollContainer>
+        </ActionHeaderScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
 
