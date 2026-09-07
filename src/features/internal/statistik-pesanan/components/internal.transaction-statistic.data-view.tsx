@@ -9,9 +9,12 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -38,7 +41,8 @@ import {
   formatAdaptiveDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { EyeIcon } from "lucide-react";
+import { isEmptyArray } from "@/shared/utils/data/array";
+import { EyeIcon, HistoryIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
@@ -304,9 +308,36 @@ export const InternalTransactionStatisticDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         <VStack flex={1} w={"full"} position={"relative"}>
-          {isLoading && <Skeleton flex={1} w={"full"} p={"md"} rounded={0} />}
-
-          {!isLoading && (
+          {isLoading ? (
+            <Skeleton flex={1} w={"full"} p={"md"} rounded={0} />
+          ) : isEmptyArray(transactions.items) ? (
+            <Box
+              flex={1}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              w={"full"}
+              py={"xl"}
+              bg={"bg.body"}
+            >
+              {debouncedSearch || params.transactionStatus ? (
+                <NoResultState
+                  query={debouncedSearch || undefined}
+                  description={
+                    "Tidak ada transaksi yang sesuai dengan kata kunci atau filter yang Anda pilih."
+                  }
+                />
+              ) : (
+                <NoDataState
+                  icon={HistoryIcon}
+                  title={"Belum Ada Transaksi"}
+                  description={
+                    "Belum ada data riwayat transaksi permohonan dari mitra."
+                  }
+                />
+              )}
+            </Box>
+          ) : (
             <>
               <DataViewTable.Root
                 headers={dataList.headers}
