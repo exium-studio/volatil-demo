@@ -490,13 +490,15 @@ const Content = () => {
 
   // Right Splitter panel — holds MapShell (MapOverlay controls, layer management, draw toolbar)
   const spacerPanel = (
-    <Splitter.Panel key={"spacer"} id={"spacer"} pointerEvents={"none"}>
-      <VStack
-        pos={"relative"}
-        minH={"300px"}
-        boxSize={"full"}
-        pointerEvents={"none"}
-      >
+    <Splitter.Panel
+      key={"spacer"}
+      id={"spacer"}
+      display={"flex"}
+      flexDir={"column"}
+      justifyContent={"end"}
+      pointerEvents={"none"}
+    >
+      <VStack pos={"relative"} minH={"300px"} h={"full"} pointerEvents={"none"}>
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
