@@ -49,14 +49,10 @@ const ROLE_MAP: Record<UserRole, { label: string; color: string }> = {
   mitra: { label: "Mitra", color: "blue" },
 };
 
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { RoleFilterSelect } from "@/features/shared/components/role-filter.select";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 
 export const InternalUserManagementDataView = () => {
-  // Stores
-  const { theme } = useThemeStore();
-
   // States — Centralized query/action parameters
   const [params, setParams] = useState<UserManagementQueryParams>({
     page: 1,
@@ -174,9 +170,7 @@ export const InternalUserManagementDataView = () => {
               confirmLabel={
                 user.status === "active" ? "Nonaktifkan" : "Aktifkan"
               }
-              colorPalette={
-                user.status === "active" ? "red" : theme.colorPalette
-              }
+              colorPalette={user.status === "active" ? "red" : "green"}
               onConfirm={() => {
                 updateStatusMutation.mutate({
                   id: user.id,
@@ -195,7 +189,7 @@ export const InternalUserManagementDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [users, preferredTimezone, updateStatusMutation, theme.colorPalette]);
+  }, [users, preferredTimezone, updateStatusMutation]);
 
   return (
     <Container.Root flex={1} withContext={true} position={"relative"}>
