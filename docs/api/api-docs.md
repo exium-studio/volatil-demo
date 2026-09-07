@@ -43,9 +43,9 @@ Sistem Volatil memiliki 2 role pengguna:
 
 # Auth & Session
 
-## Sign In
+## Sign In / Login
 
-- **Endpoint**: `POST /api/auth/sign-in`
+- **Endpoint**: `POST /api/auth/login`
 - **Middleware / Akses**: `Public`
 - **Payload**:
 
@@ -82,6 +82,40 @@ type SignInResponse = {
 - **Endpoint**: `POST /api/auth/logout`
 - **Middleware / Akses**: `Authenticated (Mitra & Internal)`
 - **Response**: `200 OK` / `{ success: true, message: "Logged out successfully" }`
+
+## Registrasi Mitra Eksternal
+
+- **Endpoint**: `POST /api/auth/register`
+- **Middleware / Akses**: `Public`
+- **Payload**: `FormData` (nama, email, instansi/perusahaan, dokumen identitas, dokumen legalitas, nomor kontak)
+- **Response**:
+
+```typescript
+type MitraRegistrationCreatedData = {
+  registrationNumber: string;
+  message: string;
+};
+```
+
+## Cek Status Registrasi Mitra
+
+- **Endpoint**: `GET /api/auth/registration-status/{registrationNumber}`
+- **Middleware / Akses**: `Public`
+- **Response**:
+
+```typescript
+type MitraRegistrationStatusData = {
+  registrationNumber: string;
+  organizationName: string;
+  picName: string;
+  email: string;
+  phone: string;
+  status: "submitted" | "in_review" | "approved" | "rejected";
+  submittedAt: string;
+  reviewedAt?: string;
+  rejectionReason?: string;
+};
+```
 
 ---
 
@@ -174,55 +208,59 @@ type HelpCenterListApiResponse = {
 
 # Notifikasi & Inbox
 
-Sistem notifikasi in-app untuk Mitra dan Internal user.
+Modul riwayat notifikasi sistem, tagihan pembayaran, tiket bantuan, dan informasi akun pengguna.
 
-## List Notifikasi
+## Get List Inbox / Notifikasi
 
-- **Endpoint**: `GET /api/notifications`
+- **Endpoint**: `GET /api/inbox`
 - **Middleware / Akses**: `Authenticated (Mitra & Internal)`
 - **Params**:
   - `page?: number`
-  - `limit?: number`
+  - `pageSize?: number`
+  - `category?: "transaksi" | "sistem" | "bantuan" | "akun"`
   - `isRead?: boolean`
+  - `search?: string`
 - **Response**:
 
 ```typescript
-type NotificationsResponse = {
+type InboxListResponse = {
   items: Array<{
     id: string;
-    type: NotificationType;
     title: string;
     message: string;
+    category: "transaksi" | "sistem" | "bantuan" | "akun";
     isRead: boolean;
+    actionUrl?: string;
     createdAt: string;
-    metadata?: Record<string, unknown>;
   }>;
+  total: number;
   unreadCount: number;
-  pagination: {
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-    itemsPerPage: number;
-  };
+  page?: number;
+  pageSize?: number;
 };
-
-type NotificationType =
-  | "PAYMENT_SETTLED" // → Notifikasi ke mitra: pembayaran berhasil, layanan WMS disiapkan
-  | "ORDER_PENDING_REVIEW" // → Notifikasi ke internal: ada layanan baru yang perlu divalidasi
-  | "ORDER_APPROVED" // → Notifikasi ke mitra: layanan WMS disetujui & aktif di My Data
-  | "ORDER_REJECTED" // → Notifikasi ke mitra: permohonan layanan ditolak + reason penolakan
-  | "ORDER_EXPIRED"; // → Notifikasi ke mitra: pesanan transaksi kadaluwarsa
 ```
 
 ## Tandai Notifikasi Telah Dibaca
 
-- **Endpoint**: `PUT /api/notifications/{id}/read`
+- **Endpoint**: `PATCH /api/inbox/{id}/read`
 - **Middleware / Akses**: `Authenticated (Mitra & Internal)`
 - **Response**: `200 OK` / `{ success: true }`
 
 ## Tandai Semua Notifikasi Telah Dibaca
 
-- **Endpoint**: `PUT /api/notifications/read-all`
+- **Endpoint**: `PATCH /api/inbox/read-all`
+- **Middleware / Akses**: `Authenticated (Mitra & Internal)`
+- **Response**: `200 OK` / `{ success: true }`
+
+## Hapus Notifikasi
+
+- **Endpoint**: `DELETE /api/inbox/{id}`
+- **Middleware / Akses**: `Authenticated (Mitra & Internal)`
+- **Response**: `200 OK` / `{ success: true }`
+
+## Hapus Semua Notifikasi
+
+- **Endpoint**: `DELETE /api/inbox/clear-all`
 - **Middleware / Akses**: `Authenticated (Mitra & Internal)`
 - **Response**: `200 OK` / `{ success: true }`
 
@@ -881,7 +919,7 @@ Modul bagi Internal User untuk memproses permohonan data spasial yang telah diba
 
 ## Trigger Provisioning GeoServer (Create Service WMS)
 
-- **Endpoint**: `POST /api/mitra/cart/orders/{orderId}/provision`
+- **Endpoint**: `POST /api/mitra/orders/{orderId}/provision`
 - **Middleware / Akses**: `Internal / Mitra Auth Token`
 - **Kapan Dipanggil**: User internal menekan tombol "Create Service WMS" pada daftar Review Permohonan untuk order berstatus `paid`.
 - **Deskripsi**:
@@ -905,49 +943,57 @@ type ProvisionOrderResponse = {
 
 ## List Orders Review Permohonan
 
-- **Endpoint**: `GET /api/internal/orders`
+- **Endpoint**: `GET /api/internal/interop/orders`
 - **Middleware / Akses**: `Internal Only`
-- **Params**: `status?: "paid" | "pending_review" | "all"`
+- **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `status?: "paid" | "pending_review" | "all"`
 - **Response**:
 
 ```typescript
 type InternalOrderListResponse = {
-  orders: Array<{
+  items: Array<{
     orderId: string;
     mitraId: string;
     mitraName: string;
     status: OrderStatus;
     selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     createdAt: string;
-    items: Array<{
-      id: string;
-      sourceLayerId: string;
-      sourceLayerTitle: string;
-      spatialBasis: "bidang" | "kawasan";
-      featuresCount: number;
-      areaHa?: number;
-    }>;
+    readyAt?: string;
+    expiredAt?: string;
+    totalPrice: number;
+    items: CartOrderItem[];
   }>;
-  total: number;
+  pagination: PaginationMeta;
 };
 ```
 
 ## Detail Order Review
 
-- **Endpoint**: `GET /api/internal/orders/{orderId}`
+- **Endpoint**: `GET /api/internal/interop/orders/{orderId}`
 - **Middleware / Akses**: `Internal Only`
-- **Response**: `OrderDetailResponse`
+- **Response**: `InternalOrderItem`
 
 ## Approve Order
 
-- **Endpoint**: `PUT /api/internal/orders/{orderId}/approve`
+- **Endpoint**: `PUT /api/internal/interop/orders/{orderId}/approve`
 - **Middleware / Akses**: `Internal Only`
-- **Payload**: `{}`
+- **Payload**:
+
+```typescript
+type ApproveOrderPayload = {
+  orderId: string;
+  items?: Array<{
+    sourceLayerId: string;
+    externalWmsUrl?: string;
+    externalWfsUrl?: string;
+  }>;
+};
+```
+
 - **Response**: `200 OK` / `{ success: true, message: "Order permohonan berhasil divalidasi dan disetujui" }`
 
 ## Reject Order
 
-- **Endpoint**: `PUT /api/internal/orders/{orderId}/reject`
+- **Endpoint**: `PUT /api/internal/interop/orders/{orderId}/reject`
 - **Middleware / Akses**: `Internal Only`
 - **Payload**:
 
@@ -1137,47 +1183,70 @@ type AdminUsersStatisticsApiResponse = {
 
 # Dashboard & Statistik Sistem
 
-Modul agregasi metrik operasional IGT untuk admin internal ATR/BPN.
+Modul agregasi metrik operasional IGT untuk admin internal ATR/BPN. Diimplementasikan secara modular melalui endpoint terpisah per widget:
 
-## Internal Dashboard Overview
+## Ringkasan Basis IGT
 
-- **Endpoint**: `GET /api/internal/home?period={1d|1w|1m|1y|all}`
+- **Endpoint**: `GET /api/internal/home/igt-basis`
 - **Middleware / Akses**: `Internal Only`
 - **Response**:
 
 ```typescript
-type InternalHomeDataResponse = {
-  igtBasis: {
-    field: number;
-    area: number;
-  };
-  igtPublicationStatus: {
-    active: number;
-    inactive: number;
-  };
-  mitraRegistration: {
-    active: number;
-    pendingVerification: number;
-  };
-  serviceRates: Array<{
-    id: string;
-    title: string;
-    price: number;
-    unit: string;
-    kodePnbp?: string;
-    minPurchase: number;
-    minUnit: string;
-    colorPalette?: string;
-  }>;
-  acquisitionTrends: Record<
-    "1d" | "1w" | "1m" | "1y" | "all",
-    Array<{
-      label: string;
-      field: number;
-      area: number;
-      revenue: number;
-    }>
-  >;
+type IgtBasisSummary = {
+  field: number;
+  area: number;
+};
+```
+
+## Status Publikasi Layer IGT
+
+- **Endpoint**: `GET /api/internal/home/publication-status`
+- **Middleware / Akses**: `Internal Only`
+- **Response**:
+
+```typescript
+type IgtPublicationStatusSummary = {
+  active: number;
+  inactive: number;
+};
+```
+
+## Statistik Registrasi Mitra
+
+- **Endpoint**: `GET /api/internal/home/mitra-registration`
+- **Middleware / Akses**: `Internal Only`
+- **Response**:
+
+```typescript
+type MitraRegistrationSummary = {
+  active: number;
+  pendingVerification: number;
+};
+```
+
+## Tren Akuisisi & Pendapatan IGT
+
+- **Endpoint**: `GET /api/internal/home/trends?period={1d|1w|1m|1y|all}`
+- **Middleware / Akses**: `Internal Only`
+- **Response**:
+
+```typescript
+type InternalHomeTrendItem = {
+  label: string;
+  field: number;
+  area: number;
+  revenue: number;
+};
+```
+
+## Leaderboard Mitra & Layer Terpopuler
+
+- **Endpoint**: `GET /api/internal/home/leaderboard?period={1d|1w|1m|1y|all}`
+- **Middleware / Akses**: `Internal Only`
+- **Response**:
+
+```typescript
+type InternalLeaderboardResponse = {
   topMitraList: Array<{
     rank: number;
     mitraId: string;
