@@ -1,3 +1,5 @@
+import { getLocale } from "@/shared/libs/i18n";
+
 const DEFAULT_TIMEZONE = "UTC";
 const DEFAULT_LOCALE = "id-ID";
 
@@ -73,4 +75,58 @@ export const formatUtcDateTime = (
   } catch {
     return createFormatter(DEFAULT_TIMEZONE).format(date);
   }
+};
+
+export const formatRelativeTime = (
+  timestamp: number | Date | string | null | undefined,
+  locale?: string,
+): string => {
+  if (!timestamp) return "-";
+
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return "-";
+
+  const now = Date.now();
+  const diffInSeconds = Math.round((date.getTime() - now) / 1000);
+
+  const currentLocale = locale ?? getLocale();
+  const resolvedLocale =
+    currentLocale === "id"
+      ? "id-ID"
+      : currentLocale === "en"
+        ? "en-US"
+        : currentLocale;
+
+  const rtf = new Intl.RelativeTimeFormat(resolvedLocale, {
+    numeric: "auto",
+  });
+
+  const absDiff = Math.abs(diffInSeconds);
+
+  if (absDiff < 60) {
+    return rtf.format(diffInSeconds, "second");
+  }
+
+  const diffInMinutes = Math.round(diffInSeconds / 60);
+  if (Math.abs(diffInMinutes) < 60) {
+    return rtf.format(diffInMinutes, "minute");
+  }
+
+  const diffInHours = Math.round(diffInMinutes / 60);
+  if (Math.abs(diffInHours) < 24) {
+    return rtf.format(diffInHours, "hour");
+  }
+
+  const diffInDays = Math.round(diffInHours / 24);
+  if (Math.abs(diffInDays) < 30) {
+    return rtf.format(diffInDays, "day");
+  }
+
+  const diffInMonths = Math.round(diffInDays / 30);
+  if (Math.abs(diffInMonths) < 12) {
+    return rtf.format(diffInMonths, "month");
+  }
+
+  const diffInYears = Math.round(diffInDays / 365);
+  return rtf.format(diffInYears, "year");
 };

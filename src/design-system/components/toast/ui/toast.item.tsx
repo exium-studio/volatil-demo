@@ -26,10 +26,8 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import {
-  formatUtcDateTime,
-  getPreferredUserTimezone,
-} from "@/shared/utils/formatter/date.formatter";
+import { formatRelativeTime } from "@/shared/utils/formatter/date.formatter";
+import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import { tintDark } from "@/shared/utils/style/color";
 import {
   AlertCircleIcon,
@@ -38,7 +36,7 @@ import {
   InfoIcon,
   XCircleIcon,
 } from "lucide-react";
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 
 export const TOAST_VARIANT_MAP: ToastVariantMap = {
   success: {
@@ -96,6 +94,7 @@ export const ToastItem = memo(function ToastItem(
 
   // Hooks
   const { showDeletedFromHistoryIndicator, showProgressBar } = getToastConfig();
+  const { locale } = useLocale();
 
   // States
   const [toastItemExpanded, setToastItemExpanded] = useState<boolean>(false);
@@ -106,7 +105,6 @@ export const ToastItem = memo(function ToastItem(
     toastData.description ||
     (toastData.actions && !isEmptyArray(toastData.actions)),
   );
-  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Collapse item when stack is collapsed
   useFirstMountEffect(
@@ -223,7 +221,7 @@ export const ToastItem = memo(function ToastItem(
                 mr={1}
                 alignSelf={"center"}
               >
-                {formatUtcDateTime(toastData.createdAt, preferredTimezone)}
+                {formatRelativeTime(toastData.createdAt, locale)}
               </P>
             ) : null}
 
