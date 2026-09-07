@@ -582,7 +582,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             wrap={"wrap"}
           >
             {/* Left Breakdown: Bidang & Kawasan */}
-            <HStack align={"center"} gap={"md"} wrap={"wrap"}>
+            <HStack align={"center"} gap={"sm"} wrap={"wrap"}>
               {summaryData.isAnySummaryLoading ? (
                 <Skeleton h={"18px"} w={"220px"} />
               ) : (
@@ -651,7 +651,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             {/* Right: Grand Total */}
             <HStack align={"center"} gap={"xs"}>
               {summaryData.isAnySummaryLoading ? (
-                <Skeleton h={"18px"} />
+                <Skeleton w={"200px"} h={"18px"} />
               ) : (
                 <>
                   <P fontSize={"xs"} color={"fg.muted"}>
