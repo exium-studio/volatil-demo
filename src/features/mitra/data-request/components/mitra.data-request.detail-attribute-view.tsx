@@ -1,8 +1,7 @@
-// src/features/mitra/data-request/components/mitra.data-request.detail-attribute-view.tsx
-
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
 import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
 import type { MitraDataRequestDetailAttributeViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
@@ -29,8 +28,16 @@ export const MitraDataRequestDetailAttributeView = memo(
       onBack,
     } = props;
 
+    // Hooks — Delay mounting to guarantee initial render is always a skeleton and avoid flashing no-result state
+    const isMounted = useMountTimeout({
+      isOpen: true,
+      mountDelay: 250,
+    });
+
     // Derived Values
     const hasData = !isEmptyArray(features);
+    const showSkeleton =
+      !isMounted || isLoading || (isFetching && !hasData);
 
     return (
       <VStack
@@ -48,13 +55,13 @@ export const MitraDataRequestDetailAttributeView = memo(
           onBack={onBack}
         />
 
-        {isLoading && (
+        {showSkeleton && (
           <VStack flex={1} p={"md"} bg={"bg.body"} minH={0}>
             <Skeleton flex={1} w={"full"} h={"full"} rounded={0} />
           </VStack>
         )}
 
-        {!isLoading && !hasData && (
+        {!showSkeleton && !hasData && (
           <VStack
             flex={1}
             align={"center"}
@@ -67,7 +74,7 @@ export const MitraDataRequestDetailAttributeView = memo(
           </VStack>
         )}
 
-        {!isLoading && hasData && (
+        {!showSkeleton && hasData && (
           <VStack flex={1} gap={0} bg={"bg.body"} minH={0}>
             <SpatialFeaturesDataView
               wfsFeatures={features}
