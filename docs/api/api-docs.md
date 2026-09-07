@@ -564,7 +564,40 @@ type OrderListResponse = {
 
 - **Endpoint**: `GET /api/mitra/cart/orders/{orderId}`
 - **Middleware / Akses**: `Mitra Only`
-- **Response**: `OrderDetailResponse`
+- **Response**:
+
+```typescript
+type CartOrderDetailResponse = {
+  orderId: string;
+  status: OrderStatus;
+  /** Metode pengajuan AOI order ("catalog" | "upload_aoi" | "draw_aoi") */
+  selectionType: "catalog" | "upload_aoi" | "draw_aoi";
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  createdAt: string;
+  readyAt?: string;
+  approvedAt?: string;
+  expiredAt?: string;
+  rejectionReason?: string;
+  totalPrice: number;
+  items: Array<{
+    id: string;
+    sourceLayerId: string;
+    sourceLayerTitle: string;
+    spatialBasis: "bidang" | "kawasan";
+    featuresCount: number;
+    areaHa?: number;
+    unitPrice: number;
+    subtotalPrice: number;
+    wfsUrl?: string;
+    wmsUrl?: string;
+    previewWmsUrl?: string;
+    previewWfsUrl?: string;
+    externalWfsUrl?: string | null;
+    externalWmsUrl?: string | null;
+  }>;
+};
+```
 
 ## Hapus Order dari Keranjang
 

@@ -10,6 +10,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartOrder } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type { MitraCartOrderSummaryProps } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   AlertCircleIcon,
@@ -175,7 +176,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
             {isSelected ? (
               totalBidang > 0 ? (
                 <>
-                  <TNum>{totalBidang}</TNum> {"bidang"}
+                  <TNum>{formatNumber(totalBidang)}</TNum> {"bidang"}
                 </>
               ) : (
                 "-"
@@ -192,7 +193,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
             {isSelected ? (
               totalKawasanHa > 0 ? (
                 <>
-                  <TNum>{totalKawasanHa}</TNum> {"ha"}
+                  <TNum>{formatNumber(totalKawasanHa)}</TNum> {"ha"}
                 </>
               ) : (
                 "-"

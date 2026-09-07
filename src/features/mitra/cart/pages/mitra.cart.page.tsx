@@ -18,6 +18,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.order-item";
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
 import { MitraCartExpiredOrdersTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-orders.modal";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import {
   useCancelActiveCartOrder,
   useClearAllCartOrders,
@@ -229,11 +230,19 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
       w={"full"}
     >
       <HeaderContainer>
-        <HStack align={"center"} gap={"sm"}>
-          <Heading>{"Rincian Pesanan"}</Heading>
+        <HStack align={"center"} justify={"space-between"} w={"full"}>
+          <HStack align={"center"} gap={"sm"}>
+            <Heading>{"Rincian Pesanan"}</Heading>
 
-          {selectedOrderIndex !== -1 && (
-            <Badge>{`Pesanan #${selectedOrderIndex + 1}`}</Badge>
+            {selectedOrderIndex !== -1 && (
+              <Badge>{`Pesanan #${selectedOrderIndex + 1}`}</Badge>
+            )}
+          </HStack>
+
+          {selectedOrder?.selectionType && (
+            <SelectionTypeBadge size={"sm"}>
+              {selectedOrder.selectionType}
+            </SelectionTypeBadge>
           )}
         </HStack>
       </HeaderContainer>
