@@ -293,7 +293,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
             gap={"sm"}
             w={"full"}
           >
-            <P fontWeight={"semibold"} fontSize={"md"}>
+            <P fontWeight={"medium"} fontSize={"md"}>
               {"Hasil query spasial gambar AOI"}
             </P>
 

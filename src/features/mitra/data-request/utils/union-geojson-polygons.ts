@@ -31,15 +31,53 @@ export const unionGeoJsonPolygons = (
   }
 
   try {
-    const unionResult = turf.union(turf.featureCollection(polygonFeatures));
-    if (
-      unionResult &&
-      (unionResult.geometry.type === "Polygon" ||
-        unionResult.geometry.type === "MultiPolygon")
-    ) {
-      return unionResult as GeoJSON.Feature<
-        GeoJSON.Polygon | GeoJSON.MultiPolygon
-      >;
+    if (polygonFeatures.length > 50) {
+      let currentBatch = [...polygonFeatures];
+      const chunkSize = 25;
+
+      while (currentBatch.length > 1 && currentBatch.length <= 500) {
+        const nextBatch: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>[] = [];
+        for (let i = 0; i < currentBatch.length; i += chunkSize) {
+          const chunk = currentBatch.slice(i, i + chunkSize);
+          if (chunk.length === 1) {
+            nextBatch.push(chunk[0]);
+          } else {
+            const chunkUnion = turf.union(turf.featureCollection(chunk));
+            if (chunkUnion && (chunkUnion.geometry.type === "Polygon" || chunkUnion.geometry.type === "MultiPolygon")) {
+              nextBatch.push(chunkUnion as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>);
+            } else {
+              nextBatch.push(...chunk);
+            }
+          }
+        }
+        if (nextBatch.length >= currentBatch.length) {
+          currentBatch = nextBatch;
+          break;
+        }
+        currentBatch = nextBatch;
+      }
+
+      const finalUnion = turf.union(turf.featureCollection(currentBatch));
+      if (
+        finalUnion &&
+        (finalUnion.geometry.type === "Polygon" ||
+          finalUnion.geometry.type === "MultiPolygon")
+      ) {
+        return finalUnion as GeoJSON.Feature<
+          GeoJSON.Polygon | GeoJSON.MultiPolygon
+        >;
+      }
+    } else {
+      const unionResult = turf.union(turf.featureCollection(polygonFeatures));
+      if (
+        unionResult &&
+        (unionResult.geometry.type === "Polygon" ||
+          unionResult.geometry.type === "MultiPolygon")
+      ) {
+        return unionResult as GeoJSON.Feature<
+          GeoJSON.Polygon | GeoJSON.MultiPolygon
+        >;
+      }
     }
   } catch (error) {
     console.warn("turf.union failed, falling back to MultiPolygon combine:", error);

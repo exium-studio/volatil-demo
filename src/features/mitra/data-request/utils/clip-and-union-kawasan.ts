@@ -74,6 +74,30 @@ export const clipAndUnionKawasanFeatures = (
     return emptyResult;
   }
 
+  // Pre-calculate AOI bounding box to skip non-overlapping features cheaply
+  let aoiBbox: [number, number, number, number] | null = null;
+  try {
+    aoiBbox = turf.bbox(aoiFeature) as [number, number, number, number];
+  } catch (err) {
+    console.warn("Failed to compute aoi bbox:", err);
+  }
+
+  // If AOI has excessive coordinates (e.g. detailed coastlines of entire country/province > 2000 vertices),
+  // produce a lightly simplified copy for fast spatial clipping without altering topology drastically.
+  let clipTargetAoi = aoiFeature;
+  try {
+    const totalAoiCoords = turf.coordAll(aoiFeature).length;
+    if (totalAoiCoords > 3000) {
+      clipTargetAoi = turf.simplify(aoiFeature, {
+        tolerance: 0.0005,
+        highQuality: false,
+        mutate: false,
+      }) as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+    }
+  } catch (err) {
+    console.warn("Failed to check or simplify complex AOI:", err);
+  }
+
   const clippedPolygons: GeoJSON.Feature<
     GeoJSON.Polygon | GeoJSON.MultiPolygon
   >[] = [];
@@ -86,11 +110,27 @@ export const clipAndUnionKawasanFeatures = (
       continue;
     }
 
+    // Fast BBox rejection
+    if (aoiBbox) {
+      try {
+        const featBbox = turf.bbox(feature);
+        const overlaps = !(
+          featBbox[2] < aoiBbox[0] ||
+          featBbox[0] > aoiBbox[2] ||
+          featBbox[3] < aoiBbox[1] ||
+          featBbox[1] > aoiBbox[3]
+        );
+        if (!overlaps) continue;
+      } catch {
+        // Continue to exact intersection if bbox calculation fails
+      }
+    }
+
     try {
       const intersection = turf.intersect(
         turf.featureCollection([
           feature as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
-          aoiFeature,
+          clipTargetAoi,
         ]),
       );
 
@@ -121,22 +161,64 @@ export const clipAndUnionKawasanFeatures = (
   if (clippedPolygons.length === 1) {
     finalCoveragePolygon = clippedPolygons[0];
   } else {
+    // If there are many polygons (e.g. hundreds or thousands from massive scale AOI),
+    // turf.union all at once can crash or run O(N^2). Perform batch reduction or chunking.
     try {
-      const unionResult = turf.union(turf.featureCollection(clippedPolygons));
-      if (
-        unionResult &&
-        (unionResult.geometry.type === "Polygon" ||
-          unionResult.geometry.type === "MultiPolygon")
-      ) {
-        finalCoveragePolygon = unionResult as GeoJSON.Feature<
-          GeoJSON.Polygon | GeoJSON.MultiPolygon
-        >;
+      if (clippedPolygons.length > 50) {
+        // Chunked pairwise union
+        let currentBatch = [...clippedPolygons];
+        const chunkSize = 25;
+
+        while (currentBatch.length > 1 && currentBatch.length <= 500) {
+          const nextBatch: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>[] = [];
+          for (let i = 0; i < currentBatch.length; i += chunkSize) {
+            const chunk = currentBatch.slice(i, i + chunkSize);
+            if (chunk.length === 1) {
+              nextBatch.push(chunk[0]);
+            } else {
+              const chunkUnion = turf.union(turf.featureCollection(chunk));
+              if (chunkUnion && (chunkUnion.geometry.type === "Polygon" || chunkUnion.geometry.type === "MultiPolygon")) {
+                nextBatch.push(chunkUnion as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>);
+              } else {
+                nextBatch.push(...chunk);
+              }
+            }
+          }
+          if (nextBatch.length >= currentBatch.length) {
+            // No reduction made, break to direct union or fallback
+            currentBatch = nextBatch;
+            break;
+          }
+          currentBatch = nextBatch;
+        }
+
+        const finalUnion = turf.union(turf.featureCollection(currentBatch));
+        if (
+          finalUnion &&
+          (finalUnion.geometry.type === "Polygon" ||
+            finalUnion.geometry.type === "MultiPolygon")
+        ) {
+          finalCoveragePolygon = finalUnion as GeoJSON.Feature<
+            GeoJSON.Polygon | GeoJSON.MultiPolygon
+          >;
+        }
+      } else {
+        const unionResult = turf.union(turf.featureCollection(clippedPolygons));
+        if (
+          unionResult &&
+          (unionResult.geometry.type === "Polygon" ||
+            unionResult.geometry.type === "MultiPolygon")
+        ) {
+          finalCoveragePolygon = unionResult as GeoJSON.Feature<
+            GeoJSON.Polygon | GeoJSON.MultiPolygon
+          >;
+        }
       }
     } catch (error) {
       console.warn("turf.union failed, falling back to MultiPolygon combine:", error);
     }
 
-    // Fallback: merge coordinates into MultiPolygon if turf.union failed
+    // Fallback: merge coordinates into MultiPolygon if turf.union failed or exhausted
     if (!finalCoveragePolygon) {
       const allCoords: GeoJSON.Position[][][] = [];
       for (const feat of clippedPolygons) {

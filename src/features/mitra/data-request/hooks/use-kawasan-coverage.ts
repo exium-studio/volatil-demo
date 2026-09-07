@@ -8,10 +8,8 @@ import type {
   UseKawasanCoverageParams,
   UseKawasanCoverageResult,
 } from "@/features/mitra/data-request/types/mitra.data-request.coverage.type";
-import {
-  clipAndUnionKawasanFeatures,
-  normalizePolygonFeature,
-} from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import { runClipAndUnionKawasanInWorker } from "@/features/mitra/data-request/services/geo-ops-worker.service";
+import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useQuery } from "@tanstack/react-query";
@@ -130,8 +128,8 @@ export const useKawasanCoverage = (
         };
       }
 
-      // 3 & 4. Clip to boundary & Unary union
-      return clipAndUnionKawasanFeatures(allKawasanFeatures, aoiFeature);
+      // 3 & 4. Clip to boundary & Unary union off the main thread via Web Worker
+      return runClipAndUnionKawasanInWorker(allKawasanFeatures, aoiFeature, signal);
     },
     enabled: isEnabled,
     staleTime: 5 * 60 * 1000,

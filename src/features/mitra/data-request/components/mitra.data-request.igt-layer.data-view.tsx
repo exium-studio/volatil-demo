@@ -7,6 +7,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -188,11 +189,18 @@ export const MitraDataRequestIgtLayerDataView = memo(
         }
       });
 
-      // If unary union coverage has finished calculation, use its area as source of truth for kawasan
-      const resolvedKawasanHa =
-        effectiveAoiPolygon && kawasanCoverage.totalAreaHa > 0
+      // If unary union coverage has finished calculation, use its area as source of truth for kawasan.
+      // In catalog tab with NO administrative filter active, kawasan area must be 0 (no pricing until admin filter is selected).
+      const hasActiveAoi = Boolean(effectiveAoiPolygon);
+      const isCatalogWithoutAoi = selectionType === "catalog" && !hasActiveAoi;
+
+      const resolvedKawasanHa = isCatalogWithoutAoi
+        ? 0
+        : effectiveAoiPolygon && kawasanCoverage.totalAreaHa > 0
           ? kawasanCoverage.totalAreaHa
-          : totalKawasanAreaHa;
+          : selectionType === "catalog"
+            ? 0
+            : totalKawasanAreaHa;
 
       return {
         totalBidangCount,
@@ -206,6 +214,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
     }, [
       summaryQueries,
       filteredLayers,
+      selectionType,
       effectiveAoiPolygon,
       kawasanCoverage.totalAreaHa,
       kawasanCoverage.isLoading,
@@ -571,6 +580,30 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
         <Separator borderColor={"bg.canvas"} />
 
+        {/* Informative Non-blocking Processing Banner for Massive AOI */}
+        {kawasanCoverage.isLoading && (
+          <HStack
+            align={"center"}
+            justify={"space-between"}
+            px={"md"}
+            py={"xs"}
+            bg={"blue.subtle"}
+            borderBottomWidth={"1px"}
+            borderColor={"blue.muted"}
+          >
+            <HStack align={"center"} gap={"xs"}>
+              <Loader size={"xs"} color={"blue.fg"} />
+              <P fontSize={"xs"} color={"blue.fg"} fontWeight={"medium"}>
+                {"Menghitung cakupan spasial kawasan pada area AOI..."}
+              </P>
+            </HStack>
+
+            <P fontSize={"xs"} color={"fg.muted"}>
+              {"Jangan tutup tab/aplikasi"}
+            </P>
+          </HStack>
+        )}
+
         {/* Add to Cart Bar with Summary & ButtonGroup */}
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} mt={"auto"}>
           {/* Summary Row: Detailed Breakdown (Left) & Grand Total (Right) */}
@@ -623,25 +656,37 @@ export const MitraDataRequestIgtLayerDataView = memo(
                   {/* Kawasan Breakdown */}
                   {summaryData.hasKawasanLayers && (
                     <HStack align={"center"} gap={"xs"}>
-                      <P
-                        fontSize={"xs"}
-                        fontWeight={"medium"}
-                        color={"fg.muted"}
-                      >
-                        {`${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha`}
-                      </P>
-                      <P fontSize={"xs"} color={"fg.muted"}>
-                        {"•"}
-                      </P>
-                      <P
-                        fontSize={"xs"}
-                        fontWeight={"semibold"}
-                        color={"fg.default"}
-                      >
-                        {formatNumber(estimatedKawasanPrice, {
-                          style: "currency",
-                        })}
-                      </P>
+                      {selectionType === "catalog" && !effectiveAoiPolygon ? (
+                        <P
+                          fontSize={"xs"}
+                          fontWeight={"medium"}
+                          color={"fg.muted"}
+                        >
+                          {"Kawasan: Belum ada filter wilayah"}
+                        </P>
+                      ) : (
+                        <>
+                          <P
+                            fontSize={"xs"}
+                            fontWeight={"medium"}
+                            color={"fg.muted"}
+                          >
+                            {`${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha`}
+                          </P>
+                          <P fontSize={"xs"} color={"fg.muted"}>
+                            {"•"}
+                          </P>
+                          <P
+                            fontSize={"xs"}
+                            fontWeight={"semibold"}
+                            color={"fg.default"}
+                          >
+                            {formatNumber(estimatedKawasanPrice, {
+                              style: "currency",
+                            })}
+                          </P>
+                        </>
+                      )}
                     </HStack>
                   )}
                 </>

@@ -1,10 +1,7 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
 import type { LayerCountSummary } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
-import {
-  calculateIntersectAreaInHectares,
-  extractAoiPolygonsFromCql,
-} from "@/features/mitra/data-request/utils/calculate-feature-area";
+import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 
 /**
  * Fetches hit count / geometry area summary for an IGT layer based on its spatialBasis.
@@ -89,30 +86,34 @@ export const getLayerCountSummary = async (params: {
     });
 
     const features = featuresResult.features ?? [];
-    const aoiPolygon = extractAoiPolygonsFromCql(mergedCqlFilter);
     let totalAreaHa = 0;
 
-    features.forEach((feat) => {
-      if (feat.geometry) {
-        const area = calculateIntersectAreaInHectares(feat, aoiPolygon);
-        if (area > 0) {
-          totalAreaHa += area;
-          return;
-        }
-      }
-
+    // Fast-path area estimation for layer list row:
+    // Read pre-computed luas attribute if available; otherwise calculate feature area with turf.
+    // NOTE: Synchronous turf.intersect against AOI on the main thread is strictly avoided here
+    // because processing hundreds of complex features freezes the browser UI.
+    // The exact clipped coverage area is calculated asynchronously in Web Worker by useKawasanCoverage.
+    for (const feat of features) {
+      let featureArea = 0;
       const props =
         (feat.properties as Record<string, unknown> | undefined) ?? {};
       const luasKey = Object.keys(props).find((k) =>
         (IGT_AREA_KEYS as readonly string[]).includes(k.toLowerCase()),
       );
+
       if (luasKey) {
         const val = Number(props[luasKey]);
-        if (!isNaN(val)) {
-          totalAreaHa += val;
+        if (!isNaN(val) && val > 0) {
+          featureArea = val;
         }
       }
-    });
+
+      if (featureArea === 0 && feat.geometry) {
+        featureArea = calculateFeatureAreaInHectares(feat);
+      }
+
+      totalAreaHa += featureArea;
+    }
 
     const formattedArea = totalAreaHa.toLocaleString("id-ID", {
       maximumFractionDigits: 2,

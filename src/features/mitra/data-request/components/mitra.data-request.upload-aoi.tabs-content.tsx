@@ -48,6 +48,9 @@ import type {
   UploadAoiAddFileButtonProps,
   UploadAoiFileListTriggerProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
+import {
+  runUnionGeoJsonPolygonsInWorker,
+} from "@/features/mitra/data-request/services/geo-ops-worker.service";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
@@ -67,7 +70,7 @@ const parseGeoJsonFile = async (
   const parsed = JSON.parse(text) as GeoJSON.GeoJsonObject;
 
   if (parsed.type === "FeatureCollection") {
-    return unionGeoJsonPolygons(parsed as GeoJSON.FeatureCollection);
+    return runUnionGeoJsonPolygonsInWorker(parsed as GeoJSON.FeatureCollection);
   }
 
   if (parsed.type === "Feature") {
@@ -171,7 +174,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
       if (isShpOrZip) {
         const fc = await parseShpFile(file);
-        polygon = unionGeoJsonPolygons(fc);
+        polygon = await runUnionGeoJsonPolygonsInWorker(fc);
       } else {
         polygon = await parseGeoJsonFile(file);
       }
