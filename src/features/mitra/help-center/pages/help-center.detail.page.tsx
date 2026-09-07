@@ -25,9 +25,10 @@ import type {
   HelpCenterStatus,
 } from "@/features/mitra/help-center/types/help-center.type";
 import {
-  formatUtcDateTime,
+  formatAdaptiveDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useParams, useRouter } from "@tanstack/react-router";
@@ -59,6 +60,7 @@ export const HelpCenterDetailPage = () => {
 
   // Stores
   const { theme } = useThemeStore();
+  const { locale } = useLocale();
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const currentUser = useMemo(() => getUserSession(), []);
   const isInternalAdmin = currentUser?.role === "internal";
@@ -121,7 +123,7 @@ export const HelpCenterDetailPage = () => {
       <Container.Root withContext={true} flex={1} overflowY={"auto"}>
         <Container.Body overflowY={"auto"}>
           {/* Header Bar */}
-          <HeaderContainer px={"xs"}>
+          <HeaderContainer pl={"xs"}>
             <HStack
               justify={"space-between"}
               align={"center"}
@@ -129,23 +131,11 @@ export const HelpCenterDetailPage = () => {
               wrap={"wrap"}
               gap={"sm"}
             >
-              <HStack gap={3} align={"center"}>
+              <HStack flex={1} gap={3} align={"center"}>
                 <BackButton />
 
-                <VStack align={"start"} gap={"2xs"}>
-                  <HStack gap={2} align={"center"}>
-                    <Heading>{ticket.title}</Heading>
-
-                    <Badge colorPalette={statusConfig.color} variant={"subtle"}>
-                      {statusConfig.label}
-                    </Badge>
-
-                    {ticket.priority && (
-                      <Badge variant={"outline"} colorPalette={"gray"}>
-                        {`Prioritas: ${ticket.priority.toUpperCase()}`}
-                      </Badge>
-                    )}
-                  </HStack>
+                <HStack flex={1} wrap={"wrap"} align={"center"} gap={"sm"}>
+                  <Heading>{ticket.title}</Heading>
 
                   <P fontSize={"sm"} color={"fg.subtle"}>
                     {[
@@ -157,7 +147,21 @@ export const HelpCenterDetailPage = () => {
                       .filter(Boolean)
                       .join(" • ")}
                   </P>
-                </VStack>
+
+                  <Badge
+                    colorPalette={statusConfig.color}
+                    variant={"subtle"}
+                    ml={"auto"}
+                  >
+                    {statusConfig.label}
+                  </Badge>
+
+                  {ticket.priority && (
+                    <Badge variant={"outline"} colorPalette={"gray"}>
+                      {`Prioritas: ${ticket.priority.toUpperCase()}`}
+                    </Badge>
+                  )}
+                </HStack>
               </HStack>
 
               {ticket.status !== "resolved" && ticket.status !== "rejected" && (
@@ -205,11 +209,11 @@ export const HelpCenterDetailPage = () => {
               <HStack gap={"md"} align={"center"}>
                 <Circle
                   aspectRatio={1}
-                  w={"40px"}
+                  p={1.5}
                   bg={"bg.muted"}
                   color={"fg.muted"}
                 >
-                  <AppIcon icon={UserIcon} />
+                  <AppIcon icon={UserIcon} size={"sm"} />
                 </Circle>
 
                 <VStack align={"start"}>
@@ -221,13 +225,14 @@ export const HelpCenterDetailPage = () => {
               </HStack>
 
               <P fontSize={"sm"} color={"fg.subtle"}>
-                {formatUtcDateTime(ticket.createdAt, preferredTimezone)}
+                {formatAdaptiveDateTime(ticket.createdAt, {
+                  timeZone: preferredTimezone,
+                  locale,
+                })}
               </P>
             </HStack>
 
-            <Separator borderColor={"bg.canvas"} />
-
-            <VStack align={"start"} gap={"md"} p={"md"}>
+            <VStack align={"start"} gap={"md"} p={"md"} pl={"58px"} pt={0}>
               <P whiteSpace={"pre-wrap"} lineHeight={"tall"}>
                 {ticket.description}
               </P>
@@ -318,14 +323,14 @@ export const HelpCenterDetailPage = () => {
                           </HStack>
 
                           <P fontSize={"sm"} color={"fg.subtle"}>
-                            {formatUtcDateTime(
-                              reply.createdAt,
-                              preferredTimezone,
-                            )}
+                            {formatAdaptiveDateTime(reply.createdAt, {
+                              timeZone: preferredTimezone,
+                              locale,
+                            })}
                           </P>
                         </HStack>
 
-                        <VStack pl={"36px"} align={"start"} gap={2} w={"full"}>
+                        <VStack pl={"40px"} align={"start"} gap={2} w={"full"}>
                           <P
                             color={"fg.muted"}
                             whiteSpace={"pre-wrap"}

@@ -262,10 +262,10 @@ export const HelpCenterDataView = () => {
   return (
     <Container.Root withContext={true} flex={1}>
       <Container.Body overflowY={"auto"}>
-        <HStack align={"center"} gap={"sm"} p={"md"}>
+        <HStack align={"center"} gap={"xs"} p={"md"}>
           <Heading>{"Daftar Laporan Kendala"}</Heading>
 
-          <InfoTip>
+          <InfoTip appIconProps={{ size: "xs", color: "fg.subtle" }}>
             {"Pantau perkembangan status tiket kendala dan riwayat balasan."}
           </InfoTip>
         </HStack>

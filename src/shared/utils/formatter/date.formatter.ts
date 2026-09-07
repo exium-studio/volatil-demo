@@ -1,4 +1,5 @@
 import { getLocale } from "@/shared/libs/i18n";
+import type { FormatAdaptiveDateTimeOptions } from "@/shared/types/date.formatter.type";
 
 const DEFAULT_TIMEZONE = "UTC";
 const DEFAULT_LOCALE = "id-ID";
@@ -129,4 +130,45 @@ export const formatRelativeTime = (
 
   const diffInYears = Math.round(diffInDays / 365);
   return rtf.format(diffInYears, "year");
+};
+
+export const formatAdaptiveDateTime = (
+  timestamp: number | Date | string | null | undefined,
+  options?: FormatAdaptiveDateTimeOptions | number,
+): string => {
+  if (!timestamp) return "-";
+
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return "-";
+
+  const thresholdDays =
+    typeof options === "number" ? options : (options?.thresholdDays ?? 7);
+  const timeZone =
+    typeof options === "object"
+      ? (options?.timeZone ?? getPreferredUserTimezone())
+      : getPreferredUserTimezone();
+  const locale =
+    typeof options === "object" ? (options?.locale ?? getLocale()) : getLocale();
+
+  const diffInMs = Math.abs(Date.now() - date.getTime());
+  const maxMs = thresholdDays * 24 * 60 * 60 * 1000;
+
+  if (diffInMs >= maxMs) {
+    return formatUtcDateTime(date, timeZone);
+  }
+
+  return formatRelativeTime(date, locale);
+};
+
+export const formatRelativeOrDateTime = (
+  timestamp: number | Date | string | null | undefined,
+  preferredTimezone?: string,
+  locale?: string,
+  maxDays = 7,
+): string => {
+  return formatAdaptiveDateTime(timestamp, {
+    thresholdDays: maxDays,
+    timeZone: preferredTimezone,
+    locale,
+  });
 };

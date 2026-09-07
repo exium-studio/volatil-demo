@@ -47,6 +47,7 @@ export const InternalHomePublishStatusSummary = (
         <HStack justify={"space-between"} align={"center"} px={"md"}>
           <HStack gap={"xs"} align={"center"}>
             <Heading>{"Status Publikasi"}</Heading>
+
             <InfoTip
               variant={"icon"}
               appIconProps={{ size: "xs", color: "fg.subtle" }}
