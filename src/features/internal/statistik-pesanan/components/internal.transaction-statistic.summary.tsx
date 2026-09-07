@@ -10,11 +10,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { useInternalTransactionStatisticsQuery } from "@/features/internal/statistik-pesanan/hooks/use-internal-transaction-statistic.query";
-import {
-  CheckCircleIcon,
-  CircleDollarSignIcon,
-  LayersIcon,
-} from "lucide-react";
+import { CheckCircleIcon, CircleDollarSignIcon, ListIcon } from "lucide-react";
 
 export const InternalTransactionStatisticSummary = () => {
   return (
@@ -59,7 +55,7 @@ const InternalTransactionStatsGrid = () => {
 
   const STATS = [
     {
-      icon: LayersIcon,
+      icon: ListIcon,
       label: "Total Pesanan Aktif",
       value: statistics.activeOrders,
       suffix: "layanan",

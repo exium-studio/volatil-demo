@@ -17,6 +17,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -78,6 +79,8 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Metode", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
+      { th: "Jumlah Layer", sortable: false, align: "start" },
+      { th: "Tipe Seleksi", sortable: false, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
     ];
 
@@ -103,7 +106,7 @@ export const InternalTransactionStatisticDataView = () => {
             {
               value: item.mitra.name,
               td: (
-                <VStack align={"start"} gap={0} maxW={"180px"}>
+                <VStack align={"start"} gap={0} w={"180px"}>
                   <ClampedP fontWeight={"medium"} fontSize={"sm"}>
                     {item.mitra.name}
                   </ClampedP>
@@ -163,21 +166,36 @@ export const InternalTransactionStatisticDataView = () => {
               align: "start" as const,
             },
             {
-              value: item.itemsCount,
+              value: itemNames,
               td: (
-                <VStack align={"start"} w={"200px"}>
-                  <ClampedP title={itemNames}>{itemNames || "-"}</ClampedP>
-
-                  <HStack gap={"xs"} align={"center"}>
-                    <ClampedP fontSize={"xs"} color={"fg.subtle"}>
-                      {`${item.items.length} Layer IGT`}
-                    </ClampedP>
-
-                    <SelectionTypeBadge size={"xs"}>
-                      {item.selectionType}
-                    </SelectionTypeBadge>
-                  </HStack>
-                </VStack>
+                <Tooltip content={itemNames || "-"}>
+                  <P
+                    fontSize={"sm"}
+                    lineClamp={2}
+                    w={"220px"}
+                    title={itemNames}
+                  >
+                    {itemNames || "-"}
+                  </P>
+                </Tooltip>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.items.length,
+              td: (
+                <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                  {`${item.items.length} Layer`}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.selectionType,
+              td: (
+                <SelectionTypeBadge size={"xs"}>
+                  {item.selectionType}
+                </SelectionTypeBadge>
               ),
               align: "start" as const,
             },
@@ -199,21 +217,22 @@ export const InternalTransactionStatisticDataView = () => {
         };
       });
 
-    const itemActions: DataViewItemActionsGenerator<InternalTransactionItem>[] = [
-      {
-        key: "view-detail",
-        label: "Detail",
-        icon: EyeIcon,
-        modal: {
-          triggerComponent: (transaction: InternalTransactionItem) => (
-            <InternalTransactionDetailTrigger
-              modalKey={`internal-tx-detail-${transaction.id}`}
-              transaction={transaction}
-            />
-          ),
+    const itemActions: DataViewItemActionsGenerator<InternalTransactionItem>[] =
+      [
+        {
+          key: "view-detail",
+          label: "Detail",
+          icon: EyeIcon,
+          modal: {
+            triggerComponent: (transaction: InternalTransactionItem) => (
+              <InternalTransactionDetailTrigger
+                modalKey={`internal-tx-detail-${transaction.id}`}
+                transaction={transaction}
+              />
+            ),
+          },
         },
-      },
-    ];
+      ];
 
     return {
       headers,

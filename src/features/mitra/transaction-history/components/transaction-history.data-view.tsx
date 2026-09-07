@@ -20,8 +20,9 @@ import { ActionHeaderScrollContainer } from "@/design-system/components/layout/u
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
+import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail.modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
@@ -86,6 +87,8 @@ export const TransactionHistoryDataView = () => {
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
+      { th: "Jumlah Layer", sortable: false, align: "start" },
+      { th: "Tipe Seleksi", sortable: false, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
     ];
 
@@ -168,19 +171,25 @@ export const TransactionHistoryDataView = () => {
             {
               value: itemNames,
               td: (
-                <VStack align={"start"} w={"200px"}>
-                  <ClampedP title={itemNames}>{itemNames || "-"}</ClampedP>
-
-                  <HStack gap={"xs"} align={"center"}>
-                    <ClampedP fontSize={"xs"} color={"fg.subtle"}>
-                      {`${item.items.length} Layer IGT`}
-                    </ClampedP>
-
-                    <SelectionTypeBadge size={"xs"}>
-                      {item.selectionType}
-                    </SelectionTypeBadge>
-                  </HStack>
-                </VStack>
+                <Tooltip content={itemNames || "-"}>
+                  <P lineClamp={2} w={"220px"} title={itemNames}>
+                    {itemNames || "-"}
+                  </P>
+                </Tooltip>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.items.length,
+              td: <P whiteSpace={"nowrap"}>{`${item.items.length} Layer`}</P>,
+              align: "start" as const,
+            },
+            {
+              value: item.selectionType,
+              td: (
+                <SelectionTypeBadge size={"xs"}>
+                  {item.selectionType}
+                </SelectionTypeBadge>
               ),
               align: "start" as const,
             },
