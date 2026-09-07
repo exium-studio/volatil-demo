@@ -106,15 +106,18 @@ export type CartOrderItemPayload = {
 
 export type AddToCartOrderRequest = {
   selectionType: SelectionType;
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  items: CartOrderItemPayload[];
+  /** @deprecated Kept for backward compatibility */
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;
     kodeKecamatan?: string;
     kodeDesa?: string;
   };
-  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  /** @deprecated Kept for backward compatibility */
   cqlFilter?: string;
-  items: CartOrderItemPayload[];
 };
 
 export type AddToCartOrderResponse = {
@@ -147,14 +150,8 @@ export type CartOrder = {
   orderId: string;
   status: CartOrderStatus;
   selectionType: SelectionType;
-  administrativeFilter?: {
-    kodeProvinsi?: string;
-    kodeKabupaten?: string;
-    kodeKecamatan?: string;
-    kodeDesa?: string;
-  };
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  cqlFilter?: string;
+  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   createdAt: string;
   readyAt?: string;
   approvedAt?: string;
@@ -162,6 +159,15 @@ export type CartOrder = {
   rejectionReason?: string;
   totalPrice: number;
   items: CartOrderItem[];
+  /** @deprecated Kept for backward compatibility */
+  administrativeFilter?: {
+    kodeProvinsi?: string;
+    kodeKabupaten?: string;
+    kodeKecamatan?: string;
+    kodeDesa?: string;
+  };
+  /** @deprecated Kept for backward compatibility */
+  cqlFilter?: string;
 };
 
 export type ActiveCartOrder = CartOrder;

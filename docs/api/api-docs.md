@@ -349,6 +349,21 @@ type MitraIgtLayersResponse = {
 - `GET /api/igt/filter-options/kecamatan?kabupatenId={id}` — **Middleware / Akses**: `Mitra Only`
 - `GET /api/igt/filter-options/kelurahan?kecamatanId={id}` — **Middleware / Akses**: `Mitra Only`
 
+### WFS Batas Wilayah Administrasi (AOI Resolver)
+
+Digunakan untuk mengambil GeoJSON polygon geometri batas wilayah administrasi terdalam yang dipilih user (Provinsi / Kabupaten / Kecamatan / Kelurahan) via GeoServer WFS Proxy:
+
+- **Endpoint**: `GET /api/proxy/wfs`
+- **Params**:
+  - `layerId`: Nama layer batas administrasi (default: `administrative_workspace:BATAS_ADMINISTRASI` atau layer per level, e.g. `administrative_workspace:BATAS_PROVINSI`, `BATAS_KABUPATEN`, `BATAS_KECAMATAN`, `BATAS_DESA_KELURAHAN`)
+  - `service`: `WFS`
+  - `version`: `2.0.0`
+  - `request`: `GetFeature`
+  - `outputFormat`: `application/json`
+  - `srsName`: `EPSG:4326`
+  - `CQL_FILTER`: Filter nama/kode wilayah terdalam, e.g. `KAB_KOTA = 'BALI'` atau `DESA_KELURAHAN = 'TEMBALANG'`
+- **Output**: `GeoJSON.FeatureCollection` (Polygon / MultiPolygon) yang di-resolve oleh FE menjadi single `aoiPolygon`.
+
 ## Kebijakan Tarif & Batas Pembelian (Pricing & Policies)
 
 - **Endpoint**: `GET /api/mitra/data-request/policies`
@@ -420,18 +435,24 @@ export type OrderStatus =
 ```typescript
 type AddToCartOrderRequest = {
   selectionType: "catalog" | "upload_aoi" | "draw_aoi";
+  /** AOI Polygon boundary input user (wajib terisi untuk semua metode: Draw, Upload, Wilayah Administrasi/Catalog). Disimpan di DB sebagai referensi permanen provisioning */
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  /** Coverage Polygon hasil clip ke boundary AOI dan unary union (Turf.js). Menjadi basis perhitungan luas kawasan (ha) oleh BE */
+  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  /** Snapshot list layer IGT aktif yang dimasukkan ke keranjang */
+  items: Array<{
+    sourceLayerId: string;
+    cqlFilter?: string;
+  }>;
+  /** @deprecated Tidak lagi digunakan sebagai filter utama karena semua metode kini di-resolve langsung ke GeoJSON AOI Polygon di FE. Tetap dipertahankan untuk backward compatibility */
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;
     kodeKecamatan?: string;
     kodeDesa?: string;
   };
-  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  /** @deprecated Digantikan oleh aoiPolygon & coveragePolygon untuk spatial boundary query */
   cqlFilter?: string;
-  items: Array<{
-    sourceLayerId: string;
-    cqlFilter?: string;
-  }>;
 };
 ```
 

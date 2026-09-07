@@ -328,6 +328,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
 
         <MitraDataRequestIgtLayerDataView
           cqlFilter={aoiCqlFilter}
+          aoiPolygon={confirmedPolygon}
           selectionType={"draw_aoi"}
           showFilter={false}
           onSelectIgtLayer={(layer) => {

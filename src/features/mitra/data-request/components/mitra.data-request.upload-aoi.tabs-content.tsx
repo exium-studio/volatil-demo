@@ -507,6 +507,19 @@ const UploadAoiAttributeList = memo(
       },
     );
 
+    // Derived Values — union all done layers' polygons into 1 AOI polygon
+    const combinedAoiPolygon = useMemo(() => {
+      const donePolygons = aoiLayers
+        .filter((l) => l.status === "done" && Boolean(l.polygon))
+        .map((l) => l.polygon);
+      if (isEmptyArray(donePolygons)) return null;
+      if (donePolygons.length === 1) return donePolygons[0];
+      return unionGeoJsonPolygons({
+        type: "FeatureCollection",
+        features: donePolygons,
+      });
+    }, [aoiLayers]);
+
     if (!selectedIgtLayer || !layerId) {
       return (
         <VStack
@@ -562,6 +575,7 @@ const UploadAoiAttributeList = memo(
 
           <MitraDataRequestIgtLayerDataView
             cqlFilter={aoiCqlFilter}
+            aoiPolygon={combinedAoiPolygon}
             selectionType={"upload_aoi"}
             showFilter={false}
             onSelectIgtLayer={(layer) => {

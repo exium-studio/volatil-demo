@@ -31,3 +31,12 @@ export type AdministrativeFilterState = {
   ) => void;
 };
 
+export type AdminBoundaryLevel = "provinsi" | "kabupaten" | "kecamatan" | "kelurahan";
+
+export type FetchAdminBoundaryParams = {
+  level: AdminBoundaryLevel;
+  name: string;
+  signal?: AbortSignal;
+};
+
+

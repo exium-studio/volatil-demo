@@ -8,6 +8,11 @@ import type { FilterAdministrativeAreaValues } from "@/features/shared/types/fil
 export type MitraDataRequestIgtLayerDataViewProps = {
   cqlFilter?: string;
   selectionType?: SelectionType;
+  aoiPolygon?:
+    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+    | GeoJSON.MultiPolygon
+    | GeoJSON.Polygon
+    | null;
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
   onApplyFilter?: (filters: FilterAdministrativeAreaValues) => void;
   showFilter?: boolean;

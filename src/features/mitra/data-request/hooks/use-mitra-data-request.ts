@@ -156,6 +156,8 @@ export const useAddToCartMultipleLayers = () => {
       layers: AddToCartLayerParam[];
       selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
       cqlFilter?: string;
+      aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+      coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
     }) => {
       const payload: AddToCartOrderRequest = {
         selectionType:
@@ -163,6 +165,9 @@ export const useAddToCartMultipleLayers = () => {
           params.layers[0]?.selectionType ??
           "catalog",
         cqlFilter: params.cqlFilter ?? params.layers[0]?.cqlFilter,
+        aoiPolygon: params.aoiPolygon ?? params.layers[0]?.aoiPolygon,
+        coveragePolygon:
+          params.coveragePolygon ?? params.layers[0]?.coveragePolygon,
         items: params.layers.map((l) => ({
           sourceLayerId: l.layerId,
           cqlFilter: l.cqlFilter,

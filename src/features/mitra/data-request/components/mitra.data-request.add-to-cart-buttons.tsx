@@ -39,7 +39,12 @@ export const MitraDataRequestAddToCartButtons = (
     allItems = [],
     totalBidangCount: totalBidangCountProp,
     totalKawasanCount: totalKawasanCountProp,
+    totalKawasanAreaHa: totalKawasanAreaHaProp,
     totalCount,
+    minBidangCount = 0,
+    minKawasanHa = 0,
+    pricePerBidang: _pricePerBidang = 0,
+    pricePerKawasanHa: _pricePerKawasanHa = 0,
     ...restProps
   } = props;
 
@@ -204,6 +209,24 @@ export const MitraDataRequestAddToCartButtons = (
     kawasanCount,
   ]);
 
+  const effectiveKawasanHa =
+    totalKawasanAreaHaProp && totalKawasanAreaHaProp > 0
+      ? totalKawasanAreaHaProp
+      : allKawasanLuasTotal;
+
+  // Validation logic against purchase policies
+  const isBidangBelowMin =
+    bidangCount > 0 && minBidangCount > 0 && bidangCount < minBidangCount;
+  const isKawasanBelowMin =
+    effectiveKawasanHa > 0 && minKawasanHa > 0 && effectiveKawasanHa < minKawasanHa;
+
+  const isAddAllBidangDisabled = bidangCount === 0 || isBidangBelowMin;
+  const isAddAllKawasanDisabled = kawasanCount === 0 || isKawasanBelowMin;
+  const isAddAllBothDisabled =
+    totalItemCount === 0 ||
+    (bidangCount > 0 && isBidangBelowMin) ||
+    (kawasanCount > 0 && isKawasanBelowMin);
+
   return (
     <VStack
       gap={"md"}
@@ -248,7 +271,7 @@ export const MitraDataRequestAddToCartButtons = (
             primary
             flex={1}
             minW={0}
-            disabled={totalItemCount === 0}
+            disabled={isAddAllBothDisabled}
             onClick={onAddAllBothClick}
           >
             <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
@@ -275,7 +298,7 @@ export const MitraDataRequestAddToCartButtons = (
             <Menu.Content>
               <Menu.Item
                 value={"add-all-bidang"}
-                disabled={bidangCount === 0}
+                disabled={isAddAllBidangDisabled}
                 onClick={onAddAllBidangClick}
               >
                 {IGT_BASIS_MAP.bidang.icon && (
@@ -286,15 +309,15 @@ export const MitraDataRequestAddToCartButtons = (
 
               <Menu.Item
                 value={"add-all-kawasan"}
-                disabled={kawasanCount === 0}
+                disabled={isAddAllKawasanDisabled}
                 onClick={onAddAllKawasanClick}
               >
                 {IGT_BASIS_MAP.kawasan.icon && (
                   <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
                 )}
                 {"Tambah semua kawasan"}{" "}
-                {allKawasanLuasTotal > 0
-                  ? `(${formatNumber(allKawasanLuasTotal, { maximumFractionDigits: 2 })} ha)`
+                {effectiveKawasanHa > 0
+                  ? `(${formatNumber(effectiveKawasanHa, { maximumFractionDigits: 2 })} ha)`
                   : `(? ha kawasan)`}
               </Menu.Item>
             </Menu.Content>

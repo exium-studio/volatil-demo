@@ -40,6 +40,8 @@ import {
   SlidersHorizontalIcon,
   TablePropertiesIcon,
 } from "lucide-react";
+import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
+import { useKawasanCoverage } from "@/features/mitra/data-request/hooks/use-kawasan-coverage";
 import { memo, useMemo, useState } from "react";
 
 export const MitraDataRequestIgtLayerDataView = memo(
@@ -48,6 +50,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const {
       cqlFilter: baseCqlFilter,
       selectionType = "catalog",
+      aoiPolygon: propAoiPolygon,
       onSelectIgtLayer,
       onApplyFilter,
       showFilter = true,
@@ -142,6 +145,27 @@ export const MitraDataRequestIgtLayerDataView = memo(
       })),
     });
 
+    // Hooks — Resolve administrative boundary AOI when in catalog tab with filter applied
+    const adminBoundaryQuery = useAdminBoundaryAoi(
+      appliedAdministrativeFilters,
+      { enabled: showFilter },
+    );
+
+    // Derived Values — Resolve effective AOI polygon across all 3 methods
+    const effectiveAoiPolygon = useMemo(() => {
+      if (propAoiPolygon) return propAoiPolygon;
+      if (showFilter && adminBoundaryQuery.aoiPolygon) {
+        return adminBoundaryQuery.aoiPolygon;
+      }
+      return null;
+    }, [propAoiPolygon, showFilter, adminBoundaryQuery.aoiPolygon]);
+
+    // Hooks — Kawasan coverage processing: fetch -> clip to AOI -> unary union -> total area (ha)
+    const kawasanCoverage = useKawasanCoverage({
+      aoiPolygon: effectiveAoiPolygon,
+      enabled: Boolean(effectiveAoiPolygon),
+    });
+
     const summaryData = useMemo(() => {
       let totalBidangCount = 0;
       let totalKawasanAreaHa = 0;
@@ -164,14 +188,28 @@ export const MitraDataRequestIgtLayerDataView = memo(
         }
       });
 
+      // If unary union coverage has finished calculation, use its area as source of truth for kawasan
+      const resolvedKawasanHa =
+        effectiveAoiPolygon && kawasanCoverage.totalAreaHa > 0
+          ? kawasanCoverage.totalAreaHa
+          : totalKawasanAreaHa;
+
       return {
         totalBidangCount,
-        totalKawasanAreaHa,
+        totalKawasanAreaHa: resolvedKawasanHa,
         hasBidangLayers,
         hasKawasanLayers,
-        isAnySummaryLoading,
+        isAnySummaryLoading:
+          isAnySummaryLoading ||
+          (Boolean(effectiveAoiPolygon) && kawasanCoverage.isLoading),
       };
-    }, [summaryQueries, filteredLayers]);
+    }, [
+      summaryQueries,
+      filteredLayers,
+      effectiveAoiPolygon,
+      kawasanCoverage.totalAreaHa,
+      kawasanCoverage.isLoading,
+    ]);
 
     // Handlers — Cart actions
     const handleAddToCartAll = () => {
@@ -184,11 +222,33 @@ export const MitraDataRequestIgtLayerDataView = memo(
       addToCartMultipleMutation.mutate({
         selectionType,
         cqlFilter: combinedCqlFilter,
+        aoiPolygon:
+          effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
+            ? (effectiveAoiPolygon.geometry as
+                | GeoJSON.MultiPolygon
+                | GeoJSON.Polygon)
+            : (effectiveAoiPolygon as
+                | GeoJSON.MultiPolygon
+                | GeoJSON.Polygon
+                | undefined),
+        coveragePolygon:
+          kawasanCoverage.coveragePolygon &&
+          "geometry" in kawasanCoverage.coveragePolygon
+            ? (kawasanCoverage.coveragePolygon.geometry as
+                | GeoJSON.MultiPolygon
+                | GeoJSON.Polygon)
+            : undefined,
         layers: validLayers.map((layer) => {
           const idx = filteredLayers.findIndex((l) => l.id === layer.id);
           const summary = summaryQueries[idx]?.data as
             | LayerCountSummary
             | undefined;
+          const isKawasan = layer.spatialBasis === "kawasan";
+          const resolvedAreaHa =
+            isKawasan && kawasanCoverage.totalAreaHa > 0
+              ? kawasanCoverage.totalAreaHa
+              : summary?.totalAreaHa ?? 0;
+
           return {
             layerId: layer.id,
             typeName: layer.wfs?.wfsTypeName ?? "",
@@ -196,8 +256,24 @@ export const MitraDataRequestIgtLayerDataView = memo(
             spatialBasis: layer.spatialBasis,
             selectionType,
             featuresCount: summary?.totalCount ?? 0,
-            areaHa: summary?.totalAreaHa ?? 0,
+            areaHa: resolvedAreaHa,
             cqlFilter: combinedCqlFilter,
+            aoiPolygon:
+              effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
+                ? (effectiveAoiPolygon.geometry as
+                    | GeoJSON.MultiPolygon
+                    | GeoJSON.Polygon)
+                : (effectiveAoiPolygon as
+                    | GeoJSON.MultiPolygon
+                    | GeoJSON.Polygon
+                    | undefined),
+            coveragePolygon:
+              kawasanCoverage.coveragePolygon &&
+              "geometry" in kawasanCoverage.coveragePolygon
+                ? (kawasanCoverage.coveragePolygon.geometry as
+                    | GeoJSON.MultiPolygon
+                    | GeoJSON.Polygon)
+                : undefined,
           };
         }),
       });
@@ -213,6 +289,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
       addToCartMultipleMutation.mutate({
         selectionType,
         cqlFilter: combinedCqlFilter,
+        aoiPolygon:
+          effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
+            ? (effectiveAoiPolygon.geometry as
+                | GeoJSON.MultiPolygon
+                | GeoJSON.Polygon)
+            : (effectiveAoiPolygon as
+                | GeoJSON.MultiPolygon
+                | GeoJSON.Polygon
+                | undefined),
         layers: validLayers.map((layer) => {
           const idx = filteredLayers.findIndex((l) => l.id === layer.id);
           const summary = summaryQueries[idx]?.data as
@@ -242,11 +327,32 @@ export const MitraDataRequestIgtLayerDataView = memo(
       addToCartMultipleMutation.mutate({
         selectionType,
         cqlFilter: combinedCqlFilter,
+        aoiPolygon:
+          effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
+            ? (effectiveAoiPolygon.geometry as
+                | GeoJSON.MultiPolygon
+                | GeoJSON.Polygon)
+            : (effectiveAoiPolygon as
+                | GeoJSON.MultiPolygon
+                | GeoJSON.Polygon
+                | undefined),
+        coveragePolygon:
+          kawasanCoverage.coveragePolygon &&
+          "geometry" in kawasanCoverage.coveragePolygon
+            ? (kawasanCoverage.coveragePolygon.geometry as
+                | GeoJSON.MultiPolygon
+                | GeoJSON.Polygon)
+            : undefined,
         layers: validLayers.map((layer) => {
           const idx = filteredLayers.findIndex((l) => l.id === layer.id);
           const summary = summaryQueries[idx]?.data as
             | LayerCountSummary
             | undefined;
+          const resolvedAreaHa =
+            kawasanCoverage.totalAreaHa > 0
+              ? kawasanCoverage.totalAreaHa
+              : summary?.totalAreaHa ?? 0;
+
           return {
             layerId: layer.id,
             typeName: layer.wfs?.wfsTypeName ?? "",
@@ -254,8 +360,24 @@ export const MitraDataRequestIgtLayerDataView = memo(
             spatialBasis: layer.spatialBasis,
             selectionType,
             featuresCount: summary?.totalCount ?? 0,
-            areaHa: summary?.totalAreaHa ?? 0,
+            areaHa: resolvedAreaHa,
             cqlFilter: combinedCqlFilter,
+            aoiPolygon:
+              effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
+                ? (effectiveAoiPolygon.geometry as
+                    | GeoJSON.MultiPolygon
+                    | GeoJSON.Polygon)
+                : (effectiveAoiPolygon as
+                    | GeoJSON.MultiPolygon
+                    | GeoJSON.Polygon
+                    | undefined),
+            coveragePolygon:
+              kawasanCoverage.coveragePolygon &&
+              "geometry" in kawasanCoverage.coveragePolygon
+                ? (kawasanCoverage.coveragePolygon.geometry as
+                    | GeoJSON.MultiPolygon
+                    | GeoJSON.Polygon)
+                : undefined,
           };
         }),
       });
@@ -353,20 +475,34 @@ export const MitraDataRequestIgtLayerDataView = memo(
       (summaryData.totalKawasanAreaHa === 0 ||
         summaryData.totalKawasanAreaHa < pricingPolicy.minKawasanHa);
 
+    // Estimate price based on policies
+    const estimatedBidangPrice =
+      summaryData.totalBidangCount * pricingPolicy.pricePerBidang;
+    const estimatedKawasanPrice =
+      summaryData.totalKawasanAreaHa * pricingPolicy.pricePerKawasanHa;
+    const estimatedTotalPrice = estimatedBidangPrice + estimatedKawasanPrice;
+
+    // Condition for "Tambah semua": both active bases must satisfy their respective minimum purchase limits
+    const isAllBelowMin =
+      (summaryData.hasBidangLayers && isBidangBelowMin) ||
+      (summaryData.hasKawasanLayers && isKawasanBelowMin);
+
     const hasAnyData =
       summaryData.totalBidangCount > 0 || summaryData.totalKawasanAreaHa > 0;
 
-    const isCartDisabled =
+    const isBaseCartDisabled =
       isEmptyArray(filteredLayers) ||
       addToCartMultipleMutation.isPending ||
       summaryData.isAnySummaryLoading ||
       !hasAnyData;
 
+    const isCartDisabled = isBaseCartDisabled || isAllBelowMin;
+
     const isBidangOnlyDisabled =
-      isCartDisabled || !summaryData.hasBidangLayers || isBidangBelowMin;
+      isBaseCartDisabled || !summaryData.hasBidangLayers || isBidangBelowMin;
 
     const isKawasanOnlyDisabled =
-      isCartDisabled || !summaryData.hasKawasanLayers || isKawasanBelowMin;
+      isBaseCartDisabled || !summaryData.hasKawasanLayers || isKawasanBelowMin;
 
     return (
       <VStack
@@ -455,6 +591,14 @@ export const MitraDataRequestIgtLayerDataView = memo(
                   {`${formatNumber(summaryData.totalBidangCount)} bidang`}
                   {" • "}
                   {`${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha`}
+                  {estimatedTotalPrice > 0 && (
+                    <>
+                      {" • "}
+                      <span style={{ color: "var(--chakra-colors-teal-solid, #0d9488)" }}>
+                        {formatNumber(estimatedTotalPrice, { style: "currency" })}
+                      </span>
+                    </>
+                  )}
                 </P>
               )}
             </HStack>

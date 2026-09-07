@@ -38,7 +38,12 @@ export type MitraDataRequestAddToCartButtonsProps = StackProps & {
   allItems?: MitraDataRequestIgtDataItem[] | unknown[];
   totalBidangCount?: number;
   totalKawasanCount?: number;
+  totalKawasanAreaHa?: number;
   totalCount?: number;
+  minBidangCount?: number;
+  minKawasanHa?: number;
+  pricePerBidang?: number;
+  pricePerKawasanHa?: number;
   onAddAllBidangClick?: () => void;
   onAddAllKawasanClick?: () => void;
   onAddAllBothClick?: () => void;
@@ -54,6 +59,8 @@ export type AddToCartLayerParam = {
   featuresCount?: number;
   areaHa?: number;
   cqlFilter?: string;
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
 };
 
 
