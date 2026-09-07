@@ -247,7 +247,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           const resolvedAreaHa =
             isKawasan && kawasanCoverage.totalAreaHa > 0
               ? kawasanCoverage.totalAreaHa
-              : summary?.totalAreaHa ?? 0;
+              : (summary?.totalAreaHa ?? 0);
 
           return {
             layerId: layer.id,
@@ -351,7 +351,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           const resolvedAreaHa =
             kawasanCoverage.totalAreaHa > 0
               ? kawasanCoverage.totalAreaHa
-              : summary?.totalAreaHa ?? 0;
+              : (summary?.totalAreaHa ?? 0);
 
           return {
             layerId: layer.id,
@@ -573,33 +573,94 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
         {/* Add to Cart Bar with Summary & ButtonGroup */}
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} mt={"auto"}>
-          {/* Summary Row */}
+          {/* Summary Row: Detailed Breakdown (Left) & Grand Total (Right) */}
           <HStack
             align={"center"}
             justify={"space-between"}
             w={"full"}
             gap={"sm"}
+            wrap={"wrap"}
           >
-            <P fontSize={"xs"} color={"fg.muted"}>
-              {"Total ketersediaan data:"}
-            </P>
+            {/* Left Breakdown: Bidang & Kawasan */}
+            <HStack align={"center"} gap={"md"} wrap={"wrap"}>
+              {summaryData.isAnySummaryLoading ? (
+                <Skeleton h={"18px"} w={"220px"} />
+              ) : (
+                <>
+                  {/* Bidang Breakdown */}
+                  {summaryData.hasBidangLayers && (
+                    <HStack align={"center"} gap={"xs"}>
+                      <P
+                        fontSize={"xs"}
+                        fontWeight={"medium"}
+                        color={"fg.muted"}
+                      >
+                        {`${formatNumber(summaryData.totalBidangCount)} bidang`}
+                      </P>
+                      <P fontSize={"xs"} color={"fg.muted"}>
+                        {"•"}
+                      </P>
+                      <P
+                        fontSize={"xs"}
+                        fontWeight={"semibold"}
+                        color={"fg.default"}
+                      >
+                        {formatNumber(estimatedBidangPrice, {
+                          style: "currency",
+                        })}
+                      </P>
+                    </HStack>
+                  )}
+
+                  {/* Separator between Bidang & Kawasan if both exist */}
+                  {summaryData.hasBidangLayers &&
+                    summaryData.hasKawasanLayers && (
+                      <P fontSize={"xs"} color={"border.muted"}>
+                        {"|"}
+                      </P>
+                    )}
+
+                  {/* Kawasan Breakdown */}
+                  {summaryData.hasKawasanLayers && (
+                    <HStack align={"center"} gap={"xs"}>
+                      <P
+                        fontSize={"xs"}
+                        fontWeight={"medium"}
+                        color={"fg.muted"}
+                      >
+                        {`${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha`}
+                      </P>
+                      <P fontSize={"xs"} color={"fg.muted"}>
+                        {"•"}
+                      </P>
+                      <P
+                        fontSize={"xs"}
+                        fontWeight={"semibold"}
+                        color={"fg.default"}
+                      >
+                        {formatNumber(estimatedKawasanPrice, {
+                          style: "currency",
+                        })}
+                      </P>
+                    </HStack>
+                  )}
+                </>
+              )}
+            </HStack>
+
+            {/* Right: Grand Total */}
             <HStack align={"center"} gap={"xs"}>
               {summaryData.isAnySummaryLoading ? (
-                <Skeleton h={"16px"} w={"120px"} />
+                <Skeleton h={"18px"} />
               ) : (
-                <P fontSize={"xs"} fontWeight={"semibold"} color={"fg.default"}>
-                  {`${formatNumber(summaryData.totalBidangCount)} bidang`}
-                  {" • "}
-                  {`${formatNumber(summaryData.totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha`}
-                  {estimatedTotalPrice > 0 && (
-                    <>
-                      {" • "}
-                      <span style={{ color: "var(--chakra-colors-teal-solid, #0d9488)" }}>
-                        {formatNumber(estimatedTotalPrice, { style: "currency" })}
-                      </span>
-                    </>
-                  )}
-                </P>
+                <>
+                  <P fontSize={"xs"} color={"fg.muted"}>
+                    {"Total:"}
+                  </P>
+                  <P fontSize={"sm"} fontWeight={"bold"} color={"blue.fg"}>
+                    {formatNumber(estimatedTotalPrice, { style: "currency" })}
+                  </P>
+                </>
               )}
             </HStack>
           </HStack>
