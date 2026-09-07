@@ -101,7 +101,7 @@ const InternalHomeTrendChartContent = (props: InternalHomeTrendChartProps) => {
   const chart = useChart({
     data: acquisitionTrends,
     series: [
-      { name: "field", label: "Bidang (Objek)", color: "blue.solid" },
+      { name: "field", label: "Bidang", color: "blue.solid" },
       { name: "area", label: "Kawasan (Ha)", color: "orange.solid" },
     ],
   });
