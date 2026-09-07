@@ -150,7 +150,7 @@ const InternalOrderReviewApproveModalContent = (
               </Alert.Description>
             </Alert.Root>
 
-            <Fieldset>
+            <VStack align={"stretch"} gap={"md"}>
               {fields.map((field, index) => {
                 const item = order.items?.[index];
                 if (!item) return null;
@@ -162,83 +162,92 @@ const InternalOrderReviewApproveModalContent = (
                     `/api/proxy/wms?layerId=${item.sourceLayerId}`,
                   );
 
-                return (
-                  <VStack key={field.id} align={"stretch"} gap={"xs"}>
-                    {/* Volatil GeoServer WMS URL */}
-                    <VStack align={"stretch"} gap={1} mt={1}>
-                      <P fontSize={"xs"} color={"fg.muted"}>
-                        {"URL WMS GeoServer Volatil (Internal):"}
-                      </P>
+                const layerName =
+                  item.sourceLayerTitle || item.sourceLayerId || `Layer #${index + 1}`;
 
-                      <HStack
-                        gap={"md"}
-                        bg={"bg.panel"}
-                        p={"md"}
-                        rounded={theme.radii.component}
-                        border={"1px solid"}
-                        borderColor={"border.subtle"}
-                      >
-                        <P fontFamily={"mono"} flex={1} color={"fg.default"}>
-                          {previewUrl}
+                return (
+                  <Fieldset
+                    key={field.id}
+                    legend={layerName}
+                    containeredContent={true}
+                  >
+                    <VStack align={"stretch"} gap={"xs"} w={"full"}>
+                      {/* Volatil GeoServer WMS URL */}
+                      <VStack align={"stretch"} gap={1} mt={1}>
+                        <P fontSize={"xs"} color={"fg.muted"}>
+                          {"URL WMS GeoServer Volatil (Internal):"}
                         </P>
 
-                        <ClipboardButton
-                          value={previewUrl}
-                          variant={"ghost"}
-                          size={"xs"}
-                          aria-label={"Salin URL WMS"}
-                          mt={-2}
-                          mr={-2}
-                        />
-                      </HStack>
+                        <HStack
+                          gap={"md"}
+                          bg={"bg.panel"}
+                          p={"md"}
+                          rounded={theme.radii.component}
+                          border={"1px solid"}
+                          borderColor={"border.subtle"}
+                        >
+                          <P fontFamily={"mono"} flex={1} color={"fg.default"}>
+                            {previewUrl}
+                          </P>
+
+                          <ClipboardButton
+                            value={previewUrl}
+                            variant={"ghost"}
+                            size={"xs"}
+                            aria-label={"Salin URL WMS"}
+                            mt={-2}
+                            mr={-2}
+                          />
+                        </HStack>
+                      </VStack>
+
+                      {/* Input INTEROP WMS */}
+                      <Controller
+                        control={control}
+                        name={`items.${index}.externalWmsUrl`}
+                        render={({ field: inputField, fieldState }) => (
+                          <Field
+                            label={"URL WMS Resmi (INTEROP Pusdatin)"}
+                            errorText={fieldState.error?.message}
+                            invalid={Boolean(fieldState.error)}
+                            mt={2}
+                          >
+                            <Textarea
+                              placeholder={
+                                "https://geoportal.atrbpn.go.id/wms?layers=..."
+                              }
+                              value={inputField.value ?? ""}
+                              onChange={inputField.onChange}
+                              onBlur={inputField.onBlur}
+                            />
+                          </Field>
+                        )}
+                      />
+
+                      {/* Input INTEROP WFS (Optional) — Dikomentari sementara */}
+                      {/* <Controller
+                        control={control}
+                        name={`items.${index}.externalWfsUrl`}
+                        render={({ field: inputField }) => (
+                          <Field
+                            label={"URL WFS Resmi (INTEROP Pusdatin - Opsional)"}
+                          >
+                            <Textarea
+                              placeholder={
+                                "https://geoportal.atrbpn.go.id/wfs?typename=..."
+                              }
+                              value={inputField.value ?? ""}
+                              onChange={inputField.onChange}
+                              onBlur={inputField.onBlur}
+                            />
+                          </Field>
+                        )}
+                      /> */}
                     </VStack>
-
-                    {/* Input INTEROP WMS */}
-                    <Controller
-                      control={control}
-                      name={`items.${index}.externalWmsUrl`}
-                      render={({ field: inputField, fieldState }) => (
-                        <Field
-                          label={"URL WMS Resmi (INTEROP Pusdatin)"}
-                          errorText={fieldState.error?.message}
-                          invalid={Boolean(fieldState.error)}
-                          mt={2}
-                        >
-                          <Textarea
-                            placeholder={
-                              "https://geoportal.atrbpn.go.id/wms?layers=..."
-                            }
-                            value={inputField.value ?? ""}
-                            onChange={inputField.onChange}
-                            onBlur={inputField.onBlur}
-                          />
-                        </Field>
-                      )}
-                    />
-
-                    {/* Input INTEROP WFS (Optional) */}
-                    <Controller
-                      control={control}
-                      name={`items.${index}.externalWfsUrl`}
-                      render={({ field: inputField }) => (
-                        <Field
-                          label={"URL WFS Resmi (INTEROP Pusdatin - Opsional)"}
-                        >
-                          <Textarea
-                            placeholder={
-                              "https://geoportal.atrbpn.go.id/wfs?typename=..."
-                            }
-                            value={inputField.value ?? ""}
-                            onChange={inputField.onChange}
-                            onBlur={inputField.onBlur}
-                          />
-                        </Field>
-                      )}
-                    />
-                  </VStack>
+                  </Fieldset>
                 );
               })}
-            </Fieldset>
+            </VStack>
           </VStack>
         </Fieldset>
       </Modal.Body>

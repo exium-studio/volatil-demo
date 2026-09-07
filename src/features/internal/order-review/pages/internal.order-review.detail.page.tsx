@@ -32,7 +32,10 @@ import { OrderStatusBadge } from "@/features/shared/components/order-status.badg
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
-import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
+import {
+  formatCurrency,
+  formatNumber,
+} from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
@@ -259,7 +262,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
       { th: "Basis IGT", sortable: true },
       { th: "WMS URL (Volatil)", sortable: false },
       { th: "Jumlah / Luas", sortable: true, align: "center" },
-      { th: "Estimasi Biaya", sortable: true, align: "end" },
+      // { th: "Estimasi Biaya", sortable: true, align: "end" },
       { th: "Tampilkan di Peta", align: "center" },
     ];
 
@@ -310,17 +313,17 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
               td: (
                 <P textAlign={"center"}>
                   {item.spatialBasis === "kawasan"
-                    ? `${item.areaHa ?? 0} Ha`
-                    : `${item.featuresCount} Bidang`}
+                    ? `${formatNumber(item.areaHa ?? 0)} ha`
+                    : `${formatNumber(item.featuresCount ?? 0)} bidang`}
                 </P>
               ),
               align: "center" as const,
             },
-            {
-              value: item.subtotalPrice ?? 0,
-              td: <P>{formatCurrency(item.subtotalPrice ?? 0)}</P>,
-              align: "end" as const,
-            },
+            // {
+            //   value: item.subtotalPrice ?? 0,
+            //   td: <P>{formatCurrency(item.subtotalPrice ?? 0)}</P>,
+            //   align: "end" as const,
+            // },
             {
               value: enabledLayerIds[item.sourceLayerId] ?? false,
               td: (
