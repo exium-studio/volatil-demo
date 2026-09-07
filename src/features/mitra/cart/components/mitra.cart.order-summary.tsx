@@ -10,6 +10,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartOrder } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type { MitraCartOrderSummaryProps } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -137,9 +138,18 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
             </Badge>
           )}
         </HStack>
-        <P fontSize={"sm"} fontWeight={"semibold"}>
-          {activeOrder?.orderId ?? "-"}
-        </P>
+
+        <HStack justify={"space-between"} align={"center"} w={"full"}>
+          <P fontSize={"sm"} fontWeight={"semibold"}>
+            {activeOrder?.orderId ?? "-"}
+          </P>
+
+          {isSelected && activeOrder?.createdAt && (
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {formatDateTime(activeOrder.createdAt)}
+            </P>
+          )}
+        </HStack>
       </VStack>
 
       <Separator

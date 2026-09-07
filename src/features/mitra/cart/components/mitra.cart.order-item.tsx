@@ -16,6 +16,8 @@ import type {
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { ORDER_STATUS_MAP } from "@/shared/constants/status.config";
+import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { Trash2Icon } from "lucide-react";
 import { memo } from "react";
 
@@ -99,9 +101,17 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
 
         {/* Content Details */}
         <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
-          <P fontSize={"xs"} color={"fg.subtle"} mb={"xs"}>
-            {`${order.orderId}`}
-          </P>
+          <HStack justify={"space-between"} align={"center"} mb={"xs"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {order.orderId}
+            </P>
+
+            {order.createdAt && (
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {formatDateTime(order.createdAt)}
+              </P>
+            )}
+          </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
             <P color={"fg.muted"}>{"Metode Pengajuan:"}</P>
@@ -122,13 +132,15 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
             <P fontWeight={"medium"}>
               {totalBidang > 0 && (
                 <>
-                  <TNum>{totalBidang}</TNum> {"bidang"}
+                  <TNum>{formatNumber(totalBidang)}</TNum> {"bidang"}
                 </>
               )}
+
               {totalBidang > 0 && totalKawasanHa > 0 && " • "}
+
               {totalKawasanHa > 0 && (
                 <>
-                  <TNum>{totalKawasanHa}</TNum> {"ha"}
+                  <TNum>{formatNumber(totalKawasanHa)}</TNum> {"ha"}
                 </>
               )}
             </P>

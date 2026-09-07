@@ -173,20 +173,23 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
 
             {hasOrders && (
               <VStack gap={"sm"} align={"stretch"} w={"full"}>
-                {orders.map((order, index) => (
-                  <MitraCartOrderItem
-                    key={order.orderId}
-                    order={order}
-                    index={index}
-                    isSelected={order.orderId === selectedOrderId}
-                    onSelect={onSelectOrder}
-                    onDelete={handleDeleteOrder}
-                    isDeleting={
-                      deleteOrderMutation.isPending &&
-                      deleteOrderMutation.variables === order.orderId
-                    }
-                  />
-                ))}
+                {orders.map((order, index) => {
+                  const orderNumber = orders.length - index;
+                  return (
+                    <MitraCartOrderItem
+                      key={order.orderId}
+                      order={order}
+                      index={orderNumber - 1}
+                      isSelected={order.orderId === selectedOrderId}
+                      onSelect={onSelectOrder}
+                      onDelete={handleDeleteOrder}
+                      isDeleting={
+                        deleteOrderMutation.isPending &&
+                        deleteOrderMutation.variables === order.orderId
+                      }
+                    />
+                  );
+                })}
               </VStack>
             )}
           </>
@@ -215,9 +218,16 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
+  // Queries (for total orders count to reverse order number)
+  const { orders } = useCartOrdersQuery();
+
   // Queries — detail of selected order
   const { orderDetail: selectedOrder, isLoading: isDetailLoading } =
     useCartOrderDetailQuery(selectedOrderId || undefined);
+
+  // Derived Values — reverse order number (index 0 is latest, so it gets the highest order number)
+  const displayOrderNumber =
+    selectedOrderIndex !== -1 ? orders.length - selectedOrderIndex : null;
 
   return (
     <Container.Body
@@ -234,8 +244,8 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
           <HStack align={"center"} gap={"sm"}>
             <Heading>{"Rincian Pesanan"}</Heading>
 
-            {selectedOrderIndex !== -1 && (
-              <Badge>{`Pesanan #${selectedOrderIndex + 1}`}</Badge>
+            {displayOrderNumber !== null && (
+              <Badge>{`Pesanan #${displayOrderNumber}`}</Badge>
             )}
           </HStack>
 
