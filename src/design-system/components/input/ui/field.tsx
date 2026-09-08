@@ -37,7 +37,9 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
         {children}
 
         {helperText && (
-          <ChakraField.HelperText>{helperText}</ChakraField.HelperText>
+          <ChakraField.HelperText fontSize={"xs"} mt={"2px"}>
+            {helperText}
+          </ChakraField.HelperText>
         )}
 
         {errorText && (

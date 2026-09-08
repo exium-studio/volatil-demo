@@ -123,6 +123,7 @@ const MitraMyDataEditModalContent = (
                   {...register("label")}
                   placeholder={"Contoh: Bidang Tanah Kantor Cabang Badung"}
                   autoFocus={true}
+                  size={"lg"}
                 />
               </Field>
             </VStack>
