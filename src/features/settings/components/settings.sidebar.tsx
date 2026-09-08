@@ -77,14 +77,12 @@ export const SettingsSidebarBody = () => {
     strict: false,
   });
   const navigate = useNavigate();
-  const isSmallViewport = useIsSmallViewport();
 
   return (
     <VNavs<SettingNavKey>
       groups={SETTINGS_NAV_GROUPS_LIST}
       navs={SETTINGS_NAVS_MAP}
       activeKey={activeSettingNavKey}
-      expanded={!isSmallViewport}
       onNavClick={(key) => {
         navigate({
           to: ".",
