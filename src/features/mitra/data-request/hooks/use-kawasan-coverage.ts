@@ -12,9 +12,9 @@ import { runClipAndUnionKawasanInWorker } from "@/features/mitra/data-request/se
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type GeoJSON from "geojson";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 /**
  * Universal hook for Kawasan IGT coverage processing across ALL AOI methods (Draw, Upload, Wilayah Administrasi):
@@ -45,13 +45,23 @@ export const useKawasanCoverage = (
     return `INTERSECTS(geom, ${aoiWkt})`;
   }, [aoiWkt]);
 
+  // States
+  const [progress, setProgress] = useState<number>(0);
+
   const isEnabled = Boolean(enabled && aoiFeature && aoiCqlFilter);
+
+  const queryClient = useQueryClient();
+
+  const queryKey = queryKeys.mitra.dataRequest.kawasanCoverage(aoiCqlFilter);
 
   // Queries
   const { data, isLoading, isFetching, error, isError, refetch } = useQuery({
-    queryKey: queryKeys.mitra.dataRequest.kawasanCoverage(aoiCqlFilter),
+    queryKey,
     queryFn: async ({ signal }) => {
+      setProgress(5);
+
       if (!aoiFeature || !aoiCqlFilter) {
+        setProgress(100);
         return {
           coveragePolygon: null,
           totalAreaHa: 0,
@@ -82,7 +92,10 @@ export const useKawasanCoverage = (
         targetLayers = resolvedList;
       }
 
+      setProgress(15);
+
       if (isEmptyArray(targetLayers)) {
+        setProgress(100);
         return {
           coveragePolygon: null,
           totalAreaHa: 0,
@@ -91,7 +104,10 @@ export const useKawasanCoverage = (
         };
       }
 
-      // 2. Fetch intersecting features for all active kawasan layers
+      // 2. Fetch intersecting features for all active kawasan layers with progress tracking
+      let completedFetches = 0;
+      const totalLayers = targetLayers.length;
+
       const fetchPromises = targetLayers.map(async (layer) => {
         try {
           const res = await fetchWfs({
@@ -102,8 +118,15 @@ export const useKawasanCoverage = (
             cqlFilter: aoiCqlFilter,
             signal,
           });
+          completedFetches++;
+          // WFS fetch phase maps to 15% - 60%
+          const fetchProgress = 15 + Math.round((completedFetches / totalLayers) * 45);
+          setProgress(fetchProgress);
           return res.features ?? [];
         } catch (err) {
+          completedFetches++;
+          const fetchProgress = 15 + Math.round((completedFetches / totalLayers) * 45);
+          setProgress(fetchProgress);
           if (
             signal?.aborted ||
             (err instanceof DOMException && err.name === "AbortError") ||
@@ -120,6 +143,7 @@ export const useKawasanCoverage = (
       const allKawasanFeatures = featureArrays.flat();
 
       if (isEmptyArray(allKawasanFeatures)) {
+        setProgress(100);
         return {
           coveragePolygon: null,
           totalAreaHa: 0,
@@ -128,22 +152,42 @@ export const useKawasanCoverage = (
         };
       }
 
-      // 3 & 4. Clip to boundary & Unary union off the main thread via Web Worker
-      return runClipAndUnionKawasanInWorker(allKawasanFeatures, aoiFeature, signal);
+      setProgress(60);
+
+      // 3 & 4. Clip to boundary & Unary union off the main thread via Web Worker with progress callback
+      const result = await runClipAndUnionKawasanInWorker(
+        allKawasanFeatures,
+        aoiFeature,
+        signal,
+        (workerProgress) => {
+          setProgress(workerProgress);
+        },
+      );
+
+      setProgress(100);
+      return result;
     },
     enabled: isEnabled,
     staleTime: 5 * 60 * 1000,
   });
 
+  const isCalculating = isEnabled && (isLoading || isFetching);
+
   return {
     coveragePolygon: data?.coveragePolygon ?? null,
     totalAreaHa: data?.totalAreaHa ?? 0,
     totalIntersectedFeatures: data?.totalIntersectedFeatures ?? 0,
-    isLoading: isEnabled && (isLoading || isFetching),
+    isLoading: isCalculating,
     isError,
     error: error instanceof Error ? error : null,
+    progress: isCalculating ? progress : 100,
     refetch: async () => {
+      setProgress(0);
       await refetch();
+    },
+    cancel: () => {
+      setProgress(0);
+      void queryClient.cancelQueries({ queryKey });
     },
   };
 };

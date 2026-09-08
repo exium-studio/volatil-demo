@@ -29,5 +29,7 @@ export type UseKawasanCoverageResult = {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  progress: number;
   refetch: () => Promise<void>;
+  cancel?: () => void;
 };

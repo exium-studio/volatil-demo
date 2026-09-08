@@ -61,6 +61,7 @@ export const clipAndUnionKawasanFeatures = (
     | GeoJSON.MultiPolygon
     | null
     | undefined,
+  onProgress?: (progress: number) => void,
 ): KawasanCoverageResult => {
   const emptyResult: KawasanCoverageResult = {
     coveragePolygon: null,
@@ -102,7 +103,17 @@ export const clipAndUnionKawasanFeatures = (
     GeoJSON.Polygon | GeoJSON.MultiPolygon
   >[] = [];
 
+  const totalRaw = rawFeatures.length;
+  let processedCount = 0;
+
   for (const feature of rawFeatures) {
+    processedCount++;
+    if (processedCount % 25 === 0 || processedCount === totalRaw) {
+      // Scale clipping progress across 60% - 90% range
+      const clipRatio = processedCount / totalRaw;
+      onProgress?.(Math.round(60 + clipRatio * 30));
+    }
+
     if (!feature || !feature.geometry) continue;
 
     const geomType = feature.geometry.type;
@@ -150,7 +161,10 @@ export const clipAndUnionKawasanFeatures = (
     }
   }
 
+  onProgress?.(95);
+
   if (isEmptyArray(clippedPolygons)) {
+    onProgress?.(100);
     return emptyResult;
   }
 
@@ -255,6 +269,8 @@ export const clipAndUnionKawasanFeatures = (
       console.warn("Failed to calculate turf area on coverage polygon:", err);
     }
   }
+
+  onProgress?.(100);
 
   return {
     coveragePolygon: finalCoveragePolygon,

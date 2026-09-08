@@ -16,6 +16,7 @@ export type MitraDataRequestIgtLayerDataViewProps = {
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
   onApplyFilter?: (filters: FilterAdministrativeAreaValues) => void;
   showFilter?: boolean;
+  onCancelCoverage?: () => void;
 };
 
 export type MitraDataRequestDetailAttributeHeaderProps = {

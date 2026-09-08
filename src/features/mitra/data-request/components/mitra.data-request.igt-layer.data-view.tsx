@@ -7,7 +7,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
-import { Loader } from "@/design-system/components/feedback/ui/loader";
+import { ProgressCircle } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -40,6 +40,7 @@ import {
   ShoppingCartIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
+  XIcon,
 } from "lucide-react";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
 import { useKawasanCoverage } from "@/features/mitra/data-request/hooks/use-kawasan-coverage";
@@ -55,6 +56,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       onSelectIgtLayer,
       onApplyFilter,
       showFilter = true,
+      onCancelCoverage,
     } = props;
 
     // Stores
@@ -513,6 +515,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const isKawasanOnlyDisabled =
       isBaseCartDisabled || !summaryData.hasKawasanLayers || isKawasanBelowMin;
 
+    // Handlers — Cancel coverage calculation
+    const handleCancelCoverage = () => {
+      kawasanCoverage.cancel?.();
+      onCancelCoverage?.();
+    };
+
     return (
       <VStack
         flex={1}
@@ -585,22 +593,49 @@ export const MitraDataRequestIgtLayerDataView = memo(
           <HStack
             align={"center"}
             justify={"space-between"}
-            px={"md"}
+            pl={"md"}
+            pr={"xs"}
             py={"xs"}
             bg={"blue.subtle"}
             borderBottomWidth={"1px"}
             borderColor={"blue.muted"}
           >
-            <HStack align={"center"} gap={"xs"}>
-              <Loader size={"xs"} color={"blue.fg"} />
+            <HStack align={"center"} gap={"sm"}>
+              <ProgressCircle.Root
+                value={kawasanCoverage.progress}
+                size={"xs"}
+                colorPalette={"blue"}
+              >
+                <ProgressCircle.Circle>
+                  <ProgressCircle.Track />
+                  <ProgressCircle.Range strokeLinecap={"round"} />
+                </ProgressCircle.Circle>
+              </ProgressCircle.Root>
+
               <P fontSize={"xs"} color={"blue.fg"} fontWeight={"medium"}>
-                {"Menghitung cakupan spasial kawasan pada area AOI..."}
+                {`Menghitung cakupan spasial kawasan pada area AOI... (${kawasanCoverage.progress}%)`}
               </P>
             </HStack>
 
-            <P fontSize={"xs"} color={"fg.muted"}>
-              {"Jangan tutup tab/aplikasi"}
-            </P>
+            <HStack align={"center"} gap={"sm"}>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Jangan tutup tab/aplikasi"}
+              </P>
+
+              <Button
+                variant={"ghost"}
+                colorPalette={"blue"}
+                pl={2}
+                _hover={{
+                  bg: "blue.muted",
+                }}
+                size={"xs"}
+                onClick={handleCancelCoverage}
+              >
+                <AppIcon icon={XIcon} />
+                {"Batal"}
+              </Button>
+            </HStack>
           </HStack>
         )}
 

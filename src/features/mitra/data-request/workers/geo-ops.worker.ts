@@ -16,6 +16,15 @@ self.onmessage = (e: MessageEvent<GeoOpsWorkerRequest>) => {
       const result = clipAndUnionKawasanFeatures(
         message.payload.rawFeatures,
         message.payload.aoiPolygon,
+        (progress) => {
+          const progressResponse: GeoOpsWorkerResponse = {
+            id: message.id,
+            ok: true,
+            type: "PROGRESS",
+            progress,
+          };
+          self.postMessage(progressResponse);
+        },
       );
 
       const response: GeoOpsWorkerResponse = {
@@ -44,6 +53,7 @@ self.onmessage = (e: MessageEvent<GeoOpsWorkerRequest>) => {
     const response: GeoOpsWorkerResponse = {
       id: message.id,
       ok: false,
+      type: "ERROR",
       error: err instanceof Error ? err.message : "Gagal memproses operasi geometri spasial",
     };
     self.postMessage(response);

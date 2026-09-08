@@ -21,6 +21,7 @@ export const runClipAndUnionKawasanInWorker = (
     | null
     | undefined,
   signal?: AbortSignal,
+  onProgress?: (progress: number) => void,
 ): Promise<KawasanCoverageResult> => {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
@@ -46,6 +47,11 @@ export const runClipAndUnionKawasanInWorker = (
     worker.onmessage = (e: MessageEvent<GeoOpsWorkerResponse>) => {
       const resp = e.data;
       if (resp.id !== requestId) return;
+
+      if (resp.type === "PROGRESS") {
+        onProgress?.(resp.progress);
+        return;
+      }
 
       cleanup();
 

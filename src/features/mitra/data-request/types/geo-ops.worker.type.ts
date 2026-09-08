@@ -42,6 +42,13 @@ export type GeoOpsWorkerResponse =
     }
   | {
       id: string;
+      ok: true;
+      type: "PROGRESS";
+      progress: number;
+    }
+  | {
+      id: string;
       ok: false;
+      type: "ERROR";
       error: string;
     };
