@@ -56,8 +56,8 @@ export const ADMIN_BOUNDARY_WFS_CONFIG = {
   },
   kelurahan: {
     typeName: "administrative_workspace:BATAS_DESA_KELURAHAN",
-    wfsUrl: "/api/proxy/wfs?layerId=administrative_workspace:BATAS_DESA_KELURAHAN",
+    wfsUrl:
+      "/api/proxy/wfs?layerId=administrative_workspace:BATAS_DESA_KELURAHAN",
     attributeKey: "WADMKD",
   },
 } as const;
-
