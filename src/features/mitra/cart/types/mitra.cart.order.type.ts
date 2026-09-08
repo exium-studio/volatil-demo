@@ -59,7 +59,6 @@ export type PaymentMethod =
   | "VA_BCA"
   | "QRIS";
 
-
 export type CartItemsQueryParams = {
   page: number;
   pageSize: number;
@@ -93,9 +92,9 @@ export type MitraCartBatchItemProps = {
 
 export type MitraCartOrderSummaryProps = {
   activeOrder: ActiveCartOrder | null;
+  orderIndex?: number | null;
   isLoading?: boolean;
 };
-
 
 export type CartOrderItemPayload = {
   sourceLayerId: string;

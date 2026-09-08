@@ -261,6 +261,7 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
 
       <MitraCartOrderSummary
         activeOrder={selectedOrder}
+        orderIndex={displayOrderNumber}
         isLoading={isDetailLoading}
       />
     </Container.Body>

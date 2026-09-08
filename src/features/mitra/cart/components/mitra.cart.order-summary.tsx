@@ -9,6 +9,7 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartOrder } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type { MitraCartOrderSummaryProps } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
@@ -24,7 +25,7 @@ import { useMemo } from "react";
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
-  const { activeOrder, isLoading = false } = props;
+  const { activeOrder, orderIndex, isLoading = false } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -94,44 +95,26 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       align={"stretch"}
     >
       {/* Order Metadata Header */}
-      <VStack align={"start"} gap={1}>
-        <HStack justify={"space-between"} w={"full"}>
-          <P fontSize={"xs"} color={"fg.subtle"}>
-            {"ID Pesanan"}
+      <VStack align={"stretch"} gap={"xs"}>
+        <HStack
+          wrap={"wrap"}
+          justify={"space-between"}
+          align={"center"}
+          gap={"xs"}
+          w={"full"}
+        >
+          <P fontSize={"sm"} fontWeight={"semibold"}>
+            {isSelected
+              ? orderIndex != null
+                ? `Pesanan #${orderIndex}`
+                : "Pesanan"
+              : "Pesanan"}
           </P>
-          {isSelected ? (
-            <Badge
-              colorPalette={
-                isPendingPayment
-                  ? "orange"
-                  : isReady
-                    ? "green"
-                    : isPendingReview
-                      ? "orange"
-                      : isPaid
-                        ? "blue"
-                        : isProcessing
-                          ? "purple"
-                          : isRejected
-                            ? "red"
-                            : "gray"
-              }
-              variant={"subtle"}
-            >
-              {isPendingPayment
-                ? "Menunggu Pembayaran"
-                : isReady
-                  ? "Siap Digunakan"
-                  : isPendingReview
-                    ? "Menunggu Validasi"
-                    : isPaid
-                      ? "Terbayar"
-                      : isProcessing
-                        ? "Sedang Diproses"
-                        : isRejected
-                          ? "Ditolak"
-                          : "Draft"}
-            </Badge>
+
+          {isSelected && activeOrder ? (
+            <OrderStatusBadge showIcon={true}>
+              {activeOrder.status}
+            </OrderStatusBadge>
           ) : (
             <Badge colorPalette={"gray"} variant={"subtle"}>
               {"Belum Dipilih"}
@@ -139,13 +122,18 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           )}
         </HStack>
 
-        <HStack justify={"space-between"} align={"center"} w={"full"}>
-          <P fontSize={"sm"} fontWeight={"semibold"}>
-            {activeOrder?.orderId ?? "-"}
+        <HStack
+          justify={"space-between"}
+          align={"center"}
+          fontSize={"xs"}
+          w={"full"}
+        >
+          <P fontSize={"xs"} color={"fg.subtle"}>
+            {isSelected && activeOrder ? activeOrder.orderId : "-"}
           </P>
 
           {isSelected && activeOrder?.createdAt && (
-            <P fontSize={"xs"} color={"fg.subtle"}>
+            <P fontSize={"xs"} color={"fg.subtle"} textAlign={"right"}>
               {formatDateTime(activeOrder.createdAt)}
             </P>
           )}

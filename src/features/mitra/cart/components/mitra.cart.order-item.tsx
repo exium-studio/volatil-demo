@@ -107,7 +107,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
             </P>
 
             {order.createdAt && (
-              <P fontSize={"xs"} color={"fg.subtle"}>
+              <P fontSize={"xs"} color={"fg.subtle"} textAlign={"right"}>
                 {formatDateTime(order.createdAt)}
               </P>
             )}
@@ -128,20 +128,27 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"Volume Spasial:"}</P>
+            <P color={"fg.muted"}>{"Total Objek Bidang:"}</P>
             <P fontWeight={"medium"}>
-              {totalBidang > 0 && (
+              {totalBidang > 0 ? (
                 <>
                   <TNum>{formatNumber(totalBidang)}</TNum> {"bidang"}
                 </>
+              ) : (
+                "-"
               )}
+            </P>
+          </HStack>
 
-              {totalBidang > 0 && totalKawasanHa > 0 && " • "}
-
-              {totalKawasanHa > 0 && (
+          <HStack justify={"space-between"} align={"center"}>
+            <P color={"fg.muted"}>{"Total Luas Kawasan:"}</P>
+            <P fontWeight={"medium"}>
+              {totalKawasanHa > 0 ? (
                 <>
                   <TNum>{formatNumber(totalKawasanHa)}</TNum> {"ha"}
                 </>
+              ) : (
+                "-"
               )}
             </P>
           </HStack>
