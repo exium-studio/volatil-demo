@@ -1,5 +1,4 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
-import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
 import type { LayerCountSummary } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 
@@ -88,31 +87,11 @@ export const getLayerCountSummary = async (params: {
     const features = featuresResult.features ?? [];
     let totalAreaHa = 0;
 
-    // Fast-path area estimation for layer list row:
-    // Read pre-computed luas attribute if available; otherwise calculate feature area with turf.
-    // NOTE: Synchronous turf.intersect against AOI on the main thread is strictly avoided here
-    // because processing hundreds of complex features freezes the browser UI.
-    // The exact clipped coverage area is calculated asynchronously in Web Worker by useKawasanCoverage.
+    // Calculate total area in hectares (ha) purely from actual feature geometry using turf
     for (const feat of features) {
-      let featureArea = 0;
-      const props =
-        (feat.properties as Record<string, unknown> | undefined) ?? {};
-      const luasKey = Object.keys(props).find((k) =>
-        (IGT_AREA_KEYS as readonly string[]).includes(k.toLowerCase()),
-      );
-
-      if (luasKey) {
-        const val = Number(props[luasKey]);
-        if (!isNaN(val) && val > 0) {
-          featureArea = val;
-        }
+      if (feat.geometry) {
+        totalAreaHa += calculateFeatureAreaInHectares(feat);
       }
-
-      if (featureArea === 0 && feat.geometry) {
-        featureArea = calculateFeatureAreaInHectares(feat);
-      }
-
-      totalAreaHa += featureArea;
     }
 
     const formattedArea = totalAreaHa.toLocaleString("id-ID", {

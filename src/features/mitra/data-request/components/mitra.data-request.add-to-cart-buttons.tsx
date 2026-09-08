@@ -76,7 +76,7 @@ export const MitraDataRequestAddToCartButtons = (
   const kawasanCount = totalKawasanCountProp ?? calculatedKawasan;
   const totalItemCount = totalCount ?? bidangCount + kawasanCount;
 
-  // Derived — calculate total 'luas' in hectares (ha) using geometry or fallback to attribute
+  // Derived — calculate total 'luas' in hectares (ha) using actual feature geometry
   const selectedKawasanLuasTotal = useMemo(() => {
     if (spatialBasis !== "kawasan") return 0;
     return (selectedItems ?? []).reduce((acc, item) => {
@@ -84,7 +84,6 @@ export const MitraDataRequestAddToCartButtons = (
         | GeoJSON.Feature
         | Record<string, unknown>
         | undefined;
-      // Try calculating directly from geometry with intersection clipping
       if (data && "geometry" in data && data.geometry) {
         const geomAreaHa = calculateIntersectAreaInHectares(
           data as GeoJSON.Feature,
@@ -92,18 +91,11 @@ export const MitraDataRequestAddToCartButtons = (
         );
         if (geomAreaHa > 0) return acc + geomAreaHa;
       }
-      const props = (
-        data && "properties" in data ? data.properties : (data ?? {})
-      ) as Record<string, unknown>;
-      const key = Object.keys(props).find(
-        (k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul",
-      );
-      const val = key ? Number(props[key]) : NaN;
-      return acc + (isNaN(val) ? 0 : val);
+      return acc;
     }, 0);
   }, [selectedItems, spatialBasis, aoiPolygon]);
 
-  // Derived — calculate total 'luas' in hectares (ha) for all items
+  // Derived — calculate total 'luas' in hectares (ha) for all items using actual feature geometry
   const allKawasanLuasTotal = useMemo<number>(() => {
     if (spatialBasis !== "kawasan") return 0;
     return (allItems ?? []).reduce<number>((acc, item) => {
@@ -111,7 +103,6 @@ export const MitraDataRequestAddToCartButtons = (
         | GeoJSON.Feature
         | Record<string, unknown>
         | undefined;
-      // Try calculating directly from geometry with intersection clipping
       if (data && "geometry" in data && data.geometry) {
         const geomAreaHa = calculateIntersectAreaInHectares(
           data as GeoJSON.Feature,
@@ -119,14 +110,7 @@ export const MitraDataRequestAddToCartButtons = (
         );
         if (geomAreaHa > 0) return acc + geomAreaHa;
       }
-      const props = (
-        data && "properties" in data ? data.properties : (data ?? {})
-      ) as Record<string, unknown>;
-      const key = Object.keys(props).find(
-        (k) => k.toLowerCase() === "luas" || k.toLowerCase() === "luastertul",
-      );
-      const val = key ? Number(props[key]) : NaN;
-      return acc + (isNaN(val) ? 0 : val);
+      return acc;
     }, 0);
   }, [allItems, spatialBasis, aoiPolygon]);
 

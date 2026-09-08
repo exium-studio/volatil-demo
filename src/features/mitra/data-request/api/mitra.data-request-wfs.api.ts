@@ -1,5 +1,4 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
-import { IGT_AREA_KEYS } from "@/features/mitra/data-request/constants/igt.config";
 import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
@@ -230,18 +229,6 @@ export const fetchWfsCatalog = async ({
         const geomAreaHa = calculateIntersectAreaInHectares(feat, aoiPolygon);
         if (geomAreaHa > 0) {
           totalLuas += geomAreaHa;
-          return;
-        }
-      }
-
-      // Fallback to property key if geometry calculation returned 0
-      const luasKey = Object.keys(props).find((k) =>
-        (IGT_AREA_KEYS as readonly string[]).includes(k.toLowerCase()),
-      );
-      if (luasKey) {
-        const val = Number(props[luasKey]);
-        if (!isNaN(val)) {
-          totalLuas += val;
         }
       }
     });
