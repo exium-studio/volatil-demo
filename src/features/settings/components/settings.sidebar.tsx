@@ -77,6 +77,7 @@ export const SettingsSidebarBody = () => {
     strict: false,
   });
   const navigate = useNavigate();
+  const isSmallViewport = useIsSmallViewport();
 
   return (
     <VNavs<SettingNavKey>
@@ -91,6 +92,7 @@ export const SettingsSidebarBody = () => {
           search: (old) => ({ ...old, activeSettingNavKey: key }),
         });
       }}
+      gap={isSmallViewport ? "md" : ""}
       p={2}
     />
   );

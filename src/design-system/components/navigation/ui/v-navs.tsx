@@ -61,7 +61,11 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
           <Fragment key={groupIndex}>
             {!isFirstGroup && !isSmallViewport && <Separator my={"sm"} />}
 
-            <VStack align={expanded ? "stretch" : "start"} overflow={"clip"}>
+            <VStack
+              // className={"debug"}
+              align={expanded ? "stretch" : "start"}
+              overflow={"clip"}
+            >
               {expanded && groupTitle && (
                 <P fontSize={"sm"} color={"fg.subtle"} px={2} mb={2}>
                   {groupTitle}
