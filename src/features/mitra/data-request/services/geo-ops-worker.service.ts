@@ -21,7 +21,7 @@ export const runClipAndUnionKawasanInWorker = (
     | null
     | undefined,
   signal?: AbortSignal,
-  onProgress?: (progress: number) => void,
+  onProgress?: (progress: number, message?: string) => void,
 ): Promise<KawasanCoverageResult> => {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
@@ -49,7 +49,7 @@ export const runClipAndUnionKawasanInWorker = (
       if (resp.id !== requestId) return;
 
       if (resp.type === "PROGRESS") {
-        onProgress?.(resp.progress);
+        onProgress?.(resp.progress, resp.message);
         return;
       }
 

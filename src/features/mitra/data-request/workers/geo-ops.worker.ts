@@ -16,12 +16,13 @@ self.onmessage = (e: MessageEvent<GeoOpsWorkerRequest>) => {
       const result = clipAndUnionKawasanFeatures(
         message.payload.rawFeatures,
         message.payload.aoiPolygon,
-        (progress) => {
+        (progress, progressMessage) => {
           const progressResponse: GeoOpsWorkerResponse = {
             id: message.id,
             ok: true,
             type: "PROGRESS",
             progress,
+            message: progressMessage,
           };
           self.postMessage(progressResponse);
         },

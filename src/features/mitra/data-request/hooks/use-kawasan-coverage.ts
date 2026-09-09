@@ -9,12 +9,13 @@ import type {
   UseKawasanCoverageResult,
 } from "@/features/mitra/data-request/types/mitra.data-request.coverage.type";
 import { runClipAndUnionKawasanInWorker } from "@/features/mitra/data-request/services/geo-ops-worker.service";
+import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type GeoJSON from "geojson";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 /**
  * Universal hook for Kawasan IGT coverage processing across ALL AOI methods (Draw, Upload, Wilayah Administrasi):
@@ -45,8 +46,18 @@ export const useKawasanCoverage = (
     return `INTERSECTS(geom, ${aoiWkt})`;
   }, [aoiWkt]);
 
+  // Instantly compute AOI area in Hectares (1 polygon calculation is <1ms)
+  const aoiAreaHa = useMemo(() => {
+    if (!aoiFeature) return 0;
+    return calculateFeatureAreaInHectares(aoiFeature);
+  }, [aoiFeature]);
+
   // States
-  const [progress, setProgress] = useState<number>(0);
+  const [realProgress, setRealProgress] = useState<number>(0);
+  const [displayProgress, setDisplayProgress] = useState<number>(10);
+  const [stepMessage, setStepMessage] = useState<string>(
+    "Menyiapkan query AOI...",
+  );
 
   const isEnabled = Boolean(enabled && aoiFeature && aoiCqlFilter);
 
@@ -58,10 +69,12 @@ export const useKawasanCoverage = (
   const { data, isLoading, isFetching, error, isError, refetch } = useQuery({
     queryKey,
     queryFn: async ({ signal }) => {
-      setProgress(5);
+      setRealProgress(5);
+      setStepMessage("Menyiapkan data layer kawasan...");
 
       if (!aoiFeature || !aoiCqlFilter) {
-        setProgress(100);
+        setRealProgress(100);
+        setStepMessage("Selesai");
         return {
           coveragePolygon: null,
           totalAreaHa: 0,
@@ -92,10 +105,12 @@ export const useKawasanCoverage = (
         targetLayers = resolvedList;
       }
 
-      setProgress(15);
+      setRealProgress(15);
+      setStepMessage("Mengunduh data fitur kawasan dari GeoServer...");
 
       if (isEmptyArray(targetLayers)) {
-        setProgress(100);
+        setRealProgress(100);
+        setStepMessage("Selesai");
         return {
           coveragePolygon: null,
           totalAreaHa: 0,
@@ -119,14 +134,17 @@ export const useKawasanCoverage = (
             signal,
           });
           completedFetches++;
-          // WFS fetch phase maps to 15% - 60%
-          const fetchProgress = 15 + Math.round((completedFetches / totalLayers) * 45);
-          setProgress(fetchProgress);
+          // WFS fetch phase maps to 15% - 50%
+          const fetchProgress = 15 + Math.round((completedFetches / totalLayers) * 35);
+          setRealProgress(fetchProgress);
+          setStepMessage(
+            `Mengunduh data layer kawasan (${completedFetches}/${totalLayers})...`,
+          );
           return res.features ?? [];
         } catch (err) {
           completedFetches++;
-          const fetchProgress = 15 + Math.round((completedFetches / totalLayers) * 45);
-          setProgress(fetchProgress);
+          const fetchProgress = 15 + Math.round((completedFetches / totalLayers) * 35);
+          setRealProgress(fetchProgress);
           if (
             signal?.aborted ||
             (err instanceof DOMException && err.name === "AbortError") ||
@@ -143,7 +161,8 @@ export const useKawasanCoverage = (
       const allKawasanFeatures = featureArrays.flat();
 
       if (isEmptyArray(allKawasanFeatures)) {
-        setProgress(100);
+        setRealProgress(100);
+        setStepMessage("Tidak ditemukan kawasan berpotongan.");
         return {
           coveragePolygon: null,
           totalAreaHa: 0,
@@ -152,19 +171,26 @@ export const useKawasanCoverage = (
         };
       }
 
-      setProgress(60);
+      setRealProgress(50);
+      setStepMessage(
+        `Memotong ${allKawasanFeatures.length} fitur kawasan ke dalam batas AOI (clipping)...`,
+      );
 
       // 3 & 4. Clip to boundary & Unary union off the main thread via Web Worker with progress callback
       const result = await runClipAndUnionKawasanInWorker(
         allKawasanFeatures,
         aoiFeature,
         signal,
-        (workerProgress) => {
-          setProgress(workerProgress);
+        (workerProgress, workerMessage) => {
+          setRealProgress(workerProgress);
+          if (workerMessage) {
+            setStepMessage(workerMessage);
+          }
         },
       );
 
-      setProgress(100);
+      setRealProgress(100);
+      setStepMessage("Kalkulasi cakupan kawasan selesai");
       return result;
     },
     enabled: isEnabled,
@@ -173,6 +199,37 @@ export const useKawasanCoverage = (
 
   const isCalculating = isEnabled && (isLoading || isFetching);
 
+  // Smooth progressive timer based on AOI area:
+  // Dynamically ticks up smoothly towards realProgress or asymptotes to 97% until done
+  useEffect(() => {
+    if (!isCalculating) return;
+
+    // Determine target interval and step rate based on AOI scale
+    // Smaller AOI (< 1000 ha) moves faster; large AOI (> 25000 ha) moves more cautiously
+    const tickMs = aoiAreaHa > 25000 ? 150 : aoiAreaHa > 5000 ? 100 : 70;
+
+    const timer = setInterval(() => {
+      setDisplayProgress((prev) => {
+        // If query/worker reports a higher real progress, advance toward it
+        if (realProgress > prev) {
+          const delta = Math.ceil((realProgress - prev) / 3);
+          return Math.min(prev + delta, realProgress);
+        }
+
+        // Asymptotically creep up to 97% while waiting for heavy union operations
+        if (prev < 97) {
+          return prev + 1;
+        }
+
+        return prev;
+      });
+    }, tickMs);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [isCalculating, realProgress, aoiAreaHa]);
+
   return {
     coveragePolygon: data?.coveragePolygon ?? null,
     totalAreaHa: data?.totalAreaHa ?? 0,
@@ -180,13 +237,17 @@ export const useKawasanCoverage = (
     isLoading: isCalculating,
     isError,
     error: error instanceof Error ? error : null,
-    progress: isCalculating ? progress : 100,
+    progress: isCalculating ? Math.min(displayProgress, 99) : 100,
+    stepMessage,
+    aoiAreaHa,
     refetch: async () => {
-      setProgress(0);
+      setRealProgress(0);
+      setDisplayProgress(0);
       await refetch();
     },
     cancel: () => {
-      setProgress(0);
+      setRealProgress(0);
+      setDisplayProgress(0);
       void queryClient.cancelQueries({ queryKey });
     },
   };

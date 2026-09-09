@@ -30,6 +30,9 @@ export type UseKawasanCoverageResult = {
   isError: boolean;
   error: Error | null;
   progress: number;
+  stepMessage: string;
+  aoiAreaHa: number;
   refetch: () => Promise<void>;
   cancel?: () => void;
 };
+

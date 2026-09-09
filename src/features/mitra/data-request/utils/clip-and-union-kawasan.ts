@@ -61,7 +61,7 @@ export const clipAndUnionKawasanFeatures = (
     | GeoJSON.MultiPolygon
     | null
     | undefined,
-  onProgress?: (progress: number) => void,
+  onProgress?: (progress: number, message?: string) => void,
 ): KawasanCoverageResult => {
   const emptyResult: KawasanCoverageResult = {
     coveragePolygon: null,
@@ -106,12 +106,18 @@ export const clipAndUnionKawasanFeatures = (
   const totalRaw = rawFeatures.length;
   let processedCount = 0;
 
+  onProgress?.(50, "Memotong fitur kawasan di dalam batas AOI (clipping)...");
+
   for (const feature of rawFeatures) {
     processedCount++;
-    if (processedCount % 25 === 0 || processedCount === totalRaw) {
-      // Scale clipping progress across 60% - 90% range
+    if (processedCount % 10 === 0 || processedCount === totalRaw) {
+      // Scale clipping progress across 50% - 78% range
       const clipRatio = processedCount / totalRaw;
-      onProgress?.(Math.round(60 + clipRatio * 30));
+      const currentProg = Math.round(50 + clipRatio * 28);
+      onProgress?.(
+        currentProg,
+        `Memotong fitur kawasan di dalam batas AOI (${processedCount}/${totalRaw})...`,
+      );
     }
 
     if (!feature || !feature.geometry) continue;
@@ -161,10 +167,10 @@ export const clipAndUnionKawasanFeatures = (
     }
   }
 
-  onProgress?.(95);
+  onProgress?.(80, "Menyiapkan penggabungan geometri fitur (union)...");
 
   if (isEmptyArray(clippedPolygons)) {
-    onProgress?.(100);
+    onProgress?.(100, "Selesai");
     return emptyResult;
   }
 
@@ -174,6 +180,7 @@ export const clipAndUnionKawasanFeatures = (
 
   if (clippedPolygons.length === 1) {
     finalCoveragePolygon = clippedPolygons[0];
+    onProgress?.(95, "Menghitung total luas area cakupan (ha)...");
   } else {
     // Robust Union Algorithm:
     // Pre-clean topologies with buffer(0) or cleanCoords to prevent polygon errors in Turf v7
@@ -236,15 +243,26 @@ export const clipAndUnionKawasanFeatures = (
       return polyA;
     };
 
-    // Perform pairwise folding union across all clipped polygons
+    // Perform pairwise folding union across all clipped polygons with progress updates
     let accumulator = cleanFeature(clippedPolygons[0]);
+    const totalUnionSteps = clippedPolygons.length - 1;
 
     for (let i = 1; i < clippedPolygons.length; i++) {
+      const unionStepRatio = i / totalUnionSteps;
+      const unionProg = Math.round(80 + unionStepRatio * 16); // 80% to 96%
+      if (i % 5 === 0 || i === 1 || i === totalUnionSteps) {
+        onProgress?.(
+          unionProg,
+          `Menggabungkan geometri layer kawasan (${i}/${totalUnionSteps})...`,
+        );
+      }
       accumulator = safeUnionPair(accumulator, clippedPolygons[i]);
     }
 
     finalCoveragePolygon = accumulator;
   }
+
+  onProgress?.(98, "Menghitung total luas area cakupan (ha)...");
 
   let totalAreaHa = 0;
   if (finalCoveragePolygon) {
@@ -258,16 +276,7 @@ export const clipAndUnionKawasanFeatures = (
     }
   }
 
-  // console.log("[clipAndUnionKawasan] Result:", {
-  //   finalUnionType: finalCoveragePolygon?.geometry.type,
-  //   finalUnionCoordinatesCount:
-  //     finalCoveragePolygon?.geometry.coordinates.length,
-  //   totalAreaHa,
-  //   totalClippedPolygons: clippedPolygons.length,
-  //   finalCoveragePolygon,
-  // });
-
-  onProgress?.(100);
+  onProgress?.(100, "Selesai");
 
   return {
     coveragePolygon: finalCoveragePolygon,

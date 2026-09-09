@@ -7,7 +7,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
-import { ProgressCircle } from "@/design-system/components/feedback/ui/progress";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -613,25 +613,19 @@ export const MitraDataRequestIgtLayerDataView = memo(
             borderBottomWidth={"1px"}
             borderColor={"blue.muted"}
           >
-            <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
-              <ProgressCircle.Root
-                value={kawasanCoverage.progress}
-                size={"xs"}
-                colorPalette={"blue"}
-              >
-                <ProgressCircle.Circle>
-                  <ProgressCircle.Track />
-                  <ProgressCircle.Range strokeLinecap={"round"} />
-                </ProgressCircle.Circle>
-              </ProgressCircle.Root>
+            <HStack align={"center"} gap={"sm"}>
+              <Loader color={"blue.fg"} />
 
-              <VStack>
+              <VStack align={"start"} gap={0}>
                 <P fontSize={"xs"} color={"blue.fg"} fontWeight={"medium"}>
-                  {`Menghitung cakupan spasial kawasan pada area AOI... (${kawasanCoverage.progress}%)`}
+                  {kawasanCoverage.stepMessage ||
+                    "Memproses cakupan spasial kawasan..."}
                 </P>
 
-                <P fontSize={"xs"} color={"blue.fg"}>
-                  {"Jangan tutup tab/aplikasi"}
+                <P fontSize={"xs"} color={"blue.fg"} opacity={0.85}>
+                  {kawasanCoverage.aoiAreaHa > 0
+                    ? `Luas AOI: ${formatNumber(kawasanCoverage.aoiAreaHa, { maximumFractionDigits: 2 })} ha • Jangan tutup tab/aplikasi`
+                    : "Jangan tutup tab/aplikasi"}
                 </P>
               </VStack>
             </HStack>
@@ -677,7 +671,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
               {summaryData.hasBidangLayers && (
                 <HStack justify={"space-between"} align={"center"} w={"full"}>
                   <HStack gap={"xs"} align={"center"}>
-                    <P color={"fg.muted"}>{"Objek Bidang:"}</P>
+                    <P fontSize={"sm"} color={"fg.muted"}>
+                      {"Objek Bidang:"}
+                    </P>
+
                     <P fontWeight={"medium"} color={"fg.default"}>
                       {`${formatNumber(summaryData.totalBidangCount)} bidang`}
                     </P>
@@ -694,7 +691,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
               {summaryData.hasKawasanLayers && (
                 <HStack justify={"space-between"} align={"center"} w={"full"}>
                   <HStack gap={"xs"} align={"center"}>
-                    <P color={"fg.muted"}>{"Luas Kawasan:"}</P>
+                    <P fontSize={"sm"} color={"fg.muted"}>
+                      {"Luas Kawasan:"}
+                    </P>
+
                     {selectionType === "catalog" && !effectiveAoiPolygon ? (
                       <P color={"fg.muted"} fontStyle={"italic"}>
                         {"-"}
@@ -731,7 +731,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
                   {"Total Estimasi"}
                 </P>
-                <P fontSize={"sm"} fontWeight={"bold"} color={"blue.fg"}>
+
+                <P fontSize={"lg"} fontWeight={"bold"} color={"blue.fg"}>
                   {formatNumber(estimatedTotalPrice, { style: "currency" }) ||
                     "Rp 0"}
                 </P>
