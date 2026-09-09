@@ -686,7 +686,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     <P color={"fg.muted"}>{"Luas Kawasan:"}</P>
                     {selectionType === "catalog" && !effectiveAoiPolygon ? (
                       <P color={"fg.muted"} fontStyle={"italic"}>
-                        {"Belum ada filter wilayah"}
+                        {"-"}
                       </P>
                     ) : (
                       <P fontWeight={"medium"} color={"fg.default"}>
