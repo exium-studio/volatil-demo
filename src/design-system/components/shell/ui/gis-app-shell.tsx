@@ -505,9 +505,9 @@ const Content = () => {
           showIgtLayerSelect={
             isInternal || pathname.startsWith("/mitra/data-request")
           }
-          onDrawFinish={(feature, originalPoints) => {
-            console.log("draw finished", { feature, originalPoints });
-          }}
+          // onDrawFinish={(feature, originalPoints) => {
+          //   console.log("draw finished", { feature, originalPoints });
+          // }}
         />
       </VStack>
     </Splitter.Panel>

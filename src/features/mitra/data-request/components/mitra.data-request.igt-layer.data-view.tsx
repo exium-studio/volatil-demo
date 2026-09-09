@@ -228,7 +228,26 @@ export const MitraDataRequestIgtLayerDataView = memo(
         Boolean(layer?.wfs?.wfsTypeName),
       );
 
-      if (isEmptyArray(validLayers)) return;
+      const resolvedCoveragePolygon =
+        kawasanCoverage.coveragePolygon &&
+        "geometry" in kawasanCoverage.coveragePolygon
+          ? (kawasanCoverage.coveragePolygon.geometry as
+              | GeoJSON.MultiPolygon
+              | GeoJSON.Polygon)
+          : undefined;
+
+      // console.log(
+      //   "[AddToCart] Payload coveragePolygon:",
+      //   resolvedCoveragePolygon,
+      // );
+      // console.log(
+      //   "[AddToCart] Raw kawasanCoverage.coveragePolygon (Feature):",
+      //   kawasanCoverage.coveragePolygon,
+      // );
+      // console.log(
+      //   "[AddToCart] FE calculated totalKawasanAreaHa:",
+      //   kawasanCoverage.totalAreaHa,
+      // );
 
       addToCartMultipleMutation.mutate({
         selectionType,
@@ -242,13 +261,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 | GeoJSON.MultiPolygon
                 | GeoJSON.Polygon
                 | undefined),
-        coveragePolygon:
-          kawasanCoverage.coveragePolygon &&
-          "geometry" in kawasanCoverage.coveragePolygon
-            ? (kawasanCoverage.coveragePolygon.geometry as
-                | GeoJSON.MultiPolygon
-                | GeoJSON.Polygon)
-            : undefined,
+        coveragePolygon: resolvedCoveragePolygon,
         layers: validLayers.map((layer) => {
           const idx = filteredLayers.findIndex((l) => l.id === layer.id);
           const summary = summaryQueries[idx]?.data as

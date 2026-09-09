@@ -184,15 +184,25 @@ export const clipAndUnionKawasanFeatures = (
         const chunkSize = 25;
 
         while (currentBatch.length > 1 && currentBatch.length <= 500) {
-          const nextBatch: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>[] = [];
+          const nextBatch: GeoJSON.Feature<
+            GeoJSON.Polygon | GeoJSON.MultiPolygon
+          >[] = [];
           for (let i = 0; i < currentBatch.length; i += chunkSize) {
             const chunk = currentBatch.slice(i, i + chunkSize);
             if (chunk.length === 1) {
               nextBatch.push(chunk[0]);
             } else {
               const chunkUnion = turf.union(turf.featureCollection(chunk));
-              if (chunkUnion && (chunkUnion.geometry.type === "Polygon" || chunkUnion.geometry.type === "MultiPolygon")) {
-                nextBatch.push(chunkUnion as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>);
+              if (
+                chunkUnion &&
+                (chunkUnion.geometry.type === "Polygon" ||
+                  chunkUnion.geometry.type === "MultiPolygon")
+              ) {
+                nextBatch.push(
+                  chunkUnion as GeoJSON.Feature<
+                    GeoJSON.Polygon | GeoJSON.MultiPolygon
+                  >,
+                );
               } else {
                 nextBatch.push(...chunk);
               }
@@ -229,7 +239,10 @@ export const clipAndUnionKawasanFeatures = (
         }
       }
     } catch (error) {
-      console.warn("turf.union failed, falling back to MultiPolygon combine:", error);
+      console.warn(
+        "turf.union failed, falling back to MultiPolygon combine:",
+        error,
+      );
     }
 
     // Fallback: merge coordinates into MultiPolygon if turf.union failed or exhausted
@@ -269,6 +282,15 @@ export const clipAndUnionKawasanFeatures = (
       console.warn("Failed to calculate turf area on coverage polygon:", err);
     }
   }
+
+  // console.log("[clipAndUnionKawasan] Result:", {
+  //   finalUnionType: finalCoveragePolygon?.geometry.type,
+  //   finalUnionCoordinatesCount:
+  //     finalCoveragePolygon?.geometry.coordinates.length,
+  //   totalAreaHa,
+  //   totalClippedPolygons: clippedPolygons.length,
+  //   finalCoveragePolygon,
+  // });
 
   onProgress?.(100);
 
