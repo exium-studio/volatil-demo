@@ -30,77 +30,65 @@ export const unionGeoJsonPolygons = (
     return polygonFeatures[0];
   }
 
-  try {
-    if (polygonFeatures.length > 50) {
-      let currentBatch = [...polygonFeatures];
-      const chunkSize = 25;
-
-      while (currentBatch.length > 1 && currentBatch.length <= 500) {
-        const nextBatch: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>[] = [];
-        for (let i = 0; i < currentBatch.length; i += chunkSize) {
-          const chunk = currentBatch.slice(i, i + chunkSize);
-          if (chunk.length === 1) {
-            nextBatch.push(chunk[0]);
-          } else {
-            const chunkUnion = turf.union(turf.featureCollection(chunk));
-            if (chunkUnion && (chunkUnion.geometry.type === "Polygon" || chunkUnion.geometry.type === "MultiPolygon")) {
-              nextBatch.push(chunkUnion as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>);
-            } else {
-              nextBatch.push(...chunk);
-            }
-          }
-        }
-        if (nextBatch.length >= currentBatch.length) {
-          currentBatch = nextBatch;
-          break;
-        }
-        currentBatch = nextBatch;
-      }
-
-      const finalUnion = turf.union(turf.featureCollection(currentBatch));
+  const cleanFeature = (
+    feat: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+  ): GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> => {
+    try {
+      const cleaned = turf.cleanCoords(feat);
+      const buffered = turf.buffer(cleaned, 0, { units: "meters" });
       if (
-        finalUnion &&
-        (finalUnion.geometry.type === "Polygon" ||
-          finalUnion.geometry.type === "MultiPolygon")
+        buffered &&
+        "geometry" in buffered &&
+        (buffered.geometry.type === "Polygon" ||
+          buffered.geometry.type === "MultiPolygon")
       ) {
-        return finalUnion as GeoJSON.Feature<
+        return buffered as GeoJSON.Feature<
           GeoJSON.Polygon | GeoJSON.MultiPolygon
         >;
       }
-    } else {
-      const unionResult = turf.union(turf.featureCollection(polygonFeatures));
-      if (
-        unionResult &&
-        (unionResult.geometry.type === "Polygon" ||
-          unionResult.geometry.type === "MultiPolygon")
-      ) {
-        return unionResult as GeoJSON.Feature<
-          GeoJSON.Polygon | GeoJSON.MultiPolygon
-        >;
-      }
+      return cleaned;
+    } catch {
+      return feat;
     }
-  } catch (error) {
-    console.warn("turf.union failed, falling back to MultiPolygon combine:", error);
-  }
-
-  // Fallback: combine all polygons into a single MultiPolygon if turf.union fails
-  const allCoordinates: GeoJSON.Position[][][] = [];
-  for (const feat of polygonFeatures) {
-    if (feat.geometry.type === "Polygon") {
-      allCoordinates.push(feat.geometry.coordinates);
-    } else if (feat.geometry.type === "MultiPolygon") {
-      for (const polyCoords of feat.geometry.coordinates) {
-        allCoordinates.push(polyCoords);
-      }
-    }
-  }
-
-  return {
-    type: "Feature",
-    properties: {},
-    geometry: {
-      type: "MultiPolygon",
-      coordinates: allCoordinates,
-    },
   };
+
+  const safeUnionPair = (
+    polyA: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+    polyB: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+  ): GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> => {
+    try {
+      const res = turf.union(turf.featureCollection([polyA, polyB]));
+      if (
+        res &&
+        (res.geometry.type === "Polygon" || res.geometry.type === "MultiPolygon")
+      ) {
+        return res as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+      }
+    } catch {
+      // ignore
+    }
+
+    try {
+      const cleanA = cleanFeature(polyA);
+      const cleanB = cleanFeature(polyB);
+      const res = turf.union(turf.featureCollection([cleanA, cleanB]));
+      if (
+        res &&
+        (res.geometry.type === "Polygon" || res.geometry.type === "MultiPolygon")
+      ) {
+        return res as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+      }
+    } catch {
+      // ignore
+    }
+
+    return polyA;
+  };
+
+  let accumulator = cleanFeature(polygonFeatures[0]);
+  for (let i = 1; i < polygonFeatures.length; i++) {
+    accumulator = safeUnionPair(accumulator, polygonFeatures[i]);
+  }
+
+  return accumulator;
 };

@@ -55,7 +55,10 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   }, [activeOrder]);
 
   const totalKawasanHa = useMemo(() => {
-    if (!activeOrder?.items) return 0;
+    if (!activeOrder) return 0;
+    if (activeOrder.coverageHa !== undefined && activeOrder.coverageHa !== null) {
+      return activeOrder.coverageHa;
+    }
     return activeOrder.items
       .filter((i) => i.spatialBasis === "kawasan")
       .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);

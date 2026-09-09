@@ -18,6 +18,8 @@ export const DUMMY_CART_ORDERS: CartOrder[] = [
     readyAt: readyAt1.toISOString(),
     expiredAt: expiredAt1.toISOString(),
     totalPrice: 1850000,
+    coverageHa: 13,
+    featuresCount: 24,
     items: [
       {
         id: "coi-001",
@@ -50,6 +52,7 @@ export const DUMMY_CART_ORDERS: CartOrder[] = [
     selectionType: "catalog",
     createdAt: new Date(now.getTime() - 1000 * 60 * 10).toISOString(),
     totalPrice: 950000,
+    featuresCount: 19,
     items: [
       {
         id: "coi-003",
@@ -72,6 +75,7 @@ export const DUMMY_CART_ORDERS: CartOrder[] = [
     readyAt: readyAt2.toISOString(),
     expiredAt: expiredAt2.toISOString(),
     totalPrice: 500000,
+    coverageHa: 10,
     items: [
       {
         id: "coi-004",

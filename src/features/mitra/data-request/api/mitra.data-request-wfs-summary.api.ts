@@ -1,6 +1,9 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type { LayerCountSummary } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
-import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
+import {
+  calculateIntersectAreaInHectares,
+  extractAoiPolygonsFromCql,
+} from "@/features/mitra/data-request/utils/calculate-feature-area";
 
 /**
  * Fetches hit count / geometry area summary for an IGT layer based on its spatialBasis.
@@ -87,10 +90,13 @@ export const getLayerCountSummary = async (params: {
     const features = featuresResult.features ?? [];
     let totalAreaHa = 0;
 
-    // Calculate total area in hectares (ha) purely from actual feature geometry using turf
+    // Extract AOI boundary from CQL to clip polygons strictly to the AOI
+    const aoiPolygon = extractAoiPolygonsFromCql(mergedCqlFilter);
+
+    // Calculate total area in hectares (ha) purely from actual feature geometry clipped to AOI using turf
     for (const feat of features) {
       if (feat.geometry) {
-        totalAreaHa += calculateFeatureAreaInHectares(feat);
+        totalAreaHa += calculateIntersectAreaInHectares(feat, aoiPolygon);
       }
     }
 

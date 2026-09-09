@@ -168,107 +168,82 @@ export const clipAndUnionKawasanFeatures = (
     return emptyResult;
   }
 
-  let finalCoveragePolygon: GeoJSON.Feature<
-    GeoJSON.Polygon | GeoJSON.MultiPolygon
-  > | null = null;
+  let finalCoveragePolygon:
+    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+    | null;
 
   if (clippedPolygons.length === 1) {
     finalCoveragePolygon = clippedPolygons[0];
   } else {
-    // If there are many polygons (e.g. hundreds or thousands from massive scale AOI),
-    // turf.union all at once can crash or run O(N^2). Perform batch reduction or chunking.
-    try {
-      if (clippedPolygons.length > 50) {
-        // Chunked pairwise union
-        let currentBatch = [...clippedPolygons];
-        const chunkSize = 25;
-
-        while (currentBatch.length > 1 && currentBatch.length <= 500) {
-          const nextBatch: GeoJSON.Feature<
-            GeoJSON.Polygon | GeoJSON.MultiPolygon
-          >[] = [];
-          for (let i = 0; i < currentBatch.length; i += chunkSize) {
-            const chunk = currentBatch.slice(i, i + chunkSize);
-            if (chunk.length === 1) {
-              nextBatch.push(chunk[0]);
-            } else {
-              const chunkUnion = turf.union(turf.featureCollection(chunk));
-              if (
-                chunkUnion &&
-                (chunkUnion.geometry.type === "Polygon" ||
-                  chunkUnion.geometry.type === "MultiPolygon")
-              ) {
-                nextBatch.push(
-                  chunkUnion as GeoJSON.Feature<
-                    GeoJSON.Polygon | GeoJSON.MultiPolygon
-                  >,
-                );
-              } else {
-                nextBatch.push(...chunk);
-              }
-            }
-          }
-          if (nextBatch.length >= currentBatch.length) {
-            // No reduction made, break to direct union or fallback
-            currentBatch = nextBatch;
-            break;
-          }
-          currentBatch = nextBatch;
-        }
-
-        const finalUnion = turf.union(turf.featureCollection(currentBatch));
+    // Robust Union Algorithm:
+    // Pre-clean topologies with buffer(0) or cleanCoords to prevent polygon errors in Turf v7
+    const cleanFeature = (
+      feat: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+    ): GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> => {
+      try {
+        const cleaned = turf.cleanCoords(feat);
+        // buffer(0) dissolves self-intersections and fixes ring topology
+        const buffered = turf.buffer(cleaned, 0, { units: "meters" });
         if (
-          finalUnion &&
-          (finalUnion.geometry.type === "Polygon" ||
-            finalUnion.geometry.type === "MultiPolygon")
+          buffered &&
+          "geometry" in buffered &&
+          (buffered.geometry.type === "Polygon" ||
+            buffered.geometry.type === "MultiPolygon")
         ) {
-          finalCoveragePolygon = finalUnion as GeoJSON.Feature<
+          return buffered as GeoJSON.Feature<
             GeoJSON.Polygon | GeoJSON.MultiPolygon
           >;
         }
-      } else {
-        const unionResult = turf.union(turf.featureCollection(clippedPolygons));
+        return cleaned;
+      } catch {
+        return feat;
+      }
+    };
+
+    const safeUnionPair = (
+      polyA: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+      polyB: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+    ): GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> => {
+      // 1. Direct union
+      try {
+        const res = turf.union(turf.featureCollection([polyA, polyB]));
         if (
-          unionResult &&
-          (unionResult.geometry.type === "Polygon" ||
-            unionResult.geometry.type === "MultiPolygon")
+          res &&
+          (res.geometry.type === "Polygon" || res.geometry.type === "MultiPolygon")
         ) {
-          finalCoveragePolygon = unionResult as GeoJSON.Feature<
-            GeoJSON.Polygon | GeoJSON.MultiPolygon
-          >;
+          return res as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
         }
-      }
-    } catch (error) {
-      console.warn(
-        "turf.union failed, falling back to MultiPolygon combine:",
-        error,
-      );
-    }
-
-    // Fallback: merge coordinates into MultiPolygon if turf.union failed or exhausted
-    if (!finalCoveragePolygon) {
-      const allCoords: GeoJSON.Position[][][] = [];
-      for (const feat of clippedPolygons) {
-        if (feat.geometry.type === "Polygon") {
-          allCoords.push(feat.geometry.coordinates);
-        } else if (feat.geometry.type === "MultiPolygon") {
-          for (const polyCoords of feat.geometry.coordinates) {
-            allCoords.push(polyCoords);
-          }
-        }
+      } catch {
+        // Direct union failed, try with cleaned/buffered features
       }
 
-      finalCoveragePolygon = {
-        type: "Feature",
-        properties: {
-          isFallbackMultiPolygon: true,
-        },
-        geometry: {
-          type: "MultiPolygon",
-          coordinates: allCoords,
-        },
-      };
+      // 2. Try with clean & buffer(0)
+      try {
+        const cleanA = cleanFeature(polyA);
+        const cleanB = cleanFeature(polyB);
+        const res = turf.union(turf.featureCollection([cleanA, cleanB]));
+        if (
+          res &&
+          (res.geometry.type === "Polygon" || res.geometry.type === "MultiPolygon")
+        ) {
+          return res as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+        }
+      } catch {
+        // Cleaned union failed
+      }
+
+      // 3. Last resort fallback for pair: if union fails, keep the larger or polyA rather than doubling coordinates
+      return polyA;
+    };
+
+    // Perform pairwise folding union across all clipped polygons
+    let accumulator = cleanFeature(clippedPolygons[0]);
+
+    for (let i = 1; i < clippedPolygons.length; i++) {
+      accumulator = safeUnionPair(accumulator, clippedPolygons[i]);
     }
+
+    finalCoveragePolygon = accumulator;
   }
 
   let totalAreaHa = 0;
