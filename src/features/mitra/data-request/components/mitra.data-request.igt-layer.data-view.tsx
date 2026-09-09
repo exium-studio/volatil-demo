@@ -663,7 +663,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                         fontWeight={"medium"}
                         color={"fg.muted"}
                       >
-                        {`${formatNumber(summaryData.totalBidangCount)} bidang`}
+                        {`${formatNumber(summaryData.totalBidangCount) || "0"} bidang`}
                       </P>
                       <P fontSize={"xs"} color={"fg.muted"}>
                         {"•"}
@@ -675,7 +675,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                       >
                         {formatNumber(estimatedBidangPrice, {
                           style: "currency",
-                        })}
+                        }) || "Rp 0"}
                       </P>
                     </HStack>
                   )}
