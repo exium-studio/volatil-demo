@@ -102,16 +102,23 @@ const MitraMyDataEditModalContent = (
         <VStack as={"form"} gap={"md"} id={"my-data-edit-form"}>
           <Fieldset>
             <VStack align={"stretch"} gap={"md"}>
-              <VStack align={"start"} gap={"2xs"} w={"full"}>
+              <VStack
+                align={"start"}
+                gap={"2xs"}
+                w={"full"}
+                // px={"md"}
+              >
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Nama Layer Asli"}
                 </P>
+
                 <P fontSize={"sm"} fontWeight={"medium"}>
                   {item.title || item.id}
                 </P>
               </VStack>
 
               <Field
+                variant={"floating"}
                 label={"Label Kustom"}
                 helperText={
                   "Beri label alias untuk memudahkan identifikasi layer pada daftar data Anda."
@@ -119,12 +126,7 @@ const MitraMyDataEditModalContent = (
                 invalid={Boolean(errors.label)}
                 errorText={errors.label?.message}
               >
-                <Input
-                  {...register("label")}
-                  placeholder={"Contoh: Bidang Tanah Kantor Cabang Badung"}
-                  autoFocus={true}
-                  size={"lg"}
-                />
+                <Input {...register("label")} variant={"subtle"} size={"lg"} />
               </Field>
             </VStack>
           </Fieldset>
