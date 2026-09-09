@@ -141,7 +141,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           <HStack justify={"space-between"} align={"center"}>
             <P color={"fg.muted"}>{"Total Luas Kawasan:"}</P>
             <P fontWeight={"medium"}>
-              {totalKawasanHa > 0 ? (
+              {totalKawasanHa && totalKawasanHa > 0 ? (
                 <>
                   <TNum>{formatNumber(totalKawasanHa)}</TNum> {"ha"}
                 </>

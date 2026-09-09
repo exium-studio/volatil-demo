@@ -151,8 +151,8 @@ export type CartOrder = {
   selectionType: SelectionType;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  coverageHa: number;
-  featuresCount: number;
+  coverageHa?: number;
+  featuresCount?: number;
   createdAt: string;
   readyAt?: string;
   approvedAt?: string;
