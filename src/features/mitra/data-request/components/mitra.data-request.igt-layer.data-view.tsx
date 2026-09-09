@@ -600,7 +600,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             borderBottomWidth={"1px"}
             borderColor={"blue.muted"}
           >
-            <HStack align={"center"} gap={"sm"}>
+            <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
               <ProgressCircle.Root
                 value={kawasanCoverage.progress}
                 size={"xs"}
@@ -612,30 +612,30 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 </ProgressCircle.Circle>
               </ProgressCircle.Root>
 
-              <P fontSize={"xs"} color={"blue.fg"} fontWeight={"medium"}>
-                {`Menghitung cakupan spasial kawasan pada area AOI... (${kawasanCoverage.progress}%)`}
-              </P>
+              <VStack>
+                <P fontSize={"xs"} color={"blue.fg"} fontWeight={"medium"}>
+                  {`Menghitung cakupan spasial kawasan pada area AOI... (${kawasanCoverage.progress}%)`}
+                </P>
+
+                <P fontSize={"xs"} color={"blue.fg"}>
+                  {"Jangan tutup tab/aplikasi"}
+                </P>
+              </VStack>
             </HStack>
 
-            <HStack align={"center"} gap={"sm"}>
-              <P fontSize={"xs"} color={"fg.muted"}>
-                {"Jangan tutup tab/aplikasi"}
-              </P>
-
-              <Button
-                variant={"ghost"}
-                colorPalette={"blue"}
-                pl={2}
-                _hover={{
-                  bg: "blue.muted",
-                }}
-                size={"xs"}
-                onClick={handleCancelCoverage}
-              >
-                <AppIcon icon={XIcon} />
-                {"Batal"}
-              </Button>
-            </HStack>
+            <Button
+              variant={"ghost"}
+              colorPalette={"blue"}
+              pl={2}
+              _hover={{
+                bg: "blue.muted",
+              }}
+              size={"xs"}
+              onClick={handleCancelCoverage}
+            >
+              <AppIcon icon={XIcon} />
+              {"Batal"}
+            </Button>
           </HStack>
         )}
 
@@ -663,7 +663,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                         fontWeight={"medium"}
                         color={"fg.muted"}
                       >
-                        {`${formatNumber(summaryData.totalBidangCount) || "0"} bidang`}
+                        {`${formatNumber(summaryData.totalBidangCount)} bidang`}
                       </P>
                       <P fontSize={"xs"} color={"fg.muted"}>
                         {"•"}
@@ -675,7 +675,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                       >
                         {formatNumber(estimatedBidangPrice, {
                           style: "currency",
-                        }) || "Rp 0"}
+                        })}
                       </P>
                     </HStack>
                   )}
@@ -738,7 +738,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     {"Total:"}
                   </P>
                   <P fontSize={"sm"} fontWeight={"bold"} color={"blue.fg"}>
-                    {formatNumber(estimatedTotalPrice, { style: "currency" })}
+                    {formatNumber(estimatedTotalPrice, { style: "currency" }) ||
+                      "Rp 0"}
                   </P>
                 </>
               )}

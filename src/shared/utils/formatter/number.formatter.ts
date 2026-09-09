@@ -40,7 +40,7 @@ export function formatNumber(
     useGrouping = true,
   } = options;
 
-  if (!value) return "";
+  if (value === undefined || value === null) return "";
 
   const intlOptions: Intl.NumberFormatOptions = {
     style,
