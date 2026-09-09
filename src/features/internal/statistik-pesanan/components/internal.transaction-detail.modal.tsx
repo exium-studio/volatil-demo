@@ -28,13 +28,9 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import {
-  CheckCircleIcon,
-  ClockIcon,
-  EyeIcon,
-  XCircleIcon,
-} from "lucide-react";
+import { EyeIcon } from "lucide-react";
 import { useMemo } from "react";
+import { TRANSACTION_STATUS_MAP } from "@/shared/constants/status.config";
 
 export const InternalTransactionDetailTrigger = (
   props: InternalTransactionDetailTriggerProps,
@@ -154,10 +150,7 @@ export const InternalTransactionDetailModalContent = (
     });
   }, [transaction]);
 
-  const isPaid = transaction.transactionStatus === "paid";
-  const isExpired = transaction.transactionStatus === "expired";
-  const isRefunded = transaction.transactionStatus === "refunded";
-  const isFailed = transaction.transactionStatus === "failed";
+  const statusConfig = TRANSACTION_STATUS_MAP[transaction.transactionStatus];
 
   return (
     <Modal.Content>
@@ -186,37 +179,17 @@ export const InternalTransactionDetailModalContent = (
               gap={"md"}
             >
               <HStack gap={"md"} align={"center"}>
-                <AppIcon
-                  icon={
-                    isPaid
-                      ? CheckCircleIcon
-                      : isExpired
-                        ? ClockIcon
-                        : XCircleIcon
-                  }
-                  size={"lg"}
-                  color={
-                    isPaid
-                      ? "green.fg"
-                      : isExpired
-                        ? "gray.fg"
-                        : isRefunded
-                          ? "purple.fg"
-                          : "red.fg"
-                  }
-                />
+                {statusConfig?.icon && (
+                  <AppIcon
+                    icon={statusConfig.icon}
+                    size={"lg"}
+                    color={`${statusConfig.colorPalette}.fg`}
+                  />
+                )}
 
                 <VStack align={"start"} gap={"2xs"}>
                   <P fontWeight={"semibold"}>
-                    {isPaid
-                      ? "Pembayaran Berhasil"
-                      : isExpired
-                        ? "Transaksi Kedaluwarsa"
-                        : isRefunded
-                          ? "Pembayaran Dikembalikan"
-                          : isFailed
-                            ? "Transaksi Gagal"
-                            : "Menunggu Pembayaran"}
+                    {statusConfig?.label ?? transaction.transactionStatus}
                   </P>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {`Dibuat: ${formatUtcDateTime(transaction.createdAt, preferredTimezone)}`}

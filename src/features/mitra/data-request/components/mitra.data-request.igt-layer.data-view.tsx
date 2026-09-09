@@ -656,9 +656,20 @@ export const MitraDataRequestIgtLayerDataView = memo(
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} mt={"auto"}>
           {summaryData.isAnySummaryLoading ? (
             <VStack gap={"xs"} w={"full"}>
-              <Skeleton h={"16px"} w={"full"} />
-              <Skeleton h={"16px"} w={"full"} />
-              <Skeleton h={"20px"} w={"full"} />
+              <HStack justify={"space-between"}>
+                <Skeleton h={"16px"} w={"120px"} />
+                <Skeleton h={"16px"} w={"140px"} />
+              </HStack>
+
+              <HStack justify={"space-between"}>
+                <Skeleton h={"16px"} w={"100px"} />
+                <Skeleton h={"16px"} w={"120px"} />
+              </HStack>
+
+              <HStack justify={"space-between"}>
+                <Skeleton h={"16px"} w={"90px"} />
+                <Skeleton h={"16px"} w={"180px"} />
+              </HStack>
             </VStack>
           ) : (
             <VStack gap={"xs"} w={"full"} fontSize={"xs"}>
