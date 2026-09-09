@@ -42,9 +42,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
     .filter((i) => i.spatialBasis === "bidang")
     .reduce((sum, item) => sum + item.featuresCount, 0);
 
-  const totalKawasanHa = order.items
-    .filter((i) => i.spatialBasis === "kawasan")
-    .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
+  const totalKawasanHa = order.coverageHa;
 
   const layerTitles = order.items.map((i) => i.sourceLayerTitle).join(", ");
 

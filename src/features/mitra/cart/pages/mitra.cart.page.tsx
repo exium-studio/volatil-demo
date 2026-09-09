@@ -175,6 +175,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
               <VStack gap={"sm"} align={"stretch"} w={"full"}>
                 {orders.map((order, index) => {
                   const orderNumber = orders.length - index;
+
                   return (
                     <MitraCartOrderItem
                       key={order.orderId}
