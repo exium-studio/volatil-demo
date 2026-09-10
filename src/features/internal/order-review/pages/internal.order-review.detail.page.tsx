@@ -29,9 +29,7 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { Url } from "@/design-system/components/typography/ui/url";
-import { toast } from "@/design-system/components/toast";
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import {
   formatCurrency,
   formatNumber,
@@ -204,9 +202,9 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
 
   // Stores
   const { enabledLayerIds, setLayerEnabled } = useOrderReviewLayerStore();
-  const map = useMapInstanceStore((state) => state.map);
 
-  // Handlers
+  // Hooks
+  const { flyTo } = useFlyToLayer();
   const handleToggleLayer = useCallback(
     (item: CartOrderItem, enabled: boolean) => {
       const previewUrl = item.previewWmsUrl;
@@ -226,36 +224,18 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
 
   const handleFlyToLayer = useCallback(
     (item: CartOrderItem) => {
-      if (!item.bbox) {
-        toast.error(
-          `Informasi bbox tidak tersedia untuk layer "${item.sourceLayerTitle}"`,
-        );
-        return;
-      }
-
-      if (!map) return;
-
-      const [minLng, minLat, maxLng, maxLat] = item.bbox;
-      const bboxPolygon: import("geojson").Feature<import("geojson").Polygon> = {
-        type: "Feature",
-        properties: { id: item.sourceLayerId, title: item.sourceLayerTitle },
-        geometry: {
-          type: "Polygon",
-          coordinates: [
-            [
-              [minLng, minLat],
-              [maxLng, minLat],
-              [maxLng, maxLat],
-              [minLng, maxLat],
-              [minLng, minLat],
-            ],
-          ],
+      console.log(item);
+      void flyTo(
+        {
+          id: item.sourceLayerId,
+          title: item.sourceLayerTitle,
+          bbox: item.bbox ?? null,
+          spatialBasis: item.spatialBasis,
         },
-      };
-
-      highlightFeatureOnMap(map, bboxPolygon, { zoom: 15 });
+        {},
+      );
     },
-    [map],
+    [flyTo],
   );
 
   const dataList = useMemo(() => {

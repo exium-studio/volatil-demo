@@ -74,6 +74,9 @@ const normalizeCartOrderItem = (raw: any): CartOrderItem => {
         : undefined),
     externalWfsUrl: raw.externalWfsUrl ?? raw.external_wfs_url ?? null,
     externalWmsUrl: raw.externalWmsUrl ?? raw.external_wms_url ?? null,
+    bbox: Array.isArray(raw.bbox) && raw.bbox.length === 4
+      ? (raw.bbox as [number, number, number, number])
+      : undefined,
   };
 };
 

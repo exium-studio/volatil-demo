@@ -259,11 +259,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             id: item.id,
             title: item.title,
             spatialBasis: item.spatialBasis,
-            bbox: item.bbox,
-            wfs: {
-              wfsTypeName: item.wfsTypeName || item.id,
-              wfsUrl: item.wfsUrl || "",
-            },
+            bbox: item.bbox ?? null,
           });
         },
       },
