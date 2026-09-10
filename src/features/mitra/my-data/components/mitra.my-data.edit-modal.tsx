@@ -7,7 +7,6 @@ import { Input } from "@/design-system/components/input/ui/input";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useUpdateMyData } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import { updateMyDataItemSchema } from "@/features/mitra/my-data/types/my-data.schema";
@@ -102,7 +101,7 @@ const MitraMyDataEditModalContent = (
         <VStack as={"form"} id={"my-data-edit-form"} gap={"md"}>
           <Fieldset>
             <VStack align={"stretch"} gap={"md"}>
-              <VStack align={"start"} gap={"2xs"} w={"full"}>
+              {/* <VStack align={"start"} gap={"2xs"} w={"full"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Nama Layer Asli"}
                 </P>
@@ -110,7 +109,7 @@ const MitraMyDataEditModalContent = (
                 <P fontSize={"sm"} fontWeight={"medium"}>
                   {item.title || item.id}
                 </P>
-              </VStack>
+              </VStack> */}
 
               <Field
                 variant={"floating"}
