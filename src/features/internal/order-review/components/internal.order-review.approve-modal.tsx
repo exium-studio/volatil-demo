@@ -132,11 +132,7 @@ const InternalOrderReviewApproveModalContent = (
       </Modal.Header>
 
       <Modal.Body>
-        <Fieldset
-          as={"form"}
-          id={"approve-order-form"}
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form id={"approve-order-form"} onSubmit={handleSubmit(onSubmit)}>
           <VStack align={"stretch"} gap={"md"}>
             <Alert.Root
               status={"info"}
@@ -220,6 +216,7 @@ const InternalOrderReviewApproveModalContent = (
                               placeholder={
                                 "https://geoportal.atrbpn.go.id/wms?layers=..."
                               }
+                              minH={"150px"}
                               value={inputField.value ?? ""}
                               onChange={inputField.onChange}
                               onBlur={inputField.onBlur}
@@ -253,7 +250,7 @@ const InternalOrderReviewApproveModalContent = (
               })}
             </VStack>
           </VStack>
-        </Fieldset>
+        </form>
       </Modal.Body>
 
       <Modal.Footer>
