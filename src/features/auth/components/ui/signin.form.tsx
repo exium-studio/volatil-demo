@@ -10,6 +10,9 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
+import { UserSessionActions } from "@/features/auth/components/ui/user-session-actions";
+import { UserSessionCard } from "@/features/auth/components/ui/user-session-card";
+import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { useSigninMutation } from "@/features/auth/hooks/use-signin.mutation";
 import {
   createSigninSchema,
@@ -22,7 +25,9 @@ import { useForm } from "react-hook-form";
 
 export const MitraSignin = (props: StackProps) => {
   // Hooks
+  const { user, isAuthenticated } = useAuthSession();
   const signinMutation = useSigninMutation();
+
   const {
     register,
     handleSubmit,
@@ -43,6 +48,22 @@ export const MitraSignin = (props: StackProps) => {
       role: "mitra",
     });
   };
+
+  if (isAuthenticated && user) {
+    return (
+      <VStack
+        flex={1}
+        justify={"space-between"}
+        gap={"lg"}
+        w={"full"}
+        {...props}
+      >
+        <UserSessionCard user={user} portalType={"mitra"} />
+
+        <UserSessionActions user={user} />
+      </VStack>
+    );
+  }
 
   return (
     <VStack
@@ -153,7 +174,9 @@ export const MitraSignin = (props: StackProps) => {
 
 export const InternalSignin = (props: StackProps) => {
   // Hooks
+  const { user, isAuthenticated } = useAuthSession();
   const signinMutation = useSigninMutation();
+
   const {
     register,
     handleSubmit,
@@ -174,6 +197,22 @@ export const InternalSignin = (props: StackProps) => {
       role: "internal",
     });
   };
+
+  if (isAuthenticated && user) {
+    return (
+      <VStack
+        flex={1}
+        justify={"space-between"}
+        gap={"lg"}
+        w={"full"}
+        {...props}
+      >
+        <UserSessionCard user={user} portalType={"internal"} />
+
+        <UserSessionActions user={user} />
+      </VStack>
+    );
+  }
 
   return (
     <VStack
