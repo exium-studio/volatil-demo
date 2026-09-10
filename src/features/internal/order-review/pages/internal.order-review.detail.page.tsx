@@ -14,7 +14,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
@@ -47,12 +47,19 @@ import {
   MapPlusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 export function InternalOrderReviewDetailPage() {
   // Hooks
   const { orderId } = useParams({ strict: false }) as { orderId: string };
   const navigate = useNavigate();
+
+  // Effects — cleanup review preview layers on unmount
+  useEffect(() => {
+    return () => {
+      useOrderReviewLayerStore.getState().resetLayers();
+    };
+  }, []);
 
   // Queries
   const { data: order, isLoading } = useInternalOrderDetailQuery(orderId);
@@ -66,7 +73,7 @@ export function InternalOrderReviewDetailPage() {
         <Container.Root flex={1}>
           <Container.Body flex={1}>
             <VStack flex={1} gap={"md"} p={"md"}>
-              <Skeleton width={"300px"} />
+              <Skeleton />
             </VStack>
           </Container.Body>
         </Container.Root>
@@ -197,8 +204,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
   const { order, onDetailAttribute } = props;
 
   // Stores
-  const { enabledLayerIds, setLayerEnabled, setCustomLayerConfig } =
-    useMapLayerStore();
+  const { enabledLayerIds, setLayerEnabled } = useOrderReviewLayerStore();
   const { flyTo } = useFlyToLayer();
 
   // Queries — master IGT layers from catalog
@@ -218,42 +224,16 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
       const previewUrl = item.previewWmsUrl;
 
       if (enabled) {
-        if (previewUrl) {
-          setCustomLayerConfig(item.sourceLayerId, {
-            wmsUrl: previewUrl,
-            layers: item.sourceLayerId,
-            spatialBasis: item.spatialBasis,
-          });
-        }
-        setLayerEnabled(item.sourceLayerId, true);
-
-        // const matchedLayer = fetchedLayersList.find(
-        //   (l) => l.id === item.sourceLayerId,
-        // );
-        // void flyTo(
-        //   matchedLayer ?? {
-        //     id: item.sourceLayerId,
-        //     title: item.sourceLayerTitle,
-        //     spatialBasis: item.spatialBasis,
-        //     bbox: undefined,
-        //     wfs: {
-        //       wfsTypeName: item.sourceLayerId,
-        //       wfsUrl: item.previewWfsUrl || item.wfsUrl || "",
-        //     },
-        //   },
-        //   {},
-        // );
+        setLayerEnabled(item.sourceLayerId, true, {
+          wmsUrl: previewUrl || "",
+          layers: item.sourceLayerId,
+          spatialBasis: item.spatialBasis,
+        });
       } else {
         setLayerEnabled(item.sourceLayerId, false);
-        setCustomLayerConfig(item.sourceLayerId, null);
       }
     },
-    [
-      // fetchedLayersList,
-      // flyTo,
-      setCustomLayerConfig,
-      setLayerEnabled,
-    ],
+    [setLayerEnabled],
   );
 
   const dataList = useMemo(() => {

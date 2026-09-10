@@ -33,6 +33,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
 import {
   APP_NAV_GROUPS_LIST,
   APP_OTHER_NAV_GROUPS_LIST,
@@ -394,6 +395,10 @@ const Content = () => {
 
   const { enabledLayerIds, layerOpacities, customLayerConfigs, cqlFilter } =
     useIgtLayerStore();
+  const {
+    enabledLayerIds: previewEnabledLayerIds,
+    layerConfigs: previewLayerConfigs,
+  } = useOrderReviewLayerStore();
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
     const rawList = fetchedLayers?.items ?? fetchedLayers?.layers ?? [];
@@ -439,6 +444,23 @@ const Content = () => {
       }
     });
 
+    // Include isolated Order Review preview layers
+    Object.entries(previewEnabledLayerIds).forEach(([layerId, isEnabled]) => {
+      if (isEnabled) {
+        const previewConfig = previewLayerConfigs[layerId];
+        configs.push({
+          id: `order_preview:${layerId}`,
+          type: "wms-raster",
+          spatialBasis: previewConfig?.spatialBasis ?? "bidang",
+          visible: wmsVisible && Boolean(isEnabled),
+          opacity: 1.0,
+          wmsUrl: previewConfig?.wmsUrl ?? "",
+          layers: previewConfig?.layers ?? layerId,
+          ...(previewConfig ?? {}),
+        });
+      }
+    });
+
     return configs;
   }, [
     fetchedLayers,
@@ -446,6 +468,8 @@ const Content = () => {
     enabledLayerIds,
     layerOpacities,
     customLayerConfigs,
+    previewEnabledLayerIds,
+    previewLayerConfigs,
   ]);
 
   // Derived Values
@@ -502,7 +526,7 @@ const Content = () => {
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
-          showIgtLayerSelect={
+          showMasterIgtLayerSelect={
             isInternal || pathname.startsWith("/mitra/data-request")
           }
           // onDrawFinish={(feature, originalPoints) => {

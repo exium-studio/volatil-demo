@@ -4,13 +4,19 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { MapAttribution } from "@/design-system/components/map/ui/map.basemap-attribution";
 import { MapControls } from "@/design-system/components/map/ui/map.controls";
-import { MapIgtLayerSelect } from "@/design-system/components/map/ui/map.controls/map.igt-layer-select";
+import { MapMasterIgtLayerSelect } from "@/design-system/components/map/ui/map.controls/map.master-igt-layer-select";
 import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinates";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
 import type { MapOverlayProps } from "@/design-system/components/map/types/map.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
-export const MapOverlay = ({ showIgtLayerSelect = true }: MapOverlayProps) => {
+export const MapOverlay = (props: MapOverlayProps) => {
+  const { showMasterIgtLayerSelect, showIgtLayerSelect = true } = props;
+  const isMasterIgtLayerSelectVisible =
+    showMasterIgtLayerSelect !== undefined
+      ? showMasterIgtLayerSelect
+      : showIgtLayerSelect;
+
   return (
     <VStack
       justify={"space-between"}
@@ -33,7 +39,7 @@ export const MapOverlay = ({ showIgtLayerSelect = true }: MapOverlayProps) => {
         <MapSearch />
 
         <HStack align={"start"} gap={2} pointerEvents={"none"}>
-          {showIgtLayerSelect && <MapIgtLayerSelect />}
+          {isMasterIgtLayerSelectVisible && <MapMasterIgtLayerSelect />}
           <MapAttribution />
         </HStack>
       </HStack>

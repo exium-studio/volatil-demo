@@ -1,4 +1,4 @@
-// src/design-system/components/map/ui/map.controls/map.igt-layer-select.tsx
+// src/design-system/components/map/ui/map.controls/map.master-igt-layer-select.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
@@ -10,7 +10,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
-import type { MapIgtLayerItemProps } from "@/design-system/components/map/types/map.igt-layer-select.type";
+import type { MapMasterIgtLayerItemProps } from "@/design-system/components/map/types/map.master-igt-layer-select.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
-export const MapIgtLayerSelect = memo(() => {
+export const MapMasterIgtLayerSelect = memo(() => {
   // Stores
   const {
     enabledLayerIds,
@@ -42,7 +42,7 @@ export const MapIgtLayerSelect = memo(() => {
     setAllLayersEnabled,
   } = useMapLayerStore();
 
-  // Queries — list of all active IGT layers
+  // Queries — list of all active master IGT catalog layers
   const { data: layersData, isLoading } = useQuery({
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
@@ -84,7 +84,7 @@ export const MapIgtLayerSelect = memo(() => {
       <Popover.Trigger>
         <MapOverlayContainer p={"2px"}>
           <Tooltip
-            content={"Layer Spasial IGT"}
+            content={"Master Layer Spasial IGT"}
             positioning={{ placement: "bottom" }}
           >
             <Box position={"relative"}>
@@ -106,32 +106,34 @@ export const MapIgtLayerSelect = memo(() => {
           alignItems={"center"}
           justifyContent={"space-between"}
         >
-          <HStack gap={"xs"} align={"center"}>
-            <P fontWeight={"medium"}>{"Toggle Layer IGT"}</P>
+          <HStack justify={"space-between"} gap={"md"} w={"full"}>
+            <HStack flex={1} gap={"xs"} align={"center"}>
+              <P fontWeight={"medium"}>{"Toggle Master Layer IGT"}</P>
 
-            <Badge colorPalette={"blue"}>{enabledCount} aktif</Badge>
-          </HStack>
-
-          {activeLayers.length > 0 && (
-            <HStack
-              align={"center"}
-              gap={"sm"}
-              cursor={"pointer"}
-              onClick={() => {
-                handleToggleAll(!isAllEnabled);
-              }}
-            >
-              <P fontSize={"sm"} color={"fg.muted"} userSelect={"none"}>
-                {"Tampilkan semua"}
-              </P>
-
-              <Switch
-                size={"sm"}
-                checked={isAllEnabled}
-                pointerEvents={"none"}
-              />
+              <Badge colorPalette={"blue"}>{enabledCount} aktif</Badge>
             </HStack>
-          )}
+
+            {activeLayers.length > 0 && (
+              <HStack
+                align={"center"}
+                gap={"sm"}
+                cursor={"pointer"}
+                onClick={() => {
+                  handleToggleAll(!isAllEnabled);
+                }}
+              >
+                <P fontSize={"sm"} color={"fg.muted"} userSelect={"none"}>
+                  {"Semua"}
+                </P>
+
+                <Switch
+                  size={"sm"}
+                  checked={isAllEnabled}
+                  pointerEvents={"none"}
+                />
+              </HStack>
+            )}
+          </HStack>
         </Popover.Header>
 
         <Popover.Body p={2} maxH={"500px"} overflowY={"auto"}>
@@ -139,7 +141,7 @@ export const MapIgtLayerSelect = memo(() => {
             <HStack align={"center"} justify={"center"} gap={"md"} p={"md"}>
               <Loader />
 
-              <P color={"fg.muted"}>{"Memuat layer..."}</P>
+              <P color={"fg.muted"}>{"Memuat master layer..."}</P>
             </HStack>
           ) : (
             <VStack gap={"2xs"} align={"stretch"}>
@@ -148,7 +150,7 @@ export const MapIgtLayerSelect = memo(() => {
                 const opacity = layerOpacities[layer.id] ?? 1.0;
 
                 return (
-                  <MapIgtLayerItem
+                  <MapMasterIgtLayerItem
                     key={layer.id}
                     layer={layer}
                     isEnabled={isEnabled}
@@ -166,7 +168,7 @@ export const MapIgtLayerSelect = memo(() => {
   );
 });
 
-const MapIgtLayerItem = memo((props: MapIgtLayerItemProps) => {
+const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   // Props
   const { layer, isEnabled, opacity, onToggle, onOpacityChange } = props;
 

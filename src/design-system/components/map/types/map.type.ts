@@ -192,6 +192,8 @@ export type MapLayerState = {
 };
 
 export type MapOverlayProps = {
+  showMasterIgtLayerSelect?: boolean;
+  /** @deprecated Use showMasterIgtLayerSelect */
   showIgtLayerSelect?: boolean;
 };
 

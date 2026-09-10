@@ -120,3 +120,17 @@ export type OrderLayerDataViewProps = {
   order: InternalOrderItem;
   onDetailAttribute: (item: CartOrderItem) => void;
 };
+
+import type { WmsRasterLayerConfig } from "@/design-system/components/map/types/map.type";
+
+export type OrderReviewLayerState = {
+  enabledLayerIds: Record<string, boolean>;
+  layerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;
+  toggleLayer: (layerId: string, config?: Partial<WmsRasterLayerConfig>) => void;
+  setLayerEnabled: (
+    layerId: string,
+    enabled: boolean,
+    config?: Partial<WmsRasterLayerConfig>,
+  ) => void;
+  resetLayers: () => void;
+};
