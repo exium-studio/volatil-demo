@@ -14,22 +14,22 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
-import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
+import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import {
   useInternalOrderDetailQuery,
   useProvisionOrder,
 } from "@/features/internal/order-review/hooks/use-order-review";
+import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
 import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
+import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { Url } from "@/design-system/components/typography/ui/url";
-import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import {
   formatCurrency,
   formatNumber,
@@ -42,7 +42,6 @@ import {
   EyeOffIcon,
   FocusIcon,
   MapPlusIcon,
-  TablePropertiesIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 
@@ -179,18 +178,7 @@ export function InternalOrderReviewDetailPage() {
           <Separator borderColor={"bg.canvas"} />
 
           {/* Layer List */}
-          <OrderLayerDataView
-            order={order}
-            onDetailAttribute={(item) => {
-              void navigate({
-                to: "/internal/order-review/$orderId/layer/$layerId",
-                params: {
-                  orderId: order.orderId,
-                  layerId: encodeURIComponent(item.sourceLayerId || item.id),
-                },
-              });
-            }}
-          />
+          <OrderLayerDataView order={order} />
         </Container.Body>
       </Container.Root>
     </AppContentContainer>
@@ -198,7 +186,7 @@ export function InternalOrderReviewDetailPage() {
 }
 
 const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
-  const { order, onDetailAttribute } = props;
+  const { order } = props;
 
   // Stores
   const { enabledLayerIds, setLayerEnabled } = useOrderReviewLayerStore();
@@ -347,24 +335,10 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
           handleFlyToLayer(item);
         },
       },
-      {
-        key: "detail-attribute",
-        label: "Detail Atribut",
-        icon: TablePropertiesIcon,
-        onClick: (item: CartOrderItem) => {
-          onDetailAttribute(item);
-        },
-      },
     ];
 
     return { headers, items, itemActions };
-  }, [
-    order.items,
-    enabledLayerIds,
-    handleToggleLayer,
-    handleFlyToLayer,
-    onDetailAttribute,
-  ]);
+  }, [order.items, enabledLayerIds, handleToggleLayer, handleFlyToLayer]);
 
   return (
     <VStack flex={1} w={"full"}>

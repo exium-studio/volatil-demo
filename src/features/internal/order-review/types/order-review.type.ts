@@ -118,7 +118,6 @@ export type RejectOrderPayload = {
 
 export type OrderLayerDataViewProps = {
   order: InternalOrderItem;
-  onDetailAttribute: (item: CartOrderItem) => void;
 };
 
 import type { WmsRasterLayerConfig } from "@/design-system/components/map/types/map.type";
