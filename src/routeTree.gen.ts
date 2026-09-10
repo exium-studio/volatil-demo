@@ -29,6 +29,7 @@ import { Route as PrivateInternalOrderReviewRouteImport } from './routes/_privat
 import { Route as PrivateInternalNotificationRouteImport } from './routes/_private/internal/notification'
 import { Route as PrivateInternalMitraRegistrationRouteImport } from './routes/_private/internal/mitra-registration'
 import { Route as PrivateInternalMasterGeoserverRouteImport } from './routes/_private/internal/master-geoserver'
+import { Route as PrivateInternalJobsRouteImport } from './routes/_private/internal/jobs'
 import { Route as PrivateInternalHomeRouteImport } from './routes/_private/internal/home'
 import { Route as PrivateInternalHelpCenterRouteImport } from './routes/_private/internal/help-center'
 import { Route as PrivateInternalDataManagementRouteImport } from './routes/_private/internal/data-management'
@@ -150,6 +151,11 @@ const PrivateInternalMasterGeoserverRoute =
     path: '/internal/master-geoserver',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
+const PrivateInternalJobsRoute = PrivateInternalJobsRouteImport.update({
+  id: '/internal/jobs',
+  path: '/internal/jobs',
+  getParentRoute: () => PrivateRouteRoute,
+} as any)
 const PrivateInternalHomeRoute = PrivateInternalHomeRouteImport.update({
   id: '/internal/home',
   path: '/internal/home',
@@ -231,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/internal/home': typeof PrivateInternalHomeRoute
+  '/internal/jobs': typeof PrivateInternalJobsRoute
   '/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
   '/internal/mitra-registration': typeof PrivateInternalMitraRegistrationRouteWithChildren
   '/internal/notification': typeof PrivateInternalNotificationRoute
@@ -264,6 +271,7 @@ export interface FileRoutesByTo {
   '/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/internal/home': typeof PrivateInternalHomeRoute
+  '/internal/jobs': typeof PrivateInternalJobsRoute
   '/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
   '/internal/notification': typeof PrivateInternalNotificationRoute
   '/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/_private/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/_private/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/_private/internal/home': typeof PrivateInternalHomeRoute
+  '/_private/internal/jobs': typeof PrivateInternalJobsRoute
   '/_private/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
   '/_private/internal/mitra-registration': typeof PrivateInternalMitraRegistrationRouteWithChildren
   '/_private/internal/notification': typeof PrivateInternalNotificationRoute
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/internal/data-management'
     | '/internal/help-center'
     | '/internal/home'
+    | '/internal/jobs'
     | '/internal/master-geoserver'
     | '/internal/mitra-registration'
     | '/internal/notification'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/internal/data-management'
     | '/internal/help-center'
     | '/internal/home'
+    | '/internal/jobs'
     | '/internal/master-geoserver'
     | '/internal/notification'
     | '/internal/order-statistic'
@@ -395,6 +406,7 @@ export interface FileRouteTypes {
     | '/_private/internal/data-management'
     | '/_private/internal/help-center'
     | '/_private/internal/home'
+    | '/_private/internal/jobs'
     | '/_private/internal/master-geoserver'
     | '/_private/internal/mitra-registration'
     | '/_private/internal/notification'
@@ -571,6 +583,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInternalMasterGeoserverRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/internal/jobs': {
+      id: '/_private/internal/jobs'
+      path: '/internal/jobs'
+      fullPath: '/internal/jobs'
+      preLoaderRoute: typeof PrivateInternalJobsRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
     '/_private/internal/home': {
       id: '/_private/internal/home'
       path: '/internal/home'
@@ -715,6 +734,7 @@ interface PrivateRouteRouteChildren {
   PrivateInternalDataManagementRoute: typeof PrivateInternalDataManagementRoute
   PrivateInternalHelpCenterRoute: typeof PrivateInternalHelpCenterRoute
   PrivateInternalHomeRoute: typeof PrivateInternalHomeRoute
+  PrivateInternalJobsRoute: typeof PrivateInternalJobsRoute
   PrivateInternalMasterGeoserverRoute: typeof PrivateInternalMasterGeoserverRoute
   PrivateInternalMitraRegistrationRoute: typeof PrivateInternalMitraRegistrationRouteWithChildren
   PrivateInternalNotificationRoute: typeof PrivateInternalNotificationRoute
@@ -738,6 +758,7 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateInternalDataManagementRoute: PrivateInternalDataManagementRoute,
   PrivateInternalHelpCenterRoute: PrivateInternalHelpCenterRoute,
   PrivateInternalHomeRoute: PrivateInternalHomeRoute,
+  PrivateInternalJobsRoute: PrivateInternalJobsRoute,
   PrivateInternalMasterGeoserverRoute: PrivateInternalMasterGeoserverRoute,
   PrivateInternalMitraRegistrationRoute:
     PrivateInternalMitraRegistrationRouteWithChildren,

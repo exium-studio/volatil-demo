@@ -6,6 +6,7 @@ import { InternalHomeLeaderboard } from "@/features/internal/home/components/int
 import { InternalHomeMitraRegistration } from "@/features/internal/home/components/internal.home.mitra-registration";
 import { InternalHomePublishStatusSummary } from "@/features/internal/home/components/internal.home.publish-status-summary";
 import { InternalHomeIgtBasisSummary } from "@/features/internal/home/components/internal.home.igt-basis-summary";
+import { InternalHomeMitraLayerSyncJobsQuickView } from "@/features/internal/home/components/internal.home.mitra-layer-sync-jobs-quick-view";
 import { InternalHomeServiceRate } from "@/features/internal/home/components/internal.home.service-rate";
 import { InternalHomeTrend } from "@/features/internal/home/components/internal.home.trend";
 
@@ -25,6 +26,9 @@ export const InternalHomePage = () => {
 
       {/* Row 3: Leaderboard Mitra Teraktif & Layer Paling Diminati */}
       <InternalHomeLeaderboard />
+
+      {/* Row 4: Quick View Antrean Job Pembaruan Layer Mitra (Max 10) */}
+      <InternalHomeMitraLayerSyncJobsQuickView />
     </AppContentContainer>
   );
 };

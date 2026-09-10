@@ -1,3 +1,5 @@
+// src/features/internal/order-review/components/internal.order-review.approve-modal.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";

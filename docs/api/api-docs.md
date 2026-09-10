@@ -32,6 +32,7 @@ Sistem Volatil memiliki 2 role pengguna:
 - [My Data & Riwayat Transaksi](#my-data--riwayat-transaksi)
 - [Dashboard & Statistik Mitra](#dashboard--statistik-mitra)
 - [Master IGT Layers & Data Management](#master-igt-layers--data-management)
+- [Antrean Job Pembaruan Layer Mitra (Queue Jobs & SSE)](#antrean-job-pembaruan-layer-mitra-queue-jobs--sse)
 - [Master GeoServer](#master-geoserver)
 - [Review Permohonan (Internal Order Review)](#review-permohonan-internal-order-review)
 - [Statistik & Monitoring Transaksi Internal](#statistik--monitoring-transaksi-internal)
@@ -872,6 +873,95 @@ type CreateMasterIgtLayerPayload = {
 - **Endpoint**: `DELETE /api/internal/igt-layers/{id}`
 - **Middleware / Akses**: `Internal Only`
 - **Response**: `200 OK` / `{ success: true, message: "Layer IGT berhasil dihapus (retensi 30 hari)" }`
+
+---
+
+# Antrean Job Pembaruan Layer Mitra (Queue Jobs & SSE)
+
+Modul background queue job dan Server-Sent Events (SSE) untuk menangani proses sinkronisasi layer data yang telah dibeli oleh mitra ketika data layer master ATR/BPN diperbarui dari sumber eksternal. Karena layer mitra berjalan di dedicated geoserver service masing-masing, proses ini dieksekusi secara asinkron (background queue) agar tidak memblokir antarmuka pengguna internal.
+
+## 1. Trigger Pembaruan Layer Mitra (Queue Job)
+
+- **Endpoint**: `POST /api/internal/igt-layers/{id}/sync-mitra`
+- **Middleware / Akses**: `Internal Only`
+- **Tipe Eksekusi**: Asynchronous Background Queue Job (HTTP 202 Accepted)
+- **Keterangan**: Memicu antrean pekerjaan pembaruan layer turunan mitra yang memiliki relasi dengan layer master ID tersebut.
+- **Payload**: `{}` (Empty body)
+- **Response**: `202 Accepted`
+
+```typescript
+type TriggerMitraLayerSyncResponse = {
+  jobId: string;
+  layerId: string;
+  status: "queued" | "processing" | "completed" | "failed";
+  message: string;
+  createdAt: string;
+};
+```
+
+## 2. List Antrean Job Pembaruan Layer Mitra
+
+- **Endpoint**: `GET /api/internal/mitra-layer-sync-jobs`
+- **Middleware / Akses**: `Internal Only`
+- **Query Params**:
+  - `page?: number` (default: 1)
+  - `pageSize?: number` (default: 10)
+  - `search?: string` (pencarian berdasarkan ID job, judul layer, atau typename)
+  - `status?: "queued" | "processing" | "completed" | "failed"`
+- **Response**: `200 OK`
+
+```typescript
+type MitraLayerSyncJobItem = {
+  id: string;
+  layerId: string;
+  layerTitle: string;
+  workspaceName: string;
+  typeName: string;
+  status: "queued" | "processing" | "completed" | "failed";
+  progress: number; // 0 - 100%
+  totalMitraLayers: number;
+  processedMitraLayers: number;
+  triggeredByUserId: string;
+  triggeredByUserName: string;
+  errorMessage?: string;
+  createdAt: string;
+  startedAt?: string;
+  completedAt?: string;
+};
+
+type MitraLayerSyncJobsResponse = {
+  items: MitraLayerSyncJobItem[];
+  pagination: PaginationMeta;
+};
+```
+
+## 3. Detail Job Pembaruan Layer Mitra
+
+- **Endpoint**: `GET /api/internal/mitra-layer-sync-jobs/{jobId}`
+- **Middleware / Akses**: `Internal Only`
+- **Response**: `200 OK` / `MitraLayerSyncJobItem`
+
+## 4. Real-time Job Progress Stream (Server-Sent Events / SSE)
+
+- **Endpoint**: `GET /api/internal/mitra-layer-sync-jobs/stream`
+- **Optional Single Job Endpoint**: `GET /api/internal/mitra-layer-sync-jobs/{jobId}/stream`
+- **Middleware / Akses**: `Internal Only`
+- **Headers**:
+  - `Accept: text/event-stream`
+  - `Cache-Control: no-cache`
+  - `Connection: keep-alive`
+- **Stream Event Types**:
+  - `event: job_created`: Dikirim ketika job baru dimasukkan ke dalam antrean.
+  - `event: job_started`: Dikirim ketika worker mulai memproses sinkronisasi layer mitra.
+  - `event: job_progress`: Dikirim secara periodik mengabarkan progres sinkronisasi (`progress: number`, `processedMitraLayers: number`).
+  - `event: job_completed`: Dikirim saat seluruh layer mitra terkait berhasil disinkronisasi.
+  - `event: job_failed`: Dikirim jika terjadi kegagalan (misal: koneksi timeout ke geoserver mitra) disertai `errorMessage`.
+- **Contoh SSE Payload**:
+
+```text
+event: job_progress
+data: {"id":"sync_job_003","layerId":"testing_workspace:TEST_BIDANG_TANAH","layerTitle":"Bidang Tanah","typeName":"testing_workspace:TEST_BIDANG_TANAH","status":"processing","progress":65,"totalMitraLayers":20,"processedMitraLayers":13,"triggeredByUserId":"usr_admin_02","triggeredByUserName":"Verifikator Spasial","createdAt":"2026-09-10T03:40:00Z","startedAt":"2026-09-10T03:40:10Z"}
+```
 
 ---
 

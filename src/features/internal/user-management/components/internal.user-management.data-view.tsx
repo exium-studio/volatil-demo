@@ -1,4 +1,4 @@
-// src/features/internal/user-management/components/internal.user-management.data-list.tsx
+// src/features/internal/user-management/components/internal.user-management.data-view.tsx
 
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import type {

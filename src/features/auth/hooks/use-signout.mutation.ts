@@ -1,3 +1,5 @@
+// src/features/auth/hooks/use-signout.mutation.ts
+
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { authService } from "@/features/auth/services/auth.service";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";

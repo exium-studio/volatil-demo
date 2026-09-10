@@ -1,4 +1,4 @@
-// src/features/mitra/shared/types/wfs-data-list.type.ts
+// src/features/shared/types/spatial-features-data-view.type.ts
 
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";

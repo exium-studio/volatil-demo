@@ -1,4 +1,4 @@
-// src/features/internal/pricing/components/internal.pricing.data-list.tsx
+// src/features/internal/pricing/components/internal.pricing.data-view.tsx
 
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";

@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/ui/confirmation-trigger.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmationTriggerProps } from "@/design-system/components/feedback/types/confirmation-trigger.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

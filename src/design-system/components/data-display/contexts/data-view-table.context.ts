@@ -1,4 +1,4 @@
-// src/design-system/components/data-display/contexts/data-list-table.context.ts
+// src/design-system/components/data-display/contexts/data-view-table.context.ts
 
 import type { DataViewTableContextValue } from "@/design-system/components/data-display/types/data-view-table.type";
 import { createContext, useContext } from "react";

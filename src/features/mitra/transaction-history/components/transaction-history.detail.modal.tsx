@@ -1,4 +1,4 @@
-// src/features/mitra/transaction-history/components/transaction-history.detail-modal.tsx
+// src/features/mitra/transaction-history/components/transaction-history.detail.modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";

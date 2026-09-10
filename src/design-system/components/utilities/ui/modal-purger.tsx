@@ -1,3 +1,5 @@
+// src/design-system/components/utilities/ui/modal-purger.tsx
+
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";

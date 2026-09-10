@@ -116,6 +116,15 @@ export const queryKeys = {
       detail: (id: string | number) =>
         [...queryKeys.internal.mitraRegistration.all, "detail", id] as const,
     },
+    mitraLayerSyncJobs: {
+      all: ["internal", "mitra-layer-sync-jobs"] as const,
+      list: (params?: Record<string, unknown>) =>
+        [...queryKeys.internal.mitraLayerSyncJobs.all, "list", params] as const,
+      detail: (id: string) =>
+        [...queryKeys.internal.mitraLayerSyncJobs.all, "detail", id] as const,
+      quickView: () =>
+        [...queryKeys.internal.mitraLayerSyncJobs.all, "quick-view"] as const,
+    },
   },
   map: {
     all: ["map"] as const,

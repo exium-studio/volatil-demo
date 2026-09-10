@@ -1,4 +1,4 @@
-// src/design-system/components/data-display/ui/data-list-item-actions.tsx
+// src/design-system/components/data-display/ui/data-view-item-actions.tsx
 
 import {
   Button,

@@ -1,4 +1,4 @@
-// src/design-system/components/data-display/ui/data-list-batch-actions.tsx
+// src/design-system/components/data-display/ui/data-view-batch-actions.tsx
 
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
 import type {

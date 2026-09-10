@@ -1,3 +1,5 @@
+// src/features/internal/data-management/components/internal.data-management.data-view.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
@@ -44,6 +46,7 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
+import { useTriggerMitraLayerSyncMutation } from "@/features/internal/mitra-layer-sync-jobs/hooks/use-mitra-layer-sync-jobs.query";
 import { IconLayersOff } from "@tabler/icons-react";
 import {
   EyeIcon,
@@ -51,6 +54,7 @@ import {
   FocusIcon,
   PencilIcon,
   PlusIcon,
+  RefreshCwIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useCallback, useMemo, useState, useTransition } from "react";
@@ -76,6 +80,7 @@ export const InternalDataManagementDataView = () => {
 
   // Mutations
   const deleteMutation = useDeleteMasterIgtLayer();
+  const syncMitraMutation = useTriggerMitraLayerSyncMutation();
 
   // Queries
   const {
@@ -338,6 +343,24 @@ export const InternalDataManagementDataView = () => {
         },
       },
       {
+        key: "sync-mitra-layer",
+        label: "Perbarui Layer Mitra",
+        icon: RefreshCwIcon,
+        modal: {
+          triggerComponent: (layer: MasterIgtLayerItem) => (
+            <ConfirmationTrigger
+              modalKey={`sync-mitra-layer-${layer.id}`}
+              title={"Perbarui Layer Mitra Terkait?"}
+              description={`Tindakan ini akan menjadwalkan tugas di latar belakang (antrean job) untuk memperbarui seluruh layer turunan milik mitra yang diperoleh dari layer "${layer.title}". Proses sinkronisasi geoserver berjalan secara asinkron tanpa memblokir pekerjaan Anda.`}
+              confirmLabel={"Jadwalkan Pembaruan"}
+              onConfirm={() => {
+                syncMitraMutation.mutate({ layerId: layer.id });
+              }}
+            />
+          ),
+        },
+      },
+      {
         key: "delete-layer",
         label: "Hapus Layer",
         icon: Trash2Icon,
@@ -373,6 +396,7 @@ export const InternalDataManagementDataView = () => {
     setLayerEnabled,
     setCustomLayerConfig,
     deleteMutation,
+    syncMitraMutation,
     flyTo,
   ]);
 

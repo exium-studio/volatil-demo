@@ -1,4 +1,4 @@
-// src/features/mitra/cart/components/mitra.cart.data-list.tsx
+// src/features/mitra/cart/components/mitra.cart.data-view.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";

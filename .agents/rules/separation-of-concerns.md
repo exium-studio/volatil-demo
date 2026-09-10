@@ -32,6 +32,11 @@ src/features/<feature-name>/
 1. **API files** wajib berakhiran `.api.ts`.
 2. **Service files** wajib berakhiran `.service.ts`.
 3. **Komponen / Hooks TIDAK BOLEH memanggil `*.api.ts` secara langsung**, wajib melalui `*.service.ts` atau query hook yang mengonsumsi service.
+4. **Naming Convention Wajib Spesifik & Semantik (DILARANG General/Vague)**:
+   - File name, hook name, type name, dan constant wajib menyertakan domain konteks yang jelas secara semantik.
+   - Contoh DILARANG: `job.api.ts`, `job.keys.ts`, `job.type.ts`, `use-job.ts`, `list.tsx`.
+   - Contoh WAJIB: `mitra-layer-sync-job.api.ts`, `mitra-layer-sync-job.service.ts`, `mitra-layer-sync-job.type.ts`, `use-mitra-layer-sync-jobs.query.ts`, `internal.mitra-layer-sync-job.data-view.tsx`.
+
 
 ---
 

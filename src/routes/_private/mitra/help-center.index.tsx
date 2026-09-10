@@ -1,3 +1,5 @@
+// src/routes/_private/mitra/help-center.index.tsx
+
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { HelpCenterPage } from "@/features/mitra/help-center/pages/help-center.page";
 import { createFileRoute } from "@tanstack/react-router";

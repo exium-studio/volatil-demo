@@ -10,6 +10,7 @@ import {
   HistoryIcon,
   HouseIcon,
   LayersIcon,
+  ListChecksIcon,
   ReceiptTextIcon,
   ServerIcon,
   ShoppingCartIcon,
@@ -91,6 +92,11 @@ export const INTERNAL_APP_NAVS_MAP = {
     icon: ReceiptTextIcon,
     titleKey: "app.admin_navs.order_statistic",
     pathname: "/internal/order-statistic",
+  },
+  jobs: {
+    icon: ListChecksIcon,
+    titleKey: "app.admin_navs.jobs",
+    pathname: "/internal/jobs",
   },
   help: {
     icon: HeadsetIcon,

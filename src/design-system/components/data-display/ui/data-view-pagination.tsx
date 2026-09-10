@@ -1,4 +1,4 @@
-// src/design-system/components/data-display/ui/data-list-pagination.tsx
+// src/design-system/components/data-display/ui/data-view-pagination.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type { DataViewPaginationProps } from "@/design-system/components/data-display/types/data-view.type";

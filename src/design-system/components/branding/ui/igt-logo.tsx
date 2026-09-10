@@ -1,4 +1,4 @@
-// src/design-system/components/branding/ui/atr-logo.tsx
+// src/design-system/components/branding/ui/igt-logo.tsx
 
 "use client";
 

@@ -1,3 +1,5 @@
+// src/features/internal/home/components/internal.home.service-rate.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

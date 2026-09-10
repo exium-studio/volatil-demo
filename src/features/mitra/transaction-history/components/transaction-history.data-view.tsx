@@ -1,4 +1,4 @@
-// src/features/mitra/transaction-history/components/transaction-history.data-list.tsx
+// src/features/mitra/transaction-history/components/transaction-history.data-view.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type {

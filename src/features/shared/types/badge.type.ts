@@ -38,3 +38,8 @@ export type MyDataStatusBadgeProps = Omit<BadgeProps, "children"> & {
   children?: MyDataStatus | (string & {});
   showIcon?: boolean;
 };
+
+export type MitraLayerSyncJobStatusBadgeProps = Omit<BadgeProps, "children"> & {
+  children?: string;
+  showIcon?: boolean;
+};

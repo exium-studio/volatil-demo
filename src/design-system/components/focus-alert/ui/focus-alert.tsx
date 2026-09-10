@@ -1,3 +1,5 @@
+// src/design-system/components/focus-alert/ui/focus-alert.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FocusAlertContentProps,
