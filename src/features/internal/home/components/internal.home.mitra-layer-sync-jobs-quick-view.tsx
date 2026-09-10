@@ -168,7 +168,7 @@ export const InternalHomeMitraLayerSyncJobsQuickView = () => {
       <Container.Body gap={"md"} py={"md"}>
         {/* Header section with live SSE badge and link to full jobs page */}
         <HStack justify={"space-between"} align={"center"} px={"md"}>
-          <HStack gap={"xs"} align={"center"}>
+          <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
             <Heading>{"Antrean Pembaruan Layer Mitra"}</Heading>
 
             <InfoTip
@@ -180,11 +180,11 @@ export const InternalHomeMitraLayerSyncJobsQuickView = () => {
               }
             </InfoTip>
 
-            <Badge colorPalette={"blue"} variant={"subtle"} size={"sm"}>
+            <Badge colorPalette={"blue"} variant={"subtle"}>
               {`${totalCount} Total Tugas`}
             </Badge>
 
-            <Badge colorPalette={"green"} variant={"subtle"} size={"sm"}>
+            <Badge colorPalette={"green"} variant={"subtle"}>
               <AppIcon icon={RadioIcon} />
               {"Sinkronisasi Langsung Aktif"}
             </Badge>

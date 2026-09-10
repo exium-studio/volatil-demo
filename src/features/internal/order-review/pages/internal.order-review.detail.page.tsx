@@ -25,19 +25,18 @@ import {
   useProvisionOrder,
 } from "@/features/internal/order-review/hooks/use-order-review";
 import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
-import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { Url } from "@/design-system/components/typography/ui/url";
-import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { toast } from "@/design-system/components/toast";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import {
   formatCurrency,
   formatNumber,
 } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
@@ -205,20 +204,9 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
 
   // Stores
   const { enabledLayerIds, setLayerEnabled } = useOrderReviewLayerStore();
-  const { flyTo } = useFlyToLayer();
+  const map = useMapInstanceStore((state) => state.map);
 
-  // Queries — master IGT layers from catalog
-  const { data: layersData } = useQuery({
-    queryKey: queryKeys.map.layers(),
-    queryFn: ({ signal }) => getIgtLayers(signal),
-    staleTime: 1000 * 60 * 5,
-  });
-
-  // Derived Values
-  const fetchedLayersList = useMemo(() => {
-    return layersData?.items ?? layersData?.layers ?? [];
-  }, [layersData]);
-
+  // Handlers
   const handleToggleLayer = useCallback(
     (item: CartOrderItem, enabled: boolean) => {
       const previewUrl = item.previewWmsUrl;
@@ -234,6 +222,40 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
       }
     },
     [setLayerEnabled],
+  );
+
+  const handleFlyToLayer = useCallback(
+    (item: CartOrderItem) => {
+      if (!item.bbox) {
+        toast.error(
+          `Informasi bbox tidak tersedia untuk layer "${item.sourceLayerTitle}"`,
+        );
+        return;
+      }
+
+      if (!map) return;
+
+      const [minLng, minLat, maxLng, maxLat] = item.bbox;
+      const bboxPolygon: import("geojson").Feature<import("geojson").Polygon> = {
+        type: "Feature",
+        properties: { id: item.sourceLayerId, title: item.sourceLayerTitle },
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [minLng, minLat],
+              [maxLng, minLat],
+              [maxLng, maxLat],
+              [minLng, maxLat],
+              [minLng, minLat],
+            ],
+          ],
+        },
+      };
+
+      highlightFeatureOnMap(map, bboxPolygon, { zoom: 15 });
+    },
+    [map],
   );
 
   const dataList = useMemo(() => {
@@ -342,33 +364,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
         label: "Zoom ke Layer",
         icon: FocusIcon,
         onClick: (item: CartOrderItem) => {
-          const matchedLayer = fetchedLayersList.find(
-            (l) => l.id === item.sourceLayerId,
-          );
-          const previewUrl =
-            item.previewWmsUrl ||
-            item.wmsUrl ||
-            (item.sourceLayerId
-              ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
-              : "");
-
-          void flyTo(
-            matchedLayer ?? {
-              id: item.sourceLayerId,
-              title: item.sourceLayerTitle,
-              spatialBasis: item.spatialBasis,
-              bbox: undefined,
-              wms: {
-                layers: item.sourceLayerId,
-                wmsUrl: previewUrl,
-              },
-              wfs: {
-                wfsTypeName: item.sourceLayerId,
-                wfsUrl: item.previewWfsUrl || item.wfsUrl || "",
-              },
-            },
-            {},
-          );
+          handleFlyToLayer(item);
         },
       },
       {
@@ -386,9 +382,8 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
     order.items,
     enabledLayerIds,
     handleToggleLayer,
-    flyTo,
+    handleFlyToLayer,
     onDetailAttribute,
-    fetchedLayersList,
   ]);
 
   return (

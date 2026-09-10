@@ -556,6 +556,8 @@ type OrderListResponse = {
       subtotalPrice: number;
       wfsUrl?: string;
       wmsUrl?: string;
+      /** Bounding box layer IGT: [minLon, minLat, maxLon, maxLat] (EPSG:4326) */
+      bbox?: [number, number, number, number];
     }>;
   }>;
   total: number;
@@ -597,6 +599,8 @@ type CartOrderDetailResponse = {
     previewWfsUrl?: string;
     externalWfsUrl?: string | null;
     externalWmsUrl?: string | null;
+    /** Bounding box layer IGT: [minLon, minLat, maxLon, maxLat] (EPSG:4326) */
+    bbox?: [number, number, number, number];
   }>;
 };
 ```
@@ -1078,13 +1082,30 @@ type InternalOrderListResponse = {
     orderId: string;
     mitraId: string;
     mitraName: string;
-    status: OrderStatus;
+    status: "pending_review" | "paid" | "approved" | "rejected" | "expired" | "cancelled";
     selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     createdAt: string;
     readyAt?: string;
     expiredAt?: string;
     totalPrice: number;
-    items: CartOrderItem[];
+    items: Array<{
+      id: string;
+      sourceLayerId: string;
+      sourceLayerTitle: string;
+      spatialBasis: "bidang" | "kawasan";
+      featuresCount: number;
+      areaHa?: number;
+      unitPrice: number;
+      subtotalPrice: number;
+      wfsUrl?: string;
+      wmsUrl?: string;
+      previewWmsUrl?: string;
+      previewWfsUrl?: string;
+      externalWfsUrl?: string | null;
+      externalWmsUrl?: string | null;
+      /** Bounding box layer IGT: [minLon, minLat, maxLon, maxLat] (EPSG:4326) */
+      bbox?: [number, number, number, number];
+    }>;
   }>;
   pagination: PaginationMeta;
 };

@@ -143,6 +143,8 @@ export type CartOrderItem = {
   previewWfsUrl?: string;
   externalWfsUrl?: string | null;
   externalWmsUrl?: string | null;
+  /** Bounding box layer IGT: [minLon, minLat, maxLon, maxLat] (EPSG:4326) */
+  bbox?: [number, number, number, number];
 };
 
 export type CartOrder = {

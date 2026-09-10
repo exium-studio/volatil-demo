@@ -214,7 +214,13 @@ export const InternalMitraLayerSyncJobDataView = () => {
         <Container.Body overflowY={"auto"}>
           {/* Title Header */}
           <HeaderContainer>
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
+            <HStack
+              wrap={"wrap"}
+              justify={"space-between"}
+              align={"center"}
+              gap={"sm"}
+              w={"full"}
+            >
               <HStack gap={"xs"} align={"center"}>
                 <Heading>{"Antrean Pembaruan Layer Mitra"}</Heading>
 
@@ -232,7 +238,7 @@ export const InternalMitraLayerSyncJobDataView = () => {
               </HStack>
 
               <HStack gap={"xs"} align={"center"}>
-                <Badge colorPalette={"green"} variant={"subtle"} size={"sm"}>
+                <Badge colorPalette={"green"} variant={"subtle"}>
                   <AppIcon icon={RadioIcon} />
                   {"Sinkronisasi Langsung Aktif"}
                 </Badge>
