@@ -950,8 +950,11 @@ type MitraLayerSyncJobsResponse = {
 - **Endpoint**: `GET /api/internal/mitra-layer-sync-jobs/stream`
 - **Optional Single Job Endpoint**: `GET /api/internal/mitra-layer-sync-jobs/{jobId}/stream`
 - **Middleware / Akses**: `Internal Only`
-- **Headers**:
-  - `Accept: text/event-stream`
+- **Autentikasi**: Karena native `EventSource` tidak mendukung custom header `Authorization`, token JWT dikirim sebagai query param:
+  - `?token=<JWT_TOKEN>` — BE harus membaca dan memvalidasi token dari `req.query.token`
+  - Contoh: `GET /api/internal/mitra-layer-sync-jobs/stream?token=eyJhbGci...`
+- **Headers** (response dari server):
+  - `Content-Type: text/event-stream`
   - `Cache-Control: no-cache`
   - `Connection: keep-alive`
 - **Stream Event Types**:

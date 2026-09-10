@@ -149,6 +149,11 @@ export const createMitraLayerSyncJobEventSource = (
     ? `/api/internal/mitra-layer-sync-jobs/${jobId}/stream`
     : "/api/internal/mitra-layer-sync-jobs/stream";
 
-  const fullUrl = `${baseUrl}${endpoint}`;
+  // EventSource does not support custom headers — send auth token as query param
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const query = token ? `?token=${encodeURIComponent(token)}` : "";
+
+  const fullUrl = `${baseUrl}${endpoint}${query}`;
   return new EventSource(fullUrl, { withCredentials: true });
 };
