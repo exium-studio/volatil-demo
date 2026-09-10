@@ -6,7 +6,7 @@ import type { SearchInputProps } from "@/design-system/components/input/types/se
 import { Input } from "@/design-system/components/input/ui/input";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { InputGroup } from "@chakra-ui/react";
-import { SearchIcon, XIcon } from "lucide-react";
+import { DeleteIcon, SearchIcon } from "lucide-react";
 import {
   forwardRef,
   useEffect,
@@ -97,8 +97,13 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         }
         endElement={
           value ? (
-            <IconButton size={"xs"} onClick={handleClear} me={-2}>
-              <AppIcon icon={XIcon} />
+            <IconButton
+              variant={"plain"}
+              size={"xs"}
+              onClick={handleClear}
+              me={-2}
+            >
+              <AppIcon icon={DeleteIcon} />
             </IconButton>
           ) : undefined
         }

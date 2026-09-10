@@ -74,6 +74,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           endElement={
             <VisibilityTrigger
               disabled={restProps.disabled}
+              variant={"plain"}
               onPointerDown={(e) => {
                 if (restProps.disabled) return;
                 if (e.button !== 0) return;
