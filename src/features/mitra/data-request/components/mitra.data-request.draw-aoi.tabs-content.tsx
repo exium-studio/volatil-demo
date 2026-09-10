@@ -27,7 +27,9 @@ import type {
   DrawAoiGuideAlertProps,
   MitraDataRequestDrawAoiTabsContentProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.draw-aoi.type";
+import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconPolygonOff } from "@tabler/icons-react";
 import {
   CheckIcon,
@@ -36,7 +38,7 @@ import {
   PencilIcon,
   XIcon,
 } from "lucide-react";
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
   (props: MitraDataRequestDrawAoiTabsContentProps) => {
@@ -268,6 +270,12 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
     wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
   });
 
+  // Derived Values
+  const aoiAreaHa = useMemo(() => {
+    if (!confirmedPolygon) return 0;
+    return calculateFeatureAreaInHectares(confirmedPolygon);
+  }, [confirmedPolygon]);
+
   if (!selectedIgtLayer || !layerId) {
     return (
       <VStack
@@ -293,9 +301,16 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
             gap={"sm"}
             w={"full"}
           >
-            <P fontWeight={"medium"} fontSize={"md"}>
-              {"Hasil query spasial gambar AOI"}
-            </P>
+            <VStack align={"start"} gap={0}>
+              <P fontWeight={"medium"} fontSize={"md"}>
+                {"Hasil query spasial gambar AOI"}
+              </P>
+              {aoiAreaHa > 0 && (
+                <P fontSize={"xs"} color={"fg.muted"}>
+                  {`Luas AOI: ${formatNumber(aoiAreaHa, { maximumFractionDigits: 2 })} ha`}
+                </P>
+              )}
+            </VStack>
 
             <HStack align={"center"} gap={"sm"}>
               {confirmedPolygon && map && (

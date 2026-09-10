@@ -574,10 +574,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
               </FilterAdministrativeAreaTrigger>
             )}
           </HStack>
-
-          <P fontSize={"sm"} color={"fg.muted"} whiteSpace={"nowrap"}>
-            {`Menampilkan ${debouncedSearch ? filteredLayers.length : activeLayers.length} dari ${activeLayers.length} Layer IGT`}
-          </P>
         </HStack>
 
         <Separator borderColor={"bg.canvas"} />
