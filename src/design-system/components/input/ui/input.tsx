@@ -14,10 +14,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   return (
     <ChakraInput
       ref={ref}
-      size={["lg", null, "md"]}
-      rounded={theme.radii.component}
-      fontSize={"md"}
       colorPalette={"neutral"}
+      fontSize={"md"}
+      rounded={theme.radii.component}
       {...props}
     />
   );

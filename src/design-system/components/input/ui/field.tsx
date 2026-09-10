@@ -88,8 +88,8 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
             {label && (
               <ChakraField.Label
                 position={"absolute"}
-                left={"16px"}
-                top={"8px"}
+                left={"12px"}
+                top={"7px"}
                 zIndex={2}
                 pointerEvents={"none"}
                 transform={isFloating ? "translateY(0)" : "translateY(12px)"}
@@ -126,11 +126,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
           </Box>
 
           {helperText && (
-            <ChakraField.HelperText
-              fontSize={"xs"}
-              // px={"md"}
-              mt={"2px"}
-            >
+            <ChakraField.HelperText fontSize={"xs"} mt={"2px"}>
               {helperText}
             </ChakraField.HelperText>
           )}

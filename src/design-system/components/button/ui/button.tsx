@@ -92,7 +92,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <ChakraButton
         ref={ref}
-        size={["lg", null, "md"]}
         variant={variant || (primary ? "solid" : "ghost")}
         colorPalette={
           colorPalette ?? (primary ? theme.colorPalette : "neutral")
@@ -124,7 +123,6 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     return (
       <ChakraIconButton
         ref={ref}
-        size={["lg", null, "md"]}
         variant={variant || (primary ? "solid" : "ghost")}
         colorPalette={
           colorPalette ?? (primary ? theme.colorPalette : "neutral")

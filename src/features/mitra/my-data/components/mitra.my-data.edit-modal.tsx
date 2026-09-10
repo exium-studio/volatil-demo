@@ -99,15 +99,10 @@ const MitraMyDataEditModalContent = (
       </Modal.Header>
 
       <Modal.Body>
-        <VStack as={"form"} gap={"md"} id={"my-data-edit-form"}>
+        <VStack as={"form"} id={"my-data-edit-form"} gap={"md"}>
           <Fieldset>
             <VStack align={"stretch"} gap={"md"}>
-              <VStack
-                align={"start"}
-                gap={"2xs"}
-                w={"full"}
-                // px={"md"}
-              >
+              <VStack align={"start"} gap={"2xs"} w={"full"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Nama Layer Asli"}
                 </P>
@@ -126,7 +121,7 @@ const MitraMyDataEditModalContent = (
                 invalid={Boolean(errors.label)}
                 errorText={errors.label?.message}
               >
-                <Input {...register("label")} size={"lg"} />
+                <Input {...register("label")} />
               </Field>
             </VStack>
           </Fieldset>

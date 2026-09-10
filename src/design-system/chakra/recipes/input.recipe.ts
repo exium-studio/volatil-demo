@@ -8,7 +8,7 @@ export const inputRecipe = defineRecipe({
       outline: {
         borderColor: "neutral.muted",
       },
-      filled: {
+      subtle: {
         bg: "bg.subtle",
       },
     },
