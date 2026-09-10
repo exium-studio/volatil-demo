@@ -10,6 +10,7 @@ import type {
   OrderStatus,
   TransactionStatus,
 } from "@/shared/types/status.type";
+import type { UserRole } from "@/shared/types/common-response.type";
 
 export type IgtBasisBadgeProps = Omit<BadgeProps, "children"> & {
   children?: IgtBasisType | (string & {});
@@ -41,5 +42,10 @@ export type MyDataStatusBadgeProps = Omit<BadgeProps, "children"> & {
 
 export type MitraLayerSyncJobStatusBadgeProps = Omit<BadgeProps, "children"> & {
   children?: string;
+  showIcon?: boolean;
+};
+
+export type UserRoleBadgeProps = Omit<BadgeProps, "children"> & {
+  children?: UserRole | (string & {});
   showIcon?: boolean;
 };

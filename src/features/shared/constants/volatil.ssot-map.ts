@@ -15,6 +15,7 @@ import type {
   OrderStatusConfig,
   TransactionStatus,
   TransactionStatusConfig,
+  UserRoleConfig,
 } from "@/shared/types/status.type";
 import { IconPolygon } from "@tabler/icons-react";
 import {
@@ -23,11 +24,13 @@ import {
   ClockIcon,
   FolderArchiveIcon,
   Grid2X2Icon,
+  HandshakeIcon,
   Layers2Icon,
   ListIcon,
   LoaderIcon,
   RotateCcwIcon,
   ShieldAlertIcon,
+  ShieldCheckIcon,
   TimerOffIcon,
 } from "lucide-react";
 
@@ -250,3 +253,20 @@ export const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
 
 /** @deprecated alias for backward compatibility */
 export const MY_DATA_ORDER_STATUS_OPTIONS = MY_DATA_STATUS_OPTIONS;
+
+/**
+ * SSOT 5: User Role Map
+ */
+export const USER_ROLE_MAP: Record<"internal" | "mitra", UserRoleConfig> = {
+  internal: {
+    label: "Internal",
+    colorPalette: "purple",
+    icon: ShieldCheckIcon,
+  },
+  mitra: {
+    label: "Mitra",
+    colorPalette: "blue",
+    icon: HandshakeIcon,
+  },
+};
+

@@ -70,3 +70,13 @@ export type MyDataStatusConfig = {
   icon?: LucideIcon;
   iconColor?: string;
 };
+
+/**
+ * SSOT 4: User Role Types & Config
+ */
+export type UserRoleConfig = {
+  label: string;
+  colorPalette: "purple" | "blue";
+  icon?: LucideIcon;
+};
+

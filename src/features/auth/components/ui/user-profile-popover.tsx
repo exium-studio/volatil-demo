@@ -7,7 +7,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Avatar } from "@/design-system/components/media/ui/avatar";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
-import { Badge } from "@/design-system/components/typography/ui/badge";
+import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -24,9 +24,11 @@ export const UserProfilePopoverTrigger = (
   // Props
   const { children } = props;
 
-  // Stores & Hooks
+  // Stores
   const { theme } = useThemeStore();
   const { colorMode, toggleColorMode } = useColorMode();
+
+  // Hooks
   const signoutMutation = useSignoutMutation();
 
   // Derived Values
@@ -35,8 +37,6 @@ export const UserProfilePopoverTrigger = (
 
   const displayName = user?.name ?? "";
   const displayEmail = user?.email ?? "";
-  const displayRole = user?.role === "mitra" ? "Mitra" : "Internal";
-  const roleColorPalette = user?.role === "mitra" ? "blue" : "purple";
 
   return (
     <Popover.Root
@@ -60,13 +60,7 @@ export const UserProfilePopoverTrigger = (
 
               <VStack align={"center"} gap={"xs"}>
                 {user?.role && (
-                  <Badge
-                    colorPalette={roleColorPalette}
-                    variant={"subtle"}
-                    mb={"xs"}
-                  >
-                    {displayRole}
-                  </Badge>
+                  <UserRoleBadge mb={"xs"}>{user.role}</UserRoleBadge>
                 )}
 
                 <HStack

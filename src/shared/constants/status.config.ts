@@ -14,4 +14,7 @@ export {
   SPATIAL_BASIS_OPTIONS,
   TRANSACTION_STATUS_MAP,
   TRANSACTION_STATUS_OPTIONS,
+  USER_ROLE_MAP,
 } from "@/features/shared/constants/volatil.ssot-map";
+
+

@@ -12,7 +12,9 @@ import { AppContentContainer } from "@/design-system/components/layout/ui/page-c
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
+import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { HelpCenterAttachmentItem } from "@/features/mitra/help-center/components/help-center.attachment-item";
@@ -314,12 +316,7 @@ export const HelpCenterDetailPage = () => {
 
                             <P fontWeight={"medium"}>{replyUserName}</P>
 
-                            <Badge
-                              colorPalette={isInternal ? "purple" : "blue"}
-                              variant={"subtle"}
-                            >
-                              {isInternal ? "Admin Internal" : "Mitra"}
-                            </Badge>
+                            <UserRoleBadge>{replyUserRole}</UserRoleBadge>
                           </HStack>
 
                           <P fontSize={"sm"} color={"fg.subtle"}>

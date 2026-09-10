@@ -13,6 +13,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { SignoutTrigger } from "@/features/auth/components/ui/signout-modal";
 import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
 import type { UserIdCardProps } from "@/features/auth/types/user-id-card.type";
+import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { LogOutIcon } from "lucide-react";
 
@@ -37,12 +38,6 @@ export const UserIdCard = (props: UserIdCardProps) => {
   const user = propUser ?? sessionUser;
 
   const displayName = user?.name || user?.email || "User";
-  const displayRole =
-    user?.role === "mitra"
-      ? "Mitra ATR/BPN"
-      : user?.role === "internal"
-        ? "Internal Admin ATR/BPN"
-        : "User Role";
 
   return (
     <VStack
@@ -112,19 +107,22 @@ export const UserIdCard = (props: UserIdCardProps) => {
           objectFit={"cover"}
         />
 
-        <VStack flex={1} justify={"space-between"} gap={4} p={4}>
+        <VStack flex={1} justify={"space-between"} gap={4} p={"sm"}>
           <VStack align={"start"} gap={1}>
-            <P fontSize={"lg"} fontWeight={"medium"}>
-              {displayName}
-            </P>
+            <P fontWeight={"medium"}>{displayName}</P>
 
-            <P color={"fg.subtle"}>{displayRole}</P>
+            <P fontSize={"sm"} color={"fg.subtle"}>
+              {user?.email}
+            </P>
           </VStack>
 
-          <HStack align={"end"} justify={"space-between"} w={"full"} pos={"relative"}>
-            <P fontSize={"xs"} color={"fg.muted"}>
-              {APP_CONFIG.title}
-            </P>
+          <HStack
+            align={"end"}
+            justify={"space-between"}
+            w={"full"}
+            pos={"relative"}
+          >
+            <UserRoleBadge>{user?.role}</UserRoleBadge>
 
             {withSignoutButton && (
               <SignoutTrigger>

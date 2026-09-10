@@ -44,13 +44,10 @@ const STATUS_MAP: Record<UserStatus, { label: string; color: string }> = {
   inactive: { label: "Tidak Aktif", color: "gray" },
 };
 
-const ROLE_MAP: Record<UserRole, { label: string; color: string }> = {
-  internal: { label: "Internal", color: "purple" },
-  mitra: { label: "Mitra", color: "blue" },
-};
-
 import { RoleFilterSelect } from "@/features/shared/components/role-filter.select";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
+
 
 export const InternalUserManagementDataView = () => {
   // States — Centralized query/action parameters
@@ -106,14 +103,7 @@ export const InternalUserManagementDataView = () => {
           },
           {
             value: user.role,
-            td: (
-              <Badge
-                colorPalette={ROLE_MAP[user.role].color}
-                variant={"subtle"}
-              >
-                {ROLE_MAP[user.role].label}
-              </Badge>
-            ),
+            td: <UserRoleBadge>{user.role}</UserRoleBadge>,
             align: "start",
           },
           {
