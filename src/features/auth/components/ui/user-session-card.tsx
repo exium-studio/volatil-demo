@@ -33,8 +33,8 @@ export const UserSessionCard = (props: UserSessionCardProps) => {
           <AppIcon icon={ShieldAlertIcon} color={"orange.600"} size={"sm"} />
           <P fontSize={"xs"} color={"orange.800"}>
             {portalType === "internal"
-              ? "Akun Anda terdaftar sebagai Mitra. Menekan 'Masuk' akan mengarahkan Anda ke Dashboard Mitra."
-              : "Akun Anda terdaftar sebagai Internal. Menekan 'Masuk' akan mengarahkan Anda ke Dashboard Internal."}
+              ? "Akun Anda terdaftar sebagai Mitra. Menekan 'Masuk' akan mengarahkan Anda ke Aplikasi Mitra."
+              : "Akun Anda terdaftar sebagai Internal. Menekan 'Masuk' akan mengarahkan Anda ke Aplikasi Internal."}
           </P>
         </HStack>
       )}

@@ -1,6 +1,8 @@
 // src/features/internal/statistik-pesanan/components/internal.transaction-statistic.summary.tsx
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import {
   Container,
@@ -13,8 +15,17 @@ import { useInternalTransactionStatisticsQuery } from "@/features/internal/stati
 import { CheckCircleIcon, CircleDollarSignIcon, ListIcon } from "lucide-react";
 
 export const InternalTransactionStatisticSummary = () => {
+  // Queries
+  const { isLoading, isFetching } = useInternalTransactionStatisticsQuery();
+
+  if (isLoading) {
+    return <Skeleton h={"160px"} w={"full"} p={"md"} />;
+  }
+
   return (
-    <Container.Root withContext={true} w={"full"}>
+    <Container.Root withContext={true} w={"full"} position={"relative"}>
+      <TopBarLoader isFetching={isFetching} />
+
       <Container.Body gap={4} pt={"md"}>
         <HStack align={"center"} justify={"space-between"} px={"md"}>
           <HStack gap={"xs"} align={"center"}>
