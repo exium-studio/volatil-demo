@@ -90,7 +90,7 @@ export const InternalHomeMitraLayerSyncJobsQuickView = () => {
           {
             value: `${job.progress}%`,
             td: (
-              <VStack align={"stretch"} gap={"2xs"} minW={"140px"}>
+              <VStack gap={"2xs"} w={"150px"}>
                 <HStack justify={"space-between"} align={"center"} w={"full"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {`${job.processedMitraLayers} / ${job.totalMitraLayers} layer`}
