@@ -126,7 +126,7 @@ const MitraMyDataEditModalContent = (
                 invalid={Boolean(errors.label)}
                 errorText={errors.label?.message}
               >
-                <Input {...register("label")} variant={"subtle"} size={"lg"} />
+                <Input {...register("label")} size={"lg"} />
               </Field>
             </VStack>
           </Fieldset>

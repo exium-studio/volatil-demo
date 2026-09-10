@@ -79,8 +79,8 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
             }}
             css={{
               "& input, & textarea": {
-                height: "56px",
-                paddingTop: "20px",
+                height: "60px",
+                paddingTop: "24px",
                 paddingBottom: "4px",
               },
             }}
@@ -89,7 +89,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
               <ChakraField.Label
                 position={"absolute"}
                 left={"16px"}
-                top={"5px"}
+                top={"8px"}
                 zIndex={2}
                 pointerEvents={"none"}
                 transform={isFloating ? "translateY(0)" : "translateY(12px)"}
