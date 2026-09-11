@@ -10,7 +10,7 @@ export const IgtLogo = (props: ImageProps) => {
   return (
     <Image
       src={`${PATH_CONFIG.images}/atr_logo.png`}
-      w={"48px"}
+      w={"56px"}
       withSkeleton={false}
       {...props}
     />
