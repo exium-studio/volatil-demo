@@ -47,7 +47,7 @@ export const InternalOrderReviewLayerDetailPage = () => {
   });
 
   const selectedIgtLayer = useMemo(() => {
-    const list = layersData?.items ?? layersData?.layers ?? [];
+    const list = layersData?.items ?? [];
     return list.find((l) => l.id === layerId) ?? null;
   }, [layersData, layerId]);
 

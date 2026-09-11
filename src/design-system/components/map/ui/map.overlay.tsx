@@ -11,11 +11,7 @@ import type { MapOverlayProps } from "@/design-system/components/map/types/map.t
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
 export const MapOverlay = (props: MapOverlayProps) => {
-  const { showMasterIgtLayerSelect, showIgtLayerSelect = true } = props;
-  const isMasterIgtLayerSelectVisible =
-    showMasterIgtLayerSelect !== undefined
-      ? showMasterIgtLayerSelect
-      : showIgtLayerSelect;
+  const { showMasterIgtLayerSelect = true } = props;
 
   return (
     <VStack
@@ -39,7 +35,7 @@ export const MapOverlay = (props: MapOverlayProps) => {
         <MapSearch />
 
         <HStack align={"start"} gap={2} pointerEvents={"none"}>
-          {isMasterIgtLayerSelectVisible && <MapMasterIgtLayerSelect />}
+          {showMasterIgtLayerSelect && <MapMasterIgtLayerSelect />}
           <MapAttribution />
         </HStack>
       </HStack>

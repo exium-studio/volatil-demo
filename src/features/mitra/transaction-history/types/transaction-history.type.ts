@@ -1,8 +1,8 @@
 // src/features/mitra/transaction-history/types/transaction-history.type.ts
 
 import type {
+  IgtBasisType,
   SelectionType,
-  SpatialBasisType,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type { PaginationMeta } from "@/shared/types/common-response.type";
 
@@ -18,7 +18,7 @@ export type TransactionOrderItem = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   featuresCount: number;
   areaHa?: number;
   unitPrice: number;

@@ -18,10 +18,10 @@ import { useCreateMasterIgtLayer } from "@/features/internal/data-management/hoo
 import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
 import type {
   GeoServerWorkspaceLayerOption,
+  IgtBasisType,
   InternalDataManagementCreateModalContentProps,
   InternalDataManagementCreateTriggerProps,
   MasterIgtLayerFormValues,
-  SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { IGT_BASIS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
@@ -243,6 +243,7 @@ const InternalDataManagementCreateModalContent = (
                     <HStack
                       justify={"space-between"}
                       align={"center"}
+                      gap={"md"}
                       w={"full"}
                       py={1}
                     >
@@ -335,7 +336,7 @@ const InternalDataManagementCreateModalContent = (
                       value={field.value}
                       onValueChange={({ value }) => {
                         if (value) {
-                          field.onChange(value as SpatialBasisType);
+                          field.onChange(value as IgtBasisType);
                         }
                       }}
                       w={"full"}

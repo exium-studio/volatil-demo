@@ -15,6 +15,7 @@ export const useMapBaseMapStore = create<MapBaseMapState>()(
     }),
     {
       name: "map-base-layer-config",
+      partialize: (state) => ({ activeStyleKey: state.activeStyleKey }),
     },
   ),
 );

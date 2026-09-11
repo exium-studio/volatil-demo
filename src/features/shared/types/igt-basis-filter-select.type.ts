@@ -13,6 +13,3 @@ export type IgtBasisFilterSelectProps = {
   disabled?: boolean;
   clearable?: boolean;
 };
-
-/** @deprecated alias for IgtBasisFilterSelectProps */
-export type SpatialBasisFilterSelectProps = IgtBasisFilterSelectProps;

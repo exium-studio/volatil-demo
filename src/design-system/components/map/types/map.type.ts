@@ -116,8 +116,6 @@ import type { PaginationMeta } from "@/shared/types/common-response.type";
 export type IgtLayersResponse = {
   items: IgtLayerItem[];
   pagination?: PaginationMeta;
-  /** @deprecated fallback if returned as raw array */
-  layers?: IgtLayerItem[];
 };
 
 /** Helper converter to build WmsRasterLayerConfig for map rendering from an IgtLayerItem */
@@ -194,8 +192,6 @@ export type MapLayerState = {
 
 export type MapOverlayProps = {
   showMasterIgtLayerSelect?: boolean;
-  /** @deprecated Use showMasterIgtLayerSelect */
-  showIgtLayerSelect?: boolean;
 };
 
 

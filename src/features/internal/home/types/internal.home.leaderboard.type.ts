@@ -1,7 +1,7 @@
 // src/features/internal/home/types/internal.home.leaderboard.type.ts
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import type { SpatialBasisType } from "@/features/internal/data-management/types/data-management.type";
+import type { IgtBasisType } from "@/features/internal/data-management/types/data-management.type";
 
 export type InternalHomeLeaderboardProps = StackProps;
 
@@ -19,7 +19,7 @@ export type TopIgtLayerItem = {
   rank: number;
   layerId: string;
   layerTitle: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   totalAcquisitions: number;
   totalVolume: number;
   unit: "bidang" | "ha";

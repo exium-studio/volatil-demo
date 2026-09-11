@@ -128,6 +128,3 @@ export const InternalHomeIgtBasisSummary = (
     </Container.Root>
   );
 };
-
-/** @deprecated alias for InternalHomeIgtBasisSummary */
-export const InternalHomeSpatialBasisSummary = InternalHomeIgtBasisSummary;

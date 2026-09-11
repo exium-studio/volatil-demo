@@ -95,9 +95,6 @@ export const IGT_BASIS_OPTIONS: {
   },
 ];
 
-/** @deprecated alias for IGT_BASIS_OPTIONS */
-export const SPATIAL_BASIS_OPTIONS = IGT_BASIS_OPTIONS;
-
 export const PAYMENT_METHOD_LABEL_MAP: Record<PaymentMethod, string> = {
   MPN_GEN2: "MPN Gen 2 (Simponi / BPN)",
   VA_MANDIRI: "Virtual Account Mandiri",
@@ -247,9 +244,6 @@ export const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Kedaluwarsa", value: "expired" },
   { label: "Dicabut", value: "revoked" },
 ];
-
-/** @deprecated alias for backward compatibility */
-export const MY_DATA_ORDER_STATUS_OPTIONS = MY_DATA_STATUS_OPTIONS;
 
 /**
  * SSOT 5: User Role Map

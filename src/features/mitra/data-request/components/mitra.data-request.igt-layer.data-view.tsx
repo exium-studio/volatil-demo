@@ -113,7 +113,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
     });
 
     const activeLayers = useMemo(
-      () => layersData?.items ?? layersData?.layers ?? [],
+      () => layersData?.items ?? [],
       [layersData],
     );
 

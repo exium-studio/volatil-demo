@@ -391,7 +391,7 @@ const Content = () => {
 
   // Auto-enable layers configured with defaultVisible on initial load
   useEffect(() => {
-    const rawList = fetchedLayers?.items ?? fetchedLayers?.layers;
+    const rawList = fetchedLayers?.items;
     if (rawList && rawList.length > 0 && !hasInitializedDefaultsRef.current) {
       hasInitializedDefaultsRef.current = true;
       const defaultActiveLayers = rawList.filter((l) => Boolean(l.defaultVisible));
@@ -402,7 +402,7 @@ const Content = () => {
   }, [fetchedLayers]);
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
-    const rawList = fetchedLayers?.items ?? fetchedLayers?.layers ?? [];
+    const rawList = fetchedLayers?.items ?? [];
     const sorted = [...rawList].sort(
       (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
     );

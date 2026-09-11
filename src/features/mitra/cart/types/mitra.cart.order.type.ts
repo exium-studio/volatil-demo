@@ -10,8 +10,6 @@ import type { Icon as TablerIcon } from "@tabler/icons-react";
 import type { LucideIcon } from "lucide-react";
 
 export type IgtBasisType = "bidang" | "kawasan";
-/** @deprecated alias for IgtBasisType */
-export type SpatialBasisType = IgtBasisType;
 
 export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
 
@@ -27,8 +25,6 @@ export type IgtBasisTypeConfig = {
   colorPalette: "blue" | "orange";
   icon: LucideIcon;
 };
-/** @deprecated alias for IgtBasisTypeConfig */
-export type SpatialBasisTypeConfig = IgtBasisTypeConfig;
 
 export type CartOrderStatus = OrderStatus;
 export type CartOrderStatusConfig = OrderStatusConfig;
@@ -108,14 +104,12 @@ export type AddToCartOrderRequest = {
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   items: CartOrderItemPayload[];
-  /** @deprecated Kept for backward compatibility */
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;
     kodeKecamatan?: string;
     kodeDesa?: string;
   };
-  /** @deprecated Kept for backward compatibility */
   cqlFilter?: string;
 };
 
@@ -132,7 +126,7 @@ export type CartOrderItem = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   featuresCount: number;
   areaHa?: number;
   unitPrice: number;
@@ -162,14 +156,12 @@ export type CartOrder = {
   rejectionReason?: string;
   totalPrice: number;
   items: CartOrderItem[];
-  /** @deprecated Kept for backward compatibility */
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;
     kodeKecamatan?: string;
     kodeDesa?: string;
   };
-  /** @deprecated Kept for backward compatibility */
   cqlFilter?: string;
 };
 

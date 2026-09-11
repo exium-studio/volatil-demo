@@ -6,8 +6,6 @@ import type {
 } from "@/shared/types/common-response.type";
 
 export type IgtBasisType = "bidang" | "kawasan";
-/** @deprecated alias for IgtBasisType */
-export type SpatialBasisType = IgtBasisType;
 
 export type PublishStatusType = "all" | "published" | "draft";
 
@@ -21,7 +19,7 @@ export type MasterIgtLayerItem = {
   id: string;
   title: string;
   description?: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   bbox?: [number, number, number, number];
   isActive: boolean;
   defaultVisible?: boolean;
@@ -41,7 +39,7 @@ export type MasterIgtLayerItem = {
 };
 
 export type MasterIgtLayersQueryParams = PaginatedParams & {
-  spatialBasis?: SpatialBasisType;
+  spatialBasis?: IgtBasisType;
   isActive?: boolean;
 };
 
@@ -56,7 +54,7 @@ export type CreateMasterIgtLayerPayload = {
   typeName: string;
   title: string;
   description?: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   isActive: boolean;
   defaultVisible?: boolean;
   zIndex?: number;
@@ -78,7 +76,7 @@ export type GeoServerWorkspaceLayerOption = {
   abstract?: string;
   srs?: string;
   geometryType?: "Polygon" | "MultiPolygon" | "Point" | "LineString";
-  spatialBasis?: SpatialBasisType;
+  spatialBasis?: IgtBasisType;
   bbox?: [number, number, number, number];
 };
 

@@ -16,13 +16,10 @@ export const MapShell = ({
   cqlFilter,
   onDrawFinish,
   showMasterIgtLayerSelect,
-  showIgtLayerSelect = true,
   children,
 }: Omit<MapProps, "styleUrl"> & {
   cqlFilter?: string;
   showMasterIgtLayerSelect?: boolean;
-  /** @deprecated Use showMasterIgtLayerSelect */
-  showIgtLayerSelect?: boolean;
 }) => {
   const map = useMapInstanceStore((state) => state.map);
 
@@ -33,7 +30,6 @@ export const MapShell = ({
     <>
       <MapOverlay
         showMasterIgtLayerSelect={showMasterIgtLayerSelect}
-        showIgtLayerSelect={showIgtLayerSelect}
       />
       {children}
     </>

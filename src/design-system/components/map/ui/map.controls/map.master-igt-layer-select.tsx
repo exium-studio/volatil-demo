@@ -51,7 +51,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
 
   // Derived Values
   const activeLayers = useMemo(
-    () => layersData?.items ?? layersData?.layers ?? [],
+    () => layersData?.items ?? [],
     [layersData],
   );
 

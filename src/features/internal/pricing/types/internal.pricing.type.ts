@@ -3,8 +3,6 @@
 import type { PaginatedParams, PaginationMeta } from "@/shared/types/common-response.type";
 
 export type IgtBasisType = "bidang" | "kawasan";
-/** @deprecated alias for IgtBasisType */
-export type SpatialBasisType = IgtBasisType;
 
 export type PricingTierType = "standard" | "premium" | "enterprise";
 
@@ -13,7 +11,7 @@ export type PricingItem = {
   layerId?: string;
   layerTitle?: string;
   kodePnbp?: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   unitPrice: number;
   unitLabel: string;
   minPurchase?: number;
@@ -25,7 +23,7 @@ export type PricingItem = {
 };
 
 export type PricingQueryParams = PaginatedParams & {
-  spatialBasis?: SpatialBasisType;
+  spatialBasis?: IgtBasisType;
 };
 
 export type PricingListResponse = {
@@ -44,7 +42,7 @@ export type UpdatePricingPayload = {
 export type CreatePricingPayload = {
   layerId?: string;
   layerTitle?: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   unitPrice: number;
   unitLabel: string;
   effectiveDate: string;

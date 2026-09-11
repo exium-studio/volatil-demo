@@ -10,10 +10,6 @@ export const DEFAULT_IGT_BASIS_FILTER_OPTIONS: FocusSelectOption[] = [
   { value: "kawasan", label: "Kawasan" },
 ];
 
-/** @deprecated alias for DEFAULT_IGT_BASIS_FILTER_OPTIONS */
-export const DEFAULT_SPATIAL_BASIS_FILTER_OPTIONS =
-  DEFAULT_IGT_BASIS_FILTER_OPTIONS;
-
 export const IgtBasisFilterSelect = (props: IgtBasisFilterSelectProps) => {
   // Props
   const {
@@ -41,6 +37,3 @@ export const IgtBasisFilterSelect = (props: IgtBasisFilterSelectProps) => {
     />
   );
 };
-
-/** @deprecated alias for IgtBasisFilterSelect */
-export const SpatialBasisFilterSelect = IgtBasisFilterSelect;

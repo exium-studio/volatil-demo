@@ -43,9 +43,6 @@ export const useInternalIgtBasisQuery = () => {
   };
 };
 
-/** @deprecated alias for useInternalIgtBasisQuery */
-export const useInternalSpatialBasisQuery = useInternalIgtBasisQuery;
-
 // 2. Hook Status Publikasi
 export const useInternalPublishStatusQuery = () => {
   const query = useQuery({

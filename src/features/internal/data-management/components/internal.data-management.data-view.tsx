@@ -34,8 +34,8 @@ import {
   useMasterIgtLayersQuery,
 } from "@/features/internal/data-management/hooks/use-data-management";
 import type {
+  IgtBasisType,
   MasterIgtLayerItem,
-  SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-filter.select";
@@ -94,7 +94,7 @@ export const InternalDataManagementDataView = () => {
     search: params.search || undefined,
     spatialBasis:
       params.spatialBasis !== "all"
-        ? (params.spatialBasis as SpatialBasisType)
+        ? (params.spatialBasis as IgtBasisType)
         : undefined,
     isActive:
       params.publishStatus === "published"

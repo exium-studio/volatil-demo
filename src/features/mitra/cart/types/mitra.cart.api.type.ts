@@ -3,8 +3,6 @@
 import type GeoJSON from "geojson";
 
 export type IgtBasisType = "bidang" | "kawasan";
-/** @deprecated alias for IgtBasisType */
-export type SpatialBasisType = IgtBasisType;
 
 export type SelectionType = "catalog" | "upload_aoi" | "draw_aoi";
 
@@ -36,7 +34,7 @@ export type CartItemDto = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   selectionType: SelectionType;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   cqlFilter?: string;
@@ -114,7 +112,7 @@ export type OrderItemDetailDto = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
-  spatialBasis: SpatialBasisType;
+  spatialBasis: IgtBasisType;
   selectionType: SelectionType;
   snapshotFeaturesCount: number;
   snapshotAreaHa?: number;
