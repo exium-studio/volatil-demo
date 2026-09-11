@@ -15,8 +15,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         ref={ref}
         rounded={theme.radii.component}
         fontSize={"md"}
+        minH={"135px"}
         {...props}
       />
     );
-  }
+  },
 );
