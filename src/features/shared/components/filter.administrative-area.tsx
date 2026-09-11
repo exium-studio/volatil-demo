@@ -180,7 +180,9 @@ export const FilterAdministrativeAreaTrigger = (
             >
               <FilterAdministrativeAreaProvinceSelect
                 modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.PROVINSI}`}
-                value={localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
+                value={
+                  localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value ?? ""
+                }
                 onValueChange={(details) =>
                   handleFieldChange(IGT_FILTER_KEYS_MAP.PROVINSI, details)
                 }
