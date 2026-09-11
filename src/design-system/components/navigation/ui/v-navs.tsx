@@ -55,7 +55,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
     <VScrollContainer {...restProps}>
       {groups.map((group, groupIndex) => {
         const isFirstGroup = groupIndex === 0;
-        const groupTitle = group.titleKey ? t[group.titleKey]() : null;
+        const groupTitle = group.title || (group.titleKey ? t[group.titleKey]() : null);
 
         return (
           <Fragment key={groupIndex}>
@@ -113,7 +113,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
 
   // Constants
   const nav = navs[node.key];
-  const navTitle = t[nav.titleKey]();
+  const navTitle = nav.title || (nav.titleKey ? t[nav.titleKey]() : "");
   const hasChildren = !!node.children?.length;
 
   // Derived Values
@@ -202,7 +202,8 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
                   />
                 )}
 
-                {t[childNav.titleKey]()}
+                {childNav.title ||
+                  (childNav.titleKey ? t[childNav.titleKey]() : "")}
               </Menu.Item>
             );
           })}

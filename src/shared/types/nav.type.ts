@@ -6,7 +6,8 @@ import type { ComponentType } from "react";
 
 export type NavItem = {
   icon?: ComponentType;
-  titleKey: ParameterlessTranslationKey;
+  title?: string;
+  titleKey?: ParameterlessTranslationKey;
   descriptionKey?: ParameterlessTranslationKey;
   keywords?: string[];
   pathname?: NavLinkProps["to"];
@@ -18,6 +19,7 @@ export type NavNode<TNavKey extends string = string> = {
 };
 
 export type NavGroup<TNavKey extends string = string> = {
+  title?: string;
   titleKey?: ParameterlessTranslationKey;
   items: NavNode<TNavKey>[];
 };

@@ -37,7 +37,9 @@ const getDisplayNavItems = (isMitra: boolean) => {
       if (!matchingNav) return null;
       return {
         pathname: item.pathname,
-        title: t[matchingNav.titleKey](),
+        title:
+          matchingNav.title ||
+          (matchingNav.titleKey ? t[matchingNav.titleKey]() : ""),
         icon: matchingNav.icon,
       };
     })
@@ -61,7 +63,7 @@ const getDisplayNavItems = (isMitra: boolean) => {
       if (!nav || !nav.pathname) return null;
       return {
         pathname: nav.pathname,
-        title: t[nav.titleKey](),
+        title: nav.title || (nav.titleKey ? t[nav.titleKey]() : ""),
         icon: nav.icon,
       };
     })

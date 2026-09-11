@@ -5,6 +5,15 @@ import { defineRecipe } from "@chakra-ui/react";
 export const buttonRecipe = defineRecipe({
   variants: {
     variant: {
+      subtle: {
+        bg: "bg.subtle",
+        _hover: {
+          bg: "bg.muted",
+        },
+        _active: {
+          bg: "bg.muted",
+        },
+      },
       blend: {
         bg: "bg.body",
         _hover: {

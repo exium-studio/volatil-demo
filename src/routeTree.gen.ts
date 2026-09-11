@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as PrivateRouteRouteImport } from './routes/_private/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DesignSystemUiRouteImport } from './routes/design-system/ui'
 import { Route as PublicRegistrationStatusRouteImport } from './routes/_public/registration-status'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicAdminRouteImport } from './routes/_public/admin'
@@ -55,6 +56,11 @@ const PrivateRouteRoute = PrivateRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignSystemUiRoute = DesignSystemUiRouteImport.update({
+  id: '/design-system/ui',
+  path: '/design-system/ui',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicRegistrationStatusRoute =
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof PublicAdminRoute
   '/register': typeof PublicRegisterRoute
   '/registration-status': typeof PublicRegistrationStatusRoute
+  '/design-system/ui': typeof DesignSystemUiRoute
   '/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/internal/home': typeof PrivateInternalHomeRoute
@@ -268,6 +275,7 @@ export interface FileRoutesByTo {
   '/admin': typeof PublicAdminRoute
   '/register': typeof PublicRegisterRoute
   '/registration-status': typeof PublicRegistrationStatusRoute
+  '/design-system/ui': typeof DesignSystemUiRoute
   '/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/internal/home': typeof PrivateInternalHomeRoute
@@ -301,6 +309,7 @@ export interface FileRoutesById {
   '/_public/admin': typeof PublicAdminRoute
   '/_public/register': typeof PublicRegisterRoute
   '/_public/registration-status': typeof PublicRegistrationStatusRoute
+  '/design-system/ui': typeof DesignSystemUiRoute
   '/_private/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/_private/internal/help-center': typeof PrivateInternalHelpCenterRoute
   '/_private/internal/home': typeof PrivateInternalHomeRoute
@@ -337,6 +346,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/register'
     | '/registration-status'
+    | '/design-system/ui'
     | '/internal/data-management'
     | '/internal/help-center'
     | '/internal/home'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/register'
     | '/registration-status'
+    | '/design-system/ui'
     | '/internal/data-management'
     | '/internal/help-center'
     | '/internal/home'
@@ -403,6 +414,7 @@ export interface FileRouteTypes {
     | '/_public/admin'
     | '/_public/register'
     | '/_public/registration-status'
+    | '/design-system/ui'
     | '/_private/internal/data-management'
     | '/_private/internal/help-center'
     | '/_private/internal/home'
@@ -439,6 +451,7 @@ export interface RootRouteChildren {
   PublicAdminRoute: typeof PublicAdminRoute
   PublicRegisterRoute: typeof PublicRegisterRoute
   PublicRegistrationStatusRoute: typeof PublicRegistrationStatusRoute
+  DesignSystemUiRoute: typeof DesignSystemUiRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -462,6 +475,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/design-system/ui': {
+      id: '/design-system/ui'
+      path: '/design-system/ui'
+      fullPath: '/design-system/ui'
+      preLoaderRoute: typeof DesignSystemUiRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public/registration-status': {
@@ -790,6 +810,7 @@ const rootRouteChildren: RootRouteChildren = {
   PublicAdminRoute: PublicAdminRoute,
   PublicRegisterRoute: PublicRegisterRoute,
   PublicRegistrationStatusRoute: PublicRegistrationStatusRoute,
+  DesignSystemUiRoute: DesignSystemUiRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

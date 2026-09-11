@@ -172,7 +172,12 @@ export const FilterAdministrativeAreaTrigger = (
           </Alert.Root>
 
           <VStack gap={"md"} w={"full"}>
-            <Field label={"Provinsi"}>
+            <Field
+              label={"Provinsi"}
+              hasValue={Boolean(
+                localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value,
+              )}
+            >
               <FilterAdministrativeAreaProvinceSelect
                 modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.PROVINSI}`}
                 value={localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
@@ -182,7 +187,12 @@ export const FilterAdministrativeAreaTrigger = (
               />
             </Field>
 
-            <Field label={"Kabupaten / Kota"}>
+            <Field
+              label={"Kabupaten / Kota"}
+              hasValue={Boolean(
+                localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value,
+              )}
+            >
               <FilterAdministrativeAreaRegencySelect
                 modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KABUPATEN}`}
                 provinceId={
@@ -200,7 +210,12 @@ export const FilterAdministrativeAreaTrigger = (
               />
             </Field>
 
-            <Field label={"Kecamatan"}>
+            <Field
+              label={"Kecamatan"}
+              hasValue={Boolean(
+                localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value,
+              )}
+            >
               <FilterAdministrativeAreaDistrictSelect
                 modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KECAMATAN}`}
                 regencyId={
@@ -218,7 +233,12 @@ export const FilterAdministrativeAreaTrigger = (
               />
             </Field>
 
-            <Field label={"Kelurahan / Desa"}>
+            <Field
+              label={"Kelurahan / Desa"}
+              hasValue={Boolean(
+                localDraftFilters[IGT_FILTER_KEYS_MAP.KELURAHAN]?.value,
+              )}
+            >
               <FilterAdministrativeAreaSubdistrictSelect
                 modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KELURAHAN}`}
                 districtId={
