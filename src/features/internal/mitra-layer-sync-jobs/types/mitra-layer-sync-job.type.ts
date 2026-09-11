@@ -66,3 +66,11 @@ export type MitraLayerSyncJobStreamEvent =
       event: "connected" | "ping";
       data: { timestamp: string };
     };
+
+export type MitraLayerSyncJobDataViewProps = {
+  initialLimit?: number;
+  showPagination?: boolean;
+  showFilters?: boolean;
+  roundedTop?: number | string;
+};
+
