@@ -24,6 +24,7 @@ import type { FaceEmojiVariant } from "@/design-system/components/feedback/types
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { DotIndicator } from "@/design-system/components/feedback/ui/indicator";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import {
   Progress,
   ProgressCircle,
@@ -96,17 +97,35 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import {
+  BellIcon,
   CheckCircleIcon,
+  CheckIcon,
   ChevronDownIcon,
   CogIcon,
+  CompassIcon,
+  CopyIcon,
   EditIcon,
+  EyeIcon,
   FolderIcon,
+  LayersIcon,
+  LayoutGridIcon,
   MessageSquareIcon,
+  MousePointerClickIcon,
+  PaletteIcon,
+  SparklesIcon,
+  TableIcon,
+  TextCursorInputIcon,
   TrashIcon,
+  TypeIcon,
   Undo2Icon,
   UndoIcon,
   UserIcon,
+  WrenchIcon,
 } from "lucide-react";
+import type {
+  DemoPaletteItem,
+  DemoSectionHeaderProps,
+} from "@/features/root/types/demo.type";
 import { useState } from "react";
 import { useForm, type UseFormRegisterReturn } from "react-hook-form";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
@@ -117,6 +136,7 @@ export const DemoPage = () => {
       <IntegratedFeatures />
       <Branding />
       <Typography />
+      <ColorPalettes />
       <Navigation />
       <Buttons />
       <Toast />
@@ -131,15 +151,44 @@ export const DemoPage = () => {
   );
 };
 
+const DemoSectionHeader = (props: DemoSectionHeaderProps) => {
+  // Props
+  const { title, icon, description } = props;
+
+  return (
+    <VStack align={"center"} gap={1} w={"full"} pb={2}>
+      <HStack align={"center"} gap={3}>
+        <AppIcon icon={icon} size={"xl"} color={"fg.solid"} />
+        <P
+          textAlign={"center"}
+          fontSize={"2xl"}
+          fontWeight={"bold"}
+          letterSpacing={"tight"}
+        >
+          {title}
+        </P>
+      </HStack>
+
+      {description && (
+        <P fontSize={"sm"} color={"fg.subtle"} textAlign={"center"}>
+          {description}
+        </P>
+      )}
+    </VStack>
+  );
+};
+
 const IntegratedFeatures = () => {
   const { setLocale } = useLocale();
 
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Integrated Features
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Integrated Features"}
+          icon={CogIcon}
+          description={"Pengaturan tema, toggle mode gelap/terang, dan pergantian bahasa"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={2}>
           <SettingsTrigger modalKey={"settings"} w={"fit"}>
@@ -167,10 +216,12 @@ const IntegratedFeatures = () => {
 const Branding = () => {
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Branding
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Branding"}
+          icon={SparklesIcon}
+          description={"Identitas visual aplikasi, logo resmi, dan watermark ATR/BPN"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
           <Logo />
@@ -187,10 +238,12 @@ const Typography = () => {
 
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Typography
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Typography"}
+          icon={TypeIcon}
+          description={"Hierarki tipografi, color weights, dan angka tabular konsisten"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={8}>
           <VStack>
@@ -235,13 +288,219 @@ const Typography = () => {
   );
 };
 
+const COLOR_PALETTES: DemoPaletteItem[] = [
+  { palette: "neutral", label: "Neutral", category: "Monochrome" },
+  { palette: "grey", label: "Grey", category: "Monochrome" },
+  { palette: "cream", label: "Cream", category: "Earth & Warm" },
+  { palette: "caramel", label: "Caramel", category: "Earth & Warm" },
+  { palette: "mocha", label: "Mocha", category: "Earth & Warm" },
+  { palette: "brown", label: "Brown", category: "Earth & Warm" },
+  { palette: "maroon", label: "Maroon", category: "Red & Warm" },
+  { palette: "red", label: "Red", category: "Red & Warm" },
+  { palette: "salmon", label: "Salmon", category: "Red & Warm" },
+  {
+    palette: "pastelOrange",
+    label: "Pastel Orange",
+    category: "Orange & Yellow",
+  },
+  { palette: "orange", label: "Orange", category: "Orange & Yellow" },
+  { palette: "gold", label: "Gold", category: "Orange & Yellow" },
+  { palette: "yellow", label: "Yellow", category: "Orange & Yellow" },
+  { palette: "lime", label: "Lime", category: "Green & Teal" },
+  { palette: "olive", label: "Olive", category: "Green & Teal" },
+  { palette: "green", label: "Green", category: "Green & Teal" },
+  { palette: "jade", label: "Jade", category: "Green & Teal" },
+  { palette: "teal", label: "Teal", category: "Green & Teal" },
+  { palette: "tealBlue", label: "Teal Blue", category: "Cyan & Blue" },
+  { palette: "cyan", label: "Cyan", category: "Cyan & Blue" },
+  { palette: "sky", label: "Sky", category: "Cyan & Blue" },
+  { palette: "powderBlue", label: "Powder Blue", category: "Cyan & Blue" },
+  { palette: "blue", label: "Blue", category: "Cyan & Blue" },
+  { palette: "sapphire", label: "Sapphire", category: "Blue & Indigo" },
+  { palette: "indigo", label: "Indigo", category: "Blue & Indigo" },
+  { palette: "discord", label: "Discord", category: "Blue & Indigo" },
+  {
+    palette: "powderLavender",
+    label: "Powder Lavender",
+    category: "Purple & Violet",
+  },
+  { palette: "lavender", label: "Lavender", category: "Purple & Violet" },
+  { palette: "purple", label: "Purple", category: "Purple & Violet" },
+  {
+    palette: "bubblegumPink",
+    label: "Bubblegum Pink",
+    category: "Pink & Magenta",
+  },
+  { palette: "pink", label: "Pink", category: "Pink & Magenta" },
+];
+
+const COLOR_STEPS = [
+  "50",
+  "100",
+  "200",
+  "300",
+  "400",
+  "500",
+  "600",
+  "700",
+  "800",
+  "900",
+  "950",
+] as const;
+
+const ColorPalettes = () => {
+  // States
+  const [copiedToken, setCopiedToken] = useState<string | null>(null);
+
+  // Handlers
+  const handleCopy = (token: string) => {
+    void navigator.clipboard.writeText(token);
+    setCopiedToken(token);
+    toast.create({
+      title: "Token disalin",
+      description: token,
+      variant: "info",
+    });
+    setTimeout(() => {
+      setCopiedToken(null);
+    }, 2000);
+  };
+
+  return (
+    <Container.Root w={"full"} px={"md"}>
+      <Container.Body gap={6} p={6} align={"stretch"}>
+        <DemoSectionHeader
+          title={"Color Palettes"}
+          icon={PaletteIcon}
+          description={"Koleksi token warna gradasi 50 hingga 950 di chakra-system. Klik swatch untuk menyalin token path."}
+        />
+
+        <VStack align={"stretch"} gap={4} w={"full"}>
+          {COLOR_PALETTES.map((item) => {
+            return (
+              <VStack
+                key={item.palette}
+                align={"stretch"}
+                gap={2}
+                p={3}
+                rounded={"md"}
+                border={"1px solid"}
+                borderColor={"bg.canvas"}
+                bg={"bg.subtle"}
+              >
+                {/* Header row: Palette Name, Badge Category, Continuous Gradient bar */}
+                <HStack
+                  justify={"space-between"}
+                  align={"center"}
+                  wrap={"wrap"}
+                  gap={2}
+                >
+                  <HStack align={"center"} gap={2}>
+                    <P fontWeight={"semibold"} fontSize={"md"}>
+                      {item.label}
+                    </P>
+
+                    <Badge size={"xs"} colorPalette={"gray"}>
+                      {item.palette}
+                    </Badge>
+
+                    <Badge size={"xs"} colorPalette={"neutral"}>
+                      {item.category}
+                    </Badge>
+                  </HStack>
+                </HStack>
+
+                {/* 11 Swatches: 50, 100 .. 950 */}
+                <SimpleGrid
+                  columns={{ base: 4, sm: 6, md: 11 }}
+                  gap={1}
+                  w={"full"}
+                >
+                  {COLOR_STEPS.map((step) => {
+                    const tokenName = `${item.palette}.${step}`;
+                    const isCopied = copiedToken === tokenName;
+                    const stepNum = parseInt(step, 10);
+                    const isDark = stepNum >= 500;
+
+                    return (
+                      <VStack
+                        key={step}
+                        cursor={"pointer"}
+                        onClick={() => handleCopy(tokenName)}
+                        align={"center"}
+                        justify={"space-between"}
+                        h={"64px"}
+                        p={1}
+                        rounded={"sm"}
+                        bg={tokenName}
+                        border={"1px solid"}
+                        borderColor={"bg.canvas"}
+                        transition={"transform 0.1s ease, box-shadow 0.1s ease"}
+                        _hover={{
+                          transform: "scale(1.05)",
+                          zIndex: 2,
+                          shadow: "md",
+                        }}
+                        position={"relative"}
+                      >
+                        <HStack
+                          w={"full"}
+                          justify={"space-between"}
+                          align={"center"}
+                        >
+                          <P
+                            fontSize={"2xs"}
+                            fontWeight={"bold"}
+                            color={isDark ? "white" : "black"}
+                            opacity={0.85}
+                            lineHeight={1}
+                          >
+                            {`.${step}`}
+                          </P>
+
+                          <Box color={isDark ? "white" : "black"} opacity={0.7}>
+                            <AppIcon
+                              icon={isCopied ? CheckIcon : CopyIcon}
+                              size={"xs"}
+                            />
+                          </Box>
+                        </HStack>
+
+                        {step === "500" && (
+                          <Badge
+                            size={"xs"}
+                            variant={"solid"}
+                            fontSize={"2xs"}
+                            px={1}
+                            py={0}
+                            colorPalette={"neutral"}
+                            opacity={0.9}
+                          >
+                            {"BASE"}
+                          </Badge>
+                        )}
+                      </VStack>
+                    );
+                  })}
+                </SimpleGrid>
+              </VStack>
+            );
+          })}
+        </VStack>
+      </Container.Body>
+    </Container.Root>
+  );
+};
+
 const Navigation = () => {
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Navigation
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Navigation"}
+          icon={CompassIcon}
+          description={"Navigasi tautan internal dan tautan eksternal"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
           <ExternalLink href={"https://youtube.com"}>youtube.com</ExternalLink>
@@ -254,10 +513,12 @@ const Navigation = () => {
 const Buttons = () => {
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Buttons
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Buttons"}
+          icon={MousePointerClickIcon}
+          description={"Varian tombol interaktif primary, surface, subtle, outline, dan ghost"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
           <Button primary>Primary</Button>
@@ -278,10 +539,12 @@ const Buttons = () => {
 const Toast = () => {
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Toast
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Toast"}
+          icon={BellIcon}
+          description={"Sistem pemberitahuan instan dengan berbagai varian dan aksi responsif"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
           <Button
@@ -434,10 +697,12 @@ const Layout = () => {
 
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Layout
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Layout"}
+          icon={LayoutGridIcon}
+          description={"Komponen pembagi kontainer fleksibel, splitter, dan grid adaptif"}
+        />
 
         <HStack
           wrap={"wrap"}
@@ -587,10 +852,12 @@ export const Inputs = () => {
 
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Inputs
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Inputs"}
+          icon={TextCursorInputIcon}
+          description={"Elemen formulir, text input, password, search, slider, switch, dan date picker"}
+        />
 
         <Fieldset>
           <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={12}>
@@ -943,10 +1210,12 @@ const ONestedDrawer = () => {
 export const Overlay = () => {
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Overlay
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Overlay"}
+          icon={EyeIcon}
+          description={"Komponen modal popover, dialog konfirmasi, dan drawer drawer samping"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
           <OModal />
@@ -998,10 +1267,12 @@ export const Disclosure = () => {
 
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Disclosure
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Disclosure"}
+          icon={LayersIcon}
+          description={"Accordion lipat, tab menu bertingkat, breadcrumbs, dan carousel"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={10}>
           <Accordion.Root
@@ -1234,10 +1505,12 @@ export const Feedback = () => {
 
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Feedback
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Feedback"}
+          icon={MessageSquareIcon}
+          description={"Indikator progress, skeleton loading, dan berbagai state visual"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={10}>
           <HStack
@@ -1701,10 +1974,12 @@ export const DataDisplay = () => {
 
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Data Display
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Data Display"}
+          icon={TableIcon}
+          description={"Tabel data interaktif dengan pagination, sorting, search, dan batch actions"}
+        />
 
         <VStack gap={2} bg={"bg.canvas"} px={[4, null, 10]} py={4}>
           <HStack
@@ -1778,10 +2053,12 @@ export const Utilities = () => {
 
   return (
     <Container.Root w={"full"} px={"md"}>
-      <Container.Body gap={4} p={4}>
-        <P textAlign={"center"} fontWeight={"semibold"}>
-          Utilities
-        </P>
+      <Container.Body gap={6} p={6}>
+        <DemoSectionHeader
+          title={"Utilities"}
+          icon={WrenchIcon}
+          description={"Utilitas download berkas, formatting angka, dan helper pendukung"}
+        />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
           <DownloadTrigger

@@ -52,7 +52,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
   }, [groups, activeKey]);
 
   return (
-    <VScrollContainer className={"noScrollbar"} {...restProps}>
+    <VScrollContainer {...restProps}>
       {groups.map((group, groupIndex) => {
         const isFirstGroup = groupIndex === 0;
         const groupTitle = group.titleKey ? t[group.titleKey]() : null;

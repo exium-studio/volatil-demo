@@ -25,7 +25,8 @@ export const SettingsSidebar = () => {
   return (
     <VStack
       className={"settings-menu"}
-      overflowY={"auto"}
+      h={"full"}
+      overflow={"hidden"}
       minW={["full", null, "250px"]}
       bg={isSmallViewport ? "bg.canvas" : "bg.body"}
     >
@@ -92,7 +93,10 @@ export const SettingsSidebarBody = () => {
           search: (old) => ({ ...old, activeSettingNavKey: key }),
         });
       }}
+      flex={1}
       gap={isSmallViewport ? "md" : ""}
+      overflowY={"auto"}
+      w={"full"}
       p={2}
     />
   );

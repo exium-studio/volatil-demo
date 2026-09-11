@@ -58,7 +58,8 @@ export const SettingsActivePage = () => {
       <VStack
         className={"settings-active-page"}
         flex={1}
-        overflowY={"auto"}
+        h={"full"}
+        overflow={"hidden"}
         bg={"bg.canvas"}
       >
         <SettingsActivePageHeader />

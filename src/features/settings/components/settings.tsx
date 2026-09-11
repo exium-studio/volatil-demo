@@ -39,13 +39,13 @@ export const SettingsTrigger = (props: PopModalTriggerProps) => {
       <Modal.Content
         display={"flex"}
         flexDir={"column"}
-        overflowY={"auto"}
+        overflow={"hidden"}
         h={!isSmallViewport ? "600px" : "full"}
       >
         <Modal.Body
           display={"flex"}
           flexDir={"column"}
-          overflowY={"auto"}
+          overflow={"hidden"}
           p={0}
         >
           <SettingsView />
@@ -67,7 +67,7 @@ const SettingsView = () => {
   const shouldRenderActivePage = !isSmallViewport || !!activeSettingNavKey;
 
   return (
-    <HStack className={"settings-view"} flex={1} overflowY={"auto"}>
+    <HStack className={"settings-view"} flex={1} h={"full"} overflow={"hidden"}>
       {shouldRenderMenu && <SettingsSidebar />}
 
       {shouldRenderActivePage && <SettingsActivePage />}
