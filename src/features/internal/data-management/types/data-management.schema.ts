@@ -7,6 +7,7 @@ export const masterIgtLayerFormSchema = z.object({
   title: z.string().min(1, "Nama/Judul layer wajib diisi"),
   description: z.string().optional(),
   isActive: z.boolean(),
+  defaultVisible: z.boolean(),
   geoserverId: z.string().min(1, "Master GeoServer wajib dipilih"),
   workspace: z.string().min(1, "Workspace GeoServer wajib dipilih"),
   typeName: z.string().min(1, "Layer / Feature Type wajib dipilih"),

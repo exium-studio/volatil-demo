@@ -94,17 +94,9 @@ export const GisAppShell = (props: GisAppShellProps) => {
     }
   }, [pathname]);
 
-  // Reset all active map layers and filters when pathname or user/role changes (except within internal routes)
+  // Reset all active map layers and filters when user/role changes
   const userSession = getUserSession();
   const currentUserId = userSession?.id;
-  const isInternal =
-    userSession?.role === "internal" || pathname.startsWith("/internal");
-
-  useEffect(() => {
-    if (!isInternal) {
-      useMapLayerStore.getState().resetLayers();
-    }
-  }, [pathname, isInternal]);
 
   useEffect(() => {
     useMapLayerStore.getState().resetLayers();
@@ -381,10 +373,7 @@ const Content = () => {
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
-  const { pathname } = useLocation();
-  const userSession = getUserSession();
-  const isInternal =
-    userSession?.role === "internal" || pathname.startsWith("/internal");
+  const hasInitializedDefaultsRef = useRef(false);
 
   // Derived Values — Build layer config from fetched layer list
   const { data: fetchedLayers } = useQuery({
@@ -399,6 +388,18 @@ const Content = () => {
     enabledLayerIds: previewEnabledLayerIds,
     layerConfigs: previewLayerConfigs,
   } = useOrderReviewLayerStore();
+
+  // Auto-enable layers configured with defaultVisible on initial load
+  useEffect(() => {
+    const rawList = fetchedLayers?.items ?? fetchedLayers?.layers;
+    if (rawList && rawList.length > 0 && !hasInitializedDefaultsRef.current) {
+      hasInitializedDefaultsRef.current = true;
+      const defaultActiveLayers = rawList.filter((l) => Boolean(l.defaultVisible));
+      defaultActiveLayers.forEach((l) => {
+        useMapLayerStore.getState().setLayerEnabled(l.id, true);
+      });
+    }
+  }, [fetchedLayers]);
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
     const rawList = fetchedLayers?.items ?? fetchedLayers?.layers ?? [];
@@ -526,9 +527,7 @@ const Content = () => {
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
-          showMasterIgtLayerSelect={
-            isInternal || pathname.startsWith("/mitra/data-request")
-          }
+          showMasterIgtLayerSelect={true}
           // onDrawFinish={(feature, originalPoints) => {
           //   console.log("draw finished", { feature, originalPoints });
           // }}

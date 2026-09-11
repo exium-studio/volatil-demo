@@ -9,6 +9,7 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { AlertTriangleIcon } from "lucide-react";
 import { isValidElement, type ComponentType } from "react";
@@ -22,7 +23,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
     description,
     confirmLabel,
     cancelLabel,
-    colorPalette = "red",
+    colorPalette,
     icon,
     modalKey,
     confirmButtonProps,
@@ -30,12 +31,16 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
     onCancel,
   } = props;
 
+  // Stores
+  const { theme } = useThemeStore();
+
   // Hooks (Modal)
   const popModal = usePopModal({
     modalKey,
   });
 
   // Resolved Values
+  const resolvedColorPalette = colorPalette ?? theme.colorPalette;
   const resolvedTitle = title ?? t["action.confirm"]();
   const resolvedDesc =
     description ?? desc ?? "Apakah Anda yakin ingin melanjutkan tindakan ini?";
@@ -72,8 +77,8 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
             <VStack align={"center"} gap={"md"} textAlign={"center"}>
               <Circle
                 size={"48px"}
-                bg={`${colorPalette}.subtle`}
-                color={`${colorPalette}.fg`}
+                bg={`${resolvedColorPalette}.subtle`}
+                color={`${resolvedColorPalette}.fg`}
                 mb={"md"}
               >
                 {icon ? (
@@ -107,7 +112,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
               <Button
                 primary
                 variant={"solid"}
-                colorPalette={colorPalette}
+                colorPalette={resolvedColorPalette}
                 onClick={handleConfirm}
                 {...confirmButtonProps}
               >

@@ -14,11 +14,8 @@ import type {
   MitraHomeCartSummaryProps,
 } from "@/features/mitra/home/types/mitra.home.cart-summary.type";
 import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
-import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
-import {
-  DatabaseIcon,
-  ReceiptTextIcon,
-} from "lucide-react";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
+import { DatabaseIcon, ReceiptTextIcon } from "lucide-react";
 
 export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
   return (

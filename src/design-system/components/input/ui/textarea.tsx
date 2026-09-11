@@ -3,7 +3,7 @@ import type { TextareaProps } from "@/design-system/components/input/types/texta
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Textarea as ChakraTextarea } from "@chakra-ui/react";
 import * as React from "react";
@@ -35,7 +35,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         ref={ref}
         rounded={theme.radii.component}
         fontSize={"md"}
-        minH={isFloatingVariant ? "60px" : "135px"}
+        minH={"135px"}
         onFocusCapture={(e) => {
           setIsFocused(true);
           props.onFocusCapture?.(e);
@@ -71,16 +71,16 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             }
           >
             <HStack align={"center"} gap={2}>
-              <P
+              <ClampedP
                 fontSize={isLabelFloating ? "xs" : "md"}
                 fontWeight={"medium"}
                 color={"fg.subtle"}
                 transition={"font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"}
               >
                 {floatingLabel}
-              </P>
+              </ClampedP>
 
-              {isOptional && isLabelFloating && (
+              {isOptional && (
                 <Badge
                   size={"xs"}
                   fontSize={"2xs"}

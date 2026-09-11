@@ -105,6 +105,7 @@ export type IgtLayerItem = {
   spatialBasis: "bidang" | "kawasan";
   bbox?: [number, number, number, number];
   visible?: boolean;
+  defaultVisible?: boolean;
   zIndex?: number;
   wfs: IgtLayerWfsConfig;
   wms: IgtLayerWmsConfig;

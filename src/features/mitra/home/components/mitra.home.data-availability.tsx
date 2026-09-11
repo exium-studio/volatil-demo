@@ -11,7 +11,7 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { DatabaseIcon } from "lucide-react";
 
 export const MitraHomeDataAvailability = () => {

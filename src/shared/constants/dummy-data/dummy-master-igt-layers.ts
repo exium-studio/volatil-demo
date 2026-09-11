@@ -17,6 +17,7 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
     spatialBasis: "kawasan",
     bbox: [115.083839, -8.850039, 115.251389, -8.239441],
     isActive: true,
+    defaultVisible: true,
     zIndex: 1,
     geoserverId: "gs_prod_01",
     geoserver: {
@@ -39,6 +40,7 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
     spatialBasis: "kawasan",
     bbox: [115.083839, -8.849308, 115.251534, -8.239852],
     isActive: true,
+    defaultVisible: false,
     zIndex: 2,
     geoserverId: "gs_prod_01",
     geoserver: {
@@ -60,6 +62,7 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
     spatialBasis: "bidang",
     bbox: [115.134102, -8.685009, 115.183136, -8.622203],
     isActive: true,
+    defaultVisible: true,
     zIndex: 3,
     geoserverId: "gs_prod_01",
     geoserver: {

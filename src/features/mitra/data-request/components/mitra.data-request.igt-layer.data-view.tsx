@@ -32,7 +32,7 @@ import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
-import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";

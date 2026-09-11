@@ -24,7 +24,7 @@ import type {
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
-import { SPATIAL_BASIS_OPTIONS } from "@/shared/constants/status.config";
+import { IGT_BASIS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
@@ -87,6 +87,7 @@ const InternalDataManagementCreateModalContent = (
       workspace: "",
       typeName: "",
       isActive: true,
+      defaultVisible: false,
     },
   });
 
@@ -146,6 +147,7 @@ const InternalDataManagementCreateModalContent = (
         spatialBasis: data.spatialBasis,
         zIndex: data.zIndex,
         isActive: data.isActive,
+        defaultVisible: data.defaultVisible,
         geoserverId: selectedGeoserver.id,
         typeName: data.typeName.trim(),
       },
@@ -163,36 +165,35 @@ const InternalDataManagementCreateModalContent = (
         <Modal.CloseButton />
 
         <VStack gap={"2xs"}>
-          <Modal.Title>{"Tambah Layer IGT Baru"}</Modal.Title>
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
-            {
-              "Daftarkan layer geospasial tematik baru ke katalog internal ATR/BPN"
-            }
+          <Modal.Title>{"Tambah Master Layer IGT"}</Modal.Title>
+          <P fontSize={"xs"} color={"fg.muted"} textAlign={"center"}>
+            {"Daftarkan layer baru dari katalog GeoServer yang terhubung"}
           </P>
         </VStack>
       </Modal.Header>
 
       <Modal.Body>
         <VStack align={"stretch"} gap={"xl"}>
-          {/* Grup 1: Informasi Dasar Layer */}
+          {/* Grup 1: Informasi Dasar */}
           <Fieldset legend={"Informasi Dasar"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
-              {/* Input ID / Identifier Layer */}
+              {/* Input ID Layer (Opsional) */}
               <Controller
                 control={control}
                 name={"id"}
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <Field
-                    label={"ID / Identifier Layer"}
-                    helperText={
-                      "testing_workspace:TEST_RTRW_BADUNG (opsional, otomatis dari layer)"
-                    }
+                    label={"ID Unik Layer (Opsional)"}
                     optional
+                    errorText={fieldState.error?.message}
+                    invalid={Boolean(fieldState.error)}
                   >
                     <Input
                       value={field.value ?? ""}
                       onChange={field.onChange}
-                      placeholder={"workspace:nama_layer"}
+                      placeholder={
+                        "Otomatis sama dengan typename jika dikosongkan"
+                      }
                     />
                   </Field>
                 )}
@@ -247,11 +248,44 @@ const InternalDataManagementCreateModalContent = (
                     >
                       <VStack align={"start"} gap={0}>
                         <P fontSize={"sm"} fontWeight={"medium"}>
-                          {field.value ? "Publik (Aktif)" : "Draft (Nonaktif)"}
+                          {`Status Publikasi (${field.value ? "Publik" : "Draft"})`}
                         </P>
                         <P fontSize={"xs"} color={"fg.subtle"}>
                           {
                             "Layer yang aktif dapat dilihat & dipesan di katalog Mitra"
+                          }
+                        </P>
+                      </VStack>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(e) =>
+                          field.onChange(Boolean(e.checked))
+                        }
+                      />
+                    </HStack>
+                  </Field>
+                )}
+              />
+
+              {/* Toggle Default Visible di Map */}
+              <Controller
+                control={control}
+                name={"defaultVisible"}
+                render={({ field }) => (
+                  <Field label={"Tampil Otomatis di Peta (Default Visible)"}>
+                    <HStack
+                      justify={"space-between"}
+                      align={"center"}
+                      w={"full"}
+                      py={1}
+                    >
+                      <VStack align={"start"} gap={0}>
+                        <P fontSize={"sm"} fontWeight={"medium"}>
+                          {`Tampil di Peta Awal (${field.value ? "Aktif" : "Mati"})`}
+                        </P>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {
+                            "Layer akan langsung aktif di peta saat aplikasi pertama kali dimuat"
                           }
                         </P>
                       </VStack>
@@ -307,7 +341,7 @@ const InternalDataManagementCreateModalContent = (
                       w={"full"}
                     >
                       <HStack gap={"sm"} w={"full"}>
-                        {SPATIAL_BASIS_OPTIONS.map((opt) => (
+                        {IGT_BASIS_OPTIONS.map((opt) => (
                           <RadioCardInput.Item
                             key={opt.value}
                             value={opt.value}

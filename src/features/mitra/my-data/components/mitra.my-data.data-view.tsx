@@ -41,7 +41,7 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { Url } from "@/design-system/components/typography/ui/url";
-import { MY_DATA_STATUS_OPTIONS } from "@/shared/constants/status.config";
+import { MY_DATA_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,

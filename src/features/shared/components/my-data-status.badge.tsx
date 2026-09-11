@@ -3,7 +3,7 @@
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import type { MyDataStatusBadgeProps } from "@/features/shared/types/badge.type";
-import { MY_DATA_STATUS_MAP } from "@/shared/constants/status.config";
+import { MY_DATA_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import type { MyDataStatus } from "@/shared/types/status.type";
 
 export const MyDataStatusBadge = (props: MyDataStatusBadgeProps) => {

@@ -24,6 +24,7 @@ export type MasterIgtLayerItem = {
   spatialBasis: SpatialBasisType;
   bbox?: [number, number, number, number];
   isActive: boolean;
+  defaultVisible?: boolean;
   zIndex?: number;
   geoserverId: string;
   geoserver: {
@@ -57,6 +58,7 @@ export type CreateMasterIgtLayerPayload = {
   description?: string;
   spatialBasis: SpatialBasisType;
   isActive: boolean;
+  defaultVisible?: boolean;
   zIndex?: number;
 };
 

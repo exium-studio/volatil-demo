@@ -25,7 +25,7 @@ import type {
   SpatialBasisType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
-import { SPATIAL_BASIS_OPTIONS } from "@/shared/constants/status.config";
+import { SPATIAL_BASIS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
@@ -109,6 +109,7 @@ const InternalDataManagementEditModalContent = (
       workspace: initialWorkspace,
       typeName: item.typeName ?? item.id ?? "",
       isActive: item.isActive,
+      defaultVisible: item.defaultVisible ?? false,
     },
   });
 
@@ -149,6 +150,7 @@ const InternalDataManagementEditModalContent = (
         spatialBasis: data.spatialBasis,
         zIndex: data.zIndex,
         isActive: data.isActive,
+        defaultVisible: data.defaultVisible,
         geoserverId: selectedGeoserver.id,
         typeName: data.typeName.trim(),
       },
@@ -222,11 +224,44 @@ const InternalDataManagementEditModalContent = (
                     >
                       <VStack align={"start"} gap={0}>
                         <P fontSize={"sm"} fontWeight={"medium"}>
-                          {field.value ? "Publik (Aktif)" : "Draft (Nonaktif)"}
+                          {`Status Publikasi (${field.value ? "Publik" : "Draft"})`}
                         </P>
                         <P fontSize={"xs"} color={"fg.subtle"}>
                           {
                             "Layer yang aktif dapat dilihat & dipesan di katalog Mitra"
+                          }
+                        </P>
+                      </VStack>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(e) =>
+                          field.onChange(Boolean(e.checked))
+                        }
+                      />
+                    </HStack>
+                  </Field>
+                )}
+              />
+
+              {/* Toggle Default Visible di Map */}
+              <Controller
+                control={control}
+                name={"defaultVisible"}
+                render={({ field }) => (
+                  <Field label={"Tampil Otomatis di Peta (Default Visible)"}>
+                    <HStack
+                      justify={"space-between"}
+                      align={"center"}
+                      w={"full"}
+                      py={1}
+                    >
+                      <VStack align={"start"} gap={0}>
+                        <P fontSize={"sm"} fontWeight={"medium"}>
+                          {`Tampil di Peta Awal (${field.value ? "Aktif" : "Mati"})`}
+                        </P>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {
+                            "Layer akan langsung aktif di peta saat aplikasi pertama kali dimuat"
                           }
                         </P>
                       </VStack>

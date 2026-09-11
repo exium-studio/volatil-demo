@@ -206,16 +206,16 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
             }
           >
             <HStack align={"center"} gap={2}>
-              <P
+              <ClampedP
                 fontSize={isLabelFloating ? "xs" : "md"}
                 fontWeight={"medium"}
                 color={"fg.subtle"}
                 transition={"font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"}
               >
                 {floatingLabel}
-              </P>
+              </ClampedP>
 
-              {isOptional && isLabelFloating && (
+              {isOptional && (
                 <Badge
                   size={"xs"}
                   fontSize={"2xs"}

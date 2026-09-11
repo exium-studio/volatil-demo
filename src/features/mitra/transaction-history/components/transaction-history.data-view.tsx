@@ -30,7 +30,7 @@ import type {
   TransactionHistoryQueryParams,
   TransactionRecord,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
-import { TRANSACTION_STATUS_OPTIONS } from "@/shared/constants/status.config";
+import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import type { TransactionStatus } from "@/shared/types/status.type";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionStatusBadge } from "@/features/shared/components/transaction-status.badge";

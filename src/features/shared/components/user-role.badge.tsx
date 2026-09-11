@@ -3,7 +3,7 @@
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import type { UserRoleBadgeProps } from "@/features/shared/types/badge.type";
-import { USER_ROLE_MAP } from "@/shared/constants/status.config";
+import { USER_ROLE_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import type { UserRole } from "@/shared/types/common-response.type";
 
 export const UserRoleBadge = (props: UserRoleBadgeProps) => {

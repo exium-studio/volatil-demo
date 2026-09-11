@@ -2,16 +2,23 @@
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { useFieldContextValue } from "@/design-system/components/input/context/field.context";
 import type {
   PasswordInputProps,
   PasswordStrengthMeterProps,
 } from "@/design-system/components/input/types/password-input.type";
-import { Input } from "@/design-system/components/input/ui/input";
-import { InputGroup } from "@/design-system/components/input/ui/input-group";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { mergeRefs } from "@/shared/utils/react/merge-refs";
-import { useControllableState, type ButtonProps } from "@chakra-ui/react";
+import {
+  Input as ChakraInput,
+  InputGroup as ChakraInputGroup,
+  useControllableState,
+  type ButtonProps,
+} from "@chakra-ui/react";
 import { passwordStrength, type Options } from "check-password-strength";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { forwardRef, useRef, useState, type ChangeEvent } from "react";
@@ -27,7 +34,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   function PasswordInput(props, ref) {
     // Props
     const {
-      rootProps,
+      rootProps: _rootProps,
       defaultVisible,
       visible: visibleProp,
       onVisibleChange,
@@ -45,7 +52,20 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     // Refs
     const inputRef = useRef<HTMLInputElement>(null);
 
+    // Contexts
+    const fieldContext = useFieldContextValue();
+    const isFloatingVariant = fieldContext?.variant === "floating";
+    const floatingLabel = isFloatingVariant ? fieldContext?.label : undefined;
+    const isOptional = fieldContext?.optional;
+
+    // Stores
+    const { theme } = useThemeStore();
+
     // States
+    const [isFocused, setIsFocused] = useState<boolean>(false);
+    const [hasValueState, setHasValueState] = useState<boolean>(
+      Boolean(restProps.value) || Boolean(restProps.defaultValue),
+    );
     const [visible, setVisible] = useControllableState({
       value: visibleProp,
       defaultValue: defaultVisible || false,
@@ -53,7 +73,16 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     });
     const [strength, setStrength] = useState(0);
 
+    // Derived Values
+    const hasValue =
+      hasValueState ||
+      Boolean(restProps.value) ||
+      Boolean(restProps.defaultValue) ||
+      Boolean(fieldContext?.hasValue);
+    const isLabelFloating = isFocused || hasValue;
+
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
+      setHasValueState(Boolean(e.currentTarget.value));
       onChange?.(e);
 
       if (!withPasswordStrength) return;
@@ -69,35 +98,106 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       setStrength(result.id);
     }
 
+    const endElementNode = (
+      <VisibilityTrigger
+        disabled={restProps.disabled}
+        variant={"plain"}
+        onPointerDown={(e) => {
+          if (restProps.disabled) return;
+          if (e.button !== 0) return;
+          e.preventDefault();
+          setVisible(!visible);
+        }}
+      >
+        {visible ? visibilityIcon.off : visibilityIcon.on}
+      </VisibilityTrigger>
+    );
+
+    const inputCore = (
+      <ChakraInput
+        {...restProps}
+        ref={mergeRefs(ref, inputRef)}
+        type={visible ? "text" : "password"}
+        colorPalette={"neutral"}
+        fontSize={"md"}
+        rounded={theme.radii.component}
+        placeholder={"••••••••"}
+        onFocusCapture={(e) => {
+          setIsFocused(true);
+          restProps.onFocusCapture?.(e);
+        }}
+        onBlurCapture={(e) => {
+          setIsFocused(false);
+          setHasValueState(Boolean(e.currentTarget.value));
+          restProps.onBlurCapture?.(e);
+        }}
+        onChange={handleChange}
+        {...(isFloatingVariant && {
+          h: "60px",
+          pt: floatingLabel ? "24px" : "0px",
+          pb: floatingLabel ? "4px" : "0px",
+          _placeholder: {
+            color: "transparent",
+          },
+        })}
+      />
+    );
+
+    const inputGroupElement = (
+      <ChakraInputGroup
+        startElement={startElement}
+        endElement={endElementNode}
+        w={"full"}
+      >
+        {inputCore}
+      </ChakraInputGroup>
+    );
+
+    const labelLeft = startElement ? "40px" : "12px";
+
     return (
       <VStack gap={2} w={restProps?.w || "full"}>
-        <InputGroup
-          startElement={startElement}
-          endElement={
-            <VisibilityTrigger
-              disabled={restProps.disabled}
-              variant={"plain"}
-              onPointerDown={(e) => {
-                if (restProps.disabled) return;
-                if (e.button !== 0) return;
-                e.preventDefault();
-                setVisible(!visible);
-              }}
+        {isFloatingVariant && floatingLabel ? (
+          <Box position={"relative"} w={"full"}>
+            <Box
+              position={"absolute"}
+              left={labelLeft}
+              top={"7px"}
+              zIndex={1}
+              pointerEvents={"none"}
+              transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
+              transition={
+                "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
+              }
             >
-              {visible ? visibilityIcon.off : visibilityIcon.on}
-            </VisibilityTrigger>
-          }
-          w={"full"}
-          {...rootProps}
-        >
-          <Input
-            {...restProps}
-            ref={mergeRefs(ref, inputRef)}
-            type={visible ? "text" : "password"}
-            onChange={handleChange}
-            placeholder={"••••••••"}
-          />
-        </InputGroup>
+              <HStack align={"center"} gap={2}>
+                <ClampedP
+                  fontSize={isLabelFloating ? "xs" : "md"}
+                  fontWeight={"medium"}
+                  color={"fg.subtle"}
+                  transition={"font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"}
+                >
+                  {floatingLabel}
+                </ClampedP>
+
+                {isOptional && (
+                  <Badge
+                    size={"xs"}
+                    fontSize={"2xs"}
+                    colorPalette={"gray"}
+                    color={"fg.subtle"}
+                  >
+                    Optional
+                  </Badge>
+                )}
+              </HStack>
+            </Box>
+
+            {inputGroupElement}
+          </Box>
+        ) : (
+          inputGroupElement
+        )}
 
         {withPasswordStrength && (
           <PasswordStrengthMeter

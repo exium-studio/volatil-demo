@@ -172,6 +172,7 @@ export const InternalDataManagementDataView = () => {
       { th: "Workspace / Typename", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
+      { th: "Default Aktif", sortable: true, align: "center" },
       { th: "Terakhir Diperbarui", sortable: true },
       { th: "Tampilkan di Peta", align: "center" },
     ];
@@ -214,6 +215,18 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.zIndex ?? 0,
             td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
+            align: "center" as const,
+          },
+          {
+            value: item.defaultVisible ? "Ya" : "Tidak",
+            td: (
+              <Badge
+                colorPalette={item.defaultVisible ? "blue" : "gray"}
+                variant={"subtle"}
+              >
+                {item.defaultVisible ? "Otomatis" : "Manual"}
+              </Badge>
+            ),
             align: "center" as const,
           },
           {

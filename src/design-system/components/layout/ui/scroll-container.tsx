@@ -292,6 +292,7 @@ export const HScrollContainer = forwardRef<
       )}
 
       <HStack
+        className={"noScrollbar"}
         ref={containerRef}
         overflowX={"auto"}
         overflowY={"hidden"}

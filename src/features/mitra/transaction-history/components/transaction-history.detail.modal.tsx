@@ -33,7 +33,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { CreditCardIcon } from "lucide-react";
 import { useMemo } from "react";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { TRANSACTION_STATUS_MAP } from "@/shared/constants/status.config";
+import { TRANSACTION_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 
 export const TransactionDetailTrigger = (
   props: TransactionDetailTriggerProps,

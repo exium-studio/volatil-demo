@@ -17,11 +17,8 @@ import {
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
-import {
-  ChevronDownIcon,
-  ShoppingCartIcon,
-} from "lucide-react";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
+import { ChevronDownIcon, ShoppingCartIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const MitraDataRequestAddToCartButtons = (
@@ -202,7 +199,9 @@ export const MitraDataRequestAddToCartButtons = (
   const isBidangBelowMin =
     bidangCount > 0 && minBidangCount > 0 && bidangCount < minBidangCount;
   const isKawasanBelowMin =
-    effectiveKawasanHa > 0 && minKawasanHa > 0 && effectiveKawasanHa < minKawasanHa;
+    effectiveKawasanHa > 0 &&
+    minKawasanHa > 0 &&
+    effectiveKawasanHa < minKawasanHa;
 
   const isAddAllBidangDisabled = bidangCount === 0 || isBidangBelowMin;
   const isAddAllKawasanDisabled = kawasanCount === 0 || isKawasanBelowMin;

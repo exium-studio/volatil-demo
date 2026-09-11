@@ -34,7 +34,7 @@ import type {
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionStatusBadge } from "@/features/shared/components/transaction-status.badge";
-import { TRANSACTION_STATUS_OPTIONS } from "@/shared/constants/status.config";
+import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import type { TransactionStatus } from "@/shared/types/status.type";
 import {

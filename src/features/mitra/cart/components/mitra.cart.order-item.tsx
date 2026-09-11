@@ -17,7 +17,7 @@ import type {
   MitraCartOrderItemProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { ORDER_STATUS_MAP } from "@/shared/constants/status.config";
+import { ORDER_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { Trash2Icon } from "lucide-react";

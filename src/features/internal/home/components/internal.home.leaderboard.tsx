@@ -20,7 +20,7 @@ import type {
   TopIgtLayerItem,
   TopMitraAcquisitionItem,
 } from "@/features/internal/home/types/internal.home.leaderboard.type";
-import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { CrownIcon } from "lucide-react";
 
 export const InternalHomeLeaderboard = (

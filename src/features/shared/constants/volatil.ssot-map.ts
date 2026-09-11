@@ -75,9 +75,6 @@ export const IGT_BASIS_MAP: Record<IgtBasisType, IgtBasisTypeConfig> = {
   },
 };
 
-/** @deprecated alias for IGT_BASIS_MAP */
-export const SPATIAL_BASIS_CONFIG_MAP = IGT_BASIS_MAP;
-
 export const IGT_BASIS_OPTIONS: {
   value: IgtBasisType;
   label: string;
@@ -269,4 +266,3 @@ export const USER_ROLE_MAP: Record<"internal" | "mitra", UserRoleConfig> = {
     icon: HandshakeIcon,
   },
 };
-

@@ -20,7 +20,12 @@ import {
 } from "@/features/auth/schemas/signin.schema";
 import type { SigninFormValues } from "@/features/auth/types/signin.type";
 import { Link } from "@tanstack/react-router";
-import { HandshakeIcon, LockIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
+import {
+  HandshakeIcon,
+  LockIcon,
+  MailIcon,
+  ShieldCheckIcon,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 
 export const MitraSignin = (props: StackProps) => {

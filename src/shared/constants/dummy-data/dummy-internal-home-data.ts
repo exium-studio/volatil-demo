@@ -13,7 +13,7 @@ import type {
 import type { ServiceRateItem } from "@/features/internal/home/types/internal.home.service-rate.type";
 import type { InternalHomeTrendItem } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 
 export const dummyIgtBasis: IgtBasisSummary = {
   field: 325,

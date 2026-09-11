@@ -3,9 +3,12 @@ import type { InputProps } from "@/design-system/components/input/types/input.ty
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { Input as ChakraInput, InputGroup as ChakraInputGroup } from "@chakra-ui/react";
+import {
+  Input as ChakraInput,
+  InputGroup as ChakraInputGroup,
+} from "@chakra-ui/react";
 import { forwardRef, useState } from "react";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
@@ -20,9 +23,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   // States
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [hasValueState, setHasValueState] = useState<boolean>(
+    Boolean(restProps.value) || Boolean(restProps.defaultValue),
+  );
 
   // Derived Values
   const hasValue =
+    hasValueState ||
     Boolean(restProps.value) ||
     Boolean(restProps.defaultValue) ||
     Boolean(fieldContext?.hasValue);
@@ -43,7 +50,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       }}
       onBlurCapture={(e) => {
         setIsFocused(false);
+        setHasValueState(Boolean(e.currentTarget.value));
         restProps.onBlurCapture?.(e);
+      }}
+      onChange={(e) => {
+        setHasValueState(Boolean(e.currentTarget.value));
+        restProps.onChange?.(e);
       }}
       {...(isFloatingVariant && {
         h: "60px",
@@ -87,16 +99,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           }
         >
           <HStack align={"center"} gap={2}>
-            <P
+            <ClampedP
               fontSize={isLabelFloating ? "xs" : "md"}
               fontWeight={"medium"}
               color={"fg.subtle"}
               transition={"font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"}
             >
               {floatingLabel}
-            </P>
+            </ClampedP>
 
-            {isOptional && isLabelFloating && (
+            {isOptional && (
               <Badge
                 size={"xs"}
                 fontSize={"2xs"}

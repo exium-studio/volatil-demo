@@ -3,7 +3,7 @@
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import type { TransactionStatusBadgeProps } from "@/features/shared/types/badge.type";
-import { TRANSACTION_STATUS_MAP } from "@/shared/constants/status.config";
+import { TRANSACTION_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import type { TransactionStatus } from "@/shared/types/status.type";
 
 export const TransactionStatusBadge = (props: TransactionStatusBadgeProps) => {

@@ -19,7 +19,7 @@ import type {
   InternalHomeServiceRateProps,
 } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useInternalPricingListQuery } from "@/features/internal/pricing/hooks/use-internal-pricing";
-import { IGT_BASIS_MAP } from "@/shared/constants/status.config";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { PencilIcon } from "lucide-react";
 import { useMemo } from "react";
 

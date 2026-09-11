@@ -32,6 +32,7 @@ const normalizeIgtLayer = (raw: any): IgtLayerItem => {
     spatialBasis,
     bbox: Array.isArray(raw.bbox) ? raw.bbox : undefined,
     visible: raw.visible ?? raw.isActive ?? true,
+    defaultVisible: Boolean(raw.defaultVisible ?? raw.default_visible ?? false),
     zIndex: raw.zIndex != null ? Number(raw.zIndex) : 1,
     wms: {
       layers: raw.wms?.layers ?? typeName ?? id,

@@ -31,7 +31,7 @@ import {
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { EyeIcon } from "lucide-react";
 import { useMemo } from "react";
-import { TRANSACTION_STATUS_MAP } from "@/shared/constants/status.config";
+import { TRANSACTION_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 
 export const InternalTransactionDetailTrigger = (
   props: InternalTransactionDetailTriggerProps,
