@@ -22,6 +22,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     onWorkspaceChange,
     selectedTypeName,
     onLayerChange,
+    initialLayerOption,
   } = props;
 
   // Hooks (Queries)
@@ -52,14 +53,21 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     [workspaces],
   );
 
-  const layerOptions: FocusSelectOption[] = useMemo(
-    () =>
-      workspaceLayers.map((lyr) => ({
-        label: lyr.title || lyr.name,
-        value: lyr.typeName,
-      })),
-    [workspaceLayers],
-  );
+  const layerOptions: FocusSelectOption[] = useMemo(() => {
+    const list: FocusSelectOption[] = workspaceLayers.map((lyr) => ({
+      label: lyr.title || lyr.name,
+      value: lyr.typeName,
+    }));
+
+    if (
+      initialLayerOption &&
+      !list.some((opt) => opt.value === initialLayerOption.value)
+    ) {
+      return [initialLayerOption, ...list];
+    }
+
+    return list;
+  }, [workspaceLayers, initialLayerOption]);
 
   const handleLayerSelect = (typeName: string) => {
     const foundLayer = workspaceLayers.find((l) => l.typeName === typeName);

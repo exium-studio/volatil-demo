@@ -100,6 +100,7 @@ export type GeoserverCascadeSelectProps = {
     typeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => void;
+  initialLayerOption?: FocusSelectOption;
 };
 
 export type InternalDataManagementCreateTriggerProps = {
