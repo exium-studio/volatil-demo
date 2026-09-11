@@ -8,8 +8,8 @@ WORKDIR /app
 # Install pnpm directly via npm for 100% reliable Docker builds in Alpine
 RUN npm install -g pnpm@latest
 
-# Copy dependency manifests
-COPY package.json pnpm-lock.yaml ./
+# Copy dependency manifests and configuration
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 
 # Install dependencies (use --no-frozen-lockfile to prevent lockfile version mismatch failures)
 RUN pnpm install --no-frozen-lockfile
