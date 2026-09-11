@@ -174,7 +174,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </HStack>
 
         <HStack justify={"space-between"}>
-          <P color={"fg.muted"}>{"Total Objek Bidang"}</P>
+          <P color={"fg.muted"}>{"IGT Berbasis Bidang"}</P>
           <P fontWeight={"medium"}>
             {isSelected ? (
               totalBidang > 0 ? (
@@ -191,7 +191,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </HStack>
 
         <HStack justify={"space-between"}>
-          <P color={"fg.muted"}>{"Total Luas Kawasan"}</P>
+          <P color={"fg.muted"}>{"IGT Berbasis Kawasan"}</P>
           <P fontWeight={"medium"}>
             {isSelected ? (
               totalKawasanHa > 0 ? (

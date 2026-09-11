@@ -114,8 +114,8 @@ const InternalPricingEditModalContent = (
                 variant={"subtle"}
               >
                 {item.spatialBasis === "bidang"
-                  ? "Objek Bidang"
-                  : "Luas Kawasan"}
+                  ? "IGT Berbasis Bidang"
+                  : "IGT Berbasis Kawasan"}
               </Badge>
             </HStack>
 

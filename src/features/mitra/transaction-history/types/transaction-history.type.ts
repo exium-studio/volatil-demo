@@ -36,6 +36,7 @@ export type TransactionRecord = {
   billingCode: string;
   paymentMethod: string;
   transactionStatus: TransactionStatus;
+  orderStatus?: OrderStatus;
   selectionType: SelectionType;
   totalAmount: number;
   createdAt: string;

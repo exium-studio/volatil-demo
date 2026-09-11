@@ -20,6 +20,7 @@ import type {
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-detail-modal.type";
 import type { InternalTransactionOrderItem } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
@@ -266,6 +267,20 @@ export const InternalTransactionDetailModalContent = (
                 <P color={"fg.subtle"}>{"Nomor Order"}</P>
                 <P fontWeight={"medium"}>{transaction.orderNumber}</P>
               </HStack>
+
+              {transaction.orderStatus && (
+                <HStack
+                  align={"center"}
+                  justify={"space-between"}
+                  h={"32px"}
+                  fontSize={"sm"}
+                >
+                  <P color={"fg.subtle"}>{"Status Order"}</P>
+                  <OrderStatusBadge showIcon={true} size={"xs"}>
+                    {transaction.orderStatus}
+                  </OrderStatusBadge>
+                </HStack>
+              )}
 
               <HStack
                 align={"center"}

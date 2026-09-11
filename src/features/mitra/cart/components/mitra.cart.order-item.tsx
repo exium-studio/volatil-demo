@@ -128,7 +128,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"Total Objek Bidang:"}</P>
+            <P color={"fg.muted"}>{"IGT Berbasis Bidang:"}</P>
             <P fontWeight={"medium"}>
               {totalBidang > 0 ? (
                 <>
@@ -141,7 +141,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"Total Luas Kawasan:"}</P>
+            <P color={"fg.muted"}>{"IGT Berbasis Kawasan:"}</P>
             <P fontWeight={"medium"}>
               {totalKawasanHa && totalKawasanHa > 0 ? (
                 <>

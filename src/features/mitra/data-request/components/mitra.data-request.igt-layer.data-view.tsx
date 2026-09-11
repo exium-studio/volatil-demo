@@ -670,18 +670,28 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 <HStack justify={"space-between"} align={"center"} w={"full"}>
                   <HStack gap={"xs"} align={"center"}>
                     <P fontSize={"sm"} color={"fg.muted"}>
-                      {"Objek Bidang:"}
+                      {"IGT Berbasis Bidang:"}
                     </P>
 
                     <P fontWeight={"medium"} color={"fg.default"}>
                       {`${formatNumber(summaryData.totalBidangCount)} bidang`}
                     </P>
                   </HStack>
-                  <P fontWeight={"semibold"} color={"fg.default"}>
-                    {formatNumber(estimatedBidangPrice, {
-                      style: "currency",
-                    })}
-                  </P>
+                  {isBidangBelowMin ? (
+                    <P
+                      fontSize={"xs"}
+                      fontWeight={"medium"}
+                      color={"orange.fg"}
+                    >
+                      {`Min. ${formatNumber(pricingPolicy.minBidangCount)} bidang`}
+                    </P>
+                  ) : (
+                    <P fontWeight={"semibold"} color={"fg.default"}>
+                      {formatNumber(estimatedBidangPrice, {
+                        style: "currency",
+                      })}
+                    </P>
+                  )}
                 </HStack>
               )}
 
@@ -690,7 +700,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 <HStack justify={"space-between"} align={"center"} w={"full"}>
                   <HStack gap={"xs"} align={"center"}>
                     <P fontSize={"sm"} color={"fg.muted"}>
-                      {"Luas Kawasan:"}
+                      {"IGT Berbasis Kawasan:"}
                     </P>
 
                     {selectionType === "catalog" && !effectiveAoiPolygon ? (
@@ -703,13 +713,25 @@ export const MitraDataRequestIgtLayerDataView = memo(
                       </P>
                     )}
                   </HStack>
-                  <P fontWeight={"semibold"} color={"fg.default"}>
-                    {selectionType === "catalog" && !effectiveAoiPolygon
-                      ? "-"
-                      : formatNumber(estimatedKawasanPrice, {
-                          style: "currency",
-                        })}
-                  </P>
+                  {selectionType === "catalog" && !effectiveAoiPolygon ? (
+                    <P fontWeight={"semibold"} color={"fg.default"}>
+                      {"-"}
+                    </P>
+                  ) : isKawasanBelowMin ? (
+                    <P
+                      fontSize={"xs"}
+                      fontWeight={"medium"}
+                      color={"orange.fg"}
+                    >
+                      {`Cakupan min. ${formatNumber(pricingPolicy.minKawasanHa)} ha`}
+                    </P>
+                  ) : (
+                    <P fontWeight={"semibold"} color={"fg.default"}>
+                      {formatNumber(estimatedKawasanPrice, {
+                        style: "currency",
+                      })}
+                    </P>
+                  )}
                 </HStack>
               )}
 
