@@ -38,6 +38,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       withPasswordStrength = false,
       strengthOptions = DEFAULT_STRENGTH_OPTIONS,
       onChange,
+      startElement,
       ...restProps
     } = props;
 
@@ -71,6 +72,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     return (
       <VStack gap={2} w={restProps?.w || "full"}>
         <InputGroup
+          startElement={startElement}
           endElement={
             <VisibilityTrigger
               disabled={restProps.disabled}

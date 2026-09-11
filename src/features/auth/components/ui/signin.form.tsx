@@ -20,7 +20,7 @@ import {
 } from "@/features/auth/schemas/signin.schema";
 import type { SigninFormValues } from "@/features/auth/types/signin.type";
 import { Link } from "@tanstack/react-router";
-import { HandshakeIcon, ShieldCheckIcon } from "lucide-react";
+import { HandshakeIcon, LockIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 export const MitraSignin = (props: StackProps) => {
@@ -101,7 +101,11 @@ export const MitraSignin = (props: StackProps) => {
           invalid={Boolean(errors.email)}
           errorText={errors.email?.message}
         >
-          <Input placeholder={"jolitos@email.com"} {...register("email")} />
+          <Input
+            startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
+            placeholder={"jolitos@email.com"}
+            {...register("email")}
+          />
         </Field>
 
         <Field
@@ -109,7 +113,10 @@ export const MitraSignin = (props: StackProps) => {
           invalid={Boolean(errors.password)}
           errorText={errors.password?.message}
         >
-          <PasswordInput {...register("password")} />
+          <PasswordInput
+            startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+            {...register("password")}
+          />
         </Field>
 
         {/* <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink> */}
@@ -250,7 +257,11 @@ export const InternalSignin = (props: StackProps) => {
           invalid={Boolean(errors.email)}
           errorText={errors.email?.message}
         >
-          <Input placeholder={"jolitos@email.com"} {...register("email")} />
+          <Input
+            startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
+            placeholder={"jolitos@email.com"}
+            {...register("email")}
+          />
         </Field>
 
         <Field
@@ -258,7 +269,10 @@ export const InternalSignin = (props: StackProps) => {
           invalid={Boolean(errors.password)}
           errorText={errors.password?.message}
         >
-          <PasswordInput {...register("password")} />
+          <PasswordInput
+            startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+            {...register("password")}
+          />
         </Field>
 
         {/* <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink> */}

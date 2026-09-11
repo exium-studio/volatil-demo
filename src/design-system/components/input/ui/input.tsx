@@ -5,10 +5,13 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { Input as ChakraInput } from "@chakra-ui/react";
+import { Input as ChakraInput, InputGroup as ChakraInputGroup } from "@chakra-ui/react";
 import { forwardRef, useState } from "react";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+  // Props
+  const { startElement, endElement, ...restProps } = props;
+
   // Contexts
   const fieldContext = useFieldContextValue();
   const isFloatingVariant = fieldContext?.variant === "floating";
@@ -20,15 +23,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   // Derived Values
   const hasValue =
-    Boolean(props.value) ||
-    Boolean(props.defaultValue) ||
+    Boolean(restProps.value) ||
+    Boolean(restProps.defaultValue) ||
     Boolean(fieldContext?.hasValue);
   const isLabelFloating = isFocused || hasValue;
 
   // Stores
   const { theme } = useThemeStore();
 
-  const inputElement = (
+  const inputCore = (
     <ChakraInput
       ref={ref}
       colorPalette={"neutral"}
@@ -36,11 +39,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       rounded={theme.radii.component}
       onFocusCapture={(e) => {
         setIsFocused(true);
-        props.onFocusCapture?.(e);
+        restProps.onFocusCapture?.(e);
       }}
       onBlurCapture={(e) => {
         setIsFocused(false);
-        props.onBlurCapture?.(e);
+        restProps.onBlurCapture?.(e);
       }}
       {...(isFloatingVariant && {
         h: "60px",
@@ -50,16 +53,31 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           color: "transparent",
         },
       })}
-      {...props}
+      {...restProps}
     />
   );
 
+  const inputElement =
+    startElement || endElement ? (
+      <ChakraInputGroup
+        startElement={startElement}
+        endElement={endElement}
+        w={"full"}
+      >
+        {inputCore}
+      </ChakraInputGroup>
+    ) : (
+      inputCore
+    );
+
   if (isFloatingVariant && floatingLabel) {
+    const labelLeft = startElement ? "40px" : "12px";
+
     return (
       <Box position={"relative"} w={"full"}>
         <Box
           position={"absolute"}
-          left={"12px"}
+          left={labelLeft}
           top={"7px"}
           zIndex={1}
           pointerEvents={"none"}
