@@ -28,6 +28,7 @@ export type FocusSelectInputProps = Omit<
 > & {
   modalKey?: string;
   label?: string;
+  title?: string;
   placeholder?: string;
   options: FocusSelectOption[];
   value?: string;

@@ -2,6 +2,7 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { Field } from "@/design-system/components/input/ui/field";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -162,10 +163,6 @@ export const FilterAdministrativeAreaTrigger = (
           <Alert.Root status={"info"} colorPalette={"blue"} w={"full"}>
             <Alert.Indicator />
             <Alert.Content>
-              <Alert.Title fontWeight={"semibold"}>
-                {"Informasi Filter Wilayah Administratif"}
-              </Alert.Title>
-
               <Alert.Description>
                 {
                   "Filter wilayah administratif yang diterapkan akan berlaku secara menyeluruh pada katalog layer IGT dan tabel atribut."
@@ -175,59 +172,69 @@ export const FilterAdministrativeAreaTrigger = (
           </Alert.Root>
 
           <VStack gap={"md"} w={"full"}>
-            <FilterAdministrativeAreaProvinceSelect
-              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.PROVINSI}`}
-              value={localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
-              onValueChange={(details) =>
-                handleFieldChange(IGT_FILTER_KEYS_MAP.PROVINSI, details)
-              }
-            />
+            <Field label={"Provinsi"}>
+              <FilterAdministrativeAreaProvinceSelect
+                modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.PROVINSI}`}
+                value={localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
+                onValueChange={(details) =>
+                  handleFieldChange(IGT_FILTER_KEYS_MAP.PROVINSI, details)
+                }
+              />
+            </Field>
 
-            <FilterAdministrativeAreaRegencySelect
-              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KABUPATEN}`}
-              provinceId={
-                localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value
-              }
-              value={
-                localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value ?? ""
-              }
-              disabled={!localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
-              onValueChange={(details) =>
-                handleFieldChange(IGT_FILTER_KEYS_MAP.KABUPATEN, details)
-              }
-            />
+            <Field label={"Kabupaten / Kota"}>
+              <FilterAdministrativeAreaRegencySelect
+                modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KABUPATEN}`}
+                provinceId={
+                  localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value
+                }
+                value={
+                  localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value ?? ""
+                }
+                disabled={
+                  !localDraftFilters[IGT_FILTER_KEYS_MAP.PROVINSI]?.value
+                }
+                onValueChange={(details) =>
+                  handleFieldChange(IGT_FILTER_KEYS_MAP.KABUPATEN, details)
+                }
+              />
+            </Field>
 
-            <FilterAdministrativeAreaDistrictSelect
-              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KECAMATAN}`}
-              regencyId={
-                localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
-              }
-              value={
-                localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ?? ""
-              }
-              disabled={
-                !localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
-              }
-              onValueChange={(details) =>
-                handleFieldChange(IGT_FILTER_KEYS_MAP.KECAMATAN, details)
-              }
-            />
+            <Field label={"Kecamatan"}>
+              <FilterAdministrativeAreaDistrictSelect
+                modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KECAMATAN}`}
+                regencyId={
+                  localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
+                }
+                value={
+                  localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ?? ""
+                }
+                disabled={
+                  !localDraftFilters[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
+                }
+                onValueChange={(details) =>
+                  handleFieldChange(IGT_FILTER_KEYS_MAP.KECAMATAN, details)
+                }
+              />
+            </Field>
 
-            <FilterAdministrativeAreaSubdistrictSelect
-              modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KELURAHAN}`}
-              districtId={
-                localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
-              }
-              value={
-                localDraftFilters[IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ?? ""
-              }
-              disabled={
-                !localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
-              }
-              onValueChange={(details) =>
-                handleFieldChange(IGT_FILTER_KEYS_MAP.KELURAHAN, details)
-              }
-            />
+            <Field label={"Kelurahan / Desa"}>
+              <FilterAdministrativeAreaSubdistrictSelect
+                modalKey={`${modalKey}.${IGT_FILTER_KEYS_MAP.KELURAHAN}`}
+                districtId={
+                  localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
+                }
+                value={
+                  localDraftFilters[IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ?? ""
+                }
+                disabled={
+                  !localDraftFilters[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
+                }
+                onValueChange={(details) =>
+                  handleFieldChange(IGT_FILTER_KEYS_MAP.KELURAHAN, details)
+                }
+              />
+            </Field>
           </VStack>
         </Modal.Body>
 

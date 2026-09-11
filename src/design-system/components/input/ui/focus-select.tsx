@@ -8,7 +8,6 @@ import type {
   FocusSelectInputProps,
   FocusSelectOption,
 } from "@/design-system/components/input/types/focus-select.type";
-import { Field } from "@/design-system/components/input/ui/field";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
@@ -30,6 +29,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   const {
     modalKey: modalKeyProp,
     label,
+    title,
     placeholder = t["action.select"](),
     options = [],
     value: controlledValue,
@@ -58,11 +58,13 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
 
+  const resolvedTitle = title ?? label;
+
   const resolvedModalKey = useMemo(
     () =>
       modalKeyProp ??
-      `focus-select-${label ? label.toLowerCase().replace(/\s+/g, "-") : "option"}`,
-    [modalKeyProp, label],
+      `focus-select-${resolvedTitle ? resolvedTitle.toLowerCase().replace(/\s+/g, "-") : "option"}`,
+    [modalKeyProp, resolvedTitle],
   );
 
   // Hooks
@@ -156,13 +158,20 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         px={3}
         disabled={disabled}
         fontWeight={"normal"}
+        data-has-value={currentValue ? "true" : "false"}
+        data-floating={currentValue ? "true" : "false"}
         {...restProps}
       >
         <HStack gap={"sm"} flex={1} minW={0} justify={"start"}>
           {selectedOption?.icon && (
             <AppIcon icon={selectedOption.icon} size={"sm"} />
           )}
-          <P color={selectedOption ? "fg.default" : "fg.subtle"} truncate>
+
+          <P
+            color={selectedOption ? "fg.default" : "fg.subtle"}
+            truncate
+            data-placeholder={!selectedOption ? "true" : undefined}
+          >
             {selectedOption?.label ?? placeholder}
           </P>
         </HStack>
@@ -201,23 +210,17 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
       open={open}
       close={close}
     >
-      {label ? (
-        <Field label={label} w={w}>
-          {triggerContent}
-        </Field>
-      ) : (
-        triggerContent
-      )}
+      {triggerContent}
 
       <Modal.Content>
         <Modal.Header>
           <Modal.Title fontWeight={"semibold"}>
-            {label
-              ? label
+            {resolvedTitle
+              ? resolvedTitle
                   .toLowerCase()
                   .startsWith(t["action.select"]().toLowerCase())
-                ? label
-                : `${t["action.select"]()} ${label}`
+                ? resolvedTitle
+                : `${t["action.select"]()} ${resolvedTitle}`
               : t["common.select_option"]()}
           </Modal.Title>
 

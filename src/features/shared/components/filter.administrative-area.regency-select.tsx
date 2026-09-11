@@ -58,7 +58,7 @@ export const FilterAdministrativeAreaRegencySelect = (
   return (
     <FocusSelectInput
       modalKey={modalKey ?? "filter-administrative-area-regency-select-modal"}
-      label={"Kabupaten / Kota"}
+      title={"Kabupaten / Kota"}
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}

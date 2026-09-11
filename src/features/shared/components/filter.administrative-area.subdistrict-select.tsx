@@ -58,7 +58,7 @@ export const FilterAdministrativeAreaSubdistrictSelect = (
   return (
     <FocusSelectInput
       modalKey={modalKey ?? "filter-administrative-area-subdistrict-select-modal"}
-      label={"Kelurahan / Desa"}
+      title={"Kelurahan / Desa"}
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}

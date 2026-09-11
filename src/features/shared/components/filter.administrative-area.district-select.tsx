@@ -58,7 +58,7 @@ export const FilterAdministrativeAreaDistrictSelect = (
   return (
     <FocusSelectInput
       modalKey={modalKey ?? "filter-administrative-area-district-select-modal"}
-      label={"Kecamatan"}
+      title={"Kecamatan"}
       placeholder={t["action.select"]()}
       options={selectOptions}
       value={currentValue}

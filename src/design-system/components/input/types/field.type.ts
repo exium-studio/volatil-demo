@@ -15,4 +15,6 @@ export type FieldProps = Omit<
   errorText?: ReactNode;
   optional?: boolean;
   variant?: FieldVariant;
+  hasValue?: boolean;
+  isFloating?: boolean;
 };

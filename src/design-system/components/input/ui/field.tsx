@@ -29,6 +29,8 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
       errorText,
       optional,
       variant = "floating",
+      hasValue: hasValueProp,
+      isFloating: isFloatingProp,
       ...restProps
     } = props;
 
@@ -41,11 +43,23 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
 
     // Handlers
     const checkValueFromDom = useCallback(() => {
-      const el = containerRef.current?.querySelector<
+      const container = containerRef.current;
+      if (!container) return;
+
+      const inputEl = container.querySelector<
         HTMLInputElement | HTMLTextAreaElement
       >("input:not([type='hidden']), textarea");
-      if (el) {
-        setHasValue(Boolean(el.value));
+      if (inputEl) {
+        setHasValue(Boolean(inputEl.value));
+        return;
+      }
+
+      const buttonEl = container.querySelector<HTMLButtonElement>("button");
+      if (buttonEl) {
+        const attrVal = buttonEl.getAttribute("data-has-value");
+        if (attrVal !== null) {
+          setHasValue(attrVal === "true");
+        }
       }
     }, []);
 
@@ -53,11 +67,33 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
     useLayoutEffect(() => {
       if (variant === "floating") {
         checkValueFromDom();
+
+        const container = containerRef.current;
+        if (!container) return;
+
+        const observer = new MutationObserver(() => {
+          checkValueFromDom();
+        });
+
+        observer.observe(container, {
+          attributes: true,
+          subtree: true,
+          attributeFilter: ["data-has-value", "data-floating", "value"],
+        });
+
+        return () => {
+          observer.disconnect();
+        };
       }
-    }, [variant, checkValueFromDom]);
+    }, [variant, checkValueFromDom, children]);
 
     // Derived Values
-    const isFloating = isFocused || hasValue;
+    const resolvedHasValue =
+      hasValueProp !== undefined ? hasValueProp : hasValue;
+    const isFloating =
+      isFloatingProp !== undefined
+        ? isFloatingProp
+        : isFocused || resolvedHasValue;
 
     if (variant === "floating") {
       const stripPlaceholder = (node: ReactNode): ReactNode => {
@@ -116,6 +152,19 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
                 paddingTop: "28px",
                 paddingBottom: "4px",
               },
+              "& button": {
+                height: "60px",
+                paddingTop: "24px",
+                paddingBottom: "4px",
+              },
+              "& button[data-floating='false'] [data-placeholder='true']": {
+                opacity: 0,
+              },
+              ...(!isFloating && {
+                "& button [data-placeholder='true']": {
+                  opacity: 0,
+                },
+              }),
               "& input::placeholder, & textarea::placeholder": {
                 color: "transparent",
               },

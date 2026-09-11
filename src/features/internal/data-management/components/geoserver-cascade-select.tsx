@@ -1,6 +1,7 @@
 // src/features/internal/data-management/components/geoserver-cascade-select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
+import { Field } from "@/design-system/components/input/ui/field";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import {
@@ -68,54 +69,60 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
   return (
     <VStack align={"stretch"} gap={"md"} w={"full"}>
       {/* 1. Select Master GeoServer */}
-      <FocusSelectInput
-        modalKey={`${parentModalKey}.geoserver`}
-        label={"Master GeoServer"}
-        placeholder={"Pilih GeoServer..."}
-        options={geoserverOptions}
-        value={selectedGeoserverId}
-        onValueChange={(val) => {
-          onGeoserverChange(val);
-          onWorkspaceChange("");
-          onLayerChange("", undefined);
-        }}
-        isFetching={isLoadingGeoserver}
-      />
+      <Field label={"Master GeoServer"}>
+        <FocusSelectInput
+          modalKey={`${parentModalKey}.geoserver`}
+          title={"Master GeoServer"}
+          placeholder={"Pilih GeoServer..."}
+          options={geoserverOptions}
+          value={selectedGeoserverId}
+          onValueChange={(val) => {
+            onGeoserverChange(val);
+            onWorkspaceChange("");
+            onLayerChange("", undefined);
+          }}
+          isFetching={isLoadingGeoserver}
+        />
+      </Field>
 
       {/* 2. Select Workspace */}
-      <FocusSelectInput
-        modalKey={`${parentModalKey}.workspace`}
-        label={"Workspace GeoServer"}
-        placeholder={
-          selectedGeoserverId
-            ? "Pilih workspace..."
-            : "Pilih GeoServer terlebih dahulu"
-        }
-        options={workspaceOptions}
-        value={selectedWorkspace}
-        onValueChange={(val) => {
-          onWorkspaceChange(val);
-          onLayerChange("", undefined);
-        }}
-        disabled={!selectedGeoserverId}
-        isFetching={isLoadingWorkspaces}
-      />
+      <Field label={"Workspace GeoServer"}>
+        <FocusSelectInput
+          modalKey={`${parentModalKey}.workspace`}
+          title={"Workspace GeoServer"}
+          placeholder={
+            selectedGeoserverId
+              ? "Pilih workspace..."
+              : "Pilih GeoServer terlebih dahulu"
+          }
+          options={workspaceOptions}
+          value={selectedWorkspace}
+          onValueChange={(val) => {
+            onWorkspaceChange(val);
+            onLayerChange("", undefined);
+          }}
+          disabled={!selectedGeoserverId}
+          isFetching={isLoadingWorkspaces}
+        />
+      </Field>
 
       {/* 3. Select Layer */}
-      <FocusSelectInput
-        modalKey={`${parentModalKey}.layer`}
-        label={"Layer"}
-        placeholder={
-          selectedWorkspace
-            ? "Pilih layer..."
-            : "Pilih workspace terlebih dahulu"
-        }
-        options={layerOptions}
-        value={selectedTypeName}
-        onValueChange={handleLayerSelect}
-        disabled={!selectedWorkspace}
-        isFetching={isLoadingLayers}
-      />
+      <Field label={"Layer"}>
+        <FocusSelectInput
+          modalKey={`${parentModalKey}.layer`}
+          title={"Layer"}
+          placeholder={
+            selectedWorkspace
+              ? "Pilih layer..."
+              : "Pilih workspace terlebih dahulu"
+          }
+          options={layerOptions}
+          value={selectedTypeName}
+          onValueChange={handleLayerSelect}
+          disabled={!selectedWorkspace}
+          isFetching={isLoadingLayers}
+        />
+      </Field>
     </VStack>
   );
 };
