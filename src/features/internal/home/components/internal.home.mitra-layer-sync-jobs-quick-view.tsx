@@ -15,7 +15,7 @@ import { ArrowRightIcon } from "lucide-react";
 export const InternalHomeMitraLayerSyncJobsQuickView = () => {
   return (
     <Container.Root withContext={true} w={"full"} position={"relative"}>
-      <Container.Body>
+      <Container.Body overflowY={"auto"}>
         {/* Header */}
         <HeaderContainer justify={"space-between"} gap={"sm"} pr={"xs"}>
           <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>

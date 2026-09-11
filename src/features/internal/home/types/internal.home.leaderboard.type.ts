@@ -39,3 +39,8 @@ export type InternalLeaderboardResponse = {
   topMitraList: TopMitraAcquisitionItem[];
   topIgtLayers: TopIgtLayerItem[];
 };
+
+export type LeaderboardCardProps = {
+  flex?: string | number;
+};
+
