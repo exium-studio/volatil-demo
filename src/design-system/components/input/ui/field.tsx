@@ -3,14 +3,19 @@
 import type { FieldProps } from "@/design-system/components/input/types/field.type";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { Badge, Field as ChakraField } from "@chakra-ui/react";
+import { Field as ChakraField } from "@chakra-ui/react";
 import {
+  Children,
+  cloneElement,
   forwardRef,
+  isValidElement,
   useCallback,
   useLayoutEffect,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 
 export const Field = forwardRef<HTMLDivElement, FieldProps>(
@@ -23,7 +28,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
       helperText,
       errorText,
       optional,
-      variant = "default",
+      variant = "floating",
       ...restProps
     } = props;
 
@@ -55,6 +60,29 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
     const isFloating = isFocused || hasValue;
 
     if (variant === "floating") {
+      const stripPlaceholder = (node: ReactNode): ReactNode => {
+        return Children.map(node, (child) => {
+          if (!isValidElement(child)) {
+            return child;
+          }
+
+          const childProps = child.props as Record<string, unknown>;
+          const modifiedProps: Record<string, unknown> = {};
+
+          if ("placeholder" in childProps) {
+            modifiedProps.placeholder = "";
+          }
+
+          if (childProps.children) {
+            modifiedProps.children = stripPlaceholder(
+              childProps.children as ReactNode,
+            );
+          }
+
+          return cloneElement(child, modifiedProps);
+        });
+      };
+
       return (
         <ChakraField.Root ref={ref} gap={1} {...restProps}>
           <Box
@@ -78,10 +106,18 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
               }
             }}
             css={{
-              "& input, & textarea": {
+              "& input": {
                 height: "60px",
                 paddingTop: "24px",
                 paddingBottom: "4px",
+              },
+              "& textarea": {
+                height: "60px",
+                paddingTop: "28px",
+                paddingBottom: "4px",
+              },
+              "& input::placeholder, & textarea::placeholder": {
+                color: "transparent",
               },
             }}
           >
@@ -111,6 +147,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
 
                   {optional && isFloating && (
                     <Badge
+                      size={"xs"}
                       fontSize={"2xs"}
                       colorPalette={"gray"}
                       color={"fg.subtle"}
@@ -122,7 +159,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
               </ChakraField.Label>
             )}
 
-            {children}
+            {stripPlaceholder(children)}
           </Box>
 
           {helperText && (
