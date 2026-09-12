@@ -394,7 +394,9 @@ const Content = () => {
     const rawList = fetchedLayers?.items;
     if (rawList && rawList.length > 0 && !hasInitializedDefaultsRef.current) {
       hasInitializedDefaultsRef.current = true;
-      const defaultActiveLayers = rawList.filter((l) => Boolean(l.defaultVisible));
+      const defaultActiveLayers = rawList.filter((l) =>
+        Boolean(l.defaultVisible),
+      );
       defaultActiveLayers.forEach((l) => {
         useMapLayerStore.getState().setLayerEnabled(l.id, true);
       });

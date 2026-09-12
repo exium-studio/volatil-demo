@@ -13,6 +13,7 @@ import {
   Maximize2,
   MousePointerClick,
   Sliders,
+  ToggleRightIcon,
   Type,
 } from "lucide-react";
 
@@ -81,7 +82,7 @@ export const DS_NAVS_MAP = {
     title: "Checkbox",
   },
   switch: {
-    icon: Sliders,
+    icon: ToggleRightIcon,
     title: "Switch",
   },
   textarea: {

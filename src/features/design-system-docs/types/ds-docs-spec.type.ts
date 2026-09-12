@@ -27,3 +27,8 @@ export type ComponentDocSpec = {
   defaultProps: Record<string, unknown>;
   renderPlayground?: (props: Record<string, unknown>) => ReactNode;
 };
+
+export type ComponentPlaygroundContainerProps = {
+  children: ReactNode;
+  minH?: string | number;
+};

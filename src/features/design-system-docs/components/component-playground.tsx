@@ -1,24 +1,29 @@
 // src/features/design-system-docs/components/component-playground.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { Input } from "@/design-system/components/input/ui/input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
-import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
+import { ComponentPlaygroundContainer } from "@/features/design-system-docs/components/component-playground-container";
 import type { ComponentDocSpec } from "@/features/design-system-docs/types/ds-docs-spec.type";
-import { CopyIcon, CheckIcon } from "lucide-react";
+import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 
 export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
+  // States
   const [propsState, setPropsState] = useState<Record<string, unknown>>(
     spec.defaultProps,
   );
   const [copied, setCopied] = useState(false);
 
+  // Handlers
   const handlePropChange = (name: string, value: unknown) => {
     setPropsState((prev) => ({ ...prev, [name]: value }));
   };
@@ -27,22 +32,27 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
 
   const generateCodeSnippet = () => {
     const propStrings = Object.entries(propsState)
-      .filter(([_, val]) => val !== undefined && val !== false)
+      .filter(([key, val]) => {
+        if (key === "children") return false;
+        if (val === undefined || val === null || val === false) return false;
+        return true;
+      })
       .map(([key, val]) => {
-        if (key === "children") return null;
         if (typeof val === "boolean" && val === true) return key;
         if (typeof val === "string") return `${key}="${val}"`;
         return `${key}={${JSON.stringify(val)}}`;
       })
-      .filter(Boolean)
       .join(" ");
 
+    const componentName = spec.title.split(" ")[0];
+    const propsPrefix = propStrings ? ` ${propStrings}` : "";
     const childrenVal = propsState.children;
-    if (childrenVal && typeof childrenVal === "string") {
-      return `<${spec.title.split(" ")[0]} ${propStrings}>\n  ${childrenVal}\n</${spec.title.split(" ")[0]}>`;
+
+    if (childrenVal !== undefined && childrenVal !== null && childrenVal !== "") {
+      return `<${componentName}${propsPrefix}>\n  ${String(childrenVal)}\n</${componentName}>`;
     }
 
-    return `<${spec.title.split(" ")[0]} ${propStrings} />`;
+    return `<${componentName}${propsPrefix} />`;
   };
 
   const handleCopyCode = () => {
@@ -59,7 +69,7 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
           <P fontSize={"2xl"} fontWeight={"bold"}>
             {spec.title}
           </P>
-          <Badge variant={"subtle"} colorPalette={"blue"}>
+          <Badge variant={"subtle"}>
             {spec.category}
           </Badge>
         </HStack>
@@ -77,21 +87,11 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
       </Box>
 
       {/* Interactive Playground Sandbox */}
-      <Box
-        p={6}
-        rounded={"lg"}
-        border={"1px solid"}
-        borderColor={"border.subtle"}
-        bg={"bg.canvas"}
-        minH={"220px"}
-        display={"flex"}
-        alignItems={"center"}
-        justifyContent={"center"}
-      >
+      <ComponentPlaygroundContainer>
         {spec.renderPlayground
           ? spec.renderPlayground(propsState)
           : <ComponentToRender {...propsState} />}
-      </Box>
+      </ComponentPlaygroundContainer>
 
       {/* Controls & Props Spec Tabs */}
       <Tabs.Root defaultValue={"controls"} variant={"outline"}>
@@ -136,25 +136,19 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                 )}
 
                 {prop.controlKind === "select" && prop.options && (
-                  <select
-                    style={{
-                      width: "100%",
-                      padding: "4px 8px",
-                      borderRadius: "6px",
-                      fontSize: "12px",
-                      border: "1px solid var(--chakra-colors-border-subtle)",
-                      background: "var(--chakra-colors-bg-panel)",
-                      color: "var(--chakra-colors-fg-default)",
-                    }}
-                    value={(propsState[prop.name] as string) ?? ""}
-                    onChange={(e) => handlePropChange(prop.name, e.target.value)}
-                  >
-                    {prop.options.map((opt) => (
-                      <option key={String(opt)} value={String(opt)}>
-                        {String(opt)}
-                      </option>
-                    ))}
-                  </select>
+                  <FocusSelectInput
+                    modalKey={`playground-knob-${spec.key}-${prop.name}`}
+                    title={`Select ${prop.name}`}
+                    placeholder={`Pilih ${prop.name}`}
+                    size={"sm"}
+                    clearable={false}
+                    value={String(propsState[prop.name] ?? "")}
+                    options={prop.options.map((opt) => ({
+                      label: String(opt),
+                      value: String(opt),
+                    }))}
+                    onValueChange={(val) => handlePropChange(prop.name, val)}
+                  />
                 )}
               </Box>
             ))}
@@ -171,7 +165,11 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
               right={2}
               onClick={handleCopyCode}
             >
-              {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
+              {copied ? (
+                <AppIcon icon={CheckIcon} size={"sm"} />
+              ) : (
+                <AppIcon icon={CopyIcon} size={"sm"} />
+              )}
               {copied ? "Copied!" : "Copy Code"}
             </Button>
             <pre style={{ margin: 0, fontFamily: "monospace", fontSize: "13px" }}>
@@ -198,7 +196,7 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                   <tr key={p.name} style={{ borderBottom: "1px solid var(--chakra-colors-border-subtle)" }}>
                     <td style={{ padding: "8px", fontWeight: "bold" }}>{p.name}</td>
                     <td style={{ padding: "8px", fontFamily: "monospace", color: "#3182ce" }}>{p.type}</td>
-                    <td style={{ padding: "8px" }}>{String(p.defaultValue ?? "-")}</td>
+                    <td style={{ padding: "8px" }}>{p.defaultValue !== undefined ? String(p.defaultValue) : "undefined"}</td>
                     <td style={{ padding: "8px" }}>{p.description}</td>
                   </tr>
                 ))}

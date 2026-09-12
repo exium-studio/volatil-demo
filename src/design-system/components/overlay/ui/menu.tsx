@@ -33,14 +33,14 @@ const MenuContextTrigger = (props: MenuContextTriggerProps) => {
 
 const MenuContent = (props: MenuContentProps) => {
   // Props
-  const { portalled = true, ...restProps } = props;
+  const { portalled = true, portalRef, positionerProps, ...restProps } = props;
 
   // Stores
   const { theme } = useThemeStore();
 
   return (
-    <Portal disabled={!portalled}>
-      <ChakraMenu.Positioner>
+    <Portal disabled={!portalled} container={portalRef}>
+      <ChakraMenu.Positioner zIndex={"popover"} {...positionerProps}>
         <ChakraMenu.Content
           display={"flex"}
           flexDir={"column"}
@@ -93,10 +93,20 @@ const MenuItem = (props: MenuItemProps) => {
   );
 };
 
+const MenuItemGroup = (props: ChakraMenu.ItemGroupProps) => {
+  return <ChakraMenu.ItemGroup {...props} />;
+};
+
+const MenuItemGroupLabel = (props: ChakraMenu.ItemGroupLabelProps) => {
+  return <ChakraMenu.ItemGroupLabel {...props} />;
+};
+
 export const Menu = {
   Root: MenuRoot,
   Trigger: MenuTrigger,
   ContextTrigger: MenuContextTrigger,
   Content: MenuContent,
   Item: MenuItem,
+  ItemGroup: MenuItemGroup,
+  ItemGroupLabel: MenuItemGroupLabel,
 };

@@ -66,10 +66,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           const selectionLen =
             (e.currentTarget.selectionEnd ?? 0) -
             (e.currentTarget.selectionStart ?? 0);
-          if (
-            selectionLen === 0 &&
-            currentVal.length >= restProps.maxLength
-          ) {
+          if (selectionLen === 0 && currentVal.length >= restProps.maxLength) {
             toast.warning(
               `Karakter telah mencapai batas maksimal (${restProps.maxLength} karakter).`,
               { id: "input-max-length-warning" },

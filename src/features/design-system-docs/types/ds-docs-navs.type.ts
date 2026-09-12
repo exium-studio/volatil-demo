@@ -3,3 +3,13 @@
 import type { DS_NAVS_MAP } from "@/features/design-system-docs/constants/ds.navs";
 
 export type DsNavKey = keyof typeof DS_NAVS_MAP;
+
+export type DsDocsSearchParams = {
+  component?: string;
+};
+
+export type DsDocsSidebarProps = {
+  activeNavKey: DsNavKey;
+  onSelectNav: (key: DsNavKey) => void;
+  isMobileDrawer?: boolean;
+};

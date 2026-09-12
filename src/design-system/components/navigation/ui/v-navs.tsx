@@ -152,61 +152,73 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   // Rail mode + has children → icon-only trigger + Chakra Menu popup
   if (!expanded && hasChildren) {
     return (
-      <Menu.Root>
+      <Menu.Root
+        positioning={{
+          placement: "right-start",
+          gutter: 8,
+        }}
+      >
         <Menu.Trigger asChild>
-          <Tooltip
-            content={navTitle}
-            positioning={{
-              placement: "right",
-            }}
+          <NavButton
+            aria-label={navTitle}
+            variant={"ghost"}
+            color={
+              isActive || isAncestorActive
+                ? `${theme.colorPalette}.fg`
+                : undefined
+            }
           >
-            <NavButton
-              aria-label={navTitle}
-              variant={"ghost"}
+            <NavIcon
+              nav={nav}
               color={
                 isActive || isAncestorActive
                   ? `${theme.colorPalette}.fg`
-                  : undefined
+                  : "fg.muted"
               }
-            >
-              <NavIcon
-                nav={nav}
-                color={
-                  isActive || isAncestorActive
-                    ? `${theme.colorPalette}.fg`
-                    : "fg.muted"
-                }
-              />
-            </NavButton>
-          </Tooltip>
+            />
+          </NavButton>
         </Menu.Trigger>
 
-        <Menu.Content>
-          {node.children!.map((child) => {
-            const childNav = navs[child.key];
-            const isChildActive = activeKey === child.key;
+        <Menu.Content minW={"180px"}>
+          <Menu.ItemGroup>
+            <Menu.ItemGroupLabel
+              px={3}
+              py={1.5}
+              fontSize={"xs"}
+              fontWeight={"semibold"}
+              color={"fg.muted"}
+              textTransform={"uppercase"}
+              letterSpacing={"wider"}
+            >
+              {navTitle}
+            </Menu.ItemGroupLabel>
 
-            return (
-              <Menu.Item
-                key={child.key}
-                value={child.key}
-                onClick={() => onNavClick?.(child.key)}
-                color={isChildActive ? `${theme.colorPalette}.fg` : undefined}
-              >
-                {childNav.icon && (
-                  <AppIcon
-                    icon={childNav.icon}
-                    color={
-                      isChildActive ? `${theme.colorPalette}.fg` : "fg.muted"
-                    }
-                  />
-                )}
+            {node.children!.map((child) => {
+              const childNav = navs[child.key];
+              const isChildActive = activeKey === child.key;
 
-                {childNav.title ||
-                  (childNav.titleKey ? t[childNav.titleKey]() : "")}
-              </Menu.Item>
-            );
-          })}
+              return (
+                <Menu.Item
+                  key={child.key}
+                  value={child.key}
+                  onClick={() => onNavClick?.(child.key)}
+                  color={isChildActive ? `${theme.colorPalette}.fg` : undefined}
+                >
+                  {childNav.icon && (
+                    <AppIcon
+                      icon={childNav.icon}
+                      color={
+                        isChildActive ? `${theme.colorPalette}.fg` : "fg.muted"
+                      }
+                    />
+                  )}
+
+                  {childNav.title ||
+                    (childNav.titleKey ? t[childNav.titleKey]() : "")}
+                </Menu.Item>
+              );
+            })}
+          </Menu.ItemGroup>
         </Menu.Content>
       </Menu.Root>
     );

@@ -34,7 +34,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   // Props
   const {
     modalKey: modalKeyProp,
-    label,
     title,
     placeholder = t["action.select"](),
     options = [],
@@ -64,13 +63,13 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
 
-  const resolvedTitle = title ?? label;
+  const resolvedTitle = title ?? t["action.select"]();
 
   const resolvedModalKey = useMemo(
     () =>
       modalKeyProp ??
-      `focus-select-${resolvedTitle ? resolvedTitle.toLowerCase().replace(/\s+/g, "-") : "option"}`,
-    [modalKeyProp, resolvedTitle],
+      `focus-select-${title ? title.toLowerCase().replace(/\s+/g, "-") : "option"}`,
+    [modalKeyProp, title],
   );
 
   // Hooks
@@ -307,13 +306,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         <Modal.Content>
           <Modal.Header>
             <Modal.Title fontWeight={"semibold"}>
-              {resolvedTitle
-                ? resolvedTitle
-                    .toLowerCase()
-                    .startsWith(t["action.select"]().toLowerCase())
-                  ? resolvedTitle
-                  : `${t["action.select"]()} ${resolvedTitle}`
-                : t["common.select_option"]()}
+              {resolvedTitle}
             </Modal.Title>
 
             <Modal.CloseButton />
