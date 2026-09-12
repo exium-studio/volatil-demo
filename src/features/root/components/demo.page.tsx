@@ -187,7 +187,9 @@ const IntegratedFeatures = () => {
         <DemoSectionHeader
           title={"Integrated Features"}
           icon={CogIcon}
-          description={"Pengaturan tema, toggle mode gelap/terang, dan pergantian bahasa"}
+          description={
+            "Pengaturan tema, toggle mode gelap/terang, dan pergantian bahasa"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={2}>
@@ -220,7 +222,9 @@ const Branding = () => {
         <DemoSectionHeader
           title={"Branding"}
           icon={SparklesIcon}
-          description={"Identitas visual aplikasi, logo resmi, dan watermark ATR/BPN"}
+          description={
+            "Identitas visual aplikasi, logo resmi, dan watermark ATR/BPN"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
@@ -242,7 +246,9 @@ const Typography = () => {
         <DemoSectionHeader
           title={"Typography"}
           icon={TypeIcon}
-          description={"Hierarki tipografi, color weights, dan angka tabular konsisten"}
+          description={
+            "Hierarki tipografi, color weights, dan angka tabular konsisten"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={8}>
@@ -372,7 +378,9 @@ const ColorPalettes = () => {
         <DemoSectionHeader
           title={"Color Palettes"}
           icon={PaletteIcon}
-          description={"Koleksi token warna gradasi 50 hingga 950 di chakra-system. Klik swatch untuk menyalin token path."}
+          description={
+            "Koleksi token warna gradasi 50 hingga 950 di chakra-system. Klik swatch untuk menyalin token path."
+          }
         />
 
         <VStack align={"stretch"} gap={4} w={"full"}>
@@ -517,7 +525,9 @@ const Buttons = () => {
         <DemoSectionHeader
           title={"Buttons"}
           icon={MousePointerClickIcon}
-          description={"Varian tombol interaktif primary, surface, subtle, outline, dan ghost"}
+          description={
+            "Varian tombol interaktif primary, surface, subtle, outline, dan ghost"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
@@ -543,7 +553,9 @@ const Toast = () => {
         <DemoSectionHeader
           title={"Toast"}
           icon={BellIcon}
-          description={"Sistem pemberitahuan instan dengan berbagai varian dan aksi responsif"}
+          description={
+            "Sistem pemberitahuan instan dengan berbagai varian dan aksi responsif"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
@@ -701,7 +713,9 @@ const Layout = () => {
         <DemoSectionHeader
           title={"Layout"}
           icon={LayoutGridIcon}
-          description={"Komponen pembagi kontainer fleksibel, splitter, dan grid adaptif"}
+          description={
+            "Komponen pembagi kontainer fleksibel, splitter, dan grid adaptif"
+          }
         />
 
         <HStack
@@ -856,7 +870,9 @@ export const Inputs = () => {
         <DemoSectionHeader
           title={"Inputs"}
           icon={TextCursorInputIcon}
-          description={"Elemen formulir, text input, password, search, slider, switch, dan date picker"}
+          description={
+            "Elemen formulir, text input, password, search, slider, switch, dan date picker"
+          }
         />
 
         <Fieldset>
@@ -865,15 +881,15 @@ export const Inputs = () => {
               <Checkbox>Checkbox</Checkbox>
             </FieldTemplate>
 
-            <FieldTemplate invalid={invalid}>
+            <FieldTemplate label={"Text Input"} invalid={invalid}>
               <Input placeholder={"Text input..."} w={"200px"} />
             </FieldTemplate>
 
-            <FieldTemplate invalid={invalid}>
+            <FieldTemplate label={"Password Input"} invalid={invalid}>
               <PasswordInput w={"200px"} withPasswordStrength />
             </FieldTemplate>
 
-            <FieldTemplate invalid={invalid}>
+            <FieldTemplate variant={"default"} invalid={invalid}>
               <SearchInput placeholder={"Search..."} />
             </FieldTemplate>
 
@@ -995,7 +1011,7 @@ export const Inputs = () => {
               </RadioCardInput.Root>
             </FieldTemplate>
 
-            <FieldTemplate invalid={invalid}>
+            <FieldTemplate label={"Textarea"} invalid={invalid}>
               <Textarea placeholder="textarea" />
             </FieldTemplate>
 
@@ -1214,7 +1230,9 @@ export const Overlay = () => {
         <DemoSectionHeader
           title={"Overlay"}
           icon={EyeIcon}
-          description={"Komponen modal popover, dialog konfirmasi, dan drawer drawer samping"}
+          description={
+            "Komponen modal popover, dialog konfirmasi, dan drawer drawer samping"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>
@@ -1271,7 +1289,9 @@ export const Disclosure = () => {
         <DemoSectionHeader
           title={"Disclosure"}
           icon={LayersIcon}
-          description={"Accordion lipat, tab menu bertingkat, breadcrumbs, dan carousel"}
+          description={
+            "Accordion lipat, tab menu bertingkat, breadcrumbs, dan carousel"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={10}>
@@ -1509,7 +1529,9 @@ export const Feedback = () => {
         <DemoSectionHeader
           title={"Feedback"}
           icon={MessageSquareIcon}
-          description={"Indikator progress, skeleton loading, dan berbagai state visual"}
+          description={
+            "Indikator progress, skeleton loading, dan berbagai state visual"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={10}>
@@ -1978,7 +2000,9 @@ export const DataDisplay = () => {
         <DemoSectionHeader
           title={"Data Display"}
           icon={TableIcon}
-          description={"Tabel data interaktif dengan pagination, sorting, search, dan batch actions"}
+          description={
+            "Tabel data interaktif dengan pagination, sorting, search, dan batch actions"
+          }
         />
 
         <VStack gap={2} bg={"bg.canvas"} px={[4, null, 10]} py={4}>
@@ -2057,7 +2081,9 @@ export const Utilities = () => {
         <DemoSectionHeader
           title={"Utilities"}
           icon={WrenchIcon}
-          description={"Utilitas download berkas, formatting angka, dan helper pendukung"}
+          description={
+            "Utilitas download berkas, formatting angka, dan helper pendukung"
+          }
         />
 
         <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={4}>

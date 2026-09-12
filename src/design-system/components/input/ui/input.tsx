@@ -57,6 +57,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         setHasValueState(Boolean(e.currentTarget.value));
         restProps.onChange?.(e);
       }}
+      onInput={(e) => {
+        setHasValueState(Boolean(e.currentTarget.value));
+        restProps.onInput?.(e);
+      }}
       {...(isFloatingVariant && {
         h: "60px",
         pt: floatingLabel ? "24px" : "0px",

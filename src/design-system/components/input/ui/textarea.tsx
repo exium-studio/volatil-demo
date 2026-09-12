@@ -19,9 +19,13 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     // States
     const [isFocused, setIsFocused] = useState<boolean>(false);
+    const [hasValueState, setHasValueState] = useState<boolean>(
+      Boolean(props.value) || Boolean(props.defaultValue),
+    );
 
     // Derived Values
     const hasValue =
+      hasValueState ||
       Boolean(props.value) ||
       Boolean(props.defaultValue) ||
       Boolean(fieldContext?.hasValue);
@@ -42,7 +46,16 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         }}
         onBlurCapture={(e) => {
           setIsFocused(false);
+          setHasValueState(Boolean(e.currentTarget.value));
           props.onBlurCapture?.(e);
+        }}
+        onChange={(e) => {
+          setHasValueState(Boolean(e.currentTarget.value));
+          props.onChange?.(e);
+        }}
+        onInput={(e) => {
+          setHasValueState(Boolean(e.currentTarget.value));
+          props.onInput?.(e);
         }}
         {...(isFloatingVariant && {
           h: "60px",
