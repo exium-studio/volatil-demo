@@ -4,6 +4,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { toast } from "@/design-system/components/toast";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   Input as ChakraInput,
@@ -52,6 +53,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         setIsFocused(false);
         setHasValueState(Boolean(e.currentTarget.value));
         restProps.onBlurCapture?.(e);
+      }}
+      onPaste={(e) => {
+        if (restProps.maxLength !== undefined) {
+          const pastedText = e.clipboardData?.getData("text") ?? "";
+          const currentVal = e.currentTarget.value;
+          const selectionLen =
+            (e.currentTarget.selectionEnd ?? 0) -
+            (e.currentTarget.selectionStart ?? 0);
+          const projectedLen =
+            currentVal.length - selectionLen + pastedText.length;
+          if (projectedLen > restProps.maxLength) {
+            toast.warning("Teks yang ditempel melebihi batas maksimal dan otomatis dipotong.");
+          }
+        }
+        restProps.onPaste?.(e);
       }}
       onChange={(e) => {
         setHasValueState(Boolean(e.currentTarget.value));

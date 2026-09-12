@@ -1012,7 +1012,7 @@ export const Inputs = () => {
             </FieldTemplate>
 
             <FieldTemplate label={"Textarea"} invalid={invalid}>
-              <Textarea placeholder="textarea" />
+              <Textarea placeholder="textarea" maxLength={10} />
             </FieldTemplate>
 
             <FieldTemplate invalid={invalid}>
