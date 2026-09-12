@@ -228,7 +228,6 @@ const SidebarBody = () => {
 
   return (
     <VNavs
-      showTopBorderOnScroll={false}
       flex={1}
       groups={navGroups}
       navs={navsMap}
@@ -270,7 +269,6 @@ const SidebarFooter = () => {
   return (
     <VStack gap={1} p={3}>
       <VNavs
-        showTopBorderOnScroll={false}
         groups={otherNavGroups}
         navs={navsMap}
         activeKey={activeKey}

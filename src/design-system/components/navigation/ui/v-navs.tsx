@@ -6,7 +6,6 @@ import { Collapsible } from "@/design-system/components/disclosure/ui/collapsibl
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import type {
   VNavIconProps,
@@ -52,7 +51,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
   }, [groups, activeKey]);
 
   return (
-    <VScrollContainer {...restProps}>
+    <VStack align={"stretch"} gap={0} {...restProps}>
       {groups.map((group, groupIndex) => {
         const isFirstGroup = groupIndex === 0;
         const groupTitle =
@@ -86,7 +85,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
           </Fragment>
         );
       })}
-    </VScrollContainer>
+    </VStack>
   );
 };
 
