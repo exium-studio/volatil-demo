@@ -101,11 +101,27 @@ export const triggerMitraLayerSyncApi = async (
   payload: TriggerMitraLayerSyncPayload,
   signal?: AbortSignal,
 ): Promise<TriggerMitraLayerSyncResponse> => {
+  const resolvedLayerIds =
+    payload.layerIds && payload.layerIds.length > 0
+      ? payload.layerIds
+      : payload.layerId
+        ? [payload.layerId]
+        : [];
+
   try {
+    const isSingle = resolvedLayerIds.length === 1 && Boolean(payload.layerId);
+    const endpoint = isSingle
+      ? `/api/internal/igt-layers/${payload.layerId}/sync-mitra`
+      : `/api/internal/igt-layers/sync-mitra`;
+
+    const requestBody = isSingle
+      ? {}
+      : { layerIds: resolvedLayerIds };
+
     const response = await apiClient.post<
       | ApiResponse<TriggerMitraLayerSyncResponse>
       | TriggerMitraLayerSyncResponse
-    >(`/api/internal/igt-layers/${payload.layerId}/sync-mitra`, {}, { signal });
+    >(endpoint, requestBody, { signal });
 
     const resultData =
       response && "data" in response && response.data
@@ -118,7 +134,8 @@ export const triggerMitraLayerSyncApi = async (
 
     const fallbackJob: TriggerMitraLayerSyncResponse = {
       jobId: `sync_job_${Date.now()}`,
-      layerId: payload.layerId,
+      layerId: payload.layerId ?? resolvedLayerIds[0],
+      layerIds: resolvedLayerIds,
       status: "queued",
       message:
         "Job antrean pembaruan layer mitra telah dijadwalkan di latar belakang.",
@@ -130,7 +147,8 @@ export const triggerMitraLayerSyncApi = async (
     if (isDummyDataEnabled()) {
       return {
         jobId: `sync_job_${Date.now()}`,
-        layerId: payload.layerId,
+        layerId: payload.layerId ?? resolvedLayerIds[0],
+        layerIds: resolvedLayerIds,
         status: "queued",
         message:
           "Job antrean pembaruan layer mitra telah dijadwalkan di latar belakang.",

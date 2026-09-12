@@ -266,7 +266,7 @@ export const InternalDataManagementDataView = () => {
         selectedItemIds: string[];
         clearSelectedItems: () => void;
       }) => (
-        <HStack key={"map-visibility-batch-actions"} gap={"xs"}>
+        <HStack key={"data-management-batch-actions"} gap={"xs"}>
           <Button
             size={"sm"}
             variant={"outline"}
@@ -305,6 +305,26 @@ export const InternalDataManagementDataView = () => {
             <AppIcon icon={EyeOffIcon} />
             {"Sembunyikan dari Peta"}
           </Button>
+
+          <ConfirmationTrigger
+            modalKey={"sync-mitra-layer-batch"}
+            title={`Perbarui ${selectedItemIds.length} Layer Mitra Terpilih?`}
+            description={`Tindakan ini akan menjadwalkan tugas di latar belakang (antrean job) untuk memperbarui seluruh layer turunan milik mitra yang diperoleh dari ${selectedItemIds.length} layer IGT yang dipilih. Proses sinkronisasi geoserver berjalan secara asinkron tanpa memblokir pekerjaan Anda.`}
+            confirmLabel={"Jadwalkan Pembaruan"}
+            onConfirm={() => {
+              syncMitraMutation.mutate({ layerIds: selectedItemIds });
+              clearSelectedItems();
+            }}
+          >
+            <Button
+              size={"sm"}
+              variant={"outline"}
+              loading={syncMitraMutation.isPending}
+            >
+              <AppIcon icon={RefreshCwIcon} />
+              {"Perbarui Layer Mitra"}
+            </Button>
+          </ConfirmationTrigger>
         </HStack>
       ),
     ];

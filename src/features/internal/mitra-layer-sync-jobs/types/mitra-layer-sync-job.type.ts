@@ -46,12 +46,14 @@ export type MitraLayerSyncJobsResponse = {
 };
 
 export type TriggerMitraLayerSyncPayload = {
-  layerId: string;
+  layerId?: string;
+  layerIds?: string[];
 };
 
 export type TriggerMitraLayerSyncResponse = {
   jobId: string;
-  layerId: string;
+  layerId?: string;
+  layerIds?: string[];
   status: MitraLayerSyncJobStatus;
   message: string;
   createdAt: string;

@@ -178,7 +178,7 @@ const InternalDataManagementCreateModalContent = (
           <Fieldset legend={"Informasi Dasar"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
               {/* Input ID Layer (Opsional) */}
-              <Controller
+              {/* <Controller
                 control={control}
                 name={"id"}
                 render={({ field, fieldState }) => (
@@ -197,7 +197,7 @@ const InternalDataManagementCreateModalContent = (
                     />
                   </Field>
                 )}
-              />
+              /> */}
 
               {/* Input Judul Layer */}
               <Controller
