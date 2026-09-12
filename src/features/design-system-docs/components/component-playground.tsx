@@ -3,12 +3,13 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
+import { RadioCardInput } from "@/design-system/components/input/ui/radio-card-input";
 import { Input } from "@/design-system/components/input/ui/input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { ComponentPlaygroundContainer } from "@/features/design-system-docs/components/component-playground-container";
@@ -17,6 +18,9 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 
 export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
+  // Stores
+  const { theme } = useThemeStore();
+
   // States
   const [propsState, setPropsState] = useState<Record<string, unknown>>(
     spec.defaultProps,
@@ -105,7 +109,7 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
           <SimpleGrid columns={[1, 2, 3]} gap={4}>
             {spec.propsSpec.map((prop) => (
               <Box key={prop.name} p={3} rounded={"md"} bg={"bg.subtle"}>
-                <P fontSize={"xs"} fontWeight={"bold"} mb={1}>
+                <P fontSize={"xs"} fontWeight={"bold"} mb={2}>
                   {prop.name}
                 </P>
 
@@ -136,19 +140,44 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                 )}
 
                 {prop.controlKind === "select" && prop.options && (
-                  <FocusSelectInput
-                    modalKey={`playground-knob-${spec.key}-${prop.name}`}
-                    title={`Select ${prop.name}`}
-                    placeholder={`Pilih ${prop.name}`}
-                    size={"sm"}
-                    clearable={false}
+                  <RadioCardInput.Root
                     value={String(propsState[prop.name] ?? "")}
-                    options={prop.options.map((opt) => ({
-                      label: String(opt),
-                      value: String(opt),
-                    }))}
-                    onValueChange={(val) => handlePropChange(prop.name, val)}
-                  />
+                    onValueChange={(e) => handlePropChange(prop.name, e.value)}
+                    colorPalette={theme.colorPalette}
+                    size={"sm"}
+                  >
+                    <Box
+                      maxH={"130px"}
+                      overflowY={"auto"}
+                      pr={1}
+                      css={{
+                        "&::-webkit-scrollbar": { width: "4px" },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: "var(--chakra-colors-border-muted)",
+                          borderRadius: "4px",
+                        },
+                      }}
+                    >
+                      <SimpleGrid columns={2} gap={1.5}>
+                        {prop.options.map((opt) => (
+                          <RadioCardInput.Item
+                            key={String(opt)}
+                            value={String(opt)}
+                            px={2}
+                            py={1.5}
+                            borderWidth={"1px"}
+                          >
+                            <RadioCardInput.ItemControl>
+                              <RadioCardInput.ItemIndicator />
+                              <RadioCardInput.ItemText fontSize={"xs"} lineClamp={1}>
+                                {String(opt)}
+                              </RadioCardInput.ItemText>
+                            </RadioCardInput.ItemControl>
+                          </RadioCardInput.Item>
+                        ))}
+                      </SimpleGrid>
+                    </Box>
+                  </RadioCardInput.Root>
                 )}
               </Box>
             ))}

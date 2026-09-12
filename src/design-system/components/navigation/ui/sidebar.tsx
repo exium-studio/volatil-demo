@@ -84,7 +84,7 @@ export const SidebarRoot = (props: SidebarRootProps) => {
   return (
     <SidebarContext.Provider value={contextValue}>
       <Box
-        className={"group"}
+        className={"group debug"}
         pos={"relative"}
         zIndex={10}
         w={`${currentWidth}px`}
@@ -142,7 +142,7 @@ export const SidebarBody = (props: SidebarBodyProps) => {
   const { children, ...restProps } = props;
 
   return (
-    <VStack flex={1} minH={0} align={"stretch"} gap={0} {...restProps}>
+    <VStack flex={1} overflowY={"auto"} minH={0} {...restProps}>
       {children}
     </VStack>
   );

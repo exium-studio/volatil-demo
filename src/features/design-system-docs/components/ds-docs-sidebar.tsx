@@ -87,6 +87,7 @@ export const DsDocsSidebar = (props: DsDocsSidebarProps) => {
 
         {/* VNavs */}
         <VNavs<DsNavKey>
+          overflowY={"visible"}
           showTopBorderOnScroll={false}
           flex={1}
           groups={filteredGroups}
