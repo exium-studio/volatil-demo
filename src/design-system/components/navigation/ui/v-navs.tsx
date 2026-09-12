@@ -17,7 +17,7 @@ import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { findActivePath } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
@@ -62,11 +62,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
           <Fragment key={groupIndex}>
             {!isFirstGroup && !isSmallViewport && <Separator my={"sm"} />}
 
-            <VStack
-              // className={"debug"}
-              align={expanded ? "stretch" : "start"}
-              overflow={"clip"}
-            >
+            <VStack align={expanded ? "stretch" : "start"} overflow={"clip"}>
               {expanded && groupTitle && (
                 <P fontSize={"sm"} color={"fg.subtle"} px={2} mb={2}>
                   {groupTitle}
@@ -311,7 +307,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
               }
             />
 
-            <P
+            <ClampedP
               fontWeight={isActive || isAncestorActive ? "semibold" : "medium"}
               color={
                 isActive || isAncestorActive
@@ -320,7 +316,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
               }
             >
               {navTitle}
-            </P>
+            </ClampedP>
 
             <AppIcon
               icon={ChevronDownIcon}

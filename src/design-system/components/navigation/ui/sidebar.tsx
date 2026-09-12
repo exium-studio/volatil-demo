@@ -84,7 +84,7 @@ export const SidebarRoot = (props: SidebarRootProps) => {
   return (
     <SidebarContext.Provider value={contextValue}>
       <Box
-        className={"group debug"}
+        className={"group"}
         pos={"relative"}
         zIndex={10}
         w={`${currentWidth}px`}
