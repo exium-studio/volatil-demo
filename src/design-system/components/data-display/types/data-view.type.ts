@@ -62,31 +62,95 @@ export type DataViewItemActionsTriggerProps<T = Record<string, unknown>> =
     contextedTrigger?: boolean;
   };
 
-export type DataViewBatchActionsGenerator = (params: {
-  selectedItemIds: string[];
-  selectedItems: FormattedListItem[];
-  clearSelectedItems: () => void;
-}) => ReactNode;
-
-export type DataViewBatchActionsTriggerProps = MenuRootProps & {
-  selectedItemIds: string[];
-  selectedItems: FormattedListItem[];
-  clearSelectedItems: () => void;
-  batchActions?: DataViewBatchActionsGenerator[];
-  isAllItemsSelected: boolean;
-  selectAllItems: (isChecked: boolean) => void;
-  menuRootProps?: Omit<MenuRootProps, "children">;
-  triggerActionBarMode?: boolean;
+export type DataViewModalBatchActionConfig<T = Record<string, unknown>> = {
+  triggerComponent:
+    | ReactElement<{ children?: ReactNode }>
+    | ((params: {
+        selectedItemIds: string[];
+        selectedItems: FormattedListItem<T>[];
+        clearSelectedItems: () => void;
+      }) => ReactElement<{ children?: ReactNode }> | null | undefined);
 };
 
-export type DataViewBatchActionBarProps = Omit<
+export type DataViewDeclarativeBatchAction<T = Record<string, unknown>> = {
+  key?: string;
+  label:
+    | string
+    | ((params: {
+        selectedItemIds: string[];
+        selectedItems: FormattedListItem<T>[];
+      }) => string);
+  icon?:
+    | ActionIconType
+    | ((params: {
+        selectedItemIds: string[];
+        selectedItems: FormattedListItem<T>[];
+      }) => ActionIconType);
+  colorPalette?:
+    | string
+    | ((params: {
+        selectedItemIds: string[];
+        selectedItems: FormattedListItem<T>[];
+      }) => string | undefined);
+  variant?: "solid" | "subtle" | "outline" | "ghost";
+  onClick?: (params: {
+    selectedItemIds: string[];
+    selectedItems: FormattedListItem<T>[];
+    clearSelectedItems: () => void;
+  }) => void | Promise<void>;
+  hidden?: (params: {
+    selectedItemIds: string[];
+    selectedItems: FormattedListItem<T>[];
+  }) => boolean;
+  disabled?: (params: {
+    selectedItemIds: string[];
+    selectedItems: FormattedListItem<T>[];
+  }) => boolean;
+  loading?: (params: {
+    selectedItemIds: string[];
+    selectedItems: FormattedListItem<T>[];
+  }) => boolean;
+
+  /**
+   * Modal trigger configuration (e.g. `modal: { triggerComponent: <ConfirmationTrigger ... /> }`).
+   */
+  modal?:
+    | DataViewModalBatchActionConfig<T>
+    | ((params: {
+        selectedItemIds: string[];
+        selectedItems: FormattedListItem<T>[];
+        clearSelectedItems: () => void;
+      }) => DataViewModalBatchActionConfig<T> | null | undefined);
+};
+
+export type DataViewBatchActionsGenerator<T = Record<string, unknown>> =
+  | DataViewDeclarativeBatchAction<T>
+  | ((params: {
+      selectedItemIds: string[];
+      selectedItems: FormattedListItem<T>[];
+      clearSelectedItems: () => void;
+    }) => ReactNode);
+
+export type DataViewBatchActionsTriggerProps<T = Record<string, unknown>> =
+  MenuRootProps & {
+    selectedItemIds: string[];
+    selectedItems: FormattedListItem<T>[];
+    clearSelectedItems: () => void;
+    batchActions?: DataViewBatchActionsGenerator<T>[];
+    isAllItemsSelected: boolean;
+    selectAllItems: (isChecked: boolean) => void;
+    menuRootProps?: Omit<MenuRootProps, "children">;
+    triggerActionBarMode?: boolean;
+  };
+
+export type DataViewBatchActionBarProps<T = Record<string, unknown>> = Omit<
   ActionBarRootProps,
   "children"
 > & {
   selectedItemIds: string[];
-  selectedItems: FormattedListItem[];
+  selectedItems: FormattedListItem<T>[];
   clearSelectedItems: () => void;
-  batchActions?: DataViewBatchActionsGenerator[];
+  batchActions?: DataViewBatchActionsGenerator<T>[];
 };
 
 export type DataViewFooterProps = Omit<StackProps, "page"> & {

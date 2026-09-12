@@ -2,7 +2,10 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
-import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import type {
+  DataViewBatchActionsGenerator,
+  DataViewItemActionsGenerator,
+} from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
@@ -256,75 +259,60 @@ export const InternalDataManagementDataView = () => {
       };
     });
 
-    const batchActions = [
-      ({
-        selectedItemIds,
-        clearSelectedItems,
-      }: {
-        selectedItemIds: string[];
-        clearSelectedItems: () => void;
-      }) => (
-        <HStack key={"data-management-batch-actions"} gap={"xs"}>
-          <Button
-            size={"sm"}
-            variant={"outline"}
-            onClick={() => {
-              selectedItemIds.forEach((id) => {
-                const target = rawItems.find((it) => it.id === id);
-                if (target) {
-                  handleToggleLayer(target, true);
-                } else {
-                  setLayerEnabled(id, true);
-                }
-              });
-              clearSelectedItems();
-            }}
-          >
-            <AppIcon icon={EyeIcon} />
-            {"Tampilkan di Peta"}
-          </Button>
-
-          <Button
-            size={"sm"}
-            variant={"outline"}
-            onClick={() => {
-              selectedItemIds.forEach((id) => {
-                const target = rawItems.find((it) => it.id === id);
-                if (target) {
-                  handleToggleLayer(target, false);
-                } else {
-                  setLayerEnabled(id, false);
-                  setCustomLayerConfig(id, null);
-                }
-              });
-              clearSelectedItems();
-            }}
-          >
-            <AppIcon icon={EyeOffIcon} />
-            {"Sembunyikan dari Peta"}
-          </Button>
-
-          <ConfirmationTrigger
-            modalKey={"sync-mitra-layer-batch"}
-            title={`Perbarui ${selectedItemIds.length} Layer Mitra Terpilih?`}
-            description={`Tindakan ini akan menjadwalkan tugas di latar belakang (antrean job) untuk memperbarui seluruh layer turunan milik mitra yang diperoleh dari ${selectedItemIds.length} layer IGT yang dipilih. Proses sinkronisasi geoserver berjalan secara asinkron tanpa memblokir pekerjaan Anda.`}
-            confirmLabel={"Jadwalkan Pembaruan"}
-            onConfirm={() => {
-              syncMitraMutation.mutate({ layerIds: selectedItemIds });
-              clearSelectedItems();
-            }}
-          >
-            <Button
-              size={"sm"}
-              variant={"outline"}
-              loading={syncMitraMutation.isPending}
-            >
-              <AppIcon icon={RefreshCwIcon} />
-              {"Perbarui Layer Mitra"}
-            </Button>
-          </ConfirmationTrigger>
-        </HStack>
-      ),
+    const batchActions: DataViewBatchActionsGenerator<MasterIgtLayerItem>[] = [
+      {
+        key: "show-on-map",
+        label: "Tampilkan di Peta",
+        icon: EyeIcon,
+        onClick: ({ selectedItemIds, clearSelectedItems }) => {
+          selectedItemIds.forEach((id) => {
+            const target = rawItems.find((it) => it.id === id);
+            if (target) {
+              handleToggleLayer(target, true);
+            } else {
+              setLayerEnabled(id, true);
+            }
+          });
+          clearSelectedItems();
+        },
+      },
+      {
+        key: "hide-from-map",
+        label: "Sembunyikan dari Peta",
+        icon: EyeOffIcon,
+        onClick: ({ selectedItemIds, clearSelectedItems }) => {
+          selectedItemIds.forEach((id) => {
+            const target = rawItems.find((it) => it.id === id);
+            if (target) {
+              handleToggleLayer(target, false);
+            } else {
+              setLayerEnabled(id, false);
+              setCustomLayerConfig(id, null);
+            }
+          });
+          clearSelectedItems();
+        },
+      },
+      {
+        key: "sync-mitra-layer-batch",
+        label: "Perbarui Layer Mitra",
+        icon: RefreshCwIcon,
+        loading: () => syncMitraMutation.isPending,
+        modal: {
+          triggerComponent: ({ selectedItemIds, clearSelectedItems }) => (
+            <ConfirmationTrigger
+              modalKey={"sync-mitra-layer-batch"}
+              title={`Perbarui ${selectedItemIds.length} Layer Mitra Terpilih?`}
+              description={`Tindakan ini akan menjadwalkan tugas di latar belakang (antrean job) untuk memperbarui seluruh layer turunan milik mitra yang diperoleh dari ${selectedItemIds.length} layer IGT yang dipilih. Proses sinkronisasi geoserver berjalan secara asinkron tanpa memblokir pekerjaan Anda.`}
+              confirmLabel={"Jadwalkan Pembaruan"}
+              onConfirm={() => {
+                syncMitraMutation.mutate({ layerIds: selectedItemIds });
+                clearSelectedItems();
+              }}
+            />
+          ),
+        },
+      },
     ];
 
     const itemActions: DataViewItemActionsGenerator<MasterIgtLayerItem>[] = [
@@ -385,7 +373,7 @@ export const InternalDataManagementDataView = () => {
               description={`Tindakan ini akan menjadwalkan tugas di latar belakang (antrean job) untuk memperbarui seluruh layer turunan milik mitra yang diperoleh dari layer "${layer.title}". Proses sinkronisasi geoserver berjalan secara asinkron tanpa memblokir pekerjaan Anda.`}
               confirmLabel={"Jadwalkan Pembaruan"}
               onConfirm={() => {
-                syncMitraMutation.mutate({ layerId: layer.id });
+                syncMitraMutation.mutate({ layerIds: [layer.id] });
               }}
             />
           ),

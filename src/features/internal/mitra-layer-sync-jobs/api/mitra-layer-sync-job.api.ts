@@ -109,19 +109,10 @@ export const triggerMitraLayerSyncApi = async (
         : [];
 
   try {
-    const isSingle = resolvedLayerIds.length === 1 && Boolean(payload.layerId);
-    const endpoint = isSingle
-      ? `/api/internal/igt-layers/${payload.layerId}/sync-mitra`
-      : `/api/internal/igt-layers/sync-mitra`;
-
-    const requestBody = isSingle
-      ? {}
-      : { layerIds: resolvedLayerIds };
-
     const response = await apiClient.post<
       | ApiResponse<TriggerMitraLayerSyncResponse>
       | TriggerMitraLayerSyncResponse
-    >(endpoint, requestBody, { signal });
+    >("/api/internal/igt-layers/sync-mitra", { layerIds: resolvedLayerIds }, { signal });
 
     const resultData =
       response && "data" in response && response.data

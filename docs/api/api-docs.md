@@ -886,17 +886,24 @@ Modul background queue job dan Server-Sent Events (SSE) untuk menangani proses s
 
 ## 1. Trigger Pembaruan Layer Mitra (Queue Job)
 
-- **Endpoint**: `POST /api/internal/igt-layers/{id}/sync-mitra`
+- **Endpoint**: `POST /api/internal/igt-layers/sync-mitra`
 - **Middleware / Akses**: `Internal Only`
 - **Tipe Eksekusi**: Asynchronous Background Queue Job (HTTP 202 Accepted)
-- **Keterangan**: Memicu antrean pekerjaan pembaruan layer turunan mitra yang memiliki relasi dengan layer master ID tersebut.
-- **Payload**: `{}` (Empty body)
+- **Keterangan**: Memicu antrean pekerjaan pembaruan layer turunan mitra yang berelasi dengan layer master IGT terpilih. Menerima array ID layer sehingga mendukung baik single layer (`layerIds: ["..."]`) maupun multi layer (`layerIds: ["...", "..."]`).
+- **Payload**:
+
+```typescript
+type TriggerMitraLayerSyncPayload = {
+  layerIds: string[];
+};
+```
+
 - **Response**: `202 Accepted`
 
 ```typescript
 type TriggerMitraLayerSyncResponse = {
   jobId: string;
-  layerId: string;
+  layerIds: string[];
   status: "queued" | "processing" | "completed" | "failed";
   message: string;
   createdAt: string;
@@ -1085,7 +1092,13 @@ type InternalOrderListResponse = {
     orderId: string;
     mitraId: string;
     mitraName: string;
-    status: "pending_review" | "paid" | "approved" | "rejected" | "expired" | "cancelled";
+    status:
+      | "pending_review"
+      | "paid"
+      | "approved"
+      | "rejected"
+      | "expired"
+      | "cancelled";
     selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     createdAt: string;
     readyAt?: string;

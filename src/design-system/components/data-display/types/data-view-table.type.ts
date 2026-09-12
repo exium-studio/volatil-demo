@@ -62,7 +62,7 @@ export type DataViewTableRootProps<
   canBatchSelect?: boolean;
   selectedItems?: FormattedListItem<T, N>[];
   onSelectedItemChange?: DataViewTableOnSelectedItemChange<T, N>;
-  batchActions?: DataViewBatchActionsGenerator[];
+  batchActions?: DataViewBatchActionsGenerator<T>[];
   itemActions?: DataViewItemActionsGenerator<T>[];
   withNumbering?: boolean;
   virtualized?: boolean;
@@ -117,15 +117,17 @@ export type FormattedTableColumn = {
   bodyCellProps?: StackProps;
 };
 
-export type DataViewTableContextValue = {
+export type DataViewTableContextValue<
+  T = Record<string, unknown>,
+> = {
   headers: FormattedTableHeader[];
-  items: FormattedListItem[];
+  items: FormattedListItem<T>[];
   page?: number;
   pageSize?: number;
   initialSortColumnIndex?: number;
   initialSortOrder?: "asc" | "desc";
-  batchActions?: DataViewBatchActionsGenerator[];
-  itemActions?: DataViewItemActionsGenerator[];
+  batchActions?: DataViewBatchActionsGenerator<T>[];
+  itemActions?: DataViewItemActionsGenerator<T>[];
   withNumbering?: boolean;
   virtualized?: boolean;
   fixedItemHeight?: boolean;
@@ -134,17 +136,17 @@ export type DataViewTableContextValue = {
 
   sortConfig: DataViewTableSortConfig;
   toggleSort: (columnIndex: number) => void;
-  sortedItems: FormattedListItem[];
+  sortedItems: FormattedListItem<T>[];
   selectedItemIds: string[];
-  selectedItems: FormattedListItem[];
+  selectedItems: FormattedListItem<T>[];
   isAllItemsSelected: boolean;
-  toggleItemSelection: (item: FormattedListItem) => void;
+  toggleItemSelection: (item: FormattedListItem<T>) => void;
   selectAllItems: (isChecked: boolean) => void;
   clearSelectedItems: () => void;
   canBatchSelect: boolean;
   renderTdCell?: (
     column: FormattedTableColumn,
-    item: FormattedListItem,
+    item: FormattedListItem<T>,
     columnIndex: number,
   ) => ReactNode;
 };

@@ -9,6 +9,7 @@ import type {
 } from "@/design-system/components/overlay/types/action-bar.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { ActionBar as ChakraActioBar } from "@chakra-ui/react";
+import { forwardRef } from "react";
 
 const ActionBarRoot = (props: ActionBarRootProps) => {
   return <ChakraActioBar.Root {...props} />;
@@ -18,28 +19,30 @@ const ActionBarPositioner = (props: ActionBarPositionerProps) => {
   return <ChakraActioBar.Positioner {...props} />;
 };
 
-const ActionBarContent = (props: ActionBarContentProps) => {
-  // Stores
-  const { theme } = useThemeStore();
+const ActionBarContent = forwardRef<HTMLDivElement, ActionBarContentProps>(
+  function ActionBarContent(props, ref) {
+    // Stores
+    const { theme } = useThemeStore();
 
-  return (
-    <ChakraActioBar.Content
-      gap={1}
-      p={1}
-      bg={"bg.body"}
-      rounded={theme.radii.container}
-      border={"1px solid {colors.border.subtle}"}
-      shadow={"md"}
-      _open={{
-        animationDuration: "slow",
-      }}
-      _closed={{
-        animationDuration: "slow",
-      }}
-      {...props}
-    />
-  );
-};
+    return (
+      <ChakraActioBar.Content
+        ref={ref}
+        gap={1}
+        p={1}
+        bg={"bg.body"}
+        rounded={theme.radii.container}
+        shadow={"md"}
+        _open={{
+          animationDuration: "slow",
+        }}
+        _closed={{
+          animationDuration: "slow",
+        }}
+        {...props}
+      />
+    );
+  },
+);
 
 const ActionBarSeparator = (props: ActionBarSeparatorProps) => {
   return <ChakraActioBar.Separator bg={"border.muted"} {...props} />;

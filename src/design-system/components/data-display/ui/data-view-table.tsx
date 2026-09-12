@@ -18,7 +18,10 @@ import type {
   FormattedTableColumn,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
-import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import type {
+  DataViewBatchActionsGenerator,
+  DataViewItemActionsGenerator,
+} from "@/design-system/components/data-display/types/data-view.type";
 import {
   DataViewBatchActionBar,
   DataViewBatchActionsTrigger,
@@ -145,16 +148,16 @@ const DataListTableRootInternal = <
   );
 
   // Resolved Values
-  const contextValue = useMemo<DataViewTableContextValue>(
+  const contextValue = useMemo<DataViewTableContextValue<T>>(
     () => ({
       headers: headersList,
-      items: itemsList,
+      items: itemsList as unknown as FormattedListItem<T>[],
       page,
       pageSize,
       initialSortColumnIndex,
       initialSortOrder,
-      batchActions,
-      itemActions: itemActionsList,
+      batchActions: batchActions as unknown as DataViewBatchActionsGenerator<T>[],
+      itemActions: itemActionsList as unknown as DataViewItemActionsGenerator<T>[],
       withNumbering,
       virtualized,
       fixedItemHeight,
@@ -163,15 +166,21 @@ const DataListTableRootInternal = <
 
       sortConfig,
       toggleSort,
-      sortedItems,
+      sortedItems: sortedItems as unknown as FormattedListItem<T>[],
       selectedItemIds,
-      selectedItems,
+      selectedItems: selectedItems as unknown as FormattedListItem<T>[],
       isAllItemsSelected,
-      toggleItemSelection,
+      toggleItemSelection: toggleItemSelection as unknown as (
+        item: FormattedListItem<T>,
+      ) => void,
       selectAllItems,
       clearSelectedItems,
       canBatchSelect: !isEmptyArray(batchActions) || canBatchSelect,
-      renderTdCell: renderTdCellHandler,
+      renderTdCell: renderTdCellHandler as unknown as (
+        column: FormattedTableColumn,
+        item: FormattedListItem<T>,
+        columnIndex: number,
+      ) => React.ReactNode,
     }),
     [
       headersList,
@@ -238,12 +247,9 @@ const DataListTableRootInternal = <
           action.sticky,
       ).length;
 
-      const stickyWidth =
-        stickyActionsCount > 0
-          ? `${60 + stickyActionsCount * 36 + 8}px`
-          : "60px";
-
-      cols.push(stickyWidth);
+      // 40px trigger button + each sticky button 32px + 8px gaps + padding
+      const stickyColWidth = `${40 + stickyActionsCount * 36 + 16}px`;
+      cols.push(stickyColWidth);
     }
 
     return cols.join(" ");
@@ -256,7 +262,9 @@ const DataListTableRootInternal = <
   ]);
 
   return (
-    <DataViewTableContext.Provider value={contextValue}>
+    <DataViewTableContext.Provider
+      value={contextValue as unknown as DataViewTableContextValue}
+    >
       <VStack
         className={"table-container"}
         ref={setTableContainerRef}
@@ -280,9 +288,11 @@ const DataListTableRootInternal = <
       {!isEmptyArray(batchActions) && (
         <DataViewBatchActionBar
           selectedItemIds={selectedItemIds}
-          selectedItems={selectedItems}
+          selectedItems={selectedItems as unknown as FormattedListItem<T>[]}
           clearSelectedItems={clearSelectedItems}
-          batchActions={batchActions}
+          batchActions={
+            batchActions as unknown as DataViewBatchActionsGenerator<T>[]
+          }
         />
       )}
     </DataViewTableContext.Provider>
