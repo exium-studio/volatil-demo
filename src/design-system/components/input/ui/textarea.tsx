@@ -51,6 +51,30 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           setHasValueState(Boolean(e.currentTarget.value));
           props.onBlurCapture?.(e);
         }}
+        onKeyDown={(e) => {
+          if (
+            props.maxLength !== undefined &&
+            !e.ctrlKey &&
+            !e.metaKey &&
+            !e.altKey &&
+            e.key.length === 1
+          ) {
+            const currentVal = e.currentTarget.value;
+            const selectionLen =
+              (e.currentTarget.selectionEnd ?? 0) -
+              (e.currentTarget.selectionStart ?? 0);
+            if (
+              selectionLen === 0 &&
+              currentVal.length >= props.maxLength
+            ) {
+              toast.warning(
+                `Karakter telah mencapai batas maksimal (${props.maxLength} karakter).`,
+                { id: "input-max-length-warning" },
+              );
+            }
+          }
+          props.onKeyDown?.(e);
+        }}
         onPaste={(e) => {
           if (props.maxLength !== undefined) {
             const pastedText = e.clipboardData?.getData("text") ?? "";
@@ -61,12 +85,24 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             const projectedLen =
               currentVal.length - selectionLen + pastedText.length;
             if (projectedLen > props.maxLength) {
-              toast.warning("Teks yang ditempel melebihi batas maksimal dan otomatis dipotong.");
+              toast.warning(
+                `Teks melebihi batas maksimal (${props.maxLength} karakter) dan otomatis dipotong.`,
+                { id: "input-max-length-warning" },
+              );
             }
           }
           props.onPaste?.(e);
         }}
         onChange={(e) => {
+          if (
+            props.maxLength !== undefined &&
+            e.currentTarget.value.length >= props.maxLength
+          ) {
+            toast.warning(
+              `Karakter telah mencapai batas maksimal (${props.maxLength} karakter).`,
+              { id: "input-max-length-warning" },
+            );
+          }
           setHasValueState(Boolean(e.currentTarget.value));
           props.onChange?.(e);
         }}
@@ -107,13 +143,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
           <Box
             position={"absolute"}
-            left={"24px"}
+            left={"12px"}
             top={"7px"}
             zIndex={2}
             pointerEvents={"none"}
-            transform={
-              isLabelFloating ? "translateX(-12px)" : "translateY(12px)"
-            }
+            transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
             transition={
               "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
             }

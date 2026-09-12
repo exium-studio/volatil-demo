@@ -881,13 +881,23 @@ export const Inputs = () => {
               <Checkbox>Checkbox</Checkbox>
             </FieldTemplate>
 
-            <FieldTemplate label={"Text Input"} invalid={invalid}>
-              <Input placeholder={"Text input..."} w={"200px"} />
-            </FieldTemplate>
+            <VStack>
+              <FieldTemplate label={"Text Input"} invalid={invalid}>
+                <Input
+                  placeholder={"Text input..."}
+                  w={"200px"}
+                  roundedBottom={0}
+                />
+              </FieldTemplate>
 
-            <FieldTemplate label={"Password Input"} invalid={invalid}>
-              <PasswordInput w={"200px"} withPasswordStrength />
-            </FieldTemplate>
+              <FieldTemplate label={"Password Input"} invalid={invalid}>
+                <PasswordInput
+                  w={"200px"}
+                  withPasswordStrength
+                  roundedTop={0}
+                />
+              </FieldTemplate>
+            </VStack>
 
             <FieldTemplate variant={"default"} invalid={invalid}>
               <SearchInput placeholder={"Search..."} />

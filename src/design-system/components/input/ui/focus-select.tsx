@@ -196,13 +196,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         {isFloatingField && floatingLabel && (
           <Box
             position={"absolute"}
-            left={"24px"}
+            left={"12px"}
             top={"7px"}
             zIndex={1}
             pointerEvents={"none"}
-            transform={
-              isLabelFloating ? "translate(-12px)" : "translateY(12px)"
-            }
+            transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
             transition={
               "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
             }

@@ -11,6 +11,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { toast } from "@/design-system/components/toast";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import {
@@ -82,6 +83,15 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     const isLabelFloating = isFocused || hasValue;
 
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
+      if (
+        restProps.maxLength !== undefined &&
+        e.currentTarget.value.length >= restProps.maxLength
+      ) {
+        toast.warning(
+          `Karakter telah mencapai batas maksimal (${restProps.maxLength} karakter).`,
+          { id: "input-max-length-warning" },
+        );
+      }
       setHasValueState(Boolean(e.currentTarget.value));
       onChange?.(e);
 
@@ -115,13 +125,13 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
 
     const inputCore = (
       <ChakraInput
-        {...restProps}
         ref={mergeRefs(ref, inputRef)}
         type={visible ? "text" : "password"}
         colorPalette={"neutral"}
         fontSize={"md"}
         rounded={theme.radii.component}
         placeholder={"••••••••"}
+        {...restProps}
         onFocusCapture={(e) => {
           setIsFocused(true);
           restProps.onFocusCapture?.(e);
@@ -130,6 +140,48 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           setIsFocused(false);
           setHasValueState(Boolean(e.currentTarget.value));
           restProps.onBlurCapture?.(e);
+        }}
+        onKeyDown={(e) => {
+          if (
+            restProps.maxLength !== undefined &&
+            !e.ctrlKey &&
+            !e.metaKey &&
+            !e.altKey &&
+            e.key.length === 1
+          ) {
+            const currentVal = e.currentTarget.value;
+            const selectionLen =
+              (e.currentTarget.selectionEnd ?? 0) -
+              (e.currentTarget.selectionStart ?? 0);
+            if (
+              selectionLen === 0 &&
+              currentVal.length >= restProps.maxLength
+            ) {
+              toast.warning(
+                `Karakter telah mencapai batas maksimal (${restProps.maxLength} karakter).`,
+                { id: "input-max-length-warning" },
+              );
+            }
+          }
+          restProps.onKeyDown?.(e);
+        }}
+        onPaste={(e) => {
+          if (restProps.maxLength !== undefined) {
+            const pastedText = e.clipboardData?.getData("text") ?? "";
+            const currentVal = e.currentTarget.value;
+            const selectionLen =
+              (e.currentTarget.selectionEnd ?? 0) -
+              (e.currentTarget.selectionStart ?? 0);
+            const projectedLen =
+              currentVal.length - selectionLen + pastedText.length;
+            if (projectedLen > restProps.maxLength) {
+              toast.warning(
+                `Teks melebihi batas maksimal (${restProps.maxLength} karakter) dan otomatis dipotong.`,
+                { id: "input-max-length-warning" },
+              );
+            }
+          }
+          restProps.onPaste?.(e);
         }}
         onChange={handleChange}
         {...(isFloatingVariant && {
