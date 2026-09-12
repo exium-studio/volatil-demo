@@ -24,7 +24,7 @@ import { t } from "@/shared/libs/i18n";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
-const NAV_CHILD_ITEM_HEIGHT = 46;
+const NAV_CHILD_ITEM_HEIGHT = 44.28;
 const NAV_INDICATOR_HEIGHT = 16;
 const NAV_INDICATOR_OFFSET = (NAV_CHILD_ITEM_HEIGHT - NAV_INDICATOR_HEIGHT) / 2;
 
@@ -55,7 +55,8 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
     <VScrollContainer {...restProps}>
       {groups.map((group, groupIndex) => {
         const isFirstGroup = groupIndex === 0;
-        const groupTitle = group.title || (group.titleKey ? t[group.titleKey]() : null);
+        const groupTitle =
+          group.title || (group.titleKey ? t[group.titleKey]() : null);
 
         return (
           <Fragment key={groupIndex}>
