@@ -171,7 +171,7 @@ export const ToastItem = memo(function ToastItem(
 
         <VStack flex={1} minW={0} w={"full"}>
           {/* Header */}
-          <HStack align={"start"} gap={2} w={"full"} minW={0}>
+          <HStack align={"center"} gap={2} w={"full"} minW={0}>
             {/* Title */}
             {toastData.title && (
               <ClampedP

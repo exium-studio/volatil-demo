@@ -136,7 +136,6 @@ export const DemoPage = () => {
       <IntegratedFeatures />
       <Branding />
       <Typography />
-      <ColorPalettes />
       <Navigation />
       <Buttons />
       <Toast />
@@ -147,6 +146,7 @@ export const DemoPage = () => {
       <Feedback />
       <DataDisplay />
       <Utilities />
+      <ColorPalettes />
     </VStack>
   );
 };
