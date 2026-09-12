@@ -36,6 +36,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     const textareaElement = (
       <ChakraTextarea
+        className={"noScrollbar"}
         ref={ref}
         rounded={theme.radii.component}
         fontSize={"md"}
@@ -74,9 +75,25 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         <Box position={"relative"} w={"full"}>
           <Box
             position={"absolute"}
+            top={"1px"}
+            left={"1px"}
+            right={"1px"}
+            h={"40px"}
+            zIndex={1}
+            pointerEvents={"none"}
+            roundedTop={theme.radii.component}
+            bg={
+              "linear-gradient(to bottom, {colors.bg.body} 20%,transparent 100%)"
+            }
+            opacity={isLabelFloating ? 1 : 0}
+            transition={"opacity 0.18s ease"}
+          />
+
+          <Box
+            position={"absolute"}
             left={"24px"}
             top={"7px"}
-            zIndex={1}
+            zIndex={2}
             pointerEvents={"none"}
             transform={
               isLabelFloating ? "translateX(-12px)" : "translateY(12px)"

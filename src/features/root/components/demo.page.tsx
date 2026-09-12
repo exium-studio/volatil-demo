@@ -162,7 +162,7 @@ const DemoSectionHeader = (props: DemoSectionHeaderProps) => {
         <P
           textAlign={"center"}
           fontSize={"2xl"}
-          fontWeight={"bold"}
+          fontWeight={"semibold"}
           letterSpacing={"tight"}
         >
           {title}
