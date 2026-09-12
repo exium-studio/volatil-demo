@@ -89,7 +89,7 @@ const InternalMitraRegistrationRejectModalContent = (
       <Modal.Header>
         <Modal.CloseButton />
 
-        <VStack gap={"xs"}>
+        <VStack gap={"2xs"}>
           <Modal.Title>{"Tolak Permohonan Mitra"}</Modal.Title>
 
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>

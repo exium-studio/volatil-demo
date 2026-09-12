@@ -83,7 +83,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     );
 
   if (isFloatingVariant && floatingLabel) {
-    const labelLeft = startElement ? "40px" : "12px";
+    const labelLeft = startElement ? "40px" : "24px";
 
     return (
       <Box position={"relative"} w={"full"}>
@@ -93,7 +93,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           top={"7px"}
           zIndex={1}
           pointerEvents={"none"}
-          transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
+          transform={isLabelFloating ? "translate(-12px)" : "translateY(12px)"}
           transition={
             "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
           }

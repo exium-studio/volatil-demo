@@ -113,8 +113,8 @@ const InternalMitraRegistrationApproveModalContent = (
           </Alert.Root>
 
           <Field
+            variant={"default"}
             label={"Unggah Berkas Kontrak Resmi (Wajib)"}
-            helperText={"Format berkas: PDF atau Dokumen resmi (Maks. 10MB)"}
           >
             <Box w={"full"}>
               <FileInput
