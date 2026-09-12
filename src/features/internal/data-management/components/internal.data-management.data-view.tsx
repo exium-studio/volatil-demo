@@ -172,7 +172,7 @@ export const InternalDataManagementDataView = () => {
       { th: "Workspace / Typename", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
-      { th: "Default Aktif", sortable: true, align: "center" },
+      { th: "Default Tampil", sortable: true },
       { th: "Terakhir Diperbarui", sortable: true },
       { th: "Tampilkan di Peta", align: "center" },
     ];
@@ -227,7 +227,6 @@ export const InternalDataManagementDataView = () => {
                 {item.defaultVisible ? "Otomatis" : "Manual"}
               </Badge>
             ),
-            align: "center" as const,
           },
           {
             value: item.updatedAt,

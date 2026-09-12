@@ -16,17 +16,12 @@ import type {
 } from "@/features/internal/home/types/internal.home.leaderboard.type";
 import type { InternalHomeTrendItem } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
-import {
-  dummyIgtBasis,
-  dummyIgtPublicationStatus,
-  dummyMitraRegistration,
-} from "@/shared/constants/dummy-data/dummy-internal-home-data";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";
 
-const defaultBasis: IgtBasisSummary = dummyIgtBasis;
-const defaultPublish: IgtPublicationStatusSummary = dummyIgtPublicationStatus;
-const defaultMitraReg: MitraRegistrationSummary = dummyMitraRegistration;
+const emptyBasis: IgtBasisSummary = { field: 0, area: 0 };
+const emptyPublish: IgtPublicationStatusSummary = { active: 0, inactive: 0 };
+const emptyMitraReg: MitraRegistrationSummary = { active: 0, pendingVerification: 0 };
 
 // 1. Hook Basis IGT (Bidang vs Kawasan)
 export const useInternalIgtBasisQuery = () => {
@@ -39,7 +34,7 @@ export const useInternalIgtBasisQuery = () => {
 
   return {
     ...query,
-    igtBasis: query.data ?? defaultBasis,
+    igtBasis: query.data ?? emptyBasis,
   };
 };
 
@@ -54,7 +49,7 @@ export const useInternalPublishStatusQuery = () => {
 
   return {
     ...query,
-    igtPublicationStatus: query.data ?? defaultPublish,
+    igtPublicationStatus: query.data ?? emptyPublish,
   };
 };
 
@@ -69,7 +64,7 @@ export const useInternalMitraRegistrationQuery = () => {
 
   return {
     ...query,
-    mitraRegistration: query.data ?? defaultMitraReg,
+    mitraRegistration: query.data ?? emptyMitraReg,
   };
 };
 

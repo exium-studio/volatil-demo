@@ -112,8 +112,6 @@ export const DataViewBatchActionBar = (props: DataViewBatchActionBarProps) => {
               <TNum>{selectedItems.length}</TNum> {t["common.selected"]()}
             </P>
 
-            <ActionBar.Separator />
-
             {batchActions?.map((item, index) => {
               const node = item({
                 selectedItemIds,
@@ -125,8 +123,6 @@ export const DataViewBatchActionBar = (props: DataViewBatchActionBarProps) => {
 
               return <Fragment key={index}>{node}</Fragment>;
             })}
-
-            <ActionBar.Separator />
 
             <ActionBar.CloseTrigger>
               <Tooltip content={"Cancel"}>
