@@ -15,13 +15,11 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import { Center } from "@/design-system/components/layout/ui/center";
-import { Container } from "@/design-system/components/layout/ui/container";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
-import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -37,8 +35,10 @@ import type {
   IgtBasisType,
   MasterIgtLayerItem,
 } from "@/features/internal/data-management/types/data-management.type";
-import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
+import { useTriggerMitraLayerSyncMutation } from "@/features/internal/mitra-layer-sync-jobs/hooks/use-mitra-layer-sync-jobs.query";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-filter.select";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -46,7 +46,6 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
-import { useTriggerMitraLayerSyncMutation } from "@/features/internal/mitra-layer-sync-jobs/hooks/use-mitra-layer-sync-jobs.query";
 import { IconLayersOff } from "@tabler/icons-react";
 import {
   EyeIcon,
@@ -433,146 +432,144 @@ export const InternalDataManagementDataView = () => {
   ]);
 
   return (
-    <Container.Root withContext={true} flex={1}>
-      <Container.Body overflowY={"auto"}>
-        <HeaderContainer pr={"xs"}>
-          <HStack justify={"space-between"} align={"center"} w={"full"}>
-            <HStack gap={"xs"} align={"center"}>
-              <Heading>{"Manajemen Data IGT"}</Heading>
+    <>
+      <HeaderContainer pr={"xs"}>
+        <HStack justify={"space-between"} align={"center"} w={"full"}>
+          <HStack gap={"xs"} align={"center"}>
+            <Heading>{"Manajemen Data IGT"}</Heading>
 
-              <InfoTip
-                variant={"icon"}
-                appIconProps={{
-                  size: "xs",
-                  color: "fg.subtle",
-                }}
-              >
-                {
-                  "Katalog master data spasial geospasial ATR/BPN. Layer berstatus 'Publik' otomatis dapat diakses dan dipesan oleh Mitra."
-                }
-              </InfoTip>
-            </HStack>
-
-            <InternalDataManagementCreateTrigger>
-              <Button primary variant={"ghost"} pl={3}>
-                <AppIcon icon={PlusIcon} />
-                {"Tambah Layer"}
-              </Button>
-            </InternalDataManagementCreateTrigger>
+            <InfoTip
+              variant={"icon"}
+              appIconProps={{
+                size: "xs",
+                color: "fg.subtle",
+              }}
+            >
+              {
+                "Katalog master data spasial geospasial ATR/BPN. Layer berstatus 'Publik' otomatis dapat diakses dan dipesan oleh Mitra."
+              }
+            </InfoTip>
           </HStack>
-        </HeaderContainer>
 
-        <Separator borderColor={"bg.canvas"} />
+          <InternalDataManagementCreateTrigger>
+            <Button primary variant={"ghost"} pl={3}>
+              <AppIcon icon={PlusIcon} />
+              {"Tambah Layer"}
+            </Button>
+          </InternalDataManagementCreateTrigger>
+        </HStack>
+      </HeaderContainer>
 
-        <ActionHeaderScrollContainer>
-          <SearchInput
-            value={params.search}
-            onValueChange={(val) =>
-              startTransition(() => {
-                setParams((prev) => ({ ...prev, search: val, page: 1 }));
-              })
-            }
-            placeholder={"Cari nama layer, ID, endpoint..."}
-            maxW={"280px"}
-          />
+      <Separator borderColor={"bg.canvas"} />
 
-          <IgtBasisFilterSelect
-            modalKey={"data-management-igt-basis-filter"}
-            value={params.spatialBasis}
-            onValueChange={(val) =>
-              startTransition(() => {
-                setParams((prev) => ({ ...prev, spatialBasis: val, page: 1 }));
-              })
-            }
-            w={"150px"}
-          />
+      <ActionHeaderScrollContainer>
+        <SearchInput
+          value={params.search}
+          onValueChange={(val) =>
+            startTransition(() => {
+              setParams((prev) => ({ ...prev, search: val, page: 1 }));
+            })
+          }
+          placeholder={"Cari nama layer, ID, endpoint..."}
+          maxW={"280px"}
+        />
 
-          <StatusFilterSelect
-            modalKey={"data-management-publish-status-filter"}
-            options={PUBLISH_STATUS_OPTIONS}
-            placeholder={"Semua Status"}
-            value={params.publishStatus}
-            onValueChange={(val) =>
-              startTransition(() => {
-                setParams((prev) => ({
-                  ...prev,
-                  publishStatus: val,
-                  page: 1,
-                }));
-              })
-            }
-            w={"150px"}
-          />
-        </ActionHeaderScrollContainer>
+        <IgtBasisFilterSelect
+          modalKey={"data-management-igt-basis-filter"}
+          value={params.spatialBasis}
+          onValueChange={(val) =>
+            startTransition(() => {
+              setParams((prev) => ({ ...prev, spatialBasis: val, page: 1 }));
+            })
+          }
+          w={"150px"}
+        />
 
-        <Separator borderColor={"bg.canvas"} />
+        <StatusFilterSelect
+          modalKey={"data-management-publish-status-filter"}
+          options={PUBLISH_STATUS_OPTIONS}
+          placeholder={"Semua Status"}
+          value={params.publishStatus}
+          onValueChange={(val) =>
+            startTransition(() => {
+              setParams((prev) => ({
+                ...prev,
+                publishStatus: val,
+                page: 1,
+              }));
+            })
+          }
+          w={"150px"}
+        />
+      </ActionHeaderScrollContainer>
 
-        <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
-          {isLoading && <Skeleton p={"md"} rounded={0} />}
+      <Separator borderColor={"bg.canvas"} />
 
-          {!isLoading && (
-            <>
-              {isEmptyArray(rawItems) && (
-                <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
-                  {isSearching ? (
-                    <NoResultState query={searchQuery} />
-                  ) : (
-                    <NoDataState
-                      icon={IconLayersOff}
-                      title={"Layer IGT Kosong"}
-                      description={
-                        "Belum ada layer IGT terdaftar. Silakan tambahkan layer baru."
-                      }
-                    />
-                  )}
-                </Center>
-              )}
+      <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
+        {isLoading && <Skeleton p={"md"} rounded={0} />}
 
-              {!isEmptyArray(rawItems) && (
-                <VStack flex={1} w={"full"} position={"relative"}>
-                  <TopBarLoader isFetching={isFetching} />
-
-                  <DataViewTable.Root<MasterIgtLayerItem>
-                    headers={dataList.headers}
-                    items={dataList.items}
-                    batchActions={dataList.batchActions}
-                    itemActions={dataList.itemActions}
-                    canBatchSelect
-                    withNumbering
-                    page={params.page}
-                    pageSize={params.pageSize}
-                    pb={0}
-                    rounded={0}
-                  >
-                    <DataViewTable.Header />
-                    <DataViewTable.Body />
-                  </DataViewTable.Root>
-
-                  <Separator borderColor={"bg.canvas"} />
-
-                  <DataViewFooter
-                    page={params.page}
-                    pageSize={params.pageSize}
-                    setPage={(nextPage: number) =>
-                      setParams((prev) => ({ ...prev, page: nextPage }))
+        {!isLoading && (
+          <>
+            {isEmptyArray(rawItems) && (
+              <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
+                {isSearching ? (
+                  <NoResultState query={searchQuery} />
+                ) : (
+                  <NoDataState
+                    icon={IconLayersOff}
+                    title={"Layer IGT Kosong"}
+                    description={
+                      "Belum ada layer IGT terdaftar. Silakan tambahkan layer baru."
                     }
-                    setPageSize={(nextSize: number) => {
-                      setParams((prev) => ({
-                        ...prev,
-                        pageSize: nextSize,
-                        page: 1,
-                      }));
-                    }}
-                    currentDataLength={rawItems.length}
-                    totalData={pagination?.totalItems ?? rawItems.length}
-                    totalPage={pagination?.totalPages ?? 1}
                   />
-                </VStack>
-              )}
-            </>
-          )}
-        </VStack>
-      </Container.Body>
-    </Container.Root>
+                )}
+              </Center>
+            )}
+
+            {!isEmptyArray(rawItems) && (
+              <VStack flex={1} w={"full"} position={"relative"}>
+                <TopBarLoader isFetching={isFetching} />
+
+                <DataViewTable.Root<MasterIgtLayerItem>
+                  headers={dataList.headers}
+                  items={dataList.items}
+                  batchActions={dataList.batchActions}
+                  itemActions={dataList.itemActions}
+                  canBatchSelect
+                  withNumbering
+                  page={params.page}
+                  pageSize={params.pageSize}
+                  pb={0}
+                  rounded={0}
+                >
+                  <DataViewTable.Header />
+                  <DataViewTable.Body />
+                </DataViewTable.Root>
+
+                <Separator borderColor={"bg.canvas"} />
+
+                <DataViewFooter
+                  page={params.page}
+                  pageSize={params.pageSize}
+                  setPage={(nextPage: number) =>
+                    setParams((prev) => ({ ...prev, page: nextPage }))
+                  }
+                  setPageSize={(nextSize: number) => {
+                    setParams((prev) => ({
+                      ...prev,
+                      pageSize: nextSize,
+                      page: 1,
+                    }));
+                  }}
+                  currentDataLength={rawItems.length}
+                  totalData={pagination?.totalItems ?? rawItems.length}
+                  totalPage={pagination?.totalPages ?? 1}
+                />
+              </VStack>
+            )}
+          </>
+        )}
+      </VStack>
+    </>
   );
 };

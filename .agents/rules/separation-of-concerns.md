@@ -115,4 +115,6 @@ Setiap perubahan wajib memenuhi standar berikut sebelum dianggap selesai:
 - `pnpm verify` (`eslint` & `tsc`) wajib **0 Error dan 0 Warning**.
 - Header file path sinkron via `pnpm filepath:generate`.
 - Jangan menyentuh/mengubah file di luar scope instruksi yang diberikan.
+- **JANGAN PERNAH SENTUH UI YANG SUDAH DIDEV USER (MUTLAK)**: Dilarang keras memodifikasi, merombak, merapikan, atau mengubah struktur JSX, styling, layout, maupun komponen UI yang sudah didevelop/dibuat oleh user, KECUALI user secara eksplisit meminta membuat page/komponen baru atau secara eksplisit menyuruh refactor UI terkait.
+
 

@@ -226,7 +226,7 @@ export const InternalMasterGeoserverDataView = () => {
             </HStack>
 
             <InternalMasterGeoserverCreateTrigger>
-              <Button primary variant={"ghost"}>
+              <Button primary variant={"ghost"} pl={3}>
                 <AppIcon icon={PlusIcon} />
                 {"Tambah GeoServer"}
               </Button>

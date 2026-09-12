@@ -35,6 +35,8 @@ const { theme } = useThemeStore();
 - **Dilarang Gunakan Props `truncate` (MUTLAK)**: DILARANG menggunakan prop `truncate` pada teks/elemen apapun. WAJIB menggunakan komponen `<ClampedP>` dari `@/design-system/components/typography/ui/p` untuk pemotongan/clamping teks satu atau multi baris.
 - **Button & Component Sizes**: DILARANG asal mengecilkan `size` (misal sembarangan menambah `size={"xs"}` atau `size={"sm"}`) jika tidak diinstruksikan secara spesifik. Gunakan ukuran default komponen design system.
 - **Conditional Rendering (Eksplisit & Anti-Ternary Kompleks)**: DILARANG menggunakan nested/kompleks ternary operator (`a ? b : c ? d : e`). Ternary maksimal hanya untuk 2 kondisi sederhana (misal simple styling/variant). Untuk rendering blok view, state utama (loading, empty, error, content), WAJIB menggunakan kondisi eksplisit (`isLoading && <Skeleton />` dan nested eksplisit `!isLoading && (<>{isEmpty && <NoDataState />}{hasData && <DataView />}</>)`) atau early return eksplisit (`if (condition) return <... />;`).
+- **JANGAN PERNAH SENTUH UI YANG SUDAH DIDEV USER (MUTLAK)**: Dilarang keras menyentuh, merombak, memodifikasi struktur JSX/layout/styling UI yang sudah dibuat user. Hanya boleh menyentuh UI jika user secara eksplisit meminta dibuatkan page/komponen tertentu atau secara eksplisit meminta refactor UI.
+
 
 ---
 
