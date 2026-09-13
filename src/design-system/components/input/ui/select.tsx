@@ -85,8 +85,8 @@ export default function SelectInput(props: SelectProps) {
     }
 
     return (
-      <HStack w={"full"} minW={0} justify={"space-between"}>
-        <HStack flex={1} minW={0} gap={2}>
+      <HStack w={"full"} minW={0} justify={"space-between"} align={"center"}>
+        <HStack flex={1} minW={0} gap={2} align={"center"}>
           {renderStartElement(
             selectedOption?.startElement,
             selectedOption?.icon,
@@ -97,6 +97,7 @@ export default function SelectInput(props: SelectProps) {
             placeholder={placeholder}
             minH={"20px"}
             maxH={"20px"}
+            lineHeight={"20px"}
             whiteSpace={"nowrap"}
             overflow={"hidden"}
             textOverflow={"ellipsis"}
@@ -138,7 +139,7 @@ export default function SelectInput(props: SelectProps) {
 
       <Tooltip
         content={
-          <HStack>
+          <HStack align={"center"} gap={2}>
             {renderStartElement(
               selectedOption?.startElement,
               selectedOption?.icon,
@@ -202,10 +203,10 @@ export default function SelectInput(props: SelectProps) {
                 {renderOption ? (
                   renderOption(item)
                 ) : (
-                  <>
+                  <HStack gap={2} align={"center"} flex={1} minW={0}>
                     {renderStartElement(item.startElement, item.icon, "sm")}
                     {item.label}
-                  </>
+                  </HStack>
                 )}
 
                 <ChakraSelect.ItemIndicator
