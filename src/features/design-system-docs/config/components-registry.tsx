@@ -1372,23 +1372,40 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       'import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";',
     component: FaceEmoji,
     defaultProps: {
-      variant: "happy",
+      variant: "smile",
       size: "lg",
     },
     propsSpec: [
       {
         name: "variant",
-        type: '"happy" | "sad" | "neutral" | "celebrate" | "confused" | "searching"',
-        defaultValue: "happy",
+        type: '"smile" | "happy" | "angry" | "cry" | "embarrassed" | "surprised" | "wronged" | "shout" | "flushed" | "yummy" | "complacent" | "drool" | "scream" | "weep" | "speechless" | "funnyface" | "laughwithtears" | "wicked" | "facewithrollingeyes" | "sulk" | "thinking" | "lovely" | "greedy"',
+        defaultValue: "smile",
         description: "Ekspresi wajah emoji.",
         controlKind: "select",
         options: [
+          "smile",
           "happy",
-          "sad",
-          "neutral",
-          "celebrate",
-          "confused",
-          "searching",
+          "angry",
+          "cry",
+          "embarrassed",
+          "surprised",
+          "wronged",
+          "shout",
+          "flushed",
+          "yummy",
+          "complacent",
+          "drool",
+          "scream",
+          "weep",
+          "speechless",
+          "funnyface",
+          "laughwithtears",
+          "wicked",
+          "facewithrollingeyes",
+          "sulk",
+          "thinking",
+          "lovely",
+          "greedy",
         ],
       },
       {
@@ -1402,7 +1419,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     ],
     renderPlayground: (props) => (
       <FaceEmoji
-        variant={(props.variant as "happy") || "happy"}
+        variant={(props.variant as "smile") || "smile"}
         size={(props.size as "lg") || "lg"}
       />
     ),

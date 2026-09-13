@@ -4,6 +4,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FocusAlertContentProps,
   FocusAlertItemProps,
+  FocusAlertSemanticVariant,
   FocusAlertTriggerProps,
   FocusAlertVariant,
 } from "@/design-system/components/focus-alert/types/focus-alert.type";
@@ -20,8 +21,6 @@ import type { ComponentType } from "react";
 import {
   CheckIcon,
   HeartIcon,
-  MoonIcon,
-  SearchIcon,
   SparklesIcon,
   TriangleAlertIcon,
   XIcon,
@@ -106,10 +105,13 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   const { variant, title, description, close, onDone } = props;
 
   // Constants
-  const VARIANTS_MAP: Record<
-    FocusAlertVariant,
-    { colorPalette: string; icon: ComponentType }
-  > = {
+  const VARIANTS_MAP: Partial<
+    Record<FocusAlertVariant, { colorPalette: string; icon: ComponentType }>
+  > &
+    Record<
+      FocusAlertSemanticVariant,
+      { colorPalette: string; icon: ComponentType }
+    > = {
     // Semantic aliases
     success: {
       colorPalette: "green",
@@ -141,82 +143,116 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
       icon: TriangleAlertIcon,
       // emote: "confused",
     },
-
-    // Emote variants
-    happy: {
-      colorPalette: "green",
-      icon: CheckIcon,
-      // emote: "happy",
+    neutral: {
+      colorPalette: "neutral",
+      icon: SparklesIcon,
     },
     celebrate: {
       colorPalette: "green",
       icon: SparklesIcon,
-      // emote: "celebrate",
     },
-    winking: {
+
+    // Emote variants
+    smile: {
+      colorPalette: "pink",
+      icon: SparklesIcon,
+    },
+    happy: {
       colorPalette: "green",
       icon: CheckIcon,
-      // emote: "winking",
     },
-    sad: {
+    angry: {
       colorPalette: "red",
       icon: XIcon,
-      // emote: "sad",
     },
-    shocked: {
-      colorPalette: "red",
-      icon: ZapIcon,
-      // emote: "shocked",
-    },
-    dizzy: {
-      colorPalette: "red",
-      icon: XIcon,
-      // emote: "dizzy",
-    },
-    worried: {
-      colorPalette: "orange",
-      icon: TriangleAlertIcon,
-      // emote: "worried",
-    },
-    neutral: {
-      colorPalette: "neutral",
-      icon: SparklesIcon,
-      // emote: "neutral",
-    },
-    confused: {
-      colorPalette: "neutral",
-      icon: TriangleAlertIcon,
-      // emote: "confused",
-    },
-    sleepy: {
-      colorPalette: "neutral",
-      icon: MoonIcon,
-      // emote: "sleepy",
-    },
-    sleeping: {
-      colorPalette: "neutral",
-      icon: MoonIcon,
-      // emote: "sleeping",
-    },
-    love: {
-      colorPalette: "pink",
-      icon: HeartIcon,
-      // emote: "love",
-    },
-    crying: {
+    cry: {
       colorPalette: "blue",
       icon: XIcon,
-      // emote: "crying",
     },
-    searching: {
-      colorPalette: "neutral",
-      icon: SearchIcon,
-      // emote: "searching",
+    embarrassed: {
+      colorPalette: "teal",
+      icon: TriangleAlertIcon,
+    },
+    surprised: {
+      colorPalette: "orange",
+      icon: ZapIcon,
+    },
+    wronged: {
+      colorPalette: "yellow",
+      icon: TriangleAlertIcon,
+    },
+    shout: {
+      colorPalette: "purple",
+      icon: ZapIcon,
+    },
+    flushed: {
+      colorPalette: "yellow",
+      icon: SparklesIcon,
+    },
+    yummy: {
+      colorPalette: "pink",
+      icon: SparklesIcon,
+    },
+    complacent: {
+      colorPalette: "cyan",
+      icon: CheckIcon,
+    },
+    drool: {
+      colorPalette: "pink",
+      icon: HeartIcon,
+    },
+    scream: {
+      colorPalette: "blue",
+      icon: ZapIcon,
+    },
+    weep: {
+      colorPalette: "blue",
+      icon: XIcon,
+    },
+    speechless: {
+      colorPalette: "teal",
+      icon: IconInfoCircle,
+    },
+    funnyface: {
+      colorPalette: "orange",
+      icon: SparklesIcon,
+    },
+    laughwithtears: {
+      colorPalette: "orange",
+      icon: SparklesIcon,
+    },
+    wicked: {
+      colorPalette: "purple",
+      icon: ZapIcon,
+    },
+    facewithrollingeyes: {
+      colorPalette: "orange",
+      icon: IconInfoCircle,
+    },
+    sulk: {
+      colorPalette: "red",
+      icon: XIcon,
+    },
+    thinking: {
+      colorPalette: "yellow",
+      icon: IconInfoCircle,
+    },
+    lovely: {
+      colorPalette: "pink",
+      icon: HeartIcon,
+    },
+    greedy: {
+      colorPalette: "yellow",
+      icon: SparklesIcon,
     },
   };
 
   // Resolved Values
-  const resolved = VARIANTS_MAP[variant ?? "neutral"] ?? VARIANTS_MAP.neutral;
+  const fallback = VARIANTS_MAP.neutral ?? {
+    colorPalette: "neutral",
+    icon: SparklesIcon,
+  };
+  const resolved = (variant ? VARIANTS_MAP[variant] : undefined) ?? fallback;
 
   return (
     <Modal.Content>

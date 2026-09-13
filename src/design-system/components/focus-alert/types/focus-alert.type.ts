@@ -11,7 +11,9 @@ export type FocusAlertSemanticVariant =
   | "danger"
   | "warning"
   | "info"
-  | "help";
+  | "help"
+  | "neutral"
+  | "celebrate";
 
 export type FocusAlertVariant = FaceEmojiVariant | FocusAlertSemanticVariant;
 
