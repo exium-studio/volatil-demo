@@ -77,8 +77,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "logo",
     title: "Logo",
     category: "Branding",
-    description: "Identitas visual resmi aplikasi Exium / ATR BPN dengan adaptasi tema warna.",
-    importPath: 'import { Logo } from "@/design-system/components/branding/ui/logo";',
+    description:
+      "Identitas visual resmi aplikasi Exium / ATR BPN dengan adaptasi tema warna.",
+    importPath:
+      'import { Logo } from "@/design-system/components/branding/ui/logo";',
     component: Logo,
     defaultProps: {
       boxSize: 32,
@@ -92,9 +94,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         controlKind: "number",
       },
     ],
-    renderPlayground: (props) => (
-      <Logo boxSize={Number(props.boxSize) || 32} />
-    ),
+    renderPlayground: (props) => <Logo boxSize={Number(props.boxSize) || 32} />,
   },
 
   brand_watermark: {
@@ -102,7 +102,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     title: "Brand Watermark",
     category: "Branding",
     description: "Teks watermark hak cipta resmi dengan tautan terintegrasi.",
-    importPath: 'import { BrandWatermark } from "@/design-system/components/branding/ui/brand-watermark";',
+    importPath:
+      'import { BrandWatermark } from "@/design-system/components/branding/ui/brand-watermark";',
     component: BrandWatermark,
     defaultProps: {},
     propsSpec: [],
@@ -324,8 +325,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "heading",
     title: "Heading",
     category: "Typography & Display",
-    description: "Elemen judul semantik dengan styling tegas dan line-height teratur.",
-    importPath: 'import { Heading } from "@/design-system/components/typography/ui/heading";',
+    description:
+      "Elemen judul semantik dengan styling tegas dan line-height teratur.",
+    importPath:
+      'import { Heading } from "@/design-system/components/typography/ui/heading";',
     component: Heading,
     defaultProps: {
       children: "Exium Design System Heading",
@@ -354,8 +357,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "count_badge",
     title: "Count Badge",
     category: "Typography & Display",
-    description: "Badge penghitung angka dengan pemformatan otomatis batas maksimal (misal: 99+).",
-    importPath: 'import { CountBadge } from "@/design-system/components/typography/ui/count-badge";',
+    description:
+      "Badge penghitung angka dengan pemformatan otomatis batas maksimal (misal: 99+).",
+    importPath:
+      'import { CountBadge } from "@/design-system/components/typography/ui/count-badge";',
     component: CountBadge,
     defaultProps: {
       count: 120,
@@ -400,7 +405,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     title: "Kbd",
     category: "Typography & Display",
     description: "Elemen penunjuk tombol pintasan keyboard pengguna.",
-    importPath: 'import { Kbd } from "@/design-system/components/typography/ui/kbd";',
+    importPath:
+      'import { Kbd } from "@/design-system/components/typography/ui/kbd";',
     component: Kbd,
     defaultProps: {
       children: "Ctrl + K",
@@ -600,8 +606,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "select",
     title: "Select Input",
     category: "Form Inputs",
-    description: "Komponen dropdown pilihan tunggal dengan portalling, filter, dan dukungan startElement.",
-    importPath: 'import SelectInput from "@/design-system/components/input/ui/select";',
+    description:
+      "Komponen dropdown pilihan tunggal dengan portalling, filter, dan dukungan startElement.",
+    importPath:
+      'import SelectInput from "@/design-system/components/input/ui/select";',
     component: SelectInput,
     defaultProps: {
       placeholder: "Pilih status...",
@@ -639,8 +647,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "focus_select",
     title: "Focus Select Input",
     category: "Form Inputs",
-    description: "Input pemilihan interaktif modal terfokus dengan search realtime dan dynamic custom option.",
-    importPath: 'import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";',
+    description:
+      "Input pemilihan interaktif modal terfokus dengan search realtime dan dynamic custom option.",
+    importPath:
+      'import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";',
     component: FocusSelectInput,
     defaultProps: {
       placeholder: "Pilih kategori...",
@@ -810,7 +820,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     title: "Radio Input",
     category: "Form Inputs",
     description: "Pilihan opsi tunggal eksklusif dengan radio group styling.",
-    importPath: 'import { RadioInput } from "@/design-system/components/input/ui/radio-input";',
+    importPath:
+      'import { RadioInput } from "@/design-system/components/input/ui/radio-input";',
     component: RadioInput,
     defaultProps: {
       defaultValue: "opt1",
@@ -832,8 +843,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "radio_card",
     title: "Radio Card",
     category: "Form Inputs",
-    description: "Pilihan opsi berbentuk kartu interaktif dengan border dan indikator terintegrasi.",
-    importPath: 'import { RadioCardInput } from "@/design-system/components/input/ui/radio-card-input";',
+    description:
+      "Pilihan opsi berbentuk kartu interaktif dengan border dan indikator terintegrasi.",
+    importPath:
+      'import { RadioCardInput } from "@/design-system/components/input/ui/radio-card-input";',
     component: RadioCardInput.Root,
     defaultProps: {
       defaultValue: "standard",
@@ -844,14 +857,22 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         <HStack gap={3} w={"full"}>
           <RadioCardInput.Item value={"standard"} flex={1} p={3}>
             <RadioCardInput.ItemText>
-              <P fontWeight={"semibold"} fontSize={"sm"}>Standard</P>
-              <P fontSize={"xs"} color={"fg.muted"}>Fitur esensial</P>
+              <P fontWeight={"semibold"} fontSize={"sm"}>
+                Standard
+              </P>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                Fitur esensial
+              </P>
             </RadioCardInput.ItemText>
           </RadioCardInput.Item>
           <RadioCardInput.Item value={"pro"} flex={1} p={3}>
             <RadioCardInput.ItemText>
-              <P fontWeight={"semibold"} fontSize={"sm"}>Enterprise</P>
-              <P fontSize={"xs"} color={"fg.muted"}>Akses menyeluruh</P>
+              <P fontWeight={"semibold"} fontSize={"sm"}>
+                Enterprise
+              </P>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                Akses menyeluruh
+              </P>
             </RadioCardInput.ItemText>
           </RadioCardInput.Item>
         </HStack>
@@ -863,8 +884,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "segment_group",
     title: "Segment Group",
     category: "Form Inputs",
-    description: "Kontrol tersegmentasi horizontal bergaya tab switcher untuk pilihan cepat.",
-    importPath: 'import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";',
+    description:
+      "Kontrol tersegmentasi horizontal bergaya tab switcher untuk pilihan cepat.",
+    importPath:
+      'import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";',
     component: SegmentGroupInput,
     defaultProps: {
       defaultValue: "grid",
@@ -886,8 +909,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "slider",
     title: "Slider",
     category: "Form Inputs",
-    description: "Kontrol penggeser numerik dengan thumb interaktif dan rentang nilai presisi.",
-    importPath: 'import { Slider } from "@/design-system/components/input/ui/slider";',
+    description:
+      "Kontrol penggeser numerik dengan thumb interaktif dan rentang nilai presisi.",
+    importPath:
+      'import { Slider } from "@/design-system/components/input/ui/slider";',
     component: Slider,
     defaultProps: {
       defaultValue: [40],
@@ -928,8 +953,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "pin_input",
     title: "Pin Input",
     category: "Form Inputs",
-    description: "Input digit kode OTP / PIN keamanan dengan fokus otomatis per kotak digit.",
-    importPath: 'import { PinInput } from "@/design-system/components/input/ui/pin-input";',
+    description:
+      "Input digit kode OTP / PIN keamanan dengan fokus otomatis per kotak digit.",
+    importPath:
+      'import { PinInput } from "@/design-system/components/input/ui/pin-input";',
     component: PinInput,
     defaultProps: {
       count: 4,
@@ -952,10 +979,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       },
     ],
     renderPlayground: (props) => (
-      <PinInput
-        count={Number(props.count) || 4}
-        mask={Boolean(props.mask)}
-      />
+      <PinInput count={Number(props.count) || 4} mask={Boolean(props.mask)} />
     ),
   },
 
@@ -963,8 +987,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "search_input",
     title: "Search Input",
     category: "Form Inputs",
-    description: "Input pencarian terintegrasi dengan icon kaca pembesar dan tombol reset cepat.",
-    importPath: 'import { SearchInput } from "@/design-system/components/input/ui/search-input";',
+    description:
+      "Input pencarian terintegrasi dengan icon kaca pembesar dan tombol reset cepat.",
+    importPath:
+      'import { SearchInput } from "@/design-system/components/input/ui/search-input";',
     component: SearchInput,
     defaultProps: {
       placeholder: "Cari data di sini...",
@@ -1001,8 +1027,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "field",
     title: "Field & Fieldset",
     category: "Form Inputs",
-    description: "Wrapper form terintegrasi dengan label mengambang, helper text, error handling, dan tag optional.",
-    importPath: 'import { Field } from "@/design-system/components/input/ui/field";',
+    description:
+      "Wrapper form terintegrasi dengan label mengambang, helper text, error handling, dan tag optional.",
+    importPath:
+      'import { Field } from "@/design-system/components/input/ui/field";',
     component: Field,
     defaultProps: {
       label: "Nama Lengkap",
@@ -1174,9 +1202,9 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
               </Box>
             </Skeleton>
 
-            <VStack align={"stretch"} gap={2} flex={1}>
+            <VStack align={"stretch"} gap={isLoaded ? "2xs" : "xs"} flex={1}>
               <Skeleton
-                h={"18px"}
+                h={"16px"}
                 w={"70%"}
                 rounded={"sm"}
                 loaded={isLoaded}
@@ -1186,8 +1214,9 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
                   Exium Senior Member
                 </P>
               </Skeleton>
+
               <Skeleton
-                h={"14px"}
+                h={"16px"}
                 w={"90%"}
                 rounded={"sm"}
                 loaded={isLoaded}
@@ -1228,8 +1257,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "alert",
     title: "Alert",
     category: "Feedback & Status",
-    description: "Komponen pemberitahuan status penting (info, success, warning, error) dengan ikon indikator.",
-    importPath: 'import { Alert } from "@/design-system/components/feedback/ui/alert";',
+    description:
+      "Komponen pemberitahuan status penting (info, success, warning, error) dengan ikon indikator.",
+    importPath:
+      'import { Alert } from "@/design-system/components/feedback/ui/alert";',
     component: Alert.Root,
     defaultProps: {
       status: "info",
@@ -1246,12 +1277,17 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     ],
     renderPlayground: (props) => (
       <Box w={"full"} maxW={"420px"}>
-        <Alert.Root status={(props.status as "info" | "success" | "warning" | "error") || "info"}>
+        <Alert.Root
+          status={
+            (props.status as "info" | "success" | "warning" | "error") || "info"
+          }
+        >
           <Alert.Indicator />
           <Alert.Content>
             <Alert.Title>Informasi Sistem</Alert.Title>
             <Alert.Description>
-              Operasi berhasil disinkronkan dengan status {String(props.status || "info")}.
+              Operasi berhasil disinkronkan dengan status{" "}
+              {String(props.status || "info")}.
             </Alert.Description>
           </Alert.Content>
         </Alert.Root>
@@ -1316,8 +1352,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "state_display",
     title: "State Feedback (No Data)",
     category: "Feedback & Status",
-    description: "Komponen ilustratif untuk halaman data kosong atau kondisi belum ada data.",
-    importPath: 'import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";',
+    description:
+      "Komponen ilustratif untuk halaman data kosong atau kondisi belum ada data.",
+    importPath:
+      'import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";',
     component: NoDataState,
     defaultProps: {},
     propsSpec: [],
@@ -1328,8 +1366,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "face_emoji",
     title: "Face Emoji",
     category: "Feedback & Status",
-    description: "Animasi ekspresi wajah interaktif untuk status visual dan feedback emosional antarmuka.",
-    importPath: 'import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";',
+    description:
+      "Animasi ekspresi wajah interaktif untuk status visual dan feedback emosional antarmuka.",
+    importPath:
+      'import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";',
     component: FaceEmoji,
     defaultProps: {
       variant: "happy",
@@ -1342,7 +1382,14 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "happy",
         description: "Ekspresi wajah emoji.",
         controlKind: "select",
-        options: ["happy", "sad", "neutral", "celebrate", "confused", "searching"],
+        options: [
+          "happy",
+          "sad",
+          "neutral",
+          "celebrate",
+          "confused",
+          "searching",
+        ],
       },
       {
         name: "size",
@@ -1365,8 +1412,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "focus_alert",
     title: "Focus Alert Modal",
     category: "Focus Alert",
-    description: "Modal peringatan terpusat prioritas tinggi dengan animasi ikon besar dan aksi konfirmasi.",
-    importPath: 'import { FocusAlertItem } from "@/design-system/components/focus-alert/ui/focus-alert";',
+    description:
+      "Modal peringatan terpusat prioritas tinggi dengan animasi ikon besar dan aksi konfirmasi.",
+    importPath:
+      'import { FocusAlertItem } from "@/design-system/components/focus-alert/ui/focus-alert";',
     component: Box,
     defaultProps: {
       variant: "neutral",
@@ -1384,13 +1433,14 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     renderPlayground: (props) => <FocusAlertPlaygroundDemo {...props} />,
   },
 
-
   data_table: {
     key: "data_table",
     title: "DataView Table",
     category: "Data Display",
-    description: "Tabel data virtualized responsif dengan sorting, pagination, checkbox batch, dan menu aksi baris.",
-    importPath: 'import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";',
+    description:
+      "Tabel data virtualized responsif dengan sorting, pagination, checkbox batch, dan menu aksi baris.",
+    importPath:
+      'import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";',
     component: DataViewTable.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1401,8 +1451,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "clipboard",
     title: "Clipboard",
     category: "Data Display",
-    description: "Komponen salin teks satu klik ke papan klip dengan status umpan balik instan.",
-    importPath: 'import { Clipboard } from "@/design-system/components/data-display/ui/clipboard";',
+    description:
+      "Komponen salin teks satu klik ke papan klip dengan status umpan balik instan.",
+    importPath:
+      'import { Clipboard } from "@/design-system/components/data-display/ui/clipboard";',
     component: Clipboard.Root,
     defaultProps: {
       value: "https://volatil.atrbpn.go.id",
@@ -1417,7 +1469,9 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       },
     ],
     renderPlayground: (props) => (
-      <Clipboard.Root value={String(props.value || "https://volatil.atrbpn.go.id")}>
+      <Clipboard.Root
+        value={String(props.value || "https://volatil.atrbpn.go.id")}
+      >
         <HStack gap={2}>
           <Clipboard.Input />
           <Clipboard.Trigger asChild>
@@ -1434,8 +1488,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "countdown",
     title: "Countdown",
     category: "Data Display",
-    description: "Penghitung mundur waktu terformat dengan threshold perubahan warna saat mendekati batas akhir.",
-    importPath: 'import { Countdown } from "@/design-system/components/data-display/ui/countdown";',
+    description:
+      "Penghitung mundur waktu terformat dengan threshold perubahan warna saat mendekati batas akhir.",
+    importPath:
+      'import { Countdown } from "@/design-system/components/data-display/ui/countdown";',
     component: Countdown,
     defaultProps: {},
     propsSpec: [],
@@ -1449,13 +1505,20 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "accordion",
     title: "Accordion",
     category: "Disclosure & Navigation",
-    description: "Komponen panel lipat collapsible berlapis untuk menghemat ruang vertikal.",
-    importPath: 'import { Accordion } from "@/design-system/components/disclosure/ui/accordion";',
+    description:
+      "Komponen panel lipat collapsible berlapis untuk menghemat ruang vertikal.",
+    importPath:
+      'import { Accordion } from "@/design-system/components/disclosure/ui/accordion";',
     component: Accordion.Root,
     defaultProps: {},
     propsSpec: [],
     renderPlayground: () => (
-      <Accordion.Root collapsible defaultValue={["item-1"]} w={"full"} maxW={"380px"}>
+      <Accordion.Root
+        collapsible
+        defaultValue={["item-1"]}
+        w={"full"}
+        maxW={"380px"}
+      >
         <Accordion.Item value={"item-1"}>
           <Accordion.ItemTrigger>
             <Span flex={1}>Informasi Dokumen</Span>
@@ -1486,8 +1549,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "tabs",
     title: "Tabs",
     category: "Disclosure & Navigation",
-    description: "Navigasi tab switching dengan animasi underline indicator halus.",
-    importPath: 'import { Tabs } from "@/design-system/components/disclosure/ui/tabs";',
+    description:
+      "Navigasi tab switching dengan animasi underline indicator halus.",
+    importPath:
+      'import { Tabs } from "@/design-system/components/disclosure/ui/tabs";',
     component: Tabs.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1499,13 +1564,19 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
           <Tabs.Trigger value={"history"}>Riwayat</Tabs.Trigger>
         </Tabs.List>
         <Tabs.Content value={"overview"} pt={3}>
-          <P fontSize={"sm"} color={"fg.muted"}>Konten tab Overview terpilih.</P>
+          <P fontSize={"sm"} color={"fg.muted"}>
+            Konten tab Overview terpilih.
+          </P>
         </Tabs.Content>
         <Tabs.Content value={"specs"} pt={3}>
-          <P fontSize={"sm"} color={"fg.muted"}>Konten spesifikasi teknis dan rincian.</P>
+          <P fontSize={"sm"} color={"fg.muted"}>
+            Konten spesifikasi teknis dan rincian.
+          </P>
         </Tabs.Content>
         <Tabs.Content value={"history"} pt={3}>
-          <P fontSize={"sm"} color={"fg.muted"}>Riwayat perubahan data.</P>
+          <P fontSize={"sm"} color={"fg.muted"}>
+            Riwayat perubahan data.
+          </P>
         </Tabs.Content>
       </Tabs.Root>
     ),
@@ -1516,7 +1587,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     title: "Steps",
     category: "Disclosure & Navigation",
     description: "Indikator alur proses bertahap bertingkat (wizard/stepper).",
-    importPath: 'import { Steps } from "@/design-system/components/disclosure/ui/steps";',
+    importPath:
+      'import { Steps } from "@/design-system/components/disclosure/ui/steps";',
     component: Steps.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1546,8 +1618,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "collapsible",
     title: "Collapsible",
     category: "Disclosure & Navigation",
-    description: "Elemen ekspansi buka/tutup sederhana dengan animasi transisi.",
-    importPath: 'import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";',
+    description:
+      "Elemen ekspansi buka/tutup sederhana dengan animasi transisi.",
+    importPath:
+      'import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";',
     component: Collapsible.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1560,7 +1634,9 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         </Collapsible.Trigger>
         <Collapsible.Content pt={3}>
           <Box p={3} rounded={"md"} bg={"bg.subtle"}>
-            <P fontSize={"xs"}>Ini adalah konten tersembunyi di dalam Collapsible.</P>
+            <P fontSize={"xs"}>
+              Ini adalah konten tersembunyi di dalam Collapsible.
+            </P>
           </Box>
         </Collapsible.Content>
       </Collapsible.Root>
@@ -1571,8 +1647,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "breadcrumb",
     title: "Breadcrumb",
     category: "Disclosure & Navigation",
-    description: "Navigasi remah roti untuk menunjukkan hierarki rute halaman pengguna.",
-    importPath: 'import { Breadcrumb } from "@/design-system/components/disclosure/ui/breadcrumb";',
+    description:
+      "Navigasi remah roti untuk menunjukkan hierarki rute halaman pengguna.",
+    importPath:
+      'import { Breadcrumb } from "@/design-system/components/disclosure/ui/breadcrumb";',
     component: Breadcrumb.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1599,8 +1677,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "carousel",
     title: "Carousel",
     category: "Disclosure & Navigation",
-    description: "Slider tayangan bergambar atau konten kartu bergerak dengan kendali navigasi.",
-    importPath: 'import { Carousel } from "@/design-system/components/disclosure/ui/carousel";',
+    description:
+      "Slider tayangan bergambar atau konten kartu bergerak dengan kendali navigasi.",
+    importPath:
+      'import { Carousel } from "@/design-system/components/disclosure/ui/carousel";',
     component: Carousel.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1610,8 +1690,17 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
           <Carousel.ItemGroup width={"full"}>
             {[1, 2, 3].map((num) => (
               <Carousel.Item key={num} index={num - 1}>
-                <Box h={"140px"} bg={"blue.subtle"} rounded={"lg"} display={"flex"} alignItems={"center"} justifyContent={"center"}>
-                  <P fontWeight={"bold"} color={"blue.fg"}>Slide Banner {num}</P>
+                <Box
+                  h={"140px"}
+                  bg={"blue.subtle"}
+                  rounded={"lg"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <P fontWeight={"bold"} color={"blue.fg"}>
+                    Slide Banner {num}
+                  </P>
                 </Box>
               </Carousel.Item>
             ))}
@@ -1649,8 +1738,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "drawer",
     title: "Drawer",
     category: "Overlays & Modals",
-    description: "Panel geser dari tepi layar untuk form samping, filter, atau menu sekunder.",
-    importPath: 'import { Drawer } from "@/design-system/components/overlay/ui/drawer";',
+    description:
+      "Panel geser dari tepi layar untuk form samping, filter, atau menu sekunder.",
+    importPath:
+      'import { Drawer } from "@/design-system/components/overlay/ui/drawer";',
     component: Drawer.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1662,7 +1753,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     title: "Popover",
     category: "Overlays & Modals",
     description: "Panel mengambang interaktif terikat pada elemen pemicu.",
-    importPath: 'import { Popover } from "@/design-system/components/overlay/ui/popover";',
+    importPath:
+      'import { Popover } from "@/design-system/components/overlay/ui/popover";',
     component: Popover.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1691,8 +1783,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "tooltip",
     title: "Tooltip",
     category: "Overlays & Modals",
-    description: "Pesan informasi singkat saat pengguna mengarahkan kursor (hover) di atas elemen.",
-    importPath: 'import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";',
+    description:
+      "Pesan informasi singkat saat pengguna mengarahkan kursor (hover) di atas elemen.",
+    importPath:
+      'import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";',
     component: Tooltip,
     defaultProps: {
       content: "Tooltip info bantuan",
@@ -1717,20 +1811,26 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "menu",
     title: "Menu",
     category: "Overlays & Modals",
-    description: "Menu dropdown aksi pilihan dengan navigasi keyboard dan pemisahan kategori.",
-    importPath: 'import { Menu } from "@/design-system/components/overlay/ui/menu";',
+    description:
+      "Menu dropdown aksi pilihan dengan navigasi keyboard dan pemisahan kategori.",
+    importPath:
+      'import { Menu } from "@/design-system/components/overlay/ui/menu";',
     component: Menu.Root,
     defaultProps: {},
     propsSpec: [],
     renderPlayground: () => (
       <Menu.Root>
         <Menu.Trigger asChild>
-          <Button variant={"outline"}>Buka Menu Pilihan <AppIcon icon={ChevronDownIcon} size={"sm"} /></Button>
+          <Button variant={"outline"}>
+            Buka Menu Pilihan <AppIcon icon={ChevronDownIcon} size={"sm"} />
+          </Button>
         </Menu.Trigger>
         <Menu.Content minW={"160px"}>
           <Menu.Item value={"profile"}>Profil Saya</Menu.Item>
           <Menu.Item value={"settings"}>Pengaturan</Menu.Item>
-          <Menu.Item value={"logout"} color={"fg.error"}>Keluar</Menu.Item>
+          <Menu.Item value={"logout"} color={"fg.error"}>
+            Keluar
+          </Menu.Item>
         </Menu.Content>
       </Menu.Root>
     ),
@@ -1779,17 +1879,25 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "flex_box",
     title: "Flex / HStack / VStack",
     category: "Layout & Structure",
-    description: "Kontainer susunan fleksibel vertikal (VStack) atau horizontal (HStack) dengan alignment presisi.",
-    importPath: 'import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";',
+    description:
+      "Kontainer susunan fleksibel vertikal (VStack) atau horizontal (HStack) dengan alignment presisi.",
+    importPath:
+      'import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";',
     component: HStack,
     defaultProps: {},
     propsSpec: [],
     renderPlayground: () => (
       <VStack gap={3} align={"start"}>
         <HStack gap={3}>
-          <Box p={3} bg={"blue.subtle"} rounded={"md"}><P fontSize={"xs"}>HStack 1</P></Box>
-          <Box p={3} bg={"blue.subtle"} rounded={"md"}><P fontSize={"xs"}>HStack 2</P></Box>
-          <Box p={3} bg={"blue.subtle"} rounded={"md"}><P fontSize={"xs"}>HStack 3</P></Box>
+          <Box p={3} bg={"blue.subtle"} rounded={"md"}>
+            <P fontSize={"xs"}>HStack 1</P>
+          </Box>
+          <Box p={3} bg={"blue.subtle"} rounded={"md"}>
+            <P fontSize={"xs"}>HStack 2</P>
+          </Box>
+          <Box p={3} bg={"blue.subtle"} rounded={"md"}>
+            <P fontSize={"xs"}>HStack 3</P>
+          </Box>
         </HStack>
       </VStack>
     ),
@@ -1852,8 +1960,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "card",
     title: "Card",
     category: "Layout & Structure",
-    description: "Kartu presentasi informasi modular dengan container token styling.",
-    importPath: 'import { Card } from "@/design-system/components/layout/ui/card";',
+    description:
+      "Kartu presentasi informasi modular dengan container token styling.",
+    importPath:
+      'import { Card } from "@/design-system/components/layout/ui/card";',
     component: Card.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1864,7 +1974,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         </Card.Header>
         <Card.Body>
           <P fontSize={"sm"} color={"fg.muted"}>
-            Kartu layout dengan styling border, padding, dan background serasi tema.
+            Kartu layout dengan styling border, padding, dan background serasi
+            tema.
           </P>
         </Card.Body>
       </Card.Root>
@@ -1875,8 +1986,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "container",
     title: "Container",
     category: "Layout & Structure",
-    description: "Kontainer pembungkus halaman dengan header terintegrasi dan responsivitas adaptif.",
-    importPath: 'import { Container } from "@/design-system/components/layout/ui/container";',
+    description:
+      "Kontainer pembungkus halaman dengan header terintegrasi dan responsivitas adaptif.",
+    importPath:
+      'import { Container } from "@/design-system/components/layout/ui/container";',
     component: Container.Root,
     defaultProps: {},
     propsSpec: [],
@@ -1884,7 +1997,9 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       <Container.Root w={"full"} maxW={"380px"}>
         <Container.Header title={"Container Title"} />
         <Container.Body p={4}>
-          <P fontSize={"sm"} color={"fg.muted"}>Isi konten dalam container box.</P>
+          <P fontSize={"sm"} color={"fg.muted"}>
+            Isi konten dalam container box.
+          </P>
         </Container.Body>
       </Container.Root>
     ),
@@ -1894,8 +2009,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "separator",
     title: "Separator",
     category: "Layout & Structure",
-    description: "Garis pemisah visual horizontal atau vertikal antar bagian antarmuka.",
-    importPath: 'import { Separator } from "@/design-system/components/layout/ui/separator";',
+    description:
+      "Garis pemisah visual horizontal atau vertikal antar bagian antarmuka.",
+    importPath:
+      'import { Separator } from "@/design-system/components/layout/ui/separator";',
     component: Separator,
     defaultProps: {},
     propsSpec: [],
@@ -1912,19 +2029,32 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "sidebar",
     title: "Sidebar",
     category: "Navigation & Shell",
-    description: "Bilah navigasi samping vertikal dengan toggle perluasan (expand/collapse) dan penyimpanan state.",
-    importPath: 'import { Sidebar } from "@/design-system/components/navigation/ui/sidebar";',
+    description:
+      "Bilah navigasi samping vertikal dengan toggle perluasan (expand/collapse) dan penyimpanan state.",
+    importPath:
+      'import { Sidebar } from "@/design-system/components/navigation/ui/sidebar";',
     component: Sidebar.Root,
     defaultProps: {},
     propsSpec: [],
     renderPlayground: () => (
-      <Box h={"220px"} w={"240px"} border={"1px solid"} borderColor={"border.subtle"} rounded={"md"} overflow={"hidden"}>
+      <Box
+        h={"220px"}
+        w={"240px"}
+        border={"1px solid"}
+        borderColor={"border.subtle"}
+        rounded={"md"}
+        overflow={"hidden"}
+      >
         <Sidebar.Root sidebarKey={"demo-sidebar"} defaultExpanded>
           <Sidebar.Header p={3}>
-            <P fontWeight={"bold"} fontSize={"sm"}>Exium App</P>
+            <P fontWeight={"bold"} fontSize={"sm"}>
+              Exium App
+            </P>
           </Sidebar.Header>
           <Sidebar.Body p={3}>
-            <P fontSize={"xs"} color={"fg.muted"}>Navigasi sidebar modul aplikasi.</P>
+            <P fontSize={"xs"} color={"fg.muted"}>
+              Navigasi sidebar modul aplikasi.
+            </P>
           </Sidebar.Body>
         </Sidebar.Root>
       </Box>
@@ -1935,8 +2065,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "link",
     title: "Link",
     category: "Navigation & Shell",
-    description: "Tautan eksternal dengan target _blank dan styling underline saat di-hover.",
-    importPath: 'import { ExternalLink } from "@/design-system/components/navigation/ui/link";',
+    description:
+      "Tautan eksternal dengan target _blank dan styling underline saat di-hover.",
+    importPath:
+      'import { ExternalLink } from "@/design-system/components/navigation/ui/link";',
     component: ExternalLink,
     defaultProps: {
       href: "https://atrbpn.go.id",
@@ -1957,8 +2089,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "avatar",
     title: "Avatar",
     category: "Media & Icons",
-    description: "Gambar profil pengguna dengan fallback inisial nama otomatis dan status pemuatan.",
-    importPath: 'import { Avatar } from "@/design-system/components/media/ui/avatar";',
+    description:
+      "Gambar profil pengguna dengan fallback inisial nama otomatis dan status pemuatan.",
+    importPath:
+      'import { Avatar } from "@/design-system/components/media/ui/avatar";',
     component: Avatar,
     defaultProps: {
       name: "Sulenq Jolitos",
@@ -1987,8 +2121,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "image",
     title: "Image",
     category: "Media & Icons",
-    description: "Komponen gambar responsif dengan penanganan rasio aspek dan border rounded.",
-    importPath: 'import { Image } from "@/design-system/components/media/ui/image";',
+    description:
+      "Komponen gambar responsif dengan penanganan rasio aspek dan border rounded.",
+    importPath:
+      'import { Image } from "@/design-system/components/media/ui/image";',
     component: Image,
     defaultProps: {
       src: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80",
@@ -1997,7 +2133,9 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     propsSpec: [],
     renderPlayground: () => (
       <Image
-        src={"https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80"}
+        src={
+          "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80"
+        }
         alt={"Contoh Gambar"}
         w={"260px"}
         h={"140px"}
@@ -2011,8 +2149,10 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "app_icon",
     title: "App Icon",
     category: "Media & Icons",
-    description: "Komponen ikon serbaguna pembungkus Lucide & Tabler Icons dengan token saiz seragam.",
-    importPath: 'import { AppIcon } from "@/design-system/components/icon/ui/app-icon";',
+    description:
+      "Komponen ikon serbaguna pembungkus Lucide & Tabler Icons dengan token saiz seragam.",
+    importPath:
+      'import { AppIcon } from "@/design-system/components/icon/ui/app-icon";',
     component: AppIcon,
     defaultProps: {
       size: "lg",
@@ -2040,14 +2180,20 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     key: "utilities",
     title: "Utilities & Downloads",
     category: "Utilities & System",
-    description: "Utilitas pengunduh berkas otomatis (DownloadTrigger) dan helper ekosistem.",
-    importPath: 'import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";',
+    description:
+      "Utilitas pengunduh berkas otomatis (DownloadTrigger) dan helper ekosistem.",
+    importPath:
+      'import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";',
     component: Box,
     defaultProps: {},
     propsSpec: [],
     renderPlayground: () => (
       <DownloadTrigger
-        data={async () => new Blob(["Contoh file download teks Exium DS"], { type: "text/plain" })}
+        data={async () =>
+          new Blob(["Contoh file download teks Exium DS"], {
+            type: "text/plain",
+          })
+        }
         fileName={"exium-doc.txt"}
         mimeType={"text/plain"}
       >
@@ -2084,9 +2230,21 @@ const FocusSelectPlaygroundDemo = (props: Record<string, unknown>) => {
         clearable={Boolean(props.clearable)}
         disabled={Boolean(props.disabled)}
         options={[
-          { label: "Bidang Tanah", value: "bidang", description: "Lapisan persil bidang tanah" },
-          { label: "Batas Wilayah", value: "wilayah", description: "Batas administrasi daerah" },
-          { label: "Zona Nilai Tanah", value: "znt", description: "Pemetaan valuasi spasial" },
+          {
+            label: "Bidang Tanah",
+            value: "bidang",
+            description: "Lapisan persil bidang tanah",
+          },
+          {
+            label: "Batas Wilayah",
+            value: "wilayah",
+            description: "Batas administrasi daerah",
+          },
+          {
+            label: "Zona Nilai Tanah",
+            value: "znt",
+            description: "Pemetaan valuasi spasial",
+          },
         ]}
       />
     </Box>
@@ -2097,12 +2255,16 @@ const FocusAlertPlaygroundDemo = (props: Record<string, unknown>) => {
   const { modalKey, open } = usePopModal({ modalKey: "docs-focus-alert-demo" });
   return (
     <VStack gap={3}>
-      <Button variant={"outline"} onClick={() => open()}>Buka Focus Alert</Button>
+      <Button variant={"outline"} onClick={() => open()}>
+        Buka Focus Alert
+      </Button>
       <FocusAlertItem
         modalKey={modalKey}
         variant={(props.variant as "neutral") || "neutral"}
         title={"Perhatian Penting"}
-        description={"Tindakan ini memerlukan perhatian khusus dan konfirmasi pengguna."}
+        description={
+          "Tindakan ini memerlukan perhatian khusus dan konfirmasi pengguna."
+        }
       />
     </VStack>
   );
@@ -2130,7 +2292,10 @@ const DataTablePlaygroundDemo = () => {
       columns: [
         { value: "Budi", td: "Budi" },
         { value: "Verifikator", td: "Verifikator" },
-        { value: "Pending", td: <Badge colorPalette={"orange"}>Pending</Badge> },
+        {
+          value: "Pending",
+          td: <Badge colorPalette={"orange"}>Pending</Badge>,
+        },
       ],
     },
   ];
@@ -2146,21 +2311,35 @@ const DataTablePlaygroundDemo = () => {
 };
 
 const DrawerPlaygroundDemo = () => {
-  const { modalKey, isOpen, open, close } = usePopModal({ modalKey: "docs-drawer" });
+  const { modalKey, isOpen, open, close } = usePopModal({
+    modalKey: "docs-drawer",
+  });
   return (
-    <Drawer.Root modalKey={modalKey} opened={isOpen} open={open} close={close} size={"md"}>
+    <Drawer.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      size={"md"}
+    >
       <Drawer.Trigger asChild>
         <Button variant={"outline"}>Buka Drawer Samping</Button>
       </Drawer.Trigger>
       <Drawer.Content>
         <Drawer.Header>
-          <P fontWeight={"bold"} fontSize={"lg"}>Drawer Exium</P>
+          <P fontWeight={"bold"} fontSize={"lg"}>
+            Drawer Exium
+          </P>
         </Drawer.Header>
         <Drawer.Body>
-          <P color={"fg.muted"}>Panel geser samping untuk form atau info tambahan.</P>
+          <P color={"fg.muted"}>
+            Panel geser samping untuk form atau info tambahan.
+          </P>
         </Drawer.Body>
         <Drawer.Footer>
-          <Button variant={"ghost"} onClick={close}>Tutup</Button>
+          <Button variant={"ghost"} onClick={close}>
+            Tutup
+          </Button>
         </Drawer.Footer>
       </Drawer.Content>
     </Drawer.Root>
