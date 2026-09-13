@@ -112,6 +112,11 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   // Derived Values
   const isActive = activeKey === node.key;
   const isAncestorActive = activePathKeys.has(node.key) && !isActive;
+  const activeChildIndex = hasChildren
+    ? node.children!.findIndex(
+        (child) => child.key === activeKey || activePathKeys.has(child.key),
+      )
+    : -1;
 
   // States
   const [internalOpen, setInternalOpen] = useState(isAncestorActive);
@@ -224,18 +229,15 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           <Box
             pos={"absolute"}
             left={"-14px"}
-            top={"-6px"}
-            w={"12px"}
-            h={"26px"}
+            top={"0px"}
+            w={"14px"}
+            h={"20px"}
             borderLeft={"1.5px solid"}
             borderBottom={"1.5px solid"}
-            borderBottomLeftRadius={"6px"}
-            borderColor={
-              isActive ? `${theme.colorPalette}.solid` : "border.subtle"
-            }
+            borderBottomLeftRadius={"8px"}
+            borderColor={"border.subtle"}
             pointerEvents={"none"}
-            transition={"border-color 150ms ease"}
-            zIndex={isActive ? 1 : 0}
+            zIndex={0}
           />
         )}
 
@@ -352,6 +354,35 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           borderLeft={"1px solid"}
           borderColor={"border.subtle"}
         >
+          {/* Active continuous path from top with curve into active sub-nav */}
+          {activeChildIndex !== -1 && (
+            <Box
+              as={"svg"}
+              pos={"absolute"}
+              left={"-1px"}
+              top={0}
+              w={"15px"}
+              h={`${activeChildIndex * 44 + 28}px`}
+              overflow={"visible"}
+              pointerEvents={"none"}
+              color={`${theme.colorPalette}.solid`}
+              zIndex={2}
+            >
+              <path
+                d={`M 0 0 V ${activeChildIndex * 44 + 16} Q 0 ${
+                  activeChildIndex * 44 + 24
+                } 8 ${activeChildIndex * 44 + 24} H 15`}
+                fill={"none"}
+                stroke={"currentColor"}
+                strokeWidth={"1.5"}
+                strokeLinecap={"round"}
+                style={{
+                  transition: "d 200ms cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+              />
+            </Box>
+          )}
+
           <VStack gap={1} align={"stretch"}>
             {node.children!.map((child) => (
               <VNavNode
