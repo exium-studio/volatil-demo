@@ -360,7 +360,7 @@ const DrawerContent = (props: DrawerContentProps) => {
           }}
           {...restProps}
         >
-          {swipeToDismiss && (
+          {swipeToDismiss && placement === "bottom" && (
             <Box
               w={"80px"}
               h={"4px"}

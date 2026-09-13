@@ -1,5 +1,3 @@
-// src/features/design-system-docs/components/design-system-docs.page.tsx
-
 import {
   Button,
   IconButton,
@@ -8,6 +6,7 @@ import { ColorModeToggleButton } from "@/design-system/components/button/ui/colo
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Drawer } from "@/design-system/components/overlay/ui/drawer";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
@@ -18,16 +17,14 @@ import { COMPONENTS_REGISTRY } from "@/features/design-system-docs/config/compon
 import type { DsNavKey } from "@/features/design-system-docs/types/ds-docs-navs.type";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { MenuIcon, SparklesIcon } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 export const DesignSystemDocsPage = () => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
   const search = useSearch({ from: "/design-system/ui" });
   const navigate = useNavigate({ from: "/design-system/ui" });
-
-  // States
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const mobileDrawer = usePopModal({ modalKey: "ds-docs-mobile-nav" });
 
   // Derived Values
   const activeNavKey: DsNavKey = (search.component as DsNavKey) || "overview";
@@ -42,9 +39,9 @@ export const DesignSystemDocsPage = () => {
           component: key === "overview" ? undefined : key,
         }),
       });
-      setMobileDrawerOpen(false);
+      mobileDrawer.close();
     },
-    [navigate],
+    [navigate, mobileDrawer],
   );
 
   return (
@@ -56,7 +53,6 @@ export const DesignSystemDocsPage = () => {
       align={"stretch"}
       overflow={"hidden"}
     >
-      {/* Desktop Sidebar Navigation */}
       {!isSmallViewport && (
         <DsDocsSidebar
           activeNavKey={activeNavKey}
@@ -64,18 +60,16 @@ export const DesignSystemDocsPage = () => {
         />
       )}
 
-      {/* Mobile Responsive Drawer Navigation */}
       {isSmallViewport && (
         <Drawer.Root
           modalKey={"ds-docs-mobile-nav"}
           placement={"start"}
           size={"full"}
-          opened={mobileDrawerOpen}
-          open={() => setMobileDrawerOpen(true)}
-          close={() => setMobileDrawerOpen(false)}
+          opened={mobileDrawer.isOpen}
+          open={mobileDrawer.open}
+          close={mobileDrawer.close}
         >
           <Drawer.Content p={0}>
-            <Drawer.CloseButton />
             <DsDocsSidebar
               isMobileDrawer
               activeNavKey={activeNavKey}
@@ -103,7 +97,7 @@ export const DesignSystemDocsPage = () => {
                 size={"sm"}
                 variant={"ghost"}
                 aria-label={"Open Navigation Menu"}
-                onClick={() => setMobileDrawerOpen(true)}
+                onClick={() => mobileDrawer.open()}
               >
                 <AppIcon icon={MenuIcon} size={"sm"} />
               </IconButton>

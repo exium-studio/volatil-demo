@@ -1,11 +1,10 @@
-// src/features/design-system-docs/components/ds-docs-sidebar.tsx
-
 import { Logo } from "@/design-system/components/branding/ui/logo";
 import { Input } from "@/design-system/components/input/ui/input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Sidebar } from "@/design-system/components/navigation/ui/sidebar";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
+import { Drawer } from "@/design-system/components/overlay/ui/drawer";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -67,7 +66,10 @@ export const DsDocsSidebar = (props: DsDocsSidebarProps) => {
       defaultExpanded={DEFAULT_SIDEBAR_EXPANDED}
     >
       <Sidebar.Header>
-        <DsDocsSidebarHeader expanded={expanded} />
+        <DsDocsSidebarHeader
+          expanded={expanded}
+          isMobileDrawer={isMobileDrawer}
+        />
       </Sidebar.Header>
 
       <Sidebar.Separator mx={-1} />
@@ -100,7 +102,13 @@ export const DsDocsSidebar = (props: DsDocsSidebarProps) => {
   );
 };
 
-const DsDocsSidebarHeader = ({ expanded }: { expanded: boolean }) => {
+const DsDocsSidebarHeader = ({
+  expanded,
+  isMobileDrawer = false,
+}: {
+  expanded: boolean;
+  isMobileDrawer?: boolean;
+}) => {
   // Stores
   const { theme } = useThemeStore();
 
@@ -119,16 +127,20 @@ const DsDocsSidebarHeader = ({ expanded }: { expanded: boolean }) => {
         </ClampedP>
       </HStack>
 
-      <ClampedP
-        w={expanded ? "" : 0}
-        mr={1}
-        fontSize={"sm"}
-        transition={"200ms"}
-        color={"fg.subtle"}
-        lineHeight={1}
-      >
-        v1.0
-      </ClampedP>
+      {isMobileDrawer ? (
+        <Drawer.CloseButton pos={"relative"} top={"auto"} right={"auto"} />
+      ) : (
+        <ClampedP
+          w={expanded ? "" : 0}
+          mr={1}
+          fontSize={"sm"}
+          transition={"200ms"}
+          color={"fg.subtle"}
+          lineHeight={1}
+        >
+          v1.0
+        </ClampedP>
+      )}
     </HStack>
   );
 };
