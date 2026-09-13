@@ -25,7 +25,7 @@ export const DataViewPageSize = (props: DataViewPageSizeProps) => {
   return (
     <Select
       value={String(pageSize)}
-      selectOptions={selectOptions}
+      options={selectOptions}
       onValueChange={(val) => {
         setPageSize?.(parseInt(val, 10));
       }}

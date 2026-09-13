@@ -131,7 +131,7 @@ export function createSelectControl(config: SelectControlConfig) {
 
     return (
       <SelectInput
-        selectOptions={options}
+        options={options}
         variant={"ghost"}
         positioning={{ sameWidth: false }}
         placeholder={label}

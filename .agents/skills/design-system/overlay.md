@@ -1,9 +1,11 @@
 ---
-name: design-system-overlay
-description: "Guidelines, state conventions, and modalKey hierarchical routing patterns for Modal, Dialog, Drawer, and FocusSelect overlays using usePopModal."
+name: exium-overlay
+description: "Guidelines, state conventions, and modalKey hierarchical routing patterns for Modal, Dialog, Drawer, Popover, Menu, Tooltip, ActionBar, and FocusSelect overlays using usePopModal."
 ---
 
-# Design System Overlay (Modal / Dialog / Drawer / FocusSelect)
+# Exium Overlay Components (Modal / Dialog / Drawer / Popover / Menu / Tooltip / ActionBar)
+
+Located in `@/design-system/components/overlay/ui/`.
 
 ## Core Architectural Principle
 
@@ -47,13 +49,11 @@ When a Modal/Dialog/Drawer contains child overlays (e.g. `FocusSelect`, `Spatial
 ### ✅ Pattern Examples
 
 #### Unique Top-Level / Row-Level Modal:
-
 ```tsx
 const modalKey = `layer-edit-${item.id}`;
 ```
 
 #### Nested Overlay / Select Inside Modal (extends parent's unique `modalKey`):
-
 ```tsx
 // Inside parent modal where modalKey is "layer-edit-123"
 <SpatialBasisSelect
@@ -64,7 +64,6 @@ const modalKey = `layer-edit-${item.id}`;
 ```
 
 #### Multi-level Nested Modal (e.g., Confirmation inside Edit Modal):
-
 ```tsx
 <ConfirmationTrigger
   modalKey={`${modalKey}.confirm-delete`}
@@ -75,90 +74,14 @@ const modalKey = `layer-edit-${item.id}`;
 
 ---
 
-## 3. Component Structure Guidelines
-
-### Overlay Root & Trigger
-
-- Accept an optional `modalKey` prop with a **default that includes the unique item ID**:
-
-```tsx
-export type EditModalTriggerProps = {
-  modalKey?: string;
-  item: DataItem;
-  children?: ReactNode;
-};
-
-export const EditModalTrigger = (props: EditModalTriggerProps) => {
-  const {
-    modalKey: customModalKey = `item-edit-${props.item.id}`,
-    item,
-    children,
-  } = props;
-
-  const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: customModalKey,
-  });
-
-  return (
-    <Modal.Root
-      modalKey={modalKey}
-      opened={isOpen}
-      open={open}
-      close={close}
-      size={"md"}
-    >
-      <Modal.Trigger>{children}</Modal.Trigger>
-      <EditModalContent modalKey={modalKey} item={item} close={close} />
-    </Modal.Root>
-  );
-};
-```
-
-### Passing Unique `modalKey` Down to Content & Child Selects
-
-```tsx
-type EditModalContentProps = {
-  modalKey: string;
-  item: DataItem;
-  close: () => void;
-};
-
-const EditModalContent = (props: EditModalContentProps) => {
-  const { modalKey, item, close } = props;
-
-  return (
-    <Modal.Content>
-      <Modal.Header>
-        <Modal.CloseButton />
-        <Modal.Title>{"Ubah Data"}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Fieldset>
-          <Field label={"Basis IGT"}>
-            <SpatialBasisSelect
-              modalKey={`${modalKey}.spatial-basis`}
-              value={spatialBasis}
-              onValueChange={setSpatialBasis}
-              w={"full"}
-            />
-          </Field>
-        </Fieldset>
-      </Modal.Body>
-    </Modal.Content>
-  );
-};
-```
-
----
-
-## 4. The Trigger Component Pattern (Mandatory for All Overlays)
+## 3. The Trigger Component Pattern (Mandatory for All Overlays)
 
 ### 🔴 Critical Rule: Every Modal/Dialog/Drawer MUST Be Built as a `*Trigger` Component
 
 Trigger components act as modular containers that encapsulate overlay logic (`usePopModal`, `useMountTimeout`, and modal content), while delegating the trigger visual elements (`children`) to the parent caller:
 
 1. **Naming Convention**: Suffix the component with `Trigger` (e.g. `TransactionDetailTrigger`, `MitraCartExpiredBatchesTrigger`, `EntityEditTrigger`).
-2. **Prop Interface**: Always accept `modalKey?: string`, optional entity data, and `children?: ReactNode` (or `children: ReactNode` when caller provides the visual button/action).
+2. **Prop Interface**: Always accept `modalKey?: string`, optional entity data, and `children?: ReactNode`.
 3. **Trigger Delegation**: The trigger element (e.g. `<Button>`, `<IconButton>`, or custom row) is passed from the parent caller via `{children}` and rendered inside `<Modal.Trigger>{children}</Modal.Trigger>`.
 4. **Mount Animation & Lazy Mounting**:
    - Wrap the inner modal content component inside `{isMounted && <...ModalContent />}` using `useMountTimeout` so content is unmounted when closed and exits with clean animation.
@@ -214,33 +137,11 @@ export const EntityDetailTrigger = (props: EntityDetailTriggerProps) => {
 
 ---
 
-## 5. `itemActions` Modal Triggers in `DataViewTable`
+## 4. Overlay Sub-Components Overview
 
-When configuring modal triggers inside `itemActions` of `DataViewTable`:
-
-1. **Always pass explicit unique `modalKey` to the trigger component**:
-   ```tsx
-   modal: {
-     triggerComponent: (item: EntityItem) => (
-       <EntityEditTrigger
-         modalKey={`entity-edit-${item.id}`}
-         item={item}
-       />
-     ),
-   }
-   ```
-2. **Prevent double trigger rendering between Row button and Ellipsis Menu**:
-   - `DataViewTable` renders action buttons in both the **spread row column** (`DataViewSpreadActions`) and the **sticky ellipsis dropdown menu** (`DataListItemActionsTrigger`).
-   - If an action has a modal trigger and is displayed in the row, set `showInRow: true` and `showInMenu: false` (or vice versa) to prevent two modal trigger wrapper instances listening to the same `modalKey` simultaneously in the DOM tree.
-
----
-
-## 6. Checklist for Code Reviews & Edits
-
-- [ ] Is every modal/overlay built using the **Trigger Pattern** (`*Trigger` suffix with `modalKey` and optional `children` prop)?
-- [ ] Is every modalKey unique per screen/row (incorporating `item.id` for table rows)?
-- [ ] In `DataViewTable` itemActions with modals, is explicit `modalKey={`...-${item.id}`}` provided and `showInMenu: false` set when `showInRow: true`?
-- [ ] Are all select/dropdown filters inside overlays configured with `modalKey={`${parentModalKey}.${selectSubKey}`}`?
-- [ ] Are all forms wrapped in `<Fieldset>` with `<Field label={"..."}>`?
-- [ ] Are state values initialized without `useEffect` setters?
-- [ ] Is `pnpm verify` run with 0 errors?
+1. **Dialog (`dialog.tsx`) & Modal (`modal.tsx`)**: Focused modal cards for form entry and confirmation.
+2. **Drawer (`drawer.tsx`)**: Slide-over sheet panel for filters and detail inspections.
+3. **Popover (`popover.tsx`)**: Contextual floating cards (user profiles, pickers).
+4. **Menu (`menu.tsx`)**: Dropdown context menus and action dropdowns.
+5. **Tooltip (`tooltip.tsx`)**: Hover and focus descriptions.
+6. **ActionBar (`action-bar.tsx`)**: Floating dock for table selection actions.

@@ -3,24 +3,22 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { RadioCardInput } from "@/design-system/components/input/ui/radio-card-input";
 import { Input } from "@/design-system/components/input/ui/input";
+import { NumberInput } from "@/design-system/components/input/ui/number-input";
+import SelectInput from "@/design-system/components/input/ui/select";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { ComponentPlaygroundContainer } from "@/features/design-system-docs/components/component-playground-container";
 import type { ComponentDocSpec } from "@/features/design-system-docs/types/ds-docs-spec.type";
+import { ColorPaletteSelect } from "@/features/shared/components/color-palette.select";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 
 export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
-  // Stores
-  const { theme } = useThemeStore();
-
   // States
   const [propsState, setPropsState] = useState<Record<string, unknown>>(
     spec.defaultProps,
@@ -122,11 +120,12 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                 )}
 
                 {prop.controlKind === "number" && (
-                  <Input
-                    type={"number"}
+                  <NumberInput
                     size={"sm"}
-                    value={(propsState[prop.name] as number) ?? 0}
-                    onChange={(e) => handlePropChange(prop.name, Number(e.target.value))}
+                    value={String(propsState[prop.name] ?? 0)}
+                    onValueChange={(details) =>
+                      handlePropChange(prop.name, details.value)
+                    }
                   />
                 )}
 
@@ -139,46 +138,25 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                   </Switch>
                 )}
 
-                {prop.controlKind === "select" && prop.options && (
-                  <RadioCardInput.Root
+                {prop.name === "colorPalette" ? (
+                  <ColorPaletteSelect
                     value={String(propsState[prop.name] ?? "")}
-                    onValueChange={(e) => handlePropChange(prop.name, e.value)}
-                    colorPalette={theme.colorPalette}
+                    onValueChange={(val) => handlePropChange(prop.name, val)}
                     size={"sm"}
-                  >
-                    <Box
-                      maxH={"130px"}
-                      overflowY={"auto"}
-                      pr={1}
-                      css={{
-                        "&::-webkit-scrollbar": { width: "4px" },
-                        "&::-webkit-scrollbar-thumb": {
-                          backgroundColor: "var(--chakra-colors-border-muted)",
-                          borderRadius: "4px",
-                        },
-                      }}
-                    >
-                      <SimpleGrid columns={2} gap={1.5}>
-                        {prop.options.map((opt) => (
-                          <RadioCardInput.Item
-                            key={String(opt)}
-                            value={String(opt)}
-                            px={2}
-                            py={1.5}
-                            borderWidth={"1px"}
-                          >
-                            <RadioCardInput.ItemControl>
-                              <RadioCardInput.ItemIndicator />
-                              <RadioCardInput.ItemText fontSize={"xs"} lineClamp={1}>
-                                {String(opt)}
-                              </RadioCardInput.ItemText>
-                            </RadioCardInput.ItemControl>
-                          </RadioCardInput.Item>
-                        ))}
-                      </SimpleGrid>
-                    </Box>
-                  </RadioCardInput.Root>
-                )}
+                    selectMode={"default"}
+                  />
+                ) : prop.controlKind === "select" && prop.options ? (
+                  <SelectInput
+                    size={"sm"}
+                    placeholder={`Pilih ${prop.name}`}
+                    value={String(propsState[prop.name] ?? "")}
+                    options={prop.options.map((opt) => ({
+                      label: String(opt),
+                      value: String(opt),
+                    }))}
+                    onValueChange={(val) => handlePropChange(prop.name, val)}
+                  />
+                ) : null}
               </Box>
             ))}
           </SimpleGrid>

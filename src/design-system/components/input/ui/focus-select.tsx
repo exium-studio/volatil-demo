@@ -3,6 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
   FieldContext,
@@ -26,7 +27,7 @@ import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from "lucide-react";
 import type React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { isValidElement, useEffect, useMemo, useState } from "react";
 
 const SKELETON_LIST_COUNT = 5;
 
@@ -49,6 +50,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     w = "full",
     trigger,
     children,
+    renderOption,
     ...restProps
   } = props;
 
@@ -153,6 +155,22 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   const customTrigger = trigger ?? children;
   const iconSize = getFocusSelectIconSize(size);
 
+  // Helper
+  const renderStartElement = (
+    element?: React.ReactNode | React.ComponentType,
+    iconFallback?: React.ComponentType,
+    fallbackIconSize?: AppIconProps["size"],
+  ) => {
+    const target = element ?? iconFallback;
+    if (!target) return null;
+    if (isValidElement(target)) return target;
+    if (typeof target === "function") {
+      const Component = target as React.ComponentType;
+      return <AppIcon icon={Component} size={fallbackIconSize} />;
+    }
+    return <>{target}</>;
+  };
+
   const renderTrigger = () => {
     if (typeof customTrigger === "function") {
       return customTrigger({
@@ -229,8 +247,10 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         )}
 
         <HStack gap={"sm"} flex={1} minW={0} justify={"start"}>
-          {selectedOption?.icon && (
-            <AppIcon icon={selectedOption.icon} size={iconSize} />
+          {renderStartElement(
+            selectedOption?.startElement,
+            selectedOption?.icon,
+            iconSize,
           )}
 
           <P
@@ -397,33 +417,37 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                         justifyContent={"start"}
                         onClick={() => handleOptionSelect(opt.value, opt)}
                       >
-                        <HStack
-                          gap={"sm"}
-                          align={"center"}
-                          flex={1}
-                          minW={0}
-                          justify={"start"}
-                        >
-                          {opt.icon && <AppIcon icon={opt.icon} size={"sm"} />}
-                          <VStack align={"start"}>
-                            <ClampedP
-                              fontWeight={isSelected ? "semibold" : "normal"}
-                              textAlign={"start"}
-                            >
-                              {opt.label}
-                            </ClampedP>
-
-                            {opt.description && (
+                        {renderOption ? (
+                          renderOption(opt)
+                        ) : (
+                          <HStack
+                            gap={"sm"}
+                            align={"center"}
+                            flex={1}
+                            minW={0}
+                            justify={"start"}
+                          >
+                            {renderStartElement(opt.startElement, opt.icon, "sm")}
+                            <VStack align={"start"}>
                               <ClampedP
-                                fontSize={"xs"}
+                                fontWeight={isSelected ? "semibold" : "normal"}
                                 textAlign={"start"}
-                                color={"fg.subtle"}
                               >
-                                {opt.description}
+                                {opt.label}
                               </ClampedP>
-                            )}
-                          </VStack>
-                        </HStack>
+
+                              {opt.description && (
+                                <ClampedP
+                                  fontSize={"xs"}
+                                  textAlign={"start"}
+                                  color={"fg.subtle"}
+                                >
+                                  {opt.description}
+                                </ClampedP>
+                              )}
+                            </VStack>
+                          </HStack>
+                        )}
 
                         {isSelected && (
                           <AppIcon

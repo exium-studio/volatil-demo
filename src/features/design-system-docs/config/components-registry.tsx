@@ -443,7 +443,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "blue",
         description: "Warna saat ditandai.",
         controlKind: "select",
-        options: ["blue", "green", "red", "purple"],
+        options: COLOR_PALETTES_LIST.map((c) => c.palette),
       },
       {
         name: "disabled",
@@ -483,7 +483,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "blue",
         description: "Warna saat aktif.",
         controlKind: "select",
-        options: ["blue", "green", "red", "purple"],
+        options: COLOR_PALETTES_LIST.map((c) => c.palette),
       },
       {
         name: "size",

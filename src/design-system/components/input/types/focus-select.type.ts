@@ -7,6 +7,7 @@ export type FocusSelectOption = {
   label: string;
   value: string;
   description?: string;
+  startElement?: React.ReactNode | React.ComponentType;
   icon?: React.ComponentType;
 };
 
@@ -45,4 +46,5 @@ export type FocusSelectInputProps = Omit<
   children?:
     | React.ReactNode
     | ((params: FocusSelectTriggerRenderParams) => React.ReactNode);
+  renderOption?: (option: FocusSelectOption) => React.ReactNode;
 };
