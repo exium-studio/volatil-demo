@@ -16,16 +16,12 @@ import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { findActivePath } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
-
-const NAV_CHILD_ITEM_HEIGHT = 44.28;
-const NAV_INDICATOR_HEIGHT = 16;
-const NAV_INDICATOR_OFFSET = (NAV_CHILD_ITEM_HEIGHT - NAV_INDICATOR_HEIGHT) / 2;
 
 export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
   // Props
@@ -69,9 +65,9 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
               )}
 
               <VStack gap={1} align={expanded ? "stretch" : "center"}>
-                {group.items.map((node, nodeIndex) => (
+                {group.items.map((node) => (
                   <VNavNode
-                    key={nodeIndex}
+                    key={node.key}
                     node={node}
                     navs={navs}
                     activeKey={activeKey}
@@ -111,6 +107,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   const nav = navs[node.key];
   const navTitle = nav.title || (nav.titleKey ? t[nav.titleKey]() : "");
   const hasChildren = !!node.children?.length;
+  const isSubNav = depth > 0;
 
   // Derived Values
   const isActive = activeKey === node.key;
@@ -118,8 +115,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
 
   // States
   const [internalOpen, setInternalOpen] = useState(isAncestorActive);
-  // const opened = internalOpen || isAncestorActive;
-  const opened = internalOpen;
+  const opened = internalOpen || isAncestorActive;
 
   // Rail mode, no children → icon-only button
   if (!expanded && !hasChildren) {
@@ -223,48 +219,61 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   // Expanded, no children → icon + label button
   if (!hasChildren) {
     return (
-      <Tooltip
-        content={navTitle}
-        positioning={{
-          placement: "right",
-        }}
-      >
-        <NavButton
-          aria-label={navTitle}
-          variant={"ghost"}
-          color={
-            isActive && depth === 0 ? `${theme.colorPalette}.fg` : undefined
-          }
-          h={"40px"}
-          w={"full"}
-          rounded={isSmallViewport ? 0 : theme.radii.component}
-          onClick={() => onNavClick?.(node.key)}
-        >
-          <NavIcon
-            nav={nav}
-            color={
-              isActive && depth === 0 ? `${theme.colorPalette}.fg` : "fg.muted"
+      <Box pos={"relative"} w={"full"}>
+        {isSubNav && (
+          <Box
+            pos={"absolute"}
+            left={"-14px"}
+            top={"-6px"}
+            w={"12px"}
+            h={"26px"}
+            borderLeft={"1.5px solid"}
+            borderBottom={"1.5px solid"}
+            borderBottomLeftRadius={"6px"}
+            borderColor={
+              isActive ? `${theme.colorPalette}.solid` : "border.subtle"
             }
+            pointerEvents={"none"}
+            transition={"border-color 150ms ease"}
+            zIndex={isActive ? 1 : 0}
           />
+        )}
 
-          <P
-            fontWeight={isActive && depth === 0 ? "semibold" : "medium"}
-            color={
-              isActive && depth === 0 ? `${theme.colorPalette}.fg` : undefined
-            }
+        <Tooltip
+          content={navTitle}
+          positioning={{
+            placement: "right",
+          }}
+        >
+          <NavButton
+            aria-label={navTitle}
+            variant={"ghost"}
+            color={isActive ? `${theme.colorPalette}.fg` : undefined}
+            bg={isActive ? "bg.muted" : undefined}
+            h={"40px"}
+            w={"full"}
+            rounded={isSmallViewport ? 0 : theme.radii.component}
+            onClick={() => onNavClick?.(node.key)}
           >
-            {navTitle}
-          </P>
-        </NavButton>
-      </Tooltip>
+            <NavIcon
+              nav={nav}
+              color={isActive ? `${theme.colorPalette}.fg` : "fg.muted"}
+            />
+
+            <P
+              fontWeight={isActive ? "semibold" : "medium"}
+              color={isActive ? `${theme.colorPalette}.fg` : undefined}
+              lineClamp={1}
+            >
+              {navTitle}
+            </P>
+          </NavButton>
+        </Tooltip>
+      </Box>
     );
   }
 
-  // Expanded + children → Collapsible, children container with vertical line + sliding indicator
-  const activeChildIndex = node.children!.findIndex(
-    (child) => child.key === activeKey || activePathKeys.has(child.key),
-  );
-
+  // Expanded + children → Collapsible, children container with vertical line
   return (
     <Collapsible.Root
       opened={opened}
@@ -306,16 +315,17 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
               }
             />
 
-            <ClampedP
+            <P
               fontWeight={isActive || isAncestorActive ? "semibold" : "medium"}
               color={
                 isActive || isAncestorActive
                   ? `${theme.colorPalette}.fg`
                   : undefined
               }
+              lineClamp={1}
             >
               {navTitle}
-            </ClampedP>
+            </P>
 
             <AppIcon
               icon={ChevronDownIcon}
@@ -336,26 +346,12 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
       <Collapsible.Content>
         <VStack
           pos={"relative"}
-          pl={"13px"}
+          pl={"14px"}
           py={1}
           ml={`calc(18px * ${depth + 1})`}
           borderLeft={"1px solid"}
           borderColor={"border.subtle"}
         >
-          {/* Sliding active indicator */}
-          {activeChildIndex !== -1 && (
-            <Box
-              pos={"absolute"}
-              left={"-1px"}
-              top={0}
-              w={"2px"}
-              h={`${NAV_INDICATOR_HEIGHT}px`}
-              bg={"colorPalette.solid"}
-              transform={`translateY(${activeChildIndex * NAV_CHILD_ITEM_HEIGHT + NAV_INDICATOR_OFFSET}px)`}
-              transition={"transform 200ms ease"}
-            />
-          )}
-
           <VStack gap={1} align={"stretch"}>
             {node.children!.map((child) => (
               <VNavNode
