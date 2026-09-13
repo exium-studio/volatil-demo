@@ -144,8 +144,9 @@ export default function SelectInput(props: SelectProps) {
               size={iconSize}
               strokeWidth={2}
               cursor={"pointer"}
+              color={props?.color ?? "fg"}
               mr={"-2px"}
-              _hover={{ color: "fg.default" }}
+              _hover={{ color: "fg" }}
               onPointerDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -156,7 +157,7 @@ export default function SelectInput(props: SelectProps) {
             <AppIcon
               icon={ChevronDownIcon}
               size={iconSize}
-              color={props?.color}
+              color={props?.color ?? "fg"}
               mr={"-2px"}
             />
           )}

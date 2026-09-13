@@ -281,8 +281,9 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               size={iconSize}
               strokeWidth={2}
               cursor={"pointer"}
+              color={"fg"}
               mr={"-2px"}
-              _hover={{ color: "fg.default" }}
+              _hover={{ color: "fg" }}
               onPointerDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -290,7 +291,12 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               onClick={handleClear}
             />
           ) : (
-            <AppIcon icon={ChevronDownIcon} size={iconSize} mr={"-2px"} />
+            <AppIcon
+              icon={ChevronDownIcon}
+              size={iconSize}
+              color={"fg"}
+              mr={"-2px"}
+            />
           )}
         </HStack>
       </Button>
@@ -326,9 +332,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
       <FieldContext.Provider value={null}>
         <Modal.Content>
           <Modal.Header>
-            <Modal.Title fontWeight={"semibold"}>
-              {resolvedTitle}
-            </Modal.Title>
+            <Modal.Title fontWeight={"semibold"}>{resolvedTitle}</Modal.Title>
 
             <Modal.CloseButton />
           </Modal.Header>
@@ -428,7 +432,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                             minW={0}
                             justify={"start"}
                           >
-                            {renderStartElement(opt.startElement, opt.icon, "sm")}
+                            {renderStartElement(
+                              opt.startElement,
+                              opt.icon,
+                              "sm",
+                            )}
                             <VStack align={"start"}>
                               <ClampedP
                                 fontWeight={isSelected ? "semibold" : "normal"}
