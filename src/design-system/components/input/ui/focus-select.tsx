@@ -281,6 +281,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               size={iconSize}
               strokeWidth={2}
               cursor={"pointer"}
+              mr={"-2px"}
               _hover={{ color: "fg.default" }}
               onPointerDown={(e) => {
                 e.preventDefault();

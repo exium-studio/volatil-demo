@@ -1,10 +1,9 @@
-// src/design-system/components/input/ui/select.tsx
-
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type {
   SelectOption,
   SelectProps,
 } from "@/design-system/components/input/types/select.type";
+import { getFocusSelectIconSize } from "@/design-system/components/input/utils/focus-select.util";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -14,19 +13,22 @@ import {
   createListCollection,
   Portal,
 } from "@chakra-ui/react";
-import { ChevronDownIcon } from "lucide-react";
-import { isValidElement, useMemo } from "react";
+import { ChevronDownIcon, XIcon } from "lucide-react";
+import type React from "react";
+import { isValidElement, useMemo, useState } from "react";
 
 const EMPTY_OPTIONS: SelectOption[] = [];
 
 export default function SelectInput(props: SelectProps) {
   // Props
   const {
-    value,
+    value: controlledValue,
+    defaultValue = "",
     onValueChange,
     options: optionsProp,
     selectOptions: deprecatedSelectOptions,
     placeholder = "Select option",
+    clearable = true,
     size = "md",
     portalled = true,
     portalRef,
@@ -43,10 +45,15 @@ export default function SelectInput(props: SelectProps) {
   // Stores
   const { theme } = useThemeStore();
 
+  // States (Controlled & Uncontrolled support)
+  const [internalValue, setInternalValue] = useState<string>(defaultValue);
+  const isControlled = controlledValue !== undefined;
+  const currentValue = isControlled ? controlledValue : internalValue;
+
   // Derived Values
   const selectedOption = useMemo(() => {
-    return options.find((opt) => String(opt.value) === String(value));
-  }, [options, value]);
+    return options.find((opt) => String(opt.value) === String(currentValue));
+  }, [options, currentValue]);
 
   // States
   const collection = createListCollection({
@@ -54,6 +61,17 @@ export default function SelectInput(props: SelectProps) {
     itemToString: (item) => item.label,
     itemToValue: (item) => String(item.value),
   });
+
+  // Handlers
+  const handleClear = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+    if (!isControlled) {
+      setInternalValue("");
+    }
+    onValueChange?.("", undefined);
+  };
 
   const renderStartElement = (
     element?: React.ReactNode | React.ComponentType,
@@ -70,13 +88,18 @@ export default function SelectInput(props: SelectProps) {
     return <>{target}</>;
   };
 
+  const iconSize = getFocusSelectIconSize(size);
+  const hasValue = Boolean(currentValue);
+
   const renderTriggerContent = () => {
     if (typeof customTrigger === "function") {
       return customTrigger({
         selectedOption,
-        value,
+        value: currentValue,
         placeholder,
         disabled,
+        clearable,
+        handleClear,
       });
     }
 
@@ -109,11 +132,35 @@ export default function SelectInput(props: SelectProps) {
           {suffixLabel && <P>{suffixLabel}</P>}
         </HStack>
 
-        <AppIcon
-          icon={ChevronDownIcon}
-          color={props?.color}
-          mr={"-2px"}
-        />
+        <HStack
+          gap={"sm"}
+          align={"center"}
+          justify={"center"}
+          pointerEvents={"auto"}
+        >
+          {clearable && hasValue && !disabled ? (
+            <AppIcon
+              icon={XIcon}
+              size={iconSize}
+              strokeWidth={2}
+              cursor={"pointer"}
+              mr={"-2px"}
+              _hover={{ color: "fg.default" }}
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onClick={handleClear}
+            />
+          ) : (
+            <AppIcon
+              icon={ChevronDownIcon}
+              size={iconSize}
+              color={props?.color}
+              mr={"-2px"}
+            />
+          )}
+        </HStack>
       </HStack>
     );
   };
@@ -122,16 +169,18 @@ export default function SelectInput(props: SelectProps) {
     <ChakraSelect.Root
       collection={collection}
       size={size}
-      value={value ? [value] : undefined}
+      value={currentValue ? [currentValue] : []}
       colorPalette={"neutral"}
       disabled={disabled}
       onValueChange={(e) => {
-        if (e.value[0]) {
-          const matched = options.find(
-            (opt) => String(opt.value) === String(e.value[0]),
-          );
-          onValueChange?.(e.value[0], matched);
+        const nextVal = e.value[0] ?? "";
+        if (!isControlled) {
+          setInternalValue(nextVal);
         }
+        const matched = options.find(
+          (opt) => String(opt.value) === String(nextVal),
+        );
+        onValueChange?.(nextVal, matched);
       }}
       {...restProps}
     >

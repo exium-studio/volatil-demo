@@ -1,7 +1,5 @@
-// src/design-system/components/input/types/select.type.ts
-
 import type { SelectRootProps } from "@chakra-ui/react";
-import type { ComponentType, ReactNode, RefObject } from "react";
+import type { ComponentType, MouseEvent, ReactNode, RefObject } from "react";
 
 export type SelectOption = {
   startElement?: ReactNode | ComponentType;
@@ -17,18 +15,22 @@ export type SelectTriggerRenderParams = {
   value?: string;
   placeholder: string;
   disabled?: boolean;
+  clearable?: boolean;
+  handleClear?: (e: MouseEvent) => void;
 };
 
 export type SelectProps = Omit<
   SelectRootProps,
-  "value" | "onValueChange" | "collection"
+  "value" | "defaultValue" | "onValueChange" | "collection"
 > & {
   value?: string;
+  defaultValue?: string;
   onValueChange?: (value: string, option?: SelectOption) => void;
   options?: SelectOption[];
   /** @deprecated use `options` instead */
   selectOptions?: SelectOption[];
   placeholder?: string;
+  clearable?: boolean;
   width?: string | number;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   portalled?: boolean;

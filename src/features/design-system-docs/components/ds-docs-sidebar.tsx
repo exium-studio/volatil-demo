@@ -70,7 +70,7 @@ export const DsDocsSidebar = (props: DsDocsSidebarProps) => {
         <DsDocsSidebarHeader expanded={expanded} />
       </Sidebar.Header>
 
-      <Sidebar.Separator />
+      <Sidebar.Separator mx={-1} />
 
       <Sidebar.Body>
         {/* Filter Input (Only when expanded) */}

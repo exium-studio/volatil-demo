@@ -119,8 +119,18 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
     : -1;
 
   // States
-  const [internalOpen, setInternalOpen] = useState(isAncestorActive);
-  const opened = internalOpen || isAncestorActive;
+  const [isOpen, setIsOpen] = useState(isAncestorActive);
+  const [prevIsAncestorActive, setPrevIsAncestorActive] =
+    useState(isAncestorActive);
+  const opened = isOpen;
+
+  // Auto-open when newly became an active ancestor from outside
+  if (!prevIsAncestorActive && isAncestorActive) {
+    setPrevIsAncestorActive(true);
+    setIsOpen(true);
+  } else if (prevIsAncestorActive && !isAncestorActive) {
+    setPrevIsAncestorActive(false);
+  }
 
   // Rail mode, no children → icon-only button
   if (!expanded && !hasChildren) {
@@ -250,11 +260,14 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           <NavButton
             aria-label={navTitle}
             variant={"ghost"}
+            bg={"transparent"}
             color={isActive ? `${theme.colorPalette}.fg` : undefined}
-            bg={isActive ? "bg.muted" : undefined}
             h={"40px"}
             w={"full"}
             rounded={isSmallViewport ? 0 : theme.radii.component}
+            _hover={{
+              bg: "bg.subtle",
+            }}
             onClick={() => onNavClick?.(node.key)}
           >
             <NavIcon
@@ -277,13 +290,10 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
 
   // Expanded + children → Collapsible, children container with vertical line
   return (
-    <Collapsible.Root
-      opened={opened}
-      onOpenChange={(e) => setInternalOpen(e.open)}
-    >
+    <Collapsible.Root opened={opened} onOpenChange={(e) => setIsOpen(e.open)}>
       <Collapsible.Trigger
         _open={{
-          bg: isActive || isAncestorActive ? "bg.muted" : "transparent",
+          bg: "transparent",
         }}
       >
         <Tooltip
@@ -296,6 +306,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
             aria-expanded={opened}
             size={"md"}
             variant={"ghost"}
+            bg={"transparent"}
             color={
               isActive || isAncestorActive
                 ? `${theme.colorPalette}.fg`
@@ -304,6 +315,12 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
             h={"40px"}
             w={"full"}
             rounded={isSmallViewport ? 0 : theme.radii.component}
+            _open={{
+              bg: "transparent",
+            }}
+            _expanded={{
+              bg: "transparent",
+            }}
             _hover={{
               bg: "bg.subtle",
             }}

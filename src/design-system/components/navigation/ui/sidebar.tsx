@@ -99,7 +99,7 @@ export const SidebarRoot = (props: SidebarRootProps) => {
           py={"3px"}
           bg={"bg.body"}
           borderRight={restProps.borderRight ?? "1px solid"}
-          borderColor={restProps.borderColor ?? "bg.canvas"}
+          borderColor={restProps.borderColor ?? "bg.subtle"}
           align={"stretch"}
           gap={0}
         >
