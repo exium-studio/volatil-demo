@@ -33,6 +33,7 @@ import {
   Navigation,
   Radio,
   Sliders,
+  Smile,
   Sparkles,
   ToggleLeft,
   ToggleRightIcon,
@@ -229,6 +230,10 @@ export const DS_NAVS_MAP = {
   face_emoji: {
     icon: Activity,
     title: "Face Emoji",
+  },
+  emoji: {
+    icon: Smile,
+    title: "Emoji Component (Sliced SVG)",
   },
 
   // Components - Focus Alert

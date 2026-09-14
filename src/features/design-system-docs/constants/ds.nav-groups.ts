@@ -66,6 +66,7 @@ export const DS_NAV_GROUPS_LIST: NavGroup<DsNavKey>[] = [
           { key: "toast" },
           { key: "state_display" },
           { key: "face_emoji" },
+          { key: "emoji" },
         ],
       },
       {

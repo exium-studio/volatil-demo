@@ -16,6 +16,14 @@ import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import {
+  EmojiSmile,
+  EmojiHappy,
+  EmojiAngry,
+  EmojiCry,
+  EmojiSurprised,
+  EmojiThinking,
+} from "@/design-system/components/emoji";
+import {
   Progress,
   ProgressRoot,
 } from "@/design-system/components/feedback/ui/progress";
@@ -1423,6 +1431,72 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         size={(props.size as "lg") || "lg"}
       />
     ),
+  },
+
+  emoji: {
+    key: "emoji",
+    title: "Emoji Component (Sliced SVG)",
+    category: "Emoji",
+    description:
+      "Komponen Emoji berpotongan (sliced SVG) dengan penyesuaian dinamis colorPalette (solid, emphasized, muted, subtle).",
+    importPath:
+      'import { EmojiSmile, EmojiHappy, EmojiAngry, EmojiCry, EmojiSurprised, EmojiThinking } from "@/design-system/components/emoji";',
+    component: EmojiSmile,
+    defaultProps: {
+      emoji: "EmojiSmile",
+      colorPalette: "neutral",
+      size: "md",
+    },
+    propsSpec: [
+      {
+        name: "emoji",
+        type: '"EmojiSmile" | "EmojiHappy" | "EmojiAngry" | "EmojiCry" | "EmojiSurprised" | "EmojiThinking"',
+        defaultValue: "EmojiSmile",
+        description: "Varian sliced emoji SVG.",
+        controlKind: "select",
+        options: [
+          "EmojiSmile",
+          "EmojiHappy",
+          "EmojiAngry",
+          "EmojiCry",
+          "EmojiSurprised",
+          "EmojiThinking",
+        ],
+      },
+      {
+        name: "colorPalette",
+        type: "string",
+        defaultValue: "neutral",
+        description:
+          "Color palette theme (neutral, blue, red, teal, green, amber, purple, etc.).",
+        controlKind: "select",
+        options: ["neutral", "blue", "red", "teal", "green", "amber", "purple"],
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg" | "xl"',
+        defaultValue: "md",
+        description: "Ukuran dimensi emoji.",
+        controlKind: "select",
+        options: ["sm", "md", "lg", "xl"],
+      },
+    ],
+    renderPlayground: (props) => {
+      const cp = (props.colorPalette as string) || "neutral";
+      const sz = (props.size as "md") || "md";
+      const sel = (props.emoji as string) || "EmojiSmile";
+
+      if (sel === "EmojiHappy")
+        return <EmojiHappy colorPalette={cp} size={sz} />;
+      if (sel === "EmojiAngry")
+        return <EmojiAngry colorPalette={cp} size={sz} />;
+      if (sel === "EmojiCry") return <EmojiCry colorPalette={cp} size={sz} />;
+      if (sel === "EmojiSurprised")
+        return <EmojiSurprised colorPalette={cp} size={sz} />;
+      if (sel === "EmojiThinking")
+        return <EmojiThinking colorPalette={cp} size={sz} />;
+      return <EmojiSmile colorPalette={cp} size={sz} />;
+    },
   },
 
   focus_alert: {
