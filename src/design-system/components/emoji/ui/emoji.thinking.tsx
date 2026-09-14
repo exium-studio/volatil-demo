@@ -1,23 +1,14 @@
 // src/design-system/components/emoji/ui/emoji.thinking.tsx
 
-import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
+import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";
-import { useColorMode } from "@/design-system/hooks/use-color-mode";
 
-export const EmojiThingking = ({
-  colorPalette = "gray",
-  boxSize = 24,
-}: EmojiProps) => {
+export const EmojiThinking = (props: EmojiProps) => {
+  // Props
+  const { colorPalette = "gray", boxSize = 24 } = props;
+
   // Hooks
-  const { colorMode } = useColorMode();
-
-  // Colors
-  const muted =
-    resolveSemanticColor(`${colorPalette}.muted`, colorMode) ?? "#e6e6e6";
-  const emphasized =
-    resolveSemanticColor(`${colorPalette}.emphasized`, colorMode) ?? "#ccccc";
-  const solid =
-    resolveSemanticColor(`${colorPalette}.solid`, colorMode) ?? "#000000";
+  const { muted, emphasized, solid } = useEmojiColors(colorPalette);
 
   return (
     <svg

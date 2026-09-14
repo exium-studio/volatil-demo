@@ -111,7 +111,7 @@ export const DesignSystemDocsPage = () => {
           </HStack>
 
           <HStack align={"center"} gap={"sm"}>
-            <Button asChild size={"sm"} variant={"ghost"}>
+            <Button asChild>
               <Link to={"/demo"}>
                 <AppIcon icon={SparklesIcon} size={"sm"} />
                 {!isSmallViewport && " Full Demo Page"}

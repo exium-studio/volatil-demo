@@ -1,23 +1,14 @@
 // src/design-system/components/emoji/ui/emoji.love.tsx
 
-import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
+import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";
-import { useColorMode } from "@/design-system/hooks/use-color-mode";
 
-export const EmojiLove = ({
-  colorPalette = "gray",
-  boxSize = 24,
-}: EmojiProps) => {
+export const EmojiLove = (props: EmojiProps) => {
+  // Props
+  const { colorPalette = "gray", boxSize = 24 } = props;
+
   // Hooks
-  const { colorMode } = useColorMode();
-
-  // Colors
-  const solid =
-    resolveSemanticColor(`${colorPalette}.solid`, colorMode) ?? "#000000";
-  const muted =
-    resolveSemanticColor(`${colorPalette}.muted`, colorMode) ?? "#e6e6e6";
-  const emphasized =
-    resolveSemanticColor(`${colorPalette}.emphasized`, colorMode) ?? "#ffffff";
+  const { muted, emphasized, solid } = useEmojiColors(colorPalette);
 
   return (
     <svg
@@ -52,7 +43,7 @@ export const EmojiLove = ({
 
         {/* Mouth */}
         <path
-          fill={emphasized}
+          fill={solid}
           d={
             "M7.67 9.53c-0.5,0 -0.97,-0.06 -1.38,-0.17 -0.36,-0.1 -0.68,-0.23 -0.93,-0.39 -0.17,0.04 -0.32,0.13 -0.44,0.26 -0.14,0.18 -0.22,0.37 -0.22,0.57 0,0.2 0.08,0.4 0.22,0.57 0.44,0.55 1.51,0.94 2.75,0.94 1.24,0 2.31,-0.39 2.75,-0.94 0.14,-0.18 0.22,-0.37 0.22,-0.57 0,-0.2 -0.08,-0.4 -0.22,-0.57 -0.11,-0.13 -0.26,-0.22 -0.44,-0.26 -0.25,0.16 -0.57,0.29 -0.93,0.39 -0.41,0.11 -0.88,0.17 -1.38,0.17z"
           }

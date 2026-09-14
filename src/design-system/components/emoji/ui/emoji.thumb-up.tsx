@@ -1,25 +1,14 @@
-// src/design-system/components/emoji/ui/emoji.thumbUp.tsx
+// src/design-system/components/emoji/ui/emoji.thumb-up.tsx
 
-import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
+import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";
-import { useColorMode } from "@/design-system/hooks/use-color-mode";
 
-export const EmojiThumbUp = ({
-  colorPalette = "gray",
-  boxSize = 24,
-}: EmojiProps) => {
+export const EmojiThumbUp = (props: EmojiProps) => {
+  // Props
+  const { colorPalette = "gray", boxSize = 24 } = props;
+
   // Hooks
-  const { colorMode } = useColorMode();
-
-  // Colors
-  const subtle =
-    resolveSemanticColor(`${colorPalette}.subtle`, colorMode) ?? "#ffffff";
-  const muted =
-    resolveSemanticColor(`${colorPalette}.muted`, colorMode) ?? "#e6e6e6";
-  const emphasized =
-    resolveSemanticColor(`${colorPalette}.emphasized`, colorMode) ?? "#ccccc";
-  const solid =
-    resolveSemanticColor(`${colorPalette}.solid`, colorMode) ?? "#000000";
+  const { subtle, muted, emphasized, solid } = useEmojiColors(colorPalette);
 
   return (
     <svg
@@ -54,13 +43,6 @@ export const EmojiThumbUp = ({
           fill={solid}
           d={
             "M12.16 5.6c-1.22,0.78 -2.67,1.24 -4.22,1.24 -1.56,0 -3,-0.46 -4.22,-1.24 0.01,0.16 0.03,0.33 0.06,0.48 1.2,0.76 2.63,1.2 4.16,1.2 1.53,0 2.96,-0.44 4.16,-1.2 0.03,-0.16 0.05,-0.32 0.06,-0.48z"
-          }
-        />
-        {/* Tongue */}
-        <path
-          fill={subtle}
-          d={
-            "M8.54 6.82c0.6,-0.72 0.79,-2.41 2.15,-2.51 0.71,-0.05 0.99,1.15 0.99,1.58 -0.94,0.52 -2.01,0.84 -3.14,0.93z"
           }
         />
         {/* Hand */}

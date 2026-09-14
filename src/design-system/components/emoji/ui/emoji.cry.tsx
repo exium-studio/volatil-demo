@@ -1,25 +1,14 @@
 // src/design-system/components/emoji/ui/emoji.cry.tsx
 
-import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
+import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";
-import { useColorMode } from "@/design-system/hooks/use-color-mode";
 
-export const EmojiCry = ({
-  colorPalette = "gray",
-  boxSize = 24,
-}: EmojiProps) => {
+export const EmojiCry = (props: EmojiProps) => {
+  // Props
+  const { colorPalette = "gray", boxSize = 24 } = props;
+
   // Hooks
-  const { colorMode } = useColorMode();
-
-  // Colors
-  const subtle =
-    resolveSemanticColor(`${colorPalette}.subtle`, colorMode) ?? "#ffffff";
-  const muted =
-    resolveSemanticColor(`${colorPalette}.muted`, colorMode) ?? "#e6e6e6";
-  const emphasized =
-    resolveSemanticColor(`${colorPalette}.emphasized`, colorMode) ?? "#ccccc";
-  const solid =
-    resolveSemanticColor(`${colorPalette}.solid`, colorMode) ?? "#000000";
+  const { subtle, muted, emphasized, solid } = useEmojiColors(colorPalette);
 
   return (
     <svg
@@ -67,7 +56,7 @@ export const EmojiCry = ({
           <path
             fill={subtle}
             d={
-              "M12 4.18c0,0 1.24,1.4 2.23,3.09 0.38,0.65 0.76,1.39 1.07,2.05 -0.35,1.7 -1.26,3.19 -2.52,4.28 -0.04,-1.04 -0.19,-2.7 -0.75,-4.47 -0.07,-0.23 -0.15,-0.46 -0.23,-0.68 0.46,-0.9 0.22,-2.32 -0.94,-2.9 -0.2,-0.1 -0.4,-0.17 -0.58,-0.21 -0.57,-0.94 -1.02,-1.51 -1.02,-1.51 0.28,0.17 0.68,0.36 1.17,0.44 0.94,0.15 1.57,-0.08 1.57,-0.08z"
+              "M12 4.18c0,0 1.24,1.4 2.23,3.09 0.38,0.65 0.76,1.39 1.07,2.05 -0.35,1.7 1.26,3.19 -2.52,4.28 -0.04,-1.04 -0.19,-2.7 -0.75,-4.47 -0.07,-0.23 -0.15,-0.46 -0.23,-0.68 0.46,-0.9 0.22,-2.32 -0.94,-2.9 -0.2,-0.1 -0.4,-0.17 -0.58,-0.21 -0.57,-0.94 -1.02,-1.51 -1.02,-1.51 0.28,0.17 0.68,0.36 1.17,0.44 0.94,0.15 1.57,-0.08 1.57,-0.08z"
             }
           />
         </g>

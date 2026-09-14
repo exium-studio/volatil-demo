@@ -1,25 +1,14 @@
 // src/design-system/components/emoji/ui/emoji.scream.tsx
 
-import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
+import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";
-import { useColorMode } from "@/design-system/hooks/use-color-mode";
 
-export const EmojiScream = ({
-  colorPalette = "gray",
-  boxSize = 24,
-}: EmojiProps) => {
+export const EmojiScream = (props: EmojiProps) => {
+  // Props
+  const { colorPalette = "gray", boxSize = 24 } = props;
+
   // Hooks
-  const { colorMode } = useColorMode();
-
-  // Colors
-  const subtle =
-    resolveSemanticColor(`${colorPalette}.subtle`, colorMode) ?? "#ffffff";
-  const muted =
-    resolveSemanticColor(`${colorPalette}.muted`, colorMode) ?? "#e6e6e6";
-  const emphasized =
-    resolveSemanticColor(`${colorPalette}.emphasized`, colorMode) ?? "#ccccc";
-  const solid =
-    resolveSemanticColor(`${colorPalette}.solid`, colorMode) ?? "#000000";
+  const { subtle, muted, emphasized, solid } = useEmojiColors(colorPalette);
 
   return (
     <svg
@@ -56,7 +45,13 @@ export const EmojiScream = ({
           rx={"0.93"}
           ry={"1.73"}
         />
-
+        {/* Mouth */}
+        <ellipse
+          fill={solid}
+          transform={"matrix(1.32571 -0.44121 0.44121 1.32571 7.27 13.2902)"}
+          rx={"0.93"}
+          ry={"1.73"}
+        />
         {/* Hands */}
         <path
           fill={subtle}
