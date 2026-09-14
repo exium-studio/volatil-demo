@@ -1,4 +1,4 @@
-// src/design-system/components/emoji/ui/emoji.shout.tsx
+// src/design-system/components/emoji/ui/backup/emoji.shout.tsx
 
 import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";
