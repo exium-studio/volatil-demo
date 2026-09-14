@@ -23,9 +23,7 @@ import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import type { FaceEmojiVariant } from "@/design-system/components/feedback/types/face-emoji.type";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
-import { EmojiSmile, EmojiHappy, EmojiAngry, EmojiCry, EmojiSurprised, EmojiThinking } from "@/design-system/components/emoji";
 import { DotIndicator } from "@/design-system/components/feedback/ui/indicator";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import {
   Progress,
   ProgressCircle,
@@ -78,12 +76,17 @@ import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { Drawer } from "@/design-system/components/overlay/ui/drawer";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { toast } from "@/design-system/components/toast";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { RichTextEditorPresetEssential } from "@/design-system/components/typography/ui/rich-text-editor.preset";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import type {
+  DemoPaletteItem,
+  DemoSectionHeaderProps,
+} from "@/features/root/types/demo.type";
 import { SettingsTrigger } from "@/features/settings/components/settings";
 import { getLocale, getLocaleLabel } from "@/shared/libs/i18n";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
@@ -123,10 +126,6 @@ import {
   UserIcon,
   WrenchIcon,
 } from "lucide-react";
-import type {
-  DemoPaletteItem,
-  DemoSectionHeaderProps,
-} from "@/features/root/types/demo.type";
 import { useState } from "react";
 import { useForm, type UseFormRegisterReturn } from "react-hook-form";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
@@ -1655,37 +1654,6 @@ export const Feedback = () => {
                 );
               })}
             </HStack>
-
-            {/* Sliced Emojis Component Showcase */}
-            <VStack gap={2} mt={6} w={"full"} align={"center"}>
-              <P fontWeight={"semibold"}>{"New Sliced SVG Emojis (/components/emoji)"}</P>
-              <HStack gap={6} wrap={"wrap"} justify={"center"}>
-                <VStack gap={1}>
-                  <EmojiSmile size={"lg"} colorPalette={"neutral"} />
-                  <P fontSize={"2xs"} color={"fg.muted"}>EmojiSmile (neutral)</P>
-                </VStack>
-                <VStack gap={1}>
-                  <EmojiHappy size={"lg"} colorPalette={"teal"} />
-                  <P fontSize={"2xs"} color={"fg.muted"}>EmojiHappy (teal)</P>
-                </VStack>
-                <VStack gap={1}>
-                  <EmojiAngry size={"lg"} colorPalette={"red"} />
-                  <P fontSize={"2xs"} color={"fg.muted"}>EmojiAngry (red)</P>
-                </VStack>
-                <VStack gap={1}>
-                  <EmojiCry size={"lg"} colorPalette={"blue"} />
-                  <P fontSize={"2xs"} color={"fg.muted"}>EmojiCry (blue)</P>
-                </VStack>
-                <VStack gap={1}>
-                  <EmojiSurprised size={"lg"} colorPalette={"amber"} />
-                  <P fontSize={"2xs"} color={"fg.muted"}>EmojiSurprised (amber)</P>
-                </VStack>
-                <VStack gap={1}>
-                  <EmojiThinking size={"lg"} colorPalette={"purple"} />
-                  <P fontSize={"2xs"} color={"fg.muted"}>EmojiThinking (purple)</P>
-                </VStack>
-              </HStack>
-            </VStack>
           </VStack>
         </VStack>
       </Container.Body>

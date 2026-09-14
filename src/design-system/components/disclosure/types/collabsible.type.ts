@@ -1,4 +1,4 @@
-// src/design-system/components/disclosure/type/collabsible.type.ts
+// src/design-system/components/disclosure/types/collabsible.type.ts
 
 import { Collapsible as ChakraCollapsible } from "@chakra-ui/react";
 

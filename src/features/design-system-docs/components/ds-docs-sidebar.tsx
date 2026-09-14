@@ -1,3 +1,5 @@
+// src/features/design-system-docs/components/ds-docs-sidebar.tsx
+
 import { Logo } from "@/design-system/components/branding/ui/logo";
 import { Input } from "@/design-system/components/input/ui/input";
 import { Box } from "@/design-system/components/layout/ui/box";

@@ -287,7 +287,7 @@ export const chakraConfig = defineConfig({
         },
 
         red: {
-          50: { value: "#f6e6e6" },
+          50: { value: "#fbeeee" },
           100: { value: "#fee2e2" },
           200: { value: "#fecaca" },
           300: { value: "#fca5a5" },
@@ -357,9 +357,9 @@ export const chakraConfig = defineConfig({
         },
 
         yellow: {
-          50: { value: "#fbf7c4ff" },
+          50: { value: "#fbf7c4" },
           100: { value: "#fff7b8" },
-          200: { value: "#eae1af" },
+          200: { value: "#fdf3a3" },
           300: { value: "#ffe14d" },
           400: { value: "#ffd633" },
           500: { value: "#ffcc00" },
@@ -553,7 +553,7 @@ export const chakraConfig = defineConfig({
         },
 
         powderLavender: {
-          50: { value: "#e4e4f6ff" },
+          50: { value: "#eeeefaff" },
           100: { value: "#E2E1FF" },
           200: { value: "#CECDFF" },
           300: { value: "#BAB8FF" },

@@ -13,16 +13,27 @@ import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Steps } from "@/design-system/components/disclosure/ui/steps";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { EmojiAngry } from "@/design-system/components/emoji/ui/emoji.angry";
+import { EmojiCool } from "@/design-system/components/emoji/ui/emoji.cool";
+import { EmojiCry } from "@/design-system/components/emoji/ui/emoji.cry";
+import { EmojiEmbarassed } from "@/design-system/components/emoji/ui/emoji.embarassed";
+import { EmojiFunny } from "@/design-system/components/emoji/ui/emoji.funny";
+import { EmojiHappy } from "@/design-system/components/emoji/ui/emoji.happy";
+import { EmojiLaugh } from "@/design-system/components/emoji/ui/emoji.laugh";
+import { EmojiLove } from "@/design-system/components/emoji/ui/emoji.love";
+import { EmojiPoker } from "@/design-system/components/emoji/ui/emoji.poker";
+import { EmojiRollingEyes } from "@/design-system/components/emoji/ui/emoji.rollingEyes";
+import { EmojiSad } from "@/design-system/components/emoji/ui/emoji.sad";
+import { EmojiScream } from "@/design-system/components/emoji/ui/emoji.scream";
+import { EmojiShout } from "@/design-system/components/emoji/ui/emoji.shout";
+import { EmojiSpeechless } from "@/design-system/components/emoji/ui/emoji.speechless";
+import { EmojiSulk } from "@/design-system/components/emoji/ui/emoji.sulk";
+import { EmojiSurprised } from "@/design-system/components/emoji/ui/emoji.surprised";
+import { EmojiThingking } from "@/design-system/components/emoji/ui/emoji.thinking";
+import { EmojiWicked } from "@/design-system/components/emoji/ui/emoji.wicked";
+import { EmojiYummy } from "@/design-system/components/emoji/ui/emoji.yummy";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
-import {
-  EmojiSmile,
-  EmojiHappy,
-  EmojiAngry,
-  EmojiCry,
-  EmojiSurprised,
-  EmojiThinking,
-} from "@/design-system/components/emoji";
 import {
   Progress,
   ProgressRoot,
@@ -70,7 +81,7 @@ import { Kbd } from "@/design-system/components/typography/ui/kbd";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
-import { COLOR_PALETTES_LIST } from "@/design-system/constants/colors";
+import { COLOR_PALETTE_OPTIONS } from "@/design-system/constants/colors";
 import type { ComponentDocSpec } from "@/features/design-system-docs/types/ds-docs-spec.type";
 import {
   BellIcon,
@@ -79,6 +90,7 @@ import {
   InfoIcon,
   SparklesIcon,
 } from "lucide-react";
+import type { ReactNode } from "react";
 
 export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
   logo: {
@@ -165,7 +177,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "blue",
         description: "Skema warna UI komponen.",
         controlKind: "select",
-        options: COLOR_PALETTES_LIST.map((c) => c.palette),
+        options: COLOR_PALETTE_OPTIONS,
       },
       {
         name: "loading",
@@ -316,7 +328,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "blue",
         description: "Skema warna.",
         controlKind: "select",
-        options: COLOR_PALETTES_LIST.map((c) => c.palette),
+        options: COLOR_PALETTE_OPTIONS,
       },
       {
         name: "size",
@@ -727,7 +739,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "blue",
         description: "Warna saat ditandai.",
         controlKind: "select",
-        options: COLOR_PALETTES_LIST.map((c) => c.palette),
+        options: COLOR_PALETTE_OPTIONS,
       },
       {
         name: "disabled",
@@ -767,7 +779,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "blue",
         description: "Warna saat aktif.",
         controlKind: "select",
-        options: COLOR_PALETTES_LIST.map((c) => c.palette),
+        options: COLOR_PALETTE_OPTIONS,
       },
       {
         name: "size",
@@ -1109,7 +1121,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "blue",
         description: "Skema warna progress bar.",
         controlKind: "select",
-        options: COLOR_PALETTES_LIST.map((c) => c.palette),
+        options: COLOR_PALETTE_OPTIONS,
       },
       {
         name: "size",
@@ -1441,26 +1453,39 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       "Komponen Emoji berpotongan (sliced SVG) dengan penyesuaian dinamis colorPalette (solid, emphasized, muted, subtle).",
     importPath:
       'import { EmojiSmile, EmojiHappy, EmojiAngry, EmojiCry, EmojiSurprised, EmojiThinking } from "@/design-system/components/emoji";',
-    component: EmojiSmile,
+    component: EmojiPoker,
     defaultProps: {
-      emoji: "EmojiSmile",
+      emoji: "poker",
       colorPalette: "neutral",
-      size: "md",
+      boxSize: 80,
     },
     propsSpec: [
       {
         name: "emoji",
-        type: '"EmojiSmile" | "EmojiHappy" | "EmojiAngry" | "EmojiCry" | "EmojiSurprised" | "EmojiThinking"',
-        defaultValue: "EmojiSmile",
+        type: "EmojiKey",
+        defaultValue: "poker",
         description: "Varian sliced emoji SVG.",
         controlKind: "select",
         options: [
-          "EmojiSmile",
-          "EmojiHappy",
-          "EmojiAngry",
-          "EmojiCry",
-          "EmojiSurprised",
-          "EmojiThinking",
+          "shout",
+          "wicked",
+          "angry",
+          "funny",
+          "speechless",
+          "love",
+          "cool",
+          "laugh",
+          "embarassed",
+          "rolling_eyes",
+          "poker",
+          "cry",
+          "happy",
+          "sulk",
+          "thinking",
+          "yummy",
+          "scream",
+          "surprised",
+          "sad",
         ],
       },
       {
@@ -1470,32 +1495,44 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         description:
           "Color palette theme (neutral, blue, red, teal, green, amber, purple, etc.).",
         controlKind: "select",
-        options: ["neutral", "blue", "red", "teal", "green", "amber", "purple"],
+        options: COLOR_PALETTE_OPTIONS,
       },
       {
-        name: "size",
-        type: '"sm" | "md" | "lg" | "xl"',
-        defaultValue: "md",
-        description: "Ukuran dimensi emoji.",
-        controlKind: "select",
-        options: ["sm", "md", "lg", "xl"],
+        name: "boxSize",
+        type: "number",
+        defaultValue: 24,
+        description: "Box size emoji.",
+        controlKind: "number",
       },
     ],
     renderPlayground: (props) => {
       const cp = (props.colorPalette as string) || "neutral";
-      const sz = (props.size as "md") || "md";
-      const sel = (props.emoji as string) || "EmojiSmile";
+      const bs = (props.boxSize as number) || 24;
+      const sel = (props.emoji as string) || "poker";
 
-      if (sel === "EmojiHappy")
-        return <EmojiHappy colorPalette={cp} size={sz} />;
-      if (sel === "EmojiAngry")
-        return <EmojiAngry colorPalette={cp} size={sz} />;
-      if (sel === "EmojiCry") return <EmojiCry colorPalette={cp} size={sz} />;
-      if (sel === "EmojiSurprised")
-        return <EmojiSurprised colorPalette={cp} size={sz} />;
-      if (sel === "EmojiThinking")
-        return <EmojiThinking colorPalette={cp} size={sz} />;
-      return <EmojiSmile colorPalette={cp} size={sz} />;
+      const emojis: Record<string, ReactNode> = {
+        poker: <EmojiPoker boxSize={bs} colorPalette={cp} />,
+        angry: <EmojiAngry boxSize={bs} colorPalette={cp} />,
+        cool: <EmojiCool boxSize={bs} colorPalette={cp} />,
+        cry: <EmojiCry boxSize={bs} colorPalette={cp} />,
+        embarassed: <EmojiEmbarassed boxSize={bs} colorPalette={cp} />,
+        funny: <EmojiFunny boxSize={bs} colorPalette={cp} />,
+        happy: <EmojiHappy boxSize={bs} colorPalette={cp} />,
+        laugh: <EmojiLaugh boxSize={bs} colorPalette={cp} />,
+        love: <EmojiLove boxSize={bs} colorPalette={cp} />,
+        rolling_eyes: <EmojiRollingEyes boxSize={bs} colorPalette={cp} />,
+        sad: <EmojiSad boxSize={bs} colorPalette={cp} />,
+        scream: <EmojiScream boxSize={bs} colorPalette={cp} />,
+        shout: <EmojiShout boxSize={bs} colorPalette={cp} />,
+        speechless: <EmojiSpeechless boxSize={bs} colorPalette={cp} />,
+        sulk: <EmojiSulk boxSize={bs} colorPalette={cp} />,
+        surprised: <EmojiSurprised boxSize={bs} colorPalette={cp} />,
+        thinking: <EmojiThingking boxSize={bs} colorPalette={cp} />,
+        wicked: <EmojiWicked boxSize={bs} colorPalette={cp} />,
+        yummy: <EmojiYummy boxSize={bs} colorPalette={cp} />,
+      };
+
+      return emojis[sel];
     },
   },
 

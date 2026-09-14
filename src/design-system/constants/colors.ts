@@ -44,6 +44,8 @@ export const COLOR_PALETTES_LIST = [
   { palette: "pink", label: "Pink", primaryHex: "#ec4899" },
 ];
 
+export const COLOR_PALETTE_OPTIONS = COLOR_PALETTES_LIST.map((c) => c.palette);
+
 export const COLORS_LIST: string[] = [
   "#63B3ED",
   "#3182CE",

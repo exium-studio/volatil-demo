@@ -50,7 +50,11 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
     const propsPrefix = propStrings ? ` ${propStrings}` : "";
     const childrenVal = propsState.children;
 
-    if (childrenVal !== undefined && childrenVal !== null && childrenVal !== "") {
+    if (
+      childrenVal !== undefined &&
+      childrenVal !== null &&
+      childrenVal !== ""
+    ) {
       return `<${componentName}${propsPrefix}>\n  ${String(childrenVal)}\n</${componentName}>`;
     }
 
@@ -58,7 +62,9 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
   };
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(`${spec.importPath}\n\n${generateCodeSnippet()}`);
+    navigator.clipboard.writeText(
+      `${spec.importPath}\n\n${generateCodeSnippet()}`,
+    );
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -71,15 +77,19 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
           <P fontSize={"2xl"} fontWeight={"bold"}>
             {spec.title}
           </P>
-          <Badge variant={"subtle"}>
-            {spec.category}
-          </Badge>
+          <Badge variant={"subtle"}>{spec.category}</Badge>
         </HStack>
         <P color={"fg.muted"}>{spec.description}</P>
       </VStack>
 
       {/* Import Path Card */}
-      <Box p={3} rounded={"md"} bg={"bg.subtle"} border={"1px solid"} borderColor={"border.subtle"}>
+      <Box
+        p={3}
+        rounded={"md"}
+        bg={"bg.subtle"}
+        border={"1px solid"}
+        borderColor={"border.subtle"}
+      >
         <P fontSize={"xs"} color={"fg.subtle"} mb={1}>
           IMPORT PATH
         </P>
@@ -90,9 +100,11 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
 
       {/* Interactive Playground Sandbox */}
       <ComponentPlaygroundContainer>
-        {spec.renderPlayground
-          ? spec.renderPlayground(propsState)
-          : <ComponentToRender {...propsState} />}
+        {spec.renderPlayground ? (
+          spec.renderPlayground(propsState)
+        ) : (
+          <ComponentToRender {...propsState} />
+        )}
       </ComponentPlaygroundContainer>
 
       {/* Controls & Props Spec Tabs */}
@@ -115,7 +127,9 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                   <Input
                     size={"sm"}
                     value={(propsState[prop.name] as string) ?? ""}
-                    onChange={(e) => handlePropChange(prop.name, e.target.value)}
+                    onChange={(e) =>
+                      handlePropChange(prop.name, e.target.value)
+                    }
                   />
                 )}
 
@@ -132,9 +146,13 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                 {prop.controlKind === "boolean" && (
                   <Switch
                     checked={(propsState[prop.name] as boolean) ?? false}
-                    onCheckedChange={(e) => handlePropChange(prop.name, e.checked)}
+                    onCheckedChange={(e) =>
+                      handlePropChange(prop.name, e.checked)
+                    }
                   >
-                    <P fontSize={"xs"}>{propsState[prop.name] ? "True" : "False"}</P>
+                    <P fontSize={"xs"}>
+                      {propsState[prop.name] ? "True" : "False"}
+                    </P>
                   </Switch>
                 )}
 
@@ -179,7 +197,9 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
               )}
               {copied ? "Copied!" : "Copy Code"}
             </Button>
-            <pre style={{ margin: 0, fontFamily: "monospace", fontSize: "13px" }}>
+            <pre
+              style={{ margin: 0, fontFamily: "monospace", fontSize: "13px" }}
+            >
               {spec.importPath}
               {"\n\n"}
               {generateCodeSnippet()}
@@ -189,9 +209,21 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
 
         <Tabs.Content value={"props"} pt={4}>
           <Box overflowX={"auto"}>
-            <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "13px" }}>
+            <table
+              style={{
+                width: "100%",
+                textAlign: "left",
+                borderCollapse: "collapse",
+                fontSize: "13px",
+              }}
+            >
               <thead>
-                <tr style={{ borderBottom: "1px solid var(--chakra-colors-border-subtle)" }}>
+                <tr
+                  style={{
+                    borderBottom:
+                      "1px solid var(--chakra-colors-border-subtle)",
+                  }}
+                >
                   <th style={{ padding: "8px" }}>Prop</th>
                   <th style={{ padding: "8px" }}>Type</th>
                   <th style={{ padding: "8px" }}>Default</th>
@@ -200,10 +232,30 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
               </thead>
               <tbody>
                 {spec.propsSpec.map((p) => (
-                  <tr key={p.name} style={{ borderBottom: "1px solid var(--chakra-colors-border-subtle)" }}>
-                    <td style={{ padding: "8px", fontWeight: "bold" }}>{p.name}</td>
-                    <td style={{ padding: "8px", fontFamily: "monospace", color: "#3182ce" }}>{p.type}</td>
-                    <td style={{ padding: "8px" }}>{p.defaultValue !== undefined ? String(p.defaultValue) : "undefined"}</td>
+                  <tr
+                    key={p.name}
+                    style={{
+                      borderBottom:
+                        "1px solid var(--chakra-colors-border-subtle)",
+                    }}
+                  >
+                    <td style={{ padding: "8px", fontWeight: "bold" }}>
+                      {p.name}
+                    </td>
+                    <td
+                      style={{
+                        padding: "8px",
+                        fontFamily: "monospace",
+                        color: "#3182ce",
+                      }}
+                    >
+                      {p.type}
+                    </td>
+                    <td style={{ padding: "8px" }}>
+                      {p.defaultValue !== undefined
+                        ? String(p.defaultValue)
+                        : "undefined"}
+                    </td>
                     <td style={{ padding: "8px" }}>{p.description}</td>
                   </tr>
                 ))}

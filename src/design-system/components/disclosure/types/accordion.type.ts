@@ -1,4 +1,4 @@
-// src/design-system/components/disclosure/type/accordion.type.ts
+// src/design-system/components/disclosure/types/accordion.type.ts
 
 import type {
   AccordionRootProps as ChakraAccordionRootProps,

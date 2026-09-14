@@ -1,10 +1,27 @@
 // src/design-system/components/emoji/types/emoji.type.ts
 
-import type { BoxProps } from "@/design-system/components/layout/types/box.type";
+export type EmojiKey =
+  | "shout"
+  | "wicked"
+  | "angry"
+  | "funny"
+  | "speechless"
+  | "love"
+  | "cool"
+  | "laugh"
+  | "embarassed"
+  | "rolling_eyes"
+  | "poker"
+  | "cry"
+  | "happy"
+  | "sulk"
+  | "thinking"
+  | "yummy"
+  | "scream"
+  | "surprised"
+  | "sad";
 
-export type EmojiSize = "sm" | "md" | "lg" | "xl" | number;
-
-export type EmojiProps = BoxProps & {
-  size?: EmojiSize;
+export type EmojiProps = {
   colorPalette?: string;
+  boxSize?: number;
 };
