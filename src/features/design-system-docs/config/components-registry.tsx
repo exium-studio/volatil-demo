@@ -70,9 +70,12 @@ import {
   BellIcon,
   ChevronDownIcon,
   CopyIcon,
+  HomeIcon,
   InfoIcon,
+  SettingsIcon,
   SparklesIcon,
 } from "lucide-react";
+import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 
 export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
   logo: {
@@ -107,9 +110,33 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { BrandWatermark } from "@/design-system/components/branding/ui/brand-watermark";',
     component: BrandWatermark,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => <BrandWatermark />,
+    defaultProps: {
+      textAlign: "center",
+      color: "fg.muted",
+    },
+    propsSpec: [
+      {
+        name: "textAlign",
+        type: '"left" | "center" | "right"',
+        defaultValue: "center",
+        description: "Pensejajaran horizontal teks watermark.",
+        controlKind: "select",
+        options: ["left", "center", "right"],
+      },
+      {
+        name: "color",
+        type: "string",
+        defaultValue: "fg.muted",
+        description: "Token warna teks watermark.",
+        controlKind: "text",
+      },
+    ],
+    renderPlayground: (props) => (
+      <BrandWatermark
+        textAlign={(props.textAlign as "left" | "center" | "right") || "center"}
+        color={String(props.color || "fg.muted")}
+      />
+    ),
   },
 
   button: {
@@ -827,11 +854,41 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     component: RadioInput,
     defaultProps: {
       defaultValue: "opt1",
+      colorPalette: "blue",
+      size: "md",
+      disabled: false,
     },
-    propsSpec: [],
-    renderPlayground: () => (
+    propsSpec: [
+      {
+        name: "colorPalette",
+        type: "string",
+        defaultValue: "blue",
+        description: "Skema warna radio button saat terpilih.",
+        controlKind: "select",
+        options: COLOR_PALETTE_OPTIONS,
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        defaultValue: "md",
+        description: "Ukuran radio button.",
+        controlKind: "select",
+        options: ["sm", "md", "lg"],
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        defaultValue: false,
+        description: "Menonaktifkan semua opsi radio input.",
+        controlKind: "boolean",
+      },
+    ],
+    renderPlayground: (props) => (
       <RadioInput
         defaultValue={"opt1"}
+        colorPalette={props.colorPalette as string}
+        size={(props.size as "sm" | "md" | "lg") || "md"}
+        disabled={Boolean(props.disabled)}
         options={[
           { value: "opt1", label: "Option 1" },
           { value: "opt2", label: "Option 2" },
@@ -852,10 +909,44 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     component: RadioCardInput.Root,
     defaultProps: {
       defaultValue: "standard",
+      colorPalette: "blue",
+      size: "md",
+      disabled: false,
     },
-    propsSpec: [],
-    renderPlayground: () => (
-      <RadioCardInput.Root defaultValue={"standard"} maxW={"420px"} w={"full"}>
+    propsSpec: [
+      {
+        name: "colorPalette",
+        type: "string",
+        defaultValue: "blue",
+        description: "Skema warna border dan aksen saat kartu terpilih.",
+        controlKind: "select",
+        options: COLOR_PALETTE_OPTIONS,
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        defaultValue: "md",
+        description: "Ukuran kartu radio card.",
+        controlKind: "select",
+        options: ["sm", "md", "lg"],
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        defaultValue: false,
+        description: "Menonaktifkan kartu radio card.",
+        controlKind: "boolean",
+      },
+    ],
+    renderPlayground: (props) => (
+      <RadioCardInput.Root
+        defaultValue={"standard"}
+        colorPalette={props.colorPalette as string}
+        size={(props.size as "sm" | "md" | "lg") || "md"}
+        disabled={Boolean(props.disabled)}
+        maxW={"420px"}
+        w={"full"}
+      >
         <HStack gap={3} w={"full"}>
           <RadioCardInput.Item value={"standard"} flex={1} p={3}>
             <RadioCardInput.ItemText>
@@ -893,11 +984,41 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     component: SegmentGroupInput,
     defaultProps: {
       defaultValue: "grid",
+      colorPalette: "blue",
+      size: "md",
+      disabled: false,
     },
-    propsSpec: [],
-    renderPlayground: () => (
+    propsSpec: [
+      {
+        name: "colorPalette",
+        type: "string",
+        defaultValue: "blue",
+        description: "Skema warna indikator aktif.",
+        controlKind: "select",
+        options: COLOR_PALETTE_OPTIONS,
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        defaultValue: "md",
+        description: "Ukuran tombol segment control.",
+        controlKind: "select",
+        options: ["sm", "md", "lg"],
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        defaultValue: false,
+        description: "Menonaktifkan kontrol segment group.",
+        controlKind: "boolean",
+      },
+    ],
+    renderPlayground: (props) => (
       <SegmentGroupInput
         defaultValue={"grid"}
+        colorPalette={props.colorPalette as string}
+        size={(props.size as "sm" | "md" | "lg") || "md"}
+        disabled={Boolean(props.disabled)}
         options={[
           { value: "list", label: "List View" },
           { value: "grid", label: "Grid View" },
@@ -1359,9 +1480,32 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";',
     component: NoDataState,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => <NoDataState />,
+    defaultProps: {
+      title: "Tidak Ada Data",
+      description: "Belum ada item atau rekaman data yang tersedia.",
+    },
+    propsSpec: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Tidak Ada Data",
+        description: "Judul teks status kosong.",
+        controlKind: "text",
+      },
+      {
+        name: "description",
+        type: "string",
+        defaultValue: "Belum ada item atau rekaman data yang tersedia.",
+        description: "Deskripsi bantuan status kosong.",
+        controlKind: "text",
+      },
+    ],
+    renderPlayground: (props) => (
+      <NoDataState
+        title={props.title as string}
+        description={props.description as string}
+      />
+    ),
   },
 
   emoji: {
@@ -1473,9 +1617,78 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";',
     component: DataViewTable.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => <DataTablePlaygroundDemo />,
+    defaultProps: {
+      withNumbering: true,
+      canBatchSelect: true,
+      fixedItemHeight: true,
+      virtualized: true,
+    },
+    propsSpec: [
+      {
+        name: "headers",
+        type: "FormattedTableHeader[]",
+        defaultValue: "[]",
+        description: "Daftar definisi kolom header tabel (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "items",
+        type: "FormattedListItem[]",
+        defaultValue: "[]",
+        description: "Daftar data baris tabel (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "children",
+        type: "ReactNode",
+        defaultValue: undefined,
+        description: "Sub-komponen Header dan Body tabel (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "withNumbering",
+        type: "boolean",
+        defaultValue: true,
+        description: "Tampilkan kolom nomor urut baris data.",
+        controlKind: "boolean",
+      },
+      {
+        name: "canBatchSelect",
+        type: "boolean",
+        defaultValue: true,
+        description: "Aktifkan kotak centang pemilihan batch baris.",
+        controlKind: "boolean",
+      },
+      {
+        name: "fixedItemHeight",
+        type: "boolean",
+        defaultValue: true,
+        description: "Kunci tinggi baris data secara konsisten.",
+        controlKind: "boolean",
+      },
+      {
+        name: "virtualized",
+        type: "boolean",
+        defaultValue: true,
+        description: "Gunakan rendering virtual DOM untuk data jumlah besar.",
+        controlKind: "boolean",
+      },
+      {
+        name: "page",
+        type: "number",
+        defaultValue: 1,
+        description: "Nomor halaman aktif saat ini.",
+        controlKind: "number",
+      },
+      {
+        name: "pageSize",
+        type: "number",
+        defaultValue: 10,
+        description: "Jumlah data per halaman.",
+        controlKind: "number",
+      },
+    ],
+    renderPlayground: (props) => <DataTablePlaygroundDemo {...props} />,
   },
 
   clipboard: {
@@ -1489,19 +1702,28 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     component: Clipboard.Root,
     defaultProps: {
       value: "https://volatil.atrbpn.go.id",
+      timeout: 2000,
     },
     propsSpec: [
       {
         name: "value",
         type: "string",
         defaultValue: "https://volatil.atrbpn.go.id",
-        description: "Nilai string yang akan disalin.",
+        description: "Nilai string yang akan disalin (wajib).",
         controlKind: "text",
+      },
+      {
+        name: "timeout",
+        type: "number",
+        defaultValue: 2000,
+        description: "Durasi status tersalin aktif dalam milidetik.",
+        controlKind: "number",
       },
     ],
     renderPlayground: (props) => (
       <Clipboard.Root
         value={String(props.value || "https://volatil.atrbpn.go.id")}
+        timeout={Number(props.timeout) || 2000}
       >
         <HStack gap={2}>
           <Clipboard.Input />
@@ -1524,11 +1746,49 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Countdown } from "@/design-system/components/data-display/ui/countdown";',
     component: Countdown,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => {
-      const tomorrow = new Date(Date.now() + 86400000).toISOString();
-      return <Countdown finishedAt={tomorrow} />;
+    defaultProps: {
+      warningThresholdDays: 3,
+      warningThresholdHours: 24,
+    },
+    propsSpec: [
+      {
+        name: "finishedAt",
+        type: "string | Date",
+        defaultValue: undefined,
+        description: "Target waktu batas akhir countdown (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "warningThresholdDays",
+        type: "number",
+        defaultValue: 3,
+        description: "Batas sisa hari sebelum warna berubah menjadi peringatan.",
+        controlKind: "number",
+      },
+      {
+        name: "warningThresholdHours",
+        type: "number",
+        defaultValue: 24,
+        description: "Batas sisa jam sebelum warna berubah menjadi peringatan.",
+        controlKind: "number",
+      },
+      {
+        name: "finishColor",
+        type: "string",
+        defaultValue: "fg.error",
+        description: "Token warna teks saat waktu countdown habis.",
+        controlKind: "text",
+      },
+    ],
+    renderPlayground: (props) => {
+      const tomorrow = new Date(Date.now() + 86400000 * 2).toISOString();
+      return (
+        <Countdown
+          finishedAt={tomorrow}
+          warningThresholdDays={Number(props.warningThresholdDays) || 3}
+          warningThresholdHours={Number(props.warningThresholdHours) || 24}
+        />
+      );
     },
   },
 
@@ -1541,11 +1801,37 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Accordion } from "@/design-system/components/disclosure/ui/accordion";',
     component: Accordion.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
+    defaultProps: {
+      collapsible: true,
+      multiple: false,
+    },
+    propsSpec: [
+      {
+        name: "defaultValue",
+        type: "string[]",
+        defaultValue: '["item-1"]',
+        description: "Item panel yang terbuka secara default.",
+        controlKind: "text",
+      },
+      {
+        name: "collapsible",
+        type: "boolean",
+        defaultValue: true,
+        description: "Izinkan semua panel ditutup secara bersamaan.",
+        controlKind: "boolean",
+      },
+      {
+        name: "multiple",
+        type: "boolean",
+        defaultValue: false,
+        description: "Izinkan membuka lebih dari satu panel sekaligus.",
+        controlKind: "boolean",
+      },
+    ],
+    renderPlayground: (props) => (
       <Accordion.Root
-        collapsible
+        collapsible={Boolean(props.collapsible)}
+        multiple={Boolean(props.multiple)}
         defaultValue={["item-1"]}
         w={"full"}
         maxW={"380px"}
@@ -1585,10 +1871,65 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Tabs } from "@/design-system/components/disclosure/ui/tabs";',
     component: Tabs.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Tabs.Root defaultValue={"overview"} w={"full"} maxW={"380px"}>
+    defaultProps: {
+      variant: "line",
+      size: "md",
+      fitted: false,
+      colorPalette: "blue",
+    },
+    propsSpec: [
+      {
+        name: "defaultValue",
+        type: "string",
+        defaultValue: "overview",
+        description: "Nilai tab yang aktif pertama kali.",
+        controlKind: "text",
+      },
+      {
+        name: "variant",
+        type: '"line" | "subtle" | "outline" | "enclosed"',
+        defaultValue: "line",
+        description: "Gaya visual navigasi tab.",
+        controlKind: "select",
+        options: ["line", "subtle", "outline", "enclosed"],
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        defaultValue: "md",
+        description: "Ukuran tombol tab.",
+        controlKind: "select",
+        options: ["sm", "md", "lg"],
+      },
+      {
+        name: "fitted",
+        type: "boolean",
+        defaultValue: false,
+        description: "Ratakan lebar tab memenuhi lebar kontainer.",
+        controlKind: "boolean",
+      },
+      {
+        name: "colorPalette",
+        type: "string",
+        defaultValue: "blue",
+        description: "Skema warna aksen aktif tab.",
+        controlKind: "select",
+        options: COLOR_PALETTE_OPTIONS,
+      },
+    ],
+    renderPlayground: (props) => (
+      <Tabs.Root
+        defaultValue={"overview"}
+        variant={
+          (props.variant as "line" | "subtle" | "outline" | "enclosed") ||
+          "line"
+        }
+        size={(props.size as "sm" | "md" | "lg") || "md"}
+        fitted={Boolean(props.fitted)}
+        colorPalette={(props.colorPalette as string) || "blue"}
+        w={"full"}
+        maxW={"380px"}
+      >
         <Tabs.List>
           <Tabs.Trigger value={"overview"}>Overview</Tabs.Trigger>
           <Tabs.Trigger value={"specs"}>Spesifikasi</Tabs.Trigger>
@@ -1621,10 +1962,53 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Steps } from "@/design-system/components/disclosure/ui/steps";',
     component: Steps.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Steps.Root defaultStep={1} count={3} maxW={"380px"} w={"full"}>
+    defaultProps: {
+      defaultStep: 1,
+      count: 3,
+      size: "md",
+      colorPalette: "blue",
+    },
+    propsSpec: [
+      {
+        name: "count",
+        type: "number",
+        defaultValue: 3,
+        description: "Jumlah total langkah proses (wajib).",
+        controlKind: "number",
+      },
+      {
+        name: "defaultStep",
+        type: "number",
+        defaultValue: 1,
+        description: "Langkah aktif awal (0-indexed).",
+        controlKind: "number",
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        defaultValue: "md",
+        description: "Ukuran indikator lingkaran step.",
+        controlKind: "select",
+        options: ["sm", "md", "lg"],
+      },
+      {
+        name: "colorPalette",
+        type: "string",
+        defaultValue: "blue",
+        description: "Skema warna aksen langkah aktif.",
+        controlKind: "select",
+        options: COLOR_PALETTE_OPTIONS,
+      },
+    ],
+    renderPlayground: (props) => (
+      <Steps.Root
+        defaultStep={Number(props.defaultStep) || 1}
+        count={Number(props.count) || 3}
+        size={(props.size as "sm" | "md" | "lg") || "md"}
+        colorPalette={(props.colorPalette as string) || "blue"}
+        maxW={"380px"}
+        w={"full"}
+      >
         <Steps.List>
           <Steps.Item index={0} title={"Langkah 1"}>
             <Steps.Indicator />
@@ -1654,10 +2038,33 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";',
     component: Collapsible.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Collapsible.Root defaultOpen w={"full"} maxW={"320px"}>
+    defaultProps: {
+      defaultOpen: true,
+      unmountOnExit: false,
+    },
+    propsSpec: [
+      {
+        name: "defaultOpen",
+        type: "boolean",
+        defaultValue: true,
+        description: "Status awal konten dalam keadaan terbuka.",
+        controlKind: "boolean",
+      },
+      {
+        name: "unmountOnExit",
+        type: "boolean",
+        defaultValue: false,
+        description: "Unmount elemen DOM saat ditutup.",
+        controlKind: "boolean",
+      },
+    ],
+    renderPlayground: (props) => (
+      <Collapsible.Root
+        defaultOpen={Boolean(props.defaultOpen)}
+        unmountOnExit={Boolean(props.unmountOnExit)}
+        w={"full"}
+        maxW={"320px"}
+      >
         <Collapsible.Trigger asChild>
           <Button variant={"outline"} size={"sm"}>
             Toggle Konten Tambahan
@@ -1683,19 +2090,38 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Breadcrumb } from "@/design-system/components/disclosure/ui/breadcrumb";',
     component: Breadcrumb.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Breadcrumb.Root>
+    defaultProps: {
+      separator: "/",
+      size: "md",
+    },
+    propsSpec: [
+      {
+        name: "separator",
+        type: "string",
+        defaultValue: "/",
+        description: "Karakter pemisah antar tingkatan navigasi.",
+        controlKind: "text",
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        defaultValue: "md",
+        description: "Ukuran teks breadcrumb.",
+        controlKind: "select",
+        options: ["sm", "md", "lg"],
+      },
+    ],
+    renderPlayground: (props) => (
+      <Breadcrumb.Root size={(props.size as "sm" | "md" | "lg") || "md"}>
         <Breadcrumb.List>
           <Breadcrumb.Item>
             <Breadcrumb.Link href={"#"}>Beranda</Breadcrumb.Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Separator />
+          <Breadcrumb.Separator>{String(props.separator || "/")}</Breadcrumb.Separator>
           <Breadcrumb.Item>
             <Breadcrumb.Link href={"#"}>Manajemen Data</Breadcrumb.Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Separator />
+          <Breadcrumb.Separator>{String(props.separator || "/")}</Breadcrumb.Separator>
           <Breadcrumb.Item>
             <Breadcrumb.CurrentLink>Spasial</Breadcrumb.CurrentLink>
           </Breadcrumb.Item>
@@ -1709,36 +2135,127 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     title: "Carousel",
     category: "Disclosure & Navigation",
     description:
-      "Slider tayangan bergambar atau konten kartu bergerak dengan kendali navigasi.",
+      "Slider tayangan bergambar atau konten kartu bergerak dengan navigasi tombol dan indikator titik.",
     importPath:
       'import { Carousel } from "@/design-system/components/disclosure/ui/carousel";',
     component: Carousel.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Carousel.Root slideCount={3} w={"320px"} maxW={"320px"}>
-        <Carousel.Control>
-          <Carousel.ItemGroup width={"full"}>
-            {[1, 2, 3].map((num) => (
-              <Carousel.Item key={num} index={num - 1}>
-                <Box
-                  h={"140px"}
-                  bg={"blue.subtle"}
-                  rounded={"lg"}
-                  display={"flex"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
+    defaultProps: {
+      slideCount: 4,
+      loop: true,
+      autoplay: false,
+    },
+    propsSpec: [
+      {
+        name: "slideCount",
+        type: "number",
+        defaultValue: 4,
+        description: "Jumlah total item slide (wajib).",
+        controlKind: "number",
+      },
+      {
+        name: "loop",
+        type: "boolean",
+        defaultValue: true,
+        description: "Putar kembali slide dari awal setelah slide terakhir.",
+        controlKind: "boolean",
+      },
+      {
+        name: "autoplay",
+        type: "boolean",
+        defaultValue: false,
+        description: "Otomatis berpindah slide secara bergantian.",
+        controlKind: "boolean",
+      },
+    ],
+    renderPlayground: (props) => {
+      const carouselImages = [
+        "https://images.unsplash.com/photo-1656433031375-5042f5afe894?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2371",
+        "https://images.unsplash.com/photo-1587466412525-87497b34fc88?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2673",
+        "https://images.unsplash.com/photo-1629581688635-5d88654e5bdd?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2831",
+        "https://images.unsplash.com/photo-1661030420948-862787de0056?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=2370",
+      ];
+      const count = Math.min(
+        Math.max(1, Number(props.slideCount) || 4),
+        carouselImages.length,
+      );
+      const displayImages = carouselImages.slice(0, count);
+
+      return (
+        <Carousel.Root
+          loop={Boolean(props.loop)}
+          autoplay={Boolean(props.autoplay)}
+          slideCount={displayImages.length}
+          w={"350px"}
+          maxW={"350px"}
+          pos={"relative"}
+        >
+          <Carousel.Control>
+            <Carousel.ItemGroup width={"full"}>
+              {displayImages.map((src, index) => (
+                <Carousel.Item key={index} index={index}>
+                  <Image
+                    src={src}
+                    alt={`Slide ${index + 1}`}
+                    objectFit={"cover"}
+                    aspectRatio={16 / 9}
+                    w={"full"}
+                    rounded={"md"}
+                  />
+                </Carousel.Item>
+              ))}
+            </Carousel.ItemGroup>
+
+            <HStack
+              align={"center"}
+              justify={"space-between"}
+              w={"full"}
+              px={2}
+              pos={"absolute"}
+              top={"50%"}
+              transform={"translateY(-50%)"}
+            >
+              <Carousel.PrevTrigger asChild>
+                <Carousel.ActionButton
+                  size={"sm"}
+                  color={"white"}
+                  borderColor={"border.subtle"}
+                  bg={"blackAlpha.600"}
+                  _hover={{ bg: "blackAlpha.800" }}
                 >
-                  <P fontWeight={"bold"} color={"blue.fg"}>
-                    Slide Banner {num}
-                  </P>
-                </Box>
-              </Carousel.Item>
-            ))}
-          </Carousel.ItemGroup>
-        </Carousel.Control>
-      </Carousel.Root>
-    ),
+                  <LuArrowLeft />
+                </Carousel.ActionButton>
+              </Carousel.PrevTrigger>
+
+              <Carousel.NextTrigger asChild>
+                <Carousel.ActionButton
+                  size={"sm"}
+                  color={"white"}
+                  borderColor={"border.subtle"}
+                  bg={"blackAlpha.600"}
+                  _hover={{ bg: "blackAlpha.800" }}
+                >
+                  <LuArrowRight />
+                </Carousel.ActionButton>
+              </Carousel.NextTrigger>
+            </HStack>
+
+            <Box pos={"absolute"} bottom={2} w={"full"}>
+              <Carousel.Indicators
+                bg={"whiteAlpha.700"}
+                boxSize={1.5}
+                transition={"200ms"}
+                transformOrigin={"center"}
+                _current={{
+                  width: 5,
+                  opacity: 1,
+                  bg: "white",
+                }}
+              />
+            </Box>
+          </Carousel.Control>
+        </Carousel.Root>
+      );
+    },
   },
 
   dialog: {
@@ -1751,18 +2268,51 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       'import { Dialog } from "@/design-system/components/overlay/ui/dialog";',
     component: Dialog.Root,
     defaultProps: {
-      modalKey: "docs-dialog",
+      size: "md",
+      placement: "center",
+      scrollBehavior: "inside",
     },
     propsSpec: [
       {
         name: "modalKey",
         type: "string",
         defaultValue: "docs-dialog",
-        description: "Kunci identifikasi modal.",
+        description: "Kunci identitas unik modal popup (wajib).",
         controlKind: "text",
       },
+      {
+        name: "opened",
+        type: "boolean",
+        defaultValue: false,
+        description: "Status keterbukaan modal dialog (wajib).",
+        controlKind: "boolean",
+      },
+      {
+        name: "size",
+        type: '"xs" | "sm" | "md" | "lg" | "xl" | "full"',
+        defaultValue: "md",
+        description: "Ukuran lebar modal dialog.",
+        controlKind: "select",
+        options: ["xs", "sm", "md", "lg", "xl", "full"],
+      },
+      {
+        name: "placement",
+        type: '"center" | "top"',
+        defaultValue: "center",
+        description: "Posisi peletakan dialog pada layar.",
+        controlKind: "select",
+        options: ["center", "top"],
+      },
+      {
+        name: "scrollBehavior",
+        type: '"inside" | "outside"',
+        defaultValue: "inside",
+        description: "Perilaku scroll konten jika melebihi tinggi layar.",
+        controlKind: "select",
+        options: ["inside", "outside"],
+      },
     ],
-    renderPlayground: () => <DialogPlaygroundDemo />,
+    renderPlayground: (props) => <DialogPlaygroundDemo {...props} />,
   },
 
   drawer: {
@@ -1774,9 +2324,43 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Drawer } from "@/design-system/components/overlay/ui/drawer";',
     component: Drawer.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => <DrawerPlaygroundDemo />,
+    defaultProps: {
+      placement: "end",
+      size: "md",
+    },
+    propsSpec: [
+      {
+        name: "modalKey",
+        type: "string",
+        defaultValue: "docs-drawer",
+        description: "Kunci identitas unik drawer samping (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "opened",
+        type: "boolean",
+        defaultValue: false,
+        description: "Status visibilitas terbuka drawer (wajib).",
+        controlKind: "boolean",
+      },
+      {
+        name: "placement",
+        type: '"start" | "end" | "top" | "bottom"',
+        defaultValue: "end",
+        description: "Sisi tepi layar tempat drawer muncul.",
+        controlKind: "select",
+        options: ["start", "end", "top", "bottom"],
+      },
+      {
+        name: "size",
+        type: '"xs" | "sm" | "md" | "lg" | "xl" | "full"',
+        defaultValue: "md",
+        description: "Dimensi ketebalan drawer.",
+        controlKind: "select",
+        options: ["xs", "sm", "md", "lg", "xl", "full"],
+      },
+    ],
+    renderPlayground: (props) => <DrawerPlaygroundDemo {...props} />,
   },
 
   popover: {
@@ -1787,10 +2371,31 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Popover } from "@/design-system/components/overlay/ui/popover";',
     component: Popover.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Popover.Root>
+    defaultProps: {
+      modal: false,
+      portalled: true,
+    },
+    propsSpec: [
+      {
+        name: "modal",
+        type: "boolean",
+        defaultValue: false,
+        description: "Cegah interaksi di luar area popover saat terbuka.",
+        controlKind: "boolean",
+      },
+      {
+        name: "portalled",
+        type: "boolean",
+        defaultValue: true,
+        description: "Render popover ke dalam portal body terpisah.",
+        controlKind: "boolean",
+      },
+    ],
+    renderPlayground: (props) => (
+      <Popover.Root
+        modal={Boolean(props.modal)}
+        portalled={Boolean(props.portalled)}
+      >
         <Popover.Trigger asChild>
           <Button variant={"outline"}>Klik Popover</Button>
         </Popover.Trigger>
@@ -1821,18 +2426,54 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     component: Tooltip,
     defaultProps: {
       content: "Tooltip info bantuan",
+      disabled: false,
+      openDelay: 300,
+      closeDelay: 200,
     },
     propsSpec: [
       {
         name: "content",
-        type: "string",
+        type: "ReactNode",
         defaultValue: "Tooltip info bantuan",
-        description: "Teks isi tooltip.",
+        description: "Teks atau konten isi tooltip (wajib).",
         controlKind: "text",
+      },
+      {
+        name: "children",
+        type: "ReactElement",
+        defaultValue: undefined,
+        description: "Elemen target trigger tooltip (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        defaultValue: false,
+        description: "Nonaktifkan tampilan tooltip.",
+        controlKind: "boolean",
+      },
+      {
+        name: "openDelay",
+        type: "number",
+        defaultValue: 300,
+        description: "Jeda waktu buka tooltip (ms).",
+        controlKind: "number",
+      },
+      {
+        name: "closeDelay",
+        type: "number",
+        defaultValue: 200,
+        description: "Jeda waktu tutup tooltip (ms).",
+        controlKind: "number",
       },
     ],
     renderPlayground: (props) => (
-      <Tooltip content={String(props.content || "Tooltip info bantuan")}>
+      <Tooltip
+        content={String(props.content || "Tooltip info bantuan")}
+        disabled={Boolean(props.disabled)}
+        openDelay={Number(props.openDelay) || 300}
+        closeDelay={Number(props.closeDelay) || 200}
+      >
         <Button variant={"outline"}>Arahkan Mouse ke Sini</Button>
       </Tooltip>
     ),
@@ -1847,10 +2488,33 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Menu } from "@/design-system/components/overlay/ui/menu";',
     component: Menu.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Menu.Root>
+    defaultProps: {
+      size: "md",
+      variant: "subtle",
+    },
+    propsSpec: [
+      {
+        name: "size",
+        type: '"sm" | "md"',
+        defaultValue: "md",
+        description: "Ukuran item menu.",
+        controlKind: "select",
+        options: ["sm", "md"],
+      },
+      {
+        name: "variant",
+        type: '"subtle" | "solid"',
+        defaultValue: "subtle",
+        description: "Gaya visual latar menu terpilih.",
+        controlKind: "select",
+        options: ["subtle", "solid"],
+      },
+    ],
+    renderPlayground: (props) => (
+      <Menu.Root
+        size={(props.size as "sm" | "md") || "md"}
+        variant={(props.variant as "subtle" | "solid") || "subtle"}
+      >
         <Menu.Trigger asChild>
           <Button variant={"outline"}>
             Buka Menu Pilihan <AppIcon icon={ChevronDownIcon} size={"sm"} />
@@ -1878,23 +2542,39 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     component: Box,
     defaultProps: {
       p: 4,
-      bg: "bg.muted",
-      rounded: "md",
+      bg: "bg.subtle",
+      rounded: "lg",
     },
     propsSpec: [
       {
-        name: "children",
-        type: "ReactNode",
-        defaultValue: undefined,
-        description: "Konten di dalam Box.",
-        controlKind: "text",
+        name: "p",
+        type: "number | string",
+        defaultValue: 4,
+        description: "Besaran padding kontainer.",
+        controlKind: "number",
+      },
+      {
+        name: "bg",
+        type: '"bg.subtle" | "bg.muted" | "bg.panel"',
+        defaultValue: "bg.subtle",
+        description: "Warna latar kontainer.",
+        controlKind: "select",
+        options: ["bg.subtle", "bg.muted", "bg.panel"],
+      },
+      {
+        name: "rounded",
+        type: '"none" | "sm" | "md" | "lg" | "full"',
+        defaultValue: "lg",
+        description: "Radius sudut border.",
+        controlKind: "select",
+        options: ["none", "sm", "md", "lg", "full"],
       },
     ],
-    renderPlayground: () => (
+    renderPlayground: (props) => (
       <Box
-        p={6}
-        rounded={"lg"}
-        bg={"bg.subtle"}
+        p={Number(props.p) || 4}
+        rounded={(props.rounded as "lg") || "lg"}
+        bg={String(props.bg || "bg.subtle")}
         border={"1px solid"}
         borderColor={"border.subtle"}
       >
@@ -1908,30 +2588,80 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
 
   flex_box: {
     key: "flex_box",
-    title: "Flex / HStack / VStack",
+    title: "HStack / VStack",
     category: "Layout & Structure",
     description:
       "Kontainer susunan fleksibel vertikal (VStack) atau horizontal (HStack) dengan alignment presisi.",
     importPath:
       'import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";',
     component: HStack,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <VStack gap={3} align={"start"}>
-        <HStack gap={3}>
-          <Box p={3} bg={"blue.subtle"} rounded={"md"}>
-            <P fontSize={"xs"}>HStack 1</P>
+    defaultProps: {
+      direction: "horizontal",
+      gap: 3,
+      align: "center",
+      justify: "start",
+    },
+    propsSpec: [
+      {
+        name: "direction",
+        type: '"horizontal" | "vertical"',
+        defaultValue: "horizontal",
+        description: "Arah orientasi stack (HStack horizontal vs VStack vertikal).",
+        controlKind: "select",
+        options: ["horizontal", "vertical"],
+      },
+      {
+        name: "gap",
+        type: "number | string",
+        defaultValue: 3,
+        description: "Jarak spasi antar anak elemen.",
+        controlKind: "number",
+      },
+      {
+        name: "align",
+        type: '"start" | "center" | "end"',
+        defaultValue: "center",
+        description: "Pensejajaran sumbu silang (cross-axis alignment).",
+        controlKind: "select",
+        options: ["start", "center", "end"],
+      },
+      {
+        name: "justify",
+        type: '"start" | "center" | "end" | "space-between"',
+        defaultValue: "start",
+        description: "Pensejajaran sumbu utama (main-axis alignment).",
+        controlKind: "select",
+        options: ["start", "center", "end", "space-between"],
+      },
+    ],
+    renderPlayground: (props) => {
+      const isVertical = props.direction === "vertical";
+      const StackComp = isVertical ? VStack : HStack;
+
+      return (
+        <StackComp
+          gap={Number(props.gap) || 3}
+          align={(props.align as "center") || "center"}
+          justify={(props.justify as "start") || "start"}
+          w={"full"}
+          maxW={isVertical ? "260px" : "380px"}
+          p={3}
+          border={"1px dashed"}
+          borderColor={"border.subtle"}
+          rounded={"md"}
+        >
+          <Box p={3} bg={"blue.subtle"} rounded={"md"} textAlign={"center"} w={isVertical ? "full" : "auto"}>
+            <P fontSize={"xs"} fontWeight={"bold"} color={"blue.fg"}>Item 1</P>
           </Box>
-          <Box p={3} bg={"blue.subtle"} rounded={"md"}>
-            <P fontSize={"xs"}>HStack 2</P>
+          <Box p={3} bg={"teal.subtle"} rounded={"md"} textAlign={"center"} w={isVertical ? "full" : "auto"}>
+            <P fontSize={"xs"} fontWeight={"bold"} color={"teal.fg"}>Item 2</P>
           </Box>
-          <Box p={3} bg={"blue.subtle"} rounded={"md"}>
-            <P fontSize={"xs"}>HStack 3</P>
+          <Box p={3} bg={"purple.subtle"} rounded={"md"} textAlign={"center"} w={isVertical ? "full" : "auto"}>
+            <P fontSize={"xs"} fontWeight={"bold"} color={"purple.fg"}>Item 3</P>
           </Box>
-        </HStack>
-      </VStack>
-    ),
+        </StackComp>
+      );
+    },
   },
 
   grid: {
@@ -1957,7 +2687,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       },
       {
         name: "gap",
-        type: "number",
+        type: "number | string",
         defaultValue: 3,
         description: "Jarak spasi antar item.",
         controlKind: "number",
@@ -1996,10 +2726,35 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Card } from "@/design-system/components/layout/ui/card";',
     component: Card.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Card.Root maxW={"320px"} w={"full"}>
+    defaultProps: {
+      variant: "outline",
+      size: "md",
+    },
+    propsSpec: [
+      {
+        name: "variant",
+        type: '"outline" | "subtle" | "elevated"',
+        defaultValue: "outline",
+        description: "Gaya visual tampilan kartu.",
+        controlKind: "select",
+        options: ["outline", "subtle", "elevated"],
+      },
+      {
+        name: "size",
+        type: '"sm" | "md" | "lg"',
+        defaultValue: "md",
+        description: "Ukuran padding dan konten kartu.",
+        controlKind: "select",
+        options: ["sm", "md", "lg"],
+      },
+    ],
+    renderPlayground: (props) => (
+      <Card.Root
+        variant={(props.variant as "outline" | "subtle" | "elevated") || "outline"}
+        size={(props.size as "sm" | "md" | "lg") || "md"}
+        maxW={"320px"}
+        w={"full"}
+      >
         <Card.Header>
           <P fontWeight={"bold"}>Exium Card</P>
         </Card.Header>
@@ -2022,10 +2777,31 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Container } from "@/design-system/components/layout/ui/container";',
     component: Container.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Container.Root w={"full"} maxW={"380px"}>
+    defaultProps: {
+      withContext: false,
+    },
+    propsSpec: [
+      {
+        name: "withContext",
+        type: "boolean",
+        defaultValue: false,
+        description: "Sediakan konteks dimensi container kepada sub-komponen.",
+        controlKind: "boolean",
+      },
+      {
+        name: "children",
+        type: "ReactNode",
+        defaultValue: undefined,
+        description: "Sub-komponen Header dan Body container (wajib).",
+        controlKind: "text",
+      },
+    ],
+    renderPlayground: (props) => (
+      <Container.Root
+        withContext={Boolean(props.withContext)}
+        w={"full"}
+        maxW={"380px"}
+      >
         <Container.Header title={"Container Title"} />
         <Container.Body p={4}>
           <P fontSize={"sm"} color={"fg.muted"}>
@@ -2045,15 +2821,50 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Separator } from "@/design-system/components/layout/ui/separator";',
     component: Separator,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <VStack gap={3} w={"full"} maxW={"300px"}>
-        <P fontSize={"sm"}>Bagian Atas</P>
-        <Separator w={"full"} />
-        <P fontSize={"sm"}>Bagian Bawah</P>
-      </VStack>
-    ),
+    defaultProps: {
+      orientation: "horizontal",
+      size: "sm",
+    },
+    propsSpec: [
+      {
+        name: "orientation",
+        type: '"horizontal" | "vertical"',
+        defaultValue: "horizontal",
+        description: "Arah garis pemisah.",
+        controlKind: "select",
+        options: ["horizontal", "vertical"],
+      },
+      {
+        name: "size",
+        type: '"xs" | "sm" | "md" | "lg"',
+        defaultValue: "sm",
+        description: "Ketebalan garis pemisah.",
+        controlKind: "select",
+        options: ["xs", "sm", "md", "lg"],
+      },
+    ],
+    renderPlayground: (props) => {
+      const isVertical = props.orientation === "vertical";
+      const size = (props.size as "xs" | "sm" | "md" | "lg") || "sm";
+
+      if (isVertical) {
+        return (
+          <HStack gap={4} h={"70px"} align={"center"} justify={"center"} p={4} border={"1px dashed"} borderColor={"border.subtle"} rounded={"md"}>
+            <P fontSize={"sm"} fontWeight={"medium"}>Sisi Kiri</P>
+            <Separator orientation={"vertical"} size={size} h={"40px"} />
+            <P fontSize={"sm"} fontWeight={"medium"}>Sisi Kanan</P>
+          </HStack>
+        );
+      }
+
+      return (
+        <VStack gap={3} w={"full"} maxW={"300px"} p={4} border={"1px dashed"} borderColor={"border.subtle"} rounded={"md"}>
+          <P fontSize={"sm"} fontWeight={"medium"}>Bagian Atas</P>
+          <Separator orientation={"horizontal"} size={size} w={"full"} />
+          <P fontSize={"sm"} fontWeight={"medium"}>Bagian Bawah</P>
+        </VStack>
+      );
+    },
   },
 
   sidebar: {
@@ -2065,31 +2876,129 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { Sidebar } from "@/design-system/components/navigation/ui/sidebar";',
     component: Sidebar.Root,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
-      <Box
-        h={"220px"}
-        w={"240px"}
-        border={"1px solid"}
-        borderColor={"border.subtle"}
-        rounded={"md"}
-        overflow={"hidden"}
-      >
-        <Sidebar.Root sidebarKey={"demo-sidebar"} defaultExpanded>
-          <Sidebar.Header p={3}>
-            <P fontWeight={"bold"} fontSize={"sm"}>
-              Exium App
-            </P>
-          </Sidebar.Header>
-          <Sidebar.Body p={3}>
-            <P fontSize={"xs"} color={"fg.muted"}>
-              Navigasi sidebar modul aplikasi.
-            </P>
-          </Sidebar.Body>
-        </Sidebar.Root>
-      </Box>
-    ),
+    defaultProps: {
+      expanded: true,
+      expandable: true,
+    },
+    propsSpec: [
+      {
+        name: "expanded",
+        type: "boolean",
+        defaultValue: true,
+        description: "Status buka/tutup bilah navigasi sidebar.",
+        controlKind: "boolean",
+      },
+      {
+        name: "expandable",
+        type: "boolean",
+        defaultValue: true,
+        description: "Aktifkan kemampuan expand & collapse sidebar.",
+        controlKind: "boolean",
+      },
+      {
+        name: "collapsedWidth",
+        type: "number",
+        defaultValue: 60,
+        description: "Lebar saat sidebar dalam keadaan collapsed.",
+        controlKind: "number",
+      },
+      {
+        name: "expandedWidth",
+        type: "number",
+        defaultValue: 240,
+        description: "Lebar saat sidebar dalam keadaan expanded.",
+        controlKind: "number",
+      },
+    ],
+    renderPlayground: (props, onPropChange) => {
+      const isExpanded = Boolean(props.expanded);
+      const isExpandable = Boolean(props.expandable);
+
+      return (
+        <Box
+          h={"240px"}
+          border={"1px solid"}
+          borderColor={"border.subtle"}
+          rounded={"md"}
+          bg={"bg.canvas"}
+          pos={"relative"}
+        >
+          <Sidebar.Root
+            sidebarKey={"demo-playground-sidebar"}
+            expandable={isExpandable}
+            expanded={isExpanded}
+            onExpandedChange={(next) => onPropChange?.("expanded", next)}
+            collapsedWidth={Number(props.collapsedWidth) || 60}
+            expandedWidth={Number(props.expandedWidth) || 240}
+          >
+            <Sidebar.Header px={3} py={3} justify={isExpanded ? "space-between" : "center"}>
+              <HStack gap={2} align={"center"} overflow={"hidden"}>
+                <Box
+                  boxSize={7}
+                  minW={7}
+                  rounded={"md"}
+                  bg={"blue.solid"}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  flexShrink={0}
+                >
+                  <AppIcon icon={SparklesIcon} size={"xs"} color={"white"} />
+                </Box>
+                {isExpanded && (
+                  <P fontWeight={"bold"} fontSize={"sm"} truncate>
+                    Exium App
+                  </P>
+                )}
+              </HStack>
+            </Sidebar.Header>
+
+            <Sidebar.Separator mx={-1} />
+
+            <Sidebar.Body p={2} gap={1} align={isExpanded ? "stretch" : "center"}>
+              <Tooltip content={"Beranda"} disabled={isExpanded} positioning={{ placement: "right" }}>
+                <HStack
+                  p={2}
+                  rounded={"md"}
+                  bg={"blue.subtle"}
+                  color={"blue.fg"}
+                  gap={2.5}
+                  cursor={"pointer"}
+                  w={isExpanded ? "full" : "auto"}
+                  justify={isExpanded ? "start" : "center"}
+                >
+                  <AppIcon icon={HomeIcon} size={"sm"} flexShrink={0} />
+                  {isExpanded && (
+                    <P fontSize={"xs"} fontWeight={"semibold"} truncate>
+                      Beranda
+                    </P>
+                  )}
+                </HStack>
+              </Tooltip>
+
+              <Tooltip content={"Pengaturan"} disabled={isExpanded} positioning={{ placement: "right" }}>
+                <HStack
+                  p={2}
+                  rounded={"md"}
+                  _hover={{ bg: "bg.muted" }}
+                  gap={2.5}
+                  cursor={"pointer"}
+                  w={isExpanded ? "full" : "auto"}
+                  justify={isExpanded ? "start" : "center"}
+                >
+                  <AppIcon icon={SettingsIcon} size={"sm"} flexShrink={0} />
+                  {isExpanded && (
+                    <P fontSize={"xs"} color={"fg.muted"} truncate>
+                      Pengaturan
+                    </P>
+                  )}
+                </HStack>
+              </Tooltip>
+            </Sidebar.Body>
+          </Sidebar.Root>
+        </Box>
+      );
+    },
   },
 
   link: {
@@ -2107,13 +3016,33 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     },
     propsSpec: [
       {
+        name: "href",
+        type: "string",
+        defaultValue: "https://atrbpn.go.id",
+        description: "Alamat URL tujuan tautan (wajib).",
+        controlKind: "text",
+      },
+      {
         name: "children",
         type: "ReactNode",
         defaultValue: "Kunjungi Situs ATR BPN",
-        description: "Teks tautan.",
+        description: "Teks atau elemen anak tautan.",
         controlKind: "text",
       },
+      {
+        name: "target",
+        type: '"_blank" | "_self"',
+        defaultValue: "_blank",
+        description: "Target pembukaan link browser.",
+        controlKind: "select",
+        options: ["_blank", "_self"],
+      },
     ],
+    renderPlayground: (props) => (
+      <ExternalLink href={String(props.href || "https://atrbpn.go.id")}>
+        {String(props.children || "Kunjungi Situs ATR BPN")}
+      </ExternalLink>
+    ),
   },
 
   avatar: {
@@ -2128,6 +3057,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     defaultProps: {
       name: "Sulenq Jolitos",
       size: "lg",
+      src: "",
+      shape: "full",
     },
     propsSpec: [
       {
@@ -2139,13 +3070,44 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       },
       {
         name: "size",
-        type: '"sm" | "md" | "lg" | "xl"',
+        type: '"xs" | "sm" | "md" | "lg" | "xl" | "2xl"',
         defaultValue: "lg",
         description: "Ukuran avatar.",
         controlKind: "select",
-        options: ["sm", "md", "lg", "xl"],
+        options: ["xs", "sm", "md", "lg", "xl", "2xl"],
+      },
+      {
+        name: "src",
+        type: "string",
+        defaultValue: "",
+        description: "URL gambar foto profil pengguna.",
+        controlKind: "text",
+      },
+      {
+        name: "shape",
+        type: '"square" | "rounded" | "full"',
+        defaultValue: "full",
+        description: "Bentuk bingkai avatar.",
+        controlKind: "select",
+        options: ["square", "rounded", "full"],
+      },
+      {
+        name: "loading",
+        type: '"eager" | "lazy"',
+        defaultValue: "lazy",
+        description: "Strategi pemuatan gambar.",
+        controlKind: "select",
+        options: ["eager", "lazy"],
       },
     ],
+    renderPlayground: (props) => (
+      <Avatar
+        name={String(props.name || "Sulenq Jolitos")}
+        size={(props.size as "lg") || "lg"}
+        src={String(props.src || "")}
+        shape={(props.shape as "square" | "rounded" | "full") || "full"}
+      />
+    ),
   },
 
   image: {
@@ -2160,17 +3122,64 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     defaultProps: {
       src: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80",
       alt: "Contoh Gambar",
+      aspectRatio: 1.77,
+      withSkeleton: true,
+      objectFit: "cover",
     },
-    propsSpec: [],
-    renderPlayground: () => (
+    propsSpec: [
+      {
+        name: "src",
+        type: "string",
+        defaultValue:
+          "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80",
+        description: "URL tautan sumber gambar (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "alt",
+        type: "string",
+        defaultValue: "Contoh Gambar",
+        description: "Teks alternatif deskripsi gambar (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "aspectRatio",
+        type: "number",
+        defaultValue: 1.77,
+        description: "Rasio aspek gambar (lebar / tinggi).",
+        controlKind: "number",
+      },
+      {
+        name: "withSkeleton",
+        type: "boolean",
+        defaultValue: true,
+        description: "Tampilkan skeleton saat gambar dalam proses loading.",
+        controlKind: "boolean",
+      },
+      {
+        name: "objectFit",
+        type: '"cover" | "contain" | "fill"',
+        defaultValue: "cover",
+        description: "Perilaku penyesuaian gambar dalam kontainer.",
+        controlKind: "select",
+        options: ["cover", "contain", "fill"],
+      },
+    ],
+    renderPlayground: (props) => (
       <Image
         src={
-          "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80"
+          String(
+            props.src ||
+              "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80",
+          )
         }
-        alt={"Contoh Gambar"}
+        alt={String(props.alt || "Contoh Gambar")}
+        aspectRatio={Number(props.aspectRatio) || 1.77}
+        withSkeleton={Boolean(props.withSkeleton)}
+        objectFit={
+          (props.objectFit as "cover" | "contain" | "fill") || "cover"
+        }
         w={"260px"}
-        h={"140px"}
-        objectFit={"cover"}
         rounded={"lg"}
       />
     ),
@@ -2187,8 +3196,16 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     component: AppIcon,
     defaultProps: {
       size: "lg",
+      colorPalette: "blue",
     },
     propsSpec: [
+      {
+        name: "icon",
+        type: "ComponentType",
+        defaultValue: undefined,
+        description: "Komponen SVG Icon dari Lucide atau Tabler Icons (wajib).",
+        controlKind: "text",
+      },
       {
         name: "size",
         type: '"xs" | "sm" | "md" | "lg" | "xl" | "2xl"',
@@ -2197,9 +3214,17 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         controlKind: "select",
         options: ["xs", "sm", "md", "lg", "xl", "2xl"],
       },
+      {
+        name: "colorPalette",
+        type: "string",
+        defaultValue: "blue",
+        description: "Skema warna ikon.",
+        controlKind: "select",
+        options: COLOR_PALETTE_OPTIONS,
+      },
     ],
     renderPlayground: (props) => (
-      <HStack gap={4}>
+      <HStack gap={4} colorPalette={(props.colorPalette as string) || "blue"}>
         <AppIcon icon={SparklesIcon} size={(props.size as "lg") || "lg"} />
         <AppIcon icon={InfoIcon} size={(props.size as "lg") || "lg"} />
         <AppIcon icon={BellIcon} size={(props.size as "lg") || "lg"} />
@@ -2216,19 +3241,53 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     importPath:
       'import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";',
     component: Box,
-    defaultProps: {},
-    propsSpec: [],
-    renderPlayground: () => (
+    defaultProps: {
+      fileName: "exium-doc.txt",
+      mimeType: "text/plain",
+    },
+    propsSpec: [
+      {
+        name: "data",
+        type: "() => Promise<Blob> | Blob | string",
+        defaultValue: undefined,
+        description: "Fungsi async atau data Blob yang akan didownload (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "fileName",
+        type: "string",
+        defaultValue: "exium-doc.txt",
+        description: "Nama file berkas yang akan diunduh (wajib).",
+        controlKind: "text",
+      },
+      {
+        name: "mimeType",
+        type: "string",
+        defaultValue: "text/plain",
+        description: "Tipe MIME konten file.",
+        controlKind: "text",
+      },
+      {
+        name: "children",
+        type: "ReactNode",
+        defaultValue: undefined,
+        description: "Tombol atau elemen pemicu download (wajib).",
+        controlKind: "text",
+      },
+    ],
+    renderPlayground: (props) => (
       <DownloadTrigger
         data={async () =>
           new Blob(["Contoh file download teks Exium DS"], {
-            type: "text/plain",
+            type: String(props.mimeType || "text/plain"),
           })
         }
-        fileName={"exium-doc.txt"}
-        mimeType={"text/plain"}
+        fileName={String(props.fileName || "exium-doc.txt")}
+        mimeType={String(props.mimeType || "text/plain")}
       >
-        <Button variant={"outline"}>Download File Contoh</Button>
+        <Button variant={"outline"}>
+          Download File ({String(props.fileName || "exium-doc.txt")})
+        </Button>
       </DownloadTrigger>
     ),
   },
@@ -2302,7 +3361,11 @@ const FocusAlertPlaygroundDemo = (props: Record<string, unknown>) => {
   );
 };
 
-const DataTablePlaygroundDemo = () => {
+const DataTablePlaygroundDemo = (props?: Record<string, unknown>) => {
+  const withNumbering = props?.withNumbering !== undefined ? Boolean(props.withNumbering) : true;
+  const canBatchSelect = props?.canBatchSelect !== undefined ? Boolean(props.canBatchSelect) : true;
+  const fixedItemHeight = props?.fixedItemHeight !== undefined ? Boolean(props.fixedItemHeight) : true;
+
   const headers = [
     { th: "Nama", sortable: true },
     { th: "Peran", sortable: true },
@@ -2334,7 +3397,13 @@ const DataTablePlaygroundDemo = () => {
 
   return (
     <Box w={"full"} maxW={"500px"}>
-      <DataViewTable.Root headers={headers} items={items}>
+      <DataViewTable.Root
+        headers={headers}
+        items={items}
+        withNumbering={withNumbering}
+        canBatchSelect={canBatchSelect}
+        fixedItemHeight={fixedItemHeight}
+      >
         <DataViewTable.Header />
         <DataViewTable.Body />
       </DataViewTable.Root>
@@ -2342,7 +3411,10 @@ const DataTablePlaygroundDemo = () => {
   );
 };
 
-const DrawerPlaygroundDemo = () => {
+const DrawerPlaygroundDemo = (props?: Record<string, unknown>) => {
+  const placement = (props?.placement as "start" | "end" | "top" | "bottom") || "end";
+  const size = (props?.size as "xs" | "sm" | "md" | "lg" | "xl" | "full") || "md";
+
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: "docs-drawer",
   });
@@ -2352,7 +3424,8 @@ const DrawerPlaygroundDemo = () => {
       opened={isOpen}
       open={open}
       close={close}
-      size={"md"}
+      placement={placement}
+      size={size}
     >
       <Drawer.Trigger asChild>
         <Button variant={"outline"}>Buka Drawer Samping</Button>
@@ -2378,13 +3451,25 @@ const DrawerPlaygroundDemo = () => {
   );
 };
 
-const DialogPlaygroundDemo = () => {
+const DialogPlaygroundDemo = (props?: Record<string, unknown>) => {
+  const size = (props?.size as "xs" | "sm" | "md" | "lg" | "xl" | "full") || "md";
+  const placement = (props?.placement as "center" | "top") || "center";
+  const scrollBehavior = (props?.scrollBehavior as "inside" | "outside") || "inside";
+
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: "docs-dialog",
   });
 
   return (
-    <Dialog.Root modalKey={modalKey} opened={isOpen} open={open} close={close}>
+    <Dialog.Root
+      modalKey={modalKey}
+      opened={isOpen}
+      open={open}
+      close={close}
+      size={size}
+      placement={placement}
+      scrollBehavior={scrollBehavior}
+    >
       <Dialog.Trigger asChild>
         <Button variant={"outline"}>Buka Dialog Preview</Button>
       </Dialog.Trigger>

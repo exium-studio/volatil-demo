@@ -101,7 +101,7 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
       {/* Interactive Playground Sandbox */}
       <ComponentPlaygroundContainer>
         {spec.renderPlayground ? (
-          spec.renderPlayground(propsState)
+          spec.renderPlayground(propsState, handlePropChange)
         ) : (
           <ComponentToRender {...propsState} />
         )}
@@ -159,7 +159,9 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                 {prop.name === "colorPalette" ? (
                   <ColorPaletteSelect
                     value={String(propsState[prop.name] ?? "")}
-                    onValueChange={(val) => handlePropChange(prop.name, val)}
+                    onValueChange={(val) =>
+                      handlePropChange(prop.name, String(val ?? ""))
+                    }
                     size={"sm"}
                     selectMode={"default"}
                   />
@@ -172,7 +174,9 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                       label: String(opt),
                       value: String(opt),
                     }))}
-                    onValueChange={(val) => handlePropChange(prop.name, val)}
+                    onValueChange={(val) =>
+                      handlePropChange(prop.name, String(val ?? ""))
+                    }
                   />
                 ) : null}
               </Box>
@@ -226,39 +230,58 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
                 >
                   <th style={{ padding: "8px" }}>Prop</th>
                   <th style={{ padding: "8px" }}>Type</th>
+                  <th style={{ padding: "8px" }}>Required</th>
                   <th style={{ padding: "8px" }}>Default</th>
                   <th style={{ padding: "8px" }}>Description</th>
                 </tr>
               </thead>
               <tbody>
-                {spec.propsSpec.map((p) => (
-                  <tr
-                    key={p.name}
-                    style={{
-                      borderBottom:
-                        "1px solid var(--chakra-colors-border-subtle)",
-                    }}
-                  >
-                    <td style={{ padding: "8px", fontWeight: "bold" }}>
-                      {p.name}
-                    </td>
-                    <td
+                {spec.propsSpec.map((p) => {
+                  const isRequired =
+                    p.required ??
+                    (p.description.toLowerCase().includes("(wajib)") ||
+                      p.description.toLowerCase().includes("wajib"));
+
+                  return (
+                    <tr
+                      key={p.name}
                       style={{
-                        padding: "8px",
-                        fontFamily: "monospace",
-                        color: "#3182ce",
+                        borderBottom:
+                          "1px solid var(--chakra-colors-border-subtle)",
                       }}
                     >
-                      {p.type}
-                    </td>
-                    <td style={{ padding: "8px" }}>
-                      {p.defaultValue !== undefined
-                        ? String(p.defaultValue)
-                        : "undefined"}
-                    </td>
-                    <td style={{ padding: "8px" }}>{p.description}</td>
-                  </tr>
-                ))}
+                      <td style={{ padding: "8px", fontWeight: "bold" }}>
+                        {p.name}
+                      </td>
+                      <td
+                        style={{
+                          padding: "8px",
+                          fontFamily: "monospace",
+                          color: "#3182ce",
+                        }}
+                      >
+                        {p.type}
+                      </td>
+                      <td style={{ padding: "8px" }}>
+                        {isRequired ? (
+                          <Badge colorPalette={"red"} size={"xs"}>
+                            Required
+                          </Badge>
+                        ) : (
+                          <Badge colorPalette={"gray"} variant={"subtle"} size={"xs"}>
+                            Optional
+                          </Badge>
+                        )}
+                      </td>
+                      <td style={{ padding: "8px" }}>
+                        {p.defaultValue !== undefined
+                          ? String(p.defaultValue)
+                          : "-"}
+                      </td>
+                      <td style={{ padding: "8px" }}>{p.description}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </Box>

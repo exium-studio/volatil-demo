@@ -12,6 +12,7 @@ export type PropControlKind =
 export type PropSpec = {
   name: string;
   type: string;
+  required?: boolean;
   defaultValue?: string | number | boolean;
   description: string;
   controlKind?: PropControlKind;
@@ -27,7 +28,10 @@ export type ComponentDocSpec = {
   component: ElementType;
   propsSpec: PropSpec[];
   defaultProps: Record<string, unknown>;
-  renderPlayground?: (props: Record<string, unknown>) => ReactNode;
+  renderPlayground?: (
+    props: Record<string, unknown>,
+    onPropChange?: (name: string, value: unknown) => void,
+  ) => ReactNode;
 };
 
 export type ComponentPlaygroundContainerProps = {

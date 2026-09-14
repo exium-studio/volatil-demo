@@ -12,6 +12,7 @@ import {
   Code2,
   Compass,
   Copy,
+  DownloadIcon,
   ExternalLink,
   FileText,
   Filter,
@@ -311,7 +312,7 @@ export const DS_NAVS_MAP = {
   },
   flex_box: {
     icon: Layout,
-    title: "Flex / HStack / VStack",
+    title: "HStack / VStack",
   },
   grid: {
     icon: LayoutGrid,
@@ -356,7 +357,7 @@ export const DS_NAVS_MAP = {
 
   // Components - Utilities
   utilities: {
-    icon: Wrench,
-    title: "Utilities & Downloads",
+    icon: DownloadIcon,
+    title: "Download",
   },
 } as const satisfies Record<string, NavItem>;
