@@ -439,8 +439,8 @@ const CONFIGS: Record<FaceEmojiVariant, FaceEmojiConfig> = {
     ),
   },
 
-  // 10. [yummy] -> Pink circle, smiling eyes with lashes, pink blush, tongue sticking out, hand waving
-  yummy: {
+  // 10. [thumbUp] -> Pink circle, smiling eyes with lashes, pink blush, tongue sticking out, hand waving
+  thumbUp: {
     defaultColor: "#f472b6",
     colorPaletteFallback: "pink",
     renderFace: (c) => (

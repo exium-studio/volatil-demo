@@ -1,10 +1,10 @@
-// src/design-system/components/emoji/ui/backup/emoji.yummy.tsx
+// src/design-system/components/emoji/ui/emoji.thumbUp.tsx
 
 import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 
-export const EmojiYummy = ({
+export const EmojiThumbUp = ({
   colorPalette = "gray",
   boxSize = 24,
 }: EmojiProps) => {
@@ -12,12 +12,14 @@ export const EmojiYummy = ({
   const { colorMode } = useColorMode();
 
   // Colors
+  const subtle =
+    resolveSemanticColor(`${colorPalette}.subtle`, colorMode) ?? "#ffffff";
+  const muted =
+    resolveSemanticColor(`${colorPalette}.muted`, colorMode) ?? "#e6e6e6";
+  const emphasized =
+    resolveSemanticColor(`${colorPalette}.emphasized`, colorMode) ?? "#ccccc";
   const solid =
     resolveSemanticColor(`${colorPalette}.solid`, colorMode) ?? "#000000";
-  const emphasized =
-    resolveSemanticColor(`${colorPalette}.emphasized`, colorMode) ?? "#e6e6e6";
-  const muted =
-    resolveSemanticColor(`${colorPalette}.muted`, colorMode) ?? "#cccccc";
 
   return (
     <svg
@@ -29,7 +31,9 @@ export const EmojiYummy = ({
     >
       <g>
         {/* Background circle */}
-        <circle cx={"7.94"} cy={"7.8"} r={"7.8"} fill={emphasized} />
+        <circle cx={"7.73"} cy={"7.73"} r={"7.73"} fill={emphasized} />
+        {/* Face overlay */}
+        <circle cx={"7.73"} cy={"8.79"} r={"6.67"} fill={muted} />
         {/* Eyebrows */}
         <g>
           <polygon
@@ -54,14 +58,14 @@ export const EmojiYummy = ({
         />
         {/* Tongue */}
         <path
-          fill={muted}
+          fill={subtle}
           d={
             "M8.54 6.82c0.6,-0.72 0.79,-2.41 2.15,-2.51 0.71,-0.05 0.99,1.15 0.99,1.58 -0.94,0.52 -2.01,0.84 -3.14,0.93z"
           }
         />
-        {/* Hand/lick detail */}
+        {/* Hand */}
         <path
-          fill={muted}
+          fill={subtle}
           d={
             "M1.42 14.36c-1.83,-1.65 -1.5,-5.42 -1.14,-6.31 0.36,-0.89 -0.82,-3.25 0.64,-3.65 1.46,-0.39 1.98,2.71 2.16,2.86 0.18,0.15 2.36,-0.22 2.61,0.81 0.25,1.02 -0.19,1.58 -0.19,1.58 0,0 0.81,0.24 0.97,0.98 0.16,0.74 -0.44,1.4 -0.44,1.4 0,0 0.56,0.19 0.77,0.75 0.71,1.92 -3.83,2.96 -5.37,1.57z"
           }

@@ -13,7 +13,7 @@ export type FaceEmojiVariant =
   | "wronged"
   | "shout"
   | "flushed"
-  | "yummy"
+  | "thumbUp"
   | "complacent"
   | "drool"
   | "scream"

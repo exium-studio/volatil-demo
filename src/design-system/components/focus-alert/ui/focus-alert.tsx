@@ -189,7 +189,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
       colorPalette: "yellow",
       icon: SparklesIcon,
     },
-    yummy: {
+    thumbUp: {
       colorPalette: "pink",
       icon: SparklesIcon,
     },
@@ -300,7 +300,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button primary flex={1} onClick={onDone ?? close}>
+        <Button flex={1} onClick={onDone ?? close}>
           {"Selesai"}
         </Button>
       </Modal.Footer>

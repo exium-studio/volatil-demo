@@ -1526,7 +1526,7 @@ export const Feedback = () => {
     "wronged",
     "shout",
     "flushed",
-    "yummy",
+    "thumbUp",
     "complacent",
     "drool",
     "scream",
