@@ -22,12 +22,7 @@ export const EmojiScream = (props: EmojiProps) => {
         {/* Background circle */}
         <circle cx={"8.17"} cy={"8.17"} r={"8.17"} fill={emphasized} />
         {/* Face overlay */}
-        <path
-          fill={muted}
-          d={
-            "M7.63 2.71c3.98,0 7.21,3.23 7.21,7.21 0,1.86 -0.71,3.56 -1.87,4.84 -1.35,0.98 -3.01,1.56 -4.81,1.56 -3.54,0 -6.55,-2.25 -7.69,-5.4 -0.05,-0.33 -0.07,-0.66 -0.07,-1.01 0,-3.98 3.23,-7.21 7.21,-7.21z"
-          }
-        />
+        <circle cx={"8.17"} cy={"8.73"} r={"7.61"} fill={muted} />
         {/* Eyes */}
         <ellipse
           fill={solid}

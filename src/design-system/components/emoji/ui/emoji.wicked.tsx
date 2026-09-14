@@ -19,7 +19,7 @@ export const EmojiWicked = (props: EmojiProps) => {
       viewBox={"0 0 18.9 19.97"}
     >
       <g>
-        {/* Background */}
+        {/* Background with horns */}
         <path
           fill={emphasized}
           d={
@@ -27,12 +27,7 @@ export const EmojiWicked = (props: EmojiProps) => {
           }
         />
         {/* Face overlay */}
-        <path
-          fill={muted}
-          d={
-            "M9.45 5c4.37,0 7.92,3.55 7.92,7.92 0,1.17 -0.25,2.28 -0.71,3.28 -1.59,2.28 -4.23,3.78 -7.21,3.78 -2.99,0 -5.63,-1.49 -7.21,-3.78 -0.45,-1 -0.71,-2.11 -0.71,-3.28 0,-4.37 3.55,-7.92 7.92,-7.92z"
-          }
-        />
+        <circle cx={"9.45"} cy={"12.02"} r={"7.95"} fill={muted} />
         {/* Smile */}
         <path
           fill={solid}

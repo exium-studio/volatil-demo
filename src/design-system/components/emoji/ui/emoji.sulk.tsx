@@ -22,7 +22,7 @@ export const EmojiSulk = (props: EmojiProps) => {
         {/* Background circle */}
         <circle cx={"7.73"} cy={"7.73"} r={"7.73"} fill={emphasized} />
         {/* Face overlay */}
-        <circle cx={"7.73"} cy={"8.79"} r={"6.67"} fill={muted} />
+        <circle cx={"7.73"} cy={"8.26"} r={"7.2"} fill={muted} />
         {/* Eyes */}
         <path
           fill={solid}

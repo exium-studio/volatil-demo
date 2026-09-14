@@ -14,23 +14,23 @@ export const useEmojiColors = (colorPalette = "gray") => {
   // Dark mode uses solid 500-900 tones for high contrast.
   const subtle =
     (isDark
-      ? resolveSemanticColor(`${colorPalette}.100`, colorMode)
+      ? resolveSemanticColor(`${colorPalette}.200`, colorMode)
       : (resolveSemanticColor(`${colorPalette}.100`, colorMode) ??
         "#ffffff")) ?? "#ffffff";
 
   const muted =
     (isDark
-      ? resolveSemanticColor(`${colorPalette}.300`, colorMode)
+      ? resolveSemanticColor(`${colorPalette}.400`, colorMode)
       : resolveSemanticColor(`${colorPalette}.300`, colorMode)) ?? "#e6e6e6";
 
   const emphasized =
     (isDark
-      ? resolveSemanticColor(`${colorPalette}.400`, colorMode)
+      ? resolveSemanticColor(`${colorPalette}.500`, colorMode)
       : resolveSemanticColor(`${colorPalette}.400`, colorMode)) ?? "#cccccc";
 
   const solid =
     (isDark
-      ? resolveSemanticColor(`${colorPalette}.700`, colorMode)
+      ? resolveSemanticColor(`${colorPalette}.800`, colorMode)
       : resolveSemanticColor(`${colorPalette}.700`, colorMode)) ?? "#000000";
 
   return { subtle, muted, emphasized, solid };
