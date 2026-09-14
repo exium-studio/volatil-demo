@@ -35,15 +35,35 @@ export const DesignSystemDocsPage = () => {
   // Callbacks
   const handleSelectNav = useCallback(
     (key: DsNavKey) => {
+      // Ignore category container clicks so they only expand/collapse
+      if (key.startsWith("cat_")) {
+        return;
+      }
+
+      // If already active, dismiss mobile drawer if open, otherwise do nothing
+      if (key === activeNavKey) {
+        if (isSmallViewport && mobileDrawer.isOpen) {
+          mobileDrawer.close();
+        }
+        return;
+      }
+
       navigate({
-        search: (prev) => ({
-          ...prev,
-          component: key === "overview" ? undefined : key,
-        }),
+        search: (prev) => {
+          const nextSearch = { ...prev };
+          if (key === "overview") {
+            delete nextSearch.component;
+          } else {
+            nextSearch.component = key;
+          }
+          if (isSmallViewport && mobileDrawer.isOpen) {
+            delete nextSearch.activeModalKey;
+          }
+          return nextSearch;
+        },
       });
-      mobileDrawer.close();
     },
-    [navigate, mobileDrawer],
+    [activeNavKey, isSmallViewport, mobileDrawer, navigate],
   );
 
   return (
