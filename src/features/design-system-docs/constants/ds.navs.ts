@@ -2,7 +2,6 @@
 
 import type { NavItem } from "@/shared/types/nav.type";
 import {
-  Activity,
   AlertCircle,
   Bell,
   Box,
@@ -227,13 +226,9 @@ export const DS_NAVS_MAP = {
     icon: HelpCircle,
     title: "State Feedback (No Data)",
   },
-  face_emoji: {
-    icon: Activity,
-    title: "Face Emoji",
-  },
   emoji: {
     icon: Smile,
-    title: "Emoji Component (Sliced SVG)",
+    title: "Emoji",
   },
 
   // Components - Focus Alert
@@ -360,4 +355,3 @@ export const DS_NAVS_MAP = {
     title: "Utilities & Downloads",
   },
 } as const satisfies Record<string, NavItem>;
-

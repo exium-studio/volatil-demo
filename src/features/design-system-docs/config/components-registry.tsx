@@ -33,7 +33,6 @@ import { EmojiThingking } from "@/design-system/components/emoji/ui/emoji.thinki
 import { EmojiWicked } from "@/design-system/components/emoji/ui/emoji.wicked";
 import { EmojiYummy } from "@/design-system/components/emoji/ui/emoji.yummy";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
-import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import {
   Progress,
   ProgressRoot,
@@ -1380,69 +1379,6 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     defaultProps: {},
     propsSpec: [],
     renderPlayground: () => <NoDataState />,
-  },
-
-  face_emoji: {
-    key: "face_emoji",
-    title: "Face Emoji",
-    category: "Feedback & Status",
-    description:
-      "Animasi ekspresi wajah interaktif untuk status visual dan feedback emosional antarmuka.",
-    importPath:
-      'import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";',
-    component: FaceEmoji,
-    defaultProps: {
-      variant: "smile",
-      size: "lg",
-    },
-    propsSpec: [
-      {
-        name: "variant",
-        type: '"smile" | "happy" | "angry" | "cry" | "embarrassed" | "surprised" | "wronged" | "shout" | "flushed" | "yummy" | "complacent" | "drool" | "scream" | "weep" | "speechless" | "funnyface" | "laughwithtears" | "wicked" | "facewithrollingeyes" | "sulk" | "thinking" | "lovely" | "greedy"',
-        defaultValue: "smile",
-        description: "Ekspresi wajah emoji.",
-        controlKind: "select",
-        options: [
-          "smile",
-          "happy",
-          "angry",
-          "cry",
-          "embarrassed",
-          "surprised",
-          "wronged",
-          "shout",
-          "flushed",
-          "yummy",
-          "complacent",
-          "drool",
-          "scream",
-          "weep",
-          "speechless",
-          "funnyface",
-          "laughwithtears",
-          "wicked",
-          "facewithrollingeyes",
-          "sulk",
-          "thinking",
-          "lovely",
-          "greedy",
-        ],
-      },
-      {
-        name: "size",
-        type: '"sm" | "md" | "lg" | "xl"',
-        defaultValue: "lg",
-        description: "Ukuran emoji.",
-        controlKind: "select",
-        options: ["sm", "md", "lg", "xl"],
-      },
-    ],
-    renderPlayground: (props) => (
-      <FaceEmoji
-        variant={(props.variant as "smile") || "smile"}
-        size={(props.size as "lg") || "lg"}
-      />
-    ),
   },
 
   emoji: {

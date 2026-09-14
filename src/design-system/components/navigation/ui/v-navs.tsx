@@ -238,14 +238,14 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
         {isSubNav && (
           <Box
             pos={"absolute"}
-            left={"-14px"}
-            top={"0px"}
+            left={"-15.5px"}
+            top={"1px"}
             w={"14px"}
             h={"20px"}
             borderLeft={"1.5px solid"}
             borderBottom={"1.5px solid"}
             borderBottomLeftRadius={"8px"}
-            borderColor={"border.subtle"}
+            borderColor={"border"}
             pointerEvents={"none"}
             zIndex={0}
           />
@@ -368,8 +368,8 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           pl={"14px"}
           py={1}
           ml={`calc(18px * ${depth + 1})`}
-          borderLeft={"1px solid"}
-          borderColor={"border.subtle"}
+          borderLeft={"1.5px solid"}
+          borderColor={"border"}
         >
           {/* Active continuous path from top with curve into active sub-nav */}
           {activeChildIndex !== -1 && (

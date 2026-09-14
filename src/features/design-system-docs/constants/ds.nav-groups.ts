@@ -6,26 +6,18 @@ import type { NavGroup } from "@/shared/types/nav.type";
 export const DS_NAV_GROUPS_LIST: NavGroup<DsNavKey>[] = [
   {
     title: "Getting Started",
-    items: [
-      { key: "overview" },
-    ],
+    items: [{ key: "overview" }],
   },
   {
     title: "Components",
     items: [
       {
         key: "cat_branding",
-        children: [
-          { key: "logo" },
-          { key: "brand_watermark" },
-        ],
+        children: [{ key: "logo" }, { key: "brand_watermark" }],
       },
       {
         key: "cat_buttons",
-        children: [
-          { key: "button" },
-          { key: "button_group" },
-        ],
+        children: [{ key: "button" }, { key: "button_group" }],
       },
       {
         key: "cat_typography",
@@ -65,15 +57,12 @@ export const DS_NAV_GROUPS_LIST: NavGroup<DsNavKey>[] = [
           { key: "skeleton" },
           { key: "toast" },
           { key: "state_display" },
-          { key: "face_emoji" },
           { key: "emoji" },
         ],
       },
       {
         key: "cat_focus_alert",
-        children: [
-          { key: "focus_alert" },
-        ],
+        children: [{ key: "focus_alert" }],
       },
       {
         key: "cat_data_display",
@@ -117,26 +106,16 @@ export const DS_NAV_GROUPS_LIST: NavGroup<DsNavKey>[] = [
       },
       {
         key: "cat_navigation",
-        children: [
-          { key: "sidebar" },
-          { key: "link" },
-        ],
+        children: [{ key: "sidebar" }, { key: "link" }],
       },
       {
         key: "cat_media",
-        children: [
-          { key: "avatar" },
-          { key: "image" },
-          { key: "app_icon" },
-        ],
+        children: [{ key: "avatar" }, { key: "image" }, { key: "app_icon" }],
       },
       {
         key: "cat_utilities",
-        children: [
-          { key: "utilities" },
-        ],
+        children: [{ key: "utilities" }],
       },
     ],
   },
 ];
-
