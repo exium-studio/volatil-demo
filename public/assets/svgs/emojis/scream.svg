@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="10.1832mm" height="10.7963mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 16.33 17.32"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil2 {fill:black}
+    .fil3 {fill:#999999}
+    .fil1 {fill:#CCCCCC}
+    .fil0 {fill:#E6E6E6}
+   ]]>
+  </style>
+ </defs>
+ <g id="Main">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2276076668784">
+   <circle class="fil0" cx="8.17" cy="8.17" r="8.17"/>
+   <path class="fil1" d="M7.63 2.71c3.98,0 7.21,3.23 7.21,7.21 0,1.86 -0.71,3.56 -1.87,4.84 -1.35,0.98 -3.01,1.56 -4.81,1.56 -3.54,0 -6.55,-2.25 -7.69,-5.4 -0.05,-0.33 -0.07,-0.66 -0.07,-1.01 0,-3.98 3.23,-7.21 7.21,-7.21z"/>
+   <ellipse class="fil2" transform="matrix(1.07467 -0.357662 0.357662 1.07467 8.99783 8.05745)" rx="0.93" ry="1.73"/>
+   <ellipse class="fil2" transform="matrix(1.07467 -0.357662 0.357662 1.07467 3.32932 8.81784)" rx="0.93" ry="1.73"/>
+   <ellipse class="fil2" transform="matrix(1.32571 -0.44121 0.44121 1.32571 7.27 13.2902)" rx="0.93" ry="1.73"/>
+   <path class="fil3" d="M2.78 17.31c0,0 1.08,0.09 1.35,-0.9 0.27,-1 0.62,-1.29 0.32,-1.79 -0.3,-0.5 -2.73,-3.86 -3.08,-3.86 -0.34,0 -0.67,0.51 -0.12,1.74 0.55,1.23 0.71,1.29 0.61,2.02 -0.1,0.72 -0.48,2.33 0.92,2.79z"/>
+   <path class="fil3" d="M12.05 16.92c-0.6,-0.72 -1.64,-0.95 -1.69,-1.69 -0.05,-0.74 0.21,-3.17 1.57,-5.09 1.36,-1.92 2.22,-1.29 1.97,0.53 -0.25,1.83 -0.58,3.72 -0.37,4.39 0.21,0.67 0.67,1.39 0.02,1.9 -0.65,0.51 -1.5,-0.05 -1.5,-0.05z"/>
+  </g>
+ </g>
+</svg>
