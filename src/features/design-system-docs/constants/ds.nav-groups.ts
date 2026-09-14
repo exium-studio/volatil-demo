@@ -53,16 +53,13 @@ export const DS_NAV_GROUPS_LIST: NavGroup<DsNavKey>[] = [
         key: "cat_feedback",
         children: [
           { key: "alert" },
+          { key: "focus_alert" },
           { key: "progress" },
           { key: "skeleton" },
           { key: "toast" },
           { key: "state_display" },
           { key: "emoji" },
         ],
-      },
-      {
-        key: "cat_focus_alert",
-        children: [{ key: "focus_alert" }],
       },
       {
         key: "cat_data_display",

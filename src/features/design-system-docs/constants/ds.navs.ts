@@ -7,6 +7,7 @@ import {
   Box,
   CheckSquare,
   ChevronDown,
+  CircleAlert,
   Clock,
   Code2,
   Compass,
@@ -21,21 +22,26 @@ import {
   HelpCircle,
   Image as ImageIcon,
   Info,
+  KeyRound,
   Layers,
   Layout,
   LayoutGrid,
   List,
+  LockIcon,
   Maximize2,
   Menu,
   MessageSquare,
   MousePointerClick,
   Navigation,
   Radio,
+  SearchIcon,
   Sliders,
   Smile,
   Sparkles,
+  SquareDashedText,
   ToggleLeft,
   ToggleRightIcon,
+  TriangleAlertIcon,
   Type,
   User,
   Wrench,
@@ -153,7 +159,7 @@ export const DS_NAVS_MAP = {
     title: "Number Input",
   },
   password_input: {
-    icon: FormInput,
+    icon: LockIcon,
     title: "Password Input",
   },
   select: {
@@ -189,15 +195,15 @@ export const DS_NAVS_MAP = {
     title: "Slider",
   },
   pin_input: {
-    icon: Hash,
+    icon: KeyRound,
     title: "Pin Input",
   },
   search_input: {
-    icon: FormInput,
+    icon: SearchIcon,
     title: "Search Input",
   },
   textarea: {
-    icon: FormInput,
+    icon: SquareDashedText,
     title: "Textarea",
   },
   field: {
@@ -207,9 +213,14 @@ export const DS_NAVS_MAP = {
 
   // Components - Feedback & Status
   alert: {
-    icon: AlertCircle,
+    icon: CircleAlert,
     title: "Alert",
   },
+  focus_alert: {
+    icon: TriangleAlertIcon,
+    title: "Focus Alert Modal",
+  },
+
   progress: {
     icon: Sliders,
     title: "Progress & Circle",
@@ -229,12 +240,6 @@ export const DS_NAVS_MAP = {
   emoji: {
     icon: Smile,
     title: "Emoji",
-  },
-
-  // Components - Focus Alert
-  focus_alert: {
-    icon: AlertCircle,
-    title: "Focus Alert Modal",
   },
 
   // Components - Data Display
