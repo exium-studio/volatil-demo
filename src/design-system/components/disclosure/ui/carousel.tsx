@@ -14,7 +14,7 @@ import type {
   CarouselNextTriggerProps,
   CarouselPrevTriggerProps,
   CarouselRootProps,
-} from "@/design-system/components/disclosure/type/carousel.type";
+} from "@/design-system/components/disclosure/types/carousel.type";
 import { Carousel as ChakraCarousel } from "@chakra-ui/react";
 import { forwardRef } from "react";
 

@@ -10,7 +10,7 @@ import type {
   TabsListProps,
   TabsRootProps,
   TabsTriggerProps,
-} from "@/design-system/components/disclosure/type/tabs.type";
+} from "@/design-system/components/disclosure/types/tabs.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Tabs as ChakraTabs } from "@chakra-ui/react";
 import { createContext, forwardRef, useContext, useMemo } from "react";

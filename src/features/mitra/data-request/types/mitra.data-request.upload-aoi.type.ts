@@ -2,7 +2,7 @@
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
-import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
+import type { TabsContentProps } from "@/design-system/components/disclosure/types/tabs.type";
 import type GeoJSON from "geojson";
 
 /** Single uploaded AOI file with its parsed GeoJSON polygon — source of truth. */
@@ -51,12 +51,9 @@ export type UploadAoiFileListTriggerProps = {
   onClearAll: () => void;
 };
 
-
-
 import type { Dispatch, SetStateAction } from "react";
 
 export type MitraDataRequestUploadAoiContextValue = {
   aoiLayers: MitraDataRequestUploadAoiLayer[];
   setAoiLayers: Dispatch<SetStateAction<MitraDataRequestUploadAoiLayer[]>>;
 };
-

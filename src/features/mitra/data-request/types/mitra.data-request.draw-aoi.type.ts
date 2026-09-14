@@ -1,6 +1,6 @@
 // src/features/mitra/data-request/types/mitra.data-request.draw-aoi.type.ts
 
-import type { TabsContentProps } from "@/design-system/components/disclosure/type/tabs.type";
+import type { TabsContentProps } from "@/design-system/components/disclosure/types/tabs.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { IgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 

@@ -4,7 +4,7 @@ import type {
   CollapsibleContentProps,
   CollapsibleIndicatorProps,
   CollapsibleRootProps,
-} from "@/design-system/components/disclosure/type/collabsible.type";
+} from "@/design-system/components/disclosure/types/collabsible.type";
 import {
   Collapsible as ChakraCollapsible,
   type CollapsibleTriggerProps,

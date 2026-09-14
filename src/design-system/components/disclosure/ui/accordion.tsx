@@ -11,7 +11,7 @@ import type {
   AccordionItemContentProps,
   AccordionItemBodyProps,
   AccordionItemIndicatorProps,
-} from "@/design-system/components/disclosure/type/accordion.type";
+} from "@/design-system/components/disclosure/types/accordion.type";
 
 const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
   (props, ref) => {
