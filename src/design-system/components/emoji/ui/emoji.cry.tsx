@@ -18,7 +18,12 @@ export const EmojiCry = (props: EmojiProps) => {
       height={boxSize}
       viewBox={"0 0 15.46 15.46"}
     >
-      <g>
+      <defs>
+        <clipPath id={"emoji-cry-clip"}>
+          <circle cx={"7.73"} cy={"7.73"} r={"7.73"} />
+        </clipPath>
+      </defs>
+      <g clipPath={"url(#emoji-cry-clip)"}>
         {/* Background circle */}
         <circle cx={"7.73"} cy={"7.73"} r={"7.73"} fill={emphasized} />
         {/* Face overlay */}

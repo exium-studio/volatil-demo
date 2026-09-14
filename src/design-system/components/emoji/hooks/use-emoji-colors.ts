@@ -10,27 +10,28 @@ export const useEmojiColors = (colorPalette = "gray") => {
   // Colors
   const isDark = colorMode === "dark";
 
-  // In dark mode, scale range 500 - 900 gives solid, rich contrast without looking transparent or washed out.
+  // Light mode uses clean pastel 100-300 background tones with 700-900 facial features.
+  // Dark mode uses solid 500-900 tones for high contrast.
   const subtle =
     (isDark
-      ? resolveSemanticColor(`${colorPalette}.500`, colorMode)
-      : resolveSemanticColor(`${colorPalette}.subtle`, colorMode)) ?? "#ffffff";
+      ? resolveSemanticColor(`${colorPalette}.100`, colorMode)
+      : (resolveSemanticColor(`${colorPalette}.100`, colorMode) ??
+        "#ffffff")) ?? "#ffffff";
 
   const muted =
     (isDark
-      ? resolveSemanticColor(`${colorPalette}.600`, colorMode)
-      : resolveSemanticColor(`${colorPalette}.muted`, colorMode)) ?? "#e6e6e6";
+      ? resolveSemanticColor(`${colorPalette}.300`, colorMode)
+      : resolveSemanticColor(`${colorPalette}.300`, colorMode)) ?? "#e6e6e6";
 
   const emphasized =
     (isDark
-      ? resolveSemanticColor(`${colorPalette}.700`, colorMode)
-      : resolveSemanticColor(`${colorPalette}.emphasized`, colorMode)) ??
-    "#cccccc";
+      ? resolveSemanticColor(`${colorPalette}.400`, colorMode)
+      : resolveSemanticColor(`${colorPalette}.400`, colorMode)) ?? "#cccccc";
 
   const solid =
     (isDark
-      ? resolveSemanticColor(`${colorPalette}.900`, colorMode)
-      : resolveSemanticColor(`${colorPalette}.solid`, colorMode)) ?? "#000000";
+      ? resolveSemanticColor(`${colorPalette}.700`, colorMode)
+      : resolveSemanticColor(`${colorPalette}.700`, colorMode)) ?? "#000000";
 
   return { subtle, muted, emphasized, solid };
 };

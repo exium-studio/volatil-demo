@@ -16,7 +16,7 @@ export const EmojiSurprised = (props: EmojiProps) => {
       xmlSpace={"preserve"}
       width={boxSize}
       height={boxSize}
-      viewBox={"0 0 15.46 15.75"}
+      viewBox={"0 0 15.46 15.46"}
     >
       <g>
         {/* Background circle */}
@@ -26,7 +26,7 @@ export const EmojiSurprised = (props: EmojiProps) => {
         {/* Mouth */}
         <ellipse fill={solid} cx={"7.73"} cy={"11.3"} rx={"1.42"} ry={"2.06"} />
         {/* Eyebrows */}
-        <g>
+        <g transform={"translate(0, 1.35)"}>
           <path
             fill={solid}
             d={
