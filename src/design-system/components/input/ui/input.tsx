@@ -8,15 +8,19 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { toast } from "@/design-system/components/toast";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import {
   Input as ChakraInput,
   InputGroup as ChakraInputGroup,
 } from "@chakra-ui/react";
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   // Props
   const { startElement, endElement, ...restProps } = props;
+
+  // Refs
+  const internalInputRef = useRef<HTMLInputElement>(null);
 
   // Contexts
   const fieldContext = useFieldContextValue();
@@ -29,6 +33,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const [hasValueState, setHasValueState] = useState<boolean>(
     Boolean(restProps.value) || Boolean(restProps.defaultValue),
   );
+
+  // Effects
+  // Detect DOM value on mount or when defaultValue/value updates (e.g. React Hook Form register)
+  useEffect(() => {
+    if (
+      internalInputRef.current &&
+      Boolean(internalInputRef.current.value) !== hasValueState
+    ) {
+      setHasValueState(Boolean(internalInputRef.current.value));
+    }
+  }, [hasValueState, restProps.defaultValue, restProps.value]);
 
   // Derived Values
   const hasValue =
@@ -43,7 +58,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   const inputCore = (
     <ChakraInput
-      ref={ref}
+      ref={mergeRefs(internalInputRef, ref)}
       colorPalette={"neutral"}
       fontSize={"md"}
       rounded={theme.radii.component}

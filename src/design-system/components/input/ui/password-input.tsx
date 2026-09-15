@@ -22,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { passwordStrength, type Options } from "check-password-strength";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { forwardRef, useRef, useState, type ChangeEvent } from "react";
+import { forwardRef, useEffect, useRef, useState, type ChangeEvent } from "react";
 
 const DEFAULT_STRENGTH_OPTIONS: Options<string> = [
   { id: 1, value: "weak", minDiversity: 0, minLength: 0 },
@@ -73,6 +73,13 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       onChange: onVisibleChange,
     });
     const [strength, setStrength] = useState(0);
+
+    // Effects
+    useEffect(() => {
+      if (inputRef.current && Boolean(inputRef.current.value) !== hasValueState) {
+        setHasValueState(Boolean(inputRef.current.value));
+      }
+    }, [hasValueState, restProps.defaultValue, restProps.value]);
 
     // Derived Values
     const hasValue =

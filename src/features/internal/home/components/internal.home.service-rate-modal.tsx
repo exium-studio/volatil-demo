@@ -19,7 +19,7 @@ import type {
 } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useUpdateInternalPricing } from "@/features/internal/pricing/hooks/use-internal-pricing";
 import { t } from "@/shared/libs/i18n";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 export const InternalHomeServiceRateModalTrigger = (
   props: InternalHomeServiceRateModalTriggerProps,
@@ -61,7 +61,6 @@ const InternalHomeServiceRateModalContent = (
 
   // Forms
   const {
-    control,
     handleSubmit,
     register,
     formState: { errors },
@@ -103,51 +102,39 @@ const InternalHomeServiceRateModalContent = (
         <Modal.Body p={"md"}>
           <VStack align={"stretch"} gap={"md"}>
             {/* Input Tarif Satuan */}
-            <Controller
-              name={"price"}
-              control={control}
-              render={({ field }) => (
-                <Field
-                  label={`Tarif per ${rate.unit}`}
-                  w={"full"}
-                  errorText={errors.price?.message}
-                >
-                  <NumberInput
-                    w={"full"}
-                    value={String(field.value)}
-                    formatOptions={{
-                      style: "currency",
-                      currency: "IDR",
-                      maximumFractionDigits: 0,
-                    }}
-                    onValueChange={(val) => field.onChange(val.value)}
-                    min={0}
-                    step={1000}
-                  />
-                </Field>
-              )}
-            />
+            <Field
+              label={`Tarif per ${rate.unit}`}
+              w={"full"}
+              errorText={errors.price?.message}
+            >
+              <NumberInput
+                w={"full"}
+                defaultValue={String(rate.price)}
+                formatOptions={{
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }}
+                inputProps={register("price")}
+                min={0}
+                step={1000}
+              />
+            </Field>
 
             {/* Input Minimal Pembelian */}
-            <Controller
-              name={"minPurchase"}
-              control={control}
-              render={({ field }) => (
-                <Field
-                  label={`Minimal Pembelian (${rate.minUnit})`}
-                  w={"full"}
-                  errorText={errors.minPurchase?.message}
-                >
-                  <NumberInput
-                    w={"full"}
-                    value={String(field.value)}
-                    onValueChange={(val) => field.onChange(val.value)}
-                    min={1}
-                    step={100}
-                  />
-                </Field>
-              )}
-            />
+            <Field
+              label={`Minimal Pembelian (${rate.minUnit})`}
+              w={"full"}
+              errorText={errors.minPurchase?.message}
+            >
+              <NumberInput
+                w={"full"}
+                defaultValue={String(rate.minPurchase)}
+                inputProps={register("minPurchase")}
+                min={1}
+                step={100}
+              />
+            </Field>
 
             {/* Input Kode PNBP */}
             <Field
@@ -158,6 +145,7 @@ const InternalHomeServiceRateModalContent = (
               <Input
                 w={"full"}
                 placeholder={"PNBP-IGT-01"}
+                defaultValue={rate.kodePnbp}
                 {...register("kodePnbp")}
               />
             </Field>

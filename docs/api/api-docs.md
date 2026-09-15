@@ -466,6 +466,7 @@ export type TransactionStatus =
 
 ```typescript
 export type OrderStatus =
+  | "preparing" // Penyiapkan / kalkulasi pesanan
   | "pending_payment" // Menunggu pembayaran mitra (TTL 24 jam)
   | "paid" // Pembayaran telah terkonfirmasi
   | "processing" // Interop engine sedang menyiapkan/memotong layer data WMS/WFS
@@ -780,6 +781,7 @@ Digunakan untuk status operasional & provisioning data spasial pada tabel `ORDER
 
 ```typescript
 export type OrderStatus =
+  | "preparing" // Penyiapkan / kalkulasi pesanan
   | "pending_payment" // Menunggu Pembayaran
   | "paid" // Terbayar
   | "processing" // Sedang Diproses (Interop Engine)
@@ -1186,7 +1188,7 @@ Mengambil daftar seluruh transaksi dari seluruh mitra dengan fitur pagination, p
   - `pageSize?: number` (default: `10`)
   - `search?: string` (pencarian nomor transaksi, nama mitra, email, atau kode billing)
   - `transactionStatus?: TransactionStatus` (`"paid"` | `"expired"` | `"failed"` | `"refunded"`)
-  - `orderStatus?: OrderStatus` (`"pending_payment"` | `"paid"` | `"processing"` | `"pending_review"` | `"ready"` | `"rejected"`)
+  - `orderStatus?: OrderStatus` (`"preparing"` | `"pending_payment"` | `"paid"` | `"processing"` | `"pending_review"` | `"ready"` | `"rejected"`)
   - `selectionType?: "catalog" | "upload_aoi" | "draw_aoi"`
   - `startDate?: string` (ISO format, filter rentang tanggal mulai)
   - `endDate?: string` (ISO format, filter rentang tanggal selesai)
@@ -1201,7 +1203,7 @@ type InternalTransactionItem = {
   billingCode: string; // Kode Billing Simponi / PNBP ATR/BPN
   paymentMethod: string; // Metode pembayaran (e.g. "QRIS", "Virtual Account Mandiri")
   transactionStatus: TransactionStatus; // "paid" | "expired" | "failed" | "refunded"
-  orderStatus: OrderStatus; // "pending_payment" | "paid" | "processing" | "pending_review" | "ready" | "rejected"
+  orderStatus: OrderStatus; // "preparing" | "pending_payment" | "paid" | "processing" | "pending_review" | "ready" | "rejected"
   selectionType: "catalog" | "upload_aoi" | "draw_aoi";
   totalAmount: number; // Total nominal tagihan (IDR)
   mitra: {

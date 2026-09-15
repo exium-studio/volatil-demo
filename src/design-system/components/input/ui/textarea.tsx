@@ -8,12 +8,16 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP } from "@/design-system/components/typography/ui/p";
 import { toast } from "@/design-system/components/toast";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import { Textarea as ChakraTextarea } from "@chakra-ui/react";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(props, ref) {
+    // Refs
+    const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
+
     // Contexts
     const fieldContext = useFieldContextValue();
     const isFloatingVariant = fieldContext?.variant === "floating";
@@ -25,6 +29,16 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const [hasValueState, setHasValueState] = useState<boolean>(
       Boolean(props.value) || Boolean(props.defaultValue),
     );
+
+    // Effects
+    useEffect(() => {
+      if (
+        internalTextareaRef.current &&
+        Boolean(internalTextareaRef.current.value) !== hasValueState
+      ) {
+        setHasValueState(Boolean(internalTextareaRef.current.value));
+      }
+    }, [hasValueState, props.defaultValue, props.value]);
 
     // Derived Values
     const hasValue =
@@ -40,7 +54,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     const textareaElement = (
       <ChakraTextarea
         className={"noScrollbar"}
-        ref={ref}
+        ref={mergeRefs(internalTextareaRef, ref)}
         rounded={theme.radii.component}
         fontSize={"md"}
         minH={"135px"}
