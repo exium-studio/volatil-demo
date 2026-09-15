@@ -19,10 +19,8 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import {
-  useInternalOrderDetailQuery,
-  useProvisionOrder,
-} from "@/features/internal/order-review/hooks/use-order-review";
+import { InternalOrderReviewProvisionTrigger } from "@/features/internal/order-review/components/internal.order-review.provision-modal";
+import { useInternalOrderDetailQuery } from "@/features/internal/order-review/hooks/use-order-review";
 import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
 import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
@@ -58,10 +56,7 @@ export function InternalOrderReviewDetailPage() {
   }, []);
 
   // Queries
-  const { data: order, isLoading } = useInternalOrderDetailQuery(orderId);
-
-  // Mutations
-  const provisionMutation = useProvisionOrder();
+  const { data: order, isLoading, refetch } = useInternalOrderDetailQuery(orderId);
 
   if (isLoading || !order) {
     return (
@@ -94,19 +89,18 @@ export function InternalOrderReviewDetailPage() {
 
               <HStack gap={2}>
                 {order.status === "paid" && (
-                  <Button
-                    primary={true}
-                    colorPalette={"blue"}
-                    loading={provisionMutation.isPending}
-                    onClick={() => {
-                      provisionMutation.mutate({
-                        orderId: order.orderId,
-                      });
+                  <InternalOrderReviewProvisionTrigger
+                    order={order}
+                    modalKey={`provision-detail-${order.orderId}`}
+                    onSuccess={() => {
+                      void refetch();
                     }}
                   >
-                    <AppIcon icon={MapPlusIcon} />
-                    {"Create Service WMS"}
-                  </Button>
+                    <Button primary={true} colorPalette={"blue"}>
+                      <AppIcon icon={MapPlusIcon} />
+                      {"Create Service WMS"}
+                    </Button>
+                  </InternalOrderReviewProvisionTrigger>
                 )}
 
                 {order.status === "pending_review" && (

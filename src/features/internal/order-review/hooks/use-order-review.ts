@@ -2,6 +2,7 @@
 
 import {
   approveOrderApi,
+  createOrderProvisionEventSource,
   fetchInternalOrderDetailApi,
   fetchInternalOrdersApi,
   provisionOrderApi,
@@ -11,11 +12,15 @@ import type {
   ApproveOrderPayload,
   InternalOrderListQueryParams,
   ProvisionOrderPayload,
+  ProvisionStreamHookResult,
+  ProvisionStreamItem,
+  ProvisionStreamState,
   RejectOrderPayload,
 } from "@/features/internal/order-review/types/order-review.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useInternalOrdersQuery = (params?: InternalOrderListQueryParams) => {
   const query = useQuery({
@@ -132,4 +137,270 @@ export const useRejectOrder = () => {
     },
     onError: toastHandlers.onError,
   });
+};
+
+/**
+ * Hook to manage real-time SSE progress for layer provisioning to GeoServer internal.
+ */
+export const useOrderProvisionStream = (
+  orderId: string,
+  options?: {
+    onCompleted?: () => void;
+    onError?: (error: string) => void;
+  },
+): ProvisionStreamHookResult => {
+  const queryClient = useQueryClient();
+  const { onCompleted, onError } = options ?? {};
+
+  const [state, setState] = useState<ProvisionStreamState>({
+    isConnected: false,
+    isStarted: false,
+    isCompleted: false,
+    isFatal: false,
+    orderStatus: "paid",
+    totalItems: 0,
+    processedItems: 0,
+    failedCount: 0,
+    items: {},
+    errorMessage: null,
+  });
+
+  const eventSourceRef = useRef<EventSource | null>(null);
+
+  const stopListening = useCallback(() => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+    setState((prev) => ({
+      ...prev,
+      isConnected: false,
+    }));
+  }, []);
+
+  const resetState = useCallback(() => {
+    stopListening();
+    setState({
+      isConnected: false,
+      isStarted: false,
+      isCompleted: false,
+      isFatal: false,
+      orderStatus: "paid",
+      totalItems: 0,
+      processedItems: 0,
+      failedCount: 0,
+      items: {},
+      errorMessage: null,
+    });
+  }, [stopListening]);
+
+  const startListening = useCallback(() => {
+    if (!orderId || typeof window === "undefined") return;
+
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+    }
+
+    try {
+      const es = createOrderProvisionEventSource(orderId);
+      eventSourceRef.current = es;
+
+      es.addEventListener("connected", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          setState((prev) => ({
+            ...prev,
+            isConnected: true,
+            orderStatus: data.orderStatus ?? prev.orderStatus,
+            totalItems: Number(data.totalItems ?? prev.totalItems),
+          }));
+        } catch {
+          // ignore parsing error
+        }
+      });
+
+      es.addEventListener("provision_started", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          setState((prev) => ({
+            ...prev,
+            isStarted: true,
+            totalItems: Number(data.totalItems ?? prev.totalItems),
+            orderStatus: data.orderStatus ?? "processing",
+          }));
+        } catch {
+          // ignore parsing error
+        }
+      });
+
+      es.addEventListener("item_start", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          const key = data.sourceLayerId || data.itemId;
+          setState((prev) => {
+            const existing = prev.items[key];
+            const updatedItem: ProvisionStreamItem = {
+              itemId: String(data.itemId ?? existing?.itemId ?? ""),
+              itemIndex: Number(data.itemIndex ?? existing?.itemIndex ?? 1),
+              totalItems: Number(data.totalItems ?? prev.totalItems),
+              sourceLayerId: String(data.sourceLayerId ?? key),
+              sourceLayerTitle: String(
+                data.sourceLayerTitle ?? existing?.sourceLayerTitle ?? key,
+              ),
+              spatialBasis: data.spatialBasis ?? existing?.spatialBasis,
+              status: "processing",
+            };
+
+            return {
+              ...prev,
+              totalItems: Number(data.totalItems ?? prev.totalItems),
+              items: {
+                ...prev.items,
+                [key]: updatedItem,
+              },
+            };
+          });
+        } catch {
+          // ignore parsing error
+        }
+      });
+
+      es.addEventListener("item_done", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          const key = data.sourceLayerId || data.itemId;
+          setState((prev) => {
+            const existing = prev.items[key];
+            const updatedItem: ProvisionStreamItem = {
+              itemId: String(data.itemId ?? existing?.itemId ?? ""),
+              itemIndex: Number(data.itemIndex ?? existing?.itemIndex ?? 1),
+              totalItems: Number(data.totalItems ?? prev.totalItems),
+              sourceLayerId: String(data.sourceLayerId ?? key),
+              sourceLayerTitle: String(
+                data.sourceLayerTitle ?? existing?.sourceLayerTitle ?? key,
+              ),
+              status: "done",
+              proxyWmsUrl: data.proxyWmsUrl,
+              proxyWfsUrl: data.proxyWfsUrl,
+            };
+
+            return {
+              ...prev,
+              processedItems: prev.processedItems + 1,
+              items: {
+                ...prev.items,
+                [key]: updatedItem,
+              },
+            };
+          });
+        } catch {
+          // ignore parsing error
+        }
+      });
+
+      es.addEventListener("item_failed", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          const key = data.sourceLayerId || data.itemId;
+          setState((prev) => {
+            const existing = prev.items[key];
+            const updatedItem: ProvisionStreamItem = {
+              itemId: String(data.itemId ?? existing?.itemId ?? ""),
+              itemIndex: Number(data.itemIndex ?? existing?.itemIndex ?? 1),
+              totalItems: Number(data.totalItems ?? prev.totalItems),
+              sourceLayerId: String(data.sourceLayerId ?? key),
+              sourceLayerTitle: String(
+                data.sourceLayerTitle ?? existing?.sourceLayerTitle ?? key,
+              ),
+              status: "failed",
+              error: data.error,
+            };
+
+            return {
+              ...prev,
+              processedItems: prev.processedItems + 1,
+              failedCount: prev.failedCount + 1,
+              items: {
+                ...prev.items,
+                [key]: updatedItem,
+              },
+            };
+          });
+        } catch {
+          // ignore parsing error
+        }
+      });
+
+      es.addEventListener("provision_completed", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          setState((prev) => ({
+            ...prev,
+            isCompleted: true,
+            orderStatus: data.orderStatus ?? "pending_review",
+            processedItems: Number(data.processedItems ?? prev.totalItems),
+            failedCount: Number(data.failedCount ?? prev.failedCount),
+          }));
+
+          void queryClient.invalidateQueries({
+            queryKey: ["internal", "orders"],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ["internal", "order", orderId],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: queryKeys.internal.home.all,
+          });
+
+          onCompleted?.();
+        } catch {
+          // ignore parsing error
+        }
+        es.close();
+      });
+
+      es.addEventListener("provision_fatal", (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          const errMsg = data.error || "Terjadi kesalahan fatal saat provisioning.";
+          setState((prev) => ({
+            ...prev,
+            isFatal: true,
+            errorMessage: errMsg,
+          }));
+          onError?.(errMsg);
+        } catch {
+          // ignore parsing error
+        }
+        es.close();
+      });
+
+      es.onerror = () => {
+        // SSE will attempt reconnecting unless manually closed
+      };
+    } catch (err) {
+      console.error("Failed to establish SSE connection:", err);
+    }
+  }, [orderId, queryClient, onCompleted, onError]);
+
+  const triggerProvision = useCallback(async () => {
+    return provisionOrderApi({ orderId });
+  }, [orderId]);
+
+  useEffect(() => {
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    };
+  }, []);
+
+  return {
+    ...state,
+    triggerProvision,
+    startListening,
+    stopListening,
+    resetState,
+  };
 };

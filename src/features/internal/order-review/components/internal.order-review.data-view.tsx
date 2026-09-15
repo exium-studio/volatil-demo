@@ -22,10 +22,8 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import {
-  useInternalOrdersQuery,
-  useProvisionOrder,
-} from "@/features/internal/order-review/hooks/use-order-review";
+import { InternalOrderReviewProvisionTrigger } from "@/features/internal/order-review/components/internal.order-review.provision-modal";
+import { useInternalOrdersQuery } from "@/features/internal/order-review/hooks/use-order-review";
 import type {
   InternalOrderItem,
   InternalOrderListQueryParams,
@@ -78,9 +76,6 @@ export const InternalOrderReviewDataView = () => {
     error,
     refetch,
   } = useInternalOrdersQuery(params);
-
-  // Mutations
-  const provisionMutation = useProvisionOrder();
 
   // Derived Values - Headers & Items for DataList
   const dataList = useMemo(() => {
@@ -193,10 +188,16 @@ export const InternalOrderReviewDataView = () => {
         label: "Create Service WMS",
         icon: MapPlusIcon,
         hidden: (order: InternalOrderItem) => order.status !== "paid",
-        onClick: (order: InternalOrderItem) => {
-          provisionMutation.mutate({
-            orderId: order.orderId,
-          });
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <InternalOrderReviewProvisionTrigger
+              modalKey={`provision-order-${order.orderId}`}
+              order={order}
+              onSuccess={() => {
+                void refetch();
+              }}
+            />
+          ),
         },
       },
       {
@@ -234,7 +235,7 @@ export const InternalOrderReviewDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [orders, preferredTimezone, navigate, provisionMutation]);
+  }, [orders, preferredTimezone, navigate, refetch]);
 
   return (
     <Container.Root flex={1} minH={0} withContext={true}>

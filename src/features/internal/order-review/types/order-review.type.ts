@@ -6,6 +6,7 @@ import type {
   SelectionType,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
+  ApiResponse,
   PaginatedParams,
   PaginationMeta,
 } from "@/shared/types/common-response.type";
@@ -80,6 +81,59 @@ export type ProvisionOrderResponse = {
   orderId: string;
   transactionStatus: string;
   orderStatus: string;
+};
+
+export type ProvisionStreamItemStatus =
+  | "pending"
+  | "processing"
+  | "done"
+  | "failed";
+
+export type ProvisionStreamItem = {
+  itemId: string;
+  itemIndex: number;
+  totalItems: number;
+  sourceLayerId: string;
+  sourceLayerTitle: string;
+  spatialBasis?: string;
+  status: ProvisionStreamItemStatus;
+  proxyWmsUrl?: string;
+  proxyWfsUrl?: string;
+  error?: string;
+};
+
+export type ProvisionStreamState = {
+  isConnected: boolean;
+  isStarted: boolean;
+  isCompleted: boolean;
+  isFatal: boolean;
+  orderStatus: CartOrderStatus | "processing" | "pending_review";
+  totalItems: number;
+  processedItems: number;
+  failedCount: number;
+  items: Record<string, ProvisionStreamItem>;
+  errorMessage: string | null;
+};
+
+export type ProvisionStreamHookResult = ProvisionStreamState & {
+  triggerProvision: () => Promise<ApiResponse<ProvisionOrderResponse>>;
+  startListening: () => void;
+  stopListening: () => void;
+  resetState: () => void;
+};
+
+export type InternalOrderReviewProvisionTriggerProps = {
+  modalKey?: string;
+  order: InternalOrderItem;
+  children?: ReactNode;
+  onSuccess?: () => void;
+};
+
+export type InternalOrderReviewProvisionModalContentProps = {
+  order: InternalOrderItem;
+  isOpen: boolean;
+  onSuccess?: () => void;
+  close: () => void;
 };
 
 import { z } from "zod";

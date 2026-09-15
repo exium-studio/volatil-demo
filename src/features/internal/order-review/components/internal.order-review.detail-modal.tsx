@@ -12,7 +12,7 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-order-review";
+import { InternalOrderReviewProvisionTrigger } from "@/features/internal/order-review/components/internal.order-review.provision-modal";
 import type {
   InternalOrderReviewDetailModalContentProps,
   InternalOrderReviewDetailTriggerProps,
@@ -56,9 +56,6 @@ const InternalOrderReviewDetailModalContent = (
 ) => {
   const { order, close } = props;
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
-
-  // Mutations
-  const provisionMutation = useProvisionOrder();
 
   const isPaid = order.status === "paid";
   const isPending = order.status === "pending_review";
@@ -224,26 +221,16 @@ const InternalOrderReviewDetailModalContent = (
           </Button>
 
           {isPaid && (
-            <Button
-              primary={true}
-              colorPalette={"blue"}
-              loading={provisionMutation.isPending}
-              onClick={() => {
-                provisionMutation.mutate(
-                  {
-                    orderId: order.orderId,
-                  },
-                  {
-                    onSuccess: () => {
-                      close();
-                    },
-                  },
-                );
-              }}
+            <InternalOrderReviewProvisionTrigger
+              order={order}
+              modalKey={`provision-from-detail-${order.orderId}`}
+              onSuccess={close}
             >
-              <AppIcon icon={MapPlusIcon} />
-              {"Create Service WMS"}
-            </Button>
+              <Button primary={true} colorPalette={"blue"}>
+                <AppIcon icon={MapPlusIcon} />
+                {"Create Service WMS"}
+              </Button>
+            </InternalOrderReviewProvisionTrigger>
           )}
 
           {isPending && (

@@ -279,6 +279,21 @@ export const provisionOrderApi = async (
   }
 };
 
+export const createOrderProvisionEventSource = (
+  orderId: string,
+): EventSource => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const endpoint = `/api/mitra/orders/${orderId}/provision/stream`;
+
+  // EventSource does not support custom headers — send auth token as query param
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const query = token ? `?token=${encodeURIComponent(token)}` : "";
+
+  const fullUrl = `${baseUrl}${endpoint}${query}`;
+  return new EventSource(fullUrl, { withCredentials: true });
+};
+
 export const approveOrderApi = async (
   payload: ApproveOrderPayload,
   signal?: AbortSignal,
