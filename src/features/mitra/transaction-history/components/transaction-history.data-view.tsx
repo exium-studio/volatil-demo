@@ -30,16 +30,17 @@ import type {
   TransactionHistoryQueryParams,
   TransactionRecord,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
-import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
-import type { TransactionStatus } from "@/shared/types/status.type";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionStatusBadge } from "@/features/shared/components/transaction-status.badge";
-import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import type { OrderStatus, TransactionStatus } from "@/shared/types/status.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
 import { CreditCardIcon, EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -82,6 +83,7 @@ export const TransactionHistoryDataView = () => {
       { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "No. Order", sortable: true, align: "start" },
       { th: "Status Transaksi", sortable: true, align: "start" },
+      { th: "Status Order", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
@@ -98,6 +100,12 @@ export const TransactionHistoryDataView = () => {
           .map((it) => it.sourceLayerTitle)
           .join(", ");
         const targetExpiry = item.billingExpiredAt || item.expiredAt;
+
+        const effectiveOrderStatus: OrderStatus | undefined =
+          item.transactionStatus === "expired" &&
+          (!item.orderStatus || item.orderStatus === "pending_payment")
+            ? "rejected"
+            : item.orderStatus;
 
         return {
           id: item.id,
@@ -119,6 +127,17 @@ export const TransactionHistoryDataView = () => {
                 <TransactionStatusBadge showIcon={true}>
                   {item.transactionStatus}
                 </TransactionStatusBadge>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveOrderStatus ?? "",
+              td: effectiveOrderStatus ? (
+                <OrderStatusBadge showIcon={true}>
+                  {effectiveOrderStatus}
+                </OrderStatusBadge>
+              ) : (
+                <P color={"fg.subtle"}>{"-"}</P>
               ),
               align: "start" as const,
             },

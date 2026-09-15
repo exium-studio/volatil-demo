@@ -31,17 +31,18 @@ import type {
   InternalTransactionItem,
   InternalTransactionQueryParams,
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionStatusBadge } from "@/features/shared/components/transaction-status.badge";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
-import type { TransactionStatus } from "@/shared/types/status.type";
+import type { OrderStatus, TransactionStatus } from "@/shared/types/status.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatAdaptiveDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { isEmptyArray } from "@/shared/utils/data/array";
 import { EyeIcon, HistoryIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
@@ -51,7 +52,10 @@ export const InternalTransactionStatisticDataView = () => {
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
-  // States — Centralized query parameters
+  // Contexts
+  const { locale } = useLocale();
+
+  // States — Centralized query/action parameters
   const [params, setParams] = useState<InternalTransactionQueryParams>({
     page: 1,
     pageSize: ITEMS_PER_PAGE_DEFAULT,
@@ -59,8 +63,7 @@ export const InternalTransactionStatisticDataView = () => {
     transactionStatus: undefined,
   });
 
-  // Stores & Hooks
-  const { locale } = useLocale();
+  // Derived Values
   const debouncedSearch = useDebouncedValue(params.search ?? "", 300);
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
@@ -79,6 +82,7 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "Mitra Pemohon", sortable: true, align: "start" },
       { th: "No. Order", sortable: true, align: "start" },
       { th: "Status Transaksi", sortable: true, align: "start" },
+      { th: "Status Order", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Metode", sortable: false, align: "start" },
@@ -93,6 +97,12 @@ export const InternalTransactionStatisticDataView = () => {
         const itemNames = item.items
           .map((it) => it.sourceLayerTitle)
           .join(", ");
+
+        const effectiveOrderStatus: OrderStatus | undefined =
+          item.transactionStatus === "expired" &&
+          (!item.orderStatus || item.orderStatus === "pending_payment")
+            ? "rejected"
+            : item.orderStatus;
 
         return {
           id: item.id,
@@ -136,6 +146,19 @@ export const InternalTransactionStatisticDataView = () => {
                 <TransactionStatusBadge showIcon={true} size={"xs"}>
                   {item.transactionStatus}
                 </TransactionStatusBadge>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveOrderStatus ?? "",
+              td: effectiveOrderStatus ? (
+                <OrderStatusBadge showIcon={true} size={"xs"}>
+                  {effectiveOrderStatus}
+                </OrderStatusBadge>
+              ) : (
+                <P fontSize={"sm"} color={"fg.subtle"}>
+                  {"-"}
+                </P>
               ),
               align: "start" as const,
             },

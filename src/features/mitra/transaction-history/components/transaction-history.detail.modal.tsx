@@ -22,6 +22,7 @@ import type { TransactionOrderItem } from "@/features/mitra/transaction-history/
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import type { OrderStatus } from "@/shared/types/status.type";
 import { t } from "@/shared/libs/i18n";
 import { back } from "@/shared/utils/client/navigation";
 import {
@@ -165,6 +166,12 @@ export const TransactionDetailModalContent = (
     }
   };
 
+  const effectiveOrderStatus: OrderStatus | undefined =
+    transaction.transactionStatus === "expired" &&
+    (!transaction.orderStatus || transaction.orderStatus === "pending_payment")
+      ? "rejected"
+      : transaction.orderStatus;
+
   return (
     <Modal.Content>
       <Modal.Header>
@@ -245,7 +252,7 @@ export const TransactionDetailModalContent = (
                 <P fontWeight={"medium"}>{transaction.orderNumber}</P>
               </HStack>
 
-              {transaction.orderStatus && (
+              {effectiveOrderStatus && (
                 <HStack
                   align={"center"}
                   justify={"space-between"}
@@ -254,7 +261,7 @@ export const TransactionDetailModalContent = (
                 >
                   <P color={"fg.subtle"}>{"Status Order"}</P>
                   <OrderStatusBadge showIcon={true}>
-                    {transaction.orderStatus}
+                    {effectiveOrderStatus}
                   </OrderStatusBadge>
                 </HStack>
               )}
