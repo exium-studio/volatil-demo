@@ -12,11 +12,12 @@ import type {
 } from "@/features/mitra/my-data/types/my-data.type";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useMitraMyDataQuery = (params: MyDataQueryParams) => {
   const query = useQuery<MyDataResponse>({
-    queryKey: ["mitra", "my-data", params],
+    queryKey: queryKeys.mitra.myData.list(params),
     queryFn: ({ signal }) => getMyData(params, signal),
     placeholderData: (previousData) => previousData,
   });
@@ -41,7 +42,7 @@ export const useUpdateMyData = () => {
     mutationFn: ({ id, payload }) => updateMyData(id, payload),
     onSuccess: (data) => {
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "my-data"],
+        queryKey: queryKeys.mitra.myData.all,
       });
       toast.create({
         variant: "success",

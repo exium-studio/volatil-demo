@@ -19,6 +19,11 @@ export const queryKeys = {
       items: (params: { page: number; pageSize: number; search?: string }) =>
         [...queryKeys.mitra.cart.all, "items", params] as const,
     },
+    myData: {
+      all: ["mitra", "my-data"] as const,
+      list: (params?: Record<string, unknown>) =>
+        [...queryKeys.mitra.myData.all, "list", params] as const,
+    },
     dataRequest: {
       all: ["mitra", "data-request"] as const,
       catalog: (params?: Record<string, unknown>) =>

@@ -5,13 +5,19 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { MapAttribution } from "@/design-system/components/map/ui/map.basemap-attribution";
 import { MapControls } from "@/design-system/components/map/ui/map.controls";
 import { MapMasterIgtLayerSelect } from "@/design-system/components/map/ui/map.controls/map.master-igt-layer-select";
+import { MapMyDataLayerSelect } from "@/design-system/components/map/ui/map.controls/map.my-data-layer-select";
 import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinates";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
 import type { MapOverlayProps } from "@/design-system/components/map/types/map.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
 export const MapOverlay = (props: MapOverlayProps) => {
-  const { showMasterIgtLayerSelect = true } = props;
+  const { showMasterIgtLayerSelect = true, showMyDataLayerSelect = true } = props;
+
+  // User session
+  const userSession = getUserSession();
+  const isMitra = userSession?.role === "mitra";
 
   return (
     <VStack
@@ -35,6 +41,7 @@ export const MapOverlay = (props: MapOverlayProps) => {
         <MapSearch />
 
         <HStack align={"start"} gap={2} pointerEvents={"none"}>
+          {isMitra && showMyDataLayerSelect && <MapMyDataLayerSelect />}
           {showMasterIgtLayerSelect && <MapMasterIgtLayerSelect />}
           <MapAttribution />
         </HStack>
