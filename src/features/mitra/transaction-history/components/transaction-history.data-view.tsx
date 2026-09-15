@@ -11,6 +11,7 @@ import { DataViewTable } from "@/design-system/components/data-display/ui/data-v
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
@@ -69,7 +70,7 @@ export const TransactionHistoryDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
-  const { transactionHistory, isLoading, isFetching } =
+  const { transactionHistory, isLoading, isFetching, isError, error, refetch } =
     useTransactionHistoryQuery({
       page: params.page,
       pageSize: params.pageSize,
@@ -316,6 +317,27 @@ export const TransactionHistoryDataView = () => {
       >
         {isLoading ? (
           <Skeleton p={"md"} rounded={0} />
+        ) : isError ? (
+          <Box
+            flex={1}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+            bg={"bg.body"}
+          >
+            <RetryState
+              title={"Gagal Memuat Riwayat Transaksi"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat daftar riwayat transaksi Anda. Silakan coba lagi."
+              }
+              onRetry={() => {
+                void refetch();
+              }}
+            />
+          </Box>
         ) : isEmptyArray(transactionHistory.items) ? (
           <Box
             flex={1}

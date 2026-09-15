@@ -8,6 +8,7 @@ import { DataViewTable } from "@/design-system/components/data-display/ui/data-v
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -89,6 +90,9 @@ export const InternalMitraRegistrationDataView = () => {
     pagination,
     isLoading,
     isFetching,
+    isError,
+    error,
+    refetch,
   } = useInternalMitraRegistrationsQuery({
     page: params.page,
     pageSize: params.pageSize,
@@ -301,7 +305,22 @@ export const InternalMitraRegistrationDataView = () => {
         <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
           {isLoading && <Skeleton p={"md"} rounded={0} />}
 
-          {!isLoading && (
+          {!isLoading && isError && (
+            <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
+              <RetryState
+                title={"Gagal Memuat Permohonan Mitra"}
+                description={
+                  error?.message ||
+                  "Terjadi kesalahan saat memuat daftar permohonan registrasi mitra. Silakan coba lagi."
+                }
+                onRetry={() => {
+                  void refetch();
+                }}
+              />
+            </Center>
+          )}
+
+          {!isLoading && !isError && (
             <>
               {isEmptyArray(rawItems) && (
                 <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>

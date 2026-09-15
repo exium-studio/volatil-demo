@@ -9,6 +9,7 @@ import type { DataViewItemActionsGenerator } from "@/design-system/components/da
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -96,8 +97,8 @@ const MitraHomeLastTransactionDataView = () => {
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
-  // Queries / Data
-  const { transactionHistory, isLoading, isFetching } =
+  // Queries
+  const { transactionHistory, isLoading, isFetching, isError, error, refetch } =
     useTransactionHistoryQuery({
       page: 1,
       pageSize: 5,
@@ -263,6 +264,26 @@ const MitraHomeLastTransactionDataView = () => {
     <VStack bg={"bg.canvas"} w={"full"} position={"relative"}>
       {isLoading ? (
         <Skeleton h={"240px"} w={"full"} rounded={0} />
+      ) : isError ? (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={"full"}
+          py={"xl"}
+          bg={"bg.body"}
+        >
+          <RetryState
+            title={"Gagal Memuat Riwayat Transaksi"}
+            description={
+              error?.message ||
+              "Terjadi kesalahan saat memuat transaksi terbaru. Silakan coba lagi."
+            }
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        </Box>
       ) : isEmptyArray(transactionHistory.items) ? (
         <Box
           display={"flex"}

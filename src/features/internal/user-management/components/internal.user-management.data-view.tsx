@@ -10,9 +10,13 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -32,6 +36,7 @@ import type {
 } from "@/features/internal/user-management/types/user-management.type";
 import { t } from "@/shared/libs/i18n";
 import type { UserRole } from "@/shared/types/common-response.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -65,7 +70,7 @@ export const InternalUserManagementDataView = () => {
   const updateStatusMutation = useUpdateUserStatus();
 
   // Queries
-  const { users, total, totalPages, isLoading, isFetching } =
+  const { users, total, totalPages, isLoading, isFetching, isError, error, refetch } =
     useUserManagementUsersQuery({
       search: params.search?.trim() || undefined,
       page: params.page,
@@ -254,39 +259,80 @@ export const InternalUserManagementDataView = () => {
         <VStack flex={1} w={"full"} position={"relative"}>
           {isLoading && <Skeleton flex={1} w={"full"} p={"md"} rounded={0} />}
 
-          {!isLoading && (
-            <>
-              <DataViewTable.Root
-                headers={dataList.headers}
-                items={dataList.items}
-                itemActions={dataList.itemActions}
-                page={params.page}
-                pageSize={params.pageSize}
-                roundedTop={0}
-              >
-                <DataViewTable.Header />
-                <DataViewTable.Body />
-              </DataViewTable.Root>
-
-              <Separator borderColor={"bg.canvas"} />
-
-              <DataViewFooter
-                page={params.page ?? 1}
-                pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
-                setPage={(newPage: number) =>
-                  setParams((prev) => ({ ...prev, page: newPage }))
+          {!isLoading && isError && (
+            <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+              <RetryState
+                title={"Gagal Memuat Pengguna"}
+                description={
+                  error?.message ||
+                  "Terjadi kesalahan saat memuat daftar pengguna. Silakan coba lagi."
                 }
-                setPageSize={(newSize: number) => {
-                  setParams((prev) => ({
-                    ...prev,
-                    pageSize: newSize,
-                    page: 1,
-                  }));
+                onRetry={() => {
+                  void refetch();
                 }}
-                currentDataLength={users.length}
-                totalData={total}
-                totalPage={totalPages}
               />
+            </Center>
+          )}
+
+          {!isLoading && !isError && (
+            <>
+              {isEmptyArray(users) && (
+                <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+                  {params.search || params.status || params.role ? (
+                    <NoResultState
+                      query={params.search || params.status || params.role}
+                      description={
+                        "Tidak ada pengguna yang sesuai dengan filter atau kata kunci pencarian Anda."
+                      }
+                    />
+                  ) : (
+                    <NoDataState
+                      title={"Belum Ada Pengguna"}
+                      description={
+                        "Belum ada akun pengguna terdaftar pada sistem."
+                      }
+                    />
+                  )}
+                </Center>
+              )}
+
+              {!isEmptyArray(users) && (
+                <>
+                  <TopBarLoader isFetching={isFetching} />
+
+                  <DataViewTable.Root
+                    headers={dataList.headers}
+                    items={dataList.items}
+                    itemActions={dataList.itemActions}
+                    page={params.page}
+                    pageSize={params.pageSize}
+                    roundedTop={0}
+                  >
+                    <DataViewTable.Header />
+                    <DataViewTable.Body />
+                  </DataViewTable.Root>
+
+                  <Separator borderColor={"bg.canvas"} />
+
+                  <DataViewFooter
+                    page={params.page ?? 1}
+                    pageSize={params.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+                    setPage={(newPage: number) =>
+                      setParams((prev) => ({ ...prev, page: newPage }))
+                    }
+                    setPageSize={(newSize: number) => {
+                      setParams((prev) => ({
+                        ...prev,
+                        pageSize: newSize,
+                        page: 1,
+                      }));
+                    }}
+                    currentDataLength={users.length}
+                    totalData={total}
+                    totalPage={totalPages}
+                  />
+                </>
+              )}
             </>
           )}
         </VStack>

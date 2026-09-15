@@ -13,6 +13,7 @@ import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/conf
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -90,6 +91,9 @@ export const InternalDataManagementDataView = () => {
     pagination,
     isLoading,
     isFetching,
+    isError,
+    error,
+    refetch,
   } = useMasterIgtLayersQuery({
     page: params.page,
     pageSize: params.pageSize,
@@ -496,7 +500,22 @@ export const InternalDataManagementDataView = () => {
       <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
         {isLoading && <Skeleton p={"md"} rounded={0} />}
 
-        {!isLoading && (
+        {!isLoading && isError && (
+          <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
+            <RetryState
+              title={"Gagal Memuat Layer IGT"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat daftar layer IGT. Silakan coba lagi."
+              }
+              onRetry={() => {
+                void refetch();
+              }}
+            />
+          </Center>
+        )}
+
+        {!isLoading && !isError && (
           <>
             {isEmptyArray(rawItems) && (
               <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>

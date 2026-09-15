@@ -6,6 +6,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -52,12 +53,13 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
   const hasLocalIds = localCartIds.length > 0;
 
   // Queries
-  const { features, total, isLoading, isFetching } = useCartItemsQuery({
-    page: pageState.page,
-    pageSize: pageState.pageSize,
-    typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
-    wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
-  });
+  const { features, total, isLoading, isFetching, isError, error, refetch } =
+    useCartItemsQuery({
+      page: pageState.page,
+      pageSize: pageState.pageSize,
+      typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
+      wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
+    });
 
   // Mutations
   const removeItemsMutation = useRemoveFromCart(() => {
@@ -123,7 +125,30 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
             <Skeleton flex={1} w={"full"} h={"full"} rounded={0} p={"md"} />
           )}
 
-          {!isLoading && isEmptyArray(features) && (
+          {!isLoading && isError && (
+            <Box
+              flex={1}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              w={"full"}
+              py={"md"}
+              bg={"bg.body"}
+            >
+              <RetryState
+                title={"Gagal Memuat Item Keranjang"}
+                description={
+                  error?.message ||
+                  "Terjadi kesalahan saat memuat item data spasial di keranjang Anda. Silakan coba lagi."
+                }
+                onRetry={() => {
+                  void refetch();
+                }}
+              />
+            </Box>
+          )}
+
+          {!isLoading && !isError && isEmptyArray(features) && (
             <Box
               flex={1}
               display={"flex"}
@@ -137,7 +162,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
             </Box>
           )}
 
-          {!isLoading && features.length > 0 && (
+          {!isLoading && !isError && features.length > 0 && (
             <SpatialFeaturesDataView
               wfsFeatures={features}
               page={pageState.page}

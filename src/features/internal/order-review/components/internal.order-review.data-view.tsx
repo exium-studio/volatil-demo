@@ -9,6 +9,7 @@ import { DataViewTable } from "@/design-system/components/data-display/ui/data-v
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -73,6 +74,9 @@ export const InternalOrderReviewDataView = () => {
     pagination,
     isLoading,
     isFetching,
+    isError,
+    error,
+    refetch,
   } = useInternalOrdersQuery(params);
 
   // Mutations
@@ -296,6 +300,19 @@ export const InternalOrderReviewDataView = () => {
         >
           {isLoading ? (
             <Skeleton p={"md"} rounded={0} />
+          ) : isError ? (
+            <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+              <RetryState
+                title={"Gagal Memuat Antrean Review"}
+                description={
+                  error?.message ||
+                  "Terjadi kesalahan saat memuat antrean review pesanan. Silakan coba lagi."
+                }
+                onRetry={() => {
+                  void refetch();
+                }}
+              />
+            </Center>
           ) : isEmptyArray(orders) ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
               {params.search || params.status !== "all" ? (

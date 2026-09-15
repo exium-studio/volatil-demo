@@ -7,6 +7,7 @@ import {
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box, Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -63,6 +64,9 @@ export const NotificationInboxDataView = memo(() => {
   const {
     items,
     isLoading,
+    isError,
+    error,
+    refetch,
     unreadCount = 0,
     hasNextPage,
     isFetchingNextPage,
@@ -76,6 +80,20 @@ export const NotificationInboxDataView = memo(() => {
 
   if (isLoading) {
     return <Skeleton p={"md"} />;
+  }
+
+  if (isError) {
+    return (
+      <Center flex={1} py={"xl"}>
+        <RetryState
+          title={"Gagal Memuat Inbox"}
+          description={error?.message || "Terjadi kesalahan saat memuat pesan inbox."}
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      </Center>
+    );
   }
 
   if (isEmptyArray(items)) {

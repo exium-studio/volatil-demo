@@ -10,11 +10,13 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -85,7 +87,7 @@ export const HelpCenterDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
-  const { tickets, pagination, isLoading, isFetching } =
+  const { tickets, pagination, isLoading, isFetching, isError, error, refetch } =
     useHelpCenterTicketsQuery({
       search: params.search?.trim() || undefined,
       page: params.page,
@@ -317,7 +319,22 @@ export const HelpCenterDataView = () => {
         <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
           {isLoading && <Skeleton w={"full"} p={"md"} roundedTop={0} />}
 
-          {!isLoading && isEmptyArray(tickets) && (
+          {!isLoading && isError && (
+            <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+              <RetryState
+                title={"Gagal Memuat Laporan"}
+                description={
+                  error?.message ||
+                  "Terjadi kesalahan saat memuat tiket pusat bantuan. Silakan coba lagi."
+                }
+                onRetry={() => {
+                  void refetch();
+                }}
+              />
+            </Center>
+          )}
+
+          {!isLoading && !isError && isEmptyArray(tickets) && (
             <Box py={"xl"} w={"full"} bg={"bg.body"}>
               <NoDataState
                 icon={InboxIcon}
@@ -331,7 +348,7 @@ export const HelpCenterDataView = () => {
             </Box>
           )}
 
-          {!isLoading && !isEmptyArray(tickets) && (
+          {!isLoading && !isError && !isEmptyArray(tickets) && (
             <VStack flex={1} w={"full"} position={"relative"}>
               <TopBarLoader isFetching={isFetching} />
 

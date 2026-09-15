@@ -5,9 +5,13 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -27,6 +31,7 @@ import type {
 import { MitraLayerSyncJobStatusBadge } from "@/features/shared/components/mitra-layer-sync-job-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { t } from "@/shared/libs/i18n";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -66,6 +71,9 @@ export const InternalMitraLayerSyncJobTableView = (
     pagination,
     isLoading,
     isFetching,
+    isError,
+    error,
+    refetch,
   } = useMitraLayerSyncJobsQuery({
     page: params.page,
     pageSize: params.pageSize,
@@ -255,38 +263,85 @@ export const InternalMitraLayerSyncJobTableView = (
         overflowX={"auto"}
         align={"stretch"}
       >
-        <DataViewTable.Root
-          headers={dataList.headers}
-          items={dataList.items}
-          page={showPagination ? params.page : undefined}
-          pageSize={showPagination ? params.pageSize : undefined}
-          roundedTop={roundedTop}
-        >
-          <DataViewTable.Header />
-          <DataViewTable.Body />
-        </DataViewTable.Root>
+        {isLoading && <Skeleton p={"md"} rounded={0} />}
 
-        {showPagination && (
-          <>
-            <Separator borderColor={"bg.canvas"} />
-
-            <DataViewFooter
-              page={params.page}
-              pageSize={params.pageSize}
-              setPage={(newPage: number) =>
-                setParams((prev) => ({ ...prev, page: newPage }))
+        {!isLoading && isError && (
+          <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+            <RetryState
+              title={"Gagal Memuat Riwayat Sinkronisasi"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat daftar tugas sinkronisasi layer. Silakan coba lagi."
               }
-              setPageSize={(newSize: number) => {
-                setParams((prev) => ({
-                  ...prev,
-                  pageSize: newSize,
-                  page: 1,
-                }));
+              onRetry={() => {
+                void refetch();
               }}
-              currentDataLength={rawItems.length}
-              totalData={total}
-              totalPage={totalPages}
             />
+          </Center>
+        )}
+
+        {!isLoading && !isError && (
+          <>
+            {isEmptyArray(rawItems) && (
+              <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+                {params.search || params.status !== "all" ? (
+                  <NoResultState
+                    query={params.search || params.status}
+                    description={
+                      "Tidak ada tugas sinkronisasi yang sesuai dengan filter atau kata kunci pencarian Anda."
+                    }
+                  />
+                ) : (
+                  <NoDataState
+                    title={"Belum Ada Tugas Sinkronisasi"}
+                    description={
+                      "Belum ada riwayat tugas sinkronisasi layer IGT ke geoserver mitra."
+                    }
+                  />
+                )}
+              </Center>
+            )}
+
+            {!isEmptyArray(rawItems) && (
+              <>
+                <TopBarLoader isFetching={isFetching} />
+
+                <DataViewTable.Root
+                  headers={dataList.headers}
+                  items={dataList.items}
+                  page={showPagination ? params.page : undefined}
+                  pageSize={showPagination ? params.pageSize : undefined}
+                  roundedTop={roundedTop}
+                >
+                  <DataViewTable.Header />
+                  <DataViewTable.Body />
+                </DataViewTable.Root>
+
+                {showPagination && (
+                  <>
+                    <Separator borderColor={"bg.canvas"} />
+
+                    <DataViewFooter
+                      page={params.page}
+                      pageSize={params.pageSize}
+                      setPage={(newPage: number) =>
+                        setParams((prev) => ({ ...prev, page: newPage }))
+                      }
+                      setPageSize={(newSize: number) => {
+                        setParams((prev) => ({
+                          ...prev,
+                          pageSize: newSize,
+                          page: 1,
+                        }));
+                      }}
+                      currentDataLength={rawItems.length}
+                      totalData={total}
+                      totalPage={totalPages}
+                    />
+                  </>
+                )}
+              </>
+            )}
           </>
         )}
       </VStack>

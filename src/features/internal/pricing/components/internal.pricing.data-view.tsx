@@ -5,8 +5,12 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -24,6 +28,7 @@ import type {
   PricingQueryParams,
 } from "@/features/internal/pricing/types/internal.pricing.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -52,6 +57,9 @@ export const InternalPricingDataView = () => {
     pagination,
     isLoading,
     isFetching,
+    isError,
+    error,
+    refetch,
   } = useInternalPricingListQuery({
     page: params.page,
     pageSize: params.pageSize,
@@ -248,6 +256,37 @@ export const InternalPricingDataView = () => {
         >
           {isLoading ? (
             <Skeleton p={"md"} rounded={0} h={"320px"} />
+          ) : isError ? (
+            <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+              <RetryState
+                title={"Gagal Memuat Tarif PNBP"}
+                description={
+                  error?.message ||
+                  "Terjadi kesalahan saat memuat master tarif PNBP. Silakan coba lagi."
+                }
+                onRetry={() => {
+                  void refetch();
+                }}
+              />
+            </Center>
+          ) : isEmptyArray(filteredItems) ? (
+            <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+              {params.search || params.spatialBasis ? (
+                <NoResultState
+                  query={params.search || params.spatialBasis}
+                  description={
+                    "Tidak ada komponen tarif yang sesuai dengan filter atau kata kunci pencarian Anda."
+                  }
+                />
+              ) : (
+                <NoDataState
+                  title={"Belum Ada Data Tarif"}
+                  description={
+                    "Belum ada data tarif PNBP terdaftar pada sistem."
+                  }
+                />
+              )}
+            </Center>
           ) : (
             <VStack flex={1} w={"full"} position={"relative"}>
               <TopBarLoader isFetching={isFetching} />

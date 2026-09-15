@@ -11,6 +11,7 @@ import { DataViewTable } from "@/design-system/components/data-display/ui/data-v
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
@@ -68,12 +69,13 @@ export const InternalTransactionStatisticDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
-  const { transactions, isLoading, isFetching } = useInternalTransactionsQuery({
-    page: params.page,
-    pageSize: params.pageSize,
-    search: debouncedSearch || undefined,
-    transactionStatus: params.transactionStatus,
-  });
+  const { transactions, isLoading, isFetching, isError, error, refetch } =
+    useInternalTransactionsQuery({
+      page: params.page,
+      pageSize: params.pageSize,
+      search: debouncedSearch || undefined,
+      transactionStatus: params.transactionStatus,
+    });
 
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
@@ -333,6 +335,27 @@ export const InternalTransactionStatisticDataView = () => {
         <VStack flex={1} w={"full"} position={"relative"}>
           {isLoading ? (
             <Skeleton flex={1} w={"full"} p={"md"} rounded={0} />
+          ) : isError ? (
+            <Box
+              flex={1}
+              display={"flex"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              w={"full"}
+              py={"xl"}
+              bg={"bg.body"}
+            >
+              <RetryState
+                title={"Gagal Memuat Transaksi"}
+                description={
+                  error?.message ||
+                  "Terjadi kesalahan saat memuat data statistik dan riwayat transaksi. Silakan coba lagi."
+                }
+                onRetry={() => {
+                  void refetch();
+                }}
+              />
+            </Box>
           ) : isEmptyArray(transactions.items) ? (
             <Box
               flex={1}

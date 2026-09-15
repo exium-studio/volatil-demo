@@ -11,6 +11,7 @@ import type {
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -102,10 +103,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
     }, [baseCqlFilter, localCqlFilter, showFilter]);
 
     // Queries — list of all active IGT layers
-    const isLoadingLayers = false;
     const {
       data: layersData,
-      // isLoading: isLoadingLayers
+      isLoading: isLoadingLayers,
+      isError: isErrorLayers,
+      error: errorLayers,
+      refetch: refetchLayers,
     } = useQuery({
       queryKey: queryKeys.map.layers(),
       queryFn: ({ signal }) => getIgtLayers(signal),
@@ -582,7 +585,22 @@ export const MitraDataRequestIgtLayerDataView = memo(
         <VStack flex={1} bg={"bg.body"} overflow={"clip"}>
           {isLoadingLayers && <Skeleton flex={1} p={"md"} rounded={0} />}
 
-          {!isLoadingLayers && (
+          {!isLoadingLayers && isErrorLayers && (
+            <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
+              <RetryState
+                title={"Gagal Memuat Katalog Layer IGT"}
+                description={
+                  errorLayers?.message ||
+                  "Terjadi kesalahan saat memuat katalog layer IGT. Silakan coba lagi."
+                }
+                onRetry={() => {
+                  void refetchLayers();
+                }}
+              />
+            </VStack>
+          )}
+
+          {!isLoadingLayers && !isErrorLayers && (
             <DataViewTable.Root<IgtLayerItem>
               headers={dataList.headers}
               items={dataList.items}
