@@ -163,7 +163,7 @@ export const highlightFeatureOnMap = (
   },
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!map || !(map as any).style || !map.isStyleLoaded()) return;
+  if (!map || !(map as any).style) return;
 
   const { zoom = 16, timeoutMs = HIGHLIGHT_TIMEOUT_MS } = options ?? {};
 

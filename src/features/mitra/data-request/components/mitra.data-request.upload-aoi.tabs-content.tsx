@@ -19,6 +19,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
+import { fitBoundsSafe } from "@/design-system/components/map/utils/map-camera";
 import { parseShpFile } from "@/design-system/components/map/utils/parse-shp-file";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
@@ -40,7 +41,10 @@ import type {
   UploadedAoiFile,
 } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
-import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import {
+  getGeometryBounds,
+  highlightFeatureOnMap,
+} from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
@@ -273,26 +277,9 @@ export const MitraDataRequestUploadAoiTabsContent = (
     }
   }, []);
 
-  const handleSelectFeature = useCallback(
-    (featureId: string) => {
-      setSelectedFeatureId(featureId);
-      setUploadedFile((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          features: prev.features.map((f) =>
-            f.id === featureId ? { ...f, isVisibleOnMap: true } : f,
-          ),
-        };
-      });
-
-      const target = uploadedFile?.features.find((f) => f.id === featureId);
-      if (map && target?.polygon) {
-        highlightFeatureOnMap(map, target.polygon);
-      }
-    },
-    [uploadedFile, map],
-  );
+  const handleSelectFeature = useCallback((featureId: string) => {
+    setSelectedFeatureId(featureId);
+  }, []);
 
   const handleToggleFeatureVisibility = useCallback((featureId: string) => {
     setUploadedFile((prev) => {
@@ -315,7 +302,14 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
     setConfirmedFeature(target);
     if (map) {
-      highlightFeatureOnMap(map, target.polygon);
+      const bounds = getGeometryBounds(target.polygon.geometry);
+      if (bounds) {
+        fitBoundsSafe(map, bounds, {
+          padding: 80,
+          maxZoom: 16,
+          duration: 1200,
+        });
+      }
     }
   }, [uploadedFile, selectedFeatureId, map]);
 

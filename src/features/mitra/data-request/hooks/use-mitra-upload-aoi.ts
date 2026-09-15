@@ -4,7 +4,7 @@ import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.con
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 /** MapLibre source & layer ID prefixes for Upload AOI polygon layers. */
 export const UPLOAD_AOI_SOURCE_PREFIX = "upload-aoi-source-";
@@ -13,9 +13,9 @@ export const UPLOAD_AOI_LINE_PREFIX = "upload-aoi-line-";
 
 /** Orange theme color — visually distinct from Draw AOI (blue). */
 const AOI_FILL_COLOR = "#f97316";
-const AOI_FILL_OPACITY = 0.15;
-const AOI_LINE_COLOR = "#f97316";
-const AOI_LINE_WIDTH = 2;
+const AOI_FILL_OPACITY = 0.25;
+const AOI_LINE_COLOR = "#ea580c";
+const AOI_LINE_WIDTH = 2.5;
 
 /**
  * Returns the layer ID that Upload AOI layers should be inserted before (below draw layers),
@@ -23,6 +23,23 @@ const AOI_LINE_WIDTH = 2;
  */
 const getBeforeId = (map: maplibregl.Map): string | undefined => {
   if (map.getLayer(DRAW_FILL_LAYER_ID)) return DRAW_FILL_LAYER_ID;
+  const styleLayers = map.getStyle()?.layers;
+  if (styleLayers) {
+    const building3dIdx = styleLayers.findIndex((l) => l.id === "building-3d");
+    const buildingIdx = styleLayers.findIndex((l) => l.id === "building");
+    const maxBuildingIdx = Math.max(building3dIdx, buildingIdx);
+
+    if (maxBuildingIdx !== -1) {
+      for (let i = maxBuildingIdx + 1; i < styleLayers.length; i++) {
+        if (styleLayers[i].type === "symbol") {
+          return styleLayers[i].id;
+        }
+      }
+    }
+
+    const firstSymbol = styleLayers.find((l) => l.type === "symbol");
+    if (firstSymbol) return firstSymbol.id;
+  }
   return undefined;
 };
 
@@ -138,67 +155,20 @@ export const useMitraUploadAoi = (
     activeFeaturesRef.current = activeFeatures;
   }, [activeFeatures]);
 
-  // Rebuild all layers from scratch on mount & style reload
-  useEffect(() => {
-    if (!map) return;
-
-    const rebuildAll = () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!(map as any).style) return;
-
-      const style = map.getStyle();
-      style?.layers?.forEach((l) => {
-        if (
-          l.id.startsWith(UPLOAD_AOI_FILL_PREFIX) ||
-          l.id.startsWith(UPLOAD_AOI_LINE_PREFIX)
-        ) {
-          if (map.getLayer(l.id)) map.removeLayer(l.id);
-        }
-      });
-
-      if (style?.sources) {
-        Object.keys(style.sources).forEach((sid) => {
-          if (sid.startsWith(UPLOAD_AOI_SOURCE_PREFIX) && map.getSource(sid)) {
-            map.removeSource(sid);
-          }
-        });
-      }
-
-      const beforeId = getBeforeId(map);
-      activeFeaturesRef.current.forEach((feat) =>
-        addAoiLayer(map, feat.id, feat.polygon, beforeId),
-      );
-    };
-
-    map.on(MAP_EVENTS_MAP.styleReady as string, rebuildAll);
-    if (map.isStyleLoaded()) rebuildAll();
-
-    return () => {
-      map.off(MAP_EVENTS_MAP.styleReady as string, rebuildAll);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!(map as any).style) return;
-      activeFeaturesRef.current.forEach((feat) => removeAoiLayer(map, feat.id));
-    };
-  }, [map]);
-
-  // Reactive sync when activeFeatures state updates
-  useEffect(() => {
-    if (!map) return;
+  const syncAllActiveLayers = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(map as any).style || !map.isStyleLoaded()) return;
+    if (!map || !(map as any).style) return;
 
     const beforeId = getBeforeId(map);
+    const currentFeatures = activeFeaturesRef.current;
+    const currentIds = new Set(currentFeatures.map((f) => f.id));
 
-    // Add new active features
-    activeFeatures.forEach((feat) => {
-      const fillId = `${UPLOAD_AOI_FILL_PREFIX}${feat.id}`;
-      if (!map.getLayer(fillId)) {
-        addAoiLayer(map, feat.id, feat.polygon, beforeId);
-      }
+    // 1. Add or ensure active features are added
+    currentFeatures.forEach((feat) => {
+      addAoiLayer(map, feat.id, feat.polygon, beforeId);
     });
 
-    // Remove deleted features
-    const currentIds = new Set(activeFeatures.map((f) => f.id));
+    // 2. Remove obsolete layers that are no longer in activeFeatures
     const style = map.getStyle();
     style?.layers?.forEach((l) => {
       if (l.id.startsWith(UPLOAD_AOI_FILL_PREFIX)) {
@@ -208,9 +178,36 @@ export const useMitraUploadAoi = (
         }
       }
     });
-  }, [map, activeFeatures]);
+  }, [map]);
+
+  // Rebuild / resync all layers on style ready & layers ready
+  useEffect(() => {
+    if (!map) return;
+
+    const handleReady = () => {
+      syncAllActiveLayers();
+    };
+
+    map.on(MAP_EVENTS_MAP.styleReady as string, handleReady);
+    map.on(MAP_EVENTS_MAP.layersReady as string, handleReady);
+    syncAllActiveLayers();
+
+    return () => {
+      map.off(MAP_EVENTS_MAP.styleReady as string, handleReady);
+      map.off(MAP_EVENTS_MAP.layersReady as string, handleReady);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!(map as any).style) return;
+      activeFeaturesRef.current.forEach((feat) => removeAoiLayer(map, feat.id));
+    };
+  }, [map, syncAllActiveLayers]);
+
+  // Reactive sync when activeFeatures state updates
+  useEffect(() => {
+    syncAllActiveLayers();
+  }, [syncAllActiveLayers, activeFeatures]);
 };
 
 export const useUploadAoi = useMitraUploadAoi;
+
 
 
