@@ -115,10 +115,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       staleTime: 1000 * 60 * 5,
     });
 
-    const activeLayers = useMemo(
-      () => layersData?.items ?? [],
-      [layersData],
-    );
+    const activeLayers = useMemo(() => layersData?.items ?? [], [layersData]);
 
     const filteredLayers = useMemo(() => {
       if (!debouncedSearch) return activeLayers;
@@ -504,11 +501,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
       (summaryData.totalKawasanAreaHa === 0 ||
         summaryData.totalKawasanAreaHa < pricingPolicy.minKawasanHa);
 
-    // Estimate price based on policies
-    const estimatedBidangPrice =
-      summaryData.totalBidangCount * pricingPolicy.pricePerBidang;
-    const estimatedKawasanPrice =
-      summaryData.totalKawasanAreaHa * pricingPolicy.pricePerKawasanHa;
+    // Estimate price based on policies (exclude spatial bases that don't meet minimum purchase limit)
+    const estimatedBidangPrice = isBidangBelowMin
+      ? 0
+      : summaryData.totalBidangCount * pricingPolicy.pricePerBidang;
+    const estimatedKawasanPrice = isKawasanBelowMin
+      ? 0
+      : summaryData.totalKawasanAreaHa * pricingPolicy.pricePerKawasanHa;
     const estimatedTotalPrice = estimatedBidangPrice + estimatedKawasanPrice;
 
     // Condition for "Tambah semua": both active bases must satisfy their respective minimum purchase limits
@@ -741,7 +740,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                       fontWeight={"medium"}
                       color={"orange.fg"}
                     >
-                      {`Cakupan min. ${formatNumber(pricingPolicy.minKawasanHa)} ha`}
+                      {`Min. ${formatNumber(pricingPolicy.minKawasanHa)} ha`}
                     </P>
                   ) : (
                     <P fontWeight={"semibold"} color={"fg.default"}>
@@ -771,8 +770,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 </P>
 
                 <P fontSize={"lg"} fontWeight={"bold"} color={"blue.fg"}>
-                  {formatNumber(estimatedTotalPrice, { style: "currency" }) ||
-                    "Rp 0"}
+                  {estimatedTotalPrice > 0
+                    ? formatNumber(estimatedTotalPrice, { style: "currency" })
+                    : "-"}
                 </P>
               </HStack>
             </VStack>

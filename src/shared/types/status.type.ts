@@ -22,6 +22,7 @@ export type TransactionStatusConfig = {
  * SSOT 2: Order & Provisioning Status Types (Order Table & Spatial Services)
  */
 export type OrderStatus =
+  | "preparing"
   | "pending_payment"
   | "paid"
   | "processing"
@@ -79,4 +80,3 @@ export type UserRoleConfig = {
   colorPalette: "purple" | "blue";
   icon?: LucideIcon;
 };
-

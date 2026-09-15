@@ -149,6 +149,12 @@ export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
  * SSOT 3: Order & Provisioning Status Map (Single Order Table & Spatial Services)
  */
 export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
+  preparing: {
+    label: "Penyiapkan Pesanan",
+    colorPalette: "gray",
+    icon: LoaderIcon,
+    iconColor: "gray.fg",
+  },
   pending_payment: {
     label: "Menunggu Pembayaran",
     colorPalette: "orange",
