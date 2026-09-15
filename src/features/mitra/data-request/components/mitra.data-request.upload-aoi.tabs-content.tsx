@@ -273,6 +273,27 @@ export const MitraDataRequestUploadAoiTabsContent = (
     }
   }, []);
 
+  const handleSelectFeature = useCallback(
+    (featureId: string) => {
+      setSelectedFeatureId(featureId);
+      setUploadedFile((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          features: prev.features.map((f) =>
+            f.id === featureId ? { ...f, isVisibleOnMap: true } : f,
+          ),
+        };
+      });
+
+      const target = uploadedFile?.features.find((f) => f.id === featureId);
+      if (map && target?.polygon) {
+        highlightFeatureOnMap(map, target.polygon);
+      }
+    },
+    [uploadedFile, map],
+  );
+
   const handleToggleFeatureVisibility = useCallback((featureId: string) => {
     setUploadedFile((prev) => {
       if (!prev) return prev;
@@ -391,7 +412,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
             <UploadAoiFeatureList
               file={uploadedFile}
               selectedFeatureId={selectedFeatureId}
-              onSelectFeature={(id) => setSelectedFeatureId(id)}
+              onSelectFeature={handleSelectFeature}
               onToggleFeatureVisibility={handleToggleFeatureVisibility}
               onConfirmSelection={handleConfirmSelection}
               onResetFile={handleResetFile}
