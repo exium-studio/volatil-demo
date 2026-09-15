@@ -7,7 +7,7 @@ import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { UserSessionActions } from "@/features/auth/components/ui/user-session-actions";
@@ -138,16 +138,11 @@ export const MitraSignin = (props: StackProps) => {
       </Button>
 
       <VStack gap={2} mt={2} align={"center"} w={"full"}>
-        <P
-          fontSize={"sm"}
-          color={"fg.muted"}
-          as={"div"}
-          display={"flex"}
-          gap={"1"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {"Belum bermitra dengan ATR/BPN? "}
+        <HStack wrap={"wrap"} justify={"center"} gapX={"xs"}>
+          <P fontSize={"sm"} color={"fg.muted"}>
+            {"Belum bermitra dengan ATR/BPN? "}
+          </P>
+
           <Link
             to={"/register"}
             style={{
@@ -157,18 +152,13 @@ export const MitraSignin = (props: StackProps) => {
           >
             {"Daftar Mitra Baru"}
           </Link>
-        </P>
+        </HStack>
 
-        <P
-          fontSize={"sm"}
-          color={"fg.muted"}
-          as={"div"}
-          display={"flex"}
-          gap={"1"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {"Sudah mendaftar? "}
+        <HStack wrap={"wrap"} justify={"center"} gapX={"xs"}>
+          <P fontSize={"sm"} color={"fg.muted"}>
+            {"Sudah mendaftar? "}
+          </P>
+
           <Link
             to={"/registration-status"}
             style={{
@@ -178,7 +168,7 @@ export const MitraSignin = (props: StackProps) => {
           >
             {"Cek Status Pengajuan"}
           </Link>
-        </P>
+        </HStack>
       </VStack>
     </VStack>
   );

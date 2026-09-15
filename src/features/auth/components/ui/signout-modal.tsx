@@ -16,12 +16,12 @@ export const SignoutTrigger = (props: SignoutTriggerProps) => {
     <ConfirmationTrigger
       modalKey={modalKey}
       icon={LogOutIcon}
+      colorPalette={"red"}
       title={"Keluar dari Aplikasi"}
       description={"Apakah Anda yakin ingin keluar dari akun Anda?"}
       confirmLabel={"Keluar"}
       cancelLabel={"Batal"}
       confirmButtonProps={{
-        colorPalette: "red",
         loading: signoutMutation.isPending,
       }}
       onConfirm={() => signoutMutation.mutate()}
