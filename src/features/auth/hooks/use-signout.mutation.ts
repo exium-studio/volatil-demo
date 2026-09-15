@@ -2,6 +2,7 @@
 
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { authService } from "@/features/auth/services/auth.service";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -31,6 +32,7 @@ export const useSignoutMutation = () => {
     onMutate: toastHandlers.onLoading,
     onSuccess: ({ role }) => {
       toastHandlers.onSuccess();
+      queryClient.setQueryData(queryKeys.auth.me(), null);
       queryClient.clear();
       useMapLayerStore.getState().resetLayers();
       if (role === "internal") {

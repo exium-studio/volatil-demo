@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useAuthSession = () => {
   const token = authService.getToken();
-  const cachedUser = authService.getCurrentUser();
+  const cachedUser = token ? authService.getCurrentUser() : null;
 
   const query = useQuery<User | null>({
     queryKey: queryKeys.auth.me(),
@@ -17,10 +17,12 @@ export const useAuthSession = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  const currentUser = token ? (query.data ?? cachedUser) : null;
+
   return {
     token,
-    user: query.data ?? cachedUser,
+    user: currentUser,
     isLoading: query.isLoading,
-    isAuthenticated: Boolean(token && (query.data ?? cachedUser)),
+    isAuthenticated: Boolean(token && currentUser),
   };
 };
