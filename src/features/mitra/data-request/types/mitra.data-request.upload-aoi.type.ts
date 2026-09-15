@@ -1,22 +1,33 @@
 // src/features/mitra/data-request/types/mitra.data-request.upload-aoi.type.ts
 
-import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { TabsContentProps } from "@/design-system/components/disclosure/types/tabs.type";
 import type GeoJSON from "geojson";
+import type { Dispatch, SetStateAction } from "react";
 
-/** Single uploaded AOI file with its parsed GeoJSON polygon — source of truth. */
-export type MitraDataRequestUploadAoiLayer = {
+/** Individual polygon feature extracted from uploaded file. */
+export type AoiFeatureItem = {
+  id: string;
+  index: number;
+  name: string;
+  areaHa: number;
+  polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+  isVisibleOnMap: boolean;
+};
+
+/** Metadata for the uploaded file. */
+export type UploadedAoiFile = {
   id: string;
   fileName: string;
   fileSize: number;
-  polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
-  /** Processing state: parsing is async (worker), done means polygon is ready. */
+  features: AoiFeatureItem[];
   status: "parsing" | "done" | "error";
   errorMessage?: string;
 };
 
-export type AoiLayer = MitraDataRequestUploadAoiLayer;
+/** Compatibility alias */
+export type MitraDataRequestUploadAoiLayer = UploadedAoiFile;
+export type AoiLayer = UploadedAoiFile;
 
 export type MitraDataRequestUploadAoiTabsContentProps = TabsContentProps & {
   isActive?: boolean;
@@ -24,10 +35,8 @@ export type MitraDataRequestUploadAoiTabsContentProps = TabsContentProps & {
 
 export type MitraDataRequestUploadAoiDataViewProps = {
   aoiCqlFilter: string;
-  aoiLayers: MitraDataRequestUploadAoiLayer[];
-  onFilesAdded: (files: File[]) => void;
-  onDeleteLayer: (id: string) => void;
-  onClearAll: () => void;
+  confirmedPolygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+  onResetAoi: () => void;
 };
 
 export type MitraDataRequestUploadAoiPageState = {
@@ -39,21 +48,19 @@ export type MitraDataRequestUploadAoiPageState = {
 export type MitraDataRequestUploadAoiAttributeViewProps =
   MitraDataRequestUploadAoiDataViewProps;
 
-export type UploadAoiAddFileButtonProps = ButtonProps & {
-  isIconButton?: boolean;
-  onFilesAdded: (files: File[]) => void;
+export type UploadAoiFeatureListProps = {
+  file: UploadedAoiFile;
+  selectedFeatureId: string | null;
+  onSelectFeature: (id: string) => void;
+  onToggleFeatureVisibility: (id: string) => void;
+  onConfirmSelection: () => void;
+  onResetFile: () => void;
 };
-
-export type UploadAoiFileListTriggerProps = {
-  children: import("react").ReactNode;
-  onFilesAdded: (files: File[]) => void;
-  onDeleteLayer: (id: string) => void;
-  onClearAll: () => void;
-};
-
-import type { Dispatch, SetStateAction } from "react";
 
 export type MitraDataRequestUploadAoiContextValue = {
-  aoiLayers: MitraDataRequestUploadAoiLayer[];
-  setAoiLayers: Dispatch<SetStateAction<MitraDataRequestUploadAoiLayer[]>>;
+  uploadedFile: UploadedAoiFile | null;
+  setUploadedFile: Dispatch<SetStateAction<UploadedAoiFile | null>>;
+  confirmedFeature: AoiFeatureItem | null;
+  setConfirmedFeature: Dispatch<SetStateAction<AoiFeatureItem | null>>;
 };
+

@@ -6,92 +6,133 @@ import {
 } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
-import { FileItem } from "@/design-system/components/data-display/ui/file-item";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import {
-  FileInput,
-  FileInputTrigger,
-} from "@/design-system/components/input/ui/file-input";
+import { FileInput } from "@/design-system/components/input/ui/file-input";
+import { RadioIndicator } from "@/design-system/components/input/ui/radio-indicator";
+import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { parseShpFile } from "@/design-system/components/map/utils/parse-shp-file";
-import {
-  MODAL_SEARCH_PARAM_KEY,
-  usePopModal,
-} from "@/design-system/components/overlay/hooks/use-pop-modal";
-import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
-import {
-  MitraDataRequestUploadAoiContext,
-  useMitraDataRequestUploadAoiContext,
-} from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
+import { MitraDataRequestUploadAoiContext } from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import type {
+  AoiFeatureItem,
   MitraDataRequestUploadAoiAttributeViewProps,
-  MitraDataRequestUploadAoiLayer,
   MitraDataRequestUploadAoiPageState,
   MitraDataRequestUploadAoiTabsContentProps,
-  UploadAoiAddFileButtonProps,
-  UploadAoiFileListTriggerProps,
+  UploadAoiFeatureListProps,
+  UploadedAoiFile,
 } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
-import {
-  runUnionGeoJsonPolygonsInWorker,
-} from "@/features/mitra/data-request/services/geo-ops-worker.service";
+import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
-import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
-import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
-import { useSearch } from "@tanstack/react-router";
-import { FilePlusIcon, FilesIcon, FocusIcon, TrashIcon } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import {
+  CheckIcon,
+  FilePlusIcon,
+  FocusIcon,
+  RotateCcwIcon,
+  TrashIcon,
+} from "lucide-react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 
 // -------------------------------------------------------------------------------------
 
-/** Parses a GeoJSON/JSON file and returns a Polygon or MultiPolygon Feature, or null. */
-const parseGeoJsonFile = async (
-  file: File,
-): Promise<GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null> => {
-  const text = await file.text();
-  const parsed = JSON.parse(text) as GeoJSON.GeoJsonObject;
+/** Extracts human-friendly name or identifier from feature properties. */
+const extractFeatureName = (
+  props: GeoJSON.GeoJsonProperties,
+  index: number,
+): string => {
+  if (!props) return `Area #${index + 1}`;
 
-  if (parsed.type === "FeatureCollection") {
-    return runUnionGeoJsonPolygonsInWorker(parsed as GeoJSON.FeatureCollection);
+  const candidates = [
+    props.name,
+    props.nama,
+    props.NAMOBJ,
+    props.namobj,
+    props.NAMA,
+    props.TITLE,
+    props.title,
+    props.LABEL,
+    props.label,
+    props.KODE,
+    props.kode,
+    props.id,
+    props.ID,
+    props.WADMKC,
+    props.WADMKK,
+    props.WADMPR,
+  ];
+
+  for (const c of candidates) {
+    if (typeof c === "string" && c.trim()) return c.trim();
+    if (typeof c === "number") return String(c);
   }
 
-  if (parsed.type === "Feature") {
-    const feat = parsed as GeoJSON.Feature;
-    if (
-      feat.geometry?.type === "Polygon" ||
-      feat.geometry?.type === "MultiPolygon"
-    ) {
-      return feat as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+  return `Area #${index + 1}`;
+};
+
+/** Extracts individual Polygon/MultiPolygon features from a GeoJSON object. */
+const extractPolygonFeatures = (
+  geojson: GeoJSON.GeoJsonObject,
+): Array<GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>> => {
+  const result: Array<GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>> =
+    [];
+
+  const addIfPolygon = (
+    geom: GeoJSON.Geometry | null | undefined,
+    properties: GeoJSON.GeoJsonProperties = {},
+  ) => {
+    if (!geom) return;
+    if (geom.type === "Polygon" || geom.type === "MultiPolygon") {
+      result.push({
+        type: "Feature",
+        properties,
+        geometry: geom,
+      });
+    } else if (geom.type === "GeometryCollection") {
+      geom.geometries.forEach((g) => addIfPolygon(g, properties));
     }
-  }
+  };
 
-  if (parsed.type === "Polygon" || parsed.type === "MultiPolygon") {
-    return {
+  if (geojson.type === "FeatureCollection") {
+    const fc = geojson as GeoJSON.FeatureCollection;
+    fc.features.forEach((f) => {
+      if (f && f.geometry) {
+        addIfPolygon(f.geometry, f.properties);
+      }
+    });
+  } else if (geojson.type === "Feature") {
+    const feat = geojson as GeoJSON.Feature;
+    addIfPolygon(feat.geometry, feat.properties);
+  } else if (geojson.type === "Polygon" || geojson.type === "MultiPolygon") {
+    const polyGeom = geojson as GeoJSON.Polygon | GeoJSON.MultiPolygon;
+    result.push({
       type: "Feature",
       properties: {},
-      geometry: parsed as GeoJSON.Polygon | GeoJSON.MultiPolygon,
-    };
+      geometry: polyGeom,
+    });
   }
 
-  return null;
+  return result;
 };
 
 // -------------------------------------------------------------------------------------
@@ -107,27 +148,43 @@ export const MitraDataRequestUploadAoiTabsContent = (
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
 
   // States
-  const [aoiLayers, setAoiLayers] = useState<MitraDataRequestUploadAoiLayer[]>(
-    [],
+  const [uploadedFile, setUploadedFile] = useState<UploadedAoiFile | null>(
+    null,
   );
+  const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(
+    null,
+  );
+  const [confirmedFeature, setConfirmedFeature] =
+    useState<AoiFeatureItem | null>(null);
+
+  // Derived Values — Map Layers (either confirmed polygon OR visible list features)
+  const mapActiveFeatures = useMemo(() => {
+    if (confirmedFeature) {
+      return [
+        {
+          id: `confirmed-${confirmedFeature.id}`,
+          polygon: confirmedFeature.polygon,
+        },
+      ];
+    }
+    if (uploadedFile?.features) {
+      return uploadedFile.features
+        .filter((f) => f.isVisibleOnMap)
+        .map((f) => ({ id: f.id, polygon: f.polygon }));
+    }
+    return [];
+  }, [confirmedFeature, uploadedFile]);
 
   // Hooks
-  useMitraUploadAoi(map, aoiLayers);
+  useMitraUploadAoi(map, mapActiveFeatures);
   const isMounted = useMountTimeout({
     isOpen: isActive,
     mountDelay: 250,
   });
 
-  // Search Params
-  const search = useSearch({ strict: false }) as Record<
-    string,
-    string | undefined
-  >;
-  const isAoiFileModalOpen = search[MODAL_SEARCH_PARAM_KEY] === "aoi-file-list";
-
-  // Handlers — parse a single file, update aoiLayers with status
+  // Handlers — parse a single file
   const processFile = useCallback(async (file: File) => {
-    const id = crypto.randomUUID();
+    const fileId = crypto.randomUUID();
 
     // Validate extension
     const isShpOrZip = file.name.endsWith(".shp") || file.name.endsWith(".zip");
@@ -152,47 +209,56 @@ export const MitraDataRequestUploadAoiTabsContent = (
       return;
     }
 
-    // Optimistically add layer in "parsing" state
-    const placeholder: MitraDataRequestUploadAoiLayer = {
-      id,
+    setUploadedFile({
+      id: fileId,
       fileName: file.name,
       fileSize: file.size,
-      // Placeholder polygon — will be replaced on success
-      polygon: {
-        type: "Feature",
-        properties: {},
-        geometry: { type: "Polygon", coordinates: [] },
-      },
+      features: [],
       status: "parsing",
-    };
-    setAoiLayers((prev) => [...prev, placeholder]);
+    });
 
     try {
-      let polygon: GeoJSON.Feature<
-        GeoJSON.Polygon | GeoJSON.MultiPolygon
-      > | null = null;
+      let rawFeatures: Array<
+        GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+      > = [];
 
       if (isShpOrZip) {
         const fc = await parseShpFile(file);
-        polygon = await runUnionGeoJsonPolygonsInWorker(fc);
+        rawFeatures = extractPolygonFeatures(fc);
       } else {
-        polygon = await parseGeoJsonFile(file);
+        const text = await file.text();
+        const parsed = JSON.parse(text) as GeoJSON.GeoJsonObject;
+        rawFeatures = extractPolygonFeatures(parsed);
       }
 
-      if (!polygon) {
+      if (isEmptyArray(rawFeatures)) {
         toast.error("Polygon tidak ditemukan", {
           group: "Permohonan Data",
           description: `Tidak ditemukan geometri polygon yang valid di dalam file "${file.name}".`,
         });
-        setAoiLayers((prev) => prev.filter((l) => l.id !== id));
+        setUploadedFile(null);
         return;
       }
 
-      setAoiLayers((prev) =>
-        prev.map((l) =>
-          l.id === id ? { ...l, polygon, status: "done" as const } : l,
-        ),
-      );
+      const featureItems: AoiFeatureItem[] = rawFeatures.map((feat, idx) => ({
+        id: `${fileId}-${idx}`,
+        index: idx,
+        name: extractFeatureName(feat.properties, idx),
+        areaHa: calculateFeatureAreaInHectares(feat),
+        polygon: feat,
+        isVisibleOnMap: false,
+      }));
+
+      setUploadedFile({
+        id: fileId,
+        fileName: file.name,
+        fileSize: file.size,
+        features: featureItems,
+        status: "done",
+      });
+
+      // Keep selection empty by default
+      setSelectedFeatureId(null);
     } catch (error) {
       console.error("Failed to parse AOI file:", error);
       const errorMsg =
@@ -203,79 +269,63 @@ export const MitraDataRequestUploadAoiTabsContent = (
         group: "Permohonan Data",
         description: `File "${file.name}": ${errorMsg}`,
       });
-      setAoiLayers((prev) =>
-        prev.map((l) =>
-          l.id === id
-            ? {
-                ...l,
-                status: "error" as const,
-                errorMessage: errorMsg,
-              }
-            : l,
-        ),
-      );
+      setUploadedFile(null);
     }
   }, []);
 
-  // Handlers — receive new files from file input (multi-file)
-  const handleFilesAdded = useCallback(
-    (files: File[]) => {
-      if (isEmptyArray(files)) return;
-      files.forEach((file) => void processFile(file));
-    },
-    [processFile],
-  );
+  const handleToggleFeatureVisibility = useCallback((featureId: string) => {
+    setUploadedFile((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        features: prev.features.map((f) =>
+          f.id === featureId ? { ...f, isVisibleOnMap: !f.isVisibleOnMap } : f,
+        ),
+      };
+    });
+  }, []);
 
-  // Handlers — delete a single MitraDataRequestUploadAoiLayer
-  const handleDeleteLayer = useCallback(
-    (id: string) => {
-      setAoiLayers((prev) => {
-        const remaining = prev.filter((l) => l.id !== id);
-        if (isEmptyArray(remaining)) resetWfsClipStore();
-        return remaining;
-      });
-    },
-    [resetWfsClipStore],
-  );
+  const handleConfirmSelection = useCallback(() => {
+    if (!uploadedFile || !selectedFeatureId) return;
+    const target = uploadedFile.features.find(
+      (f) => f.id === selectedFeatureId,
+    );
+    if (!target) return;
 
-  // Handlers — clear all
-  const handleClearAll = useCallback(() => {
-    setAoiLayers([]);
+    setConfirmedFeature(target);
+    if (map) {
+      highlightFeatureOnMap(map, target.polygon);
+    }
+  }, [uploadedFile, selectedFeatureId, map]);
+
+  const handleResetAoi = useCallback(() => {
+    setConfirmedFeature(null);
     resetWfsClipStore();
   }, [resetWfsClipStore]);
 
-  // Derived Values — CQL INTERSECTS OR from all "done" layers
-  const aoiCqlFilter = useMemo(() => {
-    const doneLayers = aoiLayers.filter((l) => l.status === "done");
-    if (isEmptyArray(doneLayers)) return null;
+  const handleResetFile = useCallback(() => {
+    setUploadedFile(null);
+    setSelectedFeatureId(null);
+    setConfirmedFeature(null);
+    resetWfsClipStore();
+  }, [resetWfsClipStore]);
 
-    const clauses = doneLayers.map(
-      (l) => `INTERSECTS(geom, ${geojsonPolygonToWkt(l.polygon)})`,
-    );
-    return clauses.length === 1 ? clauses[0] : `(${clauses.join(" OR ")})`;
-  }, [aoiLayers]);
+  // Derived Values — CQL INTERSECTS clause from confirmed feature
+  const aoiCqlFilter = useMemo(() => {
+    if (!confirmedFeature) return null;
+    return `INTERSECTS(geom, ${geojsonPolygonToWkt(confirmedFeature.polygon)})`;
+  }, [confirmedFeature]);
 
   const contextValue = useMemo(
-    () => ({ aoiLayers, setAoiLayers }),
-    [aoiLayers],
+    () => ({
+      uploadedFile,
+      setUploadedFile,
+      confirmedFeature,
+      setConfirmedFeature,
+    }),
+    [uploadedFile, confirmedFeature],
   );
 
-  const hasLayers = !isEmptyArray(aoiLayers);
-
-  // Effects
-  const { close } = usePopModal({ modalKey: "aoi-file-list" });
-  useFirstMountEffect(
-    {
-      onUpdate: () => {
-        if (isAoiFileModalOpen && !hasLayers) {
-          close();
-        }
-      },
-    },
-    [isAoiFileModalOpen, hasLayers],
-  );
-
-  // Render
   return (
     <MitraDataRequestUploadAoiContext.Provider value={contextValue}>
       <Tabs.Content
@@ -286,12 +336,13 @@ export const MitraDataRequestUploadAoiTabsContent = (
         p={0}
         {...restProps}
       >
-        {!hasLayers && (
+        {/* Step 1: Upload Dropzone (No File Uploaded Yet) */}
+        {!uploadedFile && !confirmedFeature && (
           <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
             <FileInput
               variant={"dropzone"}
               label={
-                "Upload file AOI untuk melihat data IGT yang tersedia di area tersebut"
+                "Upload file AOI (.shp/.zip atau .geojson/.json) untuk memilih area query IGT"
               }
               accept={[
                 ".zip",
@@ -301,10 +352,12 @@ export const MitraDataRequestUploadAoiTabsContent = (
                 "application/zip",
                 "application/x-zip-compressed",
               ]}
-              maxFiles={10}
+              maxFiles={1}
               maxFileSize={10 * 1024 * 1024}
               onFileChange={({ acceptedFiles }) => {
-                handleFilesAdded(acceptedFiles);
+                if (!isEmptyArray(acceptedFiles)) {
+                  void processFile(acceptedFiles[0]);
+                }
               }}
               dropzoneProps={{
                 flex: 1,
@@ -316,7 +369,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
                 children: (
                   <>
                     <AppIcon icon={FilePlusIcon} />
-                    {"Upload AOI"}
+                    {"Upload Berkas AOI"}
                   </>
                 ),
               }}
@@ -326,17 +379,35 @@ export const MitraDataRequestUploadAoiTabsContent = (
           </Box>
         )}
 
-        {hasLayers && (!isActive || !isMounted) && (
+        {/* Loading skeleton while mounting tab or parsing */}
+        {uploadedFile?.status === "parsing" && (
           <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
         )}
 
-        {hasLayers && isActive && isMounted && aoiCqlFilter && (
-          <UploadAoiAttributeList
+        {/* Step 2: Uploaded State — Polygon Selection List */}
+        {uploadedFile &&
+          uploadedFile.status === "done" &&
+          !confirmedFeature && (
+            <UploadAoiFeatureList
+              file={uploadedFile}
+              selectedFeatureId={selectedFeatureId}
+              onSelectFeature={(id) => setSelectedFeatureId(id)}
+              onToggleFeatureVisibility={handleToggleFeatureVisibility}
+              onConfirmSelection={handleConfirmSelection}
+              onResetFile={handleResetFile}
+            />
+          )}
+
+        {/* Step 3: Confirmed AOI State — Query & IGT Layer Data View */}
+        {confirmedFeature && (!isActive || !isMounted) && (
+          <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
+        )}
+
+        {confirmedFeature && isActive && isMounted && aoiCqlFilter && (
+          <UploadAoiConfirmedAttributeList
             aoiCqlFilter={aoiCqlFilter}
-            aoiLayers={aoiLayers}
-            onFilesAdded={handleFilesAdded}
-            onDeleteLayer={handleDeleteLayer}
-            onClearAll={handleClearAll}
+            confirmedPolygon={confirmedFeature.polygon}
+            onResetAoi={handleResetAoi}
           />
         )}
       </Tabs.Content>
@@ -346,147 +417,204 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
 // -------------------------------------------------------------------------------------
 
-const UploadAoiAddFileButton = (props: UploadAoiAddFileButtonProps) => {
+const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
   // Props
-  const { isIconButton, onFilesAdded, ...restProps } = props;
+  const {
+    file,
+    selectedFeatureId,
+    onSelectFeature,
+    onToggleFeatureVisibility,
+    onConfirmSelection,
+    onResetFile,
+  } = props;
 
-  return (
-    <FileInputTrigger
-      fileInputProps={{
-        accept: [
-          ".zip",
-          ".shp",
-          ".geojson",
-          ".json",
-          "application/zip",
-          "application/x-zip-compressed",
-        ],
-        maxFiles: 10,
-        maxFileSize: 10 * 1024 * 1024,
-        value: [],
-        onFileChange: ({ acceptedFiles }) => {
-          onFilesAdded(acceptedFiles);
-        },
-      }}
-    >
-      {isIconButton ? (
-        <IconButton primary {...restProps}>
-          <AppIcon icon={FilePlusIcon} />
-        </IconButton>
-      ) : (
-        <Button primary w={"full"} pl={3} {...restProps}>
-          <AppIcon icon={FilePlusIcon} />
-          {"Tambah file AOI"}
-        </Button>
-      )}
-    </FileInputTrigger>
-  );
-};
-
-// -------------------------------------------------------------------------------------
-
-const UploadAoiFileListTrigger = (props: UploadAoiFileListTriggerProps) => {
-  // Props
-  const { children, onFilesAdded, onDeleteLayer, onClearAll } = props;
-
-  // Contexts
-  const { aoiLayers } = useMitraDataRequestUploadAoiContext();
+  // Stores
   const map = useMapInstanceStore((state) => state.map);
+  const { theme } = useThemeStore();
 
-  // Hooks
-  const { modalKey, isOpen, open, close } = usePopModal({
-    modalKey: "aoi-file-list",
+  // Virtualizer setup
+  const parentRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const rowVirtualizer = useVirtualizer({
+    count: file.features.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 76,
+    overscan: 5,
   });
 
-  // Render
   return (
-    <Modal.Root
-      modalKey={modalKey}
-      opened={isOpen}
-      open={open}
-      close={close}
-      size={"md"}
-    >
-      <Modal.Trigger>{children}</Modal.Trigger>
+    <VStack flex={1} w={"full"} gap={0} overflow={"hidden"}>
+      {/* Header Info */}
+      <VStack p={"md"} gap={"xs"} bg={"bg.body"} w={"full"} align={"stretch"}>
+        <HStack
+          justify={"space-between"}
+          align={"center"}
+          wrap={"wrap"}
+          gap={2}
+        >
+          <VStack align={"start"} gap={0}>
+            <P fontWeight={"semibold"} fontSize={"md"}>
+              {"Pilih Area AOI"}
+            </P>
 
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title fontSize={"lg"}>{"File AOI Anda"}</Modal.Title>
-
-          <Modal.CloseButton />
-        </Modal.Header>
-
-        <Modal.Body gap={"sm"}>
-          {isEmptyArray(aoiLayers) && <NoDataState />}
-
-          {aoiLayers.map((layer) => (
-            <HStack key={layer.id} w={"full"} gap={2} align={"center"}>
-              <FileItem
-                flex={1}
-                name={
-                  layer.status === "parsing"
-                    ? `${layer.fileName} (memproses...)`
-                    : layer.status === "error"
-                      ? `${layer.fileName} (gagal)`
-                      : layer.fileName
-                }
-                mimeType={""}
-                sizeLabel={formatByte(layer.fileSize)}
-                onDelete={
-                  layer.status === "parsing"
-                    ? undefined
-                    : () => onDeleteLayer(layer.id)
-                }
-                actionButtons={
-                  layer.status === "done" &&
-                  layer.polygon &&
-                  map && (
-                    <Tooltip content={"Zoom ke Area (AOI)"}>
-                      <IconButton
-                        aria-label={"Zoom ke Area (AOI)"}
-                        size={"xs"}
-                        onClick={() => {
-                          highlightFeatureOnMap(map, layer.polygon);
-                          close();
-                        }}
-                      >
-                        <AppIcon icon={FocusIcon} />
-                      </IconButton>
-                    </Tooltip>
-                  )
-                }
-                opacity={layer.status === "error" ? 0.6 : 1}
-              />
-            </HStack>
-          ))}
-        </Modal.Body>
-
-        <Modal.Footer>
-          <VStack gap={"xs"} w={"full"}>
-            <UploadAoiAddFileButton
-              w={"full"}
-              onFilesAdded={onFilesAdded}
-              variant={"outline"}
-            />
-
-            <Button w={"full"} colorPalette={"red"} onClick={onClearAll}>
-              <AppIcon icon={TrashIcon} />
-              {"Hapus semua"}
-            </Button>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {`${file.fileName} (${formatByte(file.fileSize)}) • ${file.features.length} Polygon`}
+            </P>
           </VStack>
-        </Modal.Footer>
-      </Modal.Content>
-    </Modal.Root>
+
+          <Button
+            variant={"outline"}
+            colorPalette={"red"}
+            onClick={onResetFile}
+          >
+            <AppIcon icon={TrashIcon} />
+            {"Ganti Berkas"}
+          </Button>
+        </HStack>
+      </VStack>
+
+      <Separator borderColor={"bg.canvas"} />
+
+      {/* Virtualized Polygon List */}
+      <Box
+        ref={parentRef}
+        flex={1}
+        w={"full"}
+        overflowY={"auto"}
+        p={"md"}
+        position={"relative"}
+      >
+        <Box
+          position={"relative"}
+          w={"full"}
+          h={`${rowVirtualizer.getTotalSize()}px`}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            const feat = file.features[virtualRow.index];
+            if (!feat) return null;
+            const isSelected = selectedFeatureId === feat.id;
+
+            return (
+              <Box
+                key={feat.id}
+                position={"absolute"}
+                top={0}
+                left={0}
+                w={"full"}
+                transform={`translateY(${virtualRow.start}px)`}
+                pb={"sm"}
+              >
+                <Container.Root>
+                  <Container.Body
+                    p={"sm"}
+                    border={"1px solid"}
+                    borderColor={"border.subtle"}
+                    bg={"bg.body"}
+                    rounded={theme.radii.component}
+                  >
+                    <HStack
+                      align={"center"}
+                      justify={"space-between"}
+                      w={"full"}
+                      gap={"sm"}
+                    >
+                      {/* Left: Radio Select Clickable Area */}
+                      <HStack
+                        align={"center"}
+                        gap={"sm"}
+                        flex={1}
+                        minW={0}
+                        cursor={"pointer"}
+                        onClick={() => onSelectFeature(feat.id)}
+                      >
+                        <RadioIndicator checked={isSelected} />
+                        <VStack align={"start"} gap={0} flex={1} minW={0}>
+                          <P
+                            fontWeight={isSelected ? "semibold" : "medium"}
+                            fontSize={"sm"}
+                            truncate
+                          >
+                            {feat.name}
+                          </P>
+                          {feat.areaHa > 0 && (
+                            <P fontSize={"xs"} color={"fg.subtle"}>
+                              {`Luas: ${formatNumber(feat.areaHa, { maximumFractionDigits: 2 })} ha`}
+                            </P>
+                          )}
+                        </VStack>
+                      </HStack>
+
+                      {/* Right: Actions (Map Toggle & Zoom) */}
+                      <HStack align={"center"} gap={"xs"} flexShrink={0}>
+                        <Tooltip
+                          content={
+                            feat.isVisibleOnMap
+                              ? "Sembunyikan di Peta"
+                              : "Tampilkan di Peta"
+                          }
+                        >
+                          <HStack align={"center"} gap={1}>
+                            <Switch
+                              size={"sm"}
+                              checked={feat.isVisibleOnMap}
+                              onCheckedChange={() =>
+                                onToggleFeatureVisibility(feat.id)
+                              }
+                            />
+                          </HStack>
+                        </Tooltip>
+
+                        {map && (
+                          <Tooltip content={"Zoom ke Area"}>
+                            <IconButton
+                              size={"xs"}
+                              variant={"ghost"}
+                              aria-label={"Zoom ke Area"}
+                              onClick={() => {
+                                highlightFeatureOnMap(map, feat.polygon);
+                              }}
+                            >
+                              <AppIcon icon={FocusIcon} />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </HStack>
+                    </HStack>
+                  </Container.Body>
+                </Container.Root>
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+
+      <Separator borderColor={"bg.canvas"} />
+
+      {/* Footer Confirm Action */}
+      <VStack p={"md"} bg={"bg.body"} w={"full"}>
+        <Button
+          primary
+          w={"full"}
+          disabled={!selectedFeatureId}
+          onClick={onConfirmSelection}
+        >
+          <AppIcon icon={CheckIcon} />
+          {"Konfirmasi & Gunakan AOI Ini"}
+        </Button>
+      </VStack>
+    </VStack>
   );
-};
+});
 
 // -------------------------------------------------------------------------------------
 
-const UploadAoiAttributeList = memo(
+const UploadAoiConfirmedAttributeList = memo(
   (props: MitraDataRequestUploadAoiAttributeViewProps) => {
     // Props
-    const { aoiCqlFilter, aoiLayers, onFilesAdded, onDeleteLayer, onClearAll } =
-      props;
+    const { aoiCqlFilter, confirmedPolygon, onResetAoi } = props;
+
+    // Stores
+    const map = useMapInstanceStore((state) => state.map);
 
     // States
     const [pageState, setPageState] =
@@ -510,18 +638,11 @@ const UploadAoiAttributeList = memo(
       },
     );
 
-    // Derived Values — union all done layers' polygons into 1 AOI polygon
-    const combinedAoiPolygon = useMemo(() => {
-      const donePolygons = aoiLayers
-        .filter((l) => l.status === "done" && Boolean(l.polygon))
-        .map((l) => l.polygon);
-      if (isEmptyArray(donePolygons)) return null;
-      if (donePolygons.length === 1) return donePolygons[0];
-      return unionGeoJsonPolygons({
-        type: "FeatureCollection",
-        features: donePolygons,
-      });
-    }, [aoiLayers]);
+    // Derived Values
+    const aoiAreaHa = useMemo(() => {
+      if (!confirmedPolygon) return 0;
+      return calculateFeatureAreaInHectares(confirmedPolygon);
+    }, [confirmedPolygon]);
 
     if (!selectedIgtLayer || !layerId) {
       return (
@@ -533,7 +654,7 @@ const UploadAoiAttributeList = memo(
           position={"relative"}
           w={"full"}
         >
-          {/* Header Action Bar — AOI File Management */}
+          {/* Header Action Bar */}
           <VStack
             wrap={"wrap"}
             justify={"space-between"}
@@ -549,27 +670,41 @@ const UploadAoiAttributeList = memo(
               gap={"sm"}
               w={"full"}
             >
-              <P fontWeight={"semibold"} fontSize={"md"}>
-                {`Hasil query spasial AOI`}
-              </P>
+              <VStack align={"start"} gap={0}>
+                <P fontWeight={"semibold"} fontSize={"md"}>
+                  {"Hasil query spasial AOI"}
+                </P>
+                {aoiAreaHa > 0 && (
+                  <P fontSize={"xs"} color={"fg.muted"}>
+                    {`Luas AOI: ${formatNumber(aoiAreaHa, { maximumFractionDigits: 2 })} ha`}
+                  </P>
+                )}
+              </VStack>
 
               <HStack align={"center"} gap={"sm"}>
-                <UploadAoiFileListTrigger
-                  onFilesAdded={onFilesAdded}
-                  onDeleteLayer={onDeleteLayer}
-                  onClearAll={onClearAll}
-                >
-                  <Button variant={"outline"}>
-                    <AppIcon icon={FilesIcon} />
-                    {`File AOI anda (${aoiLayers.length})`}
-                  </Button>
-                </UploadAoiFileListTrigger>
+                {confirmedPolygon && map && (
+                  <Tooltip content={"Zoom ke Area (AOI)"}>
+                    <IconButton
+                      variant={"outline"}
+                      aria-label={"Zoom ke Area (AOI)"}
+                      onClick={() => {
+                        highlightFeatureOnMap(map, confirmedPolygon);
+                      }}
+                    >
+                      <AppIcon icon={FocusIcon} />
+                    </IconButton>
+                  </Tooltip>
+                )}
 
-                <UploadAoiAddFileButton
-                  isIconButton
-                  onFilesAdded={onFilesAdded}
+                <Button
                   variant={"outline"}
-                />
+                  colorPalette={"red"}
+                  pl={3}
+                  onClick={onResetAoi}
+                >
+                  <AppIcon icon={RotateCcwIcon} />
+                  {"Ganti AOI"}
+                </Button>
               </HStack>
             </HStack>
           </VStack>
@@ -578,7 +713,7 @@ const UploadAoiAttributeList = memo(
 
           <MitraDataRequestIgtLayerDataView
             cqlFilter={aoiCqlFilter}
-            aoiPolygon={combinedAoiPolygon}
+            aoiPolygon={confirmedPolygon}
             selectionType={"upload_aoi"}
             showFilter={false}
             onSelectIgtLayer={(layer) => {

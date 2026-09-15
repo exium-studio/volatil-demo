@@ -2,7 +2,7 @@
 
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
-import type { MitraDataRequestUploadAoiLayer } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
+import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
@@ -67,7 +67,7 @@ const safeAddLayer = (
   }
 };
 
-/** Removes source + fill + line layers for a given MitraDataRequestUploadAoiLayer id. */
+/** Removes source + fill + line layers for a given id. */
 const removeAoiLayer = (map: maplibregl.Map, id: string) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!(map as any).style) return;
@@ -81,17 +81,18 @@ const removeAoiLayer = (map: maplibregl.Map, id: string) => {
   if (map.getSource(sourceId)) map.removeSource(sourceId);
 };
 
-/** Adds or updates source + fill + line layer pair for a single MitraDataRequestUploadAoiLayer. */
+/** Adds or updates source + fill + line layer pair for a single polygon feature. */
 const addAoiLayer = (
   map: maplibregl.Map,
-  aoi: MitraDataRequestUploadAoiLayer,
+  id: string,
+  polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
   beforeId: string | undefined,
 ) => {
-  const sourceId = `${UPLOAD_AOI_SOURCE_PREFIX}${aoi.id}`;
-  const fillId = `${UPLOAD_AOI_FILL_PREFIX}${aoi.id}`;
-  const lineId = `${UPLOAD_AOI_LINE_PREFIX}${aoi.id}`;
+  const sourceId = `${UPLOAD_AOI_SOURCE_PREFIX}${id}`;
+  const fillId = `${UPLOAD_AOI_FILL_PREFIX}${id}`;
+  const lineId = `${UPLOAD_AOI_LINE_PREFIX}${id}`;
 
-  safeAddSource(map, sourceId, aoi.polygon);
+  safeAddSource(map, sourceId, polygon);
 
   safeAddLayer(
     map,
@@ -124,18 +125,18 @@ const addAoiLayer = (
 
 /**
  * Manages MapLibre fill & line layers for uploaded AOI polygons (orange, distinct from draw).
- * - Reactively renders layers as MitraDataRequestUploadAoiLayer items complete parsing ("done").
- * - Cleanly removes layers when MitraDataRequestUploadAoiLayer items are deleted.
- * - Survives map style reload via MAP_EVENTS_MAP.styleReady.
+ * Supports:
+ * 1. Active confirmed AOI polygon.
+ * 2. Toggleable visible features from the uploaded file list.
  */
 export const useMitraUploadAoi = (
   map: maplibregl.Map | null,
-  aoiLayers: MitraDataRequestUploadAoiLayer[],
+  activeFeatures: Array<{ id: string; polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> }>,
 ) => {
-  const aoiLayersRef = useRef(aoiLayers);
+  const activeFeaturesRef = useRef(activeFeatures);
   useEffect(() => {
-    aoiLayersRef.current = aoiLayers;
-  }, [aoiLayers]);
+    activeFeaturesRef.current = activeFeatures;
+  }, [activeFeatures]);
 
   // Rebuild all layers from scratch on mount & style reload
   useEffect(() => {
@@ -164,9 +165,9 @@ export const useMitraUploadAoi = (
       }
 
       const beforeId = getBeforeId(map);
-      aoiLayersRef.current
-        .filter((a) => a.status === "done")
-        .forEach((aoi) => addAoiLayer(map, aoi, beforeId));
+      activeFeaturesRef.current.forEach((feat) =>
+        addAoiLayer(map, feat.id, feat.polygon, beforeId),
+      );
     };
 
     map.on(MAP_EVENTS_MAP.styleReady as string, rebuildAll);
@@ -176,11 +177,11 @@ export const useMitraUploadAoi = (
       map.off(MAP_EVENTS_MAP.styleReady as string, rebuildAll);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(map as any).style) return;
-      aoiLayersRef.current.forEach((aoi) => removeAoiLayer(map, aoi.id));
+      activeFeaturesRef.current.forEach((feat) => removeAoiLayer(map, feat.id));
     };
   }, [map]);
 
-  // Reactive sync when aoiLayers state updates
+  // Reactive sync when activeFeatures state updates
   useEffect(() => {
     if (!map) return;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,29 +189,28 @@ export const useMitraUploadAoi = (
 
     const beforeId = getBeforeId(map);
 
-    // Add new "done" layers
-    aoiLayers
-      .filter((a) => a.status === "done")
-      .forEach((aoi) => {
-        const fillId = `${UPLOAD_AOI_FILL_PREFIX}${aoi.id}`;
-        if (!map.getLayer(fillId)) {
-          addAoiLayer(map, aoi, beforeId);
-        }
-      });
+    // Add new active features
+    activeFeatures.forEach((feat) => {
+      const fillId = `${UPLOAD_AOI_FILL_PREFIX}${feat.id}`;
+      if (!map.getLayer(fillId)) {
+        addAoiLayer(map, feat.id, feat.polygon, beforeId);
+      }
+    });
 
-    // Remove deleted layers
-    const currentIds = new Set(aoiLayers.map((a) => a.id));
+    // Remove deleted features
+    const currentIds = new Set(activeFeatures.map((f) => f.id));
     const style = map.getStyle();
     style?.layers?.forEach((l) => {
       if (l.id.startsWith(UPLOAD_AOI_FILL_PREFIX)) {
-        const aoiId = l.id.replace(UPLOAD_AOI_FILL_PREFIX, "");
-        if (!currentIds.has(aoiId)) {
-          removeAoiLayer(map, aoiId);
+        const featureId = l.id.replace(UPLOAD_AOI_FILL_PREFIX, "");
+        if (!currentIds.has(featureId)) {
+          removeAoiLayer(map, featureId);
         }
       }
     });
-  }, [map, aoiLayers]);
+  }, [map, activeFeatures]);
 };
 
 export const useUploadAoi = useMitraUploadAoi;
+
 
