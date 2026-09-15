@@ -35,6 +35,7 @@ export type SelectProps = Omit<
   clearable?: boolean;
   width?: string | number;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
+  iconSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
   portalled?: boolean;
   portalRef?: RefObject<HTMLElement | null>;
   suffixLabel?: ReactNode;

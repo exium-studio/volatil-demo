@@ -36,6 +36,7 @@ export type FocusSelectInputProps = Omit<
   defaultValue?: string;
   onValueChange?: (value: string, option?: FocusSelectOption) => void;
   clearable?: boolean;
+  iconSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
   isFetching?: boolean;
   /** When true, typing in the search input dynamically creates a custom option at the top of the list. Defaults to false. */
   customOption?: boolean;

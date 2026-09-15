@@ -253,7 +253,7 @@ export const TransactionDetailModalContent = (
                   fontSize={"sm"}
                 >
                   <P color={"fg.subtle"}>{"Status Order"}</P>
-                  <OrderStatusBadge showIcon={true} size={"xs"}>
+                  <OrderStatusBadge showIcon={true}>
                     {transaction.orderStatus}
                   </OrderStatusBadge>
                 </HStack>

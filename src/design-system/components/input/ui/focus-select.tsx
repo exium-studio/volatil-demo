@@ -14,7 +14,6 @@ import type {
   FocusSelectOption,
 } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { getFocusSelectIconSize } from "@/design-system/components/input/utils/focus-select.util";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
@@ -43,6 +42,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     onValueChange,
     disabled = false,
     clearable = true,
+    iconSize = "md",
     isFetching = false,
     customOption = false,
     size = "md",
@@ -153,7 +153,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
   // Trigger Node
   const customTrigger = trigger ?? children;
-  const iconSize = getFocusSelectIconSize(size);
 
   // Helper
   const renderStartElement = (
@@ -473,16 +472,18 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
             </VScrollContainer>
           </Modal.Body>
 
-          <Modal.Footer>
-            <Button
-              variant={"ghost"}
-              w={"full"}
-              disabled={!currentValue}
-              onClick={handleResetSelection}
-            >
-              {t["action.reset"]()}
-            </Button>
-          </Modal.Footer>
+          {clearable && (
+            <Modal.Footer>
+              <Button
+                variant={"ghost"}
+                w={"full"}
+                disabled={!currentValue}
+                onClick={handleResetSelection}
+              >
+                {t["action.reset"]()}
+              </Button>
+            </Modal.Footer>
+          )}
         </Modal.Content>
       </FieldContext.Provider>
     </Modal.Root>

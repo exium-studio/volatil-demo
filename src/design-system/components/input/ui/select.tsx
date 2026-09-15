@@ -5,7 +5,6 @@ import type {
   SelectOption,
   SelectProps,
 } from "@/design-system/components/input/types/select.type";
-import { getFocusSelectIconSize } from "@/design-system/components/input/utils/focus-select.util";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -32,6 +31,7 @@ export default function SelectInput(props: SelectProps) {
     placeholder = "Select option",
     clearable = true,
     size = "md",
+    iconSize = "md",
     portalled = true,
     portalRef,
     suffixLabel,
@@ -90,7 +90,6 @@ export default function SelectInput(props: SelectProps) {
     return <>{target}</>;
   };
 
-  const iconSize = getFocusSelectIconSize(size);
   const hasValue = Boolean(currentValue);
 
   const renderTriggerContent = () => {

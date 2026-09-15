@@ -29,6 +29,7 @@ export const DataViewPageSize = (props: DataViewPageSizeProps) => {
       onValueChange={(val) => {
         setPageSize?.(parseInt(val, 10));
       }}
+      clearable={false}
       suffixLabel={<Span ml={1}>{"/page"}</Span>}
       variant={"ghost"}
       minW={"120px"}
