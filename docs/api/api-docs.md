@@ -790,19 +790,6 @@ export type OrderStatus =
 
 ---
 
-# Dashboard & Statistik Mitra
-
-## Mitra Home Summary
-
-- **Endpoint**: `GET /api/mitra/home?period={1d|1w|1m|1y|all}`
-- **Middleware / Akses**: `Mitra Only`
-- **Response**:
-  - `dataSummary`: Breakdown bidang vs kawasan (active, almostExpired, expired).
-  - `financialFlow`: Riwayat nominal belanja data spasial per periode.
-  - `cartSummary`: Total item aktif di keranjang saat ini.
-
----
-
 # Master IGT Layers & Data Management
 
 Modul master pengelolaan konfigurasi layer IGT spasial. Mengaitkan identifier layer dengan `geoserverId` terdaftar dan `typeName`.
@@ -1438,7 +1425,7 @@ type AdminUsersStatisticsApiResponse = {
 
 ---
 
-# Dashboard & Statistik Sistem
+# [INTERNAL] Dashboard & Statistik Sistem
 
 Modul agregasi metrik operasional IGT untuk admin internal ATR/BPN. Diimplementasikan secara modular melalui endpoint terpisah per widget:
 
@@ -1525,3 +1512,54 @@ type InternalLeaderboardResponse = {
   }>;
 };
 ```
+
+# [MITRA] Dashboard & Statistik Mitra
+
+## Mitra Home Summary
+
+- **Endpoint**: `GET /api/mitra/home`
+- **Middleware / Akses**: `Mitra Only`
+- **Headers**: `Authorization: Bearer <TOKEN_MITRA>`
+- **Query Params**:
+  - `period?: "1d" | "1w" | "1m" | "1y" | "all"` (opsional, default: `"all"`)
+- **Keterangan**: Mengambil ringkasan data dashboard beranda mitra yang mencakup statistik layer data spasial aktif per basis (bidang/kawasan), ringkasan arus belanja/pengeluaran berdasarkan periode waktu, dan ringkasan isi keranjang belanja.
+- **Response (200 OK)**:
+
+```typescript
+type MitraHomeSummaryResponse = {
+  success: boolean;
+  message?: string;
+  data: {
+    period: "1d" | "1w" | "1m" | "1y" | "all";
+    dataSummary: {
+      bidang: {
+        active: number;
+        almostExpired: number;
+        expired: number;
+      };
+      kawasan: {
+        active: number;
+        almostExpired: number;
+        expired: number;
+      };
+    };
+    financialFlow: {
+      totalSpending: number;
+      currency: "IDR" | string;
+      period: "1d" | "1w" | "1m" | "1y" | "all";
+      breakdown: Array<{
+        label: string;
+        amount: number;
+      }>;
+    };
+    cartSummary: {
+      totalBatches: number;
+      totalItems: number;
+      totalPrice: number;
+      currency: "IDR" | string;
+    };
+  };
+};
+```
+
+---

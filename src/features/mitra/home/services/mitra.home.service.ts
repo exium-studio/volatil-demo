@@ -142,20 +142,40 @@ const normalizeMitraHomeResponse = (
     };
   } else if (obj.financialFlow && typeof obj.financialFlow === "object") {
     const rawFlow = obj.financialFlow as Record<string, unknown>;
-    const periods: MitraHomePeriod[] = ["1d", "1w", "1m", "1y", "all"];
-    periods.forEach((p) => {
-      if (Array.isArray(rawFlow[p])) {
-        financialFlow[p] = (rawFlow[p] as unknown[]).map((item: unknown) => {
-          const itemObj = (item && typeof item === "object"
-            ? item
-            : {}) as Record<string, unknown>;
-          return {
-            sale: Number(itemObj.sale ?? itemObj.amount ?? itemObj.total ?? 0),
-            label: String(itemObj.label ?? itemObj.date ?? itemObj.time ?? ""),
-          };
-        });
-      }
-    });
+    if (Array.isArray(rawFlow.breakdown)) {
+      const list = (rawFlow.breakdown as unknown[]).map((item: unknown) => {
+        const itemObj = (item && typeof item === "object"
+          ? item
+          : {}) as Record<string, unknown>;
+        return {
+          sale: Number(itemObj.sale ?? itemObj.amount ?? itemObj.total ?? 0),
+          label: String(itemObj.label ?? itemObj.date ?? itemObj.time ?? ""),
+        };
+      });
+      financialFlow = {
+        "1d": list,
+        "1w": list,
+        "1m": list,
+        "1y": list,
+        all: list,
+        [period]: list,
+      };
+    } else {
+      const periods: MitraHomePeriod[] = ["1d", "1w", "1m", "1y", "all"];
+      periods.forEach((p) => {
+        if (Array.isArray(rawFlow[p])) {
+          financialFlow[p] = (rawFlow[p] as unknown[]).map((item: unknown) => {
+            const itemObj = (item && typeof item === "object"
+              ? item
+              : {}) as Record<string, unknown>;
+            return {
+              sale: Number(itemObj.sale ?? itemObj.amount ?? itemObj.total ?? 0),
+              label: String(itemObj.label ?? itemObj.date ?? itemObj.time ?? ""),
+            };
+          });
+        }
+      });
+    }
   }
 
   const rawCart = (obj.cartSummary && typeof obj.cartSummary === "object"
@@ -179,10 +199,20 @@ const normalizeMitraHomeResponse = (
         rawCart.totalArea ?? rawCart.total_area ?? rawCart.totalKawasan ?? 0,
       ),
       totalIgtData: Number(
-        rawCart.totalIgtData ?? rawCart.total_igt_data ?? rawCart.totalData ?? 0,
+        rawCart.totalIgtData ??
+          rawCart.total_igt_data ??
+          rawCart.totalItems ??
+          rawCart.total_items ??
+          rawCart.totalData ??
+          0,
       ),
       subtotalPrice: Number(
-        rawCart.subtotalPrice ?? rawCart.subtotal_price ?? rawCart.price ?? 0,
+        rawCart.subtotalPrice ??
+          rawCart.subtotal_price ??
+          rawCart.totalPrice ??
+          rawCart.total_price ??
+          rawCart.price ??
+          0,
       ),
     },
     lastTransactions: rawTransactions,
