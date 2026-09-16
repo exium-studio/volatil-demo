@@ -31,6 +31,9 @@ import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-la
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { highlightFeatureOnMap, removeFeatureHighlightFromMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import {
   formatCurrency,
   formatNumber,
@@ -51,13 +54,11 @@ export function InternalOrderReviewDetailPage() {
   // Hooks
   const { orderId } = useParams({ strict: false }) as { orderId: string };
   const navigate = useNavigate();
+  const map = useMapInstanceStore((state) => state.map);
 
-  // Effects — cleanup review preview layers on unmount
-  useEffect(() => {
-    return () => {
-      useOrderReviewLayerStore.getState().resetLayers();
-    };
-  }, []);
+  // Stores
+  const { isAoiVisible, setAoiPolygon, setAoiVisible } =
+    useOrderReviewLayerStore();
 
   // Queries
   const { data: order, isLoading } = useInternalOrderDetailQuery(orderId);
@@ -67,10 +68,50 @@ export function InternalOrderReviewDetailPage() {
 
   // Background SSE listening if current order is 'processing'
   const processingOrderIds = useMemo(() => {
-    return order?.status === "processing" && order.orderId ? [order.orderId] : [];
+    return order?.status === "processing" && order.orderId
+      ? [order.orderId]
+      : [];
   }, [order]);
 
   useOrdersProvisionStream(processingOrderIds);
+
+  // Sync order AOI Polygon with store on load
+  useEffect(() => {
+    if (order?.aoiPolygon) {
+      setAoiPolygon(order.aoiPolygon, false);
+    }
+  }, [order?.aoiPolygon, setAoiPolygon]);
+
+  // Effects — cleanup review preview layers & AOI highlight on unmount / route change
+  useEffect(() => {
+    return () => {
+      useOrderReviewLayerStore.getState().resetLayers();
+      if (map) {
+        removeFeatureHighlightFromMap(map);
+      }
+    };
+  }, [map]);
+
+  // Handlers — Toggle AOI layer on/off with highlight on map
+  const handleToggleAoi = useCallback(
+    (checked: boolean) => {
+      setAoiVisible(checked);
+      if (!map) return;
+
+      if (checked && order?.aoiPolygon) {
+        const feature = normalizePolygonFeature(order.aoiPolygon);
+        if (feature) {
+          highlightFeatureOnMap(map, feature, {
+            zoom: 15,
+            timeoutMs: 300000, // Keep visible while toggled on
+          });
+        }
+      } else {
+        removeFeatureHighlightFromMap(map);
+      }
+    },
+    [map, order, setAoiVisible],
+  );
 
   if (isLoading || !order) {
     return (
@@ -85,6 +126,8 @@ export function InternalOrderReviewDetailPage() {
       </AppContentContainer>
     );
   }
+
+  const hasAoi = Boolean(order.aoiPolygon);
 
   return (
     <AppContentContainer>
@@ -145,20 +188,27 @@ export function InternalOrderReviewDetailPage() {
 
           {/* Metadata Detail */}
           <VStack gap={"md"} p={"md"} align={"stretch"}>
-            <VStack gap={"xs"} align={"start"}>
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Pemohon / Mitra"}
-              </P>
-
-              <VStack gap={"2xs"} align={"start"}>
-                <P fontWeight={"semibold"}>{order.mitraName}</P>
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {order.mitraId}
+            <HStack wrap={"wrap"} gap={"lg"}>
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Mitra"}
                 </P>
-              </VStack>
-            </VStack>
 
-            <HStack gap={"lg"} wrap={"wrap"}>
+                <P fontWeight={"semibold"}>{order.mitraName}</P>
+              </VStack>
+
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Order ID"}
+                </P>
+
+                <P fontWeight={"semibold"}>{order.orderId}</P>
+              </VStack>
+            </HStack>
+
+            <Separator borderColor={"bg.canvas"} />
+
+            <HStack wrap={"wrap"} gap={"lg"}>
               <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Metode Pengajuan"}
@@ -186,6 +236,21 @@ export function InternalOrderReviewDetailPage() {
                   {formatCurrency(order.totalPrice ?? 0)}
                 </P>
               </VStack>
+
+              {hasAoi && (
+                <VStack gap={"xs"} align={"start"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"AOI Polygon"}
+                  </P>
+
+                  <Switch
+                    checked={isAoiVisible}
+                    onCheckedChange={({ checked }) => {
+                      handleToggleAoi(checked);
+                    }}
+                  />
+                </VStack>
+              )}
             </HStack>
           </VStack>
 

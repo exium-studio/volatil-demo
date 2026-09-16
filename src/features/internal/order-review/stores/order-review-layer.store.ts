@@ -6,6 +6,8 @@ import { create } from "zustand";
 export const useOrderReviewLayerStore = create<OrderReviewLayerState>((set) => ({
   enabledLayerIds: {},
   layerConfigs: {},
+  aoiPolygon: null,
+  isAoiVisible: false,
   toggleLayer: (layerId, config) =>
     set((state) => {
       const nextEnabled = !state.enabledLayerIds[layerId];
@@ -39,9 +41,21 @@ export const useOrderReviewLayerStore = create<OrderReviewLayerState>((set) => (
         layerConfigs: nextConfigs,
       };
     }),
+  setAoiPolygon: (polygon, visible = true) =>
+    set({
+      aoiPolygon: polygon,
+      isAoiVisible: polygon !== null ? visible : false,
+    }),
+  setAoiVisible: (visible) =>
+    set((state) => ({
+      isAoiVisible: state.aoiPolygon !== null ? visible : false,
+    })),
   resetLayers: () =>
     set({
       enabledLayerIds: {},
       layerConfigs: {},
+      aoiPolygon: null,
+      isAoiVisible: false,
     }),
 }));
+

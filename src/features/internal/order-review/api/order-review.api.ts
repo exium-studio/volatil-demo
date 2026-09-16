@@ -91,6 +91,7 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
     0,
   );
   const idVal = raw.orderId ?? raw.order_id ?? raw.id ?? "";
+  const aoiPolygon = raw.aoiPolygon ?? raw.aoi_polygon ?? null;
 
   return {
     orderId: idVal,
@@ -106,6 +107,7 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
       raw.totalPrice ?? raw.total_price ?? calculatedTotalPrice,
     ),
     items,
+    aoiPolygon,
   };
 };
 

@@ -10,6 +10,7 @@ import type {
   PaginatedParams,
   PaginationMeta,
 } from "@/shared/types/common-response.type";
+import type GeoJSON from "geojson";
 
 import type { ReactNode } from "react";
 
@@ -62,6 +63,7 @@ export type InternalOrderItem = {
   expiredAt?: string;
   totalPrice: number;
   items: CartOrderItem[];
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon | null;
 };
 
 export type InternalOrderListQueryParams = PaginatedParams & {
@@ -122,21 +124,29 @@ export type ProvisionStreamHookResult = ProvisionStreamState & {
   resetState: () => void;
 };
 
-
-
 import { z } from "zod";
 
-export type ApproveOrderItemPayload = {
-  id: string;
-  externalWmsUrl: string;
-  externalWfsUrl?: string;
-};
-
-export const approveOrderItemSchema = z.object({
-  id: z.string(),
+export const approveOrderItemPayloadSchema = z.object({
+  id: z.string().min(1, "ID Layer wajib diisi"),
   externalWmsUrl: z
     .string()
-    .trim()
+    .min(1, "URL WMS dari INTEROP wajib diisi")
+    .url("Format URL tidak valid"),
+  externalWfsUrl: z
+    .string()
+    .url("Format URL tidak valid")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type ApproveOrderItemPayload = z.infer<
+  typeof approveOrderItemPayloadSchema
+>;
+
+export const approveOrderItemSchema = z.object({
+  id: z.string().min(1, "ID Layer wajib diisi"),
+  externalWmsUrl: z
+    .string()
     .min(1, "URL WMS dari INTEROP wajib diisi"),
   externalWfsUrl: z.string().optional(),
 });
@@ -167,11 +177,18 @@ import type { WmsRasterLayerConfig } from "@/design-system/components/map/types/
 export type OrderReviewLayerState = {
   enabledLayerIds: Record<string, boolean>;
   layerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;
+  aoiPolygon: GeoJSON.MultiPolygon | GeoJSON.Polygon | null;
+  isAoiVisible: boolean;
   toggleLayer: (layerId: string, config?: Partial<WmsRasterLayerConfig>) => void;
   setLayerEnabled: (
     layerId: string,
     enabled: boolean,
     config?: Partial<WmsRasterLayerConfig>,
   ) => void;
+  setAoiPolygon: (
+    polygon: GeoJSON.MultiPolygon | GeoJSON.Polygon | null,
+    visible?: boolean,
+  ) => void;
+  setAoiVisible: (visible: boolean) => void;
   resetLayers: () => void;
 };
