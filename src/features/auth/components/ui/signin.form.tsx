@@ -32,7 +32,6 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-
 export const MitraSignin = (props: StackProps) => {
   // Hooks
   const { user, isAuthenticated } = useAuthSession();
@@ -234,13 +233,7 @@ export const InternalSignin = (props: StackProps) => {
   }
 
   return (
-    <VStack
-      flex={1}
-      justify={"space-between"}
-      gap={"lg"}
-      w={"full"}
-      {...props}
-    >
+    <VStack flex={1} justify={"space-between"} gap={"lg"} w={"full"} {...props}>
       <VStack align={"center"} gap={"lg"} w={"full"}>
         <Badge size={"lg"} colorPalette={"purple"}>
           <AppIcon icon={ShieldCheckIcon} size={"sm"} />
@@ -272,11 +265,7 @@ export const InternalSignin = (props: StackProps) => {
           gap={3}
           align={"start"}
         >
-          <AppIcon
-            icon={AlertTriangleIcon}
-            color={"fg.error"}
-            size={"md"}
-          />
+          <AppIcon icon={AlertTriangleIcon} color={"fg.error"} size={"md"} />
 
           <P fontSize={"sm"} color={"fg.error"}>
             {errorMessage}
@@ -305,7 +294,12 @@ export const InternalSignin = (props: StackProps) => {
 
       <HStack w={"full"} align={"center"} my={2}>
         <Separator flex={1} />
-        <P fontSize={"2xs"} color={"fg.muted"} textTransform={"uppercase"} px={2}>
+        <P
+          fontSize={"2xs"}
+          color={"fg.muted"}
+          textTransform={"uppercase"}
+          px={2}
+        >
           {"atau masuk dengan kredensial"}
         </P>
         <Separator flex={1} />
@@ -356,4 +350,3 @@ export const InternalSignin = (props: StackProps) => {
     </VStack>
   );
 };
-

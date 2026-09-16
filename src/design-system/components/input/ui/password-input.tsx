@@ -22,7 +22,14 @@ import {
 } from "@chakra-ui/react";
 import { passwordStrength, type Options } from "check-password-strength";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { forwardRef, useEffect, useRef, useState, type ChangeEvent } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 
 const DEFAULT_STRENGTH_OPTIONS: Options<string> = [
   { id: 1, value: "weak", minDiversity: 0, minLength: 0 },
@@ -53,6 +60,17 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     // Refs
     const inputRef = useRef<HTMLInputElement>(null);
 
+    // States
+    const [startElementWidth, setStartElementWidth] = useState<number>(0);
+
+    const startElementRef = useCallback((node: HTMLDivElement | null) => {
+      if (node) {
+        setStartElementWidth(node.offsetWidth);
+      } else {
+        setStartElementWidth(0);
+      }
+    }, []);
+
     // Contexts
     const fieldContext = useFieldContextValue();
     const isFloatingVariant = fieldContext?.variant === "floating";
@@ -76,7 +94,10 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
 
     // Effects
     useEffect(() => {
-      if (inputRef.current && Boolean(inputRef.current.value) !== hasValueState) {
+      if (
+        inputRef.current &&
+        Boolean(inputRef.current.value) !== hasValueState
+      ) {
         setHasValueState(Boolean(inputRef.current.value));
       }
     }, [hasValueState, restProps.defaultValue, restProps.value]);
@@ -204,7 +225,13 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
 
     const inputGroupElement = (
       <ChakraInputGroup
-        startElement={startElement}
+        startElement={
+          startElement ? (
+            <Box ref={startElementRef} display={"inline-flex"}>
+              {startElement}
+            </Box>
+          ) : undefined
+        }
         endElement={endElementNode}
         w={"full"}
       >
@@ -212,7 +239,9 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       </ChakraInputGroup>
     );
 
-    const labelLeft = startElement ? "40px" : "12px";
+    const labelLeft = startElement
+      ? `${(startElementWidth || 20) + 20}px`
+      : "12px";
 
     return (
       <VStack gap={2} w={restProps?.w || "full"}>
@@ -221,7 +250,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             <Box
               position={"absolute"}
               left={labelLeft}
-              top={"7px"}
+              top={"8px"}
               zIndex={1}
               pointerEvents={"none"}
               transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}

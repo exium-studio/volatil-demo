@@ -129,14 +129,17 @@ export const MitraRegistrationStatusPage = () => {
               align={"stretch"}
               gap={4}
               mb={6}
+              w={"full"}
             >
-              <Field label={"Nomor Registrasi"}>
-                <HStack gap={2}>
+              <Field variant={"default"}>
+                <HStack gap={2} w={"full"}>
                   <Input
                     placeholder={"Contoh: REG-2026-00001"}
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
+                    w={"full"}
                   />
+
                   <Button
                     primary={true}
                     type={"submit"}

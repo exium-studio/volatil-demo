@@ -13,7 +13,7 @@ import {
   Input as ChakraInput,
   InputGroup as ChakraInputGroup,
 } from "@chakra-ui/react";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   // Props
@@ -21,6 +21,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   // Refs
   const internalInputRef = useRef<HTMLInputElement>(null);
+
+  // States
+  const [startElementWidth, setStartElementWidth] = useState<number>(0);
+
+  const startElementRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      setStartElementWidth(node.offsetWidth);
+    } else {
+      setStartElementWidth(0);
+    }
+  }, []);
 
   // Contexts
   const fieldContext = useFieldContextValue();
@@ -142,7 +153,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const inputElement =
     startElement || endElement ? (
       <ChakraInputGroup
-        startElement={startElement}
+        startElement={
+          startElement ? (
+            <Box ref={startElementRef} display={"inline-flex"}>
+              {startElement}
+            </Box>
+          ) : undefined
+        }
         endElement={endElement}
         w={"full"}
       >
@@ -153,14 +170,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     );
 
   if (isFloatingVariant && floatingLabel) {
-    const labelLeft = startElement ? "40px" : "12px";
+    const labelLeft = startElement
+      ? `${(startElementWidth || 20) + 20}px`
+      : "12px";
 
     return (
       <Box position={"relative"} w={"full"}>
         <Box
           position={"absolute"}
           left={labelLeft}
-          top={"7px"}
+          top={"8px"}
           zIndex={1}
           pointerEvents={"none"}
           transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}

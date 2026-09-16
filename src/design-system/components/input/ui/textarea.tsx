@@ -11,12 +11,26 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import { Textarea as ChakraTextarea } from "@chakra-ui/react";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(props, ref) {
+    // Props
+    const { startElement, ...restProps } = props;
+
     // Refs
     const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // States
+    const [startElementWidth, setStartElementWidth] = useState<number>(0);
+
+    const startElementRef = useCallback((node: HTMLDivElement | null) => {
+      if (node) {
+        setStartElementWidth(node.offsetWidth);
+      } else {
+        setStartElementWidth(0);
+      }
+    }, []);
 
     // Contexts
     const fieldContext = useFieldContextValue();
@@ -27,7 +41,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     // States
     const [isFocused, setIsFocused] = useState<boolean>(false);
     const [hasValueState, setHasValueState] = useState<boolean>(
-      Boolean(props.value) || Boolean(props.defaultValue),
+      Boolean(restProps.value) || Boolean(restProps.defaultValue),
     );
 
     // Effects
@@ -38,13 +52,13 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       ) {
         setHasValueState(Boolean(internalTextareaRef.current.value));
       }
-    }, [hasValueState, props.defaultValue, props.value]);
+    }, [hasValueState, restProps.defaultValue, restProps.value]);
 
     // Derived Values
     const hasValue =
       hasValueState ||
-      Boolean(props.value) ||
-      Boolean(props.defaultValue) ||
+      Boolean(restProps.value) ||
+      Boolean(restProps.defaultValue) ||
       Boolean(fieldContext?.hasValue);
     const isLabelFloating = isFocused || hasValue;
 
@@ -79,10 +93,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             const selectionLen =
               (e.currentTarget.selectionEnd ?? 0) -
               (e.currentTarget.selectionStart ?? 0);
-            if (
-              selectionLen === 0 &&
-              currentVal.length >= props.maxLength
-            ) {
+            if (selectionLen === 0 && currentVal.length >= props.maxLength) {
               toast.warning(
                 `Karakter telah mencapai batas maksimal (${props.maxLength} karakter).`,
                 { id: "input-max-length-warning" },
@@ -126,6 +137,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           setHasValueState(Boolean(e.currentTarget.value));
           props.onInput?.(e);
         }}
+        {...(startElement && {
+          ps: `${(startElementWidth || 20) + 20}px`,
+        })}
         {...(isFloatingVariant && {
           h: "60px",
           pt: floatingLabel ? "28px" : "8px",
@@ -134,11 +148,35 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             color: "transparent",
           },
         })}
-        {...props}
+        {...restProps}
       />
     );
 
+    const textareaWrapper = (
+      <Box position={"relative"} w={"full"}>
+        {startElement && (
+          <Box
+            ref={startElementRef}
+            position={"absolute"}
+            left={"12px"}
+            top={isFloatingVariant ? "28px" : "12px"}
+            zIndex={2}
+            display={"inline-flex"}
+            alignItems={"center"}
+            pointerEvents={"none"}
+          >
+            {startElement}
+          </Box>
+        )}
+        {textareaElement}
+      </Box>
+    );
+
     if (isFloatingVariant && floatingLabel) {
+      const labelLeft = startElement
+        ? `${(startElementWidth || 20) + 20}px`
+        : "12px";
+
       return (
         <Box position={"relative"} w={"full"}>
           <Box
@@ -159,8 +197,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 
           <Box
             position={"absolute"}
-            left={"12px"}
-            top={"7px"}
+            left={labelLeft}
+            top={"8px"}
             zIndex={2}
             pointerEvents={"none"}
             transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
@@ -191,11 +229,11 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             </HStack>
           </Box>
 
-          {textareaElement}
+          {textareaWrapper}
         </Box>
       );
     }
 
-    return textareaElement;
+    return textareaWrapper;
   },
 );

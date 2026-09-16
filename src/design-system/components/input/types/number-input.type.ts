@@ -1,12 +1,13 @@
 // src/design-system/components/input/types/number-input.type.ts
 
-import type { ComponentPropsWithRef } from "react";
+import type { ComponentPropsWithRef, ReactNode } from "react";
 
 import { NumberInput as ChakraNumberInput } from "@chakra-ui/react";
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 
 export type NumberInputProps = NumberInputRootProps & {
   placeholder?: string;
+  startElement?: ReactNode;
   inputProps?: NumberInputInputProps;
   onValueChange?: (details: { value: number; formattedValue: string }) => void;
 };

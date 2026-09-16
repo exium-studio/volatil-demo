@@ -18,7 +18,7 @@ import { dispatchNativeInputEvent } from "@/shared/utils/dom/dispatch-native-inp
 import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import { NumberInput as ChakraNumberInput } from "@chakra-ui/react";
 import { MinusIcon, PlusIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // `valueAsNumber` is NaN while the input is empty (Number("") === NaN).
 function toSyncValue(valueAsNumber: number): string {
@@ -31,7 +31,7 @@ function checkHasValue(val: unknown): boolean {
 
 export const NumberInput = (props: NumberInputProps) => {
   // Props
-  const { placeholder, inputProps, ...restProps } = props;
+  const { placeholder, inputProps, startElement, ...restProps } = props;
 
   // Contexts
   const fieldContext = useFieldContextValue();
@@ -52,6 +52,16 @@ export const NumberInput = (props: NumberInputProps) => {
   const visibleInputRef = useRef<HTMLInputElement>(null);
 
   // States
+  const [startElementWidth, setStartElementWidth] = useState<number>(0);
+
+  const startElementRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      setStartElementWidth(node.offsetWidth);
+    } else {
+      setStartElementWidth(0);
+    }
+  }, []);
+
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [hasValueState, setHasValueState] = useState<boolean>(
     checkHasValue(restProps.value) ||
@@ -111,27 +121,47 @@ export const NumberInput = (props: NumberInputProps) => {
         {...inputProps}
         ref={mergeRefs(hiddenInputRef, inputProps?.ref)}
       />
-      <ChakraNumberInput.Input
-        ref={visibleInputRef}
-        placeholder={placeholder}
-        fontSize={"md"}
-        rounded={theme.radii.component}
-        onFocusCapture={() => {
-          setIsFocused(true);
-        }}
-        onBlurCapture={(e) => {
-          setIsFocused(false);
-          setHasValueState(Boolean(e.currentTarget.value));
-        }}
-        {...(isFloatingVariant && {
-          h: "60px",
-          pt: floatingLabel ? "24px" : "0px",
-          pb: floatingLabel ? "4px" : "0px",
-          _placeholder: {
-            color: "transparent",
-          },
-        })}
-      />
+      <Box position={"relative"} w={"full"}>
+        {startElement && (
+          <Box
+            ref={startElementRef}
+            position={"absolute"}
+            left={"12px"}
+            top={"50%"}
+            transform={"translateY(-50%)"}
+            zIndex={2}
+            display={"inline-flex"}
+            alignItems={"center"}
+            pointerEvents={"none"}
+          >
+            {startElement}
+          </Box>
+        )}
+        <ChakraNumberInput.Input
+          ref={visibleInputRef}
+          placeholder={placeholder}
+          fontSize={"md"}
+          rounded={theme.radii.component}
+          {...(startElement && {
+            ps: `${(startElementWidth || 20) + 20}px`,
+          })}
+          onFocusCapture={() => {
+            setIsFocused(true);
+          }}
+          onBlurCapture={(e) => {
+            setIsFocused(false);
+            setHasValueState(Boolean(e.currentTarget.value));
+          }}
+          {...(isFloatingVariant && {
+            h: "60px",
+            pt: floatingLabel ? "24px" : "0px",
+            pb: floatingLabel ? "4px" : "0px",
+            _placeholder: {
+              color: "transparent",
+            },
+          })}
+        />
+      </Box>
       <ChakraNumberInput.Control>
         <ChakraNumberInput.IncrementTrigger
           roundedTopRight={`calc(${theme.radii.component} - 1px)`}
@@ -144,12 +174,16 @@ export const NumberInput = (props: NumberInputProps) => {
   );
 
   if (isFloatingVariant && floatingLabel) {
+    const labelLeft = startElement
+      ? `${(startElementWidth || 20) + 20}px`
+      : "12px";
+
     return (
       <Box position={"relative"} w={restProps.w || "full"}>
         <Box
           position={"absolute"}
-          left={"12px"}
-          top={"7px"}
+          left={labelLeft}
+          top={"8px"}
           zIndex={1}
           pointerEvents={"none"}
           transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}

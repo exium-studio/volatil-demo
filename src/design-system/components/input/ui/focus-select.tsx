@@ -213,7 +213,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           <Box
             position={"absolute"}
             left={"12px"}
-            top={"7px"}
+            top={"8px"}
             zIndex={1}
             pointerEvents={"none"}
             transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
