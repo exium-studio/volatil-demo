@@ -185,15 +185,15 @@ export const InternalTransactionDetailModalContent = (
       </Modal.Header>
 
       <Modal.Body p={0}>
-        <VStack gap={"md"}>
+        <VStack gap={"sm"}>
           {/* Top Section: Responsive SimpleGrid with Timeline & Metadata Details */}
-          <Skeleton loaded={isMounted} w={"full"} px={"md"}>
-            <SimpleGrid columns={[1, 1, 2]} gap={"md"}>
+          <Skeleton loaded={isMounted} w={"full"} px={"md"} pt={"sm"}>
+            <SimpleGrid columns={[1, 1, 2]} gap={"sm"}>
               {/* Kiri: Timeline Riwayat Alur Pesanan */}
               <VStack
                 align={"stretch"}
-                gap={"sm"}
-                p={"md"}
+                gap={"xs"}
+                p={"sm"}
                 bg={"bg.subtle"}
                 rounded={"md"}
                 border={"1px solid"}
@@ -227,8 +227,14 @@ export const InternalTransactionDetailModalContent = (
                       <Timeline.Title fontSize={"xs"} fontWeight={"semibold"}>
                         {"Transaksi Dibuat"}
                       </Timeline.Title>
-                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
-                        {formatUtcDateTime(transaction.createdAt, preferredTimezone)}
+                      <Timeline.Description
+                        fontSize={"2xs"}
+                        color={"fg.subtle"}
+                      >
+                        {formatUtcDateTime(
+                          transaction.createdAt,
+                          preferredTimezone,
+                        )}
                       </Timeline.Description>
                     </Timeline.Content>
                   </Timeline.Item>
@@ -272,10 +278,16 @@ export const InternalTransactionDetailModalContent = (
                               ? "Pembayaran Dikembalikan"
                               : "Menunggu Pembayaran"}
                       </Timeline.Title>
-                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
+                      <Timeline.Description
+                        fontSize={"2xs"}
+                        color={"fg.subtle"}
+                      >
                         {isPaid
                           ? transaction.paidAt
-                            ? formatUtcDateTime(transaction.paidAt, preferredTimezone)
+                            ? formatUtcDateTime(
+                                transaction.paidAt,
+                                preferredTimezone,
+                              )
                             : `Terbayar (${transaction.paymentMethod || "MPN"})`
                           : isExpired
                             ? "Batas waktu pembayaran habis"
@@ -289,12 +301,15 @@ export const InternalTransactionDetailModalContent = (
                   </Timeline.Item>
 
                   {/* Step 3: Validasi Admin Internal */}
-                  <Timeline.Item opacity={!isPaid && !isExpired && !isRefunded ? 0.4 : 1}>
+                  <Timeline.Item
+                    opacity={!isPaid && !isExpired && !isRefunded ? 0.4 : 1}
+                  >
                     <Timeline.Connector>
                       <Timeline.Separator />
                       <Timeline.Indicator
                         colorPalette={
-                          effectiveOrderStatus === "ready" || effectiveOrderStatus === "processing"
+                          effectiveOrderStatus === "ready" ||
+                          effectiveOrderStatus === "processing"
                             ? "green"
                             : effectiveOrderStatus === "pending_review"
                               ? "orange"
@@ -305,7 +320,8 @@ export const InternalTransactionDetailModalContent = (
                       >
                         <AppIcon
                           icon={
-                            effectiveOrderStatus === "ready" || effectiveOrderStatus === "processing"
+                            effectiveOrderStatus === "ready" ||
+                            effectiveOrderStatus === "processing"
                               ? CheckIcon
                               : effectiveOrderStatus === "pending_review"
                                 ? LoaderIcon
@@ -321,12 +337,20 @@ export const InternalTransactionDetailModalContent = (
                       <Timeline.Title
                         fontSize={"xs"}
                         fontWeight={"semibold"}
-                        color={!isPaid && !isExpired && !isRefunded ? "fg.subtle" : undefined}
+                        color={
+                          !isPaid && !isExpired && !isRefunded
+                            ? "fg.subtle"
+                            : undefined
+                        }
                       >
                         {"Validasi Admin Internal"}
                       </Timeline.Title>
-                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
-                        {effectiveOrderStatus === "ready" || effectiveOrderStatus === "processing"
+                      <Timeline.Description
+                        fontSize={"2xs"}
+                        color={"fg.subtle"}
+                      >
+                        {effectiveOrderStatus === "ready" ||
+                        effectiveOrderStatus === "processing"
                           ? "Pesanan disetujui admin internal"
                           : effectiveOrderStatus === "pending_review"
                             ? "Menunggu tindakan review admin"
@@ -344,7 +368,8 @@ export const InternalTransactionDetailModalContent = (
                   {/* Step 4: Penyiapan Layanan WMS */}
                   <Timeline.Item
                     opacity={
-                      effectiveOrderStatus !== "processing" && effectiveOrderStatus !== "ready"
+                      effectiveOrderStatus !== "processing" &&
+                      effectiveOrderStatus !== "ready"
                         ? 0.4
                         : 1
                     }
@@ -377,14 +402,18 @@ export const InternalTransactionDetailModalContent = (
                         fontSize={"xs"}
                         fontWeight={"semibold"}
                         color={
-                          effectiveOrderStatus !== "processing" && effectiveOrderStatus !== "ready"
+                          effectiveOrderStatus !== "processing" &&
+                          effectiveOrderStatus !== "ready"
                             ? "fg.subtle"
                             : undefined
                         }
                       >
                         {"Penyiapan Layanan WMS"}
                       </Timeline.Title>
-                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
+                      <Timeline.Description
+                        fontSize={"2xs"}
+                        color={"fg.subtle"}
+                      >
                         {effectiveOrderStatus === "ready"
                           ? "Sinkronisasi layer spasial berhasil"
                           : effectiveOrderStatus === "processing"
@@ -395,14 +424,22 @@ export const InternalTransactionDetailModalContent = (
                   </Timeline.Item>
 
                   {/* Step 5: Siap Digunakan */}
-                  <Timeline.Item opacity={effectiveOrderStatus !== "ready" ? 0.4 : 1}>
+                  <Timeline.Item
+                    opacity={effectiveOrderStatus !== "ready" ? 0.4 : 1}
+                  >
                     <Timeline.Connector>
                       <Timeline.Separator />
                       <Timeline.Indicator
-                        colorPalette={effectiveOrderStatus === "ready" ? "green" : "gray"}
+                        colorPalette={
+                          effectiveOrderStatus === "ready" ? "green" : "gray"
+                        }
                       >
                         <AppIcon
-                          icon={effectiveOrderStatus === "ready" ? CheckIcon : CheckIcon}
+                          icon={
+                            effectiveOrderStatus === "ready"
+                              ? CheckIcon
+                              : CheckIcon
+                          }
                           size={"xs"}
                         />
                       </Timeline.Indicator>
@@ -411,11 +448,18 @@ export const InternalTransactionDetailModalContent = (
                       <Timeline.Title
                         fontSize={"xs"}
                         fontWeight={"semibold"}
-                        color={effectiveOrderStatus !== "ready" ? "fg.subtle" : undefined}
+                        color={
+                          effectiveOrderStatus !== "ready"
+                            ? "fg.subtle"
+                            : undefined
+                        }
                       >
                         {"Layanan Siap Digunakan"}
                       </Timeline.Title>
-                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
+                      <Timeline.Description
+                        fontSize={"2xs"}
+                        color={"fg.subtle"}
+                      >
                         {effectiveOrderStatus === "ready"
                           ? "Layer IGT aktif dan dapat diakses oleh Mitra"
                           : "Layanan WMS siap diakses setelah selesai diproses"}
@@ -428,10 +472,10 @@ export const InternalTransactionDetailModalContent = (
               {/* Kanan: Rincian Metadata Transaksi & Pesanan */}
               <VStack
                 align={"stretch"}
-                gap={"sm"}
+                gap={"xs"}
                 bg={"bg.body"}
                 rounded={"md"}
-                p={"md"}
+                p={"sm"}
                 border={"1px solid"}
                 borderColor={"border.subtle"}
               >
