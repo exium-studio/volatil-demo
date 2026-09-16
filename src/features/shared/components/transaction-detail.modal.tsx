@@ -341,10 +341,14 @@ export const TransactionDetailModalContent = (
           <Skeleton loaded={isMounted} w={"full"} px={"md"} pt={"sm"}>
             <SimpleGrid columns={[1, 1, 2]} gap={"sm"} p={"md"}>
               {/* Kiri: Timeline Riwayat Alur Pesanan */}
-              <VStack gap={"md"}>
-                <P fontWeight={"semibold"}>{"Riwayat Alur Pesanan"}</P>
+              <VStack gap={"md"} h={"full"} py={"xs"}>
+                {/* <P fontWeight={"semibold"}>{"Riwayat Alur Pesanan"}</P> */}
 
-                <Timeline.Root size={"sm"}>
+                <Timeline.Root
+                  size={"sm"}
+                  flex={1}
+                  justifyContent={"space-between"}
+                >
                   {timelineSteps.map((step) => (
                     <Timeline.Item
                       key={step.id}
@@ -385,7 +389,7 @@ export const TransactionDetailModalContent = (
 
               {/* Kanan: Rincian Metadata Transaksi & Pesanan */}
               <VStack gap={"md"}>
-                <P fontWeight={"semibold"}>{"Rincian Pesanan"}</P>
+                {/* <P fontWeight={"semibold"}>{"Rincian Pesanan"}</P> */}
 
                 {transaction.mitra && (
                   <>
