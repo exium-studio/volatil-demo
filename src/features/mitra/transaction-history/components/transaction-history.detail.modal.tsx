@@ -444,88 +444,86 @@ export const TransactionDetailModalContent = (
                 border={"1px solid"}
                 borderColor={"border.subtle"}
               >
-                <SimpleGrid columns={[1, 2]} gap={"sm"}>
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Nomor Pesanan"}
+                  </P>
+                  <P fontSize={"sm"} fontWeight={"medium"}>
+                    {transaction.orderNumber || "-"}
+                  </P>
+                </VStack>
+
+                {effectiveOrderStatus && (
                   <VStack align={"start"} gap={"2xs"}>
                     <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Nomor Pesanan"}
+                      {"Status Pesanan"}
+                    </P>
+                    <OrderStatusBadge showIcon={true}>
+                      {effectiveOrderStatus}
+                    </OrderStatusBadge>
+                  </VStack>
+                )}
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Kode Billing (MPN)"}
+                  </P>
+                  <HStack gap={1} align={"center"}>
+                    <P fontSize={"sm"} fontWeight={"medium"}>
+                      <TNum>{transaction.billingCode}</TNum>
+                    </P>
+                    <ClipboardButton
+                      value={transaction.billingCode}
+                      size={"2xs"}
+                    />
+                  </HStack>
+                </VStack>
+
+                {targetExpiry && !isPaid && !isRefunded && (
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Sisa Waktu Pembayaran"}
+                    </P>
+                    <Countdown
+                      finishedAt={targetExpiry}
+                      fontWeight={"medium"}
+                      color={isExpired ? "fg.subtle" : "orange.fg"}
+                    />
+                  </VStack>
+                )}
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Metode Pengajuan"}
+                  </P>
+                  <SelectionTypeBadge size={"xs"}>
+                    {transaction.selectionType}
+                  </SelectionTypeBadge>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Metode Pembayaran"}
+                  </P>
+                  {transaction.paymentMethod ? (
+                    <Badge variant={"subtle"} colorPalette={"gray"}>
+                      {transaction.paymentMethod}
+                    </Badge>
+                  ) : (
+                    <P fontSize={"sm"}>{"-"}</P>
+                  )}
+                </VStack>
+
+                {transaction.paidAt && (
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Waktu Pembayaran"}
                     </P>
                     <P fontSize={"sm"} fontWeight={"medium"}>
-                      {transaction.orderNumber || "-"}
+                      {formatUtcDateTime(transaction.paidAt, preferredTimezone)}
                     </P>
                   </VStack>
-
-                  {effectiveOrderStatus && (
-                    <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Status Pesanan"}
-                      </P>
-                      <OrderStatusBadge showIcon={true}>
-                        {effectiveOrderStatus}
-                      </OrderStatusBadge>
-                    </VStack>
-                  )}
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Kode Billing (MPN)"}
-                    </P>
-                    <HStack gap={1} align={"center"}>
-                      <P fontSize={"sm"} fontWeight={"medium"}>
-                        <TNum>{transaction.billingCode}</TNum>
-                      </P>
-                      <ClipboardButton
-                        value={transaction.billingCode}
-                        size={"2xs"}
-                      />
-                    </HStack>
-                  </VStack>
-
-                  {targetExpiry && !isPaid && !isRefunded && (
-                    <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Sisa Waktu Pembayaran"}
-                      </P>
-                      <Countdown
-                        finishedAt={targetExpiry}
-                        fontWeight={"medium"}
-                        color={isExpired ? "fg.subtle" : "orange.fg"}
-                      />
-                    </VStack>
-                  )}
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Metode Pengajuan"}
-                    </P>
-                    <SelectionTypeBadge size={"xs"}>
-                      {transaction.selectionType}
-                    </SelectionTypeBadge>
-                  </VStack>
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Metode Pembayaran"}
-                    </P>
-                    {transaction.paymentMethod ? (
-                      <Badge variant={"subtle"} colorPalette={"gray"}>
-                        {transaction.paymentMethod}
-                      </Badge>
-                    ) : (
-                      <P fontSize={"sm"}>{"-"}</P>
-                    )}
-                  </VStack>
-
-                  {transaction.paidAt && (
-                    <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Waktu Pembayaran"}
-                      </P>
-                      <P fontSize={"sm"} fontWeight={"medium"}>
-                        {formatUtcDateTime(transaction.paidAt, preferredTimezone)}
-                      </P>
-                    </VStack>
-                  )}
-                </SimpleGrid>
+                )}
               </VStack>
             </SimpleGrid>
           </Skeleton>

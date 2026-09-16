@@ -435,104 +435,102 @@ export const InternalTransactionDetailModalContent = (
                 border={"1px solid"}
                 borderColor={"border.subtle"}
               >
-                <SimpleGrid columns={[1, 2]} gap={"sm"}>
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Nama Mitra"}
+                  </P>
+                  <P fontSize={"sm"} fontWeight={"medium"}>
+                    {transaction.mitra.name}
+                  </P>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Email Mitra"}
+                  </P>
+                  <P fontSize={"sm"} color={"fg.muted"}>
+                    {transaction.mitra.email}
+                  </P>
+                </VStack>
+
+                {transaction.mitra.agencyOrCompany && (
                   <VStack align={"start"} gap={"2xs"}>
                     <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Nama Mitra"}
+                      {"Instansi / Perusahaan"}
                     </P>
                     <P fontSize={"sm"} fontWeight={"medium"}>
-                      {transaction.mitra.name}
+                      {transaction.mitra.agencyOrCompany}
                     </P>
                   </VStack>
+                )}
 
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Nomor Pesanan"}
+                  </P>
+                  <P fontSize={"sm"} fontWeight={"medium"}>
+                    {transaction.orderNumber || "-"}
+                  </P>
+                </VStack>
+
+                {effectiveOrderStatus && (
                   <VStack align={"start"} gap={"2xs"}>
                     <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Email Mitra"}
+                      {"Status Pesanan"}
                     </P>
-                    <P fontSize={"sm"} color={"fg.muted"}>
-                      {transaction.mitra.email}
-                    </P>
+                    <OrderStatusBadge showIcon={true}>
+                      {effectiveOrderStatus}
+                    </OrderStatusBadge>
                   </VStack>
+                )}
 
-                  {transaction.mitra.agencyOrCompany && (
-                    <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Instansi / Perusahaan"}
-                      </P>
-                      <P fontSize={"sm"} fontWeight={"medium"}>
-                        {transaction.mitra.agencyOrCompany}
-                      </P>
-                    </VStack>
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Kode Billing (MPN)"}
+                  </P>
+                  <HStack gap={1} align={"center"}>
+                    <P fontSize={"sm"} fontWeight={"medium"}>
+                      <TNum>{transaction.billingCode}</TNum>
+                    </P>
+                    <ClipboardButton
+                      value={transaction.billingCode}
+                      size={"2xs"}
+                    />
+                  </HStack>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Metode Pengajuan"}
+                  </P>
+                  <SelectionTypeBadge size={"xs"}>
+                    {transaction.selectionType}
+                  </SelectionTypeBadge>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Metode Pembayaran"}
+                  </P>
+                  {transaction.paymentMethod ? (
+                    <Badge variant={"subtle"} colorPalette={"gray"}>
+                      {transaction.paymentMethod}
+                    </Badge>
+                  ) : (
+                    <P fontSize={"sm"}>{"-"}</P>
                   )}
+                </VStack>
 
+                {transaction.paidAt && (
                   <VStack align={"start"} gap={"2xs"}>
                     <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Nomor Pesanan"}
+                      {"Waktu Pembayaran"}
                     </P>
                     <P fontSize={"sm"} fontWeight={"medium"}>
-                      {transaction.orderNumber || "-"}
+                      {formatUtcDateTime(transaction.paidAt, preferredTimezone)}
                     </P>
                   </VStack>
-
-                  {effectiveOrderStatus && (
-                    <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Status Pesanan"}
-                      </P>
-                      <OrderStatusBadge showIcon={true}>
-                        {effectiveOrderStatus}
-                      </OrderStatusBadge>
-                    </VStack>
-                  )}
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Kode Billing (MPN)"}
-                    </P>
-                    <HStack gap={1} align={"center"}>
-                      <P fontSize={"sm"} fontWeight={"medium"}>
-                        <TNum>{transaction.billingCode}</TNum>
-                      </P>
-                      <ClipboardButton
-                        value={transaction.billingCode}
-                        size={"2xs"}
-                      />
-                    </HStack>
-                  </VStack>
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Metode Pengajuan"}
-                    </P>
-                    <SelectionTypeBadge size={"xs"}>
-                      {transaction.selectionType}
-                    </SelectionTypeBadge>
-                  </VStack>
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Metode Pembayaran"}
-                    </P>
-                    {transaction.paymentMethod ? (
-                      <Badge variant={"subtle"} colorPalette={"gray"}>
-                        {transaction.paymentMethod}
-                      </Badge>
-                    ) : (
-                      <P fontSize={"sm"}>{"-"}</P>
-                    )}
-                  </VStack>
-
-                  {transaction.paidAt && (
-                    <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Waktu Pembayaran"}
-                      </P>
-                      <P fontSize={"sm"} fontWeight={"medium"}>
-                        {formatUtcDateTime(transaction.paidAt, preferredTimezone)}
-                      </P>
-                    </VStack>
-                  )}
-                </SimpleGrid>
+                )}
               </VStack>
             </SimpleGrid>
           </Skeleton>
