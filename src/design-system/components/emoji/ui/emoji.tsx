@@ -50,10 +50,10 @@ const EMOJI_COMPONENTS: Record<EmojiKey, ComponentType<EmojiProps>> = {
 
 export const Emoji = (props: EmojiProps) => {
   // Props
-  const { emojiKey = "poker", ...restProps } = props;
+  const { emojiKey = "poker", colorPalette = "neutral", ...restProps } = props;
 
   // Derived Values
   const SelectedEmoji = EMOJI_COMPONENTS[emojiKey] ?? EmojiPoker;
 
-  return <SelectedEmoji {...restProps} />;
+  return <SelectedEmoji colorPalette={colorPalette} {...restProps} />;
 };
