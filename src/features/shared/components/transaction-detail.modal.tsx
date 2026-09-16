@@ -133,7 +133,10 @@ export const TransactionDetailModalContent = (
       {
         id: "preparing" as OrderStatus,
         title: "Transaksi Dibuat",
-        description: formatUtcDateTime(transaction.createdAt, preferredTimezone),
+        description: formatUtcDateTime(
+          transaction.createdAt,
+          preferredTimezone,
+        ),
         icon: ORDER_STATUS_MAP.ready.icon,
         colorPalette: ORDER_STATUS_MAP.ready.colorPalette,
         isMuted: false,
@@ -350,7 +353,11 @@ export const TransactionDetailModalContent = (
                       <Timeline.Connector>
                         <Timeline.Separator />
 
-                        <Timeline.Indicator colorPalette={step.colorPalette}>
+                        <Timeline.Indicator
+                          colorPalette={step.colorPalette}
+                          w={"20px"}
+                          h={"20px"}
+                        >
                           <AppIcon icon={step.icon} size={"xs"} />
                         </Timeline.Indicator>
                       </Timeline.Connector>
@@ -378,7 +385,8 @@ export const TransactionDetailModalContent = (
 
               {/* Kanan: Rincian Metadata Transaksi & Pesanan */}
               <VStack gap={"md"}>
-                {/* Info Mitra (Hanya jika data mitra tersedia / Internal View) */}
+                <P fontWeight={"semibold"}>{"Rincian Pesanan"}</P>
+
                 {transaction.mitra && (
                   <>
                     <VStack align={"start"} gap={"2xs"}>
