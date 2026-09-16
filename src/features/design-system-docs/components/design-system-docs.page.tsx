@@ -14,7 +14,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { ComponentPlayground } from "@/features/design-system-docs/components/component-playground";
 import { DsDocsSidebar } from "@/features/design-system-docs/components/ds-docs-sidebar";
-import { OverviewDocs } from "@/features/design-system-docs/components/overview-docs";
+import { DemoPage } from "@/features/root/components/demo.page";
 import { COMPONENTS_REGISTRY } from "@/features/design-system-docs/config/components-registry";
 import type { DsNavKey } from "@/features/design-system-docs/types/ds-docs-navs.type";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
@@ -144,9 +144,7 @@ export const DesignSystemDocsPage = () => {
         {/* Content Body Scroll Area */}
         <Box flex={1} overflowY={"auto"} p={[4, 8]}>
           {activeNavKey === "overview" || !currentSpec ? (
-            <OverviewDocs
-              onSelectComponent={(key) => handleSelectNav(key as DsNavKey)}
-            />
+            <DemoPage />
           ) : (
             <ComponentPlayground key={currentSpec.key} spec={currentSpec} />
           )}

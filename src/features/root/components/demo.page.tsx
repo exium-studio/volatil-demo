@@ -20,9 +20,9 @@ import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Steps } from "@/design-system/components/disclosure/ui/steps";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import type { FaceEmojiVariant } from "@/design-system/components/feedback/types/face-emoji.type";
+import type { EmojiKey } from "@/design-system/components/emoji/types/emoji.type";
+import { Emoji } from "@/design-system/components/emoji/ui/emoji";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
-import { FaceEmoji } from "@/design-system/components/feedback/ui/face-emoji";
 import { DotIndicator } from "@/design-system/components/feedback/ui/indicator";
 import {
   Progress,
@@ -132,7 +132,7 @@ import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 
 export const DemoPage = () => {
   return (
-    <VStack minH={"100dvh"} bg={"bg.canvas"} gap={4}>
+    <VStack minH={"100dvh"} gap={4}>
       <IntegratedFeatures />
       <Branding />
       <Typography />
@@ -182,7 +182,7 @@ const IntegratedFeatures = () => {
   const { setLocale } = useLocale();
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Integrated Features"}
@@ -217,7 +217,7 @@ const IntegratedFeatures = () => {
 
 const Branding = () => {
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Branding"}
@@ -241,7 +241,7 @@ const Typography = () => {
   const [tnum, setTnum] = useState<number>(10);
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Typography"}
@@ -373,7 +373,7 @@ const ColorPalettes = () => {
   };
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6} align={"stretch"}>
         <DemoSectionHeader
           title={"Color Palettes"}
@@ -502,7 +502,7 @@ const ColorPalettes = () => {
 
 const Navigation = () => {
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Navigation"}
@@ -520,7 +520,7 @@ const Navigation = () => {
 
 const Buttons = () => {
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Buttons"}
@@ -548,7 +548,7 @@ const Buttons = () => {
 
 const Toast = () => {
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Toast"}
@@ -708,7 +708,7 @@ const Layout = () => {
   );
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Layout"}
@@ -865,7 +865,7 @@ export const Inputs = () => {
   // console.log("number1", number1);
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Inputs"}
@@ -1235,7 +1235,7 @@ const ONestedDrawer = () => {
 
 export const Overlay = () => {
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Overlay"}
@@ -1294,7 +1294,7 @@ export const Disclosure = () => {
   ];
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Disclosure"}
@@ -1516,34 +1516,30 @@ export const Disclosure = () => {
 };
 
 export const Feedback = () => {
-  const FACE_EMOJI_VARIANTS: FaceEmojiVariant[] = [
-    "smile",
+  const EMOJI_KEYS: EmojiKey[] = [
+    "poker",
     "happy",
-    "angry",
-    "cry",
-    "embarrassed",
-    "surprised",
-    "wronged",
-    "shout",
-    "flushed",
+    "laugh",
+    "funny",
+    "cool",
+    "love",
     "thumbUp",
-    "complacent",
-    "drool",
-    "scream",
-    "weep",
     "speechless",
-    "funnyface",
-    "laughwithtears",
-    "wicked",
-    "facewithrollingeyes",
-    "sulk",
+    "rollingEyes",
     "thinking",
-    "lovely",
-    "greedy",
+    "embarassed",
+    "surprised",
+    "scream",
+    "shout",
+    "sad",
+    "cry",
+    "sulk",
+    "angry",
+    "wicked",
   ];
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Feedback"}
@@ -1636,19 +1632,15 @@ export const Feedback = () => {
           borderColor={"border.subtle"}
           pt={4}
         >
-          <P fontWeight={"semibold"}>{"Face Emojis"}</P>
+          <P fontWeight={"semibold"}>{"Emoji"}</P>
           <VStack gap={4} w={"full"} align={"center"}>
             <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={8}>
-              {FACE_EMOJI_VARIANTS.map((variant) => {
+              {EMOJI_KEYS.map((key) => {
                 return (
-                  <VStack gap={1} key={variant}>
-                    <FaceEmoji
-                      variant={variant as FaceEmojiVariant}
-                      size={"lg"}
-                      transition={true}
-                    />
+                  <VStack gap={1} key={key}>
+                    <Emoji emojiKey={key} boxSize={48} />
                     <P fontSize={"2xs"} color={"fg.muted"}>
-                      {variant}
+                      {key}
                     </P>
                   </VStack>
                 );
@@ -2014,7 +2006,7 @@ export const DataDisplay = () => {
   const [page, setPage] = useState<number>(1);
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Data Display"}
@@ -2095,7 +2087,7 @@ export const Utilities = () => {
   };
 
   return (
-    <Container.Root w={"full"} px={"md"}>
+    <Container.Root w={"full"}>
       <Container.Body gap={6} p={6}>
         <DemoSectionHeader
           title={"Utilities"}

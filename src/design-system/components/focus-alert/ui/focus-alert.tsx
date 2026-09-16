@@ -152,9 +152,9 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
       icon: SparklesIcon,
     },
 
-    // Emote variants
-    smile: {
-      colorPalette: "pink",
+    // Emote variants (EmojiKey)
+    poker: {
+      colorPalette: "neutral",
       icon: SparklesIcon,
     },
     happy: {
@@ -169,81 +169,65 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
       colorPalette: "blue",
       icon: XIcon,
     },
-    embarrassed: {
+    embarassed: {
       colorPalette: "teal",
       icon: TriangleAlertIcon,
     },
-    surprised: {
+    funny: {
       colorPalette: "orange",
-      icon: ZapIcon,
-    },
-    wronged: {
-      colorPalette: "yellow",
-      icon: TriangleAlertIcon,
-    },
-    shout: {
-      colorPalette: "purple",
-      icon: ZapIcon,
-    },
-    flushed: {
-      colorPalette: "yellow",
       icon: SparklesIcon,
     },
-    thumbUp: {
-      colorPalette: "pink",
+    cool: {
+      colorPalette: "blue",
       icon: SparklesIcon,
     },
-    complacent: {
-      colorPalette: "cyan",
-      icon: CheckIcon,
+    laugh: {
+      colorPalette: "orange",
+      icon: SparklesIcon,
     },
-    drool: {
+    love: {
       colorPalette: "pink",
       icon: HeartIcon,
+    },
+    rollingEyes: {
+      colorPalette: "orange",
+      icon: IconInfoCircle,
+    },
+    sad: {
+      colorPalette: "red",
+      icon: XIcon,
     },
     scream: {
       colorPalette: "blue",
       icon: ZapIcon,
     },
-    weep: {
-      colorPalette: "blue",
-      icon: XIcon,
-    },
-    speechless: {
-      colorPalette: "teal",
-      icon: IconInfoCircle,
-    },
-    funnyface: {
-      colorPalette: "orange",
-      icon: SparklesIcon,
-    },
-    laughwithtears: {
-      colorPalette: "orange",
-      icon: SparklesIcon,
-    },
-    wicked: {
+    shout: {
       colorPalette: "purple",
       icon: ZapIcon,
     },
-    facewithrollingeyes: {
-      colorPalette: "orange",
+    speechless: {
+      colorPalette: "teal",
       icon: IconInfoCircle,
     },
     sulk: {
       colorPalette: "red",
       icon: XIcon,
     },
+    surprised: {
+      colorPalette: "orange",
+      icon: ZapIcon,
+    },
     thinking: {
       colorPalette: "yellow",
       icon: IconInfoCircle,
     },
-    lovely: {
+    thumbUp: {
       colorPalette: "pink",
-      icon: HeartIcon,
-    },
-    greedy: {
-      colorPalette: "yellow",
       icon: SparklesIcon,
+    },
+    wicked: {
+      colorPalette: "purple",
+      icon: ZapIcon,
     },
   };
 
