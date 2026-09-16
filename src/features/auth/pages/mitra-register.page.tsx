@@ -120,10 +120,10 @@ export const MitraRegisterPage = () => {
               </Box>
 
               <VStack gap={"xs"}>
-                <Heading size={"xl"}>{"Permohonan Berhasil Dikirim"}</Heading>
+                <Heading size={"xl"}>{"Pendaftaran Berhasil Dikirim"}</Heading>
                 <P color={"fg.muted"} maxW={"600px"}>
                   {
-                    "Terima kasih telah mengajukan permohonan kemitraan dengan Kementerian ATR/BPN. Berkas Anda akan diverifikasi oleh tim internal kami."
+                    "Terima kasih telah mengajukan pendaftaran kemitraan dengan Kementerian ATR/BPN. Berkas Anda akan diverifikasi oleh tim internal kami."
                   }
                 </P>
               </VStack>
@@ -139,7 +139,7 @@ export const MitraRegisterPage = () => {
               >
                 <VStack gap={1}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"NOMOR REGISTRASI PERMOHONAN"}
+                    {"NOMOR REGISTRASI PENDAFTARAN"}
                   </P>
                   <P
                     fontSize={"2xl"}
@@ -179,7 +179,7 @@ export const MitraRegisterPage = () => {
             <HeaderContainer p={6}>
               <VStack align={"center"} textAlign={"center"} w={"full"} gap={1}>
                 <P fontWeight={"semibold"} fontSize={"md"}>
-                  {"Formulir Permohonan & Berkas Dokumen Kemitraan"}
+                  {"Formulir Pendaftaran & Berkas Dokumen Kemitraan"}
                 </P>
                 <P fontSize={"sm"} color={"fg.muted"} maxW={"560px"}>
                   {
@@ -520,7 +520,7 @@ export const MitraRegisterPage = () => {
                   loading={registerMutation.isPending}
                 >
                   <AppIcon icon={SendIcon} />
-                  {"Kirim Permohonan Mitra"}
+                  {"Kirim Pendaftaran Mitra"}
                 </Button>
               </HStack>
 
@@ -532,7 +532,7 @@ export const MitraRegisterPage = () => {
                 />
                 <P fontSize={"xs"} color={"fg.muted"} textAlign={"center"}>
                   {
-                    "Data permohonan akan diproses secara resmi oleh Kementerian ATR/BPN."
+                    "Data pendaftaran akan diproses secara resmi oleh Kementerian ATR/BPN."
                   }
                 </P>
               </HStack>
@@ -543,7 +543,7 @@ export const MitraRegisterPage = () => {
         {/* Footer Note */}
         <VStack align={"center"} mt={6} gap={2}>
           <P fontSize={"sm"} color={"fg.muted"}>
-            {"Sudah mengajukan permohonan? "}
+            {"Sudah mengajukan pendaftaran? "}
             <Link to={"/registration-status"}>
               <PLink fontWeight={"semibold"}>{"Cek Status Pengajuan"}</PLink>
             </Link>

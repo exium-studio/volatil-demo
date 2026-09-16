@@ -212,7 +212,7 @@ export const approveInternalMitraRegistration = async (
   const response: any = await approveMitraRegistrationApi(payload, signal);
   const raw = response?.data ?? response;
   if (!raw) {
-    throw new Error(response?.message || "Gagal menyetujui permohonan mitra.");
+    throw new Error(response?.message || "Gagal menyetujui pendaftaran mitra.");
   }
   return normalizeMitraRegistrationItem(raw);
 };
@@ -225,7 +225,7 @@ export const rejectInternalMitraRegistration = async (
   const response: any = await rejectMitraRegistrationApi(payload, signal);
   const raw = response?.data ?? response;
   if (!raw) {
-    throw new Error(response?.message || "Gagal menolak permohonan mitra.");
+    throw new Error(response?.message || "Gagal menolak pendaftaran mitra.");
   }
   return normalizeMitraRegistrationItem(raw);
 };

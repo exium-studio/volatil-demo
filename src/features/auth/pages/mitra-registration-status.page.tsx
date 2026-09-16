@@ -45,19 +45,19 @@ const STATUS_CONFIG: Record<
     label: "Menunggu Verifikasi",
     colorPalette: "orange",
     icon: ClockIcon,
-    desc: "Permohonan Anda sedang diverifikasi oleh Tim Teknis Kementerian ATR/BPN.",
+    desc: "Pengajuan pendaftaran Anda sedang diverifikasi oleh Tim Teknis Kementerian ATR/BPN.",
   },
   approved: {
     label: "Disetujui",
     colorPalette: "green",
     icon: CheckCircleIcon,
-    desc: "Permohonan telah disetujui. Akun SSO telah diaktifkan dan dokumen kontrak dapat diunduh.",
+    desc: "Pendaftaran telah disetujui. Akun SSO telah diaktifkan dan dokumen kontrak dapat diunduh.",
   },
   rejected: {
     label: "Ditolak",
     colorPalette: "red",
     icon: XCircleIcon,
-    desc: "Permohonan tidak dapat disetujui. Silakan periksa alasan penolakan di bawah ini.",
+    desc: "Pendaftaran tidak dapat disetujui. Silakan periksa alasan penolakan di bawah ini.",
   },
 };
 
@@ -113,7 +113,7 @@ export const MitraRegistrationStatusPage = () => {
               </P>
               <P fontSize={"sm"} color={"fg.muted"} maxW={"560px"}>
                 {
-                  "Masukkan nomor registrasi permohonan yang Anda dapatkan saat pendaftaran (format: REG-2026-XXXXX)."
+                  "Masukkan nomor registrasi pendaftaran yang Anda dapatkan saat pendaftaran (format: REG-2026-XXXXX)."
                 }
               </P>
             </VStack>

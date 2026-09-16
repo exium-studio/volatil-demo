@@ -280,7 +280,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           <AppIcon icon={HourglassIcon} />
           <Alert.Description>
             {
-              "Permohonan data sedang dalam proses validasi oleh admin internal."
+              "Permintaan data sedang dalam proses validasi oleh admin internal."
             }
           </Alert.Description>
         </Alert.Root>
@@ -304,7 +304,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           <AppIcon icon={InfoIcon} />
           <Alert.Description>
             {
-              "Pesanan permohonan telah siap digunakan. Layanan data spasial dapat diakses melalui menu Data Saya."
+              "Pesanan permintaan telah siap digunakan. Layanan data spasial dapat diakses melalui menu Data Saya."
             }
           </Alert.Description>
         </Alert.Root>

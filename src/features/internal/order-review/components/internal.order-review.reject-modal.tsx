@@ -89,7 +89,7 @@ const InternalOrderReviewRejectModalContent = (
         <Modal.CloseButton />
 
         <VStack gap={"xs"}>
-          <Modal.Title>{"Tolak Permohonan Pesanan"}</Modal.Title>
+          <Modal.Title>{"Tolak Permintaan Pesanan"}</Modal.Title>
 
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
             {`ID Pesanan: ${order.orderId} (${order.mitraName})`}

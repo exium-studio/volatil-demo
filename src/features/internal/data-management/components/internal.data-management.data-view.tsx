@@ -393,7 +393,7 @@ export const InternalDataManagementDataView = () => {
             <ConfirmationTrigger
               modalKey={`delete-layer-${layer.id}`}
               title={"Hapus Layer IGT?"}
-              description={`Apakah Anda yakin ingin menghapus layer "${layer.title}"? Layer akan diarsipkan terlebih dahulu agar permohonan data yang sedang diproses tidak terganggu, lalu dihapus permanen secara otomatis setelah 30 hari.`}
+              description={`Apakah Anda yakin ingin menghapus layer "${layer.title}"? Layer akan diarsipkan terlebih dahulu agar permintaan data yang sedang diproses tidak terganggu, lalu dihapus permanen secara otomatis setelah 30 hari.`}
               confirmLabel={"Hapus Layer"}
               colorPalette={"red"}
               onConfirm={() => {

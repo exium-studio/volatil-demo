@@ -91,7 +91,7 @@ const InternalMitraRegistrationApproveModalContent = (
         <Modal.CloseButton />
 
         <VStack gap={"2xs"}>
-          <Modal.Title>{"Setujui Permohonan Mitra"}</Modal.Title>
+          <Modal.Title>{"Setujui Pendaftaran Mitra"}</Modal.Title>
 
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
             {`${registration.organizationName ?? registration.namaInstansi} (${registration.registrationNumber})`}
@@ -106,7 +106,7 @@ const InternalMitraRegistrationApproveModalContent = (
             <Alert.Content>
               <Alert.Description>
                 {
-                  "Menyetujui permohonan ini akan otomatis mengaktifkan akun kemitraan di Volatil dan mengirimkan email pemberitahuan beserta Berkas Kontrak resmi ke mitra."
+                  "Menyetujui pendaftaran ini akan otomatis mengaktifkan akun kemitraan di Volatil dan mengirimkan email pemberitahuan beserta Berkas Kontrak resmi ke mitra."
                 }
               </Alert.Description>
             </Alert.Content>

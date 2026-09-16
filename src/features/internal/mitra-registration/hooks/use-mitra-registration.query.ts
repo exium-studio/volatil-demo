@@ -54,8 +54,8 @@ export const useApproveMitraRegistration = () => {
   >({
     mutationFn: (payload) => approveInternalMitraRegistration(payload),
     onSuccess: (data) => {
-      toast.success("Permohonan Disetujui", {
-        description: `Permohonan mitra ${data.namaInstansi} berhasil disetujui. Berkas kontrak telah diunggah dan akun aktif.`,
+      toast.success("Pendaftaran Disetujui", {
+        description: `Pendaftaran mitra ${data.namaInstansi} berhasil disetujui. Berkas kontrak telah diunggah dan akun aktif.`,
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.internal.mitraRegistration.all,
@@ -65,7 +65,7 @@ export const useApproveMitraRegistration = () => {
       });
     },
     onError: (error) => {
-      toast.error("Gagal Menyetujui Permohonan", {
+      toast.error("Gagal Menyetujui Pendaftaran", {
         description: error.message || "Terjadi kesalahan saat memproses persetujuan.",
       });
     },
@@ -82,8 +82,8 @@ export const useRejectMitraRegistration = () => {
   >({
     mutationFn: (payload) => rejectInternalMitraRegistration(payload),
     onSuccess: (data) => {
-      toast.success("Permohonan Ditolak", {
-        description: `Permohonan mitra ${data.namaInstansi} telah ditolak dengan alasan resmi.`,
+      toast.success("Pendaftaran Ditolak", {
+        description: `Pendaftaran mitra ${data.namaInstansi} telah ditolak dengan alasan resmi.`,
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.internal.mitraRegistration.all,
@@ -93,7 +93,7 @@ export const useRejectMitraRegistration = () => {
       });
     },
     onError: (error) => {
-      toast.error("Gagal Menolak Permohonan", {
+      toast.error("Gagal Menolak Pendaftaran", {
         description: error.message || "Terjadi kesalahan saat memproses penolakan.",
       });
     },

@@ -15,12 +15,12 @@ export const useMitraRegistrationMutation = () => {
   return useMutation<MitraRegistrationCreatedData, Error, MitraRegistrationFormValues>({
     mutationFn: (values) => submitMitraRegistration(values),
     onSuccess: (data) => {
-      toast.success("Permohonan Berhasil Dikirim", {
+      toast.success("Pendaftaran Berhasil Dikirim", {
         description: `Nomor registrasi Anda: ${data.registrationNumber}. Silakan simpan nomor ini untuk memantau status persetujuan.`,
       });
     },
     onError: (error) => {
-      toast.error("Gagal Mengajukan Permohonan", {
+      toast.error("Gagal Mengajukan Pendaftaran", {
         description: error.message || "Silakan periksa kembali data yang diunggah.",
       });
     },

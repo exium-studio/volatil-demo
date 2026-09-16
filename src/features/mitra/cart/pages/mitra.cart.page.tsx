@@ -166,7 +166,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
                 icon={ShoppingCartIcon}
                 title={"Keranjang Kosong"}
                 description={
-                  "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permohonan Data."
+                  "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permintaan Data."
                 }
               />
             )}

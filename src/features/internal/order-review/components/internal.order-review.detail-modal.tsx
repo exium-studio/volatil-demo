@@ -66,7 +66,7 @@ const InternalOrderReviewDetailModalContent = (
         <Modal.CloseButton />
 
         <VStack gap={"2xs"}>
-          <Modal.Title>{"Detail Permohonan Pesanan"}</Modal.Title>
+          <Modal.Title>{"Detail Permintaan Pesanan"}</Modal.Title>
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
             {`ID Pesanan: ${order.orderId}`}
           </P>
@@ -241,7 +241,7 @@ const InternalOrderReviewDetailModalContent = (
             >
               <Button colorPalette={"green"}>
                 <AppIcon icon={CheckCircleIcon} />
-                {"Setujui Permohonan"}
+                {"Setujui Permintaan"}
               </Button>
             </InternalOrderReviewApproveTrigger>
           )}

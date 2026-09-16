@@ -378,7 +378,7 @@ export const InternalTransactionStatisticDataView = () => {
                   icon={HistoryIcon}
                   title={"Belum Ada Transaksi"}
                   description={
-                    "Belum ada data riwayat transaksi permohonan dari mitra."
+                    "Belum ada data riwayat transaksi permintaan dari mitra."
                   }
                 />
               )}

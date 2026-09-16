@@ -359,7 +359,7 @@ export const TransactionHistoryDataView = () => {
                 icon={HistoryIcon}
                 title={"Belum Ada Riwayat Transaksi"}
                 description={
-                  "Anda belum pernah melakukan transaksi permohonan data IGT. Silakan ajukan permohonan data terlebih dahulu."
+                  "Anda belum pernah melakukan transaksi permintaan data IGT. Silakan ajukan permintaan data terlebih dahulu."
                 }
               >
                 <Button
@@ -370,7 +370,7 @@ export const TransactionHistoryDataView = () => {
                   }}
                 >
                   <AppIcon icon={SquarePen} />
-                  {"Permohonan Data"}
+                  {"Permintaan Data"}
                 </Button>
               </NoDataState>
             )}

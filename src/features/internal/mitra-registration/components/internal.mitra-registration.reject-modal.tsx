@@ -90,7 +90,7 @@ const InternalMitraRegistrationRejectModalContent = (
         <Modal.CloseButton />
 
         <VStack gap={"2xs"}>
-          <Modal.Title>{"Tolak Permohonan Mitra"}</Modal.Title>
+          <Modal.Title>{"Tolak Pendaftaran Mitra"}</Modal.Title>
 
           <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
             {`${registration.organizationName ?? registration.namaInstansi} (${registration.registrationNumber})`}
@@ -137,7 +137,7 @@ const InternalMitraRegistrationRejectModalContent = (
             onClick={handleReject}
           >
             <AppIcon icon={XCircleIcon} />
-            {"Tolak Permohonan"}
+            {"Tolak Pendaftaran"}
           </Button>
 
           <Button onClick={back}>{"Batal"}</Button>

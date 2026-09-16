@@ -23,6 +23,7 @@ import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-reque
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
@@ -50,10 +51,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
   });
 
   // Derived Values
-  const activeLayers = useMemo(
-    () => layersData?.items ?? [],
-    [layersData],
-  );
+  const activeLayers = useMemo(() => layersData?.items ?? [], [layersData]);
 
   const enabledCount = useMemo(() => {
     return activeLayers.filter((l) => Boolean(enabledLayerIds[l.id])).length;
@@ -113,7 +111,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
               <Badge colorPalette={"blue"}>{enabledCount} aktif</Badge>
             </HStack>
 
-            {activeLayers.length > 0 && (
+            {!isEmptyArray(activeLayers) && (
               <HStack
                 align={"center"}
                 gap={"sm"}
@@ -145,6 +143,14 @@ export const MapMasterIgtLayerSelect = memo(() => {
             </HStack>
           ) : (
             <VStack gap={"2xs"} align={"stretch"}>
+              {isEmptyArray(activeLayers) && (
+                <HStack align={"center"} justify={"center"} p={"md"}>
+                  <P color={"fg.muted"} fontSize={"sm"}>
+                    {"Tidak ada data layer IGT yang tersedia"}
+                  </P>
+                </HStack>
+              )}
+
               {activeLayers.map((layer) => {
                 const isEnabled = Boolean(enabledLayerIds[layer.id]);
                 const opacity = layerOpacities[layer.id] ?? 1.0;

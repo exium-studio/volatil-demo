@@ -130,7 +130,7 @@ const MitraCartExpiredOrdersModalContent = (
                 icon={HistoryIcon}
                 title={"Tidak Ada Pesanan Kedaluwarsa"}
                 description={
-                  "Semua permohonan data Anda aktif atau telah diselesaikan."
+                  "Semua permintaan data Anda aktif atau telah diselesaikan."
                 }
               />
             )}

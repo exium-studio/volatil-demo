@@ -197,7 +197,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
     if (!isShpOrZip && !isGeoJson) {
       toast.error("Format file tidak didukung", {
-        group: "Permohonan Data",
+        group: "Permintaan Data",
         description: `File "${file.name}" bukan berkas shapefile (.shp/.zip) atau GeoJSON (.geojson/.json).`,
       });
       return;
@@ -207,7 +207,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
     const MAX_SIZE = 10 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
       toast.error("Ukuran file melebihi batas", {
-        group: "Permohonan Data",
+        group: "Permintaan Data",
         description: `File "${file.name}" melebihi ukuran maksimum 10MB.`,
       });
       return;
@@ -237,7 +237,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
       if (isEmptyArray(rawFeatures)) {
         toast.error("Polygon tidak ditemukan", {
-          group: "Permohonan Data",
+          group: "Permintaan Data",
           description: `Tidak ditemukan geometri polygon yang valid di dalam file "${file.name}".`,
         });
         setUploadedFile(null);
@@ -270,7 +270,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
           ? error.message
           : "Terjadi kesalahan saat membaca file";
       toast.error("Gagal memproses file AOI", {
-        group: "Permohonan Data",
+        group: "Permintaan Data",
         description: `File "${file.name}": ${errorMsg}`,
       });
       setUploadedFile(null);

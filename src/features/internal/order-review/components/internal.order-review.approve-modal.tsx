@@ -128,7 +128,7 @@ const InternalOrderReviewApproveModalContent = (
     <Modal.Content>
       <Modal.Header>
         <Modal.CloseButton />
-        <Modal.Title>{"Verifikasi & Setujui Permohonan"}</Modal.Title>
+        <Modal.Title>{"Verifikasi & Setujui Permintaan"}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>

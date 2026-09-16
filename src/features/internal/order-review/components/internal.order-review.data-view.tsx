@@ -214,7 +214,7 @@ export const InternalOrderReviewDataView = () => {
       },
       {
         key: "approve-order",
-        label: "Setujui Permohonan",
+        label: "Setujui Permintaan",
         icon: CheckCircleIcon,
         colorPalette: "green",
         hidden: (order: InternalOrderItem) => order.status !== "pending_review",
@@ -243,13 +243,13 @@ export const InternalOrderReviewDataView = () => {
         {/* Header Container */}
         <HeaderContainer>
           <HStack gap={"xs"} align={"center"}>
-            <Heading>{"Review Permohonan Data IGT"}</Heading>
+            <Heading>{"Review Permintaan Data IGT"}</Heading>
             <InfoTip
               variant={"icon"}
               appIconProps={{ size: "xs", color: "fg.subtle" }}
             >
               {
-                "Validasi dan verifikasi permohonan data spasial mitra yang telah lunas bayar sebelum menerbitkan wrapper link GeoServer."
+                "Validasi dan verifikasi permintaan data spasial mitra yang telah lunas bayar sebelum menerbitkan wrapper link GeoServer."
               }
             </InfoTip>
           </HStack>
@@ -271,7 +271,7 @@ export const InternalOrderReviewDataView = () => {
           <HStack gap={"sm"}>
             <StatusFilterSelect
               modalKey={"internal-order-review-status-filter"}
-              placeholder={"Status Permohonan"}
+              placeholder={"Status Permintaan"}
               options={ORDER_STATUS_OPTIONS}
               value={params.status ?? "all"}
               onValueChange={(value) => {
@@ -319,7 +319,7 @@ export const InternalOrderReviewDataView = () => {
               {params.search || params.status !== "all" ? (
                 <NoResultState
                   description={
-                    "Tidak ada pesanan permohonan yang sesuai dengan filter atau kata kunci pencarian Anda."
+                    "Tidak ada pesanan permintaan yang sesuai dengan filter atau kata kunci pencarian Anda."
                   }
                 />
               ) : (
@@ -327,7 +327,7 @@ export const InternalOrderReviewDataView = () => {
                   icon={CheckCircleIcon}
                   title={"Tidak Ada Antrean Review"}
                   description={
-                    "Semua pesanan permohonan data spasial telah diproses dan disetujui."
+                    "Semua pesanan permintaan data spasial telah diproses dan disetujui."
                   }
                 />
               )}

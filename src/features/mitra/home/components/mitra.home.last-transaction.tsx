@@ -296,7 +296,7 @@ const MitraHomeLastTransactionDataView = () => {
           <NoDataState
             icon={HistoryIcon}
             title={"Belum Ada Riwayat Transaksi"}
-            description={"Anda belum memiliki riwayat transaksi permohonan data."}
+            description={"Anda belum memiliki riwayat transaksi permintaan data."}
           />
         </Box>
       ) : (

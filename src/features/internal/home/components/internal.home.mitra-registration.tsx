@@ -51,7 +51,7 @@ export const InternalHomeMitraRegistration = (
               appIconProps={{ size: "xs", color: "fg.subtle" }}
             >
               {
-                "Jumlah mitra aktif dan permohonan pendaftaran yang menunggu verifikasi"
+                "Jumlah mitra aktif dan pengajuan pendaftaran yang menunggu verifikasi"
               }
             </InfoTip>
           </HStack>

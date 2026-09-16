@@ -384,14 +384,14 @@ export const useReorderCartOrder = (onSuccessCallback?: () => void) => {
   const toastHandlers = mutationToastHandlers("reorder-cart-order", {
     group: "Keranjang",
     loadingMessage: {
-      title: "Membuat permohonan ulang...",
+      title: "Membuat permintaan ulang...",
     },
     successMessage: {
-      title: "Permohonan ulang berhasil dibuat!",
+      title: "Permintaan ulang berhasil dibuat!",
       description: "Pesanan baru telah masuk ke keranjang dan sedang disiapkan.",
     },
     errorMessage: {
-      title: "Gagal membuat permohonan ulang",
+      title: "Gagal membuat permintaan ulang",
     },
   });
 

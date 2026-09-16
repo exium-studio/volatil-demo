@@ -5,7 +5,7 @@
     "navs": {
       "home": "Beranda",
 
-      "data_request": "Permohonan Data",
+      "data_request": "Permintaan Data",
       "cart": "Keranjang",
       "my_data": "Data Saya",
       "transaction_history": "Riwayat Transaksi",
@@ -19,8 +19,8 @@
       "user_management": "Manajemen Pengguna",
       "master_geoserver": "Master Geoserver",
       "data_management": "Manajemen Data IGT",
-      "order_review": "Review Permohonan",
-      "mitra_registration": "Permohonan Mitra",
+      "order_review": "Review Permintaan",
+      "mitra_registration": "Pendaftaran Mitra",
       "order_statistic": "Statistik Pesanan",
       "jobs": "Antrean Job",
       "help": "Tiket Laporan",

@@ -199,7 +199,7 @@ export const InternalMitraRegistrationDataView = () => {
         },
         {
           key: "approve-registration",
-          label: "Setujui Permohonan",
+          label: "Setujui Pendaftaran",
           icon: CheckCircleIcon,
           colorPalette: "green",
           hidden: (reg: InternalMitraRegistrationItem) =>
@@ -215,7 +215,7 @@ export const InternalMitraRegistrationDataView = () => {
         },
         {
           key: "reject-registration",
-          label: "Tolak Permohonan",
+          label: "Tolak Pendaftaran",
           icon: XCircleIcon,
           colorPalette: "red",
           hidden: (reg: InternalMitraRegistrationItem) =>
@@ -245,7 +245,7 @@ export const InternalMitraRegistrationDataView = () => {
         <HeaderContainer>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
-              <Heading>{"Permohonan Kemitraan"}</Heading>
+              <Heading>{"Pendaftaran Kemitraan"}</Heading>
 
               <InfoTip
                 variant={"icon"}
@@ -255,7 +255,7 @@ export const InternalMitraRegistrationDataView = () => {
                 }}
               >
                 {
-                  "Verifikasi data permohonan kemitraan dari calon mitra, periksa 6 berkas persyaratan, terbitkan kontrak kerjasama atau tolak permohonan."
+                  "Verifikasi data pendaftaran kemitraan dari calon mitra, periksa 6 berkas persyaratan, terbitkan kontrak kerjasama atau tolak pendaftaran."
                 }
               </InfoTip>
             </HStack>
@@ -308,10 +308,10 @@ export const InternalMitraRegistrationDataView = () => {
           {!isLoading && isError && (
             <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
               <RetryState
-                title={"Gagal Memuat Permohonan Mitra"}
+                title={"Gagal Memuat Pendaftaran Mitra"}
                 description={
                   error?.message ||
-                  "Terjadi kesalahan saat memuat daftar permohonan registrasi mitra. Silakan coba lagi."
+                  "Terjadi kesalahan saat memuat daftar pendaftaran registrasi mitra. Silakan coba lagi."
                 }
                 onRetry={() => {
                   void refetch();
@@ -328,9 +328,9 @@ export const InternalMitraRegistrationDataView = () => {
                     <NoResultState query={searchQuery} />
                   ) : (
                     <NoDataState
-                      title={"Belum Ada Permohonan Mitra"}
+                      title={"Belum Ada Pendaftaran Mitra"}
                       description={
-                        "Daftar permohonan kemitraan dari calon mitra luar akan muncul di sini."
+                        "Daftar pengajuan kemitraan dari calon mitra luar akan muncul di sini."
                       }
                       icon={HandshakeIcon}
                     />

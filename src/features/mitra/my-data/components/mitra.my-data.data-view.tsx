@@ -391,7 +391,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                 icon={DatabaseIcon}
                 title={"Belum Ada Data IGT"}
                 description={
-                  "Anda belum memiliki akses ke layer data spasial IGT. Silakan ajukan permohonan data terlebih dahulu."
+                  "Anda belum memiliki akses ke layer data spasial IGT. Silakan ajukan permintaan data terlebih dahulu."
                 }
               >
                 <Button
@@ -402,7 +402,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                   }}
                 >
                   <AppIcon icon={SquarePen} />
-                  {"Permohonan Data"}
+                  {"Permintaan Data"}
                 </Button>
               </NoDataState>
             )}

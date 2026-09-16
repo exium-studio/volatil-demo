@@ -5,8 +5,8 @@ import type { InboxItem } from "@/features/notification/types/inbox.type";
 export const DUMMY_INBOX_ITEMS: InboxItem[] = [
   {
     id: "inbox-1",
-    title: "Permohonan Data Disetujui",
-    message: "Permohonan data IGT RTRW Badung (ORD-2026-00192) telah disetujui oleh admin. Silakan aktifkan kredensial akses Anda.",
+    title: "Permintaan Data Disetujui",
+    message: "Permintaan data IGT RTRW Badung (ORD-2026-00192) telah disetujui oleh admin. Silakan aktifkan kredensial akses Anda.",
     category: "transaksi",
     isRead: false,
     actionUrl: "/my-data",

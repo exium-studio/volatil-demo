@@ -163,7 +163,7 @@ export function InternalMitraRegistrationDetailPage() {
     return (
       <AppContentContainer h={"auto"}>
         <Center flex={1} p={"xl"}>
-          <P color={"fg.muted"}>{"Data permohonan mitra tidak ditemukan."}</P>
+          <P color={"fg.muted"}>{"Data pendaftaran mitra tidak ditemukan."}</P>
         </Center>
       </AppContentContainer>
     );
@@ -271,7 +271,7 @@ export function InternalMitraRegistrationDetailPage() {
 
                     <Alert.Content>
                       <Alert.Title>
-                        {"Alasan Penolakan Permohonan:"}
+                        {"Alasan Penolakan Pendaftaran:"}
                       </Alert.Title>
                       <Alert.Description>
                         {registration.rejectionReason}

@@ -114,7 +114,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
           <NoDataState
             icon={ShoppingCartIcon}
             title={"Keranjang kosong"}
-            description={"Tambahkan data IGT dari halaman Permohonan Data"}
+            description={"Tambahkan data IGT dari halaman Permintaan Data"}
           />
         </Box>
       )}

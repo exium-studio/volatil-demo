@@ -54,7 +54,7 @@ export const submitMitraRegistration = async (
 
   const response = await postRegisterMitraApi(formData, signal);
   if (!response.data) {
-    throw new Error(response.message || "Gagal mengajukan permohonan mitra.");
+    throw new Error(response.message || "Gagal mengajukan pendaftaran mitra.");
   }
   return response.data;
 };

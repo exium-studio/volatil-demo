@@ -49,13 +49,11 @@ export const MapMyDataLayerSelect = memo(() => {
   });
 
   // Derived Values — Filter only valid active items
-  const activeItems = useMemo(
-    () => myData?.items ?? [],
-    [myData],
-  );
+  const activeItems = useMemo(() => myData?.items ?? [], [myData]);
 
   const enabledCount = useMemo(() => {
-    return activeItems.filter((item) => Boolean(enabledLayerIds[item.id])).length;
+    return activeItems.filter((item) => Boolean(enabledLayerIds[item.id]))
+      .length;
   }, [activeItems, enabledLayerIds]);
 
   const isAllEnabled = useMemo(() => {

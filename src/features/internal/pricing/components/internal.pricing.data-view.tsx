@@ -178,7 +178,7 @@ export const InternalPricingDataView = () => {
             <Heading>{"Master Tarif & Pricing PNBP"}</Heading>
             <P fontSize={"xs"} color={"fg.subtle"}>
               {
-                "Konfigurasi tarif satuan layer IGT yang digunakan saat kalkulasi keranjang permohonan data mitra."
+                "Konfigurasi tarif satuan layer IGT yang digunakan saat kalkulasi keranjang permintaan data mitra."
               }
             </P>
           </VStack>

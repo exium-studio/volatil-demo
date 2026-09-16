@@ -84,7 +84,7 @@ export function InternalOrderReviewDetailPage() {
                   onClick={() => navigate({ to: "/internal/order-review" })}
                 />
 
-                <ClampedHeading>{"Review Permohonan Detail"}</ClampedHeading>
+                <ClampedHeading>{"Review Permintaan Detail"}</ClampedHeading>
               </HStack>
 
               <HStack gap={2}>
@@ -113,7 +113,7 @@ export function InternalOrderReviewDetailPage() {
                   >
                     <Button primary={true} colorPalette={"green"}>
                       <AppIcon icon={CheckCircleIcon} />
-                      {"Setujui Permohonan"}
+                      {"Setujui Permintaan"}
                     </Button>
                   </InternalOrderReviewApproveTrigger>
                 )}
