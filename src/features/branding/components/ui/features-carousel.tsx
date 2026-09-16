@@ -49,6 +49,7 @@ export const FeaturesCarousel = (props: FeaturesCarouselProps) => {
       {...restProps}
     >
       <Carousel.Root
+        defaultPage={0}
         loop
         autoplay={{
           delay: 6000,
