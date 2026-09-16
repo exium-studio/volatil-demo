@@ -262,16 +262,16 @@ export const provisionOrderApi = async (
         (b) => b.orderId === orderId,
       );
       if (targetOrder) {
-        targetOrder.status = "pending_review";
+        targetOrder.status = "processing";
       }
       return {
         success: true,
         data: {
           orderId,
           transactionStatus: "processing",
-          orderStatus: "pending_review",
+          orderStatus: "processing",
         },
-        message: "Proses provisioning layer AOI ke GeoServer berhasil dimulai.",
+        message: "Proses pembuatan layanan WMS berhasil dimulai.",
         timestamp: new Date().toISOString(),
       };
     }
@@ -325,9 +325,12 @@ const getDummyOrderList = (
   if (params?.status && params.status !== "all") {
     filtered = filtered.filter((b) => b.status === params.status);
   } else {
-    // Default: review permohonan hanya menampilkan status paid dan pending_review
+    // Default: review permintaan menampilkan status paid, processing, dan pending_review
     filtered = filtered.filter(
-      (b) => b.status === "paid" || b.status === "pending_review",
+      (b) =>
+        b.status === "paid" ||
+        b.status === "processing" ||
+        b.status === "pending_review",
     );
   }
   if (params?.search) {

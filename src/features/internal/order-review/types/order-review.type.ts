@@ -122,19 +122,7 @@ export type ProvisionStreamHookResult = ProvisionStreamState & {
   resetState: () => void;
 };
 
-export type InternalOrderReviewProvisionTriggerProps = {
-  modalKey?: string;
-  order: InternalOrderItem;
-  children?: ReactNode;
-  onSuccess?: () => void;
-};
 
-export type InternalOrderReviewProvisionModalContentProps = {
-  order: InternalOrderItem;
-  isOpen: boolean;
-  onSuccess?: () => void;
-  close: () => void;
-};
 
 import { z } from "zod";
 

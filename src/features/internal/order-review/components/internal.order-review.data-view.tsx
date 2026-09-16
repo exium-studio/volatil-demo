@@ -2,7 +2,6 @@
 
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
-import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
@@ -20,10 +19,13 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { InternalOrderReviewProvisionTrigger } from "@/features/internal/order-review/components/internal.order-review.provision-modal";
-import { useInternalOrdersQuery } from "@/features/internal/order-review/hooks/use-order-review";
+import {
+  useInternalOrdersQuery,
+  useOrdersProvisionStream,
+  useProvisionOrder,
+} from "@/features/internal/order-review/hooks/use-order-review";
 import type {
   InternalOrderItem,
   InternalOrderListQueryParams,
@@ -43,8 +45,9 @@ import { CheckCircleIcon, LayersIcon, MapPlusIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ORDER_STATUS_OPTIONS = [
-  { value: "all", label: "Semua Status (Paid & Review)" },
+  { value: "all", label: "Semua Status (Paid, Proses & Review)" },
   { value: "paid", label: "Terbayar (Perlu Create WMS)" },
+  { value: "processing", label: "Menyiapkan Layanan WMS" },
   { value: "pending_review", label: "Menunggu Review (WMS Siap)" },
 ];
 
@@ -77,6 +80,19 @@ export const InternalOrderReviewDataView = () => {
     refetch,
   } = useInternalOrdersQuery(params);
 
+  // Mutations
+  const provisionOrderMutation = useProvisionOrder();
+
+  // Derived Values — active processing order IDs for background SSE listening
+  const processingOrderIds = useMemo(() => {
+    return orders
+      .filter((order) => order.status === "processing")
+      .map((order) => order.orderId);
+  }, [orders]);
+
+  // Background SSE listener for orders currently in 'processing' status
+  useOrdersProvisionStream(processingOrderIds);
+
   // Derived Values - Headers & Items for DataList
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
@@ -98,10 +114,6 @@ export const InternalOrderReviewDataView = () => {
         .filter((i) => i.spatialBasis === "kawasan")
         .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
 
-      const layerNames = order.items
-        .map((it) => it.sourceLayerTitle)
-        .join(", ");
-
       return {
         id: order.orderId,
         data: order,
@@ -109,15 +121,9 @@ export const InternalOrderReviewDataView = () => {
           {
             value: order.orderId,
             td: (
-              <HStack gap={"xs"} align={"center"}>
-                <P fontWeight={"semibold"}>{order.orderId}</P>
-                <ClipboardButton
-                  value={order.orderId}
-                  variant={"ghost"}
-                  size={"2xs"}
-                  aria-label={"Salin ID Pesanan"}
-                />
-              </HStack>
+              <P fontWeight={"medium"} fontSize={"sm"}>
+                {order.orderId}
+              </P>
             ),
             align: "start" as const,
           },
@@ -125,9 +131,11 @@ export const InternalOrderReviewDataView = () => {
             value: order.mitraName,
             td: (
               <VStack align={"start"} gap={0}>
-                <P fontWeight={"medium"}>{order.mitraName}</P>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {`ID: ${order.mitraId}`}
+                <P fontWeight={"medium"} fontSize={"sm"}>
+                  {order.mitraName}
+                </P>
+                <P fontSize={"xs"} color={"fg.muted"}>
+                  {order.mitraId}
                 </P>
               </VStack>
             ),
@@ -135,18 +143,16 @@ export const InternalOrderReviewDataView = () => {
           },
           {
             value: order.selectionType,
-            td: (
-              <SelectionTypeBadge size={"xs"}>
-                {order.selectionType}
-              </SelectionTypeBadge>
-            ),
+            td: <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>,
             align: "start" as const,
           },
           {
-            value: layerNames,
+            value: order.items.length,
             td: (
-              <VStack align={"start"} maxW={"220px"} gap={0}>
-                <ClampedP title={layerNames}>{layerNames}</ClampedP>
+              <VStack align={"start"} gap={0}>
+                <P fontSize={"sm"} fontWeight={"medium"}>
+                  {order.items.map((i) => i.sourceLayerTitle).join(", ")}
+                </P>
                 <P fontSize={"xs"} color={"fg.muted"}>
                   {`${order.items.length} layer • `}
                   {totalBidang > 0 && `${totalBidang} bidang`}
@@ -159,20 +165,22 @@ export const InternalOrderReviewDataView = () => {
           },
           {
             value: order.status,
-            td: <OrderStatusBadge showIcon>{order.status}</OrderStatusBadge>,
+            td: <OrderStatusBadge showIcon={true}>{order.status}</OrderStatusBadge>,
             align: "start" as const,
           },
           {
             value: order.totalPrice,
             td: (
-              <P fontWeight={"semibold"}>{formatCurrency(order.totalPrice)}</P>
+              <P fontWeight={"medium"} fontSize={"sm"}>
+                {formatCurrency(order.totalPrice)}
+              </P>
             ),
             align: "end" as const,
           },
           {
             value: order.createdAt,
             td: (
-              <P fontSize={"sm"} color={"fg.muted"} whiteSpace={"nowrap"}>
+              <P fontSize={"sm"} color={"fg.muted"}>
                 {formatUtcDateTime(order.createdAt, preferredTimezone)}
               </P>
             ),
@@ -188,16 +196,8 @@ export const InternalOrderReviewDataView = () => {
         label: "Create Service WMS",
         icon: MapPlusIcon,
         hidden: (order: InternalOrderItem) => order.status !== "paid",
-        modal: {
-          triggerComponent: (order: InternalOrderItem) => (
-            <InternalOrderReviewProvisionTrigger
-              modalKey={`provision-order-${order.orderId}`}
-              order={order}
-              onSuccess={() => {
-                void refetch();
-              }}
-            />
-          ),
+        onClick: (order: InternalOrderItem) => {
+          provisionOrderMutation.mutate({ orderId: order.orderId });
         },
       },
       {
@@ -235,7 +235,7 @@ export const InternalOrderReviewDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [orders, preferredTimezone, navigate, refetch]);
+  }, [orders, preferredTimezone, navigate, provisionOrderMutation]);
 
   return (
     <Container.Root flex={1} minH={0} withContext={true}>

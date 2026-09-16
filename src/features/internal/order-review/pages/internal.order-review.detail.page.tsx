@@ -19,8 +19,11 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { InternalOrderReviewProvisionTrigger } from "@/features/internal/order-review/components/internal.order-review.provision-modal";
-import { useInternalOrderDetailQuery } from "@/features/internal/order-review/hooks/use-order-review";
+import {
+  useInternalOrderDetailQuery,
+  useOrdersProvisionStream,
+  useProvisionOrder,
+} from "@/features/internal/order-review/hooks/use-order-review";
 import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
 import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
@@ -39,6 +42,7 @@ import {
   EyeIcon,
   EyeOffIcon,
   FocusIcon,
+  LoaderIcon,
   MapPlusIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
@@ -56,7 +60,17 @@ export function InternalOrderReviewDetailPage() {
   }, []);
 
   // Queries
-  const { data: order, isLoading, refetch } = useInternalOrderDetailQuery(orderId);
+  const { data: order, isLoading } = useInternalOrderDetailQuery(orderId);
+
+  // Mutations
+  const provisionOrderMutation = useProvisionOrder();
+
+  // Background SSE listening if current order is 'processing'
+  const processingOrderIds = useMemo(() => {
+    return order?.status === "processing" && order.orderId ? [order.orderId] : [];
+  }, [order]);
+
+  useOrdersProvisionStream(processingOrderIds);
 
   if (isLoading || !order) {
     return (
@@ -89,18 +103,24 @@ export function InternalOrderReviewDetailPage() {
 
               <HStack gap={2}>
                 {order.status === "paid" && (
-                  <InternalOrderReviewProvisionTrigger
-                    order={order}
-                    modalKey={`provision-detail-${order.orderId}`}
-                    onSuccess={() => {
-                      void refetch();
+                  <Button
+                    primary={true}
+                    colorPalette={"blue"}
+                    loading={provisionOrderMutation.isPending}
+                    onClick={() => {
+                      provisionOrderMutation.mutate({ orderId: order.orderId });
                     }}
                   >
-                    <Button primary={true} colorPalette={"blue"}>
-                      <AppIcon icon={MapPlusIcon} />
-                      {"Create Service WMS"}
-                    </Button>
-                  </InternalOrderReviewProvisionTrigger>
+                    <AppIcon icon={MapPlusIcon} />
+                    {"Create Service WMS"}
+                  </Button>
+                )}
+
+                {order.status === "processing" && (
+                  <Button variant={"outline"} disabled={true}>
+                    <AppIcon icon={LoaderIcon} className={"animate-spin"} />
+                    {"Menyiapkan Layanan WMS..."}
+                  </Button>
                 )}
 
                 {order.status === "pending_review" && (

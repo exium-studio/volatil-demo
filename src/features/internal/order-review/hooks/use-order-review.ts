@@ -49,15 +49,16 @@ export const useProvisionOrder = () => {
   const toastHandlers = mutationToastHandlers("provision-order", {
     group: "Review Pesanan",
     loadingMessage: {
-      title: "Membuat layanan WMS...",
-      description: "Memotong AOI dan mempublish layer ke GeoServer...",
+      title: "Memulai proses WMS...",
+      description: "Mengirim permintaan pembuatan layanan WMS ke background...",
     },
     successMessage: {
-      title: "Layanan WMS berhasil dibuat!",
-      description: "Status pesanan diperbarui menjadi pending review.",
+      title: "Pembuatan WMS sedang diproses",
+      description:
+        "Layanan WMS sedang disiapkan di background. Status akan terupdate otomatis.",
     },
     errorMessage: {
-      title: "Gagal membuat layanan WMS",
+      title: "Gagal memulai pembuatan WMS",
     },
   });
 
@@ -68,6 +69,9 @@ export const useProvisionOrder = () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
         queryKey: ["internal", "orders"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "order"],
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.internal.home.all,
@@ -404,3 +408,63 @@ export const useOrderProvisionStream = (
     resetState,
   };
 };
+
+/**
+ * Hook to automatically listen for SSE provisioning events across all processing orders in the background.
+ */
+export const useOrdersProvisionStream = (processingOrderIds: string[]) => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (
+      typeof window === "undefined" ||
+      !processingOrderIds ||
+      processingOrderIds.length === 0
+    ) {
+      return;
+    }
+
+    const eventSources: EventSource[] = [];
+
+    processingOrderIds.forEach((orderId) => {
+      try {
+        const es = createOrderProvisionEventSource(orderId);
+        eventSources.push(es);
+
+        es.addEventListener("provision_completed", () => {
+          void queryClient.invalidateQueries({
+            queryKey: ["internal", "orders"],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ["internal", "order", orderId],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: queryKeys.internal.home.all,
+          });
+          es.close();
+        });
+
+        es.addEventListener("provision_fatal", () => {
+          void queryClient.invalidateQueries({
+            queryKey: ["internal", "orders"],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ["internal", "order", orderId],
+          });
+          es.close();
+        });
+
+        es.onerror = () => {
+          // SSE will reconnect or fail gracefully
+        };
+      } catch (err) {
+        console.error(`Failed to connect SSE for order ${orderId}:`, err);
+      }
+    });
+
+    return () => {
+      eventSources.forEach((es) => es.close());
+    };
+  }, [processingOrderIds, queryClient]);
+};
+

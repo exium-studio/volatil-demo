@@ -12,7 +12,7 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { InternalOrderReviewProvisionTrigger } from "@/features/internal/order-review/components/internal.order-review.provision-modal";
+import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import type {
   InternalOrderReviewDetailModalContentProps,
   InternalOrderReviewDetailTriggerProps,
@@ -23,7 +23,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
-import { CheckCircleIcon, MapPlusIcon } from "lucide-react";
+import { CheckCircleIcon, LoaderIcon, MapPlusIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const InternalOrderReviewDetailTrigger = (
@@ -56,8 +56,10 @@ const InternalOrderReviewDetailModalContent = (
 ) => {
   const { order, close } = props;
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+  const provisionOrderMutation = useProvisionOrder();
 
   const isPaid = order.status === "paid";
+  const isProcessing = order.status === "processing";
   const isPending = order.status === "pending_review";
 
   return (
@@ -109,7 +111,7 @@ const InternalOrderReviewDetailModalContent = (
             </HStack>
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Diajukan Pada:"}
+                {"Waktu Dibuat:"}
               </P>
               <P fontSize={"xs"}>
                 {formatUtcDateTime(order.createdAt, preferredTimezone)}
@@ -119,81 +121,69 @@ const InternalOrderReviewDetailModalContent = (
 
           {/* Layer List */}
           <VStack align={"stretch"} gap={"xs"}>
-            <P fontWeight={"semibold"} fontSize={"sm"}>
-              {`Daftar Layer Spasial (${order.items.length})`}
+            <P fontSize={"xs"} fontWeight={"semibold"}>
+              {`Daftar Layer IGT (${order.items.length})`}
             </P>
 
-            {(order.items ?? []).map((item, idx) => {
+            {order.items.map((item) => {
               const previewUrl =
                 item.previewWmsUrl ||
                 item.wmsUrl ||
                 (item.sourceLayerId
-                  ? buildWmsProxyUrl(
-                      `/api/proxy/wms?layerId=${item.sourceLayerId}`,
-                    )
+                  ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
                   : "");
 
               return (
                 <VStack
-                  key={item.id || idx}
+                  key={item.id}
                   align={"stretch"}
-                  p={"sm"}
+                  gap={"2xs"}
+                  p={"xs"}
+                  bg={"bg.subtle"}
+                  rounded={"sm"}
                   border={"1px solid"}
                   borderColor={"border.subtle"}
-                  rounded={"md"}
-                  gap={"xs"}
                 >
-                  <HStack justify={"space-between"}>
-                    <VStack align={"start"} gap={0}>
-                      <P fontWeight={"medium"} fontSize={"sm"}>
+                  <HStack justify={"space-between"} align={"center"}>
+                    <HStack gap={"xs"}>
+                      <IgtBasisBadge size={"xs"}>
+                        {item.spatialBasis}
+                      </IgtBasisBadge>
+                      <P fontSize={"xs"} fontWeight={"medium"}>
                         {item.sourceLayerTitle}
                       </P>
-                      <HStack gap={"xs"} mt={"2xs"}>
-                        <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>
-                      </HStack>
-                    </VStack>
+                    </HStack>
+                    <P fontSize={"xs"} fontWeight={"semibold"}>
+                      {formatCurrency(item.subtotalPrice ?? 0)}
+                    </P>
+                  </HStack>
 
-                    <VStack align={"end"} gap={0}>
-                      <P fontSize={"xs"} color={"fg.muted"}>
-                        {item.spatialBasis === "kawasan"
-                          ? `${item.areaHa ?? 0} Ha (${item.featuresCount} fitur)`
-                          : `${item.featuresCount} Bidang`}
-                      </P>
-                      <P
-                        fontWeight={"semibold"}
-                        fontSize={"sm"}
-                        color={"brand.fg"}
-                      >
-                        {formatCurrency(item.subtotalPrice ?? 0)}
-                      </P>
-                    </VStack>
+                  <HStack justify={"space-between"} align={"center"}>
+                    <P fontSize={"2xs"} color={"fg.subtle"}>
+                      {item.sourceLayerId}
+                    </P>
+                    <P fontSize={"2xs"} color={"fg.muted"}>
+                      {item.spatialBasis === "bidang"
+                        ? `${item.featuresCount} bidang`
+                        : `${item.areaHa ?? 0} ha`}
+                    </P>
                   </HStack>
 
                   {previewUrl && (
                     <HStack
-                      gap={"xs"}
-                      bg={"bg.subtle"}
-                      p={1.5}
-                      rounded={"sm"}
-                      border={"1px solid"}
-                      borderColor={"border.subtle"}
+                      justify={"space-between"}
+                      align={"center"}
+                      bg={"bg.canvas"}
+                      p={"2xs"}
+                      rounded={"xs"}
                     >
-                      <P fontSize={"xs"} color={"fg.muted"}>
-                        {"WMS Volatil:"}
-                      </P>
-                      <P
-                        fontSize={"xs"}
-                        fontFamily={"mono"}
-                        flex={1}
-                        truncate
-                        color={"fg.default"}
-                      >
+                      <P fontSize={"2xs"} color={"fg.subtle"} truncate>
                         {previewUrl}
                       </P>
                       <ClipboardButton
                         value={previewUrl}
                         variant={"ghost"}
-                        size={"xs"}
+                        size={"2xs"}
                         aria-label={"Salin URL WMS"}
                       />
                     </HStack>
@@ -221,16 +211,31 @@ const InternalOrderReviewDetailModalContent = (
           </Button>
 
           {isPaid && (
-            <InternalOrderReviewProvisionTrigger
-              order={order}
-              modalKey={`provision-from-detail-${order.orderId}`}
-              onSuccess={close}
+            <Button
+              primary={true}
+              colorPalette={"blue"}
+              loading={provisionOrderMutation.isPending}
+              onClick={() => {
+                provisionOrderMutation.mutate(
+                  { orderId: order.orderId },
+                  {
+                    onSuccess: () => {
+                      close();
+                    },
+                  },
+                );
+              }}
             >
-              <Button primary={true} colorPalette={"blue"}>
-                <AppIcon icon={MapPlusIcon} />
-                {"Create Service WMS"}
-              </Button>
-            </InternalOrderReviewProvisionTrigger>
+              <AppIcon icon={MapPlusIcon} />
+              {"Create Service WMS"}
+            </Button>
+          )}
+
+          {isProcessing && (
+            <Button variant={"outline"} disabled={true}>
+              <AppIcon icon={LoaderIcon} className={"animate-spin"} />
+              {"Menyiapkan Layanan WMS..."}
+            </Button>
           )}
 
           {isPending && (
