@@ -138,6 +138,7 @@ export const ToastItem = memo(function ToastItem(
       shadow={"sm"}
       opacity={toastData.status === "visible" ? 1 : 0}
       tabIndex={0}
+      userSelect={"text"}
       cursor={!stackExpanded || hasExpandableContent ? "pointer" : "auto"}
       transform={
         toastData.status === "visible" ? "translateY(0)" : "translateY(-20px)"
@@ -151,6 +152,8 @@ export const ToastItem = memo(function ToastItem(
         if (event.key === "Escape") toast.close(toastData.id);
       }}
       onClick={() => {
+        const selection = typeof window !== "undefined" ? window.getSelection() : null;
+        if (selection && selection.toString().length > 0) return;
         if (!hasExpandableContent) return;
         if (!stackExpanded) {
           onRequestExpand?.();

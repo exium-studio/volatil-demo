@@ -140,10 +140,18 @@ export function ToastStack<TItem>({
       <VStack
         pos={"relative"}
         w={"full"}
-        minW={0}
         cursor={!expanded ? "pointer" : undefined}
         rounded={theme.radii.container}
-        onClick={!expanded ? () => setExpanded(true) : undefined}
+        onClick={
+          !expanded
+            ? () => {
+                const selection =
+                  typeof window !== "undefined" ? window.getSelection() : null;
+                if (selection && selection.toString().length > 0) return;
+                setExpanded(true);
+              }
+            : undefined
+        }
       >
         {(() => {
           let nonLeavingCount = 0;

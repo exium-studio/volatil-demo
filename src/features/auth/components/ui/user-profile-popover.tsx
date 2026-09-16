@@ -83,6 +83,22 @@ export const UserProfilePopoverTrigger = (
                     {displayEmail}
                   </ClampedP>
                 )}
+
+                {user && "nip" in user && user.nip && (
+                  <P fontSize={"2xs"} color={"fg.subtle"} textAlign={"center"}>
+                    {`NIP: ${user.nip}`}
+                  </P>
+                )}
+
+                {user && "namaKantor" in user && user.namaKantor && (
+                  <ClampedP
+                    fontSize={"2xs"}
+                    color={"fg.muted"}
+                    textAlign={"center"}
+                  >
+                    {user.namaKantor}
+                  </ClampedP>
+                )}
               </VStack>
             </VStack>
 

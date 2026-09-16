@@ -1,5 +1,3 @@
-// src/features/auth/hooks/use-signout.mutation.ts
-
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { authService } from "@/features/auth/services/auth.service";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -24,23 +22,26 @@ export const useSignoutMutation = () => {
   });
 
   return useMutation({
-    mutationFn: () => {
-      const currentUser = authService.getCurrentUser();
-      const role = currentUser?.role;
-      return authService.logout().then(() => ({ role }));
-    },
+    mutationFn: () => authService.logout(),
     onMutate: toastHandlers.onLoading,
-    onSuccess: ({ role }) => {
+    onSuccess: ({ logoutUrl, role }) => {
       toastHandlers.onSuccess();
       queryClient.setQueryData(queryKeys.auth.me(), null);
       queryClient.clear();
       useMapLayerStore.getState().resetLayers();
+
+      if (logoutUrl) {
+        window.location.href = logoutUrl;
+        return;
+      }
+
       if (role === "internal") {
-        navigate({ to: "/admin" });
+        void navigate({ to: "/admin" });
       } else {
-        navigate({ to: "/" });
+        void navigate({ to: "/" });
       }
     },
     onError: toastHandlers.onError,
   });
 };
+

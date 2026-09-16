@@ -1,10 +1,11 @@
-// src/features/auth/services/auth.service.ts
-
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import {
   getAuthMeApi,
+  getSsoInternalUrlApi,
   postLoginApi,
   postLogoutApi,
+  postSsoInternalCallbackApi,
+  postSsoInternalLogoutUrlApi,
 } from "@/features/auth/api/auth.api";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
@@ -57,6 +58,12 @@ export const authService = {
           role: "internal",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
+          nip: "198805202010121002",
+          kantorId: "94efc28c-e837-4581-9bd2-a16fcf7c79d1",
+          namaKantor: "Kantah Kota Adm. Jakarta Pusat",
+          tipeKantor: "KANTAH",
+          tipeUser: "PNS",
+          internalRoles: ["operator_warkah", "verifikator_kadastral"],
         };
         setStorage("user", JSON.stringify(dummyInternalUser));
         return dummyInternalUser;
@@ -79,6 +86,65 @@ export const authService = {
     }
   },
 
+  getSsoLoginUrl: async (signal?: AbortSignal): Promise<string> => {
+    const state = crypto.randomUUID();
+    const callbackUrl = `${window.location.origin}/auth/callback/keycloak`;
+
+    sessionStorage.setItem("sso_state", state);
+    sessionStorage.setItem("sso_redirect_uri", callbackUrl);
+
+    const response = await getSsoInternalUrlApi(
+      {
+        redirectUri: callbackUrl,
+        state,
+      },
+      signal,
+    );
+
+    return response.data.loginUrl;
+  },
+
+  handleSsoCallback: async (
+    code: string,
+    state: string,
+    signal?: AbortSignal,
+  ): Promise<InternalUser> => {
+    const stateFromStorage = sessionStorage.getItem("sso_state");
+    const storedRedirectUri = sessionStorage.getItem("sso_redirect_uri");
+    const callbackUrl =
+      storedRedirectUri || `${window.location.origin}/auth/callback/keycloak`;
+
+    // Clear state after usage
+    sessionStorage.removeItem("sso_state");
+    sessionStorage.removeItem("sso_redirect_uri");
+
+    if (!code || !state || !stateFromStorage || state !== stateFromStorage) {
+      throw new Error(
+        "State mismatch atau kode otorisasi tidak valid! Kemungkinan serangan CSRF.",
+      );
+    }
+
+    const response = await postSsoInternalCallbackApi(
+      {
+        code,
+        redirectUri: callbackUrl,
+      },
+      signal,
+    );
+
+    if (response.data.accessToken) {
+      localStorage.setItem("auth_token", response.data.accessToken);
+    }
+    if (response.data.keycloakIdToken) {
+      sessionStorage.setItem("keycloakIdToken", response.data.keycloakIdToken);
+    }
+    if (response.data.user) {
+      setStorage("user", JSON.stringify(response.data.user));
+    }
+
+    return response.data.user;
+  },
+
   verifyMe: async (signal?: AbortSignal): Promise<User | null> => {
     const token = localStorage.getItem("auth_token");
     if (!token) return null;
@@ -96,6 +162,7 @@ export const authService = {
         if (error.statusCode === 401 || error.statusCode === 403) {
           localStorage.removeItem("auth_token");
           removeStorage("user");
+          sessionStorage.removeItem("keycloakIdToken");
           return null;
         }
 
@@ -108,17 +175,43 @@ export const authService = {
     }
   },
 
-  logout: async (signal?: AbortSignal): Promise<void> => {
+  logout: async (
+    signal?: AbortSignal,
+  ): Promise<{ logoutUrl?: string | null; role?: string }> => {
+    const currentUser = getUserSession();
+    const role = currentUser?.role;
+    const idToken = sessionStorage.getItem("keycloakIdToken");
+    let keycloakLogoutUrl: string | null = null;
+
     try {
-      await postLogoutApi(signal);
+      if (role === "internal") {
+        const postLogoutUri = `${window.location.origin}/admin`;
+        const response = await postSsoInternalLogoutUrlApi(
+          {
+            idToken: idToken || undefined,
+            postLogoutRedirectUri: postLogoutUri,
+          },
+          signal,
+        );
+        if (response.data?.logoutUrl) {
+          keycloakLogoutUrl = response.data.logoutUrl;
+        }
+      } else {
+        await postLogoutApi(signal);
+      }
     } catch {
       // Ignore network / offline error during logout
     } finally {
       localStorage.removeItem("auth_token");
       removeStorage("user");
+      sessionStorage.removeItem("keycloakIdToken");
+      sessionStorage.removeItem("sso_state");
+      sessionStorage.removeItem("sso_redirect_uri");
       useMapLayerStore.getState().resetLayers();
       useAdministrativeFilterStore.getState().setAppliedAdministrativeFilters({});
     }
+
+    return { logoutUrl: keycloakLogoutUrl, role };
   },
 
   getCurrentUser: (): User | null => {
@@ -130,3 +223,4 @@ export const authService = {
     return localStorage.getItem("auth_token");
   },
 };
+

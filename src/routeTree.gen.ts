@@ -16,6 +16,7 @@ import { Route as DesignSystemUiRouteImport } from './routes/design-system/ui'
 import { Route as PublicRegistrationStatusRouteImport } from './routes/_public/registration-status'
 import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicAdminRouteImport } from './routes/_public/admin'
+import { Route as AuthCallbackKeycloakRouteImport } from './routes/auth.callback.keycloak'
 import { Route as PrivateMitraWelcomeRouteImport } from './routes/_private/mitra/welcome'
 import { Route as PrivateMitraTransactionHistoryRouteImport } from './routes/_private/mitra/transaction-history'
 import { Route as PrivateMitraNotificationRouteImport } from './routes/_private/mitra/notification'
@@ -77,6 +78,11 @@ const PublicRegisterRoute = PublicRegisterRouteImport.update({
 const PublicAdminRoute = PublicAdminRouteImport.update({
   id: '/_public/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCallbackKeycloakRoute = AuthCallbackKeycloakRouteImport.update({
+  id: '/auth/callback/keycloak',
+  path: '/auth/callback/keycloak',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivateMitraWelcomeRoute = PrivateMitraWelcomeRouteImport.update({
@@ -259,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/mitra/notification': typeof PrivateMitraNotificationRoute
   '/mitra/transaction-history': typeof PrivateMitraTransactionHistoryRoute
   '/mitra/welcome': typeof PrivateMitraWelcomeRoute
+  '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
   '/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/internal/order-review/$orderId': typeof PrivateInternalOrderReviewOrderIdRouteWithChildren
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
@@ -292,6 +299,7 @@ export interface FileRoutesByTo {
   '/mitra/notification': typeof PrivateMitraNotificationRoute
   '/mitra/transaction-history': typeof PrivateMitraTransactionHistoryRoute
   '/mitra/welcome': typeof PrivateMitraWelcomeRoute
+  '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
   '/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
   '/mitra/help-center/$ticketId': typeof PrivateMitraHelpCenterTicketIdRoute
@@ -328,6 +336,7 @@ export interface FileRoutesById {
   '/_private/mitra/notification': typeof PrivateMitraNotificationRoute
   '/_private/mitra/transaction-history': typeof PrivateMitraTransactionHistoryRoute
   '/_private/mitra/welcome': typeof PrivateMitraWelcomeRoute
+  '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
   '/_private/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/_private/internal/order-review/$orderId': typeof PrivateInternalOrderReviewOrderIdRouteWithChildren
   '/_private/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
@@ -365,6 +374,7 @@ export interface FileRouteTypes {
     | '/mitra/notification'
     | '/mitra/transaction-history'
     | '/mitra/welcome'
+    | '/auth/callback/keycloak'
     | '/internal/mitra-registration/$registrationId'
     | '/internal/order-review/$orderId'
     | '/mitra/billing/$billingCode'
@@ -398,6 +408,7 @@ export interface FileRouteTypes {
     | '/mitra/notification'
     | '/mitra/transaction-history'
     | '/mitra/welcome'
+    | '/auth/callback/keycloak'
     | '/internal/mitra-registration/$registrationId'
     | '/mitra/billing/$billingCode'
     | '/mitra/help-center/$ticketId'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/_private/mitra/notification'
     | '/_private/mitra/transaction-history'
     | '/_private/mitra/welcome'
+    | '/auth/callback/keycloak'
     | '/_private/internal/mitra-registration/$registrationId'
     | '/_private/internal/order-review/$orderId'
     | '/_private/mitra/billing/$billingCode'
@@ -452,6 +464,7 @@ export interface RootRouteChildren {
   PublicRegisterRoute: typeof PublicRegisterRoute
   PublicRegistrationStatusRoute: typeof PublicRegistrationStatusRoute
   DesignSystemUiRoute: typeof DesignSystemUiRoute
+  AuthCallbackKeycloakRoute: typeof AuthCallbackKeycloakRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -503,6 +516,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof PublicAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback/keycloak': {
+      id: '/auth/callback/keycloak'
+      path: '/auth/callback/keycloak'
+      fullPath: '/auth/callback/keycloak'
+      preLoaderRoute: typeof AuthCallbackKeycloakRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_private/mitra/welcome': {
@@ -811,6 +831,7 @@ const rootRouteChildren: RootRouteChildren = {
   PublicRegisterRoute: PublicRegisterRoute,
   PublicRegistrationStatusRoute: PublicRegistrationStatusRoute,
   DesignSystemUiRoute: DesignSystemUiRoute,
+  AuthCallbackKeycloakRoute: AuthCallbackKeycloakRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

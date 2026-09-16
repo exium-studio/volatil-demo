@@ -61,7 +61,6 @@ export function Toaster() {
         transform={placementStyles.transform}
         transition={"200ms"}
         pointerEvents={"none"}
-        userSelect={"none"}
         css={{
           "&:has([data-state='expanded'])": {
             bg: "bg.backdrop",

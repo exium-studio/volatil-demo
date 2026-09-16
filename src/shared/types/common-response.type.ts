@@ -71,6 +71,14 @@ export type BaseUser = {
 
 export type InternalUser = BaseUser & {
   role: "internal";
+  status?: "active" | "inactive" | string;
+  nip?: string;
+  kantorId?: string;
+  namaKantor?: string;
+  tipeKantor?: "KANTAH" | "KANWIL" | "PUSAT" | string;
+  tipeUser?: "PNS" | "PPNPN" | string;
+  internalRoles?: string[];
+  joinedAt?: string;
 };
 
 export type MitraUser = BaseUser & {
