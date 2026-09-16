@@ -26,8 +26,9 @@ import type { MitraHomeLastTransactionProps } from "@/features/mitra/home/types/
 import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail.modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type { TransactionRecord } from "@/features/mitra/transaction-history/types/transaction-history.type";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { TransactionStatusBadge } from "@/features/shared/components/transaction-status.badge";
+import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -109,7 +110,7 @@ const MitraHomeLastTransactionDataView = () => {
     const headers: FormattedTableHeader[] = [
       { th: "No. Transaksi", sortable: false, align: "start" },
       { th: "No. Order", sortable: false, align: "start" },
-      { th: "Status Transaksi", sortable: false, align: "start" },
+      { th: "Status Pesanan", sortable: false, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: false, align: "start" },
       { th: "Metode", sortable: false, align: "start" },
@@ -124,6 +125,12 @@ const MitraHomeLastTransactionDataView = () => {
         const itemNames = item.items
           .map((it) => it.sourceLayerTitle)
           .join(", ");
+
+        const effectiveOrderStatus: OrderStatus | undefined =
+          item.transactionStatus === "expired" &&
+          (!item.orderStatus || item.orderStatus === "pending_payment")
+            ? "rejected"
+            : item.orderStatus;
 
         return {
           id: item.id,
@@ -140,11 +147,13 @@ const MitraHomeLastTransactionDataView = () => {
               align: "start" as const,
             },
             {
-              value: item.transactionStatus,
-              td: (
-                <TransactionStatusBadge showIcon={true}>
-                  {item.transactionStatus}
-                </TransactionStatusBadge>
+              value: effectiveOrderStatus ?? "",
+              td: effectiveOrderStatus ? (
+                <OrderStatusBadge showIcon={true}>
+                  {effectiveOrderStatus}
+                </OrderStatusBadge>
+              ) : (
+                <P color={"fg.subtle"}>{"-"}</P>
               ),
               align: "start" as const,
             },

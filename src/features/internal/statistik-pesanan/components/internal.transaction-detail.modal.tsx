@@ -282,7 +282,7 @@ export const InternalTransactionDetailModalContent = (
                   h={"32px"}
                   fontSize={"sm"}
                 >
-                  <P color={"fg.subtle"}>{"Status Order"}</P>
+                  <P color={"fg.subtle"}>{"Status Pesanan"}</P>
                   <OrderStatusBadge showIcon={true}>
                     {effectiveOrderStatus}
                   </OrderStatusBadge>

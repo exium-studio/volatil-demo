@@ -35,7 +35,6 @@ import type {
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
-import { TransactionStatusBadge } from "@/features/shared/components/transaction-status.badge";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import type { OrderStatus, TransactionStatus } from "@/shared/types/status.type";
@@ -83,8 +82,7 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "Mitra Pemohon", sortable: true, align: "start" },
       { th: "No. Order", sortable: true, align: "start" },
-      { th: "Status Transaksi", sortable: true, align: "start" },
-      { th: "Status Order", sortable: true, align: "start" },
+      { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Metode", sortable: false, align: "start" },
@@ -139,15 +137,6 @@ export const InternalTransactionStatisticDataView = () => {
                 <P fontSize={"sm"} color={"fg.muted"}>
                   {item.orderNumber || item.orderId}
                 </P>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.transactionStatus,
-              td: (
-                <TransactionStatusBadge showIcon={true} size={"xs"}>
-                  {item.transactionStatus}
-                </TransactionStatusBadge>
               ),
               align: "start" as const,
             },

@@ -105,7 +105,7 @@ const InternalOrderReviewDetailModalContent = (
             </HStack>
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Status:"}
+                {"Status Pesanan:"}
               </P>
               <OrderStatusBadge size={"xs"}>{order.status}</OrderStatusBadge>
             </HStack>

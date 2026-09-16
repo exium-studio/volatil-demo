@@ -224,7 +224,7 @@ export function InternalOrderReviewDetailPage() {
 
               <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Status"}
+                  {"Status Pesanan"}
                 </P>
 
                 <OrderStatusBadge>{order.status}</OrderStatusBadge>

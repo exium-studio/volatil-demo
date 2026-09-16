@@ -104,7 +104,7 @@ export const InternalOrderReviewDataView = () => {
       { th: "Nama Mitra Pemohon", sortable: true, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Daftar Layer IGT", sortable: false, align: "start" },
-      { th: "Status", sortable: true, align: "start" },
+      { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
       { th: "Waktu Diajukan", sortable: true, align: "start" },
     ];
