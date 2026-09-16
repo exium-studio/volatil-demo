@@ -32,7 +32,10 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { highlightFeatureOnMap, removeFeatureHighlightFromMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import {
+  highlightFeatureOnMap,
+  removeFeatureHighlightFromMap,
+} from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import {
   formatCurrency,
