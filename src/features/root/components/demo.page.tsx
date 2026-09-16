@@ -20,7 +20,7 @@ import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Steps } from "@/design-system/components/disclosure/ui/steps";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import type { EmojiKey } from "@/design-system/components/emoji/types/emoji.type";
+import type { EmojiVariant } from "@/design-system/components/emoji/types/emoji.type";
 import { Emoji } from "@/design-system/components/emoji/ui/emoji";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { DotIndicator } from "@/design-system/components/feedback/ui/indicator";
@@ -1516,7 +1516,7 @@ export const Disclosure = () => {
 };
 
 export const Feedback = () => {
-  const EMOJI_KEYS: EmojiKey[] = [
+  const EMOJI_KEYS: EmojiVariant[] = [
     "poker",
     "happy",
     "laugh",
@@ -1638,7 +1638,7 @@ export const Feedback = () => {
               {EMOJI_KEYS.map((key) => {
                 return (
                   <VStack gap={1} key={key}>
-                    <Emoji emojiKey={key} boxSize={48} />
+                    <Emoji variant={key} boxSize={48} />
                     <P fontSize={"2xs"} color={"fg.muted"}>
                       {key}
                     </P>

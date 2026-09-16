@@ -2,7 +2,7 @@
 
 import type { CenterProps } from "@/design-system/components/layout/types/center.type";
 
-export type EmojiKey =
+export type EmojiVariant =
   | "shout"
   | "wicked"
   | "angry"
@@ -24,7 +24,8 @@ export type EmojiKey =
   | "sad";
 
 export type EmojiProps = CenterProps & {
-  emojiKey?: EmojiKey;
+  variant?: EmojiVariant;
   colorPalette?: string;
   boxSize?: number;
 };
+

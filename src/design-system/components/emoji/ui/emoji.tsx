@@ -1,8 +1,8 @@
 // src/design-system/components/emoji/ui/emoji.tsx
 
 import type {
-  EmojiKey,
   EmojiProps,
+  EmojiVariant,
 } from "@/design-system/components/emoji/types/emoji.type";
 import type { ComponentType } from "react";
 import { EmojiAngry } from "@/design-system/components/emoji/ui/emoji.angry";
@@ -26,7 +26,7 @@ import { EmojiThumbUp } from "@/design-system/components/emoji/ui/emoji.thumb-up
 import { EmojiWicked } from "@/design-system/components/emoji/ui/emoji.wicked";
 
 // Constants
-const EMOJI_COMPONENTS: Record<EmojiKey, ComponentType<EmojiProps>> = {
+const EMOJI_COMPONENTS: Record<EmojiVariant, ComponentType<EmojiProps>> = {
   poker: EmojiPoker,
   angry: EmojiAngry,
   cool: EmojiCool,
@@ -50,10 +50,11 @@ const EMOJI_COMPONENTS: Record<EmojiKey, ComponentType<EmojiProps>> = {
 
 export const Emoji = (props: EmojiProps) => {
   // Props
-  const { emojiKey = "poker", colorPalette = "neutral", ...restProps } = props;
+  const { variant = "poker", ...restProps } = props;
 
   // Derived Values
-  const SelectedEmoji = EMOJI_COMPONENTS[emojiKey] ?? EmojiPoker;
+  const SelectedEmoji = EMOJI_COMPONENTS[variant] ?? EmojiPoker;
 
-  return <SelectedEmoji colorPalette={colorPalette} {...restProps} />;
+  return <SelectedEmoji {...restProps} />;
 };
+

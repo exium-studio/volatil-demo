@@ -1,17 +1,19 @@
 // src/design-system/components/emoji/ui/emoji.poker.tsx
 
 import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
+import { Center } from "@/design-system/components/layout/ui/center";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";
 
 export const EmojiPoker = (props: EmojiProps) => {
   // Props
-  const { colorPalette = "gray", boxSize = 24 } = props;
+  const { colorPalette = "gray", boxSize = 24, ...restProps } = props;
 
   // Hooks
   const { muted, emphasized, solid } = useEmojiColors(colorPalette);
 
   return (
-    <svg
+    <Center {...restProps}>
+      <svg
       xmlns={"http://www.w3.org/2000/svg"}
       xmlSpace={"preserve"}
       width={boxSize}
@@ -37,5 +39,6 @@ export const EmojiPoker = (props: EmojiProps) => {
         />
       </g>
     </svg>
+    </Center>
   );
 };

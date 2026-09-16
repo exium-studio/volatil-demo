@@ -13,7 +13,7 @@ import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Steps } from "@/design-system/components/disclosure/ui/steps";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import type { EmojiKey } from "@/design-system/components/emoji/types/emoji.type";
+import type { EmojiVariant } from "@/design-system/components/emoji/types/emoji.type";
 import { Emoji } from "@/design-system/components/emoji/ui/emoji";
 import { EmojiPoker } from "@/design-system/components/emoji/ui/emoji.poker";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
@@ -1518,14 +1518,14 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       'import { EmojiSmile, EmojiHappy, EmojiAngry, EmojiCry, EmojiSurprised, EmojiThinking } from "@/design-system/components/emoji";',
     component: EmojiPoker,
     defaultProps: {
-      emojiKey: "poker",
+      variant: "poker",
       colorPalette: "neutral",
       boxSize: 80,
     },
     propsSpec: [
       {
-        name: "emojiKey",
-        type: "EmojiKey",
+        name: "variant",
+        type: "EmojiVariant",
         defaultValue: "poker",
         description: "Varian sliced emoji SVG.",
         controlKind: "select",
@@ -1571,16 +1571,17 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     renderPlayground: (props) => {
       const colorPalette = (props.colorPalette as string) || "neutral";
       const boxSize = (props.boxSize as number) || 24;
-      const emojiKey = (props.emojiKey as EmojiKey) || "poker";
+      const variant = (props.variant as EmojiVariant) || "poker";
 
       return (
         <Emoji
-          emojiKey={emojiKey}
+          variant={variant}
           boxSize={boxSize}
           colorPalette={colorPalette}
         />
       );
     },
+
   },
 
   focus_alert: {

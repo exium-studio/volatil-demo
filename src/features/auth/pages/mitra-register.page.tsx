@@ -181,6 +181,7 @@ export const MitraRegisterPage = () => {
                 <P fontWeight={"semibold"} fontSize={"md"}>
                   {"Formulir Pendaftaran & Berkas Dokumen Kemitraan"}
                 </P>
+
                 <P fontSize={"sm"} color={"fg.muted"} maxW={"560px"}>
                   {
                     "Lengkapi data identitas instansi pemohon serta unggah seluruh dokumen persyaratan sesuai ketentuan Kementerian ATR/BPN."
@@ -350,7 +351,7 @@ export const MitraRegisterPage = () => {
                     </P>
                   </HStack>
 
-                  <Alert.Root status={"info"} size={"sm"} mb={3}>
+                  <Alert.Root colorPalette={"orange"} size={"sm"} mb={3}>
                     <Alert.Indicator />
                     <Alert.Content>
                       <Alert.Description>
@@ -524,7 +525,7 @@ export const MitraRegisterPage = () => {
                 </Button>
               </HStack>
 
-              <HStack gap={2} justify={"center"}>
+              <HStack align={"center"} justify={"center"} gap={2}>
                 <AppIcon
                   icon={ShieldCheckIcon}
                   color={"fg.subtle"}
