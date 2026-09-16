@@ -23,6 +23,7 @@ import type { TransactionOrderItem } from "@/features/mitra/transaction-history/
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { ORDER_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { t } from "@/shared/libs/i18n";
 import type { OrderStatus } from "@/shared/types/status.type";
 import { back } from "@/shared/utils/client/navigation";
@@ -33,14 +34,9 @@ import {
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
-  CheckIcon,
-  ClockIcon,
   CreditCardIcon,
   Layers2Icon,
-  LoaderIcon,
   RotateCcwIcon,
-  TimerOffIcon,
-  XIcon,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -99,6 +95,142 @@ export const TransactionDetailModalContent = (
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  const isPaid = transaction.transactionStatus === "paid";
+  const isExpired = transaction.transactionStatus === "expired";
+  const isRefunded = transaction.transactionStatus === "refunded";
+  const isPayable = !isPaid && !isRefunded && !isExpired;
+  const targetExpiry = transaction.billingExpiredAt || transaction.expiredAt;
+
+  const effectiveOrderStatus: OrderStatus | undefined =
+    transaction.transactionStatus === "expired" &&
+    (!transaction.orderStatus || transaction.orderStatus === "pending_payment")
+      ? "rejected"
+      : transaction.orderStatus;
+
+  const timelineSteps = useMemo(() => {
+    const isReady = effectiveOrderStatus === "ready";
+    const isProcessing = effectiveOrderStatus === "processing";
+    const isPendingReview = effectiveOrderStatus === "pending_review";
+    const isRejected = effectiveOrderStatus === "rejected";
+
+    return [
+      {
+        id: "preparing" as OrderStatus,
+        title: "Transaksi Dibuat",
+        description: formatUtcDateTime(transaction.createdAt, preferredTimezone),
+        icon: ORDER_STATUS_MAP.ready.icon,
+        colorPalette: ORDER_STATUS_MAP.ready.colorPalette,
+        isMuted: false,
+      },
+      {
+        id: "pending_payment" as OrderStatus,
+        title: isPaid
+          ? "Pembayaran Terverifikasi"
+          : isExpired
+            ? "Pembayaran Kedaluwarsa"
+            : isRefunded
+              ? "Pembayaran Dikembalikan"
+              : ORDER_STATUS_MAP.pending_payment.label,
+        description: isPaid
+          ? transaction.paidAt
+            ? formatUtcDateTime(transaction.paidAt, preferredTimezone)
+            : `Terbayar (${transaction.paymentMethod || "MPN"})`
+          : isExpired
+            ? "Batas waktu pembayaran habis"
+            : isRefunded
+              ? "Dana transaksi telah dikembalikan"
+              : transaction.billingCode
+                ? `Billing: ${transaction.billingCode}`
+                : "Menunggu pembayaran",
+        icon: isPaid
+          ? ORDER_STATUS_MAP.paid.icon
+          : isExpired
+            ? ORDER_STATUS_MAP.rejected.icon
+            : isRefunded
+              ? RotateCcwIcon
+              : ORDER_STATUS_MAP.pending_payment.icon,
+        colorPalette: isPaid
+          ? ORDER_STATUS_MAP.ready.colorPalette
+          : isExpired
+            ? ORDER_STATUS_MAP.rejected.colorPalette
+            : isRefunded
+              ? "purple"
+              : ORDER_STATUS_MAP.pending_payment.colorPalette,
+        isMuted: false,
+      },
+      {
+        id: "pending_review" as OrderStatus,
+        title: "Validasi Admin Internal",
+        description:
+          isReady || isProcessing
+            ? "Pesanan disetujui admin internal"
+            : isPendingReview
+              ? ORDER_STATUS_MAP.pending_review.label
+              : isRejected
+                ? isExpired
+                  ? "Dibatalkan otomatis (kedaluwarsa)"
+                  : "Pesanan ditolak oleh admin"
+                : isPaid
+                  ? "Menunggu validasi admin"
+                  : "Diproses setelah pembayaran",
+        icon:
+          isReady || isProcessing
+            ? ORDER_STATUS_MAP.ready.icon
+            : isPendingReview
+              ? ORDER_STATUS_MAP.pending_review.icon
+              : isRejected
+                ? ORDER_STATUS_MAP.rejected.icon
+                : ORDER_STATUS_MAP.pending_payment.icon,
+        colorPalette:
+          isReady || isProcessing
+            ? ORDER_STATUS_MAP.ready.colorPalette
+            : isPendingReview
+              ? ORDER_STATUS_MAP.pending_review.colorPalette
+              : isRejected
+                ? ORDER_STATUS_MAP.rejected.colorPalette
+                : "gray",
+        isMuted: !isPaid && !isExpired && !isRefunded,
+      },
+      {
+        id: "processing" as OrderStatus,
+        title: ORDER_STATUS_MAP.processing.label,
+        description: isReady
+          ? "Sinkronisasi layer spasial berhasil"
+          : isProcessing
+            ? "Sistem memproses sinkronisasi layer di background"
+            : "Diproses setelah validasi admin",
+        icon: isReady
+          ? ORDER_STATUS_MAP.ready.icon
+          : isProcessing
+            ? ORDER_STATUS_MAP.processing.icon
+            : Layers2Icon,
+        colorPalette: isReady
+          ? ORDER_STATUS_MAP.ready.colorPalette
+          : isProcessing
+            ? ORDER_STATUS_MAP.processing.colorPalette
+            : "gray",
+        isMuted: !isProcessing && !isReady,
+      },
+      {
+        id: "ready" as OrderStatus,
+        title: ORDER_STATUS_MAP.ready.label,
+        description: isReady
+          ? "Layer IGT aktif dan dapat diakses di menu Data Saya"
+          : "Layanan WMS siap diakses setelah selesai diproses",
+        icon: ORDER_STATUS_MAP.ready.icon,
+        colorPalette: isReady ? ORDER_STATUS_MAP.ready.colorPalette : "gray",
+        isMuted: !isReady,
+      },
+    ];
+  }, [
+    effectiveOrderStatus,
+    isExpired,
+    isPaid,
+    isRefunded,
+    preferredTimezone,
+    transaction,
+  ]);
+
   const orderItemHeaders: FormattedTableHeader[] = useMemo(
     () => [
       { th: "Layer IGT", sortable: true },
@@ -156,12 +288,6 @@ export const TransactionDetailModalContent = (
     });
   }, [transaction]);
 
-  const isPaid = transaction.transactionStatus === "paid";
-  const isExpired = transaction.transactionStatus === "expired";
-  const isRefunded = transaction.transactionStatus === "refunded";
-  const isPayable = !isPaid && !isRefunded && !isExpired;
-  const targetExpiry = transaction.billingExpiredAt || transaction.expiredAt;
-
   const handleGoToBilling = () => {
     if (transaction.billingCode) {
       back();
@@ -172,12 +298,6 @@ export const TransactionDetailModalContent = (
       });
     }
   };
-
-  const effectiveOrderStatus: OrderStatus | undefined =
-    transaction.transactionStatus === "expired" &&
-    (!transaction.orderStatus || transaction.orderStatus === "pending_payment")
-      ? "rejected"
-      : transaction.orderStatus;
 
   return (
     <Modal.Content>
@@ -198,296 +318,47 @@ export const TransactionDetailModalContent = (
           {/* Top Section: Responsive SimpleGrid with Timeline & Metadata Details */}
           <Skeleton loaded={isMounted} w={"full"} px={"md"} pt={"sm"}>
             <SimpleGrid columns={[1, 1, 2]} gap={"sm"} p={"md"}>
-              {/* Kiri: Timeline Riwayat Alur Pesanan */}
-              <VStack
-                align={"stretch"}
-                gap={"xs"}
-                p={"sm"}
-                bg={"bg.subtle"}
-                rounded={"md"}
-                border={"1px solid"}
-                borderColor={"border.subtle"}
-              >
-                <HStack justify={"space-between"} align={"center"} pb={"2xs"}>
-                  <P fontSize={"xs"} fontWeight={"semibold"} color={"fg.muted"}>
-                    {"Riwayat Alur Pesanan"}
-                  </P>
-
-                  <P fontSize={"xs"} fontWeight={"semibold"}>
-                    <FormatNumber
-                      value={transaction.totalAmount}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </P>
-                </HStack>
+              {/* Timeline Riwayat Alur Pesanan */}
+              <VStack gap={"md"}>
+                <P fontWeight={"semibold"}>{"Riwayat Alur Pesanan"}</P>
 
                 <Timeline.Root size={"sm"}>
-                  {/* Step 1: Transaksi Dibuat */}
-                  <Timeline.Item>
-                    <Timeline.Connector>
-                      <Timeline.Separator />
-                      <Timeline.Indicator colorPalette={"green"}>
-                        <AppIcon icon={CheckIcon} size={"xs"} />
-                      </Timeline.Indicator>
-                    </Timeline.Connector>
-                    <Timeline.Content>
-                      <Timeline.Title fontSize={"xs"} fontWeight={"semibold"}>
-                        {"Transaksi Dibuat"}
-                      </Timeline.Title>
-                      <Timeline.Description
-                        fontSize={"2xs"}
-                        color={"fg.subtle"}
-                      >
-                        {formatUtcDateTime(
-                          transaction.createdAt,
-                          preferredTimezone,
-                        )}
-                      </Timeline.Description>
-                    </Timeline.Content>
-                  </Timeline.Item>
+                  {timelineSteps.map((step) => (
+                    <Timeline.Item
+                      key={step.id}
+                      opacity={step.isMuted ? 0.4 : 1}
+                    >
+                      <Timeline.Connector>
+                        <Timeline.Separator />
 
-                  {/* Step 2: Pembayaran */}
-                  <Timeline.Item>
-                    <Timeline.Connector>
-                      <Timeline.Separator />
-                      <Timeline.Indicator
-                        colorPalette={
-                          isPaid
-                            ? "green"
-                            : isExpired
-                              ? "red"
-                              : isRefunded
-                                ? "purple"
-                                : "orange"
-                        }
-                      >
-                        <AppIcon
-                          icon={
-                            isPaid
-                              ? CheckIcon
-                              : isExpired
-                                ? TimerOffIcon
-                                : isRefunded
-                                  ? RotateCcwIcon
-                                  : ClockIcon
-                          }
-                          size={"xs"}
-                        />
-                      </Timeline.Indicator>
-                    </Timeline.Connector>
-                    <Timeline.Content>
-                      <Timeline.Title fontSize={"xs"} fontWeight={"semibold"}>
-                        {isPaid
-                          ? "Pembayaran Terverifikasi"
-                          : isExpired
-                            ? "Pembayaran Kedaluwarsa"
-                            : isRefunded
-                              ? "Pembayaran Dikembalikan"
-                              : "Menunggu Pembayaran"}
-                      </Timeline.Title>
-                      <Timeline.Description
-                        fontSize={"2xs"}
-                        color={"fg.subtle"}
-                      >
-                        {isPaid
-                          ? transaction.paidAt
-                            ? formatUtcDateTime(
-                                transaction.paidAt,
-                                preferredTimezone,
-                              )
-                            : `Terbayar (${transaction.paymentMethod || "MPN"})`
-                          : isExpired
-                            ? "Batas waktu pembayaran habis"
-                            : isRefunded
-                              ? "Dana transaksi telah dikembalikan"
-                              : transaction.billingCode
-                                ? `Billing: ${transaction.billingCode}`
-                                : "Menunggu pembayaran"}
-                      </Timeline.Description>
-                    </Timeline.Content>
-                  </Timeline.Item>
+                        <Timeline.Indicator colorPalette={step.colorPalette}>
+                          <AppIcon icon={step.icon} size={"xs"} />
+                        </Timeline.Indicator>
+                      </Timeline.Connector>
 
-                  {/* Step 3: Validasi Admin Internal */}
-                  <Timeline.Item
-                    opacity={!isPaid && !isExpired && !isRefunded ? 0.4 : 1}
-                  >
-                    <Timeline.Connector>
-                      <Timeline.Separator />
-                      <Timeline.Indicator
-                        colorPalette={
-                          effectiveOrderStatus === "ready" ||
-                          effectiveOrderStatus === "processing"
-                            ? "green"
-                            : effectiveOrderStatus === "pending_review"
-                              ? "orange"
-                              : effectiveOrderStatus === "rejected"
-                                ? "red"
-                                : "gray"
-                        }
-                      >
-                        <AppIcon
-                          icon={
-                            effectiveOrderStatus === "ready" ||
-                            effectiveOrderStatus === "processing"
-                              ? CheckIcon
-                              : effectiveOrderStatus === "pending_review"
-                                ? LoaderIcon
-                                : effectiveOrderStatus === "rejected"
-                                  ? XIcon
-                                  : ClockIcon
-                          }
-                          size={"xs"}
-                        />
-                      </Timeline.Indicator>
-                    </Timeline.Connector>
-                    <Timeline.Content>
-                      <Timeline.Title
-                        fontSize={"xs"}
-                        fontWeight={"semibold"}
-                        color={
-                          !isPaid && !isExpired && !isRefunded
-                            ? "fg.subtle"
-                            : undefined
-                        }
-                      >
-                        {"Validasi Admin Internal"}
-                      </Timeline.Title>
-                      <Timeline.Description
-                        fontSize={"2xs"}
-                        color={"fg.subtle"}
-                      >
-                        {effectiveOrderStatus === "ready" ||
-                        effectiveOrderStatus === "processing"
-                          ? "Pesanan disetujui admin internal"
-                          : effectiveOrderStatus === "pending_review"
-                            ? "Menunggu persetujuan admin internal"
-                            : effectiveOrderStatus === "rejected"
-                              ? isExpired
-                                ? "Dibatalkan otomatis (kedaluwarsa)"
-                                : "Pesanan ditolak oleh admin"
-                              : isPaid
-                                ? "Menunggu validasi admin"
-                                : "Diproses setelah pembayaran"}
-                      </Timeline.Description>
-                    </Timeline.Content>
-                  </Timeline.Item>
+                      <Timeline.Content>
+                        <Timeline.Title
+                          fontSize={"xs"}
+                          fontWeight={"semibold"}
+                          color={step.isMuted ? "fg.subtle" : undefined}
+                        >
+                          {step.title}
+                        </Timeline.Title>
 
-                  {/* Step 4: Penyiapan Layanan WMS */}
-                  <Timeline.Item
-                    opacity={
-                      effectiveOrderStatus !== "processing" &&
-                      effectiveOrderStatus !== "ready"
-                        ? 0.4
-                        : 1
-                    }
-                  >
-                    <Timeline.Connector>
-                      <Timeline.Separator />
-                      <Timeline.Indicator
-                        colorPalette={
-                          effectiveOrderStatus === "ready"
-                            ? "green"
-                            : effectiveOrderStatus === "processing"
-                              ? "purple"
-                              : "gray"
-                        }
-                      >
-                        <AppIcon
-                          icon={
-                            effectiveOrderStatus === "ready"
-                              ? CheckIcon
-                              : effectiveOrderStatus === "processing"
-                                ? LoaderIcon
-                                : Layers2Icon
-                          }
-                          size={"xs"}
-                        />
-                      </Timeline.Indicator>
-                    </Timeline.Connector>
-                    <Timeline.Content>
-                      <Timeline.Title
-                        fontSize={"xs"}
-                        fontWeight={"semibold"}
-                        color={
-                          effectiveOrderStatus !== "processing" &&
-                          effectiveOrderStatus !== "ready"
-                            ? "fg.subtle"
-                            : undefined
-                        }
-                      >
-                        {"Penyiapan Layanan WMS"}
-                      </Timeline.Title>
-                      <Timeline.Description
-                        fontSize={"2xs"}
-                        color={"fg.subtle"}
-                      >
-                        {effectiveOrderStatus === "ready"
-                          ? "Sinkronisasi layer spasial berhasil"
-                          : effectiveOrderStatus === "processing"
-                            ? "Sistem memproses sinkronisasi layer di background"
-                            : "Diproses setelah validasi admin"}
-                      </Timeline.Description>
-                    </Timeline.Content>
-                  </Timeline.Item>
-
-                  {/* Step 5: Siap Digunakan */}
-                  <Timeline.Item
-                    opacity={effectiveOrderStatus !== "ready" ? 0.4 : 1}
-                  >
-                    <Timeline.Connector>
-                      <Timeline.Separator />
-                      <Timeline.Indicator
-                        colorPalette={
-                          effectiveOrderStatus === "ready" ? "green" : "gray"
-                        }
-                      >
-                        <AppIcon
-                          icon={
-                            effectiveOrderStatus === "ready"
-                              ? CheckIcon
-                              : CheckIcon
-                          }
-                          size={"xs"}
-                        />
-                      </Timeline.Indicator>
-                    </Timeline.Connector>
-                    <Timeline.Content>
-                      <Timeline.Title
-                        fontSize={"xs"}
-                        fontWeight={"semibold"}
-                        color={
-                          effectiveOrderStatus !== "ready"
-                            ? "fg.subtle"
-                            : undefined
-                        }
-                      >
-                        {"Layanan Siap Digunakan"}
-                      </Timeline.Title>
-                      <Timeline.Description
-                        fontSize={"2xs"}
-                        color={"fg.subtle"}
-                      >
-                        {effectiveOrderStatus === "ready"
-                          ? "Layer IGT aktif dan dapat diakses di menu Data Saya"
-                          : "Layanan WMS siap diakses setelah selesai diproses"}
-                      </Timeline.Description>
-                    </Timeline.Content>
-                  </Timeline.Item>
+                        <Timeline.Description
+                          fontSize={"2xs"}
+                          color={"fg.subtle"}
+                        >
+                          {step.description}
+                        </Timeline.Description>
+                      </Timeline.Content>
+                    </Timeline.Item>
+                  ))}
                 </Timeline.Root>
               </VStack>
 
               {/* Kanan: Rincian Metadata Transaksi & Pesanan */}
-              <VStack
-                align={"stretch"}
-                gap={"md"}
-                bg={"bg.body"}
-                rounded={"md"}
-                p={"sm"}
-                border={"1px solid"}
-                borderColor={"border.subtle"}
-              >
+              <VStack gap={"md"}>
                 <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Nomor Pesanan"}
@@ -568,6 +439,20 @@ export const TransactionDetailModalContent = (
                     </P>
                   </VStack>
                 )}
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Total Pembayaran"}
+                  </P>
+                  <P fontSize={"sm"} fontWeight={"medium"}>
+                    <FormatNumber
+                      value={transaction.totalAmount}
+                      style={"currency"}
+                      currency={"IDR"}
+                      maximumFractionDigits={0}
+                    />
+                  </P>
+                </VStack>
               </VStack>
             </SimpleGrid>
           </Skeleton>
