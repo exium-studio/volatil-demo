@@ -2,6 +2,7 @@
 
 import {
   approveOrderApi,
+  createInternalOrdersEventSource,
   createOrderProvisionEventSource,
   fetchInternalOrderDetailApi,
   fetchInternalOrdersApi,
@@ -467,4 +468,47 @@ export const useOrdersProvisionStream = (processingOrderIds: string[]) => {
     };
   }, [processingOrderIds, queryClient]);
 };
+
+/**
+ * Hook to listen to global internal review order stream (e.g. when Mitra creates/pays a new data request).
+ * Invalidate internal orders queries on incoming events.
+ */
+export const useInternalOrdersStream = () => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let eventSource: EventSource | null = null;
+    try {
+      eventSource = createInternalOrdersEventSource();
+
+      const handleOrderUpdate = () => {
+        void queryClient.invalidateQueries({
+          queryKey: ["internal", "orders"],
+        });
+        void queryClient.invalidateQueries({
+          queryKey: queryKeys.internal.home.all,
+        });
+      };
+
+      // Listen to specific SSE event types from backend
+      eventSource.addEventListener("order_created", handleOrderUpdate);
+      eventSource.addEventListener("order_paid", handleOrderUpdate);
+      eventSource.addEventListener("order_updated", handleOrderUpdate);
+      eventSource.addEventListener("message", handleOrderUpdate);
+
+      eventSource.onerror = () => {
+        // EventSource will automatically retry connecting
+      };
+    } catch (err) {
+      console.error("Failed to connect to internal orders SSE stream:", err);
+    }
+
+    return () => {
+      eventSource?.close();
+    };
+  }, [queryClient]);
+};
+
 

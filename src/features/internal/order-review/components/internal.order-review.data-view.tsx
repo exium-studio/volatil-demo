@@ -23,6 +23,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import {
   useInternalOrdersQuery,
+  useInternalOrdersStream,
   useOrdersProvisionStream,
   useProvisionOrder,
 } from "@/features/internal/order-review/hooks/use-order-review";
@@ -92,6 +93,9 @@ export const InternalOrderReviewDataView = () => {
 
   // Background SSE listener for orders currently in 'processing' status
   useOrdersProvisionStream(processingOrderIds);
+
+  // Global SSE listener for incoming new paid/created orders from Mitra
+  useInternalOrdersStream();
 
   // Derived Values - Headers & Items for DataList
   const dataList = useMemo(() => {

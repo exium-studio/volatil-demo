@@ -74,9 +74,10 @@ const normalizeCartOrderItem = (raw: any): CartOrderItem => {
         : undefined),
     externalWfsUrl: raw.externalWfsUrl ?? raw.external_wfs_url ?? null,
     externalWmsUrl: raw.externalWmsUrl ?? raw.external_wms_url ?? null,
-    bbox: Array.isArray(raw.bbox) && raw.bbox.length === 4
-      ? (raw.bbox as [number, number, number, number])
-      : undefined,
+    bbox:
+      Array.isArray(raw.bbox) && raw.bbox.length === 4
+        ? (raw.bbox as [number, number, number, number])
+        : undefined,
   };
 };
 
@@ -221,25 +222,18 @@ export const fetchInternalOrderDetailApi = async (
         ? response.data
         : response;
 
-    if (
-      rawData &&
-      (rawData.orderId || rawData.order_id || rawData.id)
-    ) {
+    if (rawData && (rawData.orderId || rawData.order_id || rawData.id)) {
       return normalizeInternalOrderItem(rawData);
     }
 
     if (isDummyDataEnabled()) {
-      return (
-        DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId) ?? null
-      );
+      return DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId) ?? null;
     }
 
     return null;
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return (
-        DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId) ?? null
-      );
+      return DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId) ?? null;
     }
     throw error;
   }
@@ -284,6 +278,19 @@ export const createOrderProvisionEventSource = (
 ): EventSource => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
   const endpoint = `/api/mitra/orders/${orderId}/provision/stream`;
+
+  // EventSource does not support custom headers — send auth token as query param
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const query = token ? `?token=${encodeURIComponent(token)}` : "";
+
+  const fullUrl = `${baseUrl}${endpoint}${query}`;
+  return new EventSource(fullUrl, { withCredentials: true });
+};
+
+export const createInternalOrdersEventSource = (): EventSource => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const endpoint = "/api/internal/orders/stream";
 
   // EventSource does not support custom headers — send auth token as query param
   const token =
