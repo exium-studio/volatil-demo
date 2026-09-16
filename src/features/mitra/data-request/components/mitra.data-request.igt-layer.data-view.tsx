@@ -43,7 +43,6 @@ import {
   ShoppingCartIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
-  XIcon,
 } from "lucide-react";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
 import { useKawasanCoverage } from "@/features/mitra/data-request/hooks/use-kawasan-coverage";
@@ -59,7 +58,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
       onSelectIgtLayer,
       onApplyFilter,
       showFilter = true,
-      onCancelCoverage,
     } = props;
 
     // Stores
@@ -532,12 +530,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const isKawasanOnlyDisabled =
       isBaseCartDisabled || !summaryData.hasKawasanLayers || isKawasanBelowMin;
 
-    // Handlers — Cancel coverage calculation
-    const handleCancelCoverage = () => {
-      kawasanCoverage.cancel?.();
-      onCancelCoverage?.();
-    };
-
     return (
       <VStack
         flex={1}
@@ -620,9 +612,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         {kawasanCoverage.isLoading && (
           <HStack
             align={"center"}
-            justify={"space-between"}
-            pl={"md"}
-            pr={"xs"}
+            px={"md"}
             py={"xs"}
             bg={"blue.subtle"}
             borderBottomWidth={"1px"}
@@ -644,20 +634,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 </P>
               </VStack>
             </HStack>
-
-            <Button
-              variant={"ghost"}
-              colorPalette={"blue"}
-              pl={2}
-              _hover={{
-                bg: "blue.muted",
-              }}
-              size={"xs"}
-              onClick={handleCancelCoverage}
-            >
-              <AppIcon icon={XIcon} />
-              {"Batal"}
-            </Button>
           </HStack>
         )}
 

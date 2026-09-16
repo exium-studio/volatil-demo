@@ -228,14 +228,13 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
       {...restProps}
     >
       <HStack
-        align={"center"}
         gap={"md"}
         p={"md"}
         bg={getAlertBg()}
         rounded={theme.radii.container}
         color={getAlertColor()}
       >
-        <AppIcon icon={InfoIcon} />
+        <AppIcon icon={InfoIcon} mt={"2px"} />
         <P>{getGuideMessage()}</P>
       </HStack>
     </VStack>
