@@ -5,7 +5,7 @@ import { AppContentContainer } from "@/design-system/components/layout/ui/page-c
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { TransactionHistoryDataView } from "@/features/mitra/transaction-history/components/transaction-history.data-view";
+import { TransactionHistoryDataView } from "@/features/mitra/transaction-history/components/mitra.transaction-history.data-view";
 
 export const MitraTransactionHistoryPage = () => {
   return (

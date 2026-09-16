@@ -1,6 +1,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Timeline } from "@/design-system/components/data-display/ui/timeline";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
@@ -15,10 +16,10 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import type {
-  InternalTransactionDetailModalContentProps,
-  InternalTransactionDetailTriggerProps,
-} from "@/features/internal/statistik-pesanan/types/internal.transaction-detail-modal.type";
-import type { InternalTransactionOrderItem } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
+  TransactionDetailModalContentProps,
+  TransactionDetailTriggerProps,
+} from "@/features/mitra/transaction-history/types/transaction-history.modal.type";
+import type { TransactionOrderItem } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
@@ -30,10 +31,11 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
+import { useNavigate } from "@tanstack/react-router";
 import {
   CheckIcon,
   ClockIcon,
-  EyeIcon,
+  CreditCardIcon,
   Layers2Icon,
   LoaderIcon,
   RotateCcwIcon,
@@ -42,12 +44,12 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 
-export const InternalTransactionDetailTrigger = (
-  props: InternalTransactionDetailTriggerProps,
+export const TransactionDetailTrigger = (
+  props: TransactionDetailTriggerProps,
 ) => {
   // Props
   const {
-    modalKey: customModalKey = "internal-transaction-detail",
+    modalKey: customModalKey = "transaction-detail",
     transaction,
     children,
   } = props;
@@ -71,29 +73,23 @@ export const InternalTransactionDetailTrigger = (
       close={close}
       size={"xl"}
     >
-      <Modal.Trigger>
-        {children ? (
-          children
-        ) : (
-          <Button size={"xs"} variant={"subtle"} colorPalette={"blue"}>
-            <AppIcon icon={EyeIcon} size={"xs"} />
-            {"Detail"}
-          </Button>
-        )}
-      </Modal.Trigger>
+      <Modal.Trigger>{children}</Modal.Trigger>
 
       {transaction && isMounted && (
-        <InternalTransactionDetailModalContent transaction={transaction} />
+        <TransactionDetailModalContent transaction={transaction} />
       )}
     </Modal.Root>
   );
 };
 
-export const InternalTransactionDetailModalContent = (
-  props: InternalTransactionDetailModalContentProps,
+export const TransactionDetailModalContent = (
+  props: TransactionDetailModalContentProps,
 ) => {
   // Props
   const { transaction } = props;
+
+  // Navigation
+  const navigate = useNavigate();
 
   // Hooks
   const isMounted = useMountTimeout({
@@ -116,11 +112,11 @@ export const InternalTransactionDetailModalContent = (
   const orderItemsData = useMemo(() => {
     if (!transaction?.items) return [];
 
-    return transaction.items.map((item: InternalTransactionOrderItem) => {
+    return transaction.items.map((item: TransactionOrderItem) => {
       const isBidang = item.spatialBasis === "bidang";
       const qty = isBidang
-        ? `${formatNumber(item.snapshotFeaturesCount)} bidang`
-        : `${formatNumber(item.snapshotAreaHa) ?? 0} ha`;
+        ? `${formatNumber(item.featuresCount)} bidang`
+        : `${formatNumber(item.areaHa) ?? 0} ha`;
 
       return {
         id: item.id,
@@ -163,6 +159,19 @@ export const InternalTransactionDetailModalContent = (
   const isPaid = transaction.transactionStatus === "paid";
   const isExpired = transaction.transactionStatus === "expired";
   const isRefunded = transaction.transactionStatus === "refunded";
+  const isPayable = !isPaid && !isRefunded && !isExpired;
+  const targetExpiry = transaction.billingExpiredAt || transaction.expiredAt;
+
+  const handleGoToBilling = () => {
+    if (transaction.billingCode) {
+      back();
+      void navigate({
+        to: "/mitra/billing/$billingCode",
+        params: { billingCode: transaction.billingCode },
+        search: { orderId: transaction.orderId || transaction.id },
+      });
+    }
+  };
 
   const effectiveOrderStatus: OrderStatus | undefined =
     transaction.transactionStatus === "expired" &&
@@ -353,7 +362,7 @@ export const InternalTransactionDetailModalContent = (
                         effectiveOrderStatus === "processing"
                           ? "Pesanan disetujui admin internal"
                           : effectiveOrderStatus === "pending_review"
-                            ? "Menunggu tindakan review admin"
+                            ? "Menunggu persetujuan admin internal"
                             : effectiveOrderStatus === "rejected"
                               ? isExpired
                                 ? "Dibatalkan otomatis (kedaluwarsa)"
@@ -461,7 +470,7 @@ export const InternalTransactionDetailModalContent = (
                         color={"fg.subtle"}
                       >
                         {effectiveOrderStatus === "ready"
-                          ? "Layer IGT aktif dan dapat diakses oleh Mitra"
+                          ? "Layer IGT aktif dan dapat diakses di menu Data Saya"
                           : "Layanan WMS siap diakses setelah selesai diproses"}
                       </Timeline.Description>
                     </Timeline.Content>
@@ -472,42 +481,13 @@ export const InternalTransactionDetailModalContent = (
               {/* Kanan: Rincian Metadata Transaksi & Pesanan */}
               <VStack
                 align={"stretch"}
-                gap={"xs"}
+                gap={"md"}
                 bg={"bg.body"}
                 rounded={"md"}
                 p={"sm"}
                 border={"1px solid"}
                 borderColor={"border.subtle"}
               >
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Nama Mitra"}
-                  </P>
-                  <P fontSize={"sm"} fontWeight={"medium"}>
-                    {transaction.mitra.name}
-                  </P>
-                </VStack>
-
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"Email Mitra"}
-                  </P>
-                  <P fontSize={"sm"} color={"fg.muted"}>
-                    {transaction.mitra.email}
-                  </P>
-                </VStack>
-
-                {transaction.mitra.agencyOrCompany && (
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Instansi / Perusahaan"}
-                    </P>
-                    <P fontSize={"sm"} fontWeight={"medium"}>
-                      {transaction.mitra.agencyOrCompany}
-                    </P>
-                  </VStack>
-                )}
-
                 <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Nomor Pesanan"}
@@ -542,6 +522,19 @@ export const InternalTransactionDetailModalContent = (
                     />
                   </HStack>
                 </VStack>
+
+                {targetExpiry && !isPaid && !isRefunded && (
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Sisa Waktu Pembayaran"}
+                    </P>
+                    <Countdown
+                      finishedAt={targetExpiry}
+                      fontWeight={"medium"}
+                      color={isExpired ? "fg.subtle" : "orange.fg"}
+                    />
+                  </VStack>
+                )}
 
                 <VStack align={"start"} gap={"2xs"}>
                   <P fontSize={"xs"} color={"fg.subtle"}>
@@ -582,7 +575,7 @@ export const InternalTransactionDetailModalContent = (
           {/* Order Items Table */}
           <Skeleton loaded={isMounted} px={"md"} pb={"md"}>
             <VStack align={"stretch"} gap={"xs"} pt={"xs"}>
-              <Box px={"xs"}>
+              <Box px={"md"}>
                 <P fontSize={"sm"} fontWeight={"semibold"}>
                   {`Daftar Pesanan Layer IGT (${transaction.items.length} Item)`}
                 </P>
@@ -609,9 +602,18 @@ export const InternalTransactionDetailModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <Button w={"full"} onClick={back}>
-          {t["action.close"]()}
-        </Button>
+        <HStack gap={"sm"} w={"full"}>
+          <Button flex={1} onClick={back}>
+            {t["action.close"]()}
+          </Button>
+
+          {isPayable && (
+            <Button primary={true} flex={1} onClick={handleGoToBilling}>
+              <AppIcon icon={CreditCardIcon} />
+              {"Bayar Sekarang"}
+            </Button>
+          )}
+        </HStack>
       </Modal.Footer>
     </Modal.Content>
   );

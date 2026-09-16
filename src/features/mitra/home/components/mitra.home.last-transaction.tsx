@@ -23,7 +23,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import type { MitraHomeLastTransactionProps } from "@/features/mitra/home/types/mitra.home.last-transaction.type";
-import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/transaction-history.detail.modal";
+import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/mitra.transaction-history.detail.modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type { TransactionRecord } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
@@ -35,7 +35,12 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ArrowRightIcon, CreditCardIcon, EyeIcon, HistoryIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  CreditCardIcon,
+  EyeIcon,
+  HistoryIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export const MitraHomeLastTransaction = (
@@ -77,11 +82,7 @@ const MitraHomeLastTransactionHeader = () => {
         </InfoTip>
       </HStack>
 
-      <Button
-        asChild={true}
-        variant={"ghost"}
-        size={"xs"}
-      >
+      <Button asChild={true} variant={"ghost"} size={"xs"}>
         <Link to={"/mitra/transaction-history"}>
           {"Lihat Semua"}
           <AppIcon icon={ArrowRightIcon} />
@@ -305,7 +306,9 @@ const MitraHomeLastTransactionDataView = () => {
           <NoDataState
             icon={HistoryIcon}
             title={"Belum Ada Riwayat Transaksi"}
-            description={"Anda belum memiliki riwayat transaksi permintaan data."}
+            description={
+              "Anda belum memiliki riwayat transaksi permintaan data."
+            }
           />
         </Box>
       ) : (

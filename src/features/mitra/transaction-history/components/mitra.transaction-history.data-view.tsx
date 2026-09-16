@@ -1,0 +1,412 @@
+// src/features/mitra/transaction-history/components/transaction-history.data-view.tsx
+
+import { Button } from "@/design-system/components/button/ui/button";
+import type {
+  FormattedListItem,
+  FormattedTableHeader,
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
+import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Box } from "@/design-system/components/layout/ui/box";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
+import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/mitra.transaction-history.detail.modal";
+import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
+import type {
+  TransactionHistoryQueryParams,
+  TransactionRecord,
+} from "@/features/mitra/transaction-history/types/transaction-history.type";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import type {
+  OrderStatus,
+  TransactionStatus,
+} from "@/shared/types/status.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
+import {
+  formatUtcDateTime,
+  getPreferredUserTimezone,
+} from "@/shared/utils/formatter/date.formatter";
+import { useNavigate } from "@tanstack/react-router";
+import { CreditCardIcon, EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
+import { useMemo, useState, useTransition } from "react";
+
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
+
+const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
+
+export const TransactionHistoryDataView = () => {
+  // Navigation
+  const navigate = useNavigate();
+
+  // Transitions
+  const [_isPending, startTransition] = useTransition();
+
+  // States — Centralized query/action parameters
+  const [params, setParams] = useState<TransactionHistoryQueryParams>({
+    page: 1,
+    pageSize: ITEMS_PER_PAGE_DEFAULT,
+    search: "",
+    status: undefined,
+  });
+
+  // Derived Values
+  const debouncedSearch = useDebouncedValue(params.search ?? "", 300);
+  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  // Queries
+  const { transactionHistory, isLoading, isFetching, isError, error, refetch } =
+    useTransactionHistoryQuery({
+      page: params.page,
+      pageSize: params.pageSize,
+      search: debouncedSearch || undefined,
+      status: params.status,
+    });
+
+  // Derived Values - DataList headers & items
+  const dataList = useMemo(() => {
+    const headers: FormattedTableHeader[] = [
+      { th: "No. Transaksi", sortable: true, align: "start" },
+      { th: "No. Pesanan", sortable: true, align: "start" },
+      { th: "Status Pesanan", sortable: true, align: "start" },
+      { th: "Kode Billing", sortable: false, align: "start" },
+      { th: "Waktu Transaksi", sortable: true, align: "start" },
+      { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
+      { th: "Metode", sortable: false, align: "start" },
+      { th: "IGT Dibeli", sortable: false, align: "start" },
+      { th: "Jumlah Layer", sortable: false, align: "start" },
+      { th: "Tipe Seleksi", sortable: false, align: "start" },
+      { th: "Total Nominal", sortable: true, align: "end" },
+    ];
+
+    const items: FormattedListItem<TransactionRecord>[] =
+      transactionHistory.items.map((item: TransactionRecord) => {
+        const itemNames = item.items
+          .map((it) => it.sourceLayerTitle)
+          .join(", ");
+        const targetExpiry = item.billingExpiredAt || item.expiredAt;
+
+        const effectiveOrderStatus: OrderStatus | undefined =
+          item.transactionStatus === "expired" &&
+          (!item.orderStatus || item.orderStatus === "pending_payment")
+            ? "rejected"
+            : item.orderStatus;
+
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: item.transactionNumber,
+              td: <P fontWeight={"semibold"}>{item.transactionNumber}</P>,
+              align: "start" as const,
+            },
+            {
+              value: item.orderNumber,
+              td: <P color={"fg.muted"}>{item.orderNumber}</P>,
+              align: "start" as const,
+            },
+            {
+              value: effectiveOrderStatus ?? "",
+              td: effectiveOrderStatus ? (
+                <OrderStatusBadge showIcon={true}>
+                  {effectiveOrderStatus}
+                </OrderStatusBadge>
+              ) : (
+                <P color={"fg.subtle"}>{"-"}</P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.billingCode,
+              td: (
+                <P>
+                  <TNum>{item.billingCode}</TNum>
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.createdAt,
+              td: (
+                <P whiteSpace={"nowrap"}>
+                  {formatUtcDateTime(item.createdAt, preferredTimezone)}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: targetExpiry ?? "",
+              td:
+                item.transactionStatus !== "paid" &&
+                item.transactionStatus !== "refunded" &&
+                targetExpiry ? (
+                  <Countdown
+                    finishedAt={targetExpiry}
+                    fontWeight={"medium"}
+                    warningThresholdHours={1}
+                    finishColor={"fg.subtle"}
+                  />
+                ) : (
+                  <P color={"fg.subtle"}>{"-"}</P>
+                ),
+              align: "start" as const,
+            },
+            {
+              value: item.paymentMethod,
+              td: item.paymentMethod ? (
+                <Badge variant={"subtle"} colorPalette={"gray"}>
+                  {item.paymentMethod}
+                </Badge>
+              ) : (
+                "-"
+              ),
+              align: "start" as const,
+            },
+            {
+              value: itemNames,
+              td: (
+                <Tooltip content={itemNames || "-"}>
+                  <P lineClamp={2} w={"220px"} title={itemNames}>
+                    {itemNames || "-"}
+                  </P>
+                </Tooltip>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.items.length,
+              td: <P whiteSpace={"nowrap"}>{`${item.items.length} Layer`}</P>,
+              align: "start" as const,
+            },
+            {
+              value: item.selectionType,
+              td: (
+                <SelectionTypeBadge size={"xs"}>
+                  {item.selectionType}
+                </SelectionTypeBadge>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.totalAmount,
+              td: (
+                <P fontWeight={"medium"}>
+                  <FormatNumber
+                    value={item.totalAmount}
+                    style={"currency"}
+                    currency={"IDR"}
+                    maximumFractionDigits={0}
+                  />
+                </P>
+              ),
+              align: "end" as const,
+            },
+          ],
+        };
+      });
+
+    const itemActions: DataViewItemActionsGenerator<TransactionRecord>[] = [
+      {
+        key: "pay-billing",
+        label: "Bayar",
+        icon: CreditCardIcon,
+        hidden: (transaction: TransactionRecord) =>
+          transaction.transactionStatus !== "pending",
+        onClick: (transaction: TransactionRecord) => {
+          if (transaction.billingCode) {
+            void navigate({
+              to: "/mitra/billing/$billingCode",
+              params: { billingCode: transaction.billingCode },
+              search: { orderId: transaction.orderId || transaction.id },
+            });
+          }
+        },
+      },
+      {
+        key: "view-detail",
+        label: "Detail",
+        icon: EyeIcon,
+        modal: {
+          triggerComponent: (transaction: TransactionRecord) => (
+            <TransactionDetailTrigger
+              modalKey={`transaction-detail-${transaction.id}`}
+              transaction={transaction}
+            />
+          ),
+        },
+      },
+    ];
+
+    return {
+      headers,
+      items,
+      batchActions: [],
+      itemActions,
+    };
+  }, [transactionHistory.items, preferredTimezone, navigate]);
+
+  return (
+    <VStack flex={1} overflowY={"auto"} w={"full"}>
+      {/* Header Controls */}
+      <ActionHeaderScrollContainer>
+        <SearchInput
+          value={params.search}
+          onValueChange={(val) => {
+            setParams((prev) => ({ ...prev, search: val, page: 1 }));
+          }}
+          placeholder={"Cari no. transaksi / order / billing..."}
+          maxW={"300px"}
+        />
+
+        <HStack gap={"sm"}>
+          <StatusFilterSelect
+            modalKey={"transaction-history-status-filter"}
+            placeholder={"Status"}
+            options={TRANSACTION_STATUS_OPTIONS}
+            value={params.status ?? ""}
+            onValueChange={(value) => {
+              startTransition(() => {
+                setParams((prev) => ({
+                  ...prev,
+                  status: (value as TransactionStatus) || undefined,
+                  page: 1,
+                }));
+              });
+            }}
+            w={"200px"}
+          />
+        </HStack>
+      </ActionHeaderScrollContainer>
+
+      <Separator borderColor={"bg.canvas"} />
+
+      {/* Table Content */}
+      <VStack
+        flex={1}
+        gap={"sm"}
+        position={"relative"}
+        overflowY={"auto"}
+        bg={"bg.canvas"}
+        w={"full"}
+      >
+        {isLoading ? (
+          <Skeleton p={"md"} rounded={0} />
+        ) : isError ? (
+          <Box
+            flex={1}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+            bg={"bg.body"}
+          >
+            <RetryState
+              title={"Gagal Memuat Riwayat Transaksi"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat daftar riwayat transaksi Anda. Silakan coba lagi."
+              }
+              onRetry={() => {
+                void refetch();
+              }}
+            />
+          </Box>
+        ) : isEmptyArray(transactionHistory.items) ? (
+          <Box
+            flex={1}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+            bg={"bg.body"}
+          >
+            {debouncedSearch || params.status ? (
+              <NoResultState
+                description={
+                  "Tidak ada transaksi yang sesuai dengan kata kunci atau filter yang Anda pilih."
+                }
+              />
+            ) : (
+              <NoDataState
+                icon={HistoryIcon}
+                title={"Belum Ada Riwayat Transaksi"}
+                description={
+                  "Anda belum pernah melakukan transaksi permintaan data IGT. Silakan ajukan permintaan data terlebih dahulu."
+                }
+              >
+                <Button
+                  primary
+                  size={"sm"}
+                  onClick={() => {
+                    navigate({ to: "/mitra/data-request" });
+                  }}
+                >
+                  <AppIcon icon={SquarePen} />
+                  {"Permintaan Data"}
+                </Button>
+              </NoDataState>
+            )}
+          </Box>
+        ) : (
+          <VStack flex={1} w={"full"} position={"relative"} overflowY={"auto"}>
+            <TopBarLoader isFetching={isFetching} />
+
+            <DataViewTable.Root<TransactionRecord>
+              headers={dataList.headers}
+              items={dataList.items}
+              itemActions={dataList.itemActions}
+              withNumbering={true}
+              page={params.page}
+              pageSize={params.pageSize}
+              rounded={0}
+              pb={0}
+            >
+              <DataViewTable.Header />
+              <DataViewTable.Body />
+            </DataViewTable.Root>
+
+            <Separator borderColor={"bg.canvas"} />
+
+            <DataViewFooter
+              page={params.page}
+              pageSize={params.pageSize}
+              setPage={(nextPage: number) =>
+                setParams((prev) => ({ ...prev, page: nextPage }))
+              }
+              setPageSize={(nextSize: number) => {
+                setParams((prev) => ({
+                  ...prev,
+                  pageSize: nextSize,
+                  page: 1,
+                }));
+              }}
+              currentDataLength={transactionHistory.items.length}
+              totalData={transactionHistory.pagination.totalItems}
+              totalPage={transactionHistory.pagination.totalPages}
+            />
+          </VStack>
+        )}
+      </VStack>
+    </VStack>
+  );
+};
