@@ -202,7 +202,7 @@ export function InternalOrderReviewDetailPage() {
 
               <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Order ID"}
+                  {"ID Pesanan"}
                 </P>
 
                 <P fontWeight={"semibold"}>{order.orderId}</P>

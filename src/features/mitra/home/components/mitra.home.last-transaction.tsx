@@ -109,7 +109,7 @@ const MitraHomeLastTransactionDataView = () => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "No. Transaksi", sortable: false, align: "start" },
-      { th: "No. Order", sortable: false, align: "start" },
+      { th: "No. Pesanan", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: false, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: false, align: "start" },

@@ -81,7 +81,7 @@ export const InternalTransactionStatisticDataView = () => {
     const headers: FormattedTableHeader[] = [
       { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "Mitra Pemohon", sortable: true, align: "start" },
-      { th: "No. Order", sortable: true, align: "start" },
+      { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },

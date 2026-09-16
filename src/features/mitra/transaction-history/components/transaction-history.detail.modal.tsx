@@ -1,13 +1,14 @@
-// src/features/mitra/transaction-history/components/transaction-history.detail.modal.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { Timeline } from "@/design-system/components/data-display/ui/timeline";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -22,19 +23,26 @@ import type { TransactionOrderItem } from "@/features/mitra/transaction-history/
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import type { OrderStatus } from "@/shared/types/status.type";
 import { t } from "@/shared/libs/i18n";
+import type { OrderStatus } from "@/shared/types/status.type";
 import { back } from "@/shared/utils/client/navigation";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { Countdown } from "@/design-system/components/data-display/ui/countdown";
-import { useNavigate } from "@tanstack/react-router";
-import { CreditCardIcon } from "lucide-react";
-import { useMemo } from "react";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { TRANSACTION_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  CheckIcon,
+  ClockIcon,
+  CreditCardIcon,
+  Layers2Icon,
+  LoaderIcon,
+  RotateCcwIcon,
+  TimerOffIcon,
+  XIcon,
+} from "lucide-react";
+import { useMemo } from "react";
 
 export const TransactionDetailTrigger = (
   props: TransactionDetailTriggerProps,
@@ -63,7 +71,7 @@ export const TransactionDetailTrigger = (
       opened={isOpen}
       open={open}
       close={close}
-      size={"md"}
+      size={"xl"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
@@ -148,7 +156,6 @@ export const TransactionDetailModalContent = (
     });
   }, [transaction]);
 
-  const statusConfig = TRANSACTION_STATUS_MAP[transaction.transactionStatus];
   const isPaid = transaction.transactionStatus === "paid";
   const isExpired = transaction.transactionStatus === "expired";
   const isRefunded = transaction.transactionStatus === "refunded";
@@ -178,7 +185,7 @@ export const TransactionDetailModalContent = (
         <Modal.CloseButton />
 
         <VStack gap={"xs"}>
-          <Modal.Title>{"Detail Transaksi & Order"}</Modal.Title>
+          <Modal.Title>{"Detail Transaksi & Pesanan"}</Modal.Title>
 
           <P fontSize={"sm"} textAlign={"center"} color={"fg.subtle"}>
             {transaction.transactionNumber}
@@ -188,170 +195,347 @@ export const TransactionDetailModalContent = (
 
       <Modal.Body p={0}>
         <VStack gap={"md"}>
-          {/* Transaction Status Summary Box */}
+          {/* Top Section: Responsive SimpleGrid with Timeline & Metadata Details */}
           <Skeleton loaded={isMounted} w={"full"} px={"md"}>
-            <HStack
-              p={"md"}
-              bg={"bg.subtle"}
-              justify={"space-between"}
-              align={"center"}
-              wrap={"wrap"}
-              gap={"md"}
-            >
-              <HStack gap={"md"} align={"center"}>
-                {statusConfig?.icon && (
-                  <AppIcon
-                    icon={statusConfig.icon}
-                    size={"lg"}
-                    color={`${statusConfig.colorPalette}.fg`}
-                  />
-                )}
-
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontWeight={"semibold"}>
-                    {statusConfig?.label ?? transaction.transactionStatus}
+            <SimpleGrid columns={[1, 1, 2]} gap={"md"}>
+              {/* Kiri: Timeline Riwayat Alur Pesanan */}
+              <VStack
+                align={"stretch"}
+                gap={"sm"}
+                p={"md"}
+                bg={"bg.subtle"}
+                rounded={"md"}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
+              >
+                <HStack justify={"space-between"} align={"center"} pb={"2xs"}>
+                  <P fontSize={"xs"} fontWeight={"semibold"} color={"fg.muted"}>
+                    {"Riwayat Alur Pesanan"}
                   </P>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {`Dibuat: ${formatUtcDateTime(transaction.createdAt, preferredTimezone)}`}
-                  </P>
-                </VStack>
-              </HStack>
 
-              <VStack align={"end"} gap={0}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Total Nominal"}
-                </P>
-                <P fontSize={"lg"} fontWeight={"semibold"}>
-                  <FormatNumber
-                    value={transaction.totalAmount}
-                    style={"currency"}
-                    currency={"IDR"}
-                    maximumFractionDigits={0}
-                  />
-                </P>
+                  <P fontSize={"xs"} fontWeight={"semibold"}>
+                    <FormatNumber
+                      value={transaction.totalAmount}
+                      style={"currency"}
+                      currency={"IDR"}
+                      maximumFractionDigits={0}
+                    />
+                  </P>
+                </HStack>
+
+                <Timeline.Root size={"sm"}>
+                  {/* Step 1: Transaksi Dibuat */}
+                  <Timeline.Item>
+                    <Timeline.Connector>
+                      <Timeline.Separator />
+                      <Timeline.Indicator colorPalette={"green"}>
+                        <AppIcon icon={CheckIcon} size={"xs"} />
+                      </Timeline.Indicator>
+                    </Timeline.Connector>
+                    <Timeline.Content>
+                      <Timeline.Title fontSize={"xs"} fontWeight={"semibold"}>
+                        {"Transaksi Dibuat"}
+                      </Timeline.Title>
+                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
+                        {formatUtcDateTime(transaction.createdAt, preferredTimezone)}
+                      </Timeline.Description>
+                    </Timeline.Content>
+                  </Timeline.Item>
+
+                  {/* Step 2: Pembayaran */}
+                  <Timeline.Item>
+                    <Timeline.Connector>
+                      <Timeline.Separator />
+                      <Timeline.Indicator
+                        colorPalette={
+                          isPaid
+                            ? "green"
+                            : isExpired
+                              ? "red"
+                              : isRefunded
+                                ? "purple"
+                                : "orange"
+                        }
+                      >
+                        <AppIcon
+                          icon={
+                            isPaid
+                              ? CheckIcon
+                              : isExpired
+                                ? TimerOffIcon
+                                : isRefunded
+                                  ? RotateCcwIcon
+                                  : ClockIcon
+                          }
+                          size={"xs"}
+                        />
+                      </Timeline.Indicator>
+                    </Timeline.Connector>
+                    <Timeline.Content>
+                      <Timeline.Title fontSize={"xs"} fontWeight={"semibold"}>
+                        {isPaid
+                          ? "Pembayaran Terverifikasi"
+                          : isExpired
+                            ? "Pembayaran Kedaluwarsa"
+                            : isRefunded
+                              ? "Pembayaran Dikembalikan"
+                              : "Menunggu Pembayaran"}
+                      </Timeline.Title>
+                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
+                        {isPaid
+                          ? transaction.paidAt
+                            ? formatUtcDateTime(transaction.paidAt, preferredTimezone)
+                            : `Terbayar (${transaction.paymentMethod || "MPN"})`
+                          : isExpired
+                            ? "Batas waktu pembayaran habis"
+                            : isRefunded
+                              ? "Dana transaksi telah dikembalikan"
+                              : transaction.billingCode
+                                ? `Billing: ${transaction.billingCode}`
+                                : "Menunggu pembayaran"}
+                      </Timeline.Description>
+                    </Timeline.Content>
+                  </Timeline.Item>
+
+                  {/* Step 3: Validasi Admin Internal */}
+                  <Timeline.Item opacity={!isPaid && !isExpired && !isRefunded ? 0.4 : 1}>
+                    <Timeline.Connector>
+                      <Timeline.Separator />
+                      <Timeline.Indicator
+                        colorPalette={
+                          effectiveOrderStatus === "ready" || effectiveOrderStatus === "processing"
+                            ? "green"
+                            : effectiveOrderStatus === "pending_review"
+                              ? "orange"
+                              : effectiveOrderStatus === "rejected"
+                                ? "red"
+                                : "gray"
+                        }
+                      >
+                        <AppIcon
+                          icon={
+                            effectiveOrderStatus === "ready" || effectiveOrderStatus === "processing"
+                              ? CheckIcon
+                              : effectiveOrderStatus === "pending_review"
+                                ? LoaderIcon
+                                : effectiveOrderStatus === "rejected"
+                                  ? XIcon
+                                  : ClockIcon
+                          }
+                          size={"xs"}
+                        />
+                      </Timeline.Indicator>
+                    </Timeline.Connector>
+                    <Timeline.Content>
+                      <Timeline.Title
+                        fontSize={"xs"}
+                        fontWeight={"semibold"}
+                        color={!isPaid && !isExpired && !isRefunded ? "fg.subtle" : undefined}
+                      >
+                        {"Validasi Admin Internal"}
+                      </Timeline.Title>
+                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
+                        {effectiveOrderStatus === "ready" || effectiveOrderStatus === "processing"
+                          ? "Pesanan disetujui admin internal"
+                          : effectiveOrderStatus === "pending_review"
+                            ? "Menunggu persetujuan admin internal"
+                            : effectiveOrderStatus === "rejected"
+                              ? isExpired
+                                ? "Dibatalkan otomatis (kedaluwarsa)"
+                                : "Pesanan ditolak oleh admin"
+                              : isPaid
+                                ? "Menunggu validasi admin"
+                                : "Diproses setelah pembayaran"}
+                      </Timeline.Description>
+                    </Timeline.Content>
+                  </Timeline.Item>
+
+                  {/* Step 4: Penyiapan Layanan WMS */}
+                  <Timeline.Item
+                    opacity={
+                      effectiveOrderStatus !== "processing" && effectiveOrderStatus !== "ready"
+                        ? 0.4
+                        : 1
+                    }
+                  >
+                    <Timeline.Connector>
+                      <Timeline.Separator />
+                      <Timeline.Indicator
+                        colorPalette={
+                          effectiveOrderStatus === "ready"
+                            ? "green"
+                            : effectiveOrderStatus === "processing"
+                              ? "purple"
+                              : "gray"
+                        }
+                      >
+                        <AppIcon
+                          icon={
+                            effectiveOrderStatus === "ready"
+                              ? CheckIcon
+                              : effectiveOrderStatus === "processing"
+                                ? LoaderIcon
+                                : Layers2Icon
+                          }
+                          size={"xs"}
+                        />
+                      </Timeline.Indicator>
+                    </Timeline.Connector>
+                    <Timeline.Content>
+                      <Timeline.Title
+                        fontSize={"xs"}
+                        fontWeight={"semibold"}
+                        color={
+                          effectiveOrderStatus !== "processing" && effectiveOrderStatus !== "ready"
+                            ? "fg.subtle"
+                            : undefined
+                        }
+                      >
+                        {"Penyiapan Layanan WMS"}
+                      </Timeline.Title>
+                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
+                        {effectiveOrderStatus === "ready"
+                          ? "Sinkronisasi layer spasial berhasil"
+                          : effectiveOrderStatus === "processing"
+                            ? "Sistem memproses sinkronisasi layer di background"
+                            : "Diproses setelah validasi admin"}
+                      </Timeline.Description>
+                    </Timeline.Content>
+                  </Timeline.Item>
+
+                  {/* Step 5: Siap Digunakan */}
+                  <Timeline.Item opacity={effectiveOrderStatus !== "ready" ? 0.4 : 1}>
+                    <Timeline.Connector>
+                      <Timeline.Separator />
+                      <Timeline.Indicator
+                        colorPalette={effectiveOrderStatus === "ready" ? "green" : "gray"}
+                      >
+                        <AppIcon
+                          icon={effectiveOrderStatus === "ready" ? CheckIcon : CheckIcon}
+                          size={"xs"}
+                        />
+                      </Timeline.Indicator>
+                    </Timeline.Connector>
+                    <Timeline.Content>
+                      <Timeline.Title
+                        fontSize={"xs"}
+                        fontWeight={"semibold"}
+                        color={effectiveOrderStatus !== "ready" ? "fg.subtle" : undefined}
+                      >
+                        {"Layanan Siap Digunakan"}
+                      </Timeline.Title>
+                      <Timeline.Description fontSize={"2xs"} color={"fg.subtle"}>
+                        {effectiveOrderStatus === "ready"
+                          ? "Layer IGT aktif dan dapat diakses di menu Data Saya"
+                          : "Layanan WMS siap diakses setelah selesai diproses"}
+                      </Timeline.Description>
+                    </Timeline.Content>
+                  </Timeline.Item>
+                </Timeline.Root>
               </VStack>
-            </HStack>
-          </Skeleton>
 
-          {/* Transaction Metadata Grid */}
-          <Skeleton loaded={isMounted} px={"md"}>
-            <VStack
-              align={"stretch"}
-              gap={"xs"}
-              bg={"bg.body"}
-              rounded={"md"}
-              px={"md"}
-            >
-              <HStack
-                align={"center"}
-                justify={"space-between"}
-                h={"32px"}
-                fontSize={"sm"}
+              {/* Kanan: Rincian Metadata Transaksi & Pesanan */}
+              <VStack
+                align={"stretch"}
+                gap={"sm"}
+                bg={"bg.body"}
+                rounded={"md"}
+                p={"md"}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
               >
-                <P color={"fg.subtle"}>{"Nomor Order"}</P>
-                <P fontWeight={"medium"}>{transaction.orderNumber}</P>
-              </HStack>
+                <SimpleGrid columns={[1, 2]} gap={"sm"}>
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Nomor Pesanan"}
+                    </P>
+                    <P fontSize={"sm"} fontWeight={"medium"}>
+                      {transaction.orderNumber || "-"}
+                    </P>
+                  </VStack>
 
-              {effectiveOrderStatus && (
-                <HStack
-                  align={"center"}
-                  justify={"space-between"}
-                  h={"32px"}
-                  fontSize={"sm"}
-                >
-                  <P color={"fg.subtle"}>{"Status Pesanan"}</P>
-                  <OrderStatusBadge showIcon={true}>
-                    {effectiveOrderStatus}
-                  </OrderStatusBadge>
-                </HStack>
-              )}
+                  {effectiveOrderStatus && (
+                    <VStack align={"start"} gap={"2xs"}>
+                      <P fontSize={"xs"} color={"fg.subtle"}>
+                        {"Status Pesanan"}
+                      </P>
+                      <OrderStatusBadge showIcon={true}>
+                        {effectiveOrderStatus}
+                      </OrderStatusBadge>
+                    </VStack>
+                  )}
 
-              <HStack
-                align={"center"}
-                justify={"space-between"}
-                h={"32px"}
-                fontSize={"sm"}
-              >
-                <P color={"fg.subtle"}>{"Kode Billing (MPN)"}</P>
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Kode Billing (MPN)"}
+                    </P>
+                    <HStack gap={1} align={"center"}>
+                      <P fontSize={"sm"} fontWeight={"medium"}>
+                        <TNum>{transaction.billingCode}</TNum>
+                      </P>
+                      <ClipboardButton
+                        value={transaction.billingCode}
+                        size={"2xs"}
+                      />
+                    </HStack>
+                  </VStack>
 
-                <HStack gap={1} align={"center"} mr={"-4px"}>
-                  <P fontWeight={"medium"}>
-                    <TNum>{transaction.billingCode}</TNum>
-                  </P>
+                  {targetExpiry && !isPaid && !isRefunded && (
+                    <VStack align={"start"} gap={"2xs"}>
+                      <P fontSize={"xs"} color={"fg.subtle"}>
+                        {"Sisa Waktu Pembayaran"}
+                      </P>
+                      <Countdown
+                        finishedAt={targetExpiry}
+                        fontWeight={"medium"}
+                        color={isExpired ? "fg.subtle" : "orange.fg"}
+                      />
+                    </VStack>
+                  )}
 
-                  <ClipboardButton
-                    value={transaction.billingCode}
-                    size={"2xs"}
-                  />
-                </HStack>
-              </HStack>
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Metode Pengajuan"}
+                    </P>
+                    <SelectionTypeBadge size={"xs"}>
+                      {transaction.selectionType}
+                    </SelectionTypeBadge>
+                  </VStack>
 
-              {targetExpiry && !isPaid && !isRefunded && (
-                <HStack
-                  align={"center"}
-                  justify={"space-between"}
-                  h={"32px"}
-                  fontSize={"sm"}
-                >
-                  <P color={"fg.subtle"}>{"Sisa Waktu Pembayaran"}</P>
-                  <Countdown
-                    finishedAt={targetExpiry}
-                    fontWeight={"medium"}
-                    color={isExpired ? "fg.subtle" : "orange.fg"}
-                  />
-                </HStack>
-              )}
+                  <VStack align={"start"} gap={"2xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Metode Pembayaran"}
+                    </P>
+                    {transaction.paymentMethod ? (
+                      <Badge variant={"subtle"} colorPalette={"gray"}>
+                        {transaction.paymentMethod}
+                      </Badge>
+                    ) : (
+                      <P fontSize={"sm"}>{"-"}</P>
+                    )}
+                  </VStack>
 
-              <HStack
-                align={"center"}
-                justify={"space-between"}
-                h={"32px"}
-                fontSize={"sm"}
-              >
-                <P color={"fg.subtle"}>{"Metode Pengajuan"}</P>
-                <SelectionTypeBadge size={"xs"}>
-                  {transaction.selectionType}
-                </SelectionTypeBadge>
-              </HStack>
-
-              <HStack
-                align={"center"}
-                justify={"space-between"}
-                h={"32px"}
-                fontSize={"sm"}
-              >
-                <P color={"fg.subtle"}>{"Metode Pembayaran"}</P>
-                {transaction.paymentMethod ? (
-                  <Badge variant={"subtle"} colorPalette={"gray"}>
-                    {transaction.paymentMethod}
-                  </Badge>
-                ) : (
-                  <P>-</P>
-                )}
-              </HStack>
-
-              {transaction.paidAt && (
-                <HStack
-                  align={"center"}
-                  justify={"space-between"}
-                  h={"32px"}
-                  fontSize={"sm"}
-                >
-                  <P color={"fg.subtle"}>{"Waktu Pembayaran"}</P>
-                  <P fontWeight={"medium"}>
-                    {formatUtcDateTime(transaction.paidAt, preferredTimezone)}
-                  </P>
-                </HStack>
-              )}
-            </VStack>
+                  {transaction.paidAt && (
+                    <VStack align={"start"} gap={"2xs"}>
+                      <P fontSize={"xs"} color={"fg.subtle"}>
+                        {"Waktu Pembayaran"}
+                      </P>
+                      <P fontSize={"sm"} fontWeight={"medium"}>
+                        {formatUtcDateTime(transaction.paidAt, preferredTimezone)}
+                      </P>
+                    </VStack>
+                  )}
+                </SimpleGrid>
+              </VStack>
+            </SimpleGrid>
           </Skeleton>
 
           {/* Order Items Table */}
           <Skeleton loaded={isMounted} px={"md"} pb={"md"}>
-            <VStack align={"stretch"} gap={"xs"} pt={"md"}>
-              <Box px={"md"}>
+            <VStack align={"stretch"} gap={"xs"} pt={"xs"}>
+              <Box px={"xs"}>
                 <P fontSize={"sm"} fontWeight={"semibold"}>
-                  {`Daftar Order Layer IGT (${transaction.items.length} Item)`}
+                  {`Daftar Pesanan Layer IGT (${transaction.items.length} Item)`}
                 </P>
               </Box>
 
