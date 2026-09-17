@@ -108,7 +108,7 @@ export const authService = {
     code: string,
     state: string,
     signal?: AbortSignal,
-  ): Promise<InternalUser> => {
+  ): Promise<User> => {
     const stateFromStorage = sessionStorage.getItem("sso_state");
     const storedRedirectUri = sessionStorage.getItem("sso_redirect_uri");
     const callbackUrl =
