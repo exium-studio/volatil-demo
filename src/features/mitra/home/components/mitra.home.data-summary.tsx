@@ -3,6 +3,7 @@
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -35,22 +36,41 @@ const PERIOD_OPTIONS = [
 ];
 
 export const MitraHomeDataSummary = (props: MitraHomeDataSummaryProps) => {
+  return (
+    <Container.Root withContext={true} {...props}>
+      <MitraHomeDataSummaryContent />
+    </Container.Root>
+  );
+};
+
+const MitraHomeDataSummaryContent = () => {
   // States
   const [period, setPeriod] = useState<HomePeriod>("all");
 
+  // Contexts
+  const { isSmContainer } = useContainerContext();
+
+  // Queries
+  const { dataSummary, isLoading } = useMitraDataSummaryQuery(period);
+
+  if (isLoading) {
+    return <Skeleton minH={isSmContainer ? "386px" : "233px"} w={"full"} />;
+  }
+
   return (
-    <Container.Root withContext={true} {...props}>
-      <Container.Body gap={4} py={"md"}>
-        <MitraHomeDataSummaryHeader
-          period={period}
-          onPeriodChange={setPeriod}
-        />
+    <Container.Body gap={4} py={"md"}>
+      <MitraHomeDataSummaryHeader
+        period={period}
+        onPeriodChange={setPeriod}
+      />
 
-        <Separator borderColor={"bg.canvas"} />
+      <Separator borderColor={"bg.canvas"} />
 
-        <MitraHomeDataSummaryCharts period={period} />
-      </Container.Body>
-    </Container.Root>
+      <MitraHomeDataSummaryCharts
+        dataSummary={dataSummary}
+        isSmContainer={isSmContainer}
+      />
+    </Container.Body>
   );
 };
 
@@ -140,13 +160,7 @@ const AREA_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
 
 const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
   // Props
-  const { period } = props;
-
-  // Contexts
-  const { isSmContainer } = useContainerContext();
-
-  // Queries / Data for current period
-  const { dataSummary } = useMitraDataSummaryQuery(period);
+  const { dataSummary, isSmContainer } = props;
 
   return (
     <SimpleGrid columns={isSmContainer ? 1 : 2} gap={"md"} px={"md"}>

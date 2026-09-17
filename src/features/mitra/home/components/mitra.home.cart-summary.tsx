@@ -1,6 +1,7 @@
 // src/features/mitra/home/components/mitra.home.cart-summary.tsx
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import {
   Container,
@@ -20,16 +21,35 @@ import { DatabaseIcon, ReceiptTextIcon } from "lucide-react";
 export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body gap={4} pt={"md"}>
-        <MitraHomeCartSummaryHeader />
-
-        <VStack flex={1}>
-          <Separator borderColor={"bg.canvas"} />
-
-          <MitraHomeCartStats />
-        </VStack>
-      </Container.Body>
+      <MitraHomeCartSummaryContent />
     </Container.Root>
+  );
+};
+
+const MitraHomeCartSummaryContent = () => {
+  // Contexts
+  const { isSmContainer } = useContainerContext();
+
+  // Queries / Data
+  const { cartSummary, isLoading } = useMitraCartSummaryQuery();
+
+  if (isLoading) {
+    return <Skeleton minH={"353px"} w={"full"} />;
+  }
+
+  return (
+    <Container.Body gap={4} pt={"md"}>
+      <MitraHomeCartSummaryHeader />
+
+      <VStack flex={1}>
+        <Separator borderColor={"bg.canvas"} />
+
+        <MitraHomeCartStats
+          cartSummary={cartSummary}
+          isSmContainer={isSmContainer}
+        />
+      </VStack>
+    </Container.Body>
   );
 };
 
@@ -53,12 +73,17 @@ const MitraHomeCartSummaryHeader = () => {
   );
 };
 
-const MitraHomeCartStats = () => {
-  // Contexts
-  const { isSmContainer } = useContainerContext();
-
-  // Queries / Data
-  const { cartSummary } = useMitraCartSummaryQuery();
+const MitraHomeCartStats = (props: {
+  cartSummary: {
+    totalField: number;
+    totalArea: number;
+    totalIgtData: number;
+    subtotalPrice: number;
+  };
+  isSmContainer: boolean;
+}) => {
+  // Props
+  const { cartSummary, isSmContainer } = props;
   const { totalField, totalArea, totalIgtData, subtotalPrice } = cartSummary;
 
   // Constants

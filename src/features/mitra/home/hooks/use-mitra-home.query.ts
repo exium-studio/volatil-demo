@@ -13,6 +13,7 @@ import type { MitraHomeCartSummaryResponse } from "@/features/mitra/home/types/m
 import type { FinancialFlowItem } from "@/features/mitra/home/types/mitra.home.financial-flow.type";
 import { dummyMitraDataAvailability } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 import { useQuery } from "@tanstack/react-query";
 
 const emptyCartSummary: MitraHomeCartSummaryResponse = {
@@ -33,7 +34,11 @@ export const useMitraDataAvailabilityQuery = () => {
 
   return {
     ...query,
-    dataAvailability: query.data ?? dummyMitraDataAvailability,
+    dataAvailability:
+      query.data ??
+      (isDummyDataEnabled()
+        ? dummyMitraDataAvailability
+        : { totalIgt: 0, bidang: 0, kawasan: 0 }),
   };
 };
 

@@ -156,8 +156,10 @@ const DataListTableRootInternal = <
       pageSize,
       initialSortColumnIndex,
       initialSortOrder,
-      batchActions: batchActions as unknown as DataViewBatchActionsGenerator<T>[],
-      itemActions: itemActionsList as unknown as DataViewItemActionsGenerator<T>[],
+      batchActions:
+        batchActions as unknown as DataViewBatchActionsGenerator<T>[],
+      itemActions:
+        itemActionsList as unknown as DataViewItemActionsGenerator<T>[],
       withNumbering,
       virtualized,
       fixedItemHeight,

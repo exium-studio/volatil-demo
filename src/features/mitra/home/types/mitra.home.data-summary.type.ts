@@ -13,7 +13,8 @@ export type MitraHomeDataSummaryHeaderProps = {
 };
 
 export type MitraHomeDataSummaryChartsProps = {
-  period: MitraHomePeriod;
+  dataSummary: MitraHomeDataSummaryResponse;
+  isSmContainer: boolean;
 };
 
 export type MitraHomeSummaryStatus = "active" | "almostExpired" | "expired";

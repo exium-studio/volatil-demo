@@ -4,6 +4,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -37,22 +38,35 @@ const PERIOD_OPTIONS = [
 ];
 
 export const MitraHomeFinancialFlow = (props: MitraHomeFinancialFlowProps) => {
+  return (
+    <Container.Root withContext={true} {...props}>
+      <MitraHomeFinancialFlowContent />
+    </Container.Root>
+  );
+};
+
+const MitraHomeFinancialFlowContent = () => {
   // States
   const [period, setPeriod] = useState<HomePeriod>("all");
 
-  return (
-    <Container.Root withContext={true} {...props}>
-      <Container.Body gap={8} pt={"md"}>
-        <MitraHomeFinancialFlowHeader
-          period={period}
-          onPeriodChange={setPeriod}
-        />
+  // Queries / Data
+  const { financialFlow, isLoading } = useMitraFinancialFlowQuery(period);
 
-        <VStack mt={"auto"}>
-          <MitraHomeFinancialFlowChartContent period={period} />
-        </VStack>
-      </Container.Body>
-    </Container.Root>
+  if (isLoading) {
+    return <Skeleton minH={"353px"} w={"full"} />;
+  }
+
+  return (
+    <Container.Body gap={8} pt={"md"}>
+      <MitraHomeFinancialFlowHeader
+        period={period}
+        onPeriodChange={setPeriod}
+      />
+
+      <VStack mt={"auto"}>
+        <MitraHomeFinancialFlowChartContent financialFlow={financialFlow} />
+      </VStack>
+    </Container.Body>
   );
 };
 
@@ -100,13 +114,10 @@ const MitraHomeFinancialFlowChartContent = (
   props: MitraHomeFinancialFlowChartContentProps,
 ) => {
   // Props
-  const { period } = props;
+  const { financialFlow } = props;
 
   // Stores
   const { theme } = useThemeStore();
-
-  // Queries / Data
-  const { financialFlow } = useMitraFinancialFlowQuery(period);
 
   // Derived Values / Hooks
   const chart = useChart({

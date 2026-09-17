@@ -48,14 +48,45 @@ export const MitraHomeLastTransaction = (
 ) => {
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body pb={"md"}>
-        <MitraHomeLastTransactionHeader />
-
-        <Separator borderColor={"bg.canvas"} />
-
-        <MitraHomeLastTransactionDataView />
-      </Container.Body>
+      <MitraHomeLastTransactionContent />
     </Container.Root>
+  );
+};
+
+const MitraHomeLastTransactionContent = () => {
+  // Navigation
+  const navigate = useNavigate();
+
+  // Derived Values
+  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  // Queries
+  const { transactionHistory, isLoading, isFetching, isError, error, refetch } =
+    useTransactionHistoryQuery({
+      page: 1,
+      pageSize: 5,
+    });
+
+  if (isLoading) {
+    return <Skeleton minH={"380px"} w={"full"} />;
+  }
+
+  return (
+    <Container.Body pb={"md"}>
+      <MitraHomeLastTransactionHeader />
+
+      <Separator borderColor={"bg.canvas"} />
+
+      <MitraHomeLastTransactionDataView
+        transactionHistory={transactionHistory}
+        isFetching={isFetching}
+        isError={isError}
+        error={error}
+        refetch={refetch}
+        preferredTimezone={preferredTimezone}
+        navigate={navigate}
+      />
+    </Container.Body>
   );
 };
 
@@ -92,19 +123,25 @@ const MitraHomeLastTransactionHeader = () => {
   );
 };
 
-const MitraHomeLastTransactionDataView = () => {
-  // Navigation
-  const navigate = useNavigate();
-
-  // Derived Values
-  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
-
-  // Queries
-  const { transactionHistory, isLoading, isFetching, isError, error, refetch } =
-    useTransactionHistoryQuery({
-      page: 1,
-      pageSize: 5,
-    });
+const MitraHomeLastTransactionDataView = (props: {
+  transactionHistory: { items: TransactionRecord[] };
+  isFetching: boolean;
+  isError: boolean;
+  error: Error | null;
+  refetch: () => void;
+  preferredTimezone: string;
+  navigate: ReturnType<typeof useNavigate>;
+}) => {
+  // Props
+  const {
+    transactionHistory,
+    isFetching,
+    isError,
+    error,
+    refetch,
+    preferredTimezone,
+    navigate,
+  } = props;
 
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
@@ -273,9 +310,7 @@ const MitraHomeLastTransactionDataView = () => {
 
   return (
     <VStack bg={"bg.canvas"} w={"full"} position={"relative"}>
-      {isLoading ? (
-        <Skeleton h={"240px"} w={"full"} rounded={0} />
-      ) : isError ? (
+      {isError ? (
         <Box
           display={"flex"}
           alignItems={"center"}

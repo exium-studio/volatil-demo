@@ -534,11 +534,7 @@ export const TransactionDetailModalContent = (
                 </P>
               </Box>
 
-              <Box
-                rounded={"md"}
-                overflow={"hidden"}
-                borderColor={"border.subtle"}
-              >
+              <Box rounded={"md"} overflow={"hidden"}>
                 <DataViewTable.Root
                   headers={orderItemHeaders}
                   items={orderItemsData}
@@ -554,7 +550,7 @@ export const TransactionDetailModalContent = (
         </VStack>
       </Modal.Body>
 
-      <Modal.Footer>
+      <Modal.Footer border={"none"}>
         <HStack gap={"sm"} w={"full"}>
           <Button flex={1} onClick={back}>
             {t["action.close"]()}

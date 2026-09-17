@@ -1,6 +1,7 @@
 // src/features/mitra/home/components/mitra.home.data-availability.tsx
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Circle } from "@/design-system/components/layout/ui/box";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -12,7 +13,10 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { useMitraDataAvailabilityQuery } from "@/features/mitra/home/hooks/use-mitra-home.query";
-import type { MitraHomeDataAvailabilityProps } from "@/features/mitra/home/types/mitra.home.data-availability.type";
+import type {
+  MitraHomeDataAvailabilityProps,
+  MitraHomeDataAvailabilityResponse,
+} from "@/features/mitra/home/types/mitra.home.data-availability.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { DatabaseIcon } from "lucide-react";
 
@@ -21,16 +25,35 @@ export const MitraHomeDataAvailability = (
 ) => {
   return (
     <Container.Root withContext={true} {...props}>
-      <Container.Body gap={4} pt={"md"}>
-        <MitraHomeDataAvailabilityHeader />
-
-        <VStack flex={1}>
-          <Separator borderColor={"bg.canvas"} />
-
-          <MitraHomeDataAvailabilityStats />
-        </VStack>
-      </Container.Body>
+      <MitraHomeDataAvailabilityContent />
     </Container.Root>
+  );
+};
+
+const MitraHomeDataAvailabilityContent = () => {
+  // Contexts
+  const { isSmContainer } = useContainerContext();
+
+  // Queries
+  const { dataAvailability, isLoading } = useMitraDataAvailabilityQuery();
+
+  if (isLoading) {
+    return <Skeleton minH={isSmContainer ? "468px" : "188px"} w={"full"} />;
+  }
+
+  return (
+    <Container.Body gap={4} pt={"md"}>
+      <MitraHomeDataAvailabilityHeader />
+
+      <VStack flex={1}>
+        <Separator borderColor={"bg.canvas"} />
+
+        <MitraHomeDataAvailabilityStats
+          dataAvailability={dataAvailability}
+          isSmContainer={isSmContainer}
+        />
+      </VStack>
+    </Container.Body>
   );
 };
 
@@ -56,12 +79,12 @@ const MitraHomeDataAvailabilityHeader = () => {
   );
 };
 
-const MitraHomeDataAvailabilityStats = () => {
-  // Contexts
-  const { isSmContainer } = useContainerContext();
-
-  // Queries / Data
-  const { dataAvailability } = useMitraDataAvailabilityQuery();
+const MitraHomeDataAvailabilityStats = (props: {
+  dataAvailability: MitraHomeDataAvailabilityResponse;
+  isSmContainer: boolean;
+}) => {
+  // Props
+  const { dataAvailability, isSmContainer } = props;
 
   // Constants
   const cols = isSmContainer ? 1 : 3;
