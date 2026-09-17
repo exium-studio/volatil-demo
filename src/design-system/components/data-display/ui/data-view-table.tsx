@@ -247,8 +247,12 @@ const DataListTableRootInternal = <
           action.sticky,
       ).length;
 
-      // 40px trigger button + each sticky button 32px + 8px gaps + padding (left padding 16px + right padding 8px)
-      const stickyColWidth = `${40 + stickyActionsCount * 36 + 24}px`;
+      const hasStickyActions = stickyActionsCount > 0;
+
+      // 40px trigger button + each sticky button 32px + 8px gaps + padding
+      const stickyColWidth = hasStickyActions
+        ? `${40 + stickyActionsCount * 36 + 24}px`
+        : "56px";
       cols.push(stickyColWidth);
     }
 
@@ -403,14 +407,27 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
             </DataListTableCell>
           )}
           {/* Sticky column header for sticky menu & sticky actions */}
-          <DataListTableCell
-            pos={"sticky"}
-            top={0}
-            right={0}
-            zIndex={11}
-            pl={"md"}
-            pr={"xs"}
-          />
+          {(() => {
+            const hasStickyActions = itemActions?.some(
+              (action) =>
+                typeof action === "object" &&
+                action !== null &&
+                "sticky" in action &&
+                action.sticky,
+            );
+
+            return (
+              <DataListTableCell
+                pos={"sticky"}
+                top={0}
+                right={0}
+                zIndex={11}
+                px={hasStickyActions ? undefined : "xs"}
+                pl={hasStickyActions ? "md" : undefined}
+                pr={hasStickyActions ? "xs" : undefined}
+              />
+            );
+          })()}
         </>
       )}
     </Box>
@@ -533,36 +550,52 @@ const DataListTableRow = memo(
             )}
 
             {/* Sticky column cell for sticky menu trigger and sticky actions */}
-            <Center
-              pos={"sticky"}
-              right={0}
-              zIndex={2}
-              minW={"68px"}
-              bg={"bg.body"}
-            >
-              <HStack
-                w={"full"}
-                h={"full"}
-                pl={"md"}
-                pr={"xs"}
-                gap={"2xs"}
-                align={"center"}
-                justify={"end"}
-                bg={cellBg}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <DataViewStickyActions itemActions={itemActions} item={item} />
+            {(() => {
+              const hasStickyActions = itemActions.some(
+                (action) =>
+                  typeof action === "object" &&
+                  action !== null &&
+                  "sticky" in action &&
+                  action.sticky,
+              );
 
-                <DataListItemActionsTrigger
-                  itemActions={itemActions}
-                  item={item}
+              return (
+                <Center
+                  pos={"sticky"}
+                  right={0}
+                  zIndex={2}
+                  minW={hasStickyActions ? "68px" : "56px"}
+                  bg={"bg.body"}
                 >
-                  <IconButton variant={"ghost"}>
-                    <AppIcon icon={EllipsisIcon} />
-                  </IconButton>
-                </DataListItemActionsTrigger>
-              </HStack>
-            </Center>
+                  <HStack
+                    w={"full"}
+                    h={"full"}
+                    px={hasStickyActions ? undefined : "xs"}
+                    pl={hasStickyActions ? "md" : undefined}
+                    pr={hasStickyActions ? "xs" : undefined}
+                    gap={"2xs"}
+                    align={"center"}
+                    justify={hasStickyActions ? "end" : "center"}
+                    bg={cellBg}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <DataViewStickyActions
+                      itemActions={itemActions}
+                      item={item}
+                    />
+
+                    <DataListItemActionsTrigger
+                      itemActions={itemActions}
+                      item={item}
+                    >
+                      <IconButton variant={"ghost"}>
+                        <AppIcon icon={EllipsisIcon} />
+                      </IconButton>
+                    </DataListItemActionsTrigger>
+                  </HStack>
+                </Center>
+              );
+            })()}
           </>
         )}
       </Box>
