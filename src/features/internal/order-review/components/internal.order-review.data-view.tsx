@@ -169,7 +169,11 @@ export const InternalOrderReviewDataView = () => {
           },
           {
             value: order.status,
-            td: <OrderStatusBadge showIcon={true}>{order.status}</OrderStatusBadge>,
+            td: (
+              <OrderStatusBadge showIcon={true}>
+                {order.status}
+              </OrderStatusBadge>
+            ),
             align: "start" as const,
           },
           {

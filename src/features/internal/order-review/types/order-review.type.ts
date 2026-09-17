@@ -145,9 +145,7 @@ export type ApproveOrderItemPayload = z.infer<
 
 export const approveOrderItemSchema = z.object({
   id: z.string().min(1, "ID Layer wajib diisi"),
-  externalWmsUrl: z
-    .string()
-    .min(1, "URL WMS dari INTEROP wajib diisi"),
+  externalWmsUrl: z.string().min(1, "URL WMS dari INTEROP wajib diisi"),
   externalWfsUrl: z.string().optional(),
 });
 
@@ -179,7 +177,10 @@ export type OrderReviewLayerState = {
   layerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;
   aoiPolygon: GeoJSON.MultiPolygon | GeoJSON.Polygon | null;
   isAoiVisible: boolean;
-  toggleLayer: (layerId: string, config?: Partial<WmsRasterLayerConfig>) => void;
+  toggleLayer: (
+    layerId: string,
+    config?: Partial<WmsRasterLayerConfig>,
+  ) => void;
   setLayerEnabled: (
     layerId: string,
     enabled: boolean,

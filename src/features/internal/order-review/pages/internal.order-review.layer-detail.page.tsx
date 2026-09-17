@@ -23,6 +23,10 @@ import { MapPinIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 
+/**
+ * @deprecated This layer detail attributes table page is currently not linked in the order review workflow.
+ * Kept for potential future reference. Do not remove.
+ */
 export const InternalOrderReviewLayerDetailPage = () => {
   // Hooks
   const { orderId, layerId: encodedLayerId } = useParams({ strict: false }) as {
