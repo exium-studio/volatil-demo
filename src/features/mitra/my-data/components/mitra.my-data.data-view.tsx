@@ -408,7 +408,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             )}
           </VStack>
         ) : (
-          <VStack flex={1} w={"full"} position={"relative"}>
+          <VStack flex={1} w={"full"} position={"relative"} overflowY={"auto"}>
             <TopBarLoader isFetching={isFetching} />
 
             <DataViewTable.Root
