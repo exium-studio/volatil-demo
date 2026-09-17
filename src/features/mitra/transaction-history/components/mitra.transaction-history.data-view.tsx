@@ -25,8 +25,8 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/mitra.transaction-history.detail.modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
+import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import type {
   TransactionHistoryQueryParams,
   TransactionRecord,
@@ -249,6 +249,7 @@ export const TransactionHistoryDataView = () => {
             <TransactionDetailTrigger
               modalKey={`transaction-detail-${transaction.id}`}
               transaction={transaction}
+              showPayButton={true}
             />
           ),
         },

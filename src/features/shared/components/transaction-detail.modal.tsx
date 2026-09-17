@@ -352,6 +352,7 @@ export const TransactionDetailModalContent = (
                   {timelineSteps.map((step) => (
                     <Timeline.Item
                       key={step.id}
+                      flex={1}
                       opacity={step.isMuted ? 0.4 : 1}
                     >
                       <Timeline.Connector>

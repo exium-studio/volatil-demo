@@ -23,11 +23,11 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import type { MitraHomeLastTransactionProps } from "@/features/mitra/home/types/mitra.home.last-transaction.type";
-import { TransactionDetailTrigger } from "@/features/mitra/transaction-history/components/mitra.transaction-history.detail.modal";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type { TransactionRecord } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -256,6 +256,7 @@ const MitraHomeLastTransactionDataView = () => {
             <TransactionDetailTrigger
               modalKey={`transaction-detail-${transaction.id}`}
               transaction={transaction}
+              showPayButton={true}
             />
           ),
         },

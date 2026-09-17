@@ -26,7 +26,6 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { InternalTransactionDetailTrigger } from "@/features/internal/statistik-pesanan/components/internal.transaction-detail.modal";
 import { useInternalTransactionsQuery } from "@/features/internal/statistik-pesanan/hooks/use-internal-transaction-statistic.query";
 import type {
   InternalTransactionItem,
@@ -35,6 +34,7 @@ import type {
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import type { OrderStatus, TransactionStatus } from "@/shared/types/status.type";
@@ -243,9 +243,10 @@ export const InternalTransactionStatisticDataView = () => {
           icon: EyeIcon,
           modal: {
             triggerComponent: (transaction: InternalTransactionItem) => (
-              <InternalTransactionDetailTrigger
+              <TransactionDetailTrigger
                 modalKey={`internal-tx-detail-${transaction.id}`}
                 transaction={transaction}
+                showPayButton={false}
               />
             ),
           },
