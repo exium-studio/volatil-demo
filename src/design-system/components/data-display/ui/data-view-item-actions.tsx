@@ -201,7 +201,14 @@ export function DataViewStickyActions<
   if (isEmptyArray(stickyActions)) return null;
 
   return (
-    <HStack gap={"2xs"} align={"center"} onClick={(e) => e.stopPropagation()}>
+    <HStack
+      gap={"2xs"}
+      align={"center"}
+      justify={"end"}
+      wrap={"nowrap"}
+      flexShrink={0}
+      onClick={(e) => e.stopPropagation()}
+    >
       {stickyActions.map((action, index) => {
         const key = action.key ?? `sticky-action-${index}`;
         const isDisabled = Boolean(action.disabled?.(item.data, item));

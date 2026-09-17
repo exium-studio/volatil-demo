@@ -247,8 +247,8 @@ const DataListTableRootInternal = <
           action.sticky,
       ).length;
 
-      // 40px trigger button + each sticky button 32px + 8px gaps + padding
-      const stickyColWidth = `${40 + stickyActionsCount * 36 + 16}px`;
+      // 40px trigger button + each sticky button 32px + 8px gaps + padding (left padding 16px + right padding 8px)
+      const stickyColWidth = `${40 + stickyActionsCount * 36 + 24}px`;
       cols.push(stickyColWidth);
     }
 
@@ -403,7 +403,14 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
             </DataListTableCell>
           )}
           {/* Sticky column header for sticky menu & sticky actions */}
-          <DataListTableCell pos={"sticky"} top={0} right={0} zIndex={11} />
+          <DataListTableCell
+            pos={"sticky"}
+            top={0}
+            right={0}
+            zIndex={11}
+            pl={"md"}
+            pr={"xs"}
+          />
         </>
       )}
     </Box>
@@ -530,13 +537,14 @@ const DataListTableRow = memo(
               pos={"sticky"}
               right={0}
               zIndex={2}
-              minW={"60px"}
+              minW={"68px"}
               bg={"bg.body"}
             >
               <HStack
                 w={"full"}
                 h={"full"}
-                px={"xs"}
+                pl={"md"}
+                pr={"xs"}
                 gap={"2xs"}
                 align={"center"}
                 justify={"end"}
