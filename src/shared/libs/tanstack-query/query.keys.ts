@@ -10,6 +10,14 @@ export const queryKeys = {
   mitra: {
     home: {
       all: ["mitra", "home"] as const,
+      dataAvailability: () =>
+        [...queryKeys.mitra.home.all, "data-availability"] as const,
+      dataSummary: (period?: string) =>
+        [...queryKeys.mitra.home.all, "data-summary", period] as const,
+      cartSummary: () =>
+        [...queryKeys.mitra.home.all, "cart-summary"] as const,
+      financialFlow: (period?: string) =>
+        [...queryKeys.mitra.home.all, "financial-flow", period] as const,
       data: (period?: string) =>
         [...queryKeys.mitra.home.all, "data", period] as const,
     },

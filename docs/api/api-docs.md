@@ -318,49 +318,173 @@ Seluruh akses tile dan fitur spasial dialihkan melalui endpoint proxy Backend de
 
 Endpoint khusus yang hanya dapat diakses oleh user dengan role `mitra`.
 
-## 3.1 Dashboard & Statistik Mitra
+## 3.1 Dashboard & Statistik Mitra (Mitra Home)
 
-### Mitra Home Summary
-- **Endpoint**: `GET /api/mitra/home`
+Setiap widget/section pada halaman Mitra Home memiliki endpoint independen agar data dimuat secara modular:
+
+### 3.1.1 Ketersediaan Data Spasial IGT (Data Availability)
+Menyajikan statistik total ketersediaan dataset spasial IGT yang terintegrasi di sistem (Total Layer, Berbasis Bidang, dan Berbasis Kawasan).
+- **Endpoint**: `GET /api/mitra/home/data-availability`
 - **Akses**: `Mitra Only`
-- **Query Params**: `period?: "1d" | "1w" | "1m" | "1y" | "all"` (default: `"all"`)
+- **Header**: `Authorization: Bearer <token>` atau Session Cookie
 - **Response (200 OK)**:
 ```typescript
-type MitraHomeSummaryResponse = {
+type MitraDataAvailabilityResponse = {
   success: boolean;
   message?: string;
   data: {
-    period: "1d" | "1w" | "1m" | "1y" | "all";
-    dataSummary: {
-      bidang: {
-        active: number;
-        almostExpired: number;
-        expired: number;
-      };
-      kawasan: {
-        active: number;
-        almostExpired: number;
-        expired: number;
-      };
+    totalIgt: number; // Total seluruh dataset IGT terintegrasi
+    bidang: number;   // Total layer IGT berbasis bidang tanah / persil
+    kawasan: number;  // Total layer IGT berbasis kawasan / tata ruang
+  };
+};
+```
+*Contoh Response JSON:*
+```json
+{
+  "success": true,
+  "data": {
+    "totalIgt": 30,
+    "bidang": 10,
+    "kawasan": 20
+  }
+}
+```
+
+---
+
+### 3.1.2 Ringkasan Data Anda (Data Summary)
+Menyajikan ringkasan status kepemilikan data IGT milik akun mitra yang sedang login (Aktif, Hampir Kedaluwarsa, dan Kedaluwarsa) untuk tipe Bidang dan Kawasan sesuai filter periode.
+- **Endpoint**: `GET /api/mitra/home/data-summary`
+- **Akses**: `Mitra Only`
+- **Query Params**:
+  - `period?: "1d" | "1w" | "1m" | "1y" | "all"` (Default: `"all"`)
+- **Response (200 OK)**:
+```typescript
+type MitraDataSummaryResponse = {
+  success: boolean;
+  message?: string;
+  data: {
+    field: {
+      active: number;
+      almostExpired: number;
+      expired: number;
     };
-    financialFlow: {
-      totalSpending: number;
-      currency: "IDR" | string;
-      period: "1d" | "1w" | "1m" | "1y" | "all";
-      breakdown: Array<{
-        label: string;
-        amount: number;
-      }>;
-    };
-    cartSummary: {
-      totalBatches: number;
-      totalItems: number;
-      totalPrice: number;
-      currency: "IDR" | string;
+    area: {
+      active: number;
+      almostExpired: number;
+      expired: number;
     };
   };
 };
 ```
+*Contoh Response JSON:*
+```json
+{
+  "success": true,
+  "data": {
+    "field": {
+      "active": 220,
+      "almostExpired": 35,
+      "expired": 18
+    },
+    "area": {
+      "active": 110,
+      "almostExpired": 18,
+      "expired": 7
+    }
+  }
+}
+```
+
+---
+
+### 3.1.3 Ringkasan Keranjang Pembelian (Cart Summary)
+Menyajikan ringkasan item yang ada di keranjang belanja aktif milik mitra (Total bidang, total luas kawasan, total dataset, dan subtotal biaya).
+- **Endpoint**: `GET /api/mitra/home/cart-summary`
+- **Akses**: `Mitra Only`
+- **Response (200 OK)**:
+```typescript
+type MitraCartSummaryResponse = {
+  success: boolean;
+  message?: string;
+  data: {
+    totalField: number;    // Total kuantitas bidang
+    totalArea: number;     // Total luas kawasan (Hektar / ha)
+    totalIgtData: number;  // Total layer/dataset IGT di keranjang
+    subtotalPrice: number; // Subtotal nominal harga (IDR)
+  };
+};
+```
+*Contoh Response JSON:*
+```json
+{
+  "success": true,
+  "data": {
+    "totalField": 12,
+    "totalArea": 4,
+    "totalIgtData": 16,
+    "subtotalPrice": 15000000
+  }
+}
+```
+
+---
+
+### 3.1.4 Statistik Alur Keuangan (Financial Flow)
+Menyajikan data grafik runtun waktu (*time series*) transaksi pengeluaran pembelian data spasial mitra berdasarkan periode.
+- **Endpoint**: `GET /api/mitra/home/financial-flow`
+- **Akses**: `Mitra Only`
+- **Query Params**:
+  - `period?: "1d" | "1w" | "1m" | "1y" | "all"` (Default: `"all"`)
+- **Response (200 OK)**:
+```typescript
+type MitraFinancialFlowResponse = {
+  success: boolean;
+  message?: string;
+  data: {
+    period: "1d" | "1w" | "1m" | "1y" | "all";
+    totalSpending?: number;
+    currency?: string;
+    breakdown: Array<{
+      label: string; // Label waktu (e.g. "00:00", "Sen", "Minggu 1", "Jan", "2024")
+      sale: number;  // Nominal transaksi pada titik waktu tersebut (IDR)
+    }>;
+  };
+};
+```
+*Contoh Response JSON:*
+```json
+{
+  "success": true,
+  "data": {
+    "period": "1w",
+    "totalSpending": 44400000,
+    "currency": "IDR",
+    "breakdown": [
+      { "label": "Sen", "sale": 4500000 },
+      { "label": "Sel", "sale": 5200000 },
+      { "label": "Rab", "sale": 3800000 },
+      { "label": "Kam", "sale": 6000000 },
+      { "label": "Jum", "sale": 7500000 },
+      { "label": "Sab", "sale": 9000000 },
+      { "label": "Min", "sale": 8200000 }
+    ]
+  }
+}
+```
+
+---
+
+### 3.1.5 Riwayat Transaksi Terbaru (Last Transactions)
+Menyajikan 5 transaksi paling baru milik mitra untuk tabel widget transaksi terakhir.
+- **Endpoint**: `GET /api/mitra/transactions` *(atau `GET /api/transactions`)*
+- **Akses**: `Mitra Only`
+- **Query Params**:
+  - `page=1`
+  - `pageSize=5`
+  - `sortOrder?: "desc"`
+- **Response (200 OK)**: Format paginated list standar transaksi (Lihat detail DTO di [Seksi 3.4](#34-my-data--riwayat-transaksi)).
 
 ---
 

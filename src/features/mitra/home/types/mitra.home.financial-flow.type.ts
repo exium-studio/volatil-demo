@@ -13,3 +13,15 @@ export type MitraHomeFinancialFlowHeaderProps = {
 export type MitraHomeFinancialFlowChartContentProps = {
   period: MitraHomePeriod;
 };
+
+export type FinancialFlowItem = {
+  label: string;
+  sale: number;
+};
+
+export type MitraHomeFinancialFlowResponse = {
+  period: MitraHomePeriod;
+  totalSpending?: number;
+  currency?: string;
+  breakdown: FinancialFlowItem[];
+};

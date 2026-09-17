@@ -11,12 +11,16 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { useMitraDataAvailabilityQuery } from "@/features/mitra/home/hooks/use-mitra-home.query";
+import type { MitraHomeDataAvailabilityProps } from "@/features/mitra/home/types/mitra.home.data-availability.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { DatabaseIcon } from "lucide-react";
 
-export const MitraHomeDataAvailability = () => {
+export const MitraHomeDataAvailability = (
+  props: MitraHomeDataAvailabilityProps,
+) => {
   return (
-    <Container.Root withContext={true}>
+    <Container.Root withContext={true} {...props}>
       <Container.Body gap={4} pt={"md"}>
         <MitraHomeDataAvailabilityHeader />
 
@@ -56,13 +60,16 @@ const MitraHomeDataAvailabilityStats = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
+  // Queries / Data
+  const { dataAvailability } = useMitraDataAvailabilityQuery();
+
   // Constants
   const cols = isSmContainer ? 1 : 3;
   const STATS = [
     {
       icon: DatabaseIcon,
       label: "IGT Terintegrasi",
-      value: 30,
+      value: dataAvailability.totalIgt,
       suffix: "layer",
       description: "Total seluruh dataset IGT terintegrasi",
       colorPalette: "neutral",
@@ -70,7 +77,7 @@ const MitraHomeDataAvailabilityStats = () => {
     {
       icon: IGT_BASIS_MAP.bidang.icon,
       label: `IGT Berbasis ${IGT_BASIS_MAP.bidang.label}`,
-      value: 10,
+      value: dataAvailability.bidang,
       suffix: "layer",
       description: "Peta spasial berorientasi bidang tanah/persil",
       colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
@@ -78,7 +85,7 @@ const MitraHomeDataAvailabilityStats = () => {
     {
       icon: IGT_BASIS_MAP.kawasan.icon,
       label: `IGT Berbasis ${IGT_BASIS_MAP.kawasan.label}`,
-      value: 20,
+      value: dataAvailability.kawasan,
       suffix: "layer",
       description: "Peta spasial penataan ruang & zonasi wilayah",
       colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,

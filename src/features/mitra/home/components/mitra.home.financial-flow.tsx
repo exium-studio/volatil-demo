@@ -10,13 +10,13 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { useMitraFinancialFlowQuery } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import type {
   MitraHomeFinancialFlowChartContentProps,
   MitraHomeFinancialFlowHeaderProps,
   MitraHomeFinancialFlowProps,
 } from "@/features/mitra/home/types/mitra.home.financial-flow.type";
-import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import { Chart, useChart } from "@chakra-ui/charts";
 import { useState } from "react";
 import {
@@ -106,13 +106,17 @@ const MitraHomeFinancialFlowChartContent = (
   const { theme } = useThemeStore();
 
   // Queries / Data
-  const { financialFlow } = useMitraHomeData(period);
+  const { financialFlow } = useMitraFinancialFlowQuery(period);
 
   // Derived Values / Hooks
   const chart = useChart({
     data: financialFlow,
     series: [
-      { name: "sale", label: "Sale", color: `${theme.colorPalette}.solid` },
+      {
+        name: "sale" as const,
+        label: "Sale",
+        color: `${theme.colorPalette}.solid`,
+      },
     ],
   });
 
@@ -173,22 +177,19 @@ const MitraHomeFinancialFlowChartContent = (
             stroke={chart.color("border")}
           />
 
-          {chart.series.map((item) => {
-            const seriesName = String(item.name);
-            return (
-              <Area
-                key={seriesName}
-                type={"linear"}
-                isAnimationActive={false}
-                dataKey={chart.key(seriesName)}
-                name={String(item.label ?? "Sale")}
-                stroke={chart.color(item.color)}
-                strokeWidth={2}
-                fill={`url(#gradient-${seriesName})`}
-                dot={false}
-              />
-            );
-          })}
+          {chart.series.map((item) => (
+            <Area
+              key={item.name}
+              type={"linear"}
+              isAnimationActive={false}
+              dataKey={chart.key(item.name)}
+              name={String(item.label ?? "Sale")}
+              stroke={chart.color(item.color)}
+              strokeWidth={2}
+              fill={`url(#gradient-${item.name})`}
+              dot={false}
+            />
+          ))}
         </AreaChart>
       </ResponsiveContainer>
     </Chart.Root>

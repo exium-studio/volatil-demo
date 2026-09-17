@@ -9,11 +9,11 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { useMitraCartSummaryQuery } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import type {
   MitraHomeCartStatConfig,
   MitraHomeCartSummaryProps,
 } from "@/features/mitra/home/types/mitra.home.cart-summary.type";
-import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { DatabaseIcon, ReceiptTextIcon } from "lucide-react";
 
@@ -58,7 +58,7 @@ const MitraHomeCartStats = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries / Data
-  const { cartSummary } = useMitraHomeData();
+  const { cartSummary } = useMitraCartSummaryQuery();
   const { totalField, totalArea, totalIgtData, subtotalPrice } = cartSummary;
 
   // Constants

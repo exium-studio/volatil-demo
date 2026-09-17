@@ -15,7 +15,7 @@ import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useMitraHomeData } from "@/features/mitra/home/hooks/use-mitra-home.query";
+import { useMitraDataSummaryQuery } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import type {
   HomePeriod,
   MitraHomeDataSummaryChartsProps,
@@ -146,7 +146,7 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
   const { isSmContainer } = useContainerContext();
 
   // Queries / Data for current period
-  const { dataSummary } = useMitraHomeData(period);
+  const { dataSummary } = useMitraDataSummaryQuery(period);
 
   return (
     <SimpleGrid columns={isSmContainer ? 1 : 2} gap={"md"} px={"md"}>

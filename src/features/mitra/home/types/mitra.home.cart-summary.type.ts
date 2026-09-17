@@ -21,3 +21,10 @@ export type MitraHomeCartStatConfig = {
   color?: string;
   isCompact?: boolean;
 };
+
+export type MitraHomeCartSummaryResponse = {
+  totalField: number;
+  totalArea: number;
+  totalIgtData: number;
+  subtotalPrice: number;
+};
