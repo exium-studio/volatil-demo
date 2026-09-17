@@ -1,7 +1,10 @@
 // src/features/internal/order-review/pages/internal.order-review.detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -14,6 +17,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -53,6 +57,122 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 
+import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
+import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import type GeoJSON from "geojson";
+import type maplibregl from "maplibre-gl";
+
+const ORDER_REVIEW_AOI_SOURCE_ID = "order-review-aoi-source";
+const ORDER_REVIEW_AOI_FILL_ID = "order-review-aoi-fill";
+const ORDER_REVIEW_AOI_LINE_ID = "order-review-aoi-line";
+
+const getAoiColorBySelectionType = (selectionType?: string) => {
+  switch (selectionType) {
+    case "draw_aoi":
+      return {
+        fillColor: "#3b82f6",
+        lineColor: "#2563eb",
+      };
+    case "upload_aoi":
+      return {
+        fillColor: "#f97316",
+        lineColor: "#ea580c",
+      };
+    case "catalog":
+    default:
+      return {
+        fillColor: "#64748b",
+        lineColor: "#475569",
+      };
+  }
+};
+
+const removeOrderReviewAoiLayer = (map: maplibregl.Map) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!map || !(map as any).style) return;
+
+  try {
+    if (map.getLayer(ORDER_REVIEW_AOI_FILL_ID)) {
+      map.removeLayer(ORDER_REVIEW_AOI_FILL_ID);
+    }
+    if (map.getLayer(ORDER_REVIEW_AOI_LINE_ID)) {
+      map.removeLayer(ORDER_REVIEW_AOI_LINE_ID);
+    }
+    if (map.getSource(ORDER_REVIEW_AOI_SOURCE_ID)) {
+      map.removeSource(ORDER_REVIEW_AOI_SOURCE_ID);
+    }
+  } catch (err) {
+    console.warn("Failed to remove order review AOI layer:", err);
+  }
+};
+
+const renderOrderReviewAoiLayer = (
+  map: maplibregl.Map,
+  feature: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+  selectionType?: string,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!map || !(map as any).style) return;
+
+  const { fillColor, lineColor } = getAoiColorBySelectionType(selectionType);
+
+  try {
+    const existingSource = map.getSource(ORDER_REVIEW_AOI_SOURCE_ID) as
+      | maplibregl.GeoJSONSource
+      | undefined;
+
+    if (existingSource) {
+      existingSource.setData(feature);
+    } else {
+      map.addSource(ORDER_REVIEW_AOI_SOURCE_ID, {
+        type: "geojson",
+        data: feature,
+      });
+    }
+
+    const beforeId = map.getLayer(DRAW_FILL_LAYER_ID)
+      ? DRAW_FILL_LAYER_ID
+      : undefined;
+
+    if (!map.getLayer(ORDER_REVIEW_AOI_FILL_ID)) {
+      map.addLayer(
+        {
+          id: ORDER_REVIEW_AOI_FILL_ID,
+          type: "fill",
+          source: ORDER_REVIEW_AOI_SOURCE_ID,
+          paint: {
+            "fill-color": fillColor,
+            "fill-opacity": 0.25,
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    } else {
+      map.setPaintProperty(ORDER_REVIEW_AOI_FILL_ID, "fill-color", fillColor);
+    }
+
+    if (!map.getLayer(ORDER_REVIEW_AOI_LINE_ID)) {
+      map.addLayer(
+        {
+          id: ORDER_REVIEW_AOI_LINE_ID,
+          type: "line",
+          source: ORDER_REVIEW_AOI_SOURCE_ID,
+          paint: {
+            "line-color": lineColor,
+            "line-width": 2.5,
+            "line-opacity": 1,
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    } else {
+      map.setPaintProperty(ORDER_REVIEW_AOI_LINE_ID, "line-color", lineColor);
+    }
+  } catch (err) {
+    console.warn("Failed to render order review AOI layer:", err);
+  }
+};
+
 export function InternalOrderReviewDetailPage() {
   // Hooks
   const { orderId } = useParams({ strict: false }) as { orderId: string };
@@ -85,36 +205,68 @@ export function InternalOrderReviewDetailPage() {
     }
   }, [order?.aoiPolygon, setAoiPolygon]);
 
-  // Effects — cleanup review preview layers & AOI highlight on unmount / route change
+  // Effects — Reactive sync for permanent AOI layer (survives style ready)
+  useEffect(() => {
+    if (!map) return;
+
+    const syncAoiLayer = () => {
+      if (isAoiVisible && order?.aoiPolygon) {
+        const feature = normalizePolygonFeature(order.aoiPolygon);
+        if (feature) {
+          renderOrderReviewAoiLayer(map, feature, order.selectionType);
+        }
+      } else {
+        removeOrderReviewAoiLayer(map);
+      }
+    };
+
+    const handleReady = () => {
+      syncAoiLayer();
+    };
+
+    map.on(MAP_EVENTS_MAP.styleReady as string, handleReady);
+    map.on(MAP_EVENTS_MAP.layersReady as string, handleReady);
+    syncAoiLayer();
+
+    return () => {
+      map.off(MAP_EVENTS_MAP.styleReady as string, handleReady);
+      map.off(MAP_EVENTS_MAP.layersReady as string, handleReady);
+      removeOrderReviewAoiLayer(map);
+    };
+  }, [map, isAoiVisible, order]);
+
+  // Effects — cleanup review preview layers & highlights on unmount / route change
   useEffect(() => {
     return () => {
       useOrderReviewLayerStore.getState().resetLayers();
       if (map) {
         removeFeatureHighlightFromMap(map);
+        removeOrderReviewAoiLayer(map);
       }
     };
   }, [map]);
 
-  // Handlers — Toggle AOI layer on/off with highlight on map
+  // Handlers — Toggle AOI layer on/off (purely sets permanent layer visibility)
   const handleToggleAoi = useCallback(
     (checked: boolean) => {
       setAoiVisible(checked);
-      if (!map) return;
-
-      if (checked && order?.aoiPolygon) {
-        const feature = normalizePolygonFeature(order.aoiPolygon);
-        if (feature) {
-          highlightFeatureOnMap(map, feature, {
-            zoom: 15,
-            timeoutMs: 300000, // Keep visible while toggled on
-          });
-        }
-      } else {
-        removeFeatureHighlightFromMap(map);
-      }
     },
-    [map, order, setAoiVisible],
+    [setAoiVisible],
   );
+
+  // Handlers — Zoom/Fly map camera to AOI polygon with temporary 1-second gray highlight
+  const handleFlyToAoi = useCallback(() => {
+    if (!map || !order?.aoiPolygon) return;
+    const feature = normalizePolygonFeature(order.aoiPolygon);
+    if (!feature) return;
+
+    // Trigger temporary 1-second gray highlight + camera flyTo without affecting permanent AOI layer toggle
+    highlightFeatureOnMap(map, feature, {
+      zoom: 15,
+      timeoutMs: 1000,
+      fitCamera: true,
+    });
+  }, [map, order]);
 
   if (isLoading || !order) {
     return (
@@ -246,12 +398,25 @@ export function InternalOrderReviewDetailPage() {
                     {"AOI Polygon"}
                   </P>
 
-                  <Switch
-                    checked={isAoiVisible}
-                    onCheckedChange={({ checked }) => {
-                      handleToggleAoi(checked);
-                    }}
-                  />
+                  <HStack align={"center"} gap={"xs"}>
+                    <Switch
+                      checked={isAoiVisible}
+                      onCheckedChange={({ checked }) => {
+                        handleToggleAoi(checked);
+                      }}
+                    />
+
+                    <Tooltip content={"Zoom ke AOI Polygon"}>
+                      <IconButton
+                        aria-label={"Zoom to AOI polygon"}
+                        variant={"outline"}
+                        size={"xs"}
+                        onClick={handleFlyToAoi}
+                      >
+                        <AppIcon icon={FocusIcon} />
+                      </IconButton>
+                    </Tooltip>
+                  </HStack>
                 </VStack>
               )}
             </HStack>

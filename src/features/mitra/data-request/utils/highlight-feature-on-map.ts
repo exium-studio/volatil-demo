@@ -14,7 +14,8 @@ export const HIGHLIGHT_FILL_LAYER_ID = "map-feature-highlight-fill";
 export const HIGHLIGHT_LINE_LAYER_ID = "map-feature-highlight-line";
 export const HIGHLIGHT_POINT_LAYER_ID = "map-feature-highlight-point";
 
-const HIGHLIGHT_COLOR = "#bfbfbfff";
+const HIGHLIGHT_COLOR = "#facc15";
+const HIGHLIGHT_LINE_COLOR = "#eab308";
 const HIGHLIGHT_TIMEOUT_MS = 1000;
 
 let highlightTimer: ReturnType<typeof setTimeout> | null = null;
@@ -148,8 +149,83 @@ export const removeFeatureHighlightFromMap = (map: maplibregl.Map) => {
 };
 
 /**
+ * Moves or fits the map camera to the provided GeoJSON feature/geometry/collection.
+ */
+export const flyToFeatureOnMap = (
+  map: maplibregl.Map,
+  geometryOrFeatureOrCollection:
+    | GeoJSON.Geometry
+    | GeoJSON.Feature
+    | GeoJSON.FeatureCollection,
+  options?: {
+    zoom?: number;
+    padding?: number;
+  },
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!map || !(map as any).style) return;
+
+  const { zoom = 16, padding = 80 } = options ?? {};
+
+  const rawFeat = geometryOrFeatureOrCollection as unknown as Record<
+    string,
+    unknown
+  >;
+  const rawGeom =
+    (rawFeat.geometry as GeoJSON.Geometry | undefined) ??
+    (rawFeat.geom as GeoJSON.Geometry | undefined) ??
+    (
+      rawFeat.properties as
+        | { geom?: GeoJSON.Geometry; the_geom?: GeoJSON.Geometry }
+        | undefined
+    )?.geom ??
+    (
+      rawFeat.properties as
+        | { geom?: GeoJSON.Geometry; the_geom?: GeoJSON.Geometry }
+        | undefined
+    )?.the_geom ??
+    (geometryOrFeatureOrCollection.type !== "Feature" &&
+    geometryOrFeatureOrCollection.type !== "FeatureCollection"
+      ? (geometryOrFeatureOrCollection as GeoJSON.Geometry)
+      : undefined);
+
+  const geojson: GeoJSON.GeoJSON =
+    geometryOrFeatureOrCollection.type === "FeatureCollection"
+      ? (geometryOrFeatureOrCollection as GeoJSON.FeatureCollection)
+      : {
+          type: "Feature",
+          properties: (rawFeat.properties as GeoJSON.GeoJsonProperties) ?? {},
+          geometry: (rawGeom ??
+            (rawFeat.geometry as GeoJSON.Geometry)) as GeoJSON.Geometry,
+        };
+
+  let bounds: [number, number, number, number] | null = null;
+  if (geojson.type === "FeatureCollection") {
+    bounds = getFeatureCollectionBounds(geojson as GeoJSON.FeatureCollection);
+  } else if (geojson.type === "Feature") {
+    bounds = getGeometryBounds((geojson as GeoJSON.Feature).geometry);
+  }
+
+  if (bounds) {
+    fitBoundsSafe(map, bounds, {
+      padding,
+      maxZoom: zoom,
+      duration: 1200,
+    });
+  } else if (
+    geojson.type === "Feature" &&
+    (geojson as GeoJSON.Feature).geometry
+  ) {
+    const centroid = getGeometryCentroid((geojson as GeoJSON.Feature).geometry);
+    if (centroid) {
+      flyToSafe(map, { center: centroid, zoom, duration: 1200 });
+    }
+  }
+};
+
+/**
  * Creates or updates a highlight layer with the given GeoJSON geometry, feature, or FeatureCollection,
- * flies or zooms the map camera directly into the feature, and automatically removes the highlight after 5 seconds.
+ * optionally flies or zooms the map camera directly into the feature, and automatically removes the highlight after timeout.
  */
 export const highlightFeatureOnMap = (
   map: maplibregl.Map,
@@ -160,12 +236,17 @@ export const highlightFeatureOnMap = (
   options?: {
     zoom?: number;
     timeoutMs?: number;
+    fitCamera?: boolean;
   },
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!map || !(map as any).style) return;
 
-  const { zoom = 16, timeoutMs = HIGHLIGHT_TIMEOUT_MS } = options ?? {};
+  const {
+    zoom = 16,
+    timeoutMs = HIGHLIGHT_TIMEOUT_MS,
+    fitCamera = true,
+  } = options ?? {};
 
   const rawFeat = geometryOrFeatureOrCollection as unknown as Record<
     string,
@@ -233,11 +314,14 @@ export const highlightFeatureOnMap = (
           source: HIGHLIGHT_SOURCE_ID,
           paint: {
             "fill-color": HIGHLIGHT_COLOR,
-            "fill-opacity": 0.45,
+            "fill-opacity": 0.4,
           },
         } as maplibregl.LayerSpecification,
         beforeId,
       );
+    } else {
+      map.setPaintProperty(HIGHLIGHT_FILL_LAYER_ID, "fill-color", HIGHLIGHT_COLOR);
+      map.setPaintProperty(HIGHLIGHT_FILL_LAYER_ID, "fill-opacity", 0.4);
     }
 
     if (!map.getLayer(HIGHLIGHT_LINE_LAYER_ID)) {
@@ -247,12 +331,18 @@ export const highlightFeatureOnMap = (
           type: "line",
           source: HIGHLIGHT_SOURCE_ID,
           paint: {
-            "line-color": HIGHLIGHT_COLOR,
+            "line-color": HIGHLIGHT_LINE_COLOR,
             "line-width": 3.5,
             "line-opacity": 1,
           },
         } as maplibregl.LayerSpecification,
         beforeId,
+      );
+    } else {
+      map.setPaintProperty(
+        HIGHLIGHT_LINE_LAYER_ID,
+        "line-color",
+        HIGHLIGHT_LINE_COLOR,
       );
     }
 
@@ -272,37 +362,26 @@ export const highlightFeatureOnMap = (
         } as maplibregl.LayerSpecification,
         beforeId,
       );
+    } else {
+      map.setPaintProperty(
+        HIGHLIGHT_POINT_LAYER_ID,
+        "circle-color",
+        HIGHLIGHT_COLOR,
+      );
     }
   } catch (err) {
     console.warn("Failed to set highlight layers on map:", err);
   }
 
-  // 4. Calculate bounds & fit camera safely (stops ongoing animation first)
-  let bounds: [number, number, number, number] | null = null;
-  if (geojson.type === "FeatureCollection") {
-    bounds = getFeatureCollectionBounds(geojson as GeoJSON.FeatureCollection);
-  } else if (geojson.type === "Feature") {
-    bounds = getGeometryBounds((geojson as GeoJSON.Feature).geometry);
+  // 4. Calculate bounds & fit camera safely if requested
+  if (fitCamera) {
+    flyToFeatureOnMap(map, geojson, { zoom });
   }
 
-  if (bounds) {
-    fitBoundsSafe(map, bounds, {
-      padding: 80,
-      maxZoom: zoom,
-      duration: 1200,
-    });
-  } else if (
-    geojson.type === "Feature" &&
-    (geojson as GeoJSON.Feature).geometry
-  ) {
-    const centroid = getGeometryCentroid((geojson as GeoJSON.Feature).geometry);
-    if (centroid) {
-      flyToSafe(map, { center: centroid, zoom, duration: 1200 });
-    }
+  // 5. Auto cleanup after timeout if timeoutMs > 0
+  if (timeoutMs > 0) {
+    highlightTimer = setTimeout(() => {
+      removeFeatureHighlightFromMap(map);
+    }, timeoutMs);
   }
-
-  // 5. Auto cleanup after timeout
-  highlightTimer = setTimeout(() => {
-    removeFeatureHighlightFromMap(map);
-  }, timeoutMs);
 };
