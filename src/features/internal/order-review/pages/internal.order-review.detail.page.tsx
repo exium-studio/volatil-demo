@@ -409,7 +409,7 @@ export function InternalOrderReviewDetailPage() {
                     <Tooltip content={"Zoom ke AOI Polygon"}>
                       <IconButton
                         aria-label={"Zoom to AOI polygon"}
-                        variant={"outline"}
+                        // variant={"outline"}
                         size={"xs"}
                         onClick={handleFlyToAoi}
                       >
