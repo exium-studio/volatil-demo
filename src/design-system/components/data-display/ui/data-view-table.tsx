@@ -235,7 +235,7 @@ const DataListTableRootInternal = <
 
       if (hasSpreadAction) {
         // Normal column for spread action buttons
-        cols.push("auto");
+        cols.push("max-content");
       }
 
       // Sticky column for sticky actions + menu trigger (never shrinks, sizing based on sticky items + padding)
@@ -515,7 +515,9 @@ const DataListTableRow = memo(
               <HStack
                 justify={"center"}
                 align={"center"}
-                pl={"md"}
+                w={"full"}
+                h={"full"}
+                px={"md"}
                 bg={cellBg}
                 gap={1}
               >

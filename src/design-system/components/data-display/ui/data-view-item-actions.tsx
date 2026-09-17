@@ -118,7 +118,14 @@ export function DataViewSpreadActions<
   if (isEmptyArray(visibleRowActions)) return null;
 
   return (
-    <HStack gap={"2xs"} align={"center"} onClick={(e) => e.stopPropagation()}>
+    <HStack
+      gap={"2xs"}
+      align={"center"}
+      justify={"center"}
+      wrap={"nowrap"}
+      flexShrink={0}
+      onClick={(e) => e.stopPropagation()}
+    >
       {visibleRowActions.map((action, index) => {
         const key = action.key ?? `spread-action-${index}`;
         const isDisabled = Boolean(action.disabled?.(item.data, item));
@@ -322,7 +329,10 @@ export function DataListItemActionsTrigger<
                   item.data,
                 );
                 const iconNode = renderIcon(resolvedIcon);
-                const triggerElement = resolveTriggerElement(action.modal, item);
+                const triggerElement = resolveTriggerElement(
+                  action.modal,
+                  item,
+                );
                 const shouldMountModalInMenu =
                   Boolean(triggerElement) && action.showInRow === false;
 
