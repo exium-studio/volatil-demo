@@ -1,3 +1,5 @@
+// src/features/auth/components/ui/signin.form.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -25,7 +27,9 @@ import type {
 import { Link, useSearch } from "@tanstack/react-router";
 import {
   AlertTriangleIcon,
+  Code2Icon,
   HandshakeIcon,
+  KeyRoundIcon,
   LockIcon,
   MailIcon,
   ShieldCheckIcon,
@@ -36,6 +40,7 @@ export const MitraSignin = (props: StackProps) => {
   // Hooks
   const { user, isAuthenticated } = useAuthSession();
   const signinMutation = useSigninMutation();
+  const ssoSigninMutation = useSsoSigninMutation();
 
   const {
     register,
@@ -58,6 +63,10 @@ export const MitraSignin = (props: StackProps) => {
     });
   };
 
+  const handleSsoClick = () => {
+    ssoSigninMutation.mutate();
+  };
+
   if (isAuthenticated && user) {
     return (
       <VStack
@@ -75,16 +84,8 @@ export const MitraSignin = (props: StackProps) => {
   }
 
   return (
-    <VStack
-      as={"form"}
-      onSubmit={handleSubmit(handleLogin)}
-      flex={1}
-      justify={"space-between"}
-      gap={"lg"}
-      w={"full"}
-      {...props}
-    >
-      <VStack align={"center"} gap={"lg"}>
+    <VStack flex={1} justify={"space-between"} gap={"lg"} w={"full"} {...props}>
+      <VStack align={"center"} gap={"lg"} w={"full"}>
         <Badge size={"lg"} colorPalette={"blue"}>
           <AppIcon icon={HandshakeIcon} size={"sm"} />
 
@@ -99,49 +100,85 @@ export const MitraSignin = (props: StackProps) => {
           </P>
 
           <P color={"fg.muted"} textAlign={"center"}>
-            {"Pastikan informasi yang dimasukkan sudah benar!"}
+            {"Masuk menggunakan akun Single Sign-On (SSO) Mitra Anda."}
           </P>
         </VStack>
       </VStack>
 
-      <Fieldset>
-        <Field
-          label={"Email"}
-          invalid={Boolean(errors.email)}
-          errorText={errors.email?.message}
+      {/* SSO Login Action */}
+      <VStack w={"full"} gap={3}>
+        <Button
+          primary={true}
+          type={"button"}
+          w={"full"}
+          size={"lg"}
+          loading={ssoSigninMutation.isPending}
+          onClick={handleSsoClick}
         >
-          <Input
-            startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
-            placeholder={"jolitos@email.com"}
-            {...register("email")}
-          />
-        </Field>
+          <AppIcon icon={KeyRoundIcon} />
+          {"Masuk dengan SSO Mitra"}
+        </Button>
 
-        <Field
-          label={"Kata Sandi"}
-          invalid={Boolean(errors.password)}
-          errorText={errors.password?.message}
-        >
-          <PasswordInput
-            startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
-            {...register("password")}
-          />
-        </Field>
+        <P fontSize={"xs"} color={"fg.subtle"} textAlign={"center"}>
+          {"Autentikasi Single Sign-On terintegrasi Kementerian ATR/BPN"}
+        </P>
+      </VStack>
 
-        {/* <PLink ml={"auto"}>{"Lupa kata sandi?"}</PLink> */}
-      </Fieldset>
+      {/* Divider Dev / Fallback */}
+      <HStack w={"full"} align={"center"} my={1}>
+        <Separator flex={1} />
+        <Badge size={"sm"} variant={"surface"} colorPalette={"amber"} px={2}>
+          <AppIcon icon={Code2Icon} size={"xs"} />
+          <P fontSize={"2xs"} fontWeight={"medium"}>
+            {"DEVELOPMENT PURPOSE ONLY"}
+          </P>
+        </Badge>
+        <Separator flex={1} />
+      </HStack>
 
-      <Button
-        primary={true}
-        type={"submit"}
+      {/* Development / Fallback Login Form */}
+      <VStack
+        as={"form"}
+        onSubmit={handleSubmit(handleLogin)}
         w={"full"}
-        mt={4}
-        loading={signinMutation.isPending}
+        gap={"md"}
       >
-        {"Masuk"}
-      </Button>
+        <Fieldset>
+          <Field
+            label={"Email"}
+            invalid={Boolean(errors.email)}
+            errorText={errors.email?.message}
+          >
+            <Input
+              startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
+              placeholder={"mitra@instansi.go.id"}
+              {...register("email")}
+            />
+          </Field>
 
-      <VStack gap={2} mt={2} align={"center"} w={"full"}>
+          <Field
+            label={"Kata Sandi"}
+            invalid={Boolean(errors.password)}
+            errorText={errors.password?.message}
+          >
+            <PasswordInput
+              startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+              {...register("password")}
+            />
+          </Field>
+        </Fieldset>
+
+        <Button
+          variant={"outline"}
+          type={"submit"}
+          w={"full"}
+          loading={signinMutation.isPending}
+        >
+          {"Masuk dengan Kredensial (Dev Mode)"}
+        </Button>
+      </VStack>
+
+      <VStack gap={2} align={"center"} w={"full"}>
         <HStack wrap={"wrap"} justify={"center"} gapX={"xs"}>
           <P fontSize={"sm"} color={"fg.muted"}>
             {"Belum bermitra dengan ATR/BPN? "}
@@ -182,7 +219,6 @@ export const InternalSignin = (props: StackProps) => {
   // Hooks
   const { user, isAuthenticated } = useAuthSession();
   const signinMutation = useSigninMutation();
-  const ssoSigninMutation = useSsoSigninMutation();
   const search = useSearch({ strict: false }) as AdminSigninSearch;
 
   const {
@@ -200,7 +236,7 @@ export const InternalSignin = (props: StackProps) => {
   // Derived Values
   const errorMessage =
     search.reason === "session_expired"
-      ? "Sesi Anda telah berakhir setelah 8 jam. Silakan masuk kembali melalui SSO ATR/BPN."
+      ? "Sesi Anda telah berakhir. Silakan masuk kembali."
       : search.error;
 
   // Handlers
@@ -210,10 +246,6 @@ export const InternalSignin = (props: StackProps) => {
       password: values.password,
       role: "internal",
     });
-  };
-
-  const handleSsoClick = () => {
-    ssoSigninMutation.mutate();
   };
 
   if (isAuthenticated && user) {
@@ -233,7 +265,15 @@ export const InternalSignin = (props: StackProps) => {
   }
 
   return (
-    <VStack flex={1} justify={"space-between"} gap={"lg"} w={"full"} {...props}>
+    <VStack
+      as={"form"}
+      onSubmit={handleSubmit(handleLogin)}
+      flex={1}
+      justify={"space-between"}
+      gap={"lg"}
+      w={"full"}
+      {...props}
+    >
       <VStack align={"center"} gap={"lg"} w={"full"}>
         <Badge size={"lg"} colorPalette={"purple"}>
           <AppIcon icon={ShieldCheckIcon} size={"sm"} />
@@ -249,7 +289,7 @@ export const InternalSignin = (props: StackProps) => {
           </P>
 
           <P color={"fg.muted"} textAlign={"center"}>
-            {"Gunakan akun SSO Keycloak Internal ATR/BPN untuk masuk."}
+            {"Masukkan email dan kata sandi kedinasan Anda untuk masuk."}
           </P>
         </VStack>
       </VStack>
@@ -273,80 +313,45 @@ export const InternalSignin = (props: StackProps) => {
         </HStack>
       )}
 
-      {/* SSO Login Action */}
-      <VStack w={"full"} gap={3}>
-        <Button
-          primary={true}
-          type={"button"}
-          w={"full"}
-          size={"lg"}
-          loading={ssoSigninMutation.isPending}
-          onClick={handleSsoClick}
+      {/* Standard Internal Email/Password Form */}
+      <Fieldset>
+        <Field
+          label={"Email Pegawai"}
+          invalid={Boolean(errors.email)}
+          errorText={errors.email?.message}
         >
-          <AppIcon icon={ShieldCheckIcon} />
-          {"Login Pegawai ATR/BPN"}
-        </Button>
+          <Input
+            startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
+            placeholder={"pegawai@atrbpn.go.id"}
+            {...register("email")}
+          />
+        </Field>
 
-        <P fontSize={"xs"} color={"fg.subtle"} textAlign={"center"}>
-          {"Autentikasi Single Sign-On resmi Kementerian ATR/BPN"}
-        </P>
-      </VStack>
-
-      <HStack w={"full"} align={"center"} my={2}>
-        <Separator flex={1} />
-        <P
-          fontSize={"2xs"}
-          color={"fg.muted"}
-          textTransform={"uppercase"}
-          px={2}
+        <Field
+          label={"Kata Sandi"}
+          invalid={Boolean(errors.password)}
+          errorText={errors.password?.message}
         >
-          {"atau masuk dengan kredensial"}
-        </P>
-        <Separator flex={1} />
-      </HStack>
+          <PasswordInput
+            startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+            {...register("password")}
+          />
+        </Field>
+      </Fieldset>
 
-      {/* Direct Fallback Login Form */}
-      <VStack
-        as={"form"}
-        onSubmit={handleSubmit(handleLogin)}
+      <Button
+        primary={true}
+        type={"submit"}
         w={"full"}
-        gap={"md"}
+        mt={4}
+        loading={signinMutation.isPending}
       >
-        <Fieldset>
-          <Field
-            label={"Email"}
-            invalid={Boolean(errors.email)}
-            errorText={errors.email?.message}
-          >
-            <Input
-              startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
-              placeholder={"pegawai@atrbpn.go.id"}
-              {...register("email")}
-            />
-          </Field>
+        {"Masuk ke Portal Internal"}
+      </Button>
 
-          <Field
-            label={"Kata Sandi"}
-            invalid={Boolean(errors.password)}
-            errorText={errors.password?.message}
-          >
-            <PasswordInput
-              startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
-              {...register("password")}
-            />
-          </Field>
-        </Fieldset>
-
-        <Button
-          variant={"outline"}
-          type={"submit"}
-          w={"full"}
-          mt={2}
-          loading={signinMutation.isPending}
-        >
-          {"Masuk dengan Kredensial"}
-        </Button>
-      </VStack>
+      <P fontSize={"xs"} color={"fg.subtle"} textAlign={"center"}>
+        {"Akses terbatas hanya untuk pegawai dan administrator resmi ATR/BPN."}
+      </P>
     </VStack>
   );
 };
