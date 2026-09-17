@@ -204,7 +204,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         data-has-value={currentValue ? "true" : "false"}
         {...(isFloatingField && {
           h: "60px",
-          pt: floatingLabel ? "24px" : 0,
+          pt: floatingLabel ? "22px" : 0,
           pb: floatingLabel ? "2px" : 0,
         })}
         {...restProps}
@@ -213,7 +213,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           <Box
             position={"absolute"}
             left={"12px"}
-            top={"8px"}
+            top={"7px"}
             zIndex={1}
             pointerEvents={"none"}
             transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}

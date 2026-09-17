@@ -198,7 +198,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           <Box
             position={"absolute"}
             left={labelLeft}
-            top={"8px"}
+            top={"7px"}
             zIndex={2}
             pointerEvents={"none"}
             transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}

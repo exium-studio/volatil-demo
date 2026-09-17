@@ -154,7 +154,7 @@ export const NumberInput = (props: NumberInputProps) => {
           }}
           {...(isFloatingVariant && {
             h: "60px",
-            pt: floatingLabel ? "24px" : "0px",
+            pt: floatingLabel ? "22px" : "0px",
             pb: floatingLabel ? "4px" : "0px",
             _placeholder: {
               color: "transparent",
@@ -183,7 +183,7 @@ export const NumberInput = (props: NumberInputProps) => {
         <Box
           position={"absolute"}
           left={labelLeft}
-          top={"8px"}
+          top={"7px"}
           zIndex={1}
           pointerEvents={"none"}
           transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
