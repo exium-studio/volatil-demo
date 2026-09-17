@@ -1,8 +1,7 @@
-// src/shared/libs/api-client/api-client.ts
-
 import { router } from "@/app/router";
 import { toast } from "@/design-system/components/toast";
 import { ApiError } from "@/shared/libs/api-client/api-error";
+import { t } from "@/shared/libs/i18n";
 
 import type { RequestOptions } from "@/shared/types/api-client.type";
 
@@ -73,36 +72,33 @@ export const apiClient = {
           // Fallback if response is not JSON
         }
 
-        const isAuthEndpoint =
-          endpoint.includes("/auth/me") || endpoint.includes("/auth/verify");
-
-        if (
-          response.status === 401 ||
-          (response.status === 403 && isAuthEndpoint)
-        ) {
+        if (response.status === 401 || response.status === 403) {
           if (typeof window !== "undefined") {
             localStorage.removeItem("auth_token");
             localStorage.removeItem("user");
             sessionStorage.removeItem("user");
+            sessionStorage.removeItem("keycloakIdToken");
 
-            // If we are on private pages or not already on login root, navigate to root
             const isPublicPage =
               window.location.pathname === "/" ||
               window.location.pathname === "/admin";
-            if (!isPublicPage) {
-              toast.error(
-                response.status === 401
-                  ? "Sesi Anda telah berakhir"
-                  : "Akses Akun Ditolak",
-                {
-                  id: "auth-session-expired-toast",
-                  group: "Sistem",
-                  description:
-                    errorMessage ||
-                    "Akun Anda tidak memiliki akses atau telah dinonaktifkan.",
-                },
-              );
 
+            const toastTitle =
+              response.status === 401
+                ? t["error.unauthorized"]()
+                : t["error.forbidden"]();
+
+            toast.error(toastTitle, {
+              id: "auth-session-expired-toast",
+              group: t["common.system"](),
+              description:
+                errorMessage ||
+                (response.status === 401
+                  ? t["error.unauthorized"]()
+                  : t["error.forbidden"]()),
+            });
+
+            if (!isPublicPage) {
               void router.navigate({ to: "/" });
             }
           }
