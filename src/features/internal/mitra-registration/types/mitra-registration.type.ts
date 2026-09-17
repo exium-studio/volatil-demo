@@ -41,7 +41,7 @@ export type InternalMitraRegistrationItem = {
   status: MitraRegistrationStatus;
   statusDescription?: string;
   documents?: MitraRegistrationDocumentsMap | null;
-  contractDocument?: string | null;
+  contractDocument?: MitraRegistrationDocumentFile | null;
   rejectionReason?: string | null;
   verifiedAt?: string | null;
   verifiedBy?: string | null;
@@ -118,7 +118,3 @@ export type MitraRegistrationDocumentItem = {
   originalName?: string;
   size?: number;
 };
-
-
-
-

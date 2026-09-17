@@ -3,10 +3,8 @@
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
 import { FileIcon } from "@/design-system/components/data-display/ui/file-item";
-import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -21,10 +19,8 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMitraRegistrationApproveTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal";
 import { InternalMitraRegistrationRejectTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal";
 import { useInternalMitraRegistrationDetailQuery } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
-import type {
-  MitraRegistrationDocumentItem,
-  MitraRegistrationStatus,
-} from "@/features/internal/mitra-registration/types/mitra-registration.type";
+import type { MitraRegistrationDocumentItem } from "@/features/internal/mitra-registration/types/mitra-registration.type";
+import { MitraRegistrationStatusBadge } from "@/features/shared/components/mitra-registration-status.badge";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -33,8 +29,6 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   Building2Icon,
   CheckCircleIcon,
-  ClockIcon,
-  DownloadIcon,
   ExternalLinkIcon,
   FileTextIcon,
   MailIcon,
@@ -44,27 +38,6 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import { useMemo } from "react";
-
-const STATUS_CONFIG: Record<
-  MitraRegistrationStatus,
-  { label: string; colorPalette: string; icon: typeof CheckCircleIcon }
-> = {
-  pending_verification: {
-    label: "Menunggu Verifikasi",
-    colorPalette: "orange",
-    icon: ClockIcon,
-  },
-  approved: {
-    label: "Disetujui",
-    colorPalette: "green",
-    icon: CheckCircleIcon,
-  },
-  rejected: {
-    label: "Ditolak",
-    colorPalette: "red",
-    icon: XCircleIcon,
-  },
-};
 
 export function InternalMitraRegistrationDetailPage() {
   // Hooks
@@ -169,15 +142,12 @@ export function InternalMitraRegistrationDetailPage() {
     );
   }
 
-  const statusConfig =
-    STATUS_CONFIG[registration.status] || STATUS_CONFIG.pending_verification;
-
   return (
     <AppContentContainer flex={1} position={"relative"} overflowY={"auto"}>
       <Container.Root withContext flex={1} overflowY={"auto"}>
         <Container.Body overflowY={"auto"}>
           {/* Header Bar */}
-          <HeaderContainer px={"xs"}>
+          <HeaderContainer pl={"xs"}>
             <HStack
               justify={"space-between"}
               align={"center"}
@@ -227,6 +197,16 @@ export function InternalMitraRegistrationDetailPage() {
                   </InternalMitraRegistrationApproveTrigger>
                 </HStack>
               )}
+
+              {registration.contractDocument?.url && (
+                <ExternalLink href={registration.contractDocument?.url}>
+                  <HStack align={"center"} gap={"xs"}>
+                    <AppIcon icon={ExternalLinkIcon} />
+
+                    <P>{"Berkas kontrak"}</P>
+                  </HStack>
+                </ExternalLink>
+              )}
             </HStack>
           </HeaderContainer>
 
@@ -234,20 +214,10 @@ export function InternalMitraRegistrationDetailPage() {
 
           <VStack overflowY={"auto"}>
             {/* Status & Metadata Bar */}
-            <HStack
-              gap={"md"}
-              wrap={"wrap"}
-              align={"center"}
-              px={"md"}
-              py={"sm"}
-            >
-              <Badge
-                size={"sm"}
-                colorPalette={statusConfig.colorPalette}
-                variant={"subtle"}
-              >
-                {statusConfig.label}
-              </Badge>
+            <HStack gap={"md"} wrap={"wrap"} align={"center"} p={"md"}>
+              <MitraRegistrationStatusBadge size={"sm"} showIcon={true}>
+                {registration.status}
+              </MitraRegistrationStatusBadge>
 
               <P fontSize={"xs"} color={"fg.muted"}>
                 {`Diajukan: ${formatUtcDateTime(registration.createdAt, preferredTimezone)}`}
@@ -261,71 +231,6 @@ export function InternalMitraRegistrationDetailPage() {
             </HStack>
 
             <Separator borderColor={"bg.canvas"} />
-
-            {/* If Rejected Alert */}
-            {registration.status === "rejected" &&
-              registration.rejectionReason && (
-                <Box p={"md"}>
-                  <Alert.Root status={"error"} size={"sm"}>
-                    <Alert.Indicator />
-
-                    <Alert.Content>
-                      <Alert.Title>
-                        {"Alasan Penolakan Pendaftaran:"}
-                      </Alert.Title>
-                      <Alert.Description>
-                        {registration.rejectionReason}
-                      </Alert.Description>
-                    </Alert.Content>
-                  </Alert.Root>
-                </Box>
-              )}
-
-            {/* If Approved & Has Contract */}
-            {registration.status === "approved" &&
-              registration.contractDocument && (
-                <Box p={"md"} pb={0}>
-                  <Alert.Root status={"success"} size={"sm"}>
-                    <Alert.Indicator />
-
-                    <Alert.Content>
-                      <Alert.Title>
-                        {"Berkas Kontrak Kemitraan Resmi Telah Terbit"}
-                      </Alert.Title>
-
-                      <Alert.Description>
-                        <HStack
-                          justify={"space-between"}
-                          align={"center"}
-                          w={"full"}
-                          mt={2}
-                          wrap={"wrap"}
-                          gap={2}
-                        >
-                          <P fontSize={"xs"}>
-                            {
-                              "Salinan kontrak kerjasama telah diunggah dan dikirimkan ke mitra."
-                            }
-                          </P>
-                          <ExternalLink
-                            href={registration.contractDocument}
-                            download={true}
-                          >
-                            <Button
-                              size={"xs"}
-                              variant={"outline"}
-                              colorPalette={"green"}
-                            >
-                              <AppIcon icon={DownloadIcon} />
-                              {"Unduh Kontrak"}
-                            </Button>
-                          </ExternalLink>
-                        </HStack>
-                      </Alert.Description>
-                    </Alert.Content>
-                  </Alert.Root>
-                </Box>
-              )}
 
             {/* Main Info Sections */}
             <VStack p={"md"} gap={"lg"} align={"stretch"}>
@@ -521,7 +426,11 @@ export function InternalMitraRegistrationDetailPage() {
                       </HStack>
 
                       {doc.url ? (
-                        <ExternalLink href={doc.url} download={true}>
+                        <ExternalLink
+                          href={doc.url}
+                          download={true}
+                          variant={"plain"}
+                        >
                           <Button size={"xs"} variant={"outline"}>
                             <AppIcon icon={SquareArrowOutUpRightIcon} />
                             {"Tinjau Dokumen"}

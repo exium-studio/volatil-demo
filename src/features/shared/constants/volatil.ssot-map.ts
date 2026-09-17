@@ -9,6 +9,8 @@ import type {
   IgtBasisTypeConfig,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
+  MitraRegistrationStatus,
+  MitraRegistrationStatusConfig,
   MyDataStatus,
   MyDataStatusConfig,
   OrderStatus,
@@ -32,6 +34,7 @@ import {
   ShieldAlertIcon,
   ShieldCheckIcon,
   TimerOffIcon,
+  XCircleIcon,
 } from "lucide-react";
 
 /**
@@ -266,3 +269,39 @@ export const USER_ROLE_MAP: Record<"internal" | "mitra", UserRoleConfig> = {
     icon: HandshakeIcon,
   },
 };
+
+/**
+ * SSOT 6: Mitra Registration Status Map
+ */
+export const MITRA_REGISTRATION_STATUS_MAP: Record<
+  MitraRegistrationStatus,
+  MitraRegistrationStatusConfig
+> = {
+  pending_verification: {
+    label: "Menunggu Verifikasi",
+    colorPalette: "orange",
+    icon: ClockIcon,
+  },
+  verified: {
+    label: "Terverifikasi",
+    colorPalette: "green",
+    icon: CheckCircleIcon,
+  },
+  approved: {
+    label: "Disetujui",
+    colorPalette: "green",
+    icon: CheckCircleIcon,
+  },
+  rejected: {
+    label: "Ditolak",
+    colorPalette: "red",
+    icon: XCircleIcon,
+  },
+};
+
+export const MITRA_REGISTRATION_STATUS_OPTIONS: FocusSelectOption[] = [
+  { label: "Semua Status", value: "all" },
+  { label: "Menunggu Verifikasi", value: "pending_verification" },
+  { label: "Terverifikasi", value: "verified" },
+  { label: "Ditolak", value: "rejected" },
+];

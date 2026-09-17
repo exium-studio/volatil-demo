@@ -12,13 +12,14 @@ import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMitraRegistrationApproveTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal";
@@ -29,7 +30,9 @@ import type {
   InternalMitraRegistrationQueryParams,
   MitraRegistrationStatus,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
+import { MitraRegistrationStatusBadge } from "@/features/shared/components/mitra-registration-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { MITRA_REGISTRATION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -39,35 +42,11 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
   EyeIcon,
+  FileTextIcon,
   HandshakeIcon,
   XCircleIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
-
-const REGISTRATION_STATUS_OPTIONS = [
-  { value: "all", label: "Semua Status" },
-  { value: "pending_verification", label: "Menunggu Verifikasi" },
-  { value: "approved", label: "Disetujui" },
-  { value: "rejected", label: "Ditolak" },
-];
-
-const STATUS_BADGE_MAP: Record<
-  MitraRegistrationStatus,
-  { label: string; colorPalette: string }
-> = {
-  pending_verification: {
-    label: "Menunggu Verifikasi",
-    colorPalette: "orange",
-  },
-  approved: {
-    label: "Disetujui",
-    colorPalette: "green",
-  },
-  rejected: {
-    label: "Ditolak",
-    colorPalette: "red",
-  },
-};
 
 export const InternalMitraRegistrationDataView = () => {
   // Hooks
@@ -114,16 +93,14 @@ export const InternalMitraRegistrationDataView = () => {
     const headers: FormattedTableHeader[] = [
       { th: "No. Registrasi", sortable: true },
       { th: "Instansi", sortable: true },
-      { th: "Status", sortable: true },
+      { th: "Status Pendaftaran", sortable: true },
+      { th: "Berkas Kontrak" },
       { th: "Penanggung Jawab", sortable: true },
       { th: "Kontak / Email", sortable: true },
       { th: "Waktu Pengajuan", sortable: true },
     ];
 
     const items = rawItems.map((reg) => {
-      const badgeConfig =
-        STATUS_BADGE_MAP[reg.status] || STATUS_BADGE_MAP.pending_verification;
-
       return {
         id: String(reg.id),
         data: reg,
@@ -148,9 +125,24 @@ export const InternalMitraRegistrationDataView = () => {
           {
             value: reg.status,
             td: (
-              <Badge colorPalette={badgeConfig.colorPalette} variant={"subtle"}>
-                {badgeConfig.label}
-              </Badge>
+              <MitraRegistrationStatusBadge showIcon={true}>
+                {reg.status}
+              </MitraRegistrationStatusBadge>
+            ),
+          },
+          {
+            value: reg.contractDocument?.url ?? null,
+            td: (
+              <ExternalLink
+                href={reg.contractDocument?.url ?? null}
+                download={true}
+              >
+                <HStack align={"center"} gap={"xs"}>
+                  <AppIcon icon={FileTextIcon} />
+
+                  <P>{"Lihat Kontrak"}</P>
+                </HStack>
+              </ExternalLink>
             ),
           },
           {
@@ -195,6 +187,22 @@ export const InternalMitraRegistrationDataView = () => {
               to: "/internal/mitra-registration/$registrationId",
               params: { registrationId: String(reg.id) },
             });
+          },
+        },
+        {
+          key: "view-contract",
+          label: "Lihat Berkas Kontrak",
+          icon: FileTextIcon,
+          hidden: (reg: InternalMitraRegistrationItem) =>
+            !reg.contractDocument?.url,
+          onClick: (reg: InternalMitraRegistrationItem) => {
+            if (reg.contractDocument?.url) {
+              window.open(
+                reg.contractDocument.url,
+                "_blank",
+                "noopener,noreferrer",
+              );
+            }
           },
         },
         {
@@ -282,7 +290,7 @@ export const InternalMitraRegistrationDataView = () => {
           />
 
           <StatusFilterSelect
-            options={REGISTRATION_STATUS_OPTIONS}
+            options={MITRA_REGISTRATION_STATUS_OPTIONS}
             value={params.status ?? "all"}
             onValueChange={(val) => {
               startTransition(() => {

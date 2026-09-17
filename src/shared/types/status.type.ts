@@ -80,3 +80,19 @@ export type UserRoleConfig = {
   colorPalette: "purple" | "blue";
   icon?: LucideIcon;
 };
+
+/**
+ * SSOT 5: Mitra Registration Status Types & Config
+ */
+export type MitraRegistrationStatus =
+  | "pending_verification"
+  | "verified"
+  | "approved"
+  | "rejected";
+
+export type MitraRegistrationStatusConfig = {
+  label: string;
+  colorPalette: "orange" | "green" | "red" | "gray";
+  icon?: LucideIcon;
+};
+

@@ -113,7 +113,15 @@ const normalizeMitraRegistrationItem = (raw: any): InternalMitraRegistrationItem
     status: raw.status ?? "pending_verification",
     statusDescription: raw.statusDescription ?? raw.status_description ?? null,
     documents,
-    contractDocument: raw.contractDocument ?? raw.contract_document ?? null,
+    contractDocument:
+      typeof (raw.contractDocument ?? raw.contract_document) === "string"
+        ? {
+            url: raw.contractDocument ?? raw.contract_document,
+            fileName: "contract.pdf",
+            originalName: "Berkas Kontrak",
+            mimeType: "application/pdf",
+          }
+        : (raw.contractDocument ?? raw.contract_document ?? null),
     rejectionReason: raw.rejectionReason ?? raw.rejection_reason ?? null,
     verifiedAt: raw.verifiedAt ?? raw.verified_at ?? null,
     verifiedBy: raw.verifiedBy ?? raw.verified_by ?? null,

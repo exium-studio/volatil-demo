@@ -1,9 +1,8 @@
 // src/features/auth/types/mitra-registration.type.ts
 
-export type MitraRegistrationStatus =
-  | "pending_verification"
-  | "approved"
-  | "rejected";
+import type { MitraRegistrationStatus } from "@/shared/types/status.type";
+
+export type { MitraRegistrationStatus };
 
 export type MitraRegistrationFormValues = {
   namaInstansi: string;

@@ -6,6 +6,7 @@ import type {
   IgtBasisType,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
+  MitraRegistrationStatus,
   MyDataStatus,
   OrderStatus,
   TransactionStatus,
@@ -37,6 +38,11 @@ export type MyDataStatusBadgeProps = Omit<BadgeProps, "children"> & {
   showIcon?: boolean;
 };
 
+export type MitraRegistrationStatusBadgeProps = Omit<BadgeProps, "children"> & {
+  children?: MitraRegistrationStatus | (string & {});
+  showIcon?: boolean;
+};
+
 export type MitraLayerSyncJobStatusBadgeProps = Omit<BadgeProps, "children"> & {
   children?: string;
   showIcon?: boolean;
@@ -46,3 +52,4 @@ export type UserRoleBadgeProps = Omit<BadgeProps, "children"> & {
   children?: UserRole | (string & {});
   showIcon?: boolean;
 };
+

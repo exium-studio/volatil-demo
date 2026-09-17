@@ -87,7 +87,8 @@
     "system": "Sistem",
     "settings": "Pengaturan",
     "notifications": "Notifikasi",
-    "dismiss_all": "Singkirkan semua"
+    "dismiss_all": "Singkirkan semua",
+    "link_not_found": "Tautan tidak ditemukan"
   },
   "action": {
     "actions": "Aksi",

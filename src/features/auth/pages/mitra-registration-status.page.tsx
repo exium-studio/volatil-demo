@@ -47,6 +47,12 @@ const STATUS_CONFIG: Record<
     icon: ClockIcon,
     desc: "Pengajuan pendaftaran Anda sedang diverifikasi oleh Tim Teknis Kementerian ATR/BPN.",
   },
+  verified: {
+    label: "Terverifikasi",
+    colorPalette: "green",
+    icon: CheckCircleIcon,
+    desc: "Pendaftaran telah disetujui. Akun SSO telah diaktifkan dan dokumen kontrak dapat diunduh.",
+  },
   approved: {
     label: "Disetujui",
     colorPalette: "green",
