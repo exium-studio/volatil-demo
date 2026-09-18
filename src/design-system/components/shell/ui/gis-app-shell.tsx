@@ -380,8 +380,13 @@ const Content = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const { enabledLayerIds, layerOpacities, customLayerConfigs, cqlFilter } =
-    useIgtLayerStore();
+  const {
+    enabledLayerIds,
+    layerOpacities,
+    customLayerConfigs,
+    cqlFilter,
+    globalOpacity,
+  } = useIgtLayerStore();
   const {
     enabledLayerIds: previewEnabledLayerIds,
     layerConfigs: previewLayerConfigs,
@@ -410,11 +415,12 @@ const Content = () => {
       .filter((layer: IgtLayerItem) => Boolean(layer.wms))
       .map((layer: IgtLayerItem) => {
         const isEnabled = Boolean(enabledLayerIds[layer.id]);
-        const opacity = layerOpacities[layer.id] ?? 1.0;
+        const individualOpacity = layerOpacities[layer.id] ?? 1.0;
+        const effectiveOpacity = individualOpacity * globalOpacity;
         const baseConfig = getWmsRasterConfigFromIgtLayer(
           layer,
           wmsVisible && isEnabled,
-          opacity,
+          effectiveOpacity,
         );
         const customOverride = customLayerConfigs[layer.id];
         if (customOverride) {
@@ -422,7 +428,8 @@ const Content = () => {
             ...baseConfig,
             ...customOverride,
             visible: wmsVisible && isEnabled,
-            opacity: layerOpacities[layer.id] ?? baseConfig.opacity,
+            opacity:
+              (layerOpacities[layer.id] ?? baseConfig.opacity) * globalOpacity,
           };
         }
         return baseConfig;
@@ -437,7 +444,7 @@ const Content = () => {
           type: "wms-raster",
           spatialBasis: "bidang",
           visible: wmsVisible && Boolean(isEnabled),
-          opacity: layerOpacities[layerId] ?? 1.0,
+          opacity: (layerOpacities[layerId] ?? 1.0) * globalOpacity,
           wmsUrl: "",
           layers: layerId,
           ...(customOverride ?? {}),
@@ -471,6 +478,7 @@ const Content = () => {
     customLayerConfigs,
     previewEnabledLayerIds,
     previewLayerConfigs,
+    globalOpacity,
   ]);
 
   // Derived Values

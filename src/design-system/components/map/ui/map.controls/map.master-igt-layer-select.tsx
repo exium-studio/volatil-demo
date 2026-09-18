@@ -9,6 +9,7 @@ import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapMasterIgtLayerItemProps } from "@/design-system/components/map/types/map.master-igt-layer-select.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
@@ -38,6 +39,8 @@ export const MapMasterIgtLayerSelect = memo(() => {
   const {
     enabledLayerIds,
     layerOpacities,
+    globalOpacity,
+    setGlobalOpacity,
     toggleLayerId,
     setLayerOpacity,
     setAllLayersEnabled,
@@ -49,6 +52,24 @@ export const MapMasterIgtLayerSelect = memo(() => {
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
   });
+
+  // States
+  const [localGlobalOpacity, setLocalGlobalOpacity] =
+    useState<number>(globalOpacity);
+
+  // Sync local global opacity state when updated externally
+  useEffect(() => {
+    setLocalGlobalOpacity(globalOpacity);
+  }, [globalOpacity]);
+
+  // Debounce global opacity state updates to store for smooth performance
+  const debouncedGlobalOpacity = useDebouncedValue(localGlobalOpacity, 80);
+
+  useEffect(() => {
+    if (debouncedGlobalOpacity !== globalOpacity) {
+      setGlobalOpacity(debouncedGlobalOpacity);
+    }
+  }, [debouncedGlobalOpacity, globalOpacity, setGlobalOpacity]);
 
   // Derived Values
   const activeLayers = useMemo(() => layersData?.items ?? [], [layersData]);
@@ -105,32 +126,9 @@ export const MapMasterIgtLayerSelect = memo(() => {
           justifyContent={"space-between"}
         >
           <HStack justify={"space-between"} gap={"md"} w={"full"}>
-            <HStack flex={1} gap={"xs"} align={"center"}>
-              <P fontWeight={"medium"}>{"Toggle Master Layer IGT"}</P>
+            <P fontWeight={"medium"}>{"Toggle Master Layer IGT"}</P>
 
-              <Badge colorPalette={"blue"}>{enabledCount} aktif</Badge>
-            </HStack>
-
-            {!isEmptyArray(activeLayers) && (
-              <HStack
-                align={"center"}
-                gap={"sm"}
-                cursor={"pointer"}
-                onClick={() => {
-                  handleToggleAll(!isAllEnabled);
-                }}
-              >
-                <P fontSize={"sm"} color={"fg.muted"} userSelect={"none"}>
-                  {"Semua"}
-                </P>
-
-                <Switch
-                  size={"sm"}
-                  checked={isAllEnabled}
-                  pointerEvents={"none"}
-                />
-              </HStack>
-            )}
+            <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
           </HStack>
         </Popover.Header>
 
@@ -142,7 +140,61 @@ export const MapMasterIgtLayerSelect = memo(() => {
               <P color={"fg.muted"}>{"Memuat master layer..."}</P>
             </HStack>
           ) : (
-            <VStack gap={"2xs"} align={"stretch"}>
+            <VStack gap={"xs"} align={"stretch"}>
+              {!isEmptyArray(activeLayers) && (
+                <>
+                  <VStack gap={"sm"} p={1} align={"stretch"}>
+                    <HStack
+                      justify={"space-between"}
+                      align={"center"}
+                      cursor={"pointer"}
+                      onClick={() => {
+                        handleToggleAll(!isAllEnabled);
+                      }}
+                    >
+                      <P fontSize={"sm"} fontWeight={"medium"}>
+                        {"Muat Semua Layer"}
+                      </P>
+
+                      <Switch
+                        size={"sm"}
+                        checked={isAllEnabled}
+                        pointerEvents={"none"}
+                      />
+                    </HStack>
+
+                    <VStack gap={"xs"} align={"stretch"}>
+                      <HStack justify={"space-between"} w={"full"}>
+                        <P fontSize={"sm"} fontWeight={"medium"}>
+                          {"Opasitas Global"}
+                        </P>
+
+                        <P
+                          fontSize={"sm"}
+                          fontWeight={"semibold"}
+                          color={"fg.muted"}
+                        >
+                          {`${Math.round(localGlobalOpacity * 100)}%`}
+                        </P>
+                      </HStack>
+
+                      <Slider
+                        value={[Math.round(localGlobalOpacity * 100)]}
+                        min={0}
+                        max={100}
+                        step={1}
+                        showValue={false}
+                        onValueChange={(details) =>
+                          setLocalGlobalOpacity(details.value[0] / 100)
+                        }
+                      />
+                    </VStack>
+                  </VStack>
+
+                  <Separator />
+                </>
+              )}
+
               {isEmptyArray(activeLayers) && (
                 <HStack align={"center"} justify={"center"} p={"md"}>
                   <P color={"fg.muted"} fontSize={"sm"}>
@@ -151,21 +203,23 @@ export const MapMasterIgtLayerSelect = memo(() => {
                 </HStack>
               )}
 
-              {activeLayers.map((layer) => {
-                const isEnabled = Boolean(enabledLayerIds[layer.id]);
-                const opacity = layerOpacities[layer.id] ?? 1.0;
+              <VStack gap={"2xs"} align={"stretch"}>
+                {activeLayers.map((layer) => {
+                  const isEnabled = Boolean(enabledLayerIds[layer.id]);
+                  const opacity = layerOpacities[layer.id] ?? 1.0;
 
-                return (
-                  <MapMasterIgtLayerItem
-                    key={layer.id}
-                    layer={layer}
-                    isEnabled={isEnabled}
-                    opacity={opacity}
-                    onToggle={toggleLayerId}
-                    onOpacityChange={setLayerOpacity}
-                  />
-                );
-              })}
+                  return (
+                    <MapMasterIgtLayerItem
+                      key={layer.id}
+                      layer={layer}
+                      isEnabled={isEnabled}
+                      opacity={opacity}
+                      onToggle={toggleLayerId}
+                      onOpacityChange={setLayerOpacity}
+                    />
+                  );
+                })}
+              </VStack>
             </VStack>
           )}
         </Popover.Body>

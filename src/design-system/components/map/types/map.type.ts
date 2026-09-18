@@ -176,6 +176,8 @@ export type MapInteractionStore = {
 export type MapLayerState = {
   wmsVisible: boolean;
   setWmsVisible: (visible: boolean) => void;
+  globalOpacity: number;
+  setGlobalOpacity: (opacity: number) => void;
   enabledLayerIds: Record<string, boolean>;
   layerOpacities: Record<string, number>;
   customLayerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;

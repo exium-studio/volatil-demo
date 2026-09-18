@@ -15,6 +15,8 @@ if (typeof window !== "undefined") {
 export const useMapLayerStore = create<MapLayerState>((set) => ({
   wmsVisible: true,
   setWmsVisible: (wmsVisible) => set({ wmsVisible }),
+  globalOpacity: 1.0,
+  setGlobalOpacity: (globalOpacity) => set({ globalOpacity }),
   enabledLayerIds: {},
   layerOpacities: {},
   customLayerConfigs: {},
@@ -59,6 +61,7 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
     }),
   resetLayers: () =>
     set({
+      globalOpacity: 1.0,
       enabledLayerIds: {},
       layerOpacities: {},
       customLayerConfigs: {},
