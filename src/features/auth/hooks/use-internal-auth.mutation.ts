@@ -1,5 +1,4 @@
-// src/features/auth/hooks/use-internal-auth.mutation.ts
-
+import { toast } from "@/design-system/components/toast";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { authService } from "@/features/auth/services/auth.service";
 import type {
@@ -33,6 +32,20 @@ export const useInternalSigninStep1Mutation = () => {
     onSuccess: (data) => {
       if ("accessToken" in data && data.accessToken) {
         toastHandlers.onSuccess();
+      } else if ("mfaRequired" in data && data.mfaRequired) {
+        toast.info("Verifikasi 2 Langkah Diperlukan", {
+          id: "mutation-toast-auth-internal-step1",
+          group: "Autentikasi Pegawai",
+          description: "Silakan masukkan kode 6-digit dari Google Authenticator.",
+        });
+      } else if ("requiresTotpSetup" in data && data.requiresTotpSetup) {
+        toast.info("Setup Google Authenticator Diperlukan", {
+          id: "mutation-toast-auth-internal-step1",
+          group: "Autentikasi Pegawai",
+          description: "Menyiapkan QR Code untuk aktivasi akun Anda...",
+        });
+      } else {
+        toast.close("mutation-toast-auth-internal-step1");
       }
     },
     onError: (error) => {
