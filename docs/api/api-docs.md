@@ -51,29 +51,159 @@ Endpoint terbuka yang dapat diakses oleh publik tanpa memerlukan session token /
 
 ## 1.1 Auth & Session
 
-### Sign In / Login
+### Sign In / Login (Step 1)
 - **Endpoint**: `POST /api/auth/login`
 - **Akses**: `Public`
-- **Payload**:
+- **Content-Type**: `application/json`
+- **Request Body**:
 ```typescript
 type SignInPayload = {
   email: string;
   password: string;
 };
 ```
-- **Response (200 OK)**:
+- **Response A — Belum setup TOTP (200 OK)**:
 ```typescript
-type SignInResponse = {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    role: "mitra" | "internal";
-    organizationName?: string;
+type RequiresTotpSetupResponse = {
+  success: true;
+  message: string;
+  data: {
+    requiresTotpSetup: true;
+    mfaToken: string;
+    mfaTokenExpiresIn: number; // 300 detik (5 menit)
   };
 };
 ```
+- **Response B — Sudah setup TOTP, perlu verifikasi (200 OK)**:
+```typescript
+type MfaRequiredResponse = {
+  success: true;
+  message: string;
+  data: {
+    mfaRequired: true;
+    mfaToken: string;
+    mfaTokenExpiresIn: number; // 300 detik (5 menit)
+  };
+};
+```
+- **Response C — Akun Dev / Direct Login (200 OK)**:
+```typescript
+type DirectSignInResponse = {
+  success: true;
+  message: string;
+  data: {
+    tokenType: "Bearer";
+    accessToken: string;
+    expiresIn: number;
+    user: {
+      id: string | number;
+      email: string;
+      name: string;
+      role: "internal" | "mitra";
+      status?: "active" | "inactive";
+      organizationName?: string;
+    };
+  };
+};
+```
+- **Response Error (401 Unauthorized)**:
+```json
+{
+  "success": false,
+  "message": "Email atau password salah."
+}
+```
+
+### Verifikasi Kode TOTP (Step 2 - Login Normal)
+- **Endpoint**: `POST /api/auth/login/totp-verify`
+- **Akses**: `Public`
+- **Content-Type**: `application/json`
+- **Request Body**:
+```typescript
+type TotpVerifyPayload = {
+  mfaToken: string;
+  totpCode: string; // 6-digit numeric string
+};
+```
+- **Response (200 OK)**:
+```typescript
+type TotpVerifySuccessResponse = {
+  success: true;
+  message: string;
+  data: {
+    tokenType: "Bearer";
+    accessToken: string;
+    expiresIn: number;
+    user: {
+      id: string | number;
+      name: string;
+      email: string;
+      role: "internal";
+      status: "active";
+      totpEnabled: boolean;
+      organizationName?: string;
+      joinedAt?: string;
+    };
+  };
+};
+```
+- **Response Error (401 Unauthorized)**:
+  - `code: "TOTP_INVALID"`: Kode Google Authenticator salah atau kedaluwarsa.
+  - `code: "MFA_TOKEN_EXPIRED"`: MFA intermediate token habis masa berlakunya (>5 menit).
+
+### Setup Google Authenticator Awal (Step 2 - First Setup)
+- **Endpoint**: `GET /api/auth/totp/setup`
+- **Akses**: `Public (Memerlukan MFA Token Header)`
+- **Request Header**: `Authorization: Bearer <mfaToken>`
+- **Response (200 OK)**:
+```typescript
+type TotpSetupResponse = {
+  success: true;
+  message: string;
+  data: {
+    qrCodeDataUrl: string; // "data:image/png;base64,..."
+    manualEntryKey: string; // "JBSWY3DPEHPK3PXP"
+    issuer: string; // "IGTPR Volatil"
+    accountName: string; // "pmotematik@gmail.com"
+  };
+};
+```
+
+### Konfirmasi Kode Pertama Setup TOTP (Step 3 - First Setup)
+- **Endpoint**: `POST /api/auth/totp/setup/confirm`
+- **Akses**: `Public (Memerlukan MFA Token Header)`
+- **Request Header**: `Authorization: Bearer <mfaToken>`
+- **Content-Type**: `application/json`
+- **Request Body**:
+```typescript
+type TotpSetupConfirmPayload = {
+  totpCode: string; // 6-digit numeric string
+};
+```
+- **Response (200 OK)**:
+```typescript
+type TotpSetupConfirmResponse = {
+  success: true;
+  message: string;
+  data: {
+    tokenType: "Bearer";
+    accessToken: string;
+    expiresIn: number;
+    user: {
+      id: string | number;
+      name: string;
+      email: string;
+      role: "internal";
+      status: "active";
+      totpEnabled: true;
+      organizationName?: string;
+      joinedAt?: string;
+    };
+  };
+};
+```
+- **Response Error (401 Unauthorized)**:
+  - `code: "TOTP_INVALID"`: Kode tidak cocok atau waktu perangkat tidak sinkron.
 
 ---
 

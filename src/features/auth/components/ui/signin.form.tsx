@@ -11,9 +11,15 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
+import { TotpSetupStep } from "@/features/auth/components/ui/totp-setup-step";
+import { TotpVerifyStep } from "@/features/auth/components/ui/totp-verify-step";
 import { UserSessionActions } from "@/features/auth/components/ui/user-session-actions";
 import { UserSessionCard } from "@/features/auth/components/ui/user-session-card";
 import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
+import {
+  useInternalSigninStep1Mutation,
+  useInternalTotpSetupMutation,
+} from "@/features/auth/hooks/use-internal-auth.mutation";
 import { useSigninMutation } from "@/features/auth/hooks/use-signin.mutation";
 import { useSsoSigninMutation } from "@/features/auth/hooks/use-sso-signin.mutation";
 import {
@@ -22,9 +28,10 @@ import {
 } from "@/features/auth/schemas/signin.schema";
 import type {
   AdminSigninSearch,
+  InternalAuthState,
   SigninFormValues,
 } from "@/features/auth/types/signin.type";
-import { Link, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import {
   AlertTriangleIcon,
   Code2Icon,
@@ -34,6 +41,7 @@ import {
   MailIcon,
   ShieldCheckIcon,
 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export const MitraSignin = (props: StackProps) => {
@@ -218,8 +226,19 @@ export const MitraSignin = (props: StackProps) => {
 export const InternalSignin = (props: StackProps) => {
   // Hooks
   const { user, isAuthenticated } = useAuthSession();
-  const signinMutation = useSigninMutation();
+  const navigate = useNavigate();
+  const step1Mutation = useInternalSigninStep1Mutation();
+  const setupMutation = useInternalTotpSetupMutation();
   const search = useSearch({ strict: false }) as AdminSigninSearch;
+
+  // States
+  const [authState, setAuthState] = useState<InternalAuthState>({
+    screen: "login",
+    mfaToken: null,
+    mfaTokenExpiresIn: 300,
+    setupData: null,
+    email: "",
+  });
 
   const {
     register,
@@ -241,10 +260,55 @@ export const InternalSignin = (props: StackProps) => {
 
   // Handlers
   const handleLogin = (values: SigninFormValues) => {
-    signinMutation.mutate({
-      email: values.email,
-      password: values.password,
-      role: "internal",
+    step1Mutation.mutate(
+      {
+        email: values.email,
+        password: values.password,
+        role: "internal",
+      },
+      {
+        onSuccess: (data) => {
+          if ("mfaRequired" in data && data.mfaRequired) {
+            setAuthState({
+              screen: "totp-verify",
+              mfaToken: data.mfaToken,
+              mfaTokenExpiresIn: data.mfaTokenExpiresIn || 300,
+              setupData: null,
+              email: values.email,
+            });
+            return;
+          }
+
+          if ("requiresTotpSetup" in data && data.requiresTotpSetup) {
+            setupMutation.mutate(data.mfaToken, {
+              onSuccess: (setupData) => {
+                setAuthState({
+                  screen: "totp-setup-qr",
+                  mfaToken: data.mfaToken,
+                  mfaTokenExpiresIn: data.mfaTokenExpiresIn || 300,
+                  setupData,
+                  email: values.email,
+                });
+              },
+            });
+            return;
+          }
+
+          if ("accessToken" in data && data.accessToken) {
+            void navigate({ to: "/internal/welcome" });
+          }
+        },
+      },
+    );
+  };
+
+  const handleBackToLogin = () => {
+    setAuthState({
+      screen: "login",
+      mfaToken: null,
+      mfaTokenExpiresIn: 300,
+      setupData: null,
+      email: "",
     });
   };
 
@@ -261,6 +325,31 @@ export const InternalSignin = (props: StackProps) => {
 
         <UserSessionActions user={user} />
       </VStack>
+    );
+  }
+
+  if (authState.screen === "totp-verify" && authState.mfaToken) {
+    return (
+      <TotpVerifyStep
+        email={authState.email}
+        mfaToken={authState.mfaToken}
+        onSuccess={() => void navigate({ to: "/internal/welcome" })}
+        onBackToLogin={handleBackToLogin}
+        {...props}
+      />
+    );
+  }
+
+  if (authState.screen === "totp-setup-qr" && authState.mfaToken) {
+    return (
+      <TotpSetupStep
+        email={authState.email}
+        mfaToken={authState.mfaToken}
+        setupData={authState.setupData}
+        onSuccess={() => void navigate({ to: "/internal/welcome" })}
+        onBackToLogin={handleBackToLogin}
+        {...props}
+      />
     );
   }
 
@@ -344,7 +433,7 @@ export const InternalSignin = (props: StackProps) => {
         type={"submit"}
         w={"full"}
         mt={4}
-        loading={signinMutation.isPending}
+        loading={step1Mutation.isPending || setupMutation.isPending}
       >
         {"Masuk ke Portal Internal"}
       </Button>

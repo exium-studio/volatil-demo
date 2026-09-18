@@ -8,6 +8,11 @@ import type {
   SsoInternalLogoutResponse,
   SsoInternalUrlParams,
   SsoInternalUrlResponse,
+  TotpSetupConfirmPayload,
+  TotpSetupConfirmResponse,
+  TotpSetupResponse,
+  TotpVerifyPayload,
+  TotpVerifyResponse,
 } from "@/features/auth/types/auth.service.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse, User } from "@/shared/types/common-response.type";
@@ -23,6 +28,46 @@ export const postLoginApi = async (
       password: payload.password,
     },
     { signal },
+  );
+};
+
+export const postLoginTotpVerifyApi = async (
+  payload: TotpVerifyPayload,
+  signal?: AbortSignal,
+): Promise<TotpVerifyResponse<User>> => {
+  return apiClient.post<TotpVerifyResponse<User>>(
+    "/api/auth/login/totp-verify",
+    payload,
+    { signal },
+  );
+};
+
+export const getTotpSetupApi = async (
+  mfaToken: string,
+  signal?: AbortSignal,
+): Promise<TotpSetupResponse> => {
+  return apiClient.get<TotpSetupResponse>("/api/auth/totp/setup", {
+    headers: {
+      Authorization: `Bearer ${mfaToken}`,
+    },
+    signal,
+  });
+};
+
+export const postTotpSetupConfirmApi = async (
+  mfaToken: string,
+  payload: TotpSetupConfirmPayload,
+  signal?: AbortSignal,
+): Promise<TotpSetupConfirmResponse<User>> => {
+  return apiClient.post<TotpSetupConfirmResponse<User>>(
+    "/api/auth/totp/setup/confirm",
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${mfaToken}`,
+      },
+      signal,
+    },
   );
 };
 

@@ -2,12 +2,21 @@ import { useMapLayerStore } from "@/design-system/components/map/stores/map.laye
 import {
   getAuthMeApi,
   getSsoInternalUrlApi,
+  getTotpSetupApi,
   postLoginApi,
+  postLoginTotpVerifyApi,
   postLogoutApi,
   postSsoInternalCallbackApi,
   postSsoInternalLogoutUrlApi,
+  postTotpSetupConfirmApi,
 } from "@/features/auth/api/auth.api";
-import type { SigninPayload } from "@/features/auth/types/auth.service.type";
+import type {
+  AuthLoginData,
+  SigninPayload,
+  TotpSetupConfirmPayload,
+  TotpSetupData,
+  TotpVerifyPayload,
+} from "@/features/auth/types/auth.service.type";
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { ApiError } from "@/shared/libs/api-client/api-error";
 import type {
@@ -30,14 +39,15 @@ export const authService = {
     try {
       const response = await postLoginApi(payload, signal);
 
-      if (response.data.accessToken) {
+      if ("accessToken" in response.data && response.data.accessToken) {
         localStorage.setItem("auth_token", response.data.accessToken);
       }
-      if (response.data.user) {
+      if ("user" in response.data && response.data.user) {
         setStorage("user", JSON.stringify(response.data.user));
+        return response.data.user;
       }
 
-      return response.data.user;
+      throw new ApiError("Respon login tidak valid", 400);
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -83,6 +93,192 @@ export const authService = {
       };
       setStorage("user", JSON.stringify(dummyMitraUser));
       return dummyMitraUser;
+    }
+  },
+
+  loginInternalStep1: async (
+    payload: SigninPayload,
+    signal?: AbortSignal,
+  ): Promise<AuthLoginData<User>> => {
+    try {
+      const response = await postLoginApi(payload, signal);
+
+      if ("accessToken" in response.data && response.data.accessToken) {
+        localStorage.setItem("auth_token", response.data.accessToken);
+        if (response.data.user) {
+          setStorage("user", JSON.stringify(response.data.user));
+        }
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback for development environment when backend is offline and dummy data is enabled
+      if (payload.email === "internal@demo.com") {
+        const mockToken = `mock-token-${Date.now()}`;
+        localStorage.setItem("auth_token", mockToken);
+        const dummyInternalUser: InternalUser = {
+          id: "3",
+          email: payload.email,
+          name: "Internal Admin Demo",
+          role: "internal",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          nip: "198805202010121002",
+          kantorId: "94efc28c-e837-4581-9bd2-a16fcf7c79d1",
+          namaKantor: "Kantah Kota Adm. Jakarta Pusat",
+          tipeKantor: "KANTAH",
+          tipeUser: "PNS",
+          internalRoles: ["operator_warkah", "verifikator_kadastral"],
+        };
+        setStorage("user", JSON.stringify(dummyInternalUser));
+        return {
+          tokenType: "Bearer",
+          accessToken: mockToken,
+          user: dummyInternalUser,
+        };
+      }
+
+      if (payload.email === "pmotematik@gmail.com") {
+        return {
+          requiresTotpSetup: true,
+          mfaToken: `mock-mfa-token-${Date.now()}`,
+          mfaTokenExpiresIn: 300,
+        };
+      }
+
+      return {
+        mfaRequired: true,
+        mfaToken: `mock-mfa-token-${Date.now()}`,
+        mfaTokenExpiresIn: 300,
+      };
+    }
+  },
+
+  verifyTotp: async (
+    payload: TotpVerifyPayload,
+    signal?: AbortSignal,
+  ): Promise<User> => {
+    try {
+      const response = await postLoginTotpVerifyApi(payload, signal);
+
+      if (response.data.accessToken) {
+        localStorage.setItem("auth_token", response.data.accessToken);
+      }
+      if (response.data.user) {
+        setStorage("user", JSON.stringify(response.data.user));
+      }
+
+      return response.data.user;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback
+      const mockToken = `mock-token-${Date.now()}`;
+      localStorage.setItem("auth_token", mockToken);
+      const dummyInternalUser: InternalUser = {
+        id: "1",
+        email: "internal@demo.com",
+        name: "PMO Tematik",
+        role: "internal",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        nip: "198805202010121002",
+        kantorId: "94efc28c-e837-4581-9bd2-a16fcf7c79d1",
+        namaKantor: "Direktorat Jenderal IGTPR / ATR-BPN",
+        tipeKantor: "PUSAT",
+        tipeUser: "PNS",
+        internalRoles: ["pmo_tematik", "administrator"],
+      };
+      setStorage("user", JSON.stringify(dummyInternalUser));
+      return dummyInternalUser;
+    }
+  },
+
+  getTotpSetup: async (
+    mfaToken: string,
+    signal?: AbortSignal,
+  ): Promise<TotpSetupData> => {
+    try {
+      const response = await getTotpSetupApi(mfaToken, signal);
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback
+      return {
+        qrCodeDataUrl:
+          "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='200' height='200' fill='%23f1f5f9'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2364748b' font-size='14'>Mock QR Code</text></svg>",
+        manualEntryKey: "JBSWY3DPEHPK3PXP",
+        issuer: "IGTPR Volatil",
+        accountName: "pmotematik@gmail.com",
+      };
+    }
+  },
+
+  confirmTotpSetup: async (
+    mfaToken: string,
+    payload: TotpSetupConfirmPayload,
+    signal?: AbortSignal,
+  ): Promise<User> => {
+    try {
+      const response = await postTotpSetupConfirmApi(mfaToken, payload, signal);
+
+      if (response.data.accessToken) {
+        localStorage.setItem("auth_token", response.data.accessToken);
+      }
+      if (response.data.user) {
+        setStorage("user", JSON.stringify(response.data.user));
+      }
+
+      return response.data.user;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback
+      const mockToken = `mock-token-${Date.now()}`;
+      localStorage.setItem("auth_token", mockToken);
+      const dummyInternalUser: InternalUser = {
+        id: "1",
+        email: "pmotematik@gmail.com",
+        name: "PMO Tematik",
+        role: "internal",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        nip: "198805202010121002",
+        kantorId: "94efc28c-e837-4581-9bd2-a16fcf7c79d1",
+        namaKantor: "Direktorat Jenderal IGTPR / ATR-BPN",
+        tipeKantor: "PUSAT",
+        tipeUser: "PNS",
+        internalRoles: ["pmo_tematik"],
+      };
+      setStorage("user", JSON.stringify(dummyInternalUser));
+      return dummyInternalUser;
     }
   },
 

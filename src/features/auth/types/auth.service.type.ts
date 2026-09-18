@@ -11,13 +11,60 @@ export type SigninPayload = {
   role?: Role;
 };
 
-export type AuthLoginData<TUser = User> = {
+export type AuthLoginDirectData<TUser = User> = {
   tokenType: "Bearer";
   accessToken: string;
+  expiresIn?: number;
   user: TUser;
 };
 
+export type AuthLoginMfaRequiredData = {
+  mfaRequired: true;
+  mfaToken: string;
+  mfaTokenExpiresIn?: number;
+};
+
+export type AuthLoginRequiresTotpSetupData = {
+  requiresTotpSetup: true;
+  mfaToken: string;
+  mfaTokenExpiresIn?: number;
+};
+
+export type AuthLoginData<TUser = User> =
+  | AuthLoginDirectData<TUser>
+  | AuthLoginMfaRequiredData
+  | AuthLoginRequiresTotpSetupData;
+
 export type AuthLoginResponse<TUser = User> = ApiResponse<AuthLoginData<TUser>>;
+
+export type TotpVerifyPayload = {
+  mfaToken: string;
+  totpCode: string;
+};
+
+export type TotpVerifyData<TUser = User> = {
+  tokenType: "Bearer";
+  accessToken: string;
+  expiresIn?: number;
+  user: TUser;
+};
+
+export type TotpVerifyResponse<TUser = User> = ApiResponse<TotpVerifyData<TUser>>;
+
+export type TotpSetupData = {
+  qrCodeDataUrl: string;
+  manualEntryKey: string;
+  issuer?: string;
+  accountName?: string;
+};
+
+export type TotpSetupResponse = ApiResponse<TotpSetupData>;
+
+export type TotpSetupConfirmPayload = {
+  totpCode: string;
+};
+
+export type TotpSetupConfirmResponse<TUser = User> = ApiResponse<TotpVerifyData<TUser>>;
 
 export type AuthMeResponse<TUser = User> = ApiResponse<TUser>;
 
