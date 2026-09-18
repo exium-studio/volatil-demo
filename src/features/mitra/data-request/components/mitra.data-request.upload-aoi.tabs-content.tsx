@@ -526,6 +526,10 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
                     borderColor={"border.subtle"}
                     bg={"bg.body"}
                     rounded={theme.radii.component}
+                    transition={"150ms"}
+                    _hover={{
+                      bg: "bg.subtle",
+                    }}
                   >
                     <HStack
                       align={"center"}
