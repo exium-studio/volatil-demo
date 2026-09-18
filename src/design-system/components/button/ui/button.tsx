@@ -13,6 +13,7 @@ import {
   IconButton as ChakraIconButton,
   Span,
 } from "@chakra-ui/react";
+import type { ButtonProps as ChakraButtonProps } from "@chakra-ui/react";
 import { Children, forwardRef, useMemo } from "react";
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -92,7 +93,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <ChakraButton
         ref={ref}
-        variant={variant || (primary ? "solid" : "ghost")}
+        variant={
+          (variant ||
+            (primary ? "solid" : "ghost")) as ChakraButtonProps["variant"]
+        }
         colorPalette={
           colorPalette ?? (primary ? theme.colorPalette : "neutral")
         }
@@ -123,7 +127,10 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     return (
       <ChakraIconButton
         ref={ref}
-        variant={variant || (primary ? "solid" : "ghost")}
+        variant={
+          (variant ||
+            (primary ? "solid" : "ghost")) as ChakraButtonProps["variant"]
+        }
         colorPalette={
           colorPalette ?? (primary ? theme.colorPalette : "neutral")
         }

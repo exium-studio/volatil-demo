@@ -5,8 +5,9 @@ import type {
   IconButtonProps as ChakraIconButtonProps,
 } from "@chakra-ui/react";
 
-export type ButtonProps = ChakraButtonProps & {
+export type ButtonProps = Omit<ChakraButtonProps, "variant"> & {
   primary?: boolean;
+  variant?: ChakraButtonProps["variant"] | "frosted" | "blend" | (string & {});
   lineClamp?: ChakraButtonProps["lineClamp"];
 };
 
