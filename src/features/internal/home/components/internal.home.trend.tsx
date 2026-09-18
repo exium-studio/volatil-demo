@@ -1,9 +1,8 @@
-// src/features/internal/home/components/internal.home.trend.tsx
-
 import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -11,8 +10,8 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { useInternalAcquisitionTrendsQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type {
-  InternalHomeTrendChartProps,
   InternalHomeTrendHeaderProps,
+  InternalHomeTrendItem,
   InternalHomeTrendProps,
 } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
@@ -36,19 +35,35 @@ const PERIOD_OPTIONS = [
 ];
 
 export const InternalHomeTrend = (props: InternalHomeTrendProps) => {
+  return (
+    <Container.Root withContext={true} flex={"1 1 100%"} {...props}>
+      <InternalHomeTrendContent />
+    </Container.Root>
+  );
+};
+
+const InternalHomeTrendContent = () => {
   // States
   const [period, setPeriod] = useState<HomePeriod>("all");
 
-  return (
-    <Container.Root withContext={true} flex={"1 1 100%"} {...props}>
-      <Container.Body gap={8} pt={"md"} pb={"md"}>
-        <InternalHomeTrendHeader period={period} onPeriodChange={setPeriod} />
+  // Queries / Data
+  const { acquisitionTrends, isLoading } =
+    useInternalAcquisitionTrendsQuery(period);
 
-        <VStack mt={"auto"}>
-          <InternalHomeTrendChartContent period={period} />
-        </VStack>
-      </Container.Body>
-    </Container.Root>
+  if (isLoading) {
+    return <Skeleton minH={"356px"} w={"full"} />;
+  }
+
+  return (
+    <Container.Body gap={8} pt={"md"} pb={"md"}>
+      <InternalHomeTrendHeader period={period} onPeriodChange={setPeriod} />
+
+      <VStack mt={"auto"}>
+        <InternalHomeTrendChartContent
+          acquisitionTrends={acquisitionTrends}
+        />
+      </VStack>
+    </Container.Body>
   );
 };
 
@@ -90,12 +105,11 @@ const InternalHomeTrendHeader = (props: InternalHomeTrendHeaderProps) => {
   );
 };
 
-const InternalHomeTrendChartContent = (props: InternalHomeTrendChartProps) => {
+const InternalHomeTrendChartContent = (props: {
+  acquisitionTrends: InternalHomeTrendItem[];
+}) => {
   // Props
-  const { period } = props;
-
-  // Queries / Data
-  const { acquisitionTrends } = useInternalAcquisitionTrendsQuery(period);
+  const { acquisitionTrends } = props;
 
   // Derived Values / Hooks
   const chart = useChart({

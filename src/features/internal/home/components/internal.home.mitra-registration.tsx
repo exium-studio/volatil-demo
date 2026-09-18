@@ -4,6 +4,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -20,7 +21,27 @@ import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 export const InternalHomeMitraRegistration = (
   props: InternalHomeMitraRegistrationProps,
 ) => {
-  const { mitraRegistration } = useInternalMitraRegistrationQuery();
+  return (
+    <Container.Root flex={"1 1 280px"} withContext={true} {...props}>
+      <InternalHomeMitraRegistrationContent />
+    </Container.Root>
+  );
+};
+
+const InternalHomeMitraRegistrationContent = () => {
+  const { mitraRegistration, isLoading } = useInternalMitraRegistrationQuery();
+
+  if (isLoading) {
+    return <Skeleton minH={"240px"} w={"full"} />;
+  }
+
+  return <InternalHomeMitraRegistrationChart mitraRegistration={mitraRegistration} />;
+};
+
+const InternalHomeMitraRegistrationChart = (props: {
+  mitraRegistration: { active: number; pendingVerification: number };
+}) => {
+  const { mitraRegistration } = props;
 
   const chartData = [
     {
@@ -41,8 +62,7 @@ export const InternalHomeMitraRegistration = (
   });
 
   return (
-    <Container.Root flex={"1 1 280px"} withContext={true} {...props}>
-      <Container.Body justify={"space-between"} gap={"md"} py={"md"}>
+    <Container.Body justify={"space-between"} gap={"md"} py={"md"}>
         <HStack justify={"space-between"} align={"center"} px={"md"}>
           <HStack gap={"xs"} align={"center"}>
             <Heading>{"Registrasi Mitra"}</Heading>
@@ -132,6 +152,5 @@ export const InternalHomeMitraRegistration = (
           </HStack>
         </VStack>
       </Container.Body>
-    </Container.Root>
   );
 };

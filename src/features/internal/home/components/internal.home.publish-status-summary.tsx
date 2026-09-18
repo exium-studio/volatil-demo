@@ -4,6 +4,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -18,7 +19,15 @@ import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 export const InternalHomePublishStatusSummary = (
   props: InternalHomePublishStatusSummaryProps,
 ) => {
-  const { igtPublicationStatus } = useInternalPublishStatusQuery();
+  const { igtPublicationStatus, isLoading } = useInternalPublishStatusQuery();
+
+  if (isLoading) {
+    return (
+      <Container.Root flex={"1 1 240px"} withContext={true} {...props}>
+        <Skeleton minH={"240px"} w={"full"} />
+      </Container.Root>
+    );
+  }
 
   const totalPublikasi =
     igtPublicationStatus.active + igtPublicationStatus.inactive;

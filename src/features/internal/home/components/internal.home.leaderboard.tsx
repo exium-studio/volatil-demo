@@ -1,5 +1,4 @@
-// src/features/internal/home/components/internal.home.leaderboard.tsx
-
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -122,7 +121,15 @@ const TopMitraLeaderboardCard = (props: LeaderboardCardProps) => {
   const { theme } = useThemeStore();
 
   // Queries
-  const { topMitraList } = useInternalLeaderboardQuery();
+  const { topMitraList, isLoading } = useInternalLeaderboardQuery();
+
+  if (isLoading) {
+    return (
+      <Container.Root flex={flex} withContext={true}>
+        <Skeleton minH={"320px"} w={"full"} />
+      </Container.Root>
+    );
+  }
 
   return (
     <Container.Root flex={flex} withContext={true}>
@@ -222,7 +229,15 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
   const { theme } = useThemeStore();
 
   // Queries
-  const { topIgtLayers } = useInternalLeaderboardQuery();
+  const { topIgtLayers, isLoading } = useInternalLeaderboardQuery();
+
+  if (isLoading) {
+    return (
+      <Container.Root flex={flex} withContext={true}>
+        <Skeleton minH={"320px"} w={"full"} />
+      </Container.Root>
+    );
+  }
 
   return (
     <Container.Root flex={flex} withContext={true}>

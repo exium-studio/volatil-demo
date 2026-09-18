@@ -1,7 +1,6 @@
-// src/features/internal/home/components/internal.home.service-rate.tsx
-
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Circle } from "@/design-system/components/layout/ui/box";
@@ -19,6 +18,7 @@ import type {
   InternalHomeServiceRateProps,
 } from "@/features/internal/home/types/internal.home.service-rate.type";
 import { useInternalPricingListQuery } from "@/features/internal/pricing/hooks/use-internal-pricing";
+import type { PricingItem } from "@/features/internal/pricing/types/internal.pricing.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { PencilIcon } from "lucide-react";
 import { useMemo } from "react";
@@ -28,16 +28,32 @@ export const InternalHomeServiceRate = (
 ) => {
   return (
     <Container.Root flex={"1 1 350px"} withContext={true} {...props}>
-      <Container.Body gap={4} pt={"md"}>
-        <InternalHomeServiceRateHeader />
-
-        <VStack flex={1}>
-          <Separator borderColor={"bg.canvas"} />
-
-          <InternalHomeServiceRateStats />
-        </VStack>
-      </Container.Body>
+      <InternalHomeServiceRateContent />
     </Container.Root>
+  );
+};
+
+const InternalHomeServiceRateContent = () => {
+  // Contexts
+  const { isSmContainer } = useContainerContext();
+
+  // Queries / Data — directly hit dedicated pricing API
+  const { items: pricingItems, isLoading } = useInternalPricingListQuery();
+
+  if (isLoading) {
+    return <Skeleton minH={isSmContainer ? "320px" : "240px"} w={"full"} />;
+  }
+
+  return (
+    <Container.Body gap={4} pt={"md"}>
+      <InternalHomeServiceRateHeader />
+
+      <VStack flex={1}>
+        <Separator borderColor={"bg.canvas"} />
+
+        <InternalHomeServiceRateStats pricingItems={pricingItems} />
+      </VStack>
+    </Container.Body>
   );
 };
 
@@ -67,12 +83,14 @@ const InternalHomeServiceRateHeader = () => {
   );
 };
 
-const InternalHomeServiceRateStats = () => {
+const InternalHomeServiceRateStats = (props: {
+  pricingItems: PricingItem[];
+}) => {
+  // Props
+  const { pricingItems } = props;
+
   // Contexts
   const { isSmContainer } = useContainerContext();
-
-  // Queries / Data — directly hit dedicated pricing API
-  const { items: pricingItems } = useInternalPricingListQuery();
 
   // Derived Values - transform pricing items directly from response
   const serviceRates = useMemo<InternalHomeServiceRateItem[]>(() => {
