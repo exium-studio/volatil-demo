@@ -105,7 +105,7 @@ export const TransactionDetailModalContent = (
 
   // Hooks
   const isMounted = useMountTimeout({
-    mountDelay: 250,
+    mountDelay: 350,
   });
 
   // Derived Values
@@ -335,11 +335,19 @@ export const TransactionDetailModalContent = (
         </VStack>
       </Modal.Header>
 
-      <Modal.Body p={0}>
-        <VStack gap={"sm"}>
+      <Modal.Body px={"md"} pb={0}>
+        <VStack gap={"md"} align={"stretch"}>
           {/* Top Section: Responsive SimpleGrid with Timeline & Metadata Details */}
-          <Skeleton loaded={isMounted} w={"full"} px={"md"} pt={"sm"}>
-            <SimpleGrid columns={[1, 1, 2]} gap={"sm"} p={"md"}>
+          {!isMounted && (
+            <Skeleton
+              h={transaction.mitra ? "528px" : "408px"}
+              w={"full"}
+              rounded={"md"}
+            />
+          )}
+
+          {isMounted && (
+            <SimpleGrid columns={[1, 1, 2]} gap={"sm"}>
               {/* Kiri: Timeline Riwayat Alur Pesanan */}
               <VStack gap={"md"} h={"full"} py={"xs"}>
                 {/* <P fontWeight={"semibold"}>{"Riwayat Alur Pesanan"}</P> */}
@@ -369,7 +377,7 @@ export const TransactionDetailModalContent = (
 
                       <Timeline.Content>
                         <Timeline.Title
-                          fontSize={"xs"}
+                          fontSize={"md"}
                           fontWeight={"semibold"}
                           color={step.isMuted ? "fg.subtle" : undefined}
                         >
@@ -377,7 +385,7 @@ export const TransactionDetailModalContent = (
                         </Timeline.Title>
 
                         <Timeline.Description
-                          fontSize={"2xs"}
+                          fontSize={"sm"}
                           color={"fg.subtle"}
                         >
                           {step.description}
@@ -395,29 +403,29 @@ export const TransactionDetailModalContent = (
                 {transaction.mitra && (
                   <>
                     <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
+                      <P fontSize={"sm"} color={"fg.subtle"}>
                         {"Nama Mitra"}
                       </P>
-                      <P fontSize={"sm"} fontWeight={"medium"}>
+                      <P fontSize={"md"} fontWeight={"medium"}>
                         {transaction.mitra.name}
                       </P>
                     </VStack>
 
                     <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
+                      <P fontSize={"sm"} color={"fg.subtle"}>
                         {"Email Mitra"}
                       </P>
-                      <P fontSize={"sm"} color={"fg.muted"}>
+                      <P fontSize={"md"} color={"fg.muted"}>
                         {transaction.mitra.email}
                       </P>
                     </VStack>
 
                     {transaction.mitra.agencyOrCompany && (
                       <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
+                        <P fontSize={"sm"} color={"fg.subtle"}>
                           {"Instansi / Perusahaan"}
                         </P>
-                        <P fontSize={"sm"} fontWeight={"medium"}>
+                        <P fontSize={"md"} fontWeight={"medium"}>
                           {transaction.mitra.agencyOrCompany}
                         </P>
                       </VStack>
@@ -426,17 +434,17 @@ export const TransactionDetailModalContent = (
                 )}
 
                 <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Nomor Pesanan"}
                   </P>
-                  <P fontSize={"sm"} fontWeight={"medium"}>
+                  <P fontSize={"md"} fontWeight={"medium"}>
                     {transaction.orderNumber || "-"}
                   </P>
                 </VStack>
 
                 {effectiveOrderStatus && (
                   <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
+                    <P fontSize={"sm"} color={"fg.subtle"}>
                       {"Status Pesanan"}
                     </P>
                     <OrderStatusBadge showIcon={true}>
@@ -447,11 +455,11 @@ export const TransactionDetailModalContent = (
 
                 {transaction.billingCode && (
                   <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
+                    <P fontSize={"sm"} color={"fg.subtle"}>
                       {"Kode Billing (MPN)"}
                     </P>
                     <HStack gap={1} align={"center"}>
-                      <P fontSize={"sm"} fontWeight={"medium"}>
+                      <P fontSize={"md"} fontWeight={"medium"}>
                         <TNum>{transaction.billingCode}</TNum>
                       </P>
                       <ClipboardButton
@@ -464,55 +472,56 @@ export const TransactionDetailModalContent = (
 
                 {targetExpiry && !isPaid && !isRefunded && (
                   <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
+                    <P fontSize={"sm"} color={"fg.subtle"}>
                       {"Sisa Waktu Pembayaran"}
                     </P>
                     <Countdown
                       finishedAt={targetExpiry}
                       fontWeight={"medium"}
+                      fontSize={"md"}
                       color={isExpired ? "fg.subtle" : "orange.fg"}
                     />
                   </VStack>
                 )}
 
                 <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Metode Pengajuan"}
                   </P>
-                  <SelectionTypeBadge size={"xs"}>
+                  <SelectionTypeBadge size={"sm"}>
                     {transaction.selectionType}
                   </SelectionTypeBadge>
                 </VStack>
 
                 <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Metode Pembayaran"}
                   </P>
                   {transaction.paymentMethod ? (
-                    <Badge variant={"subtle"} colorPalette={"gray"}>
+                    <Badge variant={"subtle"} colorPalette={"gray"} size={"sm"}>
                       {transaction.paymentMethod}
                     </Badge>
                   ) : (
-                    <P fontSize={"sm"}>{"-"}</P>
+                    <P fontSize={"md"}>{"-"}</P>
                   )}
                 </VStack>
 
                 {transaction.paidAt && (
                   <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
+                    <P fontSize={"sm"} color={"fg.subtle"}>
                       {"Waktu Pembayaran"}
                     </P>
-                    <P fontSize={"sm"} fontWeight={"medium"}>
+                    <P fontSize={"md"} fontWeight={"medium"}>
                       {formatUtcDateTime(transaction.paidAt, preferredTimezone)}
                     </P>
                   </VStack>
                 )}
 
                 <VStack align={"start"} gap={"2xs"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Total Pembayaran"}
                   </P>
-                  <P fontSize={"sm"} fontWeight={"medium"}>
+                  <P fontSize={"md"} fontWeight={"medium"}>
                     <FormatNumber
                       value={transaction.totalAmount}
                       style={"currency"}
@@ -523,16 +532,22 @@ export const TransactionDetailModalContent = (
                 </VStack>
               </VStack>
             </SimpleGrid>
-          </Skeleton>
+          )}
 
           {/* Order Items Table */}
-          <Skeleton loaded={isMounted} px={"md"} pb={"md"}>
-            <VStack align={"stretch"} gap={"xs"} pt={"xs"}>
-              <Box px={"md"}>
-                <P fontSize={"sm"} fontWeight={"semibold"}>
-                  {`Daftar Pesanan Layer IGT (${transaction.items.length} Item)`}
-                </P>
-              </Box>
+          {!isMounted && (
+            <Skeleton
+              h={`${Math.max(140, 50 + (transaction.items?.length ?? 1) * 44)}px`}
+              w={"full"}
+              rounded={"md"}
+            />
+          )}
+
+          {isMounted && (
+            <VStack align={"stretch"} gap={"xs"}>
+              <P fontSize={"sm"} fontWeight={"semibold"}>
+                {`Daftar Pesanan Layer IGT (${transaction.items.length} Item)`}
+              </P>
 
               <Box rounded={"md"} overflow={"hidden"}>
                 <DataViewTable.Root
@@ -546,7 +561,7 @@ export const TransactionDetailModalContent = (
                 </DataViewTable.Root>
               </Box>
             </VStack>
-          </Skeleton>
+          )}
         </VStack>
       </Modal.Body>
 
