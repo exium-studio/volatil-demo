@@ -15,11 +15,16 @@ import { useInternalTransactionStatisticsQuery } from "@/features/internal/stati
 import { CheckCircleIcon, CircleDollarSignIcon, ListIcon } from "lucide-react";
 
 export const InternalTransactionStatisticSummary = () => {
+  // Contexts
+  const { isSmContainer } = useContainerContext();
+
   // Queries
   const { isLoading, isFetching } = useInternalTransactionStatisticsQuery();
 
   if (isLoading) {
-    return <Skeleton h={"160px"} w={"full"} p={"md"} />;
+    return (
+      <Skeleton h={isSmContainer ? "328px" : "160px"} w={"full"} p={"md"} />
+    );
   }
 
   return (
