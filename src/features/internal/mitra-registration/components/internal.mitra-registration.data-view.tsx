@@ -182,7 +182,6 @@ export const InternalMitraRegistrationDataView = () => {
           key: "open-detail",
           label: "Lihat Detail Berkas",
           icon: EyeIcon,
-          sticky: true,
           onClick: (reg: InternalMitraRegistrationItem) => {
             void navigate({
               to: "/internal/mitra-registration/$registrationId",
