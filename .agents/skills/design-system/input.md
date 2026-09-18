@@ -1,32 +1,31 @@
 ---
 name: design-system-input
-description: "Guidelines, component APIs, RHF integrations, and usage rules for Input, NumberInput, Switch, Checkbox, Textarea, PasswordInput, RadioInput, RadioCardInput, and FocusSelect."
+description: "Guidelines, component APIs, RHF integrations, and usage rules for Input, NumberInput, Switch, Checkbox, Textarea, PasswordInput, FocusSelect, Select, FileInput, DateInput, Slider, PinInput, Field, and SegmentGroup."
 ---
 
 # Design System Input Components
 
-This guide details all input components in `@/design-system/components/input/ui/`.
-Always import from `@/design-system/components/input/ui/<component-name>`.
+Located in `@/design-system/components/input/ui/`.
 
 ---
 
 ## 1. NumberInput (`number-input.tsx`)
 
-### 🔴 Critical Rule: Never use `<Input type="number" />`!
-Always use `NumberInput` or `SteppedNumberInput` from `@/design-system/components/input/ui/number-input`.
+### 🔴 Critical Rule: DILARANG menggunakan `<Input type="number" />`!
+Selalu gunakan `NumberInput` dari `@/design-system/components/input/ui/number-input`.
 
-### Components
-- `NumberInput`: Standard numeric input with increment/decrement triggers and support for min/max/step.
-- `SteppedNumberInput`: Compact horizontal stepper with segmented `-` and `+` buttons.
+### Components:
+- `NumberInput`: Standar input angka dengan tombol increment/decrement dan format pemisah ribuan.
+- `SteppedNumberInput`: Input angka horizontal kompak dengan kontrol `-` dan `+`.
 
-### Key Props & API
-- `value`: `string`
+### Key Props:
+- `value: string | number`
 - `min?: number`, `max?: number`, `step?: number`
 - `onValueChange?: (details: { value: number; formattedValue: string }) => void`
 - `size?: "xs" | "sm" | "md" | "lg"`
-- `inputProps`: Props passed down to the underlying input element (used by React Hook Form `register`).
+- `allowNegative?: boolean`
 
-### Usage Example:
+### Example:
 ```tsx
 import { NumberInput } from "@/design-system/components/input/ui/number-input";
 
@@ -34,137 +33,204 @@ import { NumberInput } from "@/design-system/components/input/ui/number-input";
   size={"sm"}
   min={0}
   max={100}
-  step={5}
-  value={String(field.value ?? 0)}
-  onValueChange={(details) => field.onChange(details.value)}
+  step={1}
+  value={field.value}
+  onValueChange={(e) => field.onChange(e.value)}
 />
 ```
 
 ---
 
-## 2. Input (`input.tsx`)
+## 2. Text Input & Search (`input.tsx`, `search-input.tsx`, `focus-search.tsx`)
 
-Text input with built-in clear button (`clearable`), prefix/suffix icons, addon text, and debounce support.
+- `Input`: Standar text field dengan `clearable`, icon prefix/suffix, dan addon.
+- `SearchInput`: Search bar dengan debounced typing dan instant clear button.
+- `FocusSearch`: Search overlay trigger yang membuka dialog pencarian global.
 
-### Key Props
-- `clearable?: boolean`
-- `leftIcon?: LucideIcon`, `rightIcon?: LucideIcon`
-- `startAddon?: ReactNode`, `endAddon?: ReactNode`
-- `onClear?: () => void`
-
-### Usage Example:
 ```tsx
 import { Input } from "@/design-system/components/input/ui/input";
+import { SearchIcon } from "lucide-react";
 
 <Input
-  placeholder={"Search user..."}
+  placeholder={"Cari data..."}
   clearable
-  value={query}
-  onChange={(e) => setQuery(e.target.value)}
-  onClear={() => setQuery("")}
+  leftIcon={SearchIcon}
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  onClear={() => setSearchQuery("")}
 />
 ```
 
 ---
 
-## 3. Switch (`switch.tsx`)
+## 3. PasswordInput (`password-input.tsx`)
 
-Toggle switch component for boolean flags.
+Input password dengan tombol show/hide otomatis.
 
-### Key Props
-- `checked?: boolean`
-- `onCheckedChange?: (details: { checked: boolean }) => void`
-- `colorPalette?: string`
-- `size?: "sm" | "md" | "lg"`
-
-### Usage Example:
 ```tsx
-import { Switch } from "@/design-system/components/input/ui/switch";
+import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 
-<Switch
-  checked={field.value}
-  onCheckedChange={(e) => field.onChange(e.checked)}
-  colorPalette={"blue"}
->
-  Active Status
-</Switch>
+<PasswordInput
+  placeholder={"Masukkan kata sandi..."}
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+/>
 ```
 
 ---
 
-## 4. Checkbox (`checkbox.tsx`)
+## 4. FocusSelect & Select (`focus-select.tsx`, `select.tsx`)
 
-Checkbox input supporting indeterminate state and rich color palettes.
+- `FocusSelect`: Dropdown seleksi dengan pencarian interaktif yang dimuat via overlay URL `modalKey`.
+  - 🔴 **Wajib**: Turunkan `modalKey` jika berada di dalam modal (`modalKey={`${parentModalKey}.select-name`}`).
+- `Select`: Standar select dropdown popover Chakra UI.
 
-### Key Props
-- `checked?: boolean | "indeterminate"`
-- `onCheckedChange?: (details: { checked: boolean | "indeterminate" }) => void`
-- `colorPalette?: string`
-
-### Usage Example:
 ```tsx
+import { FocusSelect } from "@/design-system/components/input/ui/focus-select";
+
+<FocusSelect
+  modalKey={`${parentModalKey}.district-select`}
+  label={"Pilih Kecamatan"}
+  items={districtOptions}
+  value={selectedDistrict}
+  onValueChange={(val) => setSelectedDistrict(val)}
+/>
+```
+
+---
+
+## 5. FileInput (`file-input.tsx`)
+
+Drag-and-drop file upload dengan validasi tipe file (misal `.shp`, `.geojson`, `.pdf`, `.zip`), progress upload, dan preview list.
+
+```tsx
+import { FileInput } from "@/design-system/components/input/ui/file-input";
+
+<FileInput
+  accept={".zip,.shp,.geojson"}
+  maxFileSizeMb={50}
+  value={files}
+  onFilesChange={(newFiles) => setFiles(newFiles)}
+/>
+```
+
+---
+
+## 6. DateInput & DatePicker (`date-input.tsx`, `date-picker.tsx`, `chakra-date-picker.tsx`)
+
+Input tanggal dengan parsing kalender lokal dan format tanggal Indonesia/Inggris.
+
+```tsx
+import { DateInput } from "@/design-system/components/input/ui/date-input";
+
+<DateInput
+  value={selectedDate}
+  onValueChange={(d) => setSelectedDate(d)}
+  placeholder={"Pilih tanggal batas..."}
+/>
+```
+
+---
+
+## 7. Switch & Checkbox (`switch.tsx`, `checkbox.tsx`)
+
+- `Switch`: Toggle boolean dengan label.
+- `Checkbox`: Checkbox pilihan ganda / single check.
+
+```tsx
+import { Switch } from "@/design-system/components/input/ui/switch";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
 
-<Checkbox
-  checked={isSelected}
-  onCheckedChange={(e) => setSelected(Boolean(e.checked))}
+<Switch
+  checked={isActive}
+  onCheckedChange={(e) => setIsActive(e.checked)}
+  colorPalette={"blue"}
 >
-  Agree to terms
+  {"Status Aktif"}
+</Switch>
+
+<Checkbox
+  checked={isAgreed}
+  onCheckedChange={(e) => setIsAgreed(Boolean(e.checked))}
+>
+  {"Saya menyetujui syarat & ketentuan"}
 </Checkbox>
 ```
 
 ---
 
-## 5. PasswordInput (`password-input.tsx`)
+## 8. RadioInput & RadioCardInput (`radio-input.tsx`, `radio-card-input.tsx`)
 
-Password input with visibility toggle.
+- `RadioInput`: Standar opsi radio.
+- `RadioCardInput`: Kartu seleksi interaktif dengan indikator visual.
 
-### Key Props
-- `placeholder?: string`
-- Standard `InputProps` (`size`, `disabled`, `errorText`, etc.)
-
----
-
-## 6. Textarea (`textarea.tsx`)
-
-Multiline text input with auto-resize capability.
-
-### Key Props
-- `autoresize?: boolean`
-- Standard textarea attributes.
-
----
-
-## 7. RadioCardInput (`radio-card-input.tsx`) & RadioInput (`radio-input.tsx`)
-
-- `RadioInput`: Standard Chakra radio list.
-- `RadioCardInput`: Card-like interactive selectables (`RadioCardInput.Root`, `RadioCardInput.Item`, `RadioCardInput.ItemControl`, `RadioCardInput.ItemIndicator`, `RadioCardInput.ItemText`).
-
-### Usage Example:
 ```tsx
 import { RadioCardInput } from "@/design-system/components/input/ui/radio-card-input";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 
-<RadioCardInput.Root
-  value={val}
-  onValueChange={(e) => setVal(e.value)}
-  colorPalette={"blue"}
->
+<RadioCardInput.Root value={basis} onValueChange={(e) => setBasis(e.value)} colorPalette={"blue"}>
   <SimpleGrid columns={2} gap={2}>
-    {options.map((opt) => (
-      <RadioCardInput.Item key={opt.value} value={opt.value}>
-        <RadioCardInput.ItemControl>
-          <RadioCardInput.ItemIndicator />
-          <RadioCardInput.ItemText>{opt.label}</RadioCardInput.ItemText>
-        </RadioCardInput.ItemControl>
-      </RadioCardInput.Item>
-    ))}
+    <RadioCardInput.Item value={"bidang"}>
+      <RadioCardInput.ItemControl>
+        <RadioCardInput.ItemIndicator />
+        <RadioCardInput.ItemText>{"Berbasis Bidang"}</RadioCardInput.ItemText>
+      </RadioCardInput.ItemControl>
+    </RadioCardInput.Item>
+    <RadioCardInput.Item value={"kawasan"}>
+      <RadioCardInput.ItemControl>
+        <RadioCardInput.ItemIndicator />
+        <RadioCardInput.ItemText>{"Berbasis Kawasan"}</RadioCardInput.ItemText>
+      </RadioCardInput.ItemControl>
+    </RadioCardInput.Item>
   </SimpleGrid>
 </RadioCardInput.Root>
 ```
 
 ---
 
-## 8. FocusSelectInput (`focus-select.tsx`)
+## 9. Textarea (`textarea.tsx`)
 
-Searchable select that opens in an overlay/drawer with instant filtering.
-Always provide a unique `modalKey` (see `modal.md` for rules on nesting).
+Multiline text input dengan auto-resize.
+
+```tsx
+import { Textarea } from "@/design-system/components/input/ui/textarea";
+
+<Textarea
+  placeholder={"Keterangan tambahan..."}
+  autoresize
+  value={notes}
+  onChange={(e) => setNotes(e.target.value)}
+/>
+```
+
+---
+
+## 10. Field & Fieldset (`field.tsx`, `fieldset.tsx`)
+
+Container form label, helper text, dan error message terintegrasi dengan RHF.
+
+```tsx
+import { Field } from "@/design-system/components/input/ui/field";
+
+<Field
+  label={"Nama Lengkap"}
+  required
+  errorText={errors.fullName?.message}
+  helperText={"Sesuai kartu identitas"}
+>
+  <Input {...register("fullName")} />
+</Field>
+```
+
+---
+
+## 11. Slider & PinInput (`slider.tsx`, `pin-input.tsx`)
+
+- `Slider`: Range slider dengan tooltip nilai aktif.
+- `PinInput`: Input digit OTP / PIN verifikasi.
+
+---
+
+## 12. SegmentGroup (`segment-group.tsx`, `segment-group-input.tsx`)
+
+Pilihan opsi segmented button horizontal (misal tab switch view list/grid).

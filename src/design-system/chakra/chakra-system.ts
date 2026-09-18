@@ -725,6 +725,9 @@ export const chakraConfig = defineConfig({
 
       // Motion preset
       animations: {
+        "scale-up-from-click-origin": {
+          value: "scale-up-from-click-origin",
+        },
         "scale-up-overshoot-from-click-origin": {
           value: "scale-up-overshoot-from-click-origin",
         },
@@ -733,6 +736,9 @@ export const chakraConfig = defineConfig({
         },
         "scale-up-overshoot": {
           value: "scale-up-overshoot cubic-bezier(0.4, 0, 0.2, 1)",
+        },
+        "scale-down-to-click-origin": {
+          value: "scale-down-to-click-origin",
         },
         "scale-down": {
           value: "scale-down cubic-bezier(0.4, 0, 0.2, 1)",

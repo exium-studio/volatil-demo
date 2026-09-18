@@ -2,13 +2,9 @@
 
 "use client";
 
-import { Button } from "@/design-system/components/button/ui/button";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { FocusAlertItem } from "@/design-system/components/focus-alert/ui/focus-alert";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
-import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { toast } from "@/design-system/components/toast";
-import { P } from "@/design-system/components/typography/ui/p";
 import { t } from "@/shared/libs/i18n";
 import { WifiOffIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -19,6 +15,7 @@ export const OfflineAlert = () => {
     modalKey: "offlineAlert",
   });
 
+  // Effects
   useEffect(() => {
     const handleOffline = () => {
       if (!isOpen) open();
@@ -42,26 +39,14 @@ export const OfflineAlert = () => {
   }, [isOpen, open, close]);
 
   return (
-    <Dialog.Root modalKey={modalKey} opened={isOpen} open={open} close={close}>
-      <Dialog.Content>
-        <Dialog.Body>
-          <VStack align={"center"} gap={4} py={4}>
-            <AppIcon icon={WifiOffIcon} size={"xl"} color={"fg.muted"} />
-
-            <P textAlign={"center"}>{t["offline_alert.title"]()}</P>
-
-            <P textAlign={"center"} color={"fg.muted"}>
-              {t["offline_alert.description"]()}
-            </P>
-          </VStack>
-        </Dialog.Body>
-
-        <Dialog.Footer>
-          <Button onClick={close} flex={1}>
-            {t["action.close"]()}
-          </Button>
-        </Dialog.Footer>
-      </Dialog.Content>
-    </Dialog.Root>
+    <FocusAlertItem
+      modalKey={modalKey}
+      variant={"warning"}
+      icon={WifiOffIcon}
+      title={t["offline_alert.title"]()}
+      description={t["offline_alert.description"]()}
+      doneLabel={t["action.close"]()}
+      onDone={close}
+    />
   );
 };

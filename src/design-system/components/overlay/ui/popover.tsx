@@ -77,7 +77,7 @@ const PopoverContent = forwardRef<HTMLDivElement, PopoverContentProps>(
             rounded={theme.radii.container}
             shadow={"sm"}
             _open={{
-              animation: "scale-up-overshoot",
+              animation: "scale-up",
               animationDuration: "slow",
             }}
             _closed={{

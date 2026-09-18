@@ -1,7 +1,6 @@
-// src/design-system/components/focus-alert/types/focus-alert.type.ts
-
+import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { EmojiVariant } from "@/design-system/components/emoji/types/emoji.type";
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 export type FocusAlertRenderFn = () => ReactNode;
 
@@ -17,13 +16,20 @@ export type FocusAlertSemanticVariant =
 
 export type FocusAlertVariant = EmojiVariant | FocusAlertSemanticVariant;
 
-
 export type FocusAlertItemProps = {
   modalKey?: string;
   variant?: FocusAlertVariant;
+  colorPalette?: string;
+  icon?: ComponentType | ReactNode;
+  emoji?: EmojiVariant;
   title?: string;
   description?: string;
+  doneLabel?: string;
+  cancelLabel?: string;
+  doneButtonProps?: Partial<ButtonProps>;
+  cancelButtonProps?: Partial<ButtonProps>;
   onDone?: () => void;
+  onCancel?: () => void;
 };
 
 export type FocusAlertTriggerProps = FocusAlertItemProps & {
@@ -33,11 +39,19 @@ export type FocusAlertTriggerProps = FocusAlertItemProps & {
 
 export type FocusAlertContentProps = {
   variant?: FocusAlertVariant;
+  colorPalette?: string;
+  icon?: ComponentType | ReactNode;
+  emoji?: EmojiVariant;
   title?: string;
   description?: string;
   transition?: boolean;
+  doneLabel?: string;
+  cancelLabel?: string;
+  doneButtonProps?: Partial<ButtonProps>;
+  cancelButtonProps?: Partial<ButtonProps>;
   close: () => void;
   onDone?: () => void;
+  onCancel?: () => void;
 };
 
 export type FocusAlertContextValue = {

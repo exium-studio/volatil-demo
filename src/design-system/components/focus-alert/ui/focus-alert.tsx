@@ -1,6 +1,7 @@
 // src/design-system/components/focus-alert/ui/focus-alert.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Emoji } from "@/design-system/components/emoji/ui/emoji";
 import type {
   FocusAlertContentProps,
   FocusAlertItemProps,
@@ -16,8 +17,9 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
+import { t } from "@/shared/libs/i18n";
 import { IconInfoCircle } from "@tabler/icons-react";
-import type { ComponentType } from "react";
+import { isValidElement, type ComponentType } from "react";
 import {
   CheckIcon,
   HeartIcon,
@@ -32,9 +34,17 @@ export const FocusAlertItem = (props: FocusAlertItemProps) => {
   const {
     modalKey: modalKeyProp,
     variant = "neutral",
+    colorPalette,
+    icon,
+    emoji,
     title,
     description,
+    doneLabel,
+    cancelLabel,
+    doneButtonProps,
+    cancelButtonProps,
     onDone,
+    onCancel,
   } = props;
 
   // Context
@@ -51,14 +61,23 @@ export const FocusAlertItem = (props: FocusAlertItemProps) => {
       open={open}
       close={close}
       closeOnInteractOutside={false}
+      dialogClickOriginAnimation={false}
       size={"xs"}
     >
       <FocusAlertContent
         variant={variant}
+        colorPalette={colorPalette}
+        icon={icon}
+        emoji={emoji}
         title={title}
         description={description}
+        doneLabel={doneLabel}
+        cancelLabel={cancelLabel}
+        doneButtonProps={doneButtonProps}
+        cancelButtonProps={cancelButtonProps}
         close={close}
         onDone={onDone}
+        onCancel={onCancel}
       />
     </Modal.Root>
   );
@@ -70,8 +89,17 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
     children,
     modalKey: modalKeyProp,
     variant = "neutral",
+    colorPalette,
+    icon,
+    emoji,
     title,
     description,
+    doneLabel,
+    cancelLabel,
+    doneButtonProps,
+    cancelButtonProps,
+    onDone,
+    onCancel,
   } = props;
 
   // Hooks
@@ -86,15 +114,25 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
       open={open}
       close={close}
       closeOnInteractOutside={false}
+      dialogClickOriginAnimation={false}
       size={"xs"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
       <FocusAlertContent
         variant={variant}
+        colorPalette={colorPalette}
+        icon={icon}
+        emoji={emoji}
         title={title}
         description={description}
+        doneLabel={doneLabel}
+        cancelLabel={cancelLabel}
+        doneButtonProps={doneButtonProps}
+        cancelButtonProps={cancelButtonProps}
         close={close}
+        onDone={onDone}
+        onCancel={onCancel}
       />
     </Modal.Root>
   );
@@ -102,7 +140,21 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
 
 const FocusAlertContent = (props: FocusAlertContentProps) => {
   // Props
-  const { variant, title, description, close, onDone } = props;
+  const {
+    variant,
+    colorPalette,
+    icon,
+    emoji,
+    title,
+    description,
+    doneLabel,
+    cancelLabel,
+    doneButtonProps,
+    cancelButtonProps,
+    close,
+    onDone,
+    onCancel,
+  } = props;
 
   // Constants
   const VARIANTS_MAP: Partial<
@@ -231,15 +283,35 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
     },
   };
 
+  // Handlers
+  const handleDone = () => {
+    onDone?.();
+    close();
+  };
+
+  const handleCancel = () => {
+    onCancel?.();
+    close();
+  };
+
   // Resolved Values
   const fallback = VARIANTS_MAP.neutral ?? {
     colorPalette: "neutral",
     icon: SparklesIcon,
   };
   const resolved = (variant ? VARIANTS_MAP[variant] : undefined) ?? fallback;
+  const resolvedColorPalette = colorPalette ?? resolved.colorPalette;
+  const resolvedDoneLabel = doneLabel ?? t["action.finish"]();
+  const hasCancel = Boolean(cancelLabel || onCancel);
+  const resolvedCancelLabel = cancelLabel ?? t["action.cancel"]();
 
   return (
-    <Modal.Content>
+    <Modal.Content
+      _open={{
+        animation: "scale-up-overshoot",
+        animationDuration: "slower",
+      }}
+    >
       <Modal.Body pt={"lg"} pb={"md"}>
         <VStack align={"center"} gap={"md"} textAlign={"center"} my={"sm"}>
           <Box
@@ -253,21 +325,37 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
             <Circle
               pos={"absolute"}
               inset={0}
-              size={"48px"}
-              bg={`${resolved.colorPalette}.emphasized`}
+              size={"76px"}
+              bg={`${resolvedColorPalette}.emphasized`}
               opacity={0.35}
               pointerEvents={"none"}
-              animation={"ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite"}
+              animation={"ping 2s cubic-bezier(0, 0, 0.2, 1) infinite"}
             />
 
-            {/* Inner Icon Circle */}
+            {/* Inner Icon / Emoji Circle */}
             <Circle
-              size={"48px"}
+              size={"76px"}
               pos={"relative"}
-              bg={`${resolved.colorPalette}.subtle`}
-              color={`${resolved.colorPalette}.fg`}
+              bg={`${resolvedColorPalette}.muted`}
+              color={`${resolvedColorPalette}.fg`}
+              border={"12px solid"}
+              borderColor={`${resolvedColorPalette}.subtle`}
             >
-              <AppIcon icon={resolved.icon} size={"lg"} />
+              {icon ? (
+                isValidElement(icon) ? (
+                  icon
+                ) : (
+                  <AppIcon icon={icon as ComponentType} size={"lg"} />
+                )
+              ) : emoji ? (
+                <Emoji
+                  variant={emoji}
+                  colorPalette={resolvedColorPalette}
+                  boxSize={28}
+                />
+              ) : (
+                <AppIcon icon={resolved.icon} size={"lg"} />
+              )}
             </Circle>
           </Box>
 
@@ -284,9 +372,27 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button flex={1} onClick={onDone ?? close}>
-          {"Selesai"}
-        </Button>
+        {hasCancel ? (
+          <VStack gap={"xs"} w={"full"}>
+            <Button
+              primary
+              variant={"solid"}
+              colorPalette={resolvedColorPalette}
+              onClick={handleDone}
+              {...doneButtonProps}
+            >
+              {resolvedDoneLabel}
+            </Button>
+
+            <Button onClick={handleCancel} {...cancelButtonProps}>
+              {resolvedCancelLabel}
+            </Button>
+          </VStack>
+        ) : (
+          <Button flex={1} onClick={handleDone} {...doneButtonProps}>
+            {resolvedDoneLabel}
+          </Button>
+        )}
       </Modal.Footer>
     </Modal.Content>
   );

@@ -1,6 +1,6 @@
 ---
 name: exium-media
-description: "Guidelines and API reference for Exium Media components: Avatar and Image."
+description: "Guidelines and API reference for Exium Media components: Avatar, AvatarGroup, and Image."
 ---
 
 # Exium Media Components
@@ -11,17 +11,45 @@ Located in `@/design-system/components/media/ui/`.
 
 ## 1. Avatar (`avatar.tsx`)
 
-User avatar element with fallback initials and image status handling.
+User profile picture with automatic name-derived initials and fallback placeholders.
 
-### Usage Example:
+### Key Props:
+- `name?: string`: Generates fallback initials (e.g. `"Budi Santoso"` -> `"BS"`).
+- `src?: string`: Image source URL.
+- `size?: "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl"`.
+- `shape?: "full" | "square" | "rounded"`.
+- `colorPalette?: string`.
+
+### Example:
 ```tsx
-import { Avatar } from "@/design-system/components/media/ui/avatar";
+import { Avatar, AvatarGroup } from "@/design-system/components/media/ui/avatar";
 
-<Avatar name={"Sulenq"} src={"/avatars/user.jpg"} size={"md"} />
+// Single Avatar
+<Avatar name={"Ahmad Hidayat"} src={user.avatarUrl} size={"sm"} />
+
+// Avatar Group
+<AvatarGroup size={"sm"} max={3}>
+  <Avatar name={"User One"} src={"/avatars/1.jpg"} />
+  <Avatar name={"User Two"} src={"/avatars/2.jpg"} />
+  <Avatar name={"User Three"} src={"/avatars/3.jpg"} />
+</AvatarGroup>
 ```
 
 ---
 
 ## 2. Image (`image.tsx`)
 
-Enhanced image component with lazy loading, skeleton blur placeholders, and fallback states.
+Next-generation responsive image component with fallback handling and aspect ratio containment.
+
+```tsx
+import { Image } from "@/design-system/components/media/ui/image";
+
+<Image
+  src={"/assets/map-preview.png"}
+  alt={"Preview Peta"}
+  rounded={"md"}
+  fit={"cover"}
+  h={"180px"}
+  w={"full"}
+/>
+```

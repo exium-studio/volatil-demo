@@ -226,7 +226,7 @@ export default function SelectInput(props: SelectProps) {
             border={"1px solid {colors.border.subtle}"}
             shadow={"sm"}
             _open={{
-              animation: "scale-up-overshoot",
+              animation: "scale-up",
               animationDuration: "slow",
             }}
             _closed={{
