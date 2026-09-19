@@ -16,11 +16,11 @@ import { useInternalLeaderboardQuery } from "@/features/internal/home/hooks/use-
 import type {
   InternalHomeLeaderboardProps,
   LeaderboardCardProps,
+  LeaderboardRankBadgeProps,
   TopIgtLayerItem,
   TopMitraAcquisitionItem,
 } from "@/features/internal/home/types/internal.home.leaderboard.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
-import { CrownIcon } from "lucide-react";
 
 export const InternalHomeLeaderboard = (
   props: InternalHomeLeaderboardProps,
@@ -33,92 +33,34 @@ export const InternalHomeLeaderboard = (
   );
 };
 
-const LeaderboardRankBadge = (props: { rank: number }) => {
+const LeaderboardRankBadge = (props: LeaderboardRankBadgeProps) => {
   // Props
   const { rank } = props;
 
   // Stores
   const { theme } = useThemeStore();
 
+  // Derived Values
   const palette = theme.colorPalette;
 
-  // Rank 1 solid, rank 2 muted, rank 3 subtle
-  const getGradientCrownStyle = () => {
-    switch (rank) {
-      case 1:
-        return {
-          background: `linear-gradient(135deg, {colors.${palette}.solid}, {colors.${palette}.focusRing})`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.18))",
-        };
-      case 2:
-        return {
-          background: `linear-gradient(135deg, {colors.${palette}.muted}, {colors.${palette}.emphasized})`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          filter: "drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12))",
-        };
-      case 3:
-        return {
-          background: `linear-gradient(135deg, {colors.${palette}.subtle}, {colors.${palette}.muted})`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        };
-      default:
-        return undefined;
-    }
-  };
-
-  const getRankNumberColor = () => {
-    switch (rank) {
-      case 1:
-        return `${palette}.solid`;
-      case 2:
-        return `${palette}.muted`;
-      case 3:
-        return `${palette}.subtle`;
-      default:
-        return "fg.subtle";
-    }
-  };
-
   return (
-    <VStack
-      align={"center"}
-      justify={"center"}
-      w={"44px"}
-      flexShrink={0}
-      gap={0}
-      py={"xxs"}
-    >
-      {rank <= 3 ? (
-        <Center css={getGradientCrownStyle()} mb={"-2px"}>
-          <AppIcon icon={CrownIcon} size={"sm"} />
-        </Center>
-      ) : (
-        <Center h={"16px"} mb={"-2px"} />
-      )}
-
+    <Center w={"36px"} flexShrink={0}>
       <P
         fontSize={"2xl"}
         fontWeight={"black"}
         lineHeight={1}
-        color={getRankNumberColor()}
+        color={rank === 1 ? `${palette}.fg` : undefined}
         textAlign={"center"}
       >
         {rank}
       </P>
-    </VStack>
+    </Center>
   );
 };
 
 const TopMitraLeaderboardCard = (props: LeaderboardCardProps) => {
   // Props
   const { flex } = props;
-
-  // Stores
-  const { theme } = useThemeStore();
 
   // Queries
   const { topMitraList, isLoading } = useInternalLeaderboardQuery();
@@ -163,11 +105,6 @@ const TopMitraLeaderboardCard = (props: LeaderboardCardProps) => {
                 index < topMitraList.length - 1 ? "1px solid" : "none"
               }
               borderColor={"bg.canvas"}
-              transition={"background-color 0.15s ease"}
-              _hover={{
-                bg: "bg.subtle",
-              }}
-              rounded={theme.radii.component}
             >
               {/* Ranking di paling kiri */}
               <LeaderboardRankBadge rank={mitra.rank} />
@@ -225,9 +162,6 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
   // Props
   const { flex } = props;
 
-  // Stores
-  const { theme } = useThemeStore();
-
   // Queries
   const { topIgtLayers, isLoading } = useInternalLeaderboardQuery();
 
@@ -275,11 +209,6 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
                   index < topIgtLayers.length - 1 ? "1px solid" : "none"
                 }
                 borderColor={"bg.canvas"}
-                transition={"background-color 0.15s ease"}
-                _hover={{
-                  bg: "bg.subtle",
-                }}
-                rounded={theme.radii.component}
               >
                 {/* Ranking di paling kiri */}
                 <LeaderboardRankBadge rank={layer.rank} />

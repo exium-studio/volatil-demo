@@ -44,3 +44,7 @@ export type LeaderboardCardProps = {
   flex?: string | number;
 };
 
+export type LeaderboardRankBadgeProps = {
+  rank: number;
+};
+
