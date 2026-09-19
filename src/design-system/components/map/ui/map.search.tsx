@@ -117,6 +117,21 @@ export const MapSearch = () => {
     setIsOpen(true);
   }
 
+  // Effects — Focus input whenever search is opened
+  useEffect(() => {
+    if (isOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  // Handle opening and focusing search input
+  const handleOpenSearch = () => {
+    if (!isOpen) {
+      setIsOpen(true);
+    }
+    inputRef.current?.focus();
+  };
+
   // Sync state if activeQuery changes externally (e.g. navigation)
   if (activeQuery !== prevActiveQuery) {
     setInputValue(activeQuery);
@@ -219,12 +234,7 @@ export const MapSearch = () => {
           bg={"bg.body"}
           transition={"width 200ms ease"}
           cursor={isOpened ? "text" : "pointer"}
-          onClick={() => {
-            if (!isOpen) {
-              setIsOpen(true);
-            }
-            inputRef.current?.focus();
-          }}
+          onClick={handleOpenSearch}
         >
           <SearchInput
             ref={inputRef}
@@ -233,10 +243,15 @@ export const MapSearch = () => {
             size={"sm"}
             placeholder={t["common.search_location"]()}
             w={"full"}
+            minW={"0"}
             border={"none"}
             outline={"none"}
             bg={"transparent"}
             onFocus={handleFocus}
+            appIconProps={{
+              cursor: "pointer",
+              onClick: handleOpenSearch,
+            }}
           />
         </MapOverlayContainer>
       </Tooltip>

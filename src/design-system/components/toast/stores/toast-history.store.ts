@@ -9,7 +9,7 @@ import type {
   HistoryStore,
 } from "@/design-system/components/toast/types/toast.type";
 
-function isExpired(entry: HistoryEntry, ttl: number | null): boolean {
+export function isExpired(entry: HistoryEntry, ttl: number | null): boolean {
   if (ttl === null) return false;
   return Date.now() - entry.createdAt > ttl;
 }
@@ -33,8 +33,11 @@ export const useToastHistoryStore = create<HistoryStore>()(
 
       add: (entry) =>
         set((state) => {
-          const { historyLimit } = getToastConfig();
-          const next = [...state.entries, entry];
+          const { historyLimit, historyTTL } = getToastConfig();
+          const notExpired = state.entries.filter(
+            (item) => !isExpired(item, historyTTL),
+          );
+          const next = [...notExpired, entry];
           return {
             entries:
               next.length > historyLimit
@@ -101,9 +104,6 @@ export const useToastHistoryStore = create<HistoryStore>()(
           (entry) => !isExpired(entry, historyTTL),
         );
 
-        if (notExpired.length !== state.entries.length)
-          set({ entries: notExpired });
-
         return options?.includeDeleted
           ? notExpired
           : notExpired.filter((entry) => !entry.deletedFromHistory);
@@ -112,9 +112,21 @@ export const useToastHistoryStore = create<HistoryStore>()(
     {
       name: getToastConfig().historyStorageKey,
       version: 1,
-      // Add a case here whenever the persisted shape changes in a future version:
-      // migrate: (persisted, version) => { if (version === 0) { ... } return persisted as HistoryState; },
-      partialize: (state) => ({ entries: state.entries }),
+      partialize: (state) => ({
+        entries: state.entries.filter(
+          (entry) => !isExpired(entry, getToastConfig().historyTTL),
+        ),
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        const { historyTTL } = getToastConfig();
+        const notExpired = state.entries.filter(
+          (entry) => !isExpired(entry, historyTTL),
+        );
+        if (notExpired.length !== state.entries.length) {
+          state.entries = notExpired;
+        }
+      },
     },
   ),
 );

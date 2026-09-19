@@ -12,7 +12,7 @@ const DEFAULT_TOAST_CONFIG: ToastEngineConfig = {
   duplicateStrategy: "replace",
   historyStorageKey: "design-system:toast-history",
   historyLimit: 200,
-  historyTTL: 1000 * 60 * 60 * 24 * 30, // 30 days
+  historyTTL: 1000 * 60 * 60 * 24, // 24 hours (1 day)
   showDeletedFromHistoryIndicator: false,
   leaveAnimationDuration: 300,
   placement: "top",
