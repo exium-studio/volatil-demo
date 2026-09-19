@@ -6,7 +6,6 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -37,19 +36,12 @@ const LeaderboardRankBadge = (props: LeaderboardRankBadgeProps) => {
   // Props
   const { rank } = props;
 
-  // Stores
-  const { theme } = useThemeStore();
-
-  // Derived Values
-  const palette = theme.colorPalette;
-
   return (
     <Center w={"36px"} flexShrink={0}>
       <P
         fontSize={"2xl"}
-        fontWeight={"black"}
+        fontWeight={rank === 1 ? "bold" : "medium"}
         lineHeight={1}
-        color={rank === 1 ? `${palette}.fg` : undefined}
         textAlign={"center"}
       >
         {rank}
