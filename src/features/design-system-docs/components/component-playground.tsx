@@ -117,70 +117,78 @@ export const ComponentPlayground = ({ spec }: { spec: ComponentDocSpec }) => {
 
         <Tabs.Content value={"controls"} pt={4}>
           <SimpleGrid columns={[1, 2, 3]} gap={4}>
-            {spec.propsSpec.map((prop) => (
-              <Box key={prop.name} p={3} rounded={"md"} bg={"bg.subtle"}>
-                <P fontSize={"xs"} fontWeight={"bold"} mb={2}>
-                  {prop.name}
-                </P>
+            {spec.propsSpec
+              .filter((prop) => prop.controlKind !== undefined)
+              .map((prop) => (
+                <Box key={prop.name} p={3} rounded={"md"} bg={"bg.subtle"}>
+                  <P fontSize={"xs"} fontWeight={"bold"} mb={2}>
+                    {prop.name}
+                  </P>
 
-                {prop.controlKind === "text" && (
-                  <Input
-                    size={"sm"}
-                    value={(propsState[prop.name] as string) ?? ""}
-                    onChange={(e) =>
-                      handlePropChange(prop.name, e.target.value)
-                    }
-                  />
-                )}
+                  {prop.controlKind === "text" && (
+                    <Input
+                      size={"sm"}
+                      value={(propsState[prop.name] as string) ?? ""}
+                      onChange={(e) =>
+                        handlePropChange(prop.name, e.target.value)
+                      }
+                    />
+                  )}
 
-                {prop.controlKind === "number" && (
-                  <NumberInput
-                    size={"sm"}
-                    value={String(propsState[prop.name] ?? 0)}
-                    onValueChange={(details) =>
-                      handlePropChange(prop.name, details.value)
-                    }
-                  />
-                )}
+                  {prop.controlKind === "number" && (
+                    <NumberInput
+                      size={"sm"}
+                      min={prop.name === "page" ? 1 : undefined}
+                      value={String(propsState[prop.name] ?? 0)}
+                      onValueChange={(details) =>
+                        handlePropChange(
+                          prop.name,
+                          prop.name === "page"
+                            ? Math.max(1, Number(details.value) || 1)
+                            : Number(details.value) || 0,
+                        )
+                      }
+                    />
+                  )}
 
-                {prop.controlKind === "boolean" && (
-                  <Switch
-                    checked={(propsState[prop.name] as boolean) ?? false}
-                    onCheckedChange={(e) =>
-                      handlePropChange(prop.name, e.checked)
-                    }
-                  >
-                    <P fontSize={"xs"}>
-                      {propsState[prop.name] ? "True" : "False"}
-                    </P>
-                  </Switch>
-                )}
+                  {prop.controlKind === "boolean" && (
+                    <Switch
+                      checked={(propsState[prop.name] as boolean) ?? false}
+                      onCheckedChange={(e) =>
+                        handlePropChange(prop.name, e.checked)
+                      }
+                    >
+                      <P fontSize={"xs"}>
+                        {propsState[prop.name] ? "True" : "False"}
+                      </P>
+                    </Switch>
+                  )}
 
-                {prop.name === "colorPalette" ? (
-                  <ColorPaletteSelect
-                    value={String(propsState[prop.name] ?? "")}
-                    onValueChange={(val) =>
-                      handlePropChange(prop.name, String(val ?? ""))
-                    }
-                    size={"sm"}
-                    selectMode={"default"}
-                  />
-                ) : prop.controlKind === "select" && prop.options ? (
-                  <SelectInput
-                    size={"sm"}
-                    placeholder={`Pilih ${prop.name}`}
-                    value={String(propsState[prop.name] ?? "")}
-                    options={prop.options.map((opt) => ({
-                      label: String(opt),
-                      value: String(opt),
-                    }))}
-                    onValueChange={(val) =>
-                      handlePropChange(prop.name, String(val ?? ""))
-                    }
-                  />
-                ) : null}
-              </Box>
-            ))}
+                  {prop.name === "colorPalette" ? (
+                    <ColorPaletteSelect
+                      value={String(propsState[prop.name] ?? "")}
+                      onValueChange={(val) =>
+                        handlePropChange(prop.name, String(val ?? ""))
+                      }
+                      size={"sm"}
+                      selectMode={"default"}
+                    />
+                  ) : prop.controlKind === "select" && prop.options ? (
+                    <SelectInput
+                      size={"sm"}
+                      placeholder={`Pilih ${prop.name}`}
+                      value={String(propsState[prop.name] ?? "")}
+                      options={prop.options.map((opt) => ({
+                        label: String(opt),
+                        value: String(opt),
+                      }))}
+                      onValueChange={(val) =>
+                        handlePropChange(prop.name, String(val ?? ""))
+                      }
+                    />
+                  ) : null}
+                </Box>
+              ))}
           </SimpleGrid>
         </Tabs.Content>
 

@@ -6,6 +6,15 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import { Clipboard } from "@/design-system/components/data-display/ui/clipboard";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
+import type {
+  FormattedListItem,
+  FormattedTableHeader,
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import type {
+  DataViewBatchActionsGenerator,
+  DataViewItemActionsGenerator,
+} from "@/design-system/components/data-display/types/data-view.type";
+import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Breadcrumb } from "@/design-system/components/disclosure/ui/breadcrumb";
@@ -16,6 +25,7 @@ import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import type { EmojiVariant } from "@/design-system/components/emoji/types/emoji.type";
 import { Emoji } from "@/design-system/components/emoji/ui/emoji";
 import { EmojiPoker } from "@/design-system/components/emoji/ui/emoji.poker";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import {
   Progress,
@@ -65,16 +75,23 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { Span } from "@/design-system/components/typography/ui/span";
 import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
 import { COLOR_PALETTE_OPTIONS } from "@/design-system/constants/colors";
-import type { ComponentDocSpec } from "@/features/design-system-docs/types/ds-docs-spec.type";
+import type {
+  ComponentDocSpec,
+  TableDemoItem,
+} from "@/features/design-system-docs/types/ds-docs-spec.type";
 import {
   BellIcon,
   ChevronDownIcon,
   CopyIcon,
+  EditIcon,
+  EyeIcon,
   HomeIcon,
   InfoIcon,
   SettingsIcon,
   SparklesIcon,
+  Trash2Icon,
 } from "lucide-react";
+import { useMemo } from "react";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 
 export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
@@ -1616,13 +1633,15 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     description:
       "Tabel data virtualized responsif dengan sorting, pagination, checkbox batch, dan menu aksi baris.",
     importPath:
-      'import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";',
+      'import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";\nimport { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";',
     component: DataViewTable.Root,
     defaultProps: {
       withNumbering: true,
       canBatchSelect: true,
       fixedItemHeight: true,
       virtualized: true,
+      page: 1,
+      pageSize: 4,
     },
     propsSpec: [
       {
@@ -1630,21 +1649,32 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         type: "FormattedTableHeader[]",
         defaultValue: "[]",
         description: "Daftar definisi kolom header tabel (wajib).",
-        controlKind: "text",
       },
       {
         name: "items",
         type: "FormattedListItem[]",
         defaultValue: "[]",
         description: "Daftar data baris tabel (wajib).",
-        controlKind: "text",
+      },
+      {
+        name: "itemActions",
+        type: "DataViewItemActionsGenerator[]",
+        defaultValue: undefined,
+        description:
+          "Definisi menu aksi per baris data (termasuk modal konfirmasi hapus).",
+      },
+      {
+        name: "batchActions",
+        type: "DataViewBatchActionsGenerator[]",
+        defaultValue: undefined,
+        description:
+          "Definisi aksi batch ketika satu atau lebih baris dipilih.",
       },
       {
         name: "children",
         type: "ReactNode",
         defaultValue: undefined,
         description: "Sub-komponen Header dan Body tabel (wajib).",
-        controlKind: "text",
       },
       {
         name: "withNumbering",
@@ -1678,18 +1708,21 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         name: "page",
         type: "number",
         defaultValue: 1,
-        description: "Nomor halaman aktif saat ini.",
+        description: "Nomor halaman aktif saat ini (minimal 1).",
         controlKind: "number",
       },
       {
         name: "pageSize",
         type: "number",
-        defaultValue: 10,
-        description: "Jumlah data per halaman.",
-        controlKind: "number",
+        defaultValue: 4,
+        description: "Jumlah data yang ditampilkan per halaman.",
+        controlKind: "select",
+        options: [2, 4, 8],
       },
     ],
-    renderPlayground: (props) => <DataTablePlaygroundDemo {...props} />,
+    renderPlayground: (props, onPropChange) => (
+      <DataTablePlaygroundDemo props={props} onPropChange={onPropChange} />
+    ),
   },
 
   clipboard: {
@@ -3362,53 +3395,205 @@ const FocusAlertPlaygroundDemo = (props: Record<string, unknown>) => {
   );
 };
 
-const DataTablePlaygroundDemo = (props?: Record<string, unknown>) => {
-  const withNumbering = props?.withNumbering !== undefined ? Boolean(props.withNumbering) : true;
-  const canBatchSelect = props?.canBatchSelect !== undefined ? Boolean(props.canBatchSelect) : true;
-  const fixedItemHeight = props?.fixedItemHeight !== undefined ? Boolean(props.fixedItemHeight) : true;
+const ALL_DEMO_ITEMS: FormattedListItem<TableDemoItem>[] = [
+  {
+    id: "1",
+    data: { name: "Ahmad Dahlan", role: "Surveyor", status: "Aktif" },
+    columns: [
+      { value: "Ahmad Dahlan", td: "Ahmad Dahlan" },
+      { value: "Surveyor", td: "Surveyor" },
+      { value: "Aktif", td: <Badge colorPalette={"green"}>Aktif</Badge> },
+    ],
+  },
+  {
+    id: "2",
+    data: { name: "Budi Santoso", role: "Verifikator", status: "Pending" },
+    columns: [
+      { value: "Budi Santoso", td: "Budi Santoso" },
+      { value: "Verifikator", td: "Verifikator" },
+      {
+        value: "Pending",
+        td: <Badge colorPalette={"orange"}>Pending</Badge>,
+      },
+    ],
+  },
+  {
+    id: "3",
+    data: { name: "Citra Lestari", role: "Administrator", status: "Aktif" },
+    columns: [
+      { value: "Citra Lestari", td: "Citra Lestari" },
+      { value: "Administrator", td: "Administrator" },
+      { value: "Aktif", td: <Badge colorPalette={"green"}>Aktif</Badge> },
+    ],
+  },
+  {
+    id: "4",
+    data: { name: "Dedi Supriadi", role: "Petugas Ukur", status: "Nonaktif" },
+    columns: [
+      { value: "Dedi Supriadi", td: "Dedi Supriadi" },
+      { value: "Petugas Ukur", td: "Petugas Ukur" },
+      { value: "Nonaktif", td: <Badge colorPalette={"gray"}>Nonaktif</Badge> },
+    ],
+  },
+  {
+    id: "5",
+    data: { name: "Eka Wulandari", role: "Validator", status: "Aktif" },
+    columns: [
+      { value: "Eka Wulandari", td: "Eka Wulandari" },
+      { value: "Validator", td: "Validator" },
+      { value: "Aktif", td: <Badge colorPalette={"green"}>Aktif</Badge> },
+    ],
+  },
+  {
+    id: "6",
+    data: { name: "Fajar Pratama", role: "Surveyor", status: "Pending" },
+    columns: [
+      { value: "Fajar Pratama", td: "Fajar Pratama" },
+      { value: "Surveyor", td: "Surveyor" },
+      {
+        value: "Pending",
+        td: <Badge colorPalette={"orange"}>Pending</Badge>,
+      },
+    ],
+  },
+  {
+    id: "7",
+    data: { name: "Gita Permata", role: "Administrator", status: "Aktif" },
+    columns: [
+      { value: "Gita Permata", td: "Gita Permata" },
+      { value: "Administrator", td: "Administrator" },
+      { value: "Aktif", td: <Badge colorPalette={"green"}>Aktif</Badge> },
+    ],
+  },
+  {
+    id: "8",
+    data: { name: "Hadi Kusuma", role: "Petugas Ukur", status: "Aktif" },
+    columns: [
+      { value: "Hadi Kusuma", td: "Hadi Kusuma" },
+      { value: "Petugas Ukur", td: "Petugas Ukur" },
+      { value: "Aktif", td: <Badge colorPalette={"green"}>Aktif</Badge> },
+    ],
+  },
+];
 
-  const headers = [
-    { th: "Nama", sortable: true },
-    { th: "Peran", sortable: true },
-    { th: "Status", sortable: false },
-  ];
-  const items = [
-    {
-      id: "1",
-      data: { name: "Ahmad", role: "Surveyor", status: "Aktif" },
-      columns: [
-        { value: "Ahmad", td: "Ahmad" },
-        { value: "Surveyor", td: "Surveyor" },
-        { value: "Aktif", td: <Badge colorPalette={"green"}>Aktif</Badge> },
-      ],
-    },
-    {
-      id: "2",
-      data: { name: "Budi", role: "Verifikator", status: "Pending" },
-      columns: [
-        { value: "Budi", td: "Budi" },
-        { value: "Verifikator", td: "Verifikator" },
+const DataTablePlaygroundDemo = ({
+  props,
+  onPropChange,
+}: {
+  props?: Record<string, unknown>;
+  onPropChange?: (name: string, value: unknown) => void;
+}) => {
+  // Props
+  const withNumbering =
+    props?.withNumbering !== undefined ? Boolean(props.withNumbering) : true;
+  const canBatchSelect =
+    props?.canBatchSelect !== undefined ? Boolean(props.canBatchSelect) : true;
+  const fixedItemHeight =
+    props?.fixedItemHeight !== undefined
+      ? Boolean(props.fixedItemHeight)
+      : true;
+  const rawPage = Number(props?.page) || 1;
+  const page = Math.max(1, rawPage);
+  const pageSize = Math.max(1, Number(props?.pageSize) || 4);
+
+  // Handlers (sync page / pageSize back to playground knobs)
+  const setPage = (nextPage: number) => {
+    const validPage = Math.max(1, nextPage);
+    onPropChange?.("page", validPage);
+  };
+
+  const setPageSize = (nextSize: number) => {
+    onPropChange?.("pageSize", nextSize);
+    onPropChange?.("page", 1);
+  };
+
+  // Pagination Slice
+  const startIndex = (page - 1) * pageSize;
+  const paginatedItems = ALL_DEMO_ITEMS.slice(
+    startIndex,
+    startIndex + pageSize,
+  );
+  const totalPage = Math.ceil(ALL_DEMO_ITEMS.length / pageSize);
+
+  // Derived Values — Single useMemo for DataList Table Pattern
+  const dataList = useMemo(
+    () => ({
+      headers: [
+        { th: "Nama", sortable: true },
+        { th: "Peran", sortable: true },
+        { th: "Status", sortable: false },
+      ] as FormattedTableHeader[],
+      items: paginatedItems,
+      batchActions: [] as DataViewBatchActionsGenerator<TableDemoItem>[],
+      itemActions: [
         {
-          value: "Pending",
-          td: <Badge colorPalette={"orange"}>Pending</Badge>,
+          key: "view",
+          label: "Lihat Detail",
+          icon: EyeIcon,
+          onClick: (item: TableDemoItem) => {
+            toast.info(`Melihat data ${item.name}`);
+          },
         },
-      ],
-    },
-  ];
+        {
+          key: "edit",
+          label: "Edit Data",
+          icon: EditIcon,
+          onClick: (item: TableDemoItem) => {
+            toast.info(`Mengedit data ${item.name}`);
+          },
+        },
+        {
+          key: "delete",
+          label: "Hapus",
+          icon: Trash2Icon,
+          colorPalette: "red",
+          modal: {
+            triggerComponent: (item: TableDemoItem) => (
+              <ConfirmationTrigger
+                modalKey={`docs-table-delete-${item.name}`}
+                title={"Hapus Data?"}
+                description={`Apakah Anda yakin ingin menghapus data ${item.name}? Tindakan ini tidak dapat dibatalkan.`}
+                confirmLabel={"Hapus"}
+                colorPalette={"red"}
+                onConfirm={() => {
+                  toast.success(`Data ${item.name} berhasil dihapus.`);
+                }}
+              />
+            ),
+          },
+        },
+      ] as DataViewItemActionsGenerator<TableDemoItem>[],
+    }),
+    [paginatedItems],
+  );
 
   return (
-    <Box w={"full"} maxW={"500px"}>
+    <VStack w={"full"} maxW={"650px"} gap={0} align={"stretch"}>
       <DataViewTable.Root
-        headers={headers}
-        items={items}
+        headers={dataList.headers}
+        items={dataList.items}
+        itemActions={dataList.itemActions}
+        batchActions={dataList.batchActions}
         withNumbering={withNumbering}
         canBatchSelect={canBatchSelect}
         fixedItemHeight={fixedItemHeight}
+        page={page}
+        pageSize={pageSize}
       >
         <DataViewTable.Header />
         <DataViewTable.Body />
       </DataViewTable.Root>
-    </Box>
+
+      <DataViewFooter
+        currentDataLength={dataList.items.length}
+        totalData={ALL_DEMO_ITEMS.length}
+        totalPage={totalPage}
+        page={page}
+        setPage={setPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+      />
+    </VStack>
   );
 };
 

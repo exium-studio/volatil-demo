@@ -38,3 +38,10 @@ export type ComponentPlaygroundContainerProps = {
   children: ReactNode;
   minH?: string | number;
 };
+
+export type TableDemoItem = {
+  name: string;
+  role: string;
+  status: string;
+};
+
