@@ -399,7 +399,7 @@ export const chakraConfig = defineConfig({
         },
 
         green: {
-          50: { value: "#d6f6dfff" },
+          50: { value: "#e5faeb" },
           100: { value: "#c9f2d7" },
           200: { value: "#b2eec7" },
           300: { value: "#86efac" },
