@@ -1,7 +1,8 @@
 // src/features/design-system-docs/components/ds-docs-sidebar.tsx
 
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { Logo } from "@/design-system/components/branding/ui/logo";
-import { Input } from "@/design-system/components/input/ui/input";
+import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Sidebar } from "@/design-system/components/navigation/ui/sidebar";
@@ -80,25 +81,30 @@ export const DsDocsSidebar = (props: DsDocsSidebarProps) => {
         {/* Filter Input (Only when expanded) */}
         {expanded && (
           <Box p={"sm"} flexShrink={0} w={"full"}>
-            <Input
+            <SearchInput
               size={"sm"}
               placeholder={"Filter components..."}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onValueChange={setSearchQuery}
+              w={"full"}
+              minW={"0"}
             />
           </Box>
         )}
 
-        {/* VNavs */}
-        <VNavs<DsNavKey>
-          flex={1}
-          groups={filteredGroups}
-          navs={DS_NAVS_MAP as unknown as Record<DsNavKey, NavItem>}
-          activeKey={activeNavKey}
-          expanded={expanded}
-          onNavClick={onSelectNav}
-          p={3}
-        />
+        {/* VNavs or No Result State */}
+        {filteredGroups.length === 0 ? (
+          <NoResultState query={searchQuery} minH={"200px"} py={"md"} />
+        ) : (
+          <VNavs<DsNavKey>
+            flex={1}
+            groups={filteredGroups}
+            navs={DS_NAVS_MAP as unknown as Record<DsNavKey, NavItem>}
+            activeKey={activeNavKey}
+            expanded={expanded}
+            onNavClick={onSelectNav}
+            p={3}
+          />
+        )}
       </Sidebar.Body>
     </Sidebar.Root>
   );

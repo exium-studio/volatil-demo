@@ -16,11 +16,13 @@ import {
 } from "react";
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  function SeachInput(
+  function SearchInput(
     {
       queryKey,
       value: controlledValue,
+      debounceMs = 300,
       onValueChange,
+      onChange,
       w,
       inputGroupProps,
       appIconProps,
@@ -30,6 +32,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ) {
     // Refs
     const internalRef = useRef<HTMLInputElement | null>(null);
+    const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Hooks
     const { queryValue, setQueryValue, clearQueryValue } = useSearchParam(
@@ -49,35 +52,73 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     };
 
     // States
-    const [value, setValue] = useState<string>(
-      isUrlMode ? (queryValue ?? "") : (controlledValue ?? ""),
+    const initialValue = isUrlMode
+      ? (queryValue ?? "")
+      : (controlledValue ?? (restProps.defaultValue as string) ?? "");
+    const [value, setValue] = useState<string>(initialValue);
+    const [prevControlledValue, setPrevControlledValue] =
+      useState<string | undefined>(controlledValue);
+    const [prevQueryValue, setPrevQueryValue] = useState<string | undefined>(
+      queryValue,
     );
 
-    // Sync state with controlledValue prop
-    useEffect(() => {
-      if (!isUrlMode && controlledValue !== undefined) {
-        setValue(controlledValue);
-      }
-    }, [controlledValue, isUrlMode]);
+    // Derived State Synchronization during render (no useEffect setState anti-pattern)
+    if (
+      !isUrlMode &&
+      controlledValue !== undefined &&
+      controlledValue !== prevControlledValue
+    ) {
+      setPrevControlledValue(controlledValue);
+      setValue(controlledValue);
+    }
 
-    // Sync state with queryValue URL param
+    if (isUrlMode && queryValue !== prevQueryValue) {
+      setPrevQueryValue(queryValue);
+      setValue(queryValue ?? "");
+    }
+
+    // Effects — Cleanup debounce timer on unmount
     useEffect(() => {
-      if (isUrlMode) {
-        setValue(queryValue ?? "");
-      }
-    }, [queryValue, isUrlMode]);
+      return () => {
+        if (debounceTimerRef.current) {
+          clearTimeout(debounceTimerRef.current);
+        }
+      };
+    }, []);
 
     // Handlers
+    function triggerDebouncedChange(next: string) {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      if (debounceMs <= 0) {
+        if (isUrlMode) {
+          setQueryValue(next);
+        }
+        onValueChange?.(next);
+        return;
+      }
+
+      debounceTimerRef.current = setTimeout(() => {
+        if (isUrlMode) {
+          setQueryValue(next);
+        }
+        onValueChange?.(next);
+      }, debounceMs);
+    }
+
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
       const next = e.currentTarget.value;
       setValue(next);
-      if (isUrlMode) {
-        setQueryValue(next);
-      }
-      onValueChange?.(next);
+      onChange?.(e);
+      triggerDebouncedChange(next);
     }
 
     function handleClear() {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
       setValue("");
       if (isUrlMode) {
         clearQueryValue();

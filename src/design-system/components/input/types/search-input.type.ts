@@ -7,6 +7,7 @@ import type { InputProps } from "@/design-system/components/input/types/input.ty
 export type SearchInputProps = InputProps & {
   queryKey?: string;
   value?: string;
+  debounceMs?: number;
   onValueChange?: (value: string) => void;
   inputGroupProps?: Omit<InputGroupProps, "children">;
   appIconProps?: AppIconProps;
