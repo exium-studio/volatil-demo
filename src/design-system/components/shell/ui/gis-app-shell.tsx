@@ -6,6 +6,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
+import { Avatar } from "@/design-system/components/media/ui/avatar";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
 import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-view-padding";
@@ -24,7 +25,7 @@ import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
-import { ClampedP } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useSidebarStore } from "@/design-system/stores/sidebar-store";
@@ -246,6 +247,7 @@ const SidebarBody = () => {
 
 const SidebarFooter = () => {
   // Stores
+  const { theme } = useThemeStore();
   const expanded = useSidebarStore(
     (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
@@ -256,6 +258,7 @@ const SidebarFooter = () => {
 
   // Derived Values
   const userData = getUserSession();
+  const displayName = userData?.name ?? "";
   const role = userData?.role ?? "mitra";
   const navsMap = (role === "internal"
     ? INTERNAL_APP_NAVS_MAP
@@ -283,13 +286,26 @@ const SidebarFooter = () => {
 
       <UserProfilePopoverTrigger>
         <NavButton
-          aria-label={t["app.navs.profile"]()}
+          aria-label={displayName || t["app.navs.profile"]()}
           variant={"ghost"}
           w={expanded ? "full" : undefined}
+          h={"40px"}
+          pl={"6px"}
         >
-          <AppIcon icon={UserIcon} color={"fg.muted"} />
+          <Avatar
+            name={displayName || "User"}
+            size={"2xs"}
+            colorPalette={theme.colorPalette}
+            flexShrink={0}
+          />
 
-          {expanded && t["app.navs.profile"]()}
+          {expanded && (
+            <VStack>
+              <P fontWeight={"medium"} lineClamp={1}>
+                {displayName || t["app.navs.profile"]()}
+              </P>
+            </VStack>
+          )}
         </NavButton>
       </UserProfilePopoverTrigger>
     </VStack>
