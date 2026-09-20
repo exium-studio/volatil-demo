@@ -24,7 +24,7 @@ import { useState } from "react";
 
 export const TotpSetupStep = (props: TotpSetupStepProps) => {
   // Props
-  const { email, mfaToken, setupData, onBackToLogin, ...restProps } = props;
+  const { mfaToken, setupData, onBackToLogin, ...restProps } = props;
 
   // States
   const [totpCode, setTotpCode] = useState<string>("");
@@ -114,11 +114,7 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
             <P as={"span"} fontWeight={"semibold"} color={"fg.default"}>
               {"Google Authenticator"}
             </P>
-            {" pada ponsel Anda ("}
-            <P as={"span"} fontWeight={"semibold"} color={"fg.default"}>
-              {email}
-            </P>
-            {")."}
+            {" pada ponsel Anda."}
           </P>
         </VStack>
       </VStack>
