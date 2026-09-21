@@ -40,7 +40,6 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   FocusIcon,
   InfoIcon,
-  MapPinOffIcon,
   ShoppingCartIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
