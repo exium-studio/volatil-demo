@@ -155,3 +155,55 @@ export function calculateIntersectAreaInHectares(
     return calculateFeatureAreaInHectares(targetFeature);
   }
 }
+
+/**
+ * Checks if an IGT layer's bounding box [minLng, minLat, maxLng, maxLat] intersects with an AOI Polygon.
+ */
+export function checkBboxIntersection(
+  layerBbox?: [number, number, number, number],
+  aoiPolygon?:
+    | GeoJSON.Polygon
+    | GeoJSON.MultiPolygon
+    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+    | null,
+): boolean {
+  if (!layerBbox || !aoiPolygon) return true;
+  const geom =
+    "geometry" in aoiPolygon ? aoiPolygon.geometry : aoiPolygon;
+  if (!geom || !("coordinates" in geom)) return true;
+
+  let minLng = Infinity;
+  let minLat = Infinity;
+  let maxLng = -Infinity;
+  let maxLat = -Infinity;
+
+  const traverse = (coords: unknown) => {
+    if (!Array.isArray(coords) || isEmptyArray(coords)) return;
+    if (typeof coords[0] === "number" && typeof coords[1] === "number") {
+      const lng = coords[0];
+      const lat = coords[1];
+      minLng = Math.min(minLng, lng);
+      minLat = Math.min(minLat, lat);
+      maxLng = Math.max(maxLng, lng);
+      maxLat = Math.max(maxLat, lat);
+    } else {
+      coords.forEach(traverse);
+    }
+  };
+
+  traverse(geom.coordinates);
+
+  if (minLng === Infinity) return true;
+
+  const [lMinLng, lMinLat, lMaxLng, lMaxLat] = layerBbox;
+  // Disjoint condition
+  if (
+    maxLng < lMinLng ||
+    minLng > lMaxLng ||
+    maxLat < lMinLat ||
+    minLat > lMaxLat
+  ) {
+    return false;
+  }
+  return true;
+}
