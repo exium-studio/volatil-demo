@@ -1,4 +1,4 @@
-// src/features/mitra/help-center/components/help-center.summary.tsx
+// src/features/help-center/components/help-center.summary.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -8,8 +8,8 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useHelpCenterStatisticsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
-import type { HelpCenterSummaryProps } from "@/features/mitra/help-center/types/help-center.type";
+import { useHelpCenterStatisticsQuery } from "@/features/help-center/hooks/use-help-center.query";
+import type { HelpCenterSummaryProps } from "@/features/help-center/types/help-center.type";
 import { CheckCircleIcon, ClockIcon, FileTextIcon } from "lucide-react";
 import { memo } from "react";
 

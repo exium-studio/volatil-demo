@@ -1,10 +1,11 @@
-// src/features/mitra/help-center/components/help-center.data-view.tsx
+// src/features/help-center/components/help-center.data-view.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
@@ -23,14 +24,14 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { CreateHelpCenterTrigger } from "@/features/mitra/help-center/components/help-center.create";
-import { useHelpCenterTicketsQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
+import { CreateHelpCenterTrigger } from "@/features/help-center/components/help-center.create";
+import { useHelpCenterTicketsQuery } from "@/features/help-center/hooks/use-help-center.query";
 import type {
   HelpCenterItem,
   HelpCenterQueryParams,
   HelpCenterResponse,
   HelpCenterStatus,
-} from "@/features/mitra/help-center/types/help-center.type";
+} from "@/features/help-center/types/help-center.type";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -38,7 +39,7 @@ import {
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { useNavigate } from "@tanstack/react-router";
+import { useLocation, useNavigate } from "@tanstack/react-router";
 import {
   EyeIcon,
   InboxIcon,
@@ -73,8 +74,12 @@ const HELP_CENTER_STATUS_OPTIONS: FocusSelectOption[] = [
 ];
 
 export const HelpCenterDataView = () => {
-  // Navigation
+  // Hooks
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Derived Values
+  const isInternal = location.pathname.includes("/internal");
 
   // States — Centralized query/action parameters
   const [params, setParams] = useState<HelpCenterQueryParams>({
@@ -87,13 +92,20 @@ export const HelpCenterDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
-  const { tickets, pagination, isLoading, isFetching, isError, error, refetch } =
-    useHelpCenterTicketsQuery({
-      search: params.search?.trim() || undefined,
-      page: params.page,
-      limit: params.limit,
-      status: params.status,
-    });
+  const {
+    tickets,
+    pagination,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useHelpCenterTicketsQuery({
+    search: params.search?.trim() || undefined,
+    page: params.page,
+    limit: params.limit,
+    status: params.status,
+  });
 
   // Derived Values - DataList headers, items, itemActions
   const dataList = useMemo(() => {
@@ -138,7 +150,7 @@ export const HelpCenterDataView = () => {
               td: <P fontWeight={"medium"}>{ticket.title}</P>,
             },
             {
-              value: ticket.title,
+              value: ticket.description,
               td: (
                 <ClampedP color={"fg.subtle"} w={"200px"}>
                   {ticket.description}
@@ -236,14 +248,16 @@ export const HelpCenterDataView = () => {
       },
     );
 
-    const itemActions = [
+    const itemActions: DataViewItemActionsGenerator<HelpCenterItem>[] = [
       {
         key: "view-detail",
         label: "Lihat Detail",
         icon: EyeIcon,
         onClick: (ticket: HelpCenterItem) => {
           void navigate({
-            to: "/mitra/help-center/$ticketId",
+            to: isInternal
+              ? "/internal/help-center/$ticketId"
+              : "/mitra/help-center/$ticketId",
             params: { ticketId: String(ticket.id) },
           });
         },
@@ -256,7 +270,7 @@ export const HelpCenterDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [tickets, preferredTimezone, navigate]);
+  }, [tickets, preferredTimezone, navigate, isInternal]);
 
   const currentUser = useMemo(() => getUserSession(), []);
   const isInternalAdmin = currentUser?.role === "internal";
@@ -274,16 +288,17 @@ export const HelpCenterDataView = () => {
 
         <Separator borderColor={"bg.canvas"} />
 
+        {/* Action Header Scroll Container */}
         <ActionHeaderScrollContainer justify={"space-between"}>
           <HStack gap={"sm"}>
             <SearchInput
               placeholder={t["action.search"]()}
               value={params.search}
-              onValueChange={(val) =>
+              onValueChange={(val) => {
                 startTransition(() => {
                   setParams((prev) => ({ ...prev, search: val, page: 1 }));
-                })
-              }
+                });
+              }}
               maxW={"240px"}
             />
 
@@ -291,7 +306,7 @@ export const HelpCenterDataView = () => {
               modalKey={"help-center-status-filter"}
               options={HELP_CENTER_STATUS_OPTIONS}
               value={params.status ?? "all"}
-              onValueChange={(val) =>
+              onValueChange={(val) => {
                 startTransition(() => {
                   setParams((prev) => ({
                     ...prev,
@@ -299,8 +314,8 @@ export const HelpCenterDataView = () => {
                       val === "all" ? undefined : (val as HelpCenterStatus),
                     page: 1,
                   }));
-                })
-              }
+                });
+              }}
             />
           </HStack>
 
@@ -317,15 +332,17 @@ export const HelpCenterDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         <VStack flex={1} gap={"sm"} w={"full"} position={"relative"}>
-          {isLoading && <Skeleton w={"full"} p={"md"} roundedTop={0} />}
+          {isLoading && (
+            <Skeleton w={"full"} p={"md"} rounded={0} colorPalette={"gray"} />
+          )}
 
           {!isLoading && isError && (
-            <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+            <Center py={"xl"} w={"full"}>
               <RetryState
                 title={"Gagal Memuat Laporan"}
                 description={
-                  error?.message ||
-                  "Terjadi kesalahan saat memuat tiket pusat bantuan. Silakan coba lagi."
+                  error?.message ??
+                  "Terjadi kesalahan saat mengambil daftar laporan bantuan."
                 }
                 onRetry={() => {
                   void refetch();
@@ -352,7 +369,7 @@ export const HelpCenterDataView = () => {
             <VStack flex={1} w={"full"} position={"relative"}>
               <TopBarLoader isFetching={isFetching} />
 
-              <DataViewTable.Root
+              <DataViewTable.Root<HelpCenterItem>
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}

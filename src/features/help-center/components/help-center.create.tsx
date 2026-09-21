@@ -1,4 +1,4 @@
-// src/features/mitra/help-center/components/help-center.create.tsx
+// src/features/help-center/components/help-center.create.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -8,13 +8,13 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { HelpCenterTransactionSelect } from "@/features/mitra/help-center/components/help-center.transaction-select";
-import { useCreateHelpCenterTicket } from "@/features/mitra/help-center/hooks/use-help-center.query";
+import { HelpCenterTransactionSelect } from "@/features/help-center/components/help-center.transaction-select";
+import { useCreateHelpCenterTicket } from "@/features/help-center/hooks/use-help-center.query";
 import {
   createHelpCenterSchema,
   zodResolver,
-} from "@/features/mitra/help-center/schemas/help-center.schema";
-import type { CreateHelpCenterFormValues, CreateHelpCenterTriggerProps } from "@/features/mitra/help-center/types/help-center.type";
+} from "@/features/help-center/schemas/help-center.schema";
+import type { CreateHelpCenterFormValues, CreateHelpCenterTriggerProps } from "@/features/help-center/types/help-center.type";
 import { Controller, useForm } from "react-hook-form";
 
 export const CreateHelpCenterTrigger = (

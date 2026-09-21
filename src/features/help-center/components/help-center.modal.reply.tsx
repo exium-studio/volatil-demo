@@ -1,4 +1,4 @@
-// src/features/mitra/help-center/components/help-center.modal.reply.tsx
+// src/features/help-center/components/help-center.modal.reply.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -7,8 +7,8 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { useReplyHelpCenterTicket } from "@/features/mitra/help-center/hooks/use-help-center.query";
-import type { HelpCenterModalReplyTriggerProps } from "@/features/mitra/help-center/types/help-center.type";
+import { useReplyHelpCenterTicket } from "@/features/help-center/hooks/use-help-center.query";
+import type { HelpCenterModalReplyTriggerProps } from "@/features/help-center/types/help-center.type";
 import { useState } from "react";
 
 export const HelpCenterModalReplyTrigger = (

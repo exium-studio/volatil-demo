@@ -13,7 +13,7 @@ import type {
   VNavsProps,
 } from "@/design-system/components/navigation/types/v-navs.type";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
-import { findActivePath } from "@/design-system/components/navigation/utils/v-navs.utils";
+import { findActivePath } from "@/design-system/components/navigation/utils/navs.utils";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";

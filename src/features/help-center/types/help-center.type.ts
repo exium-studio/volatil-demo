@@ -1,4 +1,4 @@
-// src/features/mitra/help-center/types/help-center.type.ts
+// src/features/help-center/types/help-center.type.ts
 
 import type { ReactNode } from "react";
 
@@ -172,7 +172,7 @@ export type HelpCenterTransactionSelectProps = {
   disabled?: boolean;
 };
 
-import { createHelpCenterSchema } from "@/features/mitra/help-center/schemas/help-center.schema";
+import { createHelpCenterSchema } from "@/features/help-center/schemas/help-center.schema";
 import type { z } from "zod";
 export type CreateHelpCenterFormValues = z.infer<ReturnType<typeof createHelpCenterSchema>>;
 

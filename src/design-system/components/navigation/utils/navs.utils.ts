@@ -1,4 +1,4 @@
-// src/design-system/components/navigation/utils/v-navs.utils.ts
+// src/design-system/components/navigation/utils/navs.utils.ts
 
 import type { NavItem, NavNode } from "@/shared/types/nav.type";
 
@@ -27,7 +27,7 @@ export function getNavKeyFromPathname<TNavKey extends string>(
   const entries = Object.entries(navsMap) as [TNavKey, NavItem][];
 
   const matches = entries
-    .filter(([, item]) => Boolean(item.pathname && pathname.startsWith(item.pathname)))
+    .filter(([, item]) => Boolean(item.pathname && pathname.includes(item.pathname)))
     .sort(([, a], [, b]) => (b.pathname?.length ?? 0) - (a.pathname?.length ?? 0));
 
   return matches[0]?.[0];

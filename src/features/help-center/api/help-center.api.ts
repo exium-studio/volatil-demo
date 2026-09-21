@@ -1,4 +1,4 @@
-// src/features/mitra/help-center/api/help-center.api.ts
+// src/features/help-center/api/help-center.api.ts
 
 import type {
   CreateHelpCenterApiResponse,
@@ -6,14 +6,14 @@ import type {
   HelpCenterListApiResponse,
   HelpCenterStatisticsApiResponse,
   ReplyHelpCenterApiResponse,
-} from "@/features/mitra/help-center/types/help-center.api.type";
+} from "@/features/help-center/types/help-center.api.type";
 import type {
   CreateHelpCenterPayload,
   HelpCenterQueryParams,
   RejectHelpCenterPayload,
   ReplyHelpCenterPayload,
   ResolveHelpCenterPayload,
-} from "@/features/mitra/help-center/types/help-center.type";
+} from "@/features/help-center/types/help-center.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 
 export const getHelpCenterStatisticsApi = async (
