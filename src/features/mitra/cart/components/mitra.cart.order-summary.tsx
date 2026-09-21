@@ -1,4 +1,7 @@
-import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -75,7 +78,10 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
   const totalKawasanHa = useMemo(() => {
     if (!activeOrder) return 0;
-    if (activeOrder.coverageHa !== undefined && activeOrder.coverageHa !== null) {
+    if (
+      activeOrder.coverageHa !== undefined &&
+      activeOrder.coverageHa !== null
+    ) {
       return activeOrder.coverageHa;
     }
     return activeOrder.items
@@ -313,9 +319,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
                           colorPalette={isAoiVisible ? "orange" : "gray"}
                           onClick={onToggleAoiVisible}
                         >
-                          <AppIcon
-                            icon={isAoiVisible ? EyeIcon : EyeOffIcon}
-                          />
+                          <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
                         </IconButton>
                       </Tooltip>
                     )}
