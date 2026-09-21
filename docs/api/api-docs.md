@@ -699,15 +699,23 @@ type MitraPricingPolicyResponse = {
 
 ## 3.3 Keranjang & Order Provisioning Spasial
 
-### Add to Cart (Buat Order Keranjang)
+> [!NOTE]
+> **Alur Permintaan Data Berbasis AOI (AOI-Driven Request Flow)**:
+> 1. Mitra menentukan batas area spasial melalui **Upload AOI** (`upload_aoi`) atau **Gambar AOI** (`draw_aoi`).
+> 2. Frontend mengirimkan request pembuatan pesanan dengan geometri `aoiPolygon` dan daftar layer target.
+> 3. Backend langsung mengembalikan order dengan status awal **`requesting`**.
+> 4. Backend Worker secara asinkron memproses pemotongan (*spatial clipping*), *unary union* cakupan kawasan, penghitungan jumlah bidang & luas hektar kawasan, serta estimasi harga berdasarkan tarif resmi PNBP.
+> 5. Setelah kalkulasi selesai, status order bertransisi menjadi **`pending_payment`** (atau **`pending_review`**).
+
+### Add to Cart / Create Spatial Order (Buat Order Keranjang)
 - **Endpoint**: `POST /api/mitra/cart/orders`
 - **Akses**: `Mitra Only`
 - **Payload**:
 ```typescript
 type AddToCartOrderRequest = {
-  selectionType: "catalog" | "upload_aoi" | "draw_aoi";
-  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  selectionType: "upload_aoi" | "draw_aoi" | "catalog";
+  aoiPolygon: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  cqlFilter?: string; // e.g. "INTERSECTS(geom, POLYGON(...))"
   items: Array<{
     sourceLayerId: string;
     cqlFilter?: string;
@@ -720,7 +728,7 @@ type AddToCartOrderRequest = {
 ```typescript
 type AddToCartOrderResponse = {
   orderId: string;
-  status: OrderStatus;
+  status: "requesting"; // Status awal ketika kalkulasi spasial sedang diproses oleh BE
   estimatedTotalPrice: number;
   createdAt: string;
 };
@@ -1178,10 +1186,11 @@ export type TransactionStatus =
 ### 2. SSOT Status Order & Layanan Spasial (`OrderStatus`)
 ```typescript
 export type OrderStatus =
-  | "preparing"        // Penyiapkan / kalkulasi pesanan
+  | "requesting"       // Permintaan Dibuat (Sedang Dikalkulasi Spasial di BE)
+  | "preparing"        // Penyiapan / kalkulasi pesanan
   | "pending_payment"  // Menunggu Pembayaran
   | "paid"             // Terbayar
-  | "processing"       // Sedang Diproses (Interop Engine)
+  | "processing"       // Sedang Diproses (Interop Engine / Provisioning WMS)
   | "pending_review"   // Menunggu Validasi Admin
   | "rejected"         // Ditolak Admin
   | "ready";           // Siap Digunakan

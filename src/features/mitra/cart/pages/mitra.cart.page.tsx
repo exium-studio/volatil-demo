@@ -1,5 +1,3 @@
-// src/features/mitra/cart/pages/mitra.cart.page.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
@@ -12,25 +10,30 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { MitraCartExpiredOrdersTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-orders.modal";
 import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.order-item";
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
-import { MitraCartExpiredOrdersTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-orders.modal";
-import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import {
+  flyToCartGeometry,
+  useCartAoiCoverageMap,
+} from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import {
   useCancelActiveCartOrder,
-  useClearAllCartOrders,
   useCartOrderDetailQuery,
   useCartOrdersQuery,
+  useClearAllCartOrders,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { HistoryIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const MitraCartPage = () => {
   return (
@@ -219,12 +222,60 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
+  // Stores
+  const map = useMapInstanceStore((state) => state.map);
+
+  // States
+  const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
+  const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
+
   // Queries (for total orders count to reverse order number)
   const { orders } = useCartOrdersQuery();
 
   // Queries — detail of selected order
   const { orderDetail: selectedOrder, isLoading: isDetailLoading } =
     useCartOrderDetailQuery(selectedOrderId || undefined);
+
+  // Map layer synchronization hook for Cart AOI & Coverage Polygon
+  useCartAoiCoverageMap(map, {
+    aoiPolygon: selectedOrder?.aoiPolygon,
+    coveragePolygon: selectedOrder?.coveragePolygon,
+    selectionType: selectedOrder?.selectionType,
+    isAoiVisible,
+    isCoverageVisible,
+  });
+
+  // Auto zoom on order selection change
+  useEffect(() => {
+    if (selectedOrder) {
+      const targetGeom =
+        selectedOrder.aoiPolygon ?? selectedOrder.coveragePolygon;
+      if (targetGeom && map) {
+        flyToCartGeometry(map, targetGeom);
+      }
+    }
+  }, [selectedOrder, map]);
+
+  // Handlers
+  const handleToggleAoi = useCallback(() => {
+    setIsAoiVisible((prev) => !prev);
+  }, []);
+
+  const handleToggleCoverage = useCallback(() => {
+    setIsCoverageVisible((prev) => !prev);
+  }, []);
+
+  const handleFlyToAoi = useCallback(() => {
+    if (selectedOrder?.aoiPolygon && map) {
+      flyToCartGeometry(map, selectedOrder.aoiPolygon);
+    }
+  }, [selectedOrder, map]);
+
+  const handleFlyToCoverage = useCallback(() => {
+    if (selectedOrder?.coveragePolygon && map) {
+      flyToCartGeometry(map, selectedOrder.coveragePolygon);
+    }
+  }, [selectedOrder, map]);
 
   // Derived Values — reverse order number (index 0 is latest, so it gets the highest order number)
   const displayOrderNumber =
@@ -264,6 +315,12 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
         activeOrder={selectedOrder}
         orderIndex={displayOrderNumber}
         isLoading={isDetailLoading}
+        isAoiVisible={isAoiVisible}
+        isCoverageVisible={isCoverageVisible}
+        onToggleAoiVisible={handleToggleAoi}
+        onToggleCoverageVisible={handleToggleCoverage}
+        onFlyToAoi={handleFlyToAoi}
+        onFlyToCoverage={handleFlyToCoverage}
       />
     </Container.Body>
   );

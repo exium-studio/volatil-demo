@@ -1,10 +1,9 @@
-// src/features/mitra/cart/components/mitra.cart.order-summary.tsx
-
-import { Button } from "@/design-system/components/button/ui/button";
+import { Button, IconButton } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -19,15 +18,30 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   AlertCircleIcon,
   CreditCardIcon,
+  EyeIcon,
+  EyeOffIcon,
+  FocusIcon,
   HourglassIcon,
   InfoIcon,
+  LoaderIcon,
+  MapPinIcon,
   ShieldCheckIcon,
 } from "lucide-react";
 import { useMemo } from "react";
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
-  const { activeOrder, orderIndex, isLoading = false } = props;
+  const {
+    activeOrder,
+    orderIndex,
+    isLoading = false,
+    isAoiVisible = true,
+    isCoverageVisible = true,
+    onToggleAoiVisible,
+    onToggleCoverageVisible,
+    onFlyToAoi,
+    onFlyToCoverage,
+  } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -40,6 +54,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
   // Derived Values
   const isSelected = Boolean(activeOrder);
+  const isRequesting = activeOrder?.status === "requesting";
   const isPendingPayment = activeOrder?.status === "pending_payment";
   const isPayable = isPendingPayment;
   const isReady = activeOrder?.status === "ready";
@@ -48,6 +63,8 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   const isRejected = activeOrder?.status === "rejected";
   const isPaid = activeOrder?.status === "paid";
   const hasItems = (activeOrder?.items.length ?? 0) > 0;
+  const hasAoiPolygon = Boolean(activeOrder?.aoiPolygon);
+  const hasCoveragePolygon = Boolean(activeOrder?.coveragePolygon);
 
   const totalBidang = useMemo(() => {
     if (!activeOrder?.items) return 0;
@@ -239,6 +256,128 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </HStack>
       </VStack>
 
+      {/* Spatial Visualizations & Map Toggles */}
+      {isSelected && (hasAoiPolygon || hasCoveragePolygon) && (
+        <>
+          <Separator borderColor={"bg.canvas"} my={1} />
+
+          <VStack align={"stretch"} gap={"xs"}>
+            <HStack justify={"space-between"} align={"center"}>
+              <HStack gap={1} align={"center"}>
+                <AppIcon icon={MapPinIcon} size={"xs"} color={"fg.muted"} />
+                <P fontSize={"xs"} fontWeight={"medium"} color={"fg.muted"}>
+                  {"Visualisasi Spasial Peta"}
+                </P>
+              </HStack>
+            </HStack>
+
+            <VStack gap={"xs"} align={"stretch"}>
+              {hasAoiPolygon && (
+                <HStack
+                  justify={"space-between"}
+                  align={"center"}
+                  p={2}
+                  rounded={"md"}
+                  bg={"bg.subtle"}
+                >
+                  <HStack gap={"xs"} align={"center"}>
+                    <Badge colorPalette={"orange"} size={"sm"}>
+                      {"AOI Polygon"}
+                    </Badge>
+                  </HStack>
+
+                  <HStack gap={"xs"}>
+                    {onFlyToAoi && (
+                      <Tooltip content={"Zoom ke Polygon AOI"}>
+                        <IconButton
+                          size={"xs"}
+                          variant={"ghost"}
+                          onClick={onFlyToAoi}
+                        >
+                          <AppIcon icon={FocusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    {onToggleAoiVisible && (
+                      <Tooltip
+                        content={
+                          isAoiVisible
+                            ? "Sembunyikan Polygon AOI"
+                            : "Tampilkan Polygon AOI"
+                        }
+                      >
+                        <IconButton
+                          size={"xs"}
+                          variant={isAoiVisible ? "subtle" : "ghost"}
+                          colorPalette={isAoiVisible ? "orange" : "gray"}
+                          onClick={onToggleAoiVisible}
+                        >
+                          <AppIcon
+                            icon={isAoiVisible ? EyeIcon : EyeOffIcon}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </HStack>
+                </HStack>
+              )}
+
+              {hasCoveragePolygon && (
+                <HStack
+                  justify={"space-between"}
+                  align={"center"}
+                  p={2}
+                  rounded={"md"}
+                  bg={"bg.subtle"}
+                >
+                  <HStack gap={"xs"} align={"center"}>
+                    <Badge colorPalette={"green"} size={"sm"}>
+                      {"Coverage Area"}
+                    </Badge>
+                  </HStack>
+
+                  <HStack gap={"xs"}>
+                    {onFlyToCoverage && (
+                      <Tooltip content={"Zoom ke Coverage Area"}>
+                        <IconButton
+                          size={"xs"}
+                          variant={"ghost"}
+                          onClick={onFlyToCoverage}
+                        >
+                          <AppIcon icon={FocusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    {onToggleCoverageVisible && (
+                      <Tooltip
+                        content={
+                          isCoverageVisible
+                            ? "Sembunyikan Coverage Area"
+                            : "Tampilkan Coverage Area"
+                        }
+                      >
+                        <IconButton
+                          size={"xs"}
+                          variant={isCoverageVisible ? "subtle" : "ghost"}
+                          colorPalette={isCoverageVisible ? "green" : "gray"}
+                          onClick={onToggleCoverageVisible}
+                        >
+                          <AppIcon
+                            icon={isCoverageVisible ? EyeIcon : EyeOffIcon}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </HStack>
+                </HStack>
+              )}
+            </VStack>
+          </VStack>
+        </>
+      )}
+
       {/* Notice States */}
       {!isSelected && (
         <Alert.Root status={"neutral"}>
@@ -246,6 +385,17 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           <Alert.Description>
             {
               "Silakan pilih salah satu pesanan pada daftar keranjang untuk menampilkan rincian dan melakukan pembayaran."
+            }
+          </Alert.Description>
+        </Alert.Root>
+      )}
+
+      {isSelected && isRequesting && (
+        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+          <AppIcon icon={LoaderIcon} />
+          <Alert.Description>
+            {
+              "Pesanan sedang dalam proses kalkulasi oleh server (clipping spasial, luas cakupan kawasan, dan estimasi tarif PNBP). Tagihan akan otomatis siap dibayar setelah proses selesai."
             }
           </Alert.Description>
         </Alert.Root>
@@ -319,7 +469,8 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           !isPayable ||
           !hasItems ||
           checkoutMutation.isPending ||
-          isLoading
+          isLoading ||
+          isRequesting
         }
         loading={checkoutMutation.isPending}
         onClick={handleCheckout}
@@ -328,17 +479,19 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         <AppIcon icon={CreditCardIcon} />
         {!isSelected
           ? "Pilih Pesanan Terlebih Dahulu"
-          : isReady
-            ? "Pesanan Siap Digunakan"
-            : isProcessing
-              ? "Menyiapkan Layanan..."
-              : isPendingReview
-                ? "Menunggu Validasi Admin"
-                : isRejected
-                  ? "Pesanan Ditolak"
-                  : isPaid
-                    ? "Pesanan Sudah Dibayar"
-                    : "Bayar Sekarang"}
+          : isRequesting
+            ? "Sedang Dikalkulasi (BE)..."
+            : isReady
+              ? "Pesanan Siap Digunakan"
+              : isProcessing
+                ? "Menyiapkan Layanan..."
+                : isPendingReview
+                  ? "Menunggu Validasi Admin"
+                  : isRejected
+                    ? "Pesanan Ditolak"
+                    : isPaid
+                      ? "Pesanan Sudah Dibayar"
+                      : "Bayar Sekarang"}
       </Button>
 
       <HStack align={"center"} justify={"center"} gap={1}>

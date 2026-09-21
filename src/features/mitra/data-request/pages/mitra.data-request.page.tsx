@@ -69,11 +69,11 @@ export const MitraDataRequestPage = () => {
   const { queryValue: tabQuery, setQueryValue: setTab } = useSearchParam("tab");
   const { setQueryValue: setLayerId } = useSearchParam("layerId");
 
-  // Derived active tab (default to catalog without forcing URL push in useEffect)
+  // Derived active tab (default to uploadAoi without forcing URL push in useEffect)
   const activeTab =
     tabQuery && Object.keys(REQUEST_METHOD_MAP).includes(tabQuery)
       ? tabQuery
-      : "catalog";
+      : "uploadAoi";
 
   return (
     <AppContentContainer overflowY={"auto"}>

@@ -196,8 +196,19 @@ export const useMitraUploadAoi = (
       map.off(MAP_EVENTS_MAP.styleReady as string, handleReady);
       map.off(MAP_EVENTS_MAP.layersReady as string, handleReady);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!(map as any).style) return;
-      activeFeaturesRef.current.forEach((feat) => removeAoiLayer(map, feat.id));
+      if (!map || !(map as any).style) return;
+      try {
+        const style = map.getStyle();
+        style?.layers?.forEach((l) => {
+          if (l.id.startsWith(UPLOAD_AOI_FILL_PREFIX)) {
+            const featureId = l.id.replace(UPLOAD_AOI_FILL_PREFIX, "");
+            removeAoiLayer(map, featureId);
+          }
+        });
+        activeFeaturesRef.current.forEach((feat) => removeAoiLayer(map, feat.id));
+      } catch (err) {
+        console.warn("Failed to cleanup upload AOI layers:", err);
+      }
     };
   }, [map, syncAllActiveLayers]);
 

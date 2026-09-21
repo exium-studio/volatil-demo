@@ -152,6 +152,12 @@ export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
  * SSOT 3: Order & Provisioning Status Map (Single Order Table & Spatial Services)
  */
 export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
+  requesting: {
+    label: "Sedang Dikalkulasi (BE)",
+    colorPalette: "blue",
+    icon: LoaderIcon,
+    iconColor: "blue.fg",
+  },
   preparing: {
     label: "Penyiapkan Pesanan",
     colorPalette: "gray",

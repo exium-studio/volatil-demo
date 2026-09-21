@@ -167,6 +167,25 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
         </VStack>
 
         {/* Dynamic Status Notices */}
+        {order.status === "requesting" && (
+          <HStack
+            align={"center"}
+            gap={"xs"}
+            bg={"blue.subtle"}
+            p={2}
+            rounded={"md"}
+            fontSize={"xs"}
+            color={"blue.fg"}
+          >
+            <AppIcon icon={statusConfig.icon} />
+            <P>
+              {
+                "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server..."
+              }
+            </P>
+          </HStack>
+        )}
+
         {order.status === "pending_payment" && order.expiredAt && (
           <HStack
             justify={"space-between"}

@@ -90,6 +90,28 @@ export type MitraCartOrderSummaryProps = {
   activeOrder: ActiveCartOrder | null;
   orderIndex?: number | null;
   isLoading?: boolean;
+  isAoiVisible?: boolean;
+  isCoverageVisible?: boolean;
+  onToggleAoiVisible?: () => void;
+  onToggleCoverageVisible?: () => void;
+  onFlyToAoi?: () => void;
+  onFlyToCoverage?: () => void;
+};
+
+export type CartMapLayerOptions = {
+  aoiPolygon?:
+    | GeoJSON.MultiPolygon
+    | GeoJSON.Polygon
+    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+    | null;
+  coveragePolygon?:
+    | GeoJSON.MultiPolygon
+    | GeoJSON.Polygon
+    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+    | null;
+  selectionType?: string;
+  isAoiVisible?: boolean;
+  isCoverageVisible?: boolean;
 };
 
 export type CartOrderItemPayload = {

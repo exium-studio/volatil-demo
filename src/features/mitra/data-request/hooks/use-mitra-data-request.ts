@@ -195,29 +195,6 @@ export const useAddToCartMultipleLayers = () => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
       const count = params.layers.length;
 
-      let totalBidang = 0;
-      let totalKawasanHa = 0;
-
-      params.layers.forEach((l) => {
-        if (l.spatialBasis === "bidang") {
-          totalBidang += l.featuresCount ?? 0;
-        } else if (l.spatialBasis === "kawasan") {
-          totalKawasanHa += l.areaHa ?? 0;
-        }
-      });
-
-      const countParts: string[] = [];
-      if (totalBidang > 0) {
-        countParts.push(`${formatNumber(totalBidang)} bidang`);
-      }
-      if (totalKawasanHa > 0) {
-        countParts.push(
-          `${formatNumber(totalKawasanHa, { maximumFractionDigits: 2 })} ha`,
-        );
-      }
-      const countDetail =
-        countParts.length > 0 ? ` (${countParts.join(", ")})` : "";
-
       const firstLayerTitle =
         params.layers[0]?.title ||
         params.layers[0]?.typeName.split(":")[1]?.replace(/_/g, " ") ||
@@ -225,10 +202,13 @@ export const useAddToCartMultipleLayers = () => {
 
       const title =
         count === 1
-          ? `Layer "${firstLayerTitle}"${countDetail} berhasil ditambahkan ke keranjang`
-          : `Berhasil menambahkan ${count} Layer IGT${countDetail} ke keranjang`;
+          ? `Permintaan layer "${firstLayerTitle}" berhasil diajukan ke keranjang!`
+          : `Permintaan ${count} Layer IGT berhasil diajukan ke keranjang!`;
 
-      toast.success(title, { id: toastId, group: "Keranjang" });
+      toast.success(
+        `${title} Sistem sedang mengkalkulasi clipping dan estimasi harga di server.`,
+        { id: toastId, group: "Keranjang" },
+      );
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "orders"],
       });

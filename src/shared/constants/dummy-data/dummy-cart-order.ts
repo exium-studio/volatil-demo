@@ -9,11 +9,100 @@ const expiredAt1 = new Date(readyAt1.getTime() + 1000 * 60 * 60 * 24); // 24 hou
 const readyAt2 = new Date(now.getTime() - 1000 * 60 * 120); // 2 hours ago
 const expiredAt2 = new Date(readyAt2.getTime() + 1000 * 60 * 60 * 24);
 
+export const DUMMY_AOI_POLYGON_1: GeoJSON.Polygon = {
+  type: "Polygon",
+  coordinates: [
+    [
+      [106.815, -6.175],
+      [106.835, -6.175],
+      [106.835, -6.195],
+      [106.815, -6.195],
+      [106.815, -6.175],
+    ],
+  ],
+};
+
+export const DUMMY_COVERAGE_POLYGON_1: GeoJSON.Polygon = {
+  type: "Polygon",
+  coordinates: [
+    [
+      [106.818, -6.178],
+      [106.832, -6.178],
+      [106.832, -6.192],
+      [106.818, -6.192],
+      [106.818, -6.178],
+    ],
+  ],
+};
+
+export const DUMMY_AOI_POLYGON_2: GeoJSON.Polygon = {
+  type: "Polygon",
+  coordinates: [
+    [
+      [107.605, -6.905],
+      [107.625, -6.905],
+      [107.625, -6.925],
+      [107.605, -6.925],
+      [107.605, -6.905],
+    ],
+  ],
+};
+
+export const DUMMY_COVERAGE_POLYGON_2: GeoJSON.Polygon = {
+  type: "Polygon",
+  coordinates: [
+    [
+      [107.608, -6.908],
+      [107.622, -6.908],
+      [107.622, -6.922],
+      [107.608, -6.922],
+      [107.608, -6.908],
+    ],
+  ],
+};
+
 export const DUMMY_CART_ORDERS: CartOrder[] = [
+  {
+    orderId: "ord-2026-0825-000",
+    status: "requesting",
+    selectionType: "upload_aoi",
+    aoiPolygon: DUMMY_AOI_POLYGON_1,
+    createdAt: new Date().toISOString(),
+    totalPrice: 0,
+    coverageHa: 0,
+    featuresCount: 0,
+    items: [
+      {
+        id: "coi-000a",
+        sourceLayerId: "geonode:bidang_tanah_rdtr",
+        sourceLayerTitle: "Bidang Tanah RDTR Perkotaan",
+        spatialBasis: "bidang",
+        featuresCount: 0,
+        unitPrice: 50000,
+        subtotalPrice: 0,
+        wfsUrl: "/api/mitra/layers/lyr-001/wfs",
+        wmsUrl: "/api/mitra/layers/lyr-001/wms",
+      },
+      {
+        id: "coi-000b",
+        sourceLayerId: "geonode:kawasan_lindung_geologi",
+        sourceLayerTitle: "Kawasan Lindung Geologi Nasional",
+        spatialBasis: "kawasan",
+        featuresCount: 0,
+        areaHa: 0,
+        unitPrice: 50000,
+        subtotalPrice: 0,
+        wfsUrl: "/api/mitra/layers/lyr-002/wfs",
+        wmsUrl: "/api/mitra/layers/lyr-002/wms",
+      },
+    ],
+  },
   {
     orderId: "ord-2026-0825-001",
     status: "pending_payment",
     selectionType: "draw_aoi",
+    aoiPolygon: DUMMY_AOI_POLYGON_1,
+    coveragePolygon: DUMMY_COVERAGE_POLYGON_1,
     createdAt: new Date(now.getTime() - 1000 * 60 * 35).toISOString(),
     readyAt: readyAt1.toISOString(),
     expiredAt: expiredAt1.toISOString(),
@@ -71,6 +160,8 @@ export const DUMMY_CART_ORDERS: CartOrder[] = [
     orderId: "ord-2026-0825-003",
     status: "pending_payment",
     selectionType: "upload_aoi",
+    aoiPolygon: DUMMY_AOI_POLYGON_2,
+    coveragePolygon: DUMMY_COVERAGE_POLYGON_2,
     createdAt: new Date(now.getTime() - 1000 * 60 * 130).toISOString(),
     readyAt: readyAt2.toISOString(),
     expiredAt: expiredAt2.toISOString(),

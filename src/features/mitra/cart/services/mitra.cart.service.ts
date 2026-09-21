@@ -251,65 +251,61 @@ export async function createCartOrder(
     const response = await postCreateCartOrderApi(payload, signal);
     if (response.data) return response.data;
     const newOrderId = `ord-${Date.now()}`;
-    const calculatedTotal = 1200000 * payload.items.length;
     const newOrder: CartOrder = {
       orderId: newOrderId,
-      status: "pending_payment",
-      selectionType: payload.selectionType ?? "catalog",
+      status: "requesting",
+      selectionType: payload.selectionType ?? "upload_aoi",
       administrativeFilter: payload.administrativeFilter,
       aoiPolygon: payload.aoiPolygon,
       coveragePolygon: payload.coveragePolygon,
       cqlFilter: payload.cqlFilter,
       createdAt: new Date().toISOString(),
-      expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
-      totalPrice: calculatedTotal,
+      totalPrice: 0,
       items: payload.items.map((it, idx) => ({
         id: `coi-${Date.now()}-${idx}`,
         sourceLayerId: it.sourceLayerId ?? "geonode:layer",
         sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
         spatialBasis: "bidang",
-        featuresCount: 15,
+        featuresCount: 0,
         unitPrice: 50000,
-        subtotalPrice: 1200000,
+        subtotalPrice: 0,
       })),
     };
     localDummyOrders = [newOrder, ...localDummyOrders];
     return {
       orderId: newOrderId,
-      status: "pending_payment",
-      estimatedTotalPrice: calculatedTotal,
+      status: "requesting",
+      estimatedTotalPrice: 0,
       createdAt: newOrder.createdAt,
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
       const newOrderId = `ord-${Date.now()}`;
-      const calculatedTotal = 1200000 * payload.items.length;
       const newOrder: CartOrder = {
         orderId: newOrderId,
-        status: "pending_payment",
-        selectionType: payload.selectionType ?? "catalog",
+        status: "requesting",
+        selectionType: payload.selectionType ?? "upload_aoi",
         administrativeFilter: payload.administrativeFilter,
         aoiPolygon: payload.aoiPolygon,
         coveragePolygon: payload.coveragePolygon,
         cqlFilter: payload.cqlFilter,
         createdAt: new Date().toISOString(),
-        expiredAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
-        totalPrice: calculatedTotal,
+        totalPrice: 0,
         items: payload.items.map((it, idx) => ({
           id: `coi-${Date.now()}-${idx}`,
           sourceLayerId: it.sourceLayerId ?? "geonode:layer",
           sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
           spatialBasis: "bidang",
-          featuresCount: 15,
+          featuresCount: 0,
           unitPrice: 50000,
-          subtotalPrice: 1200000,
+          subtotalPrice: 0,
         })),
       };
       localDummyOrders = [newOrder, ...localDummyOrders];
       return {
         orderId: newOrderId,
-        status: "pending_payment",
-        estimatedTotalPrice: calculatedTotal,
+        status: "requesting",
+        estimatedTotalPrice: 0,
         createdAt: newOrder.createdAt,
       };
     }
