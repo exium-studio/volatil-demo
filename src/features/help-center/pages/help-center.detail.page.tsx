@@ -1,4 +1,4 @@
-// src/features/mitra/help-center/pages/help-center.detail.page.tsx
+// src/features/help-center/pages/help-center.detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
@@ -17,15 +17,15 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { HelpCenterAttachmentItem } from "@/features/mitra/help-center/components/help-center.attachment-item";
-import { HelpCenterModalReplyTrigger } from "@/features/mitra/help-center/components/help-center.modal.reply";
-import { HelpCenterModalResolveRejectTrigger } from "@/features/mitra/help-center/components/help-center.modal.resolve-reject";
-import { useHelpCenterDetailQuery } from "@/features/mitra/help-center/hooks/use-help-center.query";
+import { HelpCenterAttachmentItem } from "@/features/help-center/components/help-center.attachment-item";
+import { HelpCenterModalReplyTrigger } from "@/features/help-center/components/help-center.modal.reply";
+import { HelpCenterModalResolveRejectTrigger } from "@/features/help-center/components/help-center.modal.resolve-reject";
+import { useHelpCenterDetailQuery } from "@/features/help-center/hooks/use-help-center.query";
 import type {
   HelpCenterAttachment,
   HelpCenterResponse,
   HelpCenterStatus,
-} from "@/features/mitra/help-center/types/help-center.type";
+} from "@/features/help-center/types/help-center.type";
 import {
   formatAdaptiveDateTime,
   getPreferredUserTimezone,

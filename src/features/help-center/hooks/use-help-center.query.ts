@@ -1,13 +1,13 @@
-// src/features/mitra/help-center/hooks/use-help-center.query.ts
+// src/features/help-center/hooks/use-help-center.query.ts
 
-import { helpCenterService } from "@/features/mitra/help-center/services/help-center.service";
+import { helpCenterService } from "@/features/help-center/services/help-center.service";
 import type {
   CreateHelpCenterPayload,
   HelpCenterQueryParams,
   RejectHelpCenterPayload,
   ReplyHelpCenterPayload,
   ResolveHelpCenterPayload,
-} from "@/features/mitra/help-center/types/help-center.type";
+} from "@/features/help-center/types/help-center.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

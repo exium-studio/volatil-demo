@@ -1,6 +1,6 @@
-// src/features/mitra/help-center/api/mitra.transaction.api.ts
+// src/features/help-center/api/mitra.transaction.api.ts
 
-import type { MitraTransactionListResponse } from "@/features/mitra/help-center/types/mitra.transaction.type";
+import type { MitraTransactionListResponse } from "@/features/help-center/types/mitra.transaction.type";
 import { DUMMY_MITRA_TRANSACTIONS } from "@/shared/constants/dummy-data/dummy-mitra-transactions";
 
 export const getMitraTransactionsApi = async (

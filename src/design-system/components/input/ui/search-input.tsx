@@ -56,8 +56,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       ? (queryValue ?? "")
       : (controlledValue ?? (restProps.defaultValue as string) ?? "");
     const [value, setValue] = useState<string>(initialValue);
-    const [prevControlledValue, setPrevControlledValue] =
-      useState<string | undefined>(controlledValue);
+    const [prevControlledValue, setPrevControlledValue] = useState<
+      string | undefined
+    >(controlledValue);
     const [prevQueryValue, setPrevQueryValue] = useState<string | undefined>(
       queryValue,
     );

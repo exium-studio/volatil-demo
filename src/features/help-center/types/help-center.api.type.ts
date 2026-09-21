@@ -1,11 +1,11 @@
-// src/features/mitra/help-center/types/help-center.api.type.ts
+// src/features/help-center/types/help-center.api.type.ts
 
 import type {
   HelpCenterItem,
   HelpCenterPagination,
   HelpCenterResponse,
   HelpCenterStatistics,
-} from "@/features/mitra/help-center/types/help-center.type";
+} from "@/features/help-center/types/help-center.type";
 
 export type HelpCenterListApiResponse = {
   success: boolean;

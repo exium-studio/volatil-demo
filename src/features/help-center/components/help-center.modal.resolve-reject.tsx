@@ -1,4 +1,4 @@
-// src/features/mitra/help-center/components/help-center.modal.resolve-reject.tsx
+// src/features/help-center/components/help-center.modal.resolve-reject.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -11,8 +11,8 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   useRejectHelpCenterTicket,
   useResolveHelpCenterTicket,
-} from "@/features/mitra/help-center/hooks/use-help-center.query";
-import type { HelpCenterModalResolveRejectTriggerProps } from "@/features/mitra/help-center/types/help-center.type";
+} from "@/features/help-center/hooks/use-help-center.query";
+import type { HelpCenterModalResolveRejectTriggerProps } from "@/features/help-center/types/help-center.type";
 import { useState } from "react";
 
 export const HelpCenterModalResolveRejectTrigger = (

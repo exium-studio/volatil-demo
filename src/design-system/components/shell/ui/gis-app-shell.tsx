@@ -22,7 +22,7 @@ import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
 import { HNavs } from "@/design-system/components/navigation/ui/h-navs";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
-import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/v-navs.utils";
+import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -81,7 +81,11 @@ export const GisAppShell = (props: GisAppShellProps) => {
   // Effects
   useEffect(() => {
     const userData = getUserSession();
-    const role = userData?.role ?? "mitra";
+    const role = pathname.startsWith("/internal")
+      ? "internal"
+      : pathname.startsWith("/mitra")
+        ? "mitra"
+        : (userData?.role ?? "mitra");
     const navsMap = (
       role === "internal" ? INTERNAL_APP_NAVS_MAP : APP_NAVS_MAP
     ) as Record<string, NavItem>;
@@ -219,7 +223,11 @@ const SidebarBody = () => {
 
   // Derived Values
   const userData = getUserSession();
-  const role = userData?.role ?? "mitra";
+  const role = pathname.startsWith("/internal")
+    ? "internal"
+    : pathname.startsWith("/mitra")
+      ? "mitra"
+      : (userData?.role ?? "mitra");
   const navsMap = (role === "internal"
     ? INTERNAL_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
@@ -259,7 +267,11 @@ const SidebarFooter = () => {
   // Derived Values
   const userData = getUserSession();
   const displayName = userData?.name ?? "";
-  const role = userData?.role ?? "mitra";
+  const role = pathname.startsWith("/internal")
+    ? "internal"
+    : pathname.startsWith("/mitra")
+      ? "mitra"
+      : (userData?.role ?? "mitra");
   const navsMap = (role === "internal"
     ? INTERNAL_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
@@ -610,7 +622,11 @@ const MobileBottomNav = () => {
 
   // Derived Values
   const userData = getUserSession();
-  const role = userData?.role ?? "mitra";
+  const role = pathname.startsWith("/internal")
+    ? "internal"
+    : pathname.startsWith("/mitra")
+      ? "mitra"
+      : (userData?.role ?? "mitra");
   const navsMap = (role === "internal"
     ? INTERNAL_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;

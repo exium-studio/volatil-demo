@@ -1,4 +1,4 @@
-// src/features/mitra/help-center/services/help-center.service.ts
+// src/features/help-center/services/help-center.service.ts
 
 import {
   getHelpCenterStatisticsApi,
@@ -8,12 +8,12 @@ import {
   postRejectHelpCenterTicketApi,
   postReplyHelpCenterTicketApi,
   postResolveHelpCenterTicketApi,
-} from "@/features/mitra/help-center/api/help-center.api";
+} from "@/features/help-center/api/help-center.api";
 import type {
   CreateHelpCenterApiResponse,
   HelpCenterListApiResponse,
   ReplyHelpCenterApiResponse,
-} from "@/features/mitra/help-center/types/help-center.api.type";
+} from "@/features/help-center/types/help-center.api.type";
 import type {
   CreateHelpCenterPayload,
   HelpCenterItem,
@@ -23,7 +23,7 @@ import type {
   RejectHelpCenterPayload,
   ReplyHelpCenterPayload,
   ResolveHelpCenterPayload,
-} from "@/features/mitra/help-center/types/help-center.type";
+} from "@/features/help-center/types/help-center.type";
 
 const EMPTY_STATISTICS: HelpCenterStatistics = {
   totalTickets: 0,

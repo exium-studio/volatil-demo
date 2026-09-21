@@ -1,12 +1,12 @@
 // src/routes/_private/mitra/help-center.$ticketId.tsx
 
-import { requireAuthenticatedGuard } from "@/features/auth/services/auth-guard.service";
-import { HelpCenterDetailPage } from "@/features/mitra/help-center/pages/help-center.detail.page";
+import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
+import { HelpCenterDetailPage } from "@/features/help-center/pages/help-center.detail.page";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private/mitra/help-center/$ticketId")({
   beforeLoad: async () => {
-    await requireAuthenticatedGuard();
+    await requireRoleGuard("mitra");
   },
   component: RouteComponent,
 });

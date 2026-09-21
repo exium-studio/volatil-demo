@@ -1,9 +1,9 @@
-// src/features/mitra/help-center/components/help-center.transaction-select.tsx
+// src/features/help-center/components/help-center.transaction-select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
-import { useMitraTransactionsQuery } from "@/features/mitra/help-center/hooks/use-mitra-transactions.query";
-import type { HelpCenterTransactionSelectProps } from "@/features/mitra/help-center/types/help-center.type";
+import { useMitraTransactionsQuery } from "@/features/help-center/hooks/use-mitra-transactions.query";
+import type { HelpCenterTransactionSelectProps } from "@/features/help-center/types/help-center.type";
 import { t } from "@/shared/libs/i18n";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useMemo, useState } from "react";
