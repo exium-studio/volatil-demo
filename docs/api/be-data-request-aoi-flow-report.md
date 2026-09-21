@@ -38,6 +38,10 @@ sequenceDiagram
     BE-->>FE: 201 Created (orderId, status: 'requesting')
     FE->>Mitra: Notifikasi Toast "Permintaan diajukan (Sedang Dikalkulasi BE)"
     
+    Mitra->>FE: Buka Halaman Keranjang (Cart)
+    FE->>BE: GET /api/mitra/cart/orders/stream (Koneksi SSE Realtime)
+    BE-->>FE: SSE Stream Connected (200 OK text/event-stream)
+    
     rect rgb(240, 248, 255)
     Note over BE,Worker: Pemrosesan Asinkron di Backend
     BE->>Worker: Enqueue Spatial Job (orderId, aoiPolygon, layerIds)
@@ -46,12 +50,12 @@ sequenceDiagram
     Worker->>Worker: 3. Hitung total features bidang
     Worker->>Worker: 4. Kalkulasi harga berdasarkan tarif PNBP
     Worker->>DB: UPDATE order (coverageHa, coveragePolygon, featuresCount, totalPrice, status: 'pending_payment')
+    Worker->>BE: Emit order_updated / order_ready event
     end
 
-    Mitra->>FE: Buka Halaman Keranjang (Cart)
-    FE->>BE: GET /api/mitra/cart/orders
-    BE-->>FE: Order data (status: 'pending_payment'/'requesting', aoiPolygon, coveragePolygon)
-    FE->>Mitra: Tampilkan kartu pesanan + Toggle visualisasi AOI & Coverage di peta
+    BE-->>FE: SSE Push: event: order_ready (order data updated)
+    FE->>FE: Auto-update TanStack Query Cache (Live Realtime!)
+    FE->>Mitra: Tampilkan kartu pesanan 'Menunggu Pembayaran' + Toggle visualisasi AOI & Coverage di peta
 ```
 
 ---
@@ -171,6 +175,46 @@ sequenceDiagram
 
 ---
 
+### 3.3 Real-Time SSE Stream Keranjang (Server-Sent Events)
+Untuk memberikan pengalaman pengguna yang mulus tanpa perlu *polling* berkala, Backend menyediakan saluran *Server-Sent Events* (SSE) guna menyiarkan pembaruan status dan kalkulasi pesanan secara instan ke Frontend.
+
+- **Endpoint**: `GET /api/mitra/cart/orders/stream`
+- **Akses**: `Mitra Only`
+- **Protocol**: `text/event-stream`
+- **Header Response**:
+  - `Content-Type: text/event-stream`
+  - `Cache-Control: no-cache`
+  - `Connection: keep-alive`
+- **Autentikasi**: Query param `?token=<jwt_token>` (karena browser EventSource native tidak mendukung custom header `Authorization`).
+
+#### Spesifikasi Event SSE:
+
+| Event Name | Kapan Diterbitkan? | Deskripsi Payload |
+| :--- | :--- | :--- |
+| `order_created` | Saat order baru berhasil dimasukkan ke keranjang | `{ "type": "order_created", "orderId": string, "order": CartOrder }` |
+| `order_calculating` | Saat proses clipping/union sedang berjalan di worker | `{ "type": "order_calculating", "orderId": string, "progress": number, "message": string }` |
+| `order_ready` / `order_updated` | Saat kalkulasi selesai dan order siap dibayar (`pending_payment`) | `{ "type": "order_ready", "orderId": string, "order": CartOrder }` |
+| `order_cancelled` | Saat order dibatalkan oleh user atau kalkulasi gagal | `{ "type": "order_cancelled", "orderId": string, "message": string }` |
+| `heartbeat` | Setiap 15–30 detik (Keepalive ping) | `: ping\n\n` atau `{ "type": "heartbeat", "timestamp": string }` |
+
+#### Contoh Aliran Stream SSE dari Backend:
+```http
+HTTP/1.1 200 OK
+Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive
+
+: ping
+
+event: order_calculating
+data: {"type":"order_calculating","orderId":"ord-2026-0921-0089","progress":45,"message":"Memotong layer spasial kawasan dan menghitung luas tutupan..."}
+
+event: order_ready
+data: {"type":"order_ready","orderId":"ord-2026-0921-0089","order":{"orderId":"ord-2026-0921-0089","status":"pending_payment","selectionType":"upload_aoi","coverageHa":124.5,"featuresCount":42,"totalPrice":2100000,"coveragePolygon":{"type":"Polygon","coordinates":[[[106.815,-6.175],[106.835,-6.175],[106.835,-6.195],[106.815,-6.195],[106.815,-6.175]]]},"createdAt":"2026-09-21T10:45:00.000Z"},"timestamp":"2026-09-21T10:45:03.500Z"}
+```
+
+---
+
 ## 4. Algoritma Pemrosesan Spasial di Backend (PostGIS Implementation)
 
 Untuk memproses setiap item layer dalam order, Backend disarankan menggunakan query spasial PostGIS berikut:
@@ -231,6 +275,7 @@ Frontend telah dilengkapi *layer management* otomatis:
 - **AOI Polygon (`aoiPolygon`)**: Ditampilkan pada peta dengan warna oranye (`#f97316`) atau biru (`#3b82f6`).
 - **Coverage Polygon (`coveragePolygon`)**: Ditampilkan pada peta dengan warna hijau emerald (`#10b981`) di atas poligon AOI.
 - **Interaktivitas**: Mitra dapat menekan tombol *toggle* mata (*Eye Icon*) dan tombol *Focus/Zoom* (*Focus Icon*) pada kartu pesanan keranjang untuk memeriksa area yang akan dibeli secara visual.
+- **SSE Stream Listener**: Frontend otomatis terhubung ke `GET /api/mitra/cart/orders/stream` untuk memperbarui antarmuka dan memunculkan polygon hasil secara *live* segera setelah BE selesai menghitung.
 - **Route Cleanup**: Seluruh layer spasial otomatis dihapus bersih (*cleaned up*) dari instans MapLibre saat mitra berpindah halaman/rute.
 
 ---
@@ -240,4 +285,5 @@ Frontend telah dilengkapi *layer management* otomatis:
 - [ ] Endpoint `POST /api/mitra/cart/orders` menerima payload `aoiPolygon` dan mengembalikan status `"requesting"`.
 - [ ] Worker asinkron memproses *clipping* PostGIS dan menghitung luas `coverageHa` & jumlah `featuresCount`.
 - [ ] Endpoint `GET /api/mitra/cart/orders` mengembalikan data order lengkap beserta `aoiPolygon` dan `coveragePolygon`.
+- [ ] Endpoint SSE `GET /api/mitra/cart/orders/stream` mengalirkan event `order_ready` saat kalkulasi selesai.
 - [ ] Transisi status otomatis dari `"requesting"` ke `"pending_payment"` setelah kalkulasi selesai.

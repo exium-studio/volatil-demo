@@ -313,6 +313,39 @@ export async function createCartOrder(
   }
 }
 
+/**
+ * Simulates BE spatial calculation completion in dummy mode.
+ * Transitions order from 'requesting' to 'pending_payment' with calculated metrics.
+ */
+export function simulateCalculationComplete(orderId?: string): boolean {
+  let updated = false;
+  localDummyOrders = localDummyOrders.map((ord) => {
+    if ((!orderId || ord.orderId === orderId) && ord.status === "requesting") {
+      updated = true;
+      const coverageHa = 124.5;
+      const featuresCount = 42;
+      const unitPrice = 50000;
+      const subtotalPrice = featuresCount * unitPrice;
+      return {
+        ...ord,
+        status: "pending_payment" as const,
+        coverageHa,
+        featuresCount,
+        totalPrice: subtotalPrice,
+        coveragePolygon: ord.coveragePolygon ?? ord.aoiPolygon,
+        items: ord.items.map((item) => ({
+          ...item,
+          featuresCount,
+          areaHa: coverageHa,
+          subtotalPrice,
+        })),
+      };
+    }
+    return ord;
+  });
+  return updated;
+}
+
 export async function getCartOrders(
   signal?: AbortSignal,
 ): Promise<CartOrderListResponse> {

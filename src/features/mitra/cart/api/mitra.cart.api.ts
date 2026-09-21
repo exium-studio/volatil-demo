@@ -256,6 +256,23 @@ export async function postCheckoutOrderApi(
   );
 }
 
+/**
+ * Creates an EventSource stream connection for real-time Cart Orders updates (SSE).
+ * Backend pushes status transitions (e.g. requesting -> pending_payment, spatial calculations).
+ */
+export const createCartOrdersEventSource = (): EventSource => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const endpoint = "/api/mitra/cart/orders/stream";
+
+  // EventSource does not support custom headers — send auth token as query param
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const query = token ? `?token=${encodeURIComponent(token)}` : "";
+
+  const fullUrl = `${baseUrl}${endpoint}${query}`;
+  return new EventSource(fullUrl, { withCredentials: true });
+};
+
 // Backwards-compatible aliases
 export const postCreateCartBatchApi = postCreateCartOrderApi;
 export const fetchCartBatchesApi = fetchCartOrdersApi;

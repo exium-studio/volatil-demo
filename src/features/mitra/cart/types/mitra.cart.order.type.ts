@@ -219,3 +219,20 @@ export type CheckPaymentStatusResponse = {
 };
 
 export type OrderPaymentStatusResponse = CheckPaymentStatusResponse;
+
+export type CartOrderStreamEventType =
+  | "order_created"
+  | "order_calculating"
+  | "order_updated"
+  | "order_ready"
+  | "order_cancelled"
+  | "heartbeat";
+
+export type CartOrderStreamEvent = {
+  type: CartOrderStreamEventType;
+  order?: CartOrder;
+  orderId?: string;
+  progress?: number;
+  message?: string;
+  timestamp: string;
+};

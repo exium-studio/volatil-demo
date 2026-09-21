@@ -25,6 +25,7 @@ import {
   useCancelActiveCartOrder,
   useCartOrderDetailQuery,
   useCartOrdersQuery,
+  useCartOrdersStream,
   useClearAllCartOrders,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type {
@@ -46,6 +47,9 @@ export const MitraCartPage = () => {
 const MitraCartContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
+
+  // SSE Stream: Listen to real-time cart order calculations and status updates
+  useCartOrdersStream();
 
   // Queries (for derived index between orders and selected order)
   const { orders } = useCartOrdersQuery();

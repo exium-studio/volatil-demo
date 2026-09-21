@@ -773,6 +773,38 @@ type OrderListResponse = {
 - **Endpoint**: `GET /api/mitra/cart/orders/{orderId}`
 - **Akses**: `Mitra Only`
 
+### Real-Time Stream Order Keranjang (Server-Sent Events / SSE)
+Mengalirkan notifikasi status dan progres kalkulasi spasial pesanan secara *real-time* ke antarmuka keranjang mitra (misal transisi otomatis dari status `requesting` ke `pending_payment` setelah kalkulasi selesai di BE).
+- **Endpoint**: `GET /api/mitra/cart/orders/stream`
+- **Akses**: `Mitra Only`
+- **Protocol**: `text/event-stream`
+- **Authentication**: `?token=<jwt_token>` query parameter (standard EventSource browser client)
+- **Response Stream Event Types**:
+  - `order_created`: Diterbitkan saat pesanan baru berhasil dibuat (`status: "requesting"`).
+  - `order_calculating`: Diterbitkan berkala untuk membagikan progres komputasi spasial (*clipping*/*union*).
+  - `order_updated` / `order_ready`: Diterbitkan saat kalkulasi spasial selesai dan rincian harga siap dibayar (`status: "pending_payment"`).
+  - `order_cancelled`: Diterbitkan saat order dibatalkan atau komputasi gagal.
+  - `heartbeat`: Ping keep-alive koneksi setiap 15–30 detik (`: ping\n\n`).
+- **Contoh Event Payload (`order_ready` / `order_updated`)**:
+```json
+event: order_ready
+data: {
+  "type": "order_ready",
+  "orderId": "ord-2026-0921-0089",
+  "order": {
+    "orderId": "ord-2026-0921-0089",
+    "status": "pending_payment",
+    "selectionType": "upload_aoi",
+    "coverageHa": 124.5,
+    "featuresCount": 42,
+    "totalPrice": 2100000,
+    "coveragePolygon": { "type": "Polygon", "coordinates": [...] },
+    "createdAt": "2026-09-21T10:45:00.000Z"
+  },
+  "timestamp": "2026-09-21T10:45:04.120Z"
+}
+```
+
 ### Hapus Order dari Keranjang
 - **Endpoint**: `DELETE /api/mitra/cart/orders/{orderId}`
 - **Akses**: `Mitra Only`
