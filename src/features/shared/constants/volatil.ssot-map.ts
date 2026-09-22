@@ -157,12 +157,15 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     colorPalette: "blue",
     icon: LoaderIcon,
     iconColor: "blue.fg",
+    noticeDescription:
+      "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server...",
   },
   preparing: {
     label: "Penyiapkan Pesanan",
     colorPalette: "gray",
     icon: LoaderIcon,
     iconColor: "gray.fg",
+    noticeDescription: "Sedang menyiapkan pesanan...",
   },
   pending_payment: {
     label: "Menunggu Pembayaran",
@@ -175,32 +178,38 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     colorPalette: "blue",
     icon: CheckCircleIcon,
     iconColor: "blue.fg",
+    noticeDescription: "Pesanan telah berhasil dibayar.",
   },
   processing: {
     label: "Menyiapkan Layanan WMS",
     colorPalette: "purple",
     icon: LoaderIcon,
     iconColor: "purple.fg",
+    noticeDescription: "Layanan WMS sedang dipersiapkan...",
   },
   pending_review: {
     label: "Menunggu Validasi Admin",
     colorPalette: "orange",
     icon: LoaderIcon,
     iconColor: "orange.fg",
+    noticeDescription: "Menunggu validasi Admin Internal...",
   },
   rejected: {
     label: "Ditolak",
     colorPalette: "red",
     icon: AlertCircleIcon,
     iconColor: "red.fg",
+    noticeDescription: "Pesanan ditolak oleh Admin Internal.",
   },
   ready: {
     label: "Siap Digunakan",
     colorPalette: "green",
     icon: CheckCircleIcon,
     iconColor: "green.fg",
+    noticeDescription: "Layanan data spasial siap digunakan.",
   },
 };
+
 
 /**
  * SSOT 4: My Data Active Status Map (Mitra Data Saya)

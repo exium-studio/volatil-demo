@@ -8,7 +8,13 @@ import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.
 
 export const IgtBasisBadge = (props: IgtBasisBadgeProps) => {
   // Props
-  const { children, showIcon = true, variant = "subtle", ...restProps } = props;
+  const {
+    children,
+    showIcon = true,
+    showLabel = true,
+    variant = "subtle",
+    ...restProps
+  } = props;
 
   // Derived Values
   const basisKey = (children ?? "") as IgtBasisType;
@@ -22,7 +28,7 @@ export const IgtBasisBadge = (props: IgtBasisBadgeProps) => {
     >
       {showIcon && config?.icon && <AppIcon icon={config.icon} size={"xs"} />}
 
-      {config?.label ?? children ?? "-"}
+      {showLabel ? (config?.label ?? children ?? "-") : null}
     </Badge>
   );
 };

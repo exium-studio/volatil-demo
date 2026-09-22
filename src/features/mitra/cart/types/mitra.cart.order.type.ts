@@ -36,16 +36,30 @@ export type MitraCartOrderItemProps = {
   onSelect: (orderId: string) => void;
   onDelete?: (orderId: string) => void;
   isDeleting?: boolean;
+  isAoiVisible?: boolean;
+  isCoverageVisible?: boolean;
+  onToggleAoiVisible?: () => void;
+  onToggleCoverageVisible?: () => void;
+  onFlyToAoi?: () => void;
+  onFlyToCoverage?: () => void;
 };
 
 export type MitraCartOrderListProps = {
   selectedOrderId: string | null;
   onSelectOrder: (orderId: string) => void;
+  isAoiVisible?: boolean;
+  isCoverageVisible?: boolean;
+  onToggleAoiVisible?: () => void;
+  onToggleCoverageVisible?: () => void;
+  onFlyToAoi?: () => void;
+  onFlyToCoverage?: () => void;
 };
 
 export type MitraCartOrderDetailProps = {
   selectedOrderId: string | null;
   selectedOrderIndex: number;
+  selectedOrder?: ActiveCartOrder | null;
+  isLoading?: boolean;
 };
 
 export type PaymentMethod =
@@ -90,13 +104,8 @@ export type MitraCartOrderSummaryProps = {
   activeOrder: ActiveCartOrder | null;
   orderIndex?: number | null;
   isLoading?: boolean;
-  isAoiVisible?: boolean;
-  isCoverageVisible?: boolean;
-  onToggleAoiVisible?: () => void;
-  onToggleCoverageVisible?: () => void;
-  onFlyToAoi?: () => void;
-  onFlyToCoverage?: () => void;
 };
+
 
 export type CartMapLayerOptions = {
   aoiPolygon?:

@@ -1,6 +1,9 @@
 // src/features/mitra/cart/components/mitra.cart.order-item.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -8,8 +11,9 @@ import { RadioIndicator } from "@/design-system/components/input/ui/radio-indica
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
+import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
@@ -20,7 +24,7 @@ import { SelectionTypeBadge } from "@/features/shared/components/selection-type.
 import { ORDER_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { Trash2Icon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, FocusIcon, Trash2Icon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
@@ -32,6 +36,12 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
     onSelect,
     onDelete,
     isDeleting = false,
+    isAoiVisible = true,
+    isCoverageVisible = true,
+    onToggleAoiVisible,
+    onToggleCoverageVisible,
+    onFlyToAoi,
+    onFlyToCoverage,
   } = props;
 
   // Stores
@@ -46,7 +56,8 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
 
   const totalKawasanHa = order.coverageHa;
 
-  const layerTitles = order.items.map((i) => i.sourceLayerTitle).join(", ");
+  const hasAoiPolygon = Boolean(order.aoiPolygon);
+  const hasCoveragePolygon = Boolean(order.coveragePolygon);
 
   return (
     <Box
@@ -62,7 +73,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
         borderColor: isSelected
           ? `${theme.colorPalette}.solid`
           : "border.muted",
-        bg: "bg.subtle",
+        bg: isSelected ? `` : "bg.subtle",
       }}
       onClick={() => onSelect(order.orderId)}
     >
@@ -101,16 +112,11 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
 
         {/* Content Details */}
         <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
-          <HStack justify={"space-between"} align={"center"} mb={"xs"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {order.orderId}
+          <HStack justify={"space-between"} align={"center"}>
+            <P color={"fg.muted"}>{"Tanggal Pesan:"}</P>
+            <P fontWeight={"medium"}>
+              {order.createdAt ? formatDateTime(order.createdAt) : "-"}
             </P>
-
-            {order.createdAt && (
-              <P fontSize={"xs"} color={"fg.subtle"} textAlign={"right"}>
-                {formatDateTime(order.createdAt)}
-              </P>
-            )}
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
@@ -118,13 +124,6 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
             <SelectionTypeBadge size={"xs"}>
               {order.selectionType}
             </SelectionTypeBadge>
-          </HStack>
-
-          <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"Daftar Layer IGT:"}</P>
-            <ClampedP maxW={"65%"} textAlign={"end"} color={"fg.default"}>
-              {layerTitles || "-"}
-            </ClampedP>
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
@@ -167,26 +166,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
         </VStack>
 
         {/* Dynamic Status Notices */}
-        {order.status === "requesting" && (
-          <HStack
-            align={"center"}
-            gap={"xs"}
-            bg={"blue.subtle"}
-            p={2}
-            rounded={"md"}
-            fontSize={"xs"}
-            color={"blue.fg"}
-          >
-            <AppIcon icon={statusConfig.icon} />
-            <P>
-              {
-                "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server..."
-              }
-            </P>
-          </HStack>
-        )}
-
-        {order.status === "pending_payment" && order.expiredAt && (
+        {order.status === "pending_payment" && order.expiredAt ? (
           <HStack
             justify={"space-between"}
             align={"center"}
@@ -204,90 +184,155 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
               color={"orange.fg"}
             />
           </HStack>
-        )}
-
-        {order.status === "pending_review" && (
+        ) : order.status === "rejected" ? (
           <HStack
             align={"center"}
             gap={"xs"}
-            bg={"orange.subtle"}
+            bg={`${statusConfig.colorPalette}.subtle`}
             p={2}
             rounded={"md"}
             fontSize={"xs"}
-            color={"orange.fg"}
+            color={`${statusConfig.colorPalette}.fg`}
           >
-            <P>{"Menunggu validasi Admin Internal..."}</P>
+            {statusConfig.icon && <AppIcon icon={statusConfig.icon} />}
+            <P>
+              {order.rejectionReason
+                ? `Alasan penolakan: ${order.rejectionReason}`
+                : statusConfig.noticeDescription || statusConfig.label}
+            </P>
           </HStack>
-        )}
-
-        {order.status === "processing" && (
+        ) : statusConfig.noticeDescription ? (
           <HStack
             align={"center"}
             gap={"xs"}
-            bg={"purple.subtle"}
+            bg={`${statusConfig.colorPalette}.subtle`}
             p={2}
             rounded={"md"}
             fontSize={"xs"}
-            color={"purple.fg"}
+            color={`${statusConfig.colorPalette}.fg`}
           >
-            <P>{"Layanan WMS sedang dipersiapkan..."}</P>
+            {statusConfig.icon && <AppIcon icon={statusConfig.icon} />}
+            <P>{statusConfig.noticeDescription}</P>
           </HStack>
-        )}
+        ) : null}
 
-        {order.status === "ready" && (
-          <HStack
-            align={"center"}
-            gap={"xs"}
-            bg={"green.subtle"}
-            p={2}
-            rounded={"md"}
-            fontSize={"xs"}
-            color={"green.fg"}
-          >
-            <P>{"Layanan data spasial siap digunakan."}</P>
-          </HStack>
-        )}
 
-        {order.status === "rejected" && order.rejectionReason && (
-          <HStack
-            align={"center"}
-            gap={"xs"}
-            bg={"red.subtle"}
-            p={2}
-            rounded={"md"}
-            fontSize={"xs"}
-            color={"red.fg"}
-          >
-            <P>{`Alasan penolakan: ${order.rejectionReason}`}</P>
-          </HStack>
-        )}
-
-        {/* Selected Order Actions: Individual Delete */}
-        {isSelected && onDelete && (
+        {/* Selected Order Actions: Spatial Actions (Left) & Delete (Right) */}
+        {isSelected && (
           <>
             <Separator />
 
             <HStack
+              justify={"space-between"}
+              align={"end"}
               w={"full"}
               onClick={(e) => {
                 e.stopPropagation();
               }}
             >
-              <ConfirmationTrigger
-                modalKey={`delete-order-${order.orderId}`}
-                title={"Hapus Pesanan?"}
-                description={`Pesanan #${index + 1} (${order.orderId}) akan dihapus dari keranjang transaksi.`}
-                confirmLabel={"Hapus pesanan"}
-                colorPalette={"red"}
-                onConfirm={() => {
-                  onDelete(order.orderId);
-                }}
-              >
-                <Button colorPalette={"red"} w={"full"} loading={isDeleting}>
-                  <AppIcon icon={Trash2Icon} />
-                  {"Hapus pesanan ini"}
-                </Button>
-              </ConfirmationTrigger>
+              {/* Pojok Kiri: Spatial Actions (AOI & Coverage) */}
+              <VStack>
+                {hasAoiPolygon && (
+                  <HStack gap={"2xs"} align={"center"}>
+                    <P w={"100px"}>AOI</P>
+
+                    {onFlyToAoi && (
+                      <Tooltip content={"Zoom ke Polygon AOI"}>
+                        <IconButton
+                          size={"xs"}
+                          variant={"ghost"}
+                          onClick={onFlyToAoi}
+                        >
+                          <AppIcon icon={FocusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    {onToggleAoiVisible && (
+                      <Tooltip
+                        content={
+                          isAoiVisible
+                            ? "Sembunyikan Polygon AOI"
+                            : "Tampilkan Polygon AOI"
+                        }
+                      >
+                        <IconButton size={"xs"} onClick={onToggleAoiVisible}>
+                          <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </HStack>
+                )}
+
+                <Separator
+                  direction={"vertical"}
+                  w={"1px"}
+                  borderColor={"red"}
+                  // className={"debug"}
+                  alignSelf={"stretch"}
+                />
+
+                {hasCoveragePolygon && (
+                  <HStack gap={"2xs"} align={"center"}>
+                    <P w={"100px"}>Kawasan</P>
+
+                    {onFlyToCoverage && (
+                      <Tooltip content={"Zoom ke Coverage Area"}>
+                        <IconButton
+                          size={"xs"}
+                          variant={"ghost"}
+                          onClick={onFlyToCoverage}
+                        >
+                          <AppIcon icon={FocusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+
+                    {onToggleCoverageVisible && (
+                      <Tooltip
+                        content={
+                          isCoverageVisible
+                            ? "Sembunyikan Coverage Area"
+                            : "Tampilkan Coverage Area"
+                        }
+                      >
+                        <IconButton
+                          size={"xs"}
+                          onClick={onToggleCoverageVisible}
+                        >
+                          <AppIcon
+                            icon={isCoverageVisible ? EyeIcon : EyeOffIcon}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </HStack>
+                )}
+              </VStack>
+
+              {/* Pojok Kanan: Hapus Pesanan */}
+              {onDelete && (
+                <ConfirmationTrigger
+                  modalKey={`delete-order-${order.orderId}`}
+                  title={"Hapus Pesanan?"}
+                  description={`Pesanan #${index + 1} akan dihapus dari keranjang transaksi.`}
+                  confirmLabel={"Hapus pesanan"}
+                  colorPalette={"red"}
+                  onConfirm={() => {
+                    onDelete(order.orderId);
+                  }}
+                >
+                  <Button
+                    colorPalette={"red"}
+                    variant={"ghost"}
+                    size={"xs"}
+                    loading={isDeleting}
+                  >
+                    <AppIcon icon={Trash2Icon} />
+                    {"Hapus Pesanan"}
+                  </Button>
+                </ConfirmationTrigger>
+              )}
             </HStack>
           </>
         )}

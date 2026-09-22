@@ -47,6 +47,9 @@ const MitraCartContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
+  // Stores
+  const map = useMapInstanceStore((state) => state.map);
+
   // SSE Stream: Listen to real-time cart order calculations and status updates
   useCartOrdersStream();
 
@@ -55,6 +58,53 @@ const MitraCartContent = () => {
 
   // States — initial load has NO selected order
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
+  const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
+
+  // Queries — detail of selected order
+  const { orderDetail: selectedOrder, isLoading: isDetailLoading } =
+    useCartOrderDetailQuery(selectedOrderId || undefined);
+
+  // Map layer synchronization hook for Cart AOI & Coverage Polygon
+  useCartAoiCoverageMap(map, {
+    aoiPolygon: selectedOrder?.aoiPolygon,
+    coveragePolygon: selectedOrder?.coveragePolygon,
+    selectionType: selectedOrder?.selectionType,
+    isAoiVisible,
+    isCoverageVisible,
+  });
+
+  // Auto zoom on order selection change
+  useEffect(() => {
+    if (selectedOrder) {
+      const targetGeom =
+        selectedOrder.aoiPolygon ?? selectedOrder.coveragePolygon;
+      if (targetGeom && map) {
+        flyToCartGeometry(map, targetGeom);
+      }
+    }
+  }, [selectedOrder, map]);
+
+  // Handlers
+  const handleToggleAoi = useCallback(() => {
+    setIsAoiVisible((prev) => !prev);
+  }, []);
+
+  const handleToggleCoverage = useCallback(() => {
+    setIsCoverageVisible((prev) => !prev);
+  }, []);
+
+  const handleFlyToAoi = useCallback(() => {
+    if (selectedOrder?.aoiPolygon && map) {
+      flyToCartGeometry(map, selectedOrder.aoiPolygon);
+    }
+  }, [selectedOrder, map]);
+
+  const handleFlyToCoverage = useCallback(() => {
+    if (selectedOrder?.coveragePolygon && map) {
+      flyToCartGeometry(map, selectedOrder.coveragePolygon);
+    }
+  }, [selectedOrder, map]);
 
   // Derived Values
   const selectedOrderIndex = orders.findIndex(
@@ -76,11 +126,19 @@ const MitraCartContent = () => {
         <MitraCartOrderList
           selectedOrderId={selectedOrderId}
           onSelectOrder={setSelectedOrderId}
+          isAoiVisible={isAoiVisible}
+          isCoverageVisible={isCoverageVisible}
+          onToggleAoiVisible={handleToggleAoi}
+          onToggleCoverageVisible={handleToggleCoverage}
+          onFlyToAoi={handleFlyToAoi}
+          onFlyToCoverage={handleFlyToCoverage}
         />
 
         <MitraCartOrderDetail
           selectedOrderId={selectedOrderId}
           selectedOrderIndex={selectedOrderIndex}
+          selectedOrder={selectedOrder}
+          isLoading={isDetailLoading}
         />
       </HStack>
     </AppContentContainer>
@@ -89,7 +147,16 @@ const MitraCartContent = () => {
 
 export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
   // Props
-  const { selectedOrderId, onSelectOrder } = props;
+  const {
+    selectedOrderId,
+    onSelectOrder,
+    isAoiVisible,
+    isCoverageVisible,
+    onToggleAoiVisible,
+    onToggleCoverageVisible,
+    onFlyToAoi,
+    onFlyToCoverage,
+  } = props;
 
   // Contexts
   const { isSmContainer } = useContainerContext();
@@ -194,6 +261,12 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
                         deleteOrderMutation.isPending &&
                         deleteOrderMutation.variables === order.orderId
                       }
+                      isAoiVisible={isAoiVisible}
+                      isCoverageVisible={isCoverageVisible}
+                      onToggleAoiVisible={onToggleAoiVisible}
+                      onToggleCoverageVisible={onToggleCoverageVisible}
+                      onFlyToAoi={onFlyToAoi}
+                      onFlyToCoverage={onFlyToCoverage}
                     />
                   );
                 })}
@@ -220,69 +293,24 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
 
 export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
   // Props
-  const { selectedOrderId, selectedOrderIndex } = props;
+  const {
+    selectedOrderId: _selectedOrderId,
+    selectedOrderIndex,
+    selectedOrder,
+    isLoading = false,
+  } = props;
 
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Stores
-  const map = useMapInstanceStore((state) => state.map);
-
-  // States
-  const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
-  const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
-
   // Queries (for total orders count to reverse order number)
   const { orders } = useCartOrdersQuery();
 
-  // Queries — detail of selected order
-  const { orderDetail: selectedOrder, isLoading: isDetailLoading } =
-    useCartOrderDetailQuery(selectedOrderId || undefined);
-
-  // Map layer synchronization hook for Cart AOI & Coverage Polygon
-  useCartAoiCoverageMap(map, {
-    aoiPolygon: selectedOrder?.aoiPolygon,
-    coveragePolygon: selectedOrder?.coveragePolygon,
-    selectionType: selectedOrder?.selectionType,
-    isAoiVisible,
-    isCoverageVisible,
-  });
-
-  // Auto zoom on order selection change
-  useEffect(() => {
-    if (selectedOrder) {
-      const targetGeom =
-        selectedOrder.aoiPolygon ?? selectedOrder.coveragePolygon;
-      if (targetGeom && map) {
-        flyToCartGeometry(map, targetGeom);
-      }
-    }
-  }, [selectedOrder, map]);
-
-  // Handlers
-  const handleToggleAoi = useCallback(() => {
-    setIsAoiVisible((prev) => !prev);
-  }, []);
-
-  const handleToggleCoverage = useCallback(() => {
-    setIsCoverageVisible((prev) => !prev);
-  }, []);
-
-  const handleFlyToAoi = useCallback(() => {
-    if (selectedOrder?.aoiPolygon && map) {
-      flyToCartGeometry(map, selectedOrder.aoiPolygon);
-    }
-  }, [selectedOrder, map]);
-
-  const handleFlyToCoverage = useCallback(() => {
-    if (selectedOrder?.coveragePolygon && map) {
-      flyToCartGeometry(map, selectedOrder.coveragePolygon);
-    }
-  }, [selectedOrder, map]);
-
   // Derived Values — reverse order number (index 0 is latest, so it gets the highest order number)
   const displayOrderNumber =
-    selectedOrderIndex !== -1 ? orders.length - selectedOrderIndex : null;
+    selectedOrderIndex !== -1 && selectedOrderIndex != null
+      ? orders.length - selectedOrderIndex
+      : null;
 
   return (
     <Container.Body
@@ -309,15 +337,9 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
       <Separator borderColor={"bg.canvas"} />
 
       <MitraCartOrderSummary
-        activeOrder={selectedOrder}
+        activeOrder={selectedOrder ?? null}
         orderIndex={displayOrderNumber}
-        isLoading={isDetailLoading}
-        isAoiVisible={isAoiVisible}
-        isCoverageVisible={isCoverageVisible}
-        onToggleAoiVisible={handleToggleAoi}
-        onToggleCoverageVisible={handleToggleCoverage}
-        onFlyToAoi={handleFlyToAoi}
-        onFlyToCoverage={handleFlyToCoverage}
+        isLoading={isLoading}
       />
     </Container.Body>
   );

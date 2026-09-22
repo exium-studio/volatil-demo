@@ -45,7 +45,9 @@ export type OrderStatusConfig = {
     | "gray";
   icon?: LucideIcon;
   iconColor?: string;
+  noticeDescription?: string;
 };
+
 
 /**
  * SSOT 3: My Data Active Status Types (Mitra Data Saya)

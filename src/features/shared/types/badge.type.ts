@@ -16,6 +16,7 @@ import type { UserRole } from "@/shared/types/common-response.type";
 export type IgtBasisBadgeProps = Omit<BadgeProps, "children"> & {
   children?: IgtBasisType | (string & {});
   showIcon?: boolean;
+  showLabel?: boolean;
 };
 
 export type SelectionTypeBadgeProps = Omit<BadgeProps, "children"> & {
@@ -52,4 +53,3 @@ export type UserRoleBadgeProps = Omit<BadgeProps, "children"> & {
   children?: UserRole | (string & {});
   showIcon?: boolean;
 };
-

@@ -1,29 +1,22 @@
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartOrder } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import type { MitraCartOrderSummaryProps } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   AlertCircleIcon,
   CreditCardIcon,
-  EyeIcon,
-  EyeOffIcon,
-  FocusIcon,
   HourglassIcon,
   InfoIcon,
   LoaderIcon,
@@ -33,17 +26,7 @@ import { useMemo } from "react";
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
-  const {
-    activeOrder,
-    orderIndex,
-    isLoading = false,
-    isAoiVisible = true,
-    isCoverageVisible = true,
-    onToggleAoiVisible,
-    onToggleCoverageVisible,
-    onFlyToAoi,
-    onFlyToCoverage,
-  } = props;
+  const { activeOrder, orderIndex, isLoading = false } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -65,8 +48,6 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   const isRejected = activeOrder?.status === "rejected";
   const isPaid = activeOrder?.status === "paid";
   const hasItems = (activeOrder?.items.length ?? 0) > 0;
-  const hasAoiPolygon = Boolean(activeOrder?.aoiPolygon);
-  const hasCoveragePolygon = Boolean(activeOrder?.coveragePolygon);
 
   const totalBidang = useMemo(() => {
     if (!activeOrder?.items) return 0;
@@ -146,23 +127,6 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
             <Badge colorPalette={"gray"} variant={"subtle"}>
               {"Belum Dipilih"}
             </Badge>
-          )}
-        </HStack>
-
-        <HStack
-          justify={"space-between"}
-          align={"center"}
-          fontSize={"xs"}
-          w={"full"}
-        >
-          <P fontSize={"xs"} color={"fg.subtle"}>
-            {isSelected && activeOrder ? activeOrder.orderId : "-"}
-          </P>
-
-          {isSelected && activeOrder?.createdAt && (
-            <P fontSize={"xs"} color={"fg.subtle"} textAlign={"right"}>
-              {formatDateTime(activeOrder.createdAt)}
-            </P>
           )}
         </HStack>
       </VStack>
@@ -261,105 +225,61 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </HStack>
       </VStack>
 
-      {/* Spatial Visualizations & Map Toggles */}
-      {isSelected && (hasAoiPolygon || hasCoveragePolygon) && (
+      {/* Daftar Layer IGT */}
+      {isSelected && activeOrder?.items && activeOrder.items.length > 0 && (
         <>
           <Separator borderColor={"bg.canvas"} my={1} />
 
           <VStack align={"stretch"} gap={"xs"}>
-            <HStack justify={"space-between"} align={"center"}>
-              <HStack gap={1} align={"center"}>
-                <P fontSize={"xs"} fontWeight={"medium"} color={"fg.muted"}>
-                  {"Visualisasi Spasial Peta"}
-                </P>
-              </HStack>
-            </HStack>
+            <P fontSize={"xs"} fontWeight={"semibold"} color={"fg.muted"}>
+              {"Daftar Layer IGT"}
+            </P>
 
-            <VStack gap={"xs"} align={"stretch"}>
-              {hasAoiPolygon && (
-                <HStack
-                  justify={"space-between"}
-                  align={"center"}
-                  p={2}
-                  rounded={"md"}
-                  bg={"bg.subtle"}
-                >
-                  <P>{"AOI Polygon"}</P>
+            <VStack
+              align={"stretch"}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+              rounded={theme.radii.component}
+              overflowY={"auto"}
+              maxH={"300px"}
+            >
+              {activeOrder.items.map((item, index) => {
+                const isFirstIndex = index === 0;
 
-                  <HStack gap={"xs"}>
-                    {onFlyToAoi && (
-                      <Tooltip content={"Zoom ke Polygon AOI"}>
-                        <IconButton
-                          size={"xs"}
-                          variant={"ghost"}
-                          onClick={onFlyToAoi}
-                        >
-                          <AppIcon icon={FocusIcon} />
-                        </IconButton>
-                      </Tooltip>
-                    )}
+                return (
+                  <VStack
+                    key={item.id || item.sourceLayerId || index}
+                    align={"stretch"}
+                    gap={"2xs"}
+                    p={"sm"}
+                    borderTop={isFirstIndex ? "none" : "1px solid"}
+                    borderColor={"border.subtle"}
+                    fontSize={"xs"}
+                  >
+                    <HStack
+                      align={"center"}
+                      justify={"space-between"}
+                      gap={"2xs"}
+                    >
+                      <P fontWeight={"medium"} color={"fg.default"}>
+                        {item.sourceLayerTitle || item.sourceLayerId}
+                      </P>
+                    </HStack>
 
-                    {onToggleAoiVisible && (
-                      <Tooltip
-                        content={
-                          isAoiVisible
-                            ? "Sembunyikan Polygon AOI"
-                            : "Tampilkan Polygon AOI"
-                        }
-                      >
-                        <IconButton size={"xs"} onClick={onToggleAoiVisible}>
-                          <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  </HStack>
-                </HStack>
-              )}
+                    <HStack justify={"space-between"} color={"fg.muted"}>
+                      <IgtBasisBadge size={"xs"}>
+                        {item.spatialBasis}
+                      </IgtBasisBadge>
 
-              {hasCoveragePolygon && (
-                <HStack
-                  justify={"space-between"}
-                  align={"center"}
-                  p={2}
-                  rounded={"md"}
-                  bg={"bg.subtle"}
-                >
-                  <P>{"IGT Berbasis Kawasan (Coverage Area Polygon)"}</P>
-
-                  <HStack gap={"xs"}>
-                    {onFlyToCoverage && (
-                      <Tooltip content={"Zoom ke Coverage Area"}>
-                        <IconButton
-                          size={"xs"}
-                          variant={"ghost"}
-                          onClick={onFlyToCoverage}
-                        >
-                          <AppIcon icon={FocusIcon} />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-
-                    {onToggleCoverageVisible && (
-                      <Tooltip
-                        content={
-                          isCoverageVisible
-                            ? "Sembunyikan Coverage Area"
-                            : "Tampilkan Coverage Area"
-                        }
-                      >
-                        <IconButton
-                          size={"xs"}
-                          onClick={onToggleCoverageVisible}
-                        >
-                          <AppIcon
-                            icon={isCoverageVisible ? EyeIcon : EyeOffIcon}
-                          />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  </HStack>
-                </HStack>
-              )}
+                      <P>
+                        {item.spatialBasis === "bidang"
+                          ? `${formatNumber(item.featuresCount)} bidang`
+                          : `${formatNumber(item.areaHa ?? 0)} ha`}
+                      </P>
+                    </HStack>
+                  </VStack>
+                );
+              })}
             </VStack>
           </VStack>
         </>
