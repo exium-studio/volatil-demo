@@ -15,17 +15,26 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import {
+  flyToCartGeometry,
+  useCartAoiCoverageMap,
+} from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { MitraDataRequestSpatialSummary } from "@/features/mitra/data-request/components/mitra.data-request.spatial-summary";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
-import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import { useMitraDataRequestCalculation } from "@/features/mitra/data-request/hooks/use-mitra-data-request-calculation";
 import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { checkBboxIntersection } from "@/features/mitra/data-request/utils/calculate-feature-area";
@@ -36,16 +45,15 @@ import type { FilterAdministrativeAreaValues } from "@/features/shared/types/fil
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
+import { IconDatabaseOff } from "@tabler/icons-react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   FocusIcon,
-  InfoIcon,
   ShoppingCartIcon,
   SlidersHorizontalIcon,
   TablePropertiesIcon,
 } from "lucide-react";
-import { memo, useMemo, useState } from "react";
-import { IconDatabaseOff } from "@tabler/icons-react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 export const MitraDataRequestIgtLayerDataView = memo(
   (props: MitraDataRequestIgtLayerDataViewProps) => {
@@ -62,6 +70,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
     // Stores
     const { theme } = useThemeStore();
     const { flyTo } = useFlyToLayer();
+    const map = useMapInstanceStore((state) => state.map);
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
@@ -70,9 +79,20 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const [selectedTableItems, setSelectedTableItems] = useState<
       FormattedListItem<IgtLayerItem>[]
     >([]);
+    const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
+    const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
 
     // Mutations
     const addToCartMultipleMutation = useAddToCartMultipleLayers();
+
+    // Hooks
+    const {
+      isCalculating,
+      progressMessage,
+      progressPercentage,
+      result: calculationResult,
+      calculate,
+    } = useMitraDataRequestCalculation();
 
     // Derived Values
     const debouncedSearch = useDebouncedValue(searchRaw);
@@ -201,6 +221,55 @@ export const MitraDataRequestIgtLayerDataView = memo(
       [filteredLayers],
     );
 
+    // Manage AOI & Coverage Map Layers
+    useCartAoiCoverageMap(map, {
+      aoiPolygon: effectiveAoiPolygon,
+      coveragePolygon: calculationResult?.coveragePolygon,
+      selectionType,
+      isAoiVisible,
+      isCoverageVisible,
+    });
+
+    // Effects — Trigger backend spatial calculation whenever effective AOI or layers change
+    useEffect(() => {
+      if (!effectiveAoiPolygon || isEmptyArray(filteredLayers)) return;
+
+      const validLayers = filteredLayers.filter((layer) =>
+        Boolean(layer?.wfs?.wfsTypeName || layer?.id),
+      );
+
+      if (isEmptyArray(validLayers)) return;
+
+      const resolvedAoi =
+        effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
+          ? (effectiveAoiPolygon.geometry as
+              | GeoJSON.MultiPolygon
+              | GeoJSON.Polygon)
+          : (effectiveAoiPolygon as
+              | GeoJSON.MultiPolygon
+              | GeoJSON.Polygon);
+
+      void calculate({
+        selectionType,
+        cqlFilter: combinedCqlFilter,
+        aoiPolygon: resolvedAoi,
+        layers: validLayers.map((layer) => ({
+          layerId: layer.id,
+          typeName: layer.wfs?.wfsTypeName ?? "",
+          title: layer.title,
+          spatialBasis: layer.spatialBasis,
+          selectionType,
+          cqlFilter: combinedCqlFilter,
+        })),
+      });
+    }, [
+      effectiveAoiPolygon,
+      combinedCqlFilter,
+      filteredLayers,
+      selectionType,
+      calculate,
+    ]);
+
     // Handlers — Cart actions (Direct submit to BE without local spatial processing)
     const handleAddToCartSelected = () => {
       const targetLayers =
@@ -230,6 +299,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         selectionType,
         cqlFilter: combinedCqlFilter,
         aoiPolygon: resolvedAoi,
+        coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
@@ -262,6 +332,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         selectionType,
         cqlFilter: combinedCqlFilter,
         aoiPolygon: resolvedAoi,
+        coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
@@ -294,6 +365,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         selectionType,
         cqlFilter: combinedCqlFilter,
         aoiPolygon: resolvedAoi,
+        coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
@@ -378,10 +450,21 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const hasSelectedLayers = selectedTableItems.length > 0;
     const isShowLoading = isLoadingLayers || isCheckingHits;
     const hasIntersectingData = !isEmptyArray(filteredLayers);
+    const isPurchaseLimitValid = calculationResult?.isPurchaseLimitValid ?? true;
+    const purchaseLimitMessage = calculationResult?.purchaseLimitMessage;
+
     const isCartDisabled =
       !hasIntersectingData ||
       addToCartMultipleMutation.isPending ||
-      isShowLoading;
+      isShowLoading ||
+      isCalculating ||
+      !isPurchaseLimitValid;
+
+    const isBidangDisabled =
+      isCartDisabled || isEmptyArray(bidangLayers);
+
+    const isKawasanDisabled =
+      isCartDisabled || isEmptyArray(kawasanLayers);
 
     return (
       <VStack
@@ -480,71 +563,145 @@ export const MitraDataRequestIgtLayerDataView = memo(
           )}
         </VStack>
 
-        <Separator borderColor={"bg.canvas"} />
+        {/* Spatial Calculation Summary Box */}
+        {effectiveAoiPolygon && (
+          <Box px={"md"} pt={"sm"} bg={"bg.body"} w={"full"}>
+            <MitraDataRequestSpatialSummary
+              totalBidangCount={calculationResult?.totalBidangCount ?? 0}
+              totalKawasanCount={calculationResult?.totalKawasanCount ?? 0}
+              totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
+              subtotalBidangPrice={calculationResult?.subtotalBidangPrice ?? 0}
+              subtotalKawasanPrice={
+                calculationResult?.subtotalKawasanPrice ?? 0
+              }
+              estimatedTotalPrice={
+                calculationResult?.estimatedTotalPrice ?? 0
+              }
+              isPurchaseLimitValid={isPurchaseLimitValid}
+              purchaseLimitMessage={purchaseLimitMessage}
+              isCalculating={isCalculating}
+              progressMessage={progressMessage}
+              progressPercentage={progressPercentage}
+              hasAoiPolygon={Boolean(effectiveAoiPolygon)}
+              hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
+              isAoiVisible={isAoiVisible}
+              isCoverageVisible={isCoverageVisible}
+              onToggleAoiVisible={() => setIsAoiVisible((prev) => !prev)}
+              onToggleCoverageVisible={() =>
+                setIsCoverageVisible((prev) => !prev)
+              }
+              onFlyToAoi={() => flyToCartGeometry(map, effectiveAoiPolygon)}
+              onFlyToCoverage={() =>
+                flyToCartGeometry(map, calculationResult?.coveragePolygon)
+              }
+            />
+          </Box>
+        )}
+
+        <Separator borderColor={"bg.canvas"} mt={"xs"} />
 
         {/* Action Bar Footer */}
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} mt={"auto"}>
-          <HStack
-            align={"center"}
-            gap={"xs"}
-            p={"xs"}
-            px={"sm"}
-            w={"full"}
-            rounded={"md"}
-            bg={"blue.subtle"}
-            color={"blue.fg"}
-          >
-            <AppIcon icon={InfoIcon} size={"xs"} flexShrink={0} />
-            <P fontSize={"xs"}>
-              {
-                "Kalkulasi clipping, luas tutupan kawasan, dan estimasi tarif akan diproses otomatis oleh server setelah ditambahkan ke keranjang."
-              }
-            </P>
-          </HStack>
-
           {/* Action Buttons */}
           <VStack w={"full"} gap={"xs"}>
-            <Button
-              primary
-              w={"full"}
-              disabled={isCartDisabled}
-              loading={addToCartMultipleMutation.isPending}
-              onClick={handleAddToCartSelected}
-            >
-              <AppIcon icon={ShoppingCartIcon} />
-              {hasSelectedLayers
-                ? `Tambah ${selectedTableItems.length} layer terpilih ke keranjang`
-                : `Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
-            </Button>
+            {!isPurchaseLimitValid && purchaseLimitMessage ? (
+              <Tooltip content={purchaseLimitMessage}>
+                <VStack w={"full"} align={"stretch"}>
+                  <Button
+                    primary
+                    w={"full"}
+                    disabled={isCartDisabled}
+                    loading={addToCartMultipleMutation.isPending}
+                    onClick={handleAddToCartSelected}
+                  >
+                    <AppIcon icon={ShoppingCartIcon} />
+                    {hasSelectedLayers
+                      ? `Tambah ${selectedTableItems.length} layer terpilih ke keranjang`
+                      : `Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
+                  </Button>
+                </VStack>
+              </Tooltip>
+            ) : (
+              <Button
+                primary
+                w={"full"}
+                disabled={isCartDisabled}
+                loading={addToCartMultipleMutation.isPending}
+                onClick={handleAddToCartSelected}
+              >
+                <AppIcon icon={ShoppingCartIcon} />
+                {hasSelectedLayers
+                  ? `Tambah ${selectedTableItems.length} layer terpilih ke keranjang`
+                  : `Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
+              </Button>
+            )}
 
             <HStack w={"full"} gap={"xs"}>
-              <Button
-                primary
-                variant={"outline"}
-                flex={1}
-                minW={0}
-                disabled={isCartDisabled || isEmptyArray(bidangLayers)}
-                onClick={handleAddToCartBidangOnly}
-              >
-                {IGT_BASIS_MAP.bidang.icon && (
-                  <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
-                )}
-                {"Semua Bidang"} ({formatNumber(bidangLayers.length)})
-              </Button>
+              {!isPurchaseLimitValid && purchaseLimitMessage ? (
+                <Tooltip content={purchaseLimitMessage}>
+                  <VStack flex={1} minW={0} align={"stretch"}>
+                    <Button
+                      primary
+                      variant={"outline"}
+                      w={"full"}
+                      disabled={isBidangDisabled}
+                      onClick={handleAddToCartBidangOnly}
+                    >
+                      {IGT_BASIS_MAP.bidang.icon && (
+                        <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
+                      )}
+                      {"Semua Bidang"} ({formatNumber(bidangLayers.length)})
+                    </Button>
+                  </VStack>
+                </Tooltip>
+              ) : (
+                <Button
+                  primary
+                  variant={"outline"}
+                  flex={1}
+                  minW={0}
+                  disabled={isBidangDisabled}
+                  onClick={handleAddToCartBidangOnly}
+                >
+                  {IGT_BASIS_MAP.bidang.icon && (
+                    <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
+                  )}
+                  {"Semua Bidang"} ({formatNumber(bidangLayers.length)})
+                </Button>
+              )}
 
-              <Button
-                primary
-                variant={"outline"}
-                flex={1}
-                minW={0}
-                disabled={isCartDisabled || isEmptyArray(kawasanLayers)}
-                onClick={handleAddToCartKawasanOnly}
-              >
-                {IGT_BASIS_MAP.kawasan.icon && (
-                  <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
-                )}
-                {"Semua Kawasan"} ({formatNumber(kawasanLayers.length)})
-              </Button>
+              {!isPurchaseLimitValid && purchaseLimitMessage ? (
+                <Tooltip content={purchaseLimitMessage}>
+                  <VStack flex={1} minW={0} align={"stretch"}>
+                    <Button
+                      primary
+                      variant={"outline"}
+                      w={"full"}
+                      disabled={isKawasanDisabled}
+                      onClick={handleAddToCartKawasanOnly}
+                    >
+                      {IGT_BASIS_MAP.kawasan.icon && (
+                        <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
+                      )}
+                      {"Semua Kawasan"} ({formatNumber(kawasanLayers.length)})
+                    </Button>
+                  </VStack>
+                </Tooltip>
+              ) : (
+                <Button
+                  primary
+                  variant={"outline"}
+                  flex={1}
+                  minW={0}
+                  disabled={isKawasanDisabled}
+                  onClick={handleAddToCartKawasanOnly}
+                >
+                  {IGT_BASIS_MAP.kawasan.icon && (
+                    <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
+                  )}
+                  {"Semua Kawasan"} ({formatNumber(kawasanLayers.length)})
+                </Button>
+              )}
             </HStack>
           </VStack>
         </VStack>
@@ -552,3 +709,4 @@ export const MitraDataRequestIgtLayerDataView = memo(
     );
   },
 );
+

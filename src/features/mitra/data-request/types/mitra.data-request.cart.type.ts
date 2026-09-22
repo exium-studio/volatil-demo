@@ -44,6 +44,9 @@ export type MitraDataRequestAddToCartButtonsProps = StackProps & {
   minKawasanHa?: number;
   pricePerBidang?: number;
   pricePerKawasanHa?: number;
+  isPurchaseLimitValid?: boolean;
+  purchaseLimitMessage?: string;
+  isLoading?: boolean;
   onAddAllBidangClick?: () => void;
   onAddAllKawasanClick?: () => void;
   onAddAllBothClick?: () => void;

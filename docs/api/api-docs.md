@@ -667,6 +667,73 @@ type MitraIgtLayersResponse = {
 - **Akses**: `Mitra Only`
 - **Params**: `page?: number`, `pageSize?: number`, `search?: string`
 
+### Spatial Coverage & Limit Calculation Stream (PostGIS Streaming)
+- **Endpoint**: `POST /api/mitra/data-request/calculate/stream`
+- **Akses**: `Mitra Only`
+- **Content-Type**: `application/json`
+- **Response Format**: Server-Sent Events (`text/event-stream`) / Line-delimited JSON stream
+- **Deskripsi**: Menjalankan kalkulasi spasial terpusat di server (PostGIS) untuk memotong (*spatial clipping*) fitur IGT terhadap polygon AOI, melakukan *ST_Union* pada seluruh fitur beririsan bertipe kawasan, menghitung total bidang & luas hektar cakupan kawasan, mengevaluasi validitas terhadap *purchase limit* mitra, dan mengalirkan progress real-time ke client.
+- **Request Body**:
+```typescript
+type CalculateSpatialCoverageRequest = {
+  selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
+  cqlFilter?: string;
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  layers: Array<{
+    layerId: string;
+    typeName: string;
+    title?: string;
+    spatialBasis: "bidang" | "kawasan";
+    selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
+    cqlFilter?: string;
+  }>;
+};
+```
+- **Stream Event Format**:
+```typescript
+// Progress event
+type CalculateSpatialProgressEvent = {
+  type: "progress";
+  stage: "downloading" | "clipping" | "unioning" | "calculating" | "validating";
+  percentage: number; // 0 - 100
+  message: string;
+  currentLayerIndex?: number;
+  totalLayers?: number;
+  processedFeatures?: number;
+  totalFeatures?: number;
+};
+
+// Completed event (final payload)
+type CalculateSpatialCompletedEvent = {
+  type: "completed";
+  data: {
+    totalBidangCount: number;
+    totalKawasanCount: number;
+    totalKawasanAreaHa: number;
+    subtotalBidangPrice: number;
+    subtotalKawasanPrice: number;
+    estimatedTotalPrice: number;
+    isPurchaseLimitValid: boolean;
+    purchaseLimitMessage?: string;
+    coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+    layersSummary: Array<{
+      layerId: string;
+      title: string;
+      spatialBasis: "bidang" | "kawasan";
+      featureCount: number;
+      areaHa: number;
+      subtotalPrice: number;
+    }>;
+  };
+};
+
+// Error event
+type CalculateSpatialErrorEvent = {
+  type: "error";
+  message: string;
+};
+```
+
 ### Filter Options Wilayah & Tema
 - `GET /api/mitra/data-request/filter-options/basis` — **Akses**: `Mitra Only`
 - `GET /api/mitra/data-request/filter-options/tema` — **Akses**: `Mitra Only`

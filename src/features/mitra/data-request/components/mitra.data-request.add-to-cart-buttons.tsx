@@ -8,6 +8,7 @@ import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { MitraDataRequestAddToCartButtonsProps } from "@/features/mitra/data-request/types/mitra.data-request.cart.type";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
@@ -42,6 +43,9 @@ export const MitraDataRequestAddToCartButtons = (
     minKawasanHa = 0,
     pricePerBidang: _pricePerBidang = 0,
     pricePerKawasanHa: _pricePerKawasanHa = 0,
+    isPurchaseLimitValid = true,
+    purchaseLimitMessage,
+    isLoading = false,
     ...restProps
   } = props;
 
@@ -203,12 +207,54 @@ export const MitraDataRequestAddToCartButtons = (
     minKawasanHa > 0 &&
     effectiveKawasanHa < minKawasanHa;
 
-  const isAddAllBidangDisabled = bidangCount === 0 || isBidangBelowMin;
-  const isAddAllKawasanDisabled = kawasanCount === 0 || isKawasanBelowMin;
+  const isOverPurchaseLimit = isPurchaseLimitValid === false;
+  const limitTooltipText =
+    purchaseLimitMessage || "Melebihi batas kuota pembelian spasial (purchase limit).";
+
+  const isAddSelectedDisabled =
+    isEmptyArray(selectedItems) || isOverPurchaseLimit || isLoading;
+  const isAddAllBidangDisabled =
+    bidangCount === 0 || isBidangBelowMin || isOverPurchaseLimit || isLoading;
+  const isAddAllKawasanDisabled =
+    kawasanCount === 0 || isKawasanBelowMin || isOverPurchaseLimit || isLoading;
   const isAddAllBothDisabled =
     totalItemCount === 0 ||
     (bidangCount > 0 && isBidangBelowMin) ||
-    (kawasanCount > 0 && isKawasanBelowMin);
+    (kawasanCount > 0 && isKawasanBelowMin) ||
+    isOverPurchaseLimit ||
+    isLoading;
+
+  const renderSelectedButton = (
+    <Button
+      primary={true}
+      variant={"outline"}
+      flex={"1 1 300px"}
+      w={"full"}
+      maxW={"full"}
+      minW={0}
+      disabled={isAddSelectedDisabled}
+      loading={isLoading}
+      onClick={onAddSelectedClick}
+    >
+      <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
+      {"Tambah yang dipilih"}{" "}
+      {!isEmptyArray(selectedItems) && selectedCountLabel}
+    </Button>
+  );
+
+  const renderAllButton = (
+    <Button
+      primary={true}
+      flex={1}
+      minW={0}
+      disabled={isAddAllBothDisabled}
+      loading={isLoading}
+      onClick={onAddAllBothClick}
+    >
+      <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
+      {"Tambah semua"} {allCountLabel}
+    </Button>
+  );
 
   return (
     <VStack
@@ -226,86 +272,98 @@ export const MitraDataRequestAddToCartButtons = (
         w={"full"}
       >
         {/* Add selected */}
-        <Button
-          primary
-          variant={"outline"}
-          flex={"1 1 300px"}
-          w={"full"}
-          maxW={"full"}
-          minW={0}
-          disabled={isEmptyArray(selectedItems)}
-          onClick={onAddSelectedClick}
-        >
-          <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
-          {"Tambah yang dipilih"}{" "}
-          {!isEmptyArray(selectedItems) && selectedCountLabel}
-        </Button>
+        {isOverPurchaseLimit ? (
+          <Tooltip content={limitTooltipText}>
+            <VStack flex={"1 1 300px"} align={"stretch"}>
+              {renderSelectedButton}
+            </VStack>
+          </Tooltip>
+        ) : (
+          renderSelectedButton
+        )}
 
         {/* Add all — ButtonGroup with main button on left and menu trigger on right */}
-        <ButtonGroup
-          variant={"outline"}
-          attached
-          flex={"1 1 300px"}
-          w={"full"}
-          maxW={"full"}
-          minW={0}
-        >
-          <Button
-            primary
-            flex={1}
+        {isOverPurchaseLimit ? (
+          <Tooltip content={limitTooltipText}>
+            <VStack flex={"1 1 300px"} align={"stretch"}>
+              <ButtonGroup
+                variant={"outline"}
+                attached={true}
+                w={"full"}
+                maxW={"full"}
+                minW={0}
+              >
+                {renderAllButton}
+
+                <IconButton
+                  primary={true}
+                  aria-label={"Pilih opsi tambah semua"}
+                  roundedLeft={0}
+                  flexShrink={0}
+                  disabled={true}
+                >
+                  <AppIcon icon={ChevronDownIcon} />
+                </IconButton>
+              </ButtonGroup>
+            </VStack>
+          </Tooltip>
+        ) : (
+          <ButtonGroup
+            variant={"outline"}
+            attached={true}
+            flex={"1 1 300px"}
+            w={"full"}
+            maxW={"full"}
             minW={0}
-            disabled={isAddAllBothDisabled}
-            onClick={onAddAllBothClick}
           >
-            <AppIcon icon={ShoppingCartIcon} flexShrink={0} />
-            {"Tambah semua"} {allCountLabel}
-          </Button>
+            {renderAllButton}
 
-          <Menu.Root
-            positioning={{
-              placement: "top-end",
-            }}
-          >
-            <Menu.Trigger>
-              <IconButton
-                primary
-                aria-label={"Pilih opsi tambah semua"}
-                roundedLeft={0}
-                flexShrink={0}
-                disabled={totalItemCount === 0}
-              >
-                <AppIcon icon={ChevronDownIcon} />
-              </IconButton>
-            </Menu.Trigger>
+            <Menu.Root
+              positioning={{
+                placement: "top-end",
+              }}
+            >
+              <Menu.Trigger>
+                <IconButton
+                  primary={true}
+                  aria-label={"Pilih opsi tambah semua"}
+                  roundedLeft={0}
+                  flexShrink={0}
+                  disabled={totalItemCount === 0 || isLoading}
+                >
+                  <AppIcon icon={ChevronDownIcon} />
+                </IconButton>
+              </Menu.Trigger>
 
-            <Menu.Content>
-              <Menu.Item
-                value={"add-all-bidang"}
-                disabled={isAddAllBidangDisabled}
-                onClick={onAddAllBidangClick}
-              >
-                {IGT_BASIS_MAP.bidang.icon && (
-                  <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
-                )}
-                {"Tambah semua bidang"} ({formatNumber(bidangCount)})
-              </Menu.Item>
+              <Menu.Content>
+                <Menu.Item
+                  value={"add-all-bidang"}
+                  disabled={isAddAllBidangDisabled}
+                  onClick={onAddAllBidangClick}
+                >
+                  {IGT_BASIS_MAP.bidang.icon && (
+                    <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
+                  )}
+                  {"Tambah semua bidang"} ({formatNumber(bidangCount)})
+                </Menu.Item>
 
-              <Menu.Item
-                value={"add-all-kawasan"}
-                disabled={isAddAllKawasanDisabled}
-                onClick={onAddAllKawasanClick}
-              >
-                {IGT_BASIS_MAP.kawasan.icon && (
-                  <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
-                )}
-                {"Tambah semua kawasan"}{" "}
-                {effectiveKawasanHa > 0
-                  ? `(${formatNumber(effectiveKawasanHa, { maximumFractionDigits: 2 })} ha)`
-                  : `(? ha kawasan)`}
-              </Menu.Item>
-            </Menu.Content>
-          </Menu.Root>
-        </ButtonGroup>
+                <Menu.Item
+                  value={"add-all-kawasan"}
+                  disabled={isAddAllKawasanDisabled}
+                  onClick={onAddAllKawasanClick}
+                >
+                  {IGT_BASIS_MAP.kawasan.icon && (
+                    <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
+                  )}
+                  {"Tambah semua kawasan"}{" "}
+                  {effectiveKawasanHa > 0
+                    ? `(${formatNumber(effectiveKawasanHa, { maximumFractionDigits: 2 })} ha)`
+                    : `(? ha kawasan)`}
+                </Menu.Item>
+              </Menu.Content>
+            </Menu.Root>
+          </ButtonGroup>
+        )}
       </HStack>
     </VStack>
   );

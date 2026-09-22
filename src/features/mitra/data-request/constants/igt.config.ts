@@ -41,22 +41,29 @@ export const DEFAULT_ACTIVE_IGT_BBOX: [number, number, number, number] = [
 export const ADMIN_BOUNDARY_WFS_CONFIG = {
   provinsi: {
     typeName: "administrative_workspace:BATAS_PROVINSI",
-    wfsUrl: "/api/proxy/wfs?layerId=administrative_workspace:BATAS_PROVINSI",
+    wfsUrl:
+      import.meta.env.VITE_WFS_ADMIN_PROVINCE_URL ||
+      "/api/proxy/wfs?layerId=administrative_workspace:BATAS_PROVINSI",
     attributeKey: "WADMPR",
   },
   kabupaten: {
     typeName: "administrative_workspace:BATAS_KABUPATEN",
-    wfsUrl: "/api/proxy/wfs?layerId=administrative_workspace:BATAS_KABUPATEN",
+    wfsUrl:
+      import.meta.env.VITE_WFS_ADMIN_KABUPATEN_URL ||
+      "/api/proxy/wfs?layerId=administrative_workspace:BATAS_KABUPATEN",
     attributeKey: "WADMKK",
   },
   kecamatan: {
     typeName: "administrative_workspace:BATAS_KECAMATAN",
-    wfsUrl: "/api/proxy/wfs?layerId=administrative_workspace:BATAS_KECAMATAN",
+    wfsUrl:
+      import.meta.env.VITE_WFS_ADMIN_KECAMATAN_URL ||
+      "/api/proxy/wfs?layerId=administrative_workspace:BATAS_KECAMATAN",
     attributeKey: "WADMKC",
   },
   kelurahan: {
     typeName: "administrative_workspace:BATAS_DESA_KELURAHAN",
     wfsUrl:
+      import.meta.env.VITE_WFS_ADMIN_DESA_URL ||
       "/api/proxy/wfs?layerId=administrative_workspace:BATAS_DESA_KELURAHAN",
     attributeKey: "WADMKD",
   },
