@@ -463,7 +463,7 @@ const Content = () => {
         return baseConfig;
       });
 
-    // Also include any layer in enabledLayerIds (even if not in catalog list yet)
+    // Also include any layer in enabledLayerIds (even if not in catalog list yet, e.g. My Data)
     Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
       if (!configs.some((c) => c.id === layerId)) {
         const customOverride = customLayerConfigs[layerId];
@@ -472,7 +472,7 @@ const Content = () => {
           type: "wms-raster",
           spatialBasis: "bidang",
           visible: wmsVisible && Boolean(isEnabled),
-          opacity: (layerOpacities[layerId] ?? 1.0) * globalOpacity,
+          opacity: layerOpacities[layerId] ?? 1.0,
           wmsUrl: "",
           layers: layerId,
           ...(customOverride ?? {}),

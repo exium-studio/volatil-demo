@@ -8,7 +8,6 @@ import type {
   CalculateSpatialCoverageResult,
   CalculateSpatialStreamEvent,
 } from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
-import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useCallback, useRef, useState } from "react";
 
 export const useMitraDataRequestCalculation = () => {
@@ -18,22 +17,18 @@ export const useMitraDataRequestCalculation = () => {
     useState<CalculateSpatialCalculationStage>("idle");
   const [progressPercentage, setProgressPercentage] = useState<number>(0);
   const [progressMessage, setProgressMessage] = useState<string>("");
-  const [result, setResult] =
-    useState<CalculateSpatialCoverageResult | null>(null);
+  const [result, setResult] = useState<CalculateSpatialCoverageResult | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
 
   // Refs
   const abortControllerRef = useRef<AbortController | null>(null);
-  const toastIdRef = useRef<string | null>(null);
 
   const reset = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
-    }
-    if (toastIdRef.current) {
-      toast.close(toastIdRef.current);
-      toastIdRef.current = null;
     }
     setIsCalculating(false);
     setProgressStage("idle");
@@ -60,59 +55,26 @@ export const useMitraDataRequestCalculation = () => {
       setProgressMessage("Menginisialisasi kalkulasi spasial di server...");
       setError(null);
 
-      const toastId = `calc-stream-${Date.now()}`;
-      toastIdRef.current = toastId;
-
-      toast.loading("Memulai kalkulasi spasial (PostGIS)...", {
-        id: toastId,
-        group: "Kalkulasi Spasial",
-      });
-
       return new Promise<CalculateSpatialCoverageResult | null>((resolve) => {
         const handleEvent = (event: CalculateSpatialStreamEvent) => {
           if (event.type === "progress") {
             setProgressStage(event.stage);
             setProgressPercentage(event.percentage);
             setProgressMessage(event.message);
-
-            if (toastIdRef.current) {
-              toast.loading(event.message, {
-                id: toastIdRef.current,
-                group: "Kalkulasi Spasial",
-              });
-            }
           } else if (event.type === "completed") {
             setResult(event.data);
             setIsCalculating(false);
             setProgressStage("idle");
             setProgressPercentage(100);
             setProgressMessage("Kalkulasi spasial selesai.");
-
-            if (toastIdRef.current) {
-              const countText =
-                event.data.totalBidangCount > 0
-                  ? `${formatNumber(event.data.totalBidangCount)} bidang`
-                  : `${formatNumber(event.data.totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha`;
-
-              toast.success(`Kalkulasi spasial selesai (${countText})`, {
-                id: toastIdRef.current,
-                group: "Kalkulasi Spasial",
-              });
-              toastIdRef.current = null;
-            }
             resolve(event.data);
           } else if (event.type === "error") {
             setError(event.message);
             setIsCalculating(false);
             setProgressStage("idle");
-
-            if (toastIdRef.current) {
-              toast.error(event.message || "Gagal melakukan kalkulasi spasial", {
-                id: toastIdRef.current,
-                group: "Kalkulasi Spasial",
-              });
-              toastIdRef.current = null;
-            }
+            toast.error(event.message || "Gagal melakukan kalkulasi spasial", {
+              group: "Kalkulasi Spasial",
+            });
             resolve(null);
           }
         };
@@ -125,13 +87,9 @@ export const useMitraDataRequestCalculation = () => {
               setError(err.message);
               setIsCalculating(false);
               setProgressStage("idle");
-              if (toastIdRef.current) {
-                toast.error(err.message || "Gagal melakukan kalkulasi spasial", {
-                  id: toastIdRef.current,
-                  group: "Kalkulasi Spasial",
-                });
-                toastIdRef.current = null;
-              }
+              toast.error(err.message || "Gagal melakukan kalkulasi spasial", {
+                group: "Kalkulasi Spasial",
+              });
               resolve(null);
             },
           },

@@ -166,7 +166,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
                     <VStack gap={"xs"} align={"stretch"}>
                       <HStack justify={"space-between"} w={"full"}>
                         <P fontSize={"sm"} fontWeight={"medium"}>
-                          {"Opasitas Global"}
+                          {"Opasitas Layer IGT"}
                         </P>
 
                         <P
