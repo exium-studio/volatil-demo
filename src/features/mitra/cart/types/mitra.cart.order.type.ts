@@ -185,6 +185,10 @@ export type CartOrder = {
   approvedAt?: string;
   expiredAt?: string;
   rejectionReason?: string;
+  subtotalBidangPrice?: number;
+  subtotalKawasanPrice?: number;
+  subtotalBidang?: number;
+  subtotalKawasan?: number;
   totalPrice: number;
   items: CartOrderItem[];
   administrativeFilter?: {

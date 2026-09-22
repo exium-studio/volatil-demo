@@ -182,7 +182,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
 
   return (
     <Container.Body
-      flex={isSmContainer ? 1 : 2}
+      flex={isSmContainer ? 1 : 3}
       minH={isSmContainer ? undefined : 0}
       overflowY={isSmContainer ? undefined : "auto"}
       w={"full"}
@@ -226,7 +226,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
         flex={1}
         overflowY={isSmContainer ? undefined : "auto"}
         w={"full"}
-        p={"md"}
+        p={"xs"}
       >
         {isOrdersLoading && (
           <Skeleton flex={1} w={"full"} minH={"250px"} rounded={0} />
@@ -245,7 +245,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
             )}
 
             {hasOrders && (
-              <VStack gap={"sm"} align={"stretch"} w={"full"}>
+              <VStack gap={"xs"} align={"stretch"} w={"full"}>
                 {orders.map((order, index) => {
                   const orderNumber = orders.length - index;
 
@@ -314,7 +314,7 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
 
   return (
     <Container.Body
-      flex={isSmContainer ? undefined : 1}
+      flex={isSmContainer ? 1 : 2}
       alignSelf={isSmContainer ? undefined : "start"}
       minW={isSmContainer ? "full" : "320px"}
       maxH={isSmContainer ? undefined : "full"}

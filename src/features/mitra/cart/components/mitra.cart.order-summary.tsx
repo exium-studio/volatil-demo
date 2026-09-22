@@ -69,6 +69,34 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
   }, [activeOrder]);
 
+  const subtotalBidang = useMemo(() => {
+    if (!activeOrder) return 0;
+    if (activeOrder.subtotalBidangPrice != null) {
+      return activeOrder.subtotalBidangPrice;
+    }
+    if (activeOrder.subtotalBidang != null) {
+      return activeOrder.subtotalBidang;
+    }
+    if (!activeOrder.items) return 0;
+    return activeOrder.items
+      .filter((i) => i.spatialBasis === "bidang")
+      .reduce((sum, item) => sum + (item.subtotalPrice ?? 0), 0);
+  }, [activeOrder]);
+
+  const subtotalKawasan = useMemo(() => {
+    if (!activeOrder) return 0;
+    if (activeOrder.subtotalKawasanPrice != null) {
+      return activeOrder.subtotalKawasanPrice;
+    }
+    if (activeOrder.subtotalKawasan != null) {
+      return activeOrder.subtotalKawasan;
+    }
+    if (!activeOrder.items) return 0;
+    return activeOrder.items
+      .filter((i) => i.spatialBasis === "kawasan")
+      .reduce((sum, item) => sum + (item.subtotalPrice ?? 0), 0);
+  }, [activeOrder]);
+
   const handleCheckout = () => {
     if (!activeOrder?.orderId || !isPayable) return;
 
@@ -135,7 +163,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         variant={"dashed"}
         borderStyle={"dashed"}
         borderTopWidth={"2px"}
-        borderColor={"border.emphasized"}
+        borderColor={"border.subtle"}
         my={1}
       />
 
@@ -192,46 +220,20 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
             )}
           </P>
         </HStack>
-
-        <Separator
-          variant={"dashed"}
-          borderStyle={"dashed"}
-          borderTopWidth={"2px"}
-          borderColor={"border.emphasized"}
-          my={3}
-        />
-
-        <HStack
-          justify={"space-between"}
-          color={isPayable ? "blue.fg" : undefined}
-        >
-          <P fontSize={"md"} fontWeight={"semibold"}>
-            {"Total Tagihan"}
-          </P>
-          {isSelected ? (
-            <P fontSize={"lg"} fontWeight={"semibold"}>
-              <FormatNumber
-                value={activeOrder?.totalPrice ?? 0}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
-            </P>
-          ) : (
-            <P fontSize={"lg"} fontWeight={"semibold"}>
-              {"-"}
-            </P>
-          )}
-        </HStack>
       </VStack>
 
       {/* Daftar Layer IGT */}
       {isSelected && activeOrder?.items && activeOrder.items.length > 0 && (
         <>
-          <Separator borderColor={"bg.canvas"} my={1} />
+          <Separator
+            variant={"dashed"}
+            borderTopWidth={"2px"}
+            borderColor={"border.subtle"}
+            my={1}
+          />
 
           <VStack align={"stretch"} gap={"xs"}>
-            <P fontSize={"xs"} fontWeight={"semibold"} color={"fg.muted"}>
+            <P fontSize={"sm"} color={"fg.subtle"}>
               {"Daftar Layer IGT"}
             </P>
 
@@ -284,6 +286,77 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           </VStack>
         </>
       )}
+
+      {/* Subtotal & Total Tagihan */}
+      <VStack align={"stretch"} gap={"xs"}>
+        <Separator
+          variant={"dashed"}
+          borderTopWidth={"2px"}
+          borderColor={"border.subtle"}
+          my={1}
+        />
+
+        <VStack gap={1} align={"stretch"} fontSize={"sm"}>
+          <P fontSize={"sm"} color={"fg.subtle"} mb={"xs"}>
+            Subtotal IGT
+          </P>
+
+          <HStack justify={"space-between"}>
+            <P color={"fg.muted"}>{"Basis Bidang"}</P>
+            <P fontWeight={"medium"}>
+              <FormatNumber
+                value={isSelected ? subtotalBidang : 0}
+                style={"currency"}
+                currency={"IDR"}
+                maximumFractionDigits={0}
+              />
+            </P>
+          </HStack>
+
+          <HStack justify={"space-between"} gap={"md"}>
+            <P color={"fg.muted"}>{"Basis Kawasan"}</P>
+            <P fontWeight={"medium"}>
+              <FormatNumber
+                value={isSelected ? subtotalKawasan : 0}
+                style={"currency"}
+                currency={"IDR"}
+                maximumFractionDigits={0}
+              />
+            </P>
+          </HStack>
+        </VStack>
+
+        <Separator
+          variant={"dashed"}
+          borderTopWidth={"2px"}
+          borderColor={"border.subtle"}
+          my={1}
+        />
+
+        <HStack
+          justify={"space-between"}
+          color={isPayable ? "blue.fg" : undefined}
+        >
+          <P fontSize={"md"} fontWeight={"semibold"}>
+            {"Total Tagihan"}
+          </P>
+
+          {isSelected ? (
+            <P fontSize={"lg"} fontWeight={"semibold"}>
+              <FormatNumber
+                value={activeOrder?.totalPrice ?? 0}
+                style={"currency"}
+                currency={"IDR"}
+                maximumFractionDigits={0}
+              />
+            </P>
+          ) : (
+            <P fontSize={"lg"} fontWeight={"semibold"}>
+              {"-"}
+            </P>
+          )}
+        </HStack>
+      </VStack>
 
       {/* Notice States */}
       {!isSelected && (

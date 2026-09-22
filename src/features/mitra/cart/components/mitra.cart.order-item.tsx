@@ -1,13 +1,11 @@
 // src/features/mitra/cart/components/mitra.cart.order-item.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { RadioIndicator } from "@/design-system/components/input/ui/radio-indicator";
+import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -21,10 +19,13 @@ import type {
   MitraCartOrderItemProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { ORDER_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
+import {
+  ORDER_STATUS_MAP,
+  SELECTION_TYPE_CONFIG_MAP,
+} from "@/features/shared/constants/volatil.ssot-map";
 import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { EyeIcon, EyeOffIcon, FocusIcon, Trash2Icon } from "lucide-react";
+import { FocusIcon, Trash2Icon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
@@ -49,6 +50,8 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
 
   // Derived Values
   const statusConfig = ORDER_STATUS_MAP[order.status];
+  const selectionConfig = SELECTION_TYPE_CONFIG_MAP[order.selectionType];
+  const aoiColorPalette = selectionConfig?.colorPalette ?? "blue";
 
   const totalBidang = order.items
     .filter((i) => i.spatialBasis === "bidang")
@@ -63,16 +66,14 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
     <Box
       w={"full"}
       p={"md"}
-      bg={"bg.body"}
+      bg={isSelected ? "" : "bg.body"}
       rounded={theme.radii.container}
       border={"1.5px solid"}
-      borderColor={isSelected ? `${theme.colorPalette}.solid` : "border.subtle"}
+      borderColor={isSelected ? `${theme.colorPalette}.solid` : "transparent"}
       cursor={"pointer"}
       transition={"all 0.15s ease-in-out"}
       _hover={{
-        borderColor: isSelected
-          ? `${theme.colorPalette}.solid`
-          : "border.muted",
+        // borderColor: "border.muted",
         bg: isSelected ? `` : "bg.subtle",
       }}
       onClick={() => onSelect(order.orderId)}
@@ -94,15 +95,13 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
               </VStack>
             </HStack>
 
-            <HStack gap={"sm"} align={"center"}>
-              <Badge
-                size={"sm"}
-                variant={"subtle"}
-                colorPalette={statusConfig.colorPalette}
-              >
-                {statusConfig.label}
-              </Badge>
-            </HStack>
+            <Badge
+              size={"sm"}
+              variant={"subtle"}
+              colorPalette={statusConfig.colorPalette}
+            >
+              {statusConfig.label}
+            </Badge>
           </HStack>
 
           <RadioIndicator checked={isSelected} mt={"2px"} />
@@ -113,21 +112,21 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
         {/* Content Details */}
         <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"Tanggal Pesan:"}</P>
+            <P color={"fg.subtle"}>{"Tanggal Pesan:"}</P>
             <P fontWeight={"medium"}>
               {order.createdAt ? formatDateTime(order.createdAt) : "-"}
             </P>
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"Metode Pengajuan:"}</P>
+            <P color={"fg.subtle"}>{"Metode Pengajuan:"}</P>
             <SelectionTypeBadge size={"xs"}>
               {order.selectionType}
             </SelectionTypeBadge>
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"IGT Berbasis Bidang:"}</P>
+            <P color={"fg.subtle"}>{"IGT Berbasis Bidang:"}</P>
             <P fontWeight={"medium"}>
               {totalBidang > 0 ? (
                 <>
@@ -140,7 +139,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"IGT Berbasis Kawasan:"}</P>
+            <P color={"fg.subtle"}>{"IGT Berbasis Kawasan:"}</P>
             <P fontWeight={"medium"}>
               {totalKawasanHa && totalKawasanHa > 0 ? (
                 <>
@@ -153,8 +152,8 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           </HStack>
 
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"Total Tagihan:"}</P>
-            <P fontWeight={"semibold"} color={"blue.fg"}>
+            <P color={"fg.subtle"}>{"Total Tagihan:"}</P>
+            <P fontWeight={"semibold"}>
               <FormatNumber
                 value={order.totalPrice}
                 style={"currency"}
@@ -216,7 +215,6 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           </HStack>
         ) : null}
 
-
         {/* Selected Order Actions: Spatial Actions (Left) & Delete (Right) */}
         {isSelected && (
           <>
@@ -231,84 +229,91 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
               }}
             >
               {/* Pojok Kiri: Spatial Actions (AOI & Coverage) */}
-              <VStack>
+              <HStack wrap={"wrap"} gapX={"md"}>
                 {hasAoiPolygon && (
-                  <HStack gap={"2xs"} align={"center"}>
-                    <P w={"100px"}>AOI</P>
+                  <HStack gap={"sm"} align={"center"}>
+                    <HStack gap={"xs"} align={"center"}>
+                      <Box
+                        w={"8px"}
+                        h={"8px"}
+                        bg={`${aoiColorPalette}.solid`}
+                      />
 
-                    {onFlyToAoi && (
-                      <Tooltip content={"Zoom ke Polygon AOI"}>
-                        <IconButton
-                          size={"xs"}
-                          variant={"ghost"}
-                          onClick={onFlyToAoi}
+                      <P>{"AOI"}</P>
+                    </HStack>
+
+                    <HStack gap={"2xs"} align={"center"}>
+                      {onToggleAoiVisible && (
+                        <Tooltip
+                          content={
+                            isAoiVisible
+                              ? "Sembunyikan Polygon AOI"
+                              : "Tampilkan Polygon AOI"
+                          }
                         >
-                          <AppIcon icon={FocusIcon} />
-                        </IconButton>
-                      </Tooltip>
-                    )}
+                          <Switch
+                            size={"sm"}
+                            checked={isAoiVisible}
+                            onCheckedChange={onToggleAoiVisible}
+                          />
+                        </Tooltip>
+                      )}
 
-                    {onToggleAoiVisible && (
-                      <Tooltip
-                        content={
-                          isAoiVisible
-                            ? "Sembunyikan Polygon AOI"
-                            : "Tampilkan Polygon AOI"
-                        }
-                      >
-                        <IconButton size={"xs"} onClick={onToggleAoiVisible}>
-                          <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
-                        </IconButton>
-                      </Tooltip>
-                    )}
+                      {onFlyToAoi && (
+                        <Tooltip content={"Zoom ke Polygon AOI"}>
+                          <IconButton
+                            size={"xs"}
+                            variant={"ghost"}
+                            onClick={onFlyToAoi}
+                          >
+                            <AppIcon icon={FocusIcon} />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </HStack>
                   </HStack>
                 )}
-
-                <Separator
-                  direction={"vertical"}
-                  w={"1px"}
-                  borderColor={"red"}
-                  // className={"debug"}
-                  alignSelf={"stretch"}
-                />
 
                 {hasCoveragePolygon && (
-                  <HStack gap={"2xs"} align={"center"}>
-                    <P w={"100px"}>Kawasan</P>
+                  <HStack gap={"sm"} align={"center"}>
+                    <HStack gap={"xs"} align={"center"}>
+                      <Box w={"8px"} h={"8px"} bg={"green.solid"} />
 
-                    {onFlyToCoverage && (
-                      <Tooltip content={"Zoom ke Coverage Area"}>
-                        <IconButton
-                          size={"xs"}
-                          variant={"ghost"}
-                          onClick={onFlyToCoverage}
-                        >
-                          <AppIcon icon={FocusIcon} />
-                        </IconButton>
-                      </Tooltip>
-                    )}
+                      <P>{"Kawasan"}</P>
+                    </HStack>
 
-                    {onToggleCoverageVisible && (
-                      <Tooltip
-                        content={
-                          isCoverageVisible
-                            ? "Sembunyikan Coverage Area"
-                            : "Tampilkan Coverage Area"
-                        }
-                      >
-                        <IconButton
-                          size={"xs"}
-                          onClick={onToggleCoverageVisible}
+                    <HStack gap={"2xs"} align={"center"}>
+                      {onToggleCoverageVisible && (
+                        <Tooltip
+                          content={
+                            isCoverageVisible
+                              ? "Sembunyikan Coverage Area"
+                              : "Tampilkan Coverage Area"
+                          }
                         >
-                          <AppIcon
-                            icon={isCoverageVisible ? EyeIcon : EyeOffIcon}
+                          <Switch
+                            size={"sm"}
+                            checked={isCoverageVisible}
+                            onCheckedChange={onToggleCoverageVisible}
                           />
-                        </IconButton>
-                      </Tooltip>
-                    )}
+                        </Tooltip>
+                      )}
+
+                      {onFlyToCoverage && (
+                        <Tooltip content={"Zoom ke Coverage Area"}>
+                          <IconButton
+                            size={"xs"}
+                            variant={"ghost"}
+                            onClick={onFlyToCoverage}
+                          >
+                            <AppIcon icon={FocusIcon} />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </HStack>
                   </HStack>
                 )}
-              </VStack>
+              </HStack>
 
               {/* Pojok Kanan: Hapus Pesanan */}
               {onDelete && (
@@ -322,15 +327,9 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
                     onDelete(order.orderId);
                   }}
                 >
-                  <Button
-                    colorPalette={"red"}
-                    variant={"ghost"}
-                    size={"xs"}
-                    loading={isDeleting}
-                  >
+                  <IconButton colorPalette={"red"} loading={isDeleting}>
                     <AppIcon icon={Trash2Icon} />
-                    {"Hapus Pesanan"}
-                  </Button>
+                  </IconButton>
                 </ConfirmationTrigger>
               )}
             </HStack>

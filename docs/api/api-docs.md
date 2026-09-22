@@ -750,6 +750,8 @@ type OrderListResponse = {
     readyAt?: string;
     expiredAt?: string;
     rejectionReason?: string;
+    subtotalBidangPrice?: number;
+    subtotalKawasanPrice?: number;
     totalPrice: number;
     items: Array<{
       id: string;
@@ -772,6 +774,41 @@ type OrderListResponse = {
 ### Ambil Detail Order di Keranjang
 - **Endpoint**: `GET /api/mitra/cart/orders/{orderId}`
 - **Akses**: `Mitra Only`
+- **Response (200 OK)**:
+```typescript
+type GetOrderDetailResponse = {
+  success: true;
+  data: {
+    orderId: string;
+    batchId?: string;
+    status: OrderStatus;
+    selectionType: "catalog" | "upload_aoi" | "draw_aoi";
+    createdAt: string;
+    readyAt?: string;
+    approvedAt?: string;
+    expiredAt?: string;
+    subtotalBidangPrice: number; // Subtotal tarif untuk semua layer IGT Basis Bidang (default 0 jika tidak ada)
+    subtotalKawasanPrice: number; // Subtotal tarif untuk semua layer IGT Basis Kawasan (default 0 jika tidak ada)
+    totalPrice: number; // Total harga (subtotalBidangPrice + subtotalKawasanPrice)
+    coverageHa?: number;
+    areaHa?: number;
+    featuresCount?: number;
+    aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+    coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+    items: Array<{
+      id: string;
+      sourceLayerId: string;
+      sourceLayerTitle: string;
+      spatialBasis: "bidang" | "kawasan";
+      selectionType: string;
+      featuresCount: number;
+      unitPrice: number;
+      subtotalPrice: number;
+      areaHa?: number;
+    }>;
+  };
+};
+```
 
 ### Real-Time Stream Order Keranjang (Server-Sent Events / SSE)
 Mengalirkan notifikasi status dan progres kalkulasi spasial pesanan secara *real-time* ke antarmuka keranjang mitra (misal transisi otomatis dari status `requesting` ke `pending_payment` setelah kalkulasi selesai di BE).
@@ -797,6 +834,8 @@ data: {
     "selectionType": "upload_aoi",
     "coverageHa": 124.5,
     "featuresCount": 42,
+    "subtotalBidangPrice": 0,
+    "subtotalKawasanPrice": 2100000,
     "totalPrice": 2100000,
     "coveragePolygon": { "type": "Polygon", "coordinates": [...] },
     "createdAt": "2026-09-21T10:45:00.000Z"
