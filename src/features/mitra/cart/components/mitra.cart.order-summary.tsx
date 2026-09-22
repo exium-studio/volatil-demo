@@ -1,5 +1,6 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -26,7 +27,7 @@ import { useMemo } from "react";
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
-  const { activeOrder, orderIndex, isLoading = false } = props;
+  const { activeOrder, orderIndex, isLoading = false, isFetching = false } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -122,6 +123,117 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
     );
   };
 
+  // Render Skeleton feedback when loading / switching order
+  if (isLoading) {
+    return (
+      <VStack
+        gap={"md"}
+        p={"md"}
+        rounded={theme.radii.container}
+        bg={"bg.body"}
+        align={"stretch"}
+      >
+        {/* Header Skeleton */}
+        <HStack justify={"space-between"} align={"center"}>
+          <Skeleton h={"20px"} w={"100px"} />
+          <Skeleton h={"20px"} w={"120px"} />
+        </HStack>
+
+        <Separator
+          variant={"dashed"}
+          borderTopWidth={"2px"}
+          borderColor={"border.subtle"}
+          my={1}
+        />
+
+        {/* Breakdown Rows Skeletons */}
+        <VStack gap={2} align={"stretch"}>
+          <HStack justify={"space-between"}>
+            <Skeleton h={"16px"} w={"120px"} />
+            <Skeleton h={"16px"} w={"80px"} />
+          </HStack>
+          <HStack justify={"space-between"}>
+            <Skeleton h={"16px"} w={"100px"} />
+            <Skeleton h={"16px"} w={"60px"} />
+          </HStack>
+          <HStack justify={"space-between"}>
+            <Skeleton h={"16px"} w={"130px"} />
+            <Skeleton h={"16px"} w={"70px"} />
+          </HStack>
+          <HStack justify={"space-between"}>
+            <Skeleton h={"16px"} w={"140px"} />
+            <Skeleton h={"16px"} w={"70px"} />
+          </HStack>
+        </VStack>
+
+        <Separator
+          variant={"dashed"}
+          borderTopWidth={"2px"}
+          borderColor={"border.subtle"}
+          my={1}
+        />
+
+        {/* Layer List Skeleton */}
+        <VStack align={"stretch"} gap={"xs"}>
+          <Skeleton h={"16px"} w={"110px"} />
+          <VStack
+            border={"1px solid"}
+            borderColor={"border.subtle"}
+            rounded={theme.radii.component}
+            p={"sm"}
+            gap={"xs"}
+            align={"stretch"}
+          >
+            <HStack justify={"space-between"}>
+              <Skeleton h={"14px"} w={"160px"} />
+              <Skeleton h={"14px"} w={"60px"} />
+            </HStack>
+            <HStack justify={"space-between"}>
+              <Skeleton h={"14px"} w={"120px"} />
+              <Skeleton h={"14px"} w={"50px"} />
+            </HStack>
+          </VStack>
+        </VStack>
+
+        <Separator
+          variant={"dashed"}
+          borderTopWidth={"2px"}
+          borderColor={"border.subtle"}
+          my={1}
+        />
+
+        {/* Subtotal & Total Skeletons */}
+        <VStack gap={1} align={"stretch"}>
+          <Skeleton h={"14px"} w={"80px"} mb={"xs"} />
+          <HStack justify={"space-between"}>
+            <Skeleton h={"14px"} w={"100px"} />
+            <Skeleton h={"14px"} w={"90px"} />
+          </HStack>
+          <HStack justify={"space-between"}>
+            <Skeleton h={"14px"} w={"110px"} />
+            <Skeleton h={"14px"} w={"90px"} />
+          </HStack>
+        </VStack>
+
+        <Separator
+          variant={"dashed"}
+          borderTopWidth={"2px"}
+          borderColor={"border.subtle"}
+          my={1}
+        />
+
+        {/* Total Tagihan */}
+        <HStack justify={"space-between"} align={"center"}>
+          <Skeleton h={"20px"} w={"100px"} />
+          <Skeleton h={"24px"} w={"120px"} />
+        </HStack>
+
+        {/* Action Button Skeleton */}
+        <Skeleton h={"40px"} w={"full"} rounded={theme.radii.component} mt={1} />
+      </VStack>
+    );
+  }
+
   return (
     <VStack
       gap={"md"}
@@ -129,6 +241,8 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       rounded={theme.radii.container}
       bg={"bg.body"}
       align={"stretch"}
+      opacity={isFetching ? 0.8 : 1}
+      transition={"opacity 0.2s ease-in-out"}
     >
       {/* Order Metadata Header */}
       <VStack align={"stretch"} gap={"xs"}>

@@ -1,4 +1,5 @@
 import { Button } from "@/design-system/components/button/ui/button";
+import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -32,7 +33,12 @@ import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
-import { HistoryIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
+import {
+  HistoryIcon,
+  InfoIcon,
+  ShoppingCartIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 export const MitraCartPage = () => {
@@ -62,8 +68,11 @@ const MitraCartContent = () => {
   const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
 
   // Queries — detail of selected order
-  const { orderDetail: selectedOrder, isLoading: isDetailLoading } =
-    useCartOrderDetailQuery(selectedOrderId || undefined);
+  const {
+    orderDetail: selectedOrder,
+    isLoading: isDetailLoading,
+    isFetching: isDetailFetching,
+  } = useCartOrderDetailQuery(selectedOrderId || undefined);
 
   // Map layer synchronization hook for Cart AOI & Coverage Polygon
   useCartAoiCoverageMap(map, {
@@ -111,6 +120,10 @@ const MitraCartContent = () => {
     (b) => b.orderId === selectedOrderId,
   );
 
+  const isOrderLoadingOrSwitching =
+    Boolean(selectedOrderId) &&
+    (isDetailLoading || (isDetailFetching && selectedOrder?.orderId !== selectedOrderId));
+
   return (
     <AppContentContainer
       overflowY={isSmContainer ? "auto" : undefined}
@@ -138,7 +151,8 @@ const MitraCartContent = () => {
           selectedOrderId={selectedOrderId}
           selectedOrderIndex={selectedOrderIndex}
           selectedOrder={selectedOrder}
-          isLoading={isDetailLoading}
+          isLoading={isOrderLoadingOrSwitching}
+          isFetching={isDetailFetching}
         />
       </HStack>
     </AppContentContainer>
@@ -246,6 +260,17 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
 
             {hasOrders && (
               <VStack gap={"xs"} align={"stretch"} w={"full"}>
+                {!selectedOrderId && (
+                  <Alert.Root status={"neutral"} mb={1}>
+                    <AppIcon icon={InfoIcon} />
+                    <Alert.Description>
+                      {
+                        "Silakan pilih salah satu pesanan untuk melihat rincian layer atau melanjutkan ke pembayaran."
+                      }
+                    </Alert.Description>
+                  </Alert.Root>
+                )}
+
                 {orders.map((order, index) => {
                   const orderNumber = orders.length - index;
 
@@ -298,6 +323,7 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
     selectedOrderIndex,
     selectedOrder,
     isLoading = false,
+    isFetching = false,
   } = props;
 
   // Contexts
@@ -340,6 +366,7 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
         activeOrder={selectedOrder ?? null}
         orderIndex={displayOrderNumber}
         isLoading={isLoading}
+        isFetching={isFetching}
       />
     </Container.Body>
   );

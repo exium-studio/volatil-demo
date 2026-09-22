@@ -2,11 +2,7 @@
 
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
-import { fitBoundsSafe } from "@/design-system/components/map/utils/map-camera";
-import {
-  getGeometryBounds,
-  highlightFeatureOnMap,
-} from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import type { CartMapLayerOptions } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type GeoJSON from "geojson";
@@ -258,7 +254,7 @@ export const renderCartMapLayers = (
 };
 
 /**
- * Fly / zoom map camera safely to a GeoJSON polygon or multi-polygon.
+ * Fly / zoom map camera safely to a GeoJSON polygon or multi-polygon with highlight overlay.
  */
 export const flyToCartGeometry = (
   map: maplibregl.Map | null,
@@ -267,21 +263,22 @@ export const flyToCartGeometry = (
     | GeoJSON.Polygon
     | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
     | null,
+  options?: {
+    zoom?: number;
+    timeoutMs?: number;
+  },
 ) => {
   if (!map || !geometry) return;
   const feat = normalizePolygonFeature(geometry);
   if (!feat || !feat.geometry) return;
 
-  const bounds = getGeometryBounds(feat.geometry);
-  if (bounds) {
-    fitBoundsSafe(map, bounds, {
-      padding: { top: 80, bottom: 80, left: 80, right: 80 },
-      maxZoom: 16,
-      duration: 1200,
-    });
-  } else {
-    highlightFeatureOnMap(map, feat, { zoom: 14 });
-  }
+  const { zoom = 16, timeoutMs = 1500 } = options ?? {};
+
+  highlightFeatureOnMap(map, feat, {
+    zoom,
+    fitCamera: true,
+    timeoutMs,
+  });
 };
 
 /**
