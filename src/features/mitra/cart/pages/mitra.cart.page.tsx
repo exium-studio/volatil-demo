@@ -32,7 +32,6 @@ import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
-import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { HistoryIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -304,12 +303,6 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
               <Badge>{`Pesanan #${displayOrderNumber}`}</Badge>
             )}
           </HStack>
-
-          {selectedOrder?.selectionType && (
-            <SelectionTypeBadge size={"sm"}>
-              {selectedOrder.selectionType}
-            </SelectionTypeBadge>
-          )}
         </HStack>
       </HeaderContainer>
 

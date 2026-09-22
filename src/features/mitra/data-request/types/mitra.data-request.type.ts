@@ -25,3 +25,11 @@ export type MitraDataRequestGetCatalogParams = {
   search?: string;
 };
 
+export type MitraDataRequestTab = "catalog" | "uploadAoi" | "drawAoi";
+
+export type MitraDataRequestSearch = {
+  tab?: MitraDataRequestTab;
+  layerId?: string;
+};
+
+

@@ -8,9 +8,10 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
-import { useSearchParam } from "@/design-system/hooks/use-search-param";
+import type { MitraDataRequestTab } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
 import { lazy, Suspense, useTransition } from "react";
 
@@ -66,14 +67,26 @@ const REQUEST_METHOD_OPTIONS = (
 export const MitraDataRequestPage = () => {
   // Hooks
   const [_isPending, startTransition] = useTransition();
-  const { queryValue: tabQuery, setQueryValue: setTab } = useSearchParam("tab");
-  const { setQueryValue: setLayerId } = useSearchParam("layerId");
+  const navigate = useNavigate();
+  const search = useSearch({ from: "/_private/mitra/data-request" });
 
-  // Derived active tab (default to uploadAoi without forcing URL push in useEffect)
-  const activeTab =
-    tabQuery && Object.keys(REQUEST_METHOD_MAP).includes(tabQuery)
-      ? tabQuery
-      : "uploadAoi";
+  // Derived Values
+  const activeTab: MitraDataRequestTab = search.tab ?? "catalog";
+
+  // Handlers
+  const handleTabChange = (nextTab: string) => {
+    startTransition(() => {
+      navigate({
+        to: "/mitra/data-request",
+        search: (prev) => {
+          const updated = { ...prev } as Record<string, unknown>;
+          updated.tab = nextTab;
+          delete updated.layerId;
+          return updated;
+        },
+      });
+    });
+  };
 
   return (
     <AppContentContainer overflowY={"auto"}>
@@ -92,10 +105,7 @@ export const MitraDataRequestPage = () => {
             flexDir={"column"}
             overflowY={"auto"}
             onValueChange={(details) => {
-              startTransition(() => {
-                setTab(details.value, { replace: true });
-                setLayerId(undefined, { replace: true });
-              });
+              handleTabChange(details.value);
             }}
           >
             <Tabs.List borderColor={"bg.canvas"}>

@@ -27,7 +27,6 @@ import {
   HourglassIcon,
   InfoIcon,
   LoaderIcon,
-  MapPinIcon,
   ShieldCheckIcon,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -270,7 +269,6 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           <VStack align={"stretch"} gap={"xs"}>
             <HStack justify={"space-between"} align={"center"}>
               <HStack gap={1} align={"center"}>
-                <AppIcon icon={MapPinIcon} size={"xs"} color={"fg.muted"} />
                 <P fontSize={"xs"} fontWeight={"medium"} color={"fg.muted"}>
                   {"Visualisasi Spasial Peta"}
                 </P>
@@ -286,11 +284,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
                   rounded={"md"}
                   bg={"bg.subtle"}
                 >
-                  <HStack gap={"xs"} align={"center"}>
-                    <Badge colorPalette={"orange"} size={"sm"}>
-                      {"AOI Polygon"}
-                    </Badge>
-                  </HStack>
+                  <P>{"AOI Polygon"}</P>
 
                   <HStack gap={"xs"}>
                     {onFlyToAoi && (
@@ -313,12 +307,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
                             : "Tampilkan Polygon AOI"
                         }
                       >
-                        <IconButton
-                          size={"xs"}
-                          variant={isAoiVisible ? "subtle" : "ghost"}
-                          colorPalette={isAoiVisible ? "orange" : "gray"}
-                          onClick={onToggleAoiVisible}
-                        >
+                        <IconButton size={"xs"} onClick={onToggleAoiVisible}>
                           <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
                         </IconButton>
                       </Tooltip>
@@ -335,11 +324,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
                   rounded={"md"}
                   bg={"bg.subtle"}
                 >
-                  <HStack gap={"xs"} align={"center"}>
-                    <Badge colorPalette={"green"} size={"sm"}>
-                      {"Coverage Area"}
-                    </Badge>
-                  </HStack>
+                  <P>{"IGT Berbasis Kawasan (Coverage Area Polygon)"}</P>
 
                   <HStack gap={"xs"}>
                     {onFlyToCoverage && (
@@ -364,8 +349,6 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
                       >
                         <IconButton
                           size={"xs"}
-                          variant={isCoverageVisible ? "subtle" : "ghost"}
-                          colorPalette={isCoverageVisible ? "green" : "gray"}
                           onClick={onToggleCoverageVisible}
                         >
                           <AppIcon
