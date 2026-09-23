@@ -3,7 +3,6 @@
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
