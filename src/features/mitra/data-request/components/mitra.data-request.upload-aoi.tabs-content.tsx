@@ -357,7 +357,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
             <FileInput
               variant={"dropzone"}
               label={
-                "Upload file AOI (.shp/.zip atau .geojson/.json) untuk memilih area query IGT"
+                "Upload file AOI (.shp/.zip atau .geojson/.json) untuk mengambil data IGT"
               }
               accept={[
                 ".zip",
