@@ -103,7 +103,6 @@ export type CalculateSpatialStreamEvent =
   | CalculateSpatialCompletedEvent
   | CalculateSpatialErrorEvent;
 
-<<<<<<< HEAD
 export type CalculateSpatialStreamCallbacks = {
   onEvent?: (event: CalculateSpatialStreamEvent) => void;
   onConnected?: () => void;
@@ -118,8 +117,6 @@ export type CalculateSpatialStreamCallbacks = {
   onError?: (error: Error) => void;
 };
 
-
-=======
 export type MitraDataRequestCalculationState = {
   isCalculating: boolean;
   progressStage: CalculateSpatialCalculationStage;
@@ -134,4 +131,4 @@ export type MitraDataRequestCalculationState = {
   setResult: (result: CalculateSpatialCoverageResult | null) => void;
   abort: () => void;
 };
->>>>>>> 33809338f1c7d2bc03bcaa5db8c6fa17af78cfa9
+
