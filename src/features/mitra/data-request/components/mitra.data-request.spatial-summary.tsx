@@ -2,6 +2,7 @@
 
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -71,46 +72,87 @@ export const MitraDataRequestSpatialSummary = memo(
           gap={"sm"}
           p={"md"}
           rounded={theme.radii.container}
-          bg={"bg.body"}
+          bg={"bg.subtle"}
           align={"stretch"}
-          border={"1px solid"}
           borderColor={"border.subtle"}
         >
-          <HStack align={"center"} justify={"space-between"} color={"blue.fg"}>
-            <HStack align={"center"} gap={"xs"}>
-              <AppIcon icon={LoaderIcon} />
-              <P fontSize={"sm"} fontWeight={"semibold"}>
-                {effectiveProgressMessage ||
-                  "Sedang mengkalkulasi spasial di server (PostGIS)..."}
-              </P>
+          {/* Progress / Loading message */}
+          <VStack gap={"xs"} align={"stretch"}>
+            <HStack
+              align={"center"}
+              justify={"space-between"}
+              color={"blue.fg"}
+            >
+              <HStack align={"center"} gap={"xs"}>
+                <AppIcon icon={LoaderIcon} />
+                <P fontSize={"sm"} fontWeight={"semibold"}>
+                  {effectiveProgressMessage ||
+                    "Sedang mengkalkulasi spasial di server (PostGIS)..."}
+                </P>
+              </HStack>
+              {effectiveProgressPercentage > 0 && (
+                <P fontSize={"xs"} fontWeight={"bold"} color={"blue.fg"}>
+                  {`${effectiveProgressPercentage}%`}
+                </P>
+              )}
             </HStack>
-            {effectiveProgressPercentage > 0 && (
-              <P fontSize={"xs"} fontWeight={"bold"} color={"blue.fg"}>
-                {`${effectiveProgressPercentage}%`}
-              </P>
-            )}
-          </HStack>
 
-          <Progress.Root
-            value={effectiveProgressPercentage}
-            size={"xs"}
-            colorPalette={"blue"}
-          >
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
+            <Progress.Root
+              value={effectiveProgressPercentage}
+              size={"xs"}
+              colorPalette={"blue"}
+            >
+              <Progress.Track>
+                <Progress.Range />
+              </Progress.Track>
+            </Progress.Root>
+          </VStack>
+
+          <Separator borderColor={"border.subtle"} />
+
+          {/* Pricing Skeleton Placeholders */}
+          <VStack gap={"sm"} align={"stretch"} fontSize={"sm"}>
+            {/* Subtotal Bidang */}
+            <HStack justify={"space-between"} align={"center"}>
+              <VStack align={"start"} gap={1}>
+                <P fontSize={"sm"} fontWeight={"medium"} color={"fg.body"}>
+                  {"Subtotal Bidang"}
+                </P>
+                <Skeleton h={"14px"} w={"100px"} />
+              </VStack>
+              <Skeleton h={"18px"} w={"80px"} />
+            </HStack>
+
+            {/* Subtotal Kawasan */}
+            <HStack justify={"space-between"} align={"center"}>
+              <VStack align={"start"} gap={1}>
+                <P fontSize={"sm"} fontWeight={"medium"} color={"fg.body"}>
+                  {"Subtotal Kawasan"}
+                </P>
+                <Skeleton h={"14px"} w={"120px"} />
+              </VStack>
+              <Skeleton h={"18px"} w={"80px"} />
+            </HStack>
+
+            <Separator borderColor={"border.subtle"} />
+
+            {/* Total Estimasi */}
+            <HStack justify={"space-between"} align={"center"}>
+              <P fontWeight={"semibold"}>{"Total Estimasi"}</P>
+              <Skeleton h={"22px"} w={"110px"} />
+            </HStack>
+          </VStack>
         </VStack>
       );
     }
 
     return (
       <VStack
-        gap={"sm"}
+        gap={"md"}
         p={"md"}
         rounded={theme.radii.container}
         bg={"bg.subtle"}
-        align={"stretch"}
+        border={"1px solid"}
         borderColor={"border.subtle"}
       >
         {/* Coverage Layer Switch (Only rendered if coverage polygon exists) */}
@@ -118,10 +160,11 @@ export const MitraDataRequestSpatialSummary = memo(
           <HStack justify={"space-between"} align={"center"}>
             <HStack gap={"xs"} align={"center"}>
               <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
-              <P fontSize={"xs"} color={"fg.muted"}>
+              <P fontSize={"sm"} color={"fg.muted"}>
                 {"Tampilkan Cakupan Kawasan"}
               </P>
             </HStack>
+
             <Switch
               size={"sm"}
               checked={isCoverageVisible}
@@ -134,12 +177,12 @@ export const MitraDataRequestSpatialSummary = memo(
         <VStack gap={"sm"} align={"stretch"} fontSize={"sm"}>
           {/* Subtotal Bidang */}
           <HStack justify={"space-between"} align={"start"}>
-            <VStack align={"start"} gap={0}>
-              <P fontSize={"sm"} fontWeight={"medium"} color={"fg.body"}>
+            <VStack align={"start"} gap={"2xs"}>
+              <P fontSize={"sm"} color={"fg.subtle"}>
                 {"Subtotal Bidang"}
               </P>
 
-              <P fontSize={"xs"} color={"fg.muted"}>
+              <P fontSize={"sm"}>
                 {totalBidangCount > 0 ? (
                   <>
                     <TNum>{formatNumber(totalBidangCount)}</TNum>
@@ -169,12 +212,12 @@ export const MitraDataRequestSpatialSummary = memo(
 
           {/* Subtotal Kawasan */}
           <HStack justify={"space-between"} align={"start"}>
-            <VStack align={"start"} gap={0}>
-              <P fontSize={"sm"} fontWeight={"medium"} color={"fg.body"}>
+            <VStack align={"start"} gap={"2xs"}>
+              <P fontSize={"sm"} color={"fg.subtle"}>
                 {"Subtotal Kawasan"}
               </P>
 
-              <P fontSize={"xs"} color={"fg.muted"}>
+              <P fontSize={"sm"}>
                 {totalKawasanAreaHa > 0 ? (
                   <>
                     <TNum>

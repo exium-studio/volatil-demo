@@ -19,8 +19,8 @@ const DRAW_SOURCE_ID = "map-draw-source";
 /** Exported so useMapLayers can insert config layers below the draw stack using beforeId. */
 export const DRAW_FILL_LAYER_ID = "map-draw-fill";
 
-const DRAW_LINE_LAYER_ID = "map-draw-line";
-const DRAW_VERTEX_LAYER_ID = "map-draw-vertex";
+export const DRAW_LINE_LAYER_ID = "map-draw-line";
+export const DRAW_VERTEX_LAYER_ID = "map-draw-vertex";
 
 const buildSourceData = (
   pts: DrawPoint[],

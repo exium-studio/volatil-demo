@@ -1,7 +1,9 @@
-// src/features/mitra/cart/hooks/use-cart-aoi-coverage-map.ts
-
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
-import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import {
+  DRAW_FILL_LAYER_ID,
+  DRAW_LINE_LAYER_ID,
+  DRAW_VERTEX_LAYER_ID,
+} from "@/design-system/components/map/hooks/use-map-draw";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import type { CartMapLayerOptions } from "@/features/mitra/cart/types/mitra.cart.order.type";
@@ -112,8 +114,36 @@ export const renderCartMapLayers = (
   const aoiFeature = normalizePolygonFeature(aoiPolygon);
   const coverageFeature = normalizePolygonFeature(coveragePolygon);
 
-  // 1. Manage AOI layer
-  if (aoiFeature && isAoiVisible) {
+  // 1. Manage AOI layer (useMapDraw natively renders the drawn polygon for draw_aoi)
+  if (selectionType === "draw_aoi") {
+    // Remove duplicate cart-aoi layers if present
+    if (map.getLayer(CART_AOI_FILL_ID)) map.removeLayer(CART_AOI_FILL_ID);
+    if (map.getLayer(CART_AOI_LINE_ID)) map.removeLayer(CART_AOI_LINE_ID);
+    if (map.getSource(CART_AOI_SOURCE_ID)) map.removeSource(CART_AOI_SOURCE_ID);
+
+    // Sync visibility directly to the draw layers
+    if (map.getLayer(DRAW_FILL_LAYER_ID)) {
+      map.setLayoutProperty(
+        DRAW_FILL_LAYER_ID,
+        "visibility",
+        isAoiVisible ? "visible" : "none",
+      );
+    }
+    if (map.getLayer(DRAW_LINE_LAYER_ID)) {
+      map.setLayoutProperty(
+        DRAW_LINE_LAYER_ID,
+        "visibility",
+        isAoiVisible ? "visible" : "none",
+      );
+    }
+    if (map.getLayer(DRAW_VERTEX_LAYER_ID)) {
+      map.setLayoutProperty(
+        DRAW_VERTEX_LAYER_ID,
+        "visibility",
+        isAoiVisible ? "visible" : "none",
+      );
+    }
+  } else if (aoiFeature && isAoiVisible) {
     const colors = getAoiColor(selectionType);
     const existingSource = map.getSource(CART_AOI_SOURCE_ID) as
       | maplibregl.GeoJSONSource

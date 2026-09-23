@@ -468,7 +468,11 @@ export const MitraDataRequestIgtLayerDataView = memo(
     }, [filteredLayers, combinedCqlFilter, flyTo, onSelectIgtLayer]);
 
     const hasSelectedLayers = selectedTableItems.length > 0;
-    const isShowLoading = isLoadingLayers || isCheckingHits;
+    const isShowLoading =
+      isLoadingLayers ||
+      (showFilter && adminBoundaryQuery.isLoading) ||
+      isCheckingHits ||
+      isCalculating;
     const hasIntersectingLayers = !isEmptyArray(intersectingLayers);
     const hasFilteredLayers = !isEmptyArray(filteredLayers);
     const isPurchaseLimitValid =
