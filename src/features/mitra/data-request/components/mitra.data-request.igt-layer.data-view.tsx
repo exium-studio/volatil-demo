@@ -273,6 +273,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
       calculate,
     ]);
 
+    // Effects — Auto-fit map camera when administrative boundary AOI polygon is resolved
+    useEffect(() => {
+      if (!map || !effectiveAoiPolygon || selectionType !== "catalog") return;
+      flyToCartGeometry(map, effectiveAoiPolygon);
+    }, [map, effectiveAoiPolygon, selectionType]);
+
     // Handlers — Cart actions (Direct submit to BE without local spatial processing)
     const handleAddToCartSelected = () => {
       const targetLayers =
