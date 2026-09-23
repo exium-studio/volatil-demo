@@ -1,5 +1,6 @@
 // src/features/mitra/data-request/hooks/use-mitra-data-request-calculation.ts
 
+<<<<<<< HEAD
 import { toast } from "@/design-system/components/toast";
 import { calculateSpatialCoverageStream } from "@/features/mitra/data-request/api/mitra.data-request-calculation.api";
 import type {
@@ -152,5 +153,11 @@ export const useMitraDataRequestCalculation = () => {
     reset,
     setResult,
   };
+=======
+import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
+
+export const useMitraDataRequestCalculation = () => {
+  return useMitraDataRequestCalculationStore();
+>>>>>>> 33809338f1c7d2bc03bcaa5db8c6fa17af78cfa9
 };
 

@@ -2,7 +2,7 @@
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
-import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -12,6 +12,7 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestSpatialSummaryProps } from "@/features/mitra/data-request/types/mitra.data-request.spatial-summary.type";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import {
@@ -32,8 +33,9 @@ export const MitraDataRequestSpatialSummary = memo(
       estimatedTotalPrice = 0,
       isPurchaseLimitValid = true,
       purchaseLimitMessage,
-      isCalculating = false,
-      progressMessage,
+      isCalculating: propIsCalculating,
+      progressMessage: propProgressMessage,
+      progressPercentage: propProgressPercentage,
       hasAoiPolygon = false,
       hasCoveragePolygon = false,
       aoiColorPalette = "blue",
@@ -47,8 +49,24 @@ export const MitraDataRequestSpatialSummary = memo(
 
     // Stores
     const { theme } = useThemeStore();
+    const storeIsCalculating = useMitraDataRequestCalculationStore(
+      (state) => state.isCalculating,
+    );
+    const storeProgressMessage = useMitraDataRequestCalculationStore(
+      (state) => state.progressMessage,
+    );
+    const storeProgressPercentage = useMitraDataRequestCalculationStore(
+      (state) => state.progressPercentage,
+    );
 
-    if (isCalculating) {
+    // Derived Values
+    const effectiveIsCalculating = propIsCalculating ?? storeIsCalculating;
+    const effectiveProgressMessage =
+      propProgressMessage || storeProgressMessage;
+    const effectiveProgressPercentage =
+      propProgressPercentage ?? storeProgressPercentage;
+
+    if (effectiveIsCalculating) {
       return (
         <VStack
           gap={"sm"}
@@ -59,15 +77,30 @@ export const MitraDataRequestSpatialSummary = memo(
           border={"1px solid"}
           borderColor={"border.subtle"}
         >
-          <HStack align={"center"} gap={"xs"} color={"blue.fg"}>
-            <AppIcon icon={LoaderIcon} />
-            <P fontSize={"sm"} fontWeight={"semibold"}>
-              {progressMessage || "Sedang mengkalkulasi spasial di server (PostGIS)..."}
-            </P>
+          <HStack align={"center"} justify={"space-between"} color={"blue.fg"}>
+            <HStack align={"center"} gap={"xs"}>
+              <AppIcon icon={LoaderIcon} />
+              <P fontSize={"sm"} fontWeight={"semibold"}>
+                {effectiveProgressMessage ||
+                  "Sedang mengkalkulasi spasial di server (PostGIS)..."}
+              </P>
+            </HStack>
+            {effectiveProgressPercentage > 0 && (
+              <P fontSize={"xs"} fontWeight={"bold"} color={"blue.fg"}>
+                {`${effectiveProgressPercentage}%`}
+              </P>
+            )}
           </HStack>
 
-          <Skeleton h={"16px"} w={"full"} />
-          <Skeleton h={"16px"} w={"80%"} />
+          <Progress.Root
+            value={effectiveProgressPercentage}
+            size={"xs"}
+            colorPalette={"blue"}
+          >
+            <Progress.Track>
+              <Progress.Range />
+            </Progress.Track>
+          </Progress.Root>
         </VStack>
       );
     }

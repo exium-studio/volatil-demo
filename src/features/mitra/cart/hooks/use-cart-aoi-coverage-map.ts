@@ -7,7 +7,7 @@ import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/cli
 import type { CartMapLayerOptions } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
-import { useCallback, useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export const CART_AOI_SOURCE_ID = "cart-aoi-source";
 export const CART_AOI_FILL_ID = "cart-aoi-fill";
@@ -293,25 +293,57 @@ export const useCartAoiCoverageMap = (
   map: maplibregl.Map | null,
   options: CartMapLayerOptions,
 ) => {
-  const syncLayers = useCallback(() => {
-    renderCartMapLayers(map, options);
-  }, [map, options]);
+  // Destructure options for precise dependencies
+  const {
+    aoiPolygon,
+    coveragePolygon,
+    selectionType,
+    isAoiVisible = true,
+    isCoverageVisible = true,
+  } = options;
 
+  // Refs — Hold latest options for event callbacks without re-triggering unmount/remount
+  const optionsRef = useRef(options);
+
+  // Effects — Keep optionsRef synchronized without mutating ref during render
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [options]);
+
+  // Effects — Setup map event listeners and unmount cleanup
   useEffect(() => {
     if (!map) return;
 
     const handleReady = () => {
-      syncLayers();
+      renderCartMapLayers(map, optionsRef.current);
     };
 
     map.on(MAP_EVENTS_MAP.styleReady as string, handleReady);
     map.on(MAP_EVENTS_MAP.layersReady as string, handleReady);
-    syncLayers();
 
     return () => {
       map.off(MAP_EVENTS_MAP.styleReady as string, handleReady);
       map.off(MAP_EVENTS_MAP.layersReady as string, handleReady);
       removeCartMapLayers(map);
     };
-  }, [map, syncLayers]);
+  }, [map]);
+
+  // Effects — Synchronize map layers whenever options properties change
+  useEffect(() => {
+    if (!map) return;
+    renderCartMapLayers(map, {
+      aoiPolygon,
+      coveragePolygon,
+      selectionType,
+      isAoiVisible,
+      isCoverageVisible,
+    });
+  }, [
+    map,
+    aoiPolygon,
+    coveragePolygon,
+    selectionType,
+    isAoiVisible,
+    isCoverageVisible,
+  ]);
 };
