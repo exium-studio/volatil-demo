@@ -135,10 +135,11 @@ export const MitraDataRequestSpatialSummary = memo(
           {/* Subtotal Bidang */}
           <HStack justify={"space-between"} align={"start"}>
             <VStack align={"start"} gap={0}>
-              <P fontSize={"xs"} fontWeight={"medium"} color={"fg.body"}>
+              <P fontSize={"sm"} fontWeight={"medium"} color={"fg.body"}>
                 {"Subtotal Bidang"}
               </P>
-              <P fontSize={"2xs"} color={"fg.muted"}>
+
+              <P fontSize={"xs"} color={"fg.muted"}>
                 {totalBidangCount > 0 ? (
                   <>
                     <TNum>{formatNumber(totalBidangCount)}</TNum>
@@ -155,7 +156,8 @@ export const MitraDataRequestSpatialSummary = memo(
                 )}
               </P>
             </VStack>
-            <P fontWeight={"semibold"} fontSize={"xs"}>
+
+            <P fontWeight={"semibold"} fontSize={"sm"}>
               <FormatNumber
                 value={subtotalBidangPrice}
                 style={"currency"}
@@ -168,10 +170,11 @@ export const MitraDataRequestSpatialSummary = memo(
           {/* Subtotal Kawasan */}
           <HStack justify={"space-between"} align={"start"}>
             <VStack align={"start"} gap={0}>
-              <P fontSize={"xs"} fontWeight={"medium"} color={"fg.body"}>
+              <P fontSize={"sm"} fontWeight={"medium"} color={"fg.body"}>
                 {"Subtotal Kawasan"}
               </P>
-              <P fontSize={"2xs"} color={"fg.muted"}>
+
+              <P fontSize={"xs"} color={"fg.muted"}>
                 {totalKawasanAreaHa > 0 ? (
                   <>
                     <TNum>
@@ -192,7 +195,8 @@ export const MitraDataRequestSpatialSummary = memo(
                 )}
               </P>
             </VStack>
-            <P fontWeight={"semibold"} fontSize={"xs"}>
+
+            <P fontWeight={"semibold"} fontSize={"sm"}>
               <FormatNumber
                 value={subtotalKawasanPrice}
                 style={"currency"}
@@ -206,10 +210,9 @@ export const MitraDataRequestSpatialSummary = memo(
 
           {/* Total Estimasi */}
           <HStack justify={"space-between"} align={"center"}>
-            <P fontSize={"sm"} fontWeight={"semibold"}>
-              {"Total Estimasi"}
-            </P>
-            <P fontSize={"md"} fontWeight={"semibold"} color={"blue.fg"}>
+            <P fontWeight={"semibold"}>{"Total Estimasi"}</P>
+
+            <P fontWeight={"bold"} color={"blue.fg"}>
               <FormatNumber
                 value={estimatedTotalPrice}
                 style={"currency"}

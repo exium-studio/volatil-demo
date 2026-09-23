@@ -201,7 +201,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       });
     }, [activeLayers, combinedCqlFilter, effectiveAoiPolygon, hitQueries]);
 
-    // Apply text search & basis filter
+    // Apply text search & basis filter locally for UI display
     const filteredLayers = useMemo(() => {
       let layers = intersectingLayers;
       if (basisFilter === "bidang") {
@@ -238,30 +238,30 @@ export const MitraDataRequestIgtLayerDataView = memo(
       isCoverageVisible,
     });
 
-    // Derived — Valid layers eligible for spatial calculation
-    const validLayers = useMemo(() => {
-      return filteredLayers.filter((layer) =>
+    // Derived — Valid layers eligible for spatial calculation (ALL intersecting layers in AOI, NOT affected by local search/basis filter)
+    const validCalculationLayers = useMemo(() => {
+      return intersectingLayers.filter((layer) =>
         Boolean(layer?.wfs?.wfsTypeName || layer?.id),
       );
-    }, [filteredLayers]);
+    }, [intersectingLayers]);
 
-    // Derived stable trigger key: ensures re-renders from stream progress don't re-trigger calculate()
+    // Derived stable trigger key: depends strictly on AOI, selectionType, and all intersecting layers in that AOI
     const calcTriggerKey = useMemo(() => {
-      if (!effectiveAoiPolygon || isEmptyArray(validLayers)) return "";
-      const layerIds = validLayers
+      if (!effectiveAoiPolygon || isEmptyArray(validCalculationLayers)) return "";
+      const layerIds = validCalculationLayers
         .map((l) => l.id)
         .sort()
         .join(",");
       const aoiString = JSON.stringify(effectiveAoiPolygon);
       return `${selectionType}|${combinedCqlFilter ?? ""}|${layerIds}|${aoiString}`;
-    }, [effectiveAoiPolygon, validLayers, selectionType, combinedCqlFilter]);
+    }, [effectiveAoiPolygon, validCalculationLayers, selectionType, combinedCqlFilter]);
 
-    // Effects — Trigger backend spatial calculation whenever effective AOI or layers change
+    // Effects — Trigger backend spatial calculation whenever effective AOI or intersecting layers change
     useEffect(() => {
       if (
         !calcTriggerKey ||
         !effectiveAoiPolygon ||
-        isEmptyArray(validLayers)
+        isEmptyArray(validCalculationLayers)
       ) {
         return;
       }
@@ -277,7 +277,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         selectionType,
         cqlFilter: combinedCqlFilter,
         aoiPolygon: resolvedAoi,
-        layers: validLayers.map((layer) => ({
+        layers: validCalculationLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
           title: layer.title,
@@ -469,13 +469,14 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     const hasSelectedLayers = selectedTableItems.length > 0;
     const isShowLoading = isLoadingLayers || isCheckingHits;
-    const hasIntersectingData = !isEmptyArray(filteredLayers);
+    const hasIntersectingLayers = !isEmptyArray(intersectingLayers);
+    const hasFilteredLayers = !isEmptyArray(filteredLayers);
     const isPurchaseLimitValid =
       calculationResult?.isPurchaseLimitValid ?? true;
     const purchaseLimitMessage = calculationResult?.purchaseLimitMessage;
 
     const isCartDisabled =
-      !hasIntersectingData ||
+      !hasFilteredLayers ||
       addToCartMultipleMutation.isPending ||
       isShowLoading ||
       isCalculating ||
@@ -554,23 +555,33 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 </VStack>
               )}
 
-            {!isShowLoading && !isErrorLayers && !hasIntersectingData && (
+            {!isShowLoading && !isErrorLayers && !hasIntersectingLayers && (
               <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
-                {debouncedSearch ? (
-                  <NoResultState />
-                ) : (
-                  <NoDataState
-                    icon={IconDatabaseOff}
-                    title={"Tidak Ada Layer IGT pada Area Ini"}
-                    description={
-                      "Area AOI yang Anda pilih tidak beririsan dengan data spasial layer IGT manapun. Silakan gambar atau upload area lain yang memiliki data."
-                    }
-                  />
-                )}
+                <NoDataState
+                  icon={IconDatabaseOff}
+                  title={"Tidak Ada Layer IGT pada Area Ini"}
+                  description={
+                    "Area AOI yang Anda pilih tidak beririsan dengan data spasial layer IGT manapun. Silakan gambar atau upload area lain yang memiliki data."
+                  }
+                />
               </VStack>
             )}
 
-            {!isShowLoading && !isErrorLayers && hasIntersectingData && (
+            {!isShowLoading &&
+              !isErrorLayers &&
+              hasIntersectingLayers &&
+              !hasFilteredLayers && (
+                <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
+                  <NoResultState
+                    query={
+                      debouncedSearch ||
+                      (basisFilter !== "all" ? `Basis: ${basisFilter}` : "...")
+                    }
+                  />
+                </VStack>
+              )}
+
+            {!isShowLoading && !isErrorLayers && hasFilteredLayers && (
               <DataViewTable.Root<IgtLayerItem>
                 headers={dataList.headers}
                 items={dataList.items}

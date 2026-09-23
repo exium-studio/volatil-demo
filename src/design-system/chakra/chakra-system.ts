@@ -2482,7 +2482,7 @@ export const chakraConfig = defineConfig({
         tableCellH: { value: "56px" },
         tableActionsW: { value: "56px" },
         modalControlsW: { value: "70px" },
-        feedbackMinH: { value: "250px" },
+        feedbackMinH: { value: "240px" },
       },
       zIndex: {
         modal: { value: 1400 },
