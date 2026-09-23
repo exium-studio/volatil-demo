@@ -51,6 +51,8 @@ import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   CheckIcon,
+  EyeIcon,
+  EyeOffIcon,
   FilePlusIcon,
   FocusIcon,
   RotateCcwIcon,
@@ -477,14 +479,16 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
             </P>
           </VStack>
 
-          <Button
-            variant={"outline"}
-            colorPalette={"red"}
-            onClick={onResetFile}
-          >
-            <AppIcon icon={TrashIcon} />
-            {"Ganti Berkas"}
-          </Button>
+          <Tooltip content={"Ganti Berkas / Unggah Ulang"}>
+            <IconButton
+              variant={"outline"}
+              colorPalette={"red"}
+              aria-label={"Ganti Berkas / Unggah Ulang"}
+              onClick={onResetFile}
+            >
+              <AppIcon icon={TrashIcon} />
+            </IconButton>
+          </Tooltip>
         </HStack>
       </VStack>
 
@@ -636,6 +640,7 @@ const UploadAoiConfirmedAttributeList = memo(
     const map = useMapInstanceStore((state) => state.map);
 
     // States
+    const [isAoiVisible, setIsAoiVisible] = useState(true);
     const [pageState, setPageState] =
       useState<MitraDataRequestUploadAoiPageState>({
         page: 1,
@@ -708,28 +713,47 @@ const UploadAoiConfirmedAttributeList = memo(
 
               <HStack align={"center"} gap={"sm"}>
                 {confirmedPolygon && map && (
-                  <Tooltip content={"Zoom ke Area (AOI)"}>
-                    <IconButton
-                      variant={"outline"}
-                      aria-label={"Zoom ke Area (AOI)"}
-                      onClick={() => {
-                        highlightFeatureOnMap(map, confirmedPolygon);
-                      }}
+                  <>
+                    <Tooltip
+                      content={
+                        isAoiVisible
+                          ? "Sembunyikan Area (AOI) dari Peta"
+                          : "Tampilkan Area (AOI) di Peta"
+                      }
                     >
-                      <AppIcon icon={FocusIcon} />
-                    </IconButton>
-                  </Tooltip>
+                      <IconButton
+                        variant={"outline"}
+                        aria-label={"Toggle Visibilitas AOI"}
+                        onClick={() => setIsAoiVisible((prev) => !prev)}
+                      >
+                        <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip content={"Zoom ke Area (AOI)"}>
+                      <IconButton
+                        variant={"outline"}
+                        aria-label={"Zoom ke Area (AOI)"}
+                        onClick={() => {
+                          highlightFeatureOnMap(map, confirmedPolygon);
+                        }}
+                      >
+                        <AppIcon icon={FocusIcon} />
+                      </IconButton>
+                    </Tooltip>
+                  </>
                 )}
 
-                <Button
-                  variant={"outline"}
-                  colorPalette={"red"}
-                  pl={3}
-                  onClick={onResetAoi}
-                >
-                  <AppIcon icon={RotateCcwIcon} />
-                  {"Ganti AOI"}
-                </Button>
+                <Tooltip content={"Ganti AOI / Unggah Ulang"}>
+                  <IconButton
+                    variant={"outline"}
+                    colorPalette={"red"}
+                    aria-label={"Ganti AOI"}
+                    onClick={onResetAoi}
+                  >
+                    <AppIcon icon={RotateCcwIcon} />
+                  </IconButton>
+                </Tooltip>
               </HStack>
             </HStack>
           </VStack>
@@ -739,6 +763,7 @@ const UploadAoiConfirmedAttributeList = memo(
           <MitraDataRequestIgtLayerDataView
             cqlFilter={aoiCqlFilter}
             aoiPolygon={confirmedPolygon}
+            isAoiVisible={isAoiVisible}
             selectionType={"upload_aoi"}
             showFilter={false}
             onSelectIgtLayer={(layer) => {

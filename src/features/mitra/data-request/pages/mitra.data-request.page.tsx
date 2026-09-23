@@ -8,12 +8,14 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
+import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestTab } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { FolderArchiveIcon, ListIcon } from "lucide-react";
-import { lazy, Suspense, useTransition } from "react";
+import { lazy, Suspense, useEffect, useTransition } from "react";
 
 const MitraDataRequestCatalogTabsContent = lazy(() =>
   import("@/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content").then(
@@ -72,6 +74,16 @@ export const MitraDataRequestPage = () => {
 
   // Derived Values
   const activeTab: MitraDataRequestTab = search.tab ?? "catalog";
+
+  // Effects — Reset data request states only when navigating away from the route
+  useEffect(() => {
+    return () => {
+      useAdministrativeFilterStore
+        .getState()
+        .setAppliedAdministrativeFilters({});
+      useMitraDataRequestCalculationStore.getState().reset();
+    };
+  }, []);
 
   // Handlers
   const handleTabChange = (nextTab: string) => {

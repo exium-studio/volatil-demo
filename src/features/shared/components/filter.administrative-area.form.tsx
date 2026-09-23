@@ -32,6 +32,7 @@ export const FilterAdministrativeAreaForm = (
     onReset,
     showActionButtons = true,
     showAlert = true,
+    alertDescription = "Pilih wilayah administratif untuk menentukan batas area (AOI) untuk mengambil data IGT.",
   } = props;
 
   // States
@@ -42,8 +43,7 @@ export const FilterAdministrativeAreaForm = (
   const isControlled = controlledValue !== undefined;
   const currentValues = isControlled ? controlledValue : internalValue;
 
-  const isApplyDisabled =
-    !currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value;
+  const isApplyDisabled = !currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value;
 
   // Handlers
   const handleFieldChange = (
@@ -90,11 +90,7 @@ export const FilterAdministrativeAreaForm = (
           <Alert.Root status={"info"} colorPalette={"blue"} w={"full"}>
             <Alert.Indicator />
             <Alert.Content>
-              <Alert.Description>
-                {
-                  "Filter wilayah administratif yang diterapkan akan berlaku secara menyeluruh pada katalog layer IGT dan tabel atribut."
-                }
-              </Alert.Description>
+              <Alert.Description>{alertDescription}</Alert.Description>
             </Alert.Content>
           </Alert.Root>
         )}
@@ -108,9 +104,7 @@ export const FilterAdministrativeAreaForm = (
           >
             <FilterAdministrativeAreaProvinceSelect
               modalKey={`${modalKeyPrefix}.${IGT_FILTER_KEYS_MAP.PROVINSI}`}
-              value={
-                currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value ?? ""
-              }
+              value={currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value ?? ""}
               onValueChange={(details) =>
                 handleFieldChange(IGT_FILTER_KEYS_MAP.PROVINSI, details)
               }
@@ -125,15 +119,9 @@ export const FilterAdministrativeAreaForm = (
           >
             <FilterAdministrativeAreaRegencySelect
               modalKey={`${modalKeyPrefix}.${IGT_FILTER_KEYS_MAP.KABUPATEN}`}
-              provinceId={
-                currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value
-              }
-              value={
-                currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value ?? ""
-              }
-              disabled={
-                !currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value
-              }
+              provinceId={currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
+              value={currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value ?? ""}
+              disabled={!currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
               onValueChange={(details) =>
                 handleFieldChange(IGT_FILTER_KEYS_MAP.KABUPATEN, details)
               }
@@ -148,15 +136,9 @@ export const FilterAdministrativeAreaForm = (
           >
             <FilterAdministrativeAreaDistrictSelect
               modalKey={`${modalKeyPrefix}.${IGT_FILTER_KEYS_MAP.KECAMATAN}`}
-              regencyId={
-                currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
-              }
-              value={
-                currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ?? ""
-              }
-              disabled={
-                !currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value
-              }
+              regencyId={currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value}
+              value={currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ?? ""}
+              disabled={!currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value}
               onValueChange={(details) =>
                 handleFieldChange(IGT_FILTER_KEYS_MAP.KECAMATAN, details)
               }
@@ -171,15 +153,9 @@ export const FilterAdministrativeAreaForm = (
           >
             <FilterAdministrativeAreaSubdistrictSelect
               modalKey={`${modalKeyPrefix}.${IGT_FILTER_KEYS_MAP.KELURAHAN}`}
-              districtId={
-                currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
-              }
-              value={
-                currentValues[IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ?? ""
-              }
-              disabled={
-                !currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value
-              }
+              districtId={currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value}
+              value={currentValues[IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ?? ""}
+              disabled={!currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value}
               onValueChange={(details) =>
                 handleFieldChange(IGT_FILTER_KEYS_MAP.KELURAHAN, details)
               }

@@ -59,6 +59,7 @@ export type FilterAdministrativeAreaFormProps = {
   onReset?: () => void;
   showActionButtons?: boolean;
   showAlert?: boolean;
+  alertDescription?: string;
 };
 
 export const hasActiveAdministrativeFilter = (

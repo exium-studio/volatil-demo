@@ -3,7 +3,8 @@
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import type { SelectionType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
-import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
+
+export type BasisFilterType = "all" | "bidang" | "kawasan";
 
 export type MitraDataRequestIgtLayerDataViewProps = {
   cqlFilter?: string;
@@ -14,8 +15,8 @@ export type MitraDataRequestIgtLayerDataViewProps = {
     | GeoJSON.Polygon
     | null;
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
-  onApplyFilter?: (filters: FilterAdministrativeAreaValues) => void;
   showFilter?: boolean;
+  isAoiVisible?: boolean;
   onCancelCoverage?: () => void;
 };
 

@@ -1,6 +1,5 @@
 // src/features/mitra/data-request/components/mitra.data-request.spatial-summary.tsx
 
-import { IconButton } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -8,14 +7,14 @@ import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestSpatialSummaryProps } from "@/features/mitra/data-request/types/mitra.data-request.spatial-summary.type";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { FocusIcon, LoaderIcon, ShieldAlertIcon } from "lucide-react";
+import { LoaderIcon, ShieldAlertIcon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraDataRequestSpatialSummary = memo(
@@ -26,21 +25,17 @@ export const MitraDataRequestSpatialSummary = memo(
       totalKawasanAreaHa = 0,
       subtotalBidangPrice = 0,
       subtotalKawasanPrice = 0,
+      pricePerBidang: propPricePerBidang,
+      pricePerKawasanHa: propPricePerKawasanHa,
       estimatedTotalPrice = 0,
       isPurchaseLimitValid = true,
       purchaseLimitMessage,
       isCalculating: propIsCalculating,
       progressMessage: propProgressMessage,
       progressPercentage: propProgressPercentage,
-      hasAoiPolygon = false,
       hasCoveragePolygon = false,
-      aoiColorPalette = "blue",
-      isAoiVisible = true,
       isCoverageVisible = true,
-      onToggleAoiVisible,
       onToggleCoverageVisible,
-      onFlyToAoi,
-      onFlyToCoverage,
     } = props;
 
     // Stores
@@ -55,12 +50,20 @@ export const MitraDataRequestSpatialSummary = memo(
       (state) => state.progressPercentage,
     );
 
+    // Hooks
+    const pricingPolicy = usePricingPolicy();
+
     // Derived Values
     const effectiveIsCalculating = propIsCalculating ?? storeIsCalculating;
     const effectiveProgressMessage =
       propProgressMessage || storeProgressMessage;
     const effectiveProgressPercentage =
       propProgressPercentage ?? storeProgressPercentage;
+
+    const effectivePricePerBidang =
+      propPricePerBidang ?? pricingPolicy.pricePerBidang;
+    const effectivePricePerKawasanHa =
+      propPricePerKawasanHa ?? pricingPolicy.pricePerKawasanHa;
 
     if (effectiveIsCalculating) {
       return (
@@ -108,148 +111,51 @@ export const MitraDataRequestSpatialSummary = memo(
         rounded={theme.radii.container}
         bg={"bg.subtle"}
         align={"stretch"}
-        // border={"1px solid"}
         borderColor={"border.subtle"}
       >
-        {/* Layer Controls & Metrics */}
-        <VStack gap={"xs"} align={"stretch"} fontSize={"sm"}>
-          {/* AOI Layer Control Row */}
-          {hasAoiPolygon && (
-            <HStack justify={"space-between"} align={"center"}>
-              <HStack gap={"xs"} align={"center"}>
-                <Box
-                  w={"8px"}
-                  h={"8px"}
-                  rounded={"full"}
-                  bg={`${aoiColorPalette}.solid`}
-                />
-                <P color={"fg.muted"}>{"Area Batas (AOI)"}</P>
-              </HStack>
-
-              <HStack gap={"xs"} align={"center"}>
-                {onToggleAoiVisible && (
-                  <Tooltip
-                    content={
-                      isAoiVisible
-                        ? "Sembunyikan Polygon AOI"
-                        : "Tampilkan Polygon AOI"
-                    }
-                  >
-                    <Switch
-                      size={"sm"}
-                      checked={isAoiVisible}
-                      onCheckedChange={onToggleAoiVisible}
-                    />
-                  </Tooltip>
-                )}
-
-                {onFlyToAoi && (
-                  <Tooltip content={"Zoom ke Polygon AOI"}>
-                    <IconButton
-                      size={"xs"}
-                      variant={"ghost"}
-                      onClick={onFlyToAoi}
-                    >
-                      <AppIcon icon={FocusIcon} />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </HStack>
-            </HStack>
-          )}
-
-          {/* Bidang Summary Row */}
-          <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.muted"}>{"IGT Berbasis Bidang"}</P>
-            <P fontWeight={"medium"}>
-              {totalBidangCount > 0 ? (
-                <>
-                  <TNum>{formatNumber(totalBidangCount)}</TNum> {"bidang"}
-                </>
-              ) : (
-                "-"
-              )}
-            </P>
-          </HStack>
-
-          {/* Kawasan Summary & Map Control Row */}
+        {/* Coverage Layer Switch (Only rendered if coverage polygon exists) */}
+        {hasCoveragePolygon && onToggleCoverageVisible && (
           <HStack justify={"space-between"} align={"center"}>
             <HStack gap={"xs"} align={"center"}>
-              {hasCoveragePolygon && (
-                <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
-              )}
-              <P color={"fg.muted"}>{"IGT Berbasis Kawasan"}</P>
+              <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Tampilkan Cakupan Kawasan"}
+              </P>
             </HStack>
+            <Switch
+              size={"sm"}
+              checked={isCoverageVisible}
+              onCheckedChange={onToggleCoverageVisible}
+            />
+          </HStack>
+        )}
 
-            <HStack gap={"sm"} align={"center"}>
-              <P fontWeight={"medium"}>
-                {totalKawasanAreaHa > 0 ? (
+        {/* Pricing Subtotal & Details */}
+        <VStack gap={"sm"} align={"stretch"} fontSize={"sm"}>
+          {/* Subtotal Bidang */}
+          <HStack justify={"space-between"} align={"start"}>
+            <VStack align={"start"} gap={0}>
+              <P fontSize={"xs"} fontWeight={"medium"} color={"fg.body"}>
+                {"Subtotal Bidang"}
+              </P>
+              <P fontSize={"2xs"} color={"fg.muted"}>
+                {totalBidangCount > 0 ? (
                   <>
-                    <TNum>
-                      {formatNumber(totalKawasanAreaHa, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </TNum>{" "}
-                    {"ha"}
+                    <TNum>{formatNumber(totalBidangCount)}</TNum>
+                    {" bidang × "}
+                    <FormatNumber
+                      value={effectivePricePerBidang}
+                      style={"currency"}
+                      currency={"IDR"}
+                      maximumFractionDigits={0}
+                    />
                   </>
                 ) : (
-                  "-"
+                  "0 bidang"
                 )}
               </P>
-
-              {hasCoveragePolygon && (
-                <HStack gap={"2xs"} align={"center"}>
-                  {onToggleCoverageVisible && (
-                    <Tooltip
-                      content={
-                        isCoverageVisible
-                          ? "Sembunyikan Cakupan Kawasan"
-                          : "Tampilkan Cakupan Kawasan"
-                      }
-                    >
-                      <Switch
-                        size={"sm"}
-                        checked={isCoverageVisible}
-                        onCheckedChange={onToggleCoverageVisible}
-                      />
-                    </Tooltip>
-                  )}
-
-                  {onFlyToCoverage && (
-                    <Tooltip content={"Zoom ke Cakupan Kawasan"}>
-                      <IconButton
-                        size={"xs"}
-                        variant={"ghost"}
-                        onClick={onFlyToCoverage}
-                      >
-                        <AppIcon icon={FocusIcon} />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </HStack>
-              )}
-            </HStack>
-          </HStack>
-        </VStack>
-
-        <Separator
-          variant={"dashed"}
-          borderTopWidth={"2px"}
-          borderColor={"border.subtle"}
-          my={1}
-        />
-
-        {/* Pricing Subtotal & Total */}
-        <VStack gap={1} align={"stretch"} fontSize={"sm"}>
-          <P fontSize={"xs"} color={"fg.subtle"}>
-            {"Estimasi Tagihan"}
-          </P>
-
-          <HStack justify={"space-between"}>
-            <P color={"fg.muted"} fontSize={"xs"}>
-              {"Subtotal Bidang"}
-            </P>
-            <P fontWeight={"medium"} fontSize={"xs"}>
+            </VStack>
+            <P fontWeight={"semibold"} fontSize={"xs"}>
               <FormatNumber
                 value={subtotalBidangPrice}
                 style={"currency"}
@@ -259,11 +165,34 @@ export const MitraDataRequestSpatialSummary = memo(
             </P>
           </HStack>
 
-          <HStack justify={"space-between"}>
-            <P color={"fg.muted"} fontSize={"xs"}>
-              {"Subtotal Kawasan"}
-            </P>
-            <P fontWeight={"medium"} fontSize={"xs"}>
+          {/* Subtotal Kawasan */}
+          <HStack justify={"space-between"} align={"start"}>
+            <VStack align={"start"} gap={0}>
+              <P fontSize={"xs"} fontWeight={"medium"} color={"fg.body"}>
+                {"Subtotal Kawasan"}
+              </P>
+              <P fontSize={"2xs"} color={"fg.muted"}>
+                {totalKawasanAreaHa > 0 ? (
+                  <>
+                    <TNum>
+                      {formatNumber(totalKawasanAreaHa, {
+                        maximumFractionDigits: 2,
+                      })}
+                    </TNum>
+                    {" ha × "}
+                    <FormatNumber
+                      value={effectivePricePerKawasanHa}
+                      style={"currency"}
+                      currency={"IDR"}
+                      maximumFractionDigits={0}
+                    />
+                  </>
+                ) : (
+                  "0 ha"
+                )}
+              </P>
+            </VStack>
+            <P fontWeight={"semibold"} fontSize={"xs"}>
               <FormatNumber
                 value={subtotalKawasanPrice}
                 style={"currency"}
@@ -273,8 +202,9 @@ export const MitraDataRequestSpatialSummary = memo(
             </P>
           </HStack>
 
-          <Separator borderColor={"border.subtle"} my={1} />
+          <Separator borderColor={"border.subtle"} />
 
+          {/* Total Estimasi */}
           <HStack justify={"space-between"} align={"center"}>
             <P fontSize={"sm"} fontWeight={"semibold"}>
               {"Total Estimasi"}

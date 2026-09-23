@@ -6,6 +6,8 @@ export type MitraDataRequestSpatialSummaryProps = {
   totalKawasanAreaHa?: number;
   subtotalBidangPrice?: number;
   subtotalKawasanPrice?: number;
+  pricePerBidang?: number;
+  pricePerKawasanHa?: number;
   estimatedTotalPrice?: number;
   isPurchaseLimitValid?: boolean;
   purchaseLimitMessage?: string;

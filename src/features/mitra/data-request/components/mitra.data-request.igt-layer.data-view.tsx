@@ -1,9 +1,6 @@
 // src/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -14,6 +11,7 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -36,27 +34,27 @@ import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-la
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
-import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
+import type {
+  BasisFilterType,
+  MitraDataRequestIgtLayerDataViewProps,
+} from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { checkBboxIntersection } from "@/features/mitra/data-request/utils/calculate-feature-area";
-import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
-import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconDatabaseOff } from "@tabler/icons-react";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import {
-  EyeIcon,
-  EyeOffIcon,
-  FocusIcon,
-  ShoppingCartIcon,
-  SlidersHorizontalIcon,
-  TablePropertiesIcon,
-} from "lucide-react";
+import { FocusIcon, ShoppingCartIcon, TablePropertiesIcon } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
+
+const BASIS_FILTER_OPTIONS: Array<{ value: BasisFilterType; label: string }> = [
+  { value: "all", label: "Semua" },
+  { value: "bidang", label: "Bidang" },
+  { value: "kawasan", label: "Kawasan" },
+];
 
 export const MitraDataRequestIgtLayerDataView = memo(
   (props: MitraDataRequestIgtLayerDataViewProps) => {
@@ -66,16 +64,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
       selectionType = "catalog",
       aoiPolygon: propAoiPolygon,
       onSelectIgtLayer,
-      onApplyFilter,
       showFilter = true,
+      isAoiVisible = true,
     } = props;
 
     // Stores
     const { theme } = useThemeStore();
     const { flyTo } = useFlyToLayer();
     const map = useMapInstanceStore((state) => state.map);
-    const { appliedAdministrativeFilters, setAppliedAdministrativeFilters } =
-      useAdministrativeFilterStore();
+    const { appliedAdministrativeFilters } = useAdministrativeFilterStore();
     const calculate = useMitraDataRequestCalculationStore(
       (state) => state.calculate,
     );
@@ -88,10 +85,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
+    const [basisFilter, setBasisFilter] = useState<BasisFilterType>("all");
     const [selectedTableItems, setSelectedTableItems] = useState<
       FormattedListItem<IgtLayerItem>[]
     >([]);
-    const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
     const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
 
     // Mutations
@@ -204,17 +201,23 @@ export const MitraDataRequestIgtLayerDataView = memo(
       });
     }, [activeLayers, combinedCqlFilter, effectiveAoiPolygon, hitQueries]);
 
-    // Apply text search
+    // Apply text search & basis filter
     const filteredLayers = useMemo(() => {
-      if (!debouncedSearch) return intersectingLayers;
+      let layers = intersectingLayers;
+      if (basisFilter === "bidang") {
+        layers = layers.filter((l) => l.spatialBasis === "bidang");
+      } else if (basisFilter === "kawasan") {
+        layers = layers.filter((l) => l.spatialBasis === "kawasan");
+      }
+      if (!debouncedSearch) return layers;
       const lower = debouncedSearch.toLowerCase();
-      return intersectingLayers.filter(
+      return layers.filter(
         (l) =>
           l.id.toLowerCase().includes(lower) ||
           l.wfs?.wfsTypeName?.toLowerCase().includes(lower) ||
           l.title?.toLowerCase().includes(lower),
       );
-    }, [intersectingLayers, debouncedSearch]);
+    }, [intersectingLayers, basisFilter, debouncedSearch]);
 
     const bidangLayers = useMemo(
       () => filteredLayers.filter((l) => l.spatialBasis === "bidang"),
@@ -399,11 +402,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
       });
     };
 
-    const handleApplyFilters = (filters: FilterAdministrativeAreaValues) => {
-      setAppliedAdministrativeFilters(filters);
-      onApplyFilter?.(filters);
-    };
-
     // Derived Values - DataList headers, items, itemActions
     const dataList = useMemo(() => {
       const headers: FormattedTableHeader[] = [
@@ -496,7 +494,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         bg={"bg.body"}
         roundedBottom={theme.radii.container}
       >
-        {/* Actions Header */}
+        {/* Actions Header: Search Bar & Basis IGT Filter */}
         <HStack
           wrap={"wrap"}
           align={"center"}
@@ -515,63 +513,25 @@ export const MitraDataRequestIgtLayerDataView = memo(
             />
           </HStack>
 
-          {/* Right: Actions (Toggle AOI, Zoom AOI, Filter) */}
+          {/* Right: Basis IGT Filter SegmentGroup */}
           <HStack align={"center"} gap={"sm"} flexShrink={0}>
-            {map && (
-              <>
-                <Tooltip
-                  content={
-                    isAoiVisible
-                      ? "Sembunyikan Area (AOI) dari Peta"
-                      : "Tampilkan Area (AOI) di Peta"
-                  }
-                >
-                  <IconButton
-                    variant={"outline"}
-                    aria-label={"Toggle Visibilitas AOI"}
-                    onClick={() => setIsAoiVisible((prev) => !prev)}
-                  >
-                    <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip content={"Zoom ke Area (AOI)"}>
-                  <IconButton
-                    variant={"outline"}
-                    aria-label={"Zoom ke Area (AOI)"}
-                    onClick={() => {
-                      if (effectiveAoiPolygon) {
-                        flyToCartGeometry(map, effectiveAoiPolygon);
-                      }
-                    }}
-                  >
-                    <AppIcon icon={FocusIcon} />
-                  </IconButton>
-                </Tooltip>
-              </>
-            )}
-
-            {showFilter && (
-              <FilterAdministrativeAreaTrigger
-                modalKey={"mitra-data-request-igt-card-filter-modal"}
-                value={appliedAdministrativeFilters}
-                onApply={handleApplyFilters}
-              >
-                <IconButton
-                  variant={"outline"}
-                  aria-label={"Filter Wilayah Administratif"}
-                >
-                  <AppIcon icon={SlidersHorizontalIcon} />
-                </IconButton>
-              </FilterAdministrativeAreaTrigger>
-            )}
+            <SegmentGroupInput
+              size={"sm"}
+              value={basisFilter}
+              onValueChange={(details) => {
+                if (details.value) {
+                  setBasisFilter(details.value as BasisFilterType);
+                }
+              }}
+              options={BASIS_FILTER_OPTIONS}
+            />
           </HStack>
         </HStack>
 
         <Separator borderColor={"bg.canvas"} />
 
         {/* DataList Table with Multi-Selection Checkbox */}
-        <VStack overflowY={"auto"}>
+        <VStack flex={1} overflowY={"auto"}>
           <VStack flex={1} bg={"bg.body"}>
             {isShowLoading && <Skeleton flex={1} p={"md"} rounded={0} />}
 
@@ -632,10 +592,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
           {/* Spatial Calculation Summary Box */}
           {effectiveAoiPolygon && (
-            <Box p={"md"} bg={"bg.body"} w={"full"}>
+            <Box p={"md"} bg={"bg.body"} w={"full"} mt={"auto"}>
               <MitraDataRequestSpatialSummary
                 totalBidangCount={calculationResult?.totalBidangCount ?? 0}
-                totalKawasanCount={calculationResult?.totalKawasanCount ?? 0}
                 totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
                 subtotalBidangPrice={
                   calculationResult?.subtotalBidangPrice ?? 0
@@ -648,17 +607,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 }
                 isPurchaseLimitValid={isPurchaseLimitValid}
                 purchaseLimitMessage={purchaseLimitMessage}
-                hasAoiPolygon={Boolean(effectiveAoiPolygon)}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
-                isAoiVisible={isAoiVisible}
                 isCoverageVisible={isCoverageVisible}
-                onToggleAoiVisible={() => setIsAoiVisible((prev) => !prev)}
                 onToggleCoverageVisible={() =>
                   setIsCoverageVisible((prev) => !prev)
-                }
-                onFlyToAoi={() => flyToCartGeometry(map, effectiveAoiPolygon)}
-                onFlyToCoverage={() =>
-                  flyToCartGeometry(map, calculationResult?.coveragePolygon)
                 }
               />
             </Box>

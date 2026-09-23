@@ -33,6 +33,8 @@ import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconPolygonOff } from "@tabler/icons-react";
 import {
   CheckIcon,
+  EyeIcon,
+  EyeOffIcon,
   FocusIcon,
   InfoIcon,
   PencilIcon,
@@ -254,6 +256,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
 
   // States
+  const [isAoiVisible, setIsAoiVisible] = useState(true);
   const [pageState, setPageState] = useState({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
@@ -321,27 +324,47 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
 
             <HStack align={"center"} gap={"sm"}>
               {confirmedPolygon && map && (
-                <Tooltip content={"Zoom ke Area (AOI)"}>
-                  <IconButton
-                    variant={"outline"}
-                    onClick={() => {
-                      highlightFeatureOnMap(map, confirmedPolygon);
-                    }}
+                <>
+                  <Tooltip
+                    content={
+                      isAoiVisible
+                        ? "Sembunyikan Area (AOI) dari Peta"
+                        : "Tampilkan Area (AOI) di Peta"
+                    }
                   >
-                    <AppIcon icon={FocusIcon} />
-                  </IconButton>
-                </Tooltip>
+                    <IconButton
+                      variant={"outline"}
+                      aria-label={"Toggle Visibilitas AOI"}
+                      onClick={() => setIsAoiVisible((prev) => !prev)}
+                    >
+                      <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip content={"Zoom ke Area (AOI)"}>
+                    <IconButton
+                      variant={"outline"}
+                      aria-label={"Zoom ke Area (AOI)"}
+                      onClick={() => {
+                        highlightFeatureOnMap(map, confirmedPolygon);
+                      }}
+                    >
+                      <AppIcon icon={FocusIcon} />
+                    </IconButton>
+                  </Tooltip>
+                </>
               )}
 
-              <Button
-                variant={"outline"}
-                colorPalette={"red"}
-                pl={3}
-                onClick={onResetDraw}
-              >
-                <AppIcon icon={IconPolygonOff} />
-                {"Hapus gambar"}
-              </Button>
+              <Tooltip content={"Hapus Gambar AOI"}>
+                <IconButton
+                  variant={"outline"}
+                  colorPalette={"red"}
+                  aria-label={"Hapus Gambar AOI"}
+                  onClick={onResetDraw}
+                >
+                  <AppIcon icon={IconPolygonOff} />
+                </IconButton>
+              </Tooltip>
             </HStack>
           </HStack>
         </VStack>
@@ -351,6 +374,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
         <MitraDataRequestIgtLayerDataView
           cqlFilter={aoiCqlFilter}
           aoiPolygon={confirmedPolygon}
+          isAoiVisible={isAoiVisible}
           selectionType={"draw_aoi"}
           showFilter={false}
           onSelectIgtLayer={(layer) => {
