@@ -49,6 +49,8 @@ import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconDatabaseOff } from "@tabler/icons-react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import {
+  EyeIcon,
+  EyeOffIcon,
   FocusIcon,
   ShoppingCartIcon,
   SlidersHorizontalIcon,
@@ -501,13 +503,46 @@ export const MitraDataRequestIgtLayerDataView = memo(
               onValueChange={(val) => setSearchRaw(val)}
             />
 
+            {effectiveAoiPolygon && map && (
+              <>
+                <Tooltip
+                  content={
+                    isAoiVisible
+                      ? "Sembunyikan Area (AOI) dari Peta"
+                      : "Tampilkan Area (AOI) di Peta"
+                  }
+                >
+                  <IconButton
+                    variant={"outline"}
+                    colorPalette={isAoiVisible ? "blue" : "gray"}
+                    aria-label={"Toggle Visibilitas AOI"}
+                    onClick={() => setIsAoiVisible((prev) => !prev)}
+                  >
+                    <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip content={"Zoom ke Area (AOI)"}>
+                  <IconButton
+                    variant={"outline"}
+                    aria-label={"Zoom ke Area (AOI)"}
+                    onClick={() => {
+                      flyToCartGeometry(map, effectiveAoiPolygon);
+                    }}
+                  >
+                    <AppIcon icon={FocusIcon} />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
+
             {showFilter && (
               <FilterAdministrativeAreaTrigger
                 modalKey={"mitra-data-request-igt-card-filter-modal"}
                 value={appliedAdministrativeFilters}
                 onApply={handleApplyFilters}
               >
-                <IconButton variant={"outline"}>
+                <IconButton variant={"outline"} aria-label={"Filter Wilayah Administratif"}>
                   <AppIcon icon={SlidersHorizontalIcon} />
                 </IconButton>
               </FilterAdministrativeAreaTrigger>

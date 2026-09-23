@@ -30,51 +30,56 @@ export async function fetchAdminBoundaryPolygon(
   const cleanName = cleanAdministrativeValue(name);
   if (!cleanName) return null;
 
-  const cqlFilter = `${config.attributeKey} ILIKE '%${cleanName}%'`;
+  const candidateKeys = Array.from(
+    new Set([
+      config.attributeKey,
+      config.attributeKey.toLowerCase(),
+      config.attributeKey.toUpperCase(),
+      "NAMOBJ",
+      "namobj",
+      "NAMA",
+      "nama",
+    ]),
+  );
 
-  try {
-    const result = await fetchWfs({
-      typeName: config.typeName,
-      wfsUrl: config.wfsUrl,
-      version: "2.0.0",
-      srsName: "EPSG:4326",
-      cqlFilter,
-      signal,
-    });
+  for (const attrKey of candidateKeys) {
+    const cqlFilter = `${attrKey} ILIKE '%${cleanName}%'`;
 
-    const features = result.features ?? [];
-    if (features.length === 0) {
-      return null;
-    }
+    try {
+      const result = await fetchWfs({
+        typeName: config.typeName,
+        wfsUrl: config.wfsUrl,
+        version: "2.0.0",
+        srsName: "EPSG:4326",
+        cqlFilter,
+        signal,
+      });
 
-    if (features.length === 1) {
-      const single = features[0];
-      if (
-        single.geometry &&
-        (single.geometry.type === "Polygon" ||
-          single.geometry.type === "MultiPolygon")
-      ) {
-        return single as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+      const features = result.features ?? [];
+      if (features.length === 0) {
+        continue;
       }
-    }
 
-    // If multiple features returned (e.g. multi-part boundary / islands), union them
-    return unionGeoJsonPolygons({
-      type: "FeatureCollection",
-      features,
-    });
-  } catch (error) {
-    if (
-      signal?.aborted ||
-      (error instanceof DOMException && error.name === "AbortError") ||
-      (error instanceof Error && error.name === "AbortError")
-    ) {
-      throw error;
+      if (features.length === 1) {
+        const single = features[0];
+        if (
+          single.geometry &&
+          (single.geometry.type === "Polygon" ||
+            single.geometry.type === "MultiPolygon")
+        ) {
+          return single as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+        }
+      }
+
+      // If multiple features returned (e.g. multi-part boundary / islands), union them
+      return unionGeoJsonPolygons({
+        type: "FeatureCollection",
+        features,
+      });
+    } catch {
+      // Continue trying next candidate attribute
     }
-    console.warn(
-      `Failed to fetch admin boundary polygon for ${level} "${name}":`,
-      error,
-    );
-    return null;
   }
+
+  return null;
 }

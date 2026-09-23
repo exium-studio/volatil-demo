@@ -3,7 +3,6 @@
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Circle } from "@/design-system/components/layout/ui/box";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import {
   Container,
@@ -119,7 +118,12 @@ const MitraHomeDataAvailabilityStats = (props: {
     <StatGrid.Root columns={cols}>
       {STATS.map((stat, index) => {
         return (
-          <StatGrid.Item key={stat.label} index={index} columns={cols}>
+          <StatGrid.Item
+            key={stat.label}
+            index={index}
+            columns={cols}
+            pos={"relative"}
+          >
             <StatGrid.Header>
               <StatGrid.Label
                 fontWeight={"semibold"}
@@ -128,9 +132,15 @@ const MitraHomeDataAvailabilityStats = (props: {
                 {stat.label}
               </StatGrid.Label>
 
-              <Circle p={2} bg={`${stat.colorPalette}.subtle`}>
-                <AppIcon icon={stat.icon} color={`${stat.colorPalette}.fg`} />
-              </Circle>
+              <AppIcon
+                icon={stat.icon}
+                color={`${stat.colorPalette}.subtle`}
+                boxSize={"58px"}
+                pos={"absolute"}
+                right={"16px"}
+                bottom={"50%"}
+                transform={"translateY(50%)"}
+              />
             </StatGrid.Header>
 
             <StatGrid.Value
@@ -139,7 +149,7 @@ const MitraHomeDataAvailabilityStats = (props: {
               color={`${stat.colorPalette}.fg`}
             />
 
-            <StatGrid.Description mt={1}>
+            <StatGrid.Description mt={1} zIndex={2}>
               {stat.description}
             </StatGrid.Description>
           </StatGrid.Item>
