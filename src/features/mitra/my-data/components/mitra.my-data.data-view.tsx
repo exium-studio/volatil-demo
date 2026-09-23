@@ -136,8 +136,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "Label", sortable: true },
-      { th: "Layer IGT", sortable: true },
+      { th: "Layer IGT (Label)", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "WMS URL", sortable: false },
       // { th: "WFS URL", sortable: false,  },
@@ -149,7 +148,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
 
     const items: FormattedListItem<MyDataItem>[] = myData.items.map(
       (item: MyDataItem) => {
-        const layerDisplayName = item.title || item.id.replace(/_/g, " ");
+        const layerDisplayName = item.label || item.title || item.id.replace(/_/g, " ");
         // const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
         const effectiveWmsUrl = item.externalWmsUrl;
         const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
@@ -159,20 +158,11 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           data: item,
           columns: [
             {
-              value: item.label || layerDisplayName,
-              td: (
-                <ClampedP fontSize={"sm"} fontWeight={"medium"} w={"200px"}>
-                  {item.label || "-"}
-                </ClampedP>
-              ),
-              align: "start" as const,
-            },
-            {
               value: layerDisplayName,
               td: (
-                <P fontSize={"sm"} fontWeight={"medium"}>
+                <ClampedP fontSize={"sm"} fontWeight={"medium"} w={"220px"}>
                   {layerDisplayName}
-                </P>
+                </ClampedP>
               ),
               align: "start" as const,
             },
