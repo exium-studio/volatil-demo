@@ -6,7 +6,6 @@ import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
@@ -162,10 +161,7 @@ export const MitraDataRequestSpatialSummary = memo(
         {hasCoveragePolygon && onToggleCoverageVisible && (
           <HStack justify={"space-between"} align={"center"}>
             <HStack gap={"xs"} align={"center"}>
-              <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {"Tampilkan Cakupan Kawasan"}
-              </P>
+              <P fontSize={"sm"}>{"Tampilkan Cakupan Kawasan"}</P>
             </HStack>
 
             <Switch
