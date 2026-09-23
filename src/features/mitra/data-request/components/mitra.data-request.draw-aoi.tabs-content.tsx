@@ -10,6 +10,7 @@ import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
@@ -33,8 +34,6 @@ import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconPolygonOff } from "@tabler/icons-react";
 import {
   CheckIcon,
-  EyeIcon,
-  EyeOffIcon,
   FocusIcon,
   InfoIcon,
   PencilIcon,
@@ -333,13 +332,11 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
                         : "Tampilkan Area (AOI) di Peta"
                     }
                   >
-                    <IconButton
-                      variant={"outline"}
-                      aria-label={"Toggle Visibilitas AOI"}
-                      onClick={() => setIsAoiVisible((prev) => !prev)}
-                    >
-                      <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
-                    </IconButton>
+                    <Switch
+                      checked={isAoiVisible}
+                      onCheckedChange={(e) => setIsAoiVisible(e.checked)}
+                      mr={"xs"}
+                    />
                   </Tooltip>
 
                   <Tooltip content={"Zoom ke Area (AOI)"}>

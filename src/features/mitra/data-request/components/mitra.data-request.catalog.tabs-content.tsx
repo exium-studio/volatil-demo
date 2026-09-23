@@ -6,6 +6,7 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
@@ -30,13 +31,7 @@ import {
   hasActiveAdministrativeFilter,
   type FilterAdministrativeAreaValues,
 } from "@/features/shared/types/filter.administrative-area.type";
-import {
-  EyeIcon,
-  EyeOffIcon,
-  FocusIcon,
-  SlidersHorizontalIcon,
-  TrashIcon,
-} from "lucide-react";
+import { FocusIcon, SlidersHorizontalIcon, TrashIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export const MitraDataRequestCatalogTabsContent = (
@@ -172,13 +167,11 @@ export const MitraDataRequestCatalogTabsContent = (
                           : "Tampilkan Area (AOI) di Peta"
                       }
                     >
-                      <IconButton
-                        variant={"outline"}
-                        aria-label={"Toggle Visibilitas AOI"}
-                        onClick={() => setIsAoiVisible((prev) => !prev)}
-                      >
-                        <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
-                      </IconButton>
+                      <Switch
+                        checked={isAoiVisible}
+                        onCheckedChange={(e) => setIsAoiVisible(e.checked)}
+                        mr={"xs"}
+                      />
                     </Tooltip>
 
                     <Tooltip content={"Zoom ke Area (AOI)"}>

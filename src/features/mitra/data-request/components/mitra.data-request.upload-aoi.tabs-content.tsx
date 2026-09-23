@@ -51,8 +51,6 @@ import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   CheckIcon,
-  EyeIcon,
-  EyeOffIcon,
   FilePlusIcon,
   FocusIcon,
   RotateCcwIcon,
@@ -353,7 +351,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
         p={0}
         {...restProps}
       >
-        {(!isActive || !isMounted) ? (
+        {!isActive || !isMounted ? (
           <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
         ) : (
           <>
@@ -637,7 +635,12 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
 const UploadAoiConfirmedAttributeList = memo(
   (props: MitraDataRequestUploadAoiAttributeViewProps) => {
     // Props
-    const { aoiCqlFilter, confirmedPolygon, isActive = true, onResetAoi } = props;
+    const {
+      aoiCqlFilter,
+      confirmedPolygon,
+      isActive = true,
+      onResetAoi,
+    } = props;
 
     // Stores
     const map = useMapInstanceStore((state) => state.map);
@@ -724,13 +727,11 @@ const UploadAoiConfirmedAttributeList = memo(
                           : "Tampilkan Area (AOI) di Peta"
                       }
                     >
-                      <IconButton
-                        variant={"outline"}
-                        aria-label={"Toggle Visibilitas AOI"}
-                        onClick={() => setIsAoiVisible((prev) => !prev)}
-                      >
-                        <AppIcon icon={isAoiVisible ? EyeIcon : EyeOffIcon} />
-                      </IconButton>
+                      <Switch
+                        checked={isAoiVisible}
+                        onCheckedChange={(e) => setIsAoiVisible(e.checked)}
+                        mr={"xs"}
+                      />
                     </Tooltip>
 
                     <Tooltip content={"Zoom ke Area (AOI)"}>
