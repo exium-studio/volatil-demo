@@ -247,14 +247,20 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // Derived stable trigger key: depends strictly on AOI, selectionType, and all intersecting layers in that AOI
     const calcTriggerKey = useMemo(() => {
-      if (!effectiveAoiPolygon || isEmptyArray(validCalculationLayers)) return "";
+      if (!effectiveAoiPolygon || isEmptyArray(validCalculationLayers))
+        return "";
       const layerIds = validCalculationLayers
         .map((l) => l.id)
         .sort()
         .join(",");
       const aoiString = JSON.stringify(effectiveAoiPolygon);
       return `${selectionType}|${combinedCqlFilter ?? ""}|${layerIds}|${aoiString}`;
-    }, [effectiveAoiPolygon, validCalculationLayers, selectionType, combinedCqlFilter]);
+    }, [
+      effectiveAoiPolygon,
+      validCalculationLayers,
+      selectionType,
+      combinedCqlFilter,
+    ]);
 
     // Effects — Trigger backend spatial calculation whenever effective AOI or intersecting layers change
     useEffect(() => {
@@ -535,9 +541,37 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
         <Separator borderColor={"bg.canvas"} />
 
-        {/* DataList Table with Multi-Selection Checkbox */}
         <VStack flex={1} overflowY={"auto"}>
-          <VStack flex={1} bg={"bg.body"}>
+          {/* Spatial Calculation Summary Box */}
+          {effectiveAoiPolygon && (
+            <Box p={"md"} bg={"bg.body"} w={"full"}>
+              <MitraDataRequestSpatialSummary
+                totalBidangCount={calculationResult?.totalBidangCount ?? 0}
+                totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
+                subtotalBidangPrice={
+                  calculationResult?.subtotalBidangPrice ?? 0
+                }
+                subtotalKawasanPrice={
+                  calculationResult?.subtotalKawasanPrice ?? 0
+                }
+                estimatedTotalPrice={
+                  calculationResult?.estimatedTotalPrice ?? 0
+                }
+                isPurchaseLimitValid={isPurchaseLimitValid}
+                purchaseLimitMessage={purchaseLimitMessage}
+                hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
+                isCoverageVisible={isCoverageVisible}
+                onToggleCoverageVisible={() =>
+                  setIsCoverageVisible((prev) => !prev)
+                }
+              />
+            </Box>
+          )}
+
+          <Separator borderColor={"bg.canvas"} />
+
+          {/* DataList Table with Multi-Selection Checkbox */}
+          <VStack bg={"bg.body"}>
             {isShowLoading && <Skeleton flex={1} p={"md"} rounded={0} />}
 
             {!isShowLoading &&
@@ -604,32 +638,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
               </DataViewTable.Root>
             )}
           </VStack>
-
-          {/* Spatial Calculation Summary Box */}
-          {effectiveAoiPolygon && (
-            <Box p={"md"} bg={"bg.body"} w={"full"} mt={"auto"}>
-              <MitraDataRequestSpatialSummary
-                totalBidangCount={calculationResult?.totalBidangCount ?? 0}
-                totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
-                subtotalBidangPrice={
-                  calculationResult?.subtotalBidangPrice ?? 0
-                }
-                subtotalKawasanPrice={
-                  calculationResult?.subtotalKawasanPrice ?? 0
-                }
-                estimatedTotalPrice={
-                  calculationResult?.estimatedTotalPrice ?? 0
-                }
-                isPurchaseLimitValid={isPurchaseLimitValid}
-                purchaseLimitMessage={purchaseLimitMessage}
-                hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
-                isCoverageVisible={isCoverageVisible}
-                onToggleCoverageVisible={() =>
-                  setIsCoverageVisible((prev) => !prev)
-                }
-              />
-            </Box>
-          )}
         </VStack>
 
         <Separator borderColor={"bg.canvas"} />
