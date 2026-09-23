@@ -87,7 +87,9 @@ export const NotificationInboxDataView = memo(() => {
       <Center flex={1} py={"xl"}>
         <RetryState
           title={"Gagal Memuat Inbox"}
-          description={error?.message || "Terjadi kesalahan saat memuat pesan inbox."}
+          description={
+            error?.message || "Terjadi kesalahan saat memuat pesan inbox."
+          }
           onRetry={() => {
             void refetch();
           }}
@@ -208,7 +210,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       bg={item.isRead ? "bg.body" : "bg.subtle"}
       borderWidth={"1px"}
       borderColor={"border.subtle"}
-      shadow={"sm"}
+      shadow={"xs"}
       rounded={theme.radii.container}
       w={"full"}
     >
