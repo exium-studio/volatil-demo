@@ -12,6 +12,7 @@ export const useIgtWfsCatalog = (params: UseIgtWfsCatalogParams) => {
     placeholderData: (prev) => prev,
     staleTime: 10 * 60 * 1000, // 10 minutes memory cache
     gcTime: 30 * 60 * 1000, // 30 minutes garbage collection time
+    retry: false,
   });
 
   return {

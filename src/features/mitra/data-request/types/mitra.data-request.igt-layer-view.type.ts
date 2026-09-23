@@ -33,6 +33,9 @@ export type MitraDataRequestDetailAttributeViewProps = {
   totalFeatures: number;
   isLoading: boolean;
   isFetching: boolean;
+  isError?: boolean;
+  error?: Error | null;
+  onRetry?: () => void;
   page?: number;
   pageSize?: number;
   setPage?: (page: number) => void;

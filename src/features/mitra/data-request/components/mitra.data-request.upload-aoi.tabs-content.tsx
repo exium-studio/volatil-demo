@@ -647,15 +647,21 @@ const UploadAoiConfirmedAttributeList = memo(
     const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
 
     // Queries — server-side WFS pagination
-    const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog(
-      {
-        page: pageState.page,
-        pageSize: pageState.pageSize,
-        cqlFilter: aoiCqlFilter,
-        typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
-        wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
-      },
-    );
+    const {
+      features,
+      totalFeatures,
+      isLoading,
+      isFetching,
+      isError,
+      error,
+      refetch,
+    } = useIgtWfsCatalog({
+      page: pageState.page,
+      pageSize: pageState.pageSize,
+      cqlFilter: aoiCqlFilter,
+      typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
+      wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
+    });
 
     // Derived Values
     const aoiAreaHa = useMemo(() => {
@@ -752,6 +758,11 @@ const UploadAoiConfirmedAttributeList = memo(
         totalFeatures={totalFeatures}
         isLoading={isLoading}
         isFetching={isFetching}
+        isError={isError}
+        error={error}
+        onRetry={() => {
+          void refetch();
+        }}
         page={pageState.page}
         pageSize={pageState.pageSize}
         setPage={(page) => setPageState((prev) => ({ ...prev, page }))}

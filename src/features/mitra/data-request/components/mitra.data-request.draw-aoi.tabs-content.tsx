@@ -261,7 +261,15 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
   });
 
   // Queries — server-side WFS pagination
-  const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
+  const {
+    features,
+    totalFeatures,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useIgtWfsCatalog({
     page: pageState.page,
     pageSize: pageState.pageSize,
     cqlFilter: aoiCqlFilter,
@@ -361,6 +369,11 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
       totalFeatures={totalFeatures}
       isLoading={isLoading}
       isFetching={isFetching}
+      isError={isError}
+      error={error}
+      onRetry={() => {
+        void refetch();
+      }}
       page={pageState.page}
       pageSize={pageState.pageSize}
       setPage={(page) => setPageState((prev) => ({ ...prev, page }))}

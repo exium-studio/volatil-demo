@@ -52,7 +52,7 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
   catalog: {
     label: "Katalog",
     variant: "subtle",
-    colorPalette: "gray",
+    colorPalette: "purple",
     icon: ListIcon,
   },
   upload_aoi: {

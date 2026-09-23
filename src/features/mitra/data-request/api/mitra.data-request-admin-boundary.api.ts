@@ -30,56 +30,36 @@ export async function fetchAdminBoundaryPolygon(
   const cleanName = cleanAdministrativeValue(name);
   if (!cleanName) return null;
 
-  const candidateKeys = Array.from(
-    new Set([
-      config.attributeKey,
-      config.attributeKey.toLowerCase(),
-      config.attributeKey.toUpperCase(),
-      "NAMOBJ",
-      "namobj",
-      "NAMA",
-      "nama",
-    ]),
-  );
+  const cqlFilter = `${config.attributeKey} ILIKE '%${cleanName}%'`;
 
-  for (const attrKey of candidateKeys) {
-    const cqlFilter = `${attrKey} ILIKE '%${cleanName}%'`;
+  const result = await fetchWfs({
+    typeName: config.typeName,
+    wfsUrl: config.wfsUrl,
+    version: "2.0.0",
+    srsName: "EPSG:4326",
+    cqlFilter,
+    signal,
+  });
 
-    try {
-      const result = await fetchWfs({
-        typeName: config.typeName,
-        wfsUrl: config.wfsUrl,
-        version: "2.0.0",
-        srsName: "EPSG:4326",
-        cqlFilter,
-        signal,
-      });
+  const features = result.features ?? [];
+  if (features.length === 0) {
+    return null;
+  }
 
-      const features = result.features ?? [];
-      if (features.length === 0) {
-        continue;
-      }
-
-      if (features.length === 1) {
-        const single = features[0];
-        if (
-          single.geometry &&
-          (single.geometry.type === "Polygon" ||
-            single.geometry.type === "MultiPolygon")
-        ) {
-          return single as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
-        }
-      }
-
-      // If multiple features returned (e.g. multi-part boundary / islands), union them
-      return unionGeoJsonPolygons({
-        type: "FeatureCollection",
-        features,
-      });
-    } catch {
-      // Continue trying next candidate attribute
+  if (features.length === 1) {
+    const single = features[0];
+    if (
+      single.geometry &&
+      (single.geometry.type === "Polygon" ||
+        single.geometry.type === "MultiPolygon")
+    ) {
+      return single as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
     }
   }
 
-  return null;
+  // If multiple features returned (e.g. multi-part boundary / islands), union them
+  return unionGeoJsonPolygons({
+    type: "FeatureCollection",
+    features,
+  });
 }

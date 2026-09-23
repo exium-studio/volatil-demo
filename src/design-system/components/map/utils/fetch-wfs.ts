@@ -28,6 +28,7 @@ export const normalizeWfsEndpointUrl = (urlStr: string): string => {
 const buildWfsUrl = (
   {
     typeName,
+    wfsUrl,
     bbox,
     cqlFilter,
     version = "2.0.0",
@@ -38,15 +39,22 @@ const buildWfsUrl = (
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
-  const baseUrl =
+  const defaultBaseUrl =
     import.meta.env.VITE_API_BASE_URL &&
     !import.meta.env.VITE_API_BASE_URL.endsWith("/")
       ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wfs`
       : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wfs`;
 
-  const url = new URL(baseUrl);
+  const rawUrl = wfsUrl || defaultBaseUrl;
+  const url = new URL(
+    rawUrl.startsWith("http")
+      ? rawUrl
+      : `${defaultBaseUrl}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`,
+  );
 
-  url.searchParams.set("layerId", typeName);
+  if (!url.searchParams.has("layerId")) {
+    url.searchParams.set("layerId", typeName);
+  }
   url.searchParams.set("service", "WFS");
   url.searchParams.set("version", version);
   url.searchParams.set("request", "GetFeature");

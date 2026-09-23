@@ -23,6 +23,7 @@ export const useIgtCatalog = (params?: MitraDataRequestGetCatalogParams) => {
   const query = useQuery({
     queryKey: queryKeys.mitra.dataRequest.catalog(params),
     queryFn: ({ signal }) => getIgtCatalog(params, signal),
+    retry: false,
   });
 
   return {

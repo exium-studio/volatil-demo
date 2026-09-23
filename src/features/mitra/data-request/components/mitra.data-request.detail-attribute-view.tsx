@@ -2,6 +2,7 @@
 
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
@@ -20,6 +21,9 @@ export const MitraDataRequestDetailAttributeView = memo(
       totalFeatures,
       isLoading,
       isFetching,
+      isError,
+      error,
+      onRetry,
       page,
       pageSize,
       setPage,
@@ -39,7 +43,7 @@ export const MitraDataRequestDetailAttributeView = memo(
     // Derived Values
     const hasData = !isEmptyArray(features);
     const showSkeleton =
-      !isMounted || isLoading || (isFetching && !hasData);
+      !isMounted || isLoading || (isFetching && !hasData && !isError);
 
     return (
       <VStack
@@ -63,7 +67,27 @@ export const MitraDataRequestDetailAttributeView = memo(
           </VStack>
         )}
 
-        {!showSkeleton && !hasData && (
+        {!showSkeleton && isError && (
+          <VStack
+            flex={1}
+            align={"center"}
+            justify={"center"}
+            p={"md"}
+            bg={"bg.body"}
+            minH={0}
+          >
+            <RetryState
+              title={"Gagal Memuat Data Spasial"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat data fitur spasial. Silakan coba lagi."
+              }
+              onRetry={onRetry}
+            />
+          </VStack>
+        )}
+
+        {!showSkeleton && !isError && !hasData && (
           <VStack
             flex={1}
             align={"center"}

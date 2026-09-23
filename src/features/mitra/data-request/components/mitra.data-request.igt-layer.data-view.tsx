@@ -126,6 +126,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       queryKey: queryKeys.map.layers(),
       queryFn: ({ signal }) => getIgtLayers(signal),
       staleTime: 1000 * 60 * 5,
+      retry: false,
     });
 
     const activeLayers = useMemo(() => layersData?.items ?? [], [layersData]);
@@ -185,6 +186,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           },
           enabled: Boolean(combinedCqlFilter),
           staleTime: 5 * 60 * 1000,
+          retry: false,
         };
       }),
     });
@@ -487,6 +489,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         roundedBottom={theme.radii.container}
       >
         {/* Header Action Bar */}
+        {/* Actions Header */}
         <HStack
           wrap={"wrap"}
           align={"center"}
@@ -496,14 +499,18 @@ export const MitraDataRequestIgtLayerDataView = memo(
           p={"md"}
           bg={"bg.body"}
         >
+          {/* Left: Search Bar */}
           <HStack gap={"sm"} flex={1} maxW={"full"}>
             <SearchInput
               placeholder={"Cari nama / layer IGT"}
               value={searchRaw}
               onValueChange={(val) => setSearchRaw(val)}
             />
+          </HStack>
 
-            {effectiveAoiPolygon && map && (
+          {/* Right: Actions (Toggle AOI, Zoom AOI, Filter) */}
+          <HStack align={"center"} gap={"sm"} flexShrink={0}>
+            {map && (
               <>
                 <Tooltip
                   content={
@@ -527,7 +534,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     variant={"outline"}
                     aria-label={"Zoom ke Area (AOI)"}
                     onClick={() => {
-                      flyToCartGeometry(map, effectiveAoiPolygon);
+                      if (effectiveAoiPolygon) {
+                        flyToCartGeometry(map, effectiveAoiPolygon);
+                      }
                     }}
                   >
                     <AppIcon icon={FocusIcon} />
@@ -542,7 +551,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 value={appliedAdministrativeFilters}
                 onApply={handleApplyFilters}
               >
-                <IconButton variant={"outline"} aria-label={"Filter Wilayah Administratif"}>
+                <IconButton
+                  variant={"outline"}
+                  aria-label={"Filter Wilayah Administratif"}
+                >
                   <AppIcon icon={SlidersHorizontalIcon} />
                 </IconButton>
               </FilterAdministrativeAreaTrigger>
@@ -556,16 +568,18 @@ export const MitraDataRequestIgtLayerDataView = memo(
         <VStack flex={1} bg={"bg.body"} overflow={"clip"}>
           {isShowLoading && <Skeleton flex={1} p={"md"} rounded={0} />}
 
-          {!isShowLoading && isErrorLayers && (
+          {!isShowLoading && (isErrorLayers || (showFilter && adminBoundaryQuery.isError)) && (
             <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
               <RetryState
-                title={"Gagal Memuat Katalog Layer IGT"}
+                title={"Gagal Memuat Data Wilayah / Layer IGT"}
                 description={
                   errorLayers?.message ||
-                  "Terjadi kesalahan saat memuat katalog layer IGT. Silakan coba lagi."
+                  adminBoundaryQuery.error?.message ||
+                  "Terjadi kesalahan saat memuat data katalog layer IGT. Silakan coba lagi."
                 }
                 onRetry={() => {
-                  void refetchLayers();
+                  if (isErrorLayers) void refetchLayers();
+                  if (showFilter && adminBoundaryQuery.isError) void adminBoundaryQuery.refetch();
                 }}
               />
             </VStack>

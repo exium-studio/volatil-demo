@@ -195,6 +195,7 @@ export const useKawasanCoverage = (
     },
     enabled: isEnabled,
     staleTime: 5 * 60 * 1000,
+    retry: false,
   });
 
   const isCalculating = isEnabled && (isLoading || isFetching);

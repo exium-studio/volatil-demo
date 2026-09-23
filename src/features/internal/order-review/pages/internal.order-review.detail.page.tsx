@@ -81,8 +81,8 @@ const getAoiColorBySelectionType = (selectionType?: string) => {
     case "catalog":
     default:
       return {
-        fillColor: "#64748b",
-        lineColor: "#475569",
+        fillColor: "#a855f7",
+        lineColor: "#7c3aed",
       };
   }
 };

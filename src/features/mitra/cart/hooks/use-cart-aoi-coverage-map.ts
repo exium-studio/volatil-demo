@@ -19,6 +19,11 @@ export const CART_COVERAGE_LINE_ID = "cart-coverage-line";
 
 const getAoiColor = (selectionType?: string) => {
   switch (selectionType) {
+    case "catalog":
+      return {
+        fill: "#a855f7",
+        line: "#7c3aed",
+      };
     case "upload_aoi":
       return {
         fill: "#f97316",
@@ -31,8 +36,8 @@ const getAoiColor = (selectionType?: string) => {
       };
     default:
       return {
-        fill: "#f59e0b",
-        line: "#d97706",
+        fill: "#a855f7",
+        line: "#7c3aed",
       };
   }
 };

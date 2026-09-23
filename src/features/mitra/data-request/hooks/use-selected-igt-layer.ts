@@ -15,6 +15,7 @@ export const useSelectedIgtLayer = () => {
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
+    retry: false,
   });
 
   const selectedIgtLayer = useMemo<IgtLayerItem | null>(() => {

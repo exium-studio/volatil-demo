@@ -8,12 +8,7 @@ import type { OrderStatus } from "@/shared/types/status.type";
 
 export const OrderStatusBadge = (props: OrderStatusBadgeProps) => {
   // Props
-  const {
-    children,
-    showIcon = false,
-    variant = "subtle",
-    ...restProps
-  } = props;
+  const { children, showIcon = true, variant = "subtle", ...restProps } = props;
 
   // Derived Values
   const statusKey = (children ?? "") as OrderStatus;

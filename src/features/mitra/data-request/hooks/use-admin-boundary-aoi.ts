@@ -73,6 +73,7 @@ export const useAdminBoundaryAoi = (
     },
     enabled: isEnabled,
     staleTime: 10 * 60 * 1000,
+    retry: false,
   });
 
   return {

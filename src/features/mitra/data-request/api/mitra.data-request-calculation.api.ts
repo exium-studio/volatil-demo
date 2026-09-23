@@ -23,15 +23,27 @@ export async function calculateSpatialCoverageStream(
   },
   signal?: AbortSignal,
 ): Promise<void> {
-  const endpoint = `${API_BASE_URL}/api/mitra/data-request/calculate/stream`;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const baseUrl = API_BASE_URL.replace(/\/$/, "");
+  const url = new URL(`${baseUrl}/api/mitra/data-request/calculate/stream`);
+  if (token) {
+    url.searchParams.set("token", token);
+  }
+  const endpoint = url.toString();
 
   try {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(endpoint, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "text/event-stream",
-      },
+      headers,
       credentials: "same-origin",
       body: JSON.stringify(request),
       signal,
