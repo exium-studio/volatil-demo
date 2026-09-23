@@ -120,6 +120,12 @@ export const apiClient = {
       if ((err as { name?: string }).name === "AbortError") {
         throw err;
       }
+
+      // Notify application of network/connection drop or captive portal
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("app:network-offline"));
+      }
+
       throw new ApiError(
         err instanceof Error ? err.message : "Terjadi kesalahan jaringan",
         0,

@@ -31,10 +31,12 @@ export const OfflineAlert = () => {
 
     window.addEventListener("offline", handleOffline);
     window.addEventListener("online", handleOnline);
+    window.addEventListener("app:network-offline", handleOffline);
 
     return () => {
       window.removeEventListener("offline", handleOffline);
       window.removeEventListener("online", handleOnline);
+      window.removeEventListener("app:network-offline", handleOffline);
     };
   }, [isOpen, open, close]);
 

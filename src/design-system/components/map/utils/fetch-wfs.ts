@@ -115,9 +115,20 @@ export const fetchWfs = async (
   const { version = "2.0.0", signal, startIndex = 0, maxFeatures } = params;
 
   let url = buildWfsUrl(params, true);
-  let res = await fetch(url.toString(), {
-    signal,
-  });
+  let res: Response;
+  try {
+    res = await fetch(url.toString(), {
+      signal,
+    });
+  } catch (err: unknown) {
+    if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
+      throw err;
+    }
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("app:network-offline"));
+    }
+    throw err;
+  }
 
   // If server throws 400 Bad Request due to GeoServer startIndex NullPointerException bug, retry without startIndex
   if (!res.ok && res.status === 400 && startIndex > 0) {
@@ -125,9 +136,19 @@ export const fetchWfs = async (
       "GeoServer rejected startIndex with 400 NPE. Falling back to fetching without startIndex.",
     );
     url = buildWfsUrl({ ...params, maxFeatures: undefined }, false);
-    res = await fetch(url.toString(), {
-      signal,
-    });
+    try {
+      res = await fetch(url.toString(), {
+        signal,
+      });
+    } catch (err: unknown) {
+      if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
+        throw err;
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("app:network-offline"));
+      }
+      throw err;
+    }
   }
 
   // If server throws 400 Bad Request due to GeoServer "Illegal property name" in CQL_FILTER

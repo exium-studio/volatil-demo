@@ -225,6 +225,9 @@ export async function calculateSpatialCoverageStream(
     }
   } catch (error) {
     if (signal?.aborted) return;
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("app:network-offline"));
+    }
     const err =
       error instanceof Error ? error : new Error("Stream connection failed");
     callbacks.onEvent?.({
