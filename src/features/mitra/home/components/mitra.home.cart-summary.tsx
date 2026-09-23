@@ -2,6 +2,7 @@
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import {
   Container,
@@ -94,26 +95,28 @@ const MitraHomeCartStats = (props: {
       label: `Total ${IGT_BASIS_MAP.bidang.label}`,
       value: totalField,
       suffix: "bidang",
-      color: `${IGT_BASIS_MAP.bidang.colorPalette}.fg`,
+      colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
     },
     {
       icon: IGT_BASIS_MAP.kawasan.icon,
       label: `Total ${IGT_BASIS_MAP.kawasan.label}`,
       value: totalArea,
       suffix: "ha",
-      color: `${IGT_BASIS_MAP.kawasan.colorPalette}.fg`,
+      colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,
     },
     {
       icon: DatabaseIcon,
       label: "Total Data IGT",
       value: totalIgtData,
       suffix: "data",
+      colorPalette: "neutral",
     },
     {
       icon: ReceiptTextIcon,
       label: "Subtotal Harga",
       value: subtotalPrice,
       isCompact: true,
+      colorPalette: "neutral",
     },
   ];
 
@@ -123,10 +126,24 @@ const MitraHomeCartStats = (props: {
         const isCurrency = stat.label.toLowerCase().includes("harga");
 
         return (
-          <StatGrid.Item key={stat.label} index={index} columns={cols}>
+          <StatGrid.Item
+            key={stat.label}
+            index={index}
+            columns={cols}
+            pos={"relative"}
+          >
             <StatGrid.Header>
               <StatGrid.Label>{stat.label}</StatGrid.Label>
-              <StatGrid.Icon icon={stat.icon} color={stat.color} />
+
+              <AppIcon
+                icon={stat.icon}
+                color={`${stat.colorPalette}.subtle`}
+                boxSize={"58px"}
+                pos={"absolute"}
+                right={"16px"}
+                bottom={"50%"}
+                transform={"translateY(50%)"}
+              />
             </StatGrid.Header>
 
             <StatGrid.Value
@@ -134,7 +151,7 @@ const MitraHomeCartStats = (props: {
               suffix={stat.suffix}
               isCurrency={isCurrency}
               isCompact={stat.isCompact}
-              color={stat.color}
+              color={`${stat.colorPalette}.fg`}
             />
           </StatGrid.Item>
         );

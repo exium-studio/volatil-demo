@@ -10,7 +10,7 @@ export type MitraHomeCartSummaryStatItemProps = StackProps & {
   value: number;
   suffix?: string;
   icon?: ComponentType;
-  color?: string;
+  colorPalette?: string;
 };
 
 export type MitraHomeCartStatConfig = {
@@ -18,7 +18,7 @@ export type MitraHomeCartStatConfig = {
   label: string;
   value: number;
   suffix?: string;
-  color?: string;
+  colorPalette?: string;
   isCompact?: boolean;
 };
 
