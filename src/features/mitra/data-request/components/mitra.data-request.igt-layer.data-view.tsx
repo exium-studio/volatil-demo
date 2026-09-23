@@ -74,10 +74,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const { theme } = useThemeStore();
     const { flyTo } = useFlyToLayer();
     const map = useMapInstanceStore((state) => state.map);
-    const {
-      appliedAdministrativeFilters,
-      setAppliedAdministrativeFilters,
-    } = useAdministrativeFilterStore();
+    const { appliedAdministrativeFilters, setAppliedAdministrativeFilters } =
+      useAdministrativeFilterStore();
     const calculate = useMitraDataRequestCalculationStore(
       (state) => state.calculate,
     );
@@ -247,7 +245,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
     // Derived stable trigger key: ensures re-renders from stream progress don't re-trigger calculate()
     const calcTriggerKey = useMemo(() => {
       if (!effectiveAoiPolygon || isEmptyArray(validLayers)) return "";
-      const layerIds = validLayers.map((l) => l.id).sort().join(",");
+      const layerIds = validLayers
+        .map((l) => l.id)
+        .sort()
+        .join(",");
       const aoiString = JSON.stringify(effectiveAoiPolygon);
       return `${selectionType}|${combinedCqlFilter ?? ""}|${layerIds}|${aoiString}`;
     }, [effectiveAoiPolygon, validLayers, selectionType, combinedCqlFilter]);
@@ -267,9 +268,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           ? (effectiveAoiPolygon.geometry as
               | GeoJSON.MultiPolygon
               | GeoJSON.Polygon)
-          : (effectiveAoiPolygon as
-              | GeoJSON.MultiPolygon
-              | GeoJSON.Polygon);
+          : (effectiveAoiPolygon as GeoJSON.MultiPolygon | GeoJSON.Polygon);
 
       void calculate({
         selectionType,
@@ -473,7 +472,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const hasSelectedLayers = selectedTableItems.length > 0;
     const isShowLoading = isLoadingLayers || isCheckingHits;
     const hasIntersectingData = !isEmptyArray(filteredLayers);
-    const isPurchaseLimitValid = calculationResult?.isPurchaseLimitValid ?? true;
+    const isPurchaseLimitValid =
+      calculationResult?.isPurchaseLimitValid ?? true;
     const purchaseLimitMessage = calculationResult?.purchaseLimitMessage;
 
     const isCartDisabled =
@@ -483,11 +483,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
       isCalculating ||
       !isPurchaseLimitValid;
 
-    const isBidangDisabled =
-      isCartDisabled || isEmptyArray(bidangLayers);
+    const isBidangDisabled = isCartDisabled || isEmptyArray(bidangLayers);
 
-    const isKawasanDisabled =
-      isCartDisabled || isEmptyArray(kawasanLayers);
+    const isKawasanDisabled = isCartDisabled || isEmptyArray(kawasanLayers);
 
     return (
       <VStack
@@ -498,7 +496,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
         bg={"bg.body"}
         roundedBottom={theme.radii.container}
       >
-        {/* Header Action Bar */}
         {/* Actions Header */}
         <HStack
           wrap={"wrap"}
@@ -574,95 +571,101 @@ export const MitraDataRequestIgtLayerDataView = memo(
         <Separator borderColor={"bg.canvas"} />
 
         {/* DataList Table with Multi-Selection Checkbox */}
-        <VStack flex={1} bg={"bg.body"} overflow={"clip"}>
-          {isShowLoading && <Skeleton flex={1} p={"md"} rounded={0} />}
+        <VStack overflowY={"auto"}>
+          <VStack flex={1} bg={"bg.body"}>
+            {isShowLoading && <Skeleton flex={1} p={"md"} rounded={0} />}
 
-          {!isShowLoading && (isErrorLayers || (showFilter && adminBoundaryQuery.isError)) && (
-            <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
-              <RetryState
-                title={"Gagal Memuat Data Wilayah / Layer IGT"}
-                description={
-                  errorLayers?.message ||
-                  adminBoundaryQuery.error?.message ||
-                  "Terjadi kesalahan saat memuat data katalog layer IGT. Silakan coba lagi."
-                }
-                onRetry={() => {
-                  if (isErrorLayers) void refetchLayers();
-                  if (showFilter && adminBoundaryQuery.isError) void adminBoundaryQuery.refetch();
-                }}
-              />
-            </VStack>
-          )}
-
-          {!isShowLoading && !isErrorLayers && !hasIntersectingData && (
-            <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
-              {debouncedSearch ? (
-                <NoResultState />
-              ) : (
-                <NoDataState
-                  icon={IconDatabaseOff}
-                  title={"Tidak Ada Layer IGT pada Area Ini"}
-                  description={
-                    "Area AOI yang Anda pilih tidak beririsan dengan data spasial layer IGT manapun. Silakan gambar atau upload area lain yang memiliki data."
-                  }
-                />
+            {!isShowLoading &&
+              (isErrorLayers || (showFilter && adminBoundaryQuery.isError)) && (
+                <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
+                  <RetryState
+                    title={"Gagal Memuat Data Wilayah / Layer IGT"}
+                    description={
+                      errorLayers?.message ||
+                      adminBoundaryQuery.error?.message ||
+                      "Terjadi kesalahan saat memuat data katalog layer IGT. Silakan coba lagi."
+                    }
+                    onRetry={() => {
+                      if (isErrorLayers) void refetchLayers();
+                      if (showFilter && adminBoundaryQuery.isError)
+                        void adminBoundaryQuery.refetch();
+                    }}
+                  />
+                </VStack>
               )}
-            </VStack>
-          )}
 
-          {!isShowLoading && !isErrorLayers && hasIntersectingData && (
-            <DataViewTable.Root<IgtLayerItem>
-              headers={dataList.headers}
-              items={dataList.items}
-              itemActions={dataList.itemActions}
-              canBatchSelect={true}
-              selectedItems={selectedTableItems}
-              onSelectedItemChange={({ selectedItems }) =>
-                setSelectedTableItems(selectedItems)
-              }
-              virtualized={true}
-              withNumbering={true}
-              roundedTop={0}
-            >
-              <DataViewTable.Header />
-              <DataViewTable.Body />
-            </DataViewTable.Root>
+            {!isShowLoading && !isErrorLayers && !hasIntersectingData && (
+              <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
+                {debouncedSearch ? (
+                  <NoResultState />
+                ) : (
+                  <NoDataState
+                    icon={IconDatabaseOff}
+                    title={"Tidak Ada Layer IGT pada Area Ini"}
+                    description={
+                      "Area AOI yang Anda pilih tidak beririsan dengan data spasial layer IGT manapun. Silakan gambar atau upload area lain yang memiliki data."
+                    }
+                  />
+                )}
+              </VStack>
+            )}
+
+            {!isShowLoading && !isErrorLayers && hasIntersectingData && (
+              <DataViewTable.Root<IgtLayerItem>
+                headers={dataList.headers}
+                items={dataList.items}
+                itemActions={dataList.itemActions}
+                canBatchSelect={true}
+                selectedItems={selectedTableItems}
+                onSelectedItemChange={({ selectedItems }) =>
+                  setSelectedTableItems(selectedItems)
+                }
+                virtualized={true}
+                withNumbering={true}
+                roundedTop={0}
+              >
+                <DataViewTable.Header />
+                <DataViewTable.Body />
+              </DataViewTable.Root>
+            )}
+          </VStack>
+
+          {/* Spatial Calculation Summary Box */}
+          {effectiveAoiPolygon && (
+            <Box p={"md"} bg={"bg.body"} w={"full"}>
+              <MitraDataRequestSpatialSummary
+                totalBidangCount={calculationResult?.totalBidangCount ?? 0}
+                totalKawasanCount={calculationResult?.totalKawasanCount ?? 0}
+                totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
+                subtotalBidangPrice={
+                  calculationResult?.subtotalBidangPrice ?? 0
+                }
+                subtotalKawasanPrice={
+                  calculationResult?.subtotalKawasanPrice ?? 0
+                }
+                estimatedTotalPrice={
+                  calculationResult?.estimatedTotalPrice ?? 0
+                }
+                isPurchaseLimitValid={isPurchaseLimitValid}
+                purchaseLimitMessage={purchaseLimitMessage}
+                hasAoiPolygon={Boolean(effectiveAoiPolygon)}
+                hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
+                isAoiVisible={isAoiVisible}
+                isCoverageVisible={isCoverageVisible}
+                onToggleAoiVisible={() => setIsAoiVisible((prev) => !prev)}
+                onToggleCoverageVisible={() =>
+                  setIsCoverageVisible((prev) => !prev)
+                }
+                onFlyToAoi={() => flyToCartGeometry(map, effectiveAoiPolygon)}
+                onFlyToCoverage={() =>
+                  flyToCartGeometry(map, calculationResult?.coveragePolygon)
+                }
+              />
+            </Box>
           )}
         </VStack>
 
-        {/* Spatial Calculation Summary Box */}
-        {effectiveAoiPolygon && (
-          <Box px={"md"} pt={"sm"} bg={"bg.body"} w={"full"}>
-            <MitraDataRequestSpatialSummary
-              totalBidangCount={calculationResult?.totalBidangCount ?? 0}
-              totalKawasanCount={calculationResult?.totalKawasanCount ?? 0}
-              totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
-              subtotalBidangPrice={calculationResult?.subtotalBidangPrice ?? 0}
-              subtotalKawasanPrice={
-                calculationResult?.subtotalKawasanPrice ?? 0
-              }
-              estimatedTotalPrice={
-                calculationResult?.estimatedTotalPrice ?? 0
-              }
-              isPurchaseLimitValid={isPurchaseLimitValid}
-              purchaseLimitMessage={purchaseLimitMessage}
-              hasAoiPolygon={Boolean(effectiveAoiPolygon)}
-              hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
-              isAoiVisible={isAoiVisible}
-              isCoverageVisible={isCoverageVisible}
-              onToggleAoiVisible={() => setIsAoiVisible((prev) => !prev)}
-              onToggleCoverageVisible={() =>
-                setIsCoverageVisible((prev) => !prev)
-              }
-              onFlyToAoi={() => flyToCartGeometry(map, effectiveAoiPolygon)}
-              onFlyToCoverage={() =>
-                flyToCartGeometry(map, calculationResult?.coveragePolygon)
-              }
-            />
-          </Box>
-        )}
-
-        <Separator borderColor={"bg.canvas"} mt={"xs"} />
+        <Separator borderColor={"bg.canvas"} />
 
         {/* Action Bar Footer */}
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} mt={"auto"}>
@@ -773,4 +776,3 @@ export const MitraDataRequestIgtLayerDataView = memo(
     );
   },
 );
-

@@ -15,11 +15,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestSpatialSummaryProps } from "@/features/mitra/data-request/types/mitra.data-request.spatial-summary.type";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import {
-  FocusIcon,
-  LoaderIcon,
-  ShieldAlertIcon,
-} from "lucide-react";
+import { FocusIcon, LoaderIcon, ShieldAlertIcon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraDataRequestSpatialSummary = memo(
@@ -110,9 +106,9 @@ export const MitraDataRequestSpatialSummary = memo(
         gap={"sm"}
         p={"md"}
         rounded={theme.radii.container}
-        bg={"bg.body"}
+        bg={"bg.subtle"}
         align={"stretch"}
-        border={"1px solid"}
+        // border={"1px solid"}
         borderColor={"border.subtle"}
       >
         {/* Layer Controls & Metrics */}
@@ -180,12 +176,7 @@ export const MitraDataRequestSpatialSummary = memo(
           <HStack justify={"space-between"} align={"center"}>
             <HStack gap={"xs"} align={"center"}>
               {hasCoveragePolygon && (
-                <Box
-                  w={"8px"}
-                  h={"8px"}
-                  rounded={"full"}
-                  bg={"green.solid"}
-                />
+                <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
               )}
               <P color={"fg.muted"}>{"IGT Berbasis Kawasan"}</P>
             </HStack>
@@ -301,7 +292,12 @@ export const MitraDataRequestSpatialSummary = memo(
 
         {/* Limit Warning Notice */}
         {!isPurchaseLimitValid && (
-          <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"} mt={1}>
+          <Alert.Root
+            status={"error"}
+            colorPalette={"red"}
+            variant={"subtle"}
+            mt={1}
+          >
             <AppIcon icon={ShieldAlertIcon} />
             <Alert.Description fontSize={"xs"}>
               {purchaseLimitMessage ||

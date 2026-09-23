@@ -39,18 +39,18 @@ const buildWfsUrl = (
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
-  const defaultBaseUrl =
-    import.meta.env.VITE_API_BASE_URL &&
-    !import.meta.env.VITE_API_BASE_URL.endsWith("/")
-      ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wfs`
-      : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wfs`;
+  const apiBaseUrl = (
+    import.meta.env.VITE_API_BASE_URL || ""
+  ).replace(/\/+$/, "");
+  const defaultBaseUrl = `${apiBaseUrl}/api/proxy/wfs`;
 
   const rawUrl = wfsUrl || defaultBaseUrl;
-  const url = new URL(
-    rawUrl.startsWith("http")
+  const targetUrlStr =
+    rawUrl.startsWith("http://") || rawUrl.startsWith("https://")
       ? rawUrl
-      : `${defaultBaseUrl}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`,
-  );
+      : `${apiBaseUrl}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
+
+  const url = new URL(targetUrlStr);
 
   if (!url.searchParams.has("layerId")) {
     url.searchParams.set("layerId", typeName);

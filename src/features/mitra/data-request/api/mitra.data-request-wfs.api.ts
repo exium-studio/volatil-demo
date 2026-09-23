@@ -25,13 +25,17 @@ export const getWfsDynamicAttributes = async (
     return cachedAttributes[cacheKey];
   }
   try {
-    const baseUrl =
-      import.meta.env.VITE_API_BASE_URL &&
-      !import.meta.env.VITE_API_BASE_URL.endsWith("/")
-        ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wfs`
-        : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wfs`;
+    const apiBaseUrl = (
+      import.meta.env.VITE_API_BASE_URL || ""
+    ).replace(/\/+$/, "");
+    const defaultEndpoint = `${apiBaseUrl}/api/proxy/wfs`;
 
-    const url = new URL(baseUrl);
+    let targetUrlStr = wfsUrl || defaultEndpoint;
+    if (!targetUrlStr.startsWith("http://") && !targetUrlStr.startsWith("https://")) {
+      targetUrlStr = `${apiBaseUrl}${targetUrlStr.startsWith("/") ? "" : "/"}${targetUrlStr}`;
+    }
+
+    const url = new URL(targetUrlStr);
     url.searchParams.set("layerId", typeName);
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", "2.0.0");
@@ -99,13 +103,17 @@ export const getWfsStringAttributes = async (
   }
 
   try {
-    const baseUrl =
-      import.meta.env.VITE_API_BASE_URL &&
-      !import.meta.env.VITE_API_BASE_URL.endsWith("/")
-        ? `${import.meta.env.VITE_API_BASE_URL}/api/proxy/wfs`
-        : `${import.meta.env.VITE_API_BASE_URL || ""}/api/proxy/wfs`;
+    const apiBaseUrl = (
+      import.meta.env.VITE_API_BASE_URL || ""
+    ).replace(/\/+$/, "");
+    const defaultEndpoint = `${apiBaseUrl}/api/proxy/wfs`;
 
-    const url = new URL(baseUrl);
+    let targetUrlStr = wfsUrl || defaultEndpoint;
+    if (!targetUrlStr.startsWith("http://") && !targetUrlStr.startsWith("https://")) {
+      targetUrlStr = `${apiBaseUrl}${targetUrlStr.startsWith("/") ? "" : "/"}${targetUrlStr}`;
+    }
+
+    const url = new URL(targetUrlStr);
     url.searchParams.set("layerId", typeName);
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", "2.0.0");
