@@ -34,8 +34,8 @@ import { MitraDataRequestSpatialSummary } from "@/features/mitra/data-request/co
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
-import { useMitraDataRequestCalculation } from "@/features/mitra/data-request/hooks/use-mitra-data-request-calculation";
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { checkBboxIntersection } from "@/features/mitra/data-request/utils/calculate-feature-area";
@@ -78,6 +78,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
       appliedAdministrativeFilters,
       setAppliedAdministrativeFilters,
     } = useAdministrativeFilterStore();
+    const calculate = useMitraDataRequestCalculationStore(
+      (state) => state.calculate,
+    );
+    const calculationResult = useMitraDataRequestCalculationStore(
+      (state) => state.result,
+    );
+    const isCalculating = useMitraDataRequestCalculationStore(
+      (state) => state.isCalculating,
+    );
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
@@ -89,15 +98,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // Mutations
     const addToCartMultipleMutation = useAddToCartMultipleLayers();
-
-    // Hooks
-    const {
-      isCalculating,
-      progressMessage,
-      progressPercentage,
-      result: calculationResult,
-      calculate,
-    } = useMitraDataRequestCalculation();
 
     // Derived Values
     const debouncedSearch = useDebouncedValue(searchRaw);
@@ -521,7 +521,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 >
                   <IconButton
                     variant={"outline"}
-                    colorPalette={isAoiVisible ? "blue" : "gray"}
                     aria-label={"Toggle Visibilitas AOI"}
                     onClick={() => setIsAoiVisible((prev) => !prev)}
                   >
@@ -637,9 +636,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
               }
               isPurchaseLimitValid={isPurchaseLimitValid}
               purchaseLimitMessage={purchaseLimitMessage}
-              isCalculating={isCalculating}
-              progressMessage={progressMessage}
-              progressPercentage={progressPercentage}
               hasAoiPolygon={Boolean(effectiveAoiPolygon)}
               hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
               isAoiVisible={isAoiVisible}

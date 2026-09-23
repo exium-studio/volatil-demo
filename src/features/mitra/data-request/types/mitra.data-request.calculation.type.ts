@@ -94,3 +94,18 @@ export type CalculateSpatialStreamEvent =
   | CalculateSpatialProgressEvent
   | CalculateSpatialCompletedEvent
   | CalculateSpatialErrorEvent;
+
+export type MitraDataRequestCalculationState = {
+  isCalculating: boolean;
+  progressStage: CalculateSpatialCalculationStage;
+  progressPercentage: number;
+  progressMessage: string;
+  result: CalculateSpatialCoverageResult | null;
+  error: string | null;
+  calculate: (
+    request: CalculateSpatialCoverageRequest,
+  ) => Promise<CalculateSpatialCoverageResult | null>;
+  reset: () => void;
+  setResult: (result: CalculateSpatialCoverageResult | null) => void;
+  abort: () => void;
+};
