@@ -31,6 +31,7 @@ import type {
   InternalAuthState,
   SigninFormValues,
 } from "@/features/auth/types/signin.type";
+import { isDevModeEnabled } from "@/shared/utils/env/env.utils";
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import {
   AlertTriangleIcon,
@@ -61,6 +62,9 @@ export const MitraSignin = (props: StackProps) => {
       password: "",
     },
   });
+
+  // Derived Values
+  const isDevMode = isDevModeEnabled();
 
   // Handlers
   const handleLogin = (values: SigninFormValues) => {
@@ -126,65 +130,69 @@ export const MitraSignin = (props: StackProps) => {
           <AppIcon icon={KeyRoundIcon} />
           {"Masuk dengan SSO Mitra"}
         </Button>
-
-        <P fontSize={"xs"} color={"fg.subtle"} textAlign={"center"}>
-          {"Autentikasi Single Sign-On terintegrasi Kementerian ATR/BPN"}
-        </P>
       </VStack>
 
-      {/* Divider Dev / Fallback */}
-      <HStack w={"full"} align={"center"} my={1}>
-        <Separator flex={1} />
-        <Badge size={"sm"} variant={"surface"} colorPalette={"amber"} px={2}>
-          <AppIcon icon={Code2Icon} size={"xs"} />
-          <P fontSize={"2xs"} fontWeight={"medium"}>
-            {"DEVELOPMENT PURPOSE ONLY"}
-          </P>
-        </Badge>
-        <Separator flex={1} />
-      </HStack>
+      {/* Divider Dev / Fallback & Development / Fallback Login Form */}
+      {isDevMode && (
+        <>
+          <HStack w={"full"} align={"center"} my={1}>
+            <Separator flex={1} />
+            <Badge
+              size={"sm"}
+              variant={"surface"}
+              colorPalette={"amber"}
+              px={2}
+            >
+              <AppIcon icon={Code2Icon} size={"xs"} />
+              <P fontSize={"2xs"} fontWeight={"medium"}>
+                {"DEVELOPMENT PURPOSE ONLY"}
+              </P>
+            </Badge>
+            <Separator flex={1} />
+          </HStack>
 
-      {/* Development / Fallback Login Form */}
-      <VStack
-        as={"form"}
-        onSubmit={handleSubmit(handleLogin)}
-        w={"full"}
-        gap={"md"}
-      >
-        <Fieldset>
-          <Field
-            label={"Email"}
-            invalid={Boolean(errors.email)}
-            errorText={errors.email?.message}
+          <VStack
+            as={"form"}
+            onSubmit={handleSubmit(handleLogin)}
+            w={"full"}
+            gap={"md"}
           >
-            <Input
-              startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
-              placeholder={"mitra@instansi.go.id"}
-              {...register("email")}
-            />
-          </Field>
+            <Fieldset>
+              <Field
+                label={"Email"}
+                invalid={Boolean(errors.email)}
+                errorText={errors.email?.message}
+              >
+                <Input
+                  startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
+                  placeholder={"mitra@instansi.go.id"}
+                  {...register("email")}
+                />
+              </Field>
 
-          <Field
-            label={"Kata Sandi"}
-            invalid={Boolean(errors.password)}
-            errorText={errors.password?.message}
-          >
-            <PasswordInput
-              startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
-              {...register("password")}
-            />
-          </Field>
-        </Fieldset>
+              <Field
+                label={"Kata Sandi"}
+                invalid={Boolean(errors.password)}
+                errorText={errors.password?.message}
+              >
+                <PasswordInput
+                  startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+                  {...register("password")}
+                />
+              </Field>
+            </Fieldset>
 
-        <Button
-          variant={"outline"}
-          type={"submit"}
-          w={"full"}
-          loading={signinMutation.isPending}
-        >
-          {"Masuk dengan Kredensial (Dev Mode)"}
-        </Button>
-      </VStack>
+            <Button
+              variant={"outline"}
+              type={"submit"}
+              w={"full"}
+              loading={signinMutation.isPending}
+            >
+              {"Masuk dengan Kredensial (Dev Mode)"}
+            </Button>
+          </VStack>
+        </>
+      )}
 
       <VStack gap={2} align={"center"} w={"full"}>
         <HStack wrap={"wrap"} justify={"center"} gapX={"xs"}>

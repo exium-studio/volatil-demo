@@ -21,7 +21,7 @@ export const InternalSigninPage = () => {
         overflow={"clip"}
         w={"full"}
         maxW={"1200px"}
-        maxH={[null, null, "680px"]}
+        maxH={[null, null, "720px"]}
         m={"auto"}
         borderColor={"border.subtle"}
         rounded={theme.radii.container}
