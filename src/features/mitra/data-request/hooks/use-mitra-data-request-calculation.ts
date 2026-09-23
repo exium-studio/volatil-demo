@@ -8,7 +8,7 @@ import type {
   CalculateSpatialCoverageResult,
   CalculateSpatialStreamEvent,
 } from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useMitraDataRequestCalculation = () => {
   // States
@@ -24,19 +24,41 @@ export const useMitraDataRequestCalculation = () => {
 
   // Refs
   const abortControllerRef = useRef<AbortController | null>(null);
+  const isMountedRef = useRef<boolean>(true);
 
-  const reset = useCallback(() => {
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    };
+  }, []);
+
+  const cancel = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
-    setIsCalculating(false);
-    setProgressStage("idle");
-    setProgressPercentage(0);
-    setProgressMessage("");
-    setResult(null);
-    setError(null);
+    if (isMountedRef.current) {
+      setIsCalculating(false);
+      setProgressStage("idle");
+    }
   }, []);
+
+  const reset = useCallback(() => {
+    cancel();
+    if (isMountedRef.current) {
+      setIsCalculating(false);
+      setProgressStage("idle");
+      setProgressPercentage(0);
+      setProgressMessage("");
+      setResult(null);
+      setError(null);
+    }
+  }, [cancel]);
 
   const calculate = useCallback(
     async (
@@ -57,6 +79,8 @@ export const useMitraDataRequestCalculation = () => {
 
       return new Promise<CalculateSpatialCoverageResult | null>((resolve) => {
         const handleEvent = (event: CalculateSpatialStreamEvent) => {
+          if (!isMountedRef.current) return;
+
           if (event.type === "progress") {
             setProgressStage(event.stage);
             setProgressPercentage(event.percentage);
@@ -83,7 +107,23 @@ export const useMitraDataRequestCalculation = () => {
           request,
           {
             onEvent: handleEvent,
+            onProgress: (data) => {
+              if (!isMountedRef.current) return;
+              setProgressStage(data.stage);
+              setProgressPercentage(data.percentage);
+              setProgressMessage(data.message);
+            },
+            onCompleted: (data) => {
+              if (!isMountedRef.current) return;
+              setResult(data);
+              setIsCalculating(false);
+              setProgressStage("idle");
+              setProgressPercentage(100);
+              setProgressMessage("Kalkulasi spasial selesai.");
+              resolve(data);
+            },
             onError: (err) => {
+              if (!isMountedRef.current || controller.signal.aborted) return;
               setError(err.message);
               setIsCalculating(false);
               setProgressStage("idle");
@@ -108,7 +148,9 @@ export const useMitraDataRequestCalculation = () => {
     result,
     error,
     calculate,
+    cancel,
     reset,
     setResult,
   };
 };
+

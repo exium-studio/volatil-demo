@@ -237,15 +237,30 @@ export const MitraDataRequestIgtLayerDataView = memo(
       isCoverageVisible,
     });
 
-    // Effects — Trigger backend spatial calculation whenever effective AOI or layers change
-    useEffect(() => {
-      if (!effectiveAoiPolygon || isEmptyArray(filteredLayers)) return;
-
-      const validLayers = filteredLayers.filter((layer) =>
+    // Derived — Valid layers eligible for spatial calculation
+    const validLayers = useMemo(() => {
+      return filteredLayers.filter((layer) =>
         Boolean(layer?.wfs?.wfsTypeName || layer?.id),
       );
+    }, [filteredLayers]);
 
-      if (isEmptyArray(validLayers)) return;
+    // Derived stable trigger key: ensures re-renders from stream progress don't re-trigger calculate()
+    const calcTriggerKey = useMemo(() => {
+      if (!effectiveAoiPolygon || isEmptyArray(validLayers)) return "";
+      const layerIds = validLayers.map((l) => l.id).sort().join(",");
+      const aoiString = JSON.stringify(effectiveAoiPolygon);
+      return `${selectionType}|${combinedCqlFilter ?? ""}|${layerIds}|${aoiString}`;
+    }, [effectiveAoiPolygon, validLayers, selectionType, combinedCqlFilter]);
+
+    // Effects — Trigger backend spatial calculation whenever effective AOI or layers change
+    useEffect(() => {
+      if (
+        !calcTriggerKey ||
+        !effectiveAoiPolygon ||
+        isEmptyArray(validLayers)
+      ) {
+        return;
+      }
 
       const resolvedAoi =
         effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
@@ -269,13 +284,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
           cqlFilter: combinedCqlFilter,
         })),
       });
-    }, [
-      effectiveAoiPolygon,
-      combinedCqlFilter,
-      filteredLayers,
-      selectionType,
-      calculate,
-    ]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [calcTriggerKey]);
 
     // Effects — Auto-fit map camera when administrative boundary AOI polygon is resolved
     useEffect(() => {

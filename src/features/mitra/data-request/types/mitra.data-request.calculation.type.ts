@@ -11,7 +11,8 @@ export type CalculateSpatialCalculationStage =
   | "clipping"
   | "union"
   | "validating"
-  | "idle";
+  | "idle"
+  | (string & {});
 
 export type CalculateSpatialItemParam = {
   layerId?: string;
@@ -68,6 +69,12 @@ export type CalculateSpatialCoverageResult = {
   items: CalculateSpatialCalculatedItem[];
 };
 
+export type CalculateSpatialConnectedEvent = {
+  type: "connected";
+  message?: string;
+  data?: Record<string, unknown>;
+};
+
 export type CalculateSpatialProgressEvent = {
   type: "progress";
   stage: CalculateSpatialCalculationStage;
@@ -91,6 +98,23 @@ export type CalculateSpatialErrorEvent = {
 };
 
 export type CalculateSpatialStreamEvent =
+  | CalculateSpatialConnectedEvent
   | CalculateSpatialProgressEvent
   | CalculateSpatialCompletedEvent
   | CalculateSpatialErrorEvent;
+
+export type CalculateSpatialStreamCallbacks = {
+  onEvent?: (event: CalculateSpatialStreamEvent) => void;
+  onConnected?: () => void;
+  onProgress?: (data: {
+    stage: string;
+    percentage: number;
+    message: string;
+    currentLayer?: number;
+    totalLayers?: number;
+  }) => void;
+  onCompleted?: (result: CalculateSpatialCoverageResult) => void;
+  onError?: (error: Error) => void;
+};
+
+
