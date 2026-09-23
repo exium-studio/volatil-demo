@@ -16,6 +16,8 @@ export const MyDataStatusBadge = (props: MyDataStatusBadgeProps) => {
 
   return (
     <Badge
+      bg={"transparent"}
+      px={0}
       colorPalette={config?.colorPalette ?? "gray"}
       variant={variant}
       {...restProps}

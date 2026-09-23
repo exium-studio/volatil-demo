@@ -24,6 +24,8 @@ export const MitraLayerSyncJobStatusBadge = (
 
   return (
     <Badge
+      bg={"transparent"}
+      px={0}
       colorPalette={config?.colorPalette ?? "gray"}
       variant={variant}
       size={size}

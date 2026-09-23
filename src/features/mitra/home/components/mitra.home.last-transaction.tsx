@@ -18,7 +18,6 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -26,6 +25,7 @@ import type { MitraHomeLastTransactionProps } from "@/features/mitra/home/types/
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type { TransactionRecord } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import type { OrderStatus } from "@/shared/types/status.type";
@@ -215,13 +215,7 @@ const MitraHomeLastTransactionDataView = (props: {
             },
             {
               value: item.paymentMethod,
-              td: item.paymentMethod ? (
-                <Badge variant={"subtle"} colorPalette={"gray"}>
-                  {item.paymentMethod}
-                </Badge>
-              ) : (
-                "-"
-              ),
+              td: <PaymentMethodBadge>{item.paymentMethod}</PaymentMethodBadge>,
               align: "start" as const,
             },
             {

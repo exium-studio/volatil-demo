@@ -70,6 +70,12 @@ export type PaymentMethod =
   | "VA_BCA"
   | "QRIS";
 
+export type PaymentMethodConfig = {
+  label: string;
+  colorPalette: "gray" | "blue" | "green" | "purple" | "orange" | "teal";
+  icon?: LucideIcon;
+};
+
 export type CartItemsQueryParams = {
   page: number;
   pageSize: number;

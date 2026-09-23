@@ -3,6 +3,7 @@
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import type {
   PaymentMethod,
+  PaymentMethodConfig,
   SelectionType,
   SelectionTypeConfig,
   IgtBasisType,
@@ -24,12 +25,15 @@ import {
   AlertCircleIcon,
   CheckCircleIcon,
   ClockIcon,
+  CreditCardIcon,
   FolderArchiveIcon,
   Grid2X2Icon,
   HandshakeIcon,
+  LandmarkIcon,
   Layers2Icon,
   ListIcon,
   LoaderIcon,
+  QrCodeIcon,
   RotateCcwIcon,
   ShieldAlertIcon,
   ShieldCheckIcon,
@@ -98,12 +102,40 @@ export const IGT_BASIS_OPTIONS: {
   },
 ];
 
+export const PAYMENT_METHOD_MAP: Record<PaymentMethod, PaymentMethodConfig> = {
+  MPN_GEN2: {
+    label: "MPN Gen 2 (Simponi / BPN)",
+    colorPalette: "blue",
+    icon: LandmarkIcon,
+  },
+  VA_MANDIRI: {
+    label: "Virtual Account Mandiri",
+    colorPalette: "blue",
+    icon: CreditCardIcon,
+  },
+  VA_BRI: {
+    label: "Virtual Account BRI",
+    colorPalette: "blue",
+    icon: CreditCardIcon,
+  },
+  VA_BCA: {
+    label: "Virtual Account BCA",
+    colorPalette: "blue",
+    icon: CreditCardIcon,
+  },
+  QRIS: {
+    label: "QRIS",
+    colorPalette: "teal",
+    icon: QrCodeIcon,
+  },
+};
+
 export const PAYMENT_METHOD_LABEL_MAP: Record<PaymentMethod, string> = {
-  MPN_GEN2: "MPN Gen 2 (Simponi / BPN)",
-  VA_MANDIRI: "Virtual Account Mandiri",
-  VA_BRI: "Virtual Account BRI",
-  VA_BCA: "Virtual Account BCA",
-  QRIS: "QRIS",
+  MPN_GEN2: PAYMENT_METHOD_MAP.MPN_GEN2.label,
+  VA_MANDIRI: PAYMENT_METHOD_MAP.VA_MANDIRI.label,
+  VA_BRI: PAYMENT_METHOD_MAP.VA_BRI.label,
+  VA_BCA: PAYMENT_METHOD_MAP.VA_BCA.label,
+  QRIS: PAYMENT_METHOD_MAP.QRIS.label,
 };
 
 /**

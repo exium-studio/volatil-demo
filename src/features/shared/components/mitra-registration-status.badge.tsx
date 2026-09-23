@@ -23,6 +23,8 @@ export const MitraRegistrationStatusBadge = (
 
   return (
     <Badge
+      bg={"transparent"}
+      px={0}
       colorPalette={config?.colorPalette ?? "gray"}
       variant={variant}
       {...restProps}

@@ -4,6 +4,7 @@ import type { BadgeProps } from "@/design-system/components/typography/types/bad
 import type {
   SelectionType,
   IgtBasisType,
+  PaymentMethod,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
   MitraRegistrationStatus,
@@ -12,6 +13,11 @@ import type {
   TransactionStatus,
 } from "@/shared/types/status.type";
 import type { UserRole } from "@/shared/types/common-response.type";
+
+export type PaymentMethodBadgeProps = Omit<BadgeProps, "children"> & {
+  children?: PaymentMethod | (string & {}) | null;
+  showIcon?: boolean;
+};
 
 export type IgtBasisBadgeProps = Omit<BadgeProps, "children"> & {
   children?: IgtBasisType | (string & {});

@@ -32,6 +32,7 @@ import type {
   InternalTransactionQueryParams,
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
@@ -177,9 +178,7 @@ export const InternalTransactionStatisticDataView = () => {
             {
               value: item.paymentMethod,
               td: (
-                <P fontSize={"sm"} color={"fg.muted"}>
-                  {item.paymentMethod || "-"}
-                </P>
+                <PaymentMethodBadge>{item.paymentMethod}</PaymentMethodBadge>
               ),
               align: "start" as const,
             },

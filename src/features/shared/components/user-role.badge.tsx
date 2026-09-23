@@ -21,6 +21,8 @@ export const UserRoleBadge = (props: UserRoleBadgeProps) => {
 
   return (
     <Badge
+      bg={"transparent"}
+      px={0}
       colorPalette={config?.colorPalette ?? "gray"}
       variant={variant}
       {...restProps}

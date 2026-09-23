@@ -13,12 +13,12 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { ORDER_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import type {
@@ -497,13 +497,9 @@ export const TransactionDetailModalContent = (
                   <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Metode Pembayaran"}
                   </P>
-                  {transaction.paymentMethod ? (
-                    <Badge variant={"subtle"} colorPalette={"gray"} size={"sm"}>
-                      {transaction.paymentMethod}
-                    </Badge>
-                  ) : (
-                    <P fontSize={"md"}>{"-"}</P>
-                  )}
+                  <PaymentMethodBadge size={"sm"}>
+                    {transaction.paymentMethod}
+                  </PaymentMethodBadge>
                 </VStack>
 
                 {transaction.paidAt && (

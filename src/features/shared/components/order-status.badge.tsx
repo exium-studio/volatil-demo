@@ -21,6 +21,8 @@ export const OrderStatusBadge = (props: OrderStatusBadgeProps) => {
 
   return (
     <Badge
+      bg={"transparent"}
+      px={0}
       colorPalette={config?.colorPalette ?? "gray"}
       variant={variant}
       {...restProps}

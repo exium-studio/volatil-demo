@@ -22,7 +22,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
@@ -32,6 +31,7 @@ import type {
   TransactionRecord,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
@@ -171,13 +171,7 @@ export const TransactionHistoryDataView = () => {
             },
             {
               value: item.paymentMethod,
-              td: item.paymentMethod ? (
-                <Badge variant={"subtle"} colorPalette={"gray"}>
-                  {item.paymentMethod}
-                </Badge>
-              ) : (
-                "-"
-              ),
+              td: <PaymentMethodBadge>{item.paymentMethod}</PaymentMethodBadge>,
               align: "start" as const,
             },
             {
