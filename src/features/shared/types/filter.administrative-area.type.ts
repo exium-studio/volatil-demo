@@ -49,3 +49,23 @@ export type FilterAdministrativeAreaTriggerProps = {
   onFilterChange?: (filters: FilterAdministrativeAreaValues) => void;
   onApply?: (filters: FilterAdministrativeAreaValues) => void;
 };
+
+export type FilterAdministrativeAreaFormProps = {
+  value?: FilterAdministrativeAreaValues;
+  defaultValue?: FilterAdministrativeAreaValues;
+  modalKeyPrefix?: string;
+  onChange?: (values: FilterAdministrativeAreaValues) => void;
+  onApply?: (values: FilterAdministrativeAreaValues) => void;
+  onReset?: () => void;
+  showActionButtons?: boolean;
+  showAlert?: boolean;
+};
+
+export const hasActiveAdministrativeFilter = (
+  filters?: FilterAdministrativeAreaValues | null,
+): boolean => {
+  if (!filters) return false;
+  return Object.values(filters).some(
+    (val) => val !== null && val !== undefined && Boolean(val.value),
+  );
+};

@@ -35,6 +35,7 @@ import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-adm
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { useMitraDataRequestCalculation } from "@/features/mitra/data-request/hooks/use-mitra-data-request-calculation";
+import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import type { MitraDataRequestIgtLayerDataViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { checkBboxIntersection } from "@/features/mitra/data-request/utils/calculate-feature-area";
@@ -71,11 +72,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const { theme } = useThemeStore();
     const { flyTo } = useFlyToLayer();
     const map = useMapInstanceStore((state) => state.map);
+    const {
+      appliedAdministrativeFilters,
+      setAppliedAdministrativeFilters,
+    } = useAdministrativeFilterStore();
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
-    const [appliedAdministrativeFilters, setAppliedAdministrativeFilters] =
-      useState<FilterAdministrativeAreaValues>({});
     const [selectedTableItems, setSelectedTableItems] = useState<
       FormattedListItem<IgtLayerItem>[]
     >([]);
