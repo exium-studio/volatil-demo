@@ -1,6 +1,7 @@
 // src/features/mitra/data-request/components/mitra.data-request.spatial-summary.tsx
 
 import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -15,7 +16,7 @@ import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricin
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestSpatialSummaryProps } from "@/features/mitra/data-request/types/mitra.data-request.spatial-summary.type";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { LoaderIcon, ShieldAlertIcon } from "lucide-react";
+import { ShieldAlertIcon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraDataRequestSpatialSummary = memo(
@@ -77,19 +78,22 @@ export const MitraDataRequestSpatialSummary = memo(
           borderColor={"border.subtle"}
         >
           {/* Progress / Loading message */}
-          <VStack gap={"xs"} align={"stretch"}>
+          <VStack gap={"sm"} align={"stretch"}>
             <HStack
               align={"center"}
               justify={"space-between"}
               color={"blue.fg"}
             >
               <HStack align={"center"} gap={"xs"}>
-                <AppIcon icon={LoaderIcon} />
+                {/* <AppIcon icon={LoaderIcon} /> */}
+                <Loader size={"xs"} />
+
                 <P fontSize={"sm"} fontWeight={"semibold"}>
                   {effectiveProgressMessage ||
                     "Sedang mengkalkulasi spasial di server (PostGIS)..."}
                 </P>
               </HStack>
+
               {effectiveProgressPercentage > 0 && (
                 <P fontSize={"xs"} fontWeight={"bold"} color={"blue.fg"}>
                   {`${effectiveProgressPercentage}%`}
@@ -152,7 +156,6 @@ export const MitraDataRequestSpatialSummary = memo(
         p={"md"}
         rounded={theme.radii.container}
         bg={"bg.subtle"}
-        border={"1px solid"}
         borderColor={"border.subtle"}
       >
         {/* Coverage Layer Switch (Only rendered if coverage polygon exists) */}

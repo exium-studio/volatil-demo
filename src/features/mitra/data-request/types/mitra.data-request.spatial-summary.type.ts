@@ -19,6 +19,7 @@ export type MitraDataRequestSpatialSummaryProps = {
   aoiColorPalette?: string;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  selectionType?: string;
   onToggleAoiVisible?: () => void;
   onToggleCoverageVisible?: () => void;
   onFlyToAoi?: () => void;

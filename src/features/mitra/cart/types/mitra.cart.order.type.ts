@@ -129,6 +129,7 @@ export type CartMapLayerOptions = {
   selectionType?: string;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  isActive?: boolean;
 };
 
 export type CartOrderItemPayload = {

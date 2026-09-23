@@ -148,7 +148,11 @@ const addAoiLayer = (
  */
 export const useMitraUploadAoi = (
   map: maplibregl.Map | null,
-  activeFeatures: Array<{ id: string; polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> }>,
+  activeFeatures: Array<{
+    id: string;
+    polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+  }>,
+  isActive: boolean = true,
 ) => {
   const activeFeaturesRef = useRef(activeFeatures);
   useEffect(() => {
@@ -158,6 +162,17 @@ export const useMitraUploadAoi = (
   const syncAllActiveLayers = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!map || !(map as any).style) return;
+
+    if (!isActive) {
+      const style = map.getStyle();
+      style?.layers?.forEach((l) => {
+        if (l.id.startsWith(UPLOAD_AOI_FILL_PREFIX)) {
+          const featureId = l.id.replace(UPLOAD_AOI_FILL_PREFIX, "");
+          removeAoiLayer(map, featureId);
+        }
+      });
+      return;
+    }
 
     const beforeId = getBeforeId(map);
     const currentFeatures = activeFeaturesRef.current;
@@ -178,7 +193,7 @@ export const useMitraUploadAoi = (
         }
       }
     });
-  }, [map]);
+  }, [map, isActive]);
 
   // Rebuild / resync all layers on style ready & layers ready
   useEffect(() => {
@@ -212,10 +227,10 @@ export const useMitraUploadAoi = (
     };
   }, [map, syncAllActiveLayers]);
 
-  // Reactive sync when activeFeatures state updates
+  // Reactive sync when activeFeatures or isActive state updates
   useEffect(() => {
     syncAllActiveLayers();
-  }, [syncAllActiveLayers, activeFeatures]);
+  }, [syncAllActiveLayers, activeFeatures, isActive]);
 };
 
 export const useUploadAoi = useMitraUploadAoi;

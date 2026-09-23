@@ -36,6 +36,7 @@ export type MitraDataRequestUploadAoiTabsContentProps = TabsContentProps & {
 export type MitraDataRequestUploadAoiDataViewProps = {
   aoiCqlFilter: string;
   confirmedPolygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+  isActive?: boolean;
   onResetAoi: () => void;
 };
 

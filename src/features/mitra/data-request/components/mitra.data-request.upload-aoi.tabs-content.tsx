@@ -182,7 +182,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
   }, [confirmedFeature, uploadedFile]);
 
   // Hooks
-  useMitraUploadAoi(map, mapActiveFeatures);
+  useMitraUploadAoi(map, mapActiveFeatures, isActive);
   const isMounted = useMountTimeout({
     isOpen: isActive,
     mountDelay: 250,
@@ -353,79 +353,82 @@ export const MitraDataRequestUploadAoiTabsContent = (
         p={0}
         {...restProps}
       >
-        {/* Step 1: Upload Dropzone (No File Uploaded Yet) */}
-        {!uploadedFile && !confirmedFeature && (
-          <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
-            <FileInput
-              variant={"dropzone"}
-              label={
-                "Upload file AOI (.shp/.zip atau .geojson/.json) untuk mengambil data IGT"
-              }
-              accept={[
-                ".zip",
-                ".shp",
-                ".geojson",
-                ".json",
-                "application/zip",
-                "application/x-zip-compressed",
-              ]}
-              maxFiles={1}
-              maxFileSize={10 * 1024 * 1024}
-              onFileChange={({ acceptedFiles }) => {
-                if (!isEmptyArray(acceptedFiles)) {
-                  void processFile(acceptedFiles[0]);
-                }
-              }}
-              dropzoneProps={{
-                flex: 1,
-                h: "full",
-                minH: "0",
-              }}
-              dropzoneButtonProps={{
-                primary: true,
-                children: (
-                  <>
-                    <AppIcon icon={FilePlusIcon} />
-                    {"Upload Berkas AOI"}
-                  </>
-                ),
-              }}
-              flex={1}
-              h={"full"}
-            />
-          </Box>
-        )}
-
-        {/* Loading skeleton while mounting tab or parsing */}
-        {uploadedFile?.status === "parsing" && (
+        {(!isActive || !isMounted) ? (
           <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
-        )}
+        ) : (
+          <>
+            {/* Step 1: Upload Dropzone (No File Uploaded Yet) */}
+            {!uploadedFile && !confirmedFeature && (
+              <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
+                <FileInput
+                  variant={"dropzone"}
+                  label={
+                    "Upload file AOI (.shp/.zip atau .geojson/.json) untuk mengambil data IGT"
+                  }
+                  accept={[
+                    ".zip",
+                    ".shp",
+                    ".geojson",
+                    ".json",
+                    "application/zip",
+                    "application/x-zip-compressed",
+                  ]}
+                  maxFiles={1}
+                  maxFileSize={10 * 1024 * 1024}
+                  onFileChange={({ acceptedFiles }) => {
+                    if (!isEmptyArray(acceptedFiles)) {
+                      void processFile(acceptedFiles[0]);
+                    }
+                  }}
+                  dropzoneProps={{
+                    flex: 1,
+                    h: "full",
+                    minH: "0",
+                  }}
+                  dropzoneButtonProps={{
+                    primary: true,
+                    children: (
+                      <>
+                        <AppIcon icon={FilePlusIcon} />
+                        {"Upload Berkas AOI"}
+                      </>
+                    ),
+                  }}
+                  flex={1}
+                  h={"full"}
+                />
+              </Box>
+            )}
 
-        {/* Step 2: Uploaded State — Polygon Selection List */}
-        {uploadedFile &&
-          uploadedFile.status === "done" &&
-          !confirmedFeature && (
-            <UploadAoiFeatureList
-              file={uploadedFile}
-              selectedFeatureId={selectedFeatureId}
-              onSelectFeature={handleSelectFeature}
-              onToggleFeatureVisibility={handleToggleFeatureVisibility}
-              onConfirmSelection={handleConfirmSelection}
-              onResetFile={handleResetFile}
-            />
-          )}
+            {/* Loading skeleton while parsing */}
+            {uploadedFile?.status === "parsing" && (
+              <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
+            )}
 
-        {/* Step 3: Confirmed AOI State — Query & IGT Layer Data View */}
-        {confirmedFeature && (!isActive || !isMounted) && (
-          <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
-        )}
+            {/* Step 2: Uploaded State — Polygon Selection List */}
+            {uploadedFile &&
+              uploadedFile.status === "done" &&
+              !confirmedFeature && (
+                <UploadAoiFeatureList
+                  file={uploadedFile}
+                  selectedFeatureId={selectedFeatureId}
+                  onSelectFeature={handleSelectFeature}
+                  onToggleFeatureVisibility={handleToggleFeatureVisibility}
+                  onConfirmSelection={handleConfirmSelection}
+                  onResetFile={handleResetFile}
+                />
+              )}
 
-        {confirmedFeature && isActive && isMounted && aoiCqlFilter && (
-          <UploadAoiConfirmedAttributeList
-            aoiCqlFilter={aoiCqlFilter}
-            confirmedPolygon={confirmedFeature.polygon}
-            onResetAoi={handleResetAoi}
-          />
+            {/* Step 3: Confirmed AOI State — Query & IGT Layer Data View */}
+            {confirmedFeature && aoiCqlFilter && (
+              <UploadAoiConfirmedAttributeList
+                aoiCqlFilter={aoiCqlFilter}
+                confirmedPolygon={confirmedFeature.polygon}
+                isActive={isActive}
+                onResetAoi={handleResetAoi}
+              />
+            )}
+          </>
         )}
       </Tabs.Content>
     </MitraDataRequestUploadAoiContext.Provider>
@@ -634,7 +637,7 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
 const UploadAoiConfirmedAttributeList = memo(
   (props: MitraDataRequestUploadAoiAttributeViewProps) => {
     // Props
-    const { aoiCqlFilter, confirmedPolygon, onResetAoi } = props;
+    const { aoiCqlFilter, confirmedPolygon, isActive = true, onResetAoi } = props;
 
     // Stores
     const map = useMapInstanceStore((state) => state.map);
@@ -764,6 +767,7 @@ const UploadAoiConfirmedAttributeList = memo(
             cqlFilter={aoiCqlFilter}
             aoiPolygon={confirmedPolygon}
             isAoiVisible={isAoiVisible}
+            isActive={isActive}
             selectionType={"upload_aoi"}
             showFilter={false}
             onSelectIgtLayer={(layer) => {

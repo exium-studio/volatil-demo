@@ -66,6 +66,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       onSelectIgtLayer,
       showFilter = true,
       isAoiVisible = true,
+      isActive = true,
     } = props;
 
     // Stores
@@ -236,6 +237,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       selectionType,
       isAoiVisible,
       isCoverageVisible,
+      isActive,
     });
 
     // Derived — Valid layers eligible for spatial calculation (ALL intersecting layers in AOI, NOT affected by local search/basis filter)
@@ -505,42 +507,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
         bg={"bg.body"}
         roundedBottom={theme.radii.container}
       >
-        {/* Actions Header: Search Bar & Basis IGT Filter */}
-        <HStack
-          wrap={"wrap"}
-          align={"center"}
-          justify={"space-between"}
-          gap={"sm"}
-          w={"full"}
-          p={"md"}
-          bg={"bg.body"}
-        >
-          {/* Left: Search Bar */}
-          <HStack gap={"sm"} flex={1} maxW={"full"}>
-            <SearchInput
-              placeholder={"Cari nama / layer IGT"}
-              value={searchRaw}
-              onValueChange={(val) => setSearchRaw(val)}
-            />
-          </HStack>
-
-          {/* Right: Basis IGT Filter SegmentGroup */}
-          <HStack align={"center"} gap={"sm"} flexShrink={0}>
-            <SegmentGroupInput
-              size={"sm"}
-              value={basisFilter}
-              onValueChange={(details) => {
-                if (details.value) {
-                  setBasisFilter(details.value as BasisFilterType);
-                }
-              }}
-              options={BASIS_FILTER_OPTIONS}
-            />
-          </HStack>
-        </HStack>
-
-        <Separator borderColor={"bg.canvas"} />
-
         <VStack flex={1} overflowY={"auto"}>
           {/* Spatial Calculation Summary Box */}
           {effectiveAoiPolygon && (
@@ -561,12 +527,49 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 purchaseLimitMessage={purchaseLimitMessage}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
                 isCoverageVisible={isCoverageVisible}
+                selectionType={selectionType}
                 onToggleCoverageVisible={() =>
                   setIsCoverageVisible((prev) => !prev)
                 }
               />
             </Box>
           )}
+
+          <Separator borderColor={"bg.canvas"} />
+
+          {/* Actions Header: Search Bar & Basis IGT Filter */}
+          <HStack
+            wrap={"wrap"}
+            align={"center"}
+            justify={"space-between"}
+            gap={"sm"}
+            w={"full"}
+            p={"md"}
+            bg={"bg.body"}
+          >
+            {/* Left: Search Bar */}
+            <HStack gap={"sm"} flex={1} maxW={"full"}>
+              <SearchInput
+                placeholder={"Cari nama / layer IGT"}
+                value={searchRaw}
+                onValueChange={(val) => setSearchRaw(val)}
+              />
+            </HStack>
+
+            {/* Right: Basis IGT Filter SegmentGroup */}
+            <HStack align={"center"} gap={"sm"} flexShrink={0}>
+              <SegmentGroupInput
+                size={"sm"}
+                value={basisFilter}
+                onValueChange={(details) => {
+                  if (details.value) {
+                    setBasisFilter(details.value as BasisFilterType);
+                  }
+                }}
+                options={BASIS_FILTER_OPTIONS}
+              />
+            </HStack>
+          </HStack>
 
           <Separator borderColor={"bg.canvas"} />
 

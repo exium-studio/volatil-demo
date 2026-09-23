@@ -23,5 +23,6 @@ export type DrawAoiDataViewProps = {
 export type DrawAoiAttributeViewProps = {
   aoiCqlFilter: string;
   confirmedPolygon?: GeoJSON.Feature<GeoJSON.Polygon> | null;
+  isActive?: boolean;
   onResetDraw: () => void;
 };

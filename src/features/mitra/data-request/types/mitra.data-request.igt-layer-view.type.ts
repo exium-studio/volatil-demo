@@ -17,6 +17,7 @@ export type MitraDataRequestIgtLayerDataViewProps = {
   onSelectIgtLayer: (layer: IgtLayerItem) => void;
   showFilter?: boolean;
   isAoiVisible?: boolean;
+  isActive?: boolean;
   onCancelCoverage?: () => void;
 };
 

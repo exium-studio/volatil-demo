@@ -38,6 +38,7 @@ import {
   FocusIcon,
   InfoIcon,
   PencilIcon,
+  TrashIcon,
   XIcon,
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
@@ -83,7 +84,9 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
         p={0}
         {...restProps}
       >
-        {!hasAoi && !isDone && !isLoading && (
+        {!isActive || !isMounted ? (
+          <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
+        ) : !hasAoi && !isDone && !isLoading ? (
           <>
             <GuideAlert
               isLoading={isLoading}
@@ -152,28 +155,21 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
               isVisible={false}
             />
           </>
-        )}
-
-        {isError && (
+        ) : isError ? (
           <VStack gap={"sm"} p={"md"}>
             <P color={"fg.error"}>{error ?? "Terjadi kesalahan"}</P>
             <Button variant={"outline"} onClick={handleResetDraw}>
               {"Coba lagi"}
             </Button>
           </VStack>
-        )}
-
-        {hasAoi && (!isActive || !isMounted) && (
-          <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
-        )}
-
-        {hasAoi && isActive && isMounted && aoiCqlFilter && (
+        ) : hasAoi && aoiCqlFilter ? (
           <DrawAoiAttributeList
             aoiCqlFilter={aoiCqlFilter}
             confirmedPolygon={confirmedPolygon}
+            isActive={isActive}
             onResetDraw={handleResetDraw}
           />
-        )}
+        ) : null}
       </Tabs.Content>
     );
   },
@@ -247,7 +243,12 @@ const GuideAlert = (props: DrawAoiGuideAlertProps) => {
 
 const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
   // Props
-  const { aoiCqlFilter, confirmedPolygon, onResetDraw } = props;
+  const {
+    aoiCqlFilter,
+    confirmedPolygon,
+    isActive = true,
+    onResetDraw,
+  } = props;
 
   // Stores
   const map = useMapInstanceStore((state) => state.map);
@@ -362,7 +363,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
                   aria-label={"Hapus Gambar AOI"}
                   onClick={onResetDraw}
                 >
-                  <AppIcon icon={IconPolygonOff} />
+                  <AppIcon icon={TrashIcon} />
                 </IconButton>
               </Tooltip>
             </HStack>
@@ -375,6 +376,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
           cqlFilter={aoiCqlFilter}
           aoiPolygon={confirmedPolygon}
           isAoiVisible={isAoiVisible}
+          isActive={isActive}
           selectionType={"draw_aoi"}
           showFilter={false}
           onSelectIgtLayer={(layer) => {

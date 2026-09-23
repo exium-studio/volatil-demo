@@ -4,12 +4,14 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { flyToCartGeometry } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
@@ -32,8 +34,8 @@ import {
   EyeIcon,
   EyeOffIcon,
   FocusIcon,
-  RotateCcwIcon,
   SlidersHorizontalIcon,
+  TrashIcon,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -41,19 +43,23 @@ export const MitraDataRequestCatalogTabsContent = (
   props: MitraDataRequestCatalogTabsContentProps,
 ) => {
   // Props
-  const { isActive: _isActive, ...restProps } = props;
+  const { isActive = false, ...restProps } = props;
 
   // Stores
   const { theme } = useThemeStore();
   const map = useMapInstanceStore((state) => state.map);
-  const {
-    appliedAdministrativeFilters,
-    setAppliedAdministrativeFilters,
-  } = useAdministrativeFilterStore();
+  const { appliedAdministrativeFilters, setAppliedAdministrativeFilters } =
+    useAdministrativeFilterStore();
 
   // Hooks
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
-  const adminBoundaryQuery = useAdminBoundaryAoi(appliedAdministrativeFilters);
+  const isMounted = useMountTimeout({
+    isOpen: isActive,
+    mountDelay: 250,
+  });
+  const adminBoundaryQuery = useAdminBoundaryAoi(appliedAdministrativeFilters, {
+    enabled: isActive,
+  });
 
   // States
   const [draftFilters, setDraftFilters] =
@@ -97,7 +103,9 @@ export const MitraDataRequestCatalogTabsContent = (
       {...restProps}
       value={"catalog"}
     >
-      {!hasFilter ? (
+      {!isActive || !isMounted ? (
+        <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
+      ) : !hasFilter ? (
         <VStack
           flex={1}
           w={"full"}
@@ -145,7 +153,7 @@ export const MitraDataRequestCatalogTabsContent = (
             >
               <VStack align={"start"} gap={0}>
                 <P fontWeight={"semibold"} fontSize={"md"}>
-                  {"Katalog Layer IGT"}
+                  {"AOI Wilayah Administrasi"}
                 </P>
                 {filterLabel && (
                   <P fontSize={"xs"} color={"fg.muted"}>
@@ -179,7 +187,10 @@ export const MitraDataRequestCatalogTabsContent = (
                         aria-label={"Zoom ke Area (AOI)"}
                         onClick={() => {
                           if (adminBoundaryQuery.aoiPolygon) {
-                            flyToCartGeometry(map, adminBoundaryQuery.aoiPolygon);
+                            flyToCartGeometry(
+                              map,
+                              adminBoundaryQuery.aoiPolygon,
+                            );
                           }
                         }}
                       >
@@ -204,14 +215,14 @@ export const MitraDataRequestCatalogTabsContent = (
                   </Tooltip>
                 </FilterAdministrativeAreaTrigger>
 
-                <Tooltip content={"Reset Filter Wilayah"}>
+                <Tooltip content={"Hapus AOI Wilayah Administrasi"}>
                   <IconButton
                     variant={"outline"}
                     colorPalette={"red"}
-                    aria-label={"Reset Filter Wilayah"}
+                    aria-label={"Hapus AOI Wilayah Administrasi"}
                     onClick={handleResetInitialFilter}
                   >
-                    <AppIcon icon={RotateCcwIcon} />
+                    <AppIcon icon={TrashIcon} />
                   </IconButton>
                 </Tooltip>
               </HStack>
@@ -224,6 +235,7 @@ export const MitraDataRequestCatalogTabsContent = (
             selectionType={"catalog"}
             aoiPolygon={adminBoundaryQuery.aoiPolygon}
             isAoiVisible={isAoiVisible}
+            isActive={isActive}
             onSelectIgtLayer={(layer) => {
               selectLayer(layer.id);
             }}
@@ -289,4 +301,3 @@ const CatalogAttributeList = () => {
     />
   );
 };
-
