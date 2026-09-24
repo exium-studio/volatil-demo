@@ -45,6 +45,8 @@ export const approveMitraRegistrationApi = async (
 ): Promise<ApiResponse<InternalMitraRegistrationItem>> => {
   const formData = new FormData();
   formData.append("contractDocument", payload.contractDocument);
+  formData.append("workspaceInteropUrl", payload.workspaceInteropUrl);
+  formData.append("workspaceUrl", payload.workspaceInteropUrl);
 
   return apiClient.post<ApiResponse<InternalMitraRegistrationItem>>(
     `/api/internal/mitra-registrations/${payload.id}/approve`,
