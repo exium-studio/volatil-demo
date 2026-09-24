@@ -58,6 +58,7 @@ export const useMitraDataRequestCalculationStore =
         progressStage: "downloading",
         progressPercentage: 10,
         progressMessage: "Menginisialisasi kalkulasi spasial di server...",
+        result: null,
         error: null,
       });
 
@@ -70,14 +71,18 @@ export const useMitraDataRequestCalculationStore =
               progressMessage: event.message,
             });
           } else if (event.type === "completed") {
+            const finalResult = {
+              ...event.data,
+              selectionType: request.selectionType,
+            };
             set({
-              result: event.data,
+              result: finalResult,
               isCalculating: false,
               progressStage: "idle",
               progressPercentage: 100,
               progressMessage: "Kalkulasi spasial selesai.",
             });
-            resolve(event.data);
+            resolve(finalResult);
           } else if (event.type === "error") {
             set({
               error: event.message,

@@ -24,6 +24,7 @@ import {
   useAdministrativeFilterStore,
   useIgtLayerStore,
 } from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestCatalogTabsContentProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import { FilterAdministrativeAreaForm } from "@/features/shared/components/filter.administrative-area.form";
@@ -80,10 +81,12 @@ export const MitraDataRequestCatalogTabsContent = (
   const handleApplyInitialFilter = (
     filters: FilterAdministrativeAreaValues,
   ) => {
+    useMitraDataRequestCalculationStore.getState().reset();
     setAppliedAdministrativeFilters(filters);
   };
 
   const handleResetInitialFilter = () => {
+    useMitraDataRequestCalculationStore.getState().reset();
     setDraftFilters({});
     setAppliedAdministrativeFilters({});
   };

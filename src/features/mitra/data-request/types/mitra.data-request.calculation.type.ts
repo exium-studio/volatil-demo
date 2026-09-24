@@ -67,6 +67,7 @@ export type CalculateSpatialCoverageResult = {
   isPurchaseLimitValid: boolean;
   purchaseLimitMessage?: string;
   items: CalculateSpatialCalculatedItem[];
+  selectionType?: SelectionType;
 };
 
 export type CalculateSpatialConnectedEvent = {

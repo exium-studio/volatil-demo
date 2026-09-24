@@ -231,9 +231,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
     );
 
     // Manage AOI & Coverage Map Layers
+    const activeCoveragePolygon =
+      calculationResult?.selectionType === selectionType ||
+      !calculationResult?.selectionType
+        ? calculationResult?.coveragePolygon
+        : null;
+
     useCartAoiCoverageMap(map, {
       aoiPolygon: effectiveAoiPolygon,
-      coveragePolygon: calculationResult?.coveragePolygon,
+      coveragePolygon: activeCoveragePolygon,
       selectionType,
       isAoiVisible,
       isCoverageVisible,

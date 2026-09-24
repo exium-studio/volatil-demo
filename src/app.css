@@ -15,6 +15,13 @@
   transition: none !important;
 }
 
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
 /* Scroll */
 .noScrollbar {
   -ms-overflow-style: none;

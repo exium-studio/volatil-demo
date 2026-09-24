@@ -121,6 +121,13 @@ export const chakraConfig = defineConfig({
           transform: `scaleX(0)`,
         },
       },
+
+      "ping": {
+        "75%, 100%": {
+          transform: "scale(2)",
+          opacity: 0,
+        },
+      },
     },
 
     tokens: {
