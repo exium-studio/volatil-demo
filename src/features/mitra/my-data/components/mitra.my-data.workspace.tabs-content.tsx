@@ -38,13 +38,7 @@ export const MitraMyDataWorkspaceTabsContent = (
   if (!isActive) return null;
 
   if (isLoading) {
-    return (
-      <VStack flex={1} w={"full"} p={isSmContainer ? "md" : "lg"} gap={"md"}>
-        <Skeleton h={"80px"} w={"full"} />
-        <Skeleton h={"140px"} w={"full"} />
-        <Skeleton h={"140px"} w={"full"} />
-      </VStack>
-    );
+    return <Skeleton w={"full"} p={"md"} />;
   }
 
   if (isError) {
