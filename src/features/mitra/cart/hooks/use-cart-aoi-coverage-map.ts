@@ -1,93 +1,46 @@
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
-import {
-  DRAW_FILL_LAYER_ID,
-  DRAW_LINE_LAYER_ID,
-  DRAW_VERTEX_LAYER_ID,
-} from "@/design-system/components/map/hooks/use-map-draw";
-import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import type { CartMapLayerOptions } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
-/** Helper to generate isolated namespaced source & layer IDs per selection tab */
-export const getCartAoiLayerIds = (selectionType?: string) => {
-  const key = selectionType ?? "catalog";
-  return {
-    sourceId: `cart-aoi-${key}-source`,
-    fillId: `cart-aoi-${key}-fill`,
-    lineId: `cart-aoi-${key}-line`,
-  };
+// Fixed SSOT Source and Layer IDs for single active cart/request item
+export const CART_AOI_SOURCE_ID = "cart-aoi-source";
+export const CART_AOI_FILL_ID = "cart-aoi-fill";
+export const CART_AOI_LINE_ID = "cart-aoi-line";
+
+export const CART_COVERAGE_SOURCE_ID = "cart-coverage-source";
+export const CART_COVERAGE_FILL_ID = "cart-coverage-fill";
+export const CART_COVERAGE_LINE_ID = "cart-coverage-line";
+
+const EMPTY_FEATURE_COLLECTION: GeoJSON.FeatureCollection = {
+  type: "FeatureCollection",
+  features: [],
 };
 
-export const getCartCoverageLayerIds = (selectionType?: string) => {
-  const key = selectionType ?? "catalog";
-  return {
-    sourceId: `cart-coverage-${key}-source`,
-    fillId: `cart-coverage-${key}-fill`,
-    lineId: `cart-coverage-${key}-line`,
-  };
-};
+/** Helper returning the single recycled source & layer IDs */
+export const getCartAoiLayerIds = (_selectionType?: string) => ({
+  sourceId: CART_AOI_SOURCE_ID,
+  fillId: CART_AOI_FILL_ID,
+  lineId: CART_AOI_LINE_ID,
+});
 
-// Compatibility aliases
-export const CART_AOI_SOURCE_ID = "cart-aoi-catalog-source";
-export const CART_AOI_FILL_ID = "cart-aoi-catalog-fill";
-export const CART_AOI_LINE_ID = "cart-aoi-catalog-line";
+export const getCartCoverageLayerIds = (_selectionType?: string) => ({
+  sourceId: CART_COVERAGE_SOURCE_ID,
+  fillId: CART_COVERAGE_FILL_ID,
+  lineId: CART_COVERAGE_LINE_ID,
+});
 
-export const CART_COVERAGE_SOURCE_ID = "cart-coverage-catalog-source";
-export const CART_COVERAGE_FILL_ID = "cart-coverage-catalog-fill";
-export const CART_COVERAGE_LINE_ID = "cart-coverage-catalog-line";
+/** Compatibility color helpers backed by SSOT */
+export const getAoiColor = (selectionType?: string) =>
+  getSelectionTypeMapColors(selectionType);
 
-export const getAoiColor = (selectionType?: string) => {
-  switch (selectionType) {
-    case "catalog":
-      return {
-        fill: "#a855f7",
-        line: "#7c3aed",
-      };
-    case "upload_aoi":
-      return {
-        fill: "#f97316",
-        line: "#ea580c",
-      };
-    case "draw_aoi":
-      return {
-        fill: "#3b82f6",
-        line: "#2563eb",
-      };
-    default:
-      return {
-        fill: "#a855f7",
-        line: "#7c3aed",
-      };
-  }
-};
-
-export const getCoverageColor = (selectionType?: string) => {
-  switch (selectionType) {
-    case "catalog":
-      return {
-        fill: "#a855f7",
-        line: "#7c3aed",
-      };
-    case "upload_aoi":
-      return {
-        fill: "#f97316",
-        line: "#ea580c",
-      };
-    case "draw_aoi":
-      return {
-        fill: "#3b82f6",
-        line: "#2563eb",
-      };
-    default:
-      return {
-        fill: "#a855f7",
-        line: "#7c3aed",
-      };
-  }
-};
+export const getCoverageColor = (selectionType?: string) =>
+  getSelectionTypeMapColors(selectionType);
 
 /**
  * Returns the layer ID that Cart AOI/Coverage layers should be inserted before (below draw layer).
@@ -114,38 +67,30 @@ const getBeforeId = (map: maplibregl.Map): string | undefined => {
   return undefined;
 };
 
-/** Removes Cart AOI and Coverage layers & sources from map for specified selectionType or all types. */
+/** Removes recycled Cart AOI and Coverage layers & sources from map. */
 export const removeCartMapLayers = (
   map: maplibregl.Map | null,
-  selectionType?: string,
+  _selectionType?: string,
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!map || !(map as any).style) return;
 
-  const types = selectionType
-    ? [selectionType]
-    : ["catalog", "draw_aoi", "upload_aoi"];
-
   try {
-    types.forEach((typeKey) => {
-      const cov = getCartCoverageLayerIds(typeKey);
-      const aoi = getCartAoiLayerIds(typeKey);
+    if (map.getLayer(CART_COVERAGE_FILL_ID)) map.removeLayer(CART_COVERAGE_FILL_ID);
+    if (map.getLayer(CART_COVERAGE_LINE_ID)) map.removeLayer(CART_COVERAGE_LINE_ID);
+    if (map.getSource(CART_COVERAGE_SOURCE_ID)) map.removeSource(CART_COVERAGE_SOURCE_ID);
 
-      if (map.getLayer(cov.fillId)) map.removeLayer(cov.fillId);
-      if (map.getLayer(cov.lineId)) map.removeLayer(cov.lineId);
-      if (map.getSource(cov.sourceId)) map.removeSource(cov.sourceId);
-
-      if (map.getLayer(aoi.fillId)) map.removeLayer(aoi.fillId);
-      if (map.getLayer(aoi.lineId)) map.removeLayer(aoi.lineId);
-      if (map.getSource(aoi.sourceId)) map.removeSource(aoi.sourceId);
-    });
+    if (map.getLayer(CART_AOI_FILL_ID)) map.removeLayer(CART_AOI_FILL_ID);
+    if (map.getLayer(CART_AOI_LINE_ID)) map.removeLayer(CART_AOI_LINE_ID);
+    if (map.getSource(CART_AOI_SOURCE_ID)) map.removeSource(CART_AOI_SOURCE_ID);
   } catch (err) {
     console.warn("Failed to remove cart map layers:", err);
   }
 };
 
 /**
- * Renders or updates Cart AOI & Coverage polygon layers on MapLibre independently per tab.
+ * Renders or updates recycled Cart AOI & Coverage polygon layers on MapLibre.
+ * Updates data and paint colors based on active selectionType SSOT.
  */
 export const renderCartMapLayers = (
   map: maplibregl.Map | null,
@@ -163,41 +108,16 @@ export const renderCartMapLayers = (
     isActive = true,
   } = options;
 
-  const aoiIds = getCartAoiLayerIds(selectionType);
-  const coverageIds = getCartCoverageLayerIds(selectionType);
-  const aoiColors = getAoiColor(selectionType);
-  const coverageColors = getCoverageColor(selectionType);
+  const colors = getSelectionTypeMapColors(selectionType);
   const beforeId = getBeforeId(map);
   const aoiFeature = normalizePolygonFeature(aoiPolygon);
   const coverageFeature = normalizePolygonFeature(coveragePolygon);
 
-  // 1. Manage AOI layer
-  if (selectionType === "draw_aoi") {
-    // Draw AOI uses MapLibre native draw stack (useMapDraw)
-    const isVisible = isActive && isAoiVisible;
-    if (map.getLayer(DRAW_FILL_LAYER_ID)) {
-      map.setLayoutProperty(
-        DRAW_FILL_LAYER_ID,
-        "visibility",
-        isVisible ? "visible" : "none",
-      );
-    }
-    if (map.getLayer(DRAW_LINE_LAYER_ID)) {
-      map.setLayoutProperty(
-        DRAW_LINE_LAYER_ID,
-        "visibility",
-        isVisible ? "visible" : "none",
-      );
-    }
-    if (map.getLayer(DRAW_VERTEX_LAYER_ID)) {
-      map.setLayoutProperty(
-        DRAW_VERTEX_LAYER_ID,
-        "visibility",
-        isVisible ? "visible" : "none",
-      );
-    }
-  } else if (isActive && aoiFeature && isAoiVisible) {
-    const existingSource = map.getSource(aoiIds.sourceId) as
+  // 1. Manage Recycled AOI layer
+  const shouldShowAoi = isActive && isAoiVisible && Boolean(aoiFeature);
+
+  if (shouldShowAoi && aoiFeature) {
+    const existingSource = map.getSource(CART_AOI_SOURCE_ID) as
       | maplibregl.GeoJSONSource
       | undefined;
 
@@ -205,46 +125,46 @@ export const renderCartMapLayers = (
       existingSource.setData(aoiFeature);
     } else {
       try {
-        map.addSource(aoiIds.sourceId, {
+        map.addSource(CART_AOI_SOURCE_ID, {
           type: "geojson",
           data: aoiFeature,
         });
       } catch (err) {
-        console.warn(`Failed to add ${aoiIds.sourceId}:`, err);
+        console.warn(`Failed to add source ${CART_AOI_SOURCE_ID}:`, err);
       }
     }
 
-    if (!map.getLayer(aoiIds.fillId)) {
+    if (!map.getLayer(CART_AOI_FILL_ID)) {
       try {
         map.addLayer(
           {
-            id: aoiIds.fillId,
+            id: CART_AOI_FILL_ID,
             type: "fill",
-            source: aoiIds.sourceId,
+            source: CART_AOI_SOURCE_ID,
             paint: {
-              "fill-color": aoiColors.fill,
+              "fill-color": colors.fill,
               "fill-opacity": 0.2,
             },
           } as maplibregl.LayerSpecification,
           beforeId,
         );
       } catch (err) {
-        console.warn(`Failed to add ${aoiIds.fillId}:`, err);
+        console.warn(`Failed to add layer ${CART_AOI_FILL_ID}:`, err);
       }
     } else {
-      map.setPaintProperty(aoiIds.fillId, "fill-color", aoiColors.fill);
-      map.setLayoutProperty(aoiIds.fillId, "visibility", "visible");
+      map.setPaintProperty(CART_AOI_FILL_ID, "fill-color", colors.fill);
+      map.setLayoutProperty(CART_AOI_FILL_ID, "visibility", "visible");
     }
 
-    if (!map.getLayer(aoiIds.lineId)) {
+    if (!map.getLayer(CART_AOI_LINE_ID)) {
       try {
         map.addLayer(
           {
-            id: aoiIds.lineId,
+            id: CART_AOI_LINE_ID,
             type: "line",
-            source: aoiIds.sourceId,
+            source: CART_AOI_SOURCE_ID,
             paint: {
-              "line-color": aoiColors.line,
+              "line-color": colors.line,
               "line-width": 2.5,
               "line-opacity": 0.9,
             },
@@ -252,25 +172,34 @@ export const renderCartMapLayers = (
           beforeId,
         );
       } catch (err) {
-        console.warn(`Failed to add ${aoiIds.lineId}:`, err);
+        console.warn(`Failed to add layer ${CART_AOI_LINE_ID}:`, err);
       }
     } else {
-      map.setPaintProperty(aoiIds.lineId, "line-color", aoiColors.line);
-      map.setLayoutProperty(aoiIds.lineId, "visibility", "visible");
+      map.setPaintProperty(CART_AOI_LINE_ID, "line-color", colors.line);
+      map.setLayoutProperty(CART_AOI_LINE_ID, "visibility", "visible");
     }
   } else {
-    // Hide AOI layers for this tab
-    if (map.getLayer(aoiIds.fillId)) {
-      map.setLayoutProperty(aoiIds.fillId, "visibility", "none");
+    // Hide or clear AOI layers
+    const existingSource = map.getSource(CART_AOI_SOURCE_ID) as
+      | maplibregl.GeoJSONSource
+      | undefined;
+    if (existingSource) {
+      existingSource.setData(EMPTY_FEATURE_COLLECTION);
     }
-    if (map.getLayer(aoiIds.lineId)) {
-      map.setLayoutProperty(aoiIds.lineId, "visibility", "none");
+    if (map.getLayer(CART_AOI_FILL_ID)) {
+      map.setLayoutProperty(CART_AOI_FILL_ID, "visibility", "none");
+    }
+    if (map.getLayer(CART_AOI_LINE_ID)) {
+      map.setLayoutProperty(CART_AOI_LINE_ID, "visibility", "none");
     }
   }
 
-  // 2. Manage Coverage layer (independent per tab)
-  if (isActive && coverageFeature && isCoverageVisible) {
-    const existingSource = map.getSource(coverageIds.sourceId) as
+  // 2. Manage Recycled Coverage layer (colors match selectionType SSOT)
+  const shouldShowCoverage =
+    isActive && isCoverageVisible && Boolean(coverageFeature);
+
+  if (shouldShowCoverage && coverageFeature) {
+    const existingSource = map.getSource(CART_COVERAGE_SOURCE_ID) as
       | maplibregl.GeoJSONSource
       | undefined;
 
@@ -278,50 +207,46 @@ export const renderCartMapLayers = (
       existingSource.setData(coverageFeature);
     } else {
       try {
-        map.addSource(coverageIds.sourceId, {
+        map.addSource(CART_COVERAGE_SOURCE_ID, {
           type: "geojson",
           data: coverageFeature,
         });
       } catch (err) {
-        console.warn(`Failed to add ${coverageIds.sourceId}:`, err);
+        console.warn(`Failed to add source ${CART_COVERAGE_SOURCE_ID}:`, err);
       }
     }
 
-    if (!map.getLayer(coverageIds.fillId)) {
+    if (!map.getLayer(CART_COVERAGE_FILL_ID)) {
       try {
         map.addLayer(
           {
-            id: coverageIds.fillId,
+            id: CART_COVERAGE_FILL_ID,
             type: "fill",
-            source: coverageIds.sourceId,
+            source: CART_COVERAGE_SOURCE_ID,
             paint: {
-              "fill-color": coverageColors.fill,
+              "fill-color": colors.fill,
               "fill-opacity": 0.35,
             },
           } as maplibregl.LayerSpecification,
           beforeId,
         );
       } catch (err) {
-        console.warn(`Failed to add ${coverageIds.fillId}:`, err);
+        console.warn(`Failed to add layer ${CART_COVERAGE_FILL_ID}:`, err);
       }
     } else {
-      map.setPaintProperty(
-        coverageIds.fillId,
-        "fill-color",
-        coverageColors.fill,
-      );
-      map.setLayoutProperty(coverageIds.fillId, "visibility", "visible");
+      map.setPaintProperty(CART_COVERAGE_FILL_ID, "fill-color", colors.fill);
+      map.setLayoutProperty(CART_COVERAGE_FILL_ID, "visibility", "visible");
     }
 
-    if (!map.getLayer(coverageIds.lineId)) {
+    if (!map.getLayer(CART_COVERAGE_LINE_ID)) {
       try {
         map.addLayer(
           {
-            id: coverageIds.lineId,
+            id: CART_COVERAGE_LINE_ID,
             type: "line",
-            source: coverageIds.sourceId,
+            source: CART_COVERAGE_SOURCE_ID,
             paint: {
-              "line-color": coverageColors.line,
+              "line-color": colors.line,
               "line-width": 2.5,
               "line-opacity": 1.0,
             },
@@ -329,23 +254,25 @@ export const renderCartMapLayers = (
           beforeId,
         );
       } catch (err) {
-        console.warn(`Failed to add ${coverageIds.lineId}:`, err);
+        console.warn(`Failed to add layer ${CART_COVERAGE_LINE_ID}:`, err);
       }
     } else {
-      map.setPaintProperty(
-        coverageIds.lineId,
-        "line-color",
-        coverageColors.line,
-      );
-      map.setLayoutProperty(coverageIds.lineId, "visibility", "visible");
+      map.setPaintProperty(CART_COVERAGE_LINE_ID, "line-color", colors.line);
+      map.setLayoutProperty(CART_COVERAGE_LINE_ID, "visibility", "visible");
     }
   } else {
-    // Hide Coverage layers for this tab
-    if (map.getLayer(coverageIds.fillId)) {
-      map.setLayoutProperty(coverageIds.fillId, "visibility", "none");
+    // Hide or clear Coverage layers
+    const existingSource = map.getSource(CART_COVERAGE_SOURCE_ID) as
+      | maplibregl.GeoJSONSource
+      | undefined;
+    if (existingSource) {
+      existingSource.setData(EMPTY_FEATURE_COLLECTION);
     }
-    if (map.getLayer(coverageIds.lineId)) {
-      map.setLayoutProperty(coverageIds.lineId, "visibility", "none");
+    if (map.getLayer(CART_COVERAGE_FILL_ID)) {
+      map.setLayoutProperty(CART_COVERAGE_FILL_ID, "visibility", "none");
+    }
+    if (map.getLayer(CART_COVERAGE_LINE_ID)) {
+      map.setLayoutProperty(CART_COVERAGE_LINE_ID, "visibility", "none");
     }
   }
 };
@@ -379,7 +306,7 @@ export const flyToCartGeometry = (
 };
 
 /**
- * Hook to manage Cart AOI and Coverage layers with cleanup on unmount.
+ * Hook to manage recycled Cart AOI and Coverage layers with cleanup on unmount.
  */
 export const useCartAoiCoverageMap = (
   map: maplibregl.Map | null,
@@ -417,7 +344,7 @@ export const useCartAoiCoverageMap = (
     return () => {
       map.off(MAP_EVENTS_MAP.styleReady as string, handleReady);
       map.off(MAP_EVENTS_MAP.layersReady as string, handleReady);
-      removeCartMapLayers(map, optionsRef.current.selectionType);
+      removeCartMapLayers(map);
     };
   }, [map]);
 

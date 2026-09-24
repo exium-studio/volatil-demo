@@ -69,6 +69,55 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
   },
 };
 
+/**
+ * SSOT for MapLibre AOI & Coverage polygon layer colors by SelectionType:
+ * - catalog: Purple (#a855f7 / #7c3aed)
+ * - upload_aoi: Orange (#f97316 / #ea580c)
+ * - draw_aoi: Blue (#3b82f6 / #2563eb)
+ */
+export const SELECTION_TYPE_MAP_COLOR: Record<
+  SelectionType,
+  {
+    fill: string;
+    line: string;
+  }
+> = {
+  catalog: {
+    fill: "#a855f7",
+    line: "#7c3aed",
+  },
+  upload_aoi: {
+    fill: "#f97316",
+    line: "#ea580c",
+  },
+  draw_aoi: {
+    fill: "#3b82f6",
+    line: "#2563eb",
+  },
+};
+
+/**
+ * Returns the fill and line colors for MapLibre AOI & Coverage polygon layers based on selectionType.
+ */
+export const getSelectionTypeMapColors = (
+  selectionType?: string | null,
+): {
+  fill: string;
+  line: string;
+  fillColor: string;
+  lineColor: string;
+} => {
+  const normalized = (selectionType ?? "catalog") as SelectionType;
+  const color =
+    SELECTION_TYPE_MAP_COLOR[normalized] ?? SELECTION_TYPE_MAP_COLOR.catalog;
+  return {
+    fill: color.fill,
+    line: color.line,
+    fillColor: color.fill,
+    lineColor: color.line,
+  };
+};
+
 export const IGT_BASIS_MAP: Record<IgtBasisType, IgtBasisTypeConfig> = {
   bidang: {
     label: "Bidang",

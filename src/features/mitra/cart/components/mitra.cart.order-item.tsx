@@ -277,7 +277,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
                 {hasCoveragePolygon && (
                   <HStack gap={"sm"} align={"center"}>
                     <HStack gap={"xs"} align={"center"}>
-                      <Box w={"8px"} h={"8px"} bg={"green.solid"} />
+                      <Box w={"8px"} h={"8px"} bg={`${aoiColorPalette}.solid`} />
 
                       <P>{"Kawasan"}</P>
                     </HStack>

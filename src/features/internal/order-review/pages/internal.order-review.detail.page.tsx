@@ -57,6 +57,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 
+import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import type GeoJSON from "geojson";
@@ -65,27 +66,6 @@ import type maplibregl from "maplibre-gl";
 const ORDER_REVIEW_AOI_SOURCE_ID = "order-review-aoi-source";
 const ORDER_REVIEW_AOI_FILL_ID = "order-review-aoi-fill";
 const ORDER_REVIEW_AOI_LINE_ID = "order-review-aoi-line";
-
-const getAoiColorBySelectionType = (selectionType?: string) => {
-  switch (selectionType) {
-    case "draw_aoi":
-      return {
-        fillColor: "#3b82f6",
-        lineColor: "#2563eb",
-      };
-    case "upload_aoi":
-      return {
-        fillColor: "#f97316",
-        lineColor: "#ea580c",
-      };
-    case "catalog":
-    default:
-      return {
-        fillColor: "#a855f7",
-        lineColor: "#7c3aed",
-      };
-  }
-};
 
 const removeOrderReviewAoiLayer = (map: maplibregl.Map) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,7 +94,7 @@ const renderOrderReviewAoiLayer = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!map || !(map as any).style) return;
 
-  const { fillColor, lineColor } = getAoiColorBySelectionType(selectionType);
+  const { fillColor, lineColor } = getSelectionTypeMapColors(selectionType);
 
   try {
     const existingSource = map.getSource(ORDER_REVIEW_AOI_SOURCE_ID) as
