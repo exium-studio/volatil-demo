@@ -13,12 +13,12 @@ import { MitraMyDataWorkspaceTabsContent } from "@/features/mitra/my-data/compon
 import type { MitraMyDataTab } from "@/features/mitra/my-data/types/my-data.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { LayersIcon, ServerIcon } from "lucide-react";
+import { FolderOpenIcon, LayersIcon } from "lucide-react";
 import { Suspense, useTransition } from "react";
 
 const MY_DATA_TAB_MAP = {
   workspace: {
-    icon: ServerIcon,
+    icon: FolderOpenIcon,
     label: "Workspace",
   },
   layers: {
@@ -100,13 +100,7 @@ export const MitraMyDataPage = () => {
 
             <Suspense
               fallback={
-                <Skeleton
-                  h={"full"}
-                  w={"full"}
-                  flex={1}
-                  p={"md"}
-                  rounded={0}
-                />
+                <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
               }
             >
               <Tabs.Content
@@ -120,12 +114,7 @@ export const MitraMyDataPage = () => {
                 />
               </Tabs.Content>
 
-              <Tabs.Content
-                value={"layers"}
-                flex={1}
-                overflowY={"auto"}
-                p={0}
-              >
+              <Tabs.Content value={"layers"} flex={1} overflowY={"auto"} p={0}>
                 <MitraMyDataDataView />
               </Tabs.Content>
             </Suspense>
