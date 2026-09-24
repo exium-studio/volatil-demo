@@ -2,6 +2,7 @@
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -141,13 +142,19 @@ export const MitraRegisterPage = () => {
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"NOMOR REGISTRASI PENDAFTARAN"}
                   </P>
-                  <P
-                    fontSize={"2xl"}
-                    fontWeight={"bold"}
-                    letterSpacing={"wider"}
-                  >
-                    {successData.registrationNumber}
-                  </P>
+                  <HStack align={"center"} justify={"center"} gap={2}>
+                    <P
+                      fontSize={"2xl"}
+                      fontWeight={"bold"}
+                      letterSpacing={"wider"}
+                    >
+                      {successData.registrationNumber}
+                    </P>
+                    <ClipboardButton
+                      value={successData.registrationNumber}
+                      size={"xs"}
+                    />
+                  </HStack>
                   <P fontSize={"xs"} color={"fg.muted"}>
                     {
                       "Simpan nomor ini untuk melakukan pengecekan status verifikasi & kontrak."
@@ -238,7 +245,8 @@ export const MitraRegisterPage = () => {
                     </Field>
 
                     <Field
-                      label={"Situs Web Instansi (Opsional)"}
+                      optional
+                      label={"Situs Web Instansi"}
                       invalid={Boolean(errors.website)}
                       errorText={errors.website?.message}
                     >

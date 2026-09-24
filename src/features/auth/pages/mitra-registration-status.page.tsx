@@ -117,6 +117,7 @@ export const MitraRegistrationStatusPage = () => {
               <P fontWeight={"semibold"} fontSize={"md"}>
                 {"Pelacakan Pengajuan Kemitraan Publik"}
               </P>
+
               <P fontSize={"sm"} color={"fg.muted"} maxW={"560px"}>
                 {
                   "Masukkan nomor registrasi pendaftaran yang Anda dapatkan saat pendaftaran (format: REG-2026-XXXXX)."
@@ -185,7 +186,7 @@ export const MitraRegistrationStatusPage = () => {
             {statusData && statusConfig && (
               <VStack align={"stretch"} gap={4}>
                 <Box
-                  p={5}
+                  p={"md"}
                   bg={"bg.subtle"}
                   rounded={"md"}
                   borderWidth={"1px"}
@@ -193,7 +194,7 @@ export const MitraRegistrationStatusPage = () => {
                 >
                   <HStack
                     justify={"space-between"}
-                    align={"center"}
+                    align={"start"}
                     mb={4}
                     wrap={"wrap"}
                     gap={2}
@@ -202,17 +203,20 @@ export const MitraRegistrationStatusPage = () => {
                       <P fontSize={"xs"} color={"fg.subtle"}>
                         {"Nomor Registrasi"}
                       </P>
+
                       <P fontSize={"lg"} fontWeight={"bold"} color={"blue.600"}>
                         {statusData.registrationNumber}
                       </P>
                     </VStack>
 
                     <Badge
-                      size={"lg"}
+                      size={"sm"}
                       colorPalette={statusConfig.colorPalette}
-                      variant={"subtle"}
+                      px={0}
+                      bg={"transparent"}
                     >
                       <AppIcon icon={statusConfig.icon} />
+
                       {statusConfig.label}
                     </Badge>
                   </HStack>
