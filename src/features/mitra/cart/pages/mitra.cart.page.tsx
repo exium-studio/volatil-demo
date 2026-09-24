@@ -122,7 +122,8 @@ const MitraCartContent = () => {
 
   const isOrderLoadingOrSwitching =
     Boolean(selectedOrderId) &&
-    (isDetailLoading || (isDetailFetching && selectedOrder?.orderId !== selectedOrderId));
+    (isDetailLoading ||
+      (isDetailFetching && selectedOrder?.orderId !== selectedOrderId));
 
   return (
     <AppContentContainer
@@ -340,7 +341,7 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
 
   return (
     <Container.Body
-      flex={isSmContainer ? 1 : 2}
+      flex={isSmContainer ? undefined : 2}
       alignSelf={isSmContainer ? undefined : "start"}
       minW={isSmContainer ? "full" : "320px"}
       maxH={isSmContainer ? undefined : "full"}
