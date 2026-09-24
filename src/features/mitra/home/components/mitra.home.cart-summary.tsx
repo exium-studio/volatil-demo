@@ -135,15 +135,7 @@ const MitraHomeCartStats = (props: {
             <StatGrid.Header>
               <StatGrid.Label>{stat.label}</StatGrid.Label>
 
-              <AppIcon
-                icon={stat.icon}
-                color={`${stat.colorPalette}.subtle`}
-                boxSize={"58px"}
-                pos={"absolute"}
-                right={"16px"}
-                bottom={"50%"}
-                transform={"translateY(50%)"}
-              />
+              <AppIcon icon={stat.icon} color={`${stat.colorPalette}.fg`} />
             </StatGrid.Header>
 
             <StatGrid.Value

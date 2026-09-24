@@ -59,10 +59,7 @@ const MitraHomeDataSummaryContent = () => {
 
   return (
     <Container.Body gap={4} py={"md"}>
-      <MitraHomeDataSummaryHeader
-        period={period}
-        onPeriodChange={setPeriod}
-      />
+      <MitraHomeDataSummaryHeader period={period} onPeriodChange={setPeriod} />
 
       <Separator borderColor={"bg.canvas"} />
 
