@@ -565,7 +565,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
             {/* Right: Basis IGT Filter SegmentGroup */}
             <HStack align={"center"} gap={"sm"} flexShrink={0}>
               <SegmentGroupInput
-                size={"sm"}
                 value={basisFilter}
                 onValueChange={(details) => {
                   if (details.value) {
@@ -582,7 +581,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
           {/* DataList Table with Multi-Selection Checkbox */}
           <VStack flex={1} w={"full"} bg={"bg.body"} minH={"240px"}>
             {isShowLoading && (
-              <Skeleton flex={1} w={"full"} minH={"240px"} p={"md"} rounded={0} />
+              <Skeleton
+                flex={1}
+                w={"full"}
+                minH={"240px"}
+                p={"md"}
+                rounded={0}
+              />
             )}
 
             {!isShowLoading &&
