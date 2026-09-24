@@ -68,14 +68,7 @@ export const MitraDataRequestSpatialSummary = memo(
 
     if (effectiveIsCalculating) {
       return (
-        <VStack
-          gap={"sm"}
-          p={"md"}
-          rounded={theme.radii.container}
-          bg={"bg.subtle"}
-          align={"stretch"}
-          borderColor={"border.subtle"}
-        >
+        <VStack gap={"md"}>
           {/* Progress / Loading message */}
           <VStack gap={"sm"} align={"stretch"}>
             <HStack
@@ -150,13 +143,7 @@ export const MitraDataRequestSpatialSummary = memo(
     }
 
     return (
-      <VStack
-        gap={"md"}
-        p={"md"}
-        rounded={theme.radii.container}
-        bg={"bg.subtle"}
-        borderColor={"border.subtle"}
-      >
+      <VStack gap={"md"}>
         {/* Coverage Layer Switch (Only rendered if coverage polygon exists) */}
         {hasCoveragePolygon && onToggleCoverageVisible && (
           <HStack justify={"space-between"} align={"center"}>

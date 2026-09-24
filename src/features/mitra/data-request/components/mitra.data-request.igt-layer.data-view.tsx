@@ -507,7 +507,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         bg={"bg.body"}
         roundedBottom={theme.radii.container}
       >
-        <VStack flex={1} overflowY={"auto"}>
+        <VStack flex={1} w={"full"} overflowY={"auto"}>
           {/* Spatial Calculation Summary Box */}
           {effectiveAoiPolygon && (
             <Box p={"md"} bg={"bg.body"} w={"full"}>
@@ -574,8 +574,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
           <Separator borderColor={"bg.canvas"} />
 
           {/* DataList Table with Multi-Selection Checkbox */}
-          <VStack bg={"bg.body"}>
-            {isShowLoading && <Skeleton flex={1} p={"md"} rounded={0} />}
+          <VStack flex={1} w={"full"} bg={"bg.body"} minH={"240px"}>
+            {isShowLoading && (
+              <Skeleton flex={1} w={"full"} minH={"240px"} p={"md"} rounded={0} />
+            )}
 
             {!isShowLoading &&
               (isErrorLayers || (showFilter && adminBoundaryQuery.isError)) && (
