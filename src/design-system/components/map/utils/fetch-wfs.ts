@@ -31,6 +31,7 @@ const buildWfsUrl = (
     wfsUrl,
     bbox,
     cqlFilter,
+    propertyName,
     version = "2.0.0",
     srsName = "EPSG:4326",
     maxFeatures,
@@ -91,6 +92,10 @@ const buildWfsUrl = (
 
   if (cqlFilter) {
     url.searchParams.set("CQL_FILTER", cqlFilter);
+  }
+
+  if (propertyName) {
+    url.searchParams.set("propertyName", propertyName);
   }
 
   return url;

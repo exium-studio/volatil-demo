@@ -1,5 +1,7 @@
 // src/features/mitra/data-request/api/mitra.data-request-filter.api.ts
 
+import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import { ADMIN_BOUNDARY_WFS_CONFIG } from "@/features/mitra/data-request/constants/igt.config";
 import type {
   FilterKabupatenParams,
   FilterKecamatanParams,
@@ -7,41 +9,27 @@ import type {
   FilterOptionItem,
   FilterOptionsResponse,
 } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
+import { cleanAdministrativeValue } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
+import type GeoJSON from "geojson";
 
-const GITHUB_WILAYAH_BASE_URLS = [
-  "https://www.emsifa.com/api-wilayah-indonesia/api",
-  "https://emsifa.github.io/api-wilayah-indonesia/api",
-];
-
-const fetchWilayahJson = async <T>(
-  endpoint: string,
-  signal?: AbortSignal,
-): Promise<T> => {
-  for (const baseUrl of GITHUB_WILAYAH_BASE_URLS) {
-    try {
-      const res = await fetch(`${baseUrl}/${endpoint}`, { signal });
-      if (res.ok) {
-        return (await res.json()) as T;
-      }
-    } catch {
-      // Try next fallback base URL
+const extractAdminFeatureName = (
+  props: GeoJSON.GeoJsonProperties,
+  primaryKeys: string[],
+): string => {
+  if (!props) return "";
+  for (const key of primaryKeys) {
+    const val =
+      props[key] ??
+      props[key.toLowerCase()] ??
+      props[key.toUpperCase()];
+    if (typeof val === "string" && val.trim() !== "") {
+      return val.trim();
     }
   }
-  throw new Error(`Failed to fetch ${endpoint} from Wilayah Indonesia API`);
+  return "";
 };
-
-// In-memory cache for mapping names to GitHub static API IDs
-let cachedProvinces: Array<{ id: string; name: string }> | null = null;
-const cachedRegencies = new Map<
-  string,
-  Array<{ id: string; province_id: string; name: string }>
->();
-const cachedDistricts = new Map<
-  string,
-  Array<{ id: string; regency_id: string; name: string }>
->();
 
 export const fetchFilterOptionsBasisApi = async (
   signal?: AbortSignal,
@@ -63,22 +51,42 @@ export const fetchFilterOptionsTemaApi = async (
   return response.data ?? { data: [] };
 };
 
+/**
+ * Fetches unique Provinsi options directly from GeoServer WFS BATAS_ADMIN_PROVINSI layer.
+ */
 export const fetchFilterOptionsProvinsiApi = async (
   signal?: AbortSignal,
 ): Promise<FilterOptionsResponse> => {
-  const provinces = await fetchWilayahJson<Array<{ id: string; name: string }>>(
-    "provinces.json",
+  const config = ADMIN_BOUNDARY_WFS_CONFIG.provinsi;
+  const res = await fetchWfs({
+    typeName: config.typeName,
+    wfsUrl: config.wfsUrl,
+    version: "2.0.0",
+    propertyName: config.attributeKey,
+    maxFeatures: 100,
     signal,
-  );
-  cachedProvinces = provinces;
+  });
 
-  const data: FilterOptionItem[] = provinces.map((p) => ({
-    label: p.name,
-    value: p.name,
+  const keys = [config.attributeKey, "WADMPR", "wadmpr", "provinsi", "NAMA", "nama"];
+  const uniqueNames = Array.from(
+    new Set(
+      res.features
+        .map((f) => extractAdminFeatureName(f.properties, keys))
+        .filter(Boolean),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "id"));
+
+  const data: FilterOptionItem[] = uniqueNames.map((name) => ({
+    label: name,
+    value: name,
   }));
   return { data };
 };
 
+/**
+ * Fetches unique Kabupaten/Kota options directly from GeoServer WFS BATAS_ADMIN_KOTAKAB layer.
+ * Filtered by parent Provinsi (WADMPR) when provided.
+ */
 export const fetchFilterOptionsKabupatenApi = async (
   params?: FilterKabupatenParams,
   signal?: AbortSignal,
@@ -87,34 +95,42 @@ export const fetchFilterOptionsKabupatenApi = async (
     return { data: [] };
   }
 
-  if (!cachedProvinces) {
-    cachedProvinces = await fetchWilayahJson<
-      Array<{ id: string; name: string }>
-    >("provinces.json", signal);
-  }
+  const config = ADMIN_BOUNDARY_WFS_CONFIG.kabupaten;
+  const cleanProv = cleanAdministrativeValue(params.provinsiId);
+  const cqlFilter = cleanProv
+    ? `WADMPR ILIKE '%${cleanProv}%'`
+    : undefined;
 
-  const provNameOrId = params.provinsiId.trim().toUpperCase();
-  const matchedProv = cachedProvinces.find(
-    (p) => p.id === provNameOrId || p.name.toUpperCase() === provNameOrId,
-  );
+  const res = await fetchWfs({
+    typeName: config.typeName,
+    wfsUrl: config.wfsUrl,
+    version: "2.0.0",
+    cqlFilter,
+    propertyName: `${config.attributeKey},WADMPR`,
+    maxFeatures: 1000,
+    signal,
+  });
 
-  if (!matchedProv) {
-    return { data: [] };
-  }
+  const keys = [config.attributeKey, "WADMKK", "wadmkk", "kabupaten", "kota", "NAMA", "nama"];
+  const uniqueNames = Array.from(
+    new Set(
+      res.features
+        .map((f) => extractAdminFeatureName(f.properties, keys))
+        .filter(Boolean),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "id"));
 
-  const regencies = await fetchWilayahJson<
-    Array<{ id: string; province_id: string; name: string }>
-  >(`regencies/${matchedProv.id}.json`, signal);
-
-  cachedRegencies.set(matchedProv.id, regencies);
-
-  const data: FilterOptionItem[] = regencies.map((r) => ({
-    label: r.name,
-    value: r.name,
+  const data: FilterOptionItem[] = uniqueNames.map((name) => ({
+    label: name,
+    value: name,
   }));
   return { data };
 };
 
+/**
+ * Fetches unique Kecamatan options directly from GeoServer WFS BATAS_ADMIN_KECAMATAN layer.
+ * Filtered by parent Kabupaten (WADMKK) when provided.
+ */
 export const fetchFilterOptionsKecamatanApi = async (
   params?: FilterKecamatanParams,
   signal?: AbortSignal,
@@ -123,76 +139,42 @@ export const fetchFilterOptionsKecamatanApi = async (
     return { data: [] };
   }
 
-  const kabNameOrId = params.kabupatenId.trim().toUpperCase();
-  let targetRegId: string | undefined;
+  const config = ADMIN_BOUNDARY_WFS_CONFIG.kecamatan;
+  const cleanKab = cleanAdministrativeValue(params.kabupatenId);
+  const cqlFilter = cleanKab
+    ? `WADMKK ILIKE '%${cleanKab}%'`
+    : undefined;
 
-  // 1. Direct ID check or search in cached regencies
-  for (const [, regList] of cachedRegencies.entries()) {
-    const found = regList.find(
-      (r) =>
-        r.id === kabNameOrId ||
-        r.name.toUpperCase() === kabNameOrId ||
-        r.name.toUpperCase().includes(kabNameOrId) ||
-        kabNameOrId.includes(r.name.toUpperCase()),
-    );
-    if (found) {
-      targetRegId = found.id;
-      break;
-    }
-  }
+  const res = await fetchWfs({
+    typeName: config.typeName,
+    wfsUrl: config.wfsUrl,
+    version: "2.0.0",
+    cqlFilter,
+    propertyName: `${config.attributeKey},WADMKK`,
+    maxFeatures: 2000,
+    signal,
+  });
 
-  // 2. If not found in cache, fetch all regencies across cached/fetched provinces
-  if (!targetRegId) {
-    if (!cachedProvinces) {
-      cachedProvinces = await fetchWilayahJson<
-        Array<{ id: string; name: string }>
-      >("provinces.json", signal);
-    }
+  const keys = [config.attributeKey, "WADMKC", "wadmkc", "kecamatan", "NAMA", "nama"];
+  const uniqueNames = Array.from(
+    new Set(
+      res.features
+        .map((f) => extractAdminFeatureName(f.properties, keys))
+        .filter(Boolean),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "id"));
 
-    for (const prov of cachedProvinces) {
-      if (!cachedRegencies.has(prov.id)) {
-        try {
-          const regList = await fetchWilayahJson<
-            Array<{ id: string; province_id: string; name: string }>
-          >(`regencies/${prov.id}.json`, signal);
-          cachedRegencies.set(prov.id, regList);
-        } catch {
-          // Continue
-        }
-      }
-
-      const regList = cachedRegencies.get(prov.id) ?? [];
-      const found = regList.find(
-        (r) =>
-          r.id === kabNameOrId ||
-          r.name.toUpperCase() === kabNameOrId ||
-          r.name.toUpperCase().includes(kabNameOrId) ||
-          kabNameOrId.includes(r.name.toUpperCase()),
-      );
-      if (found) {
-        targetRegId = found.id;
-        break;
-      }
-    }
-  }
-
-  if (!targetRegId) {
-    return { data: [] };
-  }
-
-  const districts = await fetchWilayahJson<
-    Array<{ id: string; regency_id: string; name: string }>
-  >(`districts/${targetRegId}.json`, signal);
-
-  cachedDistricts.set(targetRegId, districts);
-
-  const data: FilterOptionItem[] = districts.map((d) => ({
-    label: d.name,
-    value: d.name,
+  const data: FilterOptionItem[] = uniqueNames.map((name) => ({
+    label: name,
+    value: name,
   }));
   return { data };
 };
 
+/**
+ * Fetches unique Kelurahan/Desa options directly from GeoServer WFS BATAS_ADMIN_BIG_LEVEL_DESA layer.
+ * Filtered by parent Kecamatan (WADMKC) when provided.
+ */
 export const fetchFilterOptionsKelurahanApi = async (
   params?: FilterKelurahanParams,
   signal?: AbortSignal,
@@ -201,35 +183,34 @@ export const fetchFilterOptionsKelurahanApi = async (
     return { data: [] };
   }
 
-  const kecNameOrId = params.kecamatanId.trim().toUpperCase();
-  let targetDistId: string | undefined;
+  const config = ADMIN_BOUNDARY_WFS_CONFIG.kelurahan;
+  const cleanKec = cleanAdministrativeValue(params.kecamatanId);
+  const cqlFilter = cleanKec
+    ? `WADMKC ILIKE '%${cleanKec}%'`
+    : undefined;
 
-  // Search in cached districts
-  for (const [, distList] of cachedDistricts.entries()) {
-    const found = distList.find(
-      (d) =>
-        d.id === kecNameOrId ||
-        d.name.toUpperCase() === kecNameOrId ||
-        d.name.toUpperCase().includes(kecNameOrId) ||
-        kecNameOrId.includes(d.name.toUpperCase()),
-    );
-    if (found) {
-      targetDistId = found.id;
-      break;
-    }
-  }
+  const res = await fetchWfs({
+    typeName: config.typeName,
+    wfsUrl: config.wfsUrl,
+    version: "2.0.0",
+    cqlFilter,
+    propertyName: `${config.attributeKey},WADMKC`,
+    maxFeatures: 5000,
+    signal,
+  });
 
-  if (!targetDistId) {
-    return { data: [] };
-  }
+  const keys = [config.attributeKey, "WADMKD", "wadmkd", "kelurahan", "desa", "NAMA", "nama"];
+  const uniqueNames = Array.from(
+    new Set(
+      res.features
+        .map((f) => extractAdminFeatureName(f.properties, keys))
+        .filter(Boolean),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "id"));
 
-  const villages = await fetchWilayahJson<
-    Array<{ id: string; district_id: string; name: string }>
-  >(`villages/${targetDistId}.json`, signal);
-
-  const data: FilterOptionItem[] = villages.map((v) => ({
-    label: v.name,
-    value: v.name,
+  const data: FilterOptionItem[] = uniqueNames.map((name) => ({
+    label: name,
+    value: name,
   }));
   return { data };
 };

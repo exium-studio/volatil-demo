@@ -19,6 +19,7 @@ export type FetchWfsParams = {
   srsName?: string;
   maxFeatures?: number;
   startIndex?: number;
+  propertyName?: string;
   resultType?: "results" | "hits";
   signal?: AbortSignal;
 };
