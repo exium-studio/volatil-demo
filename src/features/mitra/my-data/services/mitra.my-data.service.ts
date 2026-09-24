@@ -10,7 +10,11 @@ import type {
   MyDataResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
-import { dummyMitraMyDataItems } from "@/shared/constants/dummy-data/dummy-my-data";
+import {
+  dummyApiKey,
+  dummyMitraMyDataItems,
+  dummyWorkspaceUrl,
+} from "@/shared/constants/dummy-data/dummy-my-data";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
@@ -38,6 +42,8 @@ export const getPaginatedMyData = (
 
   return {
     items: filteredItems.slice(startIndex, startIndex + params.pageSize),
+    apiKey: dummyApiKey,
+    workspaceUrl: dummyWorkspaceUrl,
     pagination: createPaginationMeta(
       params.page,
       params.pageSize,
@@ -48,6 +54,8 @@ export const getPaginatedMyData = (
 
 const EMPTY_MY_DATA_RESPONSE: MyDataResponse = {
   items: [],
+  apiKey: null,
+  workspaceUrl: null,
   pagination: createPaginationMeta(1, 10, 0),
 };
 

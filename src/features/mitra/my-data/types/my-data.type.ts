@@ -1,5 +1,6 @@
 // src/features/mitra/my-data/types/my-data.type.ts
 
+import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PaginatedResponse } from "@/shared/types/common-response.type";
 
@@ -7,6 +8,21 @@ import type { MyDataStatus } from "@/shared/types/status.type";
 
 export type { MyDataStatus };
 export type MyDataSpatialBasis = "bidang" | "kawasan";
+
+export type MitraMyDataTab = "workspace" | "layers";
+
+export type MitraMyDataSearch = {
+  tab?: MitraMyDataTab;
+};
+
+export type MitraMyDataWorkspaceTabsContentProps = {
+  isActive?: boolean;
+};
+
+export type MaskedSecretFieldProps = BoxProps & {
+  value: string;
+  defaultVisible?: boolean;
+};
 
 export type MyDataItem = {
   id: string;
@@ -32,8 +48,33 @@ export type MyDataQueryParams = {
   status?: MyDataStatus;
 };
 
-export type MyDataResponse = PaginatedResponse<MyDataItem>;
+export type WorkspaceUrlInfo = {
+  workspaceName: string;
+  wmsUrl: string;
+  wfsUrl: string;
+  qgisWmsUrl: string;
+  qgisWfsUrl: string;
+  note?: string;
+};
+
+export type MyDataResponse = PaginatedResponse<MyDataItem> & {
+  apiKey?: string | null;
+  workspaceUrl?: WorkspaceUrlInfo | null;
+};
 export type MitraMyDataViewProps = StackProps;
+
+export type MitraMyDataWorkspaceTriggerProps = {
+  workspaceUrl?: WorkspaceUrlInfo | null;
+  apiKey?: string | null;
+  children?: React.ReactNode;
+  modalKey?: string;
+};
+
+export type MitraMyDataWorkspaceModalContentProps = {
+  workspaceUrl: WorkspaceUrlInfo;
+  apiKey?: string | null;
+  close: () => void;
+};
 
 export type MyDataDetailAttributeListProps = {
   item: MyDataItem;

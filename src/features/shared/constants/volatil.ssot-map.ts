@@ -185,7 +185,7 @@ export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
  */
 export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   requesting: {
-    label: "Sedang Dikalkulasi (BE)",
+    label: "Menyiapkan Data IGT",
     colorPalette: "blue",
     icon: LoaderIcon,
     iconColor: "blue.fg",
@@ -241,7 +241,6 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     noticeDescription: "Layanan data spasial siap digunakan.",
   },
 };
-
 
 /**
  * SSOT 4: My Data Active Status Map (Mitra Data Saya)

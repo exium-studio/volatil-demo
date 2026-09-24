@@ -78,3 +78,18 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     bbox: [115.15, -8.75, 115.2, -8.68],
   },
 ];
+
+export const dummyWorkspaceUrl = {
+  workspaceName: "volatil_mitra_budi_santoso_42",
+  wmsUrl:
+    "https://volatil-be.exium.web.id/api/proxy/workspace/volatil_mitra_budi_santoso_42/wms?apiKey=vlt_a1b2c3d4e5f67890abcdef123456",
+  wfsUrl:
+    "https://volatil-be.exium.web.id/api/proxy/workspace/volatil_mitra_budi_santoso_42/wfs?apiKey=vlt_a1b2c3d4e5f67890abcdef123456",
+  qgisWmsUrl:
+    "https://volatil-be.exium.web.id/api/proxy/workspace/volatil_mitra_budi_santoso_42/wms",
+  qgisWfsUrl:
+    "https://volatil-be.exium.web.id/api/proxy/workspace/volatil_mitra_budi_santoso_42/wfs",
+  note: "Tambahkan apiKey sebagai query param atau header X-API-Key saat akses dari QGIS/ArcGIS.",
+};
+
+export const dummyApiKey = "vlt_a1b2c3d4e5f67890abcdef123456";

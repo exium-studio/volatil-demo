@@ -213,8 +213,8 @@ export const MitraRegistrationStatusPage = () => {
 
             {/* Results Section */}
             {statusData && (
-              <VStack align={"stretch"} gap={6} mt={2}>
-                <Separator borderColor={"border.subtle"} />
+              <VStack align={"stretch"} gap={"xl"} mt={2}>
+                {/* <Separator borderColor={"border.subtle"} /> */}
 
                 {/* 1. Status Overview Header */}
                 <VStack align={"stretch"} gap={3}>
@@ -240,10 +240,7 @@ export const MitraRegistrationStatusPage = () => {
                       </HStack>
                     </VStack>
 
-                    <MitraRegistrationStatusBadge
-                      size={"md"}
-                      showIcon={true}
-                    >
+                    <MitraRegistrationStatusBadge size={"md"} showIcon={true}>
                       {statusData.status}
                     </MitraRegistrationStatusBadge>
                   </HStack>
@@ -285,8 +282,9 @@ export const MitraRegistrationStatusPage = () => {
                 {isApproved && contractUrl && (
                   <Box
                     p={4}
-                    rounded={"md"}
-                    borderWidth={"1px"}
+                    rounded={theme.radii.container}
+                    bg={"bg.subtle"}
+                    // borderWidth={"1px"}
                     borderColor={"border.subtle"}
                   >
                     <HStack
@@ -303,9 +301,7 @@ export const MitraRegistrationStatusPage = () => {
                             <P fontWeight={"semibold"} fontSize={"sm"}>
                               {"Dokumen Perjanjian Kerjasama (PKS) Resmi"}
                             </P>
-                            <Badge size={"xs"}>
-                              {"PDF"}
-                            </Badge>
+                            <Badge size={"xs"}>{"PDF"}</Badge>
                           </HStack>
 
                           <P fontSize={"xs"} color={"fg.subtle"}>
@@ -317,10 +313,7 @@ export const MitraRegistrationStatusPage = () => {
 
                       <HStack gap={2}>
                         <ExternalLink href={contractUrl} download={true}>
-                          <Button
-                            primary={true}
-                            size={"sm"}
-                          >
+                          <Button primary={true} size={"sm"}>
                             <AppIcon icon={DownloadIcon} />
                             {"Unduh Kontrak"}
                           </Button>
@@ -352,7 +345,7 @@ export const MitraRegistrationStatusPage = () => {
                   </Alert.Root>
                 )}
 
-                <Separator borderColor={"border.subtle"} />
+                {/* <Separator borderColor={"border.subtle"} /> */}
 
                 {/* 4. Detail Data Pengajuan (Instansi & Penanggung Jawab) */}
                 <SimpleGrid columns={[1, null, 2]} gap={6}>
@@ -418,9 +411,7 @@ export const MitraRegistrationStatusPage = () => {
                   <VStack align={"stretch"} gap={3}>
                     <HStack gap={2} color={"fg.muted"}>
                       <AppIcon icon={UserCheckIcon} />
-                      <Heading size={"sm"}>
-                        {"Penanggung Jawab (PIC)"}
-                      </Heading>
+                      <Heading size={"sm"}>{"Penanggung Jawab (PIC)"}</Heading>
                     </HStack>
 
                     <VStack align={"start"} gap={1}>
@@ -460,9 +451,7 @@ export const MitraRegistrationStatusPage = () => {
                       <HStack gap={1} align={"center"}>
                         <AppIcon icon={PhoneIcon} size={"xs"} />
                         <P fontSize={"sm"}>
-                          {statusData.phoneNumber ??
-                            statusData.nomorHp ??
-                            "-"}
+                          {statusData.phoneNumber ?? statusData.nomorHp ?? "-"}
                         </P>
                       </HStack>
                     </VStack>
@@ -472,7 +461,7 @@ export const MitraRegistrationStatusPage = () => {
                 {/* 5. Uploaded Documents Checklist */}
                 {statusData.documents && (
                   <>
-                    <Separator borderColor={"border.subtle"} />
+                    {/* <Separator borderColor={"border.subtle"} /> */}
 
                     <VStack align={"stretch"} gap={3}>
                       <HStack gap={2} color={"fg.muted"}>

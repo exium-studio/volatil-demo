@@ -27,7 +27,12 @@ import { useMemo } from "react";
 
 export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
   // Props
-  const { activeOrder, orderIndex, isLoading = false, isFetching = false } = props;
+  const {
+    activeOrder,
+    orderIndex,
+    isLoading = false,
+    isFetching = false,
+  } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -229,7 +234,12 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         </HStack>
 
         {/* Action Button Skeleton */}
-        <Skeleton h={"40px"} w={"full"} rounded={theme.radii.component} mt={1} />
+        <Skeleton
+          h={"40px"}
+          w={"full"}
+          rounded={theme.radii.component}
+          mt={1}
+        />
       </VStack>
     );
   }
@@ -574,7 +584,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         {!isSelected
           ? "Pilih Pesanan Terlebih Dahulu"
           : isRequesting
-            ? "Sedang Dikalkulasi (BE)..."
+            ? "Menyiapkan Data IGT..."
             : isReady
               ? "Pesanan Siap Digunakan"
               : isProcessing
