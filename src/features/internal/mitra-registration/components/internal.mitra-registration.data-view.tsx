@@ -132,7 +132,7 @@ export const InternalMitraRegistrationDataView = () => {
           },
           {
             value: reg.contractDocument?.url ?? null,
-            td: (
+            td: reg.contractDocument?.url ? (
               <ExternalLink
                 href={reg.contractDocument?.url ?? null}
                 download={true}
@@ -143,6 +143,8 @@ export const InternalMitraRegistrationDataView = () => {
                   <P>{"Lihat Kontrak"}</P>
                 </HStack>
               </ExternalLink>
+            ) : (
+              <P>-</P>
             ),
           },
           {
