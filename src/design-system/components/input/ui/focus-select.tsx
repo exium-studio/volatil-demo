@@ -26,7 +26,7 @@ import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from "lucide-react";
 import type React from "react";
-import { isValidElement, useEffect, useMemo, useState } from "react";
+import { isValidElement, useEffect, useMemo, useRef, useState } from "react";
 
 const SKELETON_LIST_COUNT = 5;
 
@@ -79,16 +79,17 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     modalKey: resolvedModalKey,
   });
 
-  // Effects
+  // Refs
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Effects — auto focus search input when modal opens
   useEffect(() => {
-    if (
-      !isOpen &&
-      typeof document !== "undefined" &&
-      document.activeElement instanceof HTMLElement
-    ) {
-      document.activeElement.blur();
-    }
-  }, [isOpen]);
+    if (!isOpen || isFetching) return;
+    const timer = setTimeout(() => {
+      searchInputRef.current?.focus({ preventScroll: true });
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [isOpen, isFetching]);
 
   const filteredOptions = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -318,6 +319,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
       open={open}
       close={close}
       onExitComplete={() => {
+        setSearchQuery("");
         if (
           typeof document !== "undefined" &&
           document.activeElement instanceof HTMLElement
@@ -341,6 +343,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
             {!isFetching && (
               <VStack w={"full"} px={"md"} pt={"2px"} mb={"sm"}>
                 <SearchInput
+                  ref={searchInputRef}
                   placeholder={t["action.search"]()}
                   onValueChange={setSearchQuery}
                   w={"full"}

@@ -10,7 +10,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestSpatialSummaryProps } from "@/features/mitra/data-request/types/mitra.data-request.spatial-summary.type";
@@ -40,7 +39,6 @@ export const MitraDataRequestSpatialSummary = memo(
     } = props;
 
     // Stores
-    const { theme } = useThemeStore();
     const storeIsCalculating = useMitraDataRequestCalculationStore(
       (state) => state.isCalculating,
     );
