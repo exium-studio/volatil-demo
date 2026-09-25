@@ -94,7 +94,18 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
   };
 
   return (
-    <VStack flex={1} justify={"space-between"} gap={"md"} w={"full"} {...restProps}>
+    <VStack
+      as={"form"}
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleConfirm();
+      }}
+      flex={1}
+      justify={"space-between"}
+      gap={"md"}
+      w={"full"}
+      {...restProps}
+    >
       <VStack align={"center"} gap={"sm"} w={"full"}>
         <Badge size={"lg"} colorPalette={"purple"}>
           <AppIcon icon={QrCodeIcon} size={"sm"} />
@@ -234,12 +245,11 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
       <VStack gap={2} w={"full"}>
         <Button
           primary={true}
-          type={"button"}
+          type={"submit"}
           w={"full"}
           size={"md"}
           loading={confirmMutation.isPending}
           disabled={totpCode.length !== 6}
-          onClick={() => handleConfirm()}
         >
           <AppIcon icon={CheckCircle2Icon} />
           {"Konfirmasi & Masuk"}
@@ -259,3 +269,4 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
     </VStack>
   );
 };
+

@@ -74,7 +74,18 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
   };
 
   return (
-    <VStack flex={1} justify={"space-between"} gap={"lg"} w={"full"} {...restProps}>
+    <VStack
+      as={"form"}
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleVerify();
+      }}
+      flex={1}
+      justify={"space-between"}
+      gap={"lg"}
+      w={"full"}
+      {...restProps}
+    >
       <VStack align={"center"} gap={"lg"} w={"full"}>
         <Badge size={"lg"} colorPalette={"purple"}>
           <AppIcon icon={ShieldCheckIcon} size={"sm"} />
@@ -139,12 +150,11 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
       <VStack gap={3} w={"full"}>
         <Button
           primary={true}
-          type={"button"}
+          type={"submit"}
           w={"full"}
           size={"lg"}
           loading={verifyMutation.isPending}
           disabled={totpCode.length !== 6}
-          onClick={() => handleVerify()}
         >
           <AppIcon icon={CheckCircle2Icon} />
           {"Verifikasi & Masuk"}

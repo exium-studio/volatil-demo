@@ -28,7 +28,7 @@ const { theme } = useThemeStore();
 - **Import Alias**: Import di dalam `src/` WAJIB menggunakan alias `@/`.
 - **Komentar Section**: Wajib menambahkan komentar section di komponen (`// Contexts`, `// States`, `// Derived Values`, `// Hooks (Queries & Mutations)`, dll).
 - **Default Props**: DILARANG menuliskan prop yang nilainya sama dengan default komponen (misal: `VStack` default `align` adalah `stretch`, tidak perlu ditulis `align={"stretch"}`).
-- **Forms & Validation (MUTLAK RHF + Zod)**: Seluruh form input di aplikasi WAJIB menggunakan **React Hook Form (RHF)** dipadukan dengan **Zod Schema Resolver** (`@hookform/resolvers/zod`). DILARANG membuat form dengan kumpulan `useState` terpisah-pisah untuk field form.
+- **Forms & Validation (MUTLAK RHF + Zod + Uncontrolled)**: Seluruh form input di aplikasi WAJIB menggunakan **React Hook Form (RHF)** dipadukan dengan **Zod Schema Resolver** (`@hookform/resolvers/zod`). Input fields WAJIB mengutamakan pola **uncontrolled** (`{...register("field")}`) untuk performa optimal tanpa re-render yang tidak perlu. DILARANG membuat form dengan kumpulan `useState` terpisah-pisah untuk field form.
 - **Array Empty Checks (MUTLAK)**: DILARANG menggunakan `.length === 0` untuk pengecekan array kosong. WAJIB menggunakan helper `isEmptyArray(arr)` dari `@/shared/utils/data/array`.
 - **Input Width (MUTLAK)**: Seluruh komponen input (`Input`, `NumberInput`, `SearchInput`, `Select`, `Field`, dll) WAJIB selalu berukuran width 100% / `w={"full"}` di dalam container/form.
 - **Dilarang Prefix 'contoh:' (MUTLAK)**: DILARANG menyertakan prefix `"contoh:"` atau `"Contoh:"` di dalam `placeholder` maupun `helperText` input field manapun. Langsung tuliskan nilai contohnya secara ringkas dan profesional (misal: `placeholder={"admin_spatial"}` bukan `placeholder={"contoh: admin_spatial"}`).
@@ -36,7 +36,12 @@ const { theme } = useThemeStore();
 - **Button & Component Sizes**: DILARANG asal mengecilkan `size` (misal sembarangan menambah `size={"xs"}` atau `size={"sm"}`) jika tidak diinstruksikan secara spesifik. Gunakan ukuran default komponen design system.
 - **Overlay Control State (MUTLAK usePopModal)**: Seluruh komponen overlay (`Modal`, `Dialog`, `Drawer`, dll) WAJIB menggunakan hook `usePopModal` dari `@/design-system/components/overlay/hooks/use-pop-modal` untuk sinkronisasi state open/close dengan URL search params (`activeModalKey`). DILARANG mengontrol open/close overlay hanya dengan `useState` lokal agar navigasi tombol back browser otomatis menutup overlay.
 - **Conditional Rendering (Eksplisit & Anti-Ternary Kompleks)**: DILARANG menggunakan nested/kompleks ternary operator (`a ? b : c ? d : e`). Ternary maksimal hanya untuk 2 kondisi sederhana (misal simple styling/variant). Untuk rendering blok view, state utama (loading, empty, error, content), WAJIB menggunakan kondisi eksplisit (`isLoading && <Skeleton />` dan nested eksplisit `!isLoading && (<>{isEmpty && <NoDataState />}{hasData && <DataView />}</>)`) atau early return eksplisit (`if (condition) return <... />;`).
+- **Form Submission & Keyboard UX (Enter to Submit & PinInput Auto-Submit - MUTLAK)**:
+  1. **Enter to Submit (Semantic `<form>` + `onSubmit`)**: Seluruh form input WAJIB dibungkus dengan container semantik form (`<VStack as={"form"} onSubmit={form.handleSubmit(onSubmit)}>`) dan memiliki tombol `<Button type={"submit"}>`. Ini memastikan penekanan tombol `Enter` secara natural men-trigger submit tanpa perlu menambahkan event listener `onKeyDown` manual.
+  2. **PinInput / OTP / TOTP Auto-Submit**: Ketika seluruh digit PIN / OTP / TOTP selesai diketik (`onValueComplete`), langsung trigger submit otomatis via `form.handleSubmit(onSubmit)()`.
+  3. **PinInput Failure Recovery**: Jika verifikasi OTP/TOTP gagal, user cukup menekan tombol `Enter` untuk men-submit ulang form secara langsung.
 - **JANGAN PERNAH SENTUH UI YANG SUDAH DIDEV USER (MUTLAK)**: Dilarang keras menyentuh, merombak, memodifikasi struktur JSX/layout/styling UI yang sudah dibuat user. Hanya boleh menyentuh UI jika user secara eksplisit meminta dibuatkan page/komponen tertentu atau secara eksplisit meminta refactor UI.
+
 
 
 ---

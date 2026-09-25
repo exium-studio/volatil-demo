@@ -2,7 +2,6 @@ import { useMapLayerStore } from "@/design-system/components/map/stores/map.laye
 import {
   getAuthMeApi,
   getSsoInternalUrlApi,
-
   getTotpSetupApi,
   postLoginApi,
   postLoginTotpVerifyApi,
@@ -10,6 +9,7 @@ import {
   postResetPasswordConfirmApi,
   postResetPasswordRequestApi,
   postResetPasswordVerifyOtpApi,
+  postResetPasswordVerifyTotpApi,
   postSsoInternalCallbackApi,
   postSsoInternalLogoutUrlApi,
   postTotpSetupConfirmApi,
@@ -28,6 +28,8 @@ import type {
   ResetPasswordRequestPayload,
   ResetPasswordVerifyOtpData,
   ResetPasswordVerifyOtpPayload,
+  ResetPasswordVerifyTotpData,
+  ResetPasswordVerifyTotpPayload,
 } from "@/features/auth/types/reset-password.type";
 
 
@@ -482,6 +484,32 @@ export const authService = {
         message: "Kode OTP berhasil diverifikasi.",
         email: payload.email,
         resetToken: payload.resetToken,
+      };
+    }
+  },
+
+  verifyResetPasswordTotp: async (
+    payload: ResetPasswordVerifyTotpPayload,
+    signal?: AbortSignal,
+  ): Promise<ResetPasswordVerifyTotpData> => {
+    try {
+      const response = await postResetPasswordVerifyTotpApi(payload, signal);
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback
+      return {
+        success: true,
+        message: "Kode Google Authenticator berhasil diverifikasi.",
+        email: payload.email,
+        resetToken: payload.totpCode,
       };
     }
   },

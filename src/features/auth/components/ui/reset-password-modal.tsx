@@ -1,4 +1,4 @@
-// src/features/auth/components/ui/internal-reset-password-modal.tsx
+// src/features/auth/components/ui/reset-password-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
@@ -23,6 +23,7 @@ import {
   useResetPasswordConfirmMutation,
   useResetPasswordRequestMutation,
   useResetPasswordVerifyOtpMutation,
+  useResetPasswordVerifyTotpMutation,
 } from "@/features/auth/hooks/use-reset-password.mutation";
 import {
   createResetPasswordMethodSchema,
@@ -62,9 +63,7 @@ import {
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-export const ResetPasswordTrigger = (
-  props: ResetPasswordTriggerProps,
-) => {
+export const ResetPasswordTrigger = (props: ResetPasswordTriggerProps) => {
   const {
     children,
     modalKey: customModalKey = "reset-password-modal",
@@ -106,9 +105,7 @@ export const ResetPasswordTrigger = (
   );
 };
 
-export const ResetPasswordModal = (
-  props: ResetPasswordModalProps,
-) => {
+export const ResetPasswordModal = (props: ResetPasswordModalProps) => {
   const {
     modalKey: customModalKey = "reset-password-modal",
     defaultEmail = "",
@@ -142,9 +139,7 @@ export const ResetPasswordModal = (
 export const InternalResetPasswordTrigger = ResetPasswordTrigger;
 export const InternalResetPasswordModal = ResetPasswordModal;
 
-const ResetPasswordModalContent = (
-  props: ResetPasswordModalContentProps,
-) => {
+const ResetPasswordModalContent = (props: ResetPasswordModalContentProps) => {
   const { modalKey, isOpen, open, close, defaultEmail } = props;
 
   // Global State for Modal navigation
@@ -257,7 +252,7 @@ const ResetPasswordMethodSelector = ({
       gap={"md"}
       align={"stretch"}
     >
-      <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
+      <Alert.Root status={"info"} variant={"subtle"}>
         <AppIcon icon={InfoIcon} />
         <Alert.Description fontSize={"xs"}>
           {
@@ -342,9 +337,7 @@ export const ResetMethodRadioItem = (props: ResetMethodRadioItemProps) => {
 
           <VStack align={"start"} gap={"2xs"}>
             <HStack gap={"xs"} align={"center"}>
-              <P fontSize={"sm"} fontWeight={"semibold"}>
-                {title}
-              </P>
+              <P fontWeight={"semibold"}>{title}</P>
 
               {badge && (
                 <Badge size={"sm"} colorPalette={colorPalette}>
@@ -353,11 +346,12 @@ export const ResetMethodRadioItem = (props: ResetMethodRadioItemProps) => {
               )}
             </HStack>
 
-            <P fontSize={"2xs"} color={"fg.muted"}>
+            <P fontSize={"sm"} color={"fg.muted"}>
               {description}
             </P>
           </VStack>
         </HStack>
+
         <RadioIndicator checked={isSelected} />
       </HStack>
     </Box>
@@ -381,7 +375,6 @@ const EmailResetPasswordFlow = ({
   );
   const [email, setEmail] = useState<string>(initialEmail);
   const [resetToken, setResetToken] = useState<string>("");
-  const [otpCode, setOtpCode] = useState<string>("");
 
   // Mutations
   const requestMutation = useResetPasswordRequestMutation();
@@ -422,12 +415,10 @@ const EmailResetPasswordFlow = ({
       {
         onSuccess: (data) => {
           if (data.resetToken) {
-            setOtpCode(data.resetToken);
             otpForm.setValue("resetToken", data.resetToken, {
               shouldValidate: true,
             });
           } else {
-            setOtpCode("");
             otpForm.setValue("resetToken", "");
           }
           setSubStep("otp");
@@ -442,7 +433,6 @@ const EmailResetPasswordFlow = ({
       {
         onSuccess: (data) => {
           if (data.resetToken) {
-            setOtpCode(data.resetToken);
             otpForm.setValue("resetToken", data.resetToken, {
               shouldValidate: true,
             });
@@ -454,14 +444,19 @@ const EmailResetPasswordFlow = ({
 
   // Step 2: Verify OTP
   const handleOtpSubmit = (values: ResetPasswordOtpFormValues) => {
+    const code = values.resetToken || otpForm.getValues("resetToken");
+    if (!code || code.length !== 6) {
+      otpForm.setError("resetToken", { message: "Kode OTP harus 6 digit" });
+      return;
+    }
     verifyOtpMutation.mutate(
       {
         email,
-        resetToken: values.resetToken,
+        resetToken: code,
       },
       {
         onSuccess: (data) => {
-          setResetToken(data.resetToken || values.resetToken);
+          setResetToken(data.resetToken || code);
           setSubStep("password");
         },
       },
@@ -473,7 +468,7 @@ const EmailResetPasswordFlow = ({
     confirmMutation.mutate(
       {
         email,
-        resetToken: resetToken || otpCode || otpForm.getValues("resetToken"),
+        resetToken: resetToken || otpForm.getValues("resetToken"),
         newPassword: values.newPassword,
         confirmPassword: values.confirmPassword,
       },
@@ -582,18 +577,14 @@ const EmailResetPasswordFlow = ({
                 otp={true}
                 autoFocus={true}
                 onValueChange={(details) => {
-                  const code = details.value.join("");
-                  setOtpCode(code);
-                  otpForm.setValue("resetToken", code, {
-                    shouldValidate: true,
-                  });
+                  otpForm.setValue("resetToken", details.value.join(""));
                 }}
                 onValueComplete={(details) => {
                   const code = details.value.join("");
-                  setOtpCode(code);
                   otpForm.setValue("resetToken", code, {
                     shouldValidate: true,
                   });
+                  otpForm.handleSubmit(handleOtpSubmit)();
                 }}
               />
             </VStack>
@@ -717,11 +708,10 @@ const TotpResetPasswordFlow = ({
   // Step state within TOTP Flow: need email & totpCode before new password
   const [subStep, setSubStep] = useState<"totp" | "password">("totp");
   const [email, setEmail] = useState<string>(initialEmail);
-  const [totpCode, setTotpCode] = useState<string>("");
   const [verifiedToken, setVerifiedToken] = useState<string>("");
 
   // Mutations
-  const verifyOtpMutation = useResetPasswordVerifyOtpMutation();
+  const verifyTotpMutation = useResetPasswordVerifyTotpMutation();
   const confirmMutation = useResetPasswordConfirmMutation();
 
   // Forms
@@ -744,22 +734,22 @@ const TotpResetPasswordFlow = ({
   const handleTotpSubmit = (values: { email: string; totpCode: string }) => {
     const finalEmail = isUserLoggedIn
       ? (user?.email ?? values.email)
-      : values.email;
+      : values.email || totpForm.getValues("email");
     if (!finalEmail) {
       totpForm.setError("email", { message: "Email wajib diisi" });
       return;
     }
-    const code = values.totpCode || totpCode;
-    if (code.length !== 6) {
+    const code = values.totpCode || totpForm.getValues("totpCode");
+    if (!code || code.length !== 6) {
       totpForm.setError("totpCode", { message: "Kode TOTP harus 6 digit" });
       return;
     }
 
     setEmail(finalEmail);
-    verifyOtpMutation.mutate(
+    verifyTotpMutation.mutate(
       {
         email: finalEmail,
-        resetToken: code,
+        totpCode: code,
       },
       {
         onSuccess: (data) => {
@@ -775,7 +765,7 @@ const TotpResetPasswordFlow = ({
     confirmMutation.mutate(
       {
         email,
-        resetToken: verifiedToken || totpCode,
+        resetToken: verifiedToken || totpForm.getValues("totpCode"),
         newPassword: values.newPassword,
         confirmPassword: values.confirmPassword,
       },
@@ -844,18 +834,14 @@ const TotpResetPasswordFlow = ({
                 otp={true}
                 autoFocus={true}
                 onValueChange={(details) => {
-                  const code = details.value.join("");
-                  setTotpCode(code);
-                  totpForm.setValue("totpCode", code, {
-                    shouldValidate: true,
-                  });
+                  totpForm.setValue("totpCode", details.value.join(""));
                 }}
                 onValueComplete={(details) => {
                   const code = details.value.join("");
-                  setTotpCode(code);
                   totpForm.setValue("totpCode", code, {
                     shouldValidate: true,
                   });
+                  totpForm.handleSubmit(handleTotpSubmit)();
                 }}
               />
             </VStack>
@@ -878,7 +864,7 @@ const TotpResetPasswordFlow = ({
           primary={true}
           type={"submit"}
           w={"full"}
-          loading={verifyOtpMutation.isPending}
+          loading={verifyTotpMutation.isPending}
         >
           <AppIcon icon={ShieldCheckIcon} />
           {"Verifikasi Kode Authenticator"}

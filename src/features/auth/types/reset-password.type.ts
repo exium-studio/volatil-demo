@@ -30,6 +30,20 @@ export type ResetPasswordVerifyOtpData = {
 
 export type ResetPasswordVerifyOtpResponse = ApiResponse<ResetPasswordVerifyOtpData>;
 
+export type ResetPasswordVerifyTotpPayload = {
+  email: string;
+  totpCode: string;
+};
+
+export type ResetPasswordVerifyTotpData = {
+  success: boolean;
+  message: string;
+  email: string;
+  resetToken: string;
+};
+
+export type ResetPasswordVerifyTotpResponse = ApiResponse<ResetPasswordVerifyTotpData>;
+
 export type ResetPasswordConfirmPayload = {
   email: string;
   resetToken: string;

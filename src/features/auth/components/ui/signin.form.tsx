@@ -11,7 +11,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { InternalResetPasswordTrigger } from "@/features/auth/components/ui/internal-reset-password-modal";
+import { InternalResetPasswordTrigger } from "@/features/auth/components/ui/reset-password-modal";
 import { TotpSetupStep } from "@/features/auth/components/ui/totp-setup-step";
 import { TotpVerifyStep } from "@/features/auth/components/ui/totp-verify-step";
 import { UserSessionActions } from "@/features/auth/components/ui/user-session-actions";
@@ -451,9 +451,7 @@ export const InternalSignin = (props: StackProps) => {
             </Button>
           </InternalResetPasswordTrigger>
         </HStack>
-
       </Fieldset>
-
 
       <Button
         primary={true}

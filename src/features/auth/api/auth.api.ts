@@ -21,6 +21,8 @@ import type {
   ResetPasswordRequestResponse,
   ResetPasswordVerifyOtpPayload,
   ResetPasswordVerifyOtpResponse,
+  ResetPasswordVerifyTotpPayload,
+  ResetPasswordVerifyTotpResponse,
 } from "@/features/auth/types/reset-password.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 
@@ -155,6 +157,17 @@ export const postResetPasswordVerifyOtpApi = async (
   );
 };
 
+export const postResetPasswordVerifyTotpApi = async (
+  payload: ResetPasswordVerifyTotpPayload,
+  signal?: AbortSignal,
+): Promise<ResetPasswordVerifyTotpResponse> => {
+  return apiClient.post<ResetPasswordVerifyTotpResponse>(
+    "/api/auth/reset-password/verify-totp",
+    payload,
+    { signal },
+  );
+};
+
 export const postResetPasswordConfirmApi = async (
   payload: ResetPasswordConfirmPayload,
   signal?: AbortSignal,
@@ -165,3 +178,4 @@ export const postResetPasswordConfirmApi = async (
     { signal },
   );
 };
+
