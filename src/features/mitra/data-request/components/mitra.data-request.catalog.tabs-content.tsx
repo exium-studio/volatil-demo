@@ -15,15 +15,14 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { flyToCartGeometry } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
+import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
-import {
-  useAdministrativeFilterStore,
-  useIgtLayerStore,
-} from "@/features/mitra/data-request/stores/igt-layer.store";
+import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
+
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestCatalogTabsContentProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
@@ -247,7 +246,14 @@ export const MitraDataRequestCatalogTabsContent = (
 const CatalogAttributeList = () => {
   // Hooks & Stores
   const { selectedIgtLayer } = useSelectedIgtLayer();
-  const { cqlFilter } = useIgtLayerStore();
+  const { appliedAdministrativeFilters } = useAdministrativeFilterStore();
+  const adminBoundaryQuery = useAdminBoundaryAoi(appliedAdministrativeFilters);
+
+  const aoiCqlFilter = useMemo(() => {
+    if (!adminBoundaryQuery.aoiPolygon) return undefined;
+    const wkt = geojsonPolygonToWkt(adminBoundaryQuery.aoiPolygon);
+    return wkt ? `INTERSECTS(geom, ${wkt})` : undefined;
+  }, [adminBoundaryQuery.aoiPolygon]);
 
   // States
   const [pageState, setPageState] = useState({
@@ -268,7 +274,7 @@ const CatalogAttributeList = () => {
   } = useIgtWfsCatalog({
     page: pageState.page,
     pageSize: pageState.pageSize,
-    cqlFilter,
+    cqlFilter: aoiCqlFilter,
     typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
     wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
   });
@@ -276,7 +282,7 @@ const CatalogAttributeList = () => {
   return (
     <MitraDataRequestDetailAttributeView
       layer={selectedIgtLayer}
-      cqlFilter={cqlFilter}
+      cqlFilter={aoiCqlFilter}
       features={features}
       totalFeatures={totalFeatures}
       isLoading={isLoading}

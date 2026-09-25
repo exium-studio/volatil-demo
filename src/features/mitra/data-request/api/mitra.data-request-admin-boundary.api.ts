@@ -1,11 +1,10 @@
-// src/features/mitra/data-request/api/mitra.data-request-admin-boundary.api.ts
-
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { ADMIN_BOUNDARY_WFS_CONFIG } from "@/features/mitra/data-request/constants/igt.config";
 import type { FetchAdminBoundaryParams } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
-import { escapeCqlString } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
 import type GeoJSON from "geojson";
+
+const escapeCql = (val: string): string => val.trim().replace(/'/g, "''");
 
 /**
  * Queries GeoServer WFS via proxy to retrieve the GeoJSON Polygon boundary
@@ -33,7 +32,7 @@ export async function fetchAdminBoundaryPolygon(
   const clauses: string[] = [];
 
   if (provinsi && provinsi.trim() !== "") {
-    clauses.push(`WADMPR ILIKE '${escapeCqlString(provinsi)}'`);
+    clauses.push(`WADMPR ILIKE '${escapeCql(provinsi)}'`);
   }
 
   if (
@@ -41,7 +40,7 @@ export async function fetchAdminBoundaryPolygon(
     kabupaten &&
     kabupaten.trim() !== ""
   ) {
-    clauses.push(`WADMKK ILIKE '${escapeCqlString(kabupaten)}'`);
+    clauses.push(`WADMKK ILIKE '${escapeCql(kabupaten)}'`);
   }
 
   if (
@@ -49,16 +48,16 @@ export async function fetchAdminBoundaryPolygon(
     kecamatan &&
     kecamatan.trim() !== ""
   ) {
-    clauses.push(`WADMKC ILIKE '${escapeCqlString(kecamatan)}'`);
+    clauses.push(`WADMKC ILIKE '${escapeCql(kecamatan)}'`);
   }
 
   if (level === "kelurahan" && kelurahan && kelurahan.trim() !== "") {
-    clauses.push(`WADMKD ILIKE '${escapeCqlString(kelurahan)}'`);
+    clauses.push(`WADMKD ILIKE '${escapeCql(kelurahan)}'`);
   }
 
   // Fallback if no hierarchical clauses were added
   if (clauses.length === 0) {
-    clauses.push(`${config.attributeKey} ILIKE '${escapeCqlString(name)}'`);
+    clauses.push(`${config.attributeKey} ILIKE '${escapeCql(name)}'`);
   }
 
   const cqlFilter = clauses.join(" AND ");

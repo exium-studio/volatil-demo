@@ -140,6 +140,47 @@ export const MitraDataRequestSpatialSummary = memo(
       );
     }
 
+    // Validation logic against purchase policies with OR logic
+    const isBidangBelowMin =
+      totalBidangCount > 0 &&
+      pricingPolicy.minBidangCount > 0 &&
+      totalBidangCount < pricingPolicy.minBidangCount;
+
+    const isKawasanBelowMin =
+      totalKawasanAreaHa > 0 &&
+      pricingPolicy.minKawasanHa > 0 &&
+      totalKawasanAreaHa < pricingPolicy.minKawasanHa;
+
+    const hasValidBidang =
+      totalBidangCount >= pricingPolicy.minBidangCount && totalBidangCount > 0;
+    const hasValidKawasan =
+      totalKawasanAreaHa >= pricingPolicy.minKawasanHa && totalKawasanAreaHa > 0;
+
+    const hasAnyLimitViolation =
+      isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
+
+    // Logika OR: Jika salah satu valid (misal kawasan valid tapi bidang tidak), maka tetap valid untuk checkout
+    const isOrValidForCheckout = hasValidBidang || hasValidKawasan;
+
+    // Jika OR valid (bisa checkout untuk yang valid), gunakan warna orange (warning)
+    // Jika KEDUA-DUANYA tidak valid (tidak bisa checkout sama sekali), gunakan warna red (error)
+    const isOrangeWarning =
+      isOrValidForCheckout && (isBidangBelowMin || isKawasanBelowMin);
+
+    const displayAlertMessage = (() => {
+      if (purchaseLimitMessage) return purchaseLimitMessage;
+      if (isBidangBelowMin && isKawasanBelowMin) {
+        return `Minimum pembelian belum terpenuhi (Bidang: min ${formatNumber(pricingPolicy.minBidangCount)} bidang, Kawasan: min ${formatNumber(pricingPolicy.minKawasanHa)} ha).`;
+      }
+      if (isBidangBelowMin) {
+        return `Minimum pembelian untuk bidang tanah adalah ${formatNumber(pricingPolicy.minBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`;
+      }
+      if (isKawasanBelowMin) {
+        return `Minimum pembelian untuk kawasan adalah ${formatNumber(pricingPolicy.minKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha).`;
+      }
+      return "Total permohonan melebihi batas pembelian (purchase limit) akun Anda.";
+    })();
+
     return (
       <VStack gap={"md"}>
         {/* Coverage Layer Switch (Only rendered if coverage polygon exists) */}
@@ -251,21 +292,21 @@ export const MitraDataRequestSpatialSummary = memo(
         </VStack>
 
         {/* Limit Warning Notice */}
-        {!isPurchaseLimitValid && (
+        {hasAnyLimitViolation && (
           <Alert.Root
-            status={"error"}
-            colorPalette={"red"}
+            status={isOrangeWarning ? "warning" : "error"}
+            colorPalette={isOrangeWarning ? "orange" : "red"}
             variant={"subtle"}
             mt={1}
           >
             <AppIcon icon={ShieldAlertIcon} />
             <Alert.Description fontSize={"xs"}>
-              {purchaseLimitMessage ||
-                "Total permohonan melebihi batas pembelian (purchase limit) akun Anda."}
+              {displayAlertMessage}
             </Alert.Description>
           </Alert.Root>
         )}
       </VStack>
     );
+
   },
 );

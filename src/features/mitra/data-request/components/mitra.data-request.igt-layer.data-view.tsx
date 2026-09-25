@@ -32,13 +32,15 @@ import { MitraDataRequestSpatialSummary } from "@/features/mitra/data-request/co
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
+
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type {
   BasisFilterType,
   MitraDataRequestIgtLayerDataViewProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
-import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
+import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { checkBboxIntersection } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
@@ -97,19 +99,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // Derived Values
     const debouncedSearch = useDebouncedValue(searchRaw);
-    const localCqlFilter = useMemo(
-      () => buildIgtCqlFilter(appliedAdministrativeFilters),
-      [appliedAdministrativeFilters],
-    );
-    const combinedCqlFilter = useMemo(() => {
-      // Administrative filter is only applied when showFilter is true (Catalog tab)
-      const activeStoreCql = showFilter ? localCqlFilter : undefined;
-
-      if (baseCqlFilter && activeStoreCql) {
-        return `${baseCqlFilter} AND ${activeStoreCql}`;
-      }
-      return baseCqlFilter ?? activeStoreCql ?? undefined;
-    }, [baseCqlFilter, localCqlFilter, showFilter]);
 
     // Queries — list of all active IGT layers
     const {
@@ -141,6 +130,18 @@ export const MitraDataRequestIgtLayerDataView = memo(
       }
       return null;
     }, [propAoiPolygon, showFilter, adminBoundaryQuery.aoiPolygon]);
+
+    // Pure AOI spatial CQL filter: INTERSECTS(geom, POLYGON(...)) across all tabs
+    const combinedCqlFilter = useMemo(() => {
+      if (baseCqlFilter) return baseCqlFilter;
+      if (effectiveAoiPolygon) {
+        const wkt = geojsonPolygonToWkt(effectiveAoiPolygon);
+        if (wkt) {
+          return `INTERSECTS(geom, ${wkt})`;
+        }
+      }
+      return undefined;
+    }, [baseCqlFilter, effectiveAoiPolygon]);
 
     // Spatial Hit Check: Query whether each layer intersects with the active AOI
     const hitQueries = useQueries({
@@ -311,16 +312,31 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // Handlers — Cart actions (Direct submit to BE without local spatial processing)
     const handleAddToCartSelected = () => {
-      const targetLayers =
+      let targetLayers =
         selectedTableItems.length > 0
           ? (selectedTableItems
               .map((item) => item.data)
               .filter(Boolean) as IgtLayerItem[])
           : filteredLayers;
 
+      // Jika user klik tambah semua dan bidang tidak memenuhi batas tapi kawasan memenuhi:
+      // otomatis hanya tambahkan layer kawasan yang valid
+      if (selectedTableItems.length === 0) {
+        if (isBidangBelowMin && hasValidKawasan) {
+          targetLayers = targetLayers.filter(
+            (layer) => layer.spatialBasis !== "bidang",
+          );
+        } else if (isKawasanBelowMin && hasValidBidang) {
+          targetLayers = targetLayers.filter(
+            (layer) => layer.spatialBasis !== "kawasan",
+          );
+        }
+      }
+
       const validLayers = targetLayers.filter((layer) =>
         Boolean(layer?.wfs?.wfsTypeName || layer?.id),
       );
+
 
       if (isEmptyArray(validLayers)) return;
 
@@ -481,6 +497,30 @@ export const MitraDataRequestIgtLayerDataView = memo(
       };
     }, [filteredLayers, combinedCqlFilter, flyTo, onSelectIgtLayer]);
 
+    const pricingPolicy = usePricingPolicy();
+    const totalBidangCount = calculationResult?.totalBidangCount ?? 0;
+    const totalKawasanAreaHa = calculationResult?.totalKawasanAreaHa ?? 0;
+    const minBidangCount = pricingPolicy.minBidangCount;
+    const minKawasanHa = pricingPolicy.minKawasanHa;
+
+    const isBidangBelowMin =
+      totalBidangCount > 0 &&
+      minBidangCount > 0 &&
+      totalBidangCount < minBidangCount;
+
+    const isKawasanBelowMin =
+      totalKawasanAreaHa > 0 &&
+      minKawasanHa > 0 &&
+      totalKawasanAreaHa < minKawasanHa;
+
+    const hasValidBidang =
+      totalBidangCount >= minBidangCount && totalBidangCount > 0;
+    const hasValidKawasan =
+      totalKawasanAreaHa >= minKawasanHa && totalKawasanAreaHa > 0;
+
+    // Logika OR: jika limit bidang tidak terpenuhi tapi kawasan terpenuhi (atau sebaliknya), maka tetap valid untuk checkout
+    const hasValidAny = hasValidBidang || hasValidKawasan;
+
     const hasSelectedLayers = selectedTableItems.length > 0;
     const isShowLoading =
       isLoadingLayers ||
@@ -493,16 +533,77 @@ export const MitraDataRequestIgtLayerDataView = memo(
       calculationResult?.isPurchaseLimitValid ?? true;
     const purchaseLimitMessage = calculationResult?.purchaseLimitMessage;
 
+    // Cek seleksi layer jika ada yang dipilih
+    const selectedLayers = selectedTableItems
+      .map((item) => item.data)
+      .filter(Boolean) as IgtLayerItem[];
+    const selectedHasBidang = selectedLayers.some(
+      (layer) => layer.spatialBasis === "bidang",
+    );
+    const selectedHasKawasan = selectedLayers.some(
+      (layer) => layer.spatialBasis === "kawasan",
+    );
+
+    let isSelectionLimitInvalid = false;
+    if (hasSelectedLayers) {
+      if (selectedHasBidang && !selectedHasKawasan && isBidangBelowMin) {
+        isSelectionLimitInvalid = true;
+      } else if (
+        selectedHasKawasan &&
+        !selectedHasBidang &&
+        isKawasanBelowMin
+      ) {
+        isSelectionLimitInvalid = true;
+      } else if (
+        selectedHasBidang &&
+        selectedHasKawasan &&
+        isBidangBelowMin &&
+        isKawasanBelowMin
+      ) {
+        isSelectionLimitInvalid = true;
+      }
+    } else {
+      // Jika tambah semua: invalid hanya jika TIDAK ADA yang valid sama sekali
+      if (
+        (isBidangBelowMin && isKawasanBelowMin) ||
+        (isBidangBelowMin && isEmptyArray(kawasanLayers)) ||
+        (isKawasanBelowMin && isEmptyArray(bidangLayers)) ||
+        (calculationResult?.isPurchaseLimitValid === false && !hasValidAny)
+      ) {
+        isSelectionLimitInvalid = true;
+      }
+    }
+
     const isCartDisabled =
       !hasFilteredLayers ||
       addToCartMultipleMutation.isPending ||
       isShowLoading ||
       isCalculating ||
-      !isPurchaseLimitValid;
+      isSelectionLimitInvalid;
 
-    const isBidangDisabled = isCartDisabled || isEmptyArray(bidangLayers);
+    const isBidangDisabled =
+      !hasFilteredLayers ||
+      addToCartMultipleMutation.isPending ||
+      isShowLoading ||
+      isCalculating ||
+      isEmptyArray(bidangLayers) ||
+      isBidangBelowMin;
 
-    const isKawasanDisabled = isCartDisabled || isEmptyArray(kawasanLayers);
+    const isKawasanDisabled =
+      !hasFilteredLayers ||
+      addToCartMultipleMutation.isPending ||
+      isShowLoading ||
+      isCalculating ||
+      isEmptyArray(kawasanLayers) ||
+      isKawasanBelowMin;
+
+    const bidangLimitTooltip = isBidangBelowMin
+      ? `Minimum pembelian untuk bidang tanah adalah ${formatNumber(minBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`
+      : undefined;
+
+    const kawasanLimitTooltip = isKawasanBelowMin
+      ? `Minimum pembelian untuk kawasan adalah ${formatNumber(minKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha).`
+      : undefined;
 
     return (
       <VStack
@@ -662,7 +763,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} mt={"auto"}>
           {/* Action Buttons */}
           <VStack w={"full"} gap={"xs"}>
-            {!isPurchaseLimitValid && purchaseLimitMessage ? (
+            {isSelectionLimitInvalid && purchaseLimitMessage ? (
               <Tooltip content={purchaseLimitMessage}>
                 <VStack w={"full"} align={"stretch"}>
                   <Button
@@ -695,8 +796,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
             )}
 
             <HStack w={"full"} gap={"xs"}>
-              {!isPurchaseLimitValid && purchaseLimitMessage ? (
-                <Tooltip content={purchaseLimitMessage}>
+              {bidangLimitTooltip ? (
+                <Tooltip content={bidangLimitTooltip}>
                   <VStack flex={1} minW={0} align={"stretch"}>
                     <Button
                       primary
@@ -728,8 +829,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 </Button>
               )}
 
-              {!isPurchaseLimitValid && purchaseLimitMessage ? (
-                <Tooltip content={purchaseLimitMessage}>
+              {kawasanLimitTooltip ? (
+                <Tooltip content={kawasanLimitTooltip}>
                   <VStack flex={1} minW={0} align={"stretch"}>
                     <Button
                       primary

@@ -1,21 +1,14 @@
 // src/features/mitra/data-request/hooks/use-admin-boundary-aoi.ts
 
 import { fetchAdminBoundaryPolygon } from "@/features/mitra/data-request/api/mitra.data-request-admin-boundary.api";
-import type { AdminBoundaryLevel } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
+import type { AdministrativeSelection } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";
+
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";
 import type GeoJSON from "geojson";
 import { useMemo } from "react";
 
-export type AdministrativeSelection = {
-  level: AdminBoundaryLevel;
-  name: string;
-  provinsi?: string;
-  kabupaten?: string;
-  kecamatan?: string;
-  kelurahan?: string;
-};
 
 /**
  * Resolves the deepest selected administrative level into level + name along with parent hierarchy.

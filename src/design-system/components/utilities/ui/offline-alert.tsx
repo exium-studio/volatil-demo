@@ -6,11 +6,11 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box, Circle } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { toast } from "@/design-system/components/toast";
-import { Heading } from "@/design-system/components/typography/ui/heading";
-import { P } from "@/design-system/components/typography/ui/p";
+
 import { Portal } from "@/design-system/components/utilities/ui/portal";
-import { t } from "@/shared/libs/i18n";
 import { WifiOffIcon } from "lucide-react";
+
+
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export const OfflineAlert = () => {
@@ -58,7 +58,7 @@ export const OfflineAlert = () => {
       handleOffline();
     }
 
-    // Polling every 30 seconds
+    // Polling every 10 seconds
     const pollInterval = setInterval(() => {
       const isCurrentlyOffline =
         typeof navigator !== "undefined"
@@ -67,7 +67,7 @@ export const OfflineAlert = () => {
       if (isCurrentlyOffline || isOfflineRef.current) {
         triggerAlert();
       }
-    }, 30000);
+    }, 10000);
 
     window.addEventListener("offline", handleOffline);
     window.addEventListener("online", handleOnline);
@@ -100,8 +100,9 @@ export const OfflineAlert = () => {
         transition={
           "opacity 300ms cubic-bezier(0.16, 1, 0.3, 1), transform 300ms cubic-bezier(0.16, 1, 0.3, 1)"
         }
+        // bg={"bodyDarkAlpha/50"}
       >
-        <VStack align={"center"} gap={"md"} textAlign={"center"}>
+        <VStack align={"center"} gap={"md"} textAlign={"center"} zIndex={2}>
           <Box
             pos={"relative"}
             display={"inline-flex"}
@@ -132,14 +133,14 @@ export const OfflineAlert = () => {
             </Circle>
           </Box>
 
-          <VStack gap={"xs"} align={"center"}>
+          {/* <VStack gap={"xs"} align={"center"}>
             <Heading size={"md"} fontWeight={"semibold"} color={"fg.default"}>
               {t["offline_alert.title"]()}
             </Heading>
             <P fontSize={"sm"} color={"fg.muted"} maxW={"300px"}>
               {t["offline_alert.description"]()}
             </P>
-          </VStack>
+          </VStack> */}
         </VStack>
       </Box>
     </Portal>

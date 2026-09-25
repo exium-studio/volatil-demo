@@ -36,6 +36,15 @@ export type AdministrativeFilterState = {
 
 export type AdminBoundaryLevel = "provinsi" | "kabupaten" | "kecamatan" | "kelurahan";
 
+export type AdministrativeSelection = {
+  level: AdminBoundaryLevel;
+  name: string;
+  provinsi?: string;
+  kabupaten?: string;
+  kecamatan?: string;
+  kelurahan?: string;
+};
+
 export type FetchAdminBoundaryParams = {
   level: AdminBoundaryLevel;
   name: string;
@@ -45,5 +54,6 @@ export type FetchAdminBoundaryParams = {
   kelurahan?: string;
   signal?: AbortSignal;
 };
+
 
 

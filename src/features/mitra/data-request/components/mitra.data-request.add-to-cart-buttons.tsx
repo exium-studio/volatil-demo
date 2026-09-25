@@ -199,7 +199,7 @@ export const MitraDataRequestAddToCartButtons = (
       ? totalKawasanAreaHaProp
       : allKawasanLuasTotal;
 
-  // Validation logic against purchase policies
+  // Validation logic against purchase policies with OR logic
   const isBidangBelowMin =
     bidangCount > 0 && minBidangCount > 0 && bidangCount < minBidangCount;
   const isKawasanBelowMin =
@@ -207,22 +207,40 @@ export const MitraDataRequestAddToCartButtons = (
     minKawasanHa > 0 &&
     effectiveKawasanHa < minKawasanHa;
 
-  const isOverPurchaseLimit = isPurchaseLimitValid === false;
+  const hasValidBidang = bidangCount >= minBidangCount && bidangCount > 0;
+  const hasValidKawasan =
+    effectiveKawasanHa >= minKawasanHa &&
+    (kawasanCount > 0 || effectiveKawasanHa > 0);
+  const hasValidAny = hasValidBidang || hasValidKawasan;
+
+  const isOverPurchaseLimit =
+    isPurchaseLimitValid === false && !hasValidAny;
   const limitTooltipText =
-    purchaseLimitMessage || "Melebihi batas kuota pembelian spasial (purchase limit).";
+    purchaseLimitMessage ||
+    (isBidangBelowMin
+      ? `Minimum pembelian untuk bidang tanah adalah ${formatNumber(minBidangCount)} bidang (saat ini: ${formatNumber(bidangCount)} bidang).`
+      : isKawasanBelowMin
+        ? `Minimum pembelian untuk kawasan adalah ${formatNumber(minKawasanHa)} ha (saat ini: ${formatNumber(effectiveKawasanHa, { maximumFractionDigits: 2 })} ha).`
+        : "Melebihi batas kuota pembelian spasial (purchase limit).");
 
   const isAddSelectedDisabled =
-    isEmptyArray(selectedItems) || isOverPurchaseLimit || isLoading;
-  const isAddAllBidangDisabled =
-    bidangCount === 0 || isBidangBelowMin || isOverPurchaseLimit || isLoading;
-  const isAddAllKawasanDisabled =
-    kawasanCount === 0 || isKawasanBelowMin || isOverPurchaseLimit || isLoading;
-  const isAddAllBothDisabled =
-    totalItemCount === 0 ||
-    (bidangCount > 0 && isBidangBelowMin) ||
-    (kawasanCount > 0 && isKawasanBelowMin) ||
+    isEmptyArray(selectedItems) ||
+    (selectedBidangCount > 0 && selectedKawasanCount === 0 && isBidangBelowMin) ||
+    (selectedKawasanCount > 0 && selectedBidangCount === 0 && isKawasanBelowMin) ||
+    (isBidangBelowMin && isKawasanBelowMin) ||
     isOverPurchaseLimit ||
     isLoading;
+
+  const isAddAllBidangDisabled =
+    bidangCount === 0 || isBidangBelowMin || isLoading;
+  const isAddAllKawasanDisabled =
+    kawasanCount === 0 || isKawasanBelowMin || isLoading;
+  const isAddAllBothDisabled =
+    totalItemCount === 0 ||
+    !hasValidAny ||
+    isOverPurchaseLimit ||
+    isLoading;
+
 
   const renderSelectedButton = (
     <Button

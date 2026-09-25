@@ -9,10 +9,11 @@ import type {
   FilterOptionItem,
   FilterOptionsResponse,
 } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
-import { escapeCqlString } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import type GeoJSON from "geojson";
+
+const escapeCql = (val: string): string => val.trim().replace(/'/g, "''");
 
 const extractAdminFeatureName = (
   props: GeoJSON.GeoJsonProperties,
@@ -96,7 +97,7 @@ export const fetchFilterOptionsKabupatenApi = async (
   }
 
   const config = ADMIN_BOUNDARY_WFS_CONFIG.kabupaten;
-  const cleanProv = escapeCqlString(params.provinsiId);
+  const cleanProv = escapeCql(params.provinsiId);
   const cqlFilter = cleanProv
     ? `WADMPR ILIKE '${cleanProv}'`
     : undefined;
@@ -143,11 +144,11 @@ export const fetchFilterOptionsKecamatanApi = async (
   const clauses: string[] = [];
 
   if (params.provinsiId) {
-    const cleanProv = escapeCqlString(params.provinsiId);
+    const cleanProv = escapeCql(params.provinsiId);
     if (cleanProv) clauses.push(`WADMPR ILIKE '${cleanProv}'`);
   }
 
-  const cleanKab = escapeCqlString(params.kabupatenId);
+  const cleanKab = escapeCql(params.kabupatenId);
   if (cleanKab) {
     clauses.push(`WADMKK ILIKE '${cleanKab}'`);
   }
@@ -196,16 +197,16 @@ export const fetchFilterOptionsKelurahanApi = async (
   const clauses: string[] = [];
 
   if (params.provinsiId) {
-    const cleanProv = escapeCqlString(params.provinsiId);
+    const cleanProv = escapeCql(params.provinsiId);
     if (cleanProv) clauses.push(`WADMPR ILIKE '${cleanProv}'`);
   }
 
   if (params.kabupatenId) {
-    const cleanKab = escapeCqlString(params.kabupatenId);
+    const cleanKab = escapeCql(params.kabupatenId);
     if (cleanKab) clauses.push(`WADMKK ILIKE '${cleanKab}'`);
   }
 
-  const cleanKec = escapeCqlString(params.kecamatanId);
+  const cleanKec = escapeCql(params.kecamatanId);
   if (cleanKec) {
     clauses.push(`WADMKC ILIKE '${cleanKec}'`);
   }
