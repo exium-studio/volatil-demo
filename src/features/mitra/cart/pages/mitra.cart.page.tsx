@@ -32,13 +32,8 @@ import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
-import {
-  InfoIcon,
-  ShoppingCartIcon,
-  Trash2Icon,
-} from "lucide-react";
+import { InfoIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-
 
 export const MitraCartPage = () => {
   return (
@@ -303,7 +298,6 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
     </Container.Body>
   );
 };
-
 
 export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
   // Props
