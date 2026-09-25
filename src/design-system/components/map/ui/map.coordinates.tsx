@@ -61,7 +61,7 @@ export const MapCoordinates = () => {
       pointerEvents={"none"}
       zIndex={1000}
     >
-      <HStack gap={2}>
+      <HStack gap={2} w={"max"}>
         <P
           fontSize={"2xs"}
           fontWeight={"semibold"}
