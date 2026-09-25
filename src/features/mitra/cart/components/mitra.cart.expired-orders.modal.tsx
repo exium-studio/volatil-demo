@@ -1,6 +1,9 @@
 // src/features/mitra/cart/components/mitra.cart.expired-orders.modal.tsx
 
-import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -170,7 +173,7 @@ const MitraCartExpiredOrdersModalContent = (
       <Modal.Body p={"md"}>
         {isLoading && (
           <VStack gap={"md"} align={"stretch"}>
-            <Skeleton h={"250px"} rounded={"md"} />
+            <Skeleton h={"242px"} rounded={"md"} />
           </VStack>
         )}
 
