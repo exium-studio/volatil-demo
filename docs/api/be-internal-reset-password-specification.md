@@ -1,44 +1,36 @@
-# Dokumentasi & Spesifikasi Modul Reset Password Pegawai (Internal Only)
+# Dokumentasi & Spesifikasi Modul Reset Password (Khusus Internal ATR/BPN)
 
-Dokumen ini ditujukan untuk **Tim Backend (BE)** sebagai panduan implementasi endpoint API untuk modul **Reset Password & Ubah Kata Sandi Akun Internal** pada sistem IGTPR Volatil.
+Dokumen ini ditujukan untuk **Tim Backend (BE)** sebagai panduan implementasi endpoint API untuk modul **Reset Password Akun Internal** pada sistem IGTPR Volatil.
 
 ---
 
 ## 1. Ikhtisar & Arsitektur Alur (Flow)
 
-Modul ini **khusus melayani akun dengan role `internal` (Pegawai ATR/BPN)**.
-
-Terdapat 2 skenario penggunaan utama:
+Modul reset kata sandi menggunakan alur terpadu **3-Step OTP Verification Flow**:
 
 ```mermaid
 graph TD
-    subgraph Flow A: Unauthenticated Reset (Lupa Kata Sandi)
-        A1[1. Input Email Pegawai di Form Login Internal] --> A2[POST /api/auth/reset-password/request]
-        A2 -->|Kirim OTP / Token ke Email Kedinasan| A3[2. Input Kode OTP & Kata Sandi Baru di Modal]
-        A3 --> A4[POST /api/auth/reset-password/confirm]
-        A4 -->|Verifikasi Sukses| A5[Kata Sandi Direset & User Bisa Login]
-    end
-
-    subgraph Flow B: Authenticated Password Change (Profil Popover)
-        B1[1. Klik 'Ubah / Reset Kata Sandi' di Profile Popover] --> B2[Modal Ubah Kata Sandi Terbuka]
-        B2 --> B3[Input: Sandi Lama + Sandi Baru + Konfirmasi]
-        B3 --> B4[POST /api/auth/change-password]
-        B4 -->|Validasi Sukses| B5[Kata Sandi Berhasil Diperbarui]
-        B2 -.->|Jika Lupa Sandi Lama| A1
-    end
+    A[Step 1: Input Email Pegawai] -->|POST /api/auth/reset-password/request| B[Kirim OTP 6-Digit ke Email]
+    B --> C[Step 2: Input 6-Digit OTP di Modal]
+    C -->|POST /api/auth/reset-password/verify-otp| D{Validasi OTP}
+    D -->|OTP Valid| E[Step 3: Input Password Baru & Konfirmasi]
+    D -->|OTP Salah / Expired| C
+    E -->|POST /api/auth/reset-password/confirm| F[Kata Sandi Berhasil Direset]
 ```
+
+Baik saat dipanggil dari **Form Signin Internal (Lupa Password)** maupun dari **User Profile Popover**, alur verifikasinya adalah sama dan seragam demi keamanan.
 
 ---
 
 ## 2. Rincian Endpoint API
 
-### 2.1 Request Kode OTP / Reset Token (Step 1 - Lupa Sandi)
+### 2.1 Step 1: Request Kode OTP
 
-Digunakan ketika pegawai internal lupa kata sandi dan meminta kode verifikasi ke email kedinasan.
+Digunakan untuk meminta pengiriman kode OTP 6-digit ke email akun internal.
 
 - **Method**: `POST`
 - **Path**: `/api/auth/reset-password/request`
-- **Akses**: `Public`
+- **Akses**: `Public / Authenticated`
 - **Rate Limit Disarankan**: Max 3 request per 15 menit per email / IP
 - **Content-Type**: `application/json`
 
@@ -66,7 +58,7 @@ Digunakan ketika pegawai internal lupa kata sandi dan meminta kode verifikasi ke
 ```json
 {
   "success": false,
-  "message": "Email kedinasan tidak terdaftar sebagai akun internal."
+  "message": "Email tidak terdaftar sebagai akun internal."
 }
 ```
 - **429 Too Many Requests** (Rate limit terlampaui):
@@ -79,13 +71,55 @@ Digunakan ketika pegawai internal lupa kata sandi dan meminta kode verifikasi ke
 
 ---
 
-### 2.2 Konfirmasi Kode OTP & Set Kata Sandi Baru (Step 2 - Lupa Sandi)
+### 2.2 Step 2: Verifikasi Kode OTP
 
-Digunakan untuk memvalidasi token/OTP yang dikirimkan ke email dan mengupdate password pegawai internal.
+Digunakan untuk memvalidasi kode OTP 6 digit yang dimasukkan oleh pengguna sebelum pengguna mengisi password baru.
+
+- **Method**: `POST`
+- **Path**: `/api/auth/reset-password/verify-otp`
+- **Akses**: `Public / Authenticated`
+- **Content-Type**: `application/json`
+
+#### Request Payload
+```json
+{
+  "email": "pegawai@atrbpn.go.id",
+  "resetToken": "123456"
+}
+```
+
+#### Response Sukses (200 OK)
+```json
+{
+  "success": true,
+  "message": "Kode OTP valid.",
+  "data": {
+    "success": true,
+    "message": "Kode OTP valid.",
+    "email": "pegawai@atrbpn.go.id",
+    "resetToken": "123456"
+  }
+}
+```
+
+#### Skenario Error:
+- **400 Bad Request / 401 Unauthorized** (Kode salah / token expired):
+```json
+{
+  "success": false,
+  "message": "Kode OTP salah atau telah kedaluwarsa."
+}
+```
+
+---
+
+### 2.3 Step 3: Simpan Kata Sandi Baru
+
+Digunakan untuk mengupdate kata sandi baru setelah OTP terverifikasi.
 
 - **Method**: `POST`
 - **Path**: `/api/auth/reset-password/confirm`
-- **Akses**: `Public`
+- **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
 
 #### Request Payload
@@ -102,23 +136,23 @@ Digunakan untuk memvalidasi token/OTP yang dikirimkan ke email dan mengupdate pa
 ```json
 {
   "success": true,
-  "message": "Kata sandi akun internal Anda telah berhasil direset.",
+  "message": "Kata sandi akun Anda telah berhasil direset.",
   "data": {
     "success": true,
-    "message": "Kata sandi akun internal Anda telah berhasil direset."
+    "message": "Kata sandi akun Anda telah berhasil direset."
   }
 }
 ```
 
 #### Skenario Error:
-- **400 Bad Request / 401 Unauthorized** (Kode salah / token kedaluwarsa):
+- **400 Bad Request / 401 Unauthorized** (Token tidak valid / expired):
 ```json
 {
   "success": false,
-  "message": "Kode verifikasi salah atau telah kedaluwarsa."
+  "message": "Gagal mereset kata sandi. Kode verifikasi tidak valid atau kedaluwarsa."
 }
 ```
-- **422 Unprocessable Entity** (Validasi panjang sandi kurang dari 8 karakter / konfirmasi tidak cocok):
+- **422 Unprocessable Entity** (Panjang sandi kurang dari 8 karakter / konfirmasi tidak cocok):
 ```json
 {
   "success": false,
@@ -128,74 +162,19 @@ Digunakan untuk memvalidasi token/OTP yang dikirimkan ke email dan mengupdate pa
 
 ---
 
-### 2.3 Ubah Kata Sandi (Authenticated Staff via Profile Popover)
-
-Digunakan saat pegawai internal sudah login dan ingin mengganti kata sandinya dari aplikasi.
-
-- **Method**: `POST`
-- **Path**: `/api/auth/change-password`
-- **Akses**: `Authenticated (Internal Role Only)`
-- **Header**: `Authorization: Bearer <accessToken>` atau Cookie Session
-- **Content-Type**: `application/json`
-
-#### Request Payload
-```json
-{
-  "currentPassword": "PasswordLama@123",
-  "newPassword": "PasswordBaru@123",
-  "confirmPassword": "PasswordBaru@123"
-}
-```
-
-#### Response Sukses (200 OK)
-```json
-{
-  "success": true,
-  "message": "Kata sandi Anda berhasil diperbarui.",
-  "data": {
-    "success": true,
-    "message": "Kata sandi Anda berhasil diperbarui."
-  }
-}
-```
-
-#### Skenario Error:
-- **400 Bad Request** (Kata sandi lama tidak cocok):
-```json
-{
-  "success": false,
-  "message": "Kata sandi saat ini tidak sesuai."
-}
-```
-- **401 Unauthorized** (Session habis / invalid token):
-```json
-{
-  "success": false,
-  "message": "Sesi Anda telah kedaluwarsa, silakan login kembali."
-}
-```
-- **403 Forbidden** (Bukan role internal):
-```json
-{
-  "success": false,
-  "message": "Akses ditolak. Fitur ini khusus untuk pengguna internal."
-}
-```
-
----
-
 ## 3. Catatan Keamanan & Rekomendasi Teknis BE
 
-1. **Format Token & Masa Berlaku (OTP/Token):**
-   - Masa berlaku OTP/Token reset password direkomendasikan **5 menit (300 detik)**.
-   - Format kode dapat berupa 6 digit angka numerik atau secure alphanumeric token.
-   - Setiap kali kode berhasil digunakan atau kedaluwarsa, token harus di-invalidate (one-time use).
+1. **Format Token & Masa Berlaku OTP:**
+   - Masa berlaku kode OTP adalah **5 menit (300 detik)**.
+   - Format: 6 digit angka numerik.
+   - Setiap kali kode berhasil digunakan atau expired, token harus di-invalidate (*one-time use*).
+   - Batasi percobaan salah OTP max 5 kali per sesi OTP sebelum di-lock sementara.
 
 2. **Validasi Role Akun:**
-   - Endpoint `/api/auth/reset-password/request` dan `/api/auth/reset-password/confirm` harus memastikan bahwa akun yang direset adalah akun dengan `role: "internal"`.
+   - Endpoint memastikan bahwa akun yang direset memiliki `role: "internal"`.
 
 3. **Hashing Kata Sandi:**
-   - Gunakan algoritma hashing standar industri (misal: Argon2id atau Bcrypt dengan salt rounds $\ge 10$).
+   - Gunakan algoritma hashing standar (Argon2id atau Bcrypt dengan salt rounds $\ge 10$).
 
-4. **Invalidasi Sesi Aktif (Optional Best Practice):**
-   - Ketika kata sandi berhasil diubah atau direset, pertimbangkan untuk mencabut (revoke) semua refresh token atau active session lama dari user tersebut demi keamanan.
+4. **Invalidasi Sesi Aktif:**
+   - Ketika kata sandi berhasil direset, cabut (*revoke*) semua session aktif / refresh token lama dari user tersebut.

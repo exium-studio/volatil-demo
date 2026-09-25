@@ -2,12 +2,12 @@
 
 import { authService } from "@/features/auth/services/auth.service";
 import type {
-  ChangePasswordData,
-  ChangePasswordPayload,
   ResetPasswordConfirmData,
   ResetPasswordConfirmPayload,
   ResetPasswordRequestData,
   ResetPasswordRequestPayload,
+  ResetPasswordVerifyOtpData,
+  ResetPasswordVerifyOtpPayload,
 } from "@/features/auth/types/reset-password.type";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation } from "@tanstack/react-query";
@@ -26,6 +26,30 @@ export const useResetPasswordRequestMutation = () => {
   return useMutation<ResetPasswordRequestData, Error, ResetPasswordRequestPayload>({
     mutationFn: (payload: ResetPasswordRequestPayload) =>
       authService.requestResetPassword(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+    },
+    onError: (error) => {
+      toastHandlers.onError(error);
+    },
+  });
+};
+
+export const useResetPasswordVerifyOtpMutation = () => {
+  const toastHandlers = mutationToastHandlers("auth-reset-password-verify-otp", {
+    group: "Reset Kata Sandi",
+    loadingMessage: {
+      title: "Memverifikasi kode OTP...",
+    },
+    successMessage: {
+      title: "Kode OTP valid!",
+    },
+  });
+
+  return useMutation<ResetPasswordVerifyOtpData, Error, ResetPasswordVerifyOtpPayload>({
+    mutationFn: (payload: ResetPasswordVerifyOtpPayload) =>
+      authService.verifyResetPasswordOtp(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
@@ -60,27 +84,3 @@ export const useResetPasswordConfirmMutation = () => {
   });
 };
 
-export const useChangePasswordMutation = () => {
-  const toastHandlers = mutationToastHandlers("auth-change-password", {
-    group: "Ubah Kata Sandi",
-    loadingMessage: {
-      title: "Memperbarui kata sandi...",
-    },
-    successMessage: {
-      title: "Kata sandi berhasil diubah!",
-    },
-  });
-
-
-  return useMutation<ChangePasswordData, Error, ChangePasswordPayload>({
-    mutationFn: (payload: ChangePasswordPayload) =>
-      authService.changePassword(payload),
-    onMutate: toastHandlers.onLoading,
-    onSuccess: () => {
-      toastHandlers.onSuccess();
-    },
-    onError: (error) => {
-      toastHandlers.onError(error);
-    },
-  });
-};

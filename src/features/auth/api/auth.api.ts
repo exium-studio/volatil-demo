@@ -15,14 +15,15 @@ import type {
   TotpVerifyResponse,
 } from "@/features/auth/types/auth.service.type";
 import type {
-  ChangePasswordPayload,
-  ChangePasswordResponse,
   ResetPasswordConfirmPayload,
   ResetPasswordConfirmResponse,
   ResetPasswordRequestPayload,
   ResetPasswordRequestResponse,
+  ResetPasswordVerifyOtpPayload,
+  ResetPasswordVerifyOtpResponse,
 } from "@/features/auth/types/reset-password.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
+
 import type { ApiResponse, User } from "@/shared/types/common-response.type";
 
 
@@ -147,6 +148,17 @@ export const postResetPasswordRequestApi = async (
   );
 };
 
+export const postResetPasswordVerifyOtpApi = async (
+  payload: ResetPasswordVerifyOtpPayload,
+  signal?: AbortSignal,
+): Promise<ResetPasswordVerifyOtpResponse> => {
+  return apiClient.post<ResetPasswordVerifyOtpResponse>(
+    "/api/auth/internal/reset-password/verify-otp",
+    payload,
+    { signal },
+  );
+};
+
 export const postResetPasswordConfirmApi = async (
   payload: ResetPasswordConfirmPayload,
   signal?: AbortSignal,
@@ -158,15 +170,5 @@ export const postResetPasswordConfirmApi = async (
   );
 };
 
-export const postChangePasswordApi = async (
-  payload: ChangePasswordPayload,
-  signal?: AbortSignal,
-): Promise<ChangePasswordResponse> => {
-  return apiClient.post<ChangePasswordResponse>(
-    "/api/auth/internal/change-password",
-    payload,
-    { signal },
-  );
-};
 
 

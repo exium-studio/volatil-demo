@@ -2,13 +2,14 @@ import { useMapLayerStore } from "@/design-system/components/map/stores/map.laye
 import {
   getAuthMeApi,
   getSsoInternalUrlApi,
+
   getTotpSetupApi,
-  postChangePasswordApi,
   postLoginApi,
   postLoginTotpVerifyApi,
   postLogoutApi,
   postResetPasswordConfirmApi,
   postResetPasswordRequestApi,
+  postResetPasswordVerifyOtpApi,
   postSsoInternalCallbackApi,
   postSsoInternalLogoutUrlApi,
   postTotpSetupConfirmApi,
@@ -21,13 +22,14 @@ import type {
   TotpVerifyPayload,
 } from "@/features/auth/types/auth.service.type";
 import type {
-  ChangePasswordData,
-  ChangePasswordPayload,
   ResetPasswordConfirmData,
   ResetPasswordConfirmPayload,
   ResetPasswordRequestData,
   ResetPasswordRequestPayload,
+  ResetPasswordVerifyOtpData,
+  ResetPasswordVerifyOtpPayload,
 } from "@/features/auth/types/reset-password.type";
+
 
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { ApiError } from "@/shared/libs/api-client/api-error";
@@ -450,10 +452,36 @@ export const authService = {
       // Mock fallback for development environment when backend is offline
       return {
         message:
-          "Kode verifikasi reset kata sandi telah dikirimkan ke email kedinasan Anda.",
+          "Kode verifikasi reset kata sandi telah dikirimkan ke email Anda.",
         email: payload.email,
         expiresIn: 300,
         resetToken: "123456",
+      };
+    }
+  },
+
+  verifyResetPasswordOtp: async (
+    payload: ResetPasswordVerifyOtpPayload,
+    signal?: AbortSignal,
+  ): Promise<ResetPasswordVerifyOtpData> => {
+    try {
+      const response = await postResetPasswordVerifyOtpApi(payload, signal);
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback
+      return {
+        success: true,
+        message: "Kode OTP berhasil diverifikasi.",
+        email: payload.email,
+        resetToken: payload.resetToken,
       };
     }
   },
@@ -478,34 +506,11 @@ export const authService = {
       return {
         success: true,
         message:
-          "Kata sandi akun internal Anda berhasil diperbarui. Silakan masuk menggunakan kata sandi baru.",
-      };
-    }
-  },
-
-  changePassword: async (
-    payload: ChangePasswordPayload,
-    signal?: AbortSignal,
-  ): Promise<ChangePasswordData> => {
-    try {
-      const response = await postChangePasswordApi(payload, signal);
-      return response.data;
-    } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-
-      if (!isDummyDataEnabled()) {
-        throw error;
-      }
-
-      // Mock fallback
-      return {
-        success: true,
-        message: "Kata sandi Anda berhasil diperbarui.",
+          "Kata sandi akun Anda berhasil diperbarui. Silakan masuk menggunakan kata sandi baru.",
       };
     }
   },
 };
+
 
 

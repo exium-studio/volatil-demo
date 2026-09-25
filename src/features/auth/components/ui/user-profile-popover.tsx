@@ -124,11 +124,10 @@ export const UserProfilePopoverTrigger = (
                 <Switch checked={isDarkMode} pointerEvents={"none"} />
               </Button>
 
-              {/* Internal Reset / Change Password Button */}
+              {/* Internal Reset Password Button */}
               {user?.role === "internal" && (
                 <InternalResetPasswordTrigger
                   defaultEmail={user.email}
-                  initialStep={"change"}
                 >
                   <Button
                     size={"sm"}
@@ -137,10 +136,11 @@ export const UserProfilePopoverTrigger = (
                     justifyContent={"start"}
                   >
                     <AppIcon icon={KeyRoundIcon} />
-                    {"Ubah / Reset Kata Sandi"}
+                    {"Reset Kata Sandi"}
                   </Button>
                 </InternalResetPasswordTrigger>
               )}
+
 
               {/* Signout Button */}
               <SignoutTrigger>

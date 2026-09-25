@@ -7,6 +7,7 @@ import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
+import { PinInput } from "@/design-system/components/input/ui/pin-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -15,22 +16,22 @@ import { P } from "@/design-system/components/typography/ui/p";
 
 import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import {
-  useChangePasswordMutation,
   useResetPasswordConfirmMutation,
   useResetPasswordRequestMutation,
+  useResetPasswordVerifyOtpMutation,
 } from "@/features/auth/hooks/use-reset-password.mutation";
 import {
-  createChangePasswordSchema,
-  createResetPasswordConfirmSchema,
+  createResetPasswordNewPasswordSchema,
+  createResetPasswordOtpSchema,
   createResetPasswordRequestSchema,
   zodResolver,
 } from "@/features/auth/schemas/reset-password.schema";
 import type {
-  ChangePasswordFormValues,
   InternalResetPasswordModalContentProps,
   InternalResetPasswordModalProps,
   InternalResetPasswordTriggerProps,
-  ResetPasswordConfirmFormValues,
+  ResetPasswordNewPasswordFormValues,
+  ResetPasswordOtpFormValues,
   ResetPasswordRequestFormValues,
   ResetPasswordStep,
 } from "@/features/auth/types/reset-password.type";
@@ -43,6 +44,8 @@ import {
   KeyRoundIcon,
   LockIcon,
   MailIcon,
+  RotateCcwIcon,
+  ShieldCheckIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -55,7 +58,6 @@ export const InternalResetPasswordTrigger = (
     children,
     modalKey: customModalKey = "internal-reset-password-modal",
     defaultEmail = "",
-    initialStep,
   } = props;
 
   // Hooks
@@ -66,8 +68,6 @@ export const InternalResetPasswordTrigger = (
 
   const effectiveEmail =
     defaultEmail || (isAuthenticated && user ? user.email : "");
-  const effectiveInitialStep: ResetPasswordStep =
-    initialStep ?? (isAuthenticated ? "change" : "request");
 
   const handleOpenModal = () => {
     open();
@@ -95,7 +95,6 @@ export const InternalResetPasswordTrigger = (
         open={open}
         close={close}
         defaultEmail={effectiveEmail}
-        initialStep={effectiveInitialStep}
       />
     </>
   );
@@ -108,7 +107,6 @@ export const InternalResetPasswordModal = (
   const {
     modalKey: customModalKey = "internal-reset-password-modal",
     defaultEmail = "",
-    initialStep = "request",
     isOpen: controlledIsOpen,
     onClose,
   } = props;
@@ -132,7 +130,6 @@ export const InternalResetPasswordModal = (
       open={open}
       close={handleClose}
       defaultEmail={defaultEmail}
-      initialStep={initialStep}
     />
   );
 };
@@ -141,17 +138,19 @@ const InternalResetPasswordModalContent = (
   props: InternalResetPasswordModalContentProps,
 ) => {
   // Props
-  const { modalKey, isOpen, open, close, defaultEmail, initialStep } = props;
+  const { modalKey, isOpen, open, close, defaultEmail } = props;
 
   // States
-  const [step, setStep] = useState<ResetPasswordStep>(initialStep);
+  const [step, setStep] = useState<ResetPasswordStep>("request");
   const [targetEmail, setTargetEmail] = useState<string>(defaultEmail);
+  const [otpCode, setOtpCode] = useState<string>("");
+  const [verifiedToken, setVerifiedToken] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   // Mutations
   const requestMutation = useResetPasswordRequestMutation();
+  const verifyOtpMutation = useResetPasswordVerifyOtpMutation();
   const confirmMutation = useResetPasswordConfirmMutation();
-  const changeMutation = useChangePasswordMutation();
 
   // Forms
   const requestForm = useForm<ResetPasswordRequestFormValues>({
@@ -161,20 +160,16 @@ const InternalResetPasswordModalContent = (
     },
   });
 
-  const confirmForm = useForm<ResetPasswordConfirmFormValues>({
-    resolver: zodResolver(createResetPasswordConfirmSchema()),
+  const otpForm = useForm<ResetPasswordOtpFormValues>({
+    resolver: zodResolver(createResetPasswordOtpSchema()),
     defaultValues: {
-      email: defaultEmail,
       resetToken: "",
-      newPassword: "",
-      confirmPassword: "",
     },
   });
 
-  const changeForm = useForm<ChangePasswordFormValues>({
-    resolver: zodResolver(createChangePasswordSchema()),
+  const newPasswordForm = useForm<ResetPasswordNewPasswordFormValues>({
+    resolver: zodResolver(createResetPasswordNewPasswordSchema()),
     defaultValues: {
-      currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
@@ -184,11 +179,13 @@ const InternalResetPasswordModalContent = (
     close();
     // Reset state after transition
     setTimeout(() => {
-      setStep(initialStep);
+      setStep("request");
+      setOtpCode("");
+      setVerifiedToken("");
       setIsSuccess(false);
-      requestForm.reset();
-      confirmForm.reset();
-      changeForm.reset();
+      requestForm.reset({ email: defaultEmail });
+      otpForm.reset({ resetToken: "" });
+      newPasswordForm.reset({ newPassword: "", confirmPassword: "" });
     }, 200);
   };
 
@@ -199,36 +196,53 @@ const InternalResetPasswordModalContent = (
       { email: values.email },
       {
         onSuccess: (data) => {
-          confirmForm.setValue("email", values.email);
           if (data.resetToken) {
-            confirmForm.setValue("resetToken", data.resetToken);
+            setOtpCode(data.resetToken);
+            otpForm.setValue("resetToken", data.resetToken);
           }
-          setStep("confirm");
+          setStep("otp");
         },
       },
     );
   };
 
-  const handleConfirmSubmit = (values: ResetPasswordConfirmFormValues) => {
+  const handleResendOtp = () => {
+    requestMutation.mutate(
+      { email: targetEmail },
+      {
+        onSuccess: (data) => {
+          if (data.resetToken) {
+            setOtpCode(data.resetToken);
+            otpForm.setValue("resetToken", data.resetToken);
+          }
+        },
+      },
+    );
+  };
+
+
+  const handleOtpSubmit = (values: ResetPasswordOtpFormValues) => {
+    verifyOtpMutation.mutate(
+      {
+        email: targetEmail,
+        resetToken: values.resetToken,
+      },
+      {
+        onSuccess: (data) => {
+          setVerifiedToken(data.resetToken || values.resetToken);
+          setStep("new-password");
+        },
+      },
+    );
+  };
+
+  const handleNewPasswordSubmit = (
+    values: ResetPasswordNewPasswordFormValues,
+  ) => {
     confirmMutation.mutate(
       {
-        email: values.email || targetEmail,
-        resetToken: values.resetToken,
-        newPassword: values.newPassword,
-        confirmPassword: values.confirmPassword,
-      },
-      {
-        onSuccess: () => {
-          setIsSuccess(true);
-        },
-      },
-    );
-  };
-
-  const handleChangeSubmit = (values: ChangePasswordFormValues) => {
-    changeMutation.mutate(
-      {
-        currentPassword: values.currentPassword,
+        email: targetEmail,
+        resetToken: verifiedToken || otpForm.getValues("resetToken"),
         newPassword: values.newPassword,
         confirmPassword: values.confirmPassword,
       },
@@ -253,7 +267,7 @@ const InternalResetPasswordModalContent = (
           <Modal.CloseButton />
 
           <Modal.Title textAlign={"center"}>
-            {step === "change" ? "Ubah Kata Sandi" : "Reset Kata Sandi"}
+            {"Reset Kata Sandi"}
           </Modal.Title>
         </Modal.Header>
 
@@ -270,15 +284,11 @@ const InternalResetPasswordModalContent = (
 
               <VStack gap={"2xs"}>
                 <P fontSize={"md"} fontWeight={"semibold"}>
-                  {step === "change"
-                    ? "Kata Sandi Berhasil Diubah!"
-                    : "Kata Sandi Berhasil Direset!"}
+                  {"Kata Sandi Berhasil Direset!"}
                 </P>
 
                 <P fontSize={"sm"} color={"fg.muted"}>
-                  {step === "change"
-                    ? "Kata sandi Anda telah berhasil diperbarui."
-                    : "Kata sandi Anda telah berhasil direset. Silakan masuk menggunakan kata sandi baru Anda."}
+                  {"Kata sandi akun Anda telah berhasil direset. Silakan masuk menggunakan kata sandi baru Anda."}
                 </P>
               </VStack>
 
@@ -292,7 +302,7 @@ const InternalResetPasswordModalContent = (
               </Button>
             </VStack>
           ) : step === "request" ? (
-            /* Step 1: Request Reset Token via Email */
+            /* Step 1: Request OTP via Email */
             <VStack
               as={"form"}
               onSubmit={requestForm.handleSubmit(handleRequestSubmit)}
@@ -307,7 +317,7 @@ const InternalResetPasswordModalContent = (
                 <AppIcon icon={InfoIcon} />
                 <Alert.Description fontSize={"xs"}>
                   {
-                    "Masukkan email Anda. Kode verifikasi akan dikirimkan untuk mengatur ulang kata sandi."
+                    "Masukkan email Anda. Kode verifikasi (OTP) akan dikirimkan untuk mengatur ulang kata sandi."
                   }
                 </Alert.Description>
               </Alert.Root>
@@ -335,14 +345,14 @@ const InternalResetPasswordModalContent = (
                 loading={requestMutation.isPending}
               >
                 <AppIcon icon={KeyRoundIcon} />
-                {"Kirim Kode Verifikasi"}
+                {"Kirim Kode OTP"}
               </Button>
             </VStack>
-          ) : step === "confirm" ? (
-            /* Step 2: Confirm Reset Token + Set New Password */
+          ) : step === "otp" ? (
+            /* Step 2: Input 6-Digit OTP */
             <VStack
               as={"form"}
-              onSubmit={confirmForm.handleSubmit(handleConfirmSubmit)}
+              onSubmit={otpForm.handleSubmit(handleOtpSubmit)}
               gap={"md"}
               align={"stretch"}
             >
@@ -353,55 +363,35 @@ const InternalResetPasswordModalContent = (
               >
                 <AppIcon icon={InfoIcon} />
                 <Alert.Description fontSize={"xs"}>
-                  {`Kode verifikasi telah dikirimkan ke ${targetEmail}. Silakan masukkan kode dan kata sandi baru Anda.`}
+                  {`Kode OTP 6 digit telah dikirimkan ke ${targetEmail}. Silakan masukkan kode di bawah ini.`}
                 </Alert.Description>
               </Alert.Root>
 
               <Fieldset>
                 <Field
-                  label={"Kode / Token Verifikasi"}
-                  invalid={Boolean(confirmForm.formState.errors.resetToken)}
-                  errorText={confirmForm.formState.errors.resetToken?.message}
+                  label={"Kode OTP Verifikasi"}
+                  invalid={Boolean(otpForm.formState.errors.resetToken)}
+                  errorText={otpForm.formState.errors.resetToken?.message}
                 >
-                  <Input
-                    startElement={
-                      <AppIcon icon={KeyRoundIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"123456"}
-                    {...confirmForm.register("resetToken")}
-                  />
-                </Field>
+                  <VStack align={"center"} w={"full"} py={"xs"}>
+                    <PinInput
+                      count={6}
+                      value={otpCode ? otpCode.split("") : []}
+                      onValueChange={(details) => {
+                        setOtpCode(details.valueAsString);
+                        otpForm.setValue("resetToken", details.valueAsString, {
+                          shouldValidate: true,
+                        });
+                      }}
+                      onValueComplete={(details) => {
+                        setOtpCode(details.valueAsString);
+                        otpForm.setValue("resetToken", details.valueAsString, {
+                          shouldValidate: true,
+                        });
+                      }}
+                    />
+                  </VStack>
 
-                <Field
-                  label={"Kata Sandi Baru"}
-                  invalid={Boolean(confirmForm.formState.errors.newPassword)}
-                  errorText={confirmForm.formState.errors.newPassword?.message}
-                >
-                  <PasswordInput
-                    startElement={
-                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"Minimal 8 karakter"}
-                    {...confirmForm.register("newPassword")}
-                  />
-                </Field>
-
-                <Field
-                  label={"Konfirmasi Kata Sandi Baru"}
-                  invalid={Boolean(
-                    confirmForm.formState.errors.confirmPassword,
-                  )}
-                  errorText={
-                    confirmForm.formState.errors.confirmPassword?.message
-                  }
-                >
-                  <PasswordInput
-                    startElement={
-                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"Ulangi kata sandi baru"}
-                    {...confirmForm.register("confirmPassword")}
-                  />
                 </Field>
               </Fieldset>
 
@@ -413,7 +403,98 @@ const InternalResetPasswordModalContent = (
                   onClick={() => setStep("request")}
                 >
                   <AppIcon icon={ArrowLeftIcon} />
-                  {"Ganti Email / Kirim Ulang"}
+                  {"Ganti Email"}
+                </Button>
+
+                <Button
+                  variant={"ghost"}
+                  size={"xs"}
+                  type={"button"}
+                  onClick={handleResendOtp}
+                  loading={requestMutation.isPending}
+                >
+                  <AppIcon icon={RotateCcwIcon} />
+                  {"Kirim Ulang OTP"}
+                </Button>
+              </HStack>
+
+              <Button
+                primary={true}
+                type={"submit"}
+                w={"full"}
+                loading={verifyOtpMutation.isPending}
+              >
+                <AppIcon icon={ShieldCheckIcon} />
+                {"Verifikasi OTP"}
+              </Button>
+            </VStack>
+          ) : (
+            /* Step 3: New Password with Password Strength Meter */
+            <VStack
+              as={"form"}
+              onSubmit={newPasswordForm.handleSubmit(handleNewPasswordSubmit)}
+              gap={"md"}
+              align={"stretch"}
+            >
+              <Alert.Root
+                status={"info"}
+                colorPalette={"green"}
+                variant={"subtle"}
+              >
+                <AppIcon icon={InfoIcon} />
+                <Alert.Description fontSize={"xs"}>
+                  {"Kode OTP berhasil diverifikasi. Buat kata sandi baru yang kuat untuk akun Anda."}
+                </Alert.Description>
+              </Alert.Root>
+
+              <Fieldset>
+                <Field
+                  label={"Kata Sandi Baru"}
+                  invalid={Boolean(
+                    newPasswordForm.formState.errors.newPassword,
+                  )}
+                  errorText={
+                    newPasswordForm.formState.errors.newPassword?.message
+                  }
+                >
+                  <PasswordInput
+                    startElement={
+                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
+                    }
+                    placeholder={"Minimal 8 karakter"}
+                    withPasswordStrength={true}
+                    {...newPasswordForm.register("newPassword")}
+                  />
+                </Field>
+
+                <Field
+                  label={"Konfirmasi Kata Sandi Baru"}
+                  invalid={Boolean(
+                    newPasswordForm.formState.errors.confirmPassword,
+                  )}
+                  errorText={
+                    newPasswordForm.formState.errors.confirmPassword?.message
+                  }
+                >
+                  <PasswordInput
+                    startElement={
+                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
+                    }
+                    placeholder={"Ulangi kata sandi baru"}
+                    {...newPasswordForm.register("confirmPassword")}
+                  />
+                </Field>
+              </Fieldset>
+
+              <HStack justify={"start"} align={"center"} mt={"xs"}>
+                <Button
+                  variant={"ghost"}
+                  size={"xs"}
+                  type={"button"}
+                  onClick={() => setStep("otp")}
+                >
+                  <AppIcon icon={ArrowLeftIcon} />
+                  {"Kembali ke OTP"}
                 </Button>
               </HStack>
 
@@ -424,83 +505,6 @@ const InternalResetPasswordModalContent = (
                 loading={confirmMutation.isPending}
               >
                 {"Simpan Kata Sandi Baru"}
-              </Button>
-            </VStack>
-          ) : (
-            /* Change Password Mode (for logged-in internal users) */
-            <VStack
-              as={"form"}
-              onSubmit={changeForm.handleSubmit(handleChangeSubmit)}
-              gap={"md"}
-              align={"stretch"}
-            >
-              <Fieldset>
-                <Field
-                  label={"Kata Sandi Saat Ini"}
-                  invalid={Boolean(changeForm.formState.errors.currentPassword)}
-                  errorText={
-                    changeForm.formState.errors.currentPassword?.message
-                  }
-                >
-                  <PasswordInput
-                    startElement={
-                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"Masukkan kata sandi saat ini"}
-                    {...changeForm.register("currentPassword")}
-                  />
-                </Field>
-
-                <Field
-                  label={"Kata Sandi Baru"}
-                  invalid={Boolean(changeForm.formState.errors.newPassword)}
-                  errorText={changeForm.formState.errors.newPassword?.message}
-                >
-                  <PasswordInput
-                    startElement={
-                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"Minimal 8 karakter"}
-                    {...changeForm.register("newPassword")}
-                  />
-                </Field>
-
-                <Field
-                  label={"Konfirmasi Kata Sandi Baru"}
-                  invalid={Boolean(changeForm.formState.errors.confirmPassword)}
-                  errorText={
-                    changeForm.formState.errors.confirmPassword?.message
-                  }
-                >
-                  <PasswordInput
-                    startElement={
-                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"Ulangi kata sandi baru"}
-                    {...changeForm.register("confirmPassword")}
-                  />
-                </Field>
-              </Fieldset>
-
-              <HStack justify={"end"} align={"center"}>
-                <Button
-                  variant={"ghost"}
-                  size={"xs"}
-                  type={"button"}
-                  onClick={() => setStep("request")}
-                >
-                  <AppIcon icon={KeyRoundIcon} />
-                  {"Lupa kata sandi saat ini?"}
-                </Button>
-              </HStack>
-
-              <Button
-                primary={true}
-                type={"submit"}
-                w={"full"}
-                loading={changeMutation.isPending}
-              >
-                {"Perbarui Kata Sandi"}
               </Button>
             </VStack>
           )}
@@ -515,3 +519,4 @@ const InternalResetPasswordModalContent = (
     </Modal.Root>
   );
 };
+

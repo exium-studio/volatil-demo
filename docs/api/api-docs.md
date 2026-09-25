@@ -205,15 +205,15 @@ type TotpSetupConfirmResponse = {
 - **Response Error (401 Unauthorized)**:
   - `code: "TOTP_INVALID"`: Kode tidak cocok atau waktu perangkat tidak sinkron.
 
-### Reset Password — Request Kode / Token (Khusus Role Internal)
-Digunakan oleh pegawai internal ATR/BPN yang lupa kata sandi saat berada di form login internal.
+### Reset Password — Step 1: Request Kode OTP (Khusus Role Internal)
+Digunakan oleh pegawai internal yang ingin mereset kata sandi (baik saat login maupun dari profile).
 - **Endpoint**: `POST /api/auth/reset-password/request`
-- **Akses**: `Public`
+- **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
 - **Request Body**:
 ```typescript
 type ResetPasswordRequestPayload = {
-  email: string; // Email kedinasan pegawai (e.g. pegawai@atrbpn.go.id)
+  email: string; // Email akun internal (e.g. pegawai@atrbpn.go.id)
 };
 ```
 - **Response (200 OK)**:
@@ -232,21 +232,54 @@ type ResetPasswordRequestResponse = {
 ```json
 {
   "success": false,
-  "message": "Email kedinasan tidak terdaftar sebagai akun internal."
+  "message": "Email tidak terdaftar sebagai akun internal."
 }
 ```
 
-### Reset Password — Konfirmasi Token & Simpan Sandi Baru (Khusus Role Internal)
-Digunakan untuk memvalidasi kode OTP / reset token dan mengubah kata sandi akun internal.
+### Reset Password — Step 2: Verifikasi Kode OTP (Khusus Role Internal)
+Digunakan untuk memvalidasi kode OTP 6-digit sebelum menampilkan form kata sandi baru.
+- **Endpoint**: `POST /api/auth/reset-password/verify-otp`
+- **Akses**: `Public / Authenticated`
+- **Content-Type**: `application/json`
+- **Request Body**:
+```typescript
+type ResetPasswordVerifyOtpPayload = {
+  email: string;
+  resetToken: string; // 6-digit kode OTP
+};
+```
+- **Response (200 OK)**:
+```typescript
+type ResetPasswordVerifyOtpResponse = {
+  success: true;
+  message: string; // "Kode OTP valid."
+  data: {
+    success: true;
+    message: string;
+    email: string;
+    resetToken: string;
+  };
+};
+```
+- **Response Error (400 Bad Request / 401 Unauthorized)**:
+```json
+{
+  "success": false,
+  "message": "Kode OTP salah atau telah kedaluwarsa."
+}
+```
+
+### Reset Password — Step 3: Simpan Kata Sandi Baru (Khusus Role Internal)
+Digunakan untuk mengonfirmasi reset password dan mengupdate kata sandi baru.
 - **Endpoint**: `POST /api/auth/reset-password/confirm`
-- **Akses**: `Public`
+- **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
 - **Request Body**:
 ```typescript
 type ResetPasswordConfirmPayload = {
   email: string;
-  resetToken: string;
-  newPassword: string;
+  resetToken: string; // 6-digit kode OTP terverifikasi
+  newPassword: string; // Min 8 karakter
   confirmPassword?: string;
 };
 ```
@@ -254,7 +287,7 @@ type ResetPasswordConfirmPayload = {
 ```typescript
 type ResetPasswordConfirmResponse = {
   success: true;
-  message: string; // "Kata sandi akun internal Anda telah berhasil direset."
+  message: string; // "Kata sandi akun Anda telah berhasil direset."
   data: {
     success: true;
     message: string;
@@ -265,40 +298,7 @@ type ResetPasswordConfirmResponse = {
 ```json
 {
   "success": false,
-  "message": "Kode verifikasi salah atau telah kedaluwarsa."
-}
-```
-
-### Ubah Kata Sandi (Authenticated Internal Staff)
-Digunakan oleh staf internal yang sudah login (misal melalui profile popover) untuk memperbarui kata sandi dengan memasukkan kata sandi saat ini.
-- **Endpoint**: `POST /api/auth/change-password`
-- **Akses**: `Authenticated (Internal Only)`
-- **Header**: `Authorization: Bearer <accessToken>` atau via session cookie
-- **Content-Type**: `application/json`
-- **Request Body**:
-```typescript
-type ChangePasswordPayload = {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword?: string;
-};
-```
-- **Response (200 OK)**:
-```typescript
-type ChangePasswordResponse = {
-  success: true;
-  message: string; // "Kata sandi Anda berhasil diperbarui."
-  data: {
-    success: true;
-    message: string;
-  };
-};
-```
-- **Response Error (400 Bad Request)**:
-```json
-{
-  "success": false,
-  "message": "Kata sandi saat ini tidak sesuai."
+  "message": "Gagal mereset kata sandi. Kode verifikasi tidak valid atau kedaluwarsa."
 }
 ```
 

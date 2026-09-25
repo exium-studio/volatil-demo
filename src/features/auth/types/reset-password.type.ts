@@ -16,6 +16,20 @@ export type ResetPasswordRequestData = {
 
 export type ResetPasswordRequestResponse = ApiResponse<ResetPasswordRequestData>;
 
+export type ResetPasswordVerifyOtpPayload = {
+  email: string;
+  resetToken: string;
+};
+
+export type ResetPasswordVerifyOtpData = {
+  success: boolean;
+  message: string;
+  email: string;
+  resetToken: string;
+};
+
+export type ResetPasswordVerifyOtpResponse = ApiResponse<ResetPasswordVerifyOtpData>;
+
 export type ResetPasswordConfirmPayload = {
   email: string;
   resetToken: string;
@@ -30,25 +44,11 @@ export type ResetPasswordConfirmData = {
 
 export type ResetPasswordConfirmResponse = ApiResponse<ResetPasswordConfirmData>;
 
-export type ChangePasswordPayload = {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword?: string;
-};
-
-export type ChangePasswordData = {
-  success: boolean;
-  message: string;
-};
-
-export type ChangePasswordResponse = ApiResponse<ChangePasswordData>;
-
-export type ResetPasswordStep = "request" | "confirm" | "change";
+export type ResetPasswordStep = "request" | "otp" | "new-password";
 
 export type InternalResetPasswordModalProps = {
   modalKey?: string;
   defaultEmail?: string;
-  initialStep?: ResetPasswordStep;
   isOpen?: boolean;
   onClose?: () => void;
 };
@@ -57,32 +57,19 @@ export type InternalResetPasswordTriggerProps = {
   children?: React.ReactNode;
   modalKey?: string;
   defaultEmail?: string;
-  initialStep?: ResetPasswordStep;
 };
 
 export type ResetPasswordRequestFormValues = {
   email: string;
 };
 
-export type ResetPasswordConfirmFormValues = {
-  email: string;
+export type ResetPasswordOtpFormValues = {
   resetToken: string;
-  newPassword: string;
-  confirmPassword: string;
 };
 
-export type ChangePasswordFormValues = {
-  currentPassword: string;
+export type ResetPasswordNewPasswordFormValues = {
   newPassword: string;
   confirmPassword: string;
-};
-
-export type InternalResetPasswordFormValues = {
-  email: string;
-  resetToken: string;
-  currentPassword?: string;
-  newPassword?: string;
-  confirmPassword?: string;
 };
 
 export type InternalResetPasswordModalContentProps = {
@@ -91,7 +78,7 @@ export type InternalResetPasswordModalContentProps = {
   open: () => void;
   close: () => void;
   defaultEmail: string;
-  initialStep: ResetPasswordStep;
 };
+
 
 

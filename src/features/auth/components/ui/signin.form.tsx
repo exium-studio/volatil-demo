@@ -438,7 +438,7 @@ export const InternalSignin = (props: StackProps) => {
         </Field>
 
         <HStack justify={"end"} w={"full"} mt={1}>
-          <InternalResetPasswordTrigger initialStep={"request"}>
+          <InternalResetPasswordTrigger>
             <Button
               variant={"ghost"}
               size={"xs"}
@@ -451,6 +451,7 @@ export const InternalSignin = (props: StackProps) => {
             </Button>
           </InternalResetPasswordTrigger>
         </HStack>
+
       </Fieldset>
 
 
