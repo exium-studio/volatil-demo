@@ -301,8 +301,6 @@ export const InternalOrderReviewDataView = () => {
         {/* Table / Content */}
         <VStack
           flex={1}
-          gap={"sm"}
-          overflowY={"auto"}
           bg={"bg.canvas"}
           w={"full"}
           position={"relative"}
@@ -341,7 +339,11 @@ export const InternalOrderReviewDataView = () => {
               )}
             </Center>
           ) : (
-            <VStack flex={1} w={"full"} position={"relative"}>
+            <VStack
+              flex={1}
+              position={"relative"}
+              w={"full"}
+            >
               <TopBarLoader isFetching={isFetching} />
 
               <DataViewTable.Root<InternalOrderItem>
@@ -357,6 +359,7 @@ export const InternalOrderReviewDataView = () => {
                 <DataViewTable.Header />
                 <DataViewTable.Body />
               </DataViewTable.Root>
+
 
               <Separator borderColor={"bg.canvas"} />
 
