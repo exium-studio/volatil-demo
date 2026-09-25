@@ -182,6 +182,29 @@ export const DUMMY_CART_ORDERS: CartOrder[] = [
       },
     ],
   },
+  {
+    orderId: "ord-2026-0825-004",
+    status: "rejected",
+    selectionType: "catalog",
+    createdAt: new Date(now.getTime() - 1000 * 60 * 60 * 36).toISOString(),
+    expiredAt: new Date(now.getTime() - 1000 * 60 * 60 * 12).toISOString(),
+    totalPrice: 1250000,
+    featuresCount: 25,
+    rejectionReason: "Waktu pembayaran telah melewati batas maksimal (24 jam).",
+    items: [
+      {
+        id: "coi-005",
+        sourceLayerId: "geonode:peta_bidang_kadastral",
+        sourceLayerTitle: "Peta Bidang Kadastral Wilayah Jabodetabek",
+        spatialBasis: "bidang",
+        featuresCount: 25,
+        unitPrice: 50000,
+        subtotalPrice: 1250000,
+        wfsUrl: "/api/mitra/layers/lyr-005/wfs",
+        wmsUrl: "/api/mitra/layers/lyr-005/wms",
+      },
+    ],
+  },
 ];
 
 export const DUMMY_ACTIVE_CART_ORDER: CartOrder = DUMMY_CART_ORDERS[0];

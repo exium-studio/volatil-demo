@@ -1,6 +1,7 @@
 // src/features/mitra/cart/components/mitra.cart.expired-orders.modal.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -15,6 +16,8 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
+  useClearAllCartOrders,
+  useDeleteCartOrder,
   useExpiredCartOrdersQuery,
   useReorderCartOrder,
 } from "@/features/mitra/cart/hooks/use-mitra-cart";
@@ -29,7 +32,12 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { AlertCircleIcon, HistoryIcon, RotateCcwIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  HistoryIcon,
+  RotateCcwIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 
 export const MitraCartExpiredOrdersTrigger = (
@@ -90,15 +98,20 @@ const MitraCartExpiredOrdersModalContent = (
   const [reorderingOrderId, setReorderingOrderId] = useState<string | null>(
     null,
   );
+  const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+  const hasExpiredOrders = expiredOrders.length > 0;
 
   // Mutations
   const reorderMutation = useReorderCartOrder(() => {
     setReorderingOrderId(null);
     close();
   });
+
+  const deleteOrderMutation = useDeleteCartOrder();
+  const clearAllOrdersMutation = useClearAllCartOrders();
 
   const handleReorder = (orderId: string) => {
     setReorderingOrderId(orderId);
@@ -109,10 +122,48 @@ const MitraCartExpiredOrdersModalContent = (
     });
   };
 
+  const handleDelete = (orderId: string) => {
+    setDeletingOrderId(orderId);
+    deleteOrderMutation.mutate(orderId, {
+      onSettled: () => {
+        setDeletingOrderId(null);
+      },
+    });
+  };
+
+  const handleClearAll = () => {
+    const allExpiredIds = expiredOrders.map((o) => o.orderId);
+    clearAllOrdersMutation.mutate(allExpiredIds);
+  };
+
   return (
     <Modal.Content>
       <Modal.Header>
-        <Modal.Title>{"Pesanan Kedaluwarsa"}</Modal.Title>
+        <HStack justify={"space-between"} align={"center"} w={"full"} pr={"sm"}>
+          <Modal.Title>{"Pesanan Kedaluwarsa"}</Modal.Title>
+
+          {hasExpiredOrders && (
+            <ConfirmationTrigger
+              modalKey={"clear-all-expired-orders-confirmation"}
+              title={"Kosongkan Pesanan Kedaluwarsa?"}
+              description={
+                "Semua daftar pesanan kedaluwarsa akan dihapus permanen."
+              }
+              confirmLabel={"Kosongkan semua"}
+              colorPalette={"red"}
+              onConfirm={handleClearAll}
+            >
+              <Button
+                size={"xs"}
+                colorPalette={"red"}
+                loading={clearAllOrdersMutation.isPending}
+              >
+                <AppIcon icon={Trash2Icon} />
+                {"Kosongkan semua"}
+              </Button>
+            </ConfirmationTrigger>
+          )}
+        </HStack>
         <Modal.CloseButton />
       </Modal.Header>
 
@@ -135,7 +186,7 @@ const MitraCartExpiredOrdersModalContent = (
               />
             )}
 
-            {expiredOrders.length > 0 && (
+            {hasExpiredOrders && (
               <VStack gap={"md"} align={"stretch"}>
                 {expiredOrders.map((order, index) => {
                   const totalBidang = order.items
@@ -154,6 +205,11 @@ const MitraCartExpiredOrdersModalContent = (
                     reorderMutation.isPending &&
                     reorderingOrderId === order.orderId;
 
+                  const isThisDeleting =
+                    (deleteOrderMutation.isPending &&
+                      deletingOrderId === order.orderId) ||
+                    clearAllOrdersMutation.isPending;
+
                   return (
                     <Box
                       key={order.orderId}
@@ -165,7 +221,7 @@ const MitraCartExpiredOrdersModalContent = (
                       borderColor={"border.subtle"}
                     >
                       <VStack align={"stretch"} gap={"sm"}>
-                        {/* Header: Status Icon, Order Number, Badge & Reorder Action */}
+                        {/* Header: Status Icon, Order Number, Badge & Delete Shortcut */}
                         <HStack
                           wrap={"wrap"}
                           justify={"space-between"}
@@ -192,7 +248,7 @@ const MitraCartExpiredOrdersModalContent = (
                             </VStack>
                           </HStack>
 
-                          <HStack gap={"sm"} align={"center"}>
+                          <HStack gap={"xs"} align={"center"}>
                             <Badge
                               size={"sm"}
                               variant={"subtle"}
@@ -200,6 +256,23 @@ const MitraCartExpiredOrdersModalContent = (
                             >
                               {"Kedaluwarsa"}
                             </Badge>
+
+                            <ConfirmationTrigger
+                              modalKey={`delete-expired-order-header-${order.orderId}`}
+                              title={"Hapus Pesanan Kedaluwarsa?"}
+                              description={`Pesanan #${index + 1} (${order.orderId}) akan dihapus permanen.`}
+                              confirmLabel={"Hapus pesanan"}
+                              colorPalette={"red"}
+                              onConfirm={() => handleDelete(order.orderId)}
+                            >
+                              <IconButton
+                                size={"xs"}
+                                colorPalette={"red"}
+                                loading={isThisDeleting}
+                              >
+                                <AppIcon icon={Trash2Icon} />
+                              </IconButton>
+                            </ConfirmationTrigger>
                           </HStack>
                         </HStack>
 
@@ -260,17 +333,37 @@ const MitraCartExpiredOrdersModalContent = (
                           )}
                         </VStack>
 
-                        <Button
-                          primary
-                          size={"sm"}
-                          w={"full"}
-                          loading={isThisReordering}
-                          mt={"sm"}
-                          onClick={() => handleReorder(order.orderId)}
-                        >
-                          <AppIcon icon={RotateCcwIcon} />
-                          {"Pesan Ulang"}
-                        </Button>
+                        {/* Bottom Actions: Pesan Ulang & Hapus */}
+                        <HStack gap={"sm"} w={"full"} mt={"sm"}>
+                          <Button
+                            primary
+                            size={"sm"}
+                            flex={1}
+                            loading={isThisReordering}
+                            onClick={() => handleReorder(order.orderId)}
+                          >
+                            <AppIcon icon={RotateCcwIcon} />
+                            {"Pesan Ulang"}
+                          </Button>
+
+                          <ConfirmationTrigger
+                            modalKey={`delete-expired-order-btn-${order.orderId}`}
+                            title={"Hapus Pesanan Kedaluwarsa?"}
+                            description={`Pesanan #${index + 1} (${order.orderId}) akan dihapus permanen.`}
+                            confirmLabel={"Hapus pesanan"}
+                            colorPalette={"red"}
+                            onConfirm={() => handleDelete(order.orderId)}
+                          >
+                            <Button
+                              size={"sm"}
+                              colorPalette={"red"}
+                              loading={isThisDeleting}
+                            >
+                              <AppIcon icon={Trash2Icon} />
+                              {"Hapus"}
+                            </Button>
+                          </ConfirmationTrigger>
+                        </HStack>
                       </VStack>
                     </Box>
                   );

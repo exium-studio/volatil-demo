@@ -352,12 +352,23 @@ export async function getCartOrders(
   try {
     const response = await fetchCartOrdersApi(undefined, signal);
     if (response.data) return response.data;
-    return isDummyDataEnabled()
-      ? { orders: localDummyOrders, total: localDummyOrders.length }
-      : { orders: [], total: 0 };
+    if (isDummyDataEnabled()) {
+      const active = localDummyOrders.filter(
+        (b) =>
+          b.status !== "rejected" &&
+          (!b.expiredAt || new Date(b.expiredAt).getTime() >= Date.now()),
+      );
+      return { orders: active, total: active.length };
+    }
+    return { orders: [], total: 0 };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return { orders: localDummyOrders, total: localDummyOrders.length };
+      const active = localDummyOrders.filter(
+        (b) =>
+          b.status !== "rejected" &&
+          (!b.expiredAt || new Date(b.expiredAt).getTime() >= Date.now()),
+      );
+      return { orders: active, total: active.length };
     }
     throw error;
   }
@@ -388,12 +399,23 @@ export async function getActiveCartOrder(
   try {
     const response = await fetchActiveCartOrderApi(signal);
     if (response.data !== undefined) return response.data;
-    return isDummyDataEnabled()
-      ? (localDummyOrders[0] ?? DUMMY_ACTIVE_CART_ORDER)
-      : null;
+    if (isDummyDataEnabled()) {
+      const active = localDummyOrders.find(
+        (b) =>
+          b.status !== "rejected" &&
+          (!b.expiredAt || new Date(b.expiredAt).getTime() >= Date.now()),
+      );
+      return active ?? DUMMY_ACTIVE_CART_ORDER;
+    }
+    return null;
   } catch (error) {
     if (isDummyDataEnabled()) {
-      return localDummyOrders[0] ?? DUMMY_ACTIVE_CART_ORDER;
+      const active = localDummyOrders.find(
+        (b) =>
+          b.status !== "rejected" &&
+          (!b.expiredAt || new Date(b.expiredAt).getTime() >= Date.now()),
+      );
+      return active ?? DUMMY_ACTIVE_CART_ORDER;
     }
     throw error;
   }
@@ -418,17 +440,31 @@ export async function cancelActiveCartOrder(
 }
 
 export async function clearAllCartOrders(
-  orderIds: string[],
+  orderIds?: string[],
   signal?: AbortSignal,
 ): Promise<void> {
   try {
-    await Promise.all(orderIds.map((id) => deleteCartOrderApi(id, signal)));
+    if (orderIds && orderIds.length > 0) {
+      await Promise.all(orderIds.map((id) => deleteCartOrderApi(id, signal)));
+    }
     if (isDummyDataEnabled()) {
-      localDummyOrders = [];
+      if (orderIds && orderIds.length > 0) {
+        localDummyOrders = localDummyOrders.filter(
+          (b) => !orderIds.includes(b.orderId),
+        );
+      } else {
+        localDummyOrders = [];
+      }
     }
   } catch (error) {
     if (isDummyDataEnabled()) {
-      localDummyOrders = [];
+      if (orderIds && orderIds.length > 0) {
+        localDummyOrders = localDummyOrders.filter(
+          (b) => !orderIds.includes(b.orderId),
+        );
+      } else {
+        localDummyOrders = [];
+      }
       return;
     }
     throw error;
@@ -483,13 +519,21 @@ export async function getExpiredCartOrders(
     const response = await fetchExpiredCartOrdersApi(signal);
     if (response.data) return response.data;
     if (isDummyDataEnabled()) {
-      const expired = localDummyOrders.filter((b) => b.status === "rejected");
+      const expired = localDummyOrders.filter(
+        (b) =>
+          b.status === "rejected" ||
+          (b.expiredAt && new Date(b.expiredAt).getTime() < Date.now()),
+      );
       return { orders: expired, total: expired.length };
     }
     return { orders: [], total: 0 };
   } catch (error) {
     if (isDummyDataEnabled()) {
-      const expired = localDummyOrders.filter((b) => b.status === "rejected");
+      const expired = localDummyOrders.filter(
+        (b) =>
+          b.status === "rejected" ||
+          (b.expiredAt && new Date(b.expiredAt).getTime() < Date.now()),
+      );
       return { orders: expired, total: expired.length };
     }
     throw error;

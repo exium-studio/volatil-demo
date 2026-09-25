@@ -264,7 +264,7 @@ export const useCreateCartOrder = () => {
   });
 };
 
-export const useCancelActiveCartOrder = () => {
+export const useCancelActiveCartOrder = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("cancel-cart-order", {
     group: "Keranjang",
@@ -284,18 +284,18 @@ export const useCancelActiveCartOrder = () => {
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
+      onSuccessCallback?.();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "orders"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-order"],
+        queryKey: ["mitra", "cart"],
       });
     },
     onError: toastHandlers.onError,
   });
 };
 
-export const useClearAllCartOrders = () => {
+export const useDeleteCartOrder = useCancelActiveCartOrder;
+
+export const useClearAllCartOrders = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("clear-all-cart-orders", {
     group: "Keranjang",
@@ -311,15 +311,13 @@ export const useClearAllCartOrders = () => {
   });
 
   return useMutation({
-    mutationFn: (orderIds: string[]) => clearAllCartOrders(orderIds),
+    mutationFn: (orderIds?: string[]) => clearAllCartOrders(orderIds),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
+      onSuccessCallback?.();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "orders"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-order"],
+        queryKey: ["mitra", "cart"],
       });
     },
     onError: toastHandlers.onError,
@@ -404,13 +402,7 @@ export const useReorderCartOrder = (onSuccessCallback?: () => void) => {
       toastHandlers.onSuccess();
       onSuccessCallback?.();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "orders"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-order"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "expired-orders"],
+        queryKey: ["mitra", "cart"],
       });
       return data;
     },
@@ -441,10 +433,7 @@ export const useCheckOrderPaymentStatus = () => {
     onSuccess: (data) => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "orders"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-order"],
+        queryKey: ["mitra", "cart"],
       });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "transaction-history"],
@@ -476,13 +465,7 @@ export const useCartOrdersStream = () => {
 
     const handleOrderUpdate = () => {
       void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "orders"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "active-order"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["mitra", "cart", "order-detail"],
+        queryKey: ["mitra", "cart"],
       });
     };
 
