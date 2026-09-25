@@ -1,5 +1,7 @@
 // src\design-system\components\data-display\types\data-view-batch-actions.type.ts
 
+// src\design-system\components\data-display\types\data-view-batch-actions.type.ts
+
 export type {
   DataViewBatchActionsGenerator,
   DataViewBatchActionsTriggerProps,

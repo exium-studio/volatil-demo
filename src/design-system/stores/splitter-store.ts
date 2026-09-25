@@ -1,5 +1,7 @@
 // src\design-system\stores\splitter-store.ts
 
+// src\design-system\stores\splitter-store.ts
+
 import type {
   SplitterActions,
   SplitterState,

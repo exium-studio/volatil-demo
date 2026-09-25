@@ -1,5 +1,7 @@
 // src\shared\libs\api-client\api-client.ts
 
+// src\shared\libs\api-client\api-client.ts
+
 import { router } from "@/app/router";
 import { toast } from "@/design-system/components/toast";
 import { ApiError } from "@/shared/libs/api-client/api-error";

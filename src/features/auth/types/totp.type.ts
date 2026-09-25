@@ -1,5 +1,7 @@
 // src\features\auth\types\totp.type.ts
 
+// src\features\auth\types\totp.type.ts
+
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { TotpSetupData } from "@/features/auth/types/auth.service.type";
 

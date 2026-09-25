@@ -1,5 +1,7 @@
 // src\design-system\components\data-display\ui\data-view-table.tsx
 
+// src\design-system\components\data-display\ui\data-view-table.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import {
   DataViewTableContext,

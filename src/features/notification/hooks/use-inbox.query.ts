@@ -1,5 +1,7 @@
 // src\features\notification\hooks\use-inbox.query.ts
 
+// src\features\notification\hooks\use-inbox.query.ts
+
 import { notificationInboxService } from "@/features/notification/services/notification.inbox.service";
 import type { InboxQueryParams } from "@/features/notification/types/inbox.type";
 import { useInfiniteQuery } from "@/shared/hooks/use-infinite-query";

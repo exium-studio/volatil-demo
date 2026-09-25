@@ -1,5 +1,7 @@
 // src\features\auth\schemas\signin.schema.ts
 
+// src\features\auth\schemas\signin.schema.ts
+
 import { t } from "@/shared/libs/i18n";
 import type { FieldErrors } from "react-hook-form";
 import { z } from "zod";

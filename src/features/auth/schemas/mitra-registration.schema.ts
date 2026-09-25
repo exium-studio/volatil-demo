@@ -1,5 +1,7 @@
 // src\features\auth\schemas\mitra-registration.schema.ts
 
+// src\features\auth\schemas\mitra-registration.schema.ts
+
 import { z } from "zod";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

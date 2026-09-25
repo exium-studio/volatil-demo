@@ -1,5 +1,7 @@
 // src\design-system\components\input\types\focus-search.type.ts
 
+// src\design-system\components\input\types\focus-search.type.ts
+
 import type {
   SearchIndex,
   SearchIndexItem,

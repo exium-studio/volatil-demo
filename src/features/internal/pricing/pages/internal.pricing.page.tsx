@@ -1,5 +1,7 @@
 // src\features\internal\pricing\pages\internal.pricing.page.tsx
 
+// src\features\internal\pricing\pages\internal.pricing.page.tsx
+
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { InternalPricingDataView } from "@/features/internal/pricing/components/internal.pricing.data-view";
 

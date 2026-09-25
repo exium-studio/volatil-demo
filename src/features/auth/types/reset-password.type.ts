@@ -1,5 +1,7 @@
 // src\features\auth\types\reset-password.type.ts
 
+// src\features\auth\types\reset-password.type.ts
+
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import type React from "react";
 
@@ -99,11 +101,6 @@ export type ResetPasswordModalContentProps = {
   close: () => void;
   defaultEmail: string;
 };
-
-// Aliases for backward compatibility
-export type InternalResetPasswordModalProps = ResetPasswordModalProps;
-export type InternalResetPasswordTriggerProps = ResetPasswordTriggerProps;
-export type InternalResetPasswordModalContentProps = ResetPasswordModalContentProps;
 
 export type ResetPasswordMethodSelectorProps = {
   onSelectMethod: (method: ResetMethod) => void;

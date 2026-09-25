@@ -1,5 +1,7 @@
 // src\design-system\components\icon\ui\lucide-icon.tsx
 
+// src\design-system\components\icon\ui\lucide-icon.tsx
+
 "use client";
 
 import type { LucideIconProps } from "@/design-system/components/icon/types/icon.type";

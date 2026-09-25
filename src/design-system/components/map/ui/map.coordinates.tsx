@@ -1,5 +1,7 @@
 // src\design-system\components\map\ui\map.coordinates.tsx
 
+// src\design-system\components\map\ui\map.coordinates.tsx
+
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { P, TNum } from "@/design-system/components/typography/ui/p";

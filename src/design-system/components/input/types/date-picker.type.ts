@@ -1,5 +1,7 @@
 // src\design-system\components\input\types\date-picker.type.ts
 
+// src\design-system\components\input\types\date-picker.type.ts
+
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { CalendarDate } from "@internationalized/date";
 import type { ReactNode } from "react";

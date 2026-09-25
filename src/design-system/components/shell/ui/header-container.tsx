@@ -1,5 +1,7 @@
 // src\design-system\components\shell\ui\header-container.tsx
 
+// src\design-system\components\shell\ui\header-container.tsx
+
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 

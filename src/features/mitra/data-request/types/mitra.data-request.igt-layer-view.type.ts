@@ -1,5 +1,7 @@
 // src\features\mitra\data-request\types\mitra.data-request.igt-layer-view.type.ts
 
+// src\features\mitra\data-request\types\mitra.data-request.igt-layer-view.type.ts
+
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import type { SelectionType } from "@/features/mitra/cart/types/mitra.cart.batch.type";

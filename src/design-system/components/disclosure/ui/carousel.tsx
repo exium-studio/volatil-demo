@@ -1,5 +1,7 @@
 // src\design-system\components\disclosure\ui\carousel.tsx
 
+// src\design-system\components\disclosure\ui\carousel.tsx
+
 "use client";
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";

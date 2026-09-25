@@ -1,5 +1,7 @@
 // src\features\mitra\home\constants\cart.config.ts
 
+// src\features\mitra\home\constants\cart.config.ts
+
 import type { CartConfig } from "@/features/mitra/cart/types/cart.type";
 
 /**

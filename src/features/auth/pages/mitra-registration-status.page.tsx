@@ -1,5 +1,7 @@
 // src\features\auth\pages\mitra-registration-status.page.tsx
 
+// src\features\auth\pages\mitra-registration-status.page.tsx
+
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";

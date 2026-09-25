@@ -1,5 +1,7 @@
 // src\design-system\components\feedback\types\indicator.type.ts
 
+// src\design-system\components\feedback\types\indicator.type.ts
+
 import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import type { CircleProps } from "@/design-system/components/layout/types/box.type";
 

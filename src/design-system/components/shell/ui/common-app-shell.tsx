@@ -1,5 +1,7 @@
 // src\design-system\components\shell\ui\common-app-shell.tsx
 
+// src\design-system\components\shell\ui\common-app-shell.tsx
+
 "use client";
 
 import { Logo } from "@/design-system/components/branding/ui/logo";

@@ -1,5 +1,7 @@
 // src\shared\types\nav.type.ts
 
+// src\shared\types\nav.type.ts
+
 import type { NavLinkProps } from "@/design-system/components/navigation/types/link.type";
 import type { ParameterlessTranslationKey } from "@/shared/libs/i18n/translation.type";
 import type { ComponentType } from "react";

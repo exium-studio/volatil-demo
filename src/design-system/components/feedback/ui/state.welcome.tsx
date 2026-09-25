@@ -1,5 +1,7 @@
 // src\design-system\components\feedback\ui\state.welcome.tsx
 
+// src\design-system\components\feedback\ui\state.welcome.tsx
+
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { Button } from "@/design-system/components/button/ui/button";
 import type { WelcomeStateProps } from "@/design-system/components/feedback/types/state.welcome.type";

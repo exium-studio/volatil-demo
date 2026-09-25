@@ -1,5 +1,7 @@
 // src\features\design-system-docs\components\ds-docs-sidebar.tsx
 
+// src\features\design-system-docs\components\ds-docs-sidebar.tsx
+
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { Logo } from "@/design-system/components/branding/ui/logo";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";

@@ -1,5 +1,7 @@
 // src\features\shared\types\filter.administrative-area.type.ts
 
+// src\features\shared\types\filter.administrative-area.type.ts
+
 import type React from "react";
 
 export type FilterAdministrativeAreaOptionDetail = {

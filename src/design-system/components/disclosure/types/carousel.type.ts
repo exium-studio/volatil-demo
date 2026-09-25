@@ -1,5 +1,7 @@
 // src\design-system\components\disclosure\types\carousel.type.ts
 
+// src\design-system\components\disclosure\types\carousel.type.ts
+
 import { Carousel as ChakraCarousel } from "@chakra-ui/react";
 
 export type CarouselRootProps = ChakraCarousel.RootProps & {};

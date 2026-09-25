@@ -1,5 +1,7 @@
 // src\design-system\components\toast\core\toast.manager.ts
 
+// src\design-system\components\toast\core\toast.manager.ts
+
 import type {
   DismissedReason,
   TimerEntry,

@@ -1,5 +1,7 @@
 // src\features\mitra\my-data\components\mitra.my-data.workspace.tabs-content.tsx
 
+// src\features\mitra\my-data\components\mitra.my-data.workspace.tabs-content.tsx
+
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";

@@ -1,5 +1,7 @@
 // src\routes\_private\internal\user-management.tsx
 
+// src\routes\_private\internal\user-management.tsx
+
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { InternalUserManagementPage } from "@/features/internal/user-management/pages/internal.user-management.page";
 import { createFileRoute } from "@tanstack/react-router";

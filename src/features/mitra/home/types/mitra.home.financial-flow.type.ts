@@ -1,5 +1,7 @@
 // src\features\mitra\home\types\mitra.home.financial-flow.type.ts
 
+// src\features\mitra\home\types\mitra.home.financial-flow.type.ts
+
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 

@@ -1,5 +1,7 @@
 // src\design-system\chakra\types\chakra-system-resolver.type.ts
 
+// src\design-system\chakra\types\chakra-system-resolver.type.ts
+
 export type TokenValue =
   | string
   | {

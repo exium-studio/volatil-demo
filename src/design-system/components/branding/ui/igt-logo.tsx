@@ -1,5 +1,7 @@
 // src\design-system\components\branding\ui\igt-logo.tsx
 
+// src\design-system\components\branding\ui\igt-logo.tsx
+
 "use client";
 
 import type { ImageProps } from "@/design-system/components/media/types/image.type";

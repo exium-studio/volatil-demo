@@ -1,5 +1,7 @@
 // src\features\shared\types\status-filter-select.type.ts
 
+// src\features\shared\types\status-filter-select.type.ts
+
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 
 export type StatusFilterSelectProps = {

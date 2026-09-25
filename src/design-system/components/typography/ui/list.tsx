@@ -1,5 +1,7 @@
 // src\design-system\components\typography\ui\list.tsx
 
+// src\design-system\components\typography\ui\list.tsx
+
 import { List as ChakraList } from "@chakra-ui/react";
 import { forwardRef } from "react";
 import type {

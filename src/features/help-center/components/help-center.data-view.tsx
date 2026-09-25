@@ -1,5 +1,7 @@
 // src\features\help-center\components\help-center.data-view.tsx
 
+// src\features\help-center\components\help-center.data-view.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,

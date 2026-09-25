@@ -1,5 +1,7 @@
 // src\design-system\components\input\types\radio-card-input.type.ts
 
+// src\design-system\components\input\types\radio-card-input.type.ts
+
 import { RadioCard as ChakraRadioCard } from "@chakra-ui/react";
 
 export type RadioCardInputRootProps = ChakraRadioCard.RootProps;

@@ -1,5 +1,7 @@
 // src\design-system\components\overlay\stores\dialog-animation-store.ts
 
+// src\design-system\components\overlay\stores\dialog-animation-store.ts
+
 import type {
   DialogAnimationStore,
   Point,

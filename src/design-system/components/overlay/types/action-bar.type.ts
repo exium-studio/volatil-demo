@@ -1,5 +1,7 @@
 // src\design-system\components\overlay\types\action-bar.type.ts
 
+// src\design-system\components\overlay\types\action-bar.type.ts
+
 import { ActionBar as ChakraActionBar } from "@chakra-ui/react";
 
 export type ActionBarRootProps = ChakraActionBar.RootProps & {};

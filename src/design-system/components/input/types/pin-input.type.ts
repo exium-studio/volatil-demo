@@ -1,5 +1,7 @@
 // src\design-system\components\input\types\pin-input.type.ts
 
+// src\design-system\components\input\types\pin-input.type.ts
+
 import { PinInput as ChakraPinInput } from "@chakra-ui/react";
 
 export type PinInputProps = ChakraPinInput.RootProps & {

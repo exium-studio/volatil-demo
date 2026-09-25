@@ -1,5 +1,7 @@
 // src\features\notification\pages\notification.page.tsx
 
+// src\features\notification\pages\notification.page.tsx
+
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Container } from "@/design-system/components/layout/ui/container";

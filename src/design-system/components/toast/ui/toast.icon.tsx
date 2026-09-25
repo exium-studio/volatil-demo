@@ -1,5 +1,7 @@
 // src\design-system\components\toast\ui\toast.icon.tsx
 
+// src\design-system\components\toast\ui\toast.icon.tsx
+
 import { Circle } from "@/design-system/components/layout/ui/box";
 import type { ToastIconProps } from "@/design-system/components/toast/types/toast.type";
 

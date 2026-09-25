@@ -1,5 +1,7 @@
 // src\design-system\components\disclosure\types\collabsible.type.ts
 
+// src\design-system\components\disclosure\types\collabsible.type.ts
+
 import { Collapsible as ChakraCollapsible } from "@chakra-ui/react";
 
 export type CollapsibleRootProps = Omit<ChakraCollapsible.RootProps, "open"> & {

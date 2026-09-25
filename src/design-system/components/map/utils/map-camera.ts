@@ -1,5 +1,7 @@
 // src\design-system\components\map\utils\map-camera.ts
 
+// src\design-system\components\map\utils\map-camera.ts
+
 import type {
   FitBoundsSafeOptions,
   FlyToSafeOptions,

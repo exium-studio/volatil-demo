@@ -1,5 +1,7 @@
 // src\design-system\components\overlay\ui\action-bar.tsx
 
+// src\design-system\components\overlay\ui\action-bar.tsx
+
 import type {
   ActionBarCloseTriggerProps,
   ActionBarContentProps,

@@ -1,5 +1,7 @@
 // src\features\auth\components\ui\user-session-card.tsx
 
+// src\features\auth\components\ui\user-session-card.tsx
+
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { UserIdCard } from "@/features/auth/components/ui/user-id-card";
 import type { UserSessionCardProps } from "@/features/auth/types/user-session-card.type";

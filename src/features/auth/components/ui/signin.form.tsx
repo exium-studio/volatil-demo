@@ -1,5 +1,7 @@
 // src\features\auth\components\ui\signin.form.tsx
 
+// src\features\auth\components\ui\signin.form.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -11,7 +13,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { InternalResetPasswordTrigger } from "@/features/auth/components/ui/reset-password-modal";
+import { ResetPasswordTrigger } from "@/features/auth/components/ui/reset-password-modal";
 import { TotpSetupStep } from "@/features/auth/components/ui/totp-setup-step";
 import { TotpVerifyStep } from "@/features/auth/components/ui/totp-verify-step";
 import { UserSessionActions } from "@/features/auth/components/ui/user-session-actions";
@@ -438,7 +440,7 @@ export const InternalSignin = (props: StackProps) => {
         </Field>
 
         <HStack justify={"end"} w={"full"} mt={1}>
-          <InternalResetPasswordTrigger>
+          <ResetPasswordTrigger>
             <Button
               variant={"ghost"}
               size={"xs"}
@@ -449,7 +451,7 @@ export const InternalSignin = (props: StackProps) => {
             >
               {"Lupa kata sandi?"}
             </Button>
-          </InternalResetPasswordTrigger>
+          </ResetPasswordTrigger>
         </HStack>
       </Fieldset>
 

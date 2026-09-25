@@ -1,5 +1,7 @@
 // src\features\mitra\data-request\components\mitra.data-request.detail-attribute-view.tsx
 
+// src\features\mitra\data-request\components\mitra.data-request.detail-attribute-view.tsx
+
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";

@@ -1,5 +1,7 @@
 // src\design-system\components\emoji\types\emoji.type.ts
 
+// src\design-system\components\emoji\types\emoji.type.ts
+
 import type { CenterProps } from "@/design-system/components/layout/types/center.type";
 
 export type EmojiVariant =

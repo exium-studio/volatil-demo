@@ -1,5 +1,7 @@
 // src\features\mitra\home\components\mitra.home.data-availability.tsx
 
+// src\features\mitra\home\components\mitra.home.data-availability.tsx
+
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

@@ -1,5 +1,7 @@
 // src\features\auth\components\ui\reset-password-modal.tsx
 
+// src\features\auth\components\ui\reset-password-modal.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -136,9 +138,6 @@ export const ResetPasswordModal = (props: ResetPasswordModalProps) => {
   );
 };
 
-export const InternalResetPasswordTrigger = ResetPasswordTrigger;
-export const InternalResetPasswordModal = ResetPasswordModal;
-
 const ResetPasswordModalContent = (props: ResetPasswordModalContentProps) => {
   const { modalKey, isOpen, open, close, defaultEmail } = props;
 
@@ -272,7 +271,7 @@ const ResetPasswordMethodSelector = ({
                 isSelected={field.value === "email"}
                 onSelect={() => field.onChange("email")}
                 title={"OTP via Email"}
-                description={"Kirim 6-digit kode verifikasi ke email kedinasan"}
+                description={"Kirim 6-digit kode verifikasi ke email internal"}
                 icon={MailIcon}
                 colorPalette={"purple"}
               />

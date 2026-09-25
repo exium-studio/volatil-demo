@@ -1,5 +1,7 @@
 // src\features\auth\components\ui\user-profile-popover.tsx
 
+// src\features\auth\components\ui\user-profile-popover.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -10,7 +12,7 @@ import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { InternalResetPasswordTrigger } from "@/features/auth/components/ui/reset-password-modal";
+import { ResetPasswordTrigger } from "@/features/auth/components/ui/reset-password-modal";
 import { SignoutTrigger } from "@/features/auth/components/ui/signout-modal";
 import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
 import type { UserProfilePopoverTriggerProps } from "@/features/auth/types/user-profile-popover.type";
@@ -126,7 +128,7 @@ export const UserProfilePopoverTrigger = (
 
               {/* Internal Reset Password Button */}
               {user?.role === "internal" && (
-                <InternalResetPasswordTrigger defaultEmail={user.email}>
+                <ResetPasswordTrigger defaultEmail={user.email}>
                   <Button
                     size={"sm"}
                     w={"full"}
@@ -136,7 +138,7 @@ export const UserProfilePopoverTrigger = (
                     <AppIcon icon={RotateCwIcon} />
                     {"Reset Kata Sandi"}
                   </Button>
-                </InternalResetPasswordTrigger>
+                </ResetPasswordTrigger>
               )}
 
               {/* Signout Button */}

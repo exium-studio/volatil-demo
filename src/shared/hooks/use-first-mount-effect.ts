@@ -1,5 +1,7 @@
 // src\shared\hooks\use-first-mount-effect.ts
 
+// src\shared\hooks\use-first-mount-effect.ts
+
 import type { UseFirstMountEffectOptions } from "@/shared/types/use-first-mount-effect.type";
 import {
   useEffect,

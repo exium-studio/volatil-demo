@@ -1,5 +1,7 @@
 // src\design-system\components\input\types\checkbox.type.ts
 
+// src\design-system\components\input\types\checkbox.type.ts
+
 import { Checkbox as ChakraCheckbox } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 

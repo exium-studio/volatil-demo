@@ -1,5 +1,7 @@
 // src\routes\_private\internal\notification.tsx
 
+// src\routes\_private\internal\notification.tsx
+
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { NotificationPage } from "@/features/notification/pages/notification.page";
 import { createFileRoute } from "@tanstack/react-router";

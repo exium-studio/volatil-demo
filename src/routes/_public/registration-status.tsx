@@ -1,5 +1,7 @@
 // src\routes\_public\registration-status.tsx
 
+// src\routes\_public\registration-status.tsx
+
 import { MitraRegistrationStatusPage } from "@/features/auth/pages/mitra-registration-status.page";
 import { redirectIfAuthenticated } from "@/features/auth/services/auth-guard.service";
 import { createFileRoute } from "@tanstack/react-router";

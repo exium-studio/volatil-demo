@@ -1,5 +1,7 @@
 // src\design-system\components\shell\ui\gis-app-shell.tsx
 
+// src\design-system\components\shell\ui\gis-app-shell.tsx
+
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

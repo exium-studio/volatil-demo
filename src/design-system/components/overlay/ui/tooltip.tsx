@@ -1,5 +1,7 @@
 // src\design-system\components\overlay\ui\tooltip.tsx
 
+// src\design-system\components\overlay\ui\tooltip.tsx
+
 import type { TooltipProps } from "@/design-system/components/overlay/types/tooltip.type";
 import { Tooltip as ChakraTooltip, Portal } from "@chakra-ui/react";
 import { forwardRef } from "react";

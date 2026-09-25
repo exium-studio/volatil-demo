@@ -1,5 +1,7 @@
 // src\design-system\components\button\ui\color-mode.tsx
 
+// src\design-system\components\button\ui\color-mode.tsx
+
 import type { ColorModeToggleButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

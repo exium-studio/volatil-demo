@@ -1,5 +1,7 @@
 // src\features\internal\user-management\api\user-management.api.ts
 
+// src\features\internal\user-management\api\user-management.api.ts
+
 import type {
   AdminUserDetailApiResponse,
   AdminUsersApiResponse,

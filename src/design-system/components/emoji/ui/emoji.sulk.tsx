@@ -1,5 +1,7 @@
 // src\design-system\components\emoji\ui\emoji.sulk.tsx
 
+// src\design-system\components\emoji\ui\emoji.sulk.tsx
+
 import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
 import { Center } from "@/design-system/components/layout/ui/center";
 import type { EmojiProps } from "@/design-system/components/emoji/types/emoji.type";

@@ -1,5 +1,7 @@
 // src\shared\hooks\use-paginated-query.ts
 
+// src\shared\hooks\use-paginated-query.ts
+
 import type { PaginatedParams } from "@/shared/types/common-response.type";
 import type { UsePaginatedQueryOptions } from "@/shared/types/use-paginated-query.type";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";

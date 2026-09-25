@@ -1,5 +1,7 @@
 // src\design-system\stores\layout-store.ts
 
+// src\design-system\stores\layout-store.ts
+
 import type {
   LayoutConfig,
   LayoutStore,

@@ -1,5 +1,7 @@
 // src\features\design-system-docs\components\component-playground.tsx
 
+// src\features\design-system-docs\components\component-playground.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

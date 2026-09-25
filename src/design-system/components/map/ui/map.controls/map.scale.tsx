@@ -1,5 +1,7 @@
 // src\design-system\components\map\ui\map.controls\map.scale.tsx
 
+// src\design-system\components\map\ui\map.controls\map.scale.tsx
+
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";

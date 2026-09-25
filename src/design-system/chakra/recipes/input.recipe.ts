@@ -1,5 +1,7 @@
 // src\design-system\chakra\recipes\input.recipe.ts
 
+// src\design-system\chakra\recipes\input.recipe.ts
+
 import { defineRecipe } from "@chakra-ui/react";
 
 export const inputRecipe = defineRecipe({

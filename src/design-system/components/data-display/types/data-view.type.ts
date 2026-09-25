@@ -1,5 +1,7 @@
 // src\design-system\components\data-display\types\data-view.type.ts
 
+// src\design-system\components\data-display\types\data-view.type.ts
+
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { SelectProps } from "@/design-system/components/input/types/select.type";

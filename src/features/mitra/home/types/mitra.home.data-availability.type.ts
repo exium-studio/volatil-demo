@@ -1,5 +1,7 @@
 // src\features\mitra\home\types\mitra.home.data-availability.type.ts
 
+// src\features\mitra\home\types\mitra.home.data-availability.type.ts
+
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { LucideIcon } from "lucide-react";
 

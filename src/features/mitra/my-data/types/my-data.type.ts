@@ -1,5 +1,7 @@
 // src\features\mitra\my-data\types\my-data.type.ts
 
+// src\features\mitra\my-data\types\my-data.type.ts
+
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PaginatedResponse } from "@/shared/types/common-response.type";

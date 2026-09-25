@@ -1,5 +1,7 @@
 // src\design-system\components\utilities\types\portal.type.ts
 
+// src\design-system\components\utilities\types\portal.type.ts
+
 import type { PortalProps as ChakraPortalProps } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 

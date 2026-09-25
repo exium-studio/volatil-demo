@@ -1,5 +1,7 @@
 // src\design-system\components\data-display\utils\file-item.utils.ts
 
+// src\design-system\components\data-display\utils\file-item.utils.ts
+
 import {
   IconArchive,
   IconCode,

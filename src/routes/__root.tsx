@@ -1,5 +1,7 @@
 // src\routes\__root.tsx
 
+// src\routes\__root.tsx
+
 import "@/app.css";
 import { ChakraSystemProvider } from "@/design-system/chakra/providers/chakra-system.provider";
 import { ColorModeProvider } from "@/design-system/chakra/providers/color-mode-provider";

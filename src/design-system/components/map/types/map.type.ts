@@ -1,5 +1,7 @@
 // src\design-system\components\map\types\map.type.ts
 
+// src\design-system\components\map\types\map.type.ts
+
 /** Geometry types supported by the draw feature. Only "polygon" is exposed in the UI for now. */
 export type DrawGeometryType = "polygon" | "line" | "point";
 

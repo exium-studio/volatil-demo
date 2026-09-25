@@ -1,5 +1,7 @@
 // src\features\internal\mitra-registration\components\internal.mitra-registration.data-view.tsx
 
+// src\features\internal\mitra-registration\components\internal.mitra-registration.data-view.tsx
+
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";

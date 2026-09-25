@@ -1,5 +1,7 @@
 // src\design-system\components\typography\types\count-badge.type.ts
 
+// src\design-system\components\typography\types\count-badge.type.ts
+
 import type { FloatProps } from "@/design-system/components/layout/types/float.type";
 import type { BadgeProps } from "@/design-system/components/typography/types/badge.type";
 

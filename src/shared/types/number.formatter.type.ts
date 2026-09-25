@@ -1,5 +1,7 @@
 // src\shared\types\number.formatter.type.ts
 
+// src\shared\types\number.formatter.type.ts
+
 export type FormatNumberStyle = "decimal" | "currency" | "percent" | "unit";
 export type FormatNumberNotation =
   | "standard"

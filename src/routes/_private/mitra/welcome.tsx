@@ -1,5 +1,7 @@
 // src\routes\_private\mitra\welcome.tsx
 
+// src\routes\_private\mitra\welcome.tsx
+
 import { WelcomeState } from "@/design-system/components/feedback/ui/state.welcome";
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { createFileRoute } from "@tanstack/react-router";

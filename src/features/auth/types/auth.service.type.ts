@@ -1,5 +1,7 @@
 // src\features\auth\types\auth.service.type.ts
 
+// src\features\auth\types\auth.service.type.ts
+
 import type { Role } from "@/shared/types/auth.type";
 import type {
   ApiResponse,

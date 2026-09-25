@@ -1,5 +1,7 @@
 // src\features\branding\components\ui\features-carousel.tsx
 
+// src\features\branding\components\ui\features-carousel.tsx
+
 "use client";
 
 import { Carousel } from "@/design-system/components/disclosure/ui/carousel";

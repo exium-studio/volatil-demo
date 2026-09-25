@@ -1,5 +1,7 @@
 // src\features\internal\home\api\internal.home.leaderboard.api.ts
 
+// src\features\internal\home\api\internal.home.leaderboard.api.ts
+
 import type { InternalLeaderboardResponse } from "@/features/internal/home/types/internal.home.leaderboard.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";

@@ -1,5 +1,7 @@
 // src\features\internal\user-management\types\user-management.type.ts
 
+// src\features\internal\user-management\types\user-management.type.ts
+
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import type {

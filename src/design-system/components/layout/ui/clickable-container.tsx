@@ -1,5 +1,7 @@
 // src\design-system\components\layout\ui\clickable-container.tsx
 
+// src\design-system\components\layout\ui\clickable-container.tsx
+
 import type { ClickableContainerProps } from "@/design-system/components/layout/types/clickable-container.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { chakra } from "@chakra-ui/react";

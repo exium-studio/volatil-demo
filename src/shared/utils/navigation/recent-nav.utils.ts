@@ -1,5 +1,7 @@
 // src\shared\utils\navigation\recent-nav.utils.ts
 
+// src\shared\utils\navigation\recent-nav.utils.ts
+
 import type { RecentNavItem } from "@/shared/types/recent-nav.type";
 import { getStorage, setStorage } from "@/shared/utils/client/client.storage";
 

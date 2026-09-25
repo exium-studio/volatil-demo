@@ -1,5 +1,7 @@
 // src\shared\libs\i18n\index.ts
 
+// src\shared\libs\i18n\index.ts
+
 import { m } from "@/paraglide/messages";
 import type { MessageFunction } from "./translation.type";
 

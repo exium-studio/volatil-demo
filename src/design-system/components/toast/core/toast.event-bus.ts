@@ -1,5 +1,7 @@
 // src\design-system\components\toast\core\toast.event-bus.ts
 
+// src\design-system\components\toast\core\toast.event-bus.ts
+
 import type {
   ToastEventListener,
   ToastEventMap,

@@ -1,5 +1,7 @@
 // src\design-system\components\map\types\map.basemap-select.type.ts
 
+// src\design-system\components\map\types\map.basemap-select.type.ts
+
 export type BasemapKey =
   | "color"
   | "plain-light"

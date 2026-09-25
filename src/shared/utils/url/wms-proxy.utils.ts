@@ -1,5 +1,7 @@
 // src\shared\utils\url\wms-proxy.utils.ts
 
+// src\shared\utils\url\wms-proxy.utils.ts
+
 /**
  * Gets the base URL for the WMS proxy service.
  * Defaults to VITE_API_BASE_WMS_PROXY_URL or VITE_API_BASE_URL.

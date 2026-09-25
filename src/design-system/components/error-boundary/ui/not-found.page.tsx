@@ -1,5 +1,7 @@
 // src\design-system\components\error-boundary\ui\not-found.page.tsx
 
+// src\design-system\components\error-boundary\ui\not-found.page.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { ButtonGroup } from "@/design-system/components/button/ui/button-group";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";

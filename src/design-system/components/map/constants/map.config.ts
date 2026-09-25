@@ -1,5 +1,7 @@
 // src\design-system\components\map\constants\map.config.ts
 
+// src\design-system\components\map\constants\map.config.ts
+
 import type { LayerSpecification } from "maplibre-gl";
 import type { WfsLayerConfig } from "@/design-system/components/map/types/map.type";
 

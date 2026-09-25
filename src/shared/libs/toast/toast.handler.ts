@@ -1,5 +1,7 @@
 // src\shared\libs\toast\toast.handler.ts
 
+// src\shared\libs\toast\toast.handler.ts
+
 import { toast } from "@/design-system/components/toast";
 import type { MutationToastOptions } from "@/shared/types/toast-handler.type";
 

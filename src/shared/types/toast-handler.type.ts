@@ -1,5 +1,7 @@
 // src\shared\types\toast-handler.type.ts
 
+// src\shared\types\toast-handler.type.ts
+
 export type ToastMessageConfig = {
   title: string;
   description?: string;

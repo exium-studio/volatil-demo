@@ -1,5 +1,7 @@
 // src\features\shared\components\user-role.badge.tsx
 
+// src\features\shared\components\user-role.badge.tsx
+
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import type { UserRoleBadgeProps } from "@/features/shared/types/badge.type";

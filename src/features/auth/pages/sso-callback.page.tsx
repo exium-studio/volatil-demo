@@ -1,5 +1,7 @@
 // src\features\auth\pages\sso-callback.page.tsx
 
+// src\features\auth\pages\sso-callback.page.tsx
+
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { Button } from "@/design-system/components/button/ui/button";
 import { Loader } from "@/design-system/components/feedback/ui/loader";

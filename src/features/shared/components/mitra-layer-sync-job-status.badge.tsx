@@ -1,5 +1,7 @@
 // src\features\shared\components\mitra-layer-sync-job-status.badge.tsx
 
+// src\features\shared\components\mitra-layer-sync-job-status.badge.tsx
+
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { MITRA_LAYER_SYNC_JOB_STATUS_MAP } from "@/features/internal/mitra-layer-sync-jobs/constants/mitra-layer-sync-job.config";

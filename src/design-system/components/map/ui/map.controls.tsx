@@ -1,5 +1,7 @@
 // src\design-system\components\map\ui\map.controls.tsx
 
+// src\design-system\components\map\ui\map.controls.tsx
+
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Map3DToggle } from "@/design-system/components/map/ui/map.controls/map.3d-toggle";

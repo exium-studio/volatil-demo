@@ -1,5 +1,7 @@
 // src\design-system\components\input\types\focus-select.type.ts
 
+// src\design-system\components\input\types\focus-select.type.ts
+
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type React from "react";
 

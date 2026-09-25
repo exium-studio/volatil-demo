@@ -1,5 +1,7 @@
 // src\design-system\components\map\ui\map.tsx
 
+// src\design-system\components\map\ui\map.tsx
+
 import { useMapDraw } from "@/design-system/components/map/hooks/use-map-draw";
 import { useMapLayers } from "@/design-system/components/map/hooks/use-map-layers";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";

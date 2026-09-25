@@ -1,5 +1,7 @@
 // src\design-system\components\data-display\types\timeline.type.ts
 
+// src\design-system\components\data-display\types\timeline.type.ts
+
 import type {
   TimelineRootProps as ChakraTimelineRootProps,
   TimelineItemProps as ChakraTimelineItemProps,

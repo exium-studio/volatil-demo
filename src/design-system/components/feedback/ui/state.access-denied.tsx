@@ -1,5 +1,7 @@
 // src\design-system\components\feedback\ui\state.access-denied.tsx
 
+// src\design-system\components\feedback\ui\state.access-denied.tsx
+
 "use client";
 
 import type { FeedbackStateProps } from "@/design-system/components/feedback/types/feedback-state.type";

@@ -1,5 +1,7 @@
 // src\design-system\components\map\stores\map.interaction.store.ts
 
+// src\design-system\components\map\stores\map.interaction.store.ts
+
 import type { MapInteractionStore } from "@/design-system/components/map/types/map.type";
 import { create } from "zustand";
 

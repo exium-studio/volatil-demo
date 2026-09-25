@@ -1,5 +1,7 @@
 // src\design-system\components\layout\ui\splitter.tsx
 
+// src\design-system\components\layout\ui\splitter.tsx
+
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type {
   SplitterPanelProps,

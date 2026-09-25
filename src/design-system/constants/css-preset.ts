@@ -1,5 +1,7 @@
 // src\design-system\constants\css-preset.ts
 
+// src\design-system\constants\css-preset.ts
+
 import type { CSSProperties } from "react";
 
 export const VISUALLY_HIDDEN_INPUT_STYLE: CSSProperties = {
