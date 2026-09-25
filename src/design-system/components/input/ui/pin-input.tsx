@@ -12,6 +12,7 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
       count = 4,
       attached = false,
       mask = false,
+      fluid = true,
       inputProps,
       ...restProps
     } = props;
@@ -24,15 +25,25 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
         colorPalette={theme.colorPalette}
         attached={attached}
         mask={mask}
+        w={fluid ? "full" : undefined}
         {...restProps}
       >
         <ChakraPinInput.HiddenInput ref={ref} />
 
-        <ChakraPinInput.Control gap={attached ? 0 : 2}>
+        <ChakraPinInput.Control
+          gap={attached ? 0 : 2}
+          w={fluid ? "full" : undefined}
+          display={"flex"}
+        >
           {Array.from({ length: count }).map((_, index) => (
             <ChakraPinInput.Input
               key={index}
               index={index}
+              flex={fluid ? 1 : undefined}
+              w={fluid ? 0 : undefined}
+              minW={fluid ? 0 : undefined}
+              maxW={fluid ? "64px" : undefined}
+              textAlign={"center"}
               rounded={attached ? undefined : theme.radii.component}
               pb={"2px"}
               fontSize={"md"}

@@ -8,7 +8,7 @@ import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { PinInput } from "@/design-system/components/input/ui/pin-input";
-import { RadioCardInput } from "@/design-system/components/input/ui/radio-card-input";
+import { RadioIndicator } from "@/design-system/components/input/ui/radio-indicator";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -31,15 +31,17 @@ import {
   zodResolver,
 } from "@/features/auth/schemas/reset-password.schema";
 import type {
+  EmailResetPasswordFlowProps,
   InternalResetPasswordModalContentProps,
   InternalResetPasswordModalProps,
   InternalResetPasswordTriggerProps,
   ResetMethod,
   ResetPasswordMethodFormValues,
+  ResetPasswordMethodSelectorProps,
   ResetPasswordNewPasswordFormValues,
   ResetPasswordOtpFormValues,
   ResetPasswordRequestFormValues,
-  ResetPasswordStep,
+  TotpResetPasswordFlowProps,
 } from "@/features/auth/types/reset-password.type";
 
 import { t } from "@/shared/libs/i18n";
@@ -58,17 +60,19 @@ import {
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+// ==========================================
+// 1. TRIGGER & MODAL SHELL
+// ==========================================
+
 export const InternalResetPasswordTrigger = (
   props: InternalResetPasswordTriggerProps,
 ) => {
-  // Props
   const {
     children,
     modalKey: customModalKey = "internal-reset-password-modal",
     defaultEmail = "",
   } = props;
 
-  // Hooks
   const { user, isAuthenticated } = useAuthSession();
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: customModalKey,
@@ -77,15 +81,11 @@ export const InternalResetPasswordTrigger = (
   const effectiveEmail =
     defaultEmail || (isAuthenticated && user ? user.email : "");
 
-  const handleOpenModal = () => {
-    open();
-  };
-
   return (
     <>
       {children && (
         <span
-          onClick={handleOpenModal}
+          onClick={() => open()}
           role={"button"}
           tabIndex={0}
           onKeyDown={(e) => {
@@ -111,7 +111,6 @@ export const InternalResetPasswordTrigger = (
 export const InternalResetPasswordModal = (
   props: InternalResetPasswordModalProps,
 ) => {
-  // Props
   const {
     modalKey: customModalKey = "internal-reset-password-modal",
     defaultEmail = "",
@@ -142,157 +141,27 @@ export const InternalResetPasswordModal = (
   );
 };
 
+// ==========================================
+// 2. MODAL ROOT WRAPPER
+// ==========================================
+
 const InternalResetPasswordModalContent = (
   props: InternalResetPasswordModalContentProps,
 ) => {
-  // Props
   const { modalKey, isOpen, open, close, defaultEmail } = props;
 
-  // Hooks
-  const { user, isAuthenticated } = useAuthSession();
-  const isUserLoggedIn = Boolean(isAuthenticated && user);
-  const lockedEmail = isUserLoggedIn ? (user?.email ?? defaultEmail) : defaultEmail;
-
-  // States
-  const [selectedMethod, setSelectedMethod] = useState<ResetMethod>("email");
-  const [step, setStep] = useState<ResetPasswordStep>("method");
-  const [customEmail, setCustomEmail] = useState<string>("");
-  const [otpCode, setOtpCode] = useState<string>("");
-  const [verifiedToken, setVerifiedToken] = useState<string>("");
+  // Global State for Modal navigation
+  const [selectedMethod, setSelectedMethod] = useState<ResetMethod | null>(
+    null,
+  );
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-
-  // Derived effective email
-  const effectiveEmail = isUserLoggedIn
-    ? (user?.email ?? defaultEmail)
-    : customEmail || defaultEmail;
-
-  // Mutations
-  const requestMutation = useResetPasswordRequestMutation();
-  const verifyOtpMutation = useResetPasswordVerifyOtpMutation();
-  const confirmMutation = useResetPasswordConfirmMutation();
-
-  // Forms
-  const methodForm = useForm<ResetPasswordMethodFormValues>({
-    resolver: zodResolver(createResetPasswordMethodSchema()),
-    defaultValues: {
-      method: "email",
-    },
-  });
-
-  const requestForm = useForm<ResetPasswordRequestFormValues>({
-    resolver: zodResolver(createResetPasswordRequestSchema()),
-    defaultValues: {
-      email: lockedEmail,
-    },
-  });
-
-  const otpForm = useForm<ResetPasswordOtpFormValues>({
-    resolver: zodResolver(createResetPasswordOtpSchema()),
-    defaultValues: {
-      resetToken: "",
-    },
-  });
-
-  const newPasswordForm = useForm<ResetPasswordNewPasswordFormValues>({
-    resolver: zodResolver(createResetPasswordNewPasswordSchema()),
-    defaultValues: {
-      newPassword: "",
-      confirmPassword: "",
-    },
-  });
 
   const handleCloseModal = () => {
     close();
-    // Reset state after transition
     setTimeout(() => {
-      setStep("method");
-      setSelectedMethod("email");
-      setCustomEmail("");
-      setOtpCode("");
-      setVerifiedToken("");
+      setSelectedMethod(null);
       setIsSuccess(false);
-      methodForm.reset({ method: "email" });
-      requestForm.reset({ email: lockedEmail });
-      otpForm.reset({ resetToken: "" });
-      newPasswordForm.reset({ newPassword: "", confirmPassword: "" });
     }, 200);
-  };
-
-  // Handlers
-  const handleMethodSelect = (values: ResetPasswordMethodFormValues) => {
-    setSelectedMethod(values.method);
-    if (values.method === "email") {
-      setStep("request");
-    } else {
-      // TOTP / Google Authenticator
-      // Direct to TOTP verification step
-      setStep("otp");
-    }
-  };
-
-  const handleRequestSubmit = (values: ResetPasswordRequestFormValues) => {
-    // If logged in, enforce the session email on FE
-    const finalEmail = isUserLoggedIn ? (user?.email ?? values.email) : values.email;
-    setCustomEmail(finalEmail);
-    requestMutation.mutate(
-      { email: finalEmail },
-      {
-        onSuccess: (data) => {
-          if (data.resetToken) {
-            setOtpCode(data.resetToken);
-            otpForm.setValue("resetToken", data.resetToken);
-          }
-          setStep("otp");
-        },
-      },
-    );
-  };
-
-  const handleResendOtp = () => {
-    requestMutation.mutate(
-      { email: effectiveEmail },
-      {
-        onSuccess: (data) => {
-          if (data.resetToken) {
-            setOtpCode(data.resetToken);
-            otpForm.setValue("resetToken", data.resetToken);
-          }
-        },
-      },
-    );
-  };
-
-  const handleOtpSubmit = (values: ResetPasswordOtpFormValues) => {
-    verifyOtpMutation.mutate(
-      {
-        email: effectiveEmail,
-        resetToken: values.resetToken,
-      },
-      {
-        onSuccess: (data) => {
-          setVerifiedToken(data.resetToken || values.resetToken);
-          setStep("new-password");
-        },
-      },
-    );
-  };
-
-  const handleNewPasswordSubmit = (
-    values: ResetPasswordNewPasswordFormValues,
-  ) => {
-    confirmMutation.mutate(
-      {
-        email: effectiveEmail,
-        resetToken: verifiedToken || otpForm.getValues("resetToken"),
-        newPassword: values.newPassword,
-        confirmPassword: values.confirmPassword,
-      },
-      {
-        onSuccess: () => {
-          setIsSuccess(true);
-        },
-      },
-    );
   };
 
   return (
@@ -306,10 +175,7 @@ const InternalResetPasswordModalContent = (
       <Modal.Content>
         <Modal.Header>
           <Modal.CloseButton />
-
-          <Modal.Title textAlign={"center"}>
-            {"Reset Kata Sandi"}
-          </Modal.Title>
+          <Modal.Title textAlign={"center"}>{"Reset Kata Sandi"}</Modal.Title>
         </Modal.Header>
 
         <Separator borderColor={"bg.canvas"} />
@@ -329,7 +195,9 @@ const InternalResetPasswordModalContent = (
                 </P>
 
                 <P fontSize={"sm"} color={"fg.muted"}>
-                  {"Kata sandi akun Anda telah berhasil direset. Silakan masuk menggunakan kata sandi baru Anda."}
+                  {
+                    "Kata sandi akun Anda telah berhasil direset. Silakan masuk menggunakan kata sandi baru Anda."
+                  }
                 </P>
               </VStack>
 
@@ -342,376 +210,24 @@ const InternalResetPasswordModalContent = (
                 {"Selesai"}
               </Button>
             </VStack>
-          ) : step === "method" ? (
-            /* Step 0: Pilih Metode Reset Kata Sandi */
-            <VStack
-              as={"form"}
-              onSubmit={methodForm.handleSubmit(handleMethodSelect)}
-              gap={"md"}
-              align={"stretch"}
-            >
-              <Alert.Root
-                status={"info"}
-                colorPalette={"purple"}
-                variant={"subtle"}
-              >
-                <AppIcon icon={InfoIcon} />
-                <Alert.Description fontSize={"xs"}>
-                  {
-                    "Pilih metode verifikasi untuk mereset kata sandi akun internal ATR/BPN Anda."
-                  }
-                </Alert.Description>
-              </Alert.Root>
-
-              <Fieldset>
-                <Controller
-                  name={"method"}
-                  control={methodForm.control}
-                  render={({ field }) => (
-                    <RadioCardInput.Root
-                      value={field.value}
-                      onValueChange={(details) =>
-                        field.onChange(details.value as ResetMethod)
-                      }
-                      w={"full"}
-                    >
-                      <VStack gap={"sm"} align={"stretch"} w={"full"}>
-                        {/* Option 1: OTP Email */}
-                        <RadioCardInput.Item
-                          value={"email"}
-                          p={"md"}
-                          borderWidth={"1px"}
-                          rounded={"lg"}
-                          transition={"all 0.15s ease"}
-                          _hover={{ borderColor: "purple.fg" }}
-                        >
-                          <RadioCardInput.ItemControl>
-                            <HStack justify={"space-between"} align={"center"} w={"full"}>
-                              <HStack gap={"sm"} align={"center"}>
-                                <Box
-                                  p={"sm"}
-                                  rounded={"md"}
-                                  bg={"purple.subtle"}
-                                  color={"purple.fg"}
-                                >
-                                  <AppIcon icon={MailIcon} size={"md"} />
-                                </Box>
-                                <VStack align={"start"} gap={"2xs"}>
-                                  <RadioCardInput.ItemText fontWeight={"semibold"}>
-                                    {"OTP via Email"}
-                                  </RadioCardInput.ItemText>
-                                  <RadioCardInput.ItemDescription fontSize={"xs"} color={"fg.muted"}>
-                                    {"Kirim 6-digit kode verifikasi ke email kedinasan"}
-                                  </RadioCardInput.ItemDescription>
-                                </VStack>
-                              </HStack>
-                              <RadioCardInput.ItemIndicator />
-                            </HStack>
-                          </RadioCardInput.ItemControl>
-                        </RadioCardInput.Item>
-
-                        {/* Option 2: Google Authenticator (TOTP) */}
-                        <RadioCardInput.Item
-                          value={"totp"}
-                          p={"md"}
-                          borderWidth={"1px"}
-                          rounded={"lg"}
-                          transition={"all 0.15s ease"}
-                          _hover={{ borderColor: "purple.fg" }}
-                        >
-                          <RadioCardInput.ItemControl>
-                            <HStack justify={"space-between"} align={"center"} w={"full"}>
-                              <HStack gap={"sm"} align={"center"}>
-                                <Box
-                                  p={"sm"}
-                                  rounded={"md"}
-                                  bg={"blue.subtle"}
-                                  color={"blue.fg"}
-                                >
-                                  <AppIcon icon={SmartphoneIcon} size={"md"} />
-                                </Box>
-                                <VStack align={"start"} gap={"2xs"}>
-                                  <HStack gap={"xs"} align={"center"}>
-                                    <RadioCardInput.ItemText fontWeight={"semibold"}>
-                                      {"Google Authenticator (TOTP)"}
-                                    </RadioCardInput.ItemText>
-                                    <Badge size={"xs"} colorPalette={"blue"}>
-                                      {"Instan"}
-                                    </Badge>
-                                  </HStack>
-                                  <RadioCardInput.ItemDescription fontSize={"xs"} color={"fg.muted"}>
-                                    {"Gunakan kode 6 digit dari aplikasi authenticator"}
-                                  </RadioCardInput.ItemDescription>
-                                </VStack>
-                              </HStack>
-                              <RadioCardInput.ItemIndicator />
-                            </HStack>
-                          </RadioCardInput.ItemControl>
-                        </RadioCardInput.Item>
-                      </VStack>
-                    </RadioCardInput.Root>
-                  )}
-                />
-              </Fieldset>
-
-              <Button
-                primary={true}
-                type={"submit"}
-                w={"full"}
-              >
-                {"Lanjutkan"}
-                <AppIcon icon={ArrowRightIcon} />
-              </Button>
-            </VStack>
-          ) : step === "request" ? (
-            /* Step 1: Request OTP via Email */
-            <VStack
-              as={"form"}
-              onSubmit={requestForm.handleSubmit(handleRequestSubmit)}
-              gap={"md"}
-              align={"stretch"}
-            >
-              <Alert.Root
-                status={"info"}
-                colorPalette={"purple"}
-                variant={"subtle"}
-              >
-                <AppIcon icon={InfoIcon} />
-                <Alert.Description fontSize={"xs"}>
-                  {isUserLoggedIn
-                    ? "Email Anda terkunci sesuai sesi akun yang sedang aktif. Kode OTP akan dikirimkan ke email ini."
-                    : "Masukkan email Anda. Kode verifikasi (OTP) akan dikirimkan untuk mengatur ulang kata sandi."}
-                </Alert.Description>
-              </Alert.Root>
-
-              <Fieldset>
-                <Field
-                  label={"Email"}
-                  invalid={Boolean(requestForm.formState.errors.email)}
-                  errorText={requestForm.formState.errors.email?.message}
-                  helperText={
-                    isUserLoggedIn ? (
-                      <HStack gap={"2xs"} align={"center"} color={"fg.muted"}>
-                        <AppIcon icon={LockIcon} size={"xs"} />
-                        <P fontSize={"2xs"}>
-                          {"Email terkunci sesuai akun login aktif"}
-                        </P>
-                      </HStack>
-                    ) : undefined
-                  }
-                >
-                  <Input
-                    startElement={
-                      <AppIcon icon={MailIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"contoh@email.com"}
-                    readOnly={isUserLoggedIn}
-                    bg={isUserLoggedIn ? "bg.subtle" : undefined}
-                    cursor={isUserLoggedIn ? "not-allowed" : undefined}
-                    tabIndex={isUserLoggedIn ? -1 : undefined}
-                    {...requestForm.register("email")}
-                  />
-                </Field>
-              </Fieldset>
-
-              <HStack justify={"start"} align={"center"}>
-                <Button
-                  variant={"ghost"}
-                  size={"xs"}
-                  type={"button"}
-                  onClick={() => setStep("method")}
-                >
-                  <AppIcon icon={ArrowLeftIcon} />
-                  {"Ganti Metode"}
-                </Button>
-              </HStack>
-
-              <Button
-                primary={true}
-                type={"submit"}
-                w={"full"}
-                loading={requestMutation.isPending}
-              >
-                <AppIcon icon={KeyRoundIcon} />
-                {"Kirim Kode OTP"}
-              </Button>
-            </VStack>
-          ) : step === "otp" ? (
-            /* Step 2: Input 6-Digit OTP / TOTP */
-            <VStack
-              as={"form"}
-              onSubmit={otpForm.handleSubmit(handleOtpSubmit)}
-              gap={"md"}
-              align={"stretch"}
-            >
-              <Alert.Root
-                status={"info"}
-                colorPalette={selectedMethod === "totp" ? "blue" : "purple"}
-                variant={"subtle"}
-              >
-                <AppIcon
-                  icon={selectedMethod === "totp" ? SmartphoneIcon : InfoIcon}
-                />
-                <Alert.Description fontSize={"xs"}>
-                  {selectedMethod === "totp"
-                    ? "Buka aplikasi Google Authenticator Anda dan masukkan 6 digit kode yang tertera untuk akun ini."
-                    : `Kode OTP 6 digit telah dikirimkan ke ${effectiveEmail}. Silakan masukkan kode di bawah ini.`}
-                </Alert.Description>
-              </Alert.Root>
-
-              <Fieldset>
-                <Field
-                  label={
-                    selectedMethod === "totp"
-                      ? "Kode Google Authenticator (6 Digit)"
-                      : "Kode OTP Verifikasi Email"
-                  }
-                  invalid={Boolean(otpForm.formState.errors.resetToken)}
-                  errorText={otpForm.formState.errors.resetToken?.message}
-                >
-                  <VStack align={"center"} w={"full"} py={"xs"}>
-                    <PinInput
-                      count={6}
-                      value={otpCode ? otpCode.split("") : []}
-                      onValueChange={(details) => {
-                        setOtpCode(details.valueAsString);
-                        otpForm.setValue("resetToken", details.valueAsString, {
-                          shouldValidate: true,
-                        });
-                      }}
-                      onValueComplete={(details) => {
-                        setOtpCode(details.valueAsString);
-                        otpForm.setValue("resetToken", details.valueAsString, {
-                          shouldValidate: true,
-                        });
-                      }}
-                    />
-                  </VStack>
-                </Field>
-              </Fieldset>
-
-              <HStack justify={"space-between"} align={"center"} mt={"xs"}>
-                <Button
-                  variant={"ghost"}
-                  size={"xs"}
-                  type={"button"}
-                  onClick={() =>
-                    setStep(selectedMethod === "email" ? "request" : "method")
-                  }
-                >
-                  <AppIcon icon={ArrowLeftIcon} />
-                  {selectedMethod === "email"
-                    ? isUserLoggedIn
-                      ? "Ganti Metode"
-                      : "Ganti Email"
-                    : "Ganti Metode"}
-                </Button>
-
-                {selectedMethod === "email" && (
-                  <Button
-                    variant={"ghost"}
-                    size={"xs"}
-                    type={"button"}
-                    onClick={handleResendOtp}
-                    loading={requestMutation.isPending}
-                  >
-                    <AppIcon icon={RotateCcwIcon} />
-                    {"Kirim Ulang OTP"}
-                  </Button>
-                )}
-              </HStack>
-
-              <Button
-                primary={true}
-                type={"submit"}
-                w={"full"}
-                loading={verifyOtpMutation.isPending}
-              >
-                <AppIcon icon={ShieldCheckIcon} />
-                {selectedMethod === "totp"
-                  ? "Verifikasi Kode Authenticator"
-                  : "Verifikasi OTP"}
-              </Button>
-            </VStack>
+          ) : selectedMethod === null ? (
+            <ResetPasswordMethodSelector
+              onSelectMethod={(method: ResetMethod) =>
+                setSelectedMethod(method)
+              }
+            />
+          ) : selectedMethod === "email" ? (
+            <EmailResetPasswordFlow
+              defaultEmail={defaultEmail}
+              onBackToMethod={() => setSelectedMethod(null)}
+              onSuccess={() => setIsSuccess(true)}
+            />
           ) : (
-            /* Step 3: New Password with Password Strength Meter */
-            <VStack
-              as={"form"}
-              onSubmit={newPasswordForm.handleSubmit(handleNewPasswordSubmit)}
-              gap={"md"}
-              align={"stretch"}
-            >
-              <Alert.Root
-                status={"info"}
-                colorPalette={"green"}
-                variant={"subtle"}
-              >
-                <AppIcon icon={InfoIcon} />
-                <Alert.Description fontSize={"xs"}>
-                  {"Kode verifikasi berhasil divalidasi. Buat kata sandi baru yang kuat untuk akun Anda."}
-                </Alert.Description>
-              </Alert.Root>
-
-              <Fieldset>
-                <Field
-                  label={"Kata Sandi Baru"}
-                  invalid={Boolean(
-                    newPasswordForm.formState.errors.newPassword,
-                  )}
-                  errorText={
-                    newPasswordForm.formState.errors.newPassword?.message
-                  }
-                >
-                  <PasswordInput
-                    startElement={
-                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"Minimal 8 karakter"}
-                    withPasswordStrength={true}
-                    {...newPasswordForm.register("newPassword")}
-                  />
-                </Field>
-
-                <Field
-                  label={"Konfirmasi Kata Sandi Baru"}
-                  invalid={Boolean(
-                    newPasswordForm.formState.errors.confirmPassword,
-                  )}
-                  errorText={
-                    newPasswordForm.formState.errors.confirmPassword?.message
-                  }
-                >
-                  <PasswordInput
-                    startElement={
-                      <AppIcon icon={LockIcon} color={"fg.subtle"} />
-                    }
-                    placeholder={"Ulangi kata sandi baru"}
-                    {...newPasswordForm.register("confirmPassword")}
-                  />
-                </Field>
-              </Fieldset>
-
-              <HStack justify={"start"} align={"center"} mt={"xs"}>
-                <Button
-                  variant={"ghost"}
-                  size={"xs"}
-                  type={"button"}
-                  onClick={() => setStep("otp")}
-                >
-                  <AppIcon icon={ArrowLeftIcon} />
-                  {"Kembali ke Verifikasi"}
-                </Button>
-              </HStack>
-
-              <Button
-                primary={true}
-                type={"submit"}
-                w={"full"}
-                loading={confirmMutation.isPending}
-              >
-                {"Simpan Kata Sandi Baru"}
-              </Button>
-            </VStack>
+            <TotpResetPasswordFlow
+              defaultEmail={defaultEmail}
+              onBackToMethod={() => setSelectedMethod(null)}
+              onSuccess={() => setIsSuccess(true)}
+            />
           )}
         </Modal.Body>
 
@@ -725,4 +241,715 @@ const InternalResetPasswordModalContent = (
   );
 };
 
+// ==========================================
+// 3. METHOD SELECTOR (STEP 0)
+// ==========================================
 
+const ResetPasswordMethodSelector = ({
+  onSelectMethod,
+}: ResetPasswordMethodSelectorProps) => {
+  const methodForm = useForm<ResetPasswordMethodFormValues>({
+    resolver: zodResolver(createResetPasswordMethodSchema()),
+    defaultValues: {
+      method: "email",
+    },
+  });
+
+  return (
+    <VStack
+      as={"form"}
+      onSubmit={methodForm.handleSubmit((values) =>
+        onSelectMethod(values.method),
+      )}
+      gap={"md"}
+      align={"stretch"}
+    >
+      <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
+        <AppIcon icon={InfoIcon} />
+        <Alert.Description fontSize={"xs"}>
+          {
+            "Pilih metode verifikasi untuk mereset kata sandi akun internal ATR/BPN Anda."
+          }
+        </Alert.Description>
+      </Alert.Root>
+
+      <Fieldset>
+        <Controller
+          name={"method"}
+          control={methodForm.control}
+          render={({ field }) => (
+            <VStack gap={"xs"} align={"stretch"} w={"full"}>
+              {/* Option 1: OTP Email */}
+              <Box
+                onClick={() => field.onChange("email")}
+                p={"sm"}
+                borderWidth={"1.5px"}
+                borderColor={
+                  field.value === "email" ? "purple.solid" : "border.subtle"
+                }
+                bg={field.value === "email" ? "purple.subtle/30" : "bg.panel"}
+                rounded={"md"}
+                transition={"all 0.15s ease"}
+                cursor={"pointer"}
+                textAlign={"start"}
+                _hover={{ borderColor: "purple.fg" }}
+              >
+                <HStack justify={"space-between"} align={"center"} w={"full"}>
+                  <HStack gap={"xs"} align={"start"}>
+                    <Box
+                      p={1.5}
+                      rounded={"md"}
+                      bg={"purple.subtle"}
+                      color={"purple.fg"}
+                      flexShrink={0}
+                    >
+                      <AppIcon icon={MailIcon} size={"sm"} />
+                    </Box>
+                    <VStack align={"start"} gap={"2xs"}>
+                      <P fontSize={"sm"} fontWeight={"semibold"}>
+                        {"OTP via Email"}
+                      </P>
+                      <P fontSize={"2xs"} color={"fg.muted"}>
+                        {"Kirim 6-digit kode verifikasi ke email kedinasan"}
+                      </P>
+                    </VStack>
+                  </HStack>
+                  <RadioIndicator checked={field.value === "email"} />
+                </HStack>
+              </Box>
+
+              {/* Option 2: Google Authenticator (TOTP) */}
+              <Box
+                onClick={() => field.onChange("totp")}
+                p={"sm"}
+                borderWidth={"1.5px"}
+                borderColor={
+                  field.value === "totp" ? "blue.solid" : "border.subtle"
+                }
+                bg={field.value === "totp" ? "blue.subtle/30" : "bg.panel"}
+                rounded={"md"}
+                transition={"all 0.15s ease"}
+                cursor={"pointer"}
+                textAlign={"start"}
+                _hover={{ borderColor: "blue.fg" }}
+              >
+                <HStack justify={"space-between"} align={"center"} w={"full"}>
+                  <HStack gap={"xs"} align={"start"}>
+                    <Box
+                      p={1.5}
+                      rounded={"md"}
+                      bg={"blue.subtle"}
+                      color={"blue.fg"}
+                      flexShrink={0}
+                    >
+                      <AppIcon icon={SmartphoneIcon} size={"sm"} />
+                    </Box>
+                    <VStack align={"start"} gap={"2xs"}>
+                      <HStack gap={"xs"} align={"center"}>
+                        <P fontSize={"sm"} fontWeight={"semibold"}>
+                          {"Google Authenticator (TOTP)"}
+                        </P>
+                        <Badge size={"xs"} colorPalette={"blue"}>
+                          {"Instan"}
+                        </Badge>
+                      </HStack>
+                      <P fontSize={"2xs"} color={"fg.muted"}>
+                        {"Gunakan kode 6 digit dari aplikasi authenticator"}
+                      </P>
+                    </VStack>
+                  </HStack>
+                  <RadioIndicator checked={field.value === "totp"} />
+                </HStack>
+              </Box>
+            </VStack>
+          )}
+        />
+      </Fieldset>
+
+      <Button primary={true} type={"submit"} w={"full"}>
+        {"Lanjutkan"}
+        <AppIcon icon={ArrowRightIcon} />
+      </Button>
+    </VStack>
+  );
+};
+
+// ==========================================
+// 4. FLOW 1: EMAIL RESET PASSWORD COMPONENT
+// ==========================================
+
+const EmailResetPasswordFlow = ({
+  defaultEmail,
+  onBackToMethod,
+  onSuccess,
+}: EmailResetPasswordFlowProps) => {
+  const { user, isAuthenticated } = useAuthSession();
+  const isUserLoggedIn = Boolean(isAuthenticated && user);
+  const initialEmail = isUserLoggedIn
+    ? (user?.email ?? defaultEmail)
+    : defaultEmail;
+
+  // Step state within Email Flow
+  const [subStep, setSubStep] = useState<"request" | "otp" | "password">(
+    "request",
+  );
+  const [email, setEmail] = useState<string>(initialEmail);
+  const [resetToken, setResetToken] = useState<string>("");
+  const [otpCode, setOtpCode] = useState<string>("");
+
+  // Mutations
+  const requestMutation = useResetPasswordRequestMutation();
+  const verifyOtpMutation = useResetPasswordVerifyOtpMutation();
+  const confirmMutation = useResetPasswordConfirmMutation();
+
+  // Forms
+  const requestForm = useForm<ResetPasswordRequestFormValues>({
+    resolver: zodResolver(createResetPasswordRequestSchema()),
+    defaultValues: {
+      email: initialEmail,
+    },
+  });
+
+  const otpForm = useForm<ResetPasswordOtpFormValues>({
+    resolver: zodResolver(createResetPasswordOtpSchema()),
+    defaultValues: {
+      resetToken: "",
+    },
+  });
+
+  const newPasswordForm = useForm<ResetPasswordNewPasswordFormValues>({
+    resolver: zodResolver(createResetPasswordNewPasswordSchema()),
+    defaultValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  // Step 1: Request OTP
+  const handleRequestSubmit = (values: ResetPasswordRequestFormValues) => {
+    const finalEmail = isUserLoggedIn
+      ? (user?.email ?? values.email)
+      : values.email;
+    setEmail(finalEmail);
+    requestMutation.mutate(
+      { email: finalEmail },
+      {
+        onSuccess: (data) => {
+          if (data.resetToken) {
+            setOtpCode(data.resetToken);
+            otpForm.setValue("resetToken", data.resetToken, {
+              shouldValidate: true,
+            });
+          } else {
+            setOtpCode("");
+            otpForm.setValue("resetToken", "");
+          }
+          setSubStep("otp");
+        },
+      },
+    );
+  };
+
+  const handleResendOtp = () => {
+    requestMutation.mutate(
+      { email },
+      {
+        onSuccess: (data) => {
+          if (data.resetToken) {
+            setOtpCode(data.resetToken);
+            otpForm.setValue("resetToken", data.resetToken, {
+              shouldValidate: true,
+            });
+          }
+        },
+      },
+    );
+  };
+
+  // Step 2: Verify OTP
+  const handleOtpSubmit = (values: ResetPasswordOtpFormValues) => {
+    verifyOtpMutation.mutate(
+      {
+        email,
+        resetToken: values.resetToken,
+      },
+      {
+        onSuccess: (data) => {
+          setResetToken(data.resetToken || values.resetToken);
+          setSubStep("password");
+        },
+      },
+    );
+  };
+
+  // Step 3: Confirm New Password
+  const handlePasswordSubmit = (values: ResetPasswordNewPasswordFormValues) => {
+    confirmMutation.mutate(
+      {
+        email,
+        resetToken: resetToken || otpCode || otpForm.getValues("resetToken"),
+        newPassword: values.newPassword,
+        confirmPassword: values.confirmPassword,
+      },
+      {
+        onSuccess: () => {
+          onSuccess();
+        },
+      },
+    );
+  };
+
+  if (subStep === "request") {
+    return (
+      <VStack
+        as={"form"}
+        onSubmit={requestForm.handleSubmit(handleRequestSubmit)}
+        gap={"md"}
+        align={"stretch"}
+      >
+        <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
+          <AppIcon icon={InfoIcon} />
+          <Alert.Description fontSize={"xs"}>
+            {isUserLoggedIn
+              ? "Email Anda terkunci sesuai sesi akun yang sedang aktif. Kode OTP akan dikirimkan ke email ini."
+              : "Masukkan email Anda. Kode verifikasi (OTP) akan dikirimkan untuk mengatur ulang kata sandi."}
+          </Alert.Description>
+        </Alert.Root>
+
+        <Fieldset>
+          <Field
+            label={"Email"}
+            invalid={Boolean(requestForm.formState.errors.email)}
+            errorText={requestForm.formState.errors.email?.message}
+            helperText={
+              isUserLoggedIn ? (
+                <HStack gap={"2xs"} align={"center"} color={"fg.muted"}>
+                  <AppIcon icon={LockIcon} size={"xs"} />
+                  <P fontSize={"2xs"}>
+                    {"Email terkunci sesuai akun login aktif"}
+                  </P>
+                </HStack>
+              ) : undefined
+            }
+          >
+            <Input
+              startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
+              placeholder={"contoh@email.com"}
+              readOnly={isUserLoggedIn}
+              bg={isUserLoggedIn ? "bg.subtle" : undefined}
+              cursor={isUserLoggedIn ? "not-allowed" : undefined}
+              tabIndex={isUserLoggedIn ? -1 : undefined}
+              {...requestForm.register("email")}
+            />
+          </Field>
+        </Fieldset>
+
+        <HStack justify={"start"} align={"center"}>
+          <Button
+            variant={"ghost"}
+            size={"xs"}
+            type={"button"}
+            onClick={onBackToMethod}
+          >
+            <AppIcon icon={ArrowLeftIcon} />
+            {"Ganti Metode"}
+          </Button>
+        </HStack>
+
+        <Button
+          primary={true}
+          type={"submit"}
+          w={"full"}
+          loading={requestMutation.isPending}
+        >
+          <AppIcon icon={KeyRoundIcon} />
+          {"Kirim Kode OTP"}
+        </Button>
+      </VStack>
+    );
+  }
+
+  if (subStep === "otp") {
+    return (
+      <VStack
+        as={"form"}
+        onSubmit={otpForm.handleSubmit(handleOtpSubmit)}
+        gap={"md"}
+        align={"stretch"}
+      >
+        <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
+          <AppIcon icon={InfoIcon} />
+          <Alert.Description fontSize={"xs"}>
+            {`Kode OTP 6 digit telah dikirimkan ke ${email}. Silakan masukkan kode di bawah ini.`}
+          </Alert.Description>
+        </Alert.Root>
+
+        <Fieldset>
+          <Field
+            label={"Kode OTP Verifikasi Email"}
+            invalid={Boolean(otpForm.formState.errors.resetToken)}
+            errorText={otpForm.formState.errors.resetToken?.message}
+          >
+            <VStack align={"center"} w={"full"} py={"xs"}>
+              <PinInput
+                count={6}
+                value={otpCode ? otpCode.split("") : []}
+                onValueChange={(details) => {
+                  setOtpCode(details.valueAsString);
+                  otpForm.setValue("resetToken", details.valueAsString, {
+                    shouldValidate: true,
+                  });
+                }}
+                onValueComplete={(details) => {
+                  setOtpCode(details.valueAsString);
+                  otpForm.setValue("resetToken", details.valueAsString, {
+                    shouldValidate: true,
+                  });
+                }}
+              />
+            </VStack>
+          </Field>
+        </Fieldset>
+
+        <HStack justify={"space-between"} align={"center"} mt={"xs"}>
+          <Button
+            variant={"ghost"}
+            size={"xs"}
+            type={"button"}
+            onClick={() => setSubStep("request")}
+          >
+            <AppIcon icon={ArrowLeftIcon} />
+            {isUserLoggedIn ? "Kembali" : "Ganti Email"}
+          </Button>
+
+          <Button
+            variant={"ghost"}
+            size={"xs"}
+            type={"button"}
+            onClick={handleResendOtp}
+            loading={requestMutation.isPending}
+          >
+            <AppIcon icon={RotateCcwIcon} />
+            {"Kirim Ulang OTP"}
+          </Button>
+        </HStack>
+
+        <Button
+          primary={true}
+          type={"submit"}
+          w={"full"}
+          loading={verifyOtpMutation.isPending}
+        >
+          <AppIcon icon={ShieldCheckIcon} />
+          {"Verifikasi OTP"}
+        </Button>
+      </VStack>
+    );
+  }
+
+  return (
+    <VStack
+      as={"form"}
+      onSubmit={newPasswordForm.handleSubmit(handlePasswordSubmit)}
+      gap={"md"}
+      align={"stretch"}
+    >
+      <Alert.Root status={"info"} colorPalette={"green"} variant={"subtle"}>
+        <AppIcon icon={InfoIcon} />
+        <Alert.Description fontSize={"xs"}>
+          {
+            "Kode verifikasi berhasil divalidasi. Buat kata sandi baru yang kuat untuk akun Anda."
+          }
+        </Alert.Description>
+      </Alert.Root>
+
+      <Fieldset>
+        <Field
+          label={"Kata Sandi Baru"}
+          invalid={Boolean(newPasswordForm.formState.errors.newPassword)}
+          errorText={newPasswordForm.formState.errors.newPassword?.message}
+        >
+          <PasswordInput
+            startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+            placeholder={"Minimal 8 karakter"}
+            withPasswordStrength={true}
+            {...newPasswordForm.register("newPassword")}
+          />
+        </Field>
+
+        <Field
+          label={"Konfirmasi Kata Sandi Baru"}
+          invalid={Boolean(newPasswordForm.formState.errors.confirmPassword)}
+          errorText={newPasswordForm.formState.errors.confirmPassword?.message}
+        >
+          <PasswordInput
+            startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+            placeholder={"Ulangi kata sandi baru"}
+            {...newPasswordForm.register("confirmPassword")}
+          />
+        </Field>
+      </Fieldset>
+
+      <HStack justify={"start"} align={"center"} mt={"xs"}>
+        <Button
+          variant={"ghost"}
+          size={"xs"}
+          type={"button"}
+          onClick={() => setSubStep("otp")}
+        >
+          <AppIcon icon={ArrowLeftIcon} />
+          {"Kembali ke Verifikasi"}
+        </Button>
+      </HStack>
+
+      <Button
+        primary={true}
+        type={"submit"}
+        w={"full"}
+        loading={confirmMutation.isPending}
+      >
+        {"Simpan Kata Sandi Baru"}
+      </Button>
+    </VStack>
+  );
+};
+
+// ==========================================
+// 5. FLOW 2: TOTP (AUTHENTICATOR) RESET PASSWORD COMPONENT
+// ==========================================
+
+const TotpResetPasswordFlow = ({
+  defaultEmail,
+  onBackToMethod,
+  onSuccess,
+}: TotpResetPasswordFlowProps) => {
+  const { user, isAuthenticated } = useAuthSession();
+  const isUserLoggedIn = Boolean(isAuthenticated && user);
+  const initialEmail = isUserLoggedIn
+    ? (user?.email ?? defaultEmail)
+    : defaultEmail;
+
+  // Step state within TOTP Flow: need email & totpCode before new password
+  const [subStep, setSubStep] = useState<"totp" | "password">("totp");
+  const [email, setEmail] = useState<string>(initialEmail);
+  const [totpCode, setTotpCode] = useState<string>("");
+  const [verifiedToken, setVerifiedToken] = useState<string>("");
+
+  // Mutations
+  const verifyOtpMutation = useResetPasswordVerifyOtpMutation();
+  const confirmMutation = useResetPasswordConfirmMutation();
+
+  // Forms
+  const totpForm = useForm<{ email: string; totpCode: string }>({
+    defaultValues: {
+      email: initialEmail,
+      totpCode: "",
+    },
+  });
+
+  const newPasswordForm = useForm<ResetPasswordNewPasswordFormValues>({
+    resolver: zodResolver(createResetPasswordNewPasswordSchema()),
+    defaultValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  // Step 1: Submit TOTP Code
+  const handleTotpSubmit = (values: { email: string; totpCode: string }) => {
+    const finalEmail = isUserLoggedIn
+      ? (user?.email ?? values.email)
+      : values.email;
+    if (!finalEmail) {
+      totpForm.setError("email", { message: "Email wajib diisi" });
+      return;
+    }
+    const code = values.totpCode || totpCode;
+    if (code.length !== 6) {
+      totpForm.setError("totpCode", { message: "Kode TOTP harus 6 digit" });
+      return;
+    }
+
+    setEmail(finalEmail);
+    verifyOtpMutation.mutate(
+      {
+        email: finalEmail,
+        resetToken: code,
+      },
+      {
+        onSuccess: (data) => {
+          setVerifiedToken(data.resetToken || code);
+          setSubStep("password");
+        },
+      },
+    );
+  };
+
+  // Step 2: Confirm New Password
+  const handlePasswordSubmit = (values: ResetPasswordNewPasswordFormValues) => {
+    confirmMutation.mutate(
+      {
+        email,
+        resetToken: verifiedToken || totpCode,
+        newPassword: values.newPassword,
+        confirmPassword: values.confirmPassword,
+      },
+      {
+        onSuccess: () => {
+          onSuccess();
+        },
+      },
+    );
+  };
+
+  if (subStep === "totp") {
+    return (
+      <VStack
+        as={"form"}
+        onSubmit={totpForm.handleSubmit(handleTotpSubmit)}
+        gap={"md"}
+        align={"stretch"}
+      >
+        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+          <AppIcon icon={SmartphoneIcon} />
+          <Alert.Description fontSize={"xs"}>
+            {
+              "Buka aplikasi Google Authenticator Anda dan masukkan 6 digit kode yang tertera untuk akun ini."
+            }
+          </Alert.Description>
+        </Alert.Root>
+
+        <Fieldset>
+          {!isUserLoggedIn && (
+            <Field
+              label={"Email Akun"}
+              invalid={Boolean(totpForm.formState.errors.email)}
+              errorText={totpForm.formState.errors.email?.message}
+            >
+              <Input
+                startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
+                placeholder={"pegawai@atrbpn.go.id"}
+                {...totpForm.register("email", {
+                  required: "Email wajib diisi",
+                })}
+              />
+            </Field>
+          )}
+
+          <Field
+            label={"Kode Google Authenticator (6 Digit)"}
+            invalid={Boolean(totpForm.formState.errors.totpCode)}
+            errorText={totpForm.formState.errors.totpCode?.message}
+          >
+            <VStack align={"center"} w={"full"} py={"xs"}>
+              <PinInput
+                count={6}
+                value={totpCode ? totpCode.split("") : []}
+                onValueChange={(details) => {
+                  setTotpCode(details.valueAsString);
+                  totpForm.setValue("totpCode", details.valueAsString, {
+                    shouldValidate: true,
+                  });
+                }}
+                onValueComplete={(details) => {
+                  setTotpCode(details.valueAsString);
+                  totpForm.setValue("totpCode", details.valueAsString, {
+                    shouldValidate: true,
+                  });
+                }}
+              />
+            </VStack>
+          </Field>
+        </Fieldset>
+
+        <HStack justify={"start"} align={"center"} mt={"xs"}>
+          <Button
+            variant={"ghost"}
+            size={"xs"}
+            type={"button"}
+            onClick={onBackToMethod}
+          >
+            <AppIcon icon={ArrowLeftIcon} />
+            {"Ganti Metode"}
+          </Button>
+        </HStack>
+
+        <Button
+          primary={true}
+          type={"submit"}
+          w={"full"}
+          loading={verifyOtpMutation.isPending}
+        >
+          <AppIcon icon={ShieldCheckIcon} />
+          {"Verifikasi Kode Authenticator"}
+        </Button>
+      </VStack>
+    );
+  }
+
+  return (
+    <VStack
+      as={"form"}
+      onSubmit={newPasswordForm.handleSubmit(handlePasswordSubmit)}
+      gap={"md"}
+      align={"stretch"}
+    >
+      <Alert.Root status={"info"} colorPalette={"green"} variant={"subtle"}>
+        <AppIcon icon={InfoIcon} />
+        <Alert.Description fontSize={"xs"}>
+          {
+            "Kode Authenticator berhasil divalidasi. Buat kata sandi baru yang kuat untuk akun Anda."
+          }
+        </Alert.Description>
+      </Alert.Root>
+
+      <Fieldset>
+        <Field
+          label={"Kata Sandi Baru"}
+          invalid={Boolean(newPasswordForm.formState.errors.newPassword)}
+          errorText={newPasswordForm.formState.errors.newPassword?.message}
+        >
+          <PasswordInput
+            startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+            placeholder={"Minimal 8 karakter"}
+            withPasswordStrength={true}
+            {...newPasswordForm.register("newPassword")}
+          />
+        </Field>
+
+        <Field
+          label={"Konfirmasi Kata Sandi Baru"}
+          invalid={Boolean(newPasswordForm.formState.errors.confirmPassword)}
+          errorText={newPasswordForm.formState.errors.confirmPassword?.message}
+        >
+          <PasswordInput
+            startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
+            placeholder={"Ulangi kata sandi baru"}
+            {...newPasswordForm.register("confirmPassword")}
+          />
+        </Field>
+      </Fieldset>
+
+      <HStack justify={"start"} align={"center"} mt={"xs"}>
+        <Button
+          variant={"ghost"}
+          size={"xs"}
+          type={"button"}
+          onClick={() => setSubStep("totp")}
+        >
+          <AppIcon icon={ArrowLeftIcon} />
+          {"Kembali ke Verifikasi"}
+        </Button>
+      </HStack>
+
+      <Button
+        primary={true}
+        type={"submit"}
+        w={"full"}
+        loading={confirmMutation.isPending}
+      >
+        {"Simpan Kata Sandi Baru"}
+      </Button>
+    </VStack>
+  );
+};

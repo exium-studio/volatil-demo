@@ -86,5 +86,30 @@ export type InternalResetPasswordModalContentProps = {
   defaultEmail: string;
 };
 
+export type ResetPasswordMethodSelectorProps = {
+  onSelectMethod: (method: ResetMethod) => void;
+};
 
+export type EmailResetPasswordFlowProps = {
+  defaultEmail: string;
+  onBackToMethod: () => void;
+  onSuccess: () => void;
+};
+
+export type TotpResetPasswordFlowProps = {
+  defaultEmail: string;
+  onBackToMethod: () => void;
+  onSuccess: () => void;
+};
+
+export type ResetMethodRadioItemProps = {
+  method: ResetMethod;
+  isSelected: boolean;
+  onSelect: () => void;
+  title: string;
+  description: string;
+  badge?: string;
+  icon: React.ComponentType<{ size?: string | number }>;
+  colorPalette?: string;
+};
 

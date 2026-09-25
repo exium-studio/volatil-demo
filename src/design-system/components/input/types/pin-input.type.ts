@@ -7,5 +7,7 @@ export type PinInputProps = ChakraPinInput.RootProps & {
   attached?: boolean;
   mask?: boolean;
   placeholder?: string;
+  fluid?: boolean;
   inputProps?: ChakraPinInput.InputProps;
 };
+
