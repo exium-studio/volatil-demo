@@ -33,16 +33,16 @@ import {
 } from "@/features/auth/schemas/reset-password.schema";
 import type {
   EmailResetPasswordFlowProps,
-  InternalResetPasswordModalContentProps,
-  InternalResetPasswordModalProps,
-  InternalResetPasswordTriggerProps,
   ResetMethod,
   ResetMethodRadioItemProps,
   ResetPasswordMethodFormValues,
   ResetPasswordMethodSelectorProps,
+  ResetPasswordModalContentProps,
+  ResetPasswordModalProps,
   ResetPasswordNewPasswordFormValues,
   ResetPasswordOtpFormValues,
   ResetPasswordRequestFormValues,
+  ResetPasswordTriggerProps,
   TotpResetPasswordFlowProps,
 } from "@/features/auth/types/reset-password.type";
 
@@ -62,16 +62,12 @@ import {
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-// ==========================================
-// 1. TRIGGER & MODAL SHELL
-// ==========================================
-
-export const InternalResetPasswordTrigger = (
-  props: InternalResetPasswordTriggerProps,
+export const ResetPasswordTrigger = (
+  props: ResetPasswordTriggerProps,
 ) => {
   const {
     children,
-    modalKey: customModalKey = "internal-reset-password-modal",
+    modalKey: customModalKey = "reset-password-modal",
     defaultEmail = "",
   } = props;
 
@@ -99,7 +95,7 @@ export const InternalResetPasswordTrigger = (
         </span>
       )}
 
-      <InternalResetPasswordModalContent
+      <ResetPasswordModalContent
         modalKey={modalKey}
         isOpen={isOpen}
         open={open}
@@ -110,11 +106,11 @@ export const InternalResetPasswordTrigger = (
   );
 };
 
-export const InternalResetPasswordModal = (
-  props: InternalResetPasswordModalProps,
+export const ResetPasswordModal = (
+  props: ResetPasswordModalProps,
 ) => {
   const {
-    modalKey: customModalKey = "internal-reset-password-modal",
+    modalKey: customModalKey = "reset-password-modal",
     defaultEmail = "",
     isOpen: controlledIsOpen,
     onClose,
@@ -133,7 +129,7 @@ export const InternalResetPasswordModal = (
     controlledIsOpen !== undefined ? controlledIsOpen : isOpen;
 
   return (
-    <InternalResetPasswordModalContent
+    <ResetPasswordModalContent
       modalKey={modalKey}
       isOpen={isModalOpen}
       open={open}
@@ -143,8 +139,11 @@ export const InternalResetPasswordModal = (
   );
 };
 
-const InternalResetPasswordModalContent = (
-  props: InternalResetPasswordModalContentProps,
+export const InternalResetPasswordTrigger = ResetPasswordTrigger;
+export const InternalResetPasswordModal = ResetPasswordModal;
+
+const ResetPasswordModalContent = (
+  props: ResetPasswordModalContentProps,
 ) => {
   const { modalKey, isOpen, open, close, defaultEmail } = props;
 
@@ -580,16 +579,19 @@ const EmailResetPasswordFlow = ({
             <VStack align={"center"} w={"full"} py={"xs"}>
               <PinInput
                 count={6}
-                value={otpCode ? otpCode.split("") : []}
+                otp={true}
+                autoFocus={true}
                 onValueChange={(details) => {
-                  setOtpCode(details.valueAsString);
-                  otpForm.setValue("resetToken", details.valueAsString, {
+                  const code = details.value.join("");
+                  setOtpCode(code);
+                  otpForm.setValue("resetToken", code, {
                     shouldValidate: true,
                   });
                 }}
                 onValueComplete={(details) => {
-                  setOtpCode(details.valueAsString);
-                  otpForm.setValue("resetToken", details.valueAsString, {
+                  const code = details.value.join("");
+                  setOtpCode(code);
+                  otpForm.setValue("resetToken", code, {
                     shouldValidate: true,
                   });
                 }}
@@ -803,21 +805,33 @@ const TotpResetPasswordFlow = ({
         </Alert.Root>
 
         <Fieldset>
-          {!isUserLoggedIn && (
-            <Field
-              label={"Email Akun"}
-              invalid={Boolean(totpForm.formState.errors.email)}
-              errorText={totpForm.formState.errors.email?.message}
-            >
-              <Input
-                startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
-                placeholder={"pegawai@atrbpn.go.id"}
-                {...totpForm.register("email", {
-                  required: "Email wajib diisi",
-                })}
-              />
-            </Field>
-          )}
+          <Field
+            label={"Email Akun"}
+            invalid={Boolean(totpForm.formState.errors.email)}
+            errorText={totpForm.formState.errors.email?.message}
+            helperText={
+              isUserLoggedIn ? (
+                <HStack gap={"2xs"} align={"center"} color={"fg.muted"}>
+                  <AppIcon icon={LockIcon} size={"xs"} />
+                  <P fontSize={"2xs"}>
+                    {"Email terkunci sesuai akun login aktif"}
+                  </P>
+                </HStack>
+              ) : undefined
+            }
+          >
+            <Input
+              startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
+              placeholder={"pegawai@atrbpn.go.id"}
+              readOnly={isUserLoggedIn}
+              bg={isUserLoggedIn ? "bg.subtle" : undefined}
+              cursor={isUserLoggedIn ? "not-allowed" : undefined}
+              tabIndex={isUserLoggedIn ? -1 : undefined}
+              {...totpForm.register("email", {
+                required: "Email wajib diisi",
+              })}
+            />
+          </Field>
 
           <Field
             label={"Kode Google Authenticator (6 Digit)"}
@@ -827,16 +841,19 @@ const TotpResetPasswordFlow = ({
             <VStack align={"center"} w={"full"} py={"xs"}>
               <PinInput
                 count={6}
-                value={totpCode ? totpCode.split("") : []}
+                otp={true}
+                autoFocus={true}
                 onValueChange={(details) => {
-                  setTotpCode(details.valueAsString);
-                  totpForm.setValue("totpCode", details.valueAsString, {
+                  const code = details.value.join("");
+                  setTotpCode(code);
+                  totpForm.setValue("totpCode", code, {
                     shouldValidate: true,
                   });
                 }}
                 onValueComplete={(details) => {
-                  setTotpCode(details.valueAsString);
-                  totpForm.setValue("totpCode", details.valueAsString, {
+                  const code = details.value.join("");
+                  setTotpCode(code);
+                  totpForm.setValue("totpCode", code, {
                     shouldValidate: true,
                   });
                 }}

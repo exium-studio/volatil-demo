@@ -48,14 +48,14 @@ export type ResetMethod = "email" | "totp";
 
 export type ResetPasswordStep = "method" | "request" | "otp" | "new-password";
 
-export type InternalResetPasswordModalProps = {
+export type ResetPasswordModalProps = {
   modalKey?: string;
   defaultEmail?: string;
   isOpen?: boolean;
   onClose?: () => void;
 };
 
-export type InternalResetPasswordTriggerProps = {
+export type ResetPasswordTriggerProps = {
   children?: React.ReactNode;
   modalKey?: string;
   defaultEmail?: string;
@@ -78,13 +78,18 @@ export type ResetPasswordNewPasswordFormValues = {
   confirmPassword: string;
 };
 
-export type InternalResetPasswordModalContentProps = {
+export type ResetPasswordModalContentProps = {
   modalKey: string;
   isOpen: boolean;
   open: () => void;
   close: () => void;
   defaultEmail: string;
 };
+
+// Aliases for backward compatibility
+export type InternalResetPasswordModalProps = ResetPasswordModalProps;
+export type InternalResetPasswordTriggerProps = ResetPasswordTriggerProps;
+export type InternalResetPasswordModalContentProps = ResetPasswordModalContentProps;
 
 export type ResetPasswordMethodSelectorProps = {
   onSelectMethod: (method: ResetMethod) => void;
