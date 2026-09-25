@@ -205,26 +205,26 @@ type TotpSetupConfirmResponse = {
 - **Response Error (401 Unauthorized)**:
   - `code: "TOTP_INVALID"`: Kode tidak cocok atau waktu perangkat tidak sinkron.
 
-### Reset Password — Step 1: Request Kode OTP (Khusus Role Internal)
-Digunakan oleh pegawai internal yang ingin mereset kata sandi (baik saat login maupun dari profile).
+### Reset Password — Step 1: Request Kode OTP Email
+Digunakan untuk meminta kode verifikasi OTP 6 digit yang dikirimkan ke email akun.
 - **Endpoint**: `POST /api/auth/reset-password/request`
 - **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
 - **Request Body**:
 ```typescript
 type ResetPasswordRequestPayload = {
-  email: string; // Email akun internal (e.g. pegawai@atrbpn.go.id)
+  email: string; // Email akun pengguna (e.g. pegawai@atrbpn.go.id)
 };
 ```
 - **Response (200 OK)**:
 ```typescript
 type ResetPasswordRequestResponse = {
   success: true;
-  message: string; // "Kode verifikasi reset kata sandi telah dikirim ke email Anda."
+  message: string; // "Kode verifikasi reset kata sandi telah dikirimkan ke email Anda."
   data: {
     email: string;
-    expiresIn?: number; // detik berlaku kode OTP (default: 300)
-    resetToken?: string; // Diisi hanya di dev/mock mode
+    expiresIn?: number; // Detik berlaku kode OTP (default: 300)
+    resetToken?: string; // Diisi hanya pada dev/mock mode
   };
 };
 ```
@@ -232,12 +232,12 @@ type ResetPasswordRequestResponse = {
 ```json
 {
   "success": false,
-  "message": "Email tidak terdaftar sebagai akun internal."
+  "message": "Email tidak terdaftar pada sistem."
 }
 ```
 
-### Reset Password — Step 2: Verifikasi Kode OTP (Khusus Role Internal)
-Digunakan untuk memvalidasi kode OTP 6-digit sebelum menampilkan form kata sandi baru.
+### Reset Password — Step 2A: Verifikasi Kode OTP Email
+Digunakan untuk memvalidasi kode OTP 6-digit yang dikirimkan via email sebelum menampilkan form kata sandi baru.
 - **Endpoint**: `POST /api/auth/reset-password/verify-otp`
 - **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
@@ -245,14 +245,14 @@ Digunakan untuk memvalidasi kode OTP 6-digit sebelum menampilkan form kata sandi
 ```typescript
 type ResetPasswordVerifyOtpPayload = {
   email: string;
-  resetToken: string; // 6-digit kode OTP
+  resetToken: string; // 6-digit kode OTP email
 };
 ```
 - **Response (200 OK)**:
 ```typescript
 type ResetPasswordVerifyOtpResponse = {
   success: true;
-  message: string; // "Kode OTP valid."
+  message: string; // "Kode OTP berhasil diverifikasi."
   data: {
     success: true;
     message: string;
@@ -269,8 +269,41 @@ type ResetPasswordVerifyOtpResponse = {
 }
 ```
 
-### Reset Password — Step 3: Simpan Kata Sandi Baru (Khusus Role Internal)
-Digunakan untuk mengonfirmasi reset password dan mengupdate kata sandi baru.
+### Reset Password — Step 2B: Verifikasi Kode Google Authenticator (TOTP)
+Digunakan untuk memvalidasi kode 6 digit dari aplikasi Google Authenticator akun sebelum menampilkan form kata sandi baru.
+- **Endpoint**: `POST /api/auth/reset-password/verify-totp`
+- **Akses**: `Public / Authenticated`
+- **Content-Type**: `application/json`
+- **Request Body**:
+```typescript
+type ResetPasswordVerifyTotpPayload = {
+  email: string;
+  totpCode: string; // 6-digit numeric string dari Google Authenticator
+};
+```
+- **Response (200 OK)**:
+```typescript
+type ResetPasswordVerifyTotpResponse = {
+  success: true;
+  message: string; // "Kode Google Authenticator berhasil diverifikasi."
+  data: {
+    success: true;
+    message: string;
+    email: string;
+    resetToken: string; // Token atau kode yang valid untuk dipakai di step konfirmasi
+  };
+};
+```
+- **Response Error (400 Bad Request / 401 Unauthorized)**:
+```json
+{
+  "success": false,
+  "message": "Kode Google Authenticator salah atau telah kedaluwarsa."
+}
+```
+
+### Reset Password — Step 3: Konfirmasi & Simpan Kata Sandi Baru
+Digunakan untuk mengonfirmasi pembaruan kata sandi akun setelah kode OTP atau TOTP terverifikasi.
 - **Endpoint**: `POST /api/auth/reset-password/confirm`
 - **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
@@ -278,8 +311,8 @@ Digunakan untuk mengonfirmasi reset password dan mengupdate kata sandi baru.
 ```typescript
 type ResetPasswordConfirmPayload = {
   email: string;
-  resetToken: string; // 6-digit kode OTP terverifikasi
-  newPassword: string; // Min 8 karakter
+  resetToken: string; // Token / kode terverifikasi dari Step 2A atau Step 2B
+  newPassword: string; // Minimal 8 karakter
   confirmPassword?: string;
 };
 ```
@@ -287,7 +320,7 @@ type ResetPasswordConfirmPayload = {
 ```typescript
 type ResetPasswordConfirmResponse = {
   success: true;
-  message: string; // "Kata sandi akun Anda telah berhasil direset."
+  message: string; // "Kata sandi akun Anda berhasil diperbarui. Silakan masuk menggunakan kata sandi baru."
   data: {
     success: true;
     message: string;

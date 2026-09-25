@@ -271,7 +271,7 @@ const ResetPasswordMethodSelector = ({
                 isSelected={field.value === "email"}
                 onSelect={() => field.onChange("email")}
                 title={"OTP via Email"}
-                description={"Kirim 6-digit kode verifikasi ke email internal"}
+                description={"Kirim 6-digit kode verifikasi ke email"}
                 icon={MailIcon}
                 colorPalette={"purple"}
               />
@@ -325,7 +325,7 @@ export const ResetMethodRadioItem = (props: ResetMethodRadioItemProps) => {
       textAlign={"start"}
       _hover={{ borderColor: `${colorPalette}.fg` }}
     >
-      <HStack justify={"space-between"} align={"center"} w={"full"}>
+      <HStack justify={"space-between"} align={"center"} gap={"md"} w={"full"}>
         <HStack gap={"sm"} align={"start"}>
           <AppIcon
             icon={icon}
