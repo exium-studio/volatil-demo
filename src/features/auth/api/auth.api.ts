@@ -26,7 +26,6 @@ import { apiClient } from "@/shared/libs/api-client/api-client";
 
 import type { ApiResponse, User } from "@/shared/types/common-response.type";
 
-
 export const postLoginApi = async (
   payload: SigninPayload,
   signal?: AbortSignal,
@@ -97,16 +96,13 @@ export const getSsoInternalUrlApi = async (
   params: SsoInternalUrlParams,
   signal?: AbortSignal,
 ): Promise<SsoInternalUrlResponse> => {
-  return apiClient.get<SsoInternalUrlResponse>(
-    "/api/auth/sso/internal/url",
-    {
-      params: {
-        redirectUri: params.redirectUri,
-        state: params.state,
-      },
-      signal,
+  return apiClient.get<SsoInternalUrlResponse>("/api/auth/sso/internal/url", {
+    params: {
+      redirectUri: params.redirectUri,
+      state: params.state,
     },
-  );
+    signal,
+  });
 };
 
 export const postSsoInternalCallbackApi = async (
@@ -142,7 +138,7 @@ export const postResetPasswordRequestApi = async (
   signal?: AbortSignal,
 ): Promise<ResetPasswordRequestResponse> => {
   return apiClient.post<ResetPasswordRequestResponse>(
-    "/api/auth/internal/reset-password/request",
+    "/api/auth/reset-password/request",
     payload,
     { signal },
   );
@@ -153,7 +149,7 @@ export const postResetPasswordVerifyOtpApi = async (
   signal?: AbortSignal,
 ): Promise<ResetPasswordVerifyOtpResponse> => {
   return apiClient.post<ResetPasswordVerifyOtpResponse>(
-    "/api/auth/internal/reset-password/verify-otp",
+    "/api/auth/reset-password/verify-otp",
     payload,
     { signal },
   );
@@ -164,11 +160,8 @@ export const postResetPasswordConfirmApi = async (
   signal?: AbortSignal,
 ): Promise<ResetPasswordConfirmResponse> => {
   return apiClient.post<ResetPasswordConfirmResponse>(
-    "/api/auth/internal/reset-password/confirm",
+    "/api/auth/reset-password/confirm",
     payload,
     { signal },
   );
 };
-
-
-

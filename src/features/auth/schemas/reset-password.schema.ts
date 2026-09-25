@@ -3,6 +3,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
+export const createResetPasswordMethodSchema = () =>
+  z.object({
+    method: z.enum(["email", "totp"]),
+  });
+
 export const createResetPasswordRequestSchema = () =>
   z.object({
     email: z

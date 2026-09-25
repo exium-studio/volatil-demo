@@ -44,7 +44,9 @@ export type ResetPasswordConfirmData = {
 
 export type ResetPasswordConfirmResponse = ApiResponse<ResetPasswordConfirmData>;
 
-export type ResetPasswordStep = "request" | "otp" | "new-password";
+export type ResetMethod = "email" | "totp";
+
+export type ResetPasswordStep = "method" | "request" | "otp" | "new-password";
 
 export type InternalResetPasswordModalProps = {
   modalKey?: string;
@@ -57,6 +59,10 @@ export type InternalResetPasswordTriggerProps = {
   children?: React.ReactNode;
   modalKey?: string;
   defaultEmail?: string;
+};
+
+export type ResetPasswordMethodFormValues = {
+  method: ResetMethod;
 };
 
 export type ResetPasswordRequestFormValues = {
