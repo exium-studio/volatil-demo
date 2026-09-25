@@ -16,6 +16,8 @@ export const FilterAdministrativeAreaSubdistrictSelect = (
   // Props
   const {
     modalKey,
+    provinceId,
+    regencyId,
     districtId,
     value: controlledValue,
     defaultValue = "",
@@ -33,6 +35,8 @@ export const FilterAdministrativeAreaSubdistrictSelect = (
 
   // Queries
   const { data: kelurahanOptionsData, isLoading } = useFilterOptionsKelurahan({
+    provinsiId: provinceId,
+    kabupatenId: regencyId,
     kecamatanId: districtId,
   });
   const selectOptions: FocusSelectOption[] = (
@@ -57,7 +61,9 @@ export const FilterAdministrativeAreaSubdistrictSelect = (
 
   return (
     <FocusSelectInput
-      modalKey={modalKey ?? "filter-administrative-area-subdistrict-select-modal"}
+      modalKey={
+        modalKey ?? "filter-administrative-area-subdistrict-select-modal"
+      }
       title={"Kelurahan / Desa"}
       placeholder={t["action.select"]()}
       options={selectOptions}

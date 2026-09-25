@@ -8,33 +8,65 @@ import { useQuery } from "@tanstack/react-query";
 import type GeoJSON from "geojson";
 import { useMemo } from "react";
 
+export type AdministrativeSelection = {
+  level: AdminBoundaryLevel;
+  name: string;
+  provinsi?: string;
+  kabupaten?: string;
+  kecamatan?: string;
+  kelurahan?: string;
+};
+
 /**
- * Resolves the deepest selected administrative level into level + name.
+ * Resolves the deepest selected administrative level into level + name along with parent hierarchy.
  * Priority: kelurahan -> kecamatan -> kabupaten -> provinsi.
  */
 export const getDeepestAdministrativeSelection = (
   filters?: FilterAdministrativeAreaValues,
-): { level: AdminBoundaryLevel; name: string } | null => {
+): AdministrativeSelection | null => {
   if (!filters) return null;
 
-  const kel = filters.WADMKD ?? filters.wadmkd;
-  if (kel?.value && kel.value.trim() !== "") {
-    return { level: "kelurahan", name: kel.value.trim() };
+  const prov = (filters.WADMPR ?? filters.wadmpr)?.value?.trim();
+  const kab = (filters.WADMKK ?? filters.wadmkk)?.value?.trim();
+  const kec = (filters.WADMKC ?? filters.wadmkc)?.value?.trim();
+  const kel = (filters.WADMKD ?? filters.wadmkd)?.value?.trim();
+
+  if (kel) {
+    return {
+      level: "kelurahan",
+      name: kel,
+      provinsi: prov,
+      kabupaten: kab,
+      kecamatan: kec,
+      kelurahan: kel,
+    };
   }
 
-  const kec = filters.WADMKC ?? filters.wadmkc;
-  if (kec?.value && kec.value.trim() !== "") {
-    return { level: "kecamatan", name: kec.value.trim() };
+  if (kec) {
+    return {
+      level: "kecamatan",
+      name: kec,
+      provinsi: prov,
+      kabupaten: kab,
+      kecamatan: kec,
+    };
   }
 
-  const kab = filters.WADMKK ?? filters.wadmkk;
-  if (kab?.value && kab.value.trim() !== "") {
-    return { level: "kabupaten", name: kab.value.trim() };
+  if (kab) {
+    return {
+      level: "kabupaten",
+      name: kab,
+      provinsi: prov,
+      kabupaten: kab,
+    };
   }
 
-  const prov = filters.WADMPR ?? filters.wadmpr;
-  if (prov?.value && prov.value.trim() !== "") {
-    return { level: "provinsi", name: prov.value.trim() };
+  if (prov) {
+    return {
+      level: "provinsi",
+      name: prov,
+      provinsi: prov,
+    };
   }
 
   return null;
@@ -42,6 +74,7 @@ export const getDeepestAdministrativeSelection = (
 
 /**
  * Custom hook to resolve administrative filter selections into a GeoJSON Polygon AOI via WFS.
+ * Uses cascading strict matching on all selected administrative levels to return exactly 1 boundary feature.
  */
 export const useAdminBoundaryAoi = (
   filters?: FilterAdministrativeAreaValues,
@@ -62,12 +95,20 @@ export const useAdminBoundaryAoi = (
     GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null,
     Error
   >({
-    queryKey: queryKeys.mitra.dataRequest.adminBoundary(level, name),
+    queryKey: queryKeys.mitra.dataRequest.adminBoundary(
+      selection
+        ? `${selection.level}:${selection.provinsi ?? ""}:${selection.kabupaten ?? ""}:${selection.kecamatan ?? ""}:${selection.kelurahan ?? ""}`
+        : `${level}:${name}`,
+    ),
     queryFn: ({ signal }) => {
       if (!selection) return Promise.resolve(null);
       return fetchAdminBoundaryPolygon({
         level: selection.level,
         name: selection.name,
+        provinsi: selection.provinsi,
+        kabupaten: selection.kabupaten,
+        kecamatan: selection.kecamatan,
+        kelurahan: selection.kelurahan,
         signal,
       });
     },
@@ -85,3 +126,4 @@ export const useAdminBoundaryAoi = (
     refetch,
   };
 };
+

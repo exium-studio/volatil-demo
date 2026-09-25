@@ -44,8 +44,8 @@ export const queryKeys = {
         [...queryKeys.mitra.dataRequest.all, "uploaded-aoi", fileName] as const,
       geometryById: (id: string) =>
         [...queryKeys.mitra.dataRequest.all, "geometry", id] as const,
-      adminBoundary: (level: string, name: string) =>
-        [...queryKeys.mitra.dataRequest.all, "admin-boundary", level, name] as const,
+      adminBoundary: (levelOrHierarchy: string, name?: string) =>
+        [...queryKeys.mitra.dataRequest.all, "admin-boundary", levelOrHierarchy, name] as const,
       kawasanCoverage: (aoiHash: string) =>
         [...queryKeys.mitra.dataRequest.all, "kawasan-coverage", aoiHash] as const,
     },

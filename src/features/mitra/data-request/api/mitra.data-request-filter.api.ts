@@ -9,7 +9,7 @@ import type {
   FilterOptionItem,
   FilterOptionsResponse,
 } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
-import { cleanAdministrativeValue } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
+import { escapeCqlString } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import type GeoJSON from "geojson";
@@ -85,7 +85,7 @@ export const fetchFilterOptionsProvinsiApi = async (
 
 /**
  * Fetches unique Kabupaten/Kota options directly from GeoServer WFS BATAS_ADMIN_KOTAKAB layer.
- * Filtered by parent Provinsi (WADMPR) when provided.
+ * Filtered strictly by parent Provinsi (WADMPR) when provided.
  */
 export const fetchFilterOptionsKabupatenApi = async (
   params?: FilterKabupatenParams,
@@ -96,9 +96,9 @@ export const fetchFilterOptionsKabupatenApi = async (
   }
 
   const config = ADMIN_BOUNDARY_WFS_CONFIG.kabupaten;
-  const cleanProv = cleanAdministrativeValue(params.provinsiId);
+  const cleanProv = escapeCqlString(params.provinsiId);
   const cqlFilter = cleanProv
-    ? `WADMPR ILIKE '%${cleanProv}%'`
+    ? `WADMPR ILIKE '${cleanProv}'`
     : undefined;
 
   const res = await fetchWfs({
@@ -129,7 +129,7 @@ export const fetchFilterOptionsKabupatenApi = async (
 
 /**
  * Fetches unique Kecamatan options directly from GeoServer WFS BATAS_ADMIN_KECAMATAN layer.
- * Filtered by parent Kabupaten (WADMKK) when provided.
+ * Filtered strictly by parent Provinsi (WADMPR) and Kabupaten (WADMKK) when provided.
  */
 export const fetchFilterOptionsKecamatanApi = async (
   params?: FilterKecamatanParams,
@@ -140,10 +140,19 @@ export const fetchFilterOptionsKecamatanApi = async (
   }
 
   const config = ADMIN_BOUNDARY_WFS_CONFIG.kecamatan;
-  const cleanKab = cleanAdministrativeValue(params.kabupatenId);
-  const cqlFilter = cleanKab
-    ? `WADMKK ILIKE '%${cleanKab}%'`
-    : undefined;
+  const clauses: string[] = [];
+
+  if (params.provinsiId) {
+    const cleanProv = escapeCqlString(params.provinsiId);
+    if (cleanProv) clauses.push(`WADMPR ILIKE '${cleanProv}'`);
+  }
+
+  const cleanKab = escapeCqlString(params.kabupatenId);
+  if (cleanKab) {
+    clauses.push(`WADMKK ILIKE '${cleanKab}'`);
+  }
+
+  const cqlFilter = clauses.length > 0 ? clauses.join(" AND ") : undefined;
 
   const res = await fetchWfs({
     typeName: config.typeName,
@@ -173,7 +182,7 @@ export const fetchFilterOptionsKecamatanApi = async (
 
 /**
  * Fetches unique Kelurahan/Desa options directly from GeoServer WFS BATAS_ADMIN_BIG_LEVEL_DESA layer.
- * Filtered by parent Kecamatan (WADMKC) when provided.
+ * Filtered strictly by parent Provinsi (WADMPR), Kabupaten (WADMKK), and Kecamatan (WADMKC) when provided.
  */
 export const fetchFilterOptionsKelurahanApi = async (
   params?: FilterKelurahanParams,
@@ -184,10 +193,24 @@ export const fetchFilterOptionsKelurahanApi = async (
   }
 
   const config = ADMIN_BOUNDARY_WFS_CONFIG.kelurahan;
-  const cleanKec = cleanAdministrativeValue(params.kecamatanId);
-  const cqlFilter = cleanKec
-    ? `WADMKC ILIKE '%${cleanKec}%'`
-    : undefined;
+  const clauses: string[] = [];
+
+  if (params.provinsiId) {
+    const cleanProv = escapeCqlString(params.provinsiId);
+    if (cleanProv) clauses.push(`WADMPR ILIKE '${cleanProv}'`);
+  }
+
+  if (params.kabupatenId) {
+    const cleanKab = escapeCqlString(params.kabupatenId);
+    if (cleanKab) clauses.push(`WADMKK ILIKE '${cleanKab}'`);
+  }
+
+  const cleanKec = escapeCqlString(params.kecamatanId);
+  if (cleanKec) {
+    clauses.push(`WADMKC ILIKE '${cleanKec}'`);
+  }
+
+  const cqlFilter = clauses.length > 0 ? clauses.join(" AND ") : undefined;
 
   const res = await fetchWfs({
     typeName: config.typeName,

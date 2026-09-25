@@ -16,6 +16,7 @@ export const FilterAdministrativeAreaDistrictSelect = (
   // Props
   const {
     modalKey,
+    provinceId,
     regencyId,
     value: controlledValue,
     defaultValue = "",
@@ -33,6 +34,7 @@ export const FilterAdministrativeAreaDistrictSelect = (
 
   // Queries
   const { data: kecamatanOptionsData, isLoading } = useFilterOptionsKecamatan({
+    provinsiId: provinceId,
     kabupatenId: regencyId,
   });
   const selectOptions: FocusSelectOption[] = (

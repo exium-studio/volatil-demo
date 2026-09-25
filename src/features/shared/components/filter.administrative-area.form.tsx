@@ -136,6 +136,7 @@ export const FilterAdministrativeAreaForm = (
           >
             <FilterAdministrativeAreaDistrictSelect
               modalKey={`${modalKeyPrefix}.${IGT_FILTER_KEYS_MAP.KECAMATAN}`}
+              provinceId={currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
               regencyId={currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value}
               value={currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value ?? ""}
               disabled={!currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value}
@@ -153,6 +154,8 @@ export const FilterAdministrativeAreaForm = (
           >
             <FilterAdministrativeAreaSubdistrictSelect
               modalKey={`${modalKeyPrefix}.${IGT_FILTER_KEYS_MAP.KELURAHAN}`}
+              provinceId={currentValues[IGT_FILTER_KEYS_MAP.PROVINSI]?.value}
+              regencyId={currentValues[IGT_FILTER_KEYS_MAP.KABUPATEN]?.value}
               districtId={currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value}
               value={currentValues[IGT_FILTER_KEYS_MAP.KELURAHAN]?.value ?? ""}
               disabled={!currentValues[IGT_FILTER_KEYS_MAP.KECAMATAN]?.value}

@@ -32,11 +32,14 @@ export type FilterAdministrativeAreaRegencySelectProps =
 
 export type FilterAdministrativeAreaDistrictSelectProps =
   FilterAdministrativeAreaSelectProps & {
+    provinceId?: string;
     regencyId?: string;
   };
 
 export type FilterAdministrativeAreaSubdistrictSelectProps =
   FilterAdministrativeAreaSelectProps & {
+    provinceId?: string;
+    regencyId?: string;
     districtId?: string;
   };
 

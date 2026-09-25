@@ -14,10 +14,13 @@ export type FilterKabupatenParams = {
 };
 
 export type FilterKecamatanParams = {
+  provinsiId?: string;
   kabupatenId?: string;
 };
 
 export type FilterKelurahanParams = {
+  provinsiId?: string;
+  kabupatenId?: string;
   kecamatanId?: string;
 };
 
@@ -36,6 +39,10 @@ export type AdminBoundaryLevel = "provinsi" | "kabupaten" | "kecamatan" | "kelur
 export type FetchAdminBoundaryParams = {
   level: AdminBoundaryLevel;
   name: string;
+  provinsi?: string;
+  kabupaten?: string;
+  kecamatan?: string;
+  kelurahan?: string;
   signal?: AbortSignal;
 };
 
