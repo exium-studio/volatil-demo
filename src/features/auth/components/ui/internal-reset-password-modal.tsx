@@ -16,6 +16,7 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 
 import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import {
@@ -36,6 +37,7 @@ import type {
   InternalResetPasswordModalProps,
   InternalResetPasswordTriggerProps,
   ResetMethod,
+  ResetMethodRadioItemProps,
   ResetPasswordMethodFormValues,
   ResetPasswordMethodSelectorProps,
   ResetPasswordNewPasswordFormValues,
@@ -141,10 +143,6 @@ export const InternalResetPasswordModal = (
   );
 };
 
-// ==========================================
-// 2. MODAL ROOT WRAPPER
-// ==========================================
-
 const InternalResetPasswordModalContent = (
   props: InternalResetPasswordModalContentProps,
 ) => {
@@ -241,10 +239,6 @@ const InternalResetPasswordModalContent = (
   );
 };
 
-// ==========================================
-// 3. METHOD SELECTOR (STEP 0)
-// ==========================================
-
 const ResetPasswordMethodSelector = ({
   onSelectMethod,
 }: ResetPasswordMethodSelectorProps) => {
@@ -279,88 +273,26 @@ const ResetPasswordMethodSelector = ({
           control={methodForm.control}
           render={({ field }) => (
             <VStack gap={"xs"} align={"stretch"} w={"full"}>
-              {/* Option 1: OTP Email */}
-              <Box
-                onClick={() => field.onChange("email")}
-                p={"sm"}
-                borderWidth={"1.5px"}
-                borderColor={
-                  field.value === "email" ? "purple.solid" : "border.subtle"
-                }
-                bg={field.value === "email" ? "purple.subtle/30" : "bg.panel"}
-                rounded={"md"}
-                transition={"all 0.15s ease"}
-                cursor={"pointer"}
-                textAlign={"start"}
-                _hover={{ borderColor: "purple.fg" }}
-              >
-                <HStack justify={"space-between"} align={"center"} w={"full"}>
-                  <HStack gap={"xs"} align={"start"}>
-                    <Box
-                      p={1.5}
-                      rounded={"md"}
-                      bg={"purple.subtle"}
-                      color={"purple.fg"}
-                      flexShrink={0}
-                    >
-                      <AppIcon icon={MailIcon} size={"sm"} />
-                    </Box>
-                    <VStack align={"start"} gap={"2xs"}>
-                      <P fontSize={"sm"} fontWeight={"semibold"}>
-                        {"OTP via Email"}
-                      </P>
-                      <P fontSize={"2xs"} color={"fg.muted"}>
-                        {"Kirim 6-digit kode verifikasi ke email kedinasan"}
-                      </P>
-                    </VStack>
-                  </HStack>
-                  <RadioIndicator checked={field.value === "email"} />
-                </HStack>
-              </Box>
+              <ResetMethodRadioItem
+                method={"email"}
+                isSelected={field.value === "email"}
+                onSelect={() => field.onChange("email")}
+                title={"OTP via Email"}
+                description={"Kirim 6-digit kode verifikasi ke email kedinasan"}
+                icon={MailIcon}
+                colorPalette={"purple"}
+              />
 
-              {/* Option 2: Google Authenticator (TOTP) */}
-              <Box
-                onClick={() => field.onChange("totp")}
-                p={"sm"}
-                borderWidth={"1.5px"}
-                borderColor={
-                  field.value === "totp" ? "blue.solid" : "border.subtle"
-                }
-                bg={field.value === "totp" ? "blue.subtle/30" : "bg.panel"}
-                rounded={"md"}
-                transition={"all 0.15s ease"}
-                cursor={"pointer"}
-                textAlign={"start"}
-                _hover={{ borderColor: "blue.fg" }}
-              >
-                <HStack justify={"space-between"} align={"center"} w={"full"}>
-                  <HStack gap={"xs"} align={"start"}>
-                    <Box
-                      p={1.5}
-                      rounded={"md"}
-                      bg={"blue.subtle"}
-                      color={"blue.fg"}
-                      flexShrink={0}
-                    >
-                      <AppIcon icon={SmartphoneIcon} size={"sm"} />
-                    </Box>
-                    <VStack align={"start"} gap={"2xs"}>
-                      <HStack gap={"xs"} align={"center"}>
-                        <P fontSize={"sm"} fontWeight={"semibold"}>
-                          {"Google Authenticator (TOTP)"}
-                        </P>
-                        <Badge size={"xs"} colorPalette={"blue"}>
-                          {"Instan"}
-                        </Badge>
-                      </HStack>
-                      <P fontSize={"2xs"} color={"fg.muted"}>
-                        {"Gunakan kode 6 digit dari aplikasi authenticator"}
-                      </P>
-                    </VStack>
-                  </HStack>
-                  <RadioIndicator checked={field.value === "totp"} />
-                </HStack>
-              </Box>
+              <ResetMethodRadioItem
+                method={"totp"}
+                isSelected={field.value === "totp"}
+                onSelect={() => field.onChange("totp")}
+                title={"Google Authenticator (TOTP)"}
+                description={"Gunakan kode 6 digit dari aplikasi authenticator"}
+                badge={"Instan"}
+                icon={SmartphoneIcon}
+                colorPalette={"blue"}
+              />
             </VStack>
           )}
         />
@@ -374,9 +306,64 @@ const ResetPasswordMethodSelector = ({
   );
 };
 
-// ==========================================
-// 4. FLOW 1: EMAIL RESET PASSWORD COMPONENT
-// ==========================================
+export const ResetMethodRadioItem = (props: ResetMethodRadioItemProps) => {
+  const {
+    isSelected,
+    onSelect,
+    title,
+    description,
+    badge,
+    icon,
+    colorPalette = "purple",
+  } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
+
+  return (
+    <Box
+      onClick={onSelect}
+      p={"md"}
+      borderWidth={"1px"}
+      borderColor={isSelected ? `${colorPalette}.solid` : "border.subtle"}
+      rounded={theme.radii.component}
+      transition={"all 0.15s ease"}
+      cursor={"pointer"}
+      textAlign={"start"}
+      _hover={{ borderColor: `${colorPalette}.fg` }}
+    >
+      <HStack justify={"space-between"} align={"center"} w={"full"}>
+        <HStack gap={"sm"} align={"start"}>
+          <AppIcon
+            icon={icon}
+            size={"sm"}
+            color={`${colorPalette}.fg`}
+            mt={"2xs"}
+          />
+
+          <VStack align={"start"} gap={"2xs"}>
+            <HStack gap={"xs"} align={"center"}>
+              <P fontSize={"sm"} fontWeight={"semibold"}>
+                {title}
+              </P>
+
+              {badge && (
+                <Badge size={"sm"} colorPalette={colorPalette}>
+                  {badge}
+                </Badge>
+              )}
+            </HStack>
+
+            <P fontSize={"2xs"} color={"fg.muted"}>
+              {description}
+            </P>
+          </VStack>
+        </HStack>
+        <RadioIndicator checked={isSelected} />
+      </HStack>
+    </Box>
+  );
+};
 
 const EmailResetPasswordFlow = ({
   defaultEmail,
@@ -713,10 +700,6 @@ const EmailResetPasswordFlow = ({
     </VStack>
   );
 };
-
-// ==========================================
-// 5. FLOW 2: TOTP (AUTHENTICATOR) RESET PASSWORD COMPONENT
-// ==========================================
 
 const TotpResetPasswordFlow = ({
   defaultEmail,
