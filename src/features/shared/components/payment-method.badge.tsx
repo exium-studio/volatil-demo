@@ -26,13 +26,12 @@ export const PaymentMethodBadge = (props: PaymentMethodBadgeProps) => {
 
   return (
     <Badge
-      bg={"transparent"}
-      px={0}
       colorPalette={config?.colorPalette ?? "gray"}
       variant={variant}
       {...restProps}
     >
       {showIcon && config?.icon && <AppIcon icon={config.icon} size={"xs"} />}
+
 
       {config?.label ?? children}
     </Badge>

@@ -22,13 +22,12 @@ export const IgtBasisBadge = (props: IgtBasisBadgeProps) => {
 
   return (
     <Badge
-      bg={"transparent"}
-      px={0}
       colorPalette={config?.colorPalette ?? "gray"}
       variant={variant}
       {...restProps}
     >
       {showIcon && config?.icon && <AppIcon icon={config.icon} size={"xs"} />}
+
 
       {showLabel ? (config?.label ?? children ?? "-") : null}
     </Badge>
