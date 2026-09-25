@@ -7,15 +7,16 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Avatar } from "@/design-system/components/media/ui/avatar";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
-import { useThemeStore } from "@/design-system/stores/theme-store";
+import { InternalResetPasswordTrigger } from "@/features/auth/components/ui/internal-reset-password-modal";
 import { SignoutTrigger } from "@/features/auth/components/ui/signout-modal";
 import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
 import type { UserProfilePopoverTriggerProps } from "@/features/auth/types/user-profile-popover.type";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
-import { LogOutIcon, MoonIcon, SunIcon } from "lucide-react";
+import { KeyRoundIcon, LogOutIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const UserProfilePopoverTrigger = (
@@ -123,6 +124,24 @@ export const UserProfilePopoverTrigger = (
                 <Switch checked={isDarkMode} pointerEvents={"none"} />
               </Button>
 
+              {/* Internal Reset / Change Password Button */}
+              {user?.role === "internal" && (
+                <InternalResetPasswordTrigger
+                  defaultEmail={user.email}
+                  initialStep={"change"}
+                >
+                  <Button
+                    size={"sm"}
+                    w={"full"}
+                    px={"sm"}
+                    justifyContent={"start"}
+                  >
+                    <AppIcon icon={KeyRoundIcon} />
+                    {"Ubah / Reset Kata Sandi"}
+                  </Button>
+                </InternalResetPasswordTrigger>
+              )}
+
               {/* Signout Button */}
               <SignoutTrigger>
                 <Button
@@ -144,3 +163,4 @@ export const UserProfilePopoverTrigger = (
     </Popover.Root>
   );
 };
+

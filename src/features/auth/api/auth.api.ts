@@ -14,8 +14,17 @@ import type {
   TotpVerifyPayload,
   TotpVerifyResponse,
 } from "@/features/auth/types/auth.service.type";
+import type {
+  ChangePasswordPayload,
+  ChangePasswordResponse,
+  ResetPasswordConfirmPayload,
+  ResetPasswordConfirmResponse,
+  ResetPasswordRequestPayload,
+  ResetPasswordRequestResponse,
+} from "@/features/auth/types/reset-password.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse, User } from "@/shared/types/common-response.type";
+
 
 export const postLoginApi = async (
   payload: SigninPayload,
@@ -126,4 +135,38 @@ export const postSsoInternalLogoutUrlApi = async (
     },
   );
 };
+
+export const postResetPasswordRequestApi = async (
+  payload: ResetPasswordRequestPayload,
+  signal?: AbortSignal,
+): Promise<ResetPasswordRequestResponse> => {
+  return apiClient.post<ResetPasswordRequestResponse>(
+    "/api/auth/internal/reset-password/request",
+    payload,
+    { signal },
+  );
+};
+
+export const postResetPasswordConfirmApi = async (
+  payload: ResetPasswordConfirmPayload,
+  signal?: AbortSignal,
+): Promise<ResetPasswordConfirmResponse> => {
+  return apiClient.post<ResetPasswordConfirmResponse>(
+    "/api/auth/internal/reset-password/confirm",
+    payload,
+    { signal },
+  );
+};
+
+export const postChangePasswordApi = async (
+  payload: ChangePasswordPayload,
+  signal?: AbortSignal,
+): Promise<ChangePasswordResponse> => {
+  return apiClient.post<ChangePasswordResponse>(
+    "/api/auth/internal/change-password",
+    payload,
+    { signal },
+  );
+};
+
 

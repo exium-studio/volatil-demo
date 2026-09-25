@@ -3,9 +3,12 @@ import {
   getAuthMeApi,
   getSsoInternalUrlApi,
   getTotpSetupApi,
+  postChangePasswordApi,
   postLoginApi,
   postLoginTotpVerifyApi,
   postLogoutApi,
+  postResetPasswordConfirmApi,
+  postResetPasswordRequestApi,
   postSsoInternalCallbackApi,
   postSsoInternalLogoutUrlApi,
   postTotpSetupConfirmApi,
@@ -17,6 +20,15 @@ import type {
   TotpSetupData,
   TotpVerifyPayload,
 } from "@/features/auth/types/auth.service.type";
+import type {
+  ChangePasswordData,
+  ChangePasswordPayload,
+  ResetPasswordConfirmData,
+  ResetPasswordConfirmPayload,
+  ResetPasswordRequestData,
+  ResetPasswordRequestPayload,
+} from "@/features/auth/types/reset-password.type";
+
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { ApiError } from "@/shared/libs/api-client/api-error";
 import type {
@@ -418,5 +430,82 @@ export const authService = {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("auth_token");
   },
+
+  requestResetPassword: async (
+    payload: ResetPasswordRequestPayload,
+    signal?: AbortSignal,
+  ): Promise<ResetPasswordRequestData> => {
+    try {
+      const response = await postResetPasswordRequestApi(payload, signal);
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback for development environment when backend is offline
+      return {
+        message:
+          "Kode verifikasi reset kata sandi telah dikirimkan ke email kedinasan Anda.",
+        email: payload.email,
+        expiresIn: 300,
+        resetToken: "123456",
+      };
+    }
+  },
+
+  confirmResetPassword: async (
+    payload: ResetPasswordConfirmPayload,
+    signal?: AbortSignal,
+  ): Promise<ResetPasswordConfirmData> => {
+    try {
+      const response = await postResetPasswordConfirmApi(payload, signal);
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback
+      return {
+        success: true,
+        message:
+          "Kata sandi akun internal Anda berhasil diperbarui. Silakan masuk menggunakan kata sandi baru.",
+      };
+    }
+  },
+
+  changePassword: async (
+    payload: ChangePasswordPayload,
+    signal?: AbortSignal,
+  ): Promise<ChangePasswordData> => {
+    try {
+      const response = await postChangePasswordApi(payload, signal);
+      return response.data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback
+      return {
+        success: true,
+        message: "Kata sandi Anda berhasil diperbarui.",
+      };
+    }
+  },
 };
+
 

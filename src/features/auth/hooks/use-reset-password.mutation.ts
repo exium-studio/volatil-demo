@@ -1,0 +1,86 @@
+// src/features/auth/hooks/use-reset-password.mutation.ts
+
+import { authService } from "@/features/auth/services/auth.service";
+import type {
+  ChangePasswordData,
+  ChangePasswordPayload,
+  ResetPasswordConfirmData,
+  ResetPasswordConfirmPayload,
+  ResetPasswordRequestData,
+  ResetPasswordRequestPayload,
+} from "@/features/auth/types/reset-password.type";
+import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
+import { useMutation } from "@tanstack/react-query";
+
+export const useResetPasswordRequestMutation = () => {
+  const toastHandlers = mutationToastHandlers("auth-reset-password-request", {
+    group: "Reset Kata Sandi",
+    loadingMessage: {
+      title: "Mengirim kode verifikasi...",
+    },
+    successMessage: {
+      title: "Kode verifikasi terkirim!",
+    },
+  });
+
+  return useMutation<ResetPasswordRequestData, Error, ResetPasswordRequestPayload>({
+    mutationFn: (payload: ResetPasswordRequestPayload) =>
+      authService.requestResetPassword(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+    },
+    onError: (error) => {
+      toastHandlers.onError(error);
+    },
+  });
+};
+
+export const useResetPasswordConfirmMutation = () => {
+  const toastHandlers = mutationToastHandlers("auth-reset-password-confirm", {
+    group: "Reset Kata Sandi",
+    loadingMessage: {
+      title: "Menyimpan kata sandi baru...",
+    },
+    successMessage: {
+      title: "Kata sandi berhasil diperbarui!",
+    },
+  });
+
+  return useMutation<ResetPasswordConfirmData, Error, ResetPasswordConfirmPayload>({
+    mutationFn: (payload: ResetPasswordConfirmPayload) =>
+      authService.confirmResetPassword(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+    },
+    onError: (error) => {
+      toastHandlers.onError(error);
+    },
+  });
+};
+
+export const useChangePasswordMutation = () => {
+  const toastHandlers = mutationToastHandlers("auth-change-password", {
+    group: "Ubah Kata Sandi",
+    loadingMessage: {
+      title: "Memperbarui kata sandi...",
+    },
+    successMessage: {
+      title: "Kata sandi berhasil diubah!",
+    },
+  });
+
+
+  return useMutation<ChangePasswordData, Error, ChangePasswordPayload>({
+    mutationFn: (payload: ChangePasswordPayload) =>
+      authService.changePassword(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+    },
+    onError: (error) => {
+      toastHandlers.onError(error);
+    },
+  });
+};
