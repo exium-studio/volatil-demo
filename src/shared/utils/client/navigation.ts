@@ -1,4 +1,4 @@
-// src/shared/utils/client/navigation.ts
+// src\shared\utils\client\navigation.ts
 
 let lastBackAt = 0;
 

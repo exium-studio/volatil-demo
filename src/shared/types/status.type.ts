@@ -1,4 +1,4 @@
-// src/shared/types/status.type.ts
+// src\shared\types\status.type.ts
 
 import type { LucideIcon } from "lucide-react";
 

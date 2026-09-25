@@ -1,4 +1,4 @@
-// src/features/notification/types/inbox.type.ts
+// src\features\notification\types\inbox.type.ts
 
 export type InboxCategory = "transaksi" | "sistem" | "bantuan" | "akun";
 

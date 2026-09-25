@@ -1,4 +1,4 @@
-// src/design-system/stores/theme-store.ts
+// src\design-system\stores\theme-store.ts
 
 import { COLOR_PALETTES_LIST } from "@/design-system/constants/colors";
 import { ROUNDED_PRESETS_LIST } from "@/design-system/constants/presets";

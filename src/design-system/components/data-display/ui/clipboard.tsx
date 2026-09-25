@@ -1,4 +1,4 @@
-// src/design-system/components/data-display/ui/clipboard.tsx
+// src\design-system\components\data-display\ui\clipboard.tsx
 
 import type {
   ClipboardContextProps,

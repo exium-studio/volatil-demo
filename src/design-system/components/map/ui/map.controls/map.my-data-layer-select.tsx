@@ -1,4 +1,4 @@
-// src/design-system/components/map/ui/map.controls/map.my-data-layer-select.tsx
+// src\design-system\components\map\ui\map.controls\map.my-data-layer-select.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";

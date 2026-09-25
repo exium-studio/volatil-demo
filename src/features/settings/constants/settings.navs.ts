@@ -1,4 +1,4 @@
-// src/features/settings/constants/settings.navs.ts
+// src\features\settings\constants\settings.navs.ts
 
 import type { NavItem } from "@/shared/types/nav.type";
 import {

@@ -1,4 +1,4 @@
-// src/design-system/components/overlay/types/tooltip.type.ts
+// src\design-system\components\overlay\types\tooltip.type.ts
 
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import { Tooltip as ChakraTooltip } from "@chakra-ui/react";

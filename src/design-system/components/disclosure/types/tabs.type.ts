@@ -1,4 +1,4 @@
-// src/design-system/components/disclosure/types/tabs.type.ts
+// src\design-system\components\disclosure\types\tabs.type.ts
 
 import type {
   TabsRootProps as ChakraTabsRootProps,

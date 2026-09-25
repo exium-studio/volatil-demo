@@ -1,4 +1,4 @@
-// src/design-system/components/input/ui/chakra-date-picker.tsx
+// src\design-system\components\input\ui\chakra-date-picker.tsx
 
 import {
   DatePicker as ChakraDatePicker,

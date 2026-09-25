@@ -1,4 +1,4 @@
-// src/features/internal/home/types/internal.home.trend.type.ts
+// src\features\internal\home\types\internal.home.trend.type.ts
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";

@@ -1,4 +1,4 @@
-// src/routes/_private/internal/help-center.$ticketId.tsx
+// src\routes\_private\internal\help-center.$ticketId.tsx
 
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { HelpCenterDetailPage } from "@/features/help-center/pages/help-center.detail.page";

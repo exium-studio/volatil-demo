@@ -1,4 +1,4 @@
-// src/features/notification/hooks/use-notifications.ts
+// src\features\notification\hooks\use-notifications.ts
 
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
 import { useToastHistory } from "@/design-system/components/toast/hooks/use-toast-history";

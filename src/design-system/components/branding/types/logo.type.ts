@@ -1,4 +1,4 @@
-// src/design-system/components/branding/types/logo.type.ts
+// src\design-system\components\branding\types\logo.type.ts
 
 import type { CenterProps } from "@chakra-ui/react";
 

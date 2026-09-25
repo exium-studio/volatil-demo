@@ -1,4 +1,4 @@
-// src/routes/index.tsx
+// src\routes\index.tsx
 
 import { MitraSigninPage } from "@/features/auth/pages/mitra.signin.page";
 import { createFileRoute } from "@tanstack/react-router";

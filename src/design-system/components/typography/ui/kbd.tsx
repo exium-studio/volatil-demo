@@ -1,4 +1,4 @@
-// src/design-system/components/typography/ui/kbd.tsx
+// src\design-system\components\typography\ui\kbd.tsx
 
 import { Kbd as ChakraKbd } from "@chakra-ui/react";
 import { forwardRef } from "react";

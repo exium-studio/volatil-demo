@@ -1,4 +1,4 @@
-// src/features/internal/mitra-layer-sync-jobs/types/mitra-layer-sync-job.type.ts
+// src\features\internal\mitra-layer-sync-jobs\types\mitra-layer-sync-job.type.ts
 
 import type {
   PaginatedParams,

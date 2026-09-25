@@ -1,3 +1,5 @@
+// src\features\internal\home\components\internal.home.leaderboard.tsx
+
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";

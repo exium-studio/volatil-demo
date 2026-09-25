@@ -1,4 +1,4 @@
-// src/features/internal/mitra-layer-sync-jobs/hooks/use-mitra-layer-sync-jobs.query.ts
+// src\features\internal\mitra-layer-sync-jobs\hooks\use-mitra-layer-sync-jobs.query.ts
 
 import {
   getMitraLayerSyncJobById,

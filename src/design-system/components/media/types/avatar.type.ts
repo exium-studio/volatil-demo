@@ -1,4 +1,4 @@
-// src/design-system/components/media/types/avatar.type.ts
+// src\design-system\components\media\types\avatar.type.ts
 
 import type { Avatar as ChakraAvatar } from "@chakra-ui/react";
 import type { ReactNode } from "react";

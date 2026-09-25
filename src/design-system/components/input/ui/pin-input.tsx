@@ -1,4 +1,4 @@
-// src/design-system/components/input/ui/pin-input.tsx
+// src\design-system\components\input\ui\pin-input.tsx
 
 import type { PinInputProps } from "@/design-system/components/input/types/pin-input.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";

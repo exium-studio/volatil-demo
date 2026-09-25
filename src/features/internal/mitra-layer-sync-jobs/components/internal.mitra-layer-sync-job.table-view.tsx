@@ -1,4 +1,4 @@
-// src/features/internal/mitra-layer-sync-jobs/components/internal.mitra-layer-sync-job.table-view.tsx
+// src\features\internal\mitra-layer-sync-jobs\components\internal.mitra-layer-sync-job.table-view.tsx
 
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";

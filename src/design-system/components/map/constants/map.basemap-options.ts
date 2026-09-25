@@ -1,4 +1,4 @@
-// src/design-system/components/map/constants/map.basemap-options.ts
+// src\design-system\components\map\constants\map.basemap-options.ts
 
 import type {
   BasemapOption,

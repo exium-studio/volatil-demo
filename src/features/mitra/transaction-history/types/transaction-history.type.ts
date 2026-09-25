@@ -1,4 +1,4 @@
-// src/features/mitra/transaction-history/types/transaction-history.type.ts
+// src\features\mitra\transaction-history\types\transaction-history.type.ts
 
 import type {
   IgtBasisType,

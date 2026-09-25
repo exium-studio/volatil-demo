@@ -1,4 +1,4 @@
-// src/shared/utils/user/user-session.utils.ts
+// src\shared\utils\user\user-session.utils.ts
 
 import type { User } from "@/shared/types/common-response.type";
 import { getStorage } from "@/shared/utils/client/client.storage";

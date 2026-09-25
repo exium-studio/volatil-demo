@@ -1,4 +1,4 @@
-// src/features/internal/mitra-registration/pages/internal.mitra-registration.detail.page.tsx
+// src\features\internal\mitra-registration\pages\internal.mitra-registration.detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";

@@ -1,4 +1,4 @@
-// src/features/design-system-docs/types/ds-docs-spec.type.ts
+// src\features\design-system-docs\types\ds-docs-spec.type.ts
 
 import type { ElementType, ReactNode } from "react";
 

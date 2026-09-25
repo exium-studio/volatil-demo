@@ -1,4 +1,4 @@
-// src/features/auth/types/user-profile-popover.type.ts
+// src\features\auth\types\user-profile-popover.type.ts
 
 import type { ReactNode } from "react";
 

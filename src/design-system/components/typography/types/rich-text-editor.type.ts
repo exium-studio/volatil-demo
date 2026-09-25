@@ -1,4 +1,4 @@
-// src/design-system/components/typography/types/rich-text-editor.type.ts
+// src\design-system\components\typography\types\rich-text-editor.type.ts
 
 import type { SelectProps } from "@/design-system/components/input/types/select.type";
 import type { BoxProps, IconButtonProps, StackProps } from "@chakra-ui/react";

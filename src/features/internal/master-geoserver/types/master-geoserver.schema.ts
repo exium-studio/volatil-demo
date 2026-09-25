@@ -1,4 +1,4 @@
-// src/features/internal/master-geoserver/types/master-geoserver.schema.ts
+// src\features\internal\master-geoserver\types\master-geoserver.schema.ts
 
 import { z } from "zod";
 

@@ -1,4 +1,4 @@
-// src/design-system/components/typography/ui/count-badge.tsx
+// src\design-system\components\typography\ui\count-badge.tsx
 
 import { Float } from "@/design-system/components/layout/ui/float";
 import type { CountBadgeProps } from "@/design-system/components/typography/types/count-badge.type";

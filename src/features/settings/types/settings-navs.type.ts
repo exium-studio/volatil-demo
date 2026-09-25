@@ -1,4 +1,4 @@
-// src/features/settings/types/settings-navs.type.ts
+// src\features\settings\types\settings-navs.type.ts
 
 import type { SETTINGS_NAVS_MAP } from "@/features/settings/constants/settings.navs";
 

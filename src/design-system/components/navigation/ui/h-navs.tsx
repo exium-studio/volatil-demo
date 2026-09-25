@@ -1,4 +1,4 @@
-// src/design-system/components/navigation/ui/h-navs.tsx
+// src\design-system\components\navigation\ui\h-navs.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";

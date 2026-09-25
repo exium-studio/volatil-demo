@@ -1,4 +1,4 @@
-// src/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal.tsx
+// src\features\internal\mitra-registration\components\internal.mitra-registration.reject-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

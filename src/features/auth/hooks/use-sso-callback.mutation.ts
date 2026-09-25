@@ -1,4 +1,4 @@
-// src/features/auth/hooks/use-sso-callback.mutation.ts
+// src\features\auth\hooks\use-sso-callback.mutation.ts
 
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { authService } from "@/features/auth/services/auth.service";

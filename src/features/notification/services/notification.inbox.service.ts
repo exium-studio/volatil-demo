@@ -1,4 +1,4 @@
-// src/features/notification/services/notification.inbox.service.ts
+// src\features\notification\services\notification.inbox.service.ts
 
 import {
   clearAllInboxApi,

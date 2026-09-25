@@ -1,4 +1,4 @@
-// src/features/internal/user-management/services/user-management.service.ts
+// src\features\internal\user-management\services\user-management.service.ts
 
 import {
   fetchAdminUserDetailApi,

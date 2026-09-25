@@ -1,4 +1,4 @@
-// src/design-system/components/navigation/ui/sidebar.tsx
+// src\design-system\components\navigation\ui\sidebar.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

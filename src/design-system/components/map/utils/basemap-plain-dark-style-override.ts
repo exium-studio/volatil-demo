@@ -1,4 +1,4 @@
-// src/design-system/components/map/utils/basemap-plain-dark-style-override.ts
+// src\design-system\components\map\utils\basemap-plain-dark-style-override.ts
 
 import type maplibregl from "maplibre-gl";
 

@@ -1,4 +1,4 @@
-// src/shared/libs/i18n/utils.ts
+// src\shared\libs\i18n\utils.ts
 
 export function getLocaleLabel(locale: string, displayLocale?: string) {
   const names = new Intl.DisplayNames([displayLocale ?? locale], {

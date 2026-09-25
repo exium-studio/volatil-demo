@@ -1,4 +1,4 @@
-// src/design-system/components/layout/ui/constrained-container.tsx
+// src\design-system\components\layout\ui\constrained-container.tsx
 
 import type { ConstrainedContainerProps } from "@/design-system/components/layout/types/container.type";
 import { Box } from "@/design-system/components/layout/ui/box";

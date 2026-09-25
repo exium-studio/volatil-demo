@@ -1,4 +1,4 @@
-// src/design-system/components/toast/index.ts
+// src\design-system\components\toast\index.ts
 
 export { toast } from "@/design-system/components/toast/core/toast.manager";
 export { toastEventBus } from "@/design-system/components/toast/core/toast.event-bus";

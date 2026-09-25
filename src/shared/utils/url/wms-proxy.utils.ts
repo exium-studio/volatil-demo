@@ -1,4 +1,4 @@
-// src/shared/utils/url/wms-proxy.utils.ts
+// src\shared\utils\url\wms-proxy.utils.ts
 
 /**
  * Gets the base URL for the WMS proxy service.

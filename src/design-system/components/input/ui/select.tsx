@@ -1,4 +1,4 @@
-// src/design-system/components/input/ui/select.tsx
+// src\design-system\components\input\ui\select.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type {

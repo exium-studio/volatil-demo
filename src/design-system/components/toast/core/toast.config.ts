@@ -1,4 +1,4 @@
-// src/design-system/components/toast/core/toast.config.ts
+// src\design-system\components\toast\core\toast.config.ts
 
 import type { ToastEngineConfig } from "@/design-system/components/toast/types/toast.type";
 

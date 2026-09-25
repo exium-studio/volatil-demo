@@ -1,4 +1,4 @@
-// src/features/internal/home/services/internal.home.publication-status.service.ts
+// src\features\internal\home\services\internal.home.publication-status.service.ts
 
 import { fetchPublicationStatusApi } from "@/features/internal/home/api/internal.home.publication-status.api";
 import type { IgtPublicationStatusSummary } from "@/features/internal/home/types/internal.home.api.type";

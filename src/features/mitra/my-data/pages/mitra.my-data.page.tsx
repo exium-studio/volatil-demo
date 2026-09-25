@@ -1,4 +1,4 @@
-// src/features/mitra/my-data/pages/mitra.my-data.page.tsx
+// src\features\mitra\my-data\pages\mitra.my-data.page.tsx
 
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";

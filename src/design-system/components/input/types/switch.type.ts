@@ -1,4 +1,4 @@
-// src/design-system/components/input/types/switch.type.ts
+// src\design-system\components\input\types\switch.type.ts
 
 import { Switch as ChakraSwitch } from "@chakra-ui/react";
 import type { ReactNode } from "react";

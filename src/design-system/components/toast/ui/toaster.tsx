@@ -1,4 +1,4 @@
-// src/design-system/components/toast/ui/toaster.tsx
+// src\design-system\components\toast\ui\toaster.tsx
 
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";

@@ -1,4 +1,4 @@
-// src/features/settings/constants/settings.pages.ts
+// src\features\settings\constants\settings.pages.ts
 
 import { AppearanceSettingsPage } from "@/features/settings/pages/appearance/appearance.settings-page";
 import { ProfileSettingsPage } from "@/features/settings/pages/profile/profile.settings-page";

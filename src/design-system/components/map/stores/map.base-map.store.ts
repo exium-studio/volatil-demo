@@ -1,4 +1,4 @@
-// src/design-system/components/map/stores/map.base-map.store.ts
+// src\design-system\components\map\stores\map.base-map.store.ts
 
 import type { MapBaseMapState } from "@/design-system/components/map/types/map.basemap.type";
 import { create } from "zustand";

@@ -1,4 +1,4 @@
-// src/design-system/components/toast/ui/toast.progress-bar.tsx
+// src\design-system\components\toast\ui\toast.progress-bar.tsx
 
 import { Box } from "@/design-system/components/layout/ui/box";
 import type { ToastItemData } from "@/design-system/components/toast/types/toast.type";

@@ -1,4 +1,4 @@
-// src/shared/types/byte.formatter.type.ts
+// src\shared\types\byte.formatter.type.ts
 
 export type ByteUnit =
   | "B"

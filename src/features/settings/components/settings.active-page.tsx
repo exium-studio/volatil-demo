@@ -1,4 +1,4 @@
-// src/features/settings/components/settings.active-page.tsx
+// src\features\settings\components\settings.active-page.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";

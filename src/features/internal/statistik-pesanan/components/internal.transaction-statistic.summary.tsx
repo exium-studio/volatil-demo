@@ -1,4 +1,4 @@
-// src/features/internal/statistik-pesanan/components/internal.transaction-statistic.summary.tsx
+// src\features\internal\statistik-pesanan\components\internal.transaction-statistic.summary.tsx
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";

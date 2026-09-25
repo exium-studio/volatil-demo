@@ -1,4 +1,4 @@
-// src/features/internal/home/api/internal.home.publication-status.api.ts
+// src\features\internal\home\api\internal.home.publication-status.api.ts
 
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";

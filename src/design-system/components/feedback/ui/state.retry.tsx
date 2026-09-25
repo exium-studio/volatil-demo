@@ -1,4 +1,4 @@
-// src/design-system/components/feedback/ui/state.retry.tsx
+// src\design-system\components\feedback\ui\state.retry.tsx
 
 "use client";
 

@@ -1,4 +1,4 @@
-// src/design-system/components/layout/ui/page-container.tsx
+// src\design-system\components\layout\ui\page-container.tsx
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PageContainerProps } from "@/design-system/components/layout/types/page-container.type";

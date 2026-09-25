@@ -1,4 +1,4 @@
-// src/routes/_private/internal/home.tsx
+// src\routes\_private\internal\home.tsx
 
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { InternalHomePage } from "@/features/internal/home/pages/internal.home.page";

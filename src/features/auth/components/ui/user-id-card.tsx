@@ -1,4 +1,4 @@
-// src/features/auth/components/ui/user-id-card.tsx
+// src\features\auth\components\ui\user-id-card.tsx
 
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { Button } from "@/design-system/components/button/ui/button";

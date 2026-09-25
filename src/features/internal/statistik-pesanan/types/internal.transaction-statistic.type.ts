@@ -1,4 +1,4 @@
-// src/features/internal/statistik-pesanan/types/internal.transaction-statistic.type.ts
+// src\features\internal\statistik-pesanan\types\internal.transaction-statistic.type.ts
 
 import type { SelectionType } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type { PaginationMeta } from "@/shared/types/common-response.type";

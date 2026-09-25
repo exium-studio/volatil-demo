@@ -1,4 +1,4 @@
-// src/design-system/components/shell/ui/app-nav-title.tsx
+// src\design-system\components\shell\ui\app-nav-title.tsx
 
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/navs.utils";
 import type { AppNavTitleProps } from "@/design-system/components/shell/types/app-nav-title.type";

@@ -1,4 +1,4 @@
-// src/design-system/components/typography/ui/p.tsx
+// src\design-system\components\typography\ui\p.tsx
 
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Span, Text } from "@chakra-ui/react";

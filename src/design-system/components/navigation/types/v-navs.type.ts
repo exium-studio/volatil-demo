@@ -1,4 +1,4 @@
-// src/design-system/components/navigation/types/v-navs.type.ts
+// src\design-system\components\navigation\types\v-navs.type.ts
 
 import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";

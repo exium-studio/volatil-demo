@@ -1,4 +1,4 @@
-// src/design-system/components/map/hooks/use-map-view-padding.ts
+// src\design-system\components\map\hooks\use-map-view-padding.ts
 
 import type { MapViewPaddingOptions } from "@/design-system/components/map/types/map.type";
 import type maplibregl from "maplibre-gl";

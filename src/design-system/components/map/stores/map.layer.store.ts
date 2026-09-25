@@ -1,4 +1,4 @@
-// src/design-system/components/map/stores/map.layer.store.ts
+// src\design-system\components\map\stores\map.layer.store.ts
 
 import type { MapLayerState } from "@/design-system/components/map/types/map.type";
 import { create } from "zustand";

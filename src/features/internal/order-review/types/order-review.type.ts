@@ -1,4 +1,4 @@
-// src/features/internal/order-review/types/order-review.type.ts
+// src\features\internal\order-review\types\order-review.type.ts
 
 import type {
   CartOrderItem,

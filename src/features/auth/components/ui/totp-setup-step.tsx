@@ -1,4 +1,4 @@
-// src/features/auth/components/ui/totp-setup-step.tsx
+// src\features\auth\components\ui\totp-setup-step.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

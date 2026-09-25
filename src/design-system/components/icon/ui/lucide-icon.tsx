@@ -1,4 +1,4 @@
-// src/design-system/components/icon/ui/lucide-icon.tsx
+// src\design-system\components\icon\ui\lucide-icon.tsx
 
 "use client";
 

@@ -1,4 +1,4 @@
-// src/shared/utils/data/array.ts
+// src\shared\utils\data\array.ts
 
 export const isArray = (item: unknown): boolean => Array.isArray(item);
 

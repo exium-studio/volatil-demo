@@ -1,4 +1,4 @@
-// src/features/internal/user-management/hooks/use-user-management.query.ts
+// src\features\internal\user-management\hooks\use-user-management.query.ts
 
 import {
   getAdminUserDetail,

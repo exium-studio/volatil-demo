@@ -1,4 +1,4 @@
-// src/scripts/generate-file-path-header.cjs
+// src\scripts\generate-file-path-header.cjs
 
 const fs = require("fs");
 const path = require("path");

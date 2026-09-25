@@ -1,4 +1,4 @@
-// src/design-system/components/button/types/button.type.ts
+// src\design-system\components\button\types\button.type.ts
 
 import type {
   ButtonProps as ChakraButtonProps,

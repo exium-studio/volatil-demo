@@ -1,4 +1,4 @@
-// src/shared/utils/formatter/date.formatter.ts
+// src\shared\utils\formatter\date.formatter.ts
 
 import { getLocale } from "@/shared/libs/i18n";
 import type { FormatAdaptiveDateTimeOptions } from "@/shared/types/date.formatter.type";

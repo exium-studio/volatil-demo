@@ -1,4 +1,4 @@
-// src/design-system/components/typography/types/list.type.ts
+// src\design-system\components\typography\types\list.type.ts
 
 import type {
   ListRootProps as ChakraListRootProps,

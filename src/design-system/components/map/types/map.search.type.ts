@@ -1,4 +1,4 @@
-// src/design-system/components/map/types/map.search.type.ts
+// src\design-system\components\map\types\map.search.type.ts
 
 export type MapSearchResultItem = {
   place_id: number | string;

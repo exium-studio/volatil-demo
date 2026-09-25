@@ -1,4 +1,4 @@
-// src/design-system/components/emoji/ui/emoji.thinking.tsx
+// src\design-system\components\emoji\ui\emoji.thinking.tsx
 
 import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
 import { Center } from "@/design-system/components/layout/ui/center";

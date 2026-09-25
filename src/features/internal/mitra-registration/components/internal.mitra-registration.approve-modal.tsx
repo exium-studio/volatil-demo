@@ -1,4 +1,4 @@
-// src/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal.tsx
+// src\features\internal\mitra-registration\components\internal.mitra-registration.approve-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";

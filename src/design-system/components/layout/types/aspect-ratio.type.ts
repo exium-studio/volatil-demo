@@ -1,4 +1,4 @@
-// src/design-system/components/layout/types/aspect-ratio.type.ts
+// src\design-system\components\layout\types\aspect-ratio.type.ts
 
 import type { AspectRatioProps as ChakraAspectRatioProps } from "@chakra-ui/react";
 

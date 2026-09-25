@@ -1,4 +1,4 @@
-// src/shared/constants/paths.ts
+// src\shared\constants\paths.ts
 
 export const PATH_CONFIG = {
   images: "/assets/images",

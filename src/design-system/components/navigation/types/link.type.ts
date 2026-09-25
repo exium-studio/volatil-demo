@@ -1,4 +1,4 @@
-// src/design-system/components/navigation/types/link.type.ts
+// src\design-system\components\navigation\types\link.type.ts
 
 import type { AppIconSize } from "@/design-system/components/icon/types/app-icon.type";
 import type { LinkProps as ChakraLinkProps } from "@chakra-ui/react";

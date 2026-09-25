@@ -1,4 +1,4 @@
-// src/design-system/components/map/types/map.fetch-wfs.type.ts
+// src\design-system\components\map\types\map.fetch-wfs.type.ts
 
 import type GeoJSON from "geojson";
 

@@ -1,4 +1,4 @@
-// src/design-system/components/emoji/ui/emoji.thumb-up.tsx
+// src\design-system\components\emoji\ui\emoji.thumb-up.tsx
 
 import { useEmojiColors } from "@/design-system/components/emoji/hooks/use-emoji-colors";
 import { Center } from "@/design-system/components/layout/ui/center";

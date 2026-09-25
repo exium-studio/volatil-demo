@@ -1,4 +1,4 @@
-// src/features/internal/home/components/internal.home.mitra-layer-sync-jobs-quick-view.tsx
+// src\features\internal\home\components\internal.home.mitra-layer-sync-jobs-quick-view.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

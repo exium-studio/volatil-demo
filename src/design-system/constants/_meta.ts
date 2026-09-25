@@ -1,4 +1,4 @@
-// src/design-system/constants/_meta.ts
+// src\design-system\constants\_meta.ts
 
 export const APP_CONFIG = {
   title: "Volatil",

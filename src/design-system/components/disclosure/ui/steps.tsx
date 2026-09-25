@@ -1,4 +1,4 @@
-// src/design-system/components/disclosure/ui/steps.tsx
+// src\design-system\components\disclosure\ui\steps.tsx
 
 "use client";
 

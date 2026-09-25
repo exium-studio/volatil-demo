@@ -1,4 +1,4 @@
-// src/features/internal/data-management/constants/data-management.config.ts
+// src\features\internal\data-management\constants\data-management.config.ts
 
 import type { PublishStatusType, PublishStatusTypeConfig } from "@/features/internal/data-management/types/data-management.type";
 

@@ -1,4 +1,4 @@
-// src/routes/_private/internal/mitra-registration.$registrationId.tsx
+// src\routes\_private\internal\mitra-registration.$registrationId.tsx
 
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { InternalMitraRegistrationDetailPage } from "@/features/internal/mitra-registration/pages/internal.mitra-registration.detail.page";

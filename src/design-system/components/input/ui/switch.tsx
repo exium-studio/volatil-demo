@@ -1,4 +1,4 @@
-// src/design-system/components/input/ui/switch.tsx
+// src\design-system\components\input\ui\switch.tsx
 
 import type { SwitchProps } from "@/design-system/components/input/types/switch.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";

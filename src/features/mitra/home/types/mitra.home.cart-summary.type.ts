@@ -1,4 +1,4 @@
-// src/features/mitra/home/types/mitra.home.cart-summary.type.ts
+// src\features\mitra\home\types\mitra.home.cart-summary.type.ts
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ComponentType } from "react";

@@ -1,4 +1,4 @@
-// src/features/help-center/components/help-center.modal.resolve-reject.tsx
+// src\features\help-center\components\help-center.modal.resolve-reject.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";

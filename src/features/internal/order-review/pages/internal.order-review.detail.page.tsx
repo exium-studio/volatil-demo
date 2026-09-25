@@ -1,4 +1,4 @@
-// src/features/internal/order-review/pages/internal.order-review.detail.page.tsx
+// src\features\internal\order-review\pages\internal.order-review.detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import {

@@ -1,4 +1,4 @@
-// src/features/shared/types/badge.type.ts
+// src\features\shared\types\badge.type.ts
 
 import type { BadgeProps } from "@/design-system/components/typography/types/badge.type";
 import type {

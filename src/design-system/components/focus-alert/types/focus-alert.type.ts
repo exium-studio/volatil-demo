@@ -1,3 +1,5 @@
+// src\design-system\components\focus-alert\types\focus-alert.type.ts
+
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { EmojiVariant } from "@/design-system/components/emoji/types/emoji.type";
 import type { ComponentType, ReactNode } from "react";

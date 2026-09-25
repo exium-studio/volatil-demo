@@ -1,4 +1,4 @@
-// src/design-system/components/input/ui/checkbox.tsx
+// src\design-system\components\input\ui\checkbox.tsx
 
 import type { CheckboxProps } from "@/design-system/components/input/types/checkbox.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";

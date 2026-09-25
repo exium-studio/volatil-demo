@@ -1,4 +1,4 @@
-// src/shared/constants/dummy-data/dummy-igt-by-aoi.ts
+// src\shared\constants\dummy-data\dummy-igt-by-aoi.ts
 
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import type { MitraDataRequestIgtDataResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";

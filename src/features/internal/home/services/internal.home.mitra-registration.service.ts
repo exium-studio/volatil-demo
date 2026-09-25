@@ -1,4 +1,4 @@
-// src/features/internal/home/services/internal.home.mitra-registration.service.ts
+// src\features\internal\home\services\internal.home.mitra-registration.service.ts
 
 import { fetchMitraRegistrationApi } from "@/features/internal/home/api/internal.home.mitra-registration.api";
 import type { MitraRegistrationSummary } from "@/features/internal/home/types/internal.home.api.type";

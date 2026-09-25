@@ -1,4 +1,4 @@
-// src/design-system/components/emoji/ui/emoji.tsx
+// src\design-system\components\emoji\ui\emoji.tsx
 
 import type {
   EmojiProps,

@@ -1,4 +1,4 @@
-// src/shared/libs/tanstack-query/query.keys.ts
+// src\shared\libs\tanstack-query\query.keys.ts
 
 import type GeoJSON from "geojson";
 

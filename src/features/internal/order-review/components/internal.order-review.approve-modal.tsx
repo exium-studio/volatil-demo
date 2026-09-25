@@ -1,4 +1,4 @@
-// src/features/internal/order-review/components/internal.order-review.approve-modal.tsx
+// src\features\internal\order-review\components\internal.order-review.approve-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";

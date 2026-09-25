@@ -1,4 +1,4 @@
-// src/features/shared/components/spatial-features.data-view.tsx
+// src\features\shared\components\spatial-features.data-view.tsx
 
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";

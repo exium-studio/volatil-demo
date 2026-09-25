@@ -1,4 +1,4 @@
-// src/features/settings/components/settings.search.tsx
+// src\features\settings\components\settings.search.tsx
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { IconButton } from "@/design-system/components/button/ui/button";

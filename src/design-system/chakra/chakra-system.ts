@@ -1,4 +1,4 @@
-// src/design-system/chakra/chakra-system.ts
+// src\design-system\chakra\chakra-system.ts
 
 import { buttonRecipe } from "@/design-system/chakra/recipes/button.recipe";
 import { inputRecipe } from "@/design-system/chakra/recipes/input.recipe";

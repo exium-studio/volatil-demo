@@ -1,4 +1,4 @@
-// src/design-system/components/feedback/hooks/use-alert-animation.ts
+// src\design-system\components\feedback\hooks\use-alert-animation.ts
 
 import type { UseAlertAnimationOptions } from "@/design-system/components/feedback/types/alert-animation.type";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";

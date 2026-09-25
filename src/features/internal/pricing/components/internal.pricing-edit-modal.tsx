@@ -1,4 +1,4 @@
-// src/features/internal/pricing/components/internal.pricing-edit-modal.tsx
+// src\features\internal\pricing\components\internal.pricing-edit-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";

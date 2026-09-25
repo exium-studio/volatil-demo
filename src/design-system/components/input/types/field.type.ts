@@ -1,4 +1,4 @@
-// src/design-system/components/input/types/field.type.ts
+// src\design-system\components\input\types\field.type.ts
 
 import { Field as ChakraField } from "@chakra-ui/react";
 import type { ReactNode } from "react";

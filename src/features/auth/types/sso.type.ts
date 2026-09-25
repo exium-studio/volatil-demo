@@ -1,4 +1,4 @@
-// src/features/auth/types/sso.type.ts
+// src\features\auth\types\sso.type.ts
 
 export type SsoCallbackSearch = {
   code?: string;

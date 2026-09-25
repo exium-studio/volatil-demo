@@ -1,4 +1,4 @@
-// src/features/shared/components/mitra-layer-sync-job-status.badge.tsx
+// src\features\shared\components\mitra-layer-sync-job-status.badge.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";

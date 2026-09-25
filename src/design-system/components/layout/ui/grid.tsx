@@ -1,4 +1,4 @@
-// src/design-system/components/layout/ui/grid.tsx
+// src\design-system\components\layout\ui\grid.tsx
 
 import type {
   GridItemProps,

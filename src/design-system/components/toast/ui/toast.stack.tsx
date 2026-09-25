@@ -1,4 +1,4 @@
-// src/design-system/components/toast/ui/toast.stack.tsx
+// src\design-system\components\toast\ui\toast.stack.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";

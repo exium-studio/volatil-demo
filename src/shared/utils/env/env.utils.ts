@@ -1,4 +1,4 @@
-// src/shared/utils/env/env.utils.ts
+// src\shared\utils\env\env.utils.ts
 
 /**
  * Checks whether dummy data fallback is enabled via environment variable VITE_ENABLE_DUMMY_RESPONSE_FALLBACK.

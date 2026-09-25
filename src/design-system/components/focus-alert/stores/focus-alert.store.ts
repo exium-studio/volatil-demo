@@ -1,4 +1,4 @@
-// src/design-system/components/focus-alert/stores/focus-alert.store.ts
+// src\design-system\components\focus-alert\stores\focus-alert.store.ts
 
 import { create } from "zustand";
 import type { FocusAlerterStore } from "@/design-system/components/focus-alert/types/focus-alert.type";

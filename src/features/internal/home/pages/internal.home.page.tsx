@@ -1,4 +1,4 @@
-// src/features/internal/home/pages/internal.home.page.tsx
+// src\features\internal\home\pages\internal.home.page.tsx
 
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";

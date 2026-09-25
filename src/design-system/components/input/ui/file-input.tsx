@@ -1,4 +1,4 @@
-// src/design-system/components/input/ui/file-input.tsx
+// src\design-system\components\input\ui\file-input.tsx
 
 import {
   Button,

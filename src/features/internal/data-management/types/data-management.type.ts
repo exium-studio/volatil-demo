@@ -1,4 +1,4 @@
-// src/features/internal/data-management/types/data-management.type.ts
+// src\features\internal\data-management\types\data-management.type.ts
 
 import type {
   PaginatedParams,

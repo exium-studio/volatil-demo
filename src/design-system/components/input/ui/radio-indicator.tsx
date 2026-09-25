@@ -1,4 +1,4 @@
-// src/design-system/components/input/ui/radio-indicator.tsx
+// src\design-system\components\input\ui\radio-indicator.tsx
 
 import type { RadioIndicatorProps } from "@/design-system/components/input/types/radio-indicator.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";

@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/utils/build-igt-cql-filter.ts
+// src\features\mitra\data-request\utils\build-igt-cql-filter.ts
 
 import { IGT_FILTER_KEYS_MAP } from "@/features/mitra/data-request/constants/igt.config";
 import type { FilterAdministrativeAreaValues } from "@/features/shared/types/filter.administrative-area.type";

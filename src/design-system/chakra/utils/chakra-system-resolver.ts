@@ -1,4 +1,4 @@
-// src/design-system/chakra/utils/chakra-system-resolver.ts
+// src\design-system\chakra\utils\chakra-system-resolver.ts
 
 import { chakraConfig } from "@/design-system/chakra/chakra-system";
 import type { TokenNode } from "@/design-system/chakra/types/chakra-system-resolver.type";

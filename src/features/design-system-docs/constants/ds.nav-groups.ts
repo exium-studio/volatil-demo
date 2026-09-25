@@ -1,4 +1,4 @@
-// src/features/design-system-docs/constants/ds.nav-groups.ts
+// src\features\design-system-docs\constants\ds.nav-groups.ts
 
 import type { DsNavKey } from "@/features/design-system-docs/types/ds-docs-navs.type";
 import type { NavGroup } from "@/shared/types/nav.type";

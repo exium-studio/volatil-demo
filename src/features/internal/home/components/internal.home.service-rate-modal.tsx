@@ -1,4 +1,4 @@
-// src/features/internal/home/components/internal.home.service-rate-modal.tsx
+// src\features\internal\home\components\internal.home.service-rate-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";

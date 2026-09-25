@@ -1,4 +1,4 @@
-// src/shared/constants/dummy-data/dummy-inbox.ts
+// src\shared\constants\dummy-data\dummy-inbox.ts
 
 import type { InboxItem } from "@/features/notification/types/inbox.type";
 

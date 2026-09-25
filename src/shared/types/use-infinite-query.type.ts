@@ -1,4 +1,4 @@
-// src/shared/types/use-infinite-query.type.ts
+// src\shared\types\use-infinite-query.type.ts
 
 import type { PaginatedParams } from "@/shared/types/common-response.type";
 import type {

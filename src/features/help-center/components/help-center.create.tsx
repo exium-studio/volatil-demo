@@ -1,4 +1,4 @@
-// src/features/help-center/components/help-center.create.tsx
+// src\features\help-center\components\help-center.create.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Field } from "@/design-system/components/input/ui/field";

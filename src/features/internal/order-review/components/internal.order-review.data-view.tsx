@@ -1,4 +1,4 @@
-// src/features/internal/order-review/components/internal.order-review.data-view.tsx
+// src\features\internal\order-review\components\internal.order-review.data-view.tsx
 
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";

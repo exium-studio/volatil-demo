@@ -1,4 +1,4 @@
-// src/design-system/components/map/utils/gis-auth-header.ts
+// src\design-system\components\map\utils\gis-auth-header.ts
 
 /**
  * Returns Basic Auth header string for GeoServer / GIS requests if credentials exist.
