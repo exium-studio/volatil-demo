@@ -15,7 +15,6 @@ import { useMapInstanceStore } from "@/design-system/components/map/stores/map.i
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { MitraCartExpiredOrdersTrigger } from "@/features/mitra/cart/components/mitra.cart.expired-orders.modal";
 import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.order-item";
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
 import {
@@ -34,12 +33,12 @@ import type {
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import {
-  HistoryIcon,
   InfoIcon,
   ShoppingCartIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+
 
 export const MitraCartPage = () => {
   return (
@@ -301,21 +300,10 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
           </>
         )}
       </VStack>
-
-      <Separator borderColor={"bg.canvas"} />
-
-      {/* Bottom Actions: Expired Orders Shortcut */}
-      <HStack p={"md"} align={"center"} justify={"center"} w={"full"}>
-        <MitraCartExpiredOrdersTrigger>
-          <Button flex={1}>
-            <AppIcon icon={HistoryIcon} />
-            {"Pesanan Kedaluwarsa"}
-          </Button>
-        </MitraCartExpiredOrdersTrigger>
-      </HStack>
     </Container.Body>
   );
 };
+
 
 export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
   // Props
