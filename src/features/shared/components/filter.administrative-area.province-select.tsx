@@ -20,7 +20,7 @@ export const FilterAdministrativeAreaProvinceSelect = (
     defaultValue = "",
     onValueChange,
     disabled = false,
-    customOption = true,
+    customOption = false,
   } = props;
 
   // States

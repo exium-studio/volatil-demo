@@ -21,8 +21,9 @@ export const FilterAdministrativeAreaRegencySelect = (
     defaultValue = "",
     onValueChange,
     disabled = false,
-    customOption = true,
+    customOption = false,
   } = props;
+
 
   // States
   const [internalValue, setInternalValue] = useState<string>(defaultValue);

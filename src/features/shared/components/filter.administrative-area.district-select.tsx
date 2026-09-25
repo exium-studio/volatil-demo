@@ -22,8 +22,9 @@ export const FilterAdministrativeAreaDistrictSelect = (
     defaultValue = "",
     onValueChange,
     disabled = false,
-    customOption = true,
+    customOption = false,
   } = props;
+
 
   // States
   const [internalValue, setInternalValue] = useState<string>(defaultValue);
