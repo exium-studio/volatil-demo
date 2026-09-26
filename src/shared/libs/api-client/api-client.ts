@@ -127,8 +127,12 @@ export const apiClient = {
         throw err;
       }
 
-      // Notify application of network/connection drop or captive portal
-      if (typeof window !== "undefined") {
+      // Notify application of network/connection drop if actually offline
+      if (
+        typeof window !== "undefined" &&
+        typeof navigator !== "undefined" &&
+        !navigator.onLine
+      ) {
         window.dispatchEvent(new CustomEvent("app:network-offline"));
       }
 

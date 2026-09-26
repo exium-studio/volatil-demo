@@ -38,38 +38,37 @@ export const OfflineAlert = () => {
     }, 3000);
   }, []);
 
-  // Effects
-  useEffect(() => {
-    const handleOffline = () => {
+  const handleOffline = useCallback(() => {
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
       isOfflineRef.current = true;
       triggerAlert();
-    };
-
-    const handleOnline = () => {
-      isOfflineRef.current = false;
-      if (hideTimerRef.current) {
-        clearTimeout(hideTimerRef.current);
-      }
-      setIsVisible(false);
-      toast.create({
-        variant: "success",
-        title: "You're back online",
-      });
-    };
-
-    // Initial check on mount
-    if (typeof navigator !== "undefined" && !navigator.onLine) {
-      handleOffline();
     }
+  }, [triggerAlert]);
 
-    // Polling every 10 seconds
+  const handleOnline = useCallback(() => {
+    isOfflineRef.current = false;
+    if (hideTimerRef.current) {
+      clearTimeout(hideTimerRef.current);
+    }
+    setIsVisible(false);
+    toast.create({
+      variant: "success",
+      title: "You're back online",
+    });
+  }, []);
+
+  // Effects
+  useEffect(() => {
+    // Polling every 10 seconds to verify actual connectivity
     const pollInterval = setInterval(() => {
       const isCurrentlyOffline =
-        typeof navigator !== "undefined"
-          ? !navigator.onLine
-          : isOfflineRef.current;
-      if (isCurrentlyOffline || isOfflineRef.current) {
+        typeof navigator !== "undefined" ? !navigator.onLine : false;
+
+      if (isCurrentlyOffline) {
+        isOfflineRef.current = true;
         triggerAlert();
+      } else if (isOfflineRef.current) {
+        handleOnline();
       }
     }, 10000);
 
@@ -86,7 +85,7 @@ export const OfflineAlert = () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("app:network-offline", handleOffline);
     };
-  }, [triggerAlert]);
+  }, [handleOffline, handleOnline, triggerAlert]);
 
   return (
     <Portal>
