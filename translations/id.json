@@ -174,7 +174,7 @@
     }
   },
   "validation": {
-    "required": "Bidang ini wajib diisi.",
+    "required": "Kolom ini wajib diisi.",
     "email_invalid": "Harap masukkan alamat email yang valid.",
     "password_too_short": "Kata sandi harus terdiri dari minimal {min} karakter.",
     "password_mismatch": "Kata sandi tidak cocok.",
