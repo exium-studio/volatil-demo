@@ -69,7 +69,9 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
               (error.statusCode === 401 &&
                 error.message.toLowerCase().includes("kedaluwarsa"))
             ) {
-              setCustomError("MFA token telah kedaluwarsa. Silakan login ulang.");
+              setCustomError(
+                "MFA token telah kedaluwarsa. Silakan login ulang.",
+              );
               return;
             }
           }
@@ -267,10 +269,9 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
           onClick={onBackToLogin}
         >
           <AppIcon icon={ArrowLeftIcon} />
-          {"Kembali ke Form Login"}
+          {"Kembali ke Halaman Masuk"}
         </Button>
       </VStack>
     </VStack>
   );
 };
-

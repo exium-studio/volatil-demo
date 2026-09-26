@@ -17,6 +17,7 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
       attached = false,
       mask = false,
       fluid = true,
+      inputHeight,
       inputProps,
       ...restProps
     } = props;
@@ -48,12 +49,13 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
               index={index}
               flex={fluid ? 1 : undefined}
               w={fluid ? 0 : undefined}
+              h={inputHeight}
               minW={fluid ? 0 : undefined}
               maxW={fluid ? "64px" : undefined}
               textAlign={"center"}
               rounded={attached ? undefined : theme.radii.component}
               pb={"2px"}
-              fontSize={"md"}
+              fontSize={inputProps?.fontSize ?? (inputHeight ? "2xl" : "md")}
               _first={
                 attached
                   ? { borderStartRadius: theme.radii.component }

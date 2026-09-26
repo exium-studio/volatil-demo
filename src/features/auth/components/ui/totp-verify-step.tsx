@@ -145,7 +145,7 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
       <VStack align={"center"} gap={"md"} py={2} w={"full"}>
         <PinInput
           count={6}
-          size={"lg"}
+          inputHeight={"80px"}
           autoFocus={true}
           otp={true}
           onValueChange={handleValueChange}
@@ -178,7 +178,7 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
           onClick={onBackToLogin}
         >
           <AppIcon icon={ArrowLeftIcon} />
-          {"Kembali ke Form Login"}
+          {"Kembali ke Halaman Masuk"}
         </Button>
       </VStack>
     </VStack>
