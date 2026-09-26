@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/flex-box.type.ts
+
 // src\design-system\components\layout\types\flex-box.type.ts
 
 // src\design-system\components\layout\types\flex-box.type.ts

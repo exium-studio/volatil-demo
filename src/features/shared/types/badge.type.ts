@@ -1,3 +1,5 @@
+// src/features/shared/types/badge.type.ts
+
 // src\features\shared\types\badge.type.ts
 
 // src\features\shared\types\badge.type.ts

@@ -1,3 +1,5 @@
+// src/shared/constants/paths.ts
+
 // src\shared\constants\paths.ts
 
 // src\shared\constants\paths.ts

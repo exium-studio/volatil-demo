@@ -1,3 +1,5 @@
+// src/design-system/components/typography/ui/heading.tsx
+
 // src\design-system\components\typography\ui\heading.tsx
 
 // src\design-system\components\typography\ui\heading.tsx

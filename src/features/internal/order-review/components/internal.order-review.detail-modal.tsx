@@ -1,3 +1,5 @@
+// src/features/internal/order-review/components/internal.order-review.detail-modal.tsx
+
 // src\features\internal\order-review\components\internal.order-review.detail-modal.tsx
 
 // src\features\internal\order-review\components\internal.order-review.detail-modal.tsx

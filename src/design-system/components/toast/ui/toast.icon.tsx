@@ -1,3 +1,5 @@
+// src/design-system/components/toast/ui/toast.icon.tsx
+
 // src\design-system\components\toast\ui\toast.icon.tsx
 
 // src\design-system\components\toast\ui\toast.icon.tsx

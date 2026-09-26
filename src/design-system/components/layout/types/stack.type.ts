@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/stack.type.ts
+
 // src\design-system\components\layout\types\stack.type.ts
 
 // src\design-system\components\layout\types\stack.type.ts

@@ -1,3 +1,5 @@
+// src/features/auth/components/ui/user-session-card.tsx
+
 // src\features\auth\components\ui\user-session-card.tsx
 
 // src\features\auth\components\ui\user-session-card.tsx

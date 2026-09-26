@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/types/file-item.type.ts
+
 // src\design-system\components\data-display\types\file-item.type.ts
 
 // src\design-system\components\data-display\types\file-item.type.ts

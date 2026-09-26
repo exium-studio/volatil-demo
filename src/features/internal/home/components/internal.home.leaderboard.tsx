@@ -1,3 +1,5 @@
+// src/features/internal/home/components/internal.home.leaderboard.tsx
+
 // src\features\internal\home\components\internal.home.leaderboard.tsx
 
 // src\features\internal\home\components\internal.home.leaderboard.tsx

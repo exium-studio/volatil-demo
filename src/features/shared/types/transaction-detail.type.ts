@@ -1,3 +1,5 @@
+// src/features/shared/types/transaction-detail.type.ts
+
 // src\features\shared\types\transaction-detail.type.ts
 
 // src\features\shared\types\transaction-detail.type.ts

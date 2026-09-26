@@ -1,3 +1,5 @@
+// src/design-system/components/branding/ui/igt-logo.tsx
+
 // src\design-system\components\branding\ui\igt-logo.tsx
 
 // src\design-system\components\branding\ui\igt-logo.tsx

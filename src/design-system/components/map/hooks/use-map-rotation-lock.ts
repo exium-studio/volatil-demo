@@ -1,3 +1,5 @@
+// src/design-system/components/map/hooks/use-map-rotation-lock.ts
+
 // src\design-system\components\map\hooks\use-map-rotation-lock.ts
 
 // src\design-system\components\map\hooks\use-map-rotation-lock.ts

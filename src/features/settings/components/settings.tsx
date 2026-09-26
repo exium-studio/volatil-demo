@@ -1,3 +1,5 @@
+// src/features/settings/components/settings.tsx
+
 // src\features\settings\components\settings.tsx
 
 // src\features\settings\components\settings.tsx

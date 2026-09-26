@@ -1,3 +1,5 @@
+// src/design-system/hooks/types/use-color-mode.type.ts
+
 // src\design-system\hooks\types\use-color-mode.type.ts
 
 // src\design-system\hooks\types\use-color-mode.type.ts

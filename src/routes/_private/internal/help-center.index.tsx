@@ -1,3 +1,5 @@
+// src/routes/_private/internal/help-center.index.tsx
+
 // src\routes\_private\internal\help-center.index.tsx
 
 // src\routes\_private\internal\help-center.index.tsx

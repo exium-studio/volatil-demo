@@ -1,3 +1,5 @@
+// src/shared/hooks/use-infinite-query.ts
+
 // src\shared\hooks\use-infinite-query.ts
 
 // src\shared\hooks\use-infinite-query.ts

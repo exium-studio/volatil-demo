@@ -1,3 +1,5 @@
+// src/features/shared/components/transaction-detail.modal.tsx
+
 // src\features\shared\components\transaction-detail.modal.tsx
 
 // src\features\shared\components\transaction-detail.modal.tsx

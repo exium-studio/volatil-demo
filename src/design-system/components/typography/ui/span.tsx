@@ -1,3 +1,5 @@
+// src/design-system/components/typography/ui/span.tsx
+
 // src\design-system\components\typography\ui\span.tsx
 
 // src\design-system\components\typography\ui\span.tsx

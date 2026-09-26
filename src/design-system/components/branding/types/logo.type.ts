@@ -1,3 +1,5 @@
+// src/design-system/components/branding/types/logo.type.ts
+
 // src\design-system\components\branding\types\logo.type.ts
 
 // src\design-system\components\branding\types\logo.type.ts

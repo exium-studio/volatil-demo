@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/ui/state.access-denied.tsx
+
 // src\design-system\components\feedback\ui\state.access-denied.tsx
 
 // src\design-system\components\feedback\ui\state.access-denied.tsx

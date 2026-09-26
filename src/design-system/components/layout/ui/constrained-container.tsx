@@ -1,3 +1,5 @@
+// src/design-system/components/layout/ui/constrained-container.tsx
+
 // src\design-system\components\layout\ui\constrained-container.tsx
 
 // src\design-system\components\layout\ui\constrained-container.tsx

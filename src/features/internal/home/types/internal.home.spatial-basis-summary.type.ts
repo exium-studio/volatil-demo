@@ -1,3 +1,5 @@
+// src/features/internal/home/types/internal.home.spatial-basis-summary.type.ts
+
 // src\features\internal\home\types\internal.home.spatial-basis-summary.type.ts
 
 // src\features\internal\home\types\internal.home.spatial-basis-summary.type.ts

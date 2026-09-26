@@ -1,3 +1,5 @@
+// src/design-system/types/fontsource.d.ts
+
 // src\design-system\types\fontsource.d.ts
 
 // src\design-system\types\fontsource.d.ts

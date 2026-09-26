@@ -1,3 +1,5 @@
+// src/design-system/components/utilities/ui/click-delegate-container.tsx
+
 // src\design-system\components\utilities\ui\click-delegate-container.tsx
 
 // src\design-system\components\utilities\ui\click-delegate-container.tsx

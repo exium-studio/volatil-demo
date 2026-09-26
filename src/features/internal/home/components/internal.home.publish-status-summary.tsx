@@ -1,3 +1,5 @@
+// src/features/internal/home/components/internal.home.publish-status-summary.tsx
+
 // src\features\internal\home\components\internal.home.publish-status-summary.tsx
 
 // src\features\internal\home\components\internal.home.publish-status-summary.tsx

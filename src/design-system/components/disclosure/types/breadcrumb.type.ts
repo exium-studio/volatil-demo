@@ -1,3 +1,5 @@
+// src/design-system/components/disclosure/types/breadcrumb.type.ts
+
 // src\design-system\components\disclosure\types\breadcrumb.type.ts
 
 // src\design-system\components\disclosure\types\breadcrumb.type.ts

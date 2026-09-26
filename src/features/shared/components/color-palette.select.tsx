@@ -1,3 +1,5 @@
+// src/features/shared/components/color-palette.select.tsx
+
 // src\features\shared\components\color-palette.select.tsx
 
 // src\features\shared\components\color-palette.select.tsx

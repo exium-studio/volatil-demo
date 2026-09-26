@@ -1,3 +1,5 @@
+// src/features/shared/components/selection-type.badge.tsx
+
 // src\features\shared\components\selection-type.badge.tsx
 
 // src\features\shared\components\selection-type.badge.tsx

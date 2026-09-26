@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/segment-group.type.ts
+
 // src\design-system\components\input\types\segment-group.type.ts
 
 // src\design-system\components\input\types\segment-group.type.ts

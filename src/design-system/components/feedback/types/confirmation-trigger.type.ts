@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/types/confirmation-trigger.type.ts
+
 // src\design-system\components\feedback\types\confirmation-trigger.type.ts
 
 // src\design-system\components\feedback\types\confirmation-trigger.type.ts

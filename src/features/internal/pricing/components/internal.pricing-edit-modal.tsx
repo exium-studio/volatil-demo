@@ -1,3 +1,5 @@
+// src/features/internal/pricing/components/internal.pricing-edit-modal.tsx
+
 // src\features\internal\pricing\components\internal.pricing-edit-modal.tsx
 
 // src\features\internal\pricing\components\internal.pricing-edit-modal.tsx

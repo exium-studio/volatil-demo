@@ -1,3 +1,5 @@
+// src/shared/types/nav.type.ts
+
 // src\shared\types\nav.type.ts
 
 // src\shared\types\nav.type.ts

@@ -1,3 +1,5 @@
+// src/features/auth/components/ui/user-id-card.tsx
+
 // src\features\auth\components\ui\user-id-card.tsx
 
 // src\features\auth\components\ui\user-id-card.tsx

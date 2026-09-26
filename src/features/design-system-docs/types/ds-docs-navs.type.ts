@@ -1,3 +1,5 @@
+// src/features/design-system-docs/types/ds-docs-navs.type.ts
+
 // src\features\design-system-docs\types\ds-docs-navs.type.ts
 
 // src\features\design-system-docs\types\ds-docs-navs.type.ts

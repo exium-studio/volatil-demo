@@ -1,3 +1,5 @@
+// src/design-system/components/overlay/utils/fullscreen-animation-registry.ts
+
 // src\design-system\components\overlay\utils\fullscreen-animation-registry.ts
 
 // src\design-system\components\overlay\utils\fullscreen-animation-registry.ts

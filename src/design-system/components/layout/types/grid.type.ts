@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/grid.type.ts
+
 // src\design-system\components\layout\types\grid.type.ts
 
 // src\design-system\components\layout\types\grid.type.ts

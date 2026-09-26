@@ -1,3 +1,5 @@
+// src/features/mitra/home/types/mitra.home.financial-flow.type.ts
+
 // src\features\mitra\home\types\mitra.home.financial-flow.type.ts
 
 // src\features\mitra\home\types\mitra.home.financial-flow.type.ts

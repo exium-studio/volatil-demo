@@ -1,3 +1,5 @@
+// src/features/auth/components/ui/totp-setup-step.tsx
+
 // src\features\auth\components\ui\totp-setup-step.tsx
 
 // src\features\auth\components\ui\totp-setup-step.tsx

@@ -1,3 +1,5 @@
+// src/design-system/components/emoji/ui/emoji.love.tsx
+
 // src\design-system\components\emoji\ui\emoji.love.tsx
 
 // src\design-system\components\emoji\ui\emoji.love.tsx

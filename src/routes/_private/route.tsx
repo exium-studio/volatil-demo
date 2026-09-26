@@ -1,3 +1,5 @@
+// src/routes/_private/route.tsx
+
 // src\routes\_private\route.tsx
 
 // src\routes\_private\route.tsx

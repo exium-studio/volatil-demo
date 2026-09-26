@@ -1,3 +1,5 @@
+// src/design-system/components/emoji/ui/emoji.laugh.tsx
+
 // src\design-system\components\emoji\ui\emoji.laugh.tsx
 
 // src\design-system\components\emoji\ui\emoji.laugh.tsx

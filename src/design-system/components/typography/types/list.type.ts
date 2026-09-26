@@ -1,3 +1,5 @@
+// src/design-system/components/typography/types/list.type.ts
+
 // src\design-system\components\typography\types\list.type.ts
 
 // src\design-system\components\typography\types\list.type.ts

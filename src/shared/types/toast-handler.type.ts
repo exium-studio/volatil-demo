@@ -1,3 +1,5 @@
+// src/shared/types/toast-handler.type.ts
+
 // src\shared\types\toast-handler.type.ts
 
 // src\shared\types\toast-handler.type.ts

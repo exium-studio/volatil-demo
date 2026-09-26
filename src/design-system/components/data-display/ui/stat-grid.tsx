@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/ui/stat-grid.tsx
+
 // src\design-system\components\data-display\ui\stat-grid.tsx
 
 // src\design-system\components\data-display\ui\stat-grid.tsx

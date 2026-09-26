@@ -1,3 +1,5 @@
+// src/design-system/chakra/slot-recipes/carousel.recipe.ts
+
 // src\design-system\chakra\slot-recipes\carousel.recipe.ts
 
 // src\design-system\chakra\slot-recipes\carousel.recipe.ts

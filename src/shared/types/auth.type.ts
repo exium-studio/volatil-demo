@@ -1,3 +1,5 @@
+// src/shared/types/auth.type.ts
+
 // src\shared\types\auth.type.ts
 
 // src\shared\types\auth.type.ts

@@ -1,3 +1,5 @@
+// src/design-system/components/utilities/types/format-number.type.ts
+
 // src\design-system\components\utilities\types\format-number.type.ts
 
 // src\design-system\components\utilities\types\format-number.type.ts

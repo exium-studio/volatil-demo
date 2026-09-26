@@ -1,3 +1,5 @@
+// src/design-system/components/input/ui/slider.tsx
+
 // src\design-system\components\input\ui\slider.tsx
 
 // src\design-system\components\input\ui\slider.tsx

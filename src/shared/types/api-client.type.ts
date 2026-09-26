@@ -1,3 +1,5 @@
+// src/shared/types/api-client.type.ts
+
 // src\shared\types\api-client.type.ts
 
 // src\shared\types\api-client.type.ts

@@ -1,3 +1,5 @@
+// src/shared/utils/data/object.ts
+
 // src\shared\utils\data\object.ts
 
 // src\shared\utils\data\object.ts

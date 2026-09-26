@@ -1,3 +1,5 @@
+// src/design-system/components/media/ui/image.tsx
+
 // src\design-system\components\media\ui\image.tsx
 
 // src\design-system\components\media\ui\image.tsx

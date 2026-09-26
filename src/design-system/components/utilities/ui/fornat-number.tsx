@@ -1,3 +1,5 @@
+// src/design-system/components/utilities/ui/fornat-number.tsx
+
 // src\design-system\components\utilities\ui\fornat-number.tsx
 
 // src\design-system\components\utilities\ui\fornat-number.tsx

@@ -1,3 +1,5 @@
+// src/design-system/components/utilities/ui/chakra-locale-provider.tsx
+
 // src\design-system\components\utilities\ui\chakra-locale-provider.tsx
 
 // src\design-system\components\utilities\ui\chakra-locale-provider.tsx

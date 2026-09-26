@@ -1,3 +1,5 @@
+// src/features/shared/components/my-data-status.badge.tsx
+
 // src\features\shared\components\my-data-status.badge.tsx
 
 // src\features\shared\components\my-data-status.badge.tsx

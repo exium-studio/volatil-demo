@@ -1,3 +1,5 @@
+// src/design-system/hooks/types/use-is-small-viewport.type.ts
+
 // src\design-system\hooks\types\use-is-small-viewport.type.ts
 
 // src\design-system\hooks\types\use-is-small-viewport.type.ts

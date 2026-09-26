@@ -1,3 +1,5 @@
+// src/features/shared/components/payment-method.badge.tsx
+
 // src\features\shared\components\payment-method.badge.tsx
 
 // src\features\shared\components\payment-method.badge.tsx

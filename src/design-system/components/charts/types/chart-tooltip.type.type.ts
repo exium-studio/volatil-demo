@@ -1,3 +1,5 @@
+// src/design-system/components/charts/types/chart-tooltip.type.type.ts
+
 // src\design-system\components\charts\types\chart-tooltip.type.type.ts
 
 // src\design-system\components\charts\types\chart-tooltip.type.type.ts

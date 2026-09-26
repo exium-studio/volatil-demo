@@ -1,3 +1,5 @@
+// src/design-system/components/utilities/ui/offline-alert.tsx
+
 // src\design-system\components\utilities\ui\offline-alert.tsx
 
 // src\design-system\components\utilities\ui\offline-alert.tsx

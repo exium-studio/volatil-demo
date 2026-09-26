@@ -1,3 +1,5 @@
+// src/features/help-center/types/help-center.api.type.ts
+
 // src\features\help-center\types\help-center.api.type.ts
 
 // src\features\help-center\types\help-center.api.type.ts

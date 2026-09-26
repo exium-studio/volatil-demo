@@ -1,3 +1,5 @@
+// src/features/settings/constants/settings.pages.ts
+
 // src\features\settings\constants\settings.pages.ts
 
 // src\features\settings\constants\settings.pages.ts

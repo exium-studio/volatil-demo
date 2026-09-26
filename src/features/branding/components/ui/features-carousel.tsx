@@ -1,3 +1,5 @@
+// src/features/branding/components/ui/features-carousel.tsx
+
 // src\features\branding\components\ui\features-carousel.tsx
 
 // src\features\branding\components\ui\features-carousel.tsx

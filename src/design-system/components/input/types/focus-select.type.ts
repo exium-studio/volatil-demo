@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/focus-select.type.ts
+
 // src\design-system\components\input\types\focus-select.type.ts
 
 // src\design-system\components\input\types\focus-select.type.ts

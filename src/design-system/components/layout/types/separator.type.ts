@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/separator.type.ts
+
 // src\design-system\components\layout\types\separator.type.ts
 
 // src\design-system\components\layout\types\separator.type.ts

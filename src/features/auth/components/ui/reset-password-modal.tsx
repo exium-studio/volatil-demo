@@ -1,3 +1,5 @@
+// src/features/auth/components/ui/reset-password-modal.tsx
+
 // src\features\auth\components\ui\reset-password-modal.tsx
 
 // src\features\auth\components\ui\reset-password-modal.tsx

@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/center.type.ts
+
 // src\design-system\components\layout\types\center.type.ts
 
 // src\design-system\components\layout\types\center.type.ts

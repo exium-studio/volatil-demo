@@ -1,3 +1,5 @@
+// src/features/help-center/pages/help-center.page.tsx
+
 // src\features\help-center\pages\help-center.page.tsx
 
 // src\features\help-center\pages\help-center.page.tsx

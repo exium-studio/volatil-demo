@@ -1,3 +1,5 @@
+// src/features/internal/home/types/internal.home.igt-basis-summary.type.ts
+
 // src\features\internal\home\types\internal.home.igt-basis-summary.type.ts
 
 // src\features\internal\home\types\internal.home.igt-basis-summary.type.ts

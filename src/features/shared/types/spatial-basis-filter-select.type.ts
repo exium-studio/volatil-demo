@@ -1,3 +1,5 @@
+// src/features/shared/types/spatial-basis-filter-select.type.ts
+
 // src\features\shared\types\spatial-basis-filter-select.type.ts
 
 // src\features\shared\types\spatial-basis-filter-select.type.ts

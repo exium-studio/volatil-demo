@@ -1,3 +1,5 @@
+// src/design-system/components/branding/types/brand-watermark.type.ts
+
 // src\design-system\components\branding\types\brand-watermark.type.ts
 
 // src\design-system\components\branding\types\brand-watermark.type.ts

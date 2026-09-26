@@ -1,3 +1,5 @@
+// src/design-system/types/search.type.ts
+
 // src\design-system\types\search.type.ts
 
 // src\design-system\types\search.type.ts

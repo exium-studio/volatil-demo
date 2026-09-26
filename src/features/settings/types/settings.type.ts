@@ -1,3 +1,5 @@
+// src/features/settings/types/settings.type.ts
+
 // src\features\settings\types\settings.type.ts
 
 // src\features\settings\types\settings.type.ts

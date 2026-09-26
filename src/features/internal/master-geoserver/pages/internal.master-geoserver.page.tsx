@@ -1,3 +1,5 @@
+// src/features/internal/master-geoserver/pages/internal.master-geoserver.page.tsx
+
 // src\features\internal\master-geoserver\pages\internal.master-geoserver.page.tsx
 
 // src\features\internal\master-geoserver\pages\internal.master-geoserver.page.tsx

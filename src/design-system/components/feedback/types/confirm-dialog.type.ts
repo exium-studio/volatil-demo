@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/types/confirm-dialog.type.ts
+
 // src\design-system\components\feedback\types\confirm-dialog.type.ts
 
 // src\design-system\components\feedback\types\confirm-dialog.type.ts
