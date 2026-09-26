@@ -6,6 +6,7 @@
 
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { EmojiVariant } from "@/design-system/components/emoji/types/emoji.type";
+import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ComponentType, ReactNode } from "react";
 
 export type FocusAlertRenderFn = () => ReactNode;
@@ -21,6 +22,16 @@ export type FocusAlertSemanticVariant =
   | "celebrate";
 
 export type FocusAlertVariant = EmojiVariant | FocusAlertSemanticVariant;
+
+export type FocusAlertViewProps = StackProps & {
+  variant?: FocusAlertVariant;
+  colorPalette?: string;
+  icon?: ComponentType | ReactNode;
+  emoji?: EmojiVariant;
+  title?: ReactNode;
+  description?: ReactNode;
+  children?: ReactNode;
+};
 
 export type FocusAlertItemProps = {
   modalKey?: string;

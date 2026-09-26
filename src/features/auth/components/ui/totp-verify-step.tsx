@@ -144,8 +144,6 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
       {/* Pin Input */}
       <VStack align={"center"} gap={"md"} py={2} w={"full"}>
         <PinInput
-          fluid
-          mx={"auto"}
           count={6}
           size={"lg"}
           autoFocus={true}

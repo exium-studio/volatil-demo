@@ -200,7 +200,3 @@ export type MapOverlayProps = {
   showMasterIgtLayerSelect?: boolean;
   showMyDataLayerSelect?: boolean;
 };
-
-
-
-

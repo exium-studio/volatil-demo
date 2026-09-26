@@ -29,7 +29,8 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
         colorPalette={theme.colorPalette}
         attached={attached}
         mask={mask}
-        w={fluid ? "full" : undefined}
+        w={fluid ? "full" : "fit"}
+        justifyContent={"center"}
         {...restProps}
       >
         <ChakraPinInput.HiddenInput ref={ref} />
@@ -38,6 +39,8 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
           gap={attached ? 0 : 2}
           w={fluid ? "full" : undefined}
           display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
           {Array.from({ length: count }).map((_, index) => (
             <ChakraPinInput.Input

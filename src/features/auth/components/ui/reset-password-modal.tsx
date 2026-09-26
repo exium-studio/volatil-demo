@@ -6,6 +6,7 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { FocusAlertView } from "@/design-system/components/focus-alert/ui/focus-alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
@@ -55,7 +56,6 @@ import { t } from "@/shared/libs/i18n";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
-  CheckCircle2Icon,
   InfoIcon,
   KeyRoundIcon,
   LockIcon,
@@ -175,24 +175,14 @@ const ResetPasswordModalContent = (props: ResetPasswordModalContentProps) => {
 
         <Modal.Body p={"md"}>
           {isSuccess ? (
-            <VStack gap={"md"} align={"center"} py={"md"} textAlign={"center"}>
-              <AppIcon
-                icon={CheckCircle2Icon}
-                size={"2xl"}
-                color={"green.fg"}
+            <VStack gap={"md"} align={"stretch"} py={"sm"}>
+              <FocusAlertView
+                variant={"success"}
+                title={"Kata Sandi Berhasil Direset!"}
+                description={
+                  "Kata sandi akun Anda telah berhasil direset. Silakan masuk menggunakan kata sandi baru Anda."
+                }
               />
-
-              <VStack gap={"2xs"}>
-                <P fontSize={"md"} fontWeight={"semibold"}>
-                  {"Kata Sandi Berhasil Direset!"}
-                </P>
-
-                <P fontSize={"sm"} color={"fg.muted"}>
-                  {
-                    "Kata sandi akun Anda telah berhasil direset. Silakan masuk menggunakan kata sandi baru Anda."
-                  }
-                </P>
-              </VStack>
 
               <Button
                 primary={true}
@@ -224,11 +214,13 @@ const ResetPasswordModalContent = (props: ResetPasswordModalContentProps) => {
           )}
         </Modal.Body>
 
-        <Modal.Footer>
-          <Button w={"full"} onClick={handleCloseModal}>
-            {t["action.close"]()}
-          </Button>
-        </Modal.Footer>
+        {!isSuccess && (
+          <Modal.Footer>
+            <Button w={"full"} onClick={handleCloseModal}>
+              {t["action.close"]()}
+            </Button>
+          </Modal.Footer>
+        )}
       </Modal.Content>
     </Modal.Root>
   );
@@ -249,9 +241,7 @@ const ResetPasswordMethodSelector = ({
       as={"form"}
       onSubmit={(e) => {
         e.stopPropagation();
-        methodForm.handleSubmit((values) =>
-          onSelectMethod(values.method),
-        )(e);
+        methodForm.handleSubmit((values) => onSelectMethod(values.method))(e);
       }}
       gap={"md"}
       align={"stretch"}

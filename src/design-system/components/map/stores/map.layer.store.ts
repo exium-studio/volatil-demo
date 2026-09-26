@@ -71,4 +71,3 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
       customLayerConfigs: {},
     }),
 }));
-

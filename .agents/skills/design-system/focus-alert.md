@@ -29,6 +29,9 @@ Programmatic imperative trigger for event handlers, mutations, or query callback
 ### 4. `FocusAlerter` (`focus-alerter.tsx`)
 Root store subscriber component (mounted in `__root.tsx`).
 
+### 5. `FocusAlertView` (`focus-alert.tsx`)
+Sliced standalone visual graphic component (pulse ripple circle, icon/emoji, title, description) reusable within custom modals, drawers, or dialog bodies without modal wrappers.
+
 ---
 
 ## 3. Props Reference (`FocusAlertItemProps` / `FocusAlertTriggerProps`)

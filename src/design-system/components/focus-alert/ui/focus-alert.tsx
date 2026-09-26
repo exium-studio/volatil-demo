@@ -12,6 +12,7 @@ import type {
   FocusAlertSemanticVariant,
   FocusAlertTriggerProps,
   FocusAlertVariant,
+  FocusAlertViewProps,
 } from "@/design-system/components/focus-alert/types/focus-alert.type";
 import { useFocusAlertContext } from "@/design-system/components/focus-alert/ui/focus-alert-key-context";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -142,6 +143,218 @@ export const FocusAlertTrigger = (props: FocusAlertTriggerProps) => {
   );
 };
 
+export const FOCUS_ALERT_VARIANTS_MAP: Partial<
+  Record<FocusAlertVariant, { colorPalette: string; icon: ComponentType }>
+> &
+  Record<
+    FocusAlertSemanticVariant,
+    { colorPalette: string; icon: ComponentType }
+  > = {
+  // Semantic aliases
+  success: {
+    colorPalette: "green",
+    icon: CheckIcon,
+  },
+  error: {
+    colorPalette: "red",
+    icon: XIcon,
+  },
+  danger: {
+    colorPalette: "red",
+    icon: XIcon,
+  },
+  warning: {
+    colorPalette: "orange",
+    icon: TriangleAlertIcon,
+  },
+  info: {
+    colorPalette: "neutral",
+    icon: IconInfoCircle,
+  },
+  help: {
+    colorPalette: "neutral",
+    icon: TriangleAlertIcon,
+  },
+  neutral: {
+    colorPalette: "neutral",
+    icon: SparklesIcon,
+  },
+  celebrate: {
+    colorPalette: "green",
+    icon: SparklesIcon,
+  },
+
+  // Emote variants (EmojiKey)
+  poker: {
+    colorPalette: "neutral",
+    icon: SparklesIcon,
+  },
+  happy: {
+    colorPalette: "green",
+    icon: CheckIcon,
+  },
+  angry: {
+    colorPalette: "red",
+    icon: XIcon,
+  },
+  cry: {
+    colorPalette: "blue",
+    icon: XIcon,
+  },
+  embarassed: {
+    colorPalette: "teal",
+    icon: TriangleAlertIcon,
+  },
+  funny: {
+    colorPalette: "orange",
+    icon: SparklesIcon,
+  },
+  cool: {
+    colorPalette: "blue",
+    icon: SparklesIcon,
+  },
+  laugh: {
+    colorPalette: "orange",
+    icon: SparklesIcon,
+  },
+  love: {
+    colorPalette: "pink",
+    icon: HeartIcon,
+  },
+  rollingEyes: {
+    colorPalette: "orange",
+    icon: IconInfoCircle,
+  },
+  sad: {
+    colorPalette: "red",
+    icon: XIcon,
+  },
+  scream: {
+    colorPalette: "blue",
+    icon: ZapIcon,
+  },
+  shout: {
+    colorPalette: "purple",
+    icon: ZapIcon,
+  },
+  speechless: {
+    colorPalette: "teal",
+    icon: IconInfoCircle,
+  },
+  sulk: {
+    colorPalette: "red",
+    icon: XIcon,
+  },
+  surprised: {
+    colorPalette: "orange",
+    icon: ZapIcon,
+  },
+  thinking: {
+    colorPalette: "yellow",
+    icon: IconInfoCircle,
+  },
+  thumbUp: {
+    colorPalette: "pink",
+    icon: SparklesIcon,
+  },
+  wicked: {
+    colorPalette: "purple",
+    icon: ZapIcon,
+  },
+};
+
+export const FocusAlertView = (props: FocusAlertViewProps) => {
+  // Props
+  const {
+    variant = "neutral",
+    colorPalette,
+    icon,
+    emoji,
+    title,
+    description,
+    children,
+    ...restProps
+  } = props;
+
+  // Resolved Values
+  const fallback = FOCUS_ALERT_VARIANTS_MAP.neutral ?? {
+    colorPalette: "neutral",
+    icon: SparklesIcon,
+  };
+  const resolved =
+    (variant ? FOCUS_ALERT_VARIANTS_MAP[variant] : undefined) ?? fallback;
+  const resolvedColorPalette = colorPalette ?? resolved.colorPalette;
+
+  return (
+    <VStack
+      align={"center"}
+      gap={"md"}
+      textAlign={"center"}
+      my={"sm"}
+      {...restProps}
+    >
+      <Box
+        pos={"relative"}
+        display={"inline-flex"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        mb={"md"}
+      >
+        {/* Outer expanding elegant pulse ripple */}
+        <Circle
+          pos={"absolute"}
+          inset={0}
+          size={"76px"}
+          bg={`${resolvedColorPalette}.emphasized`}
+          opacity={0.35}
+          pointerEvents={"none"}
+          animation={"ping 2s cubic-bezier(0, 0, 0.2, 1) infinite"}
+        />
+
+        {/* Inner Icon / Emoji Circle */}
+        <Circle
+          size={"76px"}
+          pos={"relative"}
+          bg={`${resolvedColorPalette}.muted`}
+          color={`${resolvedColorPalette}.fg`}
+          border={"12px solid"}
+          borderColor={`${resolvedColorPalette}.subtle`}
+        >
+          {icon ? (
+            isValidElement(icon) ? (
+              icon
+            ) : (
+              <AppIcon icon={icon as ComponentType} size={"lg"} />
+            )
+          ) : emoji ? (
+            <Emoji
+              variant={emoji}
+              colorPalette={resolvedColorPalette}
+              boxSize={28}
+            />
+          ) : (
+            <AppIcon icon={resolved.icon} size={"lg"} />
+          )}
+        </Circle>
+      </Box>
+
+      {title && (
+        <Heading size={"md"} fontWeight={"semibold"}>
+          {title}
+        </Heading>
+      )}
+
+      {description && (
+        <P fontSize={"sm"} color={"fg.muted"} maxW={"260px"}>
+          {description}
+        </P>
+      )}
+
+      {children}
+    </VStack>
+  );
+};
+
 const FocusAlertContent = (props: FocusAlertContentProps) => {
   // Props
   const {
@@ -160,133 +373,6 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
     onCancel,
   } = props;
 
-  // Constants
-  const VARIANTS_MAP: Partial<
-    Record<FocusAlertVariant, { colorPalette: string; icon: ComponentType }>
-  > &
-    Record<
-      FocusAlertSemanticVariant,
-      { colorPalette: string; icon: ComponentType }
-    > = {
-    // Semantic aliases
-    success: {
-      colorPalette: "green",
-      icon: CheckIcon,
-      // emote: "happy",
-    },
-    error: {
-      colorPalette: "red",
-      icon: XIcon,
-      // emote: "sad",
-    },
-    danger: {
-      colorPalette: "red",
-      icon: XIcon,
-      // emote: "sad",
-    },
-    warning: {
-      colorPalette: "orange",
-      icon: TriangleAlertIcon,
-      // emote: "worried",
-    },
-    info: {
-      colorPalette: "neutral",
-      icon: IconInfoCircle,
-      // emote: "neutral",
-    },
-    help: {
-      colorPalette: "neutral",
-      icon: TriangleAlertIcon,
-      // emote: "confused",
-    },
-    neutral: {
-      colorPalette: "neutral",
-      icon: SparklesIcon,
-    },
-    celebrate: {
-      colorPalette: "green",
-      icon: SparklesIcon,
-    },
-
-    // Emote variants (EmojiKey)
-    poker: {
-      colorPalette: "neutral",
-      icon: SparklesIcon,
-    },
-    happy: {
-      colorPalette: "green",
-      icon: CheckIcon,
-    },
-    angry: {
-      colorPalette: "red",
-      icon: XIcon,
-    },
-    cry: {
-      colorPalette: "blue",
-      icon: XIcon,
-    },
-    embarassed: {
-      colorPalette: "teal",
-      icon: TriangleAlertIcon,
-    },
-    funny: {
-      colorPalette: "orange",
-      icon: SparklesIcon,
-    },
-    cool: {
-      colorPalette: "blue",
-      icon: SparklesIcon,
-    },
-    laugh: {
-      colorPalette: "orange",
-      icon: SparklesIcon,
-    },
-    love: {
-      colorPalette: "pink",
-      icon: HeartIcon,
-    },
-    rollingEyes: {
-      colorPalette: "orange",
-      icon: IconInfoCircle,
-    },
-    sad: {
-      colorPalette: "red",
-      icon: XIcon,
-    },
-    scream: {
-      colorPalette: "blue",
-      icon: ZapIcon,
-    },
-    shout: {
-      colorPalette: "purple",
-      icon: ZapIcon,
-    },
-    speechless: {
-      colorPalette: "teal",
-      icon: IconInfoCircle,
-    },
-    sulk: {
-      colorPalette: "red",
-      icon: XIcon,
-    },
-    surprised: {
-      colorPalette: "orange",
-      icon: ZapIcon,
-    },
-    thinking: {
-      colorPalette: "yellow",
-      icon: IconInfoCircle,
-    },
-    thumbUp: {
-      colorPalette: "pink",
-      icon: SparklesIcon,
-    },
-    wicked: {
-      colorPalette: "purple",
-      icon: ZapIcon,
-    },
-  };
-
   // Handlers
   const handleDone = () => {
     onDone?.();
@@ -299,11 +385,12 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   };
 
   // Resolved Values
-  const fallback = VARIANTS_MAP.neutral ?? {
+  const fallback = FOCUS_ALERT_VARIANTS_MAP.neutral ?? {
     colorPalette: "neutral",
     icon: SparklesIcon,
   };
-  const resolved = (variant ? VARIANTS_MAP[variant] : undefined) ?? fallback;
+  const resolved =
+    (variant ? FOCUS_ALERT_VARIANTS_MAP[variant] : undefined) ?? fallback;
   const resolvedColorPalette = colorPalette ?? resolved.colorPalette;
   const resolvedDoneLabel = doneLabel ?? t["action.finish"]();
   const hasCancel = Boolean(cancelLabel || onCancel);
@@ -317,62 +404,14 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
       }}
     >
       <Modal.Body pt={"lg"} pb={"md"}>
-        <VStack align={"center"} gap={"md"} textAlign={"center"} my={"sm"}>
-          <Box
-            pos={"relative"}
-            display={"inline-flex"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            mb={"md"}
-          >
-            {/* Outer expanding elegant pulse ripple */}
-            <Circle
-              pos={"absolute"}
-              inset={0}
-              size={"76px"}
-              bg={`${resolvedColorPalette}.emphasized`}
-              opacity={0.35}
-              pointerEvents={"none"}
-              animation={"ping 2s cubic-bezier(0, 0, 0.2, 1) infinite"}
-            />
-
-            {/* Inner Icon / Emoji Circle */}
-            <Circle
-              size={"76px"}
-              pos={"relative"}
-              bg={`${resolvedColorPalette}.muted`}
-              color={`${resolvedColorPalette}.fg`}
-              border={"12px solid"}
-              borderColor={`${resolvedColorPalette}.subtle`}
-            >
-              {icon ? (
-                isValidElement(icon) ? (
-                  icon
-                ) : (
-                  <AppIcon icon={icon as ComponentType} size={"lg"} />
-                )
-              ) : emoji ? (
-                <Emoji
-                  variant={emoji}
-                  colorPalette={resolvedColorPalette}
-                  boxSize={28}
-                />
-              ) : (
-                <AppIcon icon={resolved.icon} size={"lg"} />
-              )}
-            </Circle>
-          </Box>
-
-          <Heading size={"md"} fontWeight={"semibold"}>
-            {title}
-          </Heading>
-
-          {description && (
-            <P fontSize={"sm"} color={"fg.muted"} maxW={"260px"}>
-              {description}
-            </P>
-          )}
-        </VStack>
+        <FocusAlertView
+          variant={variant}
+          colorPalette={resolvedColorPalette}
+          icon={icon}
+          emoji={emoji}
+          title={title}
+          description={description}
+        />
       </Modal.Body>
 
       <Modal.Footer>
