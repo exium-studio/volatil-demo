@@ -49,13 +49,20 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
       {
         onError: (error) => {
           if (error instanceof ApiError) {
-            if (error.message.includes("MFA_TOKEN_EXPIRED") || error.statusCode === 401 && error.message.toLowerCase().includes("kedaluwarsa")) {
-              setCustomError("MFA token telah kedaluwarsa. Silakan login ulang.");
+            if (
+              error.message.includes("MFA_TOKEN_EXPIRED") ||
+              (error.statusCode === 401 &&
+                error.message.toLowerCase().includes("kedaluwarsa"))
+            ) {
+              setCustomError(
+                "MFA token telah kedaluwarsa. Silakan login ulang.",
+              );
               return;
             }
           }
           setCustomError(
-            error.message || "Kode Google Authenticator salah atau sudah kedaluwarsa. Coba lagi.",
+            error.message ||
+              "Kode Google Authenticator salah atau sudah kedaluwarsa. Coba lagi.",
           );
         },
       },
@@ -137,6 +144,8 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
       {/* Pin Input */}
       <VStack align={"center"} gap={"md"} py={2} w={"full"}>
         <PinInput
+          fluid
+          mx={"auto"}
           count={6}
           size={"lg"}
           autoFocus={true}

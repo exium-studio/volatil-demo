@@ -253,15 +253,6 @@ const ResetPasswordMethodSelector = ({
       gap={"md"}
       align={"stretch"}
     >
-      <Alert.Root status={"info"} variant={"subtle"}>
-        <AppIcon icon={InfoIcon} />
-        <Alert.Description fontSize={"xs"}>
-          {
-            "Pilih metode verifikasi untuk mereset kata sandi akun internal ATR/BPN Anda."
-          }
-        </Alert.Description>
-      </Alert.Root>
-
       <Fieldset>
         <Controller
           name={"method"}
@@ -275,7 +266,6 @@ const ResetPasswordMethodSelector = ({
                 title={"OTP via Email"}
                 description={"Kirim 6-digit kode verifikasi ke email"}
                 icon={MailIcon}
-                colorPalette={"purple"}
               />
 
               <ResetMethodRadioItem
@@ -286,7 +276,6 @@ const ResetPasswordMethodSelector = ({
                 description={"Gunakan kode 6 digit dari aplikasi authenticator"}
                 badge={"Instan"}
                 icon={SmartphoneIcon}
-                colorPalette={"blue"}
               />
             </VStack>
           )}
@@ -309,7 +298,7 @@ export const ResetMethodRadioItem = (props: ResetMethodRadioItemProps) => {
     description,
     badge,
     icon,
-    colorPalette = "purple",
+    colorPalette = "blue",
   } = props;
 
   // Stores
