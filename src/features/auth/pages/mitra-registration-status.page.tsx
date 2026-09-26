@@ -284,54 +284,58 @@ export const MitraRegistrationStatusPage = () => {
 
                 {/* 2. Contract Action (If Approved/Verified) */}
                 {isApproved && contractUrl && (
-                  <Box
-                    p={4}
+                  <VStack
+                    justify={"space-between"}
+                    align={"center"}
+                    gap={"md"}
+                    p={"md"}
                     rounded={theme.radii.container}
-                    bg={"bg.subtle"}
-                    // borderWidth={"1px"}
-                    borderColor={"border.subtle"}
+                    bg={"blue.subtle"}
+                    color={"blue.fg"}
                   >
-                    <HStack
-                      justify={"space-between"}
-                      align={"center"}
-                      wrap={"wrap"}
-                      gap={4}
-                    >
-                      <HStack gap={3} align={"center"}>
-                        <AppIcon icon={FileCheckIcon} size={"md"} />
+                    <VStack gap={"md"} align={"center"}>
+                      <AppIcon icon={FileCheckIcon} size={"lg"} />
 
-                        <VStack align={"start"} gap={0}>
-                          <HStack gap={2} align={"center"}>
-                            <P fontWeight={"semibold"} fontSize={"sm"}>
-                              {"Dokumen Perjanjian Kerjasama (PKS) Resmi"}
-                            </P>
-                            <Badge size={"xs"}>{"PDF"}</Badge>
-                          </HStack>
+                      <VStack align={"start"} gap={"xs"}>
+                        <P fontWeight={"semibold"}>
+                          {"Dokumen Perjanjian Kerjasama (PKS) Resmi"}
+                        </P>
 
-                          <P fontSize={"xs"} color={"fg.subtle"}>
-                            {contractFileName}
-                            {contractFileSize ? ` • ${contractFileSize}` : ""}
-                          </P>
-                        </VStack>
-                      </HStack>
+                        <P fontSize={"sm"} color={"blue.fg/50"}>
+                          {contractFileName}
+                          {contractFileSize ? ` • ${contractFileSize}` : ""}
+                        </P>
+                      </VStack>
+                    </VStack>
 
-                      <HStack gap={2}>
-                        <ExternalLink href={contractUrl} download={true}>
-                          <Button primary={true} size={"sm"}>
-                            <AppIcon icon={DownloadIcon} />
-                            {"Unduh Kontrak"}
-                          </Button>
-                        </ExternalLink>
+                    <HStack gap={2}>
+                      <ExternalLink
+                        href={contractUrl}
+                        variant={"plain"}
+                        download
+                      >
+                        <Button
+                          colorPalette={"blue"}
+                          size={"sm"}
+                          variant={"surface"}
+                        >
+                          <AppIcon icon={DownloadIcon} />
+                          {"Unduh Kontrak"}
+                        </Button>
+                      </ExternalLink>
 
-                        <Link to={"/"}>
-                          <Button variant={"outline"} size={"sm"}>
-                            <AppIcon icon={LogInIcon} />
-                            {"Masuk ke Portal SSO"}
-                          </Button>
-                        </Link>
-                      </HStack>
+                      <Link to={"/"}>
+                        <Button
+                          colorPalette={"blue"}
+                          size={"sm"}
+                          variant={"surface"}
+                        >
+                          <AppIcon icon={LogInIcon} />
+                          {"Halaman Login"}
+                        </Button>
+                      </Link>
                     </HStack>
-                  </Box>
+                  </VStack>
                 )}
 
                 {/* 3. Rejection Reason Banner (If Rejected) */}

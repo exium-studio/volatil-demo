@@ -247,9 +247,12 @@ const ResetPasswordMethodSelector = ({
   return (
     <VStack
       as={"form"}
-      onSubmit={methodForm.handleSubmit((values) =>
-        onSelectMethod(values.method),
-      )}
+      onSubmit={(e) => {
+        e.stopPropagation();
+        methodForm.handleSubmit((values) =>
+          onSelectMethod(values.method),
+        )(e);
+      }}
       gap={"md"}
       align={"stretch"}
     >
@@ -474,7 +477,10 @@ const EmailResetPasswordFlow = ({
     return (
       <VStack
         as={"form"}
-        onSubmit={requestForm.handleSubmit(handleRequestSubmit)}
+        onSubmit={(e) => {
+          e.stopPropagation();
+          requestForm.handleSubmit(handleRequestSubmit)(e);
+        }}
         gap={"md"}
         align={"stretch"}
       >
@@ -504,6 +510,7 @@ const EmailResetPasswordFlow = ({
             }
           >
             <Input
+              autoFocus={!isUserLoggedIn}
               startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
               placeholder={"contoh@email.com"}
               readOnly={isUserLoggedIn}
@@ -539,7 +546,10 @@ const EmailResetPasswordFlow = ({
     return (
       <VStack
         as={"form"}
-        onSubmit={otpForm.handleSubmit(handleOtpSubmit)}
+        onSubmit={(e) => {
+          e.stopPropagation();
+          otpForm.handleSubmit(handleOtpSubmit)(e);
+        }}
         gap={"md"}
         align={"stretch"}
       >
@@ -615,7 +625,10 @@ const EmailResetPasswordFlow = ({
   return (
     <VStack
       as={"form"}
-      onSubmit={newPasswordForm.handleSubmit(handlePasswordSubmit)}
+      onSubmit={(e) => {
+        e.stopPropagation();
+        newPasswordForm.handleSubmit(handlePasswordSubmit)(e);
+      }}
       gap={"md"}
       align={"stretch"}
     >
@@ -635,6 +648,7 @@ const EmailResetPasswordFlow = ({
           errorText={newPasswordForm.formState.errors.newPassword?.message}
         >
           <PasswordInput
+            autoFocus={true}
             startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
             placeholder={"Minimal 8 karakter"}
             withPasswordStrength={true}
@@ -766,7 +780,10 @@ const TotpResetPasswordFlow = ({
     return (
       <VStack
         as={"form"}
-        onSubmit={totpForm.handleSubmit(handleTotpSubmit)}
+        onSubmit={(e) => {
+          e.stopPropagation();
+          totpForm.handleSubmit(handleTotpSubmit)(e);
+        }}
         gap={"md"}
         align={"stretch"}
       >
@@ -796,6 +813,7 @@ const TotpResetPasswordFlow = ({
             }
           >
             <Input
+              autoFocus={!isUserLoggedIn}
               startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
               placeholder={"pegawai@atrbpn.go.id"}
               readOnly={isUserLoggedIn}
@@ -817,7 +835,7 @@ const TotpResetPasswordFlow = ({
               <PinInput
                 count={6}
                 otp={true}
-                autoFocus={true}
+                autoFocus={isUserLoggedIn}
                 onValueChange={(details) => {
                   totpForm.setValue("totpCode", details.value.join(""));
                 }}
@@ -856,7 +874,10 @@ const TotpResetPasswordFlow = ({
   return (
     <VStack
       as={"form"}
-      onSubmit={newPasswordForm.handleSubmit(handlePasswordSubmit)}
+      onSubmit={(e) => {
+        e.stopPropagation();
+        newPasswordForm.handleSubmit(handlePasswordSubmit)(e);
+      }}
       gap={"md"}
       align={"stretch"}
     >
@@ -876,6 +897,7 @@ const TotpResetPasswordFlow = ({
           errorText={newPasswordForm.formState.errors.newPassword?.message}
         >
           <PasswordInput
+            autoFocus={true}
             startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
             placeholder={"Minimal 8 karakter"}
             withPasswordStrength={true}

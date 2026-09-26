@@ -10,12 +10,13 @@ export const buttonRecipe = defineRecipe({
   variants: {
     variant: {
       subtle: {
-        bg: "bg.subtle",
+        bg: "colorPalette.subtle",
+        color: "colorPalette.fg",
         _hover: {
-          bg: "bg.muted",
+          bg: "colorPalette.muted",
         },
         _active: {
-          bg: "bg.muted",
+          bg: "colorPalette.muted",
         },
       },
       blend: {
