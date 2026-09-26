@@ -225,7 +225,7 @@ const ResetPasswordModalContent = (props: ResetPasswordModalContentProps) => {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant={"outline"} w={"full"} onClick={handleCloseModal}>
+          <Button w={"full"} onClick={handleCloseModal}>
             {t["action.close"]()}
           </Button>
         </Modal.Footer>
@@ -478,7 +478,7 @@ const EmailResetPasswordFlow = ({
         gap={"md"}
         align={"stretch"}
       >
-        <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
+        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Description fontSize={"xs"}>
             {isUserLoggedIn
@@ -496,7 +496,7 @@ const EmailResetPasswordFlow = ({
               isUserLoggedIn ? (
                 <HStack gap={"2xs"} align={"center"} color={"fg.muted"}>
                   <AppIcon icon={LockIcon} size={"xs"} />
-                  <P fontSize={"2xs"}>
+                  <P fontSize={"xs"}>
                     {"Email terkunci sesuai akun login aktif"}
                   </P>
                 </HStack>
@@ -515,27 +515,22 @@ const EmailResetPasswordFlow = ({
           </Field>
         </Fieldset>
 
-        <HStack justify={"start"} align={"center"}>
+        <VStack gap={"xs"} mt={"xs"}>
           <Button
-            variant={"ghost"}
-            size={"xs"}
-            type={"button"}
-            onClick={onBackToMethod}
+            primary={true}
+            type={"submit"}
+            w={"full"}
+            loading={requestMutation.isPending}
           >
+            <AppIcon icon={KeyRoundIcon} />
+            {"Kirim Kode OTP"}
+          </Button>
+
+          <Button onClick={onBackToMethod}>
             <AppIcon icon={ArrowLeftIcon} />
             {"Ganti Metode"}
           </Button>
-        </HStack>
-
-        <Button
-          primary={true}
-          type={"submit"}
-          w={"full"}
-          loading={requestMutation.isPending}
-        >
-          <AppIcon icon={KeyRoundIcon} />
-          {"Kirim Kode OTP"}
-        </Button>
+        </VStack>
       </VStack>
     );
   }
@@ -793,7 +788,7 @@ const TotpResetPasswordFlow = ({
               isUserLoggedIn ? (
                 <HStack gap={"2xs"} align={"center"} color={"fg.muted"}>
                   <AppIcon icon={LockIcon} size={"xs"} />
-                  <P fontSize={"2xs"}>
+                  <P fontSize={"xs"}>
                     {"Email terkunci sesuai akun login aktif"}
                   </P>
                 </HStack>
@@ -838,27 +833,22 @@ const TotpResetPasswordFlow = ({
           </Field>
         </Fieldset>
 
-        <HStack justify={"start"} align={"center"} mt={"xs"}>
+        <VStack gap={"xs"}>
           <Button
-            variant={"ghost"}
-            size={"xs"}
-            type={"button"}
-            onClick={onBackToMethod}
+            primary={true}
+            type={"submit"}
+            w={"full"}
+            loading={verifyTotpMutation.isPending}
           >
+            <AppIcon icon={ShieldCheckIcon} />
+            {"Verifikasi Kode Authenticator"}
+          </Button>
+
+          <Button onClick={onBackToMethod}>
             <AppIcon icon={ArrowLeftIcon} />
             {"Ganti Metode"}
           </Button>
-        </HStack>
-
-        <Button
-          primary={true}
-          type={"submit"}
-          w={"full"}
-          loading={verifyTotpMutation.isPending}
-        >
-          <AppIcon icon={ShieldCheckIcon} />
-          {"Verifikasi Kode Authenticator"}
-        </Button>
+        </VStack>
       </VStack>
     );
   }
@@ -906,26 +896,21 @@ const TotpResetPasswordFlow = ({
         </Field>
       </Fieldset>
 
-      <HStack justify={"start"} align={"center"} mt={"xs"}>
+      <VStack gap={"xs"}>
         <Button
-          variant={"ghost"}
-          size={"xs"}
-          type={"button"}
-          onClick={() => setSubStep("totp")}
+          primary={true}
+          type={"submit"}
+          w={"full"}
+          loading={confirmMutation.isPending}
         >
+          {"Simpan Kata Sandi Baru"}
+        </Button>
+
+        <Button onClick={() => setSubStep("totp")}>
           <AppIcon icon={ArrowLeftIcon} />
           {"Kembali ke Verifikasi"}
         </Button>
-      </HStack>
-
-      <Button
-        primary={true}
-        type={"submit"}
-        w={"full"}
-        loading={confirmMutation.isPending}
-      >
-        {"Simpan Kata Sandi Baru"}
-      </Button>
+      </VStack>
     </VStack>
   );
 };

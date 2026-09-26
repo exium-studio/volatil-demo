@@ -20,7 +20,7 @@ import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
 import type { UserProfilePopoverTriggerProps } from "@/features/auth/types/user-profile-popover.type";
 import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
-import { LogOutIcon, MoonIcon, RotateCwIcon, SunIcon } from "lucide-react";
+import { LockIcon, LogOutIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const UserProfilePopoverTrigger = (
@@ -137,7 +137,7 @@ export const UserProfilePopoverTrigger = (
                     px={"sm"}
                     justifyContent={"start"}
                   >
-                    <AppIcon icon={RotateCwIcon} />
+                    <AppIcon icon={LockIcon} />
                     {"Reset Kata Sandi"}
                   </Button>
                 </ResetPasswordTrigger>
