@@ -481,48 +481,48 @@ export const MitraRegistrationStatusPage = () => {
                           const hasDoc = Boolean(docFile?.url);
 
                           return (
-                            <Box
+                            <HStack
                               key={docItem.key}
-                              p={3}
-                              rounded={"md"}
-                              borderWidth={"1px"}
+                              align={"center"}
+                              justify={"space-between"}
+                              gap={2}
+                              rounded={theme.radii.container}
+                              border={"1px solid"}
                               borderColor={"border.subtle"}
                             >
-                              <HStack
-                                justify={"space-between"}
-                                align={"center"}
-                                gap={2}
+                              <VStack
+                                flex={1}
+                                align={"start"}
+                                gap={"xs"}
+                                p={"md"}
                               >
-                                <VStack align={"start"} gap={0} flex={1}>
-                                  <P fontSize={"xs"} fontWeight={"medium"}>
-                                    {docItem.label}
-                                  </P>
-                                  {docFile?.size ? (
-                                    <P fontSize={"xs"} color={"fg.subtle"}>
-                                      {formatByte(docFile.size, {
-                                        decimals: 1,
-                                      })}
-                                    </P>
-                                  ) : null}
-                                </VStack>
+                                <P>{docItem.label}</P>
 
+                                {docFile?.size ? (
+                                  <P fontSize={"xs"} color={"fg.subtle"}>
+                                    {formatByte(docFile.size, {
+                                      decimals: 1,
+                                    })}
+                                  </P>
+                                ) : null}
+                              </VStack>
+
+                              <Box px={"md"} py={"xs"} mt={"auto"}>
                                 {hasDoc && docFile?.url ? (
                                   <ExternalLink
                                     href={docFile.url}
                                     download={true}
                                   >
-                                    <Button size={"2xs"} variant={"outline"}>
-                                      <AppIcon icon={ExternalLinkIcon} />
-                                      {"Lihat"}
-                                    </Button>
+                                    <AppIcon icon={ExternalLinkIcon} />
+                                    {"Lihat"}
                                   </ExternalLink>
                                 ) : (
                                   <Badge size={"xs"} colorPalette={"gray"}>
                                     {"-"}
                                   </Badge>
                                 )}
-                              </HStack>
-                            </Box>
+                              </Box>
+                            </HStack>
                           );
                         })}
                       </SimpleGrid>
