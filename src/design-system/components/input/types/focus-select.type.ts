@@ -40,6 +40,11 @@ export type FocusSelectInputProps = Omit<
   clearable?: boolean;
   iconSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
   isFetching?: boolean;
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
+  errorTitle?: string;
+  errorMessage?: string;
   /** When true, typing in the search input dynamically creates a custom option at the top of the list. Defaults to false. */
   customOption?: boolean;
   /** Optional custom trigger node or render function receiving trigger state */

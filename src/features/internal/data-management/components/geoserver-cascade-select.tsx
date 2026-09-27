@@ -28,11 +28,26 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
   } = props;
 
   // Hooks (Queries)
-  const { items: geoserverList, isLoading: isLoadingGeoserver } =
+  const {
+    items: geoserverList,
+    isLoading: isLoadingGeoserver,
+    isError: isErrorGeoserver,
+    refetch: refetchGeoserver,
+  } =
     useMasterGeoserverQuery();
-  const { workspaces, isLoading: isLoadingWorkspaces } =
+  const {
+    workspaces,
+    isLoading: isLoadingWorkspaces,
+    isError: isErrorWorkspaces,
+    refetch: refetchWorkspaces,
+  } =
     useGeoServerWorkspacesQuery(selectedGeoserverId);
-  const { layers: workspaceLayers, isLoading: isLoadingLayers } =
+  const {
+    layers: workspaceLayers,
+    isLoading: isLoadingLayers,
+    isError: isErrorLayers,
+    refetch: refetchLayers,
+  } =
     useGeoServerWorkspaceLayersQuery(selectedGeoserverId, selectedWorkspace);
 
   // Derived Values
@@ -92,6 +107,8 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
             onLayerChange("", undefined);
           }}
           isFetching={isLoadingGeoserver}
+          isError={isErrorGeoserver}
+          onRetry={() => void refetchGeoserver()}
         />
       </Field>
 
@@ -113,6 +130,8 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
           }}
           disabled={!selectedGeoserverId}
           isFetching={isLoadingWorkspaces}
+          isError={isErrorWorkspaces}
+          onRetry={() => void refetchWorkspaces()}
         />
       </Field>
 
@@ -131,6 +150,8 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
           onValueChange={handleLayerSelect}
           disabled={!selectedWorkspace}
           isFetching={isLoadingLayers}
+          isError={isErrorLayers}
+          onRetry={() => void refetchLayers()}
         />
       </Field>
     </VStack>

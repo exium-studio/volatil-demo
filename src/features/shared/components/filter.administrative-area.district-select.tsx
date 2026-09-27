@@ -36,7 +36,12 @@ export const FilterAdministrativeAreaDistrictSelect = (
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: kecamatanOptionsData, isLoading } = useFilterOptionsKecamatan({
+  const {
+    data: kecamatanOptionsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useFilterOptionsKecamatan({
     provinsiId: provinceId,
     kabupatenId: regencyId,
   });
@@ -76,7 +81,9 @@ export const FilterAdministrativeAreaDistrictSelect = (
             : undefined,
         )
       }
-      loading={isLoading}
+      isFetching={isLoading}
+      isError={isError}
+      onRetry={() => void refetch()}
       disabled={disabled}
     />
   );

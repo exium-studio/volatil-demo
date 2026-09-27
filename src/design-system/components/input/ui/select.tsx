@@ -7,7 +7,12 @@ import type {
   SelectOption,
   SelectProps,
 } from "@/design-system/components/input/types/select.type";
-import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { Box } from "@/design-system/components/layout/ui/box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -41,10 +46,17 @@ export default function SelectInput(props: SelectProps) {
     renderOption,
     _hover,
     disabled = false,
+    isFetching = false,
+    isLoading = false,
+    isError = false,
+    onRetry,
+    errorTitle,
+    errorMessage,
     ...restProps
   } = props;
 
   const options = optionsProp ?? deprecatedSelectOptions ?? EMPTY_OPTIONS;
+  const isFetchingLoading = Boolean(isFetching || isLoading);
 
   // Stores
   const { theme } = useThemeStore();
@@ -236,7 +248,30 @@ export default function SelectInput(props: SelectProps) {
               animationDuration: "moderate",
             }}
           >
-            {collection.items.map((item) => (
+            {isFetchingLoading ? (
+              <VStack gap={"sm"} w={"full"} p={2}>
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton
+                    key={`select-skeleton-${index + 1}`}
+                    w={"full"}
+                    h={"32px"}
+                  />
+                ))}
+              </VStack>
+            ) : isError ? (
+              <Box p={2}>
+                <RetryState
+                  onRetry={onRetry}
+                  title={errorTitle}
+                  description={errorMessage}
+                />
+              </Box>
+            ) : isEmptyArray(options) ? (
+              <Box p={2}>
+                <NoResultState />
+              </Box>
+            ) : (
+              collection.items.map((item) => (
               <ChakraSelect.Item
                 key={String(item.value)}
                 item={item}
@@ -266,7 +301,7 @@ export default function SelectInput(props: SelectProps) {
                   color={`${theme.colorPalette}.fg`}
                 />
               </ChakraSelect.Item>
-            ))}
+            )))}
           </ChakraSelect.Content>
         </ChakraSelect.Positioner>
       </Portal>

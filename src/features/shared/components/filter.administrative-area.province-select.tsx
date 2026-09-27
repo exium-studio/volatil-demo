@@ -33,7 +33,12 @@ export const FilterAdministrativeAreaProvinceSelect = (
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: provinsiOptionsData, isLoading } = useFilterOptionsProvinsi();
+  const {
+    data: provinsiOptionsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useFilterOptionsProvinsi();
   const selectOptions: FocusSelectOption[] = (
     provinsiOptionsData?.data ?? []
   ).map((item) => ({
@@ -70,7 +75,9 @@ export const FilterAdministrativeAreaProvinceSelect = (
             : undefined,
         )
       }
-      loading={isLoading}
+      isFetching={isLoading}
+      isError={isError}
+      onRetry={() => void refetch()}
       disabled={disabled}
     />
   );

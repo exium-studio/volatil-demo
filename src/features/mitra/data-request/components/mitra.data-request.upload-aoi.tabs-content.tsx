@@ -710,8 +710,9 @@ const UploadAoiConfirmedAttributeList = memo(
             >
               <VStack align={"start"} gap={0}>
                 <P fontWeight={"semibold"} fontSize={"md"}>
-                  {"Hasil query spasial AOI"}
+                  {"AOI Upload"}
                 </P>
+
                 {aoiAreaHa > 0 && (
                   <P fontSize={"xs"} color={"fg.muted"}>
                     {`Luas AOI: ${formatNumber(aoiAreaHa, { maximumFractionDigits: 2 })} ha`}

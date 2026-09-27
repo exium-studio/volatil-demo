@@ -315,7 +315,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
           >
             <VStack align={"start"} gap={0}>
               <P fontWeight={"medium"} fontSize={"md"}>
-                {"Hasil query spasial gambar AOI"}
+                {"AOI Gambar"}
               </P>
               {aoiAreaHa > 0 && (
                 <P fontSize={"xs"} color={"fg.muted"}>

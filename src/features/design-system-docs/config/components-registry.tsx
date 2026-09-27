@@ -736,6 +736,21 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         description: "Menonaktifkan input.",
         controlKind: "boolean",
       },
+      {
+        name: "isFetching",
+        type: "boolean",
+        defaultValue: false,
+        description: "Status memuat opsi (loading/fetching).",
+        controlKind: "boolean",
+      },
+      {
+        name: "isError",
+        type: "boolean",
+        defaultValue: false,
+        description: "Status gagal memuat opsi, merender RetryState.",
+        controlKind: "boolean",
+
+      },
     ],
     renderPlayground: (props) => <FocusSelectPlaygroundDemo {...props} />,
   },
@@ -3355,6 +3370,8 @@ const FocusSelectPlaygroundDemo = (props: Record<string, unknown>) => {
         size={(props.size as "sm" | "md" | "lg") || "md"}
         clearable={Boolean(props.clearable)}
         disabled={Boolean(props.disabled)}
+        isFetching={Boolean(props.isFetching)}
+        isError={Boolean(props.isError)}
         options={[
           {
             label: "Bidang Tanah",

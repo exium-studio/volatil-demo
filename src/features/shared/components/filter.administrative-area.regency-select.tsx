@@ -35,7 +35,12 @@ export const FilterAdministrativeAreaRegencySelect = (
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: kabupatenOptionsData, isLoading } = useFilterOptionsKabupaten({
+  const {
+    data: kabupatenOptionsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useFilterOptionsKabupaten({
     provinsiId: provinceId,
   });
   const selectOptions: FocusSelectOption[] = (
@@ -74,7 +79,9 @@ export const FilterAdministrativeAreaRegencySelect = (
             : undefined,
         )
       }
-      loading={isLoading}
+      isFetching={isLoading}
+      isError={isError}
+      onRetry={() => void refetch()}
       disabled={disabled}
     />
   );

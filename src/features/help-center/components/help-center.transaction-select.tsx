@@ -26,7 +26,8 @@ export const HelpCenterTransactionSelect = (
   const [internalValue, setInternalValue] = useState<string>(defaultValue);
 
   // Queries
-  const { transactions, isLoading } = useMitraTransactionsQuery();
+  const { transactions, isLoading, isError, refetch } =
+    useMitraTransactionsQuery();
 
   // Derived Values
   const isControlled = controlledValue !== undefined;
@@ -62,6 +63,8 @@ export const HelpCenterTransactionSelect = (
       onValueChange={handleValueChange}
       disabled={disabled}
       isFetching={isLoading}
+      isError={isError}
+      onRetry={() => void refetch()}
       clearable={true}
     />
   );

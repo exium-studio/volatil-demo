@@ -43,5 +43,11 @@ export type SelectProps = Omit<
   suffixLabel?: ReactNode;
   trigger?: ReactNode | ((params: SelectTriggerRenderParams) => ReactNode);
   renderOption?: (option: SelectOption) => ReactNode;
+  isFetching?: boolean;
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
+  errorTitle?: string;
+  errorMessage?: string;
 };
 

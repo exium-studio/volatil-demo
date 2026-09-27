@@ -37,7 +37,12 @@ export const FilterAdministrativeAreaSubdistrictSelect = (
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Queries
-  const { data: kelurahanOptionsData, isLoading } = useFilterOptionsKelurahan({
+  const {
+    data: kelurahanOptionsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useFilterOptionsKelurahan({
     provinsiId: provinceId,
     kabupatenId: regencyId,
     kecamatanId: districtId,
@@ -80,7 +85,9 @@ export const FilterAdministrativeAreaSubdistrictSelect = (
             : undefined,
         )
       }
-      loading={isLoading}
+      isFetching={isLoading}
+      isError={isError}
+      onRetry={() => void refetch()}
       disabled={disabled}
     />
   );

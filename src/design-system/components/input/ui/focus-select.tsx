@@ -5,6 +5,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
@@ -46,6 +47,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     clearable = true,
     iconSize = "md",
     isFetching = false,
+    isLoading = false,
+    isError = false,
+    onRetry,
+    errorTitle,
+    errorMessage,
     customOption = false,
     size = "md",
     variant = "outline",
@@ -58,6 +64,9 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
   // Stores
   const { theme } = useThemeStore();
+  const isFetchingLoading = Boolean(
+    isFetching || isLoading || restProps.loading,
+  );
 
   // States (Uncontrolled & Controlled support)
   const [internalValue, setInternalValue] = useState<string>(defaultValue);
@@ -86,12 +95,12 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
   // Effects — auto focus search input when modal opens
   useEffect(() => {
-    if (!isOpen || isFetching) return;
+    if (!isOpen || isFetchingLoading || isError) return;
     const timer = setTimeout(() => {
       searchInputRef.current?.focus({ preventScroll: true });
     }, 50);
     return () => clearTimeout(timer);
-  }, [isOpen, isFetching]);
+  }, [isOpen, isFetchingLoading, isError]);
 
   const filteredOptions = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -342,7 +351,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
           <Modal.Body p={0}>
             {/* Always render SearchInput when not fetching */}
-            {!isFetching && (
+            {!isFetchingLoading && !isError && (
               <VStack w={"full"} px={"md"} pt={"2px"} mb={"sm"}>
                 <SearchInput
                   ref={searchInputRef}
@@ -355,7 +364,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
             )}
 
             {/* Always render Custom Option at top if customOption prop is true */}
-            {customOption && !isFetching && (
+            {customOption && !isFetchingLoading && !isError && (
               <VStack w={"full"} px={"md"} mb={"sm"}>
                 <Button
                   variant={
@@ -394,7 +403,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
 
             {/* Clean options list container */}
             <VScrollContainer w={"full"} maxH={"300px"} px={"md"} pb={"md"}>
-              {isFetching ? (
+              {isFetchingLoading ? (
                 <VStack gap={"sm"} w={"full"}>
                   {Array.from({ length: SKELETON_LIST_COUNT }).map(
                     (_, index) => (
@@ -406,6 +415,12 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                     ),
                   )}
                 </VStack>
+              ) : isError ? (
+                <RetryState
+                  onRetry={onRetry}
+                  title={errorTitle}
+                  description={errorMessage}
+                />
               ) : isEmptyArray(filteredOptions) ? (
                 <NoResultState query={searchQuery || "..."} />
               ) : (
