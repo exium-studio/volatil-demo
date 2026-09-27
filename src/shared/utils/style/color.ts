@@ -1,3 +1,5 @@
+// src/shared/utils/style/color.ts
+
 // src\shared\utils\style\color.ts
 
 // src\shared\utils\style\color.ts

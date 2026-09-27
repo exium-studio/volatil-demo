@@ -1,3 +1,5 @@
+// src/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal.tsx
+
 // src\features\internal\mitra-registration\components\internal.mitra-registration.reject-modal.tsx
 
 // src\features\internal\mitra-registration\components\internal.mitra-registration.reject-modal.tsx

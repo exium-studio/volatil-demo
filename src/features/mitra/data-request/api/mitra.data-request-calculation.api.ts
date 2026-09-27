@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/api/mitra.data-request-calculation.api.ts
+
 // src\features\mitra\data-request\api\mitra.data-request-calculation.api.ts
 
 // src\features\mitra\data-request\api\mitra.data-request-calculation.api.ts
@@ -227,7 +229,11 @@ export async function calculateSpatialCoverageStream(
     }
   } catch (error) {
     if (signal?.aborted) return;
-    if (typeof window !== "undefined") {
+    if (
+      typeof window !== "undefined" &&
+      typeof navigator !== "undefined" &&
+      !navigator.onLine
+    ) {
       window.dispatchEvent(new CustomEvent("app:network-offline"));
     }
     const err =

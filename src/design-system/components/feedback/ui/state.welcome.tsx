@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/ui/state.welcome.tsx
+
 // src\design-system\components\feedback\ui\state.welcome.tsx
 
 // src\design-system\components\feedback\ui\state.welcome.tsx

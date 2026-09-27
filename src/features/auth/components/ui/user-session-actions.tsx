@@ -1,3 +1,5 @@
+// src/features/auth/components/ui/user-session-actions.tsx
+
 // src\features\auth\components\ui\user-session-actions.tsx
 
 // src\features\auth\components\ui\user-session-actions.tsx

@@ -1,3 +1,5 @@
+// src/design-system/components/map/stores/map.layer.store.ts
+
 // src\design-system\components\map\stores\map.layer.store.ts
 
 // src\design-system\components\map\stores\map.layer.store.ts
@@ -69,4 +71,3 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
       customLayerConfigs: {},
     }),
 }));
-

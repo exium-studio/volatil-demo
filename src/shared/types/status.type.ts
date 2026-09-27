@@ -1,3 +1,5 @@
+// src/shared/types/status.type.ts
+
 // src\shared\types\status.type.ts
 
 // src\shared\types\status.type.ts

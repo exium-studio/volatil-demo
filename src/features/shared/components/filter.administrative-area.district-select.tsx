@@ -1,3 +1,5 @@
+// src/features/shared/components/filter.administrative-area.district-select.tsx
+
 // src\features\shared\components\filter.administrative-area.district-select.tsx
 
 // src\features\shared\components\filter.administrative-area.district-select.tsx

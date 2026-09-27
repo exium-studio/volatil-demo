@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/page-container.type.ts
+
 // src\design-system\components\layout\types\page-container.type.ts
 
 // src\design-system\components\layout\types\page-container.type.ts

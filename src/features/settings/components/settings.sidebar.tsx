@@ -1,3 +1,5 @@
+// src/features/settings/components/settings.sidebar.tsx
+
 // src\features\settings\components\settings.sidebar.tsx
 
 // src\features\settings\components\settings.sidebar.tsx

@@ -1,3 +1,5 @@
+// src/design-system/components/typography/ui/p.tsx
+
 // src\design-system\components\typography\ui\p.tsx
 
 // src\design-system\components\typography\ui\p.tsx

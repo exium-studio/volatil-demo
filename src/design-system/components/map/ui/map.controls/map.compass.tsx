@@ -1,3 +1,5 @@
+// src/design-system/components/map/ui/map.controls/map.compass.tsx
+
 // src\design-system\components\map\ui\map.controls\map.compass.tsx
 
 // src\design-system\components\map\ui\map.controls\map.compass.tsx

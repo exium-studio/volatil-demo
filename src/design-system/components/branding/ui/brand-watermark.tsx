@@ -1,3 +1,5 @@
+// src/design-system/components/branding/ui/brand-watermark.tsx
+
 // src\design-system\components\branding\ui\brand-watermark.tsx
 
 // src\design-system\components\branding\ui\brand-watermark.tsx

@@ -1,3 +1,5 @@
+// src/shared/libs/i18n/-typed.ts
+
 // src\shared\libs\i18n\-typed.ts
 
 // src\shared\libs\i18n\-typed.ts

@@ -1,3 +1,5 @@
+// src/routes/_public/registration-status.tsx
+
 // src\routes\_public\registration-status.tsx
 
 // src\routes\_public\registration-status.tsx

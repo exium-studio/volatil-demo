@@ -1,3 +1,5 @@
+// src/design-system/components/overlay/types/modal.type.ts
+
 // src\design-system\components\overlay\types\modal.type.ts
 
 // src\design-system\components\overlay\types\modal.type.ts

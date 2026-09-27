@@ -1,3 +1,5 @@
+// src/routes/_private/internal/mitra-registration.tsx
+
 // src\routes\_private\internal\mitra-registration.tsx
 
 // src\routes\_private\internal\mitra-registration.tsx

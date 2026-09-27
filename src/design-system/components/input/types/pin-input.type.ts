@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/pin-input.type.ts
+
 // src\design-system\components\input\types\pin-input.type.ts
 
 // src\design-system\components\input\types\pin-input.type.ts
@@ -10,6 +12,7 @@ export type PinInputProps = ChakraPinInput.RootProps & {
   mask?: boolean;
   placeholder?: string;
   fluid?: boolean;
+  inputHeight?: number | string;
   inputProps?: ChakraPinInput.InputProps;
 };
 

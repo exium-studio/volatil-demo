@@ -1,3 +1,5 @@
+// src/features/auth/pages/sso-callback.page.tsx
+
 // src\features\auth\pages\sso-callback.page.tsx
 
 // src\features\auth\pages\sso-callback.page.tsx

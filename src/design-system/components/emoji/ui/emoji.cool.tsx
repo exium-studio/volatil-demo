@@ -1,3 +1,5 @@
+// src/design-system/components/emoji/ui/emoji.cool.tsx
+
 // src\design-system\components\emoji\ui\emoji.cool.tsx
 
 // src\design-system\components\emoji\ui\emoji.cool.tsx

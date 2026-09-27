@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/ui/data-view-page-size.tsx
+
 // src\design-system\components\data-display\ui\data-view-page-size.tsx
 
 // src\design-system\components\data-display\ui\data-view-page-size.tsx

@@ -1,3 +1,5 @@
+// src/features/auth/types/mitra-registration.type.ts
+
 // src\features\auth\types\mitra-registration.type.ts
 
 // src\features\auth\types\mitra-registration.type.ts

@@ -1,3 +1,5 @@
+// src/design-system/components/map/stores/map.interaction.store.ts
+
 // src\design-system\components\map\stores\map.interaction.store.ts
 
 // src\design-system\components\map\stores\map.interaction.store.ts

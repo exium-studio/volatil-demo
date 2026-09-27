@@ -1,3 +1,5 @@
+// src/design-system/components/navigation/types/sidebar.type.ts
+
 // src\design-system\components\navigation\types\sidebar.type.ts
 
 // src\design-system\components\navigation\types\sidebar.type.ts

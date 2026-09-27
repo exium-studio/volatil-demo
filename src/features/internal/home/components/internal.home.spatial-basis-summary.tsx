@@ -1,3 +1,5 @@
+// src/features/internal/home/components/internal.home.spatial-basis-summary.tsx
+
 // src\features\internal\home\components\internal.home.spatial-basis-summary.tsx
 
 // src\features\internal\home\components\internal.home.spatial-basis-summary.tsx

@@ -1,3 +1,5 @@
+// src/features/internal/home/components/internal.home.trend.tsx
+
 // src\features\internal\home\components\internal.home.trend.tsx
 
 // src\features\internal\home\components\internal.home.trend.tsx

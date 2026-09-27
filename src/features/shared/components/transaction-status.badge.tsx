@@ -1,3 +1,5 @@
+// src/features/shared/components/transaction-status.badge.tsx
+
 // src\features\shared\components\transaction-status.badge.tsx
 
 // src\features\shared\components\transaction-status.badge.tsx

@@ -1,9 +1,12 @@
+// src/features/auth/components/ui/reset-password-modal.tsx
+
 // src\features\auth\components\ui\reset-password-modal.tsx
 
 // src\features\auth\components\ui\reset-password-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { FocusAlertView } from "@/design-system/components/focus-alert/ui/focus-alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
@@ -53,7 +56,6 @@ import { t } from "@/shared/libs/i18n";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
-  CheckCircle2Icon,
   InfoIcon,
   KeyRoundIcon,
   LockIcon,
@@ -173,24 +175,14 @@ const ResetPasswordModalContent = (props: ResetPasswordModalContentProps) => {
 
         <Modal.Body p={"md"}>
           {isSuccess ? (
-            <VStack gap={"md"} align={"center"} py={"md"} textAlign={"center"}>
-              <AppIcon
-                icon={CheckCircle2Icon}
-                size={"2xl"}
-                color={"green.fg"}
+            <VStack gap={"md"} align={"stretch"} py={"sm"}>
+              <FocusAlertView
+                variant={"success"}
+                title={"Kata Sandi Berhasil Direset!"}
+                description={
+                  "Kata sandi akun Anda telah berhasil direset. Silakan masuk menggunakan kata sandi baru Anda."
+                }
               />
-
-              <VStack gap={"2xs"}>
-                <P fontSize={"md"} fontWeight={"semibold"}>
-                  {"Kata Sandi Berhasil Direset!"}
-                </P>
-
-                <P fontSize={"sm"} color={"fg.muted"}>
-                  {
-                    "Kata sandi akun Anda telah berhasil direset. Silakan masuk menggunakan kata sandi baru Anda."
-                  }
-                </P>
-              </VStack>
 
               <Button
                 primary={true}
@@ -222,11 +214,13 @@ const ResetPasswordModalContent = (props: ResetPasswordModalContentProps) => {
           )}
         </Modal.Body>
 
-        <Modal.Footer>
-          <Button variant={"outline"} w={"full"} onClick={handleCloseModal}>
-            {t["action.close"]()}
-          </Button>
-        </Modal.Footer>
+        {!isSuccess && (
+          <Modal.Footer>
+            <Button w={"full"} onClick={handleCloseModal}>
+              {t["action.close"]()}
+            </Button>
+          </Modal.Footer>
+        )}
       </Modal.Content>
     </Modal.Root>
   );
@@ -245,21 +239,13 @@ const ResetPasswordMethodSelector = ({
   return (
     <VStack
       as={"form"}
-      onSubmit={methodForm.handleSubmit((values) =>
-        onSelectMethod(values.method),
-      )}
+      onSubmit={(e) => {
+        e.stopPropagation();
+        methodForm.handleSubmit((values) => onSelectMethod(values.method))(e);
+      }}
       gap={"md"}
       align={"stretch"}
     >
-      <Alert.Root status={"info"} variant={"subtle"}>
-        <AppIcon icon={InfoIcon} />
-        <Alert.Description fontSize={"xs"}>
-          {
-            "Pilih metode verifikasi untuk mereset kata sandi akun internal ATR/BPN Anda."
-          }
-        </Alert.Description>
-      </Alert.Root>
-
       <Fieldset>
         <Controller
           name={"method"}
@@ -273,7 +259,6 @@ const ResetPasswordMethodSelector = ({
                 title={"OTP via Email"}
                 description={"Kirim 6-digit kode verifikasi ke email"}
                 icon={MailIcon}
-                colorPalette={"purple"}
               />
 
               <ResetMethodRadioItem
@@ -284,7 +269,6 @@ const ResetPasswordMethodSelector = ({
                 description={"Gunakan kode 6 digit dari aplikasi authenticator"}
                 badge={"Instan"}
                 icon={SmartphoneIcon}
-                colorPalette={"blue"}
               />
             </VStack>
           )}
@@ -307,7 +291,7 @@ export const ResetMethodRadioItem = (props: ResetMethodRadioItemProps) => {
     description,
     badge,
     icon,
-    colorPalette = "purple",
+    colorPalette = "blue",
   } = props;
 
   // Stores
@@ -483,11 +467,14 @@ const EmailResetPasswordFlow = ({
     return (
       <VStack
         as={"form"}
-        onSubmit={requestForm.handleSubmit(handleRequestSubmit)}
+        onSubmit={(e) => {
+          e.stopPropagation();
+          requestForm.handleSubmit(handleRequestSubmit)(e);
+        }}
         gap={"md"}
         align={"stretch"}
       >
-        <Alert.Root status={"info"} colorPalette={"purple"} variant={"subtle"}>
+        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Description fontSize={"xs"}>
             {isUserLoggedIn
@@ -505,7 +492,7 @@ const EmailResetPasswordFlow = ({
               isUserLoggedIn ? (
                 <HStack gap={"2xs"} align={"center"} color={"fg.muted"}>
                   <AppIcon icon={LockIcon} size={"xs"} />
-                  <P fontSize={"2xs"}>
+                  <P fontSize={"xs"}>
                     {"Email terkunci sesuai akun login aktif"}
                   </P>
                 </HStack>
@@ -513,6 +500,7 @@ const EmailResetPasswordFlow = ({
             }
           >
             <Input
+              autoFocus={!isUserLoggedIn}
               startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
               placeholder={"contoh@email.com"}
               readOnly={isUserLoggedIn}
@@ -524,27 +512,22 @@ const EmailResetPasswordFlow = ({
           </Field>
         </Fieldset>
 
-        <HStack justify={"start"} align={"center"}>
+        <VStack gap={"xs"} mt={"xs"}>
           <Button
-            variant={"ghost"}
-            size={"xs"}
-            type={"button"}
-            onClick={onBackToMethod}
+            primary={true}
+            type={"submit"}
+            w={"full"}
+            loading={requestMutation.isPending}
           >
+            <AppIcon icon={KeyRoundIcon} />
+            {"Kirim Kode OTP"}
+          </Button>
+
+          <Button onClick={onBackToMethod}>
             <AppIcon icon={ArrowLeftIcon} />
             {"Ganti Metode"}
           </Button>
-        </HStack>
-
-        <Button
-          primary={true}
-          type={"submit"}
-          w={"full"}
-          loading={requestMutation.isPending}
-        >
-          <AppIcon icon={KeyRoundIcon} />
-          {"Kirim Kode OTP"}
-        </Button>
+        </VStack>
       </VStack>
     );
   }
@@ -553,7 +536,10 @@ const EmailResetPasswordFlow = ({
     return (
       <VStack
         as={"form"}
-        onSubmit={otpForm.handleSubmit(handleOtpSubmit)}
+        onSubmit={(e) => {
+          e.stopPropagation();
+          otpForm.handleSubmit(handleOtpSubmit)(e);
+        }}
         gap={"md"}
         align={"stretch"}
       >
@@ -629,7 +615,10 @@ const EmailResetPasswordFlow = ({
   return (
     <VStack
       as={"form"}
-      onSubmit={newPasswordForm.handleSubmit(handlePasswordSubmit)}
+      onSubmit={(e) => {
+        e.stopPropagation();
+        newPasswordForm.handleSubmit(handlePasswordSubmit)(e);
+      }}
       gap={"md"}
       align={"stretch"}
     >
@@ -649,6 +638,7 @@ const EmailResetPasswordFlow = ({
           errorText={newPasswordForm.formState.errors.newPassword?.message}
         >
           <PasswordInput
+            autoFocus={true}
             startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
             placeholder={"Minimal 8 karakter"}
             withPasswordStrength={true}
@@ -780,7 +770,10 @@ const TotpResetPasswordFlow = ({
     return (
       <VStack
         as={"form"}
-        onSubmit={totpForm.handleSubmit(handleTotpSubmit)}
+        onSubmit={(e) => {
+          e.stopPropagation();
+          totpForm.handleSubmit(handleTotpSubmit)(e);
+        }}
         gap={"md"}
         align={"stretch"}
       >
@@ -802,7 +795,7 @@ const TotpResetPasswordFlow = ({
               isUserLoggedIn ? (
                 <HStack gap={"2xs"} align={"center"} color={"fg.muted"}>
                   <AppIcon icon={LockIcon} size={"xs"} />
-                  <P fontSize={"2xs"}>
+                  <P fontSize={"xs"}>
                     {"Email terkunci sesuai akun login aktif"}
                   </P>
                 </HStack>
@@ -810,6 +803,7 @@ const TotpResetPasswordFlow = ({
             }
           >
             <Input
+              autoFocus={!isUserLoggedIn}
               startElement={<AppIcon icon={MailIcon} color={"fg.subtle"} />}
               placeholder={"pegawai@atrbpn.go.id"}
               readOnly={isUserLoggedIn}
@@ -831,7 +825,7 @@ const TotpResetPasswordFlow = ({
               <PinInput
                 count={6}
                 otp={true}
-                autoFocus={true}
+                autoFocus={isUserLoggedIn}
                 onValueChange={(details) => {
                   totpForm.setValue("totpCode", details.value.join(""));
                 }}
@@ -847,27 +841,22 @@ const TotpResetPasswordFlow = ({
           </Field>
         </Fieldset>
 
-        <HStack justify={"start"} align={"center"} mt={"xs"}>
+        <VStack gap={"xs"}>
           <Button
-            variant={"ghost"}
-            size={"xs"}
-            type={"button"}
-            onClick={onBackToMethod}
+            primary={true}
+            type={"submit"}
+            w={"full"}
+            loading={verifyTotpMutation.isPending}
           >
+            <AppIcon icon={ShieldCheckIcon} />
+            {"Verifikasi Kode Authenticator"}
+          </Button>
+
+          <Button onClick={onBackToMethod}>
             <AppIcon icon={ArrowLeftIcon} />
             {"Ganti Metode"}
           </Button>
-        </HStack>
-
-        <Button
-          primary={true}
-          type={"submit"}
-          w={"full"}
-          loading={verifyTotpMutation.isPending}
-        >
-          <AppIcon icon={ShieldCheckIcon} />
-          {"Verifikasi Kode Authenticator"}
-        </Button>
+        </VStack>
       </VStack>
     );
   }
@@ -875,7 +864,10 @@ const TotpResetPasswordFlow = ({
   return (
     <VStack
       as={"form"}
-      onSubmit={newPasswordForm.handleSubmit(handlePasswordSubmit)}
+      onSubmit={(e) => {
+        e.stopPropagation();
+        newPasswordForm.handleSubmit(handlePasswordSubmit)(e);
+      }}
       gap={"md"}
       align={"stretch"}
     >
@@ -895,6 +887,7 @@ const TotpResetPasswordFlow = ({
           errorText={newPasswordForm.formState.errors.newPassword?.message}
         >
           <PasswordInput
+            autoFocus={true}
             startElement={<AppIcon icon={LockIcon} color={"fg.subtle"} />}
             placeholder={"Minimal 8 karakter"}
             withPasswordStrength={true}
@@ -915,26 +908,21 @@ const TotpResetPasswordFlow = ({
         </Field>
       </Fieldset>
 
-      <HStack justify={"start"} align={"center"} mt={"xs"}>
+      <VStack gap={"xs"}>
         <Button
-          variant={"ghost"}
-          size={"xs"}
-          type={"button"}
-          onClick={() => setSubStep("totp")}
+          primary={true}
+          type={"submit"}
+          w={"full"}
+          loading={confirmMutation.isPending}
         >
+          {"Simpan Kata Sandi Baru"}
+        </Button>
+
+        <Button onClick={() => setSubStep("totp")}>
           <AppIcon icon={ArrowLeftIcon} />
           {"Kembali ke Verifikasi"}
         </Button>
-      </HStack>
-
-      <Button
-        primary={true}
-        type={"submit"}
-        w={"full"}
-        loading={confirmMutation.isPending}
-      >
-        {"Simpan Kata Sandi Baru"}
-      </Button>
+      </VStack>
     </VStack>
   );
 };

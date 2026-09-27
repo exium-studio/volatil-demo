@@ -1,3 +1,5 @@
+// src/design-system/components/icon/ui/app-icon.tsx
+
 // src\design-system\components\icon\ui\app-icon.tsx
 
 // src\design-system\components\icon\ui\app-icon.tsx

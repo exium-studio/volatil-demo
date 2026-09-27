@@ -1,3 +1,5 @@
+// src/features/internal/home/pages/internal.home.page.tsx
+
 // src\features\internal\home\pages\internal.home.page.tsx
 
 // src\features\internal\home\pages\internal.home.page.tsx

@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/types/skeleton.type.ts
+
 // src\design-system\components\feedback\types\skeleton.type.ts
 
 // src\design-system\components\feedback\types\skeleton.type.ts

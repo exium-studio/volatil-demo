@@ -1,3 +1,5 @@
+// src/features/auth/types/auth-guard.type.ts
+
 // src\features\auth\types\auth-guard.type.ts
 
 // src\features\auth\types\auth-guard.type.ts

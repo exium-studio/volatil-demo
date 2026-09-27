@@ -1,3 +1,5 @@
+// src/features/internal/mitra-registration/pages/internal.mitra-registration.detail.page.tsx
+
 // src\features\internal\mitra-registration\pages\internal.mitra-registration.detail.page.tsx
 
 // src\features\internal\mitra-registration\pages\internal.mitra-registration.detail.page.tsx

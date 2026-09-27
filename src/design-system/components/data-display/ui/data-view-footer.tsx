@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/ui/data-view-footer.tsx
+
 // src\design-system\components\data-display\ui\data-view-footer.tsx
 
 // src\design-system\components\data-display\ui\data-view-footer.tsx

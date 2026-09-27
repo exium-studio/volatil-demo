@@ -1,3 +1,5 @@
+// src/features/internal/home/types/internal.home.leaderboard.type.ts
+
 // src\features\internal\home\types\internal.home.leaderboard.type.ts
 
 // src\features\internal\home\types\internal.home.leaderboard.type.ts

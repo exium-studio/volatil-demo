@@ -1,3 +1,5 @@
+// src/design-system/components/map/types/map.type.ts
+
 // src\design-system\components\map\types\map.type.ts
 
 // src\design-system\components\map\types\map.type.ts
@@ -198,7 +200,3 @@ export type MapOverlayProps = {
   showMasterIgtLayerSelect?: boolean;
   showMyDataLayerSelect?: boolean;
 };
-
-
-
-

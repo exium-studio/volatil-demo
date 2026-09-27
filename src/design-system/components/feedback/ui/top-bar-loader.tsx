@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/ui/top-bar-loader.tsx
+
 // src\design-system\components\feedback\ui\top-bar-loader.tsx
 
 // src\design-system\components\feedback\ui\top-bar-loader.tsx

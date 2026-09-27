@@ -1,3 +1,5 @@
+// src/design-system/components/focus-alert/ui/focus-alerter.tsx
+
 // src\design-system\components\focus-alert\ui\focus-alerter.tsx
 
 // src\design-system\components\focus-alert\ui\focus-alerter.tsx

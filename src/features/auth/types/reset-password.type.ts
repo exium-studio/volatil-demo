@@ -1,3 +1,5 @@
+// src/features/auth/types/reset-password.type.ts
+
 // src\features\auth\types\reset-password.type.ts
 
 // src\features\auth\types\reset-password.type.ts

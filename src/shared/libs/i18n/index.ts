@@ -1,3 +1,5 @@
+// src/shared/libs/i18n/index.ts
+
 // src\shared\libs\i18n\index.ts
 
 // src\shared\libs\i18n\index.ts

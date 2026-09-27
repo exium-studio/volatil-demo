@@ -1,3 +1,5 @@
+// src/features/shared/components/mitra-registration-status.badge.tsx
+
 // src\features\shared\components\mitra-registration-status.badge.tsx
 
 // src\features\shared\components\mitra-registration-status.badge.tsx

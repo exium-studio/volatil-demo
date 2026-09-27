@@ -1,3 +1,5 @@
+// src/features/shared/types/filter.administrative-area.type.ts
+
 // src\features\shared\types\filter.administrative-area.type.ts
 
 // src\features\shared\types\filter.administrative-area.type.ts

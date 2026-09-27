@@ -1,3 +1,5 @@
+// src/design-system/components/shell/types/app-nav-title.type.ts
+
 // src\design-system\components\shell\types\app-nav-title.type.ts
 
 // src\design-system\components\shell\types\app-nav-title.type.ts

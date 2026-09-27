@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/action-header-scroll-container.type.ts
+
 // src\design-system\components\layout\types\action-header-scroll-container.type.ts
 
 // src\design-system\components\layout\types\action-header-scroll-container.type.ts

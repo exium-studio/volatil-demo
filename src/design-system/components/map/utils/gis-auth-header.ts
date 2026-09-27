@@ -1,3 +1,5 @@
+// src/design-system/components/map/utils/gis-auth-header.ts
+
 // src\design-system\components\map\utils\gis-auth-header.ts
 
 // src\design-system\components\map\utils\gis-auth-header.ts

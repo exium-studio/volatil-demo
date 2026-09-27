@@ -1,3 +1,5 @@
+// src/design-system/components/disclosure/types/carousel.type.ts
+
 // src\design-system\components\disclosure\types\carousel.type.ts
 
 // src\design-system\components\disclosure\types\carousel.type.ts

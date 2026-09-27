@@ -1,3 +1,5 @@
+// src/design-system/components/typography/ui/rich-text-editor.context.tsx
+
 // src\design-system\components\typography\ui\rich-text-editor.context.tsx
 
 // src\design-system\components\typography\ui\rich-text-editor.context.tsx

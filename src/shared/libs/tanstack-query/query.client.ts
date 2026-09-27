@@ -1,3 +1,5 @@
+// src/shared/libs/tanstack-query/query.client.ts
+
 // src\shared\libs\tanstack-query\query.client.ts
 
 // src\shared\libs\tanstack-query\query.client.ts

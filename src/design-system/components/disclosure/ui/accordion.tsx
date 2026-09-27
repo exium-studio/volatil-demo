@@ -1,3 +1,5 @@
+// src/design-system/components/disclosure/ui/accordion.tsx
+
 // src\design-system\components\disclosure\ui\accordion.tsx
 
 // src\design-system\components\disclosure\ui\accordion.tsx

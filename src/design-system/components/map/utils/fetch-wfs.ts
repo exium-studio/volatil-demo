@@ -1,3 +1,5 @@
+// src/design-system/components/map/utils/fetch-wfs.ts
+
 // src\design-system\components\map\utils\fetch-wfs.ts
 
 // src\design-system\components\map\utils\fetch-wfs.ts
@@ -131,7 +133,11 @@ export const fetchWfs = async (
     if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
       throw err;
     }
-    if (typeof window !== "undefined") {
+    if (
+      typeof window !== "undefined" &&
+      typeof navigator !== "undefined" &&
+      !navigator.onLine
+    ) {
       window.dispatchEvent(new CustomEvent("app:network-offline"));
     }
     throw err;
@@ -151,7 +157,11 @@ export const fetchWfs = async (
       if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
         throw err;
       }
-      if (typeof window !== "undefined") {
+      if (
+        typeof window !== "undefined" &&
+        typeof navigator !== "undefined" &&
+        !navigator.onLine
+      ) {
         window.dispatchEvent(new CustomEvent("app:network-offline"));
       }
       throw err;

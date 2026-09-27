@@ -1,3 +1,5 @@
+// src/features/help-center/components/help-center.modal.resolve-reject.tsx
+
 // src\features\help-center\components\help-center.modal.resolve-reject.tsx
 
 // src\features\help-center\components\help-center.modal.resolve-reject.tsx

@@ -1,3 +1,5 @@
+// src/design-system/components/layout/ui/aspect-ratio.tsx
+
 // src\design-system\components\layout\ui\aspect-ratio.tsx
 
 // src\design-system\components\layout\ui\aspect-ratio.tsx

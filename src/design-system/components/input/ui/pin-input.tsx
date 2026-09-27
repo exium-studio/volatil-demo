@@ -1,3 +1,5 @@
+// src/design-system/components/input/ui/pin-input.tsx
+
 // src\design-system\components\input\ui\pin-input.tsx
 
 // src\design-system\components\input\ui\pin-input.tsx
@@ -15,6 +17,7 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
       attached = false,
       mask = false,
       fluid = true,
+      inputHeight,
       inputProps,
       ...restProps
     } = props;
@@ -27,7 +30,8 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
         colorPalette={theme.colorPalette}
         attached={attached}
         mask={mask}
-        w={fluid ? "full" : undefined}
+        w={fluid ? "full" : "fit"}
+        justifyContent={"center"}
         {...restProps}
       >
         <ChakraPinInput.HiddenInput ref={ref} />
@@ -36,6 +40,8 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
           gap={attached ? 0 : 2}
           w={fluid ? "full" : undefined}
           display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
           {Array.from({ length: count }).map((_, index) => (
             <ChakraPinInput.Input
@@ -43,12 +49,13 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
               index={index}
               flex={fluid ? 1 : undefined}
               w={fluid ? 0 : undefined}
+              h={inputHeight}
               minW={fluid ? 0 : undefined}
               maxW={fluid ? "64px" : undefined}
               textAlign={"center"}
               rounded={attached ? undefined : theme.radii.component}
               pb={"2px"}
-              fontSize={"md"}
+              fontSize={inputProps?.fontSize ?? (inputHeight ? "2xl" : "md")}
               _first={
                 attached
                   ? { borderStartRadius: theme.radii.component }

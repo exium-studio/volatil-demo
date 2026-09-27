@@ -1,3 +1,5 @@
+// src/shared/constants/dummy-data/dummy-inbox.ts
+
 // src\shared\constants\dummy-data\dummy-inbox.ts
 
 // src\shared\constants\dummy-data\dummy-inbox.ts

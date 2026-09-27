@@ -1,3 +1,5 @@
+// src/features/settings/pages/appearance/appearance.settings-page.tsx
+
 // src\features\settings\pages\appearance\appearance.settings-page.tsx
 
 // src\features\settings\pages\appearance\appearance.settings-page.tsx

@@ -1,3 +1,5 @@
+// src/features/notification/components/notification.inbox.data-view.tsx
+
 // src\features\notification\components\notification.inbox.data-view.tsx
 
 // src\features\notification\components\notification.inbox.data-view.tsx

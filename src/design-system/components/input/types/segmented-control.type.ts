@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/segmented-control.type.ts
+
 // src\design-system\components\input\types\segmented-control.type.ts
 
 // src\design-system\components\input\types\segmented-control.type.ts

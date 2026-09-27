@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/types/mitra.data-request.draw-aoi.type.ts
+
 // src\features\mitra\data-request\types\mitra.data-request.draw-aoi.type.ts
 
 // src\features\mitra\data-request\types\mitra.data-request.draw-aoi.type.ts

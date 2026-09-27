@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/scroll-container.type.ts
+
 // src\design-system\components\layout\types\scroll-container.type.ts
 
 // src\design-system\components\layout\types\scroll-container.type.ts

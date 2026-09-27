@@ -1,3 +1,5 @@
+// src/design-system/components/shell/ui/common-app-shell.tsx
+
 // src\design-system\components\shell\ui\common-app-shell.tsx
 
 // src\design-system\components\shell\ui\common-app-shell.tsx

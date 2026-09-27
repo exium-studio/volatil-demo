@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/radio-input.type.ts
+
 // src\design-system\components\input\types\radio-input.type.ts
 
 // src\design-system\components\input\types\radio-input.type.ts

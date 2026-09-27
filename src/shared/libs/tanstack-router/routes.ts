@@ -1,3 +1,5 @@
+// src/shared/libs/tanstack-router/routes.ts
+
 // src\shared\libs\tanstack-router\routes.ts
 
 // src\shared\libs\tanstack-router\routes.ts

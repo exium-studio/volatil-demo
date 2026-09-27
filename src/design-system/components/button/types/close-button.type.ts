@@ -1,3 +1,5 @@
+// src/design-system/components/button/types/close-button.type.ts
+
 // src\design-system\components\button\types\close-button.type.ts
 
 // src\design-system\components\button\types\close-button.type.ts

@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/ui/loader.tsx
+
 // src\design-system\components\feedback\ui\loader.tsx
 
 // src\design-system\components\feedback\ui\loader.tsx

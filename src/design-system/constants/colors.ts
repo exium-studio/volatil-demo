@@ -1,3 +1,5 @@
+// src/design-system/constants/colors.ts
+
 // src\design-system\constants\colors.ts
 
 // src\design-system\constants\colors.ts

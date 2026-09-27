@@ -1,3 +1,5 @@
+// src/shared/types/locale.type.ts
+
 // src\shared\types\locale.type.ts
 
 // src\shared\types\locale.type.ts

@@ -1,3 +1,5 @@
+// src/features/internal/home/components/internal.home.mitra-layer-sync-jobs-quick-view.tsx
+
 // src\features\internal\home\components\internal.home.mitra-layer-sync-jobs-quick-view.tsx
 
 // src\features\internal\home\components\internal.home.mitra-layer-sync-jobs-quick-view.tsx

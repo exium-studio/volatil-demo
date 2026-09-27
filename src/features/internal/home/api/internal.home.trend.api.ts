@@ -1,3 +1,5 @@
+// src/features/internal/home/api/internal.home.trend.api.ts
+
 // src\features\internal\home\api\internal.home.trend.api.ts
 
 // src\features\internal\home\api\internal.home.trend.api.ts

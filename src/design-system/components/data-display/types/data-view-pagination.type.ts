@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/types/data-view-pagination.type.ts
+
 // src\design-system\components\data-display\types\data-view-pagination.type.ts
 
 // src\design-system\components\data-display\types\data-view-pagination.type.ts

@@ -1,3 +1,5 @@
+// src/design-system/components/map/hooks/use-map-resize-observer.ts
+
 // src\design-system\components\map\hooks\use-map-resize-observer.ts
 
 // src\design-system\components\map\hooks\use-map-resize-observer.ts

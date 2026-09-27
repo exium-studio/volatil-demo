@@ -1,3 +1,5 @@
+// src/design-system/components/layout/ui/splitter.tsx
+
 // src\design-system\components\layout\ui\splitter.tsx
 
 // src\design-system\components\layout\ui\splitter.tsx

@@ -1,3 +1,5 @@
+// src/design-system/components/disclosure/types/collabsible.type.ts
+
 // src\design-system\components\disclosure\types\collabsible.type.ts
 
 // src\design-system\components\disclosure\types\collabsible.type.ts

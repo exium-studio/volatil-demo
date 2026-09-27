@@ -1,3 +1,5 @@
+// src/features/internal/master-geoserver/components/internal.master-geoserver.data-view.tsx
+
 // src\features\internal\master-geoserver\components\internal.master-geoserver.data-view.tsx
 
 // src\features\internal\master-geoserver\components\internal.master-geoserver.data-view.tsx

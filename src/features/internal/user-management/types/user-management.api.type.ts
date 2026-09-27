@@ -1,3 +1,5 @@
+// src/features/internal/user-management/types/user-management.api.type.ts
+
 // src\features\internal\user-management\types\user-management.api.type.ts
 
 // src\features\internal\user-management\types\user-management.api.type.ts

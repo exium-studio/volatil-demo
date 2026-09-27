@@ -1,3 +1,5 @@
+// src/design-system/stores/types/theme-store.type.ts
+
 // src\design-system\stores\types\theme-store.type.ts
 
 // src\design-system\stores\types\theme-store.type.ts

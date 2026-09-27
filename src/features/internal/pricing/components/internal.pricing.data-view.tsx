@@ -1,3 +1,5 @@
+// src/features/internal/pricing/components/internal.pricing.data-view.tsx
+
 // src\features\internal\pricing\components\internal.pricing.data-view.tsx
 
 // src\features\internal\pricing\components\internal.pricing.data-view.tsx

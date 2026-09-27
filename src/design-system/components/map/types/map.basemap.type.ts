@@ -1,3 +1,5 @@
+// src/design-system/components/map/types/map.basemap.type.ts
+
 // src\design-system\components\map\types\map.basemap.type.ts
 
 // src\design-system\components\map\types\map.basemap.type.ts

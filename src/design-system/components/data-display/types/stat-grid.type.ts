@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/types/stat-grid.type.ts
+
 // src\design-system\components\data-display\types\stat-grid.type.ts
 
 // src\design-system\components\data-display\types\stat-grid.type.ts

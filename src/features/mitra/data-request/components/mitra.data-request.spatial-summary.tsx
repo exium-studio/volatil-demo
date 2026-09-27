@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/components/mitra.data-request.spatial-summary.tsx
+
 // src\features\mitra\data-request\components\mitra.data-request.spatial-summary.tsx
 
 // src\features\mitra\data-request\components\mitra.data-request.spatial-summary.tsx
@@ -156,7 +158,8 @@ export const MitraDataRequestSpatialSummary = memo(
     const hasValidBidang =
       totalBidangCount >= pricingPolicy.minBidangCount && totalBidangCount > 0;
     const hasValidKawasan =
-      totalKawasanAreaHa >= pricingPolicy.minKawasanHa && totalKawasanAreaHa > 0;
+      totalKawasanAreaHa >= pricingPolicy.minKawasanHa &&
+      totalKawasanAreaHa > 0;
 
     const hasAnyLimitViolation =
       isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
@@ -193,7 +196,6 @@ export const MitraDataRequestSpatialSummary = memo(
             </HStack>
 
             <Switch
-              size={"sm"}
               checked={isCoverageVisible}
               onCheckedChange={onToggleCoverageVisible}
             />
@@ -227,7 +229,7 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
             </VStack>
 
-            <P fontWeight={"semibold"} fontSize={"sm"}>
+            <P fontWeight={"semibold"}>
               <FormatNumber
                 value={subtotalBidangPrice}
                 style={"currency"}
@@ -266,7 +268,7 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
             </VStack>
 
-            <P fontWeight={"semibold"} fontSize={"sm"}>
+            <P fontWeight={"semibold"}>
               <FormatNumber
                 value={subtotalKawasanPrice}
                 style={"currency"}
@@ -282,7 +284,7 @@ export const MitraDataRequestSpatialSummary = memo(
           <HStack justify={"space-between"} align={"center"}>
             <P fontWeight={"semibold"}>{"Total Estimasi"}</P>
 
-            <P fontWeight={"bold"} color={"blue.fg"}>
+            <P fontSize={"lg"} fontWeight={"bold"} color={"blue.fg"}>
               <FormatNumber
                 value={estimatedTotalPrice}
                 style={"currency"}
@@ -309,6 +311,5 @@ export const MitraDataRequestSpatialSummary = memo(
         )}
       </VStack>
     );
-
   },
 );
