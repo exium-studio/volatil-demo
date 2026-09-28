@@ -3,6 +3,7 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Slider } from "@/design-system/components/input/ui/slider";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -45,7 +46,7 @@ export const MapMyDataLayerSelect = memo(() => {
   } = useMapLayerStore();
 
   // Queries — Fetch active data saya
-  const { myData, isLoading } = useMitraMyDataQuery({
+  const { myData, isLoading, isError, error, refetch } = useMitraMyDataQuery({
     page: 1,
     pageSize: 100,
     status: "ready",
@@ -149,6 +150,20 @@ export const MapMyDataLayerSelect = memo(() => {
 
               <P color={"fg.muted"}>{"Memuat data saya..."}</P>
             </HStack>
+          ) : isError ? (
+            <Center p={"md"}>
+              <RetryState
+                title={"Gagal Memuat Data Saya"}
+                description={
+                  error instanceof Error
+                    ? error.message
+                    : "Terjadi kesalahan saat memuat data layer Anda."
+                }
+                onRetry={() => {
+                  void refetch();
+                }}
+              />
+            </Center>
           ) : (
             <VStack gap={"xs"} align={"stretch"}>
               {!isEmptyArray(activeItems) && (
