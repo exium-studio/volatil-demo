@@ -311,7 +311,7 @@ export const InternalDataManagementDataView = () => {
           triggerComponent: ({ selectedItemIds, clearSelectedItems }) => (
             <ConfirmationTrigger
               modalKey={"sync-mitra-layer-batch"}
-              title={`Perbarui ${selectedItemIds.length} Layer Mitra Terpilih?`}
+              title={`Perbarui ${selectedItemIds.length} Layer Mitra Terpilih`}
               description={`Tindakan ini akan menjadwalkan tugas di latar belakang (antrean job) untuk memperbarui seluruh layer turunan milik mitra yang diperoleh dari ${selectedItemIds.length} layer IGT yang dipilih. Proses sinkronisasi geoserver berjalan secara asinkron tanpa memblokir pekerjaan Anda.`}
               confirmLabel={"Jadwalkan Pembaruan"}
               onConfirm={() => {
@@ -378,7 +378,8 @@ export const InternalDataManagementDataView = () => {
           triggerComponent: (layer: MasterIgtLayerItem) => (
             <ConfirmationTrigger
               modalKey={`sync-mitra-layer-${layer.id}`}
-              title={"Perbarui Layer Mitra Terkait?"}
+              icon={RefreshCwIcon}
+              title={"Perbarui Layer Mitra Terkait"}
               description={`Tindakan ini akan menjadwalkan tugas di latar belakang (antrean job) untuk memperbarui seluruh layer turunan milik mitra yang diperoleh dari layer "${layer.title}". Proses sinkronisasi geoserver berjalan secara asinkron tanpa memblokir pekerjaan Anda.`}
               confirmLabel={"Jadwalkan Pembaruan"}
               onConfirm={() => {
@@ -397,8 +398,8 @@ export const InternalDataManagementDataView = () => {
           triggerComponent: (layer: MasterIgtLayerItem) => (
             <ConfirmationTrigger
               modalKey={`delete-layer-${layer.id}`}
-              title={"Hapus Layer IGT?"}
-              description={`Apakah Anda yakin ingin menghapus layer "${layer.title}"? Layer akan diarsipkan terlebih dahulu agar permintaan data yang sedang diproses tidak terganggu, lalu dihapus permanen secara otomatis setelah 30 hari.`}
+              title={"Hapus Layer IGT"}
+              description={`Layer "${layer.title}" akan diarsipkan terlebih dahulu agar permintaan data yang sedang diproses tidak terganggu, lalu dihapus permanen secara otomatis setelah 30 hari.`}
               confirmLabel={"Hapus Layer"}
               colorPalette={"red"}
               onConfirm={() => {

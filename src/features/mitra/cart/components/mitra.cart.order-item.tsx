@@ -319,7 +319,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
               {onDelete && (
                 <ConfirmationTrigger
                   modalKey={`delete-order-${order.orderId}`}
-                  title={"Hapus Pesanan?"}
+                  title={"Hapus Pesanan"}
                   description={`Pesanan #${index + 1} akan dihapus dari keranjang transaksi.`}
                   confirmLabel={"Hapus pesanan"}
                   colorPalette={"red"}

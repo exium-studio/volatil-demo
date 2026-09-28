@@ -148,7 +148,7 @@ const MitraCartExpiredOrdersModalContent = (
           {hasExpiredOrders && (
             <ConfirmationTrigger
               modalKey={"clear-all-expired-orders-confirmation"}
-              title={"Kosongkan Pesanan Kedaluwarsa?"}
+              title={"Kosongkan Pesanan Kedaluwarsa"}
               description={
                 "Semua daftar pesanan kedaluwarsa akan dihapus permanen."
               }
@@ -262,7 +262,7 @@ const MitraCartExpiredOrdersModalContent = (
 
                             <ConfirmationTrigger
                               modalKey={`delete-expired-order-header-${order.orderId}`}
-                              title={"Hapus Pesanan Kedaluwarsa?"}
+                              title={"Hapus Pesanan Kedaluwarsa"}
                               description={`Pesanan #${index + 1} (${order.orderId}) akan dihapus permanen.`}
                               confirmLabel={"Hapus pesanan"}
                               colorPalette={"red"}
@@ -351,7 +351,7 @@ const MitraCartExpiredOrdersModalContent = (
 
                           <ConfirmationTrigger
                             modalKey={`delete-expired-order-btn-${order.orderId}`}
-                            title={"Hapus Pesanan Kedaluwarsa?"}
+                            title={"Hapus Pesanan Kedaluwarsa"}
                             description={`Pesanan #${index + 1} (${order.orderId}) akan dihapus permanen.`}
                             confirmLabel={"Hapus pesanan"}
                             colorPalette={"red"}

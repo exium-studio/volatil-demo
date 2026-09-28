@@ -3568,8 +3568,8 @@ const DataTablePlaygroundDemo = ({
             triggerComponent: (item: TableDemoItem) => (
               <ConfirmationTrigger
                 modalKey={`docs-table-delete-${item.name}`}
-                title={"Hapus Data?"}
-                description={`Apakah Anda yakin ingin menghapus data ${item.name}? Tindakan ini tidak dapat dibatalkan.`}
+                title={"Hapus Data"}
+                description={`Data ${item.name} akan dihapus secara permanen dan tidak dapat dibatalkan.`}
                 confirmLabel={"Hapus"}
                 colorPalette={"red"}
                 onConfirm={() => {

@@ -139,7 +139,7 @@ export const NotificationInboxDataView = memo(() => {
 
           <ConfirmationTrigger
             modalKey={"clear-all-notification-inbox"}
-            title={"Hapus Semua Pesan Inbox?"}
+            title={"Hapus Semua Pesan Inbox"}
             description={
               "Seluruh pesan inbox akan dihapus dan tidak dapat dikembalikan."
             }
@@ -279,7 +279,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
 
             <ConfirmationTrigger
               modalKey={`delete-inbox-item-${item.id}`}
-              title={"Hapus Pesan?"}
+              title={"Hapus Pesan"}
               description={"Pesan ini akan dihapus dari inbox Anda."}
               confirmLabel={"Hapus"}
               colorPalette={"red"}

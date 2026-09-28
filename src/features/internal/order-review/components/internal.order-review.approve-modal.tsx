@@ -108,7 +108,7 @@ const InternalOrderReviewApproveModalContent = (
             <AppIcon icon={InfoIcon} />
             <Alert.Description>
               {
-                "Apakah Anda yakin ingin memverifikasi dan menyetujui pesanan data spasial ini? Layer IGT akan otomatis disinkronkan ke workspace mitra."
+                "Pesanan data spasial yang disetujui akan diproses dan layer IGT otomatis disinkronkan ke workspace mitra."
               }
             </Alert.Description>
           </Alert.Root>

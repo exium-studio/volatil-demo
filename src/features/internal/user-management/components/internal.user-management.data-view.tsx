@@ -158,10 +158,14 @@ export const InternalUserManagementDataView = () => {
               modalKey={`toggle-user-status-${user.id}`}
               title={
                 user.status === "active"
-                  ? "Nonaktifkan Pengguna?"
-                  : "Aktifkan Pengguna?"
+                  ? "Nonaktifkan Pengguna"
+                  : "Aktifkan Pengguna"
               }
-              description={`Apakah Anda yakin ingin mengubah status akun ${user.name}?`}
+              description={
+                user.status === "active"
+                  ? `Akun ${user.name} akan dinonaktifkan sehingga tidak dapat mengakses sistem.`
+                  : `Akun ${user.name} akan diaktifkan kembali sehingga dapat mengakses sistem.`
+              }
               confirmLabel={
                 user.status === "active" ? "Nonaktifkan" : "Aktifkan"
               }

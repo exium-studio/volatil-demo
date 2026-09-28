@@ -1987,8 +1987,8 @@ export const DataDisplay = () => {
           triggerComponent: (item) => (
             <ConfirmationTrigger
               modalKey={`demo-delete-${(item as Record<string, unknown>).id || "item"}`}
-              title={"Hapus Item?"}
-              description={`Apakah Anda yakin ingin menghapus data ${(item as Record<string, unknown>).name || item.id}?`}
+              title={"Hapus Item"}
+              description={`Data ${(item as Record<string, unknown>).name || item.id} akan dihapus secara permanen.`}
               confirmLabel={"Hapus"}
               colorPalette={"red"}
               onConfirm={() => {

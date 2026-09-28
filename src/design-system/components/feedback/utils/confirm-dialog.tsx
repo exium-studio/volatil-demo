@@ -42,7 +42,7 @@ export const ConfirmDialogModal = (props: {
   // Resolved Values
   const resolvedTitle = title ?? t["action.confirm"]();
   const resolvedDesc =
-    description ?? desc ?? "Apakah Anda yakin ingin melanjutkan tindakan ini?";
+    description ?? desc ?? "Tindakan ini akan diproses pada sistem.";
   const resolvedConfirmLabel = confirmLabel ?? t["action.confirm"]();
   const resolvedCancelLabel = cancelLabel ?? t["action.cancel"]();
 

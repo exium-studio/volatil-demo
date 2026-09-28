@@ -133,7 +133,7 @@ export const UserProfilePopoverTrigger = (
                     px={"sm"}
                     justifyContent={"start"}
                   >
-                    <AppIcon icon={LockIcon} />
+                    <AppIcon icon={LockIcon} color={"fg.muted"} />
                     {"Reset Kata Sandi"}
                   </Button>
                 </ResetPasswordTrigger>

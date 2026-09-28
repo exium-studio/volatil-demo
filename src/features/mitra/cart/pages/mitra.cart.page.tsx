@@ -204,7 +204,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
         {hasOrders && (
           <ConfirmationTrigger
             modalKey={"clear-cart-confirmation"}
-            title={"Kosongkan Keranjang?"}
+            title={"Kosongkan Keranjang"}
             description={
               "Semua daftar pesanan layer spasial di keranjang akan dihapus."
             }

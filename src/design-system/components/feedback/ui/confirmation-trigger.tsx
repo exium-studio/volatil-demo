@@ -43,7 +43,7 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
   const resolvedColorPalette = colorPalette ?? theme.colorPalette;
   const resolvedTitle = title ?? t["action.confirm"]();
   const resolvedDesc =
-    description ?? desc ?? "Apakah Anda yakin ingin melanjutkan tindakan ini?";
+    description ?? desc ?? "Tindakan ini akan diproses pada sistem.";
   const resolvedConfirmLabel = confirmLabel ?? t["action.confirm"]();
   const resolvedCancelLabel = cancelLabel ?? t["action.cancel"]();
 

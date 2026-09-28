@@ -18,7 +18,7 @@ export const SignoutTrigger = (props: SignoutTriggerProps) => {
       icon={LogOutIcon}
       colorPalette={"red"}
       title={"Keluar dari Aplikasi"}
-      description={"Apakah Anda yakin ingin keluar dari akun Anda?"}
+      description={"Sesi Anda akan diakhiri dan Anda perlu masuk kembali untuk mengakses akun."}
       confirmLabel={"Keluar"}
       cancelLabel={"Batal"}
       confirmButtonProps={{
