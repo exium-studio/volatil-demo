@@ -182,7 +182,8 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                 <Url
                   url={effectiveWmsUrl}
                   label={"Salin URL WMS"}
-                  maxW={"320px"}
+                  w={"280px"}
+                  minW={"280px"}
                 />
               ),
               align: "start" as const,

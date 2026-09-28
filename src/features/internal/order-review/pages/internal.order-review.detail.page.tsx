@@ -516,7 +516,8 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
                   url={previewUrl}
                   label={"Salin WMS URL"}
                   isExternalLink={false}
-                  maxW={"240px"}
+                  w={"240px"}
+                  minW={"240px"}
                 />
               ),
               align: "start" as const,

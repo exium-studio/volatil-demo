@@ -5,7 +5,7 @@ import { ClipboardButton } from "@/design-system/components/data-display/ui/clip
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { MaskedSecretFieldProps } from "@/features/mitra/my-data/types/my-data.type";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -35,15 +35,13 @@ export const MaskedSecretField = (props: MaskedSecretFieldProps) => {
       <HStack justify={"space-between"} align={"center"} gap={2} w={"full"}>
         <HStack flex={1} minW={0} overflow={"hidden"}>
           {isVisible ? (
-            <P
+            <ClampedP
               fontWeight={"medium"}
               fontFamily={"mono"}
               color={"blue.fg"}
-              lineClamp={1}
-              wordBreak={"break-all"}
             >
               {value}
-            </P>
+            </ClampedP>
           ) : (
             <P
               fontFamily={"mono"}

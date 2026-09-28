@@ -9,6 +9,7 @@ export const HeaderContainer = (props: StackProps) => {
 
   return (
     <HStack
+      flexShrink={0}
       align={"center"}
       justify={"space-between"}
       minH={"headerH"}
