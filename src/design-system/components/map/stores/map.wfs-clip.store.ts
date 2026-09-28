@@ -1,3 +1,5 @@
+// src/design-system/components/map/stores/map.wfs-clip.store.ts
+
 import type {
   WfsClipStatus,
   WfsClipStore,

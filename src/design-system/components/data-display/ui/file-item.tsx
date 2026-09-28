@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/ui/file-item.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type {
   FileIconProps,

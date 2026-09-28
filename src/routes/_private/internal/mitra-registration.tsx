@@ -1,3 +1,5 @@
+// src/routes/_private/internal/mitra-registration.tsx
+
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 

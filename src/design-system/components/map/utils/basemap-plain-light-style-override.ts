@@ -1,3 +1,5 @@
+// src/design-system/components/map/utils/basemap-plain-light-style-override.ts
+
 import type maplibregl from "maplibre-gl";
 
 const ROAD_COLORS = {

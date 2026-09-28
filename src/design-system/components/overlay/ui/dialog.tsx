@@ -1,3 +1,5 @@
+// src/design-system/components/overlay/ui/dialog.tsx
+
 "use client";
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";

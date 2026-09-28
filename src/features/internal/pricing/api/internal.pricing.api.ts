@@ -1,3 +1,5 @@
+// src/features/internal/pricing/api/internal.pricing.api.ts
+
 import type {
   CreatePricingPayload,
   PricingListResponse,

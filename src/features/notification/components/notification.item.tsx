@@ -1,3 +1,5 @@
+// src/features/notification/components/notification.item.tsx
+
 import { getToastConfig } from "@/design-system/components/toast/core/toast.config";
 import { ToastItem } from "@/design-system/components/toast/ui/toast.item";
 import { ToastStack } from "@/design-system/components/toast/ui/toast.stack";

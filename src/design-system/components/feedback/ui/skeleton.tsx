@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/ui/skeleton.tsx
+
 "use client";
 
 import type {

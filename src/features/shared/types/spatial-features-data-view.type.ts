@@ -1,3 +1,5 @@
+// src/features/shared/types/spatial-features-data-view.type.ts
+
 import type {
   DataViewBatchActionsGenerator,
   DataViewItemActionsGenerator,

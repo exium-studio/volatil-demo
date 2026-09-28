@@ -1,3 +1,5 @@
+// src/features/shared/types/role-filter-select.type.ts
+
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 
 export type RoleFilterSelectProps = {

@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/types/alert.type.ts
+
 import type { Alert as ChakraAlert } from "@chakra-ui/react";
 
 export type AlertRootProps = ChakraAlert.RootProps;

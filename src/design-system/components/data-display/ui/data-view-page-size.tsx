@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/ui/data-view-page-size.tsx
+
 import type { DataViewPageSizeProps } from "@/design-system/components/data-display/types/data-view.type";
 import Select from "@/design-system/components/input/ui/select";
 import { Span } from "@/design-system/components/typography/ui/span";

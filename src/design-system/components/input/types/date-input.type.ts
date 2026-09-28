@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/date-input.type.ts
+
 import type { DatePickerProps } from "@/design-system/components/input/types/date-picker.type";
 
 import type { ChangeEvent, FocusEvent } from "react";

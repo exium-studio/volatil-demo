@@ -1,3 +1,5 @@
+// src/shared/utils/react/merge-refs.ts
+
 import type { Ref, RefCallback } from "react";
 
 export function mergeRefs<T>(

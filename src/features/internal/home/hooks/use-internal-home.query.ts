@@ -1,3 +1,5 @@
+// src/features/internal/home/hooks/use-internal-home.query.ts
+
 import { getIgtBasis } from "@/features/internal/home/services/internal.home.igt-basis.service";
 import { getInternalLeaderboard } from "@/features/internal/home/services/internal.home.leaderboard.service";
 import { getMitraRegistration } from "@/features/internal/home/services/internal.home.mitra-registration.service";

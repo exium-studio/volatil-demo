@@ -1,3 +1,5 @@
+// src/design-system/components/navigation/utils/navs.utils.ts
+
 import type { NavItem, NavNode } from "@/shared/types/nav.type";
 
 export function findActivePath<TNavKey extends string>(

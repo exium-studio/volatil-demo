@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/select.type.ts
+
 import type { SelectRootProps } from "@chakra-ui/react";
 import type { ComponentType, MouseEvent, ReactNode, RefObject } from "react";
 

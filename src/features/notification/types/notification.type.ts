@@ -1,3 +1,5 @@
+// src/features/notification/types/notification.type.ts
+
 import type {
   ToastItemData,
   ToastVariant,

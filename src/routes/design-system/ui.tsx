@@ -1,3 +1,5 @@
+// src/routes/design-system/ui.tsx
+
 import { DesignSystemDocsPage } from "@/features/design-system-docs/components/design-system-docs.page";
 import type { DsDocsSearchParams } from "@/features/design-system-docs/types/ds-docs-navs.type";
 import { createFileRoute } from "@tanstack/react-router";

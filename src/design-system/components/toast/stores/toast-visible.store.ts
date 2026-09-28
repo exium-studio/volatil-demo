@@ -1,3 +1,5 @@
+// src/design-system/components/toast/stores/toast-visible.store.ts
+
 import type {
   ToastItemData,
   VisibleToastStore,

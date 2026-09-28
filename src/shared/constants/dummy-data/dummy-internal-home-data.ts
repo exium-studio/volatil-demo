@@ -1,3 +1,5 @@
+// src/shared/constants/dummy-data/dummy-internal-home-data.ts
+
 import type {
   IgtBasisSummary,
   IgtPublicationStatusSummary,

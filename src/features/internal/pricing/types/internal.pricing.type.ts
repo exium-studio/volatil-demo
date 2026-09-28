@@ -1,3 +1,5 @@
+// src/features/internal/pricing/types/internal.pricing.type.ts
+
 import type { PaginatedParams, PaginationMeta } from "@/shared/types/common-response.type";
 
 export type IgtBasisType = "bidang" | "kawasan";

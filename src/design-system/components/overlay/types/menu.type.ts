@@ -1,3 +1,5 @@
+// src/design-system/components/overlay/types/menu.type.ts
+
 import { Menu as ChakraMenu } from "@chakra-ui/react";
 import type { RefObject } from "react";
 

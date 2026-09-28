@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/ui/data-view-footer.tsx
+
 import type { DataViewFooterProps } from "@/design-system/components/data-display/types/data-view-footer.type";
 import { DataViewPageSize } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewPagination } from "@/design-system/components/data-display/ui/data-view-pagination";

@@ -1,3 +1,5 @@
+// src/features/internal/master-geoserver/hooks/use-master-geoserver.ts
+
 import {
   createMasterGeoserver,
   deleteMasterGeoserver,

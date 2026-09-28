@@ -1,3 +1,5 @@
+// src/design-system/components/layout/ui/grid.tsx
+
 import type {
   GridItemProps,
   GridProps,

@@ -1,3 +1,5 @@
+// src/design-system/components/button/types/button.type.ts
+
 import type {
   ButtonProps as ChakraButtonProps,
   IconButtonProps as ChakraIconButtonProps,

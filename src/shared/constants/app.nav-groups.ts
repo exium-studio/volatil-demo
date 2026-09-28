@@ -1,3 +1,5 @@
+// src/shared/constants/app.nav-groups.ts
+
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
 import type { NavGroup } from "@/shared/types/nav.type";
 

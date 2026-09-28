@@ -1,3 +1,5 @@
+// src/features/auth/services/auth.service.ts
+
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import {
   getAuthMeApi,

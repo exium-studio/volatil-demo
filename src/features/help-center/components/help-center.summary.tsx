@@ -1,3 +1,5 @@
+// src/features/help-center/components/help-center.summary.tsx
+
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";

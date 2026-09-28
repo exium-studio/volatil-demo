@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/chakra-date-picker.type.ts
+
 import type { DatePicker as ChakraDatePicker } from "@chakra-ui/react";
 
 export type DatePickerRootProps = ChakraDatePicker.RootProps;

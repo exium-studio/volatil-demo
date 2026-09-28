@@ -1,3 +1,5 @@
+// src/design-system/components/data-display/ui/data-view-batch-actions.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";

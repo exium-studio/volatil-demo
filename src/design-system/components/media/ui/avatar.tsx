@@ -1,3 +1,5 @@
+// src/design-system/components/media/ui/avatar.tsx
+
 import type {
   AvatarFallbackProps,
   AvatarImageProps,

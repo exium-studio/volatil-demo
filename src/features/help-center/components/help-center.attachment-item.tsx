@@ -1,3 +1,5 @@
+// src/features/help-center/components/help-center.attachment-item.tsx
+
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";

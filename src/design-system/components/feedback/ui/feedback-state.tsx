@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/ui/feedback-state.tsx
+
 import type { FeedbackStateProps } from "@/design-system/components/feedback/types/feedback-state.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";

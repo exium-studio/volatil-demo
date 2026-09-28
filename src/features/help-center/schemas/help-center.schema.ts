@@ -1,3 +1,5 @@
+// src/features/help-center/schemas/help-center.schema.ts
+
 import type { FieldErrors } from "react-hook-form";
 import { z } from "zod";
 

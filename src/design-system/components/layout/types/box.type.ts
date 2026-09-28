@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/box.type.ts
+
 import type {
   BoxProps as ChakraBoxProps,
   CircleProps as ChakraCircleProps,

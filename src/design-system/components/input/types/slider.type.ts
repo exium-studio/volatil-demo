@@ -1,3 +1,5 @@
+// src/design-system/components/input/types/slider.type.ts
+
 import { Slider as ChakraSlider } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 

@@ -1,3 +1,5 @@
+// src/design-system/components/map/ui/map.draw-controls.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";

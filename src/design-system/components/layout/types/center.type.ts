@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/center.type.ts
+
 import type {
   AbsoluteCenterProps as ChakraAbsoluteCenterProps,
   CenterProps as ChakraCenterProps,

@@ -1,3 +1,5 @@
+// src/design-system/hooks/use-mount-timeout.ts
+
 import type { UseMountTimeoutOptions } from "@/design-system/hooks/types/use-mount-timeout.type";
 import { useEffect, useState } from "react";
 

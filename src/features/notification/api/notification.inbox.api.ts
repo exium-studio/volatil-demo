@@ -1,3 +1,5 @@
+// src/features/notification/api/notification.inbox.api.ts
+
 import { DUMMY_INBOX_ITEMS } from "@/shared/constants/dummy-data/dummy-inbox";
 import type {
   InboxListResponse,

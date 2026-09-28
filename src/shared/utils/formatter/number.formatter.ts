@@ -1,3 +1,5 @@
+// src/shared/utils/formatter/number.formatter.ts
+
 import { getLocale } from "@/paraglide/runtime";
 import type {
   FormatNumberCompactDisplay,

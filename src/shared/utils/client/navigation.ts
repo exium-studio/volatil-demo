@@ -1,3 +1,5 @@
+// src/shared/utils/client/navigation.ts
+
 let lastBackAt = 0;
 
 export function backWithDepth(depth?: number) {

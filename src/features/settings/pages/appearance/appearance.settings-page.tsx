@@ -1,3 +1,5 @@
+// src/features/settings/pages/appearance/appearance.settings-page.tsx
+
 "use client";
 
 import { VStack } from "@/design-system/components/layout/ui/flex-box";

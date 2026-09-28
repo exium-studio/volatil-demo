@@ -1,3 +1,5 @@
+// src/shared/constants/dummy-data/dummy-pricing.ts
+
 import type {
   PricingItem,
   PricingListResponse,

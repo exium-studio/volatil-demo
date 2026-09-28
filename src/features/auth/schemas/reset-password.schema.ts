@@ -1,3 +1,5 @@
+// src/features/auth/schemas/reset-password.schema.ts
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 

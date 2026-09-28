@@ -1,3 +1,5 @@
+// src/features/help-center/types/help-center.api.type.ts
+
 import type {
   HelpCenterItem,
   HelpCenterPagination,

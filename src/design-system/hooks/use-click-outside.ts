@@ -1,3 +1,5 @@
+// src/design-system/hooks/use-click-outside.ts
+
 import type { UseClickOutsideOptions } from "@/design-system/hooks/types/use-click-outside.type";
 import { useEffect, type RefObject } from "react";
 

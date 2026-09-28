@@ -1,3 +1,5 @@
+// src/features/internal/master-geoserver/api/master-geoserver.api.ts
+
 import type {
   CreateMasterGeoserverPayload,
   MasterGeoserverItem,

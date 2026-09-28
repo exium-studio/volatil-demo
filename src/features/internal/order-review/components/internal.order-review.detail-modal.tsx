@@ -1,3 +1,5 @@
+// src/features/internal/order-review/components/internal.order-review.detail-modal.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

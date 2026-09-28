@@ -1,3 +1,5 @@
+// src/design-system/components/icon/ui/app-icon.tsx
+
 import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import { Icon } from "@/design-system/components/icon/ui/icon";
 import { CircleQuestionMarkIcon } from "lucide-react";

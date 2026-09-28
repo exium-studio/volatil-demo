@@ -1,3 +1,5 @@
+// src/features/settings/components/settings.sidebar.tsx
+
 "use client";
 
 import { IconButton } from "@/design-system/components/button/ui/button";

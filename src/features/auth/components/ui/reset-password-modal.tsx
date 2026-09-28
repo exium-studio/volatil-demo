@@ -1,3 +1,5 @@
+// src/features/auth/components/ui/reset-password-modal.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { FocusAlertView } from "@/design-system/components/focus-alert/ui/focus-alert";

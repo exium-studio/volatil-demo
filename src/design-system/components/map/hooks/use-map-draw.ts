@@ -1,3 +1,5 @@
+// src/design-system/components/map/hooks/use-map-draw.ts
+
 import { useCallback, useEffect, useRef } from "react";
 import type maplibregl from "maplibre-gl";
 import { toast } from "@/design-system/components/toast";

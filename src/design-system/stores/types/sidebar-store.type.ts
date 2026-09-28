@@ -1,3 +1,5 @@
+// src/design-system/stores/types/sidebar-store.type.ts
+
 export type SidebarState = {
   expandedByKey: Record<string, boolean>;
 };

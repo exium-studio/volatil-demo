@@ -1,3 +1,5 @@
+// src/features/help-center/hooks/use-help-center.query.ts
+
 import { helpCenterService } from "@/features/help-center/services/help-center.service";
 import type {
   CreateHelpCenterPayload,

@@ -1,3 +1,5 @@
+// src/features/shared/components/mitra-registration-status.badge.tsx
+
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { MITRA_REGISTRATION_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";

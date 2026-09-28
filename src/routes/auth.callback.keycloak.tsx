@@ -1,3 +1,5 @@
+// src/routes/auth.callback.keycloak.tsx
+
 import { SsoCallbackPage } from "@/features/auth/pages/sso-callback.page";
 import type { SsoCallbackSearch } from "@/features/auth/types/sso.type";
 import { createFileRoute } from "@tanstack/react-router";

@@ -1,3 +1,5 @@
+// src/design-system/components/charts/ui/chart-tooltip.tsx
+
 import type {
   ChartTooltipContentProps,
   ChartTooltipProps,

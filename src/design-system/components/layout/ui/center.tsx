@@ -1,3 +1,5 @@
+// src/design-system/components/layout/ui/center.tsx
+
 import type {
   AbsoluteCenterProps,
   CenterProps,

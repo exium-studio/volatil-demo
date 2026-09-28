@@ -1,3 +1,5 @@
+// src/design-system/components/emoji/hooks/use-emoji-colors.ts
+
 import { resolveSemanticColor } from "@/design-system/chakra/utils/chakra-system-resolver";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 

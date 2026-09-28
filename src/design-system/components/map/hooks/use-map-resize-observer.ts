@@ -1,3 +1,5 @@
+// src/design-system/components/map/hooks/use-map-resize-observer.ts
+
 import { useEffect, type RefObject } from "react";
 import type maplibregl from "maplibre-gl";
 

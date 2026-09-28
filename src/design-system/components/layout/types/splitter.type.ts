@@ -1,3 +1,5 @@
+// src/design-system/components/layout/types/splitter.type.ts
+
 import type {
   SplitterRootProps as ChakraSplitterRootProps,
   SplitterPanelProps as ChakraSplitterPanelProps,

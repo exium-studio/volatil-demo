@@ -1,3 +1,5 @@
+// src/features/internal/user-management/services/user-management.service.ts
+
 import {
   fetchAdminUserDetailApi,
   fetchAdminUsersApi,

@@ -1,3 +1,5 @@
+// src/features/shared/components/selection-type.badge.tsx
+
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";

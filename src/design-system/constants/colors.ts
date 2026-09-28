@@ -1,3 +1,5 @@
+// src/design-system/constants/colors.ts
+
 export const COLOR_PALETTES_LIST = [
   { palette: "neutral", label: "Neutral", primaryHex: "#717171" },
   { palette: "grey", label: "Grey", primaryHex: "#717171" },

@@ -1,3 +1,5 @@
+// src/features/settings/constants/settings.nav-groups.ts
+
 import type { SettingNavKey } from "@/features/settings/types/settings-navs.type";
 import type { NavGroup } from "@/shared/types/nav.type";
 

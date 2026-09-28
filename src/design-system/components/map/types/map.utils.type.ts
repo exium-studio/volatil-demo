@@ -1,3 +1,5 @@
+// src/design-system/components/map/types/map.utils.type.ts
+
 import type GeoJSON from "geojson";
 
 export type PixelPoint = {

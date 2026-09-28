@@ -1,3 +1,5 @@
+// src/shared/constants/app.navs.ts
+
 import type { NavItem } from "@/shared/types/nav.type";
 import {
   BellIcon,

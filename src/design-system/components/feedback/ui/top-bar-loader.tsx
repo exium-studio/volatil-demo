@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/ui/top-bar-loader.tsx
+
 import type { TopBarLoaderProps } from "@/design-system/components/feedback/types/top-bar-loader.type";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Portal } from "@/design-system/components/utilities/ui/portal";

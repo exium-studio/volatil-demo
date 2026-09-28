@@ -1,3 +1,5 @@
+// src/shared/hooks/use-infinite-query.ts
+
 import type { PaginatedParams } from "@/shared/types/common-response.type";
 import type { UseInfiniteQueryOptions } from "@/shared/types/use-infinite-query.type";
 import { isEmptyArray } from "@/shared/utils/data/array";

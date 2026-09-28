@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/types/mitra.data-request.spatial-summary.type.ts
+
 export type MitraDataRequestSpatialSummaryProps = {
   totalBidangCount?: number;
   totalKawasanCount?: number;

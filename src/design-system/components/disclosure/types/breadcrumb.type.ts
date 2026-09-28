@@ -1,3 +1,5 @@
+// src/design-system/components/disclosure/types/breadcrumb.type.ts
+
 import type {
   BreadcrumbRootProps as ChakraBreadcrumbRootProps,
   BreadcrumbListProps as ChakraBreadcrumbListProps,

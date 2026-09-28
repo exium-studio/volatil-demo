@@ -1,3 +1,5 @@
+// src/features/internal/user-management/types/user-management.api.type.ts
+
 import type {
   UserManagementItem,
   UserManagementStatsResponse,

@@ -1,3 +1,5 @@
+// src/features/auth/types/reset-password.type.ts
+
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import type React from "react";
 

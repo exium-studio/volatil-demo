@@ -1,3 +1,5 @@
+// src/features/internal/pricing/hooks/use-internal-pricing.ts
+
 import {
   createPricing,
   getPricingList,

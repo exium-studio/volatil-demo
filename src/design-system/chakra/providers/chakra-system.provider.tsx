@@ -1,3 +1,5 @@
+// src/design-system/chakra/providers/chakra-system.provider.tsx
+
 "use client";
 
 import { chakraSystem } from "@/design-system/chakra/chakra-system";

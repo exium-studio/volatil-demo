@@ -1,3 +1,5 @@
+// src/design-system/components/feedback/utils/confirm-dialog.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmDialogOptions } from "@/design-system/components/feedback/types/confirm-dialog.type";
 import { focusAlert } from "@/design-system/components/focus-alert/utils/focus-alert";

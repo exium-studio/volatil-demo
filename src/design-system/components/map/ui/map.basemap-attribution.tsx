@@ -1,3 +1,5 @@
+// src/design-system/components/map/ui/map.basemap-attribution.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";

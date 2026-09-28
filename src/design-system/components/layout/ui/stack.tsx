@@ -1,3 +1,5 @@
+// src/design-system/components/layout/ui/stack.tsx
+
 import type { StackProps } from "@/design-system/components/layout/types/stack.type";
 import {
   HStack as ChakraHStack,

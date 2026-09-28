@@ -1,3 +1,5 @@
+// src/shared/types/status.type.ts
+
 import type { LucideIcon } from "lucide-react";
 
 /**

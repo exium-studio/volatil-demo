@@ -1,3 +1,5 @@
+// src/features/internal/master-geoserver/types/master-geoserver.type.ts
+
 import type {
   PaginatedParams,
   PaginationMeta,

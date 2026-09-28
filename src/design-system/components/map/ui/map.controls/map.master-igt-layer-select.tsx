@@ -1,3 +1,5 @@
+// src/design-system/components/map/ui/map.controls/map.master-igt-layer-select.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Loader } from "@/design-system/components/feedback/ui/loader";

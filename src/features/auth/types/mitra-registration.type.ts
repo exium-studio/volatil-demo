@@ -1,3 +1,5 @@
+// src/features/auth/types/mitra-registration.type.ts
+
 import type { MitraRegistrationStatus } from "@/shared/types/status.type";
 
 export type { MitraRegistrationStatus };

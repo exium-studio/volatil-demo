@@ -1,3 +1,5 @@
+// src/features/shared/components/my-data-status.badge.tsx
+
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import type { MyDataStatusBadgeProps } from "@/features/shared/types/badge.type";

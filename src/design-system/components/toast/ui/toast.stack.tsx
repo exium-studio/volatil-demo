@@ -1,3 +1,5 @@
+// src/design-system/components/toast/ui/toast.stack.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";

@@ -1,3 +1,5 @@
+// src/design-system/stores/sidebar-store.ts
+
 import type {
   SidebarActions,
   SidebarState,

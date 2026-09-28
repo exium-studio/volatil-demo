@@ -1,3 +1,5 @@
+// src/features/mitra/billing/pages/billing.page.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
