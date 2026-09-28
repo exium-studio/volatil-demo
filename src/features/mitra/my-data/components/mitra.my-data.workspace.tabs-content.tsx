@@ -133,7 +133,7 @@ export const MitraMyDataWorkspaceTabsContent = (
       {/* 2. Endpoint Layanan GIS */}
       <VStack align={"stretch"} gap={"md"}>
         <HStack align={"center"} gap={"xs"}>
-          <Heading>{"WMS - Endpoint Layanan GIS"}</Heading>
+          <Heading>{"Workspace URL - WMS"}</Heading>
 
           <InfoTip appIconProps={{ size: "sm" }}>
             {

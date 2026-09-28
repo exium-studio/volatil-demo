@@ -7,9 +7,10 @@
 import { Container } from "@/design-system/components/layout/ui/container";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Heading } from "@/design-system/components/typography/ui/heading";
 import { TransactionHistoryDataView } from "@/features/mitra/transaction-history/components/mitra.transaction-history.data-view";
+import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 
 export const MitraTransactionHistoryPage = () => {
   return (
@@ -17,7 +18,7 @@ export const MitraTransactionHistoryPage = () => {
       <AppContentContainer overflowY={"auto"}>
         <Container.Body flex={1} minH={0} overflowY={"auto"}>
           <HeaderContainer>
-            <Heading>{"Riwayat Transaksi"}</Heading>
+            <AppNavTitle navsMap={APP_NAVS_MAP} />
           </HeaderContainer>
 
           <Separator borderColor={"bg.canvas"} />
