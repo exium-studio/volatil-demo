@@ -335,10 +335,12 @@ export function InternalOrderReviewDetailPage() {
 
               <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"ID Pesanan"}
+                  {"Nomor Pesanan"}
                 </P>
 
-                <P fontWeight={"semibold"}>{order.orderId}</P>
+                <P fontWeight={"semibold"}>
+                  {order.orderNumber || order.orderId}
+                </P>
               </VStack>
             </HStack>
 

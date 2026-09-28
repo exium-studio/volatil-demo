@@ -68,8 +68,12 @@ export type InternalOrderReviewTteModalContentProps = {
 
 export type InternalOrderItem = {
   orderId: string;
+  orderNumber?: string;
+  transactionNumber?: string;
   mitraId: string;
   mitraName: string;
+  agencyOrCompany?: string;
+  email?: string;
   status: CartOrderStatus;
   selectionType: SelectionType;
   createdAt: string;

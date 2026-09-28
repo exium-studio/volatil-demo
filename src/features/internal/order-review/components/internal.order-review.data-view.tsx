@@ -107,7 +107,7 @@ export const InternalOrderReviewDataView = () => {
   // Derived Values - Headers & Items for DataList
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "ID Pesanan", sortable: true, align: "start" },
+      { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Nama Mitra Pemohon", sortable: true, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Daftar Layer IGT", sortable: false, align: "start" },
@@ -126,15 +126,17 @@ export const InternalOrderReviewDataView = () => {
         .filter((i) => i.spatialBasis === "kawasan")
         .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
 
+      const displayOrderNumber = order.orderNumber || order.orderId;
+
       return {
         id: order.orderId,
         data: order,
         columns: [
           {
-            value: order.orderId,
+            value: displayOrderNumber,
             td: (
-              <P fontWeight={"medium"} fontSize={"sm"}>
-                {order.orderId}
+              <P fontWeight={"semibold"} fontSize={"sm"}>
+                {displayOrderNumber}
               </P>
             ),
             align: "start" as const,
@@ -146,9 +148,11 @@ export const InternalOrderReviewDataView = () => {
                 <P fontWeight={"medium"} fontSize={"sm"}>
                   {order.mitraName}
                 </P>
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {order.mitraId}
-                </P>
+                {(order.agencyOrCompany || order.email) && (
+                  <P fontSize={"xs"} color={"fg.muted"}>
+                    {order.agencyOrCompany || order.email}
+                  </P>
+                )}
               </VStack>
             ),
             align: "start" as const,
