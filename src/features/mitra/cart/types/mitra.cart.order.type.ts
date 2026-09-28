@@ -61,6 +61,9 @@ export type MitraCartOrderDetailProps = {
   selectedOrder?: ActiveCartOrder | null;
   isLoading?: boolean;
   isFetching?: boolean;
+  isError?: boolean;
+  error?: Error | null;
+  onRetry?: () => void;
 };
 
 export type PaymentMethod =
@@ -112,6 +115,9 @@ export type MitraCartOrderSummaryProps = {
   orderIndex?: number | null;
   isLoading?: boolean;
   isFetching?: boolean;
+  isError?: boolean;
+  error?: Error | null;
+  onRetry?: () => void;
 };
 
 

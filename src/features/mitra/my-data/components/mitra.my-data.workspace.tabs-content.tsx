@@ -38,12 +38,12 @@ export const MitraMyDataWorkspaceTabsContent = (
   if (!isActive) return null;
 
   if (isLoading) {
-    return <Skeleton w={"full"} p={"md"} />;
+    return <Skeleton w={"full"} h={"full"} flex={1} p={"md"} rounded={0} />;
   }
 
   if (isError) {
     return (
-      <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+      <Center flex={1} w={"full"} h={"full"} py={"xl"} bg={"bg.body"}>
         <RetryState
           title={"Gagal Memuat Workspace"}
           description={
@@ -62,7 +62,7 @@ export const MitraMyDataWorkspaceTabsContent = (
 
   if (!workspaceUrl) {
     return (
-      <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+      <Center flex={1} w={"full"} h={"full"} py={"xl"} bg={"bg.body"}>
         <NoDataState
           title={"Workspace Belum Aktif"}
           description={

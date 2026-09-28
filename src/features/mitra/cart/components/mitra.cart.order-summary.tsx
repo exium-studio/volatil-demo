@@ -3,7 +3,9 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -34,6 +36,9 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
     orderIndex,
     isLoading = false,
     isFetching = false,
+    isError = false,
+    error,
+    onRetry,
   } = props;
 
   // Stores
@@ -243,6 +248,28 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           mt={1}
         />
       </VStack>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Center
+        flex={1}
+        w={"full"}
+        h={"full"}
+        py={"xl"}
+        bg={"bg.body"}
+        rounded={theme.radii.container}
+      >
+        <RetryState
+          title={"Gagal Memuat Rincian Pesanan"}
+          description={
+            error?.message ||
+            "Terjadi kesalahan saat memuat rincian pesanan. Silakan coba lagi."
+          }
+          onRetry={onRetry}
+        />
+      </Center>
     );
   }
 

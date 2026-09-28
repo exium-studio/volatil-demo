@@ -5,7 +5,9 @@ import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Center } from "@/design-system/components/layout/ui/center";
 import {
   Container,
   useContainerContext,
@@ -68,6 +70,9 @@ const MitraCartContent = () => {
     orderDetail: selectedOrder,
     isLoading: isDetailLoading,
     isFetching: isDetailFetching,
+    isError: isDetailError,
+    error: detailError,
+    refetch: refetchDetail,
   } = useCartOrderDetailQuery(selectedOrderId || undefined);
 
   // Map layer synchronization hook for Cart AOI & Coverage Polygon
@@ -150,6 +155,11 @@ const MitraCartContent = () => {
           selectedOrder={selectedOrder}
           isLoading={isOrderLoadingOrSwitching}
           isFetching={isDetailFetching}
+          isError={isDetailError}
+          error={detailError}
+          onRetry={() => {
+            void refetchDetail();
+          }}
         />
       </HStack>
     </AppContentContainer>
@@ -173,7 +183,13 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
   const { isSmContainer } = useContainerContext();
 
   // Queries & Mutations
-  const { orders, isLoading: isOrdersLoading } = useCartOrdersQuery();
+  const {
+    orders,
+    isLoading: isOrdersLoading,
+    isError: isOrdersError,
+    error: ordersError,
+    refetch: refetchOrders,
+  } = useCartOrdersQuery();
   const clearAllOrdersMutation = useClearAllCartOrders();
   const deleteOrderMutation = useCancelActiveCartOrder();
 
@@ -197,11 +213,12 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
       minH={isSmContainer ? undefined : 0}
       overflowY={isSmContainer ? undefined : "auto"}
       w={"full"}
+      h={"full"}
     >
       <HeaderContainer pr={"xs"}>
         <Heading>{"Keranjang Pesanan"}</Heading>
 
-        {hasOrders && (
+        {hasOrders && !isOrdersError && (
           <ConfirmationTrigger
             modalKey={"clear-cart-confirmation"}
             title={"Kosongkan Keranjang"}
@@ -237,22 +254,48 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
         flex={1}
         overflowY={isSmContainer ? undefined : "auto"}
         w={"full"}
-        p={"xs"}
+        h={"full"}
+        p={hasOrders && !isOrdersLoading && !isOrdersError ? "xs" : 0}
       >
         {isOrdersLoading && (
-          <Skeleton flex={1} w={"full"} minH={"250px"} rounded={0} />
+          <Skeleton
+            flex={1}
+            w={"full"}
+            h={"full"}
+            minH={"304px"}
+            p={"md"}
+            rounded={0}
+          />
         )}
 
-        {!isOrdersLoading && (
+        {!isOrdersLoading && isOrdersError && (
+          <Center flex={1} w={"full"} h={"full"} py={"xl"}>
+            <RetryState
+              title={"Gagal Memuat Keranjang Pesanan"}
+              description={
+                ordersError?.message ||
+                "Terjadi kesalahan saat memuat daftar pesanan di keranjang Anda. Silakan coba lagi."
+              }
+              onRetry={() => {
+                void refetchOrders();
+              }}
+            />
+          </Center>
+        )}
+
+        {!isOrdersLoading && !isOrdersError && (
           <>
             {!hasOrders && (
-              <NoDataState
-                icon={ShoppingCartIcon}
-                title={"Keranjang Kosong"}
-                description={
-                  "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permintaan Data."
-                }
-              />
+              <Center flex={1} w={"full"} h={"full"} py={"xl"}>
+                <NoDataState
+                  icon={ShoppingCartIcon}
+                  title={"Keranjang Kosong"}
+                  description={
+                    "Silakan pilih layer IGT dan masukkan ke keranjang di menu Permintaan Data."
+                  }
+                  minH={"304px"}
+                />
+              </Center>
             )}
 
             {hasOrders && (
@@ -309,6 +352,9 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
     selectedOrder,
     isLoading = false,
     isFetching = false,
+    isError = false,
+    error,
+    onRetry,
   } = props;
 
   // Contexts
@@ -332,6 +378,7 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
       minH={isSmContainer ? undefined : 0}
       overflowY={isSmContainer ? undefined : "auto"}
       w={"full"}
+      h={"full"}
     >
       <HeaderContainer>
         <HStack align={"center"} justify={"space-between"} w={"full"}>
@@ -352,6 +399,9 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
         orderIndex={displayOrderNumber}
         isLoading={isLoading}
         isFetching={isFetching}
+        isError={isError}
+        error={error}
+        onRetry={onRetry}
       />
     </Container.Body>
   );

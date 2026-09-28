@@ -346,7 +346,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   }
 
   return (
-    <VStack flex={1} overflowY={"auto"} w={"full"}>
+    <VStack flex={1} overflowY={"auto"} w={"full"} h={"full"}>
       {/* Header Controls */}
       <ActionHeaderScrollContainer>
         <SearchInput
@@ -384,10 +384,10 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       <VStack
         flex={1}
         gap={"sm"}
-        overflowY={"auto"}
-        bg={"bg.canvas"}
-        w={"full"}
         position={"relative"}
+        overflowY={"auto"}
+        w={"full"}
+        bg={"bg.canvas"}
       >
         {isLoading ? (
           <Skeleton p={"md"} rounded={0} />
