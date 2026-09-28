@@ -197,7 +197,6 @@ export const InternalTransactionStatisticDataView = () => {
                   tte={item.tte}
                   invoiceUrl={item.invoiceUrl}
                   tteInvoiceUrl={item.tteInvoiceUrl}
-                  size={"xs"}
                 />
               ),
               align: "start" as const,

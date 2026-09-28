@@ -350,7 +350,7 @@ export function InternalOrderReviewDetailPage() {
                   {"Metode Pengajuan"}
                 </P>
 
-                <SelectionTypeBadge size={"sm"} my={"auto"}>
+                <SelectionTypeBadge my={"auto"}>
                   {order.selectionType}
                 </SelectionTypeBadge>
               </VStack>
@@ -382,7 +382,6 @@ export function InternalOrderReviewDetailPage() {
                   tte={order.tte}
                   invoiceUrl={order.invoiceUrl}
                   tteInvoiceUrl={order.tteInvoiceUrl}
-                  size={"sm"}
                   my={"auto"}
                 />
               </VStack>

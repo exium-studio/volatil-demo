@@ -57,7 +57,7 @@ export const TteBadge = (props: TteBadgeProps) => {
   }
 
   return (
-    <HStack gap={"xs"} align={"center"} wrap={"wrap"}>
+    <HStack align={"center"} gap={"xs"}>
       {badgeElement}
 
       {hasInvoice && (

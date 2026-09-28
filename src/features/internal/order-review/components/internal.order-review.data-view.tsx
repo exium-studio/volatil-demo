@@ -191,7 +191,6 @@ export const InternalOrderReviewDataView = () => {
                 tte={order.tte}
                 invoiceUrl={order.invoiceUrl}
                 tteInvoiceUrl={order.tteInvoiceUrl}
-                size={"xs"}
               />
             ),
             align: "start" as const,

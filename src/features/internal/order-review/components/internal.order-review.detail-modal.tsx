@@ -104,7 +104,7 @@ const InternalOrderReviewDetailModalContent = (
               <P fontSize={"xs"} color={"fg.muted"}>
                 {"Metode Pengajuan:"}
               </P>
-              <SelectionTypeBadge size={"xs"}>
+              <SelectionTypeBadge>
                 {order.selectionType}
               </SelectionTypeBadge>
             </HStack>
@@ -112,7 +112,7 @@ const InternalOrderReviewDetailModalContent = (
               <P fontSize={"xs"} color={"fg.muted"}>
                 {"Status Pesanan:"}
               </P>
-              <OrderStatusBadge size={"xs"}>{order.status}</OrderStatusBadge>
+              <OrderStatusBadge>{order.status}</OrderStatusBadge>
             </HStack>
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>
@@ -130,7 +130,6 @@ const InternalOrderReviewDetailModalContent = (
                 tte={order.tte}
                 invoiceUrl={order.invoiceUrl}
                 tteInvoiceUrl={order.tteInvoiceUrl}
-                size={"xs"}
               />
             </HStack>
           </VStack>

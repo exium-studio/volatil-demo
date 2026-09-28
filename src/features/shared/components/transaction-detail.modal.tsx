@@ -489,7 +489,7 @@ export const TransactionDetailModalContent = (
                   <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Metode Pengajuan"}
                   </P>
-                  <SelectionTypeBadge size={"sm"}>
+                  <SelectionTypeBadge>
                     {transaction.selectionType}
                   </SelectionTypeBadge>
                 </VStack>
@@ -498,7 +498,7 @@ export const TransactionDetailModalContent = (
                   <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Metode Pembayaran"}
                   </P>
-                  <PaymentMethodBadge size={"sm"}>
+                  <PaymentMethodBadge>
                     {transaction.paymentMethod}
                   </PaymentMethodBadge>
                 </VStack>
@@ -536,7 +536,6 @@ export const TransactionDetailModalContent = (
                     tte={transaction.tte}
                     invoiceUrl={transaction.invoiceUrl}
                     tteInvoiceUrl={transaction.tteInvoiceUrl}
-                    size={"sm"}
                   />
                 </VStack>
               </VStack>
