@@ -10,15 +10,32 @@ import type {
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Alert as ChakraAlert } from "@chakra-ui/react";
 
+const STATUS_COLOR_PALETTE_MAP: Record<string, string> = {
+  info: "blue",
+  warning: "orange",
+  error: "red",
+  success: "green",
+  neutral: "neutral",
+};
+
 export const AlertRoot = (props: AlertRootProps) => {
   // Stores
   const { theme } = useThemeStore();
 
+  const { status, colorPalette, variant = "subtle", ...restProps } = props;
+
+  const resolvedColorPalette =
+    colorPalette ??
+    (typeof status === "string" ? STATUS_COLOR_PALETTE_MAP[status] : undefined) ??
+    "neutral";
+
   return (
     <ChakraAlert.Root
-      colorPalette={"neutral"}
+      status={status}
+      colorPalette={resolvedColorPalette}
+      variant={variant}
       rounded={props.rounded ?? theme.radii.component}
-      {...props}
+      {...restProps}
     />
   );
 };

@@ -52,6 +52,7 @@ import { t } from "@/shared/libs/i18n";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
+  CheckCircleIcon,
   InfoIcon,
   KeyRoundIcon,
   LockIcon,
@@ -618,8 +619,8 @@ const EmailResetPasswordFlow = ({
       gap={"md"}
       align={"stretch"}
     >
-      <Alert.Root status={"info"} colorPalette={"green"} variant={"subtle"}>
-        <AppIcon icon={InfoIcon} />
+      <Alert.Root status={"success"} colorPalette={"green"} variant={"subtle"}>
+        <AppIcon icon={CheckCircleIcon} />
         <Alert.Description fontSize={"xs"}>
           {
             "Kode verifikasi berhasil divalidasi. Buat kata sandi baru yang kuat untuk akun Anda."
@@ -867,8 +868,8 @@ const TotpResetPasswordFlow = ({
       gap={"md"}
       align={"stretch"}
     >
-      <Alert.Root status={"info"} colorPalette={"green"} variant={"subtle"}>
-        <AppIcon icon={InfoIcon} />
+      <Alert.Root status={"success"} colorPalette={"green"} variant={"subtle"}>
+        <AppIcon icon={CheckCircleIcon} />
         <Alert.Description fontSize={"xs"}>
           {
             "Kode Authenticator berhasil divalidasi. Buat kata sandi baru yang kuat untuk akun Anda."

@@ -486,7 +486,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
 
       {/* Notice States */}
       {!isSelected && (
-        <Alert.Root status={"neutral"}>
+        <Alert.Root status={"info"}>
           <AppIcon icon={InfoIcon} />
           <Alert.Description>
             {

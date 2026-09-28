@@ -359,7 +359,7 @@ export const MitraRegisterPage = () => {
                     </P>
                   </HStack>
 
-                  <Alert.Root colorPalette={"orange"} size={"sm"} mb={3}>
+                  <Alert.Root status={"info"} size={"sm"} mb={3}>
                     <Alert.Indicator />
                     <Alert.Content>
                       <Alert.Description>

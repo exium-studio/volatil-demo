@@ -258,7 +258,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
             {hasOrders && (
               <VStack gap={"xs"} align={"stretch"} w={"full"}>
                 {!selectedOrderId && (
-                  <Alert.Root status={"neutral"} mb={1}>
+                  <Alert.Root status={"info"} mb={1}>
                     <AppIcon icon={InfoIcon} />
                     <Alert.Description>
                       {
