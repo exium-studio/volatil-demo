@@ -4,6 +4,7 @@ import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -51,7 +52,8 @@ const MitraHomeDataSummaryContent = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries
-  const { dataSummary, isLoading } = useMitraDataSummaryQuery(period);
+  const { dataSummary, isLoading, isError, error, refetch } =
+    useMitraDataSummaryQuery(period);
 
   if (isLoading) {
     return <Skeleton minH={isSmContainer ? "386px" : "233px"} w={"full"} />;
@@ -63,10 +65,31 @@ const MitraHomeDataSummaryContent = () => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <MitraHomeDataSummaryCharts
-        dataSummary={dataSummary}
-        isSmContainer={isSmContainer}
-      />
+      {isError ? (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={"full"}
+          py={"xl"}
+        >
+          <RetryState
+            title={"Gagal Memuat Ringkasan Data"}
+            description={
+              error?.message ||
+              "Terjadi kesalahan saat memuat ringkasan data IGT. Silakan coba lagi."
+            }
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        </Box>
+      ) : (
+        <MitraHomeDataSummaryCharts
+          dataSummary={dataSummary}
+          isSmContainer={isSmContainer}
+        />
+      )}
     </Container.Body>
   );
 };

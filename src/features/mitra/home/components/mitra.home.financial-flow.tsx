@@ -5,8 +5,10 @@ import {
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -50,7 +52,8 @@ const MitraHomeFinancialFlowContent = () => {
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   // Queries / Data
-  const { financialFlow, isLoading } = useMitraFinancialFlowQuery(period);
+  const { financialFlow, isLoading, isError, error, refetch } =
+    useMitraFinancialFlowQuery(period);
 
   if (isLoading) {
     return <Skeleton minH={"353px"} w={"full"} />;
@@ -64,7 +67,28 @@ const MitraHomeFinancialFlowContent = () => {
       />
 
       <VStack mt={"auto"}>
-        <MitraHomeFinancialFlowChartContent financialFlow={financialFlow} />
+        {isError ? (
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+          >
+            <RetryState
+              title={"Gagal Memuat Statistik Alur Keuangan"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat data alur keuangan. Silakan coba lagi."
+              }
+              onRetry={() => {
+                void refetch();
+              }}
+            />
+          </Box>
+        ) : (
+          <MitraHomeFinancialFlowChartContent financialFlow={financialFlow} />
+        )}
       </VStack>
     </Container.Body>
   );

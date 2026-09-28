@@ -2,8 +2,10 @@
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Box } from "@/design-system/components/layout/ui/box";
 import {
   Container,
   useContainerContext,
@@ -34,7 +36,8 @@ const MitraHomeDataAvailabilityContent = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries
-  const { dataAvailability, isLoading } = useMitraDataAvailabilityQuery();
+  const { dataAvailability, isLoading, isError, error, refetch } =
+    useMitraDataAvailabilityQuery();
 
   if (isLoading) {
     return <Skeleton minH={isSmContainer ? "468px" : "188px"} w={"full"} />;
@@ -47,10 +50,31 @@ const MitraHomeDataAvailabilityContent = () => {
       <VStack flex={1}>
         <Separator borderColor={"bg.canvas"} />
 
-        <MitraHomeDataAvailabilityStats
-          dataAvailability={dataAvailability}
-          isSmContainer={isSmContainer}
-        />
+        {isError ? (
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+          >
+            <RetryState
+              title={"Gagal Memuat Ketersediaan Data"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat data ketersediaan peta IGT. Silakan coba lagi."
+              }
+              onRetry={() => {
+                void refetch();
+              }}
+            />
+          </Box>
+        ) : (
+          <MitraHomeDataAvailabilityStats
+            dataAvailability={dataAvailability}
+            isSmContainer={isSmContainer}
+          />
+        )}
       </VStack>
     </Container.Body>
   );

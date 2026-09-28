@@ -12,7 +12,7 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
       count = 4,
       attached = false,
       mask = false,
-      fluid = true,
+      fluid = false,
       inputHeight,
       inputProps,
       ...restProps

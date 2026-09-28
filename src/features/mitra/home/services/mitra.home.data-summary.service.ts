@@ -67,12 +67,9 @@ export const getMitraDataSummary = async (
       : EMPTY_SUMMARY;
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
-    if (
-      isDummyDataEnabled() ||
-      (error instanceof ApiError && error.statusCode === 404)
-    ) {
+    if (isDummyDataEnabled()) {
       return dummyMitraDataSummary[period] ?? EMPTY_SUMMARY;
     }
-    return EMPTY_SUMMARY;
+    throw error;
   }
 };

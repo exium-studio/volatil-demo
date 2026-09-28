@@ -62,12 +62,9 @@ export const getMitraFinancialFlow = async (
       : [];
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
-    if (
-      isDummyDataEnabled() ||
-      (error instanceof ApiError && error.statusCode === 404)
-    ) {
+    if (isDummyDataEnabled()) {
       return dummyMitraFinancialFlow[period] ?? [];
     }
-    return [];
+    throw error;
   }
 };

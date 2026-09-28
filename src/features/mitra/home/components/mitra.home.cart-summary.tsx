@@ -2,8 +2,10 @@
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Box } from "@/design-system/components/layout/ui/box";
 import {
   Container,
   useContainerContext,
@@ -32,7 +34,8 @@ const MitraHomeCartSummaryContent = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries / Data
-  const { cartSummary, isLoading } = useMitraCartSummaryQuery();
+  const { cartSummary, isLoading, isError, error, refetch } =
+    useMitraCartSummaryQuery();
 
   if (isLoading) {
     return <Skeleton minH={"353px"} w={"full"} />;
@@ -45,10 +48,31 @@ const MitraHomeCartSummaryContent = () => {
       <VStack flex={1}>
         <Separator borderColor={"bg.canvas"} />
 
-        <MitraHomeCartStats
-          cartSummary={cartSummary}
-          isSmContainer={isSmContainer}
-        />
+        {isError ? (
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+          >
+            <RetryState
+              title={"Gagal Memuat Ringkasan Keranjang"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat ringkasan keranjang pembelian. Silakan coba lagi."
+              }
+              onRetry={() => {
+                void refetch();
+              }}
+            />
+          </Box>
+        ) : (
+          <MitraHomeCartStats
+            cartSummary={cartSummary}
+            isSmContainer={isSmContainer}
+          />
+        )}
       </VStack>
     </Container.Body>
   );

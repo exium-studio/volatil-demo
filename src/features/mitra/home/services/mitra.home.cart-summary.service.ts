@@ -57,12 +57,9 @@ export const getMitraCartSummary = async (
     return isDummyDataEnabled() ? dummyMitraCartSummary : EMPTY_CART_SUMMARY;
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
-    if (
-      isDummyDataEnabled() ||
-      (error instanceof ApiError && error.statusCode === 404)
-    ) {
+    if (isDummyDataEnabled()) {
       return dummyMitraCartSummary;
     }
-    return EMPTY_CART_SUMMARY;
+    throw error;
   }
 };

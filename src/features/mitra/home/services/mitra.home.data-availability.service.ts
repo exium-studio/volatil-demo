@@ -45,12 +45,9 @@ export const getMitraDataAvailability = async (
       : EMPTY_AVAILABILITY;
   } catch (error) {
     if ((error as { name?: string }).name === "AbortError") throw error;
-    if (
-      isDummyDataEnabled() ||
-      (error instanceof ApiError && error.statusCode === 404)
-    ) {
+    if (isDummyDataEnabled()) {
       return dummyMitraDataAvailability;
     }
-    return EMPTY_AVAILABILITY;
+    throw error;
   }
 };
