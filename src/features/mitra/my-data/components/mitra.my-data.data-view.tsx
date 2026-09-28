@@ -144,7 +144,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "WMS URL", sortable: false },
       // { th: "WFS URL", sortable: false,  },
       { th: "Status Aktif", sortable: true },
-      { th: "Faktur & TTE", sortable: false, align: "start" },
+      { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },

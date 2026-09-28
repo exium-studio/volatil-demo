@@ -95,9 +95,14 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
 
   return {
     orderId: idVal,
+    orderNumber: raw.orderNumber ?? raw.order_number ?? undefined,
+    transactionNumber:
+      raw.transactionNumber ?? raw.transaction_number ?? undefined,
     mitraId: String(raw.mitraId ?? raw.mitra_id ?? ""),
     mitraName:
       raw.mitraName ?? raw.mitra_name ?? raw.userName ?? raw.name ?? "Mitra",
+    agencyOrCompany: raw.agencyOrCompany ?? raw.agency_or_company ?? undefined,
+    email: raw.email ?? undefined,
     status: raw.status ?? "pending_review",
     selectionType: raw.selectionType ?? raw.selection_type ?? "catalog",
     createdAt: raw.createdAt ?? raw.created_at ?? new Date().toISOString(),
@@ -389,6 +394,8 @@ const getDummyOrderList = (
     filtered = filtered.filter(
       (b) =>
         b.orderId.toLowerCase().includes(q) ||
+        (b.orderNumber && b.orderNumber.toLowerCase().includes(q)) ||
+        (b.transactionNumber && b.transactionNumber.toLowerCase().includes(q)) ||
         b.mitraName.toLowerCase().includes(q) ||
         b.items.some((it) => it.sourceLayerTitle.toLowerCase().includes(q)),
     );

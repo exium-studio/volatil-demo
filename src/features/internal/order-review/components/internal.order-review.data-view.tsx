@@ -112,7 +112,7 @@ export const InternalOrderReviewDataView = () => {
       { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Daftar Layer IGT", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
-      { th: "Faktur & TTE", sortable: false, align: "start" },
+      { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
       { th: "Waktu Diajukan", sortable: true, align: "start" },
     ];
@@ -269,6 +269,7 @@ export const InternalOrderReviewDataView = () => {
         key: "approve-order",
         label: "Setujui Permintaan",
         icon: CheckCircleIcon,
+        colorPalette: "green",
         hidden: (order: InternalOrderItem) => order.status !== "pending_review",
         modal: {
           triggerComponent: (order: InternalOrderItem) => (

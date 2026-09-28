@@ -377,7 +377,7 @@ export function InternalOrderReviewDetailPage() {
 
               <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Dokumen Faktur & TTE"}
+                  {"TTE & Faktur"}
                 </P>
 
                 <TteBadge

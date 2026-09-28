@@ -96,7 +96,7 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
-      { th: "Faktur & TTE", sortable: false, align: "start" },
+      { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
