@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 export type SwitchProps = ChakraSwitch.RootProps & {
   children?: ReactNode;
+  tooltip?: ReactNode;
   controlProps?: ChakraSwitch.ControlProps;
   thumbProps?: ChakraSwitch.ThumbProps;
 };

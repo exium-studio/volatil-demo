@@ -194,6 +194,11 @@ export const MitraDataRequestSpatialSummary = memo(
             <Switch
               checked={isCoverageVisible}
               onCheckedChange={onToggleCoverageVisible}
+              tooltip={
+                isCoverageVisible
+                  ? "Sembunyikan Cakupan Kawasan"
+                  : "Tampilkan Cakupan Kawasan"
+              }
             />
           </HStack>
         )}

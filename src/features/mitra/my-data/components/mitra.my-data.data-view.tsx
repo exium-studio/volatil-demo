@@ -231,6 +231,11 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                     onCheckedChange={({ checked }) => {
                       handleToggleLayer(item, checked);
                     }}
+                    tooltip={
+                      isVisibleOnMap
+                        ? "Sembunyikan dari Peta"
+                        : "Tampilkan di Peta"
+                    }
                     aria-label={`Toggle visibilitas peta untuk ${layerDisplayName}`}
                     size={"sm"}
                   />

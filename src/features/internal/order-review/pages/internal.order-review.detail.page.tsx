@@ -400,6 +400,11 @@ export function InternalOrderReviewDetailPage() {
                       onCheckedChange={({ checked }) => {
                         handleToggleAoi(checked);
                       }}
+                      tooltip={
+                        isAoiVisible
+                          ? "Sembunyikan Polygon AOI"
+                          : "Tampilkan Polygon AOI"
+                      }
                     />
 
                     <Tooltip content={"Zoom ke AOI Polygon"}>
@@ -546,6 +551,11 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
                   onCheckedChange={({ checked }) => {
                     handleToggleLayer(item, checked);
                   }}
+                  tooltip={
+                    (enabledLayerIds[item.sourceLayerId] ?? false)
+                      ? "Sembunyikan dari Peta"
+                      : "Tampilkan di Peta"
+                  }
                 />
               ),
               align: "center" as const,

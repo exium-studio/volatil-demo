@@ -238,6 +238,11 @@ const InternalDataManagementEditModalContent = (
                         onCheckedChange={(e) =>
                           field.onChange(Boolean(e.checked))
                         }
+                        tooltip={
+                          field.value
+                            ? "Ubah status ke Draft"
+                            : "Publikasikan ke Katalog"
+                        }
                       />
                     </HStack>
                   </Field>
@@ -270,6 +275,11 @@ const InternalDataManagementEditModalContent = (
                         checked={field.value}
                         onCheckedChange={(e) =>
                           field.onChange(Boolean(e.checked))
+                        }
+                        tooltip={
+                          field.value
+                            ? "Nonaktifkan Tampil di Peta Awal"
+                            : "Aktifkan Tampil di Peta Awal"
                         }
                       />
                     </HStack>

@@ -252,6 +252,11 @@ export const InternalDataManagementDataView = () => {
                   onCheckedChange={({ checked }) => {
                     handleToggleLayer(item, checked);
                   }}
+                  tooltip={
+                    isVisibleOnMap
+                      ? "Sembunyikan dari Peta"
+                      : "Tampilkan di Peta"
+                  }
                   aria-label={`Toggle visibilitas peta untuk ${item.title}`}
                   size={"sm"}
                 />
