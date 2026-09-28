@@ -13,6 +13,7 @@ import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapMyDataLayerItemProps } from "@/design-system/components/map/types/map.my-data-layer-select.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
@@ -21,25 +22,27 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
   DatabaseIcon,
   FocusIcon,
 } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 export const MapMyDataLayerSelect = memo(() => {
   // Stores
   const {
     enabledLayerIds,
     layerOpacities,
+    globalOpacity,
+    setGlobalOpacity,
     setLayerEnabled,
     setCustomLayerConfig,
     setLayerOpacity,
@@ -137,32 +140,9 @@ export const MapMyDataLayerSelect = memo(() => {
           justifyContent={"space-between"}
         >
           <HStack justify={"space-between"} gap={"md"} w={"full"}>
-            <HStack flex={1} gap={"xs"} align={"center"}>
-              <P fontWeight={"medium"}>{"Toggle Layer Data Saya"}</P>
+            <P fontWeight={"medium"}>{"Toggle Layer Data Saya"}</P>
 
-              <Badge colorPalette={"blue"}>{enabledCount} aktif</Badge>
-            </HStack>
-
-            {activeItems.length > 0 && (
-              <HStack
-                align={"center"}
-                gap={"sm"}
-                cursor={"pointer"}
-                onClick={() => {
-                  handleToggleAll(!isAllEnabled);
-                }}
-              >
-                <P fontSize={"sm"} color={"fg.muted"} userSelect={"none"}>
-                  {"Semua"}
-                </P>
-
-                <Switch
-                  size={"sm"}
-                  checked={isAllEnabled}
-                  pointerEvents={"none"}
-                />
-              </HStack>
-            )}
+            <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
           </HStack>
         </Popover.Header>
 
@@ -173,29 +153,87 @@ export const MapMyDataLayerSelect = memo(() => {
 
               <P color={"fg.muted"}>{"Memuat data saya..."}</P>
             </HStack>
-          ) : activeItems.length === 0 ? (
-            <HStack align={"center"} justify={"center"} p={"md"}>
-              <P color={"fg.muted"} fontSize={"sm"}>
-                {"Tidak ada data layer aktif yang tersedia"}
-              </P>
-            </HStack>
           ) : (
-            <VStack gap={"2xs"} align={"stretch"}>
-              {activeItems.map((item) => {
-                const isEnabled = Boolean(enabledLayerIds[item.id]);
-                const opacity = layerOpacities[item.id] ?? 1.0;
+            <VStack gap={"xs"} align={"stretch"}>
+              {!isEmptyArray(activeItems) && (
+                <>
+                  <VStack gap={"sm"} p={1} align={"stretch"}>
+                    <HStack
+                      justify={"space-between"}
+                      align={"center"}
+                      cursor={"pointer"}
+                      onClick={() => {
+                        handleToggleAll(!isAllEnabled);
+                      }}
+                    >
+                      <P fontSize={"sm"} fontWeight={"medium"}>
+                        {"Muat Semua Layer"}
+                      </P>
 
-                return (
-                  <MapMyDataLayerItem
-                    key={item.id}
-                    item={item}
-                    isEnabled={isEnabled}
-                    opacity={opacity}
-                    onToggle={handleToggleItem}
-                    onOpacityChange={setLayerOpacity}
-                  />
-                );
-              })}
+                      <Switch
+                        size={"sm"}
+                        checked={isAllEnabled}
+                        pointerEvents={"none"}
+                      />
+                    </HStack>
+
+                    <VStack gap={"xs"} align={"stretch"}>
+                      <HStack justify={"space-between"} w={"full"}>
+                        <P fontSize={"sm"} fontWeight={"medium"}>
+                          {"Opasitas Semua Layer Data Saya"}
+                        </P>
+
+                        <P
+                          fontSize={"sm"}
+                          fontWeight={"semibold"}
+                          color={"fg.muted"}
+                        >
+                          {`${Math.round(globalOpacity * 100)}%`}
+                        </P>
+                      </HStack>
+
+                      <Slider
+                        value={[Math.round(globalOpacity * 100)]}
+                        min={0}
+                        max={100}
+                        step={1}
+                        showValue={false}
+                        onValueChange={(details) =>
+                          setGlobalOpacity(details.value[0] / 100)
+                        }
+                      />
+                    </VStack>
+                  </VStack>
+
+                  <Separator />
+                </>
+              )}
+
+              {isEmptyArray(activeItems) && (
+                <HStack align={"center"} justify={"center"} p={"md"}>
+                  <P color={"fg.muted"} fontSize={"sm"}>
+                    {"Tidak ada data layer aktif yang tersedia"}
+                  </P>
+                </HStack>
+              )}
+
+              <VStack gap={"2xs"} align={"stretch"}>
+                {activeItems.map((item) => {
+                  const isEnabled = Boolean(enabledLayerIds[item.id]);
+                  const opacity = layerOpacities[item.id] ?? 1.0;
+
+                  return (
+                    <MapMyDataLayerItem
+                      key={item.id}
+                      item={item}
+                      isEnabled={isEnabled}
+                      opacity={opacity}
+                      onToggle={handleToggleItem}
+                      onOpacityChange={setLayerOpacity}
+                    />
+                  );
+                })}
+              </VStack>
             </VStack>
           )}
         </Popover.Body>
@@ -233,21 +271,6 @@ const MapMyDataLayerItem = memo((props: MapMyDataLayerItemProps) => {
 
   // States
   const [isOpacityOpen, setIsOpacityOpen] = useState<boolean>(false);
-  const [localOpacity, setLocalOpacity] = useState<number>(opacity);
-
-  // Sync local opacity state with prop opacity if updated externally
-  useEffect(() => {
-    setLocalOpacity(opacity);
-  }, [opacity]);
-
-  // Debounce opacity state updates to MapLibre store for performance
-  const debouncedOpacity = useDebouncedValue(localOpacity, 80);
-
-  useEffect(() => {
-    if (debouncedOpacity !== opacity) {
-      onOpacityChange(item.id, debouncedOpacity);
-    }
-  }, [debouncedOpacity, opacity, onOpacityChange, item.id]);
 
   // Derived Values
   const displayName = item.label || item.title || item.id.replace(/_/g, " ");
@@ -343,18 +366,18 @@ const MapMyDataLayerItem = memo((props: MapMyDataLayerItemProps) => {
               </P>
 
               <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
-                {`${Math.round(localOpacity * 100)}%`}
+                {`${Math.round(opacity * 100)}%`}
               </P>
             </HStack>
 
             <Slider
-              value={[Math.round(localOpacity * 100)]}
+              value={[Math.round(opacity * 100)]}
               min={0}
               max={100}
               step={1}
               showValue={false}
               onValueChange={(details) =>
-                setLocalOpacity(details.value[0] / 100)
+                onOpacityChange(item.id, details.value[0] / 100)
               }
             />
           </VStack>

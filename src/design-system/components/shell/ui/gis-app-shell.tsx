@@ -476,7 +476,7 @@ const Content = () => {
           type: "wms-raster",
           spatialBasis: "bidang",
           visible: wmsVisible && Boolean(isEnabled),
-          opacity: layerOpacities[layerId] ?? 1.0,
+          opacity: (layerOpacities[layerId] ?? 1.0) * globalOpacity,
           wmsUrl: "",
           layers: layerId,
           ...(customOverride ?? {}),

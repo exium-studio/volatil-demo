@@ -711,27 +711,13 @@ export const chakraConfig = defineConfig({
       assets: {},
 
       durations: {
-        fastest: {
-          value: "50ms",
-        },
-        faster: {
-          value: "100ms",
-        },
-        fast: {
-          value: "150ms",
-        },
-        moderate: {
-          value: "200ms",
-        },
-        slow: {
-          value: "300ms",
-        },
-        slower: {
-          value: "450ms",
-        },
-        slowest: {
-          value: "550ms",
-        },
+        fastest: { value: "40ms" },
+        faster: { value: "75ms" },
+        fast: { value: "110ms" },
+        moderate: { value: "150ms" },
+        slow: { value: "225ms" },
+        slower: { value: "340ms" },
+        slowest: { value: "400ms" },
       },
 
       // Motion preset

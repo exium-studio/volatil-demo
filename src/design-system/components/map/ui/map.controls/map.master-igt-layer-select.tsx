@@ -22,7 +22,6 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
@@ -36,7 +35,7 @@ import {
   FocusIcon,
   LayersIcon,
 } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 export const MapMasterIgtLayerSelect = memo(() => {
   // Stores
@@ -56,24 +55,6 @@ export const MapMasterIgtLayerSelect = memo(() => {
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
   });
-
-  // States
-  const [localGlobalOpacity, setLocalGlobalOpacity] =
-    useState<number>(globalOpacity);
-
-  // Sync local global opacity state when updated externally
-  useEffect(() => {
-    setLocalGlobalOpacity(globalOpacity);
-  }, [globalOpacity]);
-
-  // Debounce global opacity state updates to store for smooth performance
-  const debouncedGlobalOpacity = useDebouncedValue(localGlobalOpacity, 80);
-
-  useEffect(() => {
-    if (debouncedGlobalOpacity !== globalOpacity) {
-      setGlobalOpacity(debouncedGlobalOpacity);
-    }
-  }, [debouncedGlobalOpacity, globalOpacity, setGlobalOpacity]);
 
   // Derived Values
   const activeLayers = useMemo(() => layersData?.items ?? [], [layersData]);
@@ -178,18 +159,18 @@ export const MapMasterIgtLayerSelect = memo(() => {
                           fontWeight={"semibold"}
                           color={"fg.muted"}
                         >
-                          {`${Math.round(localGlobalOpacity * 100)}%`}
+                          {`${Math.round(globalOpacity * 100)}%`}
                         </P>
                       </HStack>
 
                       <Slider
-                        value={[Math.round(localGlobalOpacity * 100)]}
+                        value={[Math.round(globalOpacity * 100)]}
                         min={0}
                         max={100}
                         step={1}
                         showValue={false}
                         onValueChange={(details) =>
-                          setLocalGlobalOpacity(details.value[0] / 100)
+                          setGlobalOpacity(details.value[0] / 100)
                         }
                       />
                     </VStack>
@@ -252,21 +233,6 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
 
   // States
   const [isOpacityOpen, setIsOpacityOpen] = useState<boolean>(false);
-  const [localOpacity, setLocalOpacity] = useState<number>(opacity);
-
-  // Sync local opacity state with prop opacity if updated externally
-  useEffect(() => {
-    setLocalOpacity(opacity);
-  }, [opacity]);
-
-  // Debounce opacity state updates to MapLibre store for performance
-  const debouncedOpacity = useDebouncedValue(localOpacity, 80);
-
-  useEffect(() => {
-    if (debouncedOpacity !== opacity) {
-      onOpacityChange(layer.id, debouncedOpacity);
-    }
-  }, [debouncedOpacity, opacity, onOpacityChange, layer.id]);
 
   // Derived Values
   const displayName =
@@ -355,18 +321,18 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
               </P>
 
               <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
-                {`${Math.round(localOpacity * 100)}%`}
+                {`${Math.round(opacity * 100)}%`}
               </P>
             </HStack>
 
             <Slider
-              value={[Math.round(localOpacity * 100)]}
+              value={[Math.round(opacity * 100)]}
               min={0}
               max={100}
               step={1}
               showValue={false}
               onValueChange={(details) =>
-                setLocalOpacity(details.value[0] / 100)
+                onOpacityChange(layer.id, details.value[0] / 100)
               }
             />
           </VStack>
