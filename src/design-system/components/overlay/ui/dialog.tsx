@@ -9,6 +9,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import {
   DIALOG_OFFSET_X_VAR,
   DIALOG_OFFSET_Y_VAR,
+  clearDialogOffset,
   getDialogOffset,
   updateClickOrigin,
   updateDialogOffset,
@@ -33,12 +34,14 @@ import { IconSquare, IconSquares } from "@tabler/icons-react";
 import {
   createContext,
   useContext,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
   type MouseEvent,
+  type PointerEvent,
 } from "react";
 
 export const DialogContext = createContext<DialogContextValue | null>(null);
@@ -102,6 +105,15 @@ const DialogRoot = (props: DialogRootProps) => {
     [opened, isNested, delayMs],
   );
 
+  useEffect(() => {
+    if (!opened) {
+      const timeoutId = setTimeout(() => {
+        clearDialogOffset(modalKey);
+      }, 350);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [opened, modalKey]);
+
   const contextValue = useMemo<DialogContextValue>(
     () => ({
       modalKey,
@@ -154,26 +166,32 @@ const DialogRoot = (props: DialogRootProps) => {
 
 const DialogTrigger = (props: ChakraDialog.TriggerProps) => {
   // Props
-  const { onClick, ...restProps } = props;
+  const { onClick, onPointerDown, ...restProps } = props;
 
   // Contexts
   const { modalKey, open, clickOriginAnimation } = useDialogContext();
 
   // Handlers
-  const initOriginPoint = clickOriginAnimation
-    ? (e: MouseEvent) => {
-        updateClickOrigin(modalKey, e.currentTarget);
-      }
-    : undefined;
+  const handlePointerDown = (e: PointerEvent<HTMLElement>) => {
+    if (clickOriginAnimation) {
+      updateClickOrigin(modalKey, e.currentTarget);
+    }
+    (onPointerDown as ((e: PointerEvent<HTMLElement>) => void) | undefined)?.(e);
+  };
+
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
+    if (clickOriginAnimation) {
+      updateClickOrigin(modalKey, event.currentTarget);
+    }
+    open?.();
+    (onClick as ((event: MouseEvent<HTMLElement>) => void) | undefined)?.(event);
+  };
 
   return (
     <ChakraDialog.Trigger
       asChild
-      onPointerDown={initOriginPoint}
-      onClick={(event) => {
-        open?.();
-        onClick?.(event);
-      }}
+      onPointerDown={handlePointerDown}
+      onClick={handleClick}
       {...restProps}
     />
   );

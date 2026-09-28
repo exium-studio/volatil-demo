@@ -42,17 +42,23 @@ export type Point = {
 export type DialogAnimationState = {
   clickOrigin: Point;
   dialogOffset: Point;
+  targetElement?: HTMLElement | null;
 };
 
 export type DialogAnimationStore = {
   dialogs: Record<string, DialogAnimationState>;
   zIndexCounter: number;
 
-  setClickOrigin: (modalKey: string, clickOrigin: Point) => void;
+  setClickOrigin: (
+    modalKey: string,
+    clickOrigin: Point,
+    targetElement?: HTMLElement | null,
+  ) => void;
   setDialogOffset: (modalKey: string, dialogOffset: Point) => void;
 
   getClickOrigin: (modalKey: string) => Point;
   getDialogOffset: (modalKey: string) => Point;
+  getTargetElement: (modalKey: string) => HTMLElement | null;
 
   clear: (modalKey: string) => void;
 };
