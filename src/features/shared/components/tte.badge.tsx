@@ -9,7 +9,7 @@ import {
   CheckCircle2Icon,
   ClockIcon,
   FileCheckIcon,
-  FileTextIcon,
+  ReceiptTextIcon,
 } from "lucide-react";
 
 export const TteBadge = (props: TteBadgeProps) => {
@@ -71,7 +71,7 @@ export const TteBadge = (props: TteBadgeProps) => {
             }
           }}
         >
-          <AppIcon icon={FileTextIcon} size={"xs"} />
+          <AppIcon icon={ReceiptTextIcon} size={"xs"} />
           {"Faktur"}
         </Button>
       )}

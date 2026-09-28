@@ -33,6 +33,7 @@ import {
   FileTextIcon,
   MailIcon,
   PhoneIcon,
+  FilePenLine,
   SquareArrowOutUpRightIcon,
   UserCheckIcon,
   XCircleIcon,
@@ -201,7 +202,7 @@ export function InternalMitraRegistrationDetailPage() {
               {registration.contractDocument?.url && (
                 <ExternalLink href={registration.contractDocument?.url}>
                   <HStack align={"center"} gap={"xs"}>
-                    <AppIcon icon={ExternalLinkIcon} />
+                    <AppIcon icon={FilePenLine} />
 
                     <P>{"Berkas kontrak"}</P>
                   </HStack>

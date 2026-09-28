@@ -46,9 +46,9 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
   FileCheckIcon,
-  FileTextIcon,
   LayersIcon,
   MapPlusIcon,
+  ReceiptTextIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
@@ -246,7 +246,7 @@ export const InternalOrderReviewDataView = () => {
       {
         key: "view-invoice",
         label: "Lihat Faktur",
-        icon: FileTextIcon,
+        icon: ReceiptTextIcon,
         hidden: (order: InternalOrderItem) => !order.invoiceUrl,
         onClick: (order: InternalOrderItem) => {
           if (order.invoiceUrl) {

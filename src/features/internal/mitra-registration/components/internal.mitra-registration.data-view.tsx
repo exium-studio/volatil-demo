@@ -42,8 +42,8 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
   EyeIcon,
-  FileTextIcon,
   HandshakeIcon,
+  FilePenLine,
   XCircleIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -131,21 +131,34 @@ export const InternalMitraRegistrationDataView = () => {
             ),
           },
           {
-            value: reg.contractDocument?.url ?? null,
-            td: reg.contractDocument?.url ? (
-              <ExternalLink
-                href={reg.contractDocument?.url ?? null}
-                download={true}
-              >
-                <HStack align={"center"} gap={"xs"}>
-                  <AppIcon icon={FileTextIcon} />
+            value:
+              reg.contractDocument?.url ??
+              (typeof reg.contractDocument === "string"
+                ? reg.contractDocument
+                : null),
+            td:
+              (reg.contractDocument?.url ??
+              (typeof reg.contractDocument === "string"
+                ? reg.contractDocument
+                : null)) ? (
+                <ExternalLink
+                  href={
+                    reg.contractDocument?.url ??
+                    (typeof reg.contractDocument === "string"
+                      ? reg.contractDocument
+                      : null)
+                  }
+                  download={true}
+                >
+                  <HStack align={"center"} gap={"xs"}>
+                    <AppIcon icon={FilePenLine} />
 
-                  <P>{"Lihat Kontrak"}</P>
-                </HStack>
-              </ExternalLink>
-            ) : (
-              <P>-</P>
-            ),
+                    <P>{"Lihat Kontrak"}</P>
+                  </HStack>
+                </ExternalLink>
+              ) : (
+                <P>-</P>
+              ),
           },
           {
             value: reg.picName ?? reg.namaPenanggungJawab,
@@ -194,16 +207,31 @@ export const InternalMitraRegistrationDataView = () => {
         {
           key: "view-contract",
           label: "Lihat Berkas Kontrak",
-          icon: FileTextIcon,
-          hidden: (reg: InternalMitraRegistrationItem) =>
-            !reg.contractDocument?.url,
+          icon: FilePenLine,
+          hidden: (reg: InternalMitraRegistrationItem) => {
+            const url =
+              typeof reg.contractDocument === "string"
+                ? reg.contractDocument
+                : (reg.contractDocument?.url ??
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (reg as any).contractUrl ??
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (reg as any).contract_url ??
+                  null);
+            return !url;
+          },
           onClick: (reg: InternalMitraRegistrationItem) => {
-            if (reg.contractDocument?.url) {
-              window.open(
-                reg.contractDocument.url,
-                "_blank",
-                "noopener,noreferrer",
-              );
+            const url =
+              typeof reg.contractDocument === "string"
+                ? reg.contractDocument
+                : (reg.contractDocument?.url ??
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (reg as any).contractUrl ??
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  (reg as any).contract_url ??
+                  null);
+            if (url) {
+              window.open(url, "_blank", "noopener,noreferrer");
             }
           },
         },

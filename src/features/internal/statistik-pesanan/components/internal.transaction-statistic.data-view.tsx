@@ -51,8 +51,8 @@ import {
 import {
   EyeIcon,
   FileCheckIcon,
-  FileTextIcon,
   HistoryIcon,
+  ReceiptTextIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
@@ -258,7 +258,7 @@ export const InternalTransactionStatisticDataView = () => {
         {
           key: "view-invoice",
           label: "Lihat Faktur",
-          icon: FileTextIcon,
+          icon: ReceiptTextIcon,
           hidden: (transaction: InternalTransactionItem) =>
             !transaction.invoiceUrl,
           onClick: (transaction: InternalTransactionItem) => {

@@ -45,7 +45,7 @@ export const InternalMitraRegistrationApproveTrigger = (
       opened={isOpen}
       open={open}
       close={close}
-      size={"lg"}
+      size={"md"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
