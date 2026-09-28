@@ -39,8 +39,6 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   CreditCardIcon,
   EyeIcon,
-  FileCheckIcon,
-  FileTextIcon,
   Layers2Icon,
   RotateCcwIcon,
 } from "lucide-react";
@@ -534,40 +532,12 @@ export const TransactionDetailModalContent = (
                   <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Status Dokumen & TTE"}
                   </P>
-                  <HStack gap={"xs"} align={"center"} wrap={"wrap"}>
-                    <TteBadge tte={transaction.tte ?? Boolean(transaction.tteInvoiceUrl)} />
-
-                    {transaction.invoiceUrl && (
-                      <Button
-                        size={"2xs"}
-                        variant={"outline"}
-                        onClick={() => {
-                          if (transaction.invoiceUrl) {
-                            window.open(transaction.invoiceUrl, "_blank");
-                          }
-                        }}
-                      >
-                        <AppIcon icon={FileTextIcon} size={"xs"} />
-                        {"Lihat Invoice"}
-                      </Button>
-                    )}
-
-                    {transaction.tteInvoiceUrl && (
-                      <Button
-                        size={"2xs"}
-                        variant={"outline"}
-                        
-                        onClick={() => {
-                          if (transaction.tteInvoiceUrl) {
-                            window.open(transaction.tteInvoiceUrl, "_blank");
-                          }
-                        }}
-                      >
-                        <AppIcon icon={FileCheckIcon} size={"xs"} />
-                        {"Lihat Invoice TTE"}
-                      </Button>
-                    )}
-                  </HStack>
+                  <TteBadge
+                    tte={transaction.tte}
+                    invoiceUrl={transaction.invoiceUrl}
+                    tteInvoiceUrl={transaction.tteInvoiceUrl}
+                    size={"sm"}
+                  />
                 </VStack>
               </VStack>
             </SimpleGrid>

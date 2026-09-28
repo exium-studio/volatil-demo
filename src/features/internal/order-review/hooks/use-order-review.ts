@@ -24,7 +24,9 @@ import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export const useInternalOrdersQuery = (params?: InternalOrderListQueryParams) => {
+export const useInternalOrdersQuery = (
+  params?: InternalOrderListQueryParams,
+) => {
   const query = useQuery({
     queryKey: ["internal", "orders", params],
     queryFn: ({ signal }) => fetchInternalOrdersApi(params, signal),
@@ -155,7 +157,7 @@ export const useUploadOrderTteInvoice = () => {
     },
     successMessage: {
       title: "TTE Berhasil Dipasang",
-      description: "Invoice bertanda tangan elektronik berhasil disimpan.",
+      description: "Faktur bertanda tangan elektronik berhasil disimpan.",
     },
     errorMessage: {
       title: "Gagal memasang TTE",
@@ -411,7 +413,8 @@ export const useOrderProvisionStream = (
       es.addEventListener("provision_fatal", (e: MessageEvent) => {
         try {
           const data = JSON.parse(e.data);
-          const errMsg = data.error || "Terjadi kesalahan fatal saat provisioning.";
+          const errMsg =
+            data.error || "Terjadi kesalahan fatal saat provisioning.";
           setState((prev) => ({
             ...prev,
             isFatal: true,
@@ -554,5 +557,3 @@ export const useInternalOrdersStream = () => {
     };
   }, [queryClient]);
 };
-
-

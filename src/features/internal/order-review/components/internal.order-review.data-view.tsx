@@ -1,6 +1,5 @@
 // src/features/internal/order-review/components/internal.order-review.data-view.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
@@ -11,7 +10,6 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -114,7 +112,7 @@ export const InternalOrderReviewDataView = () => {
       { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Daftar Layer IGT", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
-      { th: "Invoice & TTE", sortable: false, align: "start" },
+      { th: "Faktur & TTE", sortable: false, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
       { th: "Waktu Diajukan", sortable: true, align: "start" },
     ];
@@ -189,40 +187,12 @@ export const InternalOrderReviewDataView = () => {
           {
             value: order.tte ? "TTE" : "Belum TTE",
             td: (
-              <HStack gap={1} align={"center"}>
-                <TteBadge
-                  tte={Boolean(order.tte || order.tteInvoiceUrl)}
-                  size={"xs"}
-                />
-                {order.invoiceUrl && (
-                  <Button
-                    size={"2xs"}
-                    variant={"outline"}
-                    onClick={() => {
-                      if (order.invoiceUrl) {
-                        window.open(order.invoiceUrl, "_blank");
-                      }
-                    }}
-                  >
-                    <AppIcon icon={FileTextIcon} size={"xs"} />
-                    {"Invoice"}
-                  </Button>
-                )}
-                {order.tteInvoiceUrl && (
-                  <Button
-                    size={"2xs"}
-                    variant={"outline"}
-                    onClick={() => {
-                      if (order.tteInvoiceUrl) {
-                        window.open(order.tteInvoiceUrl, "_blank");
-                      }
-                    }}
-                  >
-                    <AppIcon icon={FileCheckIcon} size={"xs"} />
-                    {"TTE"}
-                  </Button>
-                )}
-              </HStack>
+              <TteBadge
+                tte={order.tte}
+                invoiceUrl={order.invoiceUrl}
+                tteInvoiceUrl={order.tteInvoiceUrl}
+                size={"xs"}
+              />
             ),
             align: "start" as const,
           },
@@ -272,7 +242,7 @@ export const InternalOrderReviewDataView = () => {
       },
       {
         key: "view-invoice",
-        label: "Lihat Invoice",
+        label: "Lihat Faktur",
         icon: FileTextIcon,
         hidden: (order: InternalOrderItem) => !order.invoiceUrl,
         onClick: (order: InternalOrderItem) => {
@@ -283,7 +253,7 @@ export const InternalOrderReviewDataView = () => {
       },
       {
         key: "view-tte-invoice",
-        label: "Lihat Invoice TTE",
+        label: "Lihat Faktur TTE",
         icon: FileCheckIcon,
         hidden: (order: InternalOrderItem) => !order.tteInvoiceUrl,
         onClick: (order: InternalOrderItem) => {
@@ -370,12 +340,7 @@ export const InternalOrderReviewDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Table / Content */}
-        <VStack
-          flex={1}
-          bg={"bg.canvas"}
-          w={"full"}
-          position={"relative"}
-        >
+        <VStack flex={1} bg={"bg.canvas"} w={"full"} position={"relative"}>
           {isLoading ? (
             <Skeleton p={"md"} rounded={0} />
           ) : isError ? (
@@ -410,11 +375,7 @@ export const InternalOrderReviewDataView = () => {
               )}
             </Center>
           ) : (
-            <VStack
-              flex={1}
-              position={"relative"}
-              w={"full"}
-            >
+            <VStack flex={1} position={"relative"} w={"full"}>
               <TopBarLoader isFetching={isFetching} />
 
               <DataViewTable.Root<InternalOrderItem>

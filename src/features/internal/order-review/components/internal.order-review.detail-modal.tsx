@@ -26,8 +26,6 @@ import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import {
   CheckCircleIcon,
-  FileCheckIcon,
-  FileTextIcon,
   LoaderIcon,
   MapPlusIcon,
 } from "lucide-react";
@@ -128,39 +126,12 @@ const InternalOrderReviewDetailModalContent = (
               <P fontSize={"xs"} color={"fg.muted"}>
                 {"Dokumen & TTE:"}
               </P>
-              <HStack gap={"2xs"} align={"center"} wrap={"wrap"}>
-                <TteBadge tte={order.tte ?? Boolean(order.tteInvoiceUrl)} size={"xs"} />
-
-                {order.invoiceUrl && (
-                  <Button
-                    size={"2xs"}
-                    variant={"outline"}
-                    onClick={() => {
-                      if (order.invoiceUrl) {
-                        window.open(order.invoiceUrl, "_blank");
-                      }
-                    }}
-                  >
-                    <AppIcon icon={FileTextIcon} size={"xs"} />
-                    {"Invoice"}
-                  </Button>
-                )}
-
-                {order.tteInvoiceUrl && (
-                  <Button
-                    size={"2xs"}
-                    variant={"outline"}
-                    onClick={() => {
-                      if (order.tteInvoiceUrl) {
-                        window.open(order.tteInvoiceUrl, "_blank");
-                      }
-                    }}
-                  >
-                    <AppIcon icon={FileCheckIcon} size={"xs"} />
-                    {"Invoice TTE"}
-                  </Button>
-                )}
-              </HStack>
+              <TteBadge
+                tte={order.tte}
+                invoiceUrl={order.invoiceUrl}
+                tteInvoiceUrl={order.tteInvoiceUrl}
+                size={"xs"}
+              />
             </HStack>
           </VStack>
 

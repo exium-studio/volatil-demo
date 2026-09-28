@@ -64,5 +64,8 @@ export type TteBadgeProps = Omit<BadgeProps, "children"> & {
   tte?: boolean | null;
   children?: boolean | string | null;
   showIcon?: boolean;
+  invoiceUrl?: string | null;
+  tteInvoiceUrl?: string | null;
+  showInvoiceButtons?: boolean;
 };
 

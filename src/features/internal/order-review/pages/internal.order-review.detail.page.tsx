@@ -52,8 +52,6 @@ import {
   CheckCircleIcon,
   EyeIcon,
   EyeOffIcon,
-  FileCheckIcon,
-  FileTextIcon,
   FocusIcon,
   LoaderIcon,
   MapPlusIcon,
@@ -352,7 +350,7 @@ export function InternalOrderReviewDetailPage() {
                   {"Metode Pengajuan"}
                 </P>
 
-                <SelectionTypeBadge size={"sm"}>
+                <SelectionTypeBadge size={"sm"} my={"auto"}>
                   {order.selectionType}
                 </SelectionTypeBadge>
               </VStack>
@@ -362,7 +360,7 @@ export function InternalOrderReviewDetailPage() {
                   {"Status Pesanan"}
                 </P>
 
-                <OrderStatusBadge>{order.status}</OrderStatusBadge>
+                <OrderStatusBadge my={"auto"}>{order.status}</OrderStatusBadge>
               </VStack>
 
               <VStack gap={"xs"} align={"start"}>
@@ -370,9 +368,23 @@ export function InternalOrderReviewDetailPage() {
                   {"Total Estimasi PNBP"}
                 </P>
 
-                <P fontWeight={"semibold"}>
+                <P fontWeight={"semibold"} my={"auto"}>
                   {formatCurrency(order.totalPrice ?? 0)}
                 </P>
+              </VStack>
+
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Dokumen Faktur & TTE"}
+                </P>
+
+                <TteBadge
+                  tte={order.tte}
+                  invoiceUrl={order.invoiceUrl}
+                  tteInvoiceUrl={order.tteInvoiceUrl}
+                  size={"sm"}
+                  my={"auto"}
+                />
               </VStack>
 
               {hasAoi && (
@@ -381,7 +393,7 @@ export function InternalOrderReviewDetailPage() {
                     {"AOI Polygon"}
                   </P>
 
-                  <HStack align={"center"} gap={"xs"}>
+                  <HStack align={"center"} gap={"xs"} my={"auto"}>
                     <Switch
                       checked={isAoiVisible}
                       onCheckedChange={({ checked }) => {
@@ -402,47 +414,6 @@ export function InternalOrderReviewDetailPage() {
                   </HStack>
                 </VStack>
               )}
-
-              {/* Invoice & TTE Section */}
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Dokumen Invoice & TTE"}
-                </P>
-
-                <HStack gap={"xs"} align={"center"} wrap={"wrap"}>
-                  <TteBadge tte={order.tte ?? Boolean(order.tteInvoiceUrl)} size={"sm"} />
-
-                  {order.invoiceUrl && (
-                    <Button
-                      size={"xs"}
-                      variant={"outline"}
-                      onClick={() => {
-                        if (order.invoiceUrl) {
-                          window.open(order.invoiceUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <AppIcon icon={FileTextIcon} size={"xs"} />
-                      {"Lihat Invoice"}
-                    </Button>
-                  )}
-
-                  {order.tteInvoiceUrl && (
-                    <Button
-                      size={"xs"}
-                      variant={"outline"}
-                      onClick={() => {
-                        if (order.tteInvoiceUrl) {
-                          window.open(order.tteInvoiceUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <AppIcon icon={FileCheckIcon} size={"xs"} />
-                      {"Lihat Invoice TTE"}
-                    </Button>
-                  )}
-                </HStack>
-              </VStack>
             </HStack>
           </VStack>
 

@@ -25,12 +25,7 @@ export const InternalOrderReviewTteTrigger = (
   props: InternalOrderReviewTteTriggerProps,
 ) => {
   // Props
-  const {
-    modalKey: customModalKey,
-    order,
-    children,
-    onSuccess,
-  } = props;
+  const { modalKey: customModalKey, order, children, onSuccess } = props;
   const key = customModalKey || `tte-modal-${order.orderId}`;
 
   // Hooks
@@ -86,7 +81,10 @@ export const InternalOrderReviewTteModalContent = (
       setSelectedFiles([]);
       return;
     }
-    if (!file.name.toLowerCase().endsWith(".pdf") && file.type !== "application/pdf") {
+    if (
+      !file.name.toLowerCase().endsWith(".pdf") &&
+      file.type !== "application/pdf"
+    ) {
       setFileError("Format berkas harus PDF");
       setSelectedFiles([]);
       return;
@@ -101,7 +99,9 @@ export const InternalOrderReviewTteModalContent = (
   };
 
   const handleFileReject = () => {
-    setFileError("Berkas tidak valid atau melebihi batas ukuran maksimal (10 MB)");
+    setFileError(
+      "Berkas tidak valid atau melebihi batas ukuran maksimal (10 MB)",
+    );
     setSelectedFiles([]);
   };
 
@@ -123,7 +123,8 @@ export const InternalOrderReviewTteModalContent = (
     );
   };
 
-  const isSubmitDisabled = selectedFiles.length === 0 || uploadTteMutation.isPending;
+  const isSubmitDisabled =
+    selectedFiles.length === 0 || uploadTteMutation.isPending;
 
   return (
     <Modal.Content>
@@ -154,7 +155,7 @@ export const InternalOrderReviewTteModalContent = (
 
           <Field
             variant={"default"}
-            label={"Berkas Invoice TTE (.pdf)"}
+            label={"Berkas Faktur TTE (.pdf)"}
             helperText={"Maksimal ukuran file: 10 MB (Format PDF Only)"}
             invalid={Boolean(fileError)}
             errorText={fileError ?? undefined}

@@ -98,7 +98,7 @@ export const TransactionHistoryDataView = () => {
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
-      { th: "Invoice & TTE", sortable: false, align: "start" },
+      { th: "Faktur & TTE", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
@@ -186,40 +186,12 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.tte ? "TTE" : "Belum TTE",
               td: (
-                <HStack gap={1} align={"center"}>
-                  <TteBadge
-                  tte={Boolean(item.tte || item.tteInvoiceUrl)}
+                <TteBadge
+                  tte={item.tte}
+                  invoiceUrl={item.invoiceUrl}
+                  tteInvoiceUrl={item.tteInvoiceUrl}
                   size={"xs"}
-                  />
-                  {item.invoiceUrl && (
-                    <Button
-                      size={"2xs"}
-                      variant={"outline"}
-                      onClick={() => {
-                        if (item.invoiceUrl) {
-                          window.open(item.invoiceUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <AppIcon icon={FileTextIcon} size={"xs"} />
-                      {"Invoice"}
-                    </Button>
-                  )}
-                  {item.tteInvoiceUrl && (
-                    <Button
-                      size={"2xs"}
-                      variant={"outline"}
-                      onClick={() => {
-                        if (item.tteInvoiceUrl) {
-                          window.open(item.tteInvoiceUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <AppIcon icon={FileCheckIcon} size={"xs"} />
-                      {"TTE"}
-                    </Button>
-                  )}
-                </HStack>
+                />
               ),
               align: "start" as const,
             },
@@ -285,7 +257,7 @@ export const TransactionHistoryDataView = () => {
       },
       {
         key: "view-invoice",
-        label: "Lihat Invoice",
+        label: "Lihat Faktur",
         icon: FileTextIcon,
         hidden: (transaction: TransactionRecord) => !transaction.invoiceUrl,
         onClick: (transaction: TransactionRecord) => {
@@ -296,7 +268,7 @@ export const TransactionHistoryDataView = () => {
       },
       {
         key: "view-tte-invoice",
-        label: "Lihat Invoice TTE",
+        label: "Lihat Faktur TTE",
         icon: FileCheckIcon,
         hidden: (transaction: TransactionRecord) => !transaction.tteInvoiceUrl,
         onClick: (transaction: TransactionRecord) => {

@@ -1,6 +1,5 @@
 // src/features/internal/statistik-pesanan/components/internal.transaction-statistic.data-view.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -14,7 +13,6 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -41,13 +39,21 @@ import { StatusFilterSelect } from "@/features/shared/components/status-filter.s
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
-import type { OrderStatus, TransactionStatus } from "@/shared/types/status.type";
+import type {
+  OrderStatus,
+  TransactionStatus,
+} from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatAdaptiveDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { EyeIcon, FileCheckIcon, FileTextIcon, HistoryIcon } from "lucide-react";
+import {
+  EyeIcon,
+  FileCheckIcon,
+  FileTextIcon,
+  HistoryIcon,
+} from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
@@ -90,7 +96,7 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
-      { th: "Invoice & TTE", sortable: false, align: "start" },
+      { th: "Faktur & TTE", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
@@ -181,48 +187,18 @@ export const InternalTransactionStatisticDataView = () => {
             },
             {
               value: item.paymentMethod,
-              td: (
-                <PaymentMethodBadge>{item.paymentMethod}</PaymentMethodBadge>
-              ),
+              td: <PaymentMethodBadge>{item.paymentMethod}</PaymentMethodBadge>,
               align: "start" as const,
             },
             {
               value: item.tte ? "TTE" : "Belum TTE",
               td: (
-                <HStack gap={1} align={"center"}>
-                  <TteBadge
-                  tte={item.tte ?? Boolean(item.tteInvoiceUrl)}
+                <TteBadge
+                  tte={item.tte}
+                  invoiceUrl={item.invoiceUrl}
+                  tteInvoiceUrl={item.tteInvoiceUrl}
                   size={"xs"}
-                  />
-                  {item.invoiceUrl && (
-                    <Button
-                      size={"2xs"}
-                      variant={"outline"}
-                      onClick={() => {
-                        if (item.invoiceUrl) {
-                          window.open(item.invoiceUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <AppIcon icon={FileTextIcon} size={"xs"} />
-                      {"Invoice"}
-                    </Button>
-                  )}
-                  {item.tteInvoiceUrl && (
-                    <Button
-                      size={"2xs"}
-                      variant={"outline"}
-                      onClick={() => {
-                        if (item.tteInvoiceUrl) {
-                          window.open(item.tteInvoiceUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <AppIcon icon={FileCheckIcon} size={"xs"} />
-                      {"TTE"}
-                    </Button>
-                  )}
-                </HStack>
+                />
               ),
               align: "start" as const,
             },
@@ -282,9 +258,10 @@ export const InternalTransactionStatisticDataView = () => {
       [
         {
           key: "view-invoice",
-          label: "Lihat Invoice",
+          label: "Lihat Faktur",
           icon: FileTextIcon,
-          hidden: (transaction: InternalTransactionItem) => !transaction.invoiceUrl,
+          hidden: (transaction: InternalTransactionItem) =>
+            !transaction.invoiceUrl,
           onClick: (transaction: InternalTransactionItem) => {
             if (transaction.invoiceUrl) {
               window.open(transaction.invoiceUrl, "_blank");
@@ -293,9 +270,10 @@ export const InternalTransactionStatisticDataView = () => {
         },
         {
           key: "view-tte-invoice",
-          label: "Lihat Invoice TTE",
+          label: "Lihat Faktur TTE",
           icon: FileCheckIcon,
-          hidden: (transaction: InternalTransactionItem) => !transaction.tteInvoiceUrl,
+          hidden: (transaction: InternalTransactionItem) =>
+            !transaction.tteInvoiceUrl,
           onClick: (transaction: InternalTransactionItem) => {
             if (transaction.tteInvoiceUrl) {
               window.open(transaction.tteInvoiceUrl, "_blank");

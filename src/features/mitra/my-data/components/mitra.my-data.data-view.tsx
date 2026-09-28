@@ -144,7 +144,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "WMS URL", sortable: false },
       // { th: "WFS URL", sortable: false,  },
       { th: "Status Aktif", sortable: true },
-      { th: "Invoice & TTE", sortable: false, align: "start" },
+      { th: "Faktur & TTE", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },
@@ -152,7 +152,8 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
 
     const items: FormattedListItem<MyDataItem>[] = myData.items.map(
       (item: MyDataItem) => {
-        const layerDisplayName = item.label || item.title || item.id.replace(/_/g, " ");
+        const layerDisplayName =
+          item.label || item.title || item.id.replace(/_/g, " ");
         // const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl;
         const effectiveWmsUrl = item.externalWmsUrl;
         const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
@@ -194,40 +195,12 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.tte ? "TTE" : "Belum TTE",
               td: (
-                <HStack gap={1} align={"center"}>
-                  <TteBadge
-                  tte={item.tte ?? Boolean(item.tteInvoiceUrl)}
+                <TteBadge
+                  tte={item.tte}
+                  invoiceUrl={item.invoiceUrl}
+                  tteInvoiceUrl={item.tteInvoiceUrl}
                   size={"xs"}
-                  />
-                  {item.invoiceUrl && (
-                    <Button
-                      size={"2xs"}
-                      variant={"outline"}
-                      onClick={() => {
-                        if (item.invoiceUrl) {
-                          window.open(item.invoiceUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <AppIcon icon={FileTextIcon} size={"xs"} />
-                      {"Invoice"}
-                    </Button>
-                  )}
-                  {item.tteInvoiceUrl && (
-                    <Button
-                      size={"2xs"}
-                      variant={"outline"}
-                      onClick={() => {
-                        if (item.tteInvoiceUrl) {
-                          window.open(item.tteInvoiceUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <AppIcon icon={FileCheckIcon} size={"xs"} />
-                      {"TTE"}
-                    </Button>
-                  )}
-                </HStack>
+                />
               ),
               align: "start" as const,
             },
@@ -301,7 +274,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       },
       {
         key: "view-invoice",
-        label: "Lihat Invoice",
+        label: "Lihat Faktur",
         icon: FileTextIcon,
         hidden: (item: MyDataItem) => !item.invoiceUrl,
         onClick: (item: MyDataItem) => {
@@ -312,7 +285,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       },
       {
         key: "view-tte-invoice",
-        label: "Lihat Invoice TTE",
+        label: "Lihat Faktur TTE",
         icon: FileCheckIcon,
         hidden: (item: MyDataItem) => !item.tteInvoiceUrl,
         onClick: (item: MyDataItem) => {
