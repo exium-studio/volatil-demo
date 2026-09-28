@@ -1,4 +1,6 @@
-// src/features/design-system-docs/constants/ds.navs.ts
+// src\features\design-system-docs\constants\ds.navs.ts
+
+// src\features\design-system-docs\constants\ds.navs.ts
 
 // src\features\design-system-docs\constants\ds.navs.ts
 

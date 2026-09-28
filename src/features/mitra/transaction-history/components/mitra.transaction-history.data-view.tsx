@@ -1,4 +1,6 @@
-// src/features/mitra/transaction-history/components/mitra.transaction-history.data-view.tsx
+// src\features\mitra\transaction-history\components\mitra.transaction-history.data-view.tsx
+
+// src\features\mitra\transaction-history\components\mitra.transaction-history.data-view.tsx
 
 // src\features\mitra\transaction-history\components\mitra.transaction-history.data-view.tsx
 
@@ -37,6 +39,7 @@ import type {
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import type {
@@ -49,7 +52,14 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { useNavigate } from "@tanstack/react-router";
-import { CreditCardIcon, EyeIcon, HistoryIcon, SquarePen } from "lucide-react";
+import {
+  CreditCardIcon,
+  EyeIcon,
+  FileCheckIcon,
+  FileTextIcon,
+  HistoryIcon,
+  SquarePen,
+} from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
@@ -93,10 +103,11 @@ export const TransactionHistoryDataView = () => {
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
-      { th: "Metode", sortable: false, align: "start" },
+      { th: "Metode Pembayaran", sortable: false, align: "start" },
+      { th: "Status TTE", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
-      { th: "Tipe Seleksi", sortable: false, align: "start" },
+      { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
     ];
 
@@ -179,6 +190,16 @@ export const TransactionHistoryDataView = () => {
               align: "start" as const,
             },
             {
+              value: item.tte ? "TTE" : "Belum TTE",
+              td: (
+                <TteBadge
+                  tte={item.tte ?? Boolean(item.tteInvoiceUrl)}
+                  size={"xs"}
+                />
+              ),
+              align: "start" as const,
+            },
+            {
               value: itemNames,
               td: (
                 <Tooltip content={itemNames || "-"}>
@@ -235,6 +256,28 @@ export const TransactionHistoryDataView = () => {
               params: { billingCode: transaction.billingCode },
               search: { orderId: transaction.orderId || transaction.id },
             });
+          }
+        },
+      },
+      {
+        key: "view-invoice",
+        label: "Lihat Invoice",
+        icon: FileTextIcon,
+        hidden: (transaction: TransactionRecord) => !transaction.invoiceUrl,
+        onClick: (transaction: TransactionRecord) => {
+          if (transaction.invoiceUrl) {
+            window.open(transaction.invoiceUrl, "_blank");
+          }
+        },
+      },
+      {
+        key: "view-tte-invoice",
+        label: "Lihat Invoice TTE",
+        icon: FileCheckIcon,
+        hidden: (transaction: TransactionRecord) => !transaction.tteInvoiceUrl,
+        onClick: (transaction: TransactionRecord) => {
+          if (transaction.tteInvoiceUrl) {
+            window.open(transaction.tteInvoiceUrl, "_blank");
           }
         },
       },

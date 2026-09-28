@@ -1,4 +1,6 @@
-// src/design-system/components/toast/stores/toast-visible.store.ts
+// src\design-system\components\toast\stores\toast-visible.store.ts
+
+// src\design-system\components\toast\stores\toast-visible.store.ts
 
 // src\design-system\components\toast\stores\toast-visible.store.ts
 

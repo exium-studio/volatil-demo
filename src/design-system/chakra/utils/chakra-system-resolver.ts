@@ -1,4 +1,6 @@
-// src/design-system/chakra/utils/chakra-system-resolver.ts
+// src\design-system\chakra\utils\chakra-system-resolver.ts
+
+// src\design-system\chakra\utils\chakra-system-resolver.ts
 
 // src\design-system\chakra\utils\chakra-system-resolver.ts
 

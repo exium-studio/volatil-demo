@@ -1,4 +1,6 @@
-// src/features/mitra/my-data/types/my-data.type.ts
+// src\features\mitra\my-data\types\my-data.type.ts
+
+// src\features\mitra\my-data\types\my-data.type.ts
 
 // src\features\mitra\my-data\types\my-data.type.ts
 
@@ -42,6 +44,9 @@ export type MyDataItem = {
   status: MyDataStatus;
   expiresAt: string;
   bbox?: [number, number, number, number];
+  invoiceUrl?: string | null;
+  tteInvoiceUrl?: string | null;
+  tte?: boolean;
 };
 
 export type MyDataQueryParams = {

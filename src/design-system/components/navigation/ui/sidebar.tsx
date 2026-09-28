@@ -1,4 +1,6 @@
-// src/design-system/components/navigation/ui/sidebar.tsx
+// src\design-system\components\navigation\ui\sidebar.tsx
+
+// src\design-system\components\navigation\ui\sidebar.tsx
 
 // src\design-system\components\navigation\ui\sidebar.tsx
 

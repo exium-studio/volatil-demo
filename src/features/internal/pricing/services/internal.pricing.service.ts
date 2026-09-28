@@ -1,4 +1,6 @@
-// src/features/internal/pricing/services/internal.pricing.service.ts
+// src\features\internal\pricing\services\internal.pricing.service.ts
+
+// src\features\internal\pricing\services\internal.pricing.service.ts
 
 // src\features\internal\pricing\services\internal.pricing.service.ts
 

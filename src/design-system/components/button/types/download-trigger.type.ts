@@ -1,4 +1,6 @@
-// src/design-system/components/button/types/download-trigger.type.ts
+// src\design-system\components\button\types\download-trigger.type.ts
+
+// src\design-system\components\button\types\download-trigger.type.ts
 
 // src\design-system\components\button\types\download-trigger.type.ts
 

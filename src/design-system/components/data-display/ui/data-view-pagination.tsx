@@ -1,4 +1,6 @@
-// src/design-system/components/data-display/ui/data-view-pagination.tsx
+// src\design-system\components\data-display\ui\data-view-pagination.tsx
+
+// src\design-system\components\data-display\ui\data-view-pagination.tsx
 
 // src\design-system\components\data-display\ui\data-view-pagination.tsx
 

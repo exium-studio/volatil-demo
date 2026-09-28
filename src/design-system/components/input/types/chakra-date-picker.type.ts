@@ -1,4 +1,6 @@
-// src/design-system/components/input/types/chakra-date-picker.type.ts
+// src\design-system\components\input\types\chakra-date-picker.type.ts
+
+// src\design-system\components\input\types\chakra-date-picker.type.ts
 
 // src\design-system\components\input\types\chakra-date-picker.type.ts
 

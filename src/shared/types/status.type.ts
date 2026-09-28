@@ -1,4 +1,6 @@
-// src/shared/types/status.type.ts
+// src\shared\types\status.type.ts
+
+// src\shared\types\status.type.ts
 
 // src\shared\types\status.type.ts
 
@@ -31,6 +33,7 @@ export type OrderStatus =
   | "pending_payment"
   | "paid"
   | "processing"
+  | "pending_tte"
   | "pending_review"
   | "rejected"
   | "ready";
@@ -45,13 +48,13 @@ export type OrderStatusConfig = {
     | "purple"
     | "green"
     | "red"
+    | "yellow"
     | "neutral"
     | "gray";
   icon?: LucideIcon;
   iconColor?: string;
   noticeDescription?: string;
 };
-
 
 /**
  * SSOT 3: My Data Active Status Types (Mitra Data Saya)
@@ -102,4 +105,3 @@ export type MitraRegistrationStatusConfig = {
   colorPalette: "orange" | "green" | "red" | "gray";
   icon?: LucideIcon;
 };
-

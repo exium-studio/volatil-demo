@@ -1,4 +1,6 @@
-// src/design-system/stores/types/splitter-store.type.ts
+// src\design-system\stores\types\splitter-store.type.ts
+
+// src\design-system\stores\types\splitter-store.type.ts
 
 // src\design-system\stores\types\splitter-store.type.ts
 

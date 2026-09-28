@@ -1,4 +1,6 @@
-// src/features/shared/components/transaction-detail.modal.tsx
+// src\features\shared\components\transaction-detail.modal.tsx
+
+// src\features\shared\components\transaction-detail.modal.tsx
 
 // src\features\shared\components\transaction-detail.modal.tsx
 
@@ -24,6 +26,7 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { ORDER_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import type {
   SharedTransactionOrderItem,
@@ -42,6 +45,8 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   CreditCardIcon,
   EyeIcon,
+  FileCheckIcon,
+  FileTextIcon,
   Layers2Icon,
   RotateCcwIcon,
 } from "lucide-react";
@@ -529,6 +534,46 @@ export const TransactionDetailModalContent = (
                       maximumFractionDigits={0}
                     />
                   </P>
+                </VStack>
+
+                <VStack align={"start"} gap={"xs"} w={"full"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {"Status Dokumen & TTE"}
+                  </P>
+                  <HStack gap={"xs"} align={"center"} wrap={"wrap"}>
+                    <TteBadge tte={transaction.tte ?? Boolean(transaction.tteInvoiceUrl)} />
+
+                    {transaction.invoiceUrl && (
+                      <Button
+                        size={"2xs"}
+                        variant={"outline"}
+                        onClick={() => {
+                          if (transaction.invoiceUrl) {
+                            window.open(transaction.invoiceUrl, "_blank");
+                          }
+                        }}
+                      >
+                        <AppIcon icon={FileTextIcon} size={"xs"} />
+                        {"Lihat Invoice"}
+                      </Button>
+                    )}
+
+                    {transaction.tteInvoiceUrl && (
+                      <Button
+                        size={"2xs"}
+                        variant={"outline"}
+                        colorPalette={"green"}
+                        onClick={() => {
+                          if (transaction.tteInvoiceUrl) {
+                            window.open(transaction.tteInvoiceUrl, "_blank");
+                          }
+                        }}
+                      >
+                        <AppIcon icon={FileCheckIcon} size={"xs"} />
+                        {"Lihat Invoice TTE"}
+                      </Button>
+                    )}
+                  </HStack>
                 </VStack>
               </VStack>
             </SimpleGrid>

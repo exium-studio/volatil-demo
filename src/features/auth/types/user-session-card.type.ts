@@ -1,4 +1,6 @@
-// src/features/auth/types/user-session-card.type.ts
+// src\features\auth\types\user-session-card.type.ts
+
+// src\features\auth\types\user-session-card.type.ts
 
 // src\features\auth\types\user-session-card.type.ts
 

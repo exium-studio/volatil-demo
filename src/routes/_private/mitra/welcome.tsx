@@ -1,4 +1,6 @@
-// src/routes/_private/mitra/welcome.tsx
+// src\routes\_private\mitra\welcome.tsx
+
+// src\routes\_private\mitra\welcome.tsx
 
 // src\routes\_private\mitra\welcome.tsx
 

@@ -1,4 +1,6 @@
-// src/design-system/components/emoji/ui/emoji.surprised.tsx
+// src\design-system\components\emoji\ui\emoji.surprised.tsx
+
+// src\design-system\components\emoji\ui\emoji.surprised.tsx
 
 // src\design-system\components\emoji\ui\emoji.surprised.tsx
 

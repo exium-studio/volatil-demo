@@ -1,4 +1,6 @@
-// src/design-system/components/typography/ui/list.tsx
+// src\design-system\components\typography\ui\list.tsx
+
+// src\design-system\components\typography\ui\list.tsx
 
 // src\design-system\components\typography\ui\list.tsx
 

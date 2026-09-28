@@ -1,4 +1,6 @@
-// src/shared/libs/i18n/translation.type.ts
+// src\shared\libs\i18n\translation.type.ts
+
+// src\shared\libs\i18n\translation.type.ts
 
 // src\shared\libs\i18n\translation.type.ts
 

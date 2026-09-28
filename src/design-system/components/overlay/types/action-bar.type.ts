@@ -1,4 +1,6 @@
-// src/design-system/components/overlay/types/action-bar.type.ts
+// src\design-system\components\overlay\types\action-bar.type.ts
+
+// src\design-system\components\overlay\types\action-bar.type.ts
 
 // src\design-system\components\overlay\types\action-bar.type.ts
 

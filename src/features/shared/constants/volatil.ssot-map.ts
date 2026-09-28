@@ -1,4 +1,6 @@
-// src/features/shared/constants/volatil.ssot-map.ts
+// src\features\shared\constants\volatil.ssot-map.ts
+
+// src\features\shared\constants\volatil.ssot-map.ts
 
 // src\features\shared\constants\volatil.ssot-map.ts
 
@@ -271,6 +273,13 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     icon: LoaderIcon,
     iconColor: "purple.fg",
     noticeDescription: "Layanan WMS sedang dipersiapkan...",
+  },
+  pending_tte: {
+    label: "Menunggu TTE",
+    colorPalette: "yellow",
+    icon: ClockIcon,
+    iconColor: "yellow.fg",
+    noticeDescription: "Menunggu pemasangan Tanda Tangan Elektronik...",
   },
   pending_review: {
     label: "Menunggu Validasi Admin",

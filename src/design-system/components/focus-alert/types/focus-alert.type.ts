@@ -1,4 +1,6 @@
-// src/design-system/components/focus-alert/types/focus-alert.type.ts
+// src\design-system\components\focus-alert\types\focus-alert.type.ts
+
+// src\design-system\components\focus-alert\types\focus-alert.type.ts
 
 // src\design-system\components\focus-alert\types\focus-alert.type.ts
 

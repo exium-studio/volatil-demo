@@ -1,4 +1,6 @@
-// src/design-system/components/data-display/ui/file-item.tsx
+// src\design-system\components\data-display\ui\file-item.tsx
+
+// src\design-system\components\data-display\ui\file-item.tsx
 
 // src\design-system\components\data-display\ui\file-item.tsx
 

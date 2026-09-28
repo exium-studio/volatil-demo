@@ -1,4 +1,6 @@
-// src/design-system/stores/theme-store.ts
+// src\design-system\stores\theme-store.ts
+
+// src\design-system\stores\theme-store.ts
 
 // src\design-system\stores\theme-store.ts
 

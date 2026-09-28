@@ -1,4 +1,6 @@
-// src/features/notification/types/notification.type.ts
+// src\features\notification\types\notification.type.ts
+
+// src\features\notification\types\notification.type.ts
 
 // src\features\notification\types\notification.type.ts
 

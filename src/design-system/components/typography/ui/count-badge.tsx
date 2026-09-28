@@ -1,4 +1,6 @@
-// src/design-system/components/typography/ui/count-badge.tsx
+// src\design-system\components\typography\ui\count-badge.tsx
+
+// src\design-system\components\typography\ui\count-badge.tsx
 
 // src\design-system\components\typography\ui\count-badge.tsx
 

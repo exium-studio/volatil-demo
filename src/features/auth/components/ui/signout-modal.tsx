@@ -1,4 +1,6 @@
-// src/features/auth/components/ui/signout-modal.tsx
+// src\features\auth\components\ui\signout-modal.tsx
+
+// src\features\auth\components\ui\signout-modal.tsx
 
 // src\features\auth\components\ui\signout-modal.tsx
 

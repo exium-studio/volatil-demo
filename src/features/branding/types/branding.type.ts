@@ -1,4 +1,6 @@
-// src/features/branding/types/branding.type.ts
+// src\features\branding\types\branding.type.ts
+
+// src\features\branding\types\branding.type.ts
 
 // src\features\branding\types\branding.type.ts
 

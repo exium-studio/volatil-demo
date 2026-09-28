@@ -1,4 +1,6 @@
-// src/design-system/components/toast/hooks/use-page-visibility.ts
+// src\design-system\components\toast\hooks\use-page-visibility.ts
+
+// src\design-system\components\toast\hooks\use-page-visibility.ts
 
 // src\design-system\components\toast\hooks\use-page-visibility.ts
 

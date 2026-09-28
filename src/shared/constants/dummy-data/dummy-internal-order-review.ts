@@ -1,4 +1,6 @@
-// src/shared/constants/dummy-data/dummy-internal-order-review.ts
+// src\shared\constants\dummy-data\dummy-internal-order-review.ts
+
+// src\shared\constants\dummy-data\dummy-internal-order-review.ts
 
 // src\shared\constants\dummy-data\dummy-internal-order-review.ts
 
@@ -17,6 +19,9 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     selectionType: "draw_aoi",
     createdAt: new Date(now.getTime() - 1000 * 60 * 45).toISOString(),
     totalPrice: 1850000,
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-ord-2026-0830-001.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
     items: [
       {
         id: "coi-001",
@@ -59,6 +64,9 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     selectionType: "upload_aoi",
     createdAt: new Date(now.getTime() - 1000 * 60 * 120).toISOString(),
     totalPrice: 950000,
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-ord-2026-0830-002.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
     items: [
       {
         id: "coi-003",
@@ -87,6 +95,9 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     readyAt: new Date(now.getTime() - 1000 * 60 * 60 * 4).toISOString(),
     expiredAt: new Date(now.getTime() + 1000 * 60 * 60 * 20).toISOString(),
     totalPrice: 500000,
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-ord-2026-0829-003.pdf",
+    tteInvoiceUrl: "https://volatil-be.exium.web.id/invoices/TTE-INV-ord-2026-0829-003.pdf",
+    tte: true,
     items: [
       {
         id: "coi-004",
@@ -112,6 +123,9 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     selectionType: "catalog",
     createdAt: new Date(now.getTime() - 1000 * 60 * 60 * 24).toISOString(),
     totalPrice: 750000,
+    invoiceUrl: null,
+    tteInvoiceUrl: null,
+    tte: false,
     items: [
       {
         id: "coi-005",

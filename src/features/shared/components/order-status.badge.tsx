@@ -1,4 +1,6 @@
-// src/features/shared/components/order-status.badge.tsx
+// src\features\shared\components\order-status.badge.tsx
+
+// src\features\shared\components\order-status.badge.tsx
 
 // src\features\shared\components\order-status.badge.tsx
 

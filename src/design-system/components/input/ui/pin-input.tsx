@@ -1,4 +1,6 @@
-// src/design-system/components/input/ui/pin-input.tsx
+// src\design-system\components\input\ui\pin-input.tsx
+
+// src\design-system\components\input\ui\pin-input.tsx
 
 // src\design-system\components\input\ui\pin-input.tsx
 

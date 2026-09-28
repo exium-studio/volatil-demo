@@ -1,4 +1,6 @@
-// src/design-system/components/map/workers/shp.worker.ts
+// src\design-system\components\map\workers\shp.worker.ts
+
+// src\design-system\components\map\workers\shp.worker.ts
 
 // src\design-system\components\map\workers\shp.worker.ts
 

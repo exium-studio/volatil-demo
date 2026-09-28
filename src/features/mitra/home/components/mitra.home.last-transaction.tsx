@@ -1,4 +1,6 @@
-// src/features/mitra/home/components/mitra.home.last-transaction.tsx
+// src\features\mitra\home\components\mitra.home.last-transaction.tsx
+
+// src\features\mitra\home\components\mitra.home.last-transaction.tsx
 
 // src\features\mitra\home\components\mitra.home.last-transaction.tsx
 
@@ -155,10 +157,10 @@ const MitraHomeLastTransactionDataView = (props: {
       { th: "Status Pesanan", sortable: false, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: false, align: "start" },
-      { th: "Metode", sortable: false, align: "start" },
+      { th: "Metode Pembayaran", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
-      { th: "Tipe Seleksi", sortable: false, align: "start" },
+      { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Total Nominal", sortable: false, align: "end" },
     ];
 

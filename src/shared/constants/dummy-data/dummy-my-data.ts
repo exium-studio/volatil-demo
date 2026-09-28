@@ -1,4 +1,6 @@
-// src/shared/constants/dummy-data/dummy-my-data.ts
+// src\shared\constants\dummy-data\dummy-my-data.ts
+
+// src\shared\constants\dummy-data\dummy-my-data.ts
 
 // src\shared\constants\dummy-data\dummy-my-data.ts
 
@@ -19,6 +21,9 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     status: "ready",
     expiresAt: "2026-12-31T23:59:59.000Z",
     bbox: [115.083839, -8.850039, 115.251389, -8.239441],
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0825-001.pdf",
+    tteInvoiceUrl: "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
+    tte: true,
   },
   {
     id: "testing_workspace:TEST_ZNT_BADUNG",
@@ -32,6 +37,9 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     status: "ready",
     expiresAt: "2026-11-30T23:59:59.000Z",
     bbox: [115.083839, -8.849308, 115.251534, -8.239852],
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0824-002.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
   },
   {
     id: "testing_workspace:TEST_BIDANG_TANAH",
@@ -45,6 +53,9 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     status: "ready",
     expiresAt: "2026-10-15T12:00:00.000Z",
     bbox: [115.134102, -8.685009, 115.183136, -8.622203],
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0820-003.pdf",
+    tteInvoiceUrl: "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0820-003.pdf",
+    tte: true,
   },
   {
     id: "testing_workspace:TEST_BIDANG_DENPASAR",
@@ -56,6 +67,9 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     status: "provisioning",
     expiresAt: "2026-10-03T10:25:00.000Z",
     bbox: [115.2, -8.65, 115.25, -8.6],
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0818-004.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
   },
   {
     id: "testing_workspace:TEST_KAWASAN_SANUR",
@@ -67,6 +81,9 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     status: "queued",
     expiresAt: "2026-10-03T10:25:00.000Z",
     bbox: [115.24, -8.7, 115.28, -8.66],
+    invoiceUrl: null,
+    tteInvoiceUrl: null,
+    tte: false,
   },
   {
     id: "testing_workspace:TEST_RDTR_KUTA",
@@ -80,6 +97,9 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     status: "failed",
     expiresAt: "2026-01-01T00:00:00.000Z",
     bbox: [115.15, -8.75, 115.2, -8.68],
+    invoiceUrl: null,
+    tteInvoiceUrl: null,
+    tte: false,
   },
 ];
 

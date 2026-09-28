@@ -1,4 +1,6 @@
-// src/design-system/components/data-display/types/countdown.type.ts
+// src\design-system\components\data-display\types\countdown.type.ts
+
+// src\design-system\components\data-display\types\countdown.type.ts
 
 // src\design-system\components\data-display\types\countdown.type.ts
 

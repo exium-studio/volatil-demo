@@ -1,4 +1,6 @@
-// src/design-system/components/input/ui/checkbox.tsx
+// src\design-system\components\input\ui\checkbox.tsx
+
+// src\design-system\components\input\ui\checkbox.tsx
 
 // src\design-system\components\input\ui\checkbox.tsx
 

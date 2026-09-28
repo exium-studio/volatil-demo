@@ -1,4 +1,6 @@
-// src/design-system/components/focus-alert/stores/focus-alert.store.ts
+// src\design-system\components\focus-alert\stores\focus-alert.store.ts
+
+// src\design-system\components\focus-alert\stores\focus-alert.store.ts
 
 // src\design-system\components\focus-alert\stores\focus-alert.store.ts
 

@@ -1,4 +1,6 @@
-// src/features/settings/constants/settings.navs.ts
+// src\features\settings\constants\settings.navs.ts
+
+// src\features\settings\constants\settings.navs.ts
 
 // src\features\settings\constants\settings.navs.ts
 

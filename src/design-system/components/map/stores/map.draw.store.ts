@@ -1,4 +1,6 @@
-// src/design-system/components/map/stores/map.draw.store.ts
+// src\design-system\components\map\stores\map.draw.store.ts
+
+// src\design-system\components\map\stores\map.draw.store.ts
 
 // src\design-system\components\map\stores\map.draw.store.ts
 

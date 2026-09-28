@@ -1,4 +1,6 @@
-// src/design-system/components/input/ui/number-input.tsx
+// src\design-system\components\input\ui\number-input.tsx
+
+// src\design-system\components\input\ui\number-input.tsx
 
 // src\design-system\components\input\ui\number-input.tsx
 

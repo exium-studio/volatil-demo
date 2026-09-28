@@ -1,4 +1,6 @@
-// src/scripts/generate-sitemap.cjs
+// src\scripts\generate-sitemap.cjs
+
+// src\scripts\generate-sitemap.cjs
 
 // src\scripts\generate-sitemap.cjs
 

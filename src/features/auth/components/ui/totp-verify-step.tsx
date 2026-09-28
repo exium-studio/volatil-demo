@@ -1,4 +1,6 @@
-// src/features/auth/components/ui/totp-verify-step.tsx
+// src\features\auth\components\ui\totp-verify-step.tsx
+
+// src\features\auth\components\ui\totp-verify-step.tsx
 
 // src\features\auth\components\ui\totp-verify-step.tsx
 

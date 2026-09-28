@@ -1,4 +1,6 @@
-// src/design-system/components/icon/types/icon.type.ts
+// src\design-system\components\icon\types\icon.type.ts
+
+// src\design-system\components\icon\types\icon.type.ts
 
 // src\design-system\components\icon\types\icon.type.ts
 

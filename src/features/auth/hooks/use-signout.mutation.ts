@@ -1,4 +1,6 @@
-// src/features/auth/hooks/use-signout.mutation.ts
+// src\features\auth\hooks\use-signout.mutation.ts
+
+// src\features\auth\hooks\use-signout.mutation.ts
 
 // src\features\auth\hooks\use-signout.mutation.ts
 

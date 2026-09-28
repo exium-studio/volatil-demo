@@ -1,4 +1,6 @@
-// src/features/settings/types/settings-navs.type.ts
+// src\features\settings\types\settings-navs.type.ts
+
+// src\features\settings\types\settings-navs.type.ts
 
 // src\features\settings\types\settings-navs.type.ts
 

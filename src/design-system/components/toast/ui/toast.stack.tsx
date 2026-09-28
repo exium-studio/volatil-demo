@@ -1,4 +1,6 @@
-// src/design-system/components/toast/ui/toast.stack.tsx
+// src\design-system\components\toast\ui\toast.stack.tsx
+
+// src\design-system\components\toast\ui\toast.stack.tsx
 
 // src\design-system\components\toast\ui\toast.stack.tsx
 

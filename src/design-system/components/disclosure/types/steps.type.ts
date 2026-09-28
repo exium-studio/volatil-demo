@@ -1,4 +1,6 @@
-// src/design-system/components/disclosure/types/steps.type.ts
+// src\design-system\components\disclosure\types\steps.type.ts
+
+// src\design-system\components\disclosure\types\steps.type.ts
 
 // src\design-system\components\disclosure\types\steps.type.ts
 

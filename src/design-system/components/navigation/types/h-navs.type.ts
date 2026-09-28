@@ -1,4 +1,6 @@
-// src/design-system/components/navigation/types/h-navs.type.ts
+// src\design-system\components\navigation\types\h-navs.type.ts
+
+// src\design-system\components\navigation\types\h-navs.type.ts
 
 // src\design-system\components\navigation\types\h-navs.type.ts
 

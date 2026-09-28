@@ -1,4 +1,6 @@
-// src/routes/_private/internal/home.tsx
+// src\routes\_private\internal\home.tsx
+
+// src\routes\_private\internal\home.tsx
 
 // src\routes\_private\internal\home.tsx
 

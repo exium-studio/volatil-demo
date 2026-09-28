@@ -1,4 +1,6 @@
-// src/design-system/components/media/types/avatar.type.ts
+// src\design-system\components\media\types\avatar.type.ts
+
+// src\design-system\components\media\types\avatar.type.ts
 
 // src\design-system\components\media\types\avatar.type.ts
 

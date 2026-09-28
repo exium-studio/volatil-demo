@@ -1,4 +1,6 @@
-// src/features/internal/pricing/pages/internal.pricing.page.tsx
+// src\features\internal\pricing\pages\internal.pricing.page.tsx
+
+// src\features\internal\pricing\pages\internal.pricing.page.tsx
 
 // src\features\internal\pricing\pages\internal.pricing.page.tsx
 

@@ -1,4 +1,6 @@
-// src/design-system/components/input/ui/segment-group.tsx
+// src\design-system\components\input\ui\segment-group.tsx
+
+// src\design-system\components\input\ui\segment-group.tsx
 
 // src\design-system\components\input\ui\segment-group.tsx
 

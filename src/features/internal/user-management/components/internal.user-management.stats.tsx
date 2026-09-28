@@ -1,4 +1,6 @@
-// src/features/internal/user-management/components/internal.user-management.stats.tsx
+// src\features\internal\user-management\components\internal.user-management.stats.tsx
+
+// src\features\internal\user-management\components\internal.user-management.stats.tsx
 
 // src\features\internal\user-management\components\internal.user-management.stats.tsx
 

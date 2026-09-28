@@ -1,4 +1,6 @@
-// src/design-system/components/map/ui/map.controls/map.3d-toggle.tsx
+// src\design-system\components\map\ui\map.controls\map.3d-toggle.tsx
+
+// src\design-system\components\map\ui\map.controls\map.3d-toggle.tsx
 
 // src\design-system\components\map\ui\map.controls\map.3d-toggle.tsx
 

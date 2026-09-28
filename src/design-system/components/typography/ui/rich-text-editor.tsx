@@ -1,4 +1,6 @@
-// src/design-system/components/typography/ui/rich-text-editor.tsx
+// src\design-system\components\typography\ui\rich-text-editor.tsx
+
+// src\design-system\components\typography\ui\rich-text-editor.tsx
 
 // src\design-system\components\typography\ui\rich-text-editor.tsx
 

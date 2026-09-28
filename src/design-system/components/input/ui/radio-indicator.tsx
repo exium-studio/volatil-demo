@@ -1,4 +1,6 @@
-// src/design-system/components/input/ui/radio-indicator.tsx
+// src\design-system\components\input\ui\radio-indicator.tsx
+
+// src\design-system\components\input\ui\radio-indicator.tsx
 
 // src\design-system\components\input\ui\radio-indicator.tsx
 

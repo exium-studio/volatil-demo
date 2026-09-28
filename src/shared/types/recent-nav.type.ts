@@ -1,4 +1,6 @@
-// src/shared/types/recent-nav.type.ts
+// src\shared\types\recent-nav.type.ts
+
+// src\shared\types\recent-nav.type.ts
 
 // src\shared\types\recent-nav.type.ts
 

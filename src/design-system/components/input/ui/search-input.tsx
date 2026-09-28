@@ -1,4 +1,6 @@
-// src/design-system/components/input/ui/search-input.tsx
+// src\design-system\components\input\ui\search-input.tsx
+
+// src\design-system\components\input\ui\search-input.tsx
 
 // src\design-system\components\input\ui\search-input.tsx
 

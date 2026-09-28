@@ -1,4 +1,6 @@
-// src/design-system/components/emoji/types/emoji.type.ts
+// src\design-system\components\emoji\types\emoji.type.ts
+
+// src\design-system\components\emoji\types\emoji.type.ts
 
 // src\design-system\components\emoji\types\emoji.type.ts
 

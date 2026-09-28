@@ -1,4 +1,6 @@
-// src/features/internal/home/types/internal.home.mitra-registration.type.ts
+// src\features\internal\home\types\internal.home.mitra-registration.type.ts
+
+// src\features\internal\home\types\internal.home.mitra-registration.type.ts
 
 // src\features\internal\home\types\internal.home.mitra-registration.type.ts
 

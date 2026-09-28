@@ -1,4 +1,6 @@
-// src/design-system/components/typography/types/badge.type.ts
+// src\design-system\components\typography\types\badge.type.ts
+
+// src\design-system\components\typography\types\badge.type.ts
 
 // src\design-system\components\typography\types\badge.type.ts
 

@@ -1,4 +1,6 @@
-// src/design-system/components/feedback/ui/feedback-state.tsx
+// src\design-system\components\feedback\ui\feedback-state.tsx
+
+// src\design-system\components\feedback\ui\feedback-state.tsx
 
 // src\design-system\components\feedback\ui\feedback-state.tsx
 

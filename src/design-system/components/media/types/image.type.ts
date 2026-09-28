@@ -1,4 +1,6 @@
-// src/design-system/components/media/types/image.type.ts
+// src\design-system\components\media\types\image.type.ts
+
+// src\design-system\components\media\types\image.type.ts
 
 // src\design-system\components\media\types\image.type.ts
 

@@ -1,4 +1,6 @@
-// src/features/internal/home/services/internal.home.trend.service.ts
+// src\features\internal\home\services\internal.home.trend.service.ts
+
+// src\features\internal\home\services\internal.home.trend.service.ts
 
 // src\features\internal\home\services\internal.home.trend.service.ts
 

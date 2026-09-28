@@ -1,4 +1,6 @@
-// src/design-system/components/overlay/types/focus-search.type.ts
+// src\design-system\components\overlay\types\focus-search.type.ts
+
+// src\design-system\components\overlay\types\focus-search.type.ts
 
 // src\design-system\components\overlay\types\focus-search.type.ts
 

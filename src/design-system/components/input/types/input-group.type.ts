@@ -1,4 +1,6 @@
-// src/design-system/components/input/types/input-group.type.ts
+// src\design-system\components\input\types\input-group.type.ts
+
+// src\design-system\components\input\types\input-group.type.ts
 
 // src\design-system\components\input\types\input-group.type.ts
 

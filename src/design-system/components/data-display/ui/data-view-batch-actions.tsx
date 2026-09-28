@@ -1,4 +1,6 @@
-// src/design-system/components/data-display/ui/data-view-batch-actions.tsx
+// src\design-system\components\data-display\ui\data-view-batch-actions.tsx
+
+// src\design-system\components\data-display\ui\data-view-batch-actions.tsx
 
 // src\design-system\components\data-display\ui\data-view-batch-actions.tsx
 

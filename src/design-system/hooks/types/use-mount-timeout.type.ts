@@ -1,4 +1,6 @@
-// src/design-system/hooks/types/use-mount-timeout.type.ts
+// src\design-system\hooks\types\use-mount-timeout.type.ts
+
+// src\design-system\hooks\types\use-mount-timeout.type.ts
 
 // src\design-system\hooks\types\use-mount-timeout.type.ts
 

@@ -1,4 +1,6 @@
-// src/design-system/components/map/stores/map.wfs-clip.store.ts
+// src\design-system\components\map\stores\map.wfs-clip.store.ts
+
+// src\design-system\components\map\stores\map.wfs-clip.store.ts
 
 // src\design-system\components\map\stores\map.wfs-clip.store.ts
 

@@ -1,4 +1,6 @@
-// src/design-system/components/error-boundary/ui/not-found.page.tsx
+// src\design-system\components\error-boundary\ui\not-found.page.tsx
+
+// src\design-system\components\error-boundary\ui\not-found.page.tsx
 
 // src\design-system\components\error-boundary\ui\not-found.page.tsx
 

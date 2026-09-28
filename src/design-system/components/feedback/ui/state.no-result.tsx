@@ -1,4 +1,6 @@
-// src/design-system/components/feedback/ui/state.no-result.tsx
+// src\design-system\components\feedback\ui\state.no-result.tsx
+
+// src\design-system\components\feedback\ui\state.no-result.tsx
 
 // src\design-system\components\feedback\ui\state.no-result.tsx
 

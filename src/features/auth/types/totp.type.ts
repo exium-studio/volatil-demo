@@ -1,4 +1,6 @@
-// src/features/auth/types/totp.type.ts
+// src\features\auth\types\totp.type.ts
+
+// src\features\auth\types\totp.type.ts
 
 // src\features\auth\types\totp.type.ts
 

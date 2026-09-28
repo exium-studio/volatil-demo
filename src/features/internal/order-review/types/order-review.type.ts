@@ -1,4 +1,6 @@
-// src/features/internal/order-review/types/order-review.type.ts
+// src\features\internal\order-review\types\order-review.type.ts
+
+// src\features\internal\order-review\types\order-review.type.ts
 
 // src\features\internal\order-review\types\order-review.type.ts
 
@@ -56,6 +58,20 @@ export type InternalOrderReviewDetailModalContentProps = {
   close: () => void;
 };
 
+export type InternalOrderReviewTteTriggerProps = {
+  modalKey?: string;
+  order: InternalOrderItem;
+  children?: ReactNode;
+  onSuccess?: () => void;
+};
+
+export type InternalOrderReviewTteModalContentProps = {
+  order: InternalOrderItem;
+  isOpen: boolean;
+  onSuccess?: () => void;
+  close: () => void;
+};
+
 export type InternalOrderItem = {
   orderId: string;
   mitraId: string;
@@ -68,6 +84,9 @@ export type InternalOrderItem = {
   totalPrice: number;
   items: CartOrderItem[];
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon | null;
+  invoiceUrl?: string | null;
+  tteInvoiceUrl?: string | null;
+  tte?: boolean;
 };
 
 export type InternalOrderListQueryParams = PaginatedParams & {

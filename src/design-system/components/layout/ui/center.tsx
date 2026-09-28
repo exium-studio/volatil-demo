@@ -1,4 +1,6 @@
-// src/design-system/components/layout/ui/center.tsx
+// src\design-system\components\layout\ui\center.tsx
+
+// src\design-system\components\layout\ui\center.tsx
 
 // src\design-system\components\layout\ui\center.tsx
 

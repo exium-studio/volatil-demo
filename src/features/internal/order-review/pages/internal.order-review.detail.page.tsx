@@ -1,4 +1,6 @@
-// src/features/internal/order-review/pages/internal.order-review.detail.page.tsx
+// src\features\internal\order-review\pages\internal.order-review.detail.page.tsx
+
+// src\features\internal\order-review\pages\internal.order-review.detail.page.tsx
 
 // src\features\internal\order-review\pages\internal.order-review.detail.page.tsx
 
@@ -27,6 +29,7 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
+import { InternalOrderReviewTteTrigger } from "@/features/internal/order-review/components/internal.order-review.tte-modal";
 import {
   useInternalOrderDetailQuery,
   useOrdersProvisionStream,
@@ -39,6 +42,7 @@ import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-la
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import {
   highlightFeatureOnMap,
@@ -55,6 +59,9 @@ import {
   CheckCircleIcon,
   EyeIcon,
   EyeOffIcon,
+  FileCheckIcon,
+  FileSignatureIcon,
+  FileTextIcon,
   FocusIcon,
   LoaderIcon,
   MapPlusIcon,
@@ -403,6 +410,60 @@ export function InternalOrderReviewDetailPage() {
                   </HStack>
                 </VStack>
               )}
+
+              {/* Invoice & TTE Section */}
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Dokumen Invoice & TTE"}
+                </P>
+
+                <HStack gap={"xs"} align={"center"} wrap={"wrap"}>
+                  <TteBadge tte={order.tte ?? Boolean(order.tteInvoiceUrl)} size={"sm"} />
+
+                  {order.invoiceUrl && (
+                    <Button
+                      size={"xs"}
+                      variant={"outline"}
+                      onClick={() => {
+                        if (order.invoiceUrl) {
+                          window.open(order.invoiceUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <AppIcon icon={FileTextIcon} size={"xs"} />
+                      {"Lihat Invoice"}
+                    </Button>
+                  )}
+
+                  {order.tteInvoiceUrl && (
+                    <Button
+                      size={"xs"}
+                      variant={"outline"}
+                      colorPalette={"green"}
+                      onClick={() => {
+                        if (order.tteInvoiceUrl) {
+                          window.open(order.tteInvoiceUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <AppIcon icon={FileCheckIcon} size={"xs"} />
+                      {"Lihat Invoice TTE"}
+                    </Button>
+                  )}
+
+                  {!(order.tte ?? Boolean(order.tteInvoiceUrl)) && (
+                    <InternalOrderReviewTteTrigger
+                      order={order}
+                      modalKey={`tte-detail-${order.orderId}`}
+                    >
+                      <Button size={"xs"} primary colorPalette={"purple"}>
+                        <AppIcon icon={FileSignatureIcon} size={"xs"} />
+                        {"Pasang TTE"}
+                      </Button>
+                    </InternalOrderReviewTteTrigger>
+                  )}
+                </HStack>
+              </VStack>
             </HStack>
           </VStack>
 

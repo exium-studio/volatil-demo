@@ -1,4 +1,6 @@
-// src/design-system/components/overlay/ui/focus-search.tsx
+// src\design-system\components\overlay\ui\focus-search.tsx
+
+// src\design-system\components\overlay\ui\focus-search.tsx
 
 // src\design-system\components\overlay\ui\focus-search.tsx
 

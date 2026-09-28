@@ -1,4 +1,6 @@
-// src/features/internal/statistik-pesanan/types/internal.transaction-statistic.type.ts
+// src\features\internal\statistik-pesanan\types\internal.transaction-statistic.type.ts
+
+// src\features\internal\statistik-pesanan\types\internal.transaction-statistic.type.ts
 
 // src\features\internal\statistik-pesanan\types\internal.transaction-statistic.type.ts
 
@@ -54,6 +56,9 @@ export type InternalTransactionItem = {
   paidAt?: string;
   expiredAt?: string;
   billingExpiredAt?: string;
+  invoiceUrl?: string | null;
+  tteInvoiceUrl?: string | null;
+  tte?: boolean;
   itemsCount: number;
   items: InternalTransactionOrderItem[];
 };

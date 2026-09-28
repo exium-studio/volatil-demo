@@ -1,4 +1,6 @@
-// src/features/internal/order-review/components/internal.order-review.data-view.tsx
+// src\features\internal\order-review\components\internal.order-review.data-view.tsx
+
+// src\features\internal\order-review\components\internal.order-review.data-view.tsx
 
 // src\features\internal\order-review\components\internal.order-review.data-view.tsx
 
@@ -25,6 +27,7 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
+import { InternalOrderReviewTteTrigger } from "@/features/internal/order-review/components/internal.order-review.tte-modal";
 import {
   useInternalOrdersQuery,
   useInternalOrdersStream,
@@ -46,7 +49,14 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
-import { CheckCircleIcon, LayersIcon, MapPlusIcon } from "lucide-react";
+import {
+  CheckCircleIcon,
+  FileCheckIcon,
+  FileSignatureIcon,
+  FileTextIcon,
+  LayersIcon,
+  MapPlusIcon,
+} from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ORDER_STATUS_OPTIONS = [
@@ -222,6 +232,44 @@ export const InternalOrderReviewDataView = () => {
             to: "/internal/order-review/$orderId",
             params: { orderId: order.orderId },
           });
+        },
+      },
+      {
+        key: "view-invoice",
+        label: "Lihat Invoice",
+        icon: FileTextIcon,
+        hidden: (order: InternalOrderItem) => !order.invoiceUrl,
+        onClick: (order: InternalOrderItem) => {
+          if (order.invoiceUrl) {
+            window.open(order.invoiceUrl, "_blank");
+          }
+        },
+      },
+      {
+        key: "view-tte-invoice",
+        label: "Lihat Invoice TTE",
+        icon: FileCheckIcon,
+        hidden: (order: InternalOrderItem) => !order.tteInvoiceUrl,
+        onClick: (order: InternalOrderItem) => {
+          if (order.tteInvoiceUrl) {
+            window.open(order.tteInvoiceUrl, "_blank");
+          }
+        },
+      },
+      {
+        key: "pasang-tte",
+        label: "Pasang TTE",
+        icon: FileSignatureIcon,
+        colorPalette: "purple",
+        hidden: (order: InternalOrderItem) =>
+          Boolean(order.tte ?? Boolean(order.tteInvoiceUrl)),
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <InternalOrderReviewTteTrigger
+              modalKey={`tte-order-${order.orderId}`}
+              order={order}
+            />
+          ),
         },
       },
       {

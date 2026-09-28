@@ -1,4 +1,6 @@
-// src/design-system/components/emoji/ui/emoji.cry.tsx
+// src\design-system\components\emoji\ui\emoji.cry.tsx
+
+// src\design-system\components\emoji\ui\emoji.cry.tsx
 
 // src\design-system\components\emoji\ui\emoji.cry.tsx
 

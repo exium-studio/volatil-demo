@@ -1,4 +1,6 @@
-// src/features/shared/types/badge.type.ts
+// src\features\shared\types\badge.type.ts
+
+// src\features\shared\types\badge.type.ts
 
 // src\features\shared\types\badge.type.ts
 
@@ -63,3 +65,10 @@ export type UserRoleBadgeProps = Omit<BadgeProps, "children"> & {
   children?: UserRole | (string & {});
   showIcon?: boolean;
 };
+
+export type TteBadgeProps = Omit<BadgeProps, "children"> & {
+  tte?: boolean | null;
+  children?: boolean | string | null;
+  showIcon?: boolean;
+};
+

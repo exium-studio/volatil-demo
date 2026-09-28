@@ -1,4 +1,6 @@
-// src/design-system/components/input/types/toggle-tip.type.ts
+// src\design-system\components\input\types\toggle-tip.type.ts
+
+// src\design-system\components\input\types\toggle-tip.type.ts
 
 // src\design-system\components\input\types\toggle-tip.type.ts
 

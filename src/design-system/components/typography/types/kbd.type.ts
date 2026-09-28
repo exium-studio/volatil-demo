@@ -1,4 +1,6 @@
-// src/design-system/components/typography/types/kbd.type.ts
+// src\design-system\components\typography\types\kbd.type.ts
+
+// src\design-system\components\typography\types\kbd.type.ts
 
 // src\design-system\components\typography\types\kbd.type.ts
 

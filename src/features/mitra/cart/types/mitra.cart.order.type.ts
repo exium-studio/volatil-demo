@@ -1,4 +1,6 @@
-// src/features/mitra/cart/types/mitra.cart.order.type.ts
+// src\features\mitra\cart\types\mitra.cart.order.type.ts
+
+// src\features\mitra\cart\types\mitra.cart.order.type.ts
 
 // src\features\mitra\cart\types\mitra.cart.order.type.ts
 
@@ -211,6 +213,9 @@ export type CartOrder = {
     kodeDesa?: string;
   };
   cqlFilter?: string;
+  invoiceUrl?: string | null;
+  tteInvoiceUrl?: string | null;
+  tte?: boolean;
 };
 
 export type ActiveCartOrder = CartOrder;

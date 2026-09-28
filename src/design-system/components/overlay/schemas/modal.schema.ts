@@ -1,4 +1,6 @@
-// src/design-system/components/overlay/schemas/modal.schema.ts
+// src\design-system\components\overlay\schemas\modal.schema.ts
+
+// src\design-system\components\overlay\schemas\modal.schema.ts
 
 // src\design-system\components\overlay\schemas\modal.schema.ts
 

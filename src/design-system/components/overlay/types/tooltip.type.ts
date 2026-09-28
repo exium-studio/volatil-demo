@@ -1,4 +1,6 @@
-// src/design-system/components/overlay/types/tooltip.type.ts
+// src\design-system\components\overlay\types\tooltip.type.ts
+
+// src\design-system\components\overlay\types\tooltip.type.ts
 
 // src\design-system\components\overlay\types\tooltip.type.ts
 

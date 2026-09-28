@@ -1,4 +1,6 @@
-// src/design-system/components/layout/types/group.type.ts
+// src\design-system\components\layout\types\group.type.ts
+
+// src\design-system\components\layout\types\group.type.ts
 
 // src\design-system\components\layout\types\group.type.ts
 

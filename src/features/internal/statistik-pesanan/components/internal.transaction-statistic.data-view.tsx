@@ -1,4 +1,6 @@
-// src/features/internal/statistik-pesanan/components/internal.transaction-statistic.data-view.tsx
+// src\features\internal\statistik-pesanan\components\internal.transaction-statistic.data-view.tsx
+
+// src\features\internal\statistik-pesanan\components\internal.transaction-statistic.data-view.tsx
 
 // src\features\internal\statistik-pesanan\components\internal.transaction-statistic.data-view.tsx
 
@@ -38,6 +40,7 @@ import type {
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
@@ -48,7 +51,7 @@ import {
   formatAdaptiveDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { EyeIcon, HistoryIcon } from "lucide-react";
+import { EyeIcon, FileCheckIcon, FileTextIcon, HistoryIcon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
@@ -90,10 +93,11 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
-      { th: "Metode", sortable: false, align: "start" },
+      { th: "Metode Pembayaran", sortable: false, align: "start" },
+      { th: "Status TTE", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
-      { th: "Tipe Seleksi", sortable: false, align: "start" },
+      { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
     ];
 
@@ -187,6 +191,16 @@ export const InternalTransactionStatisticDataView = () => {
               align: "start" as const,
             },
             {
+              value: item.tte ? "TTE" : "Belum TTE",
+              td: (
+                <TteBadge
+                  tte={item.tte ?? Boolean(item.tteInvoiceUrl)}
+                  size={"xs"}
+                />
+              ),
+              align: "start" as const,
+            },
+            {
               value: itemNames,
               td: (
                 <Tooltip content={itemNames || "-"}>
@@ -240,6 +254,28 @@ export const InternalTransactionStatisticDataView = () => {
 
     const itemActions: DataViewItemActionsGenerator<InternalTransactionItem>[] =
       [
+        {
+          key: "view-invoice",
+          label: "Lihat Invoice",
+          icon: FileTextIcon,
+          hidden: (transaction: InternalTransactionItem) => !transaction.invoiceUrl,
+          onClick: (transaction: InternalTransactionItem) => {
+            if (transaction.invoiceUrl) {
+              window.open(transaction.invoiceUrl, "_blank");
+            }
+          },
+        },
+        {
+          key: "view-tte-invoice",
+          label: "Lihat Invoice TTE",
+          icon: FileCheckIcon,
+          hidden: (transaction: InternalTransactionItem) => !transaction.tteInvoiceUrl,
+          onClick: (transaction: InternalTransactionItem) => {
+            if (transaction.tteInvoiceUrl) {
+              window.open(transaction.tteInvoiceUrl, "_blank");
+            }
+          },
+        },
         {
           key: "view-detail",
           label: "Detail",

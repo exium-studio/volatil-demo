@@ -1,4 +1,6 @@
-// src/design-system/components/typography/types/p.type.ts
+// src\design-system\components\typography\types\p.type.ts
+
+// src\design-system\components\typography\types\p.type.ts
 
 // src\design-system\components\typography\types\p.type.ts
 

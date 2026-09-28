@@ -1,4 +1,6 @@
-// src/shared/constants/dummy-data/dummy-internal-transactions.ts
+// src\shared\constants\dummy-data\dummy-internal-transactions.ts
+
+// src\shared\constants\dummy-data\dummy-internal-transactions.ts
 
 // src\shared\constants\dummy-data\dummy-internal-transactions.ts
 
@@ -37,6 +39,9 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     paidAt: "2026-08-25T08:45:12Z",
     expiredAt: "2026-08-27T08:30:00Z",
     billingExpiredAt: "2026-08-27T08:30:00Z",
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0825-001.pdf",
+    tteInvoiceUrl: "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
+    tte: true,
     itemsCount: 2,
     items: [
       {
@@ -83,6 +88,9 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     paidAt: "2026-08-24T14:30:00Z",
     expiredAt: "2026-08-26T14:15:00Z",
     billingExpiredAt: "2026-08-26T14:15:00Z",
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0824-002.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
     itemsCount: 1,
     items: [
       {
@@ -118,6 +126,9 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     paidAt: "2026-08-23T10:12:00Z",
     expiredAt: "2026-08-25T10:00:00Z",
     billingExpiredAt: "2026-08-25T10:00:00Z",
+    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0823-003.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
     itemsCount: 1,
     items: [
       {

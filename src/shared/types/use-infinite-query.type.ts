@@ -1,4 +1,6 @@
-// src/shared/types/use-infinite-query.type.ts
+// src\shared\types\use-infinite-query.type.ts
+
+// src\shared\types\use-infinite-query.type.ts
 
 // src\shared\types\use-infinite-query.type.ts
 

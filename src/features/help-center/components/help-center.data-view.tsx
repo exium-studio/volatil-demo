@@ -1,4 +1,6 @@
-// src/features/help-center/components/help-center.data-view.tsx
+// src\features\help-center\components\help-center.data-view.tsx
+
+// src\features\help-center\components\help-center.data-view.tsx
 
 // src\features\help-center\components\help-center.data-view.tsx
 

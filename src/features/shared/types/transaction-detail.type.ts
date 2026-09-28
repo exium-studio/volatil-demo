@@ -1,4 +1,6 @@
-// src/features/shared/types/transaction-detail.type.ts
+// src\features\shared\types\transaction-detail.type.ts
+
+// src\features\shared\types\transaction-detail.type.ts
 
 // src\features\shared\types\transaction-detail.type.ts
 
@@ -53,6 +55,9 @@ export type SharedTransactionRecord = {
   expiredAt?: string;
   billingExpiredAt?: string;
   mitra?: SharedTransactionMitraInfo;
+  invoiceUrl?: string | null;
+  tteInvoiceUrl?: string | null;
+  tte?: boolean;
   items: SharedTransactionOrderItem[];
 };
 

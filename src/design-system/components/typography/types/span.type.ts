@@ -1,4 +1,6 @@
-// src/design-system/components/typography/types/span.type.ts
+// src\design-system\components\typography\types\span.type.ts
+
+// src\design-system\components\typography\types\span.type.ts
 
 // src\design-system\components\typography\types\span.type.ts
 

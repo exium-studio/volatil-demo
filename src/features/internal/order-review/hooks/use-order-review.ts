@@ -1,4 +1,6 @@
-// src/features/internal/order-review/hooks/use-order-review.ts
+// src\features\internal\order-review\hooks\use-order-review.ts
+
+// src\features\internal\order-review\hooks\use-order-review.ts
 
 // src\features\internal\order-review\hooks\use-order-review.ts
 
@@ -12,6 +14,7 @@ import {
   fetchInternalOrdersApi,
   provisionOrderApi,
   rejectOrderApi,
+  uploadOrderTteInvoiceApi,
 } from "@/features/internal/order-review/api/order-review.api";
 import type {
   ApproveOrderPayload,
@@ -142,6 +145,49 @@ export const useRejectOrder = () => {
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.internal.home.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useUploadOrderTteInvoice = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("upload-tte-invoice", {
+    group: "Pemasangan TTE",
+    loadingMessage: {
+      title: "Mengunggah invoice TTE...",
+      description: "Menyimpan file TTE pada pesanan...",
+    },
+    successMessage: {
+      title: "TTE Berhasil Dipasang",
+      description: "Invoice bertanda tangan elektronik berhasil disimpan.",
+    },
+    errorMessage: {
+      title: "Gagal memasang TTE",
+    },
+  });
+
+  return useMutation({
+    mutationFn: ({ orderId, file }: { orderId: string; file: File }) =>
+      uploadOrderTteInvoiceApi(orderId, file),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: (_data, variables) => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "orders"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "order", variables.orderId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "transactions"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "transaction-history"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "my-data"],
       });
     },
     onError: toastHandlers.onError,

@@ -1,4 +1,6 @@
-// src/features/auth/pages/mitra-registration-status.page.tsx
+// src\features\auth\pages\mitra-registration-status.page.tsx
+
+// src\features\auth\pages\mitra-registration-status.page.tsx
 
 // src\features\auth\pages\mitra-registration-status.page.tsx
 

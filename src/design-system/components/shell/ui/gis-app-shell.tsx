@@ -1,4 +1,6 @@
-// src/design-system/components/shell/ui/gis-app-shell.tsx
+// src\design-system\components\shell\ui\gis-app-shell.tsx
+
+// src\design-system\components\shell\ui\gis-app-shell.tsx
 
 // src\design-system\components\shell\ui\gis-app-shell.tsx
 

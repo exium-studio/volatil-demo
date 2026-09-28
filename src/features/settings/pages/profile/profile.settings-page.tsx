@@ -1,4 +1,6 @@
-// src/features/settings/pages/profile/profile.settings-page.tsx
+// src\features\settings\pages\profile\profile.settings-page.tsx
+
+// src\features\settings\pages\profile\profile.settings-page.tsx
 
 // src\features\settings\pages\profile\profile.settings-page.tsx
 

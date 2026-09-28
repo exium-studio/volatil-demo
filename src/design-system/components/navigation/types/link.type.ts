@@ -1,4 +1,6 @@
-// src/design-system/components/navigation/types/link.type.ts
+// src\design-system\components\navigation\types\link.type.ts
+
+// src\design-system\components\navigation\types\link.type.ts
 
 // src\design-system\components\navigation\types\link.type.ts
 

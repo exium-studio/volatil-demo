@@ -1,4 +1,6 @@
-// src/features/internal/home/hooks/use-internal-home.query.ts
+// src\features\internal\home\hooks\use-internal-home.query.ts
+
+// src\features\internal\home\hooks\use-internal-home.query.ts
 
 // src\features\internal\home\hooks\use-internal-home.query.ts
 

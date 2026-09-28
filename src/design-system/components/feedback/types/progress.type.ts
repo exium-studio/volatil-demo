@@ -1,4 +1,6 @@
-// src/design-system/components/feedback/types/progress.type.ts
+// src\design-system\components\feedback\types\progress.type.ts
+
+// src\design-system\components\feedback\types\progress.type.ts
 
 // src\design-system\components\feedback\types\progress.type.ts
 

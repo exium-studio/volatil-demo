@@ -1,4 +1,6 @@
-// src/design-system/components/disclosure/ui/collapsible.tsx
+// src\design-system\components\disclosure\ui\collapsible.tsx
+
+// src\design-system\components\disclosure\ui\collapsible.tsx
 
 // src\design-system\components\disclosure\ui\collapsible.tsx
 

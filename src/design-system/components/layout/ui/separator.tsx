@@ -1,4 +1,6 @@
-// src/design-system/components/layout/ui/separator.tsx
+// src\design-system\components\layout\ui\separator.tsx
+
+// src\design-system\components\layout\ui\separator.tsx
 
 // src\design-system\components\layout\ui\separator.tsx
 

@@ -1,4 +1,6 @@
-// src/design-system/components/map/types/map.master-igt-layer-select.type.ts
+// src\design-system\components\map\types\map.master-igt-layer-select.type.ts
+
+// src\design-system\components\map\types\map.master-igt-layer-select.type.ts
 
 // src\design-system\components\map\types\map.master-igt-layer-select.type.ts
 

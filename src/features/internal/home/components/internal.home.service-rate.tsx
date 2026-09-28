@@ -1,4 +1,6 @@
-// src/features/internal/home/components/internal.home.service-rate.tsx
+// src\features\internal\home\components\internal.home.service-rate.tsx
+
+// src\features\internal\home\components\internal.home.service-rate.tsx
 
 // src\features\internal\home\components\internal.home.service-rate.tsx
 

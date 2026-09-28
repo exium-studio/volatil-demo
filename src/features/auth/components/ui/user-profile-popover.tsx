@@ -1,4 +1,6 @@
-// src/features/auth/components/ui/user-profile-popover.tsx
+// src\features\auth\components\ui\user-profile-popover.tsx
+
+// src\features\auth\components\ui\user-profile-popover.tsx
 
 // src\features\auth\components\ui\user-profile-popover.tsx
 

@@ -1,4 +1,6 @@
-// src/features/auth/hooks/use-internal-auth.mutation.ts
+// src\features\auth\hooks\use-internal-auth.mutation.ts
+
+// src\features\auth\hooks\use-internal-auth.mutation.ts
 
 // src\features\auth\hooks\use-internal-auth.mutation.ts
 

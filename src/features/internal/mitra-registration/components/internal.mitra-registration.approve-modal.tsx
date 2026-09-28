@@ -1,4 +1,6 @@
-// src/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal.tsx
+// src\features\internal\mitra-registration\components\internal.mitra-registration.approve-modal.tsx
+
+// src\features\internal\mitra-registration\components\internal.mitra-registration.approve-modal.tsx
 
 // src\features\internal\mitra-registration\components\internal.mitra-registration.approve-modal.tsx
 

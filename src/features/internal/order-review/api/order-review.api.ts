@@ -1,4 +1,6 @@
-// src/features/internal/order-review/api/order-review.api.ts
+// src\features\internal\order-review\api\order-review.api.ts
+
+// src\features\internal\order-review\api\order-review.api.ts
 
 // src\features\internal\order-review\api\order-review.api.ts
 
@@ -112,6 +114,9 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
     ),
     items,
     aoiPolygon,
+    invoiceUrl: raw.invoiceUrl ?? raw.invoice_url ?? null,
+    tteInvoiceUrl: raw.tteInvoiceUrl ?? raw.tte_invoice_url ?? null,
+    tte: Boolean(raw.tte ?? (raw.tteInvoiceUrl || raw.tte_invoice_url)),
   };
 };
 
@@ -329,6 +334,45 @@ export const rejectOrderApi = async (
     { reason },
     { signal },
   );
+};
+
+export const uploadOrderTteInvoiceApi = async (
+  orderId: string,
+  file: File,
+  signal?: AbortSignal,
+): Promise<ApiResponse<{ tteInvoiceUrl: string; tte: boolean }>> => {
+  const formData = new FormData();
+  formData.append("tteInvoiceFile", file);
+
+  try {
+    return await apiClient.post<
+      ApiResponse<{ tteInvoiceUrl: string; tte: boolean }>
+    >(`/api/internal/interop/orders/${orderId}/tte`, formData, { signal });
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const baseUrl =
+        import.meta.env.VITE_API_BASE_URL ||
+        "https://volatil-be.exium.web.id";
+      const generatedTteUrl = `${baseUrl}/invoices/TTE-${orderId}.pdf`;
+      const targetOrder = DUMMY_INTERNAL_ORDERS.find(
+        (b) => b.orderId === orderId,
+      );
+      if (targetOrder) {
+        targetOrder.tte = true;
+        targetOrder.tteInvoiceUrl = generatedTteUrl;
+      }
+      return {
+        success: true,
+        data: {
+          tteInvoiceUrl: generatedTteUrl,
+          tte: true,
+        },
+        message: "Tanda Tangan Elektronik (TTE) berhasil dipasang.",
+        timestamp: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
 };
 
 const getDummyOrderList = (

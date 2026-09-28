@@ -1,4 +1,6 @@
-// src/design-system/components/feedback/types/alert.type.ts
+// src\design-system\components\feedback\types\alert.type.ts
+
+// src\design-system\components\feedback\types\alert.type.ts
 
 // src\design-system\components\feedback\types\alert.type.ts
 

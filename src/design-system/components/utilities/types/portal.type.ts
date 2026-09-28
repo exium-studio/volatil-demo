@@ -1,4 +1,6 @@
-// src/design-system/components/utilities/types/portal.type.ts
+// src\design-system\components\utilities\types\portal.type.ts
+
+// src\design-system\components\utilities\types\portal.type.ts
 
 // src\design-system\components\utilities\types\portal.type.ts
 

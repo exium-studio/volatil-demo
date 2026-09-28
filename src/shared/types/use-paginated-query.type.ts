@@ -1,4 +1,6 @@
-// src/shared/types/use-paginated-query.type.ts
+// src\shared\types\use-paginated-query.type.ts
+
+// src\shared\types\use-paginated-query.type.ts
 
 // src\shared\types\use-paginated-query.type.ts
 

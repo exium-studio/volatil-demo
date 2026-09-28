@@ -1,4 +1,6 @@
-// src/features/help-center/components/help-center.attachment-item.tsx
+// src\features\help-center\components\help-center.attachment-item.tsx
+
+// src\features\help-center\components\help-center.attachment-item.tsx
 
 // src\features\help-center\components\help-center.attachment-item.tsx
 

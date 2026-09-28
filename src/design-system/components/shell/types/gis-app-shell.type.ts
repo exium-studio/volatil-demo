@@ -1,4 +1,6 @@
-// src/design-system/components/shell/types/gis-app-shell.type.ts
+// src\design-system\components\shell\types\gis-app-shell.type.ts
+
+// src\design-system\components\shell\types\gis-app-shell.type.ts
 
 // src\design-system\components\shell\types\gis-app-shell.type.ts
 

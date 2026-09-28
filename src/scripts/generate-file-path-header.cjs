@@ -1,4 +1,6 @@
-// src/scripts/generate-file-path-header.cjs
+// src\scripts\generate-file-path-header.cjs
+
+// src\scripts\generate-file-path-header.cjs
 
 // src\scripts\generate-file-path-header.cjs
 

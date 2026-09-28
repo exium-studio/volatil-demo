@@ -1,4 +1,6 @@
-// src/design-system/components/navigation/ui/h-navs.tsx
+// src\design-system\components\navigation\ui\h-navs.tsx
+
+// src\design-system\components\navigation\ui\h-navs.tsx
 
 // src\design-system\components\navigation\ui\h-navs.tsx
 

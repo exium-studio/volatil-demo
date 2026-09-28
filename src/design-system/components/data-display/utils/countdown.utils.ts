@@ -1,4 +1,6 @@
-// src/design-system/components/data-display/utils/countdown.utils.ts
+// src\design-system\components\data-display\utils\countdown.utils.ts
+
+// src\design-system\components\data-display\utils\countdown.utils.ts
 
 // src\design-system\components\data-display\utils\countdown.utils.ts
 

@@ -1,4 +1,6 @@
-// src/features/root/types/demo.type.ts
+// src\features\root\types\demo.type.ts
+
+// src\features\root\types\demo.type.ts
 
 // src\features\root\types\demo.type.ts
 

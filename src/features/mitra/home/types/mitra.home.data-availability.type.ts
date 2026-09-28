@@ -1,4 +1,6 @@
-// src/features/mitra/home/types/mitra.home.data-availability.type.ts
+// src\features\mitra\home\types\mitra.home.data-availability.type.ts
+
+// src\features\mitra\home\types\mitra.home.data-availability.type.ts
 
 // src\features\mitra\home\types\mitra.home.data-availability.type.ts
 

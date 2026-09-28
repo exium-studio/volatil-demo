@@ -1,4 +1,6 @@
-// src/features/mitra/my-data/components/mitra.my-data.data-view.tsx
+// src\features\mitra\my-data\components\mitra.my-data.data-view.tsx
+
+// src\features\mitra\my-data\components\mitra.my-data.data-view.tsx
 
 // src\features\mitra\my-data\components\mitra.my-data.data-view.tsx
 
@@ -44,6 +46,7 @@ import type {
 } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { MY_DATA_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
@@ -58,6 +61,8 @@ import {
   Edit3Icon,
   EyeIcon,
   EyeOffIcon,
+  FileCheckIcon,
+  FileTextIcon,
   FocusIcon,
   SquarePen,
   TablePropertiesIcon,
@@ -145,6 +150,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "WMS URL", sortable: false },
       // { th: "WFS URL", sortable: false,  },
       { th: "Status Aktif", sortable: true },
+      { th: "Status TTE", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },
@@ -189,6 +195,16 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.status,
               td: <MyDataStatusBadge>{item.status}</MyDataStatusBadge>,
+              align: "start" as const,
+            },
+            {
+              value: item.tte ? "TTE" : "Belum TTE",
+              td: (
+                <TteBadge
+                  tte={item.tte ?? Boolean(item.tteInvoiceUrl)}
+                  size={"xs"}
+                />
+              ),
               align: "start" as const,
             },
             {
@@ -257,6 +273,28 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             spatialBasis: item.spatialBasis,
             bbox: item.bbox ?? null,
           });
+        },
+      },
+      {
+        key: "view-invoice",
+        label: "Lihat Invoice",
+        icon: FileTextIcon,
+        hidden: (item: MyDataItem) => !item.invoiceUrl,
+        onClick: (item: MyDataItem) => {
+          if (item.invoiceUrl) {
+            window.open(item.invoiceUrl, "_blank");
+          }
+        },
+      },
+      {
+        key: "view-tte-invoice",
+        label: "Lihat Invoice TTE",
+        icon: FileCheckIcon,
+        hidden: (item: MyDataItem) => !item.tteInvoiceUrl,
+        onClick: (item: MyDataItem) => {
+          if (item.tteInvoiceUrl) {
+            window.open(item.tteInvoiceUrl, "_blank");
+          }
         },
       },
       {

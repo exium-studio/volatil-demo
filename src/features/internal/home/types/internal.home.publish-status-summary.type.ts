@@ -1,4 +1,6 @@
-// src/features/internal/home/types/internal.home.publish-status-summary.type.ts
+// src\features\internal\home\types\internal.home.publish-status-summary.type.ts
+
+// src\features\internal\home\types\internal.home.publish-status-summary.type.ts
 
 // src\features\internal\home\types\internal.home.publish-status-summary.type.ts
 

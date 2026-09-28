@@ -1,4 +1,6 @@
-// src/design-system/components/disclosure/ui/tabs.tsx
+// src\design-system\components\disclosure\ui\tabs.tsx
+
+// src\design-system\components\disclosure\ui\tabs.tsx
 
 // src\design-system\components\disclosure\ui\tabs.tsx
 

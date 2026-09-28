@@ -1,4 +1,6 @@
-// src/design-system/chakra/providers/color-mode-provider.tsx
+// src\design-system\chakra\providers\color-mode-provider.tsx
+
+// src\design-system\chakra\providers\color-mode-provider.tsx
 
 // src\design-system\chakra\providers\color-mode-provider.tsx
 

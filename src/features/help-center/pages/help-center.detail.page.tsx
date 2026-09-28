@@ -1,4 +1,6 @@
-// src/features/help-center/pages/help-center.detail.page.tsx
+// src\features\help-center\pages\help-center.detail.page.tsx
+
+// src\features\help-center\pages\help-center.detail.page.tsx
 
 // src\features\help-center\pages\help-center.detail.page.tsx
 

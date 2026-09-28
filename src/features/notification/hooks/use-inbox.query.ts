@@ -1,4 +1,6 @@
-// src/features/notification/hooks/use-inbox.query.ts
+// src\features\notification\hooks\use-inbox.query.ts
+
+// src\features\notification\hooks\use-inbox.query.ts
 
 // src\features\notification\hooks\use-inbox.query.ts
 

@@ -1,4 +1,6 @@
-// src/features/design-system-docs/config/components-registry.tsx
+// src\features\design-system-docs\config\components-registry.tsx
+
+// src\features\design-system-docs\config\components-registry.tsx
 
 // src\features\design-system-docs\config\components-registry.tsx
 

@@ -1,4 +1,6 @@
-// src/features/mitra/cart/services/mitra.cart.service.ts
+// src\features\mitra\cart\services\mitra.cart.service.ts
+
+// src\features\mitra\cart\services\mitra.cart.service.ts
 
 // src\features\mitra\cart\services\mitra.cart.service.ts
 
@@ -607,6 +609,18 @@ export async function checkOrderPaymentStatus(
   try {
     const response = await fetchOrderPaymentStatusApi(orderId, signal);
     if (response.data) return response.data;
+    if (isDummyDataEnabled()) {
+      const baseUrl =
+        import.meta.env.VITE_API_BASE_URL ||
+        "https://volatil-be.exium.web.id";
+      const targetOrder = localDummyOrders.find((b) => b.orderId === orderId);
+      if (targetOrder) {
+        targetOrder.status = "paid";
+        targetOrder.invoiceUrl = `${baseUrl}/invoices/INV-${orderId}.pdf`;
+        targetOrder.tteInvoiceUrl = null;
+        targetOrder.tte = false;
+      }
+    }
     return {
       orderId,
       transactionStatus: "paid",
@@ -614,6 +628,16 @@ export async function checkOrderPaymentStatus(
     };
   } catch (error) {
     if (isDummyDataEnabled()) {
+      const baseUrl =
+        import.meta.env.VITE_API_BASE_URL ||
+        "https://volatil-be.exium.web.id";
+      const targetOrder = localDummyOrders.find((b) => b.orderId === orderId);
+      if (targetOrder) {
+        targetOrder.status = "paid";
+        targetOrder.invoiceUrl = `${baseUrl}/invoices/INV-${orderId}.pdf`;
+        targetOrder.tteInvoiceUrl = null;
+        targetOrder.tte = false;
+      }
       return {
         orderId,
         transactionStatus: "paid",

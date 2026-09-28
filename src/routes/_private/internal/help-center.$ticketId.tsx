@@ -1,4 +1,6 @@
-// src/routes/_private/internal/help-center.$ticketId.tsx
+// src\routes\_private\internal\help-center.$ticketId.tsx
+
+// src\routes\_private\internal\help-center.$ticketId.tsx
 
 // src\routes\_private\internal\help-center.$ticketId.tsx
 

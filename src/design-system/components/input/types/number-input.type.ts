@@ -1,4 +1,6 @@
-// src/design-system/components/input/types/number-input.type.ts
+// src\design-system\components\input\types\number-input.type.ts
+
+// src\design-system\components\input\types\number-input.type.ts
 
 // src\design-system\components\input\types\number-input.type.ts
 

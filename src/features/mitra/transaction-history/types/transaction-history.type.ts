@@ -1,4 +1,6 @@
-// src/features/mitra/transaction-history/types/transaction-history.type.ts
+// src\features\mitra\transaction-history\types\transaction-history.type.ts
+
+// src\features\mitra\transaction-history\types\transaction-history.type.ts
 
 // src\features\mitra\transaction-history\types\transaction-history.type.ts
 
@@ -47,6 +49,9 @@ export type TransactionRecord = {
   paidAt?: string;
   expiredAt?: string;
   billingExpiredAt?: string;
+  invoiceUrl?: string | null;
+  tteInvoiceUrl?: string | null;
+  tte?: boolean;
   items: TransactionOrderItem[];
 };
 

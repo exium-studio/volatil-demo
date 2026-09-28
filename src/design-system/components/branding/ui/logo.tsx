@@ -1,4 +1,6 @@
-// src/design-system/components/branding/ui/logo.tsx
+// src\design-system\components\branding\ui\logo.tsx
+
+// src\design-system\components\branding\ui\logo.tsx
 
 // src\design-system\components\branding\ui\logo.tsx
 

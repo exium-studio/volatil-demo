@@ -1,4 +1,6 @@
-// src/features/notification/types/inbox.type.ts
+// src\features\notification\types\inbox.type.ts
+
+// src\features\notification\types\inbox.type.ts
 
 // src\features\notification\types\inbox.type.ts
 

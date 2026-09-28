@@ -1,4 +1,6 @@
-// src/features/internal/data-management/constants/data-management.config.ts
+// src\features\internal\data-management\constants\data-management.config.ts
+
+// src\features\internal\data-management\constants\data-management.config.ts
 
 // src\features\internal\data-management\constants\data-management.config.ts
 

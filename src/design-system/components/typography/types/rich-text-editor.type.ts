@@ -1,4 +1,6 @@
-// src/design-system/components/typography/types/rich-text-editor.type.ts
+// src\design-system\components\typography\types\rich-text-editor.type.ts
+
+// src\design-system\components\typography\types\rich-text-editor.type.ts
 
 // src\design-system\components\typography\types\rich-text-editor.type.ts
 

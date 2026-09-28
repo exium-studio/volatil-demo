@@ -1,4 +1,6 @@
-// src/features/internal/order-review/components/internal.order-review.detail-modal.tsx
+// src\features\internal\order-review\components\internal.order-review.detail-modal.tsx
+
+// src\features\internal\order-review\components\internal.order-review.detail-modal.tsx
 
 // src\features\internal\order-review\components\internal.order-review.detail-modal.tsx
 
@@ -15,7 +17,9 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
+import { InternalOrderReviewTteTrigger } from "@/features/internal/order-review/components/internal.order-review.tte-modal";
 import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import type {
   InternalOrderReviewDetailModalContentProps,
@@ -27,7 +31,14 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
-import { CheckCircleIcon, LoaderIcon, MapPlusIcon } from "lucide-react";
+import {
+  CheckCircleIcon,
+  FileCheckIcon,
+  FileSignatureIcon,
+  FileTextIcon,
+  LoaderIcon,
+  MapPlusIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export const InternalOrderReviewDetailTrigger = (
@@ -101,7 +112,7 @@ const InternalOrderReviewDetailModalContent = (
             </HStack>
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Metode Seleksi:"}
+                {"Metode Pengajuan:"}
               </P>
               <SelectionTypeBadge size={"xs"}>
                 {order.selectionType}
@@ -120,6 +131,57 @@ const InternalOrderReviewDetailModalContent = (
               <P fontSize={"xs"}>
                 {formatUtcDateTime(order.createdAt, preferredTimezone)}
               </P>
+            </HStack>
+            <HStack justify={"space-between"} align={"center"} wrap={"wrap"}>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Dokumen & TTE:"}
+              </P>
+              <HStack gap={"2xs"} align={"center"} wrap={"wrap"}>
+                <TteBadge tte={order.tte ?? Boolean(order.tteInvoiceUrl)} size={"xs"} />
+
+                {order.invoiceUrl && (
+                  <Button
+                    size={"2xs"}
+                    variant={"outline"}
+                    onClick={() => {
+                      if (order.invoiceUrl) {
+                        window.open(order.invoiceUrl, "_blank");
+                      }
+                    }}
+                  >
+                    <AppIcon icon={FileTextIcon} size={"xs"} />
+                    {"Invoice"}
+                  </Button>
+                )}
+
+                {order.tteInvoiceUrl && (
+                  <Button
+                    size={"2xs"}
+                    variant={"outline"}
+                    colorPalette={"green"}
+                    onClick={() => {
+                      if (order.tteInvoiceUrl) {
+                        window.open(order.tteInvoiceUrl, "_blank");
+                      }
+                    }}
+                  >
+                    <AppIcon icon={FileCheckIcon} size={"xs"} />
+                    {"Invoice TTE"}
+                  </Button>
+                )}
+
+                {!(order.tte ?? Boolean(order.tteInvoiceUrl)) && (
+                  <InternalOrderReviewTteTrigger
+                    order={order}
+                    modalKey={`tte-modal-detail-${order.orderId}`}
+                  >
+                    <Button size={"2xs"} primary colorPalette={"purple"}>
+                      <AppIcon icon={FileSignatureIcon} size={"xs"} />
+                      {"Pasang TTE"}
+                    </Button>
+                  </InternalOrderReviewTteTrigger>
+                )}
+              </HStack>
             </HStack>
           </VStack>
 

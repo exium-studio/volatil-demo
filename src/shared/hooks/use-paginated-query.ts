@@ -1,4 +1,6 @@
-// src/shared/hooks/use-paginated-query.ts
+// src\shared\hooks\use-paginated-query.ts
+
+// src\shared\hooks\use-paginated-query.ts
 
 // src\shared\hooks\use-paginated-query.ts
 

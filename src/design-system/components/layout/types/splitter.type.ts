@@ -1,4 +1,6 @@
-// src/design-system/components/layout/types/splitter.type.ts
+// src\design-system\components\layout\types\splitter.type.ts
+
+// src\design-system\components\layout\types\splitter.type.ts
 
 // src\design-system\components\layout\types\splitter.type.ts
 

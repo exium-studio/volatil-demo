@@ -1,4 +1,6 @@
-// src/features/shared/components/mitra-layer-sync-job-status.badge.tsx
+// src\features\shared\components\mitra-layer-sync-job-status.badge.tsx
+
+// src\features\shared\components\mitra-layer-sync-job-status.badge.tsx
 
 // src\features\shared\components\mitra-layer-sync-job-status.badge.tsx
 

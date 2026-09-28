@@ -1,4 +1,6 @@
-// src/design-system/components/emoji/hooks/use-emoji-colors.ts
+// src\design-system\components\emoji\hooks\use-emoji-colors.ts
+
+// src\design-system\components\emoji\hooks\use-emoji-colors.ts
 
 // src\design-system\components\emoji\hooks\use-emoji-colors.ts
 

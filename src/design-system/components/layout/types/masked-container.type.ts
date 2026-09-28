@@ -1,4 +1,6 @@
-// src/design-system/components/layout/types/masked-container.type.ts
+// src\design-system\components\layout\types\masked-container.type.ts
+
+// src\design-system\components\layout\types\masked-container.type.ts
 
 // src\design-system\components\layout\types\masked-container.type.ts
 

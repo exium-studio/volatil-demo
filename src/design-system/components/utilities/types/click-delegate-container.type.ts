@@ -1,4 +1,6 @@
-// src/design-system/components/utilities/types/click-delegate-container.type.ts
+// src\design-system\components\utilities\types\click-delegate-container.type.ts
+
+// src\design-system\components\utilities\types\click-delegate-container.type.ts
 
 // src\design-system\components\utilities\types\click-delegate-container.type.ts
 
