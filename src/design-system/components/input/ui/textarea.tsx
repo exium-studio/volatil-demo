@@ -1,11 +1,3 @@
-// src\design-system\components\input\ui\textarea.tsx
-
-// src\design-system\components\input\ui\textarea.tsx
-
-// src\design-system\components\input\ui\textarea.tsx
-
-// src\design-system\components\input\ui\textarea.tsx
-
 import { useFieldContextValue } from "@/design-system/components/input/context/field.context";
 import type { TextareaProps } from "@/design-system/components/input/types/textarea.type";
 import { Box } from "@/design-system/components/layout/ui/box";

@@ -1,11 +1,3 @@
-// src\design-system\hooks\use-is-small-viewport.ts
-
-// src\design-system\hooks\use-is-small-viewport.ts
-
-// src\design-system\hooks\use-is-small-viewport.ts
-
-// src\design-system\hooks\use-is-small-viewport.ts
-
 import type { UseIsSmallViewportOptions } from "@/design-system/hooks/types/use-is-small-viewport.type";
 import { useViewport } from "@/design-system/hooks/use-viewport";
 

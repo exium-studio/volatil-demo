@@ -1,11 +1,3 @@
-// src\features\mitra\my-data\api\mitra.my-data.api.ts
-
-// src\features\mitra\my-data\api\mitra.my-data.api.ts
-
-// src\features\mitra\my-data\api\mitra.my-data.api.ts
-
-// src\features\mitra\my-data\api\mitra.my-data.api.ts
-
 import type {
   MyDataItem,
   MyDataQueryParams,

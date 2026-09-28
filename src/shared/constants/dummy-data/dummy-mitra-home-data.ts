@@ -1,11 +1,3 @@
-// src\shared\constants\dummy-data\dummy-mitra-home-data.ts
-
-// src\shared\constants\dummy-data\dummy-mitra-home-data.ts
-
-// src\shared\constants\dummy-data\dummy-mitra-home-data.ts
-
-// src\shared\constants\dummy-data\dummy-mitra-home-data.ts
-
 import type { MitraHomeDataAvailabilityResponse } from "@/features/mitra/home/types/mitra.home.data-availability.type";
 import type {
   HomeDataResponse,

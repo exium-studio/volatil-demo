@@ -1,11 +1,3 @@
-// src\design-system\components\data-display\types\data-view-table.type.ts
-
-// src\design-system\components\data-display\types\data-view-table.type.ts
-
-// src\design-system\components\data-display\types\data-view-table.type.ts
-
-// src\design-system\components\data-display\types\data-view-table.type.ts
-
 import type {
   DataViewBatchActionsGenerator,
   DataViewItemActionsGenerator,

@@ -1,11 +1,3 @@
-// src\design-system\components\map\utils\basemap-color-style-override.ts
-
-// src\design-system\components\map\utils\basemap-color-style-override.ts
-
-// src\design-system\components\map\utils\basemap-color-style-override.ts
-
-// src\design-system\components\map\utils\basemap-color-style-override.ts
-
 import type maplibregl from "maplibre-gl";
 
 const ROAD_COLORS = {

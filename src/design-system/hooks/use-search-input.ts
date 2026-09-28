@@ -1,10 +1,3 @@
-// src\design-system\hooks\use-search-input.ts
-
-// src\design-system\hooks\use-search-input.ts
-
-// src\design-system\hooks\use-search-input.ts
-
-// src\design-system\hooks\use-search-input.ts
 import MiniSearch from "minisearch";
 import { useMemo, useState } from "react";
 import type {

@@ -1,11 +1,3 @@
-// src\design-system\components\input\types\file-input.type.ts
-
-// src\design-system\components\input\types\file-input.type.ts
-
-// src\design-system\components\input\types\file-input.type.ts
-
-// src\design-system\components\input\types\file-input.type.ts
-
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";

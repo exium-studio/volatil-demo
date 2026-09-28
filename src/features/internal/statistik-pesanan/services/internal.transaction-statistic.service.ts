@@ -1,11 +1,3 @@
-// src\features\internal\statistik-pesanan\services\internal.transaction-statistic.service.ts
-
-// src\features\internal\statistik-pesanan\services\internal.transaction-statistic.service.ts
-
-// src\features\internal\statistik-pesanan\services\internal.transaction-statistic.service.ts
-
-// src\features\internal\statistik-pesanan\services\internal.transaction-statistic.service.ts
-
 import {
   fetchInternalTransactionDetailApi,
   fetchInternalTransactionsApi,

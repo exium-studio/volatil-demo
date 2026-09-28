@@ -1,11 +1,3 @@
-// src\features\shared\components\transaction-detail.modal.tsx
-
-// src\features\shared\components\transaction-detail.modal.tsx
-
-// src\features\shared\components\transaction-detail.modal.tsx
-
-// src\features\shared\components\transaction-detail.modal.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
@@ -562,7 +554,7 @@ export const TransactionDetailModalContent = (
                       <Button
                         size={"2xs"}
                         variant={"outline"}
-                        colorPalette={"green"}
+                        
                         onClick={() => {
                           if (transaction.tteInvoiceUrl) {
                             window.open(transaction.tteInvoiceUrl, "_blank");

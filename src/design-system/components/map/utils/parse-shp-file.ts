@@ -1,11 +1,3 @@
-// src\design-system\components\map\utils\parse-shp-file.ts
-
-// src\design-system\components\map\utils\parse-shp-file.ts
-
-// src\design-system\components\map\utils\parse-shp-file.ts
-
-// src\design-system\components\map\utils\parse-shp-file.ts
-
 import type { ShpWorkerResult } from "@/design-system/components/map/types/map.utils.type";
 import ShpWorker from "@/design-system/components/map/workers/shp.worker.ts?worker";
 import type GeoJSON from "geojson";

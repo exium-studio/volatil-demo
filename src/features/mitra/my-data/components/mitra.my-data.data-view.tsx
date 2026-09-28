@@ -1,11 +1,3 @@
-// src\features\mitra\my-data\components\mitra.my-data.data-view.tsx
-
-// src\features\mitra\my-data\components\mitra.my-data.data-view.tsx
-
-// src\features\mitra\my-data\components\mitra.my-data.data-view.tsx
-
-// src\features\mitra\my-data\components\mitra.my-data.data-view.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
@@ -150,7 +142,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "WMS URL", sortable: false },
       // { th: "WFS URL", sortable: false,  },
       { th: "Status Aktif", sortable: true },
-      { th: "Status TTE", sortable: false, align: "start" },
+      { th: "Invoice & TTE", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },
@@ -200,10 +192,40 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.tte ? "TTE" : "Belum TTE",
               td: (
-                <TteBadge
+                <HStack gap={1} align={"center"}>
+                  <TteBadge
                   tte={item.tte ?? Boolean(item.tteInvoiceUrl)}
                   size={"xs"}
-                />
+                  />
+                  {item.invoiceUrl && (
+                    <Button
+                      size={"2xs"}
+                      variant={"outline"}
+                      onClick={() => {
+                        if (item.invoiceUrl) {
+                          window.open(item.invoiceUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <AppIcon icon={FileTextIcon} size={"xs"} />
+                      {"Invoice"}
+                    </Button>
+                  )}
+                  {item.tteInvoiceUrl && (
+                    <Button
+                      size={"2xs"}
+                      variant={"outline"}
+                      onClick={() => {
+                        if (item.tteInvoiceUrl) {
+                          window.open(item.tteInvoiceUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <AppIcon icon={FileCheckIcon} size={"xs"} />
+                      {"TTE"}
+                    </Button>
+                  )}
+                </HStack>
               ),
               align: "start" as const,
             },

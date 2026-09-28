@@ -1,11 +1,3 @@
-// src\design-system\components\disclosure\types\steps.type.ts
-
-// src\design-system\components\disclosure\types\steps.type.ts
-
-// src\design-system\components\disclosure\types\steps.type.ts
-
-// src\design-system\components\disclosure\types\steps.type.ts
-
 import type {
   StepsRootProps as ChakraStepsRootProps,
   StepsListProps as ChakraStepsListProps,

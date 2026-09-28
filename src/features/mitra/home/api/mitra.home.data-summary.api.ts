@@ -1,11 +1,3 @@
-// src\features\mitra\home\api\mitra.home.data-summary.api.ts
-
-// src\features\mitra\home\api\mitra.home.data-summary.api.ts
-
-// src\features\mitra\home\api\mitra.home.data-summary.api.ts
-
-// src\features\mitra\home\api\mitra.home.data-summary.api.ts
-
 import type {
   MitraHomeDataSummaryResponse,
   MitraHomePeriod,

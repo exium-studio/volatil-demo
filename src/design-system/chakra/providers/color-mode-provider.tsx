@@ -1,11 +1,3 @@
-// src\design-system\chakra\providers\color-mode-provider.tsx
-
-// src\design-system\chakra\providers\color-mode-provider.tsx
-
-// src\design-system\chakra\providers\color-mode-provider.tsx
-
-// src\design-system\chakra\providers\color-mode-provider.tsx
-
 "use client";
 
 import { ThemeProvider } from "next-themes";

@@ -1,11 +1,3 @@
-// src\design-system\components\layout\types\container.type.ts
-
-// src\design-system\components\layout\types\container.type.ts
-
-// src\design-system\components\layout\types\container.type.ts
-
-// src\design-system\components\layout\types\container.type.ts
-
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 

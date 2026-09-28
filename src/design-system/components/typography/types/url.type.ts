@@ -1,11 +1,3 @@
-// src\design-system\components\typography\types\url.type.ts
-
-// src\design-system\components\typography\types\url.type.ts
-
-// src\design-system\components\typography\types\url.type.ts
-
-// src\design-system\components\typography\types\url.type.ts
-
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 
 export type UrlProps = Omit<StackProps, "children"> & {

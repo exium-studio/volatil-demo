@@ -1,11 +1,3 @@
-// src\features\notification\services\notification.service.ts
-
-// src\features\notification\services\notification.service.ts
-
-// src\features\notification\services\notification.service.ts
-
-// src\features\notification\services\notification.service.ts
-
 import type { HistoryEntry } from "@/design-system/components/toast/types/toast.type";
 import type { NotificationItem } from "@/features/notification/types/notification.type";
 

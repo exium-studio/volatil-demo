@@ -1,11 +1,3 @@
-// src\design-system\components\icon\types\app-icon.type.ts
-
-// src\design-system\components\icon\types\app-icon.type.ts
-
-// src\design-system\components\icon\types\app-icon.type.ts
-
-// src\design-system\components\icon\types\app-icon.type.ts
-
 import type { IconProps } from "@chakra-ui/react";
 import type { ComponentType } from "react";
 

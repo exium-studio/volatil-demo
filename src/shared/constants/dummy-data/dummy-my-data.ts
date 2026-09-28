@@ -1,11 +1,3 @@
-// src\shared\constants\dummy-data\dummy-my-data.ts
-
-// src\shared\constants\dummy-data\dummy-my-data.ts
-
-// src\shared\constants\dummy-data\dummy-my-data.ts
-
-// src\shared\constants\dummy-data\dummy-my-data.ts
-
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 
 export const dummyMitraMyDataItems: MyDataItem[] = [

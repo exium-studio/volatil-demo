@@ -1,11 +1,3 @@
-// src\features\internal\order-review\hooks\use-order-review.ts
-
-// src\features\internal\order-review\hooks\use-order-review.ts
-
-// src\features\internal\order-review\hooks\use-order-review.ts
-
-// src\features\internal\order-review\hooks\use-order-review.ts
-
 import {
   approveOrderApi,
   createInternalOrdersEventSource,

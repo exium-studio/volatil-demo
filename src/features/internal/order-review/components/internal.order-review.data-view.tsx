@@ -1,11 +1,4 @@
-// src\features\internal\order-review\components\internal.order-review.data-view.tsx
-
-// src\features\internal\order-review\components\internal.order-review.data-view.tsx
-
-// src\features\internal\order-review\components\internal.order-review.data-view.tsx
-
-// src\features\internal\order-review\components\internal.order-review.data-view.tsx
-
+import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
@@ -16,6 +9,7 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -27,7 +21,6 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { InternalOrderReviewTteTrigger } from "@/features/internal/order-review/components/internal.order-review.tte-modal";
 import {
   useInternalOrdersQuery,
   useInternalOrdersStream,
@@ -41,6 +34,7 @@ import type {
 import type { CartOrderStatus } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -52,7 +46,6 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
   FileCheckIcon,
-  FileSignatureIcon,
   FileTextIcon,
   LayersIcon,
   MapPlusIcon,
@@ -119,6 +112,7 @@ export const InternalOrderReviewDataView = () => {
       { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Daftar Layer IGT", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
+      { th: "Invoice & TTE", sortable: false, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
       { th: "Waktu Diajukan", sortable: true, align: "start" },
     ];
@@ -191,6 +185,46 @@ export const InternalOrderReviewDataView = () => {
             align: "start" as const,
           },
           {
+            value: order.tte ? "TTE" : "Belum TTE",
+            td: (
+              <HStack gap={1} align={"center"}>
+                <TteBadge
+                  tte={Boolean(order.tte || order.tteInvoiceUrl)}
+                  size={"xs"}
+                />
+                {order.invoiceUrl && (
+                  <Button
+                    size={"2xs"}
+                    variant={"outline"}
+                    onClick={() => {
+                      if (order.invoiceUrl) {
+                        window.open(order.invoiceUrl, "_blank");
+                      }
+                    }}
+                  >
+                    <AppIcon icon={FileTextIcon} size={"xs"} />
+                    {"Invoice"}
+                  </Button>
+                )}
+                {order.tteInvoiceUrl && (
+                  <Button
+                    size={"2xs"}
+                    variant={"outline"}
+                    onClick={() => {
+                      if (order.tteInvoiceUrl) {
+                        window.open(order.tteInvoiceUrl, "_blank");
+                      }
+                    }}
+                  >
+                    <AppIcon icon={FileCheckIcon} size={"xs"} />
+                    {"TTE"}
+                  </Button>
+                )}
+              </HStack>
+            ),
+            align: "start" as const,
+          },
+          {
             value: order.totalPrice,
             td: (
               <P fontWeight={"medium"} fontSize={"sm"}>
@@ -257,26 +291,9 @@ export const InternalOrderReviewDataView = () => {
         },
       },
       {
-        key: "pasang-tte",
-        label: "Pasang TTE",
-        icon: FileSignatureIcon,
-        colorPalette: "purple",
-        hidden: (order: InternalOrderItem) =>
-          Boolean(order.tte ?? Boolean(order.tteInvoiceUrl)),
-        modal: {
-          triggerComponent: (order: InternalOrderItem) => (
-            <InternalOrderReviewTteTrigger
-              modalKey={`tte-order-${order.orderId}`}
-              order={order}
-            />
-          ),
-        },
-      },
-      {
         key: "approve-order",
         label: "Setujui Permintaan",
         icon: CheckCircleIcon,
-        colorPalette: "green",
         hidden: (order: InternalOrderItem) => order.status !== "pending_review",
         modal: {
           triggerComponent: (order: InternalOrderItem) => (
@@ -411,7 +428,6 @@ export const InternalOrderReviewDataView = () => {
                 <DataViewTable.Header />
                 <DataViewTable.Body />
               </DataViewTable.Root>
-
 
               <Separator borderColor={"bg.canvas"} />
 

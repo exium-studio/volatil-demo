@@ -1,11 +1,3 @@
-// src\design-system\components\overlay\types\popover.type.ts
-
-// src\design-system\components\overlay\types\popover.type.ts
-
-// src\design-system\components\overlay\types\popover.type.ts
-
-// src\design-system\components\overlay\types\popover.type.ts
-
 import { Popover as ChakraPopover } from "@chakra-ui/react";
 import type { RefObject } from "react";
 

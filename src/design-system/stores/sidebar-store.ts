@@ -1,11 +1,3 @@
-// src\design-system\stores\sidebar-store.ts
-
-// src\design-system\stores\sidebar-store.ts
-
-// src\design-system\stores\sidebar-store.ts
-
-// src\design-system\stores\sidebar-store.ts
-
 import type {
   SidebarActions,
   SidebarState,

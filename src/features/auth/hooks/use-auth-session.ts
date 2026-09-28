@@ -1,11 +1,3 @@
-// src\features\auth\hooks\use-auth-session.ts
-
-// src\features\auth\hooks\use-auth-session.ts
-
-// src\features\auth\hooks\use-auth-session.ts
-
-// src\features\auth\hooks\use-auth-session.ts
-
 import { authService } from "@/features/auth/services/auth.service";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import type { User } from "@/shared/types/common-response.type";

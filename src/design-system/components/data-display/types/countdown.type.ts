@@ -1,11 +1,3 @@
-// src\design-system\components\data-display\types\countdown.type.ts
-
-// src\design-system\components\data-display\types\countdown.type.ts
-
-// src\design-system\components\data-display\types\countdown.type.ts
-
-// src\design-system\components\data-display\types\countdown.type.ts
-
 import type { PProps } from "@/design-system/components/typography/types/p.type";
 
 export type CountdownProps = Omit<PProps, "children"> & {

@@ -1,11 +1,3 @@
-// src\design-system\components\overlay\types\modal.type.ts
-
-// src\design-system\components\overlay\types\modal.type.ts
-
-// src\design-system\components\overlay\types\modal.type.ts
-
-// src\design-system\components\overlay\types\modal.type.ts
-
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import type { PProps } from "@/design-system/components/typography/types/p.type";
 import {

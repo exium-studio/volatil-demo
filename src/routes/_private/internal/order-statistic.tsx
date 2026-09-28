@@ -1,11 +1,3 @@
-// src\routes\_private\internal\order-statistic.tsx
-
-// src\routes\_private\internal\order-statistic.tsx
-
-// src\routes\_private\internal\order-statistic.tsx
-
-// src\routes\_private\internal\order-statistic.tsx
-
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { InternalTransactionStatisticPage } from "@/features/internal/statistik-pesanan/pages/internal.transaction-statistic.page";
 import { createFileRoute } from "@tanstack/react-router";

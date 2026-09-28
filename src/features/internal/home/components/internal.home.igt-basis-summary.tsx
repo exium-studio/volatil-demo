@@ -1,11 +1,3 @@
-// src\features\internal\home\components\internal.home.igt-basis-summary.tsx
-
-// src\features\internal\home\components\internal.home.igt-basis-summary.tsx
-
-// src\features\internal\home\components\internal.home.igt-basis-summary.tsx
-
-// src\features\internal\home\components\internal.home.igt-basis-summary.tsx
-
 import {
   ChartTooltip,
   ChartTooltipContent,

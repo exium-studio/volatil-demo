@@ -1,11 +1,3 @@
-// src\design-system\components\data-display\types\stat-grid.type.ts
-
-// src\design-system\components\data-display\types\stat-grid.type.ts
-
-// src\design-system\components\data-display\types\stat-grid.type.ts
-
-// src\design-system\components\data-display\types\stat-grid.type.ts
-
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { GridProps } from "@/design-system/components/layout/types/grid.type";
 import type { PProps } from "@/design-system/components/typography/types/p.type";

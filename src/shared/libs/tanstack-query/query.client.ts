@@ -1,11 +1,3 @@
-// src\shared\libs\tanstack-query\query.client.ts
-
-// src\shared\libs\tanstack-query\query.client.ts
-
-// src\shared\libs\tanstack-query\query.client.ts
-
-// src\shared\libs\tanstack-query\query.client.ts
-
 import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({

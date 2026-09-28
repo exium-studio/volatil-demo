@@ -1,11 +1,3 @@
-// src\features\auth\components\ui\user-session-actions.tsx
-
-// src\features\auth\components\ui\user-session-actions.tsx
-
-// src\features\auth\components\ui\user-session-actions.tsx
-
-// src\features\auth\components\ui\user-session-actions.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";

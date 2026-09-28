@@ -1,11 +1,3 @@
-// src\design-system\components\map\utils\fetch-wfs.ts
-
-// src\design-system\components\map\utils\fetch-wfs.ts
-
-// src\design-system\components\map\utils\fetch-wfs.ts
-
-// src\design-system\components\map\utils\fetch-wfs.ts
-
 import type {
   FetchWfsParams,
   GeoServerFeatureCollection,

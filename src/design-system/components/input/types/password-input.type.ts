@@ -1,11 +1,3 @@
-// src\design-system\components\input\types\password-input.type.ts
-
-// src\design-system\components\input\types\password-input.type.ts
-
-// src\design-system\components\input\types\password-input.type.ts
-
-// src\design-system\components\input\types\password-input.type.ts
-
 import type { InputGroupProps } from "@/design-system/components/input/types/input-group.type";
 import type { InputProps } from "@/design-system/components/input/types/input.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";

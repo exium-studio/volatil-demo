@@ -1,11 +1,3 @@
-// src\design-system\components\typography\ui\rich-text-editor.control.tsx
-
-// src\design-system\components\typography\ui\rich-text-editor.control.tsx
-
-// src\design-system\components\typography\ui\rich-text-editor.control.tsx
-
-// src\design-system\components\typography\ui\rich-text-editor.control.tsx
-
 "use client";
 
 import { IconButton } from "@/design-system/components/button/ui/button";

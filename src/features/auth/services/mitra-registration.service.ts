@@ -1,11 +1,3 @@
-// src\features\auth\services\mitra-registration.service.ts
-
-// src\features\auth\services\mitra-registration.service.ts
-
-// src\features\auth\services\mitra-registration.service.ts
-
-// src\features\auth\services\mitra-registration.service.ts
-
 import {
   fetchRegistrationStatusApi,
   postRegisterMitraApi,

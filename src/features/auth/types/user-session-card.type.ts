@@ -1,11 +1,3 @@
-// src\features\auth\types\user-session-card.type.ts
-
-// src\features\auth\types\user-session-card.type.ts
-
-// src\features\auth\types\user-session-card.type.ts
-
-// src\features\auth\types\user-session-card.type.ts
-
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { User } from "@/shared/types/common-response.type";
 import type { ReactNode } from "react";

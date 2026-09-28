@@ -1,11 +1,3 @@
-// src\features\design-system-docs\components\overview-docs.tsx
-
-// src\features\design-system-docs\components\overview-docs.tsx
-
-// src\features\design-system-docs\components\overview-docs.tsx
-
-// src\features\design-system-docs\components\overview-docs.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";

@@ -1,11 +1,3 @@
-// src\features\mitra\data-request\types\geo-ops.worker.type.ts
-
-// src\features\mitra\data-request\types\geo-ops.worker.type.ts
-
-// src\features\mitra\data-request\types\geo-ops.worker.type.ts
-
-// src\features\mitra\data-request\types\geo-ops.worker.type.ts
-
 import type { KawasanCoverageResult } from "@/features/mitra/data-request/types/mitra.data-request.coverage.type";
 import type GeoJSON from "geojson";
 

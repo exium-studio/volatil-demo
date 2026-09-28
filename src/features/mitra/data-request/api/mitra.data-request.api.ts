@@ -1,11 +1,3 @@
-// src\features\mitra\data-request\api\mitra.data-request.api.ts
-
-// src\features\mitra\data-request\api\mitra.data-request.api.ts
-
-// src\features\mitra\data-request\api\mitra.data-request.api.ts
-
-// src\features\mitra\data-request\api\mitra.data-request.api.ts
-
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import type { MitraDataRequestIgtDataItem } from "@/features/mitra/data-request/types/mitra.data-request.igt-by-aoi.type";
 import type {

@@ -1,11 +1,3 @@
-// src\features\internal\data-management\hooks\use-data-management.ts
-
-// src\features\internal\data-management\hooks\use-data-management.ts
-
-// src\features\internal\data-management\hooks\use-data-management.ts
-
-// src\features\internal\data-management\hooks\use-data-management.ts
-
 import {
   createMasterIgtLayer,
   deleteMasterIgtLayer,

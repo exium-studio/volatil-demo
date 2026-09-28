@@ -1,11 +1,3 @@
-// src\features\internal\user-management\components\internal.user-management.stats.tsx
-
-// src\features\internal\user-management\components\internal.user-management.stats.tsx
-
-// src\features\internal\user-management\components\internal.user-management.stats.tsx
-
-// src\features\internal\user-management\components\internal.user-management.stats.tsx
-
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";

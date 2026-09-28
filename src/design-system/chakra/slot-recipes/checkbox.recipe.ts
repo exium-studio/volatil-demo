@@ -1,11 +1,3 @@
-// src\design-system\chakra\slot-recipes\checkbox.recipe.ts
-
-// src\design-system\chakra\slot-recipes\checkbox.recipe.ts
-
-// src\design-system\chakra\slot-recipes\checkbox.recipe.ts
-
-// src\design-system\chakra\slot-recipes\checkbox.recipe.ts
-
 import { defineSlotRecipe } from "@chakra-ui/react";
 import { checkboxAnatomy } from "@chakra-ui/react/anatomy";
 

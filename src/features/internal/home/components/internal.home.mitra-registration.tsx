@@ -1,11 +1,3 @@
-// src\features\internal\home\components\internal.home.mitra-registration.tsx
-
-// src\features\internal\home\components\internal.home.mitra-registration.tsx
-
-// src\features\internal\home\components\internal.home.mitra-registration.tsx
-
-// src\features\internal\home\components\internal.home.mitra-registration.tsx
-
 import {
   ChartTooltip,
   ChartTooltipContent,

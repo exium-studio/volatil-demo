@@ -1,11 +1,3 @@
-// src\design-system\components\button\ui\download-trigger.tsx
-
-// src\design-system\components\button\ui\download-trigger.tsx
-
-// src\design-system\components\button\ui\download-trigger.tsx
-
-// src\design-system\components\button\ui\download-trigger.tsx
-
 import {
   DownloadTrigger as ChakraDownloadTrigger,
   type DownloadTriggerProps,

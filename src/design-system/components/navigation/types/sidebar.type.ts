@@ -1,11 +1,3 @@
-// src\design-system\components\navigation\types\sidebar.type.ts
-
-// src\design-system\components\navigation\types\sidebar.type.ts
-
-// src\design-system\components\navigation\types\sidebar.type.ts
-
-// src\design-system\components\navigation\types\sidebar.type.ts
-
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { SeparatorProps } from "@/design-system/components/layout/types/separator.type";

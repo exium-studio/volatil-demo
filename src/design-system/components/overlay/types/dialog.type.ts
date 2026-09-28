@@ -1,11 +1,3 @@
-// src\design-system\components\overlay\types\dialog.type.ts
-
-// src\design-system\components\overlay\types\dialog.type.ts
-
-// src\design-system\components\overlay\types\dialog.type.ts
-
-// src\design-system\components\overlay\types\dialog.type.ts
-
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";
 import { Dialog as ChakraDialog } from "@chakra-ui/react";
 import type { RefObject } from "react";

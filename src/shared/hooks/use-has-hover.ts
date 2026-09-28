@@ -1,11 +1,3 @@
-// src\shared\hooks\use-has-hover.ts
-
-// src\shared\hooks\use-has-hover.ts
-
-// src\shared\hooks\use-has-hover.ts
-
-// src\shared\hooks\use-has-hover.ts
-
 import { useEffect, useState } from "react";
 
 export const useHasHover = () => {

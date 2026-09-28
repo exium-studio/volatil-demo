@@ -1,11 +1,3 @@
-// src\design-system\components\typography\ui\badge.tsx
-
-// src\design-system\components\typography\ui\badge.tsx
-
-// src\design-system\components\typography\ui\badge.tsx
-
-// src\design-system\components\typography\ui\badge.tsx
-
 import type { BadgeProps } from "@/design-system/components/typography/types/badge.type";
 import { Badge as ChakraBadge } from "@chakra-ui/react";
 

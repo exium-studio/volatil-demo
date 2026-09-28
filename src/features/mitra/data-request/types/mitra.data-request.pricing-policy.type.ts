@@ -1,11 +1,3 @@
-// src\features\mitra\data-request\types\mitra.data-request.pricing-policy.type.ts
-
-// src\features\mitra\data-request\types\mitra.data-request.pricing-policy.type.ts
-
-// src\features\mitra\data-request\types\mitra.data-request.pricing-policy.type.ts
-
-// src\features\mitra\data-request\types\mitra.data-request.pricing-policy.type.ts
-
 export type MitraPolicyItem = {
   id: string;
   spatialBasis: "bidang" | "kawasan";

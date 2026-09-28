@@ -1,11 +1,3 @@
-// src\features\help-center\services\mitra.transaction.service.ts
-
-// src\features\help-center\services\mitra.transaction.service.ts
-
-// src\features\help-center\services\mitra.transaction.service.ts
-
-// src\features\help-center\services\mitra.transaction.service.ts
-
 import { getMitraTransactionsApi } from "@/features/help-center/api/mitra.transaction.api";
 import type { MitraTransactionItem } from "@/features/help-center/types/mitra.transaction.type";
 

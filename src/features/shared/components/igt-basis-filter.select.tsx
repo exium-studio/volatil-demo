@@ -1,11 +1,3 @@
-// src\features\shared\components\igt-basis-filter.select.tsx
-
-// src\features\shared\components\igt-basis-filter.select.tsx
-
-// src\features\shared\components\igt-basis-filter.select.tsx
-
-// src\features\shared\components\igt-basis-filter.select.tsx
-
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type { IgtBasisFilterSelectProps } from "@/features/shared/types/igt-basis-filter-select.type";

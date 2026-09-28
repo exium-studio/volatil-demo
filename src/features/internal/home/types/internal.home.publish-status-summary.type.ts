@@ -1,11 +1,3 @@
-// src\features\internal\home\types\internal.home.publish-status-summary.type.ts
-
-// src\features\internal\home\types\internal.home.publish-status-summary.type.ts
-
-// src\features\internal\home\types\internal.home.publish-status-summary.type.ts
-
-// src\features\internal\home\types\internal.home.publish-status-summary.type.ts
-
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 
 export type InternalHomePublishStatusSummaryProps = StackProps;

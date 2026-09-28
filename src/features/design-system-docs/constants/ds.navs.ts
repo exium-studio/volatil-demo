@@ -1,11 +1,3 @@
-// src\features\design-system-docs\constants\ds.navs.ts
-
-// src\features\design-system-docs\constants\ds.navs.ts
-
-// src\features\design-system-docs\constants\ds.navs.ts
-
-// src\features\design-system-docs\constants\ds.navs.ts
-
 import type { NavItem } from "@/shared/types/nav.type";
 import {
   AlertCircle,

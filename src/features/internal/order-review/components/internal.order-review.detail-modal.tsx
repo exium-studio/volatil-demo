@@ -1,11 +1,3 @@
-// src\features\internal\order-review\components\internal.order-review.detail-modal.tsx
-
-// src\features\internal\order-review\components\internal.order-review.detail-modal.tsx
-
-// src\features\internal\order-review\components\internal.order-review.detail-modal.tsx
-
-// src\features\internal\order-review\components\internal.order-review.detail-modal.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -19,7 +11,6 @@ import { OrderStatusBadge } from "@/features/shared/components/order-status.badg
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { InternalOrderReviewTteTrigger } from "@/features/internal/order-review/components/internal.order-review.tte-modal";
 import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import type {
   InternalOrderReviewDetailModalContentProps,
@@ -34,7 +25,6 @@ import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import {
   CheckCircleIcon,
   FileCheckIcon,
-  FileSignatureIcon,
   FileTextIcon,
   LoaderIcon,
   MapPlusIcon,
@@ -158,7 +148,6 @@ const InternalOrderReviewDetailModalContent = (
                   <Button
                     size={"2xs"}
                     variant={"outline"}
-                    colorPalette={"green"}
                     onClick={() => {
                       if (order.tteInvoiceUrl) {
                         window.open(order.tteInvoiceUrl, "_blank");
@@ -168,18 +157,6 @@ const InternalOrderReviewDetailModalContent = (
                     <AppIcon icon={FileCheckIcon} size={"xs"} />
                     {"Invoice TTE"}
                   </Button>
-                )}
-
-                {!(order.tte ?? Boolean(order.tteInvoiceUrl)) && (
-                  <InternalOrderReviewTteTrigger
-                    order={order}
-                    modalKey={`tte-modal-detail-${order.orderId}`}
-                  >
-                    <Button size={"2xs"} primary colorPalette={"purple"}>
-                      <AppIcon icon={FileSignatureIcon} size={"xs"} />
-                      {"Pasang TTE"}
-                    </Button>
-                  </InternalOrderReviewTteTrigger>
                 )}
               </HStack>
             </HStack>

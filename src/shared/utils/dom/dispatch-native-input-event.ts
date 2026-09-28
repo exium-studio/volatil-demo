@@ -1,11 +1,3 @@
-// src\shared\utils\dom\dispatch-native-input-event.ts
-
-// src\shared\utils\dom\dispatch-native-input-event.ts
-
-// src\shared\utils\dom\dispatch-native-input-event.ts
-
-// src\shared\utils\dom\dispatch-native-input-event.ts
-
 export function dispatchNativeInputEvent(
   input: HTMLInputElement,
   value: string,

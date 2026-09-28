@@ -1,11 +1,3 @@
-// src\features\root\types\demo.type.ts
-
-// src\features\root\types\demo.type.ts
-
-// src\features\root\types\demo.type.ts
-
-// src\features\root\types\demo.type.ts
-
 import type { ComponentType } from "react";
 
 export type DemoPaletteItem = {

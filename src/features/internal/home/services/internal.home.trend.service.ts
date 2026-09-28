@@ -1,11 +1,3 @@
-// src\features\internal\home\services\internal.home.trend.service.ts
-
-// src\features\internal\home\services\internal.home.trend.service.ts
-
-// src\features\internal\home\services\internal.home.trend.service.ts
-
-// src\features\internal\home\services\internal.home.trend.service.ts
-
 import { fetchInternalTrendApi } from "@/features/internal/home/api/internal.home.trend.api";
 import type { InternalHomeTrendItem } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";

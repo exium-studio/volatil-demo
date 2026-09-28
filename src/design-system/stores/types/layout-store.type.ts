@@ -1,11 +1,3 @@
-// src\design-system\stores\types\layout-store.type.ts
-
-// src\design-system\stores\types\layout-store.type.ts
-
-// src\design-system\stores\types\layout-store.type.ts
-
-// src\design-system\stores\types\layout-store.type.ts
-
 export type LayoutConfig = {
   maxW: string | number;
 };

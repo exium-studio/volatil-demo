@@ -1,11 +1,4 @@
-// src\features\internal\statistik-pesanan\components\internal.transaction-statistic.data-view.tsx
-
-// src\features\internal\statistik-pesanan\components\internal.transaction-statistic.data-view.tsx
-
-// src\features\internal\statistik-pesanan\components\internal.transaction-statistic.data-view.tsx
-
-// src\features\internal\statistik-pesanan\components\internal.transaction-statistic.data-view.tsx
-
+import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -19,6 +12,7 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -94,7 +88,7 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
-      { th: "Status TTE", sortable: false, align: "start" },
+      { th: "Invoice & TTE", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
@@ -193,10 +187,40 @@ export const InternalTransactionStatisticDataView = () => {
             {
               value: item.tte ? "TTE" : "Belum TTE",
               td: (
-                <TteBadge
+                <HStack gap={1} align={"center"}>
+                  <TteBadge
                   tte={item.tte ?? Boolean(item.tteInvoiceUrl)}
                   size={"xs"}
-                />
+                  />
+                  {item.invoiceUrl && (
+                    <Button
+                      size={"2xs"}
+                      variant={"outline"}
+                      onClick={() => {
+                        if (item.invoiceUrl) {
+                          window.open(item.invoiceUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <AppIcon icon={FileTextIcon} size={"xs"} />
+                      {"Invoice"}
+                    </Button>
+                  )}
+                  {item.tteInvoiceUrl && (
+                    <Button
+                      size={"2xs"}
+                      variant={"outline"}
+                      onClick={() => {
+                        if (item.tteInvoiceUrl) {
+                          window.open(item.tteInvoiceUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <AppIcon icon={FileCheckIcon} size={"xs"} />
+                      {"TTE"}
+                    </Button>
+                  )}
+                </HStack>
               ),
               align: "start" as const,
             },

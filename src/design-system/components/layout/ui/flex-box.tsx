@@ -1,11 +1,3 @@
-// src\design-system\components\layout\ui\flex-box.tsx
-
-// src\design-system\components\layout\ui\flex-box.tsx
-
-// src\design-system\components\layout\ui\flex-box.tsx
-
-// src\design-system\components\layout\ui\flex-box.tsx
-
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import {
   HStack as ChakraHStack,

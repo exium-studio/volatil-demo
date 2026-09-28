@@ -22,13 +22,14 @@ src/features/<feature-name>/
 
 ## 2. API vs Service vs Utils (Pemisahan Tanggung Jawab)
 
-| Layer | Lokasi & Penamaan | Tanggung Jawab Utama | Boleh Melakukan | DILARANG Melakukan |
-| :--- | :--- | :--- | :--- | :--- |
-| **API Layer** | `api/*.api.ts` | **Murni Network I/O** | - Memanggil `fetchApi`, WFS/WMS request, raw endpoint<br>- Parsing HTTP params/headers/body | - Menyimpan token/state ke localStorage<br>- Melakukan fallback mock/business logic<br>- React hooks/UI coupling |
-| **Service Layer** | `services/*.service.ts` | **Business Logic & Orchestration** | - Mengonsumsi API layer<br>- Data formatting, mapping, validasi bisnis<br>- Handle session (token/user storage), fallback mock logic<br>- Ekstraksi DTO response ke Domain Model | - Render JSX / React state / Hooks<br>- Memanggil fetch langsung tanpa lewat API layer |
-| **Utils Layer** | `utils/*.ts` | **Pure Helpers / Computations** | - Komputasi murni tanpa side-effect (e.g. centroid geometry, string formatter, bounds calculator)<br>- Reusable lintas feature jika diletakkan di `src/shared/utils/` | - Melakukan network request (I/O)<br>- Mengakses stateful / mutable business services |
+| Layer             | Lokasi & Penamaan       | Tanggung Jawab Utama               | Boleh Melakukan                                                                                                                                                                  | DILARANG Melakukan                                                                                               |
+| :---------------- | :---------------------- | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| **API Layer**     | `api/*.api.ts`          | **Murni Network I/O**              | - Memanggil `fetchApi`, WFS/WMS request, raw endpoint<br>- Parsing HTTP params/headers/body                                                                                      | - Menyimpan token/state ke localStorage<br>- Melakukan fallback mock/business logic<br>- React hooks/UI coupling |
+| **Service Layer** | `services/*.service.ts` | **Business Logic & Orchestration** | - Mengonsumsi API layer<br>- Data formatting, mapping, validasi bisnis<br>- Handle session (token/user storage), fallback mock logic<br>- Ekstraksi DTO response ke Domain Model | - Render JSX / React state / Hooks<br>- Memanggil fetch langsung tanpa lewat API layer                           |
+| **Utils Layer**   | `utils/*.ts`            | **Pure Helpers / Computations**    | - Komputasi murni tanpa side-effect (e.g. centroid geometry, string formatter, bounds calculator)<br>- Reusable lintas feature jika diletakkan di `src/shared/utils/`            | - Melakukan network request (I/O)<br>- Mengakses stateful / mutable business services                            |
 
 ### Rule Penting:
+
 1. **API files** wajib berakhiran `.api.ts`.
 2. **Service files** wajib berakhiran `.service.ts`.
 3. **Komponen / Hooks TIDAK BOLEH memanggil `*.api.ts` secara langsung**, wajib melalui `*.service.ts` atau query hook yang mengonsumsi service.
@@ -36,7 +37,6 @@ src/features/<feature-name>/
    - File name, hook name, type name, dan constant wajib menyertakan domain konteks yang jelas secara semantik.
    - Contoh DILARANG: `job.api.ts`, `job.keys.ts`, `job.type.ts`, `use-job.ts`, `list.tsx`.
    - Contoh WAJIB: `mitra-layer-sync-job.api.ts`, `mitra-layer-sync-job.service.ts`, `mitra-layer-sync-job.type.ts`, `use-mitra-layer-sync-jobs.query.ts`, `internal.mitra-layer-sync-job.data-view.tsx`.
-
 
 ---
 
@@ -60,7 +60,7 @@ src/features/<feature-name>/
 
 2. **Gunakan `Modal.Trigger` / Overlay Triggers**:
    - Komponen input yang membuka overlay/modal (seperti `FocusSelectInput`, date picker modal, confirmation modal) **wajib** membungkus trigger dengan `<Modal.Trigger asChild>`.
-   - Hal ini memastikan koordinat klik pengguna (`onPointerDown`) terekam sehingga animasi pembukaan meluncur akurat dari titik asal klik (*click origin*).
+   - Hal ini memastikan koordinat klik pengguna (`onPointerDown`) terekam sehingga animasi pembukaan meluncur akurat dari titik asal klik (_click origin_).
 3. **Controlled vs Uncontrolled Modularity**:
    - Komponen input interaktif wajib mendukung kedua mode:
      - **Controlled**: Mendengarkan prop `value` dan memanggil `onValueChange`.
@@ -93,7 +93,7 @@ src/features/<feature-name>/
    - Semua penambahan layer Geoserver/WFS dikelola terpusat melalui config array di `useMapLayers`.
    - Hindari membuat hook dedicated per-layer yang berjalan di luar siklus `useMapLayers`.
 2. **Highlight & Camera Actions**:
-   - Fitur inspeksi spasial (seperti *"Lihat di Peta"*) harus memisahkan logic penambahan layer sementara dan animasi kamera ke dalam helper mandiri (`highlight-feature-on-map.ts`).
+   - Fitur inspeksi spasial (seperti _"Lihat di Peta"_) harus memisahkan logic penambahan layer sementara dan animasi kamera ke dalam helper mandiri (`highlight-feature-on-map.ts`).
    - Gunakan `fitBounds` untuk `Polygon`/`MultiPolygon` dan `flyTo` untuk `Point`, dengan auto-cleanup timer.
 
 ---
@@ -112,9 +112,7 @@ src/features/<feature-name>/
 ## 7. Zero-Violation Quality Gates
 
 Setiap perubahan wajib memenuhi standar berikut sebelum dianggap selesai:
+
 - `pnpm verify` (`eslint` & `tsc`) wajib **0 Error dan 0 Warning**.
-- Header file path sinkron via `pnpm filepath:generate`.
 - Jangan menyentuh/mengubah file di luar scope instruksi yang diberikan.
 - **JANGAN PERNAH SENTUH UI YANG SUDAH DIDEV USER (MUTLAK)**: Dilarang keras memodifikasi, merombak, merapikan, atau mengubah struktur JSX, styling, layout, maupun komponen UI yang sudah didevelop/dibuat oleh user, KECUALI user secara eksplisit meminta membuat page/komponen baru atau secara eksplisit menyuruh refactor UI terkait.
-
-

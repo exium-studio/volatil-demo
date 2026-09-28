@@ -1,11 +1,3 @@
-// src\features\auth\api\mitra-registration.api.ts
-
-// src\features\auth\api\mitra-registration.api.ts
-
-// src\features\auth\api\mitra-registration.api.ts
-
-// src\features\auth\api\mitra-registration.api.ts
-
 import type {
   MitraRegistrationCreatedData,
   MitraRegistrationStatusData,

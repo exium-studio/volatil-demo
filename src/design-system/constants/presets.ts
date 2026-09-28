@@ -1,11 +1,3 @@
-// src\design-system\constants\presets.ts
-
-// src\design-system\constants\presets.ts
-
-// src\design-system\constants\presets.ts
-
-// src\design-system\constants\presets.ts
-
 export const ROUNDED_PRESETS_LIST = [
   { label: "None", component: "0px", container: "0px" },
   { label: "XS", component: "2px", container: "4px" },

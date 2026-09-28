@@ -1,11 +1,3 @@
-// src\features\help-center\api\help-center.api.ts
-
-// src\features\help-center\api\help-center.api.ts
-
-// src\features\help-center\api\help-center.api.ts
-
-// src\features\help-center\api\help-center.api.ts
-
 import type {
   CreateHelpCenterApiResponse,
   HelpCenterDetailApiResponse,

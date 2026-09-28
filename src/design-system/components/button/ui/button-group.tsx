@@ -1,11 +1,3 @@
-// src\design-system\components\button\ui\button-group.tsx
-
-// src\design-system\components\button\ui\button-group.tsx
-
-// src\design-system\components\button\ui\button-group.tsx
-
-// src\design-system\components\button\ui\button-group.tsx
-
 import type { ButtonGroupProps } from "@/design-system/components/button/types/button-group.type";
 import { ButtonGroup as ChakraButtonGroup } from "@chakra-ui/react";
 

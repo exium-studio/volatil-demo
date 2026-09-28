@@ -1,11 +1,3 @@
-// src\design-system\components\toast\hooks\use-page-visibility.ts
-
-// src\design-system\components\toast\hooks\use-page-visibility.ts
-
-// src\design-system\components\toast\hooks\use-page-visibility.ts
-
-// src\design-system\components\toast\hooks\use-page-visibility.ts
-
 import { useEffect } from "react";
 import {
   pauseAllTimers,

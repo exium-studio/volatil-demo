@@ -1,11 +1,3 @@
-// src\design-system\components\feedback\ui\state.no-data.tsx
-
-// src\design-system\components\feedback\ui\state.no-data.tsx
-
-// src\design-system\components\feedback\ui\state.no-data.tsx
-
-// src\design-system\components\feedback\ui\state.no-data.tsx
-
 "use client";
 
 import type { FeedbackStateProps } from "@/design-system/components/feedback/types/feedback-state.type";

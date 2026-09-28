@@ -1,11 +1,3 @@
-// src\features\mitra\data-request\components\mitra.data-request.spatial-summary.tsx
-
-// src\features\mitra\data-request\components\mitra.data-request.spatial-summary.tsx
-
-// src\features\mitra\data-request\components\mitra.data-request.spatial-summary.tsx
-
-// src\features\mitra\data-request\components\mitra.data-request.spatial-summary.tsx
-
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Progress } from "@/design-system/components/feedback/ui/progress";

@@ -1,11 +1,3 @@
-// src\design-system\components\input\types\segmented-control.type.ts
-
-// src\design-system\components\input\types\segmented-control.type.ts
-
-// src\design-system\components\input\types\segmented-control.type.ts
-
-// src\design-system\components\input\types\segmented-control.type.ts
-
 import { SegmentGroup as ChakraSegmentGroup } from "@chakra-ui/react";
 import type { ComponentType } from "react";
 

@@ -1,11 +1,3 @@
-// src\features\help-center\types\mitra.transaction.type.ts
-
-// src\features\help-center\types\mitra.transaction.type.ts
-
-// src\features\help-center\types\mitra.transaction.type.ts
-
-// src\features\help-center\types\mitra.transaction.type.ts
-
 import type { OrderStatus } from "@/features/mitra/cart/types/mitra.cart.api.type";
 
 export type MitraTransactionItem = {

@@ -1,11 +1,3 @@
-// src\routes\demo.tsx
-
-// src\routes\demo.tsx
-
-// src\routes\demo.tsx
-
-// src\routes\demo.tsx
-
 import { DemoPage } from "@/features/root/components/demo.page";
 import { createFileRoute } from "@tanstack/react-router";
 

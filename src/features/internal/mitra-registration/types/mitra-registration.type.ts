@@ -1,11 +1,3 @@
-// src\features\internal\mitra-registration\types\mitra-registration.type.ts
-
-// src\features\internal\mitra-registration\types\mitra-registration.type.ts
-
-// src\features\internal\mitra-registration\types\mitra-registration.type.ts
-
-// src\features\internal\mitra-registration\types\mitra-registration.type.ts
-
 import type { MitraRegistrationStatus } from "@/features/auth/types/mitra-registration.type";
 import type {
   PaginatedParams,

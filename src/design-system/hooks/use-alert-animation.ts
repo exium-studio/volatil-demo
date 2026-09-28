@@ -1,11 +1,3 @@
-// src\design-system\hooks\use-alert-animation.ts
-
-// src\design-system\hooks\use-alert-animation.ts
-
-// src\design-system\hooks\use-alert-animation.ts
-
-// src\design-system\hooks\use-alert-animation.ts
-
 import type { UseAlertAnimationOptions } from "@/design-system/types/alert-animation.type";
 import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { useEffect, useState } from "react";

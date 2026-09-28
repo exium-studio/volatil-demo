@@ -1,11 +1,3 @@
-// src\design-system\chakra\slot-recipes\drawer.recipe.ts
-
-// src\design-system\chakra\slot-recipes\drawer.recipe.ts
-
-// src\design-system\chakra\slot-recipes\drawer.recipe.ts
-
-// src\design-system\chakra\slot-recipes\drawer.recipe.ts
-
 import { defineSlotRecipe } from "@chakra-ui/react";
 import { drawerAnatomy } from "@chakra-ui/react/anatomy";
 

@@ -1,11 +1,3 @@
-// src\shared\constants\dummy-data\dummy-pricing.ts
-
-// src\shared\constants\dummy-data\dummy-pricing.ts
-
-// src\shared\constants\dummy-data\dummy-pricing.ts
-
-// src\shared\constants\dummy-data\dummy-pricing.ts
-
 import type {
   PricingItem,
   PricingListResponse,

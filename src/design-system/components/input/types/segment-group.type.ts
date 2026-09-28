@@ -1,11 +1,3 @@
-// src\design-system\components\input\types\segment-group.type.ts
-
-// src\design-system\components\input\types\segment-group.type.ts
-
-// src\design-system\components\input\types\segment-group.type.ts
-
-// src\design-system\components\input\types\segment-group.type.ts
-
 import type { SegmentGroup as ChakraSegmentGroup } from "@chakra-ui/react";
 import type { ComponentPropsWithoutRef } from "react";
 

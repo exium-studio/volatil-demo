@@ -1,11 +1,3 @@
-// src\routes\_private\mitra\transaction-history.tsx
-
-// src\routes\_private\mitra\transaction-history.tsx
-
-// src\routes\_private\mitra\transaction-history.tsx
-
-// src\routes\_private\mitra\transaction-history.tsx
-
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { MitraTransactionHistoryPage } from "@/features/mitra/transaction-history/pages/mitra.transaction-history.page";
 import { createFileRoute } from "@tanstack/react-router";

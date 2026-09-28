@@ -1,11 +1,3 @@
-// src\design-system\components\disclosure\ui\collapsible.tsx
-
-// src\design-system\components\disclosure\ui\collapsible.tsx
-
-// src\design-system\components\disclosure\ui\collapsible.tsx
-
-// src\design-system\components\disclosure\ui\collapsible.tsx
-
 import type {
   CollapsibleContentProps,
   CollapsibleIndicatorProps,

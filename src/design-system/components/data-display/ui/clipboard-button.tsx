@@ -1,11 +1,3 @@
-// src\design-system\components\data-display\ui\clipboard-button.tsx
-
-// src\design-system\components\data-display\ui\clipboard-button.tsx
-
-// src\design-system\components\data-display\ui\clipboard-button.tsx
-
-// src\design-system\components\data-display\ui\clipboard-button.tsx
-
 import type { ClipboardButtonProps } from "@/design-system/components/data-display/types/clipboard.type";
 import {
   Button,

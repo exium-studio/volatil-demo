@@ -1,11 +1,3 @@
-// src\features\mitra\data-request\workers\geo-ops.worker.ts
-
-// src\features\mitra\data-request\workers\geo-ops.worker.ts
-
-// src\features\mitra\data-request\workers\geo-ops.worker.ts
-
-// src\features\mitra\data-request\workers\geo-ops.worker.ts
-
 import type {
   GeoOpsWorkerRequest,
   GeoOpsWorkerResponse,

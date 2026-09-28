@@ -1,11 +1,3 @@
-// src\features\help-center\pages\help-center.detail.page.tsx
-
-// src\features\help-center\pages\help-center.detail.page.tsx
-
-// src\features\help-center\pages\help-center.detail.page.tsx
-
-// src\features\help-center\pages\help-center.detail.page.tsx
-
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";

@@ -1,7 +1,3 @@
-// src\features\shared\components\tte.badge.tsx
-
-// src\features\shared\components\tte.badge.tsx
-
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import type { TteBadgeProps } from "@/features/shared/types/badge.type";

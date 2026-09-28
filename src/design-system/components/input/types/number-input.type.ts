@@ -1,11 +1,3 @@
-// src\design-system\components\input\types\number-input.type.ts
-
-// src\design-system\components\input\types\number-input.type.ts
-
-// src\design-system\components\input\types\number-input.type.ts
-
-// src\design-system\components\input\types\number-input.type.ts
-
 import type { ComponentPropsWithRef, ReactNode } from "react";
 
 import { NumberInput as ChakraNumberInput } from "@chakra-ui/react";

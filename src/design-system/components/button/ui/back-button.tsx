@@ -1,11 +1,3 @@
-// src\design-system\components\button\ui\back-button.tsx
-
-// src\design-system\components\button\ui\back-button.tsx
-
-// src\design-system\components\button\ui\back-button.tsx
-
-// src\design-system\components\button\ui\back-button.tsx
-
 "use client";
 
 import type { BackButtonProps } from "@/design-system/components/button/types/back-button.type";

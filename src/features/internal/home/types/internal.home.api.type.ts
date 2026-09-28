@@ -1,11 +1,3 @@
-// src\features\internal\home\types\internal.home.api.type.ts
-
-// src\features\internal\home\types\internal.home.api.type.ts
-
-// src\features\internal\home\types\internal.home.api.type.ts
-
-// src\features\internal\home\types\internal.home.api.type.ts
-
 import type {
   TopIgtLayerItem,
   TopMitraAcquisitionItem,

@@ -1,11 +1,3 @@
-// src\features\mitra\home\components\mitra.home.data-summary.tsx
-
-// src\features\mitra\home\components\mitra.home.data-summary.tsx
-
-// src\features\mitra\home\components\mitra.home.data-summary.tsx
-
-// src\features\mitra\home\components\mitra.home.data-summary.tsx
-
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";

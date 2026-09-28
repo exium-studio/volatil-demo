@@ -1,11 +1,3 @@
-// src\design-system\components\utilities\ui\offline-alert.tsx
-
-// src\design-system\components\utilities\ui\offline-alert.tsx
-
-// src\design-system\components\utilities\ui\offline-alert.tsx
-
-// src\design-system\components\utilities\ui\offline-alert.tsx
-
 "use client";
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";

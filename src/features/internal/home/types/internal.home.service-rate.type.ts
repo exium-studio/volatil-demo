@@ -1,11 +1,3 @@
-// src\features\internal\home\types\internal.home.service-rate.type.ts
-
-// src\features\internal\home\types\internal.home.service-rate.type.ts
-
-// src\features\internal\home\types\internal.home.service-rate.type.ts
-
-// src\features\internal\home\types\internal.home.service-rate.type.ts
-
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { ComponentType } from "react";
 

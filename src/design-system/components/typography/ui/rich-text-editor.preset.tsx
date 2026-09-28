@@ -1,11 +1,3 @@
-// src\design-system\components\typography\ui\rich-text-editor.preset.tsx
-
-// src\design-system\components\typography\ui\rich-text-editor.preset.tsx
-
-// src\design-system\components\typography\ui\rich-text-editor.preset.tsx
-
-// src\design-system\components\typography\ui\rich-text-editor.preset.tsx
-
 "use client";
 
 import type { RichEditorPresetProps } from "@/design-system/components/typography/types/rich-text-editor.type";

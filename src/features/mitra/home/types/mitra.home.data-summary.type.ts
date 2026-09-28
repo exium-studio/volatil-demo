@@ -1,11 +1,3 @@
-// src\features\mitra\home\types\mitra.home.data-summary.type.ts
-
-// src\features\mitra\home\types\mitra.home.data-summary.type.ts
-
-// src\features\mitra\home\types\mitra.home.data-summary.type.ts
-
-// src\features\mitra\home\types\mitra.home.data-summary.type.ts
-
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { MitraHomeTransactionItem } from "@/features/mitra/home/types/mitra.home.last-transaction.type";
 

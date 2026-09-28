@@ -1,11 +1,3 @@
-// src\design-system\components\data-display\types\clipboard.type.ts
-
-// src\design-system\components\data-display\types\clipboard.type.ts
-
-// src\design-system\components\data-display\types\clipboard.type.ts
-
-// src\design-system\components\data-display\types\clipboard.type.ts
-
 import type { Clipboard as ChakraClipboard } from "@chakra-ui/react";
 import type { ComponentProps } from "react";
 

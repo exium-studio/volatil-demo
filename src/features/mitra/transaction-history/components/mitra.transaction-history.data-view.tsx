@@ -1,11 +1,3 @@
-// src\features\mitra\transaction-history\components\mitra.transaction-history.data-view.tsx
-
-// src\features\mitra\transaction-history\components\mitra.transaction-history.data-view.tsx
-
-// src\features\mitra\transaction-history\components\mitra.transaction-history.data-view.tsx
-
-// src\features\mitra\transaction-history\components\mitra.transaction-history.data-view.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
@@ -104,7 +96,7 @@ export const TransactionHistoryDataView = () => {
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
-      { th: "Status TTE", sortable: false, align: "start" },
+      { th: "Invoice & TTE", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
@@ -192,10 +184,40 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.tte ? "TTE" : "Belum TTE",
               td: (
-                <TteBadge
-                  tte={item.tte ?? Boolean(item.tteInvoiceUrl)}
+                <HStack gap={1} align={"center"}>
+                  <TteBadge
+                  tte={Boolean(item.tte || item.tteInvoiceUrl)}
                   size={"xs"}
-                />
+                  />
+                  {item.invoiceUrl && (
+                    <Button
+                      size={"2xs"}
+                      variant={"outline"}
+                      onClick={() => {
+                        if (item.invoiceUrl) {
+                          window.open(item.invoiceUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <AppIcon icon={FileTextIcon} size={"xs"} />
+                      {"Invoice"}
+                    </Button>
+                  )}
+                  {item.tteInvoiceUrl && (
+                    <Button
+                      size={"2xs"}
+                      variant={"outline"}
+                      onClick={() => {
+                        if (item.tteInvoiceUrl) {
+                          window.open(item.tteInvoiceUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <AppIcon icon={FileCheckIcon} size={"xs"} />
+                      {"TTE"}
+                    </Button>
+                  )}
+                </HStack>
               ),
               align: "start" as const,
             },

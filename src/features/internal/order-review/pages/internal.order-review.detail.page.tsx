@@ -1,11 +1,3 @@
-// src\features\internal\order-review\pages\internal.order-review.detail.page.tsx
-
-// src\features\internal\order-review\pages\internal.order-review.detail.page.tsx
-
-// src\features\internal\order-review\pages\internal.order-review.detail.page.tsx
-
-// src\features\internal\order-review\pages\internal.order-review.detail.page.tsx
-
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import {
   Button,
@@ -29,7 +21,6 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { InternalOrderReviewTteTrigger } from "@/features/internal/order-review/components/internal.order-review.tte-modal";
 import {
   useInternalOrderDetailQuery,
   useOrdersProvisionStream,
@@ -60,7 +51,6 @@ import {
   EyeIcon,
   EyeOffIcon,
   FileCheckIcon,
-  FileSignatureIcon,
   FileTextIcon,
   FocusIcon,
   LoaderIcon,
@@ -439,7 +429,6 @@ export function InternalOrderReviewDetailPage() {
                     <Button
                       size={"xs"}
                       variant={"outline"}
-                      colorPalette={"green"}
                       onClick={() => {
                         if (order.tteInvoiceUrl) {
                           window.open(order.tteInvoiceUrl, "_blank");
@@ -449,18 +438,6 @@ export function InternalOrderReviewDetailPage() {
                       <AppIcon icon={FileCheckIcon} size={"xs"} />
                       {"Lihat Invoice TTE"}
                     </Button>
-                  )}
-
-                  {!(order.tte ?? Boolean(order.tteInvoiceUrl)) && (
-                    <InternalOrderReviewTteTrigger
-                      order={order}
-                      modalKey={`tte-detail-${order.orderId}`}
-                    >
-                      <Button size={"xs"} primary colorPalette={"purple"}>
-                        <AppIcon icon={FileSignatureIcon} size={"xs"} />
-                        {"Pasang TTE"}
-                      </Button>
-                    </InternalOrderReviewTteTrigger>
                   )}
                 </HStack>
               </VStack>

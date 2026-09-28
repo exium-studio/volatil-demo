@@ -1,11 +1,3 @@
-// src\shared\constants\dummy-data\dummy-internal-order-review.ts
-
-// src\shared\constants\dummy-data\dummy-internal-order-review.ts
-
-// src\shared\constants\dummy-data\dummy-internal-order-review.ts
-
-// src\shared\constants\dummy-data\dummy-internal-order-review.ts
-
 import type { InternalOrderItem } from "@/features/internal/order-review/types/order-review.type";
 
 const now = new Date();

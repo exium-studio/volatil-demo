@@ -1,11 +1,3 @@
-// src\design-system\components\focus-alert\types\focus-alert.type.ts
-
-// src\design-system\components\focus-alert\types\focus-alert.type.ts
-
-// src\design-system\components\focus-alert\types\focus-alert.type.ts
-
-// src\design-system\components\focus-alert\types\focus-alert.type.ts
-
 import type { ButtonProps } from "@/design-system/components/button/types/button.type";
 import type { EmojiVariant } from "@/design-system/components/emoji/types/emoji.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";

@@ -1,11 +1,3 @@
-// src\design-system\components\map\stores\map.instance.store.ts
-
-// src\design-system\components\map\stores\map.instance.store.ts
-
-// src\design-system\components\map\stores\map.instance.store.ts
-
-// src\design-system\components\map\stores\map.instance.store.ts
-
 import type { MapInstanceState } from "@/design-system/components/map/types/map.type";
 import { create } from "zustand";
 

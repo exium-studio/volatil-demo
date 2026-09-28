@@ -1,11 +1,3 @@
-// src\features\mitra\data-request\components\mitra.data-request.add-to-cart-buttons.tsx
-
-// src\features\mitra\data-request\components\mitra.data-request.add-to-cart-buttons.tsx
-
-// src\features\mitra\data-request\components\mitra.data-request.add-to-cart-buttons.tsx
-
-// src\features\mitra\data-request\components\mitra.data-request.add-to-cart-buttons.tsx
-
 import {
   Button,
   IconButton,

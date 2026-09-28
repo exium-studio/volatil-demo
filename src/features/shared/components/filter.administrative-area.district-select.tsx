@@ -1,11 +1,3 @@
-// src\features\shared\components\filter.administrative-area.district-select.tsx
-
-// src\features\shared\components\filter.administrative-area.district-select.tsx
-
-// src\features\shared\components\filter.administrative-area.district-select.tsx
-
-// src\features\shared\components\filter.administrative-area.district-select.tsx
-
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type {

@@ -1,11 +1,3 @@
-// src\design-system\components\feedback\ui\state.no-result.tsx
-
-// src\design-system\components\feedback\ui\state.no-result.tsx
-
-// src\design-system\components\feedback\ui\state.no-result.tsx
-
-// src\design-system\components\feedback\ui\state.no-result.tsx
-
 "use client";
 
 import type { NoResultStateProps } from "@/design-system/components/feedback/types/feedback-state.type";

@@ -1,11 +1,3 @@
-// src\features\shared\types\color-palette-select.type.ts
-
-// src\features\shared\types\color-palette-select.type.ts
-
-// src\features\shared\types\color-palette-select.type.ts
-
-// src\features\shared\types\color-palette-select.type.ts
-
 export type ColorPaletteSelectMode = "focus" | "default";
 
 export type ColorPaletteSelectProps = {

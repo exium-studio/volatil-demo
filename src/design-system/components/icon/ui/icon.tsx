@@ -1,11 +1,3 @@
-// src\design-system\components\icon\ui\icon.tsx
-
-// src\design-system\components\icon\ui\icon.tsx
-
-// src\design-system\components\icon\ui\icon.tsx
-
-// src\design-system\components\icon\ui\icon.tsx
-
 "use client";
 
 import type { IconProps } from "@/design-system/components/icon/types/icon.type";

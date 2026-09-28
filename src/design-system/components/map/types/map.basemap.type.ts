@@ -1,11 +1,3 @@
-// src\design-system\components\map\types\map.basemap.type.ts
-
-// src\design-system\components\map\types\map.basemap.type.ts
-
-// src\design-system\components\map\types\map.basemap.type.ts
-
-// src\design-system\components\map\types\map.basemap.type.ts
-
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import type React from "react";
 

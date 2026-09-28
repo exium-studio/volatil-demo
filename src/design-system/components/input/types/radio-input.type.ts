@@ -1,11 +1,3 @@
-// src\design-system\components\input\types\radio-input.type.ts
-
-// src\design-system\components\input\types\radio-input.type.ts
-
-// src\design-system\components\input\types\radio-input.type.ts
-
-// src\design-system\components\input\types\radio-input.type.ts
-
 import { RadioGroup as ChakraRadioGroup } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 

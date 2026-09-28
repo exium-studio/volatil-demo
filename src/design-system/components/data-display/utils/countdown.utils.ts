@@ -1,11 +1,3 @@
-// src\design-system\components\data-display\utils\countdown.utils.ts
-
-// src\design-system\components\data-display\utils\countdown.utils.ts
-
-// src\design-system\components\data-display\utils\countdown.utils.ts
-
-// src\design-system\components\data-display\utils\countdown.utils.ts
-
 import type { CountdownParts } from "@/design-system/components/data-display/types/countdown.type";
 
 const SECOND_IN_MS = 1000;

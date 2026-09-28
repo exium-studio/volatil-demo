@@ -1,11 +1,3 @@
-// src\features\mitra\my-data\services\mitra.my-data.service.ts
-
-// src\features\mitra\my-data\services\mitra.my-data.service.ts
-
-// src\features\mitra\my-data\services\mitra.my-data.service.ts
-
-// src\features\mitra\my-data\services\mitra.my-data.service.ts
-
 import {
   fetchMyDataApi,
   updateMyDataItemApi,

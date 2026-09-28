@@ -1,11 +1,3 @@
-// src\features\mitra\cart\pages\mitra.cart.page.tsx
-
-// src\features\mitra\cart\pages\mitra.cart.page.tsx
-
-// src\features\mitra\cart\pages\mitra.cart.page.tsx
-
-// src\features\mitra\cart\pages\mitra.cart.page.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";

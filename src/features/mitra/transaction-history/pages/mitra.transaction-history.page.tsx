@@ -1,11 +1,3 @@
-// src\features\mitra\transaction-history\pages\mitra.transaction-history.page.tsx
-
-// src\features\mitra\transaction-history\pages\mitra.transaction-history.page.tsx
-
-// src\features\mitra\transaction-history\pages\mitra.transaction-history.page.tsx
-
-// src\features\mitra\transaction-history\pages\mitra.transaction-history.page.tsx
-
 import { Container } from "@/design-system/components/layout/ui/container";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";

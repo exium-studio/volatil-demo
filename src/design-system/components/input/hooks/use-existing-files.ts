@@ -1,11 +1,3 @@
-// src\design-system\components\input\hooks\use-existing-files.ts
-
-// src\design-system\components\input\hooks\use-existing-files.ts
-
-// src\design-system\components\input\hooks\use-existing-files.ts
-
-// src\design-system\components\input\hooks\use-existing-files.ts
-
 import type { UseExistingFilesOptions } from "@/design-system/components/input/types/file-input.type";
 import { useState } from "react";
 

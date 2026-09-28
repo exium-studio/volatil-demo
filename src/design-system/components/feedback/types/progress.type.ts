@@ -1,11 +1,3 @@
-// src\design-system\components\feedback\types\progress.type.ts
-
-// src\design-system\components\feedback\types\progress.type.ts
-
-// src\design-system\components\feedback\types\progress.type.ts
-
-// src\design-system\components\feedback\types\progress.type.ts
-
 import { Progress as ChakraProgress } from "@chakra-ui/react";
 import { ProgressCircle as ChakraProgressCircle } from "@chakra-ui/react";
 

@@ -1,11 +1,3 @@
-// src\design-system\components\utilities\ui\download-trigger.tsx
-
-// src\design-system\components\utilities\ui\download-trigger.tsx
-
-// src\design-system\components\utilities\ui\download-trigger.tsx
-
-// src\design-system\components\utilities\ui\download-trigger.tsx
-
 "use client";
 
 import { DownloadTrigger as ChakraDownloadTrigger } from "@chakra-ui/react";

@@ -1,11 +1,3 @@
-// src\features\design-system-docs\config\components-registry.tsx
-
-// src\features\design-system-docs\config\components-registry.tsx
-
-// src\features\design-system-docs\config\components-registry.tsx
-
-// src\features\design-system-docs\config\components-registry.tsx
-
 import { BrandWatermark } from "@/design-system/components/branding/ui/brand-watermark";
 import { Logo } from "@/design-system/components/branding/ui/logo";
 import { Button } from "@/design-system/components/button/ui/button";

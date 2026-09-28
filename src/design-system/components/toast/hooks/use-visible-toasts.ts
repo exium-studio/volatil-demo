@@ -1,11 +1,3 @@
-// src\design-system\components\toast\hooks\use-visible-toasts.ts
-
-// src\design-system\components\toast\hooks\use-visible-toasts.ts
-
-// src\design-system\components\toast\hooks\use-visible-toasts.ts
-
-// src\design-system\components\toast\hooks\use-visible-toasts.ts
-
 // [ARCHIVED] – previously used for grouped toast rendering (per-group stacks).
 // Kept as reference if grouped view is ever reintroduced.
 

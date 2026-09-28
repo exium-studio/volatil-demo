@@ -1,11 +1,3 @@
-// src\design-system\components\charts\types\chart-tooltip.type.type.ts
-
-// src\design-system\components\charts\types\chart-tooltip.type.type.ts
-
-// src\design-system\components\charts\types\chart-tooltip.type.type.ts
-
-// src\design-system\components\charts\types\chart-tooltip.type.type.ts
-
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { TooltipProps } from "recharts";
 import type {

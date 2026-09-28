@@ -1,11 +1,3 @@
-// src\features\auth\pages\mitra.signin.page.tsx
-
-// src\features\auth\pages\mitra.signin.page.tsx
-
-// src\features\auth\pages\mitra.signin.page.tsx
-
-// src\features\auth\pages\mitra.signin.page.tsx
-
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";

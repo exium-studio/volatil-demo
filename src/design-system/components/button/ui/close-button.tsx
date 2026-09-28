@@ -1,11 +1,3 @@
-// src\design-system\components\button\ui\close-button.tsx
-
-// src\design-system\components\button\ui\close-button.tsx
-
-// src\design-system\components\button\ui\close-button.tsx
-
-// src\design-system\components\button\ui\close-button.tsx
-
 "use client";
 
 import type { IconButtonProps } from "@/design-system/components/button/types/button.type";

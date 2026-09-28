@@ -1,11 +1,3 @@
-// src\design-system\components\data-display\hooks\use-data-view-sort.ts
-
-// src\design-system\components\data-display\hooks\use-data-view-sort.ts
-
-// src\design-system\components\data-display\hooks\use-data-view-sort.ts
-
-// src\design-system\components\data-display\hooks\use-data-view-sort.ts
-
 import { useMemo, useState } from "react";
 import type {
   DataViewTableSortConfig,
