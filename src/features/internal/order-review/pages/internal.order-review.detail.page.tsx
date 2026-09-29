@@ -501,7 +501,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
               value: item.sourceLayerTitle,
               td: (
                 <VStack align={"start"}>
-                  <P fontWeight={"medium"}>{item.sourceLayerTitle}</P>
+                  <P>{item.sourceLayerTitle}</P>
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {item.sourceLayerId}
                   </P>

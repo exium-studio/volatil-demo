@@ -262,7 +262,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
             flex={1}
             w={"full"}
             h={"full"}
-            minH={"304px"}
+            minH={"368px"}
             p={"md"}
             rounded={0}
           />

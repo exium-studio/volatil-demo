@@ -455,7 +455,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             columns: [
               {
                 value: formattedTitle,
-                td: <P fontWeight={"medium"}>{formattedTitle}</P>,
+                td: <P>{formattedTitle}</P>,
                 align: "start",
               },
               {

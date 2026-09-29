@@ -124,7 +124,7 @@ export const InternalMitraLayerSyncJobTableView = (
             value: job.layerTitle,
             td: (
               <VStack align={"start"} gap={"2xs"} minW={"200px"}>
-                <ClampedP fontWeight={"medium"}>{job.layerTitle}</ClampedP>
+                <ClampedP>{job.layerTitle}</ClampedP>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {job.typeName}
                 </P>
@@ -152,7 +152,6 @@ export const InternalMitraLayerSyncJobTableView = (
 
                   <P
                     fontSize={"xs"}
-                    fontWeight={"semibold"}
                     textAlign={"end"}
                     fontVariantNumeric={"tabular-nums"}
                   >

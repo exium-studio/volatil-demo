@@ -98,7 +98,7 @@ export const InternalPricingDataView = () => {
             value: item.layerTitle ?? item.id,
             td: (
               <VStack align={"start"} gap={0} maxW={"280px"}>
-                <P fontWeight={"medium"}>{item.layerTitle ?? item.id}</P>
+                <P>{item.layerTitle ?? item.id}</P>
                 {item.description && (
                   <P
                     fontSize={"xs"}
@@ -122,7 +122,7 @@ export const InternalPricingDataView = () => {
             value: item.unitPrice,
             td: (
               <VStack align={"end"} gap={0}>
-                <P fontWeight={"semibold"} color={"teal.fg"}>
+                <P color={"teal.fg"}>
                   <FormatNumber
                     value={item.unitPrice}
                     style={"currency"}

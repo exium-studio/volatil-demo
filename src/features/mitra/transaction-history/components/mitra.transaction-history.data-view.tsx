@@ -124,7 +124,7 @@ export const TransactionHistoryDataView = () => {
           columns: [
             {
               value: item.transactionNumber,
-              td: <P fontWeight={"semibold"}>{item.transactionNumber}</P>,
+              td: <P>{item.transactionNumber}</P>,
               align: "start" as const,
             },
             {
@@ -169,7 +169,6 @@ export const TransactionHistoryDataView = () => {
                 targetExpiry ? (
                   <Countdown
                     finishedAt={targetExpiry}
-                    fontWeight={"medium"}
                     warningThresholdHours={1}
                     finishColor={"fg.subtle"}
                   />
@@ -222,7 +221,7 @@ export const TransactionHistoryDataView = () => {
             {
               value: item.totalAmount,
               td: (
-                <P fontWeight={"medium"}>
+                <P>
                   <FormatNumber
                     value={item.totalAmount}
                     style={"currency"}

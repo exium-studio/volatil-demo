@@ -294,7 +294,7 @@ export const TransactionDetailModalContent = (
           {
             value: item.subtotalPrice,
             td: (
-              <P fontWeight={"medium"}>
+              <P>
                 <FormatNumber
                   value={item.subtotalPrice}
                   style={"currency"}

@@ -165,7 +165,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             {
               value: layerDisplayName,
               td: (
-                <ClampedP fontSize={"sm"} fontWeight={"medium"} w={"220px"}>
+                <ClampedP fontSize={"sm"} w={"220px"}>
                   {layerDisplayName}
                 </ClampedP>
               ),

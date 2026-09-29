@@ -98,7 +98,7 @@ export const InternalUserManagementDataView = () => {
             value: user.name,
             td: (
               <VStack align={"start"} gap={0} minW={"180px"}>
-                <P fontWeight={"medium"}>{user.name}</P>
+                <P>{user.name}</P>
                 <P fontSize={"sm"} color={"fg.subtle"}>
                   {user.email}
                 </P>

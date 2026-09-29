@@ -176,7 +176,7 @@ const MitraHomeLastTransactionDataView = (props: {
           columns: [
             {
               value: item.transactionNumber,
-              td: <P fontWeight={"semibold"}>{item.transactionNumber}</P>,
+              td: <P>{item.transactionNumber}</P>,
               align: "start" as const,
             },
             {
@@ -246,7 +246,7 @@ const MitraHomeLastTransactionDataView = (props: {
             {
               value: item.totalAmount,
               td: (
-                <P fontWeight={"medium"}>
+                <P>
                   <FormatNumber
                     value={item.totalAmount}
                     style={"currency"}

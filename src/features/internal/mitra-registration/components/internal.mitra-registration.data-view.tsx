@@ -107,13 +107,13 @@ export const InternalMitraRegistrationDataView = () => {
         columns: [
           {
             value: reg.registrationNumber,
-            td: <P fontWeight={"semibold"}>{reg.registrationNumber}</P>,
+            td: <P>{reg.registrationNumber}</P>,
           },
           {
             value: reg.organizationName ?? reg.namaInstansi,
             td: (
               <VStack gap={"2xs"}>
-                <ClampedP fontWeight={"medium"}>
+                <ClampedP>
                   {reg.organizationName ?? reg.namaInstansi}
                 </ClampedP>
                 <P fontSize={"sm"} color={"fg.subtle"}>

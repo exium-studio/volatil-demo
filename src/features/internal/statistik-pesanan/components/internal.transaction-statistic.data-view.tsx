@@ -122,7 +122,7 @@ export const InternalTransactionStatisticDataView = () => {
             {
               value: item.transactionNumber,
               td: (
-                <P fontWeight={"semibold"} fontSize={"sm"}>
+                <P fontSize={"sm"}>
                   {item.transactionNumber}
                 </P>
               ),
@@ -132,7 +132,7 @@ export const InternalTransactionStatisticDataView = () => {
               value: item.mitra.name,
               td: (
                 <VStack align={"start"} gap={0} w={"180px"}>
-                  <ClampedP fontWeight={"medium"} fontSize={"sm"}>
+                  <ClampedP fontSize={"sm"}>
                     {item.mitra.name}
                   </ClampedP>
                   <ClampedP fontSize={"xs"} color={"fg.subtle"}>
@@ -238,7 +238,7 @@ export const InternalTransactionStatisticDataView = () => {
             {
               value: item.totalAmount,
               td: (
-                <P fontWeight={"medium"}>
+                <P>
                   <FormatNumber
                     value={item.totalAmount}
                     style={"currency"}

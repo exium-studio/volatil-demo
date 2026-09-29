@@ -147,7 +147,7 @@ export const HelpCenterDataView = () => {
           columns: [
             {
               value: ticket.title,
-              td: <P fontWeight={"medium"}>{ticket.title}</P>,
+              td: <P>{ticket.title}</P>,
             },
             {
               value: ticket.description,

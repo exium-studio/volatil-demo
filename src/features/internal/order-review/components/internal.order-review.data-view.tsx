@@ -135,7 +135,7 @@ export const InternalOrderReviewDataView = () => {
           {
             value: displayOrderNumber,
             td: (
-              <P fontWeight={"semibold"} fontSize={"sm"}>
+              <P fontSize={"sm"}>
                 {displayOrderNumber}
               </P>
             ),
@@ -145,7 +145,7 @@ export const InternalOrderReviewDataView = () => {
             value: order.mitraName,
             td: (
               <VStack align={"start"} gap={0}>
-                <P fontWeight={"medium"} fontSize={"sm"}>
+                <P fontSize={"sm"}>
                   {order.mitraName}
                 </P>
                 {(order.agencyOrCompany || order.email) && (
@@ -166,7 +166,7 @@ export const InternalOrderReviewDataView = () => {
             value: order.items.length,
             td: (
               <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"} fontWeight={"medium"}>
+                <P fontSize={"sm"}>
                   {order.items.map((i) => i.sourceLayerTitle).join(", ")}
                 </P>
                 <P fontSize={"xs"} color={"fg.muted"}>
@@ -202,7 +202,7 @@ export const InternalOrderReviewDataView = () => {
           {
             value: order.totalPrice,
             td: (
-              <P fontWeight={"medium"} fontSize={"sm"}>
+              <P fontSize={"sm"}>
                 {formatCurrency(order.totalPrice)}
               </P>
             ),
