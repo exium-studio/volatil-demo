@@ -22,4 +22,3 @@ export type IconButtonProps = ChakraIconButtonProps &
   };
 
 export type ColorModeToggleButtonProps = IconButtonProps;
-

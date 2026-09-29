@@ -13,7 +13,8 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
 export const MapOverlay = (props: MapOverlayProps) => {
-  const { showMasterIgtLayerSelect = true, showMyDataLayerSelect = true } = props;
+  const { showMasterIgtLayerSelect = true, showMyDataLayerSelect = true } =
+    props;
 
   // User session
   const userSession = getUserSession();
