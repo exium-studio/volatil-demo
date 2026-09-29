@@ -128,6 +128,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       internalRef.current?.focus();
     }
 
+    const resolvedWidth = w ?? restProps.maxW ?? "280px";
+    const isFullWidth = resolvedWidth === "full" || resolvedWidth === "100%";
+
     return (
       <InputGroup
         startElement={
@@ -151,14 +154,17 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             </IconButton>
           ) : undefined
         }
-        w={w || "fit"}
-        minW={restProps.minW ?? "200px"}
+        w={resolvedWidth}
+        minW={restProps.minW ?? (isFullWidth ? "0" : resolvedWidth)}
+        maxW={isFullWidth ? "full" : resolvedWidth}
         flexShrink={0}
         {...inputGroupProps}
       >
         <Input
           {...restProps}
-          minW={restProps.minW ?? "200px"}
+          w={"full"}
+          minW={"0"}
+          maxW={"full"}
           ref={(node) => {
             internalRef.current = node;
             if (typeof ref === "function") ref(node);

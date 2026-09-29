@@ -7,7 +7,12 @@ import type {
 
 export type ButtonProps = Omit<ChakraButtonProps, "variant"> & {
   primary?: boolean;
-  variant?: ChakraButtonProps["variant"] | "frosted" | "blend" | (string & {});
+  variant?:
+    | ChakraButtonProps["variant"]
+    | "frosted"
+    | "glass"
+    | "blend"
+    | (string & {});
   lineClamp?: ChakraButtonProps["lineClamp"];
 };
 
