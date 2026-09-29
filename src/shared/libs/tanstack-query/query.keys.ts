@@ -32,6 +32,16 @@ export const queryKeys = {
       list: (params?: Record<string, unknown>) =>
         [...queryKeys.mitra.myData.all, "list", params] as const,
     },
+    workspaces: {
+      all: ["mitra", "workspaces"] as const,
+      list: (params?: Record<string, unknown>) =>
+        [...queryKeys.mitra.workspaces.all, "list", params] as const,
+    },
+    workspace: {
+      all: ["mitra", "workspace"] as const,
+      detail: (id?: string) =>
+        [...queryKeys.mitra.workspace.all, "detail", id] as const,
+    },
     dataRequest: {
       all: ["mitra", "data-request"] as const,
       catalog: (params?: Record<string, unknown>) =>

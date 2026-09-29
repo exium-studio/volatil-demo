@@ -22,7 +22,7 @@ export const useMitraWorkspacesQuery = (
   params?: MitraWorkspaceQueryParams,
 ) => {
   const query = useQuery<MitraWorkspaceListResponse>({
-    queryKey: ["mitra", "workspaces", params],
+    queryKey: queryKeys.mitra.workspaces.list(params),
     queryFn: ({ signal }) => getMitraWorkspaces(params, signal),
     placeholderData: (previousData) => previousData,
   });
@@ -38,7 +38,7 @@ export const useMitraWorkspacesQuery = (
 
 export const useMitraWorkspaceDetailQuery = (workspaceId?: string) => {
   return useQuery<MitraWorkspaceItem | null>({
-    queryKey: ["mitra", "workspace", workspaceId],
+    queryKey: queryKeys.mitra.workspace.detail(workspaceId),
     queryFn: ({ signal }) =>
       workspaceId ? getMitraWorkspaceDetail(workspaceId, signal) : null,
     enabled: Boolean(workspaceId),
@@ -71,9 +71,48 @@ export const useUpdateMyData = () => {
   >({
     mutationFn: ({ id, payload }) => updateMyData(id, payload),
     onSuccess: (data) => {
+      // 1. Direct cache update for active workspace detail query
+      queryClient.setQueriesData<MitraWorkspaceItem | null>(
+        { queryKey: queryKeys.mitra.workspace.all },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            layers: old.layers.map((l) =>
+              l.id === data.id ? { ...l, label: data.label } : l,
+            ),
+          };
+        },
+      );
+
+      // 2. Direct cache update for workspaces list query
+      queryClient.setQueriesData<MitraWorkspaceListResponse>(
+        { queryKey: queryKeys.mitra.workspaces.all },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((ws) => ({
+              ...ws,
+              layers: ws.layers.map((l) =>
+                l.id === data.id ? { ...l, label: data.label } : l,
+              ),
+            })),
+          };
+        },
+      );
+
+      // 3. Invalidate related queries to ensure server/source alignment
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspace.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspaces.all,
+      });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.myData.all,
       });
+
       toast.create({
         variant: "success",
         title: "Berhasil",

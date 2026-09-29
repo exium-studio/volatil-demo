@@ -191,7 +191,17 @@ export const updateMyData = async (
         });
       }
       existing.label = payload.label;
-      return existing;
+
+      // Also update matching layer in dummy workspaces
+      dummyMitraWorkspaces.forEach((ws) => {
+        ws.layers.forEach((layer) => {
+          if (layer.id === id) {
+            layer.label = payload.label;
+          }
+        });
+      });
+
+      return { ...existing };
     }
     throw error;
   }
