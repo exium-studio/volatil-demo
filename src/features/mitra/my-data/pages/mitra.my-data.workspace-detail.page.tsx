@@ -135,7 +135,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
               value: layerDisplayName,
               td: (
                 <VStack align={"start"} gap={0}>
-                  <ClampedP fontSize={"sm"} fontWeight={"medium"} maxW={"220px"}>
+                  <ClampedP
+                    fontSize={"sm"}
+                    fontWeight={"medium"}
+                    maxW={"220px"}
+                  >
                     {layerDisplayName}
                   </ClampedP>
                   <P fontSize={"xs"} color={"fg.subtle"}>
@@ -350,11 +354,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
           <HeaderContainer px={"xs"}>
             <HStack justify={"space-between"} align={"center"} w={"full"}>
               <HStack align={"center"} gap={"sm"}>
-                <BackButton onClick={() => navigate({ to: "/mitra/my-data" })} />
+                <BackButton
+                  onClick={() => navigate({ to: "/mitra/my-data" })}
+                />
 
-                <ClampedHeading>
-                  {`Detail Workspace: ${workspace.workspaceName}`}
-                </ClampedHeading>
+                <ClampedHeading>{`${workspace.workspaceName}`}</ClampedHeading>
               </HStack>
             </HStack>
           </HeaderContainer>
@@ -375,10 +379,10 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
               <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Nomor Pesanan / Transaksi"}
+                  {"Nomor Transaksi / Pesanan"}
                 </P>
                 <P fontWeight={"semibold"}>
-                  {workspace.orderNumber || workspace.orderId}
+                  {`${workspace.transactionNumber} / ${workspace.orderNumber}`}
                 </P>
               </VStack>
 

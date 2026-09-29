@@ -17,6 +17,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
@@ -32,16 +33,15 @@ import { useOrderReviewLayerStore } from "@/features/internal/order-review/store
 import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
-import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
-import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
-import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { TteBadge } from "@/features/shared/components/tte.badge";
-import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import {
   highlightFeatureOnMap,
   removeFeatureHighlightFromMap,
 } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
-import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import {
   formatCurrency,
   formatNumber,
@@ -58,9 +58,10 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 
@@ -380,12 +381,13 @@ export function InternalOrderReviewDetailPage() {
                   {"TTE & Faktur"}
                 </P>
 
-                <TteBadge
-                  tte={order.tte}
-                  invoiceUrl={order.invoiceUrl}
-                  tteInvoiceUrl={order.tteInvoiceUrl}
-                  my={"auto"}
-                />
+                <Center mt={"3px"}>
+                  <TteBadge
+                    tte={order.tte}
+                    invoiceUrl={order.invoiceUrl}
+                    tteInvoiceUrl={order.tteInvoiceUrl}
+                  />
+                </Center>
               </VStack>
 
               {hasAoi && (

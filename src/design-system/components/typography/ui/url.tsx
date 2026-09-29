@@ -28,7 +28,6 @@ export const Url = memo((props: UrlProps) => {
         target={isExternalLink ? "_blank" : undefined}
         rel={isExternalLink ? "noopener noreferrer" : undefined}
         fontFamily={"mono"}
-        fontSize={"xs"}
         color={"fg.muted"}
         flex={1}
         minW={0}

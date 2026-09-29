@@ -50,9 +50,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
-export const MitraMyDataWorkspacesDataView = (
-  _props: MitraMyDataViewProps,
-) => {
+export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   // Navigation
   const navigate = useNavigate();
 
@@ -72,19 +70,26 @@ export const MitraMyDataWorkspacesDataView = (
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Queries
-  const { workspaces, pagination, isLoading, isFetching, isError, error, refetch } =
-    useMitraWorkspacesQuery({
-      page: params.page,
-      pageSize: params.pageSize,
-      search: debouncedSearch || undefined,
-      status: params.status,
-    });
+  const {
+    workspaces,
+    pagination,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useMitraWorkspacesQuery({
+    page: params.page,
+    pageSize: params.pageSize,
+    search: debouncedSearch || undefined,
+    status: params.status,
+  });
 
   // Derived Values — Table headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Workspace", sortable: true },
-      { th: "No. Pesanan / Transaksi", sortable: true },
+      { th: "No. Transaksi / Pesanan", sortable: true },
       { th: "WMS URL (Interop)", sortable: false },
       { th: "Jumlah Layer", sortable: true, align: "center" },
       { th: "Status Aktif", sortable: true },
@@ -122,15 +127,14 @@ export const MitraMyDataWorkspacesDataView = (
             {
               value: item.orderNumber || item.orderId,
               td: (
-                <VStack align={"start"} gap={0}>
-                  <P fontSize={"sm"} fontWeight={"medium"}>
+                <VStack>
+                  {item.transactionNumber && (
+                    <P fontSize={"sm"}>{item.transactionNumber}</P>
+                  )}
+
+                  <P fontSize={"sm"} color={"fg.subtle"}>
                     {item.orderNumber || item.orderId}
                   </P>
-                  {item.transactionNumber && (
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {item.transactionNumber}
-                    </P>
-                  )}
                 </VStack>
               ),
               align: "start" as const,
