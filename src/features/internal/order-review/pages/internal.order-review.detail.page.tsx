@@ -421,6 +421,42 @@ export function InternalOrderReviewDetailPage() {
                 </VStack>
               )}
             </HStack>
+
+            <Separator borderColor={"bg.canvas"} />
+
+            {/* Workspace URLs */}
+            <HStack wrap={"wrap"} gap={"lg"}>
+              <VStack gap={"xs"} align={"start"} flex={1} minW={"260px"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"URL Workspace GeoServer Volatil (Internal)"}
+                </P>
+
+                <Url
+                  url={
+                    order.internalWorkspaceUrl ||
+                    `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`
+                  }
+                  label={"Salin URL Workspace Volatil"}
+                  isExternalLink={false}
+                  maxW={"full"}
+                />
+              </VStack>
+
+              {order.workspaceInteropUrl && (
+                <VStack gap={"xs"} align={"start"} flex={1} minW={"260px"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"URL Workspace Resmi (INTEROP Pusdatin)"}
+                  </P>
+
+                  <Url
+                    url={order.workspaceInteropUrl}
+                    label={"Salin URL Workspace INTEROP"}
+                    isExternalLink={true}
+                    maxW={"full"}
+                  />
+                </VStack>
+              )}
+            </HStack>
           </VStack>
 
           <Separator borderColor={"bg.canvas"} />

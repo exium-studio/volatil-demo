@@ -9,6 +9,11 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     orderId: "ord-2026-0830-001",
     orderNumber: "ORD-20260830-001",
     transactionNumber: "TRX-20260830-001",
+    workspaceName: "ws_ord_20260830_001",
+    internalWorkspaceUrl:
+      "https://geoserver.internal.volatil.atrbpn.go.id/geoserver/ws_ord_20260830_001/ows",
+    workspaceInteropUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001",
     mitraId: "mtr-001",
     mitraName: "PT Graha Pembangunan Persada",
     agencyOrCompany: "PT Graha Pembangunan Persada",
@@ -58,6 +63,10 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     orderId: "ord-2026-0830-002",
     orderNumber: "ORD-20260830-002",
     transactionNumber: "TRX-20260830-002",
+    workspaceName: "ws_ord_20260830_002",
+    internalWorkspaceUrl:
+      "https://geoserver.internal.volatil.atrbpn.go.id/geoserver/ws_ord_20260830_002/ows",
+    workspaceInteropUrl: null,
     mitraId: "mtr-002",
     mitraName: "PT Nusantara Infrastruktur Utama",
     agencyOrCompany: "PT Nusantara Infrastruktur Utama",
@@ -91,6 +100,11 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     orderId: "ord-2026-0829-003",
     orderNumber: "ORD-20260829-003",
     transactionNumber: "TRX-20260829-003",
+    workspaceName: "ws_ord_20260829_003",
+    internalWorkspaceUrl:
+      "https://geoserver.internal.volatil.atrbpn.go.id/geoserver/ws_ord_20260829_003/ows",
+    workspaceInteropUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260829_003",
     mitraId: "mtr-003",
     mitraName: "CV Agraria Citra Mandiri",
     agencyOrCompany: "CV Agraria Citra Mandiri",
@@ -125,6 +139,10 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     orderId: "ord-2026-0828-004",
     orderNumber: "ORD-20260828-004",
     transactionNumber: "TRX-20260828-004",
+    workspaceName: "ws_ord_20260828_004",
+    internalWorkspaceUrl:
+      "https://geoserver.internal.volatil.atrbpn.go.id/geoserver/ws_ord_20260828_004/ows",
+    workspaceInteropUrl: null,
     mitraId: "mtr-001",
     mitraName: "PT Graha Pembangunan Persada",
     agencyOrCompany: "PT Graha Pembangunan Persada",

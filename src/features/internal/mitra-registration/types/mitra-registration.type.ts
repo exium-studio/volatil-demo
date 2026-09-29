@@ -74,7 +74,7 @@ export type InternalMitraRegistrationListResponse = {
 export type ApproveMitraRegistrationPayload = {
   id: string | number;
   contractDocument: File;
-  workspaceInteropUrl: string;
+  workspaceInteropUrl?: string;
 };
 
 export type RejectMitraRegistrationPayload = {

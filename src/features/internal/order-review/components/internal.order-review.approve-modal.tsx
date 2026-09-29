@@ -1,13 +1,17 @@
 // src/features/internal/order-review/components/internal.order-review.approve-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Field } from "@/design-system/components/input/ui/field";
+import { Textarea } from "@/design-system/components/input/ui/textarea";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useApproveOrder } from "@/features/internal/order-review/hooks/use-order-review";
 import type {
   InternalOrderReviewApproveModalContentProps,
@@ -16,6 +20,7 @@ import type {
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import { CheckCircleIcon, InfoIcon } from "lucide-react";
+import { useState } from "react";
 
 export const InternalOrderReviewApproveTrigger = (
   props: InternalOrderReviewApproveTriggerProps,
@@ -46,7 +51,7 @@ export const InternalOrderReviewApproveTrigger = (
       opened={isOpen}
       open={open}
       close={close}
-      size={"sm"}
+      size={"md"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
@@ -68,17 +73,33 @@ const InternalOrderReviewApproveModalContent = (
   // Props
   const { order, onSuccessRedirect, close } = props;
 
+  // Stores
+  const { theme } = useThemeStore();
+
+  // States
+  const [workspaceInteropUrl, setWorkspaceInteropUrl] = useState<string>(
+    order.workspaceInteropUrl || "",
+  );
+
   // Hooks
   const navigate = useNavigate();
 
   // Mutations
   const approveMutation = useApproveOrder();
 
+  // Derived Values — Internal GeoServer workspace URL to be registered in INTEROP Pusdatin
+  const internalWorkspaceUrl =
+    order.internalWorkspaceUrl ||
+    `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`;
+
   // Handlers
   const handleApprove = () => {
+    if (!workspaceInteropUrl.trim()) return;
+
     approveMutation.mutate(
       {
         orderId: order.orderId,
+        workspaceInteropUrl: workspaceInteropUrl.trim(),
       },
       {
         onSuccess: () => {
@@ -93,60 +114,107 @@ const InternalOrderReviewApproveModalContent = (
     );
   };
 
-  const totalItemsCount = order.items?.length ?? 0;
+  const isSubmitDisabled =
+    !workspaceInteropUrl.trim() || approveMutation.isPending;
 
   return (
     <Modal.Content>
       <Modal.Header>
         <Modal.CloseButton />
-        <Modal.Title>{"Verifikasi & Setujui Pesanan"}</Modal.Title>
+        <VStack gap={"2xs"}>
+          <Modal.Title>{"Verifikasi & Setujui Pesanan"}</Modal.Title>
+          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
+            {`${order.mitraName} • ${order.orderNumber || order.orderId}`}
+          </P>
+        </VStack>
       </Modal.Header>
 
       <Modal.Body>
-        <VStack align={"stretch"} gap={"xs"}>
+        <VStack align={"stretch"} gap={"md"}>
           <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
             <AppIcon icon={InfoIcon} />
             <Alert.Description>
               {
-                "Pesanan data spasial yang disetujui akan diproses dan layer IGT otomatis disinkronkan ke workspace mitra."
+                "Salin URL Workspace GeoServer internal di bawah, buka aplikasi INTEROP Pusdatin ATR/BPN untuk mendaftarkan workspace pesanan dan mendapatkan link proxy wrapper resmi, lalu masukkan link proxy tersebut ke formulir di bawah ini."
               }
             </Alert.Description>
           </Alert.Root>
 
+          {/* Internal GeoServer Workspace URL */}
+          <VStack align={"stretch"} gap={1}>
+            <P fontSize={"xs"} color={"fg.muted"}>
+              {"URL Workspace GeoServer Volatil (Internal):"}
+            </P>
+
+            <HStack
+              gap={"md"}
+              bg={"bg.panel"}
+              p={"md"}
+              rounded={theme.radii.component}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+            >
+              <P
+                fontFamily={"mono"}
+                fontSize={"xs"}
+                flex={1}
+                color={"fg.default"}
+              >
+                {internalWorkspaceUrl}
+              </P>
+
+              <ClipboardButton
+                value={internalWorkspaceUrl}
+                variant={"ghost"}
+                size={"xs"}
+                aria-label={"Salin URL Workspace Internal"}
+              />
+            </HStack>
+          </VStack>
+
+          {/* Input INTEROP Workspace Proxy URL */}
+          <Field
+            variant={"default"}
+            label={"URL Workspace Resmi (INTEROP Pusdatin - Wajib)"}
+          >
+            <Textarea
+              placeholder={
+                "https://geoportal.atrbpn.go.id/interop/wms?workspace=..."
+              }
+              value={workspaceInteropUrl}
+              onChange={(e) => setWorkspaceInteropUrl(e.target.value)}
+              minH={"90px"}
+            />
+          </Field>
+
           {/* Order Summary Box */}
-          <VStack align={"stretch"} gap={"sm"} pt={"xs"}>
+          <HStack
+            p={"sm"}
+            bg={"bg.subtle"}
+            rounded={theme.radii.component}
+            justify={"space-between"}
+            align={"center"}
+          >
             <VStack align={"start"} gap={0}>
-              <P fontSize={"sm"} color={"fg.subtle"}>
-                {"No. Pesanan"}
-              </P>
-              <P fontWeight={"semibold"}>{order.orderId}</P>
-            </VStack>
-
-            <VStack align={"start"} gap={0}>
-              <P fontSize={"sm"} color={"fg.subtle"}>
-                {"Nama Mitra"}
-              </P>
-              <P fontWeight={"medium"}>{order.mitraName}</P>
-            </VStack>
-
-            <VStack align={"start"} gap={0}>
-              <P fontSize={"sm"} color={"fg.subtle"}>
+              <P fontSize={"xs"} color={"fg.subtle"}>
                 {"Jumlah Layer"}
               </P>
-              <P fontWeight={"medium"}>{`${totalItemsCount} Layer`}</P>
+              <P fontSize={"sm"} fontWeight={"medium"}>
+                {`${order.items?.length ?? 0} Layer`}
+              </P>
             </VStack>
 
             {order.totalPrice > 0 && (
-              <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"} color={"fg.subtle"}>
+              <VStack align={"end"} gap={0}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Total Biaya"}
                 </P>
-                <P fontWeight={"bold"} color={"colorPalette.fg"}>
+                <P fontSize={"sm"} fontWeight={"bold"} color={"colorPalette.fg"}>
                   {formatCurrency(order.totalPrice)}
                 </P>
               </VStack>
             )}
-          </VStack>
+          </HStack>
         </VStack>
       </Modal.Body>
 
@@ -155,6 +223,7 @@ const InternalOrderReviewApproveModalContent = (
           <Button
             primary
             colorPalette={"green"}
+            disabled={isSubmitDisabled}
             loading={approveMutation.isPending}
             onClick={handleApprove}
             w={"full"}
@@ -171,3 +240,4 @@ const InternalOrderReviewApproveModalContent = (
     </Modal.Content>
   );
 };
+

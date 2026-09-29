@@ -1,10 +1,15 @@
 // src/features/mitra/my-data/services/mitra.my-data.service.ts
 
 import {
+  fetchMitraWorkspaceDetailApi,
+  fetchMitraWorkspacesApi,
   fetchMyDataApi,
   updateMyDataItemApi,
 } from "@/features/mitra/my-data/api/mitra.my-data.api";
 import type {
+  MitraWorkspaceItem,
+  MitraWorkspaceListResponse,
+  MitraWorkspaceQueryParams,
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
@@ -13,10 +18,97 @@ import type {
 import {
   dummyApiKey,
   dummyMitraMyDataItems,
+  dummyMitraWorkspaces,
   dummyWorkspaceUrl,
 } from "@/shared/constants/dummy-data/dummy-my-data";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
+
+export const getPaginatedWorkspaces = (
+  items: MitraWorkspaceItem[],
+  params?: MitraWorkspaceQueryParams,
+): MitraWorkspaceListResponse => {
+  const page = params?.page ?? 1;
+  const pageSize = params?.pageSize ?? 10;
+  const search = params?.search?.trim().toLowerCase();
+
+  const filtered = items.filter((item) => {
+    const matchesStatus = !params?.status || item.status === params.status;
+    const matchesQuery =
+      !search ||
+      item.workspaceName.toLowerCase().includes(search) ||
+      (item.orderNumber && item.orderNumber.toLowerCase().includes(search)) ||
+      (item.transactionNumber &&
+        item.transactionNumber.toLowerCase().includes(search)) ||
+      (item.wmsUrl && item.wmsUrl.toLowerCase().includes(search)) ||
+      item.layers.some((l) => l.title.toLowerCase().includes(search));
+
+    return matchesStatus && matchesQuery;
+  });
+
+  const startIndex = (page - 1) * pageSize;
+  const paginated = filtered.slice(startIndex, startIndex + pageSize);
+
+  return {
+    items: paginated,
+    pagination: createPaginationMeta(page, pageSize, filtered.length),
+  };
+};
+
+export const getMitraWorkspaces = async (
+  params?: MitraWorkspaceQueryParams,
+  signal?: AbortSignal,
+): Promise<MitraWorkspaceListResponse> => {
+  try {
+    const response = await fetchMitraWorkspacesApi(params, signal);
+    if (response.data) {
+      return response.data;
+    }
+    return isDummyDataEnabled()
+      ? getPaginatedWorkspaces(dummyMitraWorkspaces, params)
+      : { items: [], pagination: createPaginationMeta(1, 10, 0) };
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return getPaginatedWorkspaces(dummyMitraWorkspaces, params);
+    }
+    throw error;
+  }
+};
+
+export const getMitraWorkspaceDetail = async (
+  workspaceId: string,
+  signal?: AbortSignal,
+): Promise<MitraWorkspaceItem | null> => {
+  try {
+    const response = await fetchMitraWorkspaceDetailApi(workspaceId, signal);
+    if (response.data) {
+      return response.data;
+    }
+    if (isDummyDataEnabled()) {
+      return (
+        dummyMitraWorkspaces.find(
+          (w) =>
+            w.id === workspaceId ||
+            w.orderId === workspaceId ||
+            w.workspaceName === workspaceId,
+        ) ?? null
+      );
+    }
+    return null;
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return (
+        dummyMitraWorkspaces.find(
+          (w) =>
+            w.id === workspaceId ||
+            w.orderId === workspaceId ||
+            w.workspaceName === workspaceId,
+        ) ?? null
+      );
+    }
+    throw error;
+  }
+};
 
 const matchesSearch = (item: MyDataItem, search: string) =>
   [
@@ -104,5 +196,6 @@ export const updateMyData = async (
     throw error;
   }
 };
+
 
 

@@ -116,6 +116,22 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
     invoiceUrl: raw.invoiceUrl ?? raw.invoice_url ?? null,
     tteInvoiceUrl: raw.tteInvoiceUrl ?? raw.tte_invoice_url ?? null,
     tte: Boolean(raw.tte ?? (raw.tteInvoiceUrl || raw.tte_invoice_url)),
+    internalWorkspaceUrl:
+      raw.internalWorkspaceUrl ??
+      raw.internal_workspace_url ??
+      raw.workspaceUrl ??
+      raw.workspace_url ??
+      `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/ws_${idVal}/ows`,
+    workspaceInteropUrl:
+      raw.workspaceInteropUrl ??
+      raw.workspace_interop_url ??
+      raw.interopUrl ??
+      raw.interop_url ??
+      null,
+    workspaceName:
+      raw.workspaceName ??
+      raw.workspace_name ??
+      `ws_${idVal}`,
   };
 };
 
@@ -315,10 +331,10 @@ export const approveOrderApi = async (
   payload: ApproveOrderPayload,
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
-  const { orderId, items } = payload;
+  const { orderId, workspaceInteropUrl } = payload;
   return apiClient.put<ApiResponse<void>>(
     `/api/internal/interop/orders/${orderId}/approve`,
-    items ? { items } : {},
+    { workspaceInteropUrl },
     { signal },
   );
 };

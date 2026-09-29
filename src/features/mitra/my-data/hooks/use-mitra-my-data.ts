@@ -1,10 +1,13 @@
-// src/features/mitra/my-data/hooks/use-mitra-my-data.ts
-
 import {
+  getMitraWorkspaceDetail,
+  getMitraWorkspaces,
   getMyData,
   updateMyData,
 } from "@/features/mitra/my-data/services/mitra.my-data.service";
 import type {
+  MitraWorkspaceItem,
+  MitraWorkspaceListResponse,
+  MitraWorkspaceQueryParams,
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
@@ -14,6 +17,33 @@ import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+export const useMitraWorkspacesQuery = (
+  params?: MitraWorkspaceQueryParams,
+) => {
+  const query = useQuery<MitraWorkspaceListResponse>({
+    queryKey: ["mitra", "workspaces", params],
+    queryFn: ({ signal }) => getMitraWorkspaces(params, signal),
+    placeholderData: (previousData) => previousData,
+  });
+
+  return {
+    ...query,
+    workspaces: query.data?.items ?? [],
+    pagination:
+      query.data?.pagination ??
+      createPaginationMeta(params?.page ?? 1, params?.pageSize ?? 10, 0),
+  };
+};
+
+export const useMitraWorkspaceDetailQuery = (workspaceId?: string) => {
+  return useQuery<MitraWorkspaceItem | null>({
+    queryKey: ["mitra", "workspace", workspaceId],
+    queryFn: ({ signal }) =>
+      workspaceId ? getMitraWorkspaceDetail(workspaceId, signal) : null,
+    enabled: Boolean(workspaceId),
+  });
+};
 
 export const useMitraMyDataQuery = (params: MyDataQueryParams) => {
   const query = useQuery<MyDataResponse>({

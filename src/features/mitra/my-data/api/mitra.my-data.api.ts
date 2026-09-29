@@ -1,6 +1,9 @@
 // src/features/mitra/my-data/api/mitra.my-data.api.ts
 
 import type {
+  MitraWorkspaceItem,
+  MitraWorkspaceListResponse,
+  MitraWorkspaceQueryParams,
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
@@ -8,6 +11,31 @@ import type {
 } from "@/features/mitra/my-data/types/my-data.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
+
+export const fetchMitraWorkspacesApi = async (
+  params?: MitraWorkspaceQueryParams,
+  signal?: AbortSignal,
+): Promise<ApiResponse<MitraWorkspaceListResponse>> => {
+  return apiClient.get<ApiResponse<MitraWorkspaceListResponse>>(
+    "/api/mitra/my-data",
+    {
+      params,
+      signal,
+    },
+  );
+};
+
+export const fetchMitraWorkspaceDetailApi = async (
+  workspaceId: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<MitraWorkspaceItem>> => {
+  return apiClient.get<ApiResponse<MitraWorkspaceItem>>(
+    `/api/mitra/my-data/${workspaceId}`,
+    {
+      signal,
+    },
+  );
+};
 
 export const fetchMyDataApi = async (
   params: MyDataQueryParams,
@@ -28,3 +56,4 @@ export const updateMyDataItemApi = async (
     payload,
   );
 };
+

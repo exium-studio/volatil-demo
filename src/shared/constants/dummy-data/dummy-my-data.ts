@@ -1,6 +1,9 @@
 // src/shared/constants/dummy-data/dummy-my-data.ts
 
-import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
+import type {
+  MitraWorkspaceItem,
+  MyDataItem,
+} from "@/features/mitra/my-data/types/my-data.type";
 
 export const dummyMitraMyDataItems: MyDataItem[] = [
   {
@@ -10,6 +13,8 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     spatialBasis: "kawasan",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
+    externalWmsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001&layer=TEST_RTRW_BADUNG",
     wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
     wmsLayers: "testing_workspace:TEST_RTRW_BADUNG",
     status: "ready",
@@ -26,6 +31,8 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     spatialBasis: "kawasan",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_ZNT_BADUNG",
+    externalWmsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001&layer=TEST_ZNT_BADUNG",
     wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
     wmsLayers: "testing_workspace:TEST_ZNT_BADUNG",
     status: "ready",
@@ -42,6 +49,8 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     spatialBasis: "bidang",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
+    externalWmsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260829_003&layer=TEST_BIDANG_TANAH",
     wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
     wmsLayers: "testing_workspace:TEST_BIDANG_TANAH",
     status: "ready",
@@ -58,6 +67,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     spatialBasis: "bidang",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_DENPASAR",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_DENPASAR",
+    externalWmsUrl: null,
     status: "provisioning",
     expiresAt: "2026-10-03T10:25:00.000Z",
     bbox: [115.2, -8.65, 115.25, -8.6],
@@ -72,6 +82,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     spatialBasis: "kawasan",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_KAWASAN_SANUR",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_KAWASAN_SANUR",
+    externalWmsUrl: null,
     status: "queued",
     expiresAt: "2026-10-03T10:25:00.000Z",
     bbox: [115.24, -8.7, 115.28, -8.66],
@@ -86,6 +97,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     spatialBasis: "kawasan",
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RDTR_KUTA",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_RDTR_KUTA",
+    externalWmsUrl: null,
     wfsTypeName: "testing_workspace:TEST_RDTR_KUTA",
     wmsLayers: "testing_workspace:TEST_RDTR_KUTA",
     status: "failed",
@@ -97,17 +109,87 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
   },
 ];
 
+export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
+  {
+    id: "ws_ord_20260830_001",
+    workspaceName: "ws_ord_20260830_001",
+    orderId: "ord-2026-0830-001",
+    orderNumber: "ORD-20260830-001",
+    transactionNumber: "TRX-20260830-001",
+    userId: 42,
+    status: "ready",
+    wmsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001",
+    wfsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wfs?workspace=ws_ord_20260830_001",
+    qgisWmsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001",
+    layersCount: 2,
+    layers: [dummyMitraMyDataItems[0], dummyMitraMyDataItems[1]],
+    createdAt: "2026-08-30T09:15:00.000Z",
+    expiresAt: "2026-12-31T23:59:59.000Z",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/INV-2026-0825-001.pdf",
+    tteInvoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
+    tte: true,
+  },
+  {
+    id: "ws_ord_20260829_003",
+    workspaceName: "ws_ord_20260829_003",
+    orderId: "ord-2026-0829-003",
+    orderNumber: "ORD-20260829-003",
+    transactionNumber: "TRX-20260829-003",
+    userId: 42,
+    status: "ready",
+    wmsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260829_003",
+    wfsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wfs?workspace=ws_ord_20260829_003",
+    qgisWmsUrl:
+      "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260829_003",
+    layersCount: 1,
+    layers: [dummyMitraMyDataItems[2]],
+    createdAt: "2026-08-29T14:30:00.000Z",
+    expiresAt: "2026-10-15T12:00:00.000Z",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/INV-2026-0820-003.pdf",
+    tteInvoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0820-003.pdf",
+    tte: true,
+  },
+  {
+    id: "ws_ord_20260818_004",
+    workspaceName: "ws_ord_20260818_004",
+    orderId: "ord-2026-0818-004",
+    orderNumber: "ORD-20260818-004",
+    transactionNumber: "TRX-20260818-004",
+    userId: 42,
+    status: "provisioning",
+    wmsUrl: null,
+    layersCount: 1,
+    layers: [dummyMitraMyDataItems[3]],
+    createdAt: "2026-08-18T10:25:00.000Z",
+    expiresAt: "2026-10-03T10:25:00.000Z",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/INV-2026-0818-004.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
+  },
+];
+
 export const dummyWorkspaceUrl = {
   workspaceName: "volatil_mitra_budi_santoso_42",
   wmsUrl:
-    "https://volatil-be.exium.web.id/api/proxy/workspace/volatil_mitra_budi_santoso_42/wms?apiKey=vlt_a1b2c3d4e5f67890abcdef123456",
+    "https://geoportal.atrbpn.go.id/interop/wms?workspace=volatil_mitra_budi_santoso_42",
   wfsUrl:
-    "https://volatil-be.exium.web.id/api/proxy/workspace/volatil_mitra_budi_santoso_42/wfs?apiKey=vlt_a1b2c3d4e5f67890abcdef123456",
+    "https://geoportal.atrbpn.go.id/interop/wfs?workspace=volatil_mitra_budi_santoso_42",
   qgisWmsUrl:
-    "https://volatil-be.exium.web.id/api/proxy/workspace/volatil_mitra_budi_santoso_42/wms",
+    "https://geoportal.atrbpn.go.id/interop/wms?workspace=volatil_mitra_budi_santoso_42",
   qgisWfsUrl:
-    "https://volatil-be.exium.web.id/api/proxy/workspace/volatil_mitra_budi_santoso_42/wfs",
-  note: "Tambahkan apiKey sebagai query param atau header X-API-Key saat akses dari QGIS/ArcGIS.",
+    "https://geoportal.atrbpn.go.id/interop/wfs?workspace=volatil_mitra_budi_santoso_42",
+  note: "URL Workspace Resmi melalui INTEROP Pusdatin ATR/BPN.",
 };
 
 export const dummyApiKey = "vlt_a1b2c3d4e5f67890abcdef123456";
+

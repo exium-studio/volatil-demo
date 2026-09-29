@@ -85,6 +85,9 @@ export type InternalOrderItem = {
   invoiceUrl?: string | null;
   tteInvoiceUrl?: string | null;
   tte?: boolean;
+  internalWorkspaceUrl?: string | null;
+  workspaceInteropUrl?: string | null;
+  workspaceName?: string | null;
 };
 
 export type InternalOrderListQueryParams = PaginatedParams & {
@@ -147,39 +150,18 @@ export type ProvisionStreamHookResult = ProvisionStreamState & {
 
 import { z } from "zod";
 
-export const approveOrderItemPayloadSchema = z.object({
-  id: z.string().min(1, "ID Layer wajib diisi"),
-  externalWmsUrl: z
+export const approveOrderSchema = z.object({
+  workspaceInteropUrl: z
     .string()
-    .min(1, "URL WMS dari INTEROP wajib diisi")
+    .min(1, "URL Workspace dari INTEROP wajib diisi")
     .url("Format URL tidak valid"),
-  externalWfsUrl: z
-    .string()
-    .url("Format URL tidak valid")
-    .optional()
-    .or(z.literal("")),
 });
 
-export type ApproveOrderItemPayload = z.infer<
-  typeof approveOrderItemPayloadSchema
->;
-
-export const approveOrderItemSchema = z.object({
-  id: z.string().min(1, "ID Layer wajib diisi"),
-  externalWmsUrl: z.string().min(1, "URL WMS dari INTEROP wajib diisi"),
-  externalWfsUrl: z.string().optional(),
-});
-
-export const approveOrderFormSchema = z.object({
-  items: z.array(approveOrderItemSchema),
-});
-
-export type ApproveOrderItemFormValues = z.infer<typeof approveOrderItemSchema>;
-export type ApproveOrderFormValues = z.infer<typeof approveOrderFormSchema>;
+export type ApproveOrderFormValues = z.infer<typeof approveOrderSchema>;
 
 export type ApproveOrderPayload = {
   orderId: string;
-  items?: ApproveOrderItemPayload[];
+  workspaceInteropUrl: string;
 };
 
 export type RejectOrderPayload = {

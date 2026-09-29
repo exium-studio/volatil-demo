@@ -1,18 +1,15 @@
 // src/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
-import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
-import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useApproveMitraRegistration } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
 import type {
   InternalMitraRegistrationApproveModalContentProps,
@@ -67,36 +64,20 @@ export const InternalMitraRegistrationApproveModalContent = (
   // Props
   const { registration, isOpen, onSuccessRedirect, close } = props;
 
-  // Stores
-  const { theme } = useThemeStore();
-
   // States
   const [contractFiles, setContractFiles] = useState<File[]>([]);
-  const [workspaceInteropUrl, setWorkspaceInteropUrl] = useState<string>("");
 
   // Mutations
   const approveMutation = useApproveMitraRegistration();
 
-  // Derived Values — Internal GeoServer workspace URL to be registered in INTEROP Pusdatin
-  const workspaceSlug = (
-    registration.organizationName ||
-    registration.namaInstansi ||
-    `mitra_${registration.id}`
-  )
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "_");
-
-  const internalWorkspaceUrl = `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${workspaceSlug}/ows`;
-
   // Handlers
   const handleApprove = () => {
-    if (!contractFiles[0] || !workspaceInteropUrl.trim()) return;
+    if (!contractFiles[0]) return;
 
     approveMutation.mutate(
       {
         id: registration.id,
         contractDocument: contractFiles[0],
-        workspaceInteropUrl: workspaceInteropUrl.trim(),
       },
       {
         onSuccess: () => {
@@ -119,10 +100,7 @@ export const InternalMitraRegistrationApproveModalContent = (
     }
   };
 
-  const isSubmitDisabled =
-    !contractFiles[0] ||
-    !workspaceInteropUrl.trim() ||
-    approveMutation.isPending;
+  const isSubmitDisabled = !contractFiles[0] || approveMutation.isPending;
 
   return (
     <Modal.Content>
@@ -144,57 +122,10 @@ export const InternalMitraRegistrationApproveModalContent = (
             <AppIcon icon={InfoIcon} />
             <Alert.Description>
               {
-                "Salin URL Workspace GeoServer internal di bawah, buka aplikasi INTEROP Pusdatin ATR/BPN untuk mendaftarkan workspace kemitraan dan mendapatkan link proxy wrapper resmi, lalu masukkan link proxy tersebut ke formulir di bawah ini."
+                "Pastikan seluruh dokumen legalitas dan proposal teknis pemohon telah diverifikasi. Unggah dokumen kontrak kemitraan resmi untuk menyelesaikan proses aktivasi mitra."
               }
             </Alert.Description>
           </Alert.Root>
-
-          {/* Internal GeoServer Workspace URL */}
-          <VStack align={"stretch"} gap={1}>
-            <P fontSize={"xs"} color={"fg.muted"}>
-              {"URL Workspace GeoServer Volatil (Internal):"}
-            </P>
-
-            <HStack
-              gap={"md"}
-              bg={"bg.panel"}
-              p={"md"}
-              rounded={theme.radii.component}
-              border={"1px solid"}
-              borderColor={"border.subtle"}
-            >
-              <P
-                fontFamily={"mono"}
-                fontSize={"xs"}
-                flex={1}
-                color={"fg.default"}
-              >
-                {internalWorkspaceUrl}
-              </P>
-
-              <ClipboardButton
-                value={internalWorkspaceUrl}
-                variant={"ghost"}
-                size={"xs"}
-                aria-label={"Salin URL Workspace Internal"}
-              />
-            </HStack>
-          </VStack>
-
-          {/* Input INTEROP Workspace Proxy URL */}
-          <Field
-            variant={"default"}
-            label={"URL Workspace Resmi (INTEROP Pusdatin - Wajib)"}
-          >
-            <Textarea
-              placeholder={
-                "https://geoportal.atrbpn.go.id/interop/wms?workspace=..."
-              }
-              value={workspaceInteropUrl}
-              onChange={(e) => setWorkspaceInteropUrl(e.target.value)}
-              minH={"90px"}
-            />
-          </Field>
 
           {/* File input for contract document */}
           <Field
@@ -235,3 +166,4 @@ export const InternalMitraRegistrationApproveModalContent = (
     </Modal.Content>
   );
 };
+

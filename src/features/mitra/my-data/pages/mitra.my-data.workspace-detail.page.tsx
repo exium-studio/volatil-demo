@@ -1,0 +1,566 @@
+// src/features/mitra/my-data/pages/mitra.my-data.workspace-detail.page.tsx
+
+import { BackButton } from "@/design-system/components/button/ui/back-button";
+import type {
+  FormattedListItem,
+  FormattedTableHeader,
+} from "@/design-system/components/data-display/types/data-view-table.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
+import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { Switch } from "@/design-system/components/input/ui/switch";
+import { Box } from "@/design-system/components/layout/ui/box";
+import { Center } from "@/design-system/components/layout/ui/center";
+import { Container } from "@/design-system/components/layout/ui/container";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { Separator } from "@/design-system/components/layout/ui/separator";
+import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { Url } from "@/design-system/components/typography/ui/url";
+import { useThemeStore } from "@/design-system/stores/theme-store";
+import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
+import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
+import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
+import { useMitraWorkspaceDetailQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
+import type {
+  MyDataDetailAttributeListProps,
+  MyDataItem,
+} from "@/features/mitra/my-data/types/my-data.type";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
+import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
+import { isEmptyArray } from "@/shared/utils/data/array";
+import {
+  formatUtcDateTime,
+  getPreferredUserTimezone,
+} from "@/shared/utils/formatter/date.formatter";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import {
+  DatabaseIcon,
+  Edit3Icon,
+  EyeIcon,
+  EyeOffIcon,
+  FileCheckIcon,
+  FileTextIcon,
+  FocusIcon,
+  TablePropertiesIcon,
+} from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+
+export const MitraMyDataWorkspaceDetailPage = () => {
+  // Navigation
+  const { workspaceId } = useParams({ strict: false }) as {
+    workspaceId: string;
+  };
+  const navigate = useNavigate();
+
+  // Stores
+  const { theme } = useThemeStore();
+  const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
+  const setLayerEnabled = useMapLayerStore((s) => s.setLayerEnabled);
+  const setCustomLayerConfig = useMapLayerStore((s) => s.setCustomLayerConfig);
+
+  // Hooks
+  const { flyTo } = useFlyToLayer();
+
+  // States
+  const [selectedAttributeLayer, setSelectedAttributeLayer] =
+    useState<MyDataItem | null>(null);
+
+  // Queries
+  const {
+    data: workspace,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useMitraWorkspaceDetailQuery(workspaceId);
+
+  // Derived Values
+  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  // Handlers
+  const handleToggleLayer = useCallback(
+    (item: MyDataItem, checked: boolean) => {
+      if (checked) {
+        const proxyWmsUrl = item.externalWmsUrl || item.wmsUrl;
+
+        setCustomLayerConfig(item.id, {
+          wmsUrl: proxyWmsUrl || undefined,
+          layers: item.wmsLayers || item.id,
+          spatialBasis: item.spatialBasis,
+        });
+        setLayerEnabled(item.id, true);
+      } else {
+        setLayerEnabled(item.id, false);
+        setCustomLayerConfig(item.id, null);
+      }
+    },
+    [setCustomLayerConfig, setLayerEnabled],
+  );
+
+  // Derived Values — Table headers & items
+  const dataList = useMemo(() => {
+    const layers = workspace?.layers ?? [];
+    const headers: FormattedTableHeader[] = [
+      { th: "Layer IGT (Label)", sortable: true },
+      { th: "Basis IGT", sortable: true },
+      { th: "WMS URL Layer", sortable: false },
+      { th: "Status Aktif", sortable: true },
+      { th: "Sisa Waktu", sortable: true },
+      { th: "Tanggal Kedaluwarsa", sortable: true },
+      { th: "Tampilkan di Peta", sortable: false, align: "center" },
+    ];
+
+    const items: FormattedListItem<MyDataItem>[] = layers.map(
+      (item: MyDataItem) => {
+        const layerDisplayName =
+          item.label || item.title || item.id.replace(/_/g, " ");
+        const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
+        const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
+
+        return {
+          id: item.id,
+          data: item,
+          columns: [
+            {
+              value: layerDisplayName,
+              td: (
+                <VStack align={"start"} gap={0}>
+                  <ClampedP fontSize={"sm"} fontWeight={"medium"} maxW={"220px"}>
+                    {layerDisplayName}
+                  </ClampedP>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {item.id}
+                  </P>
+                </VStack>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.spatialBasis,
+              td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
+              align: "start" as const,
+            },
+            {
+              value: effectiveWmsUrl ?? "",
+              td: (
+                <Url
+                  url={effectiveWmsUrl}
+                  label={"Salin URL WMS Layer"}
+                  maxW={"280px"}
+                  minW={"280px"}
+                />
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.status,
+              td: <MyDataStatusBadge>{item.status}</MyDataStatusBadge>,
+              align: "start" as const,
+            },
+            {
+              value: item.expiresAt,
+              td: item.expiresAt ? (
+                <Countdown finishedAt={item.expiresAt} />
+              ) : (
+                <P color={"fg.subtle"}>{"-"}</P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.expiresAt,
+              td: (
+                <P whiteSpace={"nowrap"}>
+                  {item.expiresAt
+                    ? formatUtcDateTime(item.expiresAt, preferredTimezone)
+                    : "-"}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: isVisibleOnMap ? "Tampil" : "Sembunyi",
+              td: (
+                <Center>
+                  <Switch
+                    checked={isVisibleOnMap}
+                    onCheckedChange={({ checked }) => {
+                      handleToggleLayer(item, checked);
+                    }}
+                    tooltip={
+                      isVisibleOnMap
+                        ? "Sembunyikan dari Peta"
+                        : "Tampilkan di Peta"
+                    }
+                    aria-label={`Toggle visibilitas peta untuk ${layerDisplayName}`}
+                    size={"sm"}
+                  />
+                </Center>
+              ),
+              align: "center" as const,
+            },
+          ],
+        };
+      },
+    );
+
+    const itemActions: DataViewItemActionsGenerator<MyDataItem>[] = [
+      {
+        key: "toggle-map-visibility",
+        label: (item: MyDataItem) => {
+          const isVisible = Boolean(enabledLayerIds[item.id]);
+          return isVisible ? "Sembunyikan dari Peta" : "Tampilkan di Peta";
+        },
+        icon: (item: MyDataItem) => {
+          const isVisible = Boolean(enabledLayerIds[item.id]);
+          return isVisible ? EyeOffIcon : EyeIcon;
+        },
+        onClick: (item: MyDataItem) => {
+          const willEnable = !enabledLayerIds[item.id];
+          handleToggleLayer(item, willEnable);
+        },
+      },
+      {
+        key: "fly-to-map",
+        label: "Zoom ke Layer",
+        icon: FocusIcon,
+        onClick: (item: MyDataItem) => {
+          void flyTo({
+            id: item.id,
+            title: item.title,
+            spatialBasis: item.spatialBasis,
+            bbox: item.bbox ?? null,
+          });
+        },
+      },
+      {
+        key: "view-invoice",
+        label: "Lihat Faktur",
+        icon: FileTextIcon,
+        hidden: (item: MyDataItem) => !item.invoiceUrl,
+        onClick: (item: MyDataItem) => {
+          if (item.invoiceUrl) {
+            window.open(item.invoiceUrl, "_blank");
+          }
+        },
+      },
+      {
+        key: "view-tte-invoice",
+        label: "Lihat Faktur TTE",
+        icon: FileCheckIcon,
+        hidden: (item: MyDataItem) => !item.tteInvoiceUrl,
+        onClick: (item: MyDataItem) => {
+          if (item.tteInvoiceUrl) {
+            window.open(item.tteInvoiceUrl, "_blank");
+          }
+        },
+      },
+      {
+        key: "edit-label",
+        label: "Ubah Label",
+        icon: Edit3Icon,
+        modal: {
+          triggerComponent: (item: MyDataItem) => (
+            <MitraMyDataEditTrigger
+              modalKey={`my-data-edit-${item.id}`}
+              item={item}
+            />
+          ),
+        },
+      },
+      {
+        key: "detail-attribute",
+        label: "Detail Atribut",
+        icon: TablePropertiesIcon,
+        onClick: (item: MyDataItem) => {
+          setSelectedAttributeLayer(item);
+        },
+      },
+    ];
+
+    return { headers, items, itemActions };
+  }, [
+    workspace?.layers,
+    enabledLayerIds,
+    preferredTimezone,
+    handleToggleLayer,
+    flyTo,
+  ]);
+
+  if (selectedAttributeLayer) {
+    return (
+      <MyDataDetailAttributeList
+        item={selectedAttributeLayer}
+        onBack={() => setSelectedAttributeLayer(null)}
+      />
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <AppContentContainer flex={1}>
+        <Container.Root flex={1}>
+          <Container.Body flex={1}>
+            <VStack flex={1} gap={"md"} p={"md"}>
+              <Skeleton />
+            </VStack>
+          </Container.Body>
+        </Container.Root>
+      </AppContentContainer>
+    );
+  }
+
+  if (isError || !workspace) {
+    return (
+      <AppContentContainer flex={1}>
+        <Container.Root flex={1}>
+          <Container.Body flex={1}>
+            <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+              <RetryState
+                title={"Gagal Memuat Detail Workspace"}
+                description={
+                  error?.message ||
+                  "Workspace tidak ditemukan atau terjadi kesalahan saat memuat data."
+                }
+                onRetry={() => {
+                  void refetch();
+                }}
+              />
+            </Center>
+          </Container.Body>
+        </Container.Root>
+      </AppContentContainer>
+    );
+  }
+
+  return (
+    <AppContentContainer>
+      <Container.Root withContext={true} flex={1}>
+        <Container.Body overflowY={"auto"}>
+          {/* Header */}
+          <HeaderContainer px={"xs"}>
+            <HStack justify={"space-between"} align={"center"} w={"full"}>
+              <HStack align={"center"} gap={"sm"}>
+                <BackButton onClick={() => navigate({ to: "/mitra/my-data" })} />
+
+                <ClampedHeading>
+                  {`Detail Workspace: ${workspace.workspaceName}`}
+                </ClampedHeading>
+              </HStack>
+            </HStack>
+          </HeaderContainer>
+
+          <Separator borderColor={"bg.canvas"} />
+
+          {/* Metadata Workspace */}
+          <VStack gap={"md"} p={"md"} align={"stretch"}>
+            <HStack wrap={"wrap"} gap={"lg"}>
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Nama Workspace"}
+                </P>
+                <P fontWeight={"semibold"} fontFamily={"mono"}>
+                  {workspace.workspaceName}
+                </P>
+              </VStack>
+
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Nomor Pesanan / Transaksi"}
+                </P>
+                <P fontWeight={"semibold"}>
+                  {workspace.orderNumber || workspace.orderId}
+                </P>
+              </VStack>
+
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Status Workspace"}
+                </P>
+                <MyDataStatusBadge my={"auto"}>
+                  {workspace.status}
+                </MyDataStatusBadge>
+              </VStack>
+
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"TTE & Faktur"}
+                </P>
+                <TteBadge
+                  tte={workspace.tte}
+                  invoiceUrl={workspace.invoiceUrl}
+                  tteInvoiceUrl={workspace.tteInvoiceUrl}
+                  my={"auto"}
+                />
+              </VStack>
+
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Sisa Waktu"}
+                </P>
+                {workspace.expiresAt ? (
+                  <Countdown finishedAt={workspace.expiresAt} my={"auto"} />
+                ) : (
+                  <P color={"fg.subtle"}>{"-"}</P>
+                )}
+              </VStack>
+
+              <VStack gap={"xs"} align={"start"}>
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Tanggal Kedaluwarsa"}
+                </P>
+                <P whiteSpace={"nowrap"} my={"auto"}>
+                  {workspace.expiresAt
+                    ? formatUtcDateTime(workspace.expiresAt, preferredTimezone)
+                    : "-"}
+                </P>
+              </VStack>
+            </HStack>
+
+            <Separator borderColor={"bg.canvas"} />
+
+            {/* Workspace WMS URL & QGIS Guide */}
+            <VStack gap={"sm"} align={"stretch"}>
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {"WMS URL Workspace (INTEROP Pusdatin)"}
+              </P>
+
+              <Url
+                url={workspace.wmsUrl}
+                label={"Salin WMS URL Workspace"}
+                maxW={"full"}
+              />
+
+              <Box
+                p={"sm"}
+                bg={"bg.subtle"}
+                rounded={theme.radii.component}
+                mt={"xs"}
+              >
+                <P fontSize={"xs"} color={"fg.muted"}>
+                  {
+                    "Gunakan URL WMS Workspace di atas untuk menambahkan seluruh layer dalam pesanan ini ke QGIS melalui menu Layer → Add Layer → Add WMS/WMTS Layer..."
+                  }
+                </P>
+              </Box>
+            </VStack>
+          </VStack>
+
+          <Separator borderColor={"bg.canvas"} />
+
+          {/* Layer List Table */}
+          <VStack flex={1} w={"full"}>
+            {isEmptyArray(workspace.layers) ? (
+              <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
+                <NoDataState
+                  icon={DatabaseIcon}
+                  title={"Belum Ada Layer di Workspace Ini"}
+                  description={
+                    "Tidak ada data layer IGT yang terdaftar pada workspace ini."
+                  }
+                />
+              </Center>
+            ) : (
+              <DataViewTable.Root<MyDataItem>
+                headers={dataList.headers}
+                items={dataList.items}
+                itemActions={dataList.itemActions}
+                withNumbering={true}
+                pb={0}
+                rounded={0}
+              >
+                <DataViewTable.Header />
+                <DataViewTable.Body />
+              </DataViewTable.Root>
+            )}
+          </VStack>
+        </Container.Body>
+      </Container.Root>
+    </AppContentContainer>
+  );
+};
+
+const MyDataDetailAttributeList = (props: MyDataDetailAttributeListProps) => {
+  // Props
+  const { item, onBack } = props;
+
+  // Stores
+  const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
+
+  // States
+  const [pageState, setPageState] = useState({
+    pageSize: 10,
+    page: 1,
+  });
+  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
+
+  // Derived Values
+  const igtLayerTarget = useMemo((): IgtLayerItem => {
+    const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl || "";
+    const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl || "";
+    const typeName = item.wfsTypeName || item.id;
+
+    return {
+      id: item.id,
+      title: item.title,
+      spatialBasis: item.spatialBasis,
+      bbox: item.bbox,
+      visible: Boolean(enabledLayerIds[item.id]),
+      zIndex: 1,
+      wms: {
+        layers: item.wmsLayers || item.id,
+        wmsUrl: effectiveWmsUrl,
+        format: "image/png",
+        transparent: true,
+        tileSize: 512,
+        styles: "",
+        version: "1.1.1",
+        srs: "EPSG:3857",
+      },
+      wfs: {
+        wfsTypeName: typeName,
+        wfsUrl: effectiveWfsUrl,
+        type: item.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
+        version: "2.0.0",
+        srsName: "EPSG:4326",
+      },
+    };
+  }, [item, enabledLayerIds]);
+
+  // Queries — server-side WFS pagination
+  const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
+    page: pageState.page,
+    pageSize: pageState.pageSize,
+    typeName: item.wfsTypeName || item.id,
+    wfsUrl: item.externalWfsUrl || item.wfsUrl || "",
+  });
+
+  return (
+    <MitraDataRequestDetailAttributeView
+      layer={igtLayerTarget}
+      features={features}
+      totalFeatures={totalFeatures}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      page={pageState.page}
+      pageSize={pageState.pageSize}
+      setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
+      setPageSize={(pageSize) =>
+        setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
+      }
+      selectedItems={selectedItems}
+      setSelectedItems={setSelectedItems}
+      showActions={false}
+      onBack={onBack}
+    />
+  );
+};
