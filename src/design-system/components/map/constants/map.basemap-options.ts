@@ -96,6 +96,107 @@ const TOPO_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
+const PETADASAR_STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  name: "Peta Dasar ATR/BPN",
+  sources: {
+    petadasar: {
+      type: "raster",
+      tiles: ["https://petadasar.atrbpn.go.id/main/wms/{x}/{y}/{z}"],
+      tileSize: 256,
+      maxzoom: 20,
+      attribution:
+        '&copy; <a href="https://petadasar.atrbpn.go.id" target="_blank" rel="noopener noreferrer">Kementerian ATR/BPN</a>',
+    },
+    "terrain-dem": {
+      type: "raster-dem",
+      tiles: [
+        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+      ],
+      encoding: "terrarium",
+      tileSize: 256,
+      maxzoom: 15,
+    },
+  },
+  layers: [
+    {
+      id: "petadasar-layer",
+      type: "raster",
+      source: "petadasar",
+      minzoom: 0,
+      maxzoom: 24,
+    },
+  ],
+};
+
+const GRID_PETADASAR_STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  name: "Grid Petadasar ATR/BPN",
+  sources: {
+    "grid-petadasar": {
+      type: "raster",
+      tiles: ["https://petadasar.atrbpn.go.id/main/tmi/{x}/{y}/{z}"],
+      tileSize: 256,
+      maxzoom: 20,
+      attribution:
+        '&copy; <a href="https://petadasar.atrbpn.go.id" target="_blank" rel="noopener noreferrer">Kementerian ATR/BPN</a>',
+    },
+    "terrain-dem": {
+      type: "raster-dem",
+      tiles: [
+        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+      ],
+      encoding: "terrarium",
+      tileSize: 256,
+      maxzoom: 15,
+    },
+  },
+  layers: [
+    {
+      id: "grid-petadasar-layer",
+      type: "raster",
+      source: "grid-petadasar",
+      minzoom: 0,
+      maxzoom: 24,
+    },
+  ],
+};
+
+const RBI_STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  name: "Rupabumi Indonesia (RBI)",
+  sources: {
+    rbi: {
+      type: "raster",
+      tiles: [
+        "https://geoservices.big.go.id/rbi/rest/services/BASEMAP/Rupabumi_Indonesia/MapServer/tile/{z}/{y}/{x}",
+      ],
+      tileSize: 256,
+      maxzoom: 20,
+      attribution:
+        '&copy; <a href="https://geoservices.big.go.id" target="_blank" rel="noopener noreferrer">Badan Informasi Geospasial (BIG)</a>',
+    },
+    "terrain-dem": {
+      type: "raster-dem",
+      tiles: [
+        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+      ],
+      encoding: "terrarium",
+      tileSize: 256,
+      maxzoom: 15,
+    },
+  },
+  layers: [
+    {
+      id: "rbi-layer",
+      type: "raster",
+      source: "rbi",
+      minzoom: 0,
+      maxzoom: 24,
+    },
+  ],
+};
+
 export const MAP_BASEMAP_MAP = {
   "plain-light": {
     thumbnail: `${PATH_CONFIG.images}/base_map_styles/plain_light.png`,
@@ -184,6 +285,48 @@ export const MAP_BASEMAP_MAP = {
     style: {
       light: TOPO_STYLE,
       dark: TOPO_STYLE,
+    },
+    maxZoom: 24,
+  },
+
+  petadasar: {
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/satellite.png`,
+    label: "Peta Dasar",
+    description: "Peta Dasar Kementerian ATR/BPN",
+    attributions: [
+      '&copy; <a href="https://petadasar.atrbpn.go.id" target="_blank" rel="noopener noreferrer">Kementerian ATR/BPN</a>',
+    ],
+    style: {
+      light: PETADASAR_STYLE,
+      dark: PETADASAR_STYLE,
+    },
+    maxZoom: 24,
+  },
+
+  "grid-petadasar": {
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/satellite.png`,
+    label: "Grid Peta Dasar",
+    description: "Grid Indeks Peta Dasar Kementerian ATR/BPN",
+    attributions: [
+      '&copy; <a href="https://petadasar.atrbpn.go.id" target="_blank" rel="noopener noreferrer">Kementerian ATR/BPN</a>',
+    ],
+    style: {
+      light: GRID_PETADASAR_STYLE,
+      dark: GRID_PETADASAR_STYLE,
+    },
+    maxZoom: 24,
+  },
+
+  rbi: {
+    thumbnail: `${PATH_CONFIG.images}/base_map_styles/satellite.png`,
+    label: "RBI BIG",
+    description: "Peta Rupa Bumi Indonesia - Badan Informasi Geospasial",
+    attributions: [
+      '&copy; <a href="https://geoservices.big.go.id" target="_blank" rel="noopener noreferrer">Badan Informasi Geospasial (BIG)</a>',
+    ],
+    style: {
+      light: RBI_STYLE,
+      dark: RBI_STYLE,
     },
     maxZoom: 24,
   },

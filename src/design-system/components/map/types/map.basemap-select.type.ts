@@ -6,7 +6,10 @@ export type BasemapKey =
   | "plain-dark"
   | "plain-adaptive"
   | "satellite"
-  | "topo";
+  | "topo"
+  | "petadasar"
+  | "grid-petadasar"
+  | "rbi";
 
 export type BasemapOption = {
   thumbnail?: string;
