@@ -22,6 +22,7 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -254,9 +255,14 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   // Derived Values
   const displayName =
     layer.title || layer.id.split(":")[1] || layer.wfs.wfsTypeName;
-  const basisConfig = IGT_BASIS_MAP[layer.spatialBasis];
+  const normalizedBasis = (
+    layer.spatialBasis ? layer.spatialBasis.toLowerCase() : ""
+  ) as IgtBasisType;
+  const basisConfig =
+    IGT_BASIS_MAP[normalizedBasis] ?? IGT_BASIS_MAP[layer.spatialBasis];
   const colorPalette = basisConfig?.colorPalette ?? "gray";
-  const LayerIcon = basisConfig?.icon;
+  const LayerIcon = basisConfig?.icon ?? LayersIcon;
+  const basisLabel = basisConfig?.label ?? layer.spatialBasis ?? "Layer IGT";
 
   return (
     <VStack gap={isOpacityOpen ? "2xs" : 0} align={"stretch"} w={"full"}>
@@ -289,7 +295,7 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
             </ClampedP>
 
             <ClampedP fontSize={"sm"} color={"fg.subtle"}>
-              {IGT_BASIS_MAP[layer.spatialBasis].label}
+              {basisLabel}
             </ClampedP>
           </VStack>
         </HStack>

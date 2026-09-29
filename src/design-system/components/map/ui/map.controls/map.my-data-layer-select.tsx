@@ -23,6 +23,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
+import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -285,9 +286,14 @@ const MapMyDataLayerItem = memo((props: MapMyDataLayerItemProps) => {
 
   // Derived Values
   const displayName = item.label || item.title || item.id.replace(/_/g, " ");
-  const basisConfig = IGT_BASIS_MAP[item.spatialBasis];
+  const normalizedBasis = (
+    item.spatialBasis ? item.spatialBasis.toLowerCase() : ""
+  ) as IgtBasisType;
+  const basisConfig =
+    IGT_BASIS_MAP[normalizedBasis] ?? IGT_BASIS_MAP[item.spatialBasis];
   const colorPalette = basisConfig?.colorPalette ?? "gray";
-  const LayerIcon = basisConfig?.icon;
+  const LayerIcon = basisConfig?.icon ?? DatabaseIcon;
+  const basisLabel = basisConfig?.label ?? item.spatialBasis ?? "Layer IGT";
 
   return (
     <VStack gap={isOpacityOpen ? "2xs" : 0} align={"stretch"} w={"full"}>
@@ -322,7 +328,7 @@ const MapMyDataLayerItem = memo((props: MapMyDataLayerItemProps) => {
 
             <HStack gap={1} align={"center"}>
               <ClampedP fontSize={"xs"} color={"fg.subtle"}>
-                {IGT_BASIS_MAP[item.spatialBasis].label}
+                {basisLabel}
               </ClampedP>
               {item.label && (
                 <ClampedP fontSize={"xs"} color={"fg.muted"}>
