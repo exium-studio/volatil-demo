@@ -95,7 +95,7 @@ export const WelcomeState = (props: WelcomeStateProps) => {
   const isMitra = user?.role === "mitra";
 
   const resolvedTitle = title ?? t["common.welcome_intro"]();
-  const resolvedSubtitle = subtitle ?? "Semoga harini berjalan lancar";
+  const resolvedSubtitle = subtitle ?? "Semoga hari ini berjalan lancar";
   const displayNavItems = useMemo(() => getDisplayNavItems(isMitra), [isMitra]);
 
   return (
