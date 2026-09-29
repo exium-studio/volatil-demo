@@ -140,11 +140,16 @@ export const MitraRegistrationStatusPage = () => {
         >
           <HeaderContainer p={6}>
             <VStack align={"center"} textAlign={"center"} w={"full"} gap={1}>
-              <P fontWeight={"semibold"} fontSize={"md"}>
+              <P fontWeight={"semibold"} fontSize={"md"} textAlign={"center"}>
                 {"Pelacakan Pengajuan Kemitraan Publik"}
               </P>
 
-              <P fontSize={"sm"} color={"fg.muted"} maxW={"560px"}>
+              <P
+                fontSize={"sm"}
+                color={"fg.muted"}
+                maxW={"560px"}
+                textAlign={"center"}
+              >
                 {
                   "Masukkan nomor registrasi pendaftaran yang Anda dapatkan saat pendaftaran (format: REG-2026-XXXXX)."
                 }
