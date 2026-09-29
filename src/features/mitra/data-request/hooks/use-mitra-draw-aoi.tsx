@@ -18,23 +18,18 @@ export const useMitraDrawAoi = () => {
   const { run: runWfsClip, cancel: cancelWfsClip } = useWfsClip();
 
   // States
-  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  const [confirmedPolygon, setConfirmedPolygon] =
+    useState<GeoJSON.Feature<GeoJSON.Polygon> | null>(null);
 
   // Derived Values
   const hasStartedDrawing = isDrawing || points.length > 0;
   const hasFinishedDraw = !isDrawing && points.length >= 3;
 
-  /** Drawn polygon GeoJSON feature directly from the accumulated points SSOT */
+  /** Drawn polygon GeoJSON feature directly from the accumulated points SSOT during active draw */
   const drawnPolygon = useMemo(() => {
     if (points.length < 3) return null;
     return toPolygonFeature(points);
   }, [points]);
-
-  /** Confirmed AOI Polygon: available once the user confirms the finished drawing */
-  const confirmedPolygon = useMemo(() => {
-    if (!isConfirmed || !drawnPolygon) return null;
-    return drawnPolygon;
-  }, [isConfirmed, drawnPolygon]);
 
   /**
    * CQL INTERSECTS filter built from the confirmed drawn polygon.
@@ -50,7 +45,7 @@ export const useMitraDrawAoi = () => {
 
   // Handlers
   const handleResetDraw = useCallback(() => {
-    setIsConfirmed(false);
+    setConfirmedPolygon(null);
     cancelDraw();
     cancelWfsClip();
     resetWfsClipStore();
@@ -60,20 +55,23 @@ export const useMitraDrawAoi = () => {
     async (typeName?: string, wfsUrl?: string) => {
       if (!hasFinishedDraw || !drawnPolygon) return;
 
-      setIsConfirmed(true);
+      const polygonToConfirm = drawnPolygon;
+      setConfirmedPolygon(polygonToConfirm);
+      // Clear in-progress draw points so useMapDraw does not duplicate the layer with useCartAoiCoverageMap
+      cancelDraw();
 
       // Run WFS clip for map layer visualization if a specific layer is passed
       if (typeName && wfsUrl) {
-        void runWfsClip(drawnPolygon, typeName, wfsUrl);
+        void runWfsClip(polygonToConfirm, typeName, wfsUrl);
       }
     },
-    [hasFinishedDraw, drawnPolygon, runWfsClip],
+    [hasFinishedDraw, drawnPolygon, cancelDraw, runWfsClip],
   );
 
   return {
     isDrawing,
     startDraw: () => {
-      setIsConfirmed(false);
+      setConfirmedPolygon(null);
       start("polygon");
     },
     cancelDraw: handleResetDraw,

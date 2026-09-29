@@ -161,15 +161,11 @@ export const MitraDataRequestUploadAoiTabsContent = (
   const [confirmedFeature, setConfirmedFeature] =
     useState<AoiFeatureItem | null>(null);
 
-  // Derived Values — Map Layers (either confirmed polygon OR visible list features)
+  // Derived Values — Map Layers (preview features only when feature is NOT yet confirmed)
+  // When confirmed, useCartAoiCoverageMap in MitraDataRequestIgtLayerDataView manages the official AOI layer
   const mapActiveFeatures = useMemo(() => {
     if (confirmedFeature) {
-      return [
-        {
-          id: `confirmed-${confirmedFeature.id}`,
-          polygon: confirmedFeature.polygon,
-        },
-      ];
+      return [];
     }
     if (uploadedFile?.features) {
       return uploadedFile.features

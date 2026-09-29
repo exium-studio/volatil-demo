@@ -361,7 +361,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               </VStack>
             )}
 
-            {/* Always render Custom Option at top if customOption prop is true */}
             {customOption && !isFetchingLoading && !isError && (
               <VStack w={"full"} px={"md"} mb={"sm"}>
                 <Button
@@ -402,13 +401,13 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
             {/* Clean options list container */}
             <VScrollContainer w={"full"} maxH={"300px"} px={"md"} pb={"md"}>
               {isFetchingLoading ? (
-                <VStack gap={"sm"} w={"full"}>
+                <VStack gap={"xs"} w={"full"} h={"240px"}>
                   {Array.from({ length: SKELETON_LIST_COUNT }).map(
                     (_, index) => (
                       <Skeleton
                         key={`skeleton-${index + 1}`}
                         w={"full"}
-                        h={"40px"}
+                        flex={1}
                       />
                     ),
                   )}
