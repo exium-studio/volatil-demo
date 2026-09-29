@@ -6,7 +6,6 @@ import type {
   MitraHomePeriod,
 } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import { dummyMitraDataSummary } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
-import { ApiError } from "@/shared/libs/api-client/api-error";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 export const EMPTY_SUMMARY: MitraHomeDataSummaryResponse = {

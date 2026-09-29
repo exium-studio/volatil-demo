@@ -3,7 +3,6 @@
 import { fetchMitraDataAvailabilityApi } from "@/features/mitra/home/api/mitra.home.data-availability.api";
 import type { MitraHomeDataAvailabilityResponse } from "@/features/mitra/home/types/mitra.home.data-availability.type";
 import { dummyMitraDataAvailability } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
-import { ApiError } from "@/shared/libs/api-client/api-error";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const EMPTY_AVAILABILITY: MitraHomeDataAvailabilityResponse = {

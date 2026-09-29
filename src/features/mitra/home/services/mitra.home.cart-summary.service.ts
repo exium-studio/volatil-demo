@@ -3,7 +3,6 @@
 import { fetchMitraCartSummaryApi } from "@/features/mitra/home/api/mitra.home.cart-summary.api";
 import type { MitraHomeCartSummaryResponse } from "@/features/mitra/home/types/mitra.home.cart-summary.type";
 import { dummyMitraCartSummary } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
-import { ApiError } from "@/shared/libs/api-client/api-error";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const EMPTY_CART_SUMMARY: MitraHomeCartSummaryResponse = {
@@ -19,10 +18,18 @@ const normalizeCartSummary = (raw: unknown): MitraHomeCartSummaryResponse => {
 
   return {
     totalField: Number(
-      obj.totalField ?? obj.total_field ?? obj.totalBidang ?? obj.total_bidang ?? 0,
+      obj.totalField ??
+        obj.total_field ??
+        obj.totalBidang ??
+        obj.total_bidang ??
+        0,
     ),
     totalArea: Number(
-      obj.totalArea ?? obj.total_area ?? obj.totalKawasan ?? obj.total_kawasan ?? 0,
+      obj.totalArea ??
+        obj.total_area ??
+        obj.totalKawasan ??
+        obj.total_kawasan ??
+        0,
     ),
     totalIgtData: Number(
       obj.totalIgtData ??

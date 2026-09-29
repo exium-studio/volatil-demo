@@ -4,7 +4,6 @@ import { fetchMitraFinancialFlowApi } from "@/features/mitra/home/api/mitra.home
 import type { MitraHomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import type { FinancialFlowItem } from "@/features/mitra/home/types/mitra.home.financial-flow.type";
 import { dummyMitraFinancialFlow } from "@/shared/constants/dummy-data/dummy-mitra-home-data";
-import { ApiError } from "@/shared/libs/api-client/api-error";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const normalizeFlowItems = (list: unknown[]): FinancialFlowItem[] => {
