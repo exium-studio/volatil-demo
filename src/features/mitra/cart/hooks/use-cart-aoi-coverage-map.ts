@@ -15,6 +15,13 @@ const EMPTY_FEATURE_COLLECTION: GeoJSON.FeatureCollection = {
   features: [],
 };
 
+export const KNOWN_SELECTION_TYPE_KEYS = [
+  "catalog",
+  "upload",
+  "draw",
+  "cart",
+] as const;
+
 /** Normalizes selectionType key for independent per-tab layer & source namespacing */
 export const normalizeSelectionTypeKey = (
   selectionType?: string | null,
@@ -87,7 +94,7 @@ const getBeforeId = (map: maplibregl.Map): string | undefined => {
   return undefined;
 };
 
-/** Removes recycled Cart AOI and Coverage layers & sources for a given selectionType from map. */
+/** Removes recycled Cart AOI and Coverage layers & sources for a given selectionType (or all if omitted) from map. */
 export const removeCartMapLayers = (
   map: maplibregl.Map | null,
   selectionType?: string | null,
@@ -95,19 +102,25 @@ export const removeCartMapLayers = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!map || !(map as any).style) return;
 
-  const aoiIds = getCartAoiLayerIds(selectionType);
-  const covIds = getCartCoverageLayerIds(selectionType);
+  const typesToRemove = selectionType
+    ? [normalizeSelectionTypeKey(selectionType)]
+    : KNOWN_SELECTION_TYPE_KEYS;
 
-  try {
-    if (map.getLayer(covIds.fillId)) map.removeLayer(covIds.fillId);
-    if (map.getLayer(covIds.lineId)) map.removeLayer(covIds.lineId);
-    if (map.getSource(covIds.sourceId)) map.removeSource(covIds.sourceId);
+  for (const key of typesToRemove) {
+    const aoiIds = getCartAoiLayerIds(key);
+    const covIds = getCartCoverageLayerIds(key);
 
-    if (map.getLayer(aoiIds.fillId)) map.removeLayer(aoiIds.fillId);
-    if (map.getLayer(aoiIds.lineId)) map.removeLayer(aoiIds.lineId);
-    if (map.getSource(aoiIds.sourceId)) map.removeSource(aoiIds.sourceId);
-  } catch (err) {
-    console.warn("Failed to remove cart map layers:", err);
+    try {
+      if (map.getLayer(covIds.fillId)) map.removeLayer(covIds.fillId);
+      if (map.getLayer(covIds.lineId)) map.removeLayer(covIds.lineId);
+      if (map.getSource(covIds.sourceId)) map.removeSource(covIds.sourceId);
+
+      if (map.getLayer(aoiIds.fillId)) map.removeLayer(aoiIds.fillId);
+      if (map.getLayer(aoiIds.lineId)) map.removeLayer(aoiIds.lineId);
+      if (map.getSource(aoiIds.sourceId)) map.removeSource(aoiIds.sourceId);
+    } catch (err) {
+      console.warn("Failed to remove cart map layers:", err);
+    }
   }
 };
 
@@ -129,6 +142,7 @@ export const renderCartMapLayers = (
     isAoiVisible = true,
     isCoverageVisible = true,
     isActive = true,
+    exclusive = false,
   } = options;
 
   const aoiIds = getCartAoiLayerIds(selectionType);
@@ -137,6 +151,39 @@ export const renderCartMapLayers = (
   const beforeId = getBeforeId(map);
   const aoiFeature = normalizePolygonFeature(aoiPolygon);
   const coverageFeature = normalizePolygonFeature(coveragePolygon);
+
+  // When exclusive mode is enabled (e.g. Cart page), hide / clear layers of all other selection types
+  if (exclusive) {
+    const currentKey = normalizeSelectionTypeKey(selectionType);
+    KNOWN_SELECTION_TYPE_KEYS.filter((k) => k !== currentKey).forEach(
+      (otherKey) => {
+        const otherAoi = getCartAoiLayerIds(otherKey);
+        const otherCov = getCartCoverageLayerIds(otherKey);
+
+        const aoiSource = map.getSource(otherAoi.sourceId) as
+          | maplibregl.GeoJSONSource
+          | undefined;
+        if (aoiSource) aoiSource.setData(EMPTY_FEATURE_COLLECTION);
+        if (map.getLayer(otherAoi.fillId)) {
+          map.setLayoutProperty(otherAoi.fillId, "visibility", "none");
+        }
+        if (map.getLayer(otherAoi.lineId)) {
+          map.setLayoutProperty(otherAoi.lineId, "visibility", "none");
+        }
+
+        const covSource = map.getSource(otherCov.sourceId) as
+          | maplibregl.GeoJSONSource
+          | undefined;
+        if (covSource) covSource.setData(EMPTY_FEATURE_COLLECTION);
+        if (map.getLayer(otherCov.fillId)) {
+          map.setLayoutProperty(otherCov.fillId, "visibility", "none");
+        }
+        if (map.getLayer(otherCov.lineId)) {
+          map.setLayoutProperty(otherCov.lineId, "visibility", "none");
+        }
+      },
+    );
+  }
 
   // 1. Manage Recycled AOI layer for this selectionType
   const shouldShowAoi = isActive && isAoiVisible && Boolean(aoiFeature);
@@ -345,10 +392,12 @@ export const useCartAoiCoverageMap = (
     isAoiVisible = true,
     isCoverageVisible = true,
     isActive = true,
+    exclusive = false,
   } = options;
 
   // Refs — Hold latest options for event callbacks without re-triggering unmount/remount
   const optionsRef = useRef(options);
+  const prevSelectionTypeRef = useRef(selectionType);
 
   // Effects — Keep optionsRef synchronized without mutating ref during render
   useEffect(() => {
@@ -369,13 +418,27 @@ export const useCartAoiCoverageMap = (
     return () => {
       map.off(MAP_EVENTS_MAP.styleReady as string, handleReady);
       map.off(MAP_EVENTS_MAP.layersReady as string, handleReady);
-      removeCartMapLayers(map, optionsRef.current.selectionType);
+      if (optionsRef.current.exclusive) {
+        removeCartMapLayers(map);
+      } else {
+        removeCartMapLayers(map, optionsRef.current.selectionType);
+      }
     };
   }, [map]);
 
   // Effects — Synchronize map layers whenever options properties change
   useEffect(() => {
     if (!map) return;
+
+    // If selectionType changed, remove previous selectionType layers immediately
+    if (
+      prevSelectionTypeRef.current &&
+      prevSelectionTypeRef.current !== selectionType
+    ) {
+      removeCartMapLayers(map, prevSelectionTypeRef.current);
+    }
+    prevSelectionTypeRef.current = selectionType;
+
     renderCartMapLayers(map, {
       aoiPolygon,
       coveragePolygon,
@@ -383,6 +446,7 @@ export const useCartAoiCoverageMap = (
       isAoiVisible,
       isCoverageVisible,
       isActive,
+      exclusive,
     });
   }, [
     map,
@@ -392,5 +456,6 @@ export const useCartAoiCoverageMap = (
     isAoiVisible,
     isCoverageVisible,
     isActive,
+    exclusive,
   ]);
 };
