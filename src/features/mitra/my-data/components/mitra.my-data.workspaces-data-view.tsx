@@ -110,7 +110,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                 <VStack align={"start"} gap={0}>
                   <ClampedP
                     fontSize={"sm"}
-                    fontWeight={"medium"}
                     fontFamily={"mono"}
                     color={"fg"}
                     maxW={"220px"}

@@ -113,7 +113,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT (Label)", sortable: true },
       { th: "Basis IGT", sortable: true },
-      { th: "WMS URL Layer", sortable: false },
       { th: "Status Aktif", sortable: true },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
@@ -124,7 +123,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
       (item: MyDataItem) => {
         const layerDisplayName =
           item.label || item.title || item.id.replace(/_/g, " ");
-        const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl;
         const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
 
         return {
@@ -152,18 +150,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             {
               value: item.spatialBasis,
               td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
-              align: "start" as const,
-            },
-            {
-              value: effectiveWmsUrl ?? "",
-              td: (
-                <Url
-                  url={effectiveWmsUrl}
-                  label={"Salin URL WMS Layer"}
-                  maxW={"280px"}
-                  minW={"280px"}
-                />
-              ),
               align: "start" as const,
             },
             {
