@@ -134,20 +134,14 @@ export const InternalOrderReviewDataView = () => {
         columns: [
           {
             value: displayOrderNumber,
-            td: (
-              <P fontSize={"sm"}>
-                {displayOrderNumber}
-              </P>
-            ),
+            td: <P fontSize={"sm"}>{displayOrderNumber}</P>,
             align: "start" as const,
           },
           {
             value: order.mitraName,
             td: (
               <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"}>
-                  {order.mitraName}
-                </P>
+                <P fontSize={"sm"}>{order.mitraName}</P>
                 {(order.agencyOrCompany || order.email) && (
                   <P fontSize={"xs"} color={"fg.muted"}>
                     {order.agencyOrCompany || order.email}
@@ -201,11 +195,7 @@ export const InternalOrderReviewDataView = () => {
           },
           {
             value: order.totalPrice,
-            td: (
-              <P fontSize={"sm"}>
-                {formatCurrency(order.totalPrice)}
-              </P>
-            ),
+            td: <P fontSize={"sm"}>{formatCurrency(order.totalPrice)}</P>,
             align: "end" as const,
           },
           {
