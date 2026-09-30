@@ -32,6 +32,7 @@ import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport"
 import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { InternalSigninPage } from "@/features/auth/pages/internal.signin.page";
 import { MitraSigninPage } from "@/features/auth/pages/mitra.signin.page";
 import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
@@ -76,9 +77,10 @@ export const GisAppShell = (props: GisAppShellProps) => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
   const pathname = useLocation().pathname;
+  const { user } = useAuthSession();
 
   // Derived Values
-  const userSession = getUserSession();
+  const userSession = user ?? getUserSession();
   const currentUserId = userSession?.id;
   const isInternal =
     pathname.startsWith("/admin") ||
@@ -117,19 +119,6 @@ export const GisAppShell = (props: GisAppShellProps) => {
   useEffect(() => {
     useMapLayerStore.getState().resetLayers();
   }, [currentUserId]);
-
-  if (isStandaloneRoute) {
-    return (
-      <AppPageContainer
-        pos={"relative"}
-        overflow={"auto"}
-        bg={"bg.canvas"}
-        {...restProps}
-      >
-        <Outlet />
-      </AppPageContainer>
-    );
-  }
 
   return (
     <AppPageContainer
@@ -175,14 +164,10 @@ export const GisAppShell = (props: GisAppShellProps) => {
         pointerEvents={isLoginRoute ? "auto" : "none"}
         opacity={isLoginRoute ? 1 : 0}
         transform={isLoginRoute ? "scale(1)" : "scale(0.96)"}
-        transition={"500ms"}
+        transition={"300ms"}
         aria-hidden={!isLoginRoute}
       >
-        {isInternal ? (
-          <InternalSigninPage key={`admin-${currentUserId ?? "guest"}`} />
-        ) : (
-          <MitraSigninPage key={`mitra-${currentUserId ?? "guest"}`} />
-        )}
+        {isInternal ? <InternalSigninPage /> : <MitraSigninPage />}
       </Center>
     </AppPageContainer>
   );
@@ -538,7 +523,7 @@ const Content = (props: GisContentProps) => {
         shadow={"md"}
         pointerEvents={"auto"}
       >
-        {!isLoginRoute && <Outlet />}
+        <Outlet />
       </VStack>
     </Splitter.Panel>
   );
