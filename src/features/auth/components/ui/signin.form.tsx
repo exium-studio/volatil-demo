@@ -81,7 +81,7 @@ export const MitraSignin = (props: StackProps) => {
     ssoSigninMutation.mutate();
   };
 
-  if (isAuthenticated && user) {
+  if (isAuthenticated && user && user.role === "mitra") {
     return (
       <VStack
         flex={1}
@@ -322,7 +322,7 @@ export const InternalSignin = (props: StackProps) => {
     });
   };
 
-  if (isAuthenticated && user) {
+  if (isAuthenticated && user && user.role === "internal") {
     return (
       <VStack
         flex={1}

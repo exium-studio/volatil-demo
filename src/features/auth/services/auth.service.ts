@@ -34,7 +34,6 @@ import type {
   ResetPasswordVerifyTotpPayload,
 } from "@/features/auth/types/reset-password.type";
 
-
 import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
 import { ApiError } from "@/shared/libs/api-client/api-error";
 import type {
@@ -54,6 +53,10 @@ export const authService = {
     payload: SigninPayload,
     signal?: AbortSignal,
   ): Promise<User> => {
+    if (authService.getToken()) {
+      await authService.logout();
+    }
+
     try {
       const response = await postLoginApi(payload, signal);
 
@@ -118,6 +121,10 @@ export const authService = {
     payload: SigninPayload,
     signal?: AbortSignal,
   ): Promise<AuthLoginData<User>> => {
+    if (authService.getToken()) {
+      await authService.logout();
+    }
+
     try {
       const response = await postLoginApi(payload, signal);
 
@@ -301,6 +308,10 @@ export const authService = {
   },
 
   getSsoLoginUrl: async (signal?: AbortSignal): Promise<string> => {
+    if (authService.getToken()) {
+      await authService.logout();
+    }
+
     const state = crypto.randomUUID();
     const callbackUrl = `${window.location.origin}/auth/callback/keycloak`;
 
@@ -422,7 +433,9 @@ export const authService = {
       sessionStorage.removeItem("sso_state");
       sessionStorage.removeItem("sso_redirect_uri");
       useMapLayerStore.getState().resetLayers();
-      useAdministrativeFilterStore.getState().setAppliedAdministrativeFilters({});
+      useAdministrativeFilterStore
+        .getState()
+        .setAppliedAdministrativeFilters({});
     }
 
     return { logoutUrl: keycloakLogoutUrl, role };
@@ -541,6 +554,3 @@ export const authService = {
     }
   },
 };
-
-
-
