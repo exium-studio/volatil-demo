@@ -293,6 +293,7 @@ export const MAP_BASEMAP_MAP = {
     thumbnail: `${PATH_CONFIG.images}/base_map_styles/satellite.png`,
     label: "Peta Dasar",
     description: "Peta Dasar Kementerian ATR/BPN",
+    hidden: true,
     attributions: [
       '&copy; <a href="https://petadasar.atrbpn.go.id" target="_blank" rel="noopener noreferrer">Kementerian ATR/BPN</a>',
     ],
@@ -307,6 +308,7 @@ export const MAP_BASEMAP_MAP = {
     thumbnail: `${PATH_CONFIG.images}/base_map_styles/satellite.png`,
     label: "Grid Peta Dasar",
     description: "Grid Indeks Peta Dasar Kementerian ATR/BPN",
+    hidden: true,
     attributions: [
       '&copy; <a href="https://petadasar.atrbpn.go.id" target="_blank" rel="noopener noreferrer">Kementerian ATR/BPN</a>',
     ],
@@ -321,6 +323,7 @@ export const MAP_BASEMAP_MAP = {
     thumbnail: `${PATH_CONFIG.images}/base_map_styles/satellite.png`,
     label: "RBI BIG",
     description: "Peta Rupa Bumi Indonesia - Badan Informasi Geospasial",
+    hidden: true,
     attributions: [
       '&copy; <a href="https://geoservices.big.go.id" target="_blank" rel="noopener noreferrer">Badan Informasi Geospasial (BIG)</a>',
     ],
@@ -332,9 +335,9 @@ export const MAP_BASEMAP_MAP = {
   },
 } as const satisfies Record<BasemapKey, BasemapOption>;
 
-export const MAP_BASEMAP_OPTIONS_LIST = Object.keys(
-  MAP_BASEMAP_MAP,
-) as BasemapKey[];
+export const MAP_BASEMAP_OPTIONS_LIST = (
+  Object.keys(MAP_BASEMAP_MAP) as BasemapKey[]
+).filter((key) => !(MAP_BASEMAP_MAP[key] as BasemapOption).hidden);
 
 // -----------------------------------------------------------------
 

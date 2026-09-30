@@ -58,7 +58,7 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
   upload_aoi: {
     label: "Upload AOI",
     variant: "subtle",
-    colorPalette: "teal",
+    colorPalette: "orange",
     icon: FolderArchiveIcon,
   },
   draw_aoi: {
@@ -87,8 +87,8 @@ export const SELECTION_TYPE_MAP_COLOR: Record<
     line: "#7c3aed",
   },
   upload_aoi: {
-    fill: "#06b6d4",
-    line: "#0891b2",
+    fill: "#f97316",
+    line: "#ea580c",
   },
   draw_aoi: {
     fill: "#3b82f6",

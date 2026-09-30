@@ -24,11 +24,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
-import {
-  CheckCircleIcon,
-  LoaderIcon,
-  MapPlusIcon,
-} from "lucide-react";
+import { CheckCircleIcon, LoaderIcon, MapPlusIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const InternalOrderReviewDetailTrigger = (
@@ -104,9 +100,7 @@ const InternalOrderReviewDetailModalContent = (
               <P fontSize={"xs"} color={"fg.muted"}>
                 {"Metode Pengajuan:"}
               </P>
-              <SelectionTypeBadge>
-                {order.selectionType}
-              </SelectionTypeBadge>
+              <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
             </HStack>
             <HStack justify={"space-between"}>
               <P fontSize={"xs"} color={"fg.muted"}>
@@ -145,7 +139,9 @@ const InternalOrderReviewDetailModalContent = (
                 item.previewWmsUrl ||
                 item.wmsUrl ||
                 (item.sourceLayerId
-                  ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
+                  ? buildWmsProxyUrl(
+                      `/api/proxy/wms?layerId=${item.sourceLayerId}`,
+                    )
                   : "");
 
               return (

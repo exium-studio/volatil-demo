@@ -337,7 +337,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
         Boolean(layer?.wfs?.wfsTypeName || layer?.id),
       );
 
-
       if (isEmptyArray(validLayers)) return;
 
       const resolvedAoi =

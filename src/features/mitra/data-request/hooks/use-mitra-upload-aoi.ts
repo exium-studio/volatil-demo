@@ -2,6 +2,7 @@
 
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
@@ -11,10 +12,10 @@ export const UPLOAD_AOI_SOURCE_PREFIX = "upload-aoi-source-";
 export const UPLOAD_AOI_FILL_PREFIX = "upload-aoi-fill-";
 export const UPLOAD_AOI_LINE_PREFIX = "upload-aoi-line-";
 
-/** Orange theme color — visually distinct from Draw AOI (blue). */
-const AOI_FILL_COLOR = "#f97316";
+/** Upload AOI theme colors derived from SSOT */
+const { fill: AOI_FILL_COLOR, line: AOI_LINE_COLOR } =
+  getSelectionTypeMapColors("upload_aoi");
 const AOI_FILL_OPACITY = 0.25;
-const AOI_LINE_COLOR = "#ea580c";
 const AOI_LINE_WIDTH = 2.5;
 
 /**

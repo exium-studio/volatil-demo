@@ -498,6 +498,7 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
         w={"full"}
         overflowY={"auto"}
         p={"md"}
+        pb={"xs"}
         position={"relative"}
       >
         <Box
