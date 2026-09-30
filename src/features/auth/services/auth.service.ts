@@ -404,7 +404,13 @@ export const authService = {
     signal?: AbortSignal,
   ): Promise<{ logoutUrl?: string | null; role?: string }> => {
     const currentUser = getUserSession();
-    const role = currentUser?.role;
+    const role =
+      currentUser?.role ??
+      (typeof window !== "undefined" &&
+      (window.location.pathname.startsWith("/internal") ||
+        window.location.pathname.startsWith("/admin"))
+        ? "internal"
+        : "mitra");
     const idToken = sessionStorage.getItem("keycloakIdToken");
     let keycloakLogoutUrl: string | null = null;
 

@@ -10,11 +10,13 @@ import { redirect } from "@tanstack/react-router";
  * Ensures the user session is authenticated via /api/auth/me query.
  * Falls back to local cached storage if network error occurs.
  */
-export const ensureAuthenticatedUser = async (): Promise<User> => {
+export const ensureAuthenticatedUser = async (
+  fallbackRedirectTo = "/",
+): Promise<User> => {
   const token = authService.getToken();
   if (!token) {
     throw redirect({
-      to: "/",
+      to: fallbackRedirectTo,
     });
   }
 
@@ -27,7 +29,7 @@ export const ensureAuthenticatedUser = async (): Promise<User> => {
 
     if (!user) {
       throw redirect({
-        to: "/",
+        to: fallbackRedirectTo,
       });
     }
 
@@ -44,7 +46,7 @@ export const ensureAuthenticatedUser = async (): Promise<User> => {
     }
 
     throw redirect({
-      to: "/",
+      to: fallbackRedirectTo,
     });
   }
 };
@@ -53,8 +55,11 @@ export const ensureAuthenticatedUser = async (): Promise<User> => {
  * Route guard helper for TanStack Router `beforeLoad`.
  * Enforces role isolation between 'internal' and 'mitra'.
  */
-export const requireRoleGuard = async (requiredRole: UserRole): Promise<{ user: User }> => {
-  const user = await ensureAuthenticatedUser();
+export const requireRoleGuard = async (
+  requiredRole: UserRole,
+): Promise<{ user: User }> => {
+  const fallbackRedirect = requiredRole === "internal" ? "/admin" : "/";
+  const user = await ensureAuthenticatedUser(fallbackRedirect);
 
   if (user.role !== requiredRole) {
     if (user.role === "internal") {
@@ -75,7 +80,11 @@ export const requireRoleGuard = async (requiredRole: UserRole): Promise<{ user: 
  * Route guard helper for shared routes accessible by any authenticated role (internal or mitra).
  */
 export const requireAuthenticatedGuard = async (): Promise<{ user: User }> => {
-  const user = await ensureAuthenticatedUser();
+  const isInternal =
+    typeof window !== "undefined" &&
+    (window.location.pathname.startsWith("/internal") ||
+      window.location.pathname.startsWith("/admin"));
+  const user = await ensureAuthenticatedUser(isInternal ? "/admin" : "/");
   return { user };
 };
 

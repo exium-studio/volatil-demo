@@ -10,12 +10,16 @@ import type {
   TotpSetupData,
   TotpVerifyPayload,
 } from "@/features/auth/types/auth.service.type";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import type { User } from "@/shared/types/common-response.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 
 export const useInternalSigninStep1Mutation = () => {
+  // Hooks
+  const queryClient = useQueryClient();
+
   // Handlers
   const toastHandlers = mutationToastHandlers("auth-internal-step1", {
     group: "Autentikasi Pegawai",
@@ -34,6 +38,13 @@ export const useInternalSigninStep1Mutation = () => {
     onSuccess: (data) => {
       if ("accessToken" in data && data.accessToken) {
         toastHandlers.onSuccess();
+        if (data.user) {
+          queryClient.setQueryData(queryKeys.auth.me(), data.user);
+          queryClient.removeQueries({
+            predicate: (query) => query.queryKey[0] !== "auth",
+          });
+          useMapLayerStore.getState().resetLayers();
+        }
       } else if ("mfaRequired" in data && data.mfaRequired) {
         toast.info("Verifikasi 2 Langkah Diperlukan", {
           id: "mutation-toast-auth-internal-step1",
@@ -76,9 +87,12 @@ export const useInternalTotpVerifyMutation = () => {
     mutationFn: (payload: TotpVerifyPayload) =>
       authService.verifyTotp(payload),
     onMutate: toastHandlers.onLoading,
-    onSuccess: () => {
+    onSuccess: (user) => {
       toastHandlers.onSuccess();
-      queryClient.clear();
+      queryClient.setQueryData(queryKeys.auth.me(), user);
+      queryClient.removeQueries({
+        predicate: (query) => query.queryKey[0] !== "auth",
+      });
       useMapLayerStore.getState().resetLayers();
       void navigate({ to: "/internal/welcome" });
     },
@@ -132,9 +146,12 @@ export const useInternalTotpConfirmMutation = () => {
     mutationFn: ({ mfaToken, payload }) =>
       authService.confirmTotpSetup(mfaToken, payload),
     onMutate: toastHandlers.onLoading,
-    onSuccess: () => {
+    onSuccess: (user) => {
       toastHandlers.onSuccess();
-      queryClient.clear();
+      queryClient.setQueryData(queryKeys.auth.me(), user);
+      queryClient.removeQueries({
+        predicate: (query) => query.queryKey[0] !== "auth",
+      });
       useMapLayerStore.getState().resetLayers();
       void navigate({ to: "/internal/welcome" });
     },

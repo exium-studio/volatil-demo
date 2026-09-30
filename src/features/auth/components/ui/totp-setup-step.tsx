@@ -236,6 +236,7 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
 
         <PinInput
           count={6}
+          fluid={true}
           size={"md"}
           otp={true}
           onValueChange={handleValueChange}

@@ -11,10 +11,10 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { SignoutTrigger } from "@/features/auth/components/ui/signout-modal";
+import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
 import type { UserIdCardProps } from "@/features/auth/types/user-id-card.type";
 import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
-import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { LogOutIcon } from "lucide-react";
 
 export const UserIdCard = (props: UserIdCardProps) => {
@@ -31,11 +31,11 @@ export const UserIdCard = (props: UserIdCardProps) => {
   const { theme } = useThemeStore();
 
   // Hooks
+  const { user: authUser } = useAuthSession();
   const signoutMutation = useSignoutMutation();
 
   // Derived Values
-  const sessionUser = getUserSession();
-  const user = propUser ?? sessionUser;
+  const user = propUser ?? authUser;
 
   const displayName = user?.name || user?.email || "User";
 

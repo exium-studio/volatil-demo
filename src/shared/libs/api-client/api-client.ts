@@ -100,8 +100,12 @@ export const apiClient = {
                   : t["error.forbidden"]()),
             });
 
+            const isInternal =
+              window.location.pathname.startsWith("/internal") ||
+              window.location.pathname.startsWith("/admin");
+
             if (!isPublicPage) {
-              void router.navigate({ to: "/" });
+              void router.navigate({ to: isInternal ? "/admin" : "/" });
             }
           }
         }

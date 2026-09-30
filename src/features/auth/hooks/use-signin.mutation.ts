@@ -3,6 +3,7 @@
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { authService } from "@/features/auth/services/auth.service";
 import type { SigninPayload } from "@/features/auth/types/auth.service.type";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import type { User } from "@/shared/types/common-response.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -29,7 +30,10 @@ export const useSigninMutation = () => {
     onMutate: toastHandlers.onLoading,
     onSuccess: (user) => {
       toastHandlers.onSuccess();
-      queryClient.clear();
+      queryClient.setQueryData(queryKeys.auth.me(), user);
+      queryClient.removeQueries({
+        predicate: (query) => query.queryKey[0] !== "auth",
+      });
       useMapLayerStore.getState().resetLayers();
       if (user.role === "mitra") {
         navigate({ to: "/mitra/welcome" });

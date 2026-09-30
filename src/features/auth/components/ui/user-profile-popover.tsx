@@ -12,12 +12,11 @@ import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { ResetPasswordTrigger } from "@/features/auth/components/ui/reset-password-modal";
 import { SignoutTrigger } from "@/features/auth/components/ui/signout-modal";
+import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
 import type { UserProfilePopoverTriggerProps } from "@/features/auth/types/user-profile-popover.type";
 import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
-import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { LockIcon, LogOutIcon, MoonIcon, SunIcon } from "lucide-react";
-import { useMemo } from "react";
 
 export const UserProfilePopoverTrigger = (
   props: UserProfilePopoverTriggerProps,
@@ -30,10 +29,10 @@ export const UserProfilePopoverTrigger = (
   const { colorMode, toggleColorMode } = useColorMode();
 
   // Hooks
+  const { user } = useAuthSession();
   const signoutMutation = useSignoutMutation();
 
   // Derived Values
-  const user = useMemo(() => getUserSession(), []);
   const isDarkMode = colorMode === "dark";
 
   const displayName = user?.name ?? "";
