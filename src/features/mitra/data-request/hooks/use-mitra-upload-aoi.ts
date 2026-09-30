@@ -2,6 +2,7 @@
 
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import { HIGHLIGHT_FILL_LAYER_ID } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
@@ -19,28 +20,13 @@ const AOI_FILL_OPACITY = 0.25;
 const AOI_LINE_WIDTH = 2.5;
 
 /**
- * Returns the layer ID that Upload AOI layers should be inserted before (below draw layers),
- * satisfying rule: basemap → wms-raster → wfs-* → upload-aoi → draw.
+ * Returns the layer ID that Upload AOI layers should be inserted before (below draw/highlight layers),
+ * satisfying rule: basemap → wms-raster → wfs-* → upload-aoi → draw → highlight.
+ * If no draw/highlight layer exists, returns undefined to place on the top-most layer stack (above WMS/WFS).
  */
 const getBeforeId = (map: maplibregl.Map): string | undefined => {
+  if (map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) return HIGHLIGHT_FILL_LAYER_ID;
   if (map.getLayer(DRAW_FILL_LAYER_ID)) return DRAW_FILL_LAYER_ID;
-  const styleLayers = map.getStyle()?.layers;
-  if (styleLayers) {
-    const building3dIdx = styleLayers.findIndex((l) => l.id === "building-3d");
-    const buildingIdx = styleLayers.findIndex((l) => l.id === "building");
-    const maxBuildingIdx = Math.max(building3dIdx, buildingIdx);
-
-    if (maxBuildingIdx !== -1) {
-      for (let i = maxBuildingIdx + 1; i < styleLayers.length; i++) {
-        if (styleLayers[i].type === "symbol") {
-          return styleLayers[i].id;
-        }
-      }
-    }
-
-    const firstSymbol = styleLayers.find((l) => l.type === "symbol");
-    if (firstSymbol) return firstSymbol.id;
-  }
   return undefined;
 };
 
@@ -139,6 +125,20 @@ const addAoiLayer = (
     } as maplibregl.LayerSpecification,
     beforeId,
   );
+
+  // Guarantee AOI layers stay above any background WMS/WFS layers
+  try {
+    const resolvedBefore =
+      beforeId && map.getLayer(beforeId) ? beforeId : undefined;
+    if (map.getLayer(fillId)) {
+      map.moveLayer(fillId, resolvedBefore);
+    }
+    if (map.getLayer(lineId)) {
+      map.moveLayer(lineId, resolvedBefore);
+    }
+  } catch (err) {
+    console.warn("Failed to ensure layer order for upload AOI:", err);
+  }
 };
 
 /**

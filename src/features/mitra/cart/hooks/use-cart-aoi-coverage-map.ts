@@ -69,28 +69,15 @@ export const getAoiColor = (selectionType?: string) =>
 export const getCoverageColor = (selectionType?: string) =>
   getSelectionTypeMapColors(selectionType);
 
+import { HIGHLIGHT_FILL_LAYER_ID } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+
 /**
- * Returns the layer ID that Cart AOI/Coverage layers should be inserted before (below draw layer).
+ * Returns the layer ID that Cart AOI/Coverage layers should be inserted before (below draw & highlight layers).
+ * If no draw/highlight layer exists, returns undefined to place on the top-most layer stack (above WMS/WFS).
  */
 const getBeforeId = (map: maplibregl.Map): string | undefined => {
+  if (map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) return HIGHLIGHT_FILL_LAYER_ID;
   if (map.getLayer(DRAW_FILL_LAYER_ID)) return DRAW_FILL_LAYER_ID;
-  const styleLayers = map.getStyle()?.layers;
-  if (styleLayers) {
-    const building3dIdx = styleLayers.findIndex((l) => l.id === "building-3d");
-    const buildingIdx = styleLayers.findIndex((l) => l.id === "building");
-    const maxBuildingIdx = Math.max(building3dIdx, buildingIdx);
-
-    if (maxBuildingIdx !== -1) {
-      for (let i = maxBuildingIdx + 1; i < styleLayers.length; i++) {
-        if (styleLayers[i].type === "symbol") {
-          return styleLayers[i].id;
-        }
-      }
-    }
-
-    const firstSymbol = styleLayers.find((l) => l.type === "symbol");
-    if (firstSymbol) return firstSymbol.id;
-  }
   return undefined;
 };
 
@@ -250,6 +237,20 @@ export const renderCartMapLayers = (
       map.setPaintProperty(aoiIds.lineId, "line-color", colors.line);
       map.setLayoutProperty(aoiIds.lineId, "visibility", "visible");
     }
+
+    // Guarantee AOI layers stay on top
+    try {
+      const resolvedBefore =
+        beforeId && map.getLayer(beforeId) ? beforeId : undefined;
+      if (map.getLayer(aoiIds.fillId)) {
+        map.moveLayer(aoiIds.fillId, resolvedBefore);
+      }
+      if (map.getLayer(aoiIds.lineId)) {
+        map.moveLayer(aoiIds.lineId, resolvedBefore);
+      }
+    } catch (err) {
+      console.warn("Failed to move AOI layers to top:", err);
+    }
   } else {
     // Hide or clear AOI layers for this selectionType
     const existingSource = map.getSource(aoiIds.sourceId) as
@@ -331,6 +332,23 @@ export const renderCartMapLayers = (
     } else {
       map.setPaintProperty(covIds.lineId, "line-color", colors.line);
       map.setLayoutProperty(covIds.lineId, "visibility", "visible");
+    }
+
+    // Guarantee Coverage layers stay above WMS/WFS but below AOI
+    try {
+      const covBefore = map.getLayer(aoiIds.fillId)
+        ? aoiIds.fillId
+        : beforeId && map.getLayer(beforeId)
+          ? beforeId
+          : undefined;
+      if (map.getLayer(covIds.fillId)) {
+        map.moveLayer(covIds.fillId, covBefore);
+      }
+      if (map.getLayer(covIds.lineId)) {
+        map.moveLayer(covIds.lineId, covBefore);
+      }
+    } catch (err) {
+      console.warn("Failed to move Coverage layers:", err);
     }
   } else {
     // Hide or clear Coverage layers for this selectionType
