@@ -236,23 +236,19 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         key: "view-invoice",
         label: "Lihat Faktur",
         icon: FileTextIcon,
+        href: (item: MyDataItem) => item.invoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (item: MyDataItem) => !item.invoiceUrl,
-        onClick: (item: MyDataItem) => {
-          if (item.invoiceUrl) {
-            window.open(item.invoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "view-tte-invoice",
         label: "Lihat Faktur TTE",
         icon: FileCheckIcon,
+        href: (item: MyDataItem) => item.tteInvoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (item: MyDataItem) => !item.tteInvoiceUrl,
-        onClick: (item: MyDataItem) => {
-          if (item.tteInvoiceUrl) {
-            window.open(item.tteInvoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "edit-label",

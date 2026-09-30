@@ -70,6 +70,18 @@ function resolveColorPalette<T>(
   return paletteProp;
 }
 
+function resolveHref<T>(
+  hrefProp: DataViewDeclarativeItemAction<T>["href"],
+  item: T,
+  formattedItem: FormattedListItem<T>,
+): string | undefined {
+  if (typeof hrefProp === "function") {
+    const res = hrefProp(item, formattedItem);
+    return res ?? undefined;
+  }
+  return hrefProp ?? undefined;
+}
+
 function renderIcon(icon: ActionIconType | undefined) {
   if (!icon) return null;
   if (isValidElement(icon)) return icon;
@@ -135,10 +147,58 @@ export function DataViewSpreadActions<
           action.colorPalette,
           item.data,
         );
+        const resolvedHref = resolveHref(action.href, item.data, item);
         const iconNode = renderIcon(resolvedIcon);
         const triggerElement = resolveTriggerElement(action.modal, item);
 
-        const rawButton = resolvedIcon ? (
+        const rawButton = resolvedHref ? (
+          resolvedIcon ? (
+            <IconButton
+              asChild
+              variant={action.variant ?? "ghost"}
+              colorPalette={resolvedColorPalette}
+              disabled={isDisabled}
+              aria-label={resolvedLabel}
+            >
+              <a
+                href={resolvedHref}
+                target={action.target ?? "_blank"}
+                rel={action.rel ?? "noopener noreferrer"}
+                onClick={(e) => {
+                  if (isDisabled) {
+                    e.preventDefault();
+                    return;
+                  }
+                  void action.onClick?.(item.data, item);
+                }}
+              >
+                {iconNode}
+              </a>
+            </IconButton>
+          ) : (
+            <Button
+              asChild
+              variant={action.variant ?? "outline"}
+              colorPalette={resolvedColorPalette}
+              disabled={isDisabled}
+            >
+              <a
+                href={resolvedHref}
+                target={action.target ?? "_blank"}
+                rel={action.rel ?? "noopener noreferrer"}
+                onClick={(e) => {
+                  if (isDisabled) {
+                    e.preventDefault();
+                    return;
+                  }
+                  void action.onClick?.(item.data, item);
+                }}
+              >
+                {resolvedLabel}
+              </a>
+            </Button>
+          )
+        ) : resolvedIcon ? (
           <IconButton
             variant={action.variant ?? "ghost"}
             colorPalette={resolvedColorPalette}
@@ -218,10 +278,58 @@ export function DataViewStickyActions<
           action.colorPalette,
           item.data,
         );
+        const resolvedHref = resolveHref(action.href, item.data, item);
         const iconNode = renderIcon(resolvedIcon);
         const triggerElement = resolveTriggerElement(action.modal, item);
 
-        const rawButton = resolvedIcon ? (
+        const rawButton = resolvedHref ? (
+          resolvedIcon ? (
+            <IconButton
+              asChild
+              variant={action.variant ?? "ghost"}
+              colorPalette={resolvedColorPalette}
+              disabled={isDisabled}
+              aria-label={resolvedLabel}
+            >
+              <a
+                href={resolvedHref}
+                target={action.target ?? "_blank"}
+                rel={action.rel ?? "noopener noreferrer"}
+                onClick={(e) => {
+                  if (isDisabled) {
+                    e.preventDefault();
+                    return;
+                  }
+                  void action.onClick?.(item.data, item);
+                }}
+              >
+                {iconNode}
+              </a>
+            </IconButton>
+          ) : (
+            <Button
+              asChild
+              variant={action.variant ?? "outline"}
+              colorPalette={resolvedColorPalette}
+              disabled={isDisabled}
+            >
+              <a
+                href={resolvedHref}
+                target={action.target ?? "_blank"}
+                rel={action.rel ?? "noopener noreferrer"}
+                onClick={(e) => {
+                  if (isDisabled) {
+                    e.preventDefault();
+                    return;
+                  }
+                  void action.onClick?.(item.data, item);
+                }}
+              >
+                {resolvedLabel}
+              </a>
+            </Button>
+          )
+        ) : resolvedIcon ? (
           <IconButton
             variant={action.variant ?? "ghost"}
             colorPalette={resolvedColorPalette}
@@ -335,6 +443,7 @@ export function DataListItemActionsTrigger<
                   action.colorPalette,
                   item.data,
                 );
+                const resolvedHref = resolveHref(action.href, item.data, item);
                 const iconNode = renderIcon(resolvedIcon);
                 const triggerElement = resolveTriggerElement(
                   action.modal,
@@ -343,7 +452,40 @@ export function DataListItemActionsTrigger<
                 const shouldMountModalInMenu =
                   Boolean(triggerElement) && action.showInRow === false;
 
-                const menuItemNode = (
+                const menuItemContent = (
+                  <>
+                    {iconNode}
+                    {resolvedLabel}
+                  </>
+                );
+
+                const menuItemNode = resolvedHref ? (
+                  <Menu.Item
+                    asChild
+                    value={key}
+                    disabled={isDisabled}
+                    color={
+                      resolvedColorPalette
+                        ? `${resolvedColorPalette}.fg`
+                        : undefined
+                    }
+                  >
+                    <a
+                      href={resolvedHref}
+                      target={action.target ?? "_blank"}
+                      rel={action.rel ?? "noopener noreferrer"}
+                      onClick={(e) => {
+                        if (isDisabled) {
+                          e.preventDefault();
+                          return;
+                        }
+                        void action.onClick?.(item.data, item);
+                      }}
+                    >
+                      {menuItemContent}
+                    </a>
+                  </Menu.Item>
+                ) : (
                   <Menu.Item
                     value={key}
                     disabled={isDisabled}
@@ -388,8 +530,7 @@ export function DataListItemActionsTrigger<
                         : () => executeItemAction(action, item)
                     }
                   >
-                    {iconNode}
-                    {resolvedLabel}
+                    {menuItemContent}
                   </Menu.Item>
                 );
 

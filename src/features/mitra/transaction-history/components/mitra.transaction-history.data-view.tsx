@@ -257,23 +257,21 @@ export const TransactionHistoryDataView = () => {
         key: "view-invoice",
         label: "Lihat Faktur",
         icon: ReceiptTextIcon,
+        href: (transaction: TransactionRecord) =>
+          transaction.invoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (transaction: TransactionRecord) => !transaction.invoiceUrl,
-        onClick: (transaction: TransactionRecord) => {
-          if (transaction.invoiceUrl) {
-            window.open(transaction.invoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "view-tte-invoice",
         label: "Lihat Faktur TTE",
         icon: FileCheckIcon,
+        href: (transaction: TransactionRecord) =>
+          transaction.tteInvoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (transaction: TransactionRecord) => !transaction.tteInvoiceUrl,
-        onClick: (transaction: TransactionRecord) => {
-          if (transaction.tteInvoiceUrl) {
-            window.open(transaction.tteInvoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "view-detail",

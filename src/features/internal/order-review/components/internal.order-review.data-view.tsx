@@ -237,23 +237,19 @@ export const InternalOrderReviewDataView = () => {
         key: "view-invoice",
         label: "Lihat Faktur",
         icon: ReceiptTextIcon,
+        href: (order: InternalOrderItem) => order.invoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (order: InternalOrderItem) => !order.invoiceUrl,
-        onClick: (order: InternalOrderItem) => {
-          if (order.invoiceUrl) {
-            window.open(order.invoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "view-tte-invoice",
         label: "Lihat Faktur TTE",
         icon: FileCheckIcon,
+        href: (order: InternalOrderItem) => order.tteInvoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (order: InternalOrderItem) => !order.tteInvoiceUrl,
-        onClick: (order: InternalOrderItem) => {
-          if (order.tteInvoiceUrl) {
-            window.open(order.tteInvoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "approve-order",
