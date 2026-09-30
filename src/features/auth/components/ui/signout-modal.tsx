@@ -7,7 +7,7 @@ import { LogOutIcon } from "lucide-react";
 
 export const SignoutTrigger = (props: SignoutTriggerProps) => {
   // Props
-  const { modalKey = "auth-signout-confirmation", children } = props;
+  const { modalKey = "auth-signout-confirmation", children, onConfirm } = props;
 
   // Mutations
   const signoutMutation = useSignoutMutation();
@@ -18,13 +18,18 @@ export const SignoutTrigger = (props: SignoutTriggerProps) => {
       icon={LogOutIcon}
       colorPalette={"red"}
       title={"Keluar dari Aplikasi"}
-      description={"Sesi Anda akan diakhiri dan Anda perlu masuk kembali untuk mengakses akun."}
+      description={
+        "Sesi Anda akan diakhiri dan Anda perlu masuk kembali untuk mengakses akun."
+      }
       confirmLabel={"Keluar"}
       cancelLabel={"Batal"}
       confirmButtonProps={{
         loading: signoutMutation.isPending,
       }}
-      onConfirm={() => signoutMutation.mutate()}
+      onConfirm={() => {
+        onConfirm?.();
+        signoutMutation.mutate();
+      }}
     >
       {children}
     </ConfirmationTrigger>

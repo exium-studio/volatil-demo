@@ -17,6 +17,7 @@ import { useSignoutMutation } from "@/features/auth/hooks/use-signout.mutation";
 import type { UserProfilePopoverTriggerProps } from "@/features/auth/types/user-profile-popover.type";
 import { UserRoleBadge } from "@/features/shared/components/user-role.badge";
 import { LockIcon, LogOutIcon, MoonIcon, SunIcon } from "lucide-react";
+import { useState } from "react";
 
 export const UserProfilePopoverTrigger = (
   props: UserProfilePopoverTriggerProps,
@@ -28,8 +29,11 @@ export const UserProfilePopoverTrigger = (
   const { theme } = useThemeStore();
   const { colorMode, toggleColorMode } = useColorMode();
 
+  // States
+  const [open, setOpen] = useState(false);
+
   // Hooks
-  const { user } = useAuthSession();
+  const { user, isAuthenticated } = useAuthSession();
   const signoutMutation = useSignoutMutation();
 
   // Derived Values
@@ -38,8 +42,26 @@ export const UserProfilePopoverTrigger = (
   const displayName = user?.name ?? "";
   const displayEmail = user?.email ?? "";
 
+  const isOpen =
+    open && Boolean(isAuthenticated && user) && !signoutMutation.isPending;
+
+  // Handlers
+  const handleOpenChange = (details: { open: boolean }) => {
+    if (!isAuthenticated || !user) {
+      setOpen(false);
+      return;
+    }
+    setOpen(details.open);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Popover.Root
+      open={isOpen}
+      onOpenChange={handleOpenChange}
       positioning={{
         placement: "right-end",
         gutter: 12,
@@ -139,7 +161,7 @@ export const UserProfilePopoverTrigger = (
               )}
 
               {/* Signout Button */}
-              <SignoutTrigger>
+              <SignoutTrigger onConfirm={handleClose}>
                 <Button
                   colorPalette={"red"}
                   size={"sm"}
@@ -147,6 +169,7 @@ export const UserProfilePopoverTrigger = (
                   px={"sm"}
                   loading={signoutMutation.isPending}
                   justifyContent={"start"}
+                  onClick={handleClose}
                 >
                   <AppIcon icon={LogOutIcon} />
                   {"Keluar"}
