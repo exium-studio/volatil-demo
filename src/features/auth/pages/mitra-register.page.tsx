@@ -9,7 +9,6 @@ import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { Input } from "@/design-system/components/input/ui/input";
-import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { ConstrainedContainer } from "@/design-system/components/layout/ui/constrained-container";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -73,7 +72,6 @@ export const MitraRegisterPage = () => {
       jabatan: "",
       email: "",
       nomorHp: "",
-      password: "",
       suratPermohonan: [],
       dokumenDik: [],
       suratPernyataanHukum: [],
@@ -331,18 +329,6 @@ export const MitraRegisterPage = () => {
                       <Input
                         placeholder={"+6281234567890"}
                         {...register("nomorHp")}
-                      />
-                    </Field>
-
-                    <Field
-                      label={"Kata Sandi Akun (Opsional)"}
-                      invalid={Boolean(errors.password)}
-                      errorText={errors.password?.message}
-                      helperText={"Dapat diset saat ini atau saat aktivasi SSO"}
-                    >
-                      <PasswordInput
-                        placeholder={"Minimal 6 karakter"}
-                        {...register("password")}
                       />
                     </Field>
                   </SimpleGrid>

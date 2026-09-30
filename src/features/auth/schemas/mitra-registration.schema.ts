@@ -75,13 +75,6 @@ export const createMitraRegistrationSchema = () =>
       .string()
       .min(1, "Nomor HP / WhatsApp wajib diisi")
       .regex(/^(\+62|62|08)[0-9]{8,13}$/, "Format nomor HP harus +62 atau 08 (10-15 digit)"),
-    password: z
-      .string()
-      .optional()
-      .refine(
-        (val) => !val || val.length >= 6,
-        "Kata sandi minimal 6 karakter jika diisi",
-      ),
 
     // 6 Berkas Dokumen Wajib
     suratPermohonan: fileSchema("Surat Permohonan Kerjasama"),
