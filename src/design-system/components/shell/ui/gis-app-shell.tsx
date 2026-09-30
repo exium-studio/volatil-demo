@@ -24,7 +24,10 @@ import { HNavs } from "@/design-system/components/navigation/ui/h-navs";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/navs.utils";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
+import type {
+  GisAppShellProps,
+  GisContentProps,
+} from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
@@ -78,8 +81,17 @@ export const GisAppShell = (props: GisAppShellProps) => {
   const isSmallViewport = useIsSmallViewport();
   const pathname = useLocation().pathname;
 
+  // Derived Values
+  const isLoginRoute = pathname === "/" || pathname === "/admin";
+  const isStandaloneRoute =
+    !isLoginRoute &&
+    !pathname.startsWith("/mitra") &&
+    !pathname.startsWith("/internal");
+
   // Effects
   useEffect(() => {
+    if (isLoginRoute || isStandaloneRoute) return;
+
     const userData = getUserSession();
     const role = pathname.startsWith("/internal")
       ? "internal"
@@ -97,7 +109,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
         titleKey: navItem.titleKey,
       });
     }
-  }, [pathname]);
+  }, [pathname, isLoginRoute, isStandaloneRoute]);
 
   // Reset all active map layers and filters when user/role changes
   const userSession = getUserSession();
@@ -107,6 +119,19 @@ export const GisAppShell = (props: GisAppShellProps) => {
     useMapLayerStore.getState().resetLayers();
   }, [currentUserId]);
 
+  if (isStandaloneRoute) {
+    return (
+      <AppPageContainer
+        pos={"relative"}
+        overflow={"auto"}
+        bg={"bg.canvas"}
+        {...restProps}
+      >
+        <Outlet />
+      </AppPageContainer>
+    );
+  }
+
   return (
     <AppPageContainer
       flexDir={isSmallViewport ? "column" : "row"}
@@ -115,11 +140,11 @@ export const GisAppShell = (props: GisAppShellProps) => {
       bg={"bg.canvas"}
       {...restProps}
     >
-      {!isSmallViewport && <Sidebar />}
+      {!isLoginRoute && !isSmallViewport && <Sidebar />}
 
-      <Content />
+      <Content isLoginRoute={isLoginRoute} />
 
-      {isSmallViewport && <MobileBottomNav />}
+      {!isLoginRoute && isSmallViewport && <MobileBottomNav />}
     </AppPageContainer>
   );
 };
@@ -383,7 +408,10 @@ const SidebarToggleButton = () => {
 
 // -------------------------------------------------------------------------------------
 
-const Content = () => {
+const Content = (props: GisContentProps) => {
+  // Props
+  const { isLoginRoute } = props;
+
   // Refs
   const contentPanelRef = useRef<HTMLDivElement | null>(null);
 
@@ -407,6 +435,7 @@ const Content = () => {
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
+    enabled: !isLoginRoute,
   });
 
   const {
@@ -436,6 +465,8 @@ const Content = () => {
   }, [fetchedLayers]);
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
+    if (isLoginRoute) return [];
+
     const rawList = fetchedLayers?.items ?? [];
     const sorted = [...rawList].sort(
       (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
@@ -500,6 +531,7 @@ const Content = () => {
 
     return configs;
   }, [
+    isLoginRoute,
     fetchedLayers,
     wmsVisible,
     enabledLayerIds,
@@ -511,7 +543,11 @@ const Content = () => {
   ]);
 
   // Derived Values
-  const sidebarPx = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
+  const sidebarPx = isLoginRoute
+    ? 0
+    : sidebarExpanded
+      ? SIDEBAR_EXPANDED_W
+      : SIDEBAR_COLLAPSED_W;
 
   const panels = [
     { id: "content", minSize: 5 },
@@ -591,23 +627,37 @@ const Content = () => {
         <BaseMap />
       </Box>
 
-      {/* Splitter — content panel + transparent spacer (no map inside) */}
-      <Splitter.Root
-        flex={1}
-        panels={panels}
-        size={splitterSize}
-        onResize={(details) => {
-          setSplitterSize(SPLITTER_KEY, details.size);
-        }}
-        orientation={isSmallViewport ? "vertical" : "horizontal"}
-        pos={"relative"}
-        zIndex={1}
-        pointerEvents={"none"}
-      >
-        {isSmallViewport
-          ? [spacerPanel, resizeTrigger, contentPanel]
-          : [contentPanel, resizeTrigger, spacerPanel]}
-      </Splitter.Root>
+      {isLoginRoute ? (
+        <Center
+          pos={"relative"}
+          zIndex={1}
+          w={"full"}
+          h={"full"}
+          p={[2, 4, 6]}
+          overflow={"auto"}
+          pointerEvents={"auto"}
+        >
+          <Outlet />
+        </Center>
+      ) : (
+        /* Splitter — content panel + transparent spacer (no map inside) */
+        <Splitter.Root
+          flex={1}
+          panels={panels}
+          size={splitterSize}
+          onResize={(details) => {
+            setSplitterSize(SPLITTER_KEY, details.size);
+          }}
+          orientation={isSmallViewport ? "vertical" : "horizontal"}
+          pos={"relative"}
+          zIndex={1}
+          pointerEvents={"none"}
+        >
+          {isSmallViewport
+            ? [spacerPanel, resizeTrigger, contentPanel]
+            : [contentPanel, resizeTrigger, spacerPanel]}
+        </Splitter.Root>
+      )}
     </>
   );
 };
