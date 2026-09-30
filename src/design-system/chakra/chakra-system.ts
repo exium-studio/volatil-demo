@@ -136,7 +136,7 @@ export const chakraConfig = defineConfig({
         canvasDark: { value: "#161717" },
 
         bodyLight: { value: "#ffffff" },
-        bodyDark: { value: "#191a1a" },
+        bodyDark: { value: "#1a1b1c" },
 
         bodyLightAlpha: { value: "rgba(255, 255, 255, 0.5)" },
         bodyDarkAlpha: { value: "rgba(25, 26, 26, 0.5)" },

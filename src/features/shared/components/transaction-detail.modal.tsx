@@ -530,7 +530,7 @@ export const TransactionDetailModalContent = (
 
                 <VStack align={"start"} gap={"xs"} w={"full"}>
                   <P fontSize={"sm"} color={"fg.subtle"}>
-                    {"Status Dokumen & TTE"}
+                    {"TTE & Faktur"}
                   </P>
                   <TteBadge
                     tte={transaction.tte}
