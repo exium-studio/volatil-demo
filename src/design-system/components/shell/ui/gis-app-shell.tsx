@@ -155,7 +155,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
         backdropFilter={"blur(5px)"}
         pointerEvents={"none"}
         opacity={isLoginRoute ? 1 : 0}
-        transition={"500ms"}
+        transition={"300ms"}
       />
 
       {/* Login Screen Container with smooth opacity and scale transition */}
@@ -168,12 +168,12 @@ export const GisAppShell = (props: GisAppShellProps) => {
         zIndex={101}
         w={"full"}
         h={"full"}
-        p={[2, 4, 6]}
+        p={["0 !important", 4, 6]}
         overflow={"auto"}
         pointerEvents={isLoginRoute ? "auto" : "none"}
         opacity={isLoginRoute ? 1 : 0}
         transform={isLoginRoute ? "scale(1)" : "scale(0.96)"}
-        transition={"200ms"}
+        transition={"500ms"}
         aria-hidden={!isLoginRoute}
       >
         {isAdminRoute ? (
@@ -386,12 +386,15 @@ const Content = (props: GisContentProps) => {
   const isSmallViewport = useIsSmallViewport();
   const hasInitializedDefaultsRef = useRef(false);
 
+  const userSession = getUserSession();
+  const isAuthenticated = Boolean(userSession?.id);
+
   // Derived Values — Build layer config from fetched layer list
   const { data: fetchedLayers } = useQuery({
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
-    enabled: !isLoginRoute,
+    enabled: !isLoginRoute && isAuthenticated,
   });
 
   const {

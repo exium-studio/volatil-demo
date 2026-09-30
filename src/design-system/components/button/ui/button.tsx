@@ -108,6 +108,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         minW={minW}
         maxW={maxW}
         overflow={"hidden"}
+        _active={{
+          transform: "translateY(2px)",
+        }}
+        transition={"150ms"}
         {...restProps}
       >
         {formattedChildren}

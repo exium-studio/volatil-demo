@@ -26,6 +26,7 @@ import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
@@ -47,6 +48,10 @@ export const MapMasterIgtLayerSelect = memo(() => {
     setAllLayersEnabled,
   } = useMapLayerStore();
 
+  // Derived Values
+  const userSession = getUserSession();
+  const isAuthenticated = Boolean(userSession?.id);
+
   // Queries — list of all active master IGT catalog layers
   const {
     data: layersData,
@@ -58,6 +63,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
+    enabled: isAuthenticated,
   });
 
   // Derived Values

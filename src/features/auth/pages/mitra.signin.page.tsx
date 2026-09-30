@@ -26,7 +26,13 @@ export const MitraSigninPage = () => {
     >
       <FeaturesCarousel h={"full"} />
 
-      <VStack h={"full"} overflowY={"auto"} px={[0, null, 12]} py={12} justify={"center"}>
+      <VStack
+        h={"full"}
+        overflowY={"auto"}
+        px={[6, 8, 12]}
+        py={[8, 10, 12]}
+        justify={"center"}
+      >
         <HStack align={"center"} justify={"center"} gap={4} ml={-4}>
           <IgtLogo />
 
