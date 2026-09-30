@@ -78,8 +78,13 @@ export const GisAppShell = (props: GisAppShellProps) => {
   const pathname = useLocation().pathname;
 
   // Derived Values
-  const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin");
-  const isLoginRoute = pathname === "/" || isAdminRoute;
+  const userSession = getUserSession();
+  const currentUserId = userSession?.id;
+  const isInternal =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/internal") ||
+    userSession?.role === "internal";
+  const isLoginRoute = pathname === "/" || pathname === "/admin";
   const isStandaloneRoute =
     !isLoginRoute &&
     !pathname.startsWith("/mitra") &&
@@ -109,9 +114,6 @@ export const GisAppShell = (props: GisAppShellProps) => {
   }, [pathname, isLoginRoute, isStandaloneRoute]);
 
   // Reset all active map layers and filters when user/role changes
-  const userSession = getUserSession();
-  const currentUserId = userSession?.id;
-
   useEffect(() => {
     useMapLayerStore.getState().resetLayers();
   }, [currentUserId]);
@@ -176,7 +178,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
         transition={"500ms"}
         aria-hidden={!isLoginRoute}
       >
-        {isAdminRoute ? (
+        {isInternal ? (
           <InternalSigninPage key={`admin-${currentUserId ?? "guest"}`} />
         ) : (
           <MitraSigninPage key={`mitra-${currentUserId ?? "guest"}`} />
