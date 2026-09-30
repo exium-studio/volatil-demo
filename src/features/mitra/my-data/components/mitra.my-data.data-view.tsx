@@ -140,9 +140,8 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT (Label)", sortable: true },
-      { th: "Basis IGT", sortable: true },
       { th: "WMS URL", sortable: false },
-      // { th: "WFS URL", sortable: false,  },
+      { th: "Basis IGT", sortable: true },
       { th: "Status Aktif", sortable: true },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
@@ -172,11 +171,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
               align: "start" as const,
             },
             {
-              value: item.spatialBasis,
-              td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
-              align: "start" as const,
-            },
-            {
               value: effectiveWmsUrl ?? "",
               td: (
                 <Url
@@ -186,6 +180,11 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                   minW={"280px"}
                 />
               ),
+              align: "start" as const,
+            },
+            {
+              value: item.spatialBasis,
+              td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
               align: "start" as const,
             },
             {

@@ -89,8 +89,8 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Workspace", sortable: true },
-      { th: "No. Transaksi / Pesanan", sortable: true },
       { th: "WMS URL (Interop)", sortable: false },
+      { th: "No. Transaksi / Pesanan", sortable: true },
       { th: "Jumlah Layer", sortable: true, align: "center" },
       { th: "Status Aktif", sortable: true },
       { th: "TTE & Faktur", sortable: false, align: "start" },
@@ -124,6 +124,18 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               align: "start" as const,
             },
             {
+              value: item.wmsUrl ?? "",
+              td: (
+                <Url
+                  url={item.wmsUrl}
+                  label={"Salin URL WMS Interop"}
+                  maxW={"280px"}
+                  minW={"280px"}
+                />
+              ),
+              align: "start" as const,
+            },
+            {
               value: item.orderNumber || item.orderId,
               td: (
                 <VStack>
@@ -135,18 +147,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                     {item.orderNumber || item.orderId}
                   </P>
                 </VStack>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.wmsUrl ?? "",
-              td: (
-                <Url
-                  url={item.wmsUrl}
-                  label={"Salin URL WMS Interop"}
-                  maxW={"280px"}
-                  minW={"280px"}
-                />
               ),
               align: "start" as const,
             },

@@ -358,16 +358,14 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Nama Workspace"}
                 </P>
-                <P fontWeight={"semibold"} fontFamily={"mono"}>
-                  {workspace.workspaceName}
-                </P>
+                <P fontFamily={"mono"}>{workspace.workspaceName}</P>
               </VStack>
 
               <VStack gap={"xs"} align={"start"}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
                   {"Nomor Transaksi / Pesanan"}
                 </P>
-                <P fontWeight={"semibold"}>
+                <P>
                   {`${workspace.transactionNumber} / ${workspace.orderNumber}`}
                 </P>
               </VStack>
