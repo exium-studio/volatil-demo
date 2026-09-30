@@ -137,14 +137,47 @@ export const GisAppShell = (props: GisAppShellProps) => {
       flexDir={isSmallViewport ? "column" : "row"}
       pos={"relative"}
       overflow={"hidden"}
-      bg={"bg.canvas"}
+      bg={"transparent"}
       {...restProps}
     >
-      {!isLoginRoute && !isSmallViewport && <Sidebar />}
+      {!isSmallViewport && <Sidebar />}
 
       <Content isLoginRoute={isLoginRoute} />
 
-      {!isLoginRoute && isSmallViewport && <MobileBottomNav />}
+      {isSmallViewport && <MobileBottomNav />}
+
+      {/* Overlay */}
+      <Box
+        pos={"fixed"}
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        zIndex={100}
+        bg={"bodyDark/20"}
+        backdropFilter={"blur(5px)"}
+        pointerEvents={"none"}
+        opacity={isLoginRoute ? 1 : 0}
+        transition={"500ms"}
+      />
+
+      {isLoginRoute && (
+        <Center
+          pos={"fixed"}
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          zIndex={101}
+          w={"full"}
+          h={"full"}
+          p={[2, 4, 6]}
+          overflow={"auto"}
+          pointerEvents={"auto"}
+        >
+          <Outlet />
+        </Center>
+      )}
     </AppPageContainer>
   );
 };
@@ -543,11 +576,7 @@ const Content = (props: GisContentProps) => {
   ]);
 
   // Derived Values
-  const sidebarPx = isLoginRoute
-    ? 0
-    : sidebarExpanded
-      ? SIDEBAR_EXPANDED_W
-      : SIDEBAR_COLLAPSED_W;
+  const sidebarPx = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
 
   const panels = [
     { id: "content", minSize: 5 },
@@ -581,7 +610,7 @@ const Content = (props: GisContentProps) => {
         shadow={"md"}
         pointerEvents={"auto"}
       >
-        <Outlet />
+        {!isLoginRoute && <Outlet />}
       </VStack>
     </Splitter.Panel>
   );
@@ -622,42 +651,28 @@ const Content = (props: GisContentProps) => {
 
   return (
     <>
-      {/* Full-viewport basemap tile layer — sits behind everything */}
+      {/* Full-viewport basemap tile layer */}
       <Box pos={"fixed"} top={0} left={0} right={0} bottom={0} zIndex={0}>
         <BaseMap />
       </Box>
 
-      {isLoginRoute ? (
-        <Center
-          pos={"relative"}
-          zIndex={1}
-          w={"full"}
-          h={"full"}
-          p={[2, 4, 6]}
-          overflow={"auto"}
-          pointerEvents={"auto"}
-        >
-          <Outlet />
-        </Center>
-      ) : (
-        /* Splitter — content panel + transparent spacer (no map inside) */
-        <Splitter.Root
-          flex={1}
-          panels={panels}
-          size={splitterSize}
-          onResize={(details) => {
-            setSplitterSize(SPLITTER_KEY, details.size);
-          }}
-          orientation={isSmallViewport ? "vertical" : "horizontal"}
-          pos={"relative"}
-          zIndex={1}
-          pointerEvents={"none"}
-        >
-          {isSmallViewport
-            ? [spacerPanel, resizeTrigger, contentPanel]
-            : [contentPanel, resizeTrigger, spacerPanel]}
-        </Splitter.Root>
-      )}
+      {/* Splitter — content panel + transparent spacer (no map inside) */}
+      <Splitter.Root
+        flex={1}
+        panels={panels}
+        size={splitterSize}
+        onResize={(details) => {
+          setSplitterSize(SPLITTER_KEY, details.size);
+        }}
+        orientation={isSmallViewport ? "vertical" : "horizontal"}
+        pos={"relative"}
+        zIndex={2}
+        pointerEvents={"none"}
+      >
+        {isSmallViewport
+          ? [spacerPanel, resizeTrigger, contentPanel]
+          : [contentPanel, resizeTrigger, spacerPanel]}
+      </Splitter.Root>
     </>
   );
 };

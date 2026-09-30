@@ -57,7 +57,7 @@ export const useMapViewPadding = (
       const panelPx = options.isVertical ? el.clientHeight : el.clientWidth;
       const panelDelta = Math.abs(panelPx - prevPanelPx.current);
       // Large delta (e.g. initial mount/transition) animates smoothly, small delta (drag) is instant
-      const duration = panelDelta > 100 ? 1000 : 0;
+      const duration = panelDelta > 100 ? 500 : 0;
       applyPadding(options.sidebarPx, panelPx, options.isVertical, duration);
       prevPanelPx.current = panelPx;
     });
@@ -65,7 +65,6 @@ export const useMapViewPadding = (
     observer.observe(el);
     return () => {
       observer.disconnect();
-      prevPanelPx.current = 0;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, options.contentPanelRef, options.isVertical, options.sidebarPx]);
@@ -79,11 +78,16 @@ export const useMapViewPadding = (
       ? options.isVertical
         ? el.clientHeight
         : el.clientWidth
-      : 0;
+      : prevPanelPx.current ||
+        (typeof window !== "undefined"
+          ? options.isVertical
+            ? window.innerHeight * 0.5
+            : (window.innerWidth - options.sidebarPx) * 0.5
+          : 0);
 
     const sidebarDelta = Math.abs(options.sidebarPx - prevSidebarPx.current);
     const isDiscreteToggle = sidebarDelta > 10;
-    const duration = isDiscreteToggle ? 1000 : 0;
+    const duration = isDiscreteToggle ? 250 : 0;
 
     applyPadding(options.sidebarPx, panelPx, options.isVertical, duration);
     prevSidebarPx.current = options.sidebarPx;
