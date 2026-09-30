@@ -58,7 +58,6 @@ const BillingPageBillingCode = () => {
               onDone={() => {
                 void navigate({
                   to: "/mitra/transaction-history",
-                  from: "/",
                 });
               }}
             />

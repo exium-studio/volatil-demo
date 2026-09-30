@@ -58,7 +58,7 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
   upload_aoi: {
     label: "Upload AOI",
     variant: "subtle",
-    colorPalette: "orange",
+    colorPalette: "teal",
     icon: FolderArchiveIcon,
   },
   draw_aoi: {
@@ -72,7 +72,7 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
 /**
  * SSOT for MapLibre AOI & Coverage polygon layer colors by SelectionType:
  * - catalog: Purple (#a855f7 / #7c3aed)
- * - upload_aoi: Orange (#f97316 / #ea580c)
+ * - upload_aoi: Teal (#06b6d4 / #0891b2)
  * - draw_aoi: Blue (#3b82f6 / #2563eb)
  */
 export const SELECTION_TYPE_MAP_COLOR: Record<
@@ -87,8 +87,8 @@ export const SELECTION_TYPE_MAP_COLOR: Record<
     line: "#7c3aed",
   },
   upload_aoi: {
-    fill: "#f97316",
-    line: "#ea580c",
+    fill: "#06b6d4",
+    line: "#0891b2",
   },
   draw_aoi: {
     fill: "#3b82f6",
