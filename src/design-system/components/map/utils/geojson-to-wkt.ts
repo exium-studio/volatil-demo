@@ -1,5 +1,6 @@
 // src/design-system/components/map/utils/geojson-to-wkt.ts
 
+import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
 
 /**
@@ -27,7 +28,7 @@ export const geojsonPolygonToWkt = (
 ): string => {
   if (!polygon) return "";
 
-  const geometry: GeoJSON.Geometry | undefined =
+  const rawGeometry: GeoJSON.Geometry | undefined =
     "geometry" in polygon && polygon.geometry
       ? polygon.geometry
       : "type" in polygon &&
@@ -35,7 +36,28 @@ export const geojsonPolygonToWkt = (
         ? (polygon as GeoJSON.Polygon | GeoJSON.MultiPolygon)
         : undefined;
 
-  if (!geometry) return "";
+  if (!rawGeometry) return "";
+
+  // Optimize high-vertex geometries (>50 points) to prevent HTTP 413/414 URL length errors
+  let geometry: GeoJSON.Geometry = rawGeometry;
+  try {
+    const coords = turf.coordAll(rawGeometry as turf.AllGeoJSON);
+    if (coords.length > 50) {
+      const simplified = turf.simplify(
+        rawGeometry as turf.AllGeoJSON,
+        {
+          tolerance: 0.0005,
+          highQuality: false,
+          mutate: false,
+        },
+      );
+      if (simplified) {
+        geometry = "geometry" in simplified ? (simplified.geometry as GeoJSON.Geometry) : (simplified as GeoJSON.Geometry);
+      }
+    }
+  } catch {
+    geometry = rawGeometry;
+  }
 
   if (geometry.type === "MultiPolygon") {
     const polys = (geometry as GeoJSON.MultiPolygon).coordinates

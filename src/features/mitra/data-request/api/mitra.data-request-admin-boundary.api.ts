@@ -4,9 +4,33 @@ import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { ADMIN_BOUNDARY_WFS_CONFIG } from "@/features/mitra/data-request/constants/igt.config";
 import type { FetchAdminBoundaryParams } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
+import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
 
 const escapeCql = (val: string): string => val.trim().replace(/'/g, "''");
+
+/**
+ * Safely simplifies high-vertex boundary polygons (e.g. province/district level)
+ * to keep network payload small (<50KB) and prevent 413 Entity Too Large errors.
+ */
+const optimizeBoundaryFeature = (
+  feature: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+): GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> => {
+  try {
+    const coords = turf.coordAll(feature);
+    if (coords.length > 200) {
+      const simplified = turf.simplify(feature, {
+        tolerance: 0.0005,
+        highQuality: false,
+        mutate: false,
+      });
+      return simplified as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+    }
+  } catch {
+    // Fallback to original feature if simplification fails
+  }
+  return feature;
+};
 
 /**
  * Queries GeoServer WFS via proxy to retrieve the GeoJSON Polygon boundary
@@ -85,14 +109,18 @@ export async function fetchAdminBoundaryPolygon(
       (single.geometry.type === "Polygon" ||
         single.geometry.type === "MultiPolygon")
     ) {
-      return single as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+      return optimizeBoundaryFeature(
+        single as GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+      );
     }
   }
 
   // If multiple features returned (e.g. multi-part boundary / islands), union them into a single Feature
-  return unionGeoJsonPolygons({
+  const unioned = unionGeoJsonPolygons({
     type: "FeatureCollection",
     features,
   });
+
+  return unioned ? optimizeBoundaryFeature(unioned) : null;
 }
 
