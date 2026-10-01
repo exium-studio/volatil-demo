@@ -18,7 +18,6 @@ export const MapControls = (props: StackProps) => {
       justify={"space-between"}
       gap={"md"}
       w={"full"}
-      p={"md"}
       pointerEvents={"none"}
       {...props}
     >

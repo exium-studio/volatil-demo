@@ -56,12 +56,12 @@ export const MapOverlay = (props: MapOverlayProps) => {
 
       <MapCoordinates />
 
-      <VStack align={"start"} gap={"xs"} w={"full"} pointerEvents={"none"}>
+      <VStack align={"start"} gap={"md"} w={"full"} pointerEvents={"none"}>
         <Box pl={"md"} pointerEvents={"none"}>
           <MapSymbologyPanel />
         </Box>
 
-        <MapControls />
+        <MapControls px={"md"} pb={"md"} />
       </VStack>
     </VStack>
   );

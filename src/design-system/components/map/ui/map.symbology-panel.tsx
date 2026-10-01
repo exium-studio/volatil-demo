@@ -110,10 +110,8 @@ export const MapSymbologyPanel = memo((props: MapSymbologyPanelProps) => {
         maxW={"calc(100vw - 32px)"}
         maxH={"420px"}
         bg={"bg.body"}
-        border={"1px solid"}
-        borderColor={"border.subtle"}
         rounded={theme.radii.container}
-        shadow={"md"}
+        shadow={"sm"}
         overflow={"hidden"}
         pointerEvents={"auto"}
         gap={0}
