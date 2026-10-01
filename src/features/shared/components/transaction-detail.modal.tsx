@@ -574,18 +574,16 @@ export const TransactionDetailModalContent = (
       </Modal.Body>
 
       <Modal.Footer border={"none"}>
-        <HStack gap={"sm"} w={"full"}>
-          <Button flex={1} onClick={back}>
-            {t["action.close"]()}
-          </Button>
-
+        <VStack gap={"sm"} w={"full"}>
           {isPayable && (
-            <Button primary={true} flex={1} onClick={handleGoToBilling}>
+            <Button primary={true} onClick={handleGoToBilling}>
               <AppIcon icon={CreditCardIcon} />
               {"Bayar Sekarang"}
             </Button>
           )}
-        </HStack>
+
+          <Button onClick={back}>{t["action.close"]()}</Button>
+        </VStack>
       </Modal.Footer>
     </Modal.Content>
   );
