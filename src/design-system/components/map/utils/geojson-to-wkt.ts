@@ -5,15 +5,15 @@ import type GeoJSON from "geojson";
 /**
  * Converts a GeoJSON Polygon or MultiPolygon (Feature or Geometry) to a WKT string for GeoServer CQL INTERSECTS queries.
  *
- * GeoServer CQL spatial functions strictly expect longitude latitude order:
- * `POLYGON((lon lat, lon lat, ...))`
+ * GeoServer WFS 2.0 with EPSG:4326 strictly expects latitude longitude order
+ * in CQL spatial functions: `POLYGON((lat lon, lat lon, ...))`
  *
- * Example output: `POLYGON((115.15 -8.66, 115.17 -8.66, 115.17 -8.68, 115.15 -8.68, 115.15 -8.66))`
+ * Example output: `POLYGON((-8.66 115.15, -8.66 115.17, -8.68 115.17, -8.68 115.15, -8.66 115.15))`
  */
 const formatCoord = (coord: number[]): string => {
   const lon = Number(coord[0].toFixed(6));
   const lat = Number(coord[1].toFixed(6));
-  return `${lon} ${lat}`;
+  return `${lat} ${lon}`;
 };
 
 export const geojsonPolygonToWkt = (

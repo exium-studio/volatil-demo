@@ -244,19 +244,24 @@ export const MitraDataRequestIgtLayerDataView = memo(
               | GeoJSON.Polygon)
           : (effectiveAoiPolygon as GeoJSON.MultiPolygon | GeoJSON.Polygon);
 
+      const itemsList = validCalculationLayers.map((layer) => ({
+        layerId: layer.id,
+        sourceLayerId: layer.id,
+        sourceLayerTitle: layer.title,
+        typeName: layer.wfs?.wfsTypeName || layer.id,
+        title: layer.title,
+        spatialBasis: layer.spatialBasis,
+        selectionType,
+        cqlFilter: combinedCqlFilter,
+      }));
+
       void calculate(
         {
           selectionType,
           cqlFilter: combinedCqlFilter,
           aoiPolygon: resolvedAoi,
-          layers: validCalculationLayers.map((layer) => ({
-            layerId: layer.id,
-            typeName: layer.wfs?.wfsTypeName ?? "",
-            title: layer.title,
-            spatialBasis: layer.spatialBasis,
-            selectionType,
-            cqlFilter: combinedCqlFilter,
-          })),
+          layers: itemsList,
+          items: itemsList,
         },
         calcTriggerKey,
       );
