@@ -326,7 +326,7 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
         >
           <IconButton
             size={"xs"}
-            variant={isSymbologyEnabled ? "subtle" : "ghost"}
+            variant={"ghost"}
             colorPalette={isSymbologyEnabled ? "blue" : undefined}
             aria-label={"Simbologi"}
             onClick={(e) => {
