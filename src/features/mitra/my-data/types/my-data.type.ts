@@ -87,6 +87,10 @@ export type MyDataResponse = PaginatedResponse<MyDataItem> & {
 
 export type MitraMyDataViewProps = StackProps;
 
+export type MitraMyDataWorkspaceDetailSearch = {
+  layerId?: string;
+};
+
 export type MyDataDetailAttributeListProps = {
   item: MyDataItem;
   onBack: () => void;

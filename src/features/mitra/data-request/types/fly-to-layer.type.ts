@@ -11,11 +11,11 @@ export type FlyToLayerTarget =
   | IgtLayerItem
   | {
       id: string;
-      title?: string;
+      title?: string | null;
       bbox?: [number, number, number, number] | null;
       wfs?: {
         wfsTypeName: string;
-        wfsUrl: string | null;
+        wfsUrl?: string | null;
       };
       spatialBasis?: "bidang" | "kawasan";
     };

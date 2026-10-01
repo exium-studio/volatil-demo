@@ -305,9 +305,7 @@ export const MitraDataRequestSpatialSummary = memo(
             mt={1}
           >
             <AppIcon icon={ShieldAlertIcon} />
-            <Alert.Description fontSize={"xs"}>
-              {displayAlertMessage}
-            </Alert.Description>
+            <Alert.Description>{displayAlertMessage}</Alert.Description>
           </Alert.Root>
         )}
       </VStack>

@@ -19,22 +19,18 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
-import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { useMitraWorkspaceDetailQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
-import type {
-  MyDataDetailAttributeListProps,
-  MyDataItem,
-} from "@/features/mitra/my-data/types/my-data.type";
+import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
+import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -53,7 +49,7 @@ import {
   FocusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 export const MitraMyDataWorkspaceDetailPage = () => {
   // Navigation
@@ -61,6 +57,10 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     workspaceId: string;
   };
   const navigate = useNavigate();
+
+  // Search Params
+  const { queryValue: layerId, setQueryValue: setLayerId } =
+    useSearchParam("layerId");
 
   // Stores
   const { theme } = useThemeStore();
@@ -70,10 +70,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // Hooks
   const { flyTo } = useFlyToLayer();
-
-  // States
-  const [selectedAttributeLayer, setSelectedAttributeLayer] =
-    useState<MyDataItem | null>(null);
 
   // Queries
   const {
@@ -86,6 +82,10 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+  const selectedAttributeLayer = useMemo(() => {
+    if (!layerId || !workspace?.layers) return null;
+    return workspace.layers.find((item) => item.id === layerId) ?? null;
+  }, [layerId, workspace]);
 
   // Handlers
   const handleToggleLayer = useCallback(
@@ -268,7 +268,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         label: "Detail Atribut",
         icon: TablePropertiesIcon,
         onClick: (item: MyDataItem) => {
-          setSelectedAttributeLayer(item);
+          setLayerId(item.id);
         },
       },
     ];
@@ -280,16 +280,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     preferredTimezone,
     handleToggleLayer,
     flyTo,
+    setLayerId,
   ]);
-
-  if (selectedAttributeLayer) {
-    return (
-      <MyDataDetailAttributeList
-        item={selectedAttributeLayer}
-        onBack={() => setSelectedAttributeLayer(null)}
-      />
-    );
-  }
 
   if (isLoading) {
     return (
@@ -322,6 +314,22 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                 }}
               />
             </Center>
+          </Container.Body>
+        </Container.Root>
+      </AppContentContainer>
+    );
+  }
+
+  if (layerId) {
+    return (
+      <AppContentContainer flex={1} overflow={"auto"}>
+        <Container.Root withContext={true} flex={1} minH={0} overflow={"auto"}>
+          <Container.Body flex={1} minH={0} overflow={"auto"}>
+            <LayerAttributeTableView
+              layer={selectedAttributeLayer}
+              onBack={() => setLayerId(undefined)}
+              showActions={false}
+            />
           </Container.Body>
         </Container.Root>
       </AppContentContainer>
@@ -470,81 +478,5 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         </Container.Body>
       </Container.Root>
     </AppContentContainer>
-  );
-};
-
-const MyDataDetailAttributeList = (props: MyDataDetailAttributeListProps) => {
-  // Props
-  const { item, onBack } = props;
-
-  // Stores
-  const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
-
-  // States
-  const [pageState, setPageState] = useState({
-    pageSize: 10,
-    page: 1,
-  });
-  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
-
-  // Derived Values
-  const igtLayerTarget = useMemo((): IgtLayerItem => {
-    const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl || "";
-    const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl || "";
-    const typeName = item.wfsTypeName || item.id;
-
-    return {
-      id: item.id,
-      title: item.title,
-      spatialBasis: item.spatialBasis,
-      bbox: item.bbox,
-      visible: Boolean(enabledLayerIds[item.id]),
-      zIndex: 1,
-      wms: {
-        layers: item.wmsLayers || item.id,
-        wmsUrl: effectiveWmsUrl,
-        format: "image/png",
-        transparent: true,
-        tileSize: 512,
-        styles: "",
-        version: "1.1.1",
-        srs: "EPSG:3857",
-      },
-      wfs: {
-        wfsTypeName: typeName,
-        wfsUrl: effectiveWfsUrl,
-        type: item.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
-        version: "2.0.0",
-        srsName: "EPSG:4326",
-      },
-    };
-  }, [item, enabledLayerIds]);
-
-  // Queries — server-side WFS pagination
-  const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
-    page: pageState.page,
-    pageSize: pageState.pageSize,
-    typeName: item.wfsTypeName || item.id,
-    wfsUrl: item.externalWfsUrl || item.wfsUrl || "",
-  });
-
-  return (
-    <MitraDataRequestDetailAttributeView
-      layer={igtLayerTarget}
-      features={features}
-      totalFeatures={totalFeatures}
-      isLoading={isLoading}
-      isFetching={isFetching}
-      page={pageState.page}
-      pageSize={pageState.pageSize}
-      setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-      setPageSize={(pageSize) =>
-        setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-      }
-      selectedItems={selectedItems}
-      setSelectedItems={setSelectedItems}
-      showActions={false}
-      onBack={onBack}
-    />
   );
 };

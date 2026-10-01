@@ -1,8 +1,4 @@
-// src/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content.tsx
-
 import { IconButton } from "@/design-system/components/button/ui/button";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -17,21 +13,20 @@ import {
   removeCartMapLayers,
   useCartAoiCoverageMap,
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
-import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
-import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import type { MitraDataRequestCatalogTabsContentProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import { FilterAdministrativeAreaForm } from "@/features/shared/components/filter.administrative-area.form";
+import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import {
   hasActiveAdministrativeFilter,
   type FilterAdministrativeAreaValues,
 } from "@/features/shared/types/filter.administrative-area.type";
 import { FocusIcon, SlidersHorizontalIcon, TrashIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 export const MitraDataRequestCatalogTabsContent = (
   props: MitraDataRequestCatalogTabsContentProps,
@@ -275,70 +270,12 @@ export const MitraDataRequestCatalogTabsContent = (
           />
         </VStack>
       ) : (
-        <CatalogAttributeList />
+        <LayerAttributeTableView
+          layer={selectedIgtLayer}
+          cqlFilter={useMitraDataRequestStore.getState().cqlFilter}
+        />
       )}
     </Tabs.Content>
   );
 };
 
-const CatalogAttributeList = () => {
-  // Hooks & Stores
-  const { selectedIgtLayer } = useSelectedIgtLayer();
-  const appliedAdministrativeFilters = useMitraDataRequestStore(
-    (state) => state.appliedAdministrativeFilters,
-  );
-  const adminCqlFilter = useMitraDataRequestStore((state) => state.cqlFilter);
-  const hasFilter = hasActiveAdministrativeFilter(appliedAdministrativeFilters);
-
-  // States
-  const [pageState, setPageState] = useState<{
-    page: number;
-    pageSize: number;
-  }>({
-    page: 1,
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
-  });
-  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
-
-  // Queries — server-side WFS pagination
-  const {
-    features,
-    totalFeatures,
-    isLoading,
-    isFetching,
-    isError,
-    error,
-    refetch,
-  } = useIgtWfsCatalog({
-    page: pageState.page,
-    pageSize: pageState.pageSize,
-    cqlFilter: adminCqlFilter,
-    typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
-    wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
-    enabled: Boolean(selectedIgtLayer && (!hasFilter || adminCqlFilter)),
-  });
-
-  return (
-    <MitraDataRequestDetailAttributeView
-      layer={selectedIgtLayer}
-      cqlFilter={adminCqlFilter}
-      features={features}
-      totalFeatures={totalFeatures}
-      isLoading={isLoading}
-      isFetching={isFetching}
-      isError={isError}
-      error={error}
-      onRetry={() => {
-        void refetch();
-      }}
-      page={pageState.page}
-      pageSize={pageState.pageSize}
-      setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-      setPageSize={(pageSize) =>
-        setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-      }
-      selectedItems={selectedItems}
-      setSelectedItems={setSelectedItems}
-    />
-  );
-};

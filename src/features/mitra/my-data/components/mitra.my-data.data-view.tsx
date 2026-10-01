@@ -23,23 +23,20 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
-import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
-import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { useMitraMyDataQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraMyDataViewProps,
-  MyDataDetailAttributeListProps,
   MyDataItem,
   MyDataQueryParams,
   MyDataStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
+import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TteBadge } from "@/features/shared/components/tte.badge";
@@ -333,9 +330,10 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
 
   if (selectedAttributeLayer) {
     return (
-      <MyDataDetailAttributeList
-        item={selectedAttributeLayer}
+      <LayerAttributeTableView
+        layer={selectedAttributeLayer}
         onBack={() => setSelectedAttributeLayer(null)}
+        showActions={false}
       />
     );
   }
@@ -480,78 +478,3 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   );
 };
 
-const MyDataDetailAttributeList = (props: MyDataDetailAttributeListProps) => {
-  // Props
-  const { item, onBack } = props;
-
-  // Stores
-  const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
-
-  // States
-  const [pageState, setPageState] = useState({
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
-    page: 1,
-  });
-  const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
-
-  // Derived Values
-  const igtLayerTarget = useMemo((): IgtLayerItem => {
-    const effectiveWmsUrl = item.externalWmsUrl || item.wmsUrl || "";
-    const effectiveWfsUrl = item.externalWfsUrl || item.wfsUrl || "";
-    const typeName = item.wfsTypeName || item.id;
-
-    return {
-      id: item.id,
-      title: item.title,
-      spatialBasis: item.spatialBasis,
-      bbox: item.bbox,
-      visible: Boolean(enabledLayerIds[item.id]),
-      zIndex: 1,
-      wms: {
-        layers: item.wmsLayers || item.id,
-        wmsUrl: effectiveWmsUrl,
-        format: "image/png",
-        transparent: true,
-        tileSize: 512,
-        styles: "",
-        version: "1.1.1",
-        srs: "EPSG:3857",
-      },
-      wfs: {
-        wfsTypeName: typeName,
-        wfsUrl: effectiveWfsUrl,
-        type: item.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
-        version: "2.0.0",
-        srsName: "EPSG:4326",
-      },
-    };
-  }, [item, enabledLayerIds]);
-
-  // Queries — server-side WFS pagination
-  const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
-    page: pageState.page,
-    pageSize: pageState.pageSize,
-    typeName: item.wfsTypeName || item.id,
-    wfsUrl: item.externalWfsUrl || item.wfsUrl || "",
-  });
-
-  return (
-    <MitraDataRequestDetailAttributeView
-      layer={igtLayerTarget}
-      features={features}
-      totalFeatures={totalFeatures}
-      isLoading={isLoading}
-      isFetching={isFetching}
-      page={pageState.page}
-      pageSize={pageState.pageSize}
-      setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-      setPageSize={(pageSize) =>
-        setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-      }
-      selectedItems={selectedItems}
-      setSelectedItems={setSelectedItems}
-      showActions={false}
-      onBack={onBack}
-    />
-  );
-};
