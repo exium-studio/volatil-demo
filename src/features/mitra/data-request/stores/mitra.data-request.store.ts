@@ -47,7 +47,7 @@ const initialCalculationState = {
 };
 
 export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
-  (set) => ({
+  (set, get) => ({
     // Catalog State & Actions
     ...initialCatalogState,
     setAppliedAdministrativeFilters: (filters) =>
@@ -206,6 +206,19 @@ export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
     },
     calculate: async (request, calcKey) => {
       const selectionType = request.selectionType ?? "catalog";
+      const currentCache = get().calculationResults[selectionType];
+      const lastKey = get().lastCalculationKeys[selectionType];
+
+      // If already calculated with the same stable trigger key, reuse persistent cache without re-requesting
+      if (calcKey && lastKey === calcKey && currentCache) {
+        set({
+          result: currentCache,
+          isCalculating: false,
+          progressStage: "idle",
+          progressPercentage: 100,
+        });
+        return currentCache;
+      }
 
       if (currentAbortController) {
         currentAbortController.abort();
