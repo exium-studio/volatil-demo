@@ -111,7 +111,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
         </MapOverlayContainer>
       </Popover.Trigger>
 
-      <Popover.Content width={"380px"}>
+      <Popover.Content w={"full"} maxW={"380px"}>
         <Popover.Header
           p={3}
           borderBottom={"1px solid"}

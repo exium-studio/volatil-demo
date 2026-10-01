@@ -18,7 +18,7 @@ const CAROUSEL_ITEMS_LIST = [
     image: `${PATH_CONFIG.images}/signin_carousel/1.png`,
     title: "Beranda Pengguna",
     description:
-      "Dashboard yang menyajikan ringkasan status data IGT, informasi keranjang pembelian, statistik alur keuangan, dan riwayat transaksi dalam satu tampilan terintegrasi untuk memudahkan pemantauan aktivitas pengguna.",
+      "Layanan Jasa Akses IGT merupakan layanan penyediaan akses terhadap Informasi Geospasial Tematik (IGT) Pertanahan dan Ruang secara digital melalui mekanisme integrasi sistem berupa Web Map Service (WMS) kepada Pelaksana Kerja Sama dengan melakukan pengayaan data dengan mengintegrasikan IGT untuk menghasilkan informasi geospasial baru sesuai dengan kebutuhan pemanfaatan dan ketentuan yang berlaku.",
   },
   {
     image: `${PATH_CONFIG.images}/signin_carousel/2.png`,
