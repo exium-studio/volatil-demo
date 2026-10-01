@@ -8,10 +8,10 @@ import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
 
-/** MapLibre source & layer ID prefixes for Upload AOI polygon layers. */
-export const UPLOAD_AOI_SOURCE_PREFIX = "upload-aoi-source-";
-export const UPLOAD_AOI_FILL_PREFIX = "upload-aoi-fill-";
-export const UPLOAD_AOI_LINE_PREFIX = "upload-aoi-line-";
+/** MapLibre source & layer ID prefixes for Upload AOI preview polygon layers. */
+export const UPLOAD_PREVIEW_AOI_SOURCE_PREFIX = "upload-preview-aoi-source-";
+export const UPLOAD_PREVIEW_AOI_FILL_PREFIX = "upload-preview-aoi-fill-";
+export const UPLOAD_PREVIEW_AOI_LINE_PREFIX = "upload-preview-aoi-line-";
 
 /** Upload AOI theme colors derived from SSOT */
 const { fill: AOI_FILL_COLOR, line: AOI_LINE_COLOR } =
@@ -76,9 +76,9 @@ const removeAoiLayer = (map: maplibregl.Map, id: string) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!(map as any).style) return;
 
-  const fillId = `${UPLOAD_AOI_FILL_PREFIX}${id}`;
-  const lineId = `${UPLOAD_AOI_LINE_PREFIX}${id}`;
-  const sourceId = `${UPLOAD_AOI_SOURCE_PREFIX}${id}`;
+  const fillId = `${UPLOAD_PREVIEW_AOI_FILL_PREFIX}${id}`;
+  const lineId = `${UPLOAD_PREVIEW_AOI_LINE_PREFIX}${id}`;
+  const sourceId = `${UPLOAD_PREVIEW_AOI_SOURCE_PREFIX}${id}`;
 
   if (map.getLayer(fillId)) map.removeLayer(fillId);
   if (map.getLayer(lineId)) map.removeLayer(lineId);
@@ -92,9 +92,9 @@ const addAoiLayer = (
   polygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
   beforeId: string | undefined,
 ) => {
-  const sourceId = `${UPLOAD_AOI_SOURCE_PREFIX}${id}`;
-  const fillId = `${UPLOAD_AOI_FILL_PREFIX}${id}`;
-  const lineId = `${UPLOAD_AOI_LINE_PREFIX}${id}`;
+  const sourceId = `${UPLOAD_PREVIEW_AOI_SOURCE_PREFIX}${id}`;
+  const fillId = `${UPLOAD_PREVIEW_AOI_FILL_PREFIX}${id}`;
+  const lineId = `${UPLOAD_PREVIEW_AOI_LINE_PREFIX}${id}`;
 
   safeAddSource(map, sourceId, polygon);
 
@@ -167,8 +167,8 @@ export const useMitraUploadAoi = (
     if (!isActive) {
       const style = map.getStyle();
       style?.layers?.forEach((l) => {
-        if (l.id.startsWith(UPLOAD_AOI_FILL_PREFIX)) {
-          const featureId = l.id.replace(UPLOAD_AOI_FILL_PREFIX, "");
+        if (l.id.startsWith(UPLOAD_PREVIEW_AOI_FILL_PREFIX)) {
+          const featureId = l.id.replace(UPLOAD_PREVIEW_AOI_FILL_PREFIX, "");
           removeAoiLayer(map, featureId);
         }
       });
@@ -187,8 +187,8 @@ export const useMitraUploadAoi = (
     // 2. Remove obsolete layers that are no longer in activeFeatures
     const style = map.getStyle();
     style?.layers?.forEach((l) => {
-      if (l.id.startsWith(UPLOAD_AOI_FILL_PREFIX)) {
-        const featureId = l.id.replace(UPLOAD_AOI_FILL_PREFIX, "");
+      if (l.id.startsWith(UPLOAD_PREVIEW_AOI_FILL_PREFIX)) {
+        const featureId = l.id.replace(UPLOAD_PREVIEW_AOI_FILL_PREFIX, "");
         if (!currentIds.has(featureId)) {
           removeAoiLayer(map, featureId);
         }
@@ -216,8 +216,8 @@ export const useMitraUploadAoi = (
       try {
         const style = map.getStyle();
         style?.layers?.forEach((l) => {
-          if (l.id.startsWith(UPLOAD_AOI_FILL_PREFIX)) {
-            const featureId = l.id.replace(UPLOAD_AOI_FILL_PREFIX, "");
+          if (l.id.startsWith(UPLOAD_PREVIEW_AOI_FILL_PREFIX)) {
+            const featureId = l.id.replace(UPLOAD_PREVIEW_AOI_FILL_PREFIX, "");
             removeAoiLayer(map, featureId);
           }
         });

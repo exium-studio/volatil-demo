@@ -4,7 +4,6 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -12,18 +11,18 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { flyToCartGeometry } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
+import {
+  flyToCartGeometry,
+  useCartAoiCoverageMap,
+} from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
-import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-
-import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
+import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import type { MitraDataRequestCatalogTabsContentProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import { FilterAdministrativeAreaForm } from "@/features/shared/components/filter.administrative-area.form";
@@ -32,7 +31,7 @@ import {
   type FilterAdministrativeAreaValues,
 } from "@/features/shared/types/filter.administrative-area.type";
 import { FocusIcon, SlidersHorizontalIcon, TrashIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const MitraDataRequestCatalogTabsContent = (
   props: MitraDataRequestCatalogTabsContentProps,
@@ -43,26 +42,61 @@ export const MitraDataRequestCatalogTabsContent = (
   // Stores
   const { theme } = useThemeStore();
   const map = useMapInstanceStore((state) => state.map);
-  const { appliedAdministrativeFilters, setAppliedAdministrativeFilters } =
-    useAdministrativeFilterStore();
+  const appliedAdministrativeFilters = useMitraDataRequestStore(
+    (state) => state.appliedAdministrativeFilters,
+  );
+  const setAppliedAdministrativeFilters = useMitraDataRequestStore(
+    (state) => state.setAppliedAdministrativeFilters,
+  );
+  const draftFilters = useMitraDataRequestStore(
+    (state) => state.draftAdministrativeFilters,
+  );
+  const setDraftFilters = useMitraDataRequestStore(
+    (state) => state.setDraftAdministrativeFilters,
+  );
+  const isAoiVisible = useMitraDataRequestStore(
+    (state) => state.isCatalogAoiVisible,
+  );
+  const setIsAoiVisible = useMitraDataRequestStore(
+    (state) => state.setIsCatalogAoiVisible,
+  );
+  const setAdminBoundaryPolygon = useMitraDataRequestStore(
+    (state) => state.setAdminBoundaryPolygon,
+  );
 
   // Hooks
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
-  const isMounted = useMountTimeout({
-    isOpen: isActive,
-    mountDelay: 250,
-  });
   const adminBoundaryQuery = useAdminBoundaryAoi(appliedAdministrativeFilters, {
     enabled: isActive,
   });
 
-  // States
-  const [draftFilters, setDraftFilters] =
-    useState<FilterAdministrativeAreaValues>(appliedAdministrativeFilters);
-  const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
+  // Sync resolved admin boundary polygon to store
+  useEffect(() => {
+    if (adminBoundaryQuery.aoiPolygon) {
+      setAdminBoundaryPolygon(adminBoundaryQuery.aoiPolygon);
+    }
+  }, [adminBoundaryQuery.aoiPolygon, setAdminBoundaryPolygon]);
+
+  const calculationResult = useMitraDataRequestStore(
+    (state) => state.calculationResults["catalog"] ?? state.result,
+  );
 
   // Derived Values
   const hasFilter = hasActiveAdministrativeFilter(appliedAdministrativeFilters);
+
+  const isCoverageVisible = useMitraDataRequestStore(
+    (state) => state.isCatalogCoverageVisible,
+  );
+
+  // Keep AOI and Coverage layers mounted across both layer cards and attribute table view
+  useCartAoiCoverageMap(map, {
+    aoiPolygon: adminBoundaryQuery.aoiPolygon,
+    coveragePolygon: calculationResult?.coveragePolygon,
+    selectionType: "catalog",
+    isAoiVisible,
+    isCoverageVisible,
+    isActive: isActive && hasFilter,
+  });
   const filterLabel = useMemo(() => {
     const parts: string[] = [];
     if (appliedAdministrativeFilters.WADMPR?.label)
@@ -80,14 +114,14 @@ export const MitraDataRequestCatalogTabsContent = (
   const handleApplyInitialFilter = (
     filters: FilterAdministrativeAreaValues,
   ) => {
-    useMitraDataRequestCalculationStore.getState().reset();
+    useMitraDataRequestStore.getState().resetCalculation();
     setAppliedAdministrativeFilters(filters);
+    setDraftFilters(filters);
   };
 
   const handleResetInitialFilter = () => {
-    useMitraDataRequestCalculationStore.getState().reset();
-    setDraftFilters({});
-    setAppliedAdministrativeFilters({});
+    useMitraDataRequestStore.getState().resetCalculation();
+    useMitraDataRequestStore.getState().resetCatalog();
   };
 
   return (
@@ -100,9 +134,7 @@ export const MitraDataRequestCatalogTabsContent = (
       {...restProps}
       value={"catalog"}
     >
-      {!isActive || !isMounted ? (
-        <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
-      ) : !hasFilter ? (
+      {!isActive ? null : !hasFilter ? (
         <VStack
           flex={1}
           w={"full"}
@@ -246,19 +278,31 @@ export const MitraDataRequestCatalogTabsContent = (
 const CatalogAttributeList = () => {
   // Hooks & Stores
   const { selectedIgtLayer } = useSelectedIgtLayer();
-  const { appliedAdministrativeFilters } = useAdministrativeFilterStore();
+  const appliedAdministrativeFilters = useMitraDataRequestStore(
+    (state) => state.appliedAdministrativeFilters,
+  );
+  const adminCqlFilter = useMitraDataRequestStore((state) => state.cqlFilter);
+  const cachedBoundary = useMitraDataRequestStore(
+    (state) => state.adminBoundaryPolygon,
+  );
   const adminBoundaryQuery = useAdminBoundaryAoi(appliedAdministrativeFilters);
+  const effectivePolygon = cachedBoundary || adminBoundaryQuery.aoiPolygon;
 
   const aoiCqlFilter = useMemo(() => {
-    if (!adminBoundaryQuery.aoiPolygon) return undefined;
-    const wkt = geojsonPolygonToWkt(adminBoundaryQuery.aoiPolygon);
-    return wkt ? `INTERSECTS(geom, ${wkt})` : undefined;
-  }, [adminBoundaryQuery.aoiPolygon]);
+    if (effectivePolygon) {
+      const wkt = geojsonPolygonToWkt(effectivePolygon);
+      if (wkt) return `INTERSECTS(geom, ${wkt})`;
+    }
+    return adminCqlFilter;
+  }, [effectivePolygon, adminCqlFilter]);
 
   // States
-  const [pageState, setPageState] = useState({
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+  const [pageState, setPageState] = useState<{
+    page: number;
+    pageSize: number;
+  }>({
     page: 1,
+    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
   });
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
 
@@ -279,13 +323,16 @@ const CatalogAttributeList = () => {
     wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
   });
 
+  const isBoundaryResolving =
+    !effectivePolygon && !adminCqlFilter && adminBoundaryQuery.isLoading;
+
   return (
     <MitraDataRequestDetailAttributeView
       layer={selectedIgtLayer}
       cqlFilter={aoiCqlFilter}
       features={features}
       totalFeatures={totalFeatures}
-      isLoading={isLoading}
+      isLoading={isLoading || isBoundaryResolving}
       isFetching={isFetching}
       isError={isError}
       error={error}

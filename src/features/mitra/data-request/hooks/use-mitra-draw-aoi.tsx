@@ -5,7 +5,8 @@ import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { toPolygonFeature } from "@/design-system/components/map/utils/geometry";
-import { useCallback, useMemo, useState } from "react";
+import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
+import { useCallback, useMemo } from "react";
 
 export const useMitraDrawAoi = () => {
   // Stores
@@ -13,13 +14,18 @@ export const useMitraDrawAoi = () => {
   const wfsStatus = useWfsClipStore((state) => state.status);
   const wfsError = useWfsClipStore((state) => state.error);
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
+  const confirmedPolygon = useMitraDataRequestStore(
+    (state) => state.confirmedPolygon,
+  );
+  const setConfirmedPolygon = useMitraDataRequestStore(
+    (state) => state.setConfirmedPolygon,
+  );
+  const resetDrawAoi = useMitraDataRequestStore(
+    (state) => state.resetDrawAoi,
+  );
 
   // Hooks
   const { run: runWfsClip, cancel: cancelWfsClip } = useWfsClip();
-
-  // States
-  const [confirmedPolygon, setConfirmedPolygon] =
-    useState<GeoJSON.Feature<GeoJSON.Polygon> | null>(null);
 
   // Derived Values
   const hasStartedDrawing = isDrawing || points.length > 0;
@@ -45,11 +51,11 @@ export const useMitraDrawAoi = () => {
 
   // Handlers
   const handleResetDraw = useCallback(() => {
-    setConfirmedPolygon(null);
+    resetDrawAoi();
     cancelDraw();
     cancelWfsClip();
     resetWfsClipStore();
-  }, [cancelDraw, cancelWfsClip, resetWfsClipStore]);
+  }, [resetDrawAoi, cancelDraw, cancelWfsClip, resetWfsClipStore]);
 
   const handleConfirmAndFetch = useCallback(
     async (typeName?: string, wfsUrl?: string) => {
@@ -65,13 +71,13 @@ export const useMitraDrawAoi = () => {
         void runWfsClip(polygonToConfirm, typeName, wfsUrl);
       }
     },
-    [hasFinishedDraw, drawnPolygon, cancelDraw, runWfsClip],
+    [hasFinishedDraw, drawnPolygon, setConfirmedPolygon, cancelDraw, runWfsClip],
   );
 
   return {
     isDrawing,
     startDraw: () => {
-      setConfirmedPolygon(null);
+      resetDrawAoi();
       start("polygon");
     },
     cancelDraw: handleResetDraw,

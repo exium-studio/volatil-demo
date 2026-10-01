@@ -23,19 +23,14 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import {
-  flyToCartGeometry,
-  useCartAoiCoverageMap,
-} from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
+import { flyToCartGeometry } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { MitraDataRequestSpatialSummary } from "@/features/mitra/data-request/components/mitra.data-request.spatial-summary";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
-
-import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
+import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import type {
   BasisFilterType,
   MitraDataRequestIgtLayerDataViewProps,
@@ -67,24 +62,51 @@ export const MitraDataRequestIgtLayerDataView = memo(
       aoiPolygon: propAoiPolygon,
       onSelectIgtLayer,
       showFilter = true,
-      isAoiVisible = true,
-      isActive = true,
     } = props;
 
     // Stores
     const { theme } = useThemeStore();
     const { flyTo } = useFlyToLayer();
     const map = useMapInstanceStore((state) => state.map);
-    const { appliedAdministrativeFilters } = useAdministrativeFilterStore();
-    const calculate = useMitraDataRequestCalculationStore(
-      (state) => state.calculate,
+    const appliedAdministrativeFilters = useMitraDataRequestStore(
+      (state) => state.appliedAdministrativeFilters,
     );
-    const calculationResult = useMitraDataRequestCalculationStore(
-      (state) => state.result,
+    const cachedBoundary = useMitraDataRequestStore(
+      (state) => state.adminBoundaryPolygon,
     );
-    const isCalculating = useMitraDataRequestCalculationStore(
+    const calculate = useMitraDataRequestStore((state) => state.calculate);
+    const calculationResult = useMitraDataRequestStore(
+      (state) => state.calculationResults[selectionType] ?? state.result,
+    );
+    const isCalculating = useMitraDataRequestStore(
       (state) => state.isCalculating,
     );
+    const isCatalogCoverageVisible = useMitraDataRequestStore(
+      (state) => state.isCatalogCoverageVisible,
+    );
+    const setIsCatalogCoverageVisible = useMitraDataRequestStore(
+      (state) => state.setIsCatalogCoverageVisible,
+    );
+    const isUploadCoverageVisible = useMitraDataRequestStore(
+      (state) => state.isUploadCoverageVisible,
+    );
+    const setIsUploadCoverageVisible = useMitraDataRequestStore(
+      (state) => state.setIsUploadCoverageVisible,
+    );
+    const isDrawCoverageVisible = useMitraDataRequestStore(
+      (state) => state.isDrawCoverageVisible,
+    );
+    const setIsDrawCoverageVisible = useMitraDataRequestStore(
+      (state) => state.setIsDrawCoverageVisible,
+    );
+
+    // Derived Values — Coverage visibility bound to active tab slice
+    const isCoverageVisible =
+      selectionType === "upload_aoi"
+        ? isUploadCoverageVisible
+        : selectionType === "draw_aoi"
+          ? isDrawCoverageVisible
+          : isCatalogCoverageVisible;
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
@@ -92,7 +114,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const [selectedTableItems, setSelectedTableItems] = useState<
       FormattedListItem<IgtLayerItem>[]
     >([]);
-    const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
 
     // Mutations
     const addToCartMultipleMutation = useAddToCartMultipleLayers();
@@ -125,11 +146,11 @@ export const MitraDataRequestIgtLayerDataView = memo(
     // Derived Values — Resolve effective AOI polygon
     const effectiveAoiPolygon = useMemo(() => {
       if (propAoiPolygon) return propAoiPolygon;
-      if (showFilter && adminBoundaryQuery.aoiPolygon) {
-        return adminBoundaryQuery.aoiPolygon;
+      if (showFilter) {
+        return cachedBoundary || adminBoundaryQuery.aoiPolygon || null;
       }
       return null;
-    }, [propAoiPolygon, showFilter, adminBoundaryQuery.aoiPolygon]);
+    }, [propAoiPolygon, showFilter, cachedBoundary, adminBoundaryQuery.aoiPolygon]);
 
     // Pure AOI spatial CQL filter: INTERSECTS(geom, POLYGON(...)) across all tabs
     const combinedCqlFilter = useMemo(() => {
@@ -231,22 +252,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
       [filteredLayers],
     );
 
-    // Manage AOI & Coverage Map Layers
-    const activeCoveragePolygon =
-      calculationResult?.selectionType === selectionType ||
-      !calculationResult?.selectionType
-        ? calculationResult?.coveragePolygon
-        : null;
-
-    useCartAoiCoverageMap(map, {
-      aoiPolygon: effectiveAoiPolygon,
-      coveragePolygon: activeCoveragePolygon,
-      selectionType,
-      isAoiVisible,
-      isCoverageVisible,
-      isActive,
-    });
-
     // Derived — Valid layers eligible for spatial calculation (ALL intersecting layers in AOI, NOT affected by local search/basis filter)
     const validCalculationLayers = useMemo(() => {
       return intersectingLayers.filter((layer) =>
@@ -288,19 +293,22 @@ export const MitraDataRequestIgtLayerDataView = memo(
               | GeoJSON.Polygon)
           : (effectiveAoiPolygon as GeoJSON.MultiPolygon | GeoJSON.Polygon);
 
-      void calculate({
-        selectionType,
-        cqlFilter: combinedCqlFilter,
-        aoiPolygon: resolvedAoi,
-        layers: validCalculationLayers.map((layer) => ({
-          layerId: layer.id,
-          typeName: layer.wfs?.wfsTypeName ?? "",
-          title: layer.title,
-          spatialBasis: layer.spatialBasis,
+      void calculate(
+        {
           selectionType,
           cqlFilter: combinedCqlFilter,
-        })),
-      });
+          aoiPolygon: resolvedAoi,
+          layers: validCalculationLayers.map((layer) => ({
+            layerId: layer.id,
+            typeName: layer.wfs?.wfsTypeName ?? "",
+            title: layer.title,
+            spatialBasis: layer.spatialBasis,
+            selectionType,
+            cqlFilter: combinedCqlFilter,
+          })),
+        },
+        calcTriggerKey,
+      );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [calcTriggerKey]);
 
@@ -634,9 +642,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
                 isCoverageVisible={isCoverageVisible}
                 selectionType={selectionType}
-                onToggleCoverageVisible={() =>
-                  setIsCoverageVisible((prev) => !prev)
-                }
+                onToggleCoverageVisible={() => {
+                  if (selectionType === "upload_aoi") {
+                    setIsUploadCoverageVisible(!isUploadCoverageVisible);
+                  } else if (selectionType === "draw_aoi") {
+                    setIsDrawCoverageVisible(!isDrawCoverageVisible);
+                  } else {
+                    setIsCatalogCoverageVisible(!isCatalogCoverageVisible);
+                  }
+                }}
               />
             </Box>
           )}
