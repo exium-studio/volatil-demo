@@ -6,6 +6,7 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapFeatureInfoStore } from "@/design-system/components/map/stores/map.feature-info.store";
@@ -16,7 +17,7 @@ import { toast } from "@/design-system/components/toast";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import * as turf from "@turf/turf";
-import { FocusIcon, XIcon } from "lucide-react";
+import { FocusIcon, Grid2X2Icon, Layers2Icon, XIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export const MapFeatureInfoPanel = () => {
@@ -47,6 +48,23 @@ export const MapFeatureInfoPanel = () => {
   // Derived Values
   const isOpen = Boolean(selectedFeature || isLoading);
   const displayFeature = selectedFeature ?? cachedFeature;
+  const normalizedBasis = (
+    displayFeature?.spatialBasis ??
+    displayFeature?.basis ??
+    ""
+  )
+    .toString()
+    .toLowerCase();
+  const isKawasan = normalizedBasis === "kawasan";
+  const isBidang = normalizedBasis === "bidang";
+  const colorPalette = isKawasan ? "orange" : isBidang ? "blue" : "gray";
+  const LayerIcon = isKawasan ? Grid2X2Icon : Layers2Icon;
+  const basisLabel = isKawasan
+    ? "Kawasan"
+    : isBidang
+      ? "Bidang"
+      : (displayFeature?.spatialBasis ?? displayFeature?.basis ?? "Layer IGT");
+
   const properties = useMemo(
     () => displayFeature?.properties ?? {},
     [displayFeature],
@@ -121,6 +139,8 @@ export const MapFeatureInfoPanel = () => {
         {/* Header */}
         <HStack
           flexShrink={0}
+          align={"center"}
+          justify={"space-between"}
           gap={"md"}
           w={"full"}
           h={"auto"}
@@ -128,32 +148,34 @@ export const MapFeatureInfoPanel = () => {
           py={"xs"}
           px={"md"}
           pr={"xs"}
-          justify={"space-between"}
-          align={"center"}
           borderBottom={"1px solid"}
           borderColor={"border.subtle"}
         >
-          <VStack gap={"2xs"} minW={0} flex={1} align={"start"}>
-            <ClampedP
-              fontWeight={"semibold"}
-              fontSize={"sm"}
-              lineHeight={"tight"}
+          <HStack gap={"md"} align={"center"} flex={1} minW={0}>
+            <Center
+              p={"xs"}
+              bg={`${colorPalette}.subtle`}
+              rounded={theme.radii.component}
+              flexShrink={0}
             >
-              {displayFeature?.title ??
-                displayFeature?.layerTitle ??
-                "Informasi Fitur"}
-            </ClampedP>
+              <AppIcon
+                icon={LayerIcon}
+                color={`${colorPalette}.fg`}
+              />
+            </Center>
 
-            {displayFeature?.typeName && (
-              <ClampedP
-                fontSize={"xs"}
-                color={"fg.subtle"}
-                lineHeight={"tight"}
-              >
-                {displayFeature.typeName}
+            <VStack flex={1} align={"start"} minW={0} gap={0}>
+              <ClampedP fontWeight={"medium"} lineHeight={"tight"}>
+                {displayFeature?.title ??
+                  displayFeature?.layerTitle ??
+                  "Informasi Fitur"}
               </ClampedP>
-            )}
-          </VStack>
+
+              <ClampedP fontSize={"sm"} color={"fg.subtle"}>
+                {basisLabel}
+              </ClampedP>
+            </VStack>
+          </HStack>
 
           <HStack align={"center"} gap={"2xs"} flexShrink={0}>
             {(selectedFeature?.geometry || displayFeature?.geometry) && (

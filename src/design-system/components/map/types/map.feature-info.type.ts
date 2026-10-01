@@ -18,6 +18,8 @@ export type MapFeatureInfoItem = {
   layerId: string;
   title?: string;
   layerTitle?: string;
+  spatialBasis?: "bidang" | "kawasan" | string;
+  basis?: "bidang" | "kawasan" | string;
   typeName?: string;
   properties: Record<string, unknown>;
   geometry?: Geometry | null;

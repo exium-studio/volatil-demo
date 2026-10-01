@@ -433,6 +433,8 @@ export const useMapFeatureInfo = (
               layerId: layer.id,
               title: humanTitle,
               layerTitle: humanTitle,
+              spatialBasis: layer.spatialBasis,
+              basis: layer.spatialBasis,
               typeName,
               properties: (feat.properties as Record<string, unknown>) ?? {},
               geometry: resolvedGeometry,
