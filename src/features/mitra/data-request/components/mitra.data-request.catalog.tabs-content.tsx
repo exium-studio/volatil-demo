@@ -14,6 +14,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   flyToCartGeometry,
+  removeCartMapLayers,
   useCartAoiCoverageMap,
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
@@ -62,6 +63,9 @@ export const MitraDataRequestCatalogTabsContent = (
   );
   const setAdminBoundaryPolygon = useMitraDataRequestStore(
     (state) => state.setAdminBoundaryPolygon,
+  );
+  const resetCatalog = useMitraDataRequestStore(
+    (state) => state.resetCatalog,
   );
 
   // Hooks
@@ -120,8 +124,11 @@ export const MitraDataRequestCatalogTabsContent = (
   };
 
   const handleResetInitialFilter = () => {
-    useMitraDataRequestStore.getState().resetCalculation();
-    useMitraDataRequestStore.getState().resetCatalog();
+    resetCatalog();
+    setDraftFilters({});
+    if (map) {
+      removeCartMapLayers(map, "catalog");
+    }
   };
 
   return (

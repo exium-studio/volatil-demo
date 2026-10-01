@@ -64,8 +64,18 @@ export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
     setIsCatalogCoverageVisible: (isCatalogCoverageVisible) =>
       set({ isCatalogCoverageVisible }),
     resetCatalog: () =>
-      set({
-        ...initialCatalogState,
+      set((state) => {
+        const updatedResults = { ...state.calculationResults };
+        const updatedKeys = { ...state.lastCalculationKeys };
+        delete updatedResults["catalog"];
+        delete updatedKeys["catalog"];
+        return {
+          ...initialCatalogState,
+          calculationResults: updatedResults,
+          lastCalculationKeys: updatedKeys,
+          result:
+            state.result?.selectionType === "catalog" ? null : state.result,
+        };
       }),
 
     // Upload AOI State & Actions
@@ -97,14 +107,34 @@ export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
     setIsUploadCoverageVisible: (isUploadCoverageVisible) =>
       set({ isUploadCoverageVisible }),
     resetUploadAoi: () =>
-      set({
-        confirmedFeature: null,
-        isUploadAoiVisible: true,
-        isUploadCoverageVisible: true,
+      set((state) => {
+        const updatedResults = { ...state.calculationResults };
+        const updatedKeys = { ...state.lastCalculationKeys };
+        delete updatedResults["upload_aoi"];
+        delete updatedKeys["upload_aoi"];
+        return {
+          confirmedFeature: null,
+          isUploadAoiVisible: true,
+          isUploadCoverageVisible: true,
+          calculationResults: updatedResults,
+          lastCalculationKeys: updatedKeys,
+          result:
+            state.result?.selectionType === "upload_aoi" ? null : state.result,
+        };
       }),
     resetUploadFile: () =>
-      set({
-        ...initialUploadAoiState,
+      set((state) => {
+        const updatedResults = { ...state.calculationResults };
+        const updatedKeys = { ...state.lastCalculationKeys };
+        delete updatedResults["upload_aoi"];
+        delete updatedKeys["upload_aoi"];
+        return {
+          ...initialUploadAoiState,
+          calculationResults: updatedResults,
+          lastCalculationKeys: updatedKeys,
+          result:
+            state.result?.selectionType === "upload_aoi" ? null : state.result,
+        };
       }),
 
     // Draw AOI State & Actions
@@ -114,8 +144,18 @@ export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
     setIsDrawCoverageVisible: (isDrawCoverageVisible) =>
       set({ isDrawCoverageVisible }),
     resetDrawAoi: () =>
-      set({
-        ...initialDrawAoiState,
+      set((state) => {
+        const updatedResults = { ...state.calculationResults };
+        const updatedKeys = { ...state.lastCalculationKeys };
+        delete updatedResults["draw_aoi"];
+        delete updatedKeys["draw_aoi"];
+        return {
+          ...initialDrawAoiState,
+          calculationResults: updatedResults,
+          lastCalculationKeys: updatedKeys,
+          result:
+            state.result?.selectionType === "draw_aoi" ? null : state.result,
+        };
       }),
 
     // Calculation State & Actions

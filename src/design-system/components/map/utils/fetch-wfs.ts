@@ -7,15 +7,6 @@ import type {
   WfsVersion,
 } from "@/design-system/components/map/types/map.fetch-wfs.type";
 
-export const getAuthHeaders = (): Record<string, string> => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
-  return {
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
-
 export const buildWfsUrl = (
   {
     typeName,
@@ -31,9 +22,10 @@ export const buildWfsUrl = (
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
-  const apiBaseUrl = (
-    import.meta.env.VITE_API_BASE_URL || ""
-  ).replace(/\/+$/, "");
+  const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(
+    /\/+$/,
+    "",
+  );
   const defaultBaseUrl = `${apiBaseUrl}/api/proxy/wfs`;
 
   const rawUrl = wfsUrl || defaultBaseUrl;
@@ -48,7 +40,7 @@ export const buildWfsUrl = (
       : "http://localhost:5174";
   const url = new URL(targetUrlStr, origin);
 
-  if (!url.searchParams.has("layerId")) {
+  if (!url.searchParams.has("layerId") && typeName) {
     url.searchParams.set("layerId", typeName);
   }
   url.searchParams.set("service", "WFS");
@@ -115,12 +107,10 @@ export const fetchWfs = async (
   const { version = "2.0.0", signal, startIndex = 0, maxFeatures } = params;
 
   let url = buildWfsUrl(params, true);
-  const headers = getAuthHeaders();
   let res: Response;
   try {
     res = await fetch(url.toString(), {
       signal,
-      headers,
     });
   } catch (err: unknown) {
     if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
@@ -145,7 +135,6 @@ export const fetchWfs = async (
     try {
       res = await fetch(url.toString(), {
         signal,
-        headers,
       });
     } catch (err: unknown) {
       if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
@@ -165,8 +154,9 @@ export const fetchWfs = async (
   // If server throws 400 Bad Request due to GeoServer "Illegal property name" in CQL_FILTER
   if (!res.ok && res.status === 400 && params.cqlFilter) {
     const errorText = await res.text().catch(() => "");
-    const matchIllegalProp =
-      /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(errorText);
+    const matchIllegalProp = /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(
+      errorText,
+    );
 
     if (matchIllegalProp && matchIllegalProp[1]) {
       const illegalProp = matchIllegalProp[1];
@@ -183,7 +173,7 @@ export const fetchWfs = async (
         filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
 
       url = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
-      res = await fetch(url.toString(), { signal, headers });
+      res = await fetch(url.toString(), { signal });
     }
   }
 

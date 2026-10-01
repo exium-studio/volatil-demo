@@ -25,7 +25,10 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { useCartAoiCoverageMap } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
+import {
+  removeCartMapLayers,
+  useCartAoiCoverageMap,
+} from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
@@ -324,12 +327,18 @@ export const MitraDataRequestUploadAoiTabsContent = (
   const handleResetAoi = useCallback(() => {
     resetUploadAoi();
     resetWfsClipStore();
-  }, [resetUploadAoi, resetWfsClipStore]);
+    if (map) {
+      removeCartMapLayers(map, "upload_aoi");
+    }
+  }, [resetUploadAoi, resetWfsClipStore, map]);
 
   const handleResetFile = useCallback(() => {
     resetUploadFile();
     resetWfsClipStore();
-  }, [resetUploadFile, resetWfsClipStore]);
+    if (map) {
+      removeCartMapLayers(map, "upload_aoi");
+    }
+  }, [resetUploadFile, resetWfsClipStore, map]);
 
   // Derived Values — CQL INTERSECTS clause from confirmed feature
   const aoiCqlFilter = useMemo(() => {

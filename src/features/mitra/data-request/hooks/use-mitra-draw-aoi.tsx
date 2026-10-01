@@ -2,14 +2,17 @@
 
 import { useWfsClip } from "@/design-system/components/map/hooks/use-wfs-clip";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
+import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useWfsClipStore } from "@/design-system/components/map/stores/map.wfs-clip.store";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { toPolygonFeature } from "@/design-system/components/map/utils/geometry";
+import { removeCartMapLayers } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import { useCallback, useMemo } from "react";
 
 export const useMitraDrawAoi = () => {
   // Stores
+  const map = useMapInstanceStore((state) => state.map);
   const { isDrawing, points, start, cancel: cancelDraw } = useMapDrawStore();
   const wfsStatus = useWfsClipStore((state) => state.status);
   const wfsError = useWfsClipStore((state) => state.error);
@@ -55,7 +58,10 @@ export const useMitraDrawAoi = () => {
     cancelDraw();
     cancelWfsClip();
     resetWfsClipStore();
-  }, [resetDrawAoi, cancelDraw, cancelWfsClip, resetWfsClipStore]);
+    if (map) {
+      removeCartMapLayers(map, "draw_aoi");
+    }
+  }, [resetDrawAoi, cancelDraw, cancelWfsClip, resetWfsClipStore, map]);
 
   const handleConfirmAndFetch = useCallback(
     async (typeName?: string, wfsUrl?: string) => {
@@ -78,6 +84,9 @@ export const useMitraDrawAoi = () => {
     isDrawing,
     startDraw: () => {
       resetDrawAoi();
+      if (map) {
+        removeCartMapLayers(map, "draw_aoi");
+      }
       start("polygon");
     },
     cancelDraw: handleResetDraw,

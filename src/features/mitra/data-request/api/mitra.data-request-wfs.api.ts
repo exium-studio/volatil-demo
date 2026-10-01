@@ -1,15 +1,10 @@
 // src/features/mitra/data-request/api/mitra.data-request-wfs.api.ts
 
-import {
-  buildWfsUrl,
-  fetchWfs,
-  getAuthHeaders,
-} from "@/design-system/components/map/utils/fetch-wfs";
+import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
-import type { WfsSchemaProperty } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 
 const cachedAttributes: Record<string, string[]> = {};
 const cachedStringAttributes: Record<string, string[]> = {};
@@ -27,30 +22,6 @@ export const getWfsDynamicAttributes = async (
   const cacheKey = `${wfsUrl}:${typeName}`;
   if (cachedAttributes[cacheKey]) {
     return cachedAttributes[cacheKey];
-  }
-  try {
-    const url = buildWfsUrl({ typeName, wfsUrl });
-    url.searchParams.set("request", "DescribeFeatureType");
-    url.searchParams.delete("count");
-    url.searchParams.delete("maxFeatures");
-    url.searchParams.delete("startIndex");
-
-    const descRes = await fetch(url.toString(), {
-      signal,
-      headers: getAuthHeaders(),
-    });
-    if (descRes.ok) {
-      const schema = await descRes.json();
-      const properties: WfsSchemaProperty[] =
-        schema.featureTypes?.[0]?.properties ?? [];
-      const allKeys = properties.map((prop) => prop.name);
-      if (allKeys.length > 0) {
-        cachedAttributes[cacheKey] = allKeys;
-        return allKeys;
-      }
-    }
-  } catch {
-    // Fallback to GetFeature if DescribeFeatureType fails
   }
 
   try {
@@ -83,7 +54,7 @@ export const getWfsDynamicAttributes = async (
 };
 
 /**
- * Fetches WFS attributes of string type dynamically from GeoServer DescribeFeatureType response.
+ * Fetches WFS attributes of string type dynamically from sample feature.
  * Used to build case-insensitive search queries on text-only fields to prevent SQL type errors.
  */
 export const getWfsStringAttributes = async (
@@ -98,26 +69,18 @@ export const getWfsStringAttributes = async (
   }
 
   try {
-    const url = buildWfsUrl({ typeName, wfsUrl });
-    url.searchParams.set("request", "DescribeFeatureType");
-    url.searchParams.delete("count");
-    url.searchParams.delete("maxFeatures");
-    url.searchParams.delete("startIndex");
-
-    const res = await fetch(url.toString(), {
+    const res = await fetchWfs({
+      typeName,
+      wfsUrl,
+      version: "2.0.0",
+      maxFeatures: 1,
       signal,
-      headers: getAuthHeaders(),
     });
-
-    if (res.ok) {
-      const schema = await res.json();
-      const properties: WfsSchemaProperty[] =
-        schema.featureTypes?.[0]?.properties ?? [];
-      const stringKeys = properties
-        .filter(
-          (prop) => prop.type === "xsd:string" || prop.localType === "string",
-        )
-        .map((prop) => prop.name);
+    const firstFeature = res.features?.[0];
+    if (firstFeature?.properties) {
+      const stringKeys = Object.entries(firstFeature.properties)
+        .filter(([, val]) => typeof val === "string")
+        .map(([key]) => key);
 
       if (stringKeys.length > 0) {
         cachedStringAttributes[cacheKey] = stringKeys;
@@ -167,20 +130,21 @@ export const fetchWfsCatalog = async ({
 
   const startIndex = (page - 1) * pageSize;
 
-  const stringAttributes = await getWfsStringAttributes(
-    typeName,
-    wfsUrl,
-    signal,
-  );
-
-  // Build search CQL using only double-quoted WFS string attributes and ILIKE
+  let searchCql: string | undefined = undefined;
   const trimmedSearch = search?.trim();
-  const searchCql =
-    trimmedSearch && trimmedSearch.length > 0 && stringAttributes.length > 0
-      ? stringAttributes
-          .map((attr) => `"${attr}" ILIKE '%${trimmedSearch}%'`)
-          .join(" OR ")
-      : undefined;
+
+  if (trimmedSearch && trimmedSearch.length > 0) {
+    const stringAttributes = await getWfsStringAttributes(
+      typeName,
+      wfsUrl,
+      signal,
+    );
+    if (stringAttributes.length > 0) {
+      searchCql = stringAttributes
+        .map((attr) => `"${attr}" ILIKE '%${trimmedSearch}%'`)
+        .join(" OR ");
+    }
+  }
 
   const mergedCqlFilter =
     [cqlFilter, searchCql ? `(${searchCql})` : undefined]
