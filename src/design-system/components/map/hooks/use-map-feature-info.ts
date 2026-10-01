@@ -425,10 +425,15 @@ export const useMapFeatureInfo = (
               coordinates: [e.lngLat.lng, e.lngLat.lat],
             };
 
+            const humanTitle = layer.title ?? layer.layers ?? layer.id;
+            const typeName = layer.layers ?? layer.id;
+
             setSelectedFeature({
               id: feat.id,
               layerId: layer.id,
-              layerTitle: layer.layers ?? layer.id,
+              title: humanTitle,
+              layerTitle: humanTitle,
+              typeName,
               properties: (feat.properties as Record<string, unknown>) ?? {},
               geometry: resolvedGeometry,
               coordinate: [e.lngLat.lng, e.lngLat.lat],

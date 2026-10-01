@@ -16,7 +16,9 @@ export type GetFeatureInfoOptions = {
 export type MapFeatureInfoItem = {
   id?: string | number;
   layerId: string;
+  title?: string;
   layerTitle?: string;
+  typeName?: string;
   properties: Record<string, unknown>;
   geometry?: Geometry | null;
   coordinate?: [number, number];

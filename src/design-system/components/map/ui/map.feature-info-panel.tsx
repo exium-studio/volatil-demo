@@ -10,6 +10,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapFeatureInfoStore } from "@/design-system/components/map/stores/map.feature-info.store";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import type { MapFeatureInfoItem } from "@/design-system/components/map/types/map.feature-info.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -27,13 +28,28 @@ export const MapFeatureInfoPanel = () => {
   const clearFeatureInfo = useMapFeatureInfoStore((s) => s.clearFeatureInfo);
 
   // States
+  const [prevFeature, setPrevFeature] = useState<MapFeatureInfoItem | null>(
+    selectedFeature,
+  );
+  const [cachedFeature, setCachedFeature] = useState<MapFeatureInfoItem | null>(
+    selectedFeature,
+  );
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Adjust state during render when selectedFeature changes (React standard pattern)
+  if (selectedFeature !== prevFeature) {
+    setPrevFeature(selectedFeature);
+    if (selectedFeature !== null) {
+      setCachedFeature(selectedFeature);
+    }
+  }
 
   // Derived Values
   const isOpen = Boolean(selectedFeature || isLoading);
+  const displayFeature = selectedFeature ?? cachedFeature;
   const properties = useMemo(
-    () => selectedFeature?.properties ?? {},
-    [selectedFeature],
+    () => displayFeature?.properties ?? {},
+    [displayFeature],
   );
 
   const filteredEntries = useMemo(() => {
@@ -47,13 +63,19 @@ export const MapFeatureInfoPanel = () => {
   }, [properties, searchQuery]);
 
   // Handlers
+  const handleExitComplete = () => {
+    setCachedFeature(null);
+    setSearchQuery("");
+  };
+
   const handleZoomToFeature = () => {
-    if (!map || !selectedFeature?.geometry) return;
+    const geom = selectedFeature?.geometry ?? displayFeature?.geometry;
+    if (!map || !geom) return;
     try {
       const bbox = turf.bbox({
         type: "Feature",
         properties: {},
-        geometry: selectedFeature.geometry,
+        geometry: geom,
       });
       map.fitBounds(
         [
@@ -74,6 +96,7 @@ export const MapFeatureInfoPanel = () => {
   return (
     <Presence
       present={isOpen}
+      onExitComplete={handleExitComplete}
       lazyMount={true}
       unmountOnExit={true}
       animationName={{
@@ -98,8 +121,11 @@ export const MapFeatureInfoPanel = () => {
         {/* Header */}
         <HStack
           flexShrink={0}
+          gap={"md"}
           w={"full"}
-          h={"48px"}
+          h={"auto"}
+          minH={"48px"}
+          py={"xs"}
           px={"md"}
           pr={"xs"}
           justify={"space-between"}
@@ -107,18 +133,30 @@ export const MapFeatureInfoPanel = () => {
           borderBottom={"1px solid"}
           borderColor={"border.subtle"}
         >
-          <HStack gap={"xs"} minW={0} flex={1}>
+          <VStack gap={"2xs"} minW={0} flex={1} align={"start"}>
             <ClampedP
               fontWeight={"semibold"}
               fontSize={"sm"}
               lineHeight={"tight"}
             >
-              {selectedFeature?.layerTitle ?? "Informasi Fitur"}
+              {displayFeature?.title ??
+                displayFeature?.layerTitle ??
+                "Informasi Fitur"}
             </ClampedP>
-          </HStack>
+
+            {displayFeature?.typeName && (
+              <ClampedP
+                fontSize={"xs"}
+                color={"fg.subtle"}
+                lineHeight={"tight"}
+              >
+                {displayFeature.typeName}
+              </ClampedP>
+            )}
+          </VStack>
 
           <HStack align={"center"} gap={"2xs"} flexShrink={0}>
-            {selectedFeature?.geometry && (
+            {(selectedFeature?.geometry || displayFeature?.geometry) && (
               <Tooltip content={"Zoom ke Fitur"}>
                 <IconButton
                   size={"sm"}
@@ -145,7 +183,7 @@ export const MapFeatureInfoPanel = () => {
         </HStack>
 
         {/* Content */}
-        {isLoading ? (
+        {isLoading && !displayFeature ? (
           <VStack w={"full"} p={"md"} gap={"sm"}>
             <Skeleton h={"28px"} w={"full"} />
             <Skeleton h={"18px"} w={"75%"} />
@@ -161,12 +199,7 @@ export const MapFeatureInfoPanel = () => {
         ) : (
           <VStack w={"full"} flex={1} gap={0} overflowY={"auto"}>
             {Object.keys(properties).length > 5 && (
-              <Box
-                p={"xs"}
-                w={"full"}
-                // borderBottom={"1px solid"}
-                borderColor={"border.subtle"}
-              >
+              <Box p={"xs"} w={"full"} borderColor={"border.subtle"}>
                 <SearchInput
                   placeholder={"Cari atribut..."}
                   value={searchQuery}

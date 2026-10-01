@@ -28,6 +28,8 @@ export type MapLayerConfig =
 
 export type BaseLayerConfig = {
   id: string;
+  /** Human-readable title of the layer */
+  title?: string;
   /** Spatial basis of this IGT layer ("bidang" or "kawasan"). */
   spatialBasis?: "bidang" | "kawasan";
   /** Bounding box of the layer [minLon, minLat, maxLon, maxLat]. */
@@ -127,6 +129,7 @@ export const getWmsRasterConfigFromIgtLayer = (
   opacity = 0.5,
 ): WmsRasterLayerConfig => ({
   id: igtLayer.id,
+  title: igtLayer.title,
   type: "wms-raster",
   spatialBasis: igtLayer.spatialBasis,
   bbox: igtLayer.bbox,
