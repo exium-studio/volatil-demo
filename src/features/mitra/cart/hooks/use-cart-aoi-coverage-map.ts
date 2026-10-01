@@ -69,14 +69,16 @@ export const getAoiColor = (selectionType?: string) =>
 export const getCoverageColor = (selectionType?: string) =>
   getSelectionTypeMapColors(selectionType);
 
+import { FEATURE_INFO_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-feature-info";
 import { HIGHLIGHT_FILL_LAYER_ID } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 
 /**
- * Returns the layer ID that Cart AOI/Coverage layers should be inserted before (below draw & highlight layers).
- * If no draw/highlight layer exists, returns undefined to place on the top-most layer stack (above WMS/WFS).
+ * Returns the layer ID that Cart AOI/Coverage layers should be inserted before (below draw, feature info & highlight layers).
+ * If no draw/highlight/feature-info layer exists, returns undefined to place on the top-most layer stack (above WMS/WFS).
  */
 const getBeforeId = (map: maplibregl.Map): string | undefined => {
   if (map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) return HIGHLIGHT_FILL_LAYER_ID;
+  if (map.getLayer(FEATURE_INFO_FILL_LAYER_ID)) return FEATURE_INFO_FILL_LAYER_ID;
   if (map.getLayer(DRAW_FILL_LAYER_ID)) return DRAW_FILL_LAYER_ID;
   return undefined;
 };

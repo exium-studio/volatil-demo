@@ -2,6 +2,7 @@
 
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import { FEATURE_INFO_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-feature-info";
 import { HIGHLIGHT_FILL_LAYER_ID } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import type GeoJSON from "geojson";
@@ -20,12 +21,13 @@ const AOI_FILL_OPACITY = 0.25;
 const AOI_LINE_WIDTH = 2.5;
 
 /**
- * Returns the layer ID that Upload AOI layers should be inserted before (below draw/highlight layers),
- * satisfying rule: basemap → wms-raster → wfs-* → upload-aoi → draw → highlight.
- * If no draw/highlight layer exists, returns undefined to place on the top-most layer stack (above WMS/WFS).
+ * Returns the layer ID that Upload AOI layers should be inserted before (below draw/feature-info/highlight layers),
+ * satisfying rule: basemap → wms-raster → wfs-* → upload-aoi → draw → feature-info → highlight.
+ * If no draw/feature-info/highlight layer exists, returns undefined to place on the top-most layer stack (above WMS/WFS).
  */
 const getBeforeId = (map: maplibregl.Map): string | undefined => {
   if (map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) return HIGHLIGHT_FILL_LAYER_ID;
+  if (map.getLayer(FEATURE_INFO_FILL_LAYER_ID)) return FEATURE_INFO_FILL_LAYER_ID;
   if (map.getLayer(DRAW_FILL_LAYER_ID)) return DRAW_FILL_LAYER_ID;
   return undefined;
 };

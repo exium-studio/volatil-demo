@@ -1,7 +1,6 @@
 // src/design-system/components/map/hooks/use-map-feature-info.ts
 
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
-import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 import { useMapFeatureInfoStore } from "@/design-system/components/map/stores/map.feature-info.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
@@ -10,13 +9,23 @@ import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { fetchWmsGetFeatureInfo } from "@/design-system/components/map/utils/wms-get-feature-info";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import * as turf from "@turf/turf";
+import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
-const HIGHLIGHT_SOURCE_ID = "map-feature-highlight-source";
+export const FEATURE_INFO_SOURCE_ID = "map-feature-info-source";
+export const FEATURE_INFO_FILL_LAYER_ID = "map-feature-info-fill";
+export const FEATURE_INFO_LINE_LAYER_ID = "map-feature-info-line";
+export const FEATURE_INFO_CIRCLE_LAYER_ID = "map-feature-info-circle";
+
+const FEATURE_INFO_FILL_COLOR = "#64748b";
+const FEATURE_INFO_FILL_OPACITY = 0.35;
+const FEATURE_INFO_LINE_COLOR = "#334155";
+const FEATURE_INFO_LINE_WIDTH = 3.5;
+const FEATURE_INFO_CIRCLE_COLOR = "#475569";
+const FEATURE_INFO_CIRCLE_STROKE_COLOR = "#ffffff";
+
 const HIGHLIGHT_FILL_LAYER_ID = "map-feature-highlight-fill";
-const HIGHLIGHT_LINE_LAYER_ID = "map-feature-highlight-line";
-const HIGHLIGHT_CIRCLE_LAYER_ID = "map-feature-highlight-circle";
 
 export const useMapFeatureInfo = (
   map: maplibregl.Map | null,
@@ -34,6 +43,7 @@ export const useMapFeatureInfo = (
   const setError = useMapFeatureInfoStore((s) => s.setError);
   const clearFeatureInfo = useMapFeatureInfoStore((s) => s.clearFeatureInfo);
 
+  // Refs
   const layersRef = useRef(layers);
   useEffect(() => {
     layersRef.current = layers;
@@ -44,13 +54,16 @@ export const useMapFeatureInfo = (
     cqlFilterRef.current = cqlFilter;
   }, [cqlFilter]);
 
-  // Manage highlight source & layers on map
+  // Effects — Manage feature info source & layers on map
   useEffect(() => {
     if (!map) return;
 
-    const setupHighlightLayers = () => {
-      if (!map.getSource(HIGHLIGHT_SOURCE_ID)) {
-        map.addSource(HIGHLIGHT_SOURCE_ID, {
+    const setupFeatureInfoLayers = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!(map as any).style) return;
+
+      if (!map.getSource(FEATURE_INFO_SOURCE_ID)) {
+        map.addSource(FEATURE_INFO_SOURCE_ID, {
           type: "geojson",
           data: {
             type: "FeatureCollection",
@@ -59,36 +72,35 @@ export const useMapFeatureInfo = (
         });
       }
 
-      const beforeId = map.getLayer(DRAW_FILL_LAYER_ID)
-        ? DRAW_FILL_LAYER_ID
+      // Feature Info stays right below temporary highlight layer, above draw/aoi/wms
+      const beforeId = map.getLayer(HIGHLIGHT_FILL_LAYER_ID)
+        ? HIGHLIGHT_FILL_LAYER_ID
         : undefined;
 
-      if (!map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) {
+      if (!map.getLayer(FEATURE_INFO_FILL_LAYER_ID)) {
         map.addLayer(
           {
-            id: HIGHLIGHT_FILL_LAYER_ID,
+            id: FEATURE_INFO_FILL_LAYER_ID,
             type: "fill",
-            source: HIGHLIGHT_SOURCE_ID,
-            filter: ["==", "$type", "Polygon"],
+            source: FEATURE_INFO_SOURCE_ID,
             paint: {
-              "fill-color": "#3b82f6",
-              "fill-opacity": 0.4,
+              "fill-color": FEATURE_INFO_FILL_COLOR,
+              "fill-opacity": FEATURE_INFO_FILL_OPACITY,
             },
           },
           beforeId,
         );
       }
 
-      if (!map.getLayer(HIGHLIGHT_LINE_LAYER_ID)) {
+      if (!map.getLayer(FEATURE_INFO_LINE_LAYER_ID)) {
         map.addLayer(
           {
-            id: HIGHLIGHT_LINE_LAYER_ID,
+            id: FEATURE_INFO_LINE_LAYER_ID,
             type: "line",
-            source: HIGHLIGHT_SOURCE_ID,
-            filter: ["any", ["==", "$type", "Polygon"], ["==", "$type", "LineString"]],
+            source: FEATURE_INFO_SOURCE_ID,
             paint: {
-              "line-color": "#1d4ed8",
-              "line-width": 3.5,
+              "line-color": FEATURE_INFO_LINE_COLOR,
+              "line-width": FEATURE_INFO_LINE_WIDTH,
               "line-opacity": 1,
             },
           },
@@ -96,18 +108,22 @@ export const useMapFeatureInfo = (
         );
       }
 
-      if (!map.getLayer(HIGHLIGHT_CIRCLE_LAYER_ID)) {
+      if (!map.getLayer(FEATURE_INFO_CIRCLE_LAYER_ID)) {
         map.addLayer(
           {
-            id: HIGHLIGHT_CIRCLE_LAYER_ID,
+            id: FEATURE_INFO_CIRCLE_LAYER_ID,
             type: "circle",
-            source: HIGHLIGHT_SOURCE_ID,
-            filter: ["==", "$type", "Point"],
+            source: FEATURE_INFO_SOURCE_ID,
+            filter: [
+              "any",
+              ["==", "$type", "Point"],
+              ["==", ["geometry-type"], "Point"],
+            ],
             paint: {
-              "circle-color": "#2563eb",
+              "circle-color": FEATURE_INFO_CIRCLE_COLOR,
               "circle-radius": 8,
               "circle-stroke-width": 3,
-              "circle-stroke-color": "#ffffff",
+              "circle-stroke-color": FEATURE_INFO_CIRCLE_STROKE_COLOR,
               "circle-opacity": 0.95,
             },
           },
@@ -117,16 +133,16 @@ export const useMapFeatureInfo = (
     };
 
     if (map.isStyleLoaded()) {
-      setupHighlightLayers();
+      setupFeatureInfoLayers();
     } else {
-      map.once("style.load", setupHighlightLayers);
+      map.once("style.load", setupFeatureInfoLayers);
     }
 
     const onStyleReady = () => {
-      setupHighlightLayers();
+      setupFeatureInfoLayers();
     };
     const onLayersReady = () => {
-      setupHighlightLayers();
+      setupFeatureInfoLayers();
     };
 
     map.on(MAP_EVENTS_MAP.styleReady, onStyleReady);
@@ -138,11 +154,82 @@ export const useMapFeatureInfo = (
     };
   }, [map, theme]);
 
-  // Update highlight geometry when selectedFeature changes
+  // Effects — Update highlight geometry and ensure top layer stack when selectedFeature changes
   useEffect(() => {
     if (!map) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(map as any).style) return;
+
+    if (!map.getSource(FEATURE_INFO_SOURCE_ID)) {
+      map.addSource(FEATURE_INFO_SOURCE_ID, {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: [],
+        },
+      });
+    }
+
+    const beforeId = map.getLayer(HIGHLIGHT_FILL_LAYER_ID)
+      ? HIGHLIGHT_FILL_LAYER_ID
+      : undefined;
+
+    if (!map.getLayer(FEATURE_INFO_FILL_LAYER_ID)) {
+      map.addLayer(
+        {
+          id: FEATURE_INFO_FILL_LAYER_ID,
+          type: "fill",
+          source: FEATURE_INFO_SOURCE_ID,
+          paint: {
+            "fill-color": FEATURE_INFO_FILL_COLOR,
+            "fill-opacity": FEATURE_INFO_FILL_OPACITY,
+          },
+        },
+        beforeId,
+      );
+    }
+
+    if (!map.getLayer(FEATURE_INFO_LINE_LAYER_ID)) {
+      map.addLayer(
+        {
+          id: FEATURE_INFO_LINE_LAYER_ID,
+          type: "line",
+          source: FEATURE_INFO_SOURCE_ID,
+          paint: {
+            "line-color": FEATURE_INFO_LINE_COLOR,
+            "line-width": FEATURE_INFO_LINE_WIDTH,
+            "line-opacity": 1,
+          },
+        },
+        beforeId,
+      );
+    }
+
+    if (!map.getLayer(FEATURE_INFO_CIRCLE_LAYER_ID)) {
+      map.addLayer(
+        {
+          id: FEATURE_INFO_CIRCLE_LAYER_ID,
+          type: "circle",
+          source: FEATURE_INFO_SOURCE_ID,
+          filter: [
+            "any",
+            ["==", "$type", "Point"],
+            ["==", ["geometry-type"], "Point"],
+          ],
+          paint: {
+            "circle-color": FEATURE_INFO_CIRCLE_COLOR,
+            "circle-radius": 8,
+            "circle-stroke-width": 3,
+            "circle-stroke-color": FEATURE_INFO_CIRCLE_STROKE_COLOR,
+            "circle-opacity": 0.95,
+          },
+        },
+        beforeId,
+      );
+    }
+
     const source = map.getSource(
-      HIGHLIGHT_SOURCE_ID,
+      FEATURE_INFO_SOURCE_ID,
     ) as maplibregl.GeoJSONSource | undefined;
     if (!source) return;
 
@@ -157,6 +244,21 @@ export const useMapFeatureInfo = (
           },
         ],
       });
+
+      // Move feature info layers to top priority (right below highlight)
+      try {
+        if (map.getLayer(FEATURE_INFO_FILL_LAYER_ID)) {
+          map.moveLayer(FEATURE_INFO_FILL_LAYER_ID, beforeId);
+        }
+        if (map.getLayer(FEATURE_INFO_LINE_LAYER_ID)) {
+          map.moveLayer(FEATURE_INFO_LINE_LAYER_ID, beforeId);
+        }
+        if (map.getLayer(FEATURE_INFO_CIRCLE_LAYER_ID)) {
+          map.moveLayer(FEATURE_INFO_CIRCLE_LAYER_ID, beforeId);
+        }
+      } catch (err) {
+        console.warn("Failed to re-order feature info layers:", err);
+      }
     } else {
       source.setData({
         type: "FeatureCollection",
@@ -165,7 +267,7 @@ export const useMapFeatureInfo = (
     }
   }, [map, selectedFeature]);
 
-  // Handle map click
+  // Effects — Handle map click for feature inspection
   useEffect(() => {
     if (!map) return;
 
@@ -215,7 +317,9 @@ export const useMapFeatureInfo = (
               const delta = 0.0003;
               const wfsRes = await fetchWfs({
                 typeName: layerName,
-                wfsUrl: layer.wmsUrl ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs") : "",
+                wfsUrl: layer.wmsUrl
+                  ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs")
+                  : "",
                 bbox: [
                   e.lngLat.lng - delta,
                   e.lngLat.lat - delta,
@@ -239,7 +343,9 @@ export const useMapFeatureInfo = (
               try {
                 const wfsRes = await fetchWfs({
                   typeName: layerName,
-                  wfsUrl: layer.wmsUrl ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs") : "",
+                  wfsUrl: layer.wmsUrl
+                    ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs")
+                    : "",
                   cqlFilter: `IN('${feat.id}')`,
                   maxFeatures: 1,
                 });
@@ -258,7 +364,9 @@ export const useMapFeatureInfo = (
                   const delta = 0.0003;
                   const wfsRes = await fetchWfs({
                     typeName: layerName,
-                    wfsUrl: layer.wmsUrl ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs") : "",
+                    wfsUrl: layer.wmsUrl
+                      ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs")
+                      : "",
                     bbox: [
                       e.lngLat.lng - delta,
                       e.lngLat.lat - delta,
@@ -283,22 +391,28 @@ export const useMapFeatureInfo = (
               }
             }
 
+            const resolvedGeometry: GeoJSON.Geometry =
+              feat.geometry ?? {
+                type: "Point",
+                coordinates: [e.lngLat.lng, e.lngLat.lat],
+              };
+
             setSelectedFeature({
               id: feat.id,
               layerId: layer.id,
               layerTitle: layer.layers ?? layer.id,
               properties: (feat.properties as Record<string, unknown>) ?? {},
-              geometry: feat.geometry,
+              geometry: resolvedGeometry,
               coordinate: [e.lngLat.lng, e.lngLat.lat],
             });
             foundFeature = true;
 
-            if (feat.geometry) {
+            if (resolvedGeometry.type !== "Point") {
               try {
                 const bbox = turf.bbox({
                   type: "Feature",
                   properties: {},
-                  geometry: feat.geometry,
+                  geometry: resolvedGeometry,
                 });
                 map.fitBounds(
                   [
@@ -318,6 +432,12 @@ export const useMapFeatureInfo = (
                   duration: 1000,
                 });
               }
+            } else {
+              map.flyTo({
+                center: [e.lngLat.lng, e.lngLat.lat],
+                zoom: 17,
+                duration: 1000,
+              });
             }
             break;
           }
@@ -338,5 +458,12 @@ export const useMapFeatureInfo = (
     return () => {
       map.off("click", handleMapClick);
     };
-  }, [map, isDrawing, clearFeatureInfo, setIsLoading, setError, setSelectedFeature]);
+  }, [
+    map,
+    isDrawing,
+    clearFeatureInfo,
+    setIsLoading,
+    setError,
+    setSelectedFeature,
+  ]);
 };
