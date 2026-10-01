@@ -18,7 +18,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
-import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
@@ -36,14 +35,13 @@ import type {
   MitraDataRequestIgtLayerDataViewProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
-import { checkBboxIntersection } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconDatabaseOff } from "@tabler/icons-react";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { FocusIcon, ShoppingCartIcon, TablePropertiesIcon } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
 
@@ -164,65 +162,25 @@ export const MitraDataRequestIgtLayerDataView = memo(
       return undefined;
     }, [baseCqlFilter, effectiveAoiPolygon]);
 
-    // Spatial Hit Check: Query whether each layer intersects with the active AOI
-    const hitQueries = useQueries({
-      queries: activeLayers.map((layer) => {
-        const isBboxOk = checkBboxIntersection(layer.bbox, effectiveAoiPolygon);
-        return {
-          queryKey: [
-            "igt-layer-hits",
-            layer.id,
-            layer.wfs?.wfsTypeName,
-            combinedCqlFilter,
-          ],
-          queryFn: async ({ signal }: { signal: AbortSignal }) => {
-            if (!combinedCqlFilter) {
-              return { layerId: layer.id, hasData: true };
-            }
-            if (!isBboxOk) {
-              return { layerId: layer.id, hasData: false };
-            }
-            if (!layer.wfs?.wfsTypeName || !layer.wfs?.wfsUrl) {
-              return { layerId: layer.id, hasData: isBboxOk };
-            }
-            try {
-              const res = await fetchWfs({
-                typeName: layer.wfs.wfsTypeName,
-                wfsUrl: layer.wfs.wfsUrl,
-                version: "2.0.0",
-                resultType: "hits",
-                maxFeatures: 1,
-                cqlFilter: combinedCqlFilter,
-                signal,
-              });
-              const total = res.totalFeatures ?? res.features.length;
-              return { layerId: layer.id, hasData: total > 0 };
-            } catch {
-              // Fallback to bbox intersection check
-              return { layerId: layer.id, hasData: isBboxOk };
-            }
-          },
-          enabled: Boolean(combinedCqlFilter),
-          staleTime: 5 * 60 * 1000,
-          retry: false,
-        };
-      }),
-    });
+    // Valid layers eligible for spatial calculation (all active IGT layers in master catalog)
+    const validCalculationLayers = useMemo(() => {
+      return activeLayers.filter((layer) =>
+        Boolean(layer?.wfs?.wfsTypeName || layer?.id),
+      );
+    }, [activeLayers]);
 
-    const isCheckingHits =
-      Boolean(combinedCqlFilter) && hitQueries.some((q) => q.isLoading);
-
-    // Filter layers that actually intersect with the AOI
+    // Filter layers that actually intersect with the AOI (based on calculation results or fallback to active layers)
     const intersectingLayers = useMemo(() => {
       if (!combinedCqlFilter) return activeLayers;
-      return activeLayers.filter((layer, idx) => {
-        const isBboxOk = checkBboxIntersection(layer.bbox, effectiveAoiPolygon);
-        if (!isBboxOk) return false;
-        const hitData = hitQueries[idx]?.data;
-        if (hitData) return hitData.hasData;
-        return isBboxOk;
-      });
-    }, [activeLayers, combinedCqlFilter, effectiveAoiPolygon, hitQueries]);
+      if (calculationResult?.items && calculationResult.items.length > 0) {
+        const itemIds = new Set(
+          calculationResult.items.map((it) => it.sourceLayerId),
+        );
+        const matched = activeLayers.filter((layer) => itemIds.has(layer.id));
+        return matched.length > 0 ? matched : activeLayers;
+      }
+      return activeLayers;
+    }, [activeLayers, combinedCqlFilter, calculationResult]);
 
     // Apply text search & basis filter locally for UI display
     const filteredLayers = useMemo(() => {
@@ -251,13 +209,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
       () => filteredLayers.filter((l) => l.spatialBasis === "kawasan"),
       [filteredLayers],
     );
-
-    // Derived — Valid layers eligible for spatial calculation (ALL intersecting layers in AOI, NOT affected by local search/basis filter)
-    const validCalculationLayers = useMemo(() => {
-      return intersectingLayers.filter((layer) =>
-        Boolean(layer?.wfs?.wfsTypeName || layer?.id),
-      );
-    }, [intersectingLayers]);
 
     // Derived stable trigger key: depends strictly on AOI, selectionType, and all intersecting layers in that AOI
     const calcTriggerKey = useMemo(() => {
@@ -444,6 +395,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       const headers: FormattedTableHeader[] = [
         { th: "Layer IGT", sortable: true, align: "start" },
         { th: "Basis IGT", sortable: true, align: "start" },
+        { th: "Jumlah / Luas", sortable: true, align: "start" },
       ];
 
       const items: FormattedListItem<IgtLayerItem>[] = filteredLayers.map(
@@ -455,6 +407,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
             layer.wfs?.wfsTypeName ||
             layer.id;
           const formattedTitle = layerDisplayName.replace(/_/g, " ");
+
+          const calcItem = calculationResult?.items?.find(
+            (it) => it.sourceLayerId === layer.id,
+          );
+
+          const countOrAreaText =
+            layer.spatialBasis === "bidang"
+              ? `${formatNumber(calcItem?.featuresCount ?? 0)} bidang`
+              : `${formatNumber(calcItem?.areaHa ?? 0, { maximumFractionDigits: 2 })} ha`;
 
           return {
             id: layer.id,
@@ -468,6 +429,14 @@ export const MitraDataRequestIgtLayerDataView = memo(
               {
                 value: layer.spatialBasis,
                 td: <IgtBasisBadge>{layer.spatialBasis}</IgtBasisBadge>,
+                align: "start",
+              },
+              {
+                value:
+                  layer.spatialBasis === "bidang"
+                    ? (calcItem?.featuresCount ?? 0)
+                    : (calcItem?.areaHa ?? 0),
+                td: <P>{countOrAreaText}</P>,
                 align: "start",
               },
             ],
@@ -502,7 +471,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
         batchActions: [],
         itemActions,
       };
-    }, [filteredLayers, combinedCqlFilter, flyTo, onSelectIgtLayer]);
+    }, [
+      filteredLayers,
+      calculationResult,
+      combinedCqlFilter,
+      flyTo,
+      onSelectIgtLayer,
+    ]);
 
     const pricingPolicy = usePricingPolicy();
     const totalBidangCount = calculationResult?.totalBidangCount ?? 0;
@@ -532,7 +507,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const isShowLoading =
       isLoadingLayers ||
       (showFilter && adminBoundaryQuery.isLoading) ||
-      isCheckingHits ||
       isCalculating;
     const hasIntersectingLayers = !isEmptyArray(intersectingLayers);
     const hasFilteredLayers = !isEmptyArray(filteredLayers);
