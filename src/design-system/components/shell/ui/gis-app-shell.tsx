@@ -422,35 +422,40 @@ const Content = (props: GisContentProps) => {
       .map((layer: IgtLayerItem) => {
         const isEnabled = Boolean(enabledLayerIds[layer.id]);
         const individualOpacity = layerOpacities[layer.id] ?? 1.0;
-        const effectiveOpacity = individualOpacity * globalOpacity;
-        const baseConfig = getWmsRasterConfigFromIgtLayer(
-          layer,
-          wmsVisible && isEnabled,
-          effectiveOpacity,
-        );
         const customOverride = customLayerConfigs[layer.id];
+
         if (customOverride) {
+          const baseConfig = getWmsRasterConfigFromIgtLayer(
+            layer,
+            wmsVisible && isEnabled,
+            individualOpacity,
+          );
           return {
             ...baseConfig,
             ...customOverride,
             visible: wmsVisible && isEnabled,
-            opacity:
-              (layerOpacities[layer.id] ?? baseConfig.opacity) * globalOpacity,
+            opacity: layerOpacities[layer.id] ?? 1.0,
           };
         }
-        return baseConfig;
+
+        const effectiveOpacity = individualOpacity * globalOpacity;
+        return getWmsRasterConfigFromIgtLayer(
+          layer,
+          wmsVisible && isEnabled,
+          effectiveOpacity,
+        );
       });
 
-    // Also include any layer in enabledLayerIds (even if not in catalog list yet, e.g. My Data)
+    // Also include any layer in enabledLayerIds (e.g. My Data / custom workspace layers)
     Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
       if (!configs.some((c) => c.id === layerId)) {
         const customOverride = customLayerConfigs[layerId];
         configs.push({
           id: layerId,
           type: "wms-raster",
-          spatialBasis: "bidang",
+          spatialBasis: customOverride?.spatialBasis ?? "bidang",
           visible: wmsVisible && Boolean(isEnabled),
-          opacity: (layerOpacities[layerId] ?? 1.0) * globalOpacity,
+          opacity: layerOpacities[layerId] ?? 1.0,
           wmsUrl: "",
           layers: layerId,
           ...(customOverride ?? {}),
