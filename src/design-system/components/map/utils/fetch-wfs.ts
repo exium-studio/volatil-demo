@@ -7,25 +7,16 @@ import type {
   WfsVersion,
 } from "@/design-system/components/map/types/map.fetch-wfs.type";
 
-/** Normalizes a WFS URL endpoint by replacing `/wms` path suffix with `/wfs` */
-export const normalizeWfsEndpointUrl = (urlStr: string): string => {
-  if (!urlStr) return urlStr;
-  let normalized = urlStr;
-  if (normalized.endsWith("/wms")) {
-    normalized = normalized.replace(/\/wms$/, "/ows");
-  } else if (normalized.includes("/wms?")) {
-    normalized = normalized.replace("/wms?", "/ows?");
-  } else if (normalized.endsWith("/wfs")) {
-    normalized = normalized.replace(/\/wfs$/, "/ows");
-  } else if (normalized.includes("/wfs?")) {
-    normalized = normalized.replace("/wfs?", "/ows?");
-  }
-  return normalized;
+export const getAuthHeaders = (): Record<string, string> => {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  return {
+    Accept: "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 };
 
-// -------------------------------------------------------------------------------------
-
-const buildWfsUrl = (
+export const buildWfsUrl = (
   {
     typeName,
     wfsUrl,
@@ -51,7 +42,11 @@ const buildWfsUrl = (
       ? rawUrl
       : `${apiBaseUrl}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
 
-  const url = new URL(targetUrlStr);
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost:5174";
+  const url = new URL(targetUrlStr, origin);
 
   if (!url.searchParams.has("layerId")) {
     url.searchParams.set("layerId", typeName);
@@ -120,10 +115,12 @@ export const fetchWfs = async (
   const { version = "2.0.0", signal, startIndex = 0, maxFeatures } = params;
 
   let url = buildWfsUrl(params, true);
+  const headers = getAuthHeaders();
   let res: Response;
   try {
     res = await fetch(url.toString(), {
       signal,
+      headers,
     });
   } catch (err: unknown) {
     if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
@@ -148,6 +145,7 @@ export const fetchWfs = async (
     try {
       res = await fetch(url.toString(), {
         signal,
+        headers,
       });
     } catch (err: unknown) {
       if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
@@ -185,7 +183,7 @@ export const fetchWfs = async (
         filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
 
       url = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
-      res = await fetch(url.toString(), { signal });
+      res = await fetch(url.toString(), { signal, headers });
     }
   }
 

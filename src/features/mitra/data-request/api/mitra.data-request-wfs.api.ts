@@ -1,6 +1,10 @@
 // src/features/mitra/data-request/api/mitra.data-request-wfs.api.ts
 
-import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import {
+  buildWfsUrl,
+  fetchWfs,
+  getAuthHeaders,
+} from "@/design-system/components/map/utils/fetch-wfs";
 import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
@@ -25,25 +29,16 @@ export const getWfsDynamicAttributes = async (
     return cachedAttributes[cacheKey];
   }
   try {
-    const apiBaseUrl = (
-      import.meta.env.VITE_API_BASE_URL || ""
-    ).replace(/\/+$/, "");
-    const defaultEndpoint = `${apiBaseUrl}/api/proxy/wfs`;
-
-    let targetUrlStr = wfsUrl || defaultEndpoint;
-    if (!targetUrlStr.startsWith("http://") && !targetUrlStr.startsWith("https://")) {
-      targetUrlStr = `${apiBaseUrl}${targetUrlStr.startsWith("/") ? "" : "/"}${targetUrlStr}`;
-    }
-
-    const url = new URL(targetUrlStr);
-    url.searchParams.set("layerId", typeName);
-    url.searchParams.set("service", "WFS");
-    url.searchParams.set("version", "2.0.0");
+    const url = buildWfsUrl({ typeName, wfsUrl });
     url.searchParams.set("request", "DescribeFeatureType");
-    url.searchParams.set("typeName", typeName);
-    url.searchParams.set("outputFormat", "application/json");
+    url.searchParams.delete("count");
+    url.searchParams.delete("maxFeatures");
+    url.searchParams.delete("startIndex");
 
-    const descRes = await fetch(url.toString(), { signal });
+    const descRes = await fetch(url.toString(), {
+      signal,
+      headers: getAuthHeaders(),
+    });
     if (descRes.ok) {
       const schema = await descRes.json();
       const properties: WfsSchemaProperty[] =
@@ -103,26 +98,15 @@ export const getWfsStringAttributes = async (
   }
 
   try {
-    const apiBaseUrl = (
-      import.meta.env.VITE_API_BASE_URL || ""
-    ).replace(/\/+$/, "");
-    const defaultEndpoint = `${apiBaseUrl}/api/proxy/wfs`;
-
-    let targetUrlStr = wfsUrl || defaultEndpoint;
-    if (!targetUrlStr.startsWith("http://") && !targetUrlStr.startsWith("https://")) {
-      targetUrlStr = `${apiBaseUrl}${targetUrlStr.startsWith("/") ? "" : "/"}${targetUrlStr}`;
-    }
-
-    const url = new URL(targetUrlStr);
-    url.searchParams.set("layerId", typeName);
-    url.searchParams.set("service", "WFS");
-    url.searchParams.set("version", "2.0.0");
+    const url = buildWfsUrl({ typeName, wfsUrl });
     url.searchParams.set("request", "DescribeFeatureType");
-    url.searchParams.set("typeName", typeName);
-    url.searchParams.set("outputFormat", "application/json");
+    url.searchParams.delete("count");
+    url.searchParams.delete("maxFeatures");
+    url.searchParams.delete("startIndex");
 
     const res = await fetch(url.toString(), {
       signal,
+      headers: getAuthHeaders(),
     });
 
     if (res.ok) {
@@ -264,12 +248,6 @@ export const fetchWfsCatalog = async ({
       throw error;
     }
     console.error(`fetchWfsCatalog failed:`, error);
-    return {
-      features: [],
-      totalFeatures: 0,
-      totalLuas: 0,
-      bidangCount: 0,
-      kawasanCount: 0,
-    };
+    throw error;
   }
 };
