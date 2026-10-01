@@ -18,13 +18,14 @@ import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loa
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { Center } from "@/design-system/components/layout/ui/center";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
@@ -40,9 +41,8 @@ import type {
 } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
-import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
-import { Url } from "@/design-system/components/typography/ui/url";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { MY_DATA_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -56,8 +56,8 @@ import {
   EyeIcon,
   EyeOffIcon,
   FileCheckIcon,
-  FileTextIcon,
   FocusIcon,
+  ReceiptTextIcon,
   SquarePen,
   TablePropertiesIcon,
 } from "lucide-react";
@@ -279,7 +279,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       {
         key: "view-invoice",
         label: "Lihat Faktur",
-        icon: FileTextIcon,
+        icon: ReceiptTextIcon,
         href: (item: MyDataItem) => item.invoiceUrl ?? undefined,
         target: "_blank",
         rel: "noopener noreferrer",

@@ -43,9 +43,9 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import {
   FileCheckIcon,
-  FileTextIcon,
   FolderOpenIcon,
   LayersIcon,
+  ReceiptTextIcon,
   SquarePen,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -215,7 +215,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       {
         key: "view-invoice",
         label: "Lihat Faktur",
-        icon: FileTextIcon,
+        icon: ReceiptTextIcon,
         href: (item: MitraWorkspaceItem) => item.invoiceUrl ?? undefined,
         target: "_blank",
         rel: "noopener noreferrer",
