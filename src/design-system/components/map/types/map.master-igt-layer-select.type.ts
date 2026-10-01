@@ -6,6 +6,8 @@ export type MapMasterIgtLayerItemProps = {
   layer: IgtLayerItem;
   isEnabled: boolean;
   opacity: number;
+  isSymbologyEnabled?: boolean;
   onToggle: (id: string) => void;
   onOpacityChange: (id: string, opacity: number) => void;
+  onToggleSymbology?: (id: string) => void;
 };

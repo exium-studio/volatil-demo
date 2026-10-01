@@ -187,9 +187,12 @@ export type MapLayerState = {
   setGlobalOpacity: (opacity: number) => void;
   enabledLayerIds: Record<string, boolean>;
   layerOpacities: Record<string, number>;
+  enabledSymbologyLayerIds: Record<string, boolean>;
   customLayerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;
   toggleLayerId: (layerId: string) => void;
   setLayerEnabled: (layerId: string, enabled: boolean) => void;
+  toggleSymbologyLayerId: (layerId: string) => void;
+  setSymbologyLayerEnabled: (layerId: string, enabled: boolean) => void;
   setLayerOpacity: (layerId: string, opacity: number) => void;
   setAllLayersEnabled: (layerIds: string[], enabled: boolean) => void;
   setCustomLayerConfig: (

@@ -53,7 +53,7 @@ const AccordionItemIndicator = forwardRef<
   HTMLDivElement,
   AccordionItemIndicatorProps
 >((props, ref) => {
-  return <ChakraAccordion.ItemIndicator ref={ref} {...props} />;
+  return <ChakraAccordion.ItemIndicator ref={ref} fontSize={"lg"} {...props} />;
 });
 
 export const Accordion = {

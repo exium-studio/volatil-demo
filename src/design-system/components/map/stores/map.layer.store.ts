@@ -19,6 +19,7 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
   setGlobalOpacity: (globalOpacity) => set({ globalOpacity }),
   enabledLayerIds: {},
   layerOpacities: {},
+  enabledSymbologyLayerIds: {},
   customLayerConfigs: {},
   toggleLayerId: (layerId) =>
     set((state) => ({
@@ -31,6 +32,20 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
     set((state) => ({
       enabledLayerIds: {
         ...state.enabledLayerIds,
+        [layerId]: enabled,
+      },
+    })),
+  toggleSymbologyLayerId: (layerId) =>
+    set((state) => ({
+      enabledSymbologyLayerIds: {
+        ...state.enabledSymbologyLayerIds,
+        [layerId]: !state.enabledSymbologyLayerIds[layerId],
+      },
+    })),
+  setSymbologyLayerEnabled: (layerId, enabled) =>
+    set((state) => ({
+      enabledSymbologyLayerIds: {
+        ...state.enabledSymbologyLayerIds,
         [layerId]: enabled,
       },
     })),
@@ -64,6 +79,7 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
       globalOpacity: 1.0,
       enabledLayerIds: {},
       layerOpacities: {},
+      enabledSymbologyLayerIds: {},
       customLayerConfigs: {},
     }),
 }));

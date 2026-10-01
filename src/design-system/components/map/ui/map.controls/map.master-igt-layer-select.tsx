@@ -31,6 +31,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
+  FlagIcon,
   FocusIcon,
   LayersIcon,
 } from "lucide-react";
@@ -40,10 +41,12 @@ export const MapMasterIgtLayerSelect = memo(() => {
   // Stores
   const {
     enabledLayerIds,
+    enabledSymbologyLayerIds,
     layerOpacities,
     globalOpacity,
     setGlobalOpacity,
     toggleLayerId,
+    toggleSymbologyLayerId,
     setLayerOpacity,
     setAllLayersEnabled,
   } = useMapLayerStore();
@@ -98,7 +101,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
       <Popover.Trigger>
         <MapOverlayContainer p={"2px"}>
           <Tooltip
-            content={"Master Layer Spasial IGT"}
+            content={"Manajemen Layer IGT"}
             positioning={{ placement: "bottom" }}
           >
             <Box position={"relative"}>
@@ -121,7 +124,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
           justifyContent={"space-between"}
         >
           <HStack justify={"space-between"} gap={"md"} w={"full"}>
-            <P fontWeight={"medium"}>{"Toggle Master Layer IGT"}</P>
+            <P fontWeight={"medium"}>{"Manajemen Layer & Simbologi"}</P>
 
             <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
           </HStack>
@@ -215,6 +218,9 @@ export const MapMasterIgtLayerSelect = memo(() => {
               <VStack gap={"2xs"} align={"stretch"}>
                 {activeLayers.map((layer) => {
                   const isEnabled = Boolean(enabledLayerIds[layer.id]);
+                  const isSymbologyEnabled = Boolean(
+                    enabledSymbologyLayerIds[layer.id],
+                  );
                   const opacity = layerOpacities[layer.id] ?? 1.0;
 
                   return (
@@ -222,8 +228,10 @@ export const MapMasterIgtLayerSelect = memo(() => {
                       key={layer.id}
                       layer={layer}
                       isEnabled={isEnabled}
+                      isSymbologyEnabled={isSymbologyEnabled}
                       opacity={opacity}
                       onToggle={toggleLayerId}
+                      onToggleSymbology={toggleSymbologyLayerId}
                       onOpacityChange={setLayerOpacity}
                     />
                   );
@@ -239,7 +247,15 @@ export const MapMasterIgtLayerSelect = memo(() => {
 
 const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   // Props
-  const { layer, isEnabled, opacity, onToggle, onOpacityChange } = props;
+  const {
+    layer,
+    isEnabled,
+    isSymbologyEnabled,
+    opacity,
+    onToggle,
+    onToggleSymbology,
+    onOpacityChange,
+  } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -313,6 +329,30 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
             pointerEvents={"none"}
             mr={"xs"}
           />
+
+          <Tooltip
+            content={
+              isSymbologyEnabled
+                ? "Sembunyikan Simbologi"
+                : "Tampilkan Simbologi"
+            }
+          >
+            <IconButton
+              size={"xs"}
+              variant={isSymbologyEnabled ? "subtle" : "ghost"}
+              colorPalette={isSymbologyEnabled ? "blue" : undefined}
+              aria-label={"Simbologi"}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleSymbology?.(layer.id);
+              }}
+            >
+              <AppIcon
+                icon={FlagIcon}
+                fill={isSymbologyEnabled ? "blue.fg" : ""}
+              />
+            </IconButton>
+          </Tooltip>
 
           <Tooltip content={"Zoom ke Layer"}>
             <IconButton size={"xs"} variant={"ghost"} onClick={handleFlyTo}>
