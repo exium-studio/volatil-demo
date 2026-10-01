@@ -5,8 +5,10 @@ import type maplibregl from "maplibre-gl";
 
 export type GetFeatureInfoOptions = {
   wmsUrl?: string | null;
+  layerId?: string;
   layers: string;
   point: { x: number; y: number };
+  lngLat?: { lng: number; lat: number };
   map: maplibregl.Map;
   cqlFilter?: string;
 };

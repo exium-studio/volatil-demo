@@ -68,6 +68,8 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
   /** Full tile URL template, or constructed dynamically using wmsUrl & layers */
   tileUrl?: string;
   wmsUrl?: string | null;
+  wfsUrl?: string | null;
+  wfsTypeName?: string;
   layers?: string;
   tileSize?: number;
   srs?: string;
@@ -133,6 +135,8 @@ export const getWmsRasterConfigFromIgtLayer = (
   zIndex: igtLayer.zIndex,
   wmsUrl: igtLayer.wms?.wmsUrl ?? "",
   layers: igtLayer.wms?.layers ?? "",
+  wfsUrl: igtLayer.wfs?.wfsUrl,
+  wfsTypeName: igtLayer.wfs?.wfsTypeName,
   tileSize: igtLayer.wms?.tileSize,
   format: igtLayer.wms?.format,
   transparent: igtLayer.wms?.transparent,

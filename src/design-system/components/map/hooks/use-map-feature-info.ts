@@ -27,6 +27,34 @@ const FEATURE_INFO_CIRCLE_STROKE_COLOR = "#ffffff";
 
 const HIGHLIGHT_FILL_LAYER_ID = "map-feature-highlight-fill";
 
+/** Dynamically computes spatial degree radius from map zoom (approx 16 pixels on screen) */
+const calculateSpatialSearchDelta = (
+  map: maplibregl.Map,
+  pixelRadius = 16,
+): number => {
+  const zoom = map.getZoom();
+  const centerLat = map.getCenter().lat;
+  const degPerPixel =
+    (360 / (256 * Math.pow(2, zoom))) * Math.cos((centerLat * Math.PI) / 180);
+  return Math.max(0.00005, degPerPixel * pixelRadius);
+};
+
+/** Resolves WFS query URL from layer configuration dynamically without hardcoding */
+const resolveWfsUrl = (layer: MapLayerConfig): string => {
+  if ("wfsUrl" in layer && layer.wfsUrl) return layer.wfsUrl;
+  if ("wmsUrl" in layer && layer.wmsUrl) {
+    return layer.wmsUrl.replace(/\/wms\b/i, "/wfs");
+  }
+  return `/api/proxy/wfs?layerId=${encodeURIComponent(layer.id)}`;
+};
+
+/** Resolves WFS typename from layer configuration dynamically */
+const resolveWfsTypeName = (layer: MapLayerConfig): string => {
+  if ("wfsTypeName" in layer && layer.wfsTypeName) return layer.wfsTypeName;
+  if ("layers" in layer && layer.layers) return layer.layers;
+  return layer.id;
+};
+
 export const useMapFeatureInfo = (
   map: maplibregl.Map | null,
   layers: MapLayerConfig[],
@@ -228,9 +256,9 @@ export const useMapFeatureInfo = (
       );
     }
 
-    const source = map.getSource(
-      FEATURE_INFO_SOURCE_ID,
-    ) as maplibregl.GeoJSONSource | undefined;
+    const source = map.getSource(FEATURE_INFO_SOURCE_ID) as
+      | maplibregl.GeoJSONSource
+      | undefined;
     if (!source) return;
 
     if (selectedFeature?.geometry) {
@@ -301,31 +329,35 @@ export const useMapFeatureInfo = (
           if (layer.type !== "wms-raster") continue;
 
           const layerName = layer.layers ?? layer.id;
+          const wfsTypeName = resolveWfsTypeName(layer);
+          const wfsEndpoint = resolveWfsUrl(layer);
+
           const result = await fetchWmsGetFeatureInfo({
             map,
             wmsUrl: layer.wmsUrl,
+            layerId: layer.id,
             layers: layerName,
             point: e.point,
+            lngLat: { lng: e.lngLat.lng, lat: e.lngLat.lat },
             cqlFilter: cqlFilterRef.current,
           });
 
           let feat = result?.features?.[0];
 
-          // Fallback to WFS point buffer if WMS GetFeatureInfo was empty
+          // Fallback to dynamic zoom-aware WFS point buffer if WMS GetFeatureInfo was empty
           if (!feat) {
             try {
-              const delta = 0.0003;
+              const delta = calculateSpatialSearchDelta(map, 16);
               const wfsRes = await fetchWfs({
-                typeName: layerName,
-                wfsUrl: layer.wmsUrl
-                  ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs")
-                  : "",
+                typeName: wfsTypeName,
+                wfsUrl: wfsEndpoint,
                 bbox: [
                   e.lngLat.lng - delta,
                   e.lngLat.lat - delta,
                   e.lngLat.lng + delta,
                   e.lngLat.lat + delta,
                 ],
+                version: "1.1.0",
                 cqlFilter: cqlFilterRef.current,
                 maxFeatures: 1,
               });
@@ -342,10 +374,8 @@ export const useMapFeatureInfo = (
             if (!feat.geometry && feat.id) {
               try {
                 const wfsRes = await fetchWfs({
-                  typeName: layerName,
-                  wfsUrl: layer.wmsUrl
-                    ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs")
-                    : "",
+                  typeName: wfsTypeName,
+                  wfsUrl: wfsEndpoint,
                   cqlFilter: `IN('${feat.id}')`,
                   maxFeatures: 1,
                 });
@@ -361,18 +391,17 @@ export const useMapFeatureInfo = (
                 }
               } catch {
                 try {
-                  const delta = 0.0003;
+                  const delta = calculateSpatialSearchDelta(map, 16);
                   const wfsRes = await fetchWfs({
-                    typeName: layerName,
-                    wfsUrl: layer.wmsUrl
-                      ? layer.wmsUrl.replace(/\/wms\b/i, "/wfs")
-                      : "",
+                    typeName: wfsTypeName,
+                    wfsUrl: wfsEndpoint,
                     bbox: [
                       e.lngLat.lng - delta,
                       e.lngLat.lat - delta,
                       e.lngLat.lng + delta,
                       e.lngLat.lat + delta,
                     ],
+                    version: "1.1.0",
                     maxFeatures: 1,
                   });
                   if (wfsRes.features && wfsRes.features[0]?.geometry) {
@@ -391,11 +420,10 @@ export const useMapFeatureInfo = (
               }
             }
 
-            const resolvedGeometry: GeoJSON.Geometry =
-              feat.geometry ?? {
-                type: "Point",
-                coordinates: [e.lngLat.lng, e.lngLat.lat],
-              };
+            const resolvedGeometry: GeoJSON.Geometry = feat.geometry ?? {
+              type: "Point",
+              coordinates: [e.lngLat.lng, e.lngLat.lat],
+            };
 
             setSelectedFeature({
               id: feat.id,
