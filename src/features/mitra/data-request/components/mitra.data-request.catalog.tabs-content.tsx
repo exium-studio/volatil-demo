@@ -281,20 +281,21 @@ const CatalogAttributeList = () => {
   const appliedAdministrativeFilters = useMitraDataRequestStore(
     (state) => state.appliedAdministrativeFilters,
   );
-  const adminCqlFilter = useMitraDataRequestStore((state) => state.cqlFilter);
   const cachedBoundary = useMitraDataRequestStore(
     (state) => state.adminBoundaryPolygon,
   );
   const adminBoundaryQuery = useAdminBoundaryAoi(appliedAdministrativeFilters);
   const effectivePolygon = cachedBoundary || adminBoundaryQuery.aoiPolygon;
 
+  const hasFilter = hasActiveAdministrativeFilter(appliedAdministrativeFilters);
+
   const aoiCqlFilter = useMemo(() => {
     if (effectivePolygon) {
       const wkt = geojsonPolygonToWkt(effectivePolygon);
       if (wkt) return `INTERSECTS(geom, ${wkt})`;
     }
-    return adminCqlFilter;
-  }, [effectivePolygon, adminCqlFilter]);
+    return undefined;
+  }, [effectivePolygon]);
 
   // States
   const [pageState, setPageState] = useState<{
@@ -305,6 +306,9 @@ const CatalogAttributeList = () => {
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
   });
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
+
+  const isBoundaryResolving =
+    hasFilter && !effectivePolygon && adminBoundaryQuery.isLoading;
 
   // Queries — server-side WFS pagination
   const {
@@ -321,10 +325,8 @@ const CatalogAttributeList = () => {
     cqlFilter: aoiCqlFilter,
     typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
     wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
+    enabled: Boolean(selectedIgtLayer && (!hasFilter || effectivePolygon)),
   });
-
-  const isBoundaryResolving =
-    !effectivePolygon && !adminCqlFilter && adminBoundaryQuery.isLoading;
 
   return (
     <MitraDataRequestDetailAttributeView
