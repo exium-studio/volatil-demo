@@ -35,6 +35,7 @@ import type {
   MitraDataRequestIgtLayerDataViewProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
+import { to2DGeometry } from "@/design-system/components/map/utils/geometry";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -78,6 +79,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
     );
     const isCalculating = useMitraDataRequestStore(
       (state) => state.isCalculating,
+    );
+    const calculationError = useMitraDataRequestStore(
+      (state) => state.error,
     );
     const isCatalogCoverageVisible = useMitraDataRequestStore(
       (state) => state.isCatalogCoverageVisible,
@@ -148,7 +152,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
         return cachedBoundary || adminBoundaryQuery.aoiPolygon || null;
       }
       return null;
-    }, [propAoiPolygon, showFilter, cachedBoundary, adminBoundaryQuery.aoiPolygon]);
+    }, [
+      propAoiPolygon,
+      showFilter,
+      cachedBoundary,
+      adminBoundaryQuery.aoiPolygon,
+    ]);
 
     // Pure AOI spatial CQL filter: INTERSECTS(geom, POLYGON(...)) across all tabs
     const combinedCqlFilter = useMemo(() => {
@@ -237,31 +246,22 @@ export const MitraDataRequestIgtLayerDataView = memo(
         return;
       }
 
-      const resolvedAoi =
-        effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
-          ? (effectiveAoiPolygon.geometry as
-              | GeoJSON.MultiPolygon
-              | GeoJSON.Polygon)
-          : (effectiveAoiPolygon as GeoJSON.MultiPolygon | GeoJSON.Polygon);
+      const resolvedAoi = to2DGeometry(effectiveAoiPolygon);
+      if (!resolvedAoi) return;
 
       const itemsList = validCalculationLayers.map((layer) => ({
         layerId: layer.id,
-        sourceLayerId: layer.id,
-        sourceLayerTitle: layer.title,
         typeName: layer.wfs?.wfsTypeName || layer.id,
         title: layer.title,
         spatialBasis: layer.spatialBasis,
-        selectionType,
-        cqlFilter: combinedCqlFilter,
       }));
 
       void calculate(
         {
           selectionType,
-          cqlFilter: combinedCqlFilter,
           aoiPolygon: resolvedAoi,
-          layers: itemsList,
           items: itemsList,
+          cqlFilter: combinedCqlFilter,
         },
         calcTriggerKey,
       );
@@ -684,19 +684,53 @@ export const MitraDataRequestIgtLayerDataView = memo(
             )}
 
             {!isShowLoading &&
-              (isErrorLayers || (showFilter && adminBoundaryQuery.isError)) && (
+              (isErrorLayers ||
+                (showFilter && adminBoundaryQuery.isError) ||
+                Boolean(calculationError && !calculationResult)) && (
                 <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
                   <RetryState
-                    title={"Gagal Memuat Data Wilayah / Layer IGT"}
+                    title={
+                      calculationError && !calculationResult
+                        ? "Gagal Menghitung Cakupan Spasial IGT"
+                        : "Gagal Memuat Data Wilayah / Layer IGT"
+                    }
                     description={
+                      (calculationError && !calculationResult
+                        ? calculationError
+                        : undefined) ||
                       errorLayers?.message ||
                       adminBoundaryQuery.error?.message ||
-                      "Terjadi kesalahan saat memuat data katalog layer IGT. Silakan coba lagi."
+                      "Terjadi kesalahan saat memproses kalkulasi spasial di server. Silakan coba lagi atau ubah filter area."
                     }
                     onRetry={() => {
                       if (isErrorLayers) void refetchLayers();
                       if (showFilter && adminBoundaryQuery.isError)
                         void adminBoundaryQuery.refetch();
+                      if (calculationError && !calculationResult) {
+                        useMitraDataRequestStore
+                          .getState()
+                          .resetCalculation(selectionType);
+                        const resolvedAoi = to2DGeometry(effectiveAoiPolygon);
+                        if (!resolvedAoi) return;
+
+                        const itemsList = validCalculationLayers.map(
+                          (layer) => ({
+                            layerId: layer.id,
+                            typeName: layer.wfs?.wfsTypeName || layer.id,
+                            title: layer.title,
+                            spatialBasis: layer.spatialBasis,
+                          }),
+                        );
+                        void calculate(
+                          {
+                            selectionType,
+                            aoiPolygon: resolvedAoi,
+                            items: itemsList,
+                            cqlFilter: combinedCqlFilter,
+                          },
+                          `${calcTriggerKey}|retry-${Date.now()}`,
+                        );
+                      }
                     }}
                   />
                 </VStack>

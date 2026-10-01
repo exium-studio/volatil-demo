@@ -41,3 +41,61 @@ export const toPolygonFeature = (
     },
   };
 };
+
+/**
+ * Normalizes input geometry into a strictly 2D GeoJSON Polygon or MultiPolygon Geometry.
+ * Extracts geometry from Feature, strips any extra Z/elevation values, and trims coordinate decimals.
+ */
+export const to2DGeometry = (
+  polygon?:
+    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+    | GeoJSON.Polygon
+    | GeoJSON.MultiPolygon
+    | GeoJSON.Feature
+    | GeoJSON.Geometry
+    | null,
+): GeoJSON.Polygon | GeoJSON.MultiPolygon | null => {
+  if (!polygon) return null;
+
+  const rawGeometry: GeoJSON.Geometry | undefined =
+    "geometry" in polygon && polygon.geometry
+      ? (polygon.geometry as GeoJSON.Geometry)
+      : "type" in polygon &&
+          (polygon.type === "Polygon" || polygon.type === "MultiPolygon")
+        ? (polygon as GeoJSON.Polygon | GeoJSON.MultiPolygon)
+        : undefined;
+
+  if (!rawGeometry) return null;
+
+  if (rawGeometry.type === "Polygon") {
+    const coordinates = (rawGeometry as GeoJSON.Polygon).coordinates.map(
+      (ring) =>
+        ring.map((coord) => [
+          Number(coord[0].toFixed(6)),
+          Number(coord[1].toFixed(6)),
+        ]),
+    );
+    return {
+      type: "Polygon",
+      coordinates,
+    };
+  }
+
+  if (rawGeometry.type === "MultiPolygon") {
+    const coordinates = (rawGeometry as GeoJSON.MultiPolygon).coordinates.map(
+      (poly) =>
+        poly.map((ring) =>
+          ring.map((coord) => [
+            Number(coord[0].toFixed(6)),
+            Number(coord[1].toFixed(6)),
+          ]),
+        ),
+    );
+    return {
+      type: "MultiPolygon",
+      coordinates,
+    };
+  }
+
+  return null;
+};
