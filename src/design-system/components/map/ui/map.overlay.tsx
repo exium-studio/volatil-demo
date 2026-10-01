@@ -7,6 +7,7 @@ import { MapControls } from "@/design-system/components/map/ui/map.controls";
 import { MapMasterIgtLayerSelect } from "@/design-system/components/map/ui/map.controls/map.master-igt-layer-select";
 import { MapMyDataLayerSelect } from "@/design-system/components/map/ui/map.controls/map.my-data-layer-select";
 import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinates";
+import { MapFeatureInfoPanel } from "@/design-system/components/map/ui/map.feature-info-panel";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
 import type { MapOverlayProps } from "@/design-system/components/map/types/map.type";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -41,11 +42,15 @@ export const MapOverlay = (props: MapOverlayProps) => {
       >
         <MapSearch />
 
-        <HStack align={"start"} gap={2} pointerEvents={"none"}>
-          {isMitra && showMyDataLayerSelect && <MapMyDataLayerSelect />}
-          {showMasterIgtLayerSelect && <MapMasterIgtLayerSelect />}
-          <MapAttribution />
-        </HStack>
+        <VStack align={"end"} gap={2} pointerEvents={"none"}>
+          <HStack align={"start"} gap={2} pointerEvents={"none"}>
+            {isMitra && showMyDataLayerSelect && <MapMyDataLayerSelect />}
+            {showMasterIgtLayerSelect && <MapMasterIgtLayerSelect />}
+            <MapAttribution />
+          </HStack>
+
+          <MapFeatureInfoPanel />
+        </VStack>
       </HStack>
 
       <MapCoordinates />

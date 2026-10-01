@@ -1,6 +1,7 @@
 // src/design-system/components/map/ui/map.tsx
 
 import { useMapDraw } from "@/design-system/components/map/hooks/use-map-draw";
+import { useMapFeatureInfo } from "@/design-system/components/map/hooks/use-map-feature-info";
 import { useMapLayers } from "@/design-system/components/map/hooks/use-map-layers";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { MapProps } from "@/design-system/components/map/types/map.basemap.type";
@@ -27,6 +28,7 @@ export const MapShell = ({
 
   useMapLayers(map, layers, cqlFilter);
   useMapDraw(map, onDrawFinish);
+  useMapFeatureInfo(map, layers, cqlFilter);
 
   return (
     <>
