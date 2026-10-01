@@ -17,7 +17,6 @@ import {
   removeCartMapLayers,
   useCartAoiCoverageMap,
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
-import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
@@ -288,21 +287,8 @@ const CatalogAttributeList = () => {
   const appliedAdministrativeFilters = useMitraDataRequestStore(
     (state) => state.appliedAdministrativeFilters,
   );
-  const cachedBoundary = useMitraDataRequestStore(
-    (state) => state.adminBoundaryPolygon,
-  );
-  const adminBoundaryQuery = useAdminBoundaryAoi(appliedAdministrativeFilters);
-  const effectivePolygon = cachedBoundary || adminBoundaryQuery.aoiPolygon;
-
+  const adminCqlFilter = useMitraDataRequestStore((state) => state.cqlFilter);
   const hasFilter = hasActiveAdministrativeFilter(appliedAdministrativeFilters);
-
-  const aoiCqlFilter = useMemo(() => {
-    if (effectivePolygon) {
-      const wkt = geojsonPolygonToWkt(effectivePolygon);
-      if (wkt) return `INTERSECTS(geom, ${wkt})`;
-    }
-    return undefined;
-  }, [effectivePolygon]);
 
   // States
   const [pageState, setPageState] = useState<{
@@ -313,9 +299,6 @@ const CatalogAttributeList = () => {
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
   });
   const [selectedItems, setSelectedItems] = useState<FormattedListItem[]>([]);
-
-  const isBoundaryResolving =
-    hasFilter && !effectivePolygon && adminBoundaryQuery.isLoading;
 
   // Queries — server-side WFS pagination
   const {
@@ -329,19 +312,19 @@ const CatalogAttributeList = () => {
   } = useIgtWfsCatalog({
     page: pageState.page,
     pageSize: pageState.pageSize,
-    cqlFilter: aoiCqlFilter,
+    cqlFilter: adminCqlFilter,
     typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
     wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
-    enabled: Boolean(selectedIgtLayer && (!hasFilter || effectivePolygon)),
+    enabled: Boolean(selectedIgtLayer && (!hasFilter || adminCqlFilter)),
   });
 
   return (
     <MitraDataRequestDetailAttributeView
       layer={selectedIgtLayer}
-      cqlFilter={aoiCqlFilter}
+      cqlFilter={adminCqlFilter}
       features={features}
       totalFeatures={totalFeatures}
-      isLoading={isLoading || isBoundaryResolving}
+      isLoading={isLoading}
       isFetching={isFetching}
       isError={isError}
       error={error}

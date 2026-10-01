@@ -1,6 +1,7 @@
 // src/features/mitra/data-request/api/mitra.data-request-wfs.api.ts
 
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
@@ -146,10 +147,21 @@ export const fetchWfsCatalog = async ({
     }
   }
 
-  const mergedCqlFilter =
+  const dynamicAttributes = await getWfsDynamicAttributes(
+    typeName,
+    wfsUrl,
+    signal,
+  );
+
+  const rawMergedFilter =
     [cqlFilter, searchCql ? `(${searchCql})` : undefined]
       .filter(Boolean)
       .join(" AND ") || undefined;
+
+  const mergedCqlFilter = adaptCqlFilterToLayerAttributes(
+    rawMergedFilter,
+    dynamicAttributes,
+  );
 
   try {
     // Fetch current page of actual features using WFS 2.0.0
