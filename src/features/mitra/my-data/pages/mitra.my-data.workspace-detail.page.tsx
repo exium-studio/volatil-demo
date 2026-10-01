@@ -49,7 +49,7 @@ import {
   FocusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 export const MitraMyDataWorkspaceDetailPage = () => {
   // Navigation
@@ -80,21 +80,40 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     refetch,
   } = useMitraWorkspaceDetailQuery(workspaceId);
 
+  // Effects — Cleanup loaded workspace layers on unmount / navigation
+  useEffect(() => {
+    return () => {
+      const state = useMapLayerStore.getState();
+      if (workspace?.layers) {
+        for (const item of workspace.layers) {
+          state.setLayerEnabled(item.id, false);
+          state.setCustomLayerConfig(item.id, null);
+        }
+      }
+    };
+  }, [workspace?.layers]);
+
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const selectedAttributeLayer = useMemo(() => {
     if (!layerId || !workspace?.layers) return null;
-    return workspace.layers.find((item) => item.id === layerId) ?? null;
+    const found = workspace.layers.find((item) => item.id === layerId);
+    if (!found) return null;
+    return {
+      ...found,
+      wfsUrl: workspace.wfsUrl ?? null,
+      wmsUrl: workspace.wmsUrl ?? null,
+    };
   }, [layerId, workspace]);
 
   // Handlers
   const handleToggleLayer = useCallback(
     (item: MyDataItem, checked: boolean) => {
       if (checked) {
-        const proxyWmsUrl = item.externalWmsUrl || item.wmsUrl;
+        if (!workspace?.wmsUrl) return;
 
         setCustomLayerConfig(item.id, {
-          wmsUrl: proxyWmsUrl || undefined,
+          wmsUrl: workspace.wmsUrl,
           layers: item.wmsLayers || item.id,
           spatialBasis: item.spatialBasis,
         });
@@ -104,7 +123,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         setCustomLayerConfig(item.id, null);
       }
     },
-    [setCustomLayerConfig, setLayerEnabled],
+    [workspace, setCustomLayerConfig, setLayerEnabled],
   );
 
   // Derived Values — Table headers & items
