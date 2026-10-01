@@ -78,36 +78,7 @@ export const buildWfsUrl = (
   }
 
   if (cqlFilter) {
-    let finalCql = cqlFilter;
-    // Safeguard: If CQL_FILTER is dangerously long (> 1500 chars), compact spatial INTERSECTS polygon into BBOX
-    if (finalCql.length > 1500 && /INTERSECTS\s*\(\s*geom/i.test(finalCql)) {
-      const coordsMatch = finalCql.match(/-?\d+\.?\d*\s+-?\d+\.?\d*/g);
-      if (coordsMatch && coordsMatch.length > 0) {
-        let minLat = Infinity,
-          maxLat = -Infinity;
-        let minLon = Infinity,
-          maxLon = -Infinity;
-        for (const pair of coordsMatch) {
-          const [latStr, lonStr] = pair.split(/\s+/);
-          const lat = parseFloat(latStr);
-          const lon = parseFloat(lonStr);
-          if (!isNaN(lat) && !isNaN(lon)) {
-            if (lat < minLat) minLat = lat;
-            if (lat > maxLat) maxLat = lat;
-            if (lon < minLon) minLon = lon;
-            if (lon > maxLon) maxLon = lon;
-          }
-        }
-        if (minLat !== Infinity) {
-          const bboxCql = `BBOX(geom, ${minLat.toFixed(6)}, ${minLon.toFixed(6)}, ${maxLat.toFixed(6)}, ${maxLon.toFixed(6)})`;
-          finalCql = finalCql.replace(
-            /INTERSECTS\s*\(\s*geom\s*,\s*(MULTI)?POLYGON\s*\(\s*\(.*?\)\s*\)\s*\)/i,
-            bboxCql,
-          );
-        }
-      }
-    }
-    url.searchParams.set("CQL_FILTER", finalCql);
+    url.searchParams.set("CQL_FILTER", cqlFilter);
   }
 
   if (propertyName) {
