@@ -142,11 +142,7 @@ export const useMapFeatureInfo = (
             id: FEATURE_INFO_CIRCLE_LAYER_ID,
             type: "circle",
             source: FEATURE_INFO_SOURCE_ID,
-            filter: [
-              "any",
-              ["==", "$type", "Point"],
-              ["==", ["geometry-type"], "Point"],
-            ],
+            filter: ["==", "$type", "Point"],
             paint: {
               "circle-color": FEATURE_INFO_CIRCLE_COLOR,
               "circle-radius": 8,
@@ -239,11 +235,7 @@ export const useMapFeatureInfo = (
           id: FEATURE_INFO_CIRCLE_LAYER_ID,
           type: "circle",
           source: FEATURE_INFO_SOURCE_ID,
-          filter: [
-            "any",
-            ["==", "$type", "Point"],
-            ["==", ["geometry-type"], "Point"],
-          ],
+          filter: ["==", "$type", "Point"],
           paint: {
             "circle-color": FEATURE_INFO_CIRCLE_COLOR,
             "circle-radius": 8,
