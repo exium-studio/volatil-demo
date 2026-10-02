@@ -115,7 +115,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
           justifyContent={"space-between"}
         >
           <HStack justify={"space-between"} gap={"md"} w={"full"}>
-            <P fontWeight={"medium"}>{"Manajemen Layer & Simbologi"}</P>
+            <P fontWeight={"medium"}>{"Manajemen Layer & Simbologi IGT"}</P>
 
             <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
           </HStack>
