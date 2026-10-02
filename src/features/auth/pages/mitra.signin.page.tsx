@@ -38,7 +38,7 @@ export const MitraSigninPage = () => {
 
           <VStack>
             <P fontSize={"lg"} fontWeight={"semibold"}>
-              {"Kementrian ATR/BPM"}
+              {"Kementrian ATR/BPN"}
             </P>
 
             <PSerif>{"Melayani Profesional Terpercaya"}</PSerif>
