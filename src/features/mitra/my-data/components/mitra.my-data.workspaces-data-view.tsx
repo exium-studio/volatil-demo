@@ -203,7 +203,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
     const itemActions: DataViewItemActionsGenerator<MitraWorkspaceItem>[] = [
       {
         key: "open-workspace-detail",
-        label: "Buka Detail Workspace",
+        label: "Buka Layer IGT",
         icon: FolderOpenIcon,
         onClick: (item: MitraWorkspaceItem) => {
           void navigate({

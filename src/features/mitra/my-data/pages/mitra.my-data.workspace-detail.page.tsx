@@ -32,7 +32,6 @@ import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
-import { TteBadge } from "@/features/shared/components/tte.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -151,15 +150,10 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             {
               value: layerDisplayName,
               td: (
-                <VStack align={"start"} gap={0}>
-                  <ClampedP
-                    fontSize={"sm"}
-                    fontWeight={"medium"}
-                    maxW={"220px"}
-                  >
-                    {layerDisplayName}
-                  </ClampedP>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
+                <VStack align={"start"} gap={"2xs"}>
+                  <ClampedP maxW={"220px"}>{layerDisplayName}</ClampedP>
+
+                  <P fontSize={"sm"} color={"fg.subtle"}>
                     {item.id}
                   </P>
                 </VStack>
@@ -372,98 +366,30 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             </HStack>
           </HeaderContainer>
 
-          <Separator borderColor={"bg.canvas"} />
+          {/* Workspace WMS URL & QGIS Guide */}
+          <VStack gap={"sm"} p={"md"} align={"stretch"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"WMS URL Workspace (INTEROP Pusdatin)"}
+            </P>
 
-          {/* Metadata Workspace */}
-          <VStack gap={"md"} p={"md"} align={"stretch"}>
-            <HStack wrap={"wrap"} gap={"lg"}>
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Nama Workspace"}
-                </P>
-                <P fontFamily={"mono"}>{workspace.workspaceName}</P>
-              </VStack>
+            <Url
+              url={workspace.wmsUrl}
+              label={"Salin WMS URL Workspace"}
+              maxW={"full"}
+            />
 
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Nomor Transaksi / Pesanan"}
-                </P>
-                <P>
-                  {`${workspace.transactionNumber} / ${workspace.orderNumber}`}
-                </P>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Status Workspace"}
-                </P>
-                <MyDataStatusBadge my={"auto"}>
-                  {workspace.status}
-                </MyDataStatusBadge>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"TTE & Faktur"}
-                </P>
-                <TteBadge
-                  tte={workspace.tte}
-                  invoiceUrl={workspace.invoiceUrl}
-                  tteInvoiceUrl={workspace.tteInvoiceUrl}
-                  my={"auto"}
-                />
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Sisa Waktu"}
-                </P>
-                {workspace.expiresAt ? (
-                  <Countdown finishedAt={workspace.expiresAt} my={"auto"} />
-                ) : (
-                  <P color={"fg.subtle"}>{"-"}</P>
-                )}
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Tanggal Kedaluwarsa"}
-                </P>
-                <P whiteSpace={"nowrap"} my={"auto"}>
-                  {workspace.expiresAt
-                    ? formatUtcDateTime(workspace.expiresAt, preferredTimezone)
-                    : "-"}
-                </P>
-              </VStack>
-            </HStack>
-
-            <Separator borderColor={"bg.canvas"} />
-
-            {/* Workspace WMS URL & QGIS Guide */}
-            <VStack gap={"sm"} align={"stretch"}>
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"WMS URL Workspace (INTEROP Pusdatin)"}
+            <Box
+              p={"sm"}
+              bg={"bg.subtle"}
+              rounded={theme.radii.component}
+              mt={"xs"}
+            >
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {
+                  "Gunakan URL WMS Workspace di atas untuk menambahkan seluruh layer dalam pesanan ini ke QGIS melalui menu Layer → Add Layer → Add WMS/WMTS Layer..."
+                }
               </P>
-
-              <Url
-                url={workspace.wmsUrl}
-                label={"Salin WMS URL Workspace"}
-                maxW={"full"}
-              />
-
-              <Box
-                p={"sm"}
-                bg={"bg.subtle"}
-                rounded={theme.radii.component}
-                mt={"xs"}
-              >
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {
-                    "Gunakan URL WMS Workspace di atas untuk menambahkan seluruh layer dalam pesanan ini ke QGIS melalui menu Layer → Add Layer → Add WMS/WMTS Layer..."
-                  }
-                </P>
-              </Box>
-            </VStack>
+            </Box>
           </VStack>
 
           <Separator borderColor={"bg.canvas"} />
