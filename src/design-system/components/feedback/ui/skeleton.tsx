@@ -50,6 +50,7 @@ export const Skeleton = (props: SkeletonProps) => {
           variant={variant}
           w={"full"}
           h={"full"}
+          bg={"an1"}
           rounded={theme.radii.container}
           css={{
             "--start-color": "transparent",
