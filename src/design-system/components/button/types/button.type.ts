@@ -14,6 +14,7 @@ export type ButtonProps = Omit<ChakraButtonProps, "variant"> & {
     | "blend"
     | (string & {});
   lineClamp?: ChakraButtonProps["lineClamp"];
+  clicky?: boolean;
 };
 
 export type IconButtonProps = ChakraIconButtonProps &

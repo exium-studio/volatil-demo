@@ -46,7 +46,7 @@ export type MitraCartOrderItemProps = {
 
 export type MitraCartOrderListProps = {
   selectedOrderId: string | null;
-  onSelectOrder: (orderId: string) => void;
+  onSelectOrder: (orderId: string | null) => void;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
   onToggleAoiVisible?: () => void;
@@ -120,7 +120,6 @@ export type MitraCartOrderSummaryProps = {
   onRetry?: () => void;
 };
 
-
 export type CartMapLayerOptions = {
   aoiPolygon?:
     | GeoJSON.MultiPolygon
@@ -132,10 +131,11 @@ export type CartMapLayerOptions = {
     | GeoJSON.Polygon
     | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
     | null;
-  selectionType?: string;
+  selectionType?: string | null;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
   isActive?: boolean;
+  exclusive?: boolean;
 };
 
 export type CartOrderItemPayload = {

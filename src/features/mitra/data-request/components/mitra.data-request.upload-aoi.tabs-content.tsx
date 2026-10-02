@@ -1,11 +1,7 @@
-// src/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content.tsx
-
 import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -24,21 +20,21 @@ import { parseShpFile } from "@/design-system/components/map/utils/parse-shp-fil
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
+import {
+  removeCartMapLayers,
+  useCartAoiCoverageMap,
+} from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
-import { MitraDataRequestUploadAoiContext } from "@/features/mitra/data-request/contexts/mitra.data-request.upload-aoi.context";
-import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
+import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
+import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import type {
   AoiFeatureItem,
   MitraDataRequestUploadAoiAttributeViewProps,
-  MitraDataRequestUploadAoiPageState,
   MitraDataRequestUploadAoiTabsContentProps,
   UploadAoiFeatureListProps,
-  UploadedAoiFile,
 } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
 import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import {
@@ -56,7 +52,7 @@ import {
   RotateCcwIcon,
   TrashIcon,
 } from "lucide-react";
-import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef } from "react";
 
 // -------------------------------------------------------------------------------------
 
@@ -150,16 +146,31 @@ export const MitraDataRequestUploadAoiTabsContent = (
   // Stores
   const map = useMapInstanceStore((state) => state.map);
   const resetWfsClipStore = useWfsClipStore((state) => state.reset);
-
-  // States
-  const [uploadedFile, setUploadedFile] = useState<UploadedAoiFile | null>(
-    null,
+  const uploadedFile = useMitraDataRequestStore((state) => state.uploadedFile);
+  const setUploadedFile = useMitraDataRequestStore(
+    (state) => state.setUploadedFile,
   );
-  const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(
-    null,
+  const selectedFeatureId = useMitraDataRequestStore(
+    (state) => state.selectedFeatureId,
   );
-  const [confirmedFeature, setConfirmedFeature] =
-    useState<AoiFeatureItem | null>(null);
+  const setSelectedFeatureId = useMitraDataRequestStore(
+    (state) => state.setSelectedFeatureId,
+  );
+  const confirmedFeature = useMitraDataRequestStore(
+    (state) => state.confirmedFeature,
+  );
+  const setConfirmedFeature = useMitraDataRequestStore(
+    (state) => state.setConfirmedFeature,
+  );
+  const toggleUploadFeatureVisibility = useMitraDataRequestStore(
+    (state) => state.toggleUploadFeatureVisibility,
+  );
+  const resetUploadAoi = useMitraDataRequestStore(
+    (state) => state.resetUploadAoi,
+  );
+  const resetUploadFile = useMitraDataRequestStore(
+    (state) => state.resetUploadFile,
+  );
 
   // Derived Values — Map Layers (preview features only when feature is NOT yet confirmed)
   // When confirmed, useCartAoiCoverageMap in MitraDataRequestIgtLayerDataView manages the official AOI layer
@@ -177,117 +188,115 @@ export const MitraDataRequestUploadAoiTabsContent = (
 
   // Hooks
   useMitraUploadAoi(map, mapActiveFeatures, isActive);
-  const isMounted = useMountTimeout({
-    isOpen: isActive,
-    mountDelay: 250,
-  });
 
   // Handlers — parse a single file
-  const processFile = useCallback(async (file: File) => {
-    const fileId = crypto.randomUUID();
+  const processFile = useCallback(
+    async (file: File) => {
+      const fileId = crypto.randomUUID();
 
-    // Validate extension
-    const isShpOrZip = file.name.endsWith(".shp") || file.name.endsWith(".zip");
-    const isGeoJson =
-      file.name.endsWith(".geojson") || file.name.endsWith(".json");
+      // Validate extension
+      const isShpOrZip =
+        file.name.endsWith(".shp") || file.name.endsWith(".zip");
+      const isGeoJson =
+        file.name.endsWith(".geojson") || file.name.endsWith(".json");
 
-    if (!isShpOrZip && !isGeoJson) {
-      toast.error("Format file tidak didukung", {
-        group: "Permintaan Data",
-        description: `File "${file.name}" bukan berkas shapefile (.shp/.zip) atau GeoJSON (.geojson/.json).`,
-      });
-      return;
-    }
-
-    // Validate size (10 MB)
-    const MAX_SIZE = 10 * 1024 * 1024;
-    if (file.size > MAX_SIZE) {
-      toast.error("Ukuran file melebihi batas", {
-        group: "Permintaan Data",
-        description: `File "${file.name}" melebihi ukuran maksimum 10MB.`,
-      });
-      return;
-    }
-
-    setUploadedFile({
-      id: fileId,
-      fileName: file.name,
-      fileSize: file.size,
-      features: [],
-      status: "parsing",
-    });
-
-    try {
-      let rawFeatures: Array<
-        GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
-      > = [];
-
-      if (isShpOrZip) {
-        const fc = await parseShpFile(file);
-        rawFeatures = extractPolygonFeatures(fc);
-      } else {
-        const text = await file.text();
-        const parsed = JSON.parse(text) as GeoJSON.GeoJsonObject;
-        rawFeatures = extractPolygonFeatures(parsed);
-      }
-
-      if (isEmptyArray(rawFeatures)) {
-        toast.error("Polygon tidak ditemukan", {
+      if (!isShpOrZip && !isGeoJson) {
+        toast.error("Format file tidak didukung", {
           group: "Permintaan Data",
-          description: `Tidak ditemukan geometri polygon yang valid di dalam file "${file.name}".`,
+          description: `File "${file.name}" bukan berkas shapefile (.shp/.zip) atau GeoJSON (.geojson/.json).`,
         });
-        setUploadedFile(null);
         return;
       }
 
-      const featureItems: AoiFeatureItem[] = rawFeatures.map((feat, idx) => ({
-        id: `${fileId}-${idx}`,
-        index: idx,
-        name: extractFeatureName(feat.properties, idx),
-        areaHa: calculateFeatureAreaInHectares(feat),
-        polygon: feat,
-        isVisibleOnMap: false,
-      }));
+      // Validate size (10 MB)
+      const MAX_SIZE = 10 * 1024 * 1024;
+      if (file.size > MAX_SIZE) {
+        toast.error("Ukuran file melebihi batas", {
+          group: "Permintaan Data",
+          description: `File "${file.name}" melebihi ukuran maksimum 10MB.`,
+        });
+        return;
+      }
 
       setUploadedFile({
         id: fileId,
         fileName: file.name,
         fileSize: file.size,
-        features: featureItems,
-        status: "done",
+        features: [],
+        status: "parsing",
       });
 
-      // Keep selection empty by default
-      setSelectedFeatureId(null);
-    } catch (error) {
-      console.error("Failed to parse AOI file:", error);
-      const errorMsg =
-        error instanceof Error
-          ? error.message
-          : "Terjadi kesalahan saat membaca file";
-      toast.error("Gagal memproses file AOI", {
-        group: "Permintaan Data",
-        description: `File "${file.name}": ${errorMsg}`,
-      });
-      setUploadedFile(null);
-    }
-  }, []);
+      try {
+        let rawFeatures: Array<
+          GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+        > = [];
 
-  const handleSelectFeature = useCallback((featureId: string) => {
-    setSelectedFeatureId(featureId);
-  }, []);
+        if (isShpOrZip) {
+          const fc = await parseShpFile(file);
+          rawFeatures = extractPolygonFeatures(fc);
+        } else {
+          const text = await file.text();
+          const parsed = JSON.parse(text) as GeoJSON.GeoJsonObject;
+          rawFeatures = extractPolygonFeatures(parsed);
+        }
 
-  const handleToggleFeatureVisibility = useCallback((featureId: string) => {
-    setUploadedFile((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        features: prev.features.map((f) =>
-          f.id === featureId ? { ...f, isVisibleOnMap: !f.isVisibleOnMap } : f,
-        ),
-      };
-    });
-  }, []);
+        if (isEmptyArray(rawFeatures)) {
+          toast.error("Polygon tidak ditemukan", {
+            group: "Permintaan Data",
+            description: `Tidak ditemukan geometri polygon yang valid di dalam file "${file.name}".`,
+          });
+          setUploadedFile(null);
+          return;
+        }
+
+        const featureItems: AoiFeatureItem[] = rawFeatures.map((feat, idx) => ({
+          id: `${fileId}-${idx}`,
+          index: idx,
+          name: extractFeatureName(feat.properties, idx),
+          areaHa: calculateFeatureAreaInHectares(feat),
+          polygon: feat,
+          isVisibleOnMap: false,
+        }));
+
+        setUploadedFile({
+          id: fileId,
+          fileName: file.name,
+          fileSize: file.size,
+          features: featureItems,
+          status: "done",
+        });
+
+        // Keep selection empty by default
+        setSelectedFeatureId(null);
+      } catch (error) {
+        console.error("Failed to parse AOI file:", error);
+        const errorMsg =
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat membaca file";
+        toast.error("Gagal memproses file AOI", {
+          group: "Permintaan Data",
+          description: `File "${file.name}": ${errorMsg}`,
+        });
+        setUploadedFile(null);
+      }
+    },
+    [setUploadedFile, setSelectedFeatureId],
+  );
+
+  const handleSelectFeature = useCallback(
+    (featureId: string) => {
+      setSelectedFeatureId(featureId);
+    },
+    [setSelectedFeatureId],
+  );
+
+  const handleToggleFeatureVisibility = useCallback(
+    (featureId: string) => {
+      toggleUploadFeatureVisibility(featureId);
+    },
+    [toggleUploadFeatureVisibility],
+  );
 
   const handleConfirmSelection = useCallback(() => {
     if (!uploadedFile || !selectedFeatureId) return;
@@ -307,19 +316,23 @@ export const MitraDataRequestUploadAoiTabsContent = (
         });
       }
     }
-  }, [uploadedFile, selectedFeatureId, map]);
+  }, [uploadedFile, selectedFeatureId, setConfirmedFeature, map]);
 
   const handleResetAoi = useCallback(() => {
-    setConfirmedFeature(null);
+    resetUploadAoi();
     resetWfsClipStore();
-  }, [resetWfsClipStore]);
+    if (map) {
+      removeCartMapLayers(map, "upload_aoi");
+    }
+  }, [resetUploadAoi, resetWfsClipStore, map]);
 
   const handleResetFile = useCallback(() => {
-    setUploadedFile(null);
-    setSelectedFeatureId(null);
-    setConfirmedFeature(null);
+    resetUploadFile();
     resetWfsClipStore();
-  }, [resetWfsClipStore]);
+    if (map) {
+      removeCartMapLayers(map, "upload_aoi");
+    }
+  }, [resetUploadFile, resetWfsClipStore, map]);
 
   // Derived Values — CQL INTERSECTS clause from confirmed feature
   const aoiCqlFilter = useMemo(() => {
@@ -327,32 +340,19 @@ export const MitraDataRequestUploadAoiTabsContent = (
     return `INTERSECTS(geom, ${geojsonPolygonToWkt(confirmedFeature.polygon)})`;
   }, [confirmedFeature]);
 
-  const contextValue = useMemo(
-    () => ({
-      uploadedFile,
-      setUploadedFile,
-      confirmedFeature,
-      setConfirmedFeature,
-    }),
-    [uploadedFile, confirmedFeature],
-  );
-
   return (
-    <MitraDataRequestUploadAoiContext.Provider value={contextValue}>
-      <Tabs.Content
-        display={"flex"}
-        flex={1}
-        flexDir={"column"}
-        overflowY={"auto"}
-        p={0}
-        {...restProps}
-      >
-        {!isActive || !isMounted ? (
-          <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
-        ) : (
-          <>
-            {/* Step 1: Upload Dropzone (No File Uploaded Yet) */}
-            {!uploadedFile && !confirmedFeature && (
+    <Tabs.Content
+      display={"flex"}
+      flex={1}
+      flexDir={"column"}
+      overflowY={"auto"}
+      p={0}
+      {...restProps}
+    >
+      {!isActive ? null : (
+        <>
+          {/* Step 1: Upload Dropzone (No File Uploaded Yet) */}
+          {!uploadedFile && !confirmedFeature && (
               <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
                 <FileInput
                   variant={"dropzone"}
@@ -425,7 +425,6 @@ export const MitraDataRequestUploadAoiTabsContent = (
           </>
         )}
       </Tabs.Content>
-    </MitraDataRequestUploadAoiContext.Provider>
   );
 };
 
@@ -498,6 +497,7 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
         w={"full"}
         overflowY={"auto"}
         p={"md"}
+        pb={"xs"}
         position={"relative"}
       >
         <Box
@@ -640,35 +640,31 @@ const UploadAoiConfirmedAttributeList = memo(
 
     // Stores
     const map = useMapInstanceStore((state) => state.map);
+    const isAoiVisible = useMitraDataRequestStore(
+      (state) => state.isUploadAoiVisible,
+    );
+    const setIsAoiVisible = useMitraDataRequestStore(
+      (state) => state.setIsUploadAoiVisible,
+    );
+    const isCoverageVisible = useMitraDataRequestStore(
+      (state) => state.isUploadCoverageVisible,
+    );
+    const calculationResult = useMitraDataRequestStore(
+      (state) => state.calculationResults["upload_aoi"] ?? state.result,
+    );
 
-    // States
-    const [isAoiVisible, setIsAoiVisible] = useState(true);
-    const [pageState, setPageState] =
-      useState<MitraDataRequestUploadAoiPageState>({
-        page: 1,
-        pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
-        selectedItems: [] as FormattedListItem[],
-      });
+    // Keep AOI and Coverage layers mounted across both layer list and attribute table view
+    useCartAoiCoverageMap(map, {
+      aoiPolygon: confirmedPolygon,
+      coveragePolygon: calculationResult?.coveragePolygon,
+      selectionType: "upload_aoi",
+      isAoiVisible,
+      isCoverageVisible,
+      isActive,
+    });
 
     // Hooks
     const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
-
-    // Queries — server-side WFS pagination
-    const {
-      features,
-      totalFeatures,
-      isLoading,
-      isFetching,
-      isError,
-      error,
-      refetch,
-    } = useIgtWfsCatalog({
-      page: pageState.page,
-      pageSize: pageState.pageSize,
-      cqlFilter: aoiCqlFilter,
-      typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
-      wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
-    });
 
     // Derived Values
     const aoiAreaHa = useMemo(() => {
@@ -778,28 +774,9 @@ const UploadAoiConfirmedAttributeList = memo(
 
     // Render Detail Data View
     return (
-      <MitraDataRequestDetailAttributeView
+      <LayerAttributeTableView
         layer={selectedIgtLayer}
         cqlFilter={aoiCqlFilter}
-        features={features}
-        totalFeatures={totalFeatures}
-        isLoading={isLoading}
-        isFetching={isFetching}
-        isError={isError}
-        error={error}
-        onRetry={() => {
-          void refetch();
-        }}
-        page={pageState.page}
-        pageSize={pageState.pageSize}
-        setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-        setPageSize={(pageSize) =>
-          setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-        }
-        selectedItems={pageState.selectedItems}
-        setSelectedItems={(items) =>
-          setPageState((prev) => ({ ...prev, selectedItems: items }))
-        }
         showActions={false}
       />
     );

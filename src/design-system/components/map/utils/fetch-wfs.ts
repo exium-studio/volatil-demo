@@ -7,25 +7,7 @@ import type {
   WfsVersion,
 } from "@/design-system/components/map/types/map.fetch-wfs.type";
 
-/** Normalizes a WFS URL endpoint by replacing `/wms` path suffix with `/wfs` */
-export const normalizeWfsEndpointUrl = (urlStr: string): string => {
-  if (!urlStr) return urlStr;
-  let normalized = urlStr;
-  if (normalized.endsWith("/wms")) {
-    normalized = normalized.replace(/\/wms$/, "/ows");
-  } else if (normalized.includes("/wms?")) {
-    normalized = normalized.replace("/wms?", "/ows?");
-  } else if (normalized.endsWith("/wfs")) {
-    normalized = normalized.replace(/\/wfs$/, "/ows");
-  } else if (normalized.includes("/wfs?")) {
-    normalized = normalized.replace("/wfs?", "/ows?");
-  }
-  return normalized;
-};
-
-// -------------------------------------------------------------------------------------
-
-const buildWfsUrl = (
+export const buildWfsUrl = (
   {
     typeName,
     wfsUrl,
@@ -40,9 +22,10 @@ const buildWfsUrl = (
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
-  const apiBaseUrl = (
-    import.meta.env.VITE_API_BASE_URL || ""
-  ).replace(/\/+$/, "");
+  const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(
+    /\/+$/,
+    "",
+  );
   const defaultBaseUrl = `${apiBaseUrl}/api/proxy/wfs`;
 
   const rawUrl = wfsUrl || defaultBaseUrl;
@@ -51,9 +34,13 @@ const buildWfsUrl = (
       ? rawUrl
       : `${apiBaseUrl}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
 
-  const url = new URL(targetUrlStr);
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost:5174";
+  const url = new URL(targetUrlStr, origin);
 
-  if (!url.searchParams.has("layerId")) {
+  if (!url.searchParams.has("layerId") && typeName) {
     url.searchParams.set("layerId", typeName);
   }
   url.searchParams.set("service", "WFS");
@@ -167,8 +154,9 @@ export const fetchWfs = async (
   // If server throws 400 Bad Request due to GeoServer "Illegal property name" in CQL_FILTER
   if (!res.ok && res.status === 400 && params.cqlFilter) {
     const errorText = await res.text().catch(() => "");
-    const matchIllegalProp =
-      /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(errorText);
+    const matchIllegalProp = /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(
+      errorText,
+    );
 
     if (matchIllegalProp && matchIllegalProp[1]) {
       const illegalProp = matchIllegalProp[1];

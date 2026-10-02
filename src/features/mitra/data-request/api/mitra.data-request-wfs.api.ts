@@ -1,11 +1,11 @@
 // src/features/mitra/data-request/api/mitra.data-request-wfs.api.ts
 
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import { adaptCqlFilterToLayerAttributes } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
 import {
   calculateIntersectAreaInHectares,
   extractAoiPolygonsFromCql,
 } from "@/features/mitra/data-request/utils/calculate-feature-area";
-import type { WfsSchemaProperty } from "@/features/mitra/data-request/types/mitra.data-request.wfs.type";
 
 const cachedAttributes: Record<string, string[]> = {};
 const cachedStringAttributes: Record<string, string[]> = {};
@@ -23,39 +23,6 @@ export const getWfsDynamicAttributes = async (
   const cacheKey = `${wfsUrl}:${typeName}`;
   if (cachedAttributes[cacheKey]) {
     return cachedAttributes[cacheKey];
-  }
-  try {
-    const apiBaseUrl = (
-      import.meta.env.VITE_API_BASE_URL || ""
-    ).replace(/\/+$/, "");
-    const defaultEndpoint = `${apiBaseUrl}/api/proxy/wfs`;
-
-    let targetUrlStr = wfsUrl || defaultEndpoint;
-    if (!targetUrlStr.startsWith("http://") && !targetUrlStr.startsWith("https://")) {
-      targetUrlStr = `${apiBaseUrl}${targetUrlStr.startsWith("/") ? "" : "/"}${targetUrlStr}`;
-    }
-
-    const url = new URL(targetUrlStr);
-    url.searchParams.set("layerId", typeName);
-    url.searchParams.set("service", "WFS");
-    url.searchParams.set("version", "2.0.0");
-    url.searchParams.set("request", "DescribeFeatureType");
-    url.searchParams.set("typeName", typeName);
-    url.searchParams.set("outputFormat", "application/json");
-
-    const descRes = await fetch(url.toString(), { signal });
-    if (descRes.ok) {
-      const schema = await descRes.json();
-      const properties: WfsSchemaProperty[] =
-        schema.featureTypes?.[0]?.properties ?? [];
-      const allKeys = properties.map((prop) => prop.name);
-      if (allKeys.length > 0) {
-        cachedAttributes[cacheKey] = allKeys;
-        return allKeys;
-      }
-    }
-  } catch {
-    // Fallback to GetFeature if DescribeFeatureType fails
   }
 
   try {
@@ -88,7 +55,7 @@ export const getWfsDynamicAttributes = async (
 };
 
 /**
- * Fetches WFS attributes of string type dynamically from GeoServer DescribeFeatureType response.
+ * Fetches WFS attributes of string type dynamically from sample feature.
  * Used to build case-insensitive search queries on text-only fields to prevent SQL type errors.
  */
 export const getWfsStringAttributes = async (
@@ -103,37 +70,18 @@ export const getWfsStringAttributes = async (
   }
 
   try {
-    const apiBaseUrl = (
-      import.meta.env.VITE_API_BASE_URL || ""
-    ).replace(/\/+$/, "");
-    const defaultEndpoint = `${apiBaseUrl}/api/proxy/wfs`;
-
-    let targetUrlStr = wfsUrl || defaultEndpoint;
-    if (!targetUrlStr.startsWith("http://") && !targetUrlStr.startsWith("https://")) {
-      targetUrlStr = `${apiBaseUrl}${targetUrlStr.startsWith("/") ? "" : "/"}${targetUrlStr}`;
-    }
-
-    const url = new URL(targetUrlStr);
-    url.searchParams.set("layerId", typeName);
-    url.searchParams.set("service", "WFS");
-    url.searchParams.set("version", "2.0.0");
-    url.searchParams.set("request", "DescribeFeatureType");
-    url.searchParams.set("typeName", typeName);
-    url.searchParams.set("outputFormat", "application/json");
-
-    const res = await fetch(url.toString(), {
+    const res = await fetchWfs({
+      typeName,
+      wfsUrl,
+      version: "2.0.0",
+      maxFeatures: 1,
       signal,
     });
-
-    if (res.ok) {
-      const schema = await res.json();
-      const properties: WfsSchemaProperty[] =
-        schema.featureTypes?.[0]?.properties ?? [];
-      const stringKeys = properties
-        .filter(
-          (prop) => prop.type === "xsd:string" || prop.localType === "string",
-        )
-        .map((prop) => prop.name);
+    const firstFeature = res.features?.[0];
+    if (firstFeature?.properties) {
+      const stringKeys = Object.entries(firstFeature.properties)
+        .filter(([, val]) => typeof val === "string")
+        .map(([key]) => key);
 
       if (stringKeys.length > 0) {
         cachedStringAttributes[cacheKey] = stringKeys;
@@ -183,25 +131,37 @@ export const fetchWfsCatalog = async ({
 
   const startIndex = (page - 1) * pageSize;
 
-  const stringAttributes = await getWfsStringAttributes(
+  let searchCql: string | undefined = undefined;
+  const trimmedSearch = search?.trim();
+
+  if (trimmedSearch && trimmedSearch.length > 0) {
+    const stringAttributes = await getWfsStringAttributes(
+      typeName,
+      wfsUrl,
+      signal,
+    );
+    if (stringAttributes.length > 0) {
+      searchCql = stringAttributes
+        .map((attr) => `"${attr}" ILIKE '%${trimmedSearch}%'`)
+        .join(" OR ");
+    }
+  }
+
+  const dynamicAttributes = await getWfsDynamicAttributes(
     typeName,
     wfsUrl,
     signal,
   );
 
-  // Build search CQL using only double-quoted WFS string attributes and ILIKE
-  const trimmedSearch = search?.trim();
-  const searchCql =
-    trimmedSearch && trimmedSearch.length > 0 && stringAttributes.length > 0
-      ? stringAttributes
-          .map((attr) => `"${attr}" ILIKE '%${trimmedSearch}%'`)
-          .join(" OR ")
-      : undefined;
-
-  const mergedCqlFilter =
+  const rawMergedFilter =
     [cqlFilter, searchCql ? `(${searchCql})` : undefined]
       .filter(Boolean)
       .join(" AND ") || undefined;
+
+  const mergedCqlFilter = adaptCqlFilterToLayerAttributes(
+    rawMergedFilter,
+    dynamicAttributes,
+  );
 
   try {
     // Fetch current page of actual features using WFS 2.0.0
@@ -264,12 +224,6 @@ export const fetchWfsCatalog = async ({
       throw error;
     }
     console.error(`fetchWfsCatalog failed:`, error);
-    return {
-      features: [],
-      totalFeatures: 0,
-      totalLuas: 0,
-      bidangCount: 0,
-      kawasanCount: 0,
-    };
+    throw error;
   }
 };

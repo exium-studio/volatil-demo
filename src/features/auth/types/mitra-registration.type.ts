@@ -31,7 +31,6 @@ export type MitraRegistrationFormValues = {
   jabatan: string;
   email: string;
   nomorHp: string;
-  password?: string;
   suratPermohonan: File[];
   dokumenDik: File[];
   suratPernyataanHukum: File[];

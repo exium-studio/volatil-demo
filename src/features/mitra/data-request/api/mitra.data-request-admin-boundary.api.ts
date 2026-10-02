@@ -90,9 +90,10 @@ export async function fetchAdminBoundaryPolygon(
   }
 
   // If multiple features returned (e.g. multi-part boundary / islands), union them into a single Feature
-  return unionGeoJsonPolygons({
+  const unioned = unionGeoJsonPolygons({
     type: "FeatureCollection",
     features,
   });
-}
 
+  return unioned ?? null;
+}

@@ -12,7 +12,7 @@ import { ApiError } from "@/shared/libs/api-client/api-error";
 import {
   AlertTriangleIcon,
   ArrowLeftIcon,
-  CheckCircle2Icon,
+  ArrowRightIcon,
   ShieldCheckIcon,
 } from "lucide-react";
 import { useState } from "react";
@@ -141,6 +141,7 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
       <VStack align={"center"} gap={"md"} py={2} w={"full"}>
         <PinInput
           count={6}
+          fluid={true}
           inputHeight={"80px"}
           autoFocus={true}
           otp={true}
@@ -163,8 +164,8 @@ export const TotpVerifyStep = (props: TotpVerifyStepProps) => {
           loading={verifyMutation.isPending}
           disabled={totpCode.length !== 6}
         >
-          <AppIcon icon={CheckCircle2Icon} />
           {"Verifikasi & Masuk"}
+          <AppIcon icon={ArrowRightIcon} />
         </Button>
 
         <Button

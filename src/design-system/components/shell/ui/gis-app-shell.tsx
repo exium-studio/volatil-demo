@@ -1,13 +1,11 @@
 // src/design-system/components/shell/ui/gis-app-shell.tsx
 
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
-import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Avatar } from "@/design-system/components/media/ui/avatar";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Splitter } from "@/design-system/components/layout/ui/splitter";
 import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-view-padding";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
@@ -20,17 +18,23 @@ import {
 import { BaseMap, MapShell } from "@/design-system/components/map/ui/map";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { NavButton } from "@/design-system/components/navigation/ui/nav";
+import { Sidebar } from "@/design-system/components/navigation/ui/sidebar";
 import { HNavs } from "@/design-system/components/navigation/ui/h-navs";
 import { VNavs } from "@/design-system/components/navigation/ui/v-navs";
 import { getNavKeyFromPathname } from "@/design-system/components/navigation/utils/navs.utils";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import type { GisAppShellProps } from "@/design-system/components/shell/types/gis-app-shell.type";
+import type {
+  GisAppShellProps,
+  GisContentProps,
+} from "@/design-system/components/shell/types/gis-app-shell.type";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { APP_CONFIG } from "@/design-system/constants/_meta";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
+import { InternalSigninPage } from "@/features/auth/pages/internal.signin.page";
+import { MitraSigninPage } from "@/features/auth/pages/mitra.signin.page";
 import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
@@ -51,10 +55,6 @@ import type { NavGroup, NavItem } from "@/shared/types/nav.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { Box } from "@chakra-ui/react";
-import {
-  IconChevronCompactLeft,
-  IconChevronCompactRight,
-} from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { recordRecentNav } from "@/shared/utils/navigation/recent-nav.utils";
@@ -77,9 +77,25 @@ export const GisAppShell = (props: GisAppShellProps) => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
   const pathname = useLocation().pathname;
+  const { user } = useAuthSession();
+
+  // Derived Values
+  const userSession = user ?? getUserSession();
+  const currentUserId = userSession?.id;
+  const isInternal =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/internal") ||
+    userSession?.role === "internal";
+  const isLoginRoute = pathname === "/" || pathname === "/admin";
+  const isStandaloneRoute =
+    !isLoginRoute &&
+    !pathname.startsWith("/mitra") &&
+    !pathname.startsWith("/internal");
 
   // Effects
   useEffect(() => {
+    if (isLoginRoute || isStandaloneRoute) return;
+
     const userData = getUserSession();
     const role = pathname.startsWith("/internal")
       ? "internal"
@@ -97,12 +113,9 @@ export const GisAppShell = (props: GisAppShellProps) => {
         titleKey: navItem.titleKey,
       });
     }
-  }, [pathname]);
+  }, [pathname, isLoginRoute, isStandaloneRoute]);
 
   // Reset all active map layers and filters when user/role changes
-  const userSession = getUserSession();
-  const currentUserId = userSession?.id;
-
   useEffect(() => {
     useMapLayerStore.getState().resetLayers();
   }, [currentUserId]);
@@ -112,59 +125,74 @@ export const GisAppShell = (props: GisAppShellProps) => {
       flexDir={isSmallViewport ? "column" : "row"}
       pos={"relative"}
       overflow={"hidden"}
-      bg={"bg.canvas"}
+      bg={"transparent"}
       {...restProps}
     >
-      {!isSmallViewport && <Sidebar />}
+      {!isSmallViewport && <GisAppSidebar />}
 
-      <Content />
+      <Content isLoginRoute={isLoginRoute} />
 
       {isSmallViewport && <MobileBottomNav />}
+
+      {/* Overlay */}
+      <Box
+        pos={"fixed"}
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        zIndex={100}
+        bg={"bodyDark/20"}
+        backdropFilter={"blur(5px)"}
+        pointerEvents={"none"}
+        opacity={isLoginRoute ? 1 : 0}
+        transition={"300ms"}
+      />
+
+      {/* Login Screen Container with smooth opacity and scale transition */}
+      <Center
+        pos={"fixed"}
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        zIndex={101}
+        w={"full"}
+        h={"full"}
+        p={["0 !important", 4, 6]}
+        overflow={"auto"}
+        pointerEvents={isLoginRoute ? "auto" : "none"}
+        opacity={isLoginRoute ? 1 : 0}
+        transform={isLoginRoute ? "scale(1)" : "scale(0.96)"}
+        transition={"300ms"}
+        aria-hidden={!isLoginRoute}
+      >
+        {isInternal ? <InternalSigninPage /> : <MitraSigninPage />}
+      </Center>
     </AppPageContainer>
   );
 };
 
 // -------------------------------------------------------------------------------------
 
-const Sidebar = () => {
-  // Stores
-  const expanded = useSidebarStore(
-    (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
-  );
-
+const GisAppSidebar = () => {
   return (
-    <Box
-      className={"group"}
-      pos={"relative"}
-      zIndex={10}
-      w={expanded ? `${SIDEBAR_EXPANDED_W}px` : `${SIDEBAR_COLLAPSED_W}px`}
-      h={"full"}
-      transition={"200ms"}
-      // transition={"200ms cubic-bezier(0.175, 0.885, 0.32, 1.1)"}
+    <Sidebar
+      expandable={true}
+      sidebarKey={SIDE_BAR_KEY}
+      defaultExpanded={DEFAULT_SIDEBAR_EXPANDED}
+      borderColor={"bg.canvas"}
     >
-      <VStack
-        className={"noScrollbar"}
-        overflowY={"auto"}
-        overflowX={"clip"}
-        h={"full"}
-        py={2}
-        bg={"bg.body"}
-        borderRight={"1px solid"}
-        borderColor={"bg.canvas"}
-      >
-        <SidebarHeader />
+      <SidebarHeader />
 
-        <Separator mx={2} />
+      <Sidebar.Separator />
 
-        <SidebarBody />
+      <SidebarBody />
 
-        <Separator mx={2} />
+      <Sidebar.Separator />
 
-        <SidebarFooter />
-      </VStack>
-
-      <SidebarToggleButton />
-    </Box>
+      <SidebarFooter />
+    </Sidebar>
   );
 };
 
@@ -176,13 +204,7 @@ const SidebarHeader = () => {
   );
 
   return (
-    <HStack
-      align={"center"}
-      justify={"space-between"}
-      h={"headerH"}
-      p={4}
-      w={"full"}
-    >
+    <Sidebar.Header>
       <NavLink to={"/"}>
         <HStack align={"center"} gap={"sm"}>
           <IgtLogo flexShrink={0} boxSize={"24px"} ml={1} />
@@ -208,7 +230,7 @@ const SidebarHeader = () => {
       >
         v{APP_CONFIG.version}
       </ClampedP>
-    </HStack>
+    </Sidebar.Header>
   );
 };
 
@@ -237,20 +259,22 @@ const SidebarBody = () => {
   const activeKey = getNavKeyFromPathname(navsMap, pathname);
 
   return (
-    <VNavs
-      flex={1}
-      groups={navGroups}
-      navs={navsMap}
-      activeKey={activeKey}
-      expanded={expanded}
-      onNavClick={(key) => {
-        navigate({
-          to: navsMap[key].pathname,
-          resetScroll: false,
-        });
-      }}
-      p={3}
-    />
+    <Sidebar.Body>
+      <VNavs
+        flex={1}
+        groups={navGroups}
+        navs={navsMap}
+        activeKey={activeKey}
+        expanded={expanded}
+        onNavClick={(key) => {
+          navigate({
+            to: navsMap[key].pathname,
+            resetScroll: false,
+          });
+        }}
+        p={3}
+      />
+    </Sidebar.Body>
   );
 };
 
@@ -283,7 +307,7 @@ const SidebarFooter = () => {
   const activeKey = getNavKeyFromPathname(navsMap, pathname);
 
   return (
-    <VStack gap={1} p={3}>
+    <Sidebar.Footer>
       <VNavs
         groups={otherNavGroups}
         navs={navsMap}
@@ -321,69 +345,16 @@ const SidebarFooter = () => {
           )}
         </NavButton>
       </UserProfilePopoverTrigger>
-    </VStack>
-  );
-};
-
-const SidebarToggleButton = () => {
-  // Stores
-  const expanded = useSidebarStore(
-    (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
-  );
-  const toggleExpanded = useSidebarStore((s) => s.toggleExpanded);
-
-  // Handlers
-  const handleToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleExpanded(SIDE_BAR_KEY, DEFAULT_SIDEBAR_EXPANDED);
-  };
-
-  return (
-    <Tooltip
-      content={expanded ? t["action.collapse"]() : t["action.expand"]()}
-      positioning={{
-        placement: "right",
-      }}
-    >
-      <Center
-        h={"full"}
-        w={"16px"}
-        pos={"absolute"}
-        right={"-8px"}
-        top={0}
-        zIndex={99}
-        opacity={0}
-        cursor={"pointer"}
-        _groupHover={{ opacity: 1 }}
-        transition={"200ms"}
-        onClick={handleToggle}
-      >
-        <IconButton
-          aria-label={expanded ? t["action.collapse"]() : t["action.expand"]()}
-          variant={"blend"}
-          size={"2xs"}
-          minW={"16px"}
-          w={"16px"}
-          h={"80px"}
-          color={"fg.muted"}
-          rounded={"full"}
-          border={"1px solid"}
-          borderColor={"border.subtle"}
-          pointerEvents={"none"}
-        >
-          <AppIcon
-            icon={expanded ? IconChevronCompactLeft : IconChevronCompactRight}
-            size={"sm"}
-          />
-        </IconButton>
-      </Center>
-    </Tooltip>
+    </Sidebar.Footer>
   );
 };
 
 // -------------------------------------------------------------------------------------
 
-const Content = () => {
+const Content = (props: GisContentProps) => {
+  // Props
+  const { isLoginRoute } = props;
+
   // Refs
   const contentPanelRef = useRef<HTMLDivElement | null>(null);
 
@@ -402,11 +373,15 @@ const Content = () => {
   const isSmallViewport = useIsSmallViewport();
   const hasInitializedDefaultsRef = useRef(false);
 
+  const userSession = getUserSession();
+  const isAuthenticated = Boolean(userSession?.id);
+
   // Derived Values — Build layer config from fetched layer list
   const { data: fetchedLayers } = useQuery({
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
+    enabled: !isLoginRoute && isAuthenticated,
   });
 
   const {
@@ -436,6 +411,8 @@ const Content = () => {
   }, [fetchedLayers]);
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
+    if (isLoginRoute) return [];
+
     const rawList = fetchedLayers?.items ?? [];
     const sorted = [...rawList].sort(
       (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
@@ -445,35 +422,40 @@ const Content = () => {
       .map((layer: IgtLayerItem) => {
         const isEnabled = Boolean(enabledLayerIds[layer.id]);
         const individualOpacity = layerOpacities[layer.id] ?? 1.0;
-        const effectiveOpacity = individualOpacity * globalOpacity;
-        const baseConfig = getWmsRasterConfigFromIgtLayer(
-          layer,
-          wmsVisible && isEnabled,
-          effectiveOpacity,
-        );
         const customOverride = customLayerConfigs[layer.id];
+
         if (customOverride) {
+          const baseConfig = getWmsRasterConfigFromIgtLayer(
+            layer,
+            wmsVisible && isEnabled,
+            individualOpacity,
+          );
           return {
             ...baseConfig,
             ...customOverride,
             visible: wmsVisible && isEnabled,
-            opacity:
-              (layerOpacities[layer.id] ?? baseConfig.opacity) * globalOpacity,
+            opacity: layerOpacities[layer.id] ?? 1.0,
           };
         }
-        return baseConfig;
+
+        const effectiveOpacity = individualOpacity * globalOpacity;
+        return getWmsRasterConfigFromIgtLayer(
+          layer,
+          wmsVisible && isEnabled,
+          effectiveOpacity,
+        );
       });
 
-    // Also include any layer in enabledLayerIds (even if not in catalog list yet, e.g. My Data)
+    // Also include any layer in enabledLayerIds (e.g. My Data / custom workspace layers)
     Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
       if (!configs.some((c) => c.id === layerId)) {
         const customOverride = customLayerConfigs[layerId];
         configs.push({
           id: layerId,
           type: "wms-raster",
-          spatialBasis: "bidang",
+          spatialBasis: customOverride?.spatialBasis ?? "bidang",
           visible: wmsVisible && Boolean(isEnabled),
-          opacity: (layerOpacities[layerId] ?? 1.0) * globalOpacity,
+          opacity: layerOpacities[layerId] ?? 1.0,
           wmsUrl: "",
           layers: layerId,
           ...(customOverride ?? {}),
@@ -500,6 +482,7 @@ const Content = () => {
 
     return configs;
   }, [
+    isLoginRoute,
     fetchedLayers,
     wmsVisible,
     enabledLayerIds,
@@ -586,7 +569,7 @@ const Content = () => {
 
   return (
     <>
-      {/* Full-viewport basemap tile layer — sits behind everything */}
+      {/* Full-viewport basemap tile layer */}
       <Box pos={"fixed"} top={0} left={0} right={0} bottom={0} zIndex={0}>
         <BaseMap />
       </Box>
@@ -601,7 +584,7 @@ const Content = () => {
         }}
         orientation={isSmallViewport ? "vertical" : "horizontal"}
         pos={"relative"}
-        zIndex={1}
+        zIndex={2}
         pointerEvents={"none"}
       >
         {isSmallViewport

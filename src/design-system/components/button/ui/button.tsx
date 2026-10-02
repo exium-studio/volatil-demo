@@ -22,6 +22,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const {
       primary,
       variant,
+      clicky = true,
       colorPalette,
       lineClamp = 1,
       children,
@@ -108,6 +109,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         minW={minW}
         maxW={maxW}
         overflow={"hidden"}
+        _active={{
+          transform: clicky ? "translateY(2px)" : "none",
+        }}
+        transition={"150ms"}
         {...restProps}
       >
         {formattedChildren}

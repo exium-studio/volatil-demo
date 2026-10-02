@@ -4,7 +4,6 @@ import {
   MAP_CONFIG,
   MAP_EVENTS_MAP,
 } from "@/design-system/components/map/constants/map.config";
-import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import type {
   MapLayerConfig,
   WmsRasterLayerConfig,
@@ -51,31 +50,43 @@ const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
 
 /**
  * Returns the layer ID to insert custom data layers (WMS/WFS) before:
- * 1. The first draw layer (if draw layer exists), so WMS/WFS layers render below draw/AOI geometries.
+ * 1. The first custom overlay layer (AOI, Coverage, Draw, Feature Info, Highlight),
+ *    so WMS/WFS layers strictly render BELOW all active UI/overlay layers.
  * 2. The first symbol/label layer that appears AFTER basemap buildings (both 2D "building" and 3D "building-3d"),
  *    so WMS/WFS layers strictly render ABOVE all basemap layers (landuse, water, roads, 2D/3D buildings).
  */
 const getCustomLayerBeforeId = (map: maplibregl.Map): string | undefined => {
-  if (map.getLayer(DRAW_FILL_LAYER_ID)) {
-    return DRAW_FILL_LAYER_ID;
-  }
   const styleLayers = map.getStyle()?.layers;
-  if (styleLayers) {
-    const building3dIdx = styleLayers.findIndex((l) => l.id === "building-3d");
-    const buildingIdx = styleLayers.findIndex((l) => l.id === "building");
-    const maxBuildingIdx = Math.max(building3dIdx, buildingIdx);
+  if (!styleLayers) return undefined;
 
-    if (maxBuildingIdx !== -1) {
-      for (let i = maxBuildingIdx + 1; i < styleLayers.length; i++) {
-        if (styleLayers[i].type === "symbol") {
-          return styleLayers[i].id;
-        }
+  // 1. If any overlay layer exists, insert below the very first overlay layer
+  const firstOverlay = styleLayers.find(
+    (l) =>
+      l.id.startsWith("upload-preview-aoi-") ||
+      l.id.includes("-aoi-") ||
+      l.id.includes("-coverage-") ||
+      l.id.startsWith("map-draw-") ||
+      l.id.startsWith("map-feature-info-") ||
+      l.id.startsWith("map-feature-highlight-"),
+  );
+  if (firstOverlay) return firstOverlay.id;
+
+  // 2. Otherwise insert above basemap buildings and below basemap symbols/labels
+  const building3dIdx = styleLayers.findIndex((l) => l.id === "building-3d");
+  const buildingIdx = styleLayers.findIndex((l) => l.id === "building");
+  const maxBuildingIdx = Math.max(building3dIdx, buildingIdx);
+
+  if (maxBuildingIdx !== -1) {
+    for (let i = maxBuildingIdx + 1; i < styleLayers.length; i++) {
+      if (styleLayers[i].type === "symbol") {
+        return styleLayers[i].id;
       }
     }
-
-    const firstSymbol = styleLayers.find((l) => l.type === "symbol");
-    if (firstSymbol) return firstSymbol.id;
   }
+
+  const firstSymbol = styleLayers.find((l) => l.type === "symbol");
+  if (firstSymbol) return firstSymbol.id;
+
   return undefined;
 };
 

@@ -1,13 +1,8 @@
-// src/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content.tsx
-
 import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
-import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
-import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -16,13 +11,13 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { MitraDataRequestDetailAttributeView } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-view";
+import { useCartAoiCoverageMap } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
-import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
+import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
+import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import type {
   DrawAoiAttributeViewProps,
   DrawAoiGuideAlertProps,
@@ -40,7 +35,7 @@ import {
   TrashIcon,
   XIcon,
 } from "lucide-react";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
   (props: MitraDataRequestDrawAoiTabsContentProps) => {
@@ -67,11 +62,6 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
       handleConfirmAndFetch,
     } = useMitraDrawAoi();
 
-    const isMounted = useMountTimeout({
-      isOpen: isActive,
-      mountDelay: 250,
-    });
-
     const hasAoi = isDone && Boolean(aoiCqlFilter);
 
     return (
@@ -83,9 +73,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
         p={0}
         {...restProps}
       >
-        {!isActive || !isMounted ? (
-          <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
-        ) : !hasAoi && !isDone && !isLoading ? (
+        {!isActive ? null : !hasAoi && !isDone && !isLoading ? (
           <>
             <GuideAlert
               isLoading={isLoading}
@@ -251,34 +239,31 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
 
   // Stores
   const map = useMapInstanceStore((state) => state.map);
+  const isAoiVisible = useMitraDataRequestStore(
+    (state) => state.isDrawAoiVisible,
+  );
+  const setIsAoiVisible = useMitraDataRequestStore(
+    (state) => state.setIsDrawAoiVisible,
+  );
+  const isCoverageVisible = useMitraDataRequestStore(
+    (state) => state.isDrawCoverageVisible,
+  );
+  const calculationResult = useMitraDataRequestStore(
+    (state) => state.calculationResults["draw_aoi"] ?? state.result,
+  );
+
+  // Keep AOI and Coverage layers mounted across both layer list and attribute table view
+  useCartAoiCoverageMap(map, {
+    aoiPolygon: confirmedPolygon,
+    coveragePolygon: calculationResult?.coveragePolygon,
+    selectionType: "draw_aoi",
+    isAoiVisible,
+    isCoverageVisible,
+    isActive,
+  });
 
   // Hooks
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
-
-  // States
-  const [isAoiVisible, setIsAoiVisible] = useState(true);
-  const [pageState, setPageState] = useState({
-    page: 1,
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
-    selectedItems: [] as FormattedListItem[],
-  });
-
-  // Queries — server-side WFS pagination
-  const {
-    features,
-    totalFeatures,
-    isLoading,
-    isFetching,
-    isError,
-    error,
-    refetch,
-  } = useIgtWfsCatalog({
-    page: pageState.page,
-    pageSize: pageState.pageSize,
-    cqlFilter: aoiCqlFilter,
-    typeName: selectedIgtLayer?.wfs.wfsTypeName ?? "",
-    wfsUrl: selectedIgtLayer?.wfs.wfsUrl ?? "",
-  });
 
   // Derived Values
   const aoiAreaHa = useMemo(() => {
@@ -385,28 +370,9 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
   }
 
   return (
-    <MitraDataRequestDetailAttributeView
+    <LayerAttributeTableView
       layer={selectedIgtLayer}
       cqlFilter={aoiCqlFilter}
-      features={features}
-      totalFeatures={totalFeatures}
-      isLoading={isLoading}
-      isFetching={isFetching}
-      isError={isError}
-      error={error}
-      onRetry={() => {
-        void refetch();
-      }}
-      page={pageState.page}
-      pageSize={pageState.pageSize}
-      setPage={(page) => setPageState((prev) => ({ ...prev, page }))}
-      setPageSize={(pageSize) =>
-        setPageState((prev) => ({ ...prev, pageSize, page: 1 }))
-      }
-      selectedItems={pageState.selectedItems}
-      setSelectedItems={(items) =>
-        setPageState((prev) => ({ ...prev, selectedItems: items }))
-      }
       showActions={false}
     />
   );

@@ -80,9 +80,10 @@ export const SpatialFeaturesDataView = memo(
         <VStack
           flex={1}
           overflow={"hidden"}
-          bg={"bg.canvas"}
+          bg={"bg.body"}
           w={"full"}
           h={"full"}
+          minH={0}
           position={"relative"}
           {...restProps}
         >

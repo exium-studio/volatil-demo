@@ -9,8 +9,7 @@ import { AppContentContainer } from "@/design-system/components/layout/ui/page-c
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
-import { useAdministrativeFilterStore } from "@/features/mitra/data-request/stores/igt-layer.store";
-import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
+import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import type { MitraDataRequestTab } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
 import { IconPolygon } from "@tabler/icons-react";
@@ -79,10 +78,7 @@ export const MitraDataRequestPage = () => {
   // Effects — Reset data request states only when navigating away from the route
   useEffect(() => {
     return () => {
-      useAdministrativeFilterStore
-        .getState()
-        .setAppliedAdministrativeFilters({});
-      useMitraDataRequestCalculationStore.getState().reset();
+      useMitraDataRequestStore.getState().resetAll();
       useMapDrawStore.getState().cancel();
     };
   }, []);

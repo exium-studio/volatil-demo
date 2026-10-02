@@ -23,6 +23,7 @@ import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
 import {
   flyToCartGeometry,
+  removeCartMapLayers,
   useCartAoiCoverageMap,
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import {
@@ -65,6 +66,12 @@ const MitraCartContent = () => {
   const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
   const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
 
+  // Derived Values — Validate selectedOrderId against current orders list
+  const effectiveSelectedOrderId =
+    selectedOrderId && orders.some((o) => o.orderId === selectedOrderId)
+      ? selectedOrderId
+      : null;
+
   // Queries — detail of selected order
   const {
     orderDetail: selectedOrder,
@@ -73,29 +80,52 @@ const MitraCartContent = () => {
     isError: isDetailError,
     error: detailError,
     refetch: refetchDetail,
-  } = useCartOrderDetailQuery(selectedOrderId || undefined);
+  } = useCartOrderDetailQuery(effectiveSelectedOrderId || undefined);
+
+  // Derived Values
+  const isOrderSelected = Boolean(effectiveSelectedOrderId && selectedOrder);
 
   // Map layer synchronization hook for Cart AOI & Coverage Polygon
   useCartAoiCoverageMap(map, {
-    aoiPolygon: selectedOrder?.aoiPolygon,
-    coveragePolygon: selectedOrder?.coveragePolygon,
+    aoiPolygon: isOrderSelected ? selectedOrder?.aoiPolygon : null,
+    coveragePolygon: isOrderSelected ? selectedOrder?.coveragePolygon : null,
     selectionType: selectedOrder?.selectionType,
     isAoiVisible,
     isCoverageVisible,
+    isActive: isOrderSelected,
+    exclusive: true,
   });
 
-  // Auto zoom on order selection change
+  // Effects — Clean up all cart map layers when entering or leaving Cart page
   useEffect(() => {
-    if (selectedOrder) {
+    if (!map) return;
+    return () => {
+      removeCartMapLayers(map);
+    };
+  }, [map]);
+
+  // Effects — Auto zoom on order selection change
+  useEffect(() => {
+    if (isOrderSelected && selectedOrder) {
       const targetGeom =
         selectedOrder.aoiPolygon ?? selectedOrder.coveragePolygon;
       if (targetGeom && map) {
         flyToCartGeometry(map, targetGeom);
       }
     }
-  }, [selectedOrder, map]);
+  }, [isOrderSelected, selectedOrder, map]);
 
   // Handlers
+  const handleSelectOrder = useCallback((orderId: string | null) => {
+    setSelectedOrderId((prev) => {
+      if (prev !== orderId) {
+        setIsAoiVisible(true);
+        setIsCoverageVisible(true);
+      }
+      return orderId;
+    });
+  }, []);
+
   const handleToggleAoi = useCallback(() => {
     setIsAoiVisible((prev) => !prev);
   }, []);
@@ -118,13 +148,14 @@ const MitraCartContent = () => {
 
   // Derived Values
   const selectedOrderIndex = orders.findIndex(
-    (b) => b.orderId === selectedOrderId,
+    (b) => b.orderId === effectiveSelectedOrderId,
   );
 
   const isOrderLoadingOrSwitching =
-    Boolean(selectedOrderId) &&
+    Boolean(effectiveSelectedOrderId) &&
     (isDetailLoading ||
-      (isDetailFetching && selectedOrder?.orderId !== selectedOrderId));
+      (isDetailFetching &&
+        selectedOrder?.orderId !== effectiveSelectedOrderId));
 
   return (
     <AppContentContainer
@@ -134,13 +165,14 @@ const MitraCartContent = () => {
       <HStack
         flex={1}
         flexDir={isSmContainer ? "column" : "row"}
+        align={"start"}
         gap={"sm"}
         minH={isSmContainer ? undefined : 0}
         w={"full"}
       >
         <MitraCartOrderList
-          selectedOrderId={selectedOrderId}
-          onSelectOrder={setSelectedOrderId}
+          selectedOrderId={effectiveSelectedOrderId}
+          onSelectOrder={handleSelectOrder}
           isAoiVisible={isAoiVisible}
           isCoverageVisible={isCoverageVisible}
           onToggleAoiVisible={handleToggleAoi}
@@ -150,7 +182,7 @@ const MitraCartContent = () => {
         />
 
         <MitraCartOrderDetail
-          selectedOrderId={selectedOrderId}
+          selectedOrderId={effectiveSelectedOrderId}
           selectedOrderIndex={selectedOrderIndex}
           selectedOrder={selectedOrder}
           isLoading={isOrderLoadingOrSwitching}
@@ -198,7 +230,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
     deleteOrderMutation.mutate(orderId, {
       onSuccess: () => {
         if (selectedOrderId === orderId) {
-          onSelectOrder("");
+          onSelectOrder(null);
         }
       },
     });
@@ -231,7 +263,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
               const allOrderIds = orders.map((b) => b.orderId);
               clearAllOrdersMutation.mutate(allOrderIds, {
                 onSuccess: () => {
-                  onSelectOrder("");
+                  onSelectOrder(null);
                 },
               });
             }}
@@ -378,7 +410,6 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
       minH={isSmContainer ? undefined : 0}
       overflowY={isSmContainer ? undefined : "auto"}
       w={"full"}
-      h={"full"}
     >
       <HeaderContainer>
         <HStack align={"center"} justify={"space-between"} w={"full"}>

@@ -28,6 +28,8 @@ export type MapLayerConfig =
 
 export type BaseLayerConfig = {
   id: string;
+  /** Human-readable title of the layer */
+  title?: string;
   /** Spatial basis of this IGT layer ("bidang" or "kawasan"). */
   spatialBasis?: "bidang" | "kawasan";
   /** Bounding box of the layer [minLon, minLat, maxLon, maxLat]. */
@@ -68,6 +70,8 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
   /** Full tile URL template, or constructed dynamically using wmsUrl & layers */
   tileUrl?: string;
   wmsUrl?: string | null;
+  wfsUrl?: string | null;
+  wfsTypeName?: string;
   layers?: string;
   tileSize?: number;
   srs?: string;
@@ -125,6 +129,7 @@ export const getWmsRasterConfigFromIgtLayer = (
   opacity = 0.5,
 ): WmsRasterLayerConfig => ({
   id: igtLayer.id,
+  title: igtLayer.title,
   type: "wms-raster",
   spatialBasis: igtLayer.spatialBasis,
   bbox: igtLayer.bbox,
@@ -133,6 +138,8 @@ export const getWmsRasterConfigFromIgtLayer = (
   zIndex: igtLayer.zIndex,
   wmsUrl: igtLayer.wms?.wmsUrl ?? "",
   layers: igtLayer.wms?.layers ?? "",
+  wfsUrl: igtLayer.wfs?.wfsUrl,
+  wfsTypeName: igtLayer.wfs?.wfsTypeName,
   tileSize: igtLayer.wms?.tileSize,
   format: igtLayer.wms?.format,
   transparent: igtLayer.wms?.transparent,
@@ -180,9 +187,12 @@ export type MapLayerState = {
   setGlobalOpacity: (opacity: number) => void;
   enabledLayerIds: Record<string, boolean>;
   layerOpacities: Record<string, number>;
+  enabledSymbologyLayerIds: Record<string, boolean>;
   customLayerConfigs: Record<string, Partial<WmsRasterLayerConfig>>;
   toggleLayerId: (layerId: string) => void;
   setLayerEnabled: (layerId: string, enabled: boolean) => void;
+  toggleSymbologyLayerId: (layerId: string) => void;
+  setSymbologyLayerEnabled: (layerId: string, enabled: boolean) => void;
   setLayerOpacity: (layerId: string, opacity: number) => void;
   setAllLayersEnabled: (layerIds: string[], enabled: boolean) => void;
   setCustomLayerConfig: (

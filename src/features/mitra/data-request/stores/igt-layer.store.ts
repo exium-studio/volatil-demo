@@ -1,21 +1,31 @@
 // src/features/mitra/data-request/stores/igt-layer.store.ts
 
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
-import type { AdministrativeFilterState } from "@/features/mitra/data-request/types/mitra.data-request-filter.type";
-import { buildIgtCqlFilter } from "@/features/mitra/data-request/utils/build-igt-cql-filter";
-import { create } from "zustand";
+import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 
-export const useAdministrativeFilterStore = create<AdministrativeFilterState>()(
-  (set) => ({
-    appliedAdministrativeFilters: {},
-    cqlFilter: undefined,
-    setAppliedAdministrativeFilters: (appliedAdministrativeFilters) =>
-      set({
-        appliedAdministrativeFilters,
-        cqlFilter: buildIgtCqlFilter(appliedAdministrativeFilters),
-      }),
-  }),
-);
+export const useAdministrativeFilterStore = () => {
+  const appliedAdministrativeFilters = useMitraDataRequestStore(
+    (state) => state.appliedAdministrativeFilters,
+  );
+  const cqlFilter = useMitraDataRequestStore((state) => state.cqlFilter);
+  const setAppliedAdministrativeFilters = useMitraDataRequestStore(
+    (state) => state.setAppliedAdministrativeFilters,
+  );
+
+  return {
+    appliedAdministrativeFilters,
+    cqlFilter,
+    setAppliedAdministrativeFilters,
+  };
+};
+
+useAdministrativeFilterStore.getState = () => ({
+  appliedAdministrativeFilters:
+    useMitraDataRequestStore.getState().appliedAdministrativeFilters,
+  cqlFilter: useMitraDataRequestStore.getState().cqlFilter,
+  setAppliedAdministrativeFilters:
+    useMitraDataRequestStore.getState().setAppliedAdministrativeFilters,
+});
 
 /**
  * Combined store hook for backward compatibility across IGT layer concerns.

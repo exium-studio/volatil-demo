@@ -15,28 +15,17 @@ export type CalculateSpatialCalculationStage =
   | (string & {});
 
 export type CalculateSpatialItemParam = {
-  layerId?: string;
-  sourceLayerId?: string;
-  sourceLayerTitle?: string;
+  layerId: string;
+  typeName: string;
   title?: string;
-  typeName?: string;
-  spatialBasis?: IgtBasisType;
-  wfsUrl?: string;
-  wmsUrl?: string;
-  cqlFilter?: string;
-  selectionType?: SelectionType;
+  spatialBasis: IgtBasisType;
 };
 
 export type CalculateSpatialCoverageRequest = {
-  selectionType?: SelectionType;
+  selectionType: SelectionType;
+  aoiPolygon: GeoJSON.Polygon | GeoJSON.MultiPolygon;
+  items: CalculateSpatialItemParam[];
   cqlFilter?: string;
-  aoiPolygon?:
-    | GeoJSON.Polygon
-    | GeoJSON.MultiPolygon
-    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
-    | null;
-  layers?: CalculateSpatialItemParam[];
-  items?: CalculateSpatialItemParam[];
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;

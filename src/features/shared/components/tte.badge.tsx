@@ -61,34 +61,34 @@ export const TteBadge = (props: TteBadgeProps) => {
       {badgeElement}
 
       {hasInvoice && (
-        <Button
-          size={"2xs"}
-          variant={"outline"}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (invoiceUrl) {
-              window.open(invoiceUrl, "_blank");
-            }
-          }}
-        >
-          <AppIcon icon={ReceiptTextIcon} size={"xs"} />
-          {"Faktur"}
+        <Button size={"2xs"} variant={"outline"} asChild>
+          <a
+            href={invoiceUrl ?? undefined}
+            target={"_blank"}
+            rel={"noopener noreferrer"}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <AppIcon icon={ReceiptTextIcon} size={"xs"} />
+            {"Faktur"}
+          </a>
         </Button>
       )}
 
       {hasTteInvoice && (
-        <Button
-          size={"2xs"}
-          variant={"outline"}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (tteInvoiceUrl) {
-              window.open(tteInvoiceUrl, "_blank");
-            }
-          }}
-        >
-          <AppIcon icon={FileCheckIcon} size={"xs"} />
-          {"Faktur + TTE"}
+        <Button size={"2xs"} variant={"outline"} asChild>
+          <a
+            href={tteInvoiceUrl ?? undefined}
+            target={"_blank"}
+            rel={"noopener noreferrer"}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <AppIcon icon={FileCheckIcon} size={"xs"} />
+            {"Faktur + TTE"}
+          </a>
         </Button>
       )}
     </HStack>

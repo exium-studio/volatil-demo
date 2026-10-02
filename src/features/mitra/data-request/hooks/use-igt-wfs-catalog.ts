@@ -5,14 +5,21 @@ import type { UseIgtWfsCatalogParams } from "@/features/mitra/data-request/types
 import { useQuery } from "@tanstack/react-query";
 
 /** TanStack Query wrapper for paginated WFS catalog fetch with parallel bidang/kawasan hit counts and in-memory caching. */
-export const useIgtWfsCatalog = (params: UseIgtWfsCatalogParams) => {
+export const useIgtWfsCatalog = (
+  params: UseIgtWfsCatalogParams & { enabled?: boolean },
+) => {
+  const { enabled = true, ...fetchParams } = params;
+  const isEnabled =
+    enabled && Boolean(fetchParams.typeName && fetchParams.wfsUrl);
+
   const query = useQuery({
-    queryKey: ["igt-wfs-catalog", params],
-    queryFn: ({ signal }) => fetchWfsCatalog({ ...params, signal }),
+    queryKey: ["igt-wfs-catalog", fetchParams],
+    queryFn: ({ signal }) => fetchWfsCatalog({ ...fetchParams, signal }),
     placeholderData: (prev) => prev,
     staleTime: 10 * 60 * 1000, // 10 minutes memory cache
     gcTime: 30 * 60 * 1000, // 30 minutes garbage collection time
     retry: false,
+    enabled: isEnabled,
   });
 
   return {

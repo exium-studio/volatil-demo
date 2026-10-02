@@ -59,7 +59,11 @@ export async function getIgtLayers(
   signal?: AbortSignal,
 ): Promise<IgtLayersResponse> {
   const user = getUserSession();
-  const isInternal = user?.role === "internal";
+  if (!user?.id) {
+    return isDummyDataEnabled() ? DUMMY_IGT_LAYERS : EMPTY_LAYERS_RESPONSE;
+  }
+
+  const isInternal = user.role === "internal";
   const endpoint = isInternal
     ? "/api/internal/igt-layers"
     : "/api/mitra/igt-layers";

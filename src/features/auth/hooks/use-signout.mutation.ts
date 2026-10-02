@@ -29,7 +29,9 @@ export const useSignoutMutation = () => {
     onSuccess: ({ logoutUrl, role }) => {
       toastHandlers.onSuccess();
       queryClient.setQueryData(queryKeys.auth.me(), null);
-      queryClient.clear();
+      queryClient.removeQueries({
+        predicate: (query) => query.queryKey[0] !== "auth",
+      });
       useMapLayerStore.getState().resetLayers();
 
       if (logoutUrl) {

@@ -259,25 +259,23 @@ export const InternalTransactionStatisticDataView = () => {
           key: "view-invoice",
           label: "Lihat Faktur",
           icon: ReceiptTextIcon,
+          href: (transaction: InternalTransactionItem) =>
+            transaction.invoiceUrl ?? undefined,
+          target: "_blank",
+          rel: "noopener noreferrer",
           hidden: (transaction: InternalTransactionItem) =>
             !transaction.invoiceUrl,
-          onClick: (transaction: InternalTransactionItem) => {
-            if (transaction.invoiceUrl) {
-              window.open(transaction.invoiceUrl, "_blank");
-            }
-          },
         },
         {
           key: "view-tte-invoice",
           label: "Lihat Faktur TTE",
           icon: FileCheckIcon,
+          href: (transaction: InternalTransactionItem) =>
+            transaction.tteInvoiceUrl ?? undefined,
+          target: "_blank",
+          rel: "noopener noreferrer",
           hidden: (transaction: InternalTransactionItem) =>
             !transaction.tteInvoiceUrl,
-          onClick: (transaction: InternalTransactionItem) => {
-            if (transaction.tteInvoiceUrl) {
-              window.open(transaction.tteInvoiceUrl, "_blank");
-            }
-          },
         },
         {
           key: "view-detail",

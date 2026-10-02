@@ -30,6 +30,14 @@ export type DataViewDeclarativeItemAction<T = Record<string, unknown>> = {
   icon?: ActionIconType | ((item: T) => ActionIconType);
   colorPalette?: string | ((item: T) => string | undefined);
   variant?: "solid" | "subtle" | "outline" | "ghost";
+  href?:
+    | string
+    | ((
+        item: T,
+        formattedItem: FormattedListItem<T>,
+      ) => string | undefined | null);
+  target?: "_blank" | "_self" | "_parent" | "_top";
+  rel?: string;
   onClick?: (
     item: T,
     formattedItem: FormattedListItem<T>,

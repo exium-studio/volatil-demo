@@ -28,9 +28,6 @@ export const submitMitraRegistration = async (
   formData.append("jabatan", values.jabatan.trim());
   formData.append("email", values.email.trim());
   formData.append("nomorHp", values.nomorHp.trim());
-  if (values.password?.trim()) {
-    formData.append("password", values.password.trim());
-  }
 
   // 6 Required Documents
   if (values.suratPermohonan[0]) {

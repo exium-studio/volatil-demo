@@ -4,7 +4,6 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
-import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
 import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
 import type { MitraDataRequestDetailAttributeViewProps } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
@@ -34,16 +33,9 @@ export const MitraDataRequestDetailAttributeView = memo(
       onBack,
     } = props;
 
-    // Hooks — Delay mounting to guarantee initial render is always a skeleton and avoid flashing no-result state
-    const isMounted = useMountTimeout({
-      isOpen: true,
-      mountDelay: 250,
-    });
-
     // Derived Values
     const hasData = !isEmptyArray(features);
-    const showSkeleton =
-      !isMounted || isLoading || (isFetching && !hasData && !isError);
+    const showSkeleton = isLoading || (isFetching && !hasData && !isError);
 
     return (
       <VStack

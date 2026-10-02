@@ -5,6 +5,7 @@ import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
+import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
@@ -14,18 +15,16 @@ import { NoResultState } from "@/design-system/components/feedback/ui/state.no-r
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
+import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
-import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import type {
   TransactionHistoryQueryParams,
   TransactionRecord,
@@ -33,8 +32,9 @@ import type {
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import type {
   OrderStatus,
@@ -50,8 +50,8 @@ import {
   CreditCardIcon,
   EyeIcon,
   FileCheckIcon,
-  FileTextIcon,
   HistoryIcon,
+  ReceiptTextIcon,
   SquarePen,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -256,24 +256,22 @@ export const TransactionHistoryDataView = () => {
       {
         key: "view-invoice",
         label: "Lihat Faktur",
-        icon: FileTextIcon,
+        icon: ReceiptTextIcon,
+        href: (transaction: TransactionRecord) =>
+          transaction.invoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (transaction: TransactionRecord) => !transaction.invoiceUrl,
-        onClick: (transaction: TransactionRecord) => {
-          if (transaction.invoiceUrl) {
-            window.open(transaction.invoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "view-tte-invoice",
         label: "Lihat Faktur TTE",
         icon: FileCheckIcon,
+        href: (transaction: TransactionRecord) =>
+          transaction.tteInvoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (transaction: TransactionRecord) => !transaction.tteInvoiceUrl,
-        onClick: (transaction: TransactionRecord) => {
-          if (transaction.tteInvoiceUrl) {
-            window.open(transaction.tteInvoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "view-detail",

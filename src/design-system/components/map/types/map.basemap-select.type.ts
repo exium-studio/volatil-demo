@@ -16,6 +16,7 @@ export type BasemapOption = {
   label: string;
   description: string;
   attributions: string[];
+  hidden?: boolean;
   style: {
     light: string | maplibregl.StyleSpecification;
     dark: string | maplibregl.StyleSpecification;

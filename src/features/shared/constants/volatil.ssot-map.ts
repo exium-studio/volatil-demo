@@ -72,7 +72,7 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
 /**
  * SSOT for MapLibre AOI & Coverage polygon layer colors by SelectionType:
  * - catalog: Purple (#a855f7 / #7c3aed)
- * - upload_aoi: Orange (#f97316 / #ea580c)
+ * - upload_aoi: Teal (#06b6d4 / #0891b2)
  * - draw_aoi: Blue (#3b82f6 / #2563eb)
  */
 export const SELECTION_TYPE_MAP_COLOR: Record<

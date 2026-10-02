@@ -371,13 +371,19 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
 
   // Handlers
   const handleDone = () => {
-    onDone?.();
-    close();
+    if (onDone) {
+      onDone();
+    } else {
+      close();
+    }
   };
 
   const handleCancel = () => {
-    onCancel?.();
-    close();
+    if (onCancel) {
+      onCancel();
+    } else {
+      close();
+    }
   };
 
   // Resolved Values

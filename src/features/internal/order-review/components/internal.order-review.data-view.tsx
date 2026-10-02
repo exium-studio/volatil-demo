@@ -134,20 +134,14 @@ export const InternalOrderReviewDataView = () => {
         columns: [
           {
             value: displayOrderNumber,
-            td: (
-              <P fontSize={"sm"}>
-                {displayOrderNumber}
-              </P>
-            ),
+            td: <P fontSize={"sm"}>{displayOrderNumber}</P>,
             align: "start" as const,
           },
           {
             value: order.mitraName,
             td: (
               <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"}>
-                  {order.mitraName}
-                </P>
+                <P fontSize={"sm"}>{order.mitraName}</P>
                 {(order.agencyOrCompany || order.email) && (
                   <P fontSize={"xs"} color={"fg.muted"}>
                     {order.agencyOrCompany || order.email}
@@ -201,11 +195,7 @@ export const InternalOrderReviewDataView = () => {
           },
           {
             value: order.totalPrice,
-            td: (
-              <P fontSize={"sm"}>
-                {formatCurrency(order.totalPrice)}
-              </P>
-            ),
+            td: <P fontSize={"sm"}>{formatCurrency(order.totalPrice)}</P>,
             align: "end" as const,
           },
           {
@@ -247,23 +237,19 @@ export const InternalOrderReviewDataView = () => {
         key: "view-invoice",
         label: "Lihat Faktur",
         icon: ReceiptTextIcon,
+        href: (order: InternalOrderItem) => order.invoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (order: InternalOrderItem) => !order.invoiceUrl,
-        onClick: (order: InternalOrderItem) => {
-          if (order.invoiceUrl) {
-            window.open(order.invoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "view-tte-invoice",
         label: "Lihat Faktur TTE",
         icon: FileCheckIcon,
+        href: (order: InternalOrderItem) => order.tteInvoiceUrl ?? undefined,
+        target: "_blank",
+        rel: "noopener noreferrer",
         hidden: (order: InternalOrderItem) => !order.tteInvoiceUrl,
-        onClick: (order: InternalOrderItem) => {
-          if (order.tteInvoiceUrl) {
-            window.open(order.tteInvoiceUrl, "_blank");
-          }
-        },
       },
       {
         key: "approve-order",

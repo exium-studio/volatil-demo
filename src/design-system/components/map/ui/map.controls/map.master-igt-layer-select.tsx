@@ -1,7 +1,4 @@
-// src/design-system/components/map/ui/map.controls/map.master-igt-layer-select.tsx
-
 import { IconButton } from "@/design-system/components/button/ui/button";
-import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -20,32 +17,34 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
-import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  FocusIcon,
-  LayersIcon,
-} from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
+import { BlendIcon, FlagIcon, FocusIcon, LayersIcon } from "lucide-react";
+import { memo, useCallback, useMemo } from "react";
 
 export const MapMasterIgtLayerSelect = memo(() => {
   // Stores
   const {
     enabledLayerIds,
+    enabledSymbologyLayerIds,
     layerOpacities,
     globalOpacity,
     setGlobalOpacity,
     toggleLayerId,
+    toggleSymbologyLayerId,
     setLayerOpacity,
     setAllLayersEnabled,
   } = useMapLayerStore();
+
+  // Derived Values
+  const userSession = getUserSession();
+  const isAuthenticated = Boolean(userSession?.id);
 
   // Queries — list of all active master IGT catalog layers
   const {
@@ -58,6 +57,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
+    enabled: isAuthenticated,
   });
 
   // Derived Values
@@ -92,7 +92,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
       <Popover.Trigger>
         <MapOverlayContainer p={"2px"}>
           <Tooltip
-            content={"Master Layer Spasial IGT"}
+            content={"Manajemen Layer IGT"}
             positioning={{ placement: "bottom" }}
           >
             <Box position={"relative"}>
@@ -105,7 +105,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
         </MapOverlayContainer>
       </Popover.Trigger>
 
-      <Popover.Content width={"380px"}>
+      <Popover.Content w={"full"} maxW={"380px"}>
         <Popover.Header
           p={3}
           borderBottom={"1px solid"}
@@ -115,7 +115,7 @@ export const MapMasterIgtLayerSelect = memo(() => {
           justifyContent={"space-between"}
         >
           <HStack justify={"space-between"} gap={"md"} w={"full"}>
-            <P fontWeight={"medium"}>{"Toggle Master Layer IGT"}</P>
+            <P fontWeight={"medium"}>{"Manajemen Layer & Simbologi IGT"}</P>
 
             <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
           </HStack>
@@ -209,6 +209,9 @@ export const MapMasterIgtLayerSelect = memo(() => {
               <VStack gap={"2xs"} align={"stretch"}>
                 {activeLayers.map((layer) => {
                   const isEnabled = Boolean(enabledLayerIds[layer.id]);
+                  const isSymbologyEnabled = Boolean(
+                    enabledSymbologyLayerIds[layer.id],
+                  );
                   const opacity = layerOpacities[layer.id] ?? 1.0;
 
                   return (
@@ -216,8 +219,10 @@ export const MapMasterIgtLayerSelect = memo(() => {
                       key={layer.id}
                       layer={layer}
                       isEnabled={isEnabled}
+                      isSymbologyEnabled={isSymbologyEnabled}
                       opacity={opacity}
                       onToggle={toggleLayerId}
+                      onToggleSymbology={toggleSymbologyLayerId}
                       onOpacityChange={setLayerOpacity}
                     />
                   );
@@ -233,7 +238,15 @@ export const MapMasterIgtLayerSelect = memo(() => {
 
 const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   // Props
-  const { layer, isEnabled, opacity, onToggle, onOpacityChange } = props;
+  const {
+    layer,
+    isEnabled,
+    isSymbologyEnabled,
+    opacity,
+    onToggle,
+    onToggleSymbology,
+    onOpacityChange,
+  } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -249,9 +262,6 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
     void flyTo(layer);
   };
 
-  // States
-  const [isOpacityOpen, setIsOpacityOpen] = useState<boolean>(false);
-
   // Derived Values
   const displayName =
     layer.title || layer.id.split(":")[1] || layer.wfs.wfsTypeName;
@@ -265,102 +275,133 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   const basisLabel = basisConfig?.label ?? layer.spatialBasis ?? "Layer IGT";
 
   return (
-    <VStack gap={isOpacityOpen ? "2xs" : 0} align={"stretch"} w={"full"}>
-      <HStack
-        align={"center"}
-        justify={"space-between"}
-        gap={"md"}
-        p={"2xs"}
-        colorPalette={colorPalette}
-        rounded={theme.radii.component}
-        cursor={"pointer"}
-        onClick={handleToggle}
-        _hover={{ bg: "bg.subtle" }}
-      >
-        <HStack gap={"md"} align={"center"} flex={1}>
-          <Center
-            p={"xs"}
-            bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
-            rounded={theme.radii.component}
-          >
-            <AppIcon
-              icon={LayerIcon}
-              color={isEnabled ? `${colorPalette}.fg` : "fg.subtle"}
-            />
-          </Center>
-
-          <VStack flex={1} align={"start"}>
-            <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
-              {displayName.replace(/_/g, " ")}
-            </ClampedP>
-
-            <ClampedP fontSize={"sm"} color={"fg.subtle"}>
-              {basisLabel}
-            </ClampedP>
-          </VStack>
-        </HStack>
-
-        <HStack gap={"xs"} align={"center"}>
-          <Switch
-            size={"sm"}
-            checked={isEnabled}
-            pointerEvents={"none"}
-            mr={"xs"}
+    <HStack
+      align={"center"}
+      justify={"space-between"}
+      gap={"md"}
+      p={"2xs"}
+      colorPalette={colorPalette}
+      rounded={theme.radii.component}
+      cursor={"pointer"}
+      onClick={handleToggle}
+      _hover={{ bg: "bg.subtle" }}
+      w={"full"}
+    >
+      <HStack gap={"md"} align={"center"} flex={1} minW={0}>
+        <Center
+          p={"xs"}
+          bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
+          rounded={theme.radii.component}
+          flexShrink={0}
+        >
+          <AppIcon
+            icon={LayerIcon}
+            color={isEnabled ? `${colorPalette}.fg` : "fg.subtle"}
           />
+        </Center>
 
-          <Tooltip content={"Zoom ke Layer"}>
-            <IconButton size={"xs"} variant={"ghost"} onClick={handleFlyTo}>
-              <AppIcon icon={FocusIcon} />
-            </IconButton>
-          </Tooltip>
+        <VStack flex={1} align={"start"} minW={0}>
+          <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
+            {displayName.replace(/_/g, " ")}
+          </ClampedP>
 
-          <Tooltip content={"Atur Opasitas"}>
-            <IconButton
-              size={"xs"}
-              variant={"ghost"}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpacityOpen((prev) => !prev);
-              }}
-            >
-              <AppIcon icon={isOpacityOpen ? ChevronUpIcon : ChevronDownIcon} />
-            </IconButton>
-          </Tooltip>
-        </HStack>
+          <ClampedP fontSize={"sm"} color={"fg.subtle"}>
+            {basisLabel}
+          </ClampedP>
+        </VStack>
       </HStack>
 
-      <Collapsible.Root opened={isOpacityOpen}>
-        <Collapsible.Content>
-          <VStack
-            gap={2}
+      <HStack gap={"xs"} align={"center"} flexShrink={0}>
+        <Switch
+          size={"sm"}
+          checked={isEnabled}
+          pointerEvents={"none"}
+          mr={"xs"}
+        />
+
+        <Tooltip
+          content={
+            isSymbologyEnabled ? "Sembunyikan Simbologi" : "Tampilkan Simbologi"
+          }
+        >
+          <IconButton
+            size={"xs"}
+            variant={"ghost"}
+            colorPalette={isSymbologyEnabled ? "blue" : undefined}
+            aria-label={"Simbologi"}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSymbology?.(layer.id);
+            }}
+          >
+            <AppIcon
+              icon={FlagIcon}
+              fill={isSymbologyEnabled ? "blue.fg" : ""}
+            />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip content={"Zoom ke Layer"}>
+          <IconButton
+            size={"xs"}
+            variant={"ghost"}
+            aria-label={"Zoom ke Layer"}
+            onClick={handleFlyTo}
+          >
+            <AppIcon icon={FocusIcon} />
+          </IconButton>
+        </Tooltip>
+
+        <Popover.Root
+          positioning={{
+            placement: "left",
+            offset: { mainAxis: 8 },
+          }}
+          portalled={true}
+        >
+          <Popover.Trigger>
+            <Tooltip content={"Atur Opasitas"}>
+              <IconButton
+                size={"xs"}
+                variant={"ghost"}
+                aria-label={"Atur Opasitas"}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <AppIcon icon={BlendIcon} />
+              </IconButton>
+            </Tooltip>
+          </Popover.Trigger>
+
+          <Popover.Content
+            w={"220px"}
             p={3}
-            bg={"bg.subtle"}
-            rounded={theme.radii.component}
             onClick={(e) => e.stopPropagation()}
           >
-            <HStack justify={"space-between"} w={"full"}>
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {"Opasitas Layer"}
-              </P>
+            <VStack gap={"xs"} align={"stretch"} w={"full"}>
+              <HStack justify={"space-between"} w={"full"}>
+                <P fontSize={"sm"} fontWeight={"medium"}>
+                  {"Opasitas Layer"}
+                </P>
 
-              <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
-                {`${Math.round(opacity * 100)}%`}
-              </P>
-            </HStack>
+                <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
+                  {`${Math.round(opacity * 100)}%`}
+                </P>
+              </HStack>
 
-            <Slider
-              value={[Math.round(opacity * 100)]}
-              min={0}
-              max={100}
-              step={1}
-              showValue={false}
-              onValueChange={(details) =>
-                onOpacityChange(layer.id, details.value[0] / 100)
-              }
-            />
-          </VStack>
-        </Collapsible.Content>
-      </Collapsible.Root>
-    </VStack>
+              <Slider
+                value={[Math.round(opacity * 100)]}
+                min={0}
+                max={100}
+                step={1}
+                showValue={false}
+                onValueChange={(details) =>
+                  onOpacityChange(layer.id, details.value[0] / 100)
+                }
+              />
+            </VStack>
+          </Popover.Content>
+        </Popover.Root>
+      </HStack>
+    </HStack>
   );
 });

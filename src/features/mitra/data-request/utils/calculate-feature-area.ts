@@ -59,8 +59,13 @@ export function extractAoiPolygonsFromCql(
       for (const pair of pairs) {
         const parts = pair.split(/\s+/).map(Number);
         if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-          // Note: geojsonPolygonToWkt produces lat lon. Turf expects GeoJSON standard [lng, lat]
-          const [lat, lng] = parts;
+          let lng = parts[0];
+          let lat = parts[1];
+          // If first part is lat (-90..90) and second part is lng (90..180 for Indonesia region), swap
+          if (parts[0] >= -15 && parts[0] <= 15 && parts[1] >= 90 && parts[1] <= 150) {
+            lat = parts[0];
+            lng = parts[1];
+          }
           coords.push([lng, lat]);
         }
       }

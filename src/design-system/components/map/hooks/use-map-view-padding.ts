@@ -18,6 +18,7 @@ export const useMapViewPadding = (
 ) => {
   // Refs
   const prevSidebarPx = useRef<number>(options.sidebarPx);
+  const prevPanelPx = useRef<number>(0);
 
   // Apply padding imperatively — called both from ResizeObserver and sidebar change effect
   const applyPadding = (
@@ -47,18 +48,24 @@ export const useMapViewPadding = (
     map.easeTo({ padding, duration });
   };
 
-  // ResizeObserver: fires on every splitter drag tick
+  // ResizeObserver: fires on every splitter drag tick and initial mount
   useEffect(() => {
     const el = options.contentPanelRef.current;
     if (!map || !el) return;
 
     const observer = new ResizeObserver(() => {
       const panelPx = options.isVertical ? el.clientHeight : el.clientWidth;
-      applyPadding(options.sidebarPx, panelPx, options.isVertical, 1000);
+      const panelDelta = Math.abs(panelPx - prevPanelPx.current);
+      // Large delta (e.g. initial mount/transition) animates smoothly, small delta (drag) is instant
+      const duration = panelDelta > 100 ? 500 : 0;
+      applyPadding(options.sidebarPx, panelPx, options.isVertical, duration);
+      prevPanelPx.current = panelPx;
     });
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, options.contentPanelRef, options.isVertical, options.sidebarPx]);
 
@@ -71,11 +78,16 @@ export const useMapViewPadding = (
       ? options.isVertical
         ? el.clientHeight
         : el.clientWidth
-      : 0;
+      : prevPanelPx.current ||
+        (typeof window !== "undefined"
+          ? options.isVertical
+            ? window.innerHeight * 0.5
+            : (window.innerWidth - options.sidebarPx) * 0.5
+          : 0);
 
     const sidebarDelta = Math.abs(options.sidebarPx - prevSidebarPx.current);
-    const isDicreteToggle = sidebarDelta > 10;
-    const duration = isDicreteToggle ? 250 : 0;
+    const isDiscreteToggle = sidebarDelta > 10;
+    const duration = isDiscreteToggle ? 250 : 0;
 
     applyPadding(options.sidebarPx, panelPx, options.isVertical, duration);
     prevSidebarPx.current = options.sidebarPx;
