@@ -327,7 +327,6 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
           <IconButton
             size={"xs"}
             variant={"ghost"}
-            colorPalette={isSymbologyEnabled ? "blue" : undefined}
             aria-label={"Simbologi"}
             onClick={(e) => {
               e.stopPropagation();
