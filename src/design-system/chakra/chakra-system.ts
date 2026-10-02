@@ -2493,6 +2493,15 @@ export const chakraConfig = defineConfig({
     textStyles: {},
 
     layerStyles: {
+      glass: {
+        value: {
+          bg: "bg.body/50",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
+          boxShadow:
+            "inset -1px 1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px -1px 1px 0 rgba(255, 255, 255, 0.25)",
+        },
+      },
       frosted: {
         value: {
           bg: "bg.frosted",

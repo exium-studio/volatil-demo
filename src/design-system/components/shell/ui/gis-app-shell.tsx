@@ -181,7 +181,7 @@ const GisAppSidebar = () => {
       expandable={true}
       sidebarKey={SIDE_BAR_KEY}
       defaultExpanded={DEFAULT_SIDEBAR_EXPANDED}
-      borderColor={"bg.canvas"}
+      borderColor={"border.subtle"}
     >
       <SidebarHeader />
 
@@ -524,7 +524,6 @@ const Content = (props: GisContentProps) => {
         w={"full"}
         minH={"300px"}
         bg={"bg.canvas"}
-        // bg={"bg.body"}
         shadow={"md"}
         pointerEvents={"auto"}
       >
