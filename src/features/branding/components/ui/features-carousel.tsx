@@ -2,37 +2,20 @@
 
 "use client";
 
-import { Carousel } from "@/design-system/components/disclosure/ui/carousel";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Box } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Image } from "@/design-system/components/media/ui/image";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { PATH_CONFIG } from "@/shared/constants/paths";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import type { FeaturesCarouselProps } from "@/features/branding/types/branding.type";
+import { PATH_CONFIG } from "@/shared/constants/paths";
 
-const CAROUSEL_ITEMS_LIST = [
-  {
-    image: `${PATH_CONFIG.images}/signin_carousel/1.png`,
-    title: "Beranda Pengguna",
-    description:
-      "Layanan Jasa Akses IGT merupakan layanan penyediaan akses terhadap Informasi Geospasial Tematik (IGT) Pertanahan dan Ruang secara digital melalui mekanisme integrasi sistem berupa Web Map Service (WMS) kepada Pelaksana Kerja Sama dengan melakukan pengayaan data dengan mengintegrasikan IGT untuk menghasilkan informasi geospasial baru sesuai dengan kebutuhan pemanfaatan dan ketentuan yang berlaku.",
-  },
-  {
-    image: `${PATH_CONFIG.images}/signin_carousel/2.png`,
-    title: "Peta Interaktif",
-    description:
-      "Peta Interaktif memungkinkan pengguna menyeleksi data IGT-PR berdasarkan area pada peta dan menambahkan data terpilih ke keranjang pembelian.",
-  },
-  {
-    image: `${PATH_CONFIG.images}/signin_carousel/3.png`,
-    title: "Tiket Laporan",
-    description:
-      "Tiket Laporan memudahkan pengguna untuk mengirim laporan, melampirkan dokumen pendukung, serta memantau proses penanganan dan tanggapan dari administrator dalam satu platform terintegrasi.",
-  },
-];
+const FEATURE_ITEM = {
+  image: `${PATH_CONFIG.images}/signin_carousel/1.png`,
+  title: "Layanan Jasa Akses IGT",
+  description:
+    "Layanan Jasa Akses IGT merupakan layanan penyediaan akses terhadap Informasi Geospasial Tematik (IGT) Pertanahan dan Ruang secara digital melalui mekanisme integrasi sistem berupa Web Map Service (WMS) kepada Pelaksana Kerja Sama dengan melakukan pengayaan data dengan mengintegrasikan IGT untuk menghasilkan informasi geospasial baru sesuai dengan kebutuhan pemanfaatan dan ketentuan yang berlaku.",
+};
 
 export const FeaturesCarousel = (props: FeaturesCarouselProps) => {
   // Props
@@ -48,93 +31,43 @@ export const FeaturesCarousel = (props: FeaturesCarouselProps) => {
       bg={`${theme.colorPalette}.solid`}
       {...restProps}
     >
-      <Carousel.Root
-        defaultPage={0}
-        loop
-        autoplay={{
-          delay: 6000,
-        }}
-        slideCount={CAROUSEL_ITEMS_LIST.length}
-        flex={1}
-        gap={4}
+      <VStack
         pos={"relative"}
+        w={"full"}
+        flex={1}
+        rounded={theme.radii.container}
+        bg={"whiteAlpha.200"}
+        gap={4}
+        p={[4, null, 6]}
+        color={"white"}
+        overflow={"clip"}
       >
-        <Carousel.Control flex={1} gap={[4, null, 6]}>
-          <Carousel.ItemGroup
-            w={"full"}
-            flex={1}
-            rounded={theme.radii.container}
-            bg={"whiteAlpha.200"}
-          >
-            {CAROUSEL_ITEMS_LIST.map((carousel, index) => (
-              <Carousel.Item
-                key={index}
-                index={index}
-                flex={1}
-                gap={4}
-                p={[4, null, 6]}
-                color={"white"}
-              >
-                <P fontSize={"xl"} fontWeight={"semibold"} textAlign={"center"}>
-                  {carousel.title}
-                </P>
+        <IgtLogo
+          pos={"absolute"}
+          top={"-50px"}
+          right={"-50px"}
+          boxSize={"300px"}
+          opacity={0.1}
+          filter={"brightness(0) invert(1)"}
+        />
 
-                <Image
-                  src={carousel.image}
-                  alt={`Image ${index + 1}`}
-                  objectFit={"contain"}
-                  w={"full"}
-                  mt={4}
-                  aspectRatio={16 / 10}
-                />
+        <Image
+          src={FEATURE_ITEM.image}
+          alt={"Image 1"}
+          objectFit={"contain"}
+          w={"full"}
+          my={"auto"}
+          aspectRatio={16 / 10}
+        />
 
-                <P textAlign={"center"} mt={"auto"}>
-                  {carousel.description}
-                </P>
-              </Carousel.Item>
-            ))}
-          </Carousel.ItemGroup>
+        <VStack gap={"sm"}>
+          <P fontSize={"xl"} fontWeight={"semibold"}>
+            {FEATURE_ITEM.title}
+          </P>
 
-          <HStack align={"center"} gap={4} w={"full"}>
-            <Carousel.PrevTrigger asChild>
-              <Carousel.ActionButton
-                color={"white"}
-                borderColor={"white"}
-                _hover={{
-                  bg: "an1",
-                }}
-              >
-                <AppIcon icon={ArrowLeftIcon} />
-              </Carousel.ActionButton>
-            </Carousel.PrevTrigger>
-
-            <Box w={"full"}>
-              <Carousel.Indicators
-                bg={"bodyLight"}
-                boxSize={1.5}
-                transition={"200ms"}
-                transformOrigin={"center"}
-                w={"full"}
-                _current={{
-                  opacity: 1,
-                }}
-              />
-            </Box>
-
-            <Carousel.NextTrigger asChild>
-              <Carousel.ActionButton
-                color={"white"}
-                borderColor={"white"}
-                _hover={{
-                  bg: "an1",
-                }}
-              >
-                <AppIcon icon={ArrowRightIcon} />
-              </Carousel.ActionButton>
-            </Carousel.NextTrigger>
-          </HStack>
-        </Carousel.Control>
-      </Carousel.Root>
+          <P mt={"auto"}>{FEATURE_ITEM.description}</P>
+        </VStack>
+      </VStack>
     </VStack>
   );
 };
