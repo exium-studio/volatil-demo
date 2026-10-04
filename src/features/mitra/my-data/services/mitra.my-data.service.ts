@@ -4,6 +4,7 @@ import {
   fetchMitraWorkspaceDetailApi,
   fetchMitraWorkspacesApi,
   fetchMyDataApi,
+  renewWorkspaceApi,
   updateMyDataItemApi,
 } from "@/features/mitra/my-data/api/mitra.my-data.api";
 import type {
@@ -13,6 +14,8 @@ import type {
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
+  RenewWorkspacePayload,
+  RenewWorkspaceResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import {
@@ -202,6 +205,50 @@ export const updateMyData = async (
       });
 
       return { ...existing };
+    }
+    throw error;
+  }
+};
+
+export const renewWorkspace = async (
+  workspaceId: string,
+  payload: RenewWorkspacePayload = { durationMonths: 12 },
+): Promise<RenewWorkspaceResponse> => {
+  try {
+    const response = await renewWorkspaceApi(workspaceId, payload);
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error("Gagal memperpanjang masa aktif workspace");
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const targetWorkspace = dummyMitraWorkspaces.find(
+        (w) => w.id === workspaceId,
+      );
+      const currentExpiry = targetWorkspace?.expiresAt
+        ? new Date(targetWorkspace.expiresAt).getTime()
+        : Date.now();
+      const baseTime = currentExpiry > Date.now() ? currentExpiry : Date.now();
+      const extendedUntil = new Date(
+        baseTime + (payload.durationMonths ?? 12) * 30 * 24 * 60 * 60 * 1000,
+      ).toISOString();
+
+      const orderNumber = `RNW-${Date.now().toString().slice(-6)}`;
+      const billingCode = `82026${Math.floor(1000000 + Math.random() * 9000000)}`;
+      const totalAmount =
+        targetWorkspace?.layers.reduce((acc, l) => {
+          return acc + (l.spatialBasis === "kawasan" ? 1500000 : 750000);
+        }, 0) || 1500000;
+
+      return {
+        orderId: `ord-renew-${workspaceId}-${Date.now()}`,
+        orderNumber,
+        billingCode,
+        totalAmount,
+        expiresAt: targetWorkspace?.expiresAt ?? new Date().toISOString(),
+        extendedUntil,
+        status: "pending_payment",
+      };
     }
     throw error;
   }

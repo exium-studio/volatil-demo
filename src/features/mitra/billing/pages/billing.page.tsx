@@ -45,6 +45,11 @@ const BillingPageBillingCode = () => {
   const handleCheckStatus = () => {
     // Check order payment status via GET /api/mitra/cart/orders/:orderId/status
     const targetOrderId = search?.orderId || billingCode;
+    const isRenewal = targetOrderId.startsWith("ord-renew-");
+    const renewWsId = isRenewal
+      ? targetOrderId.replace("ord-renew-", "").split("-")[0]
+      : null;
+
     checkPaymentMutation.mutate(targetOrderId, {
       onSuccess: (res) => {
         if (res.transactionStatus === "paid") {
@@ -53,12 +58,21 @@ const BillingPageBillingCode = () => {
               variant={"celebrate"}
               title={"Pembayaran Berhasil!"}
               description={
-                "Pembayaran telah terverifikasi dengan status 'paid'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
+                isRenewal
+                  ? "Pembayaran perpanjangan layanan telah terverifikasi. Masa aktif workspace dan layer interop GeoServer telah berhasil diperpanjang (+1 Tahun) dan berstatus Aktif/Ready."
+                  : "Pembayaran telah terverifikasi dengan status 'paid'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
               }
               onDone={() => {
-                void navigate({
-                  to: "/mitra/transaction-history",
-                });
+                if (isRenewal && renewWsId) {
+                  void navigate({
+                    to: "/mitra/my-data/$workspaceId",
+                    params: { workspaceId: renewWsId },
+                  });
+                } else {
+                  void navigate({
+                    to: "/mitra/transaction-history",
+                  });
+                }
               }}
             />
           ));

@@ -27,6 +27,7 @@ import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
+import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
 import { useMitraWorkspaceDetailQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
@@ -362,6 +363,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                 />
 
                 <ClampedHeading>{`${workspace.workspaceName}`}</ClampedHeading>
+                <MyDataStatusBadge>{workspace.status}</MyDataStatusBadge>
+              </HStack>
+
+              <HStack align={"center"} gap={"sm"}>
+                <MitraWorkspaceRenewalTrigger workspace={workspace} />
               </HStack>
             </HStack>
           </HeaderContainer>

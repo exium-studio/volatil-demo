@@ -2,6 +2,7 @@ import {
   getMitraWorkspaceDetail,
   getMitraWorkspaces,
   getMyData,
+  renewWorkspace,
   updateMyData,
 } from "@/features/mitra/my-data/services/mitra.my-data.service";
 import type {
@@ -11,6 +12,8 @@ import type {
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
+  RenewWorkspacePayload,
+  RenewWorkspaceResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
@@ -127,6 +130,37 @@ export const useUpdateMyData = () => {
           error instanceof Error
             ? error.message
             : "Terjadi kesalahan saat memperbarui label data layer",
+      });
+    },
+  });
+};
+
+export const useRenewMitraWorkspace = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    RenewWorkspaceResponse,
+    Error,
+    { workspaceId: string; payload?: RenewWorkspacePayload }
+  >({
+    mutationFn: ({ workspaceId, payload }) =>
+      renewWorkspace(workspaceId, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspace.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspaces.all,
+      });
+    },
+    onError: (error) => {
+      toast.create({
+        variant: "error",
+        title: "Gagal Memperpanjang",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat memproses perpanjangan masa aktif",
       });
     },
   });

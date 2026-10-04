@@ -117,6 +117,32 @@ export type MitraMyDataWorkspaceTabsContentProps = {
   isActive?: boolean;
 };
 
+export type RenewWorkspacePayload = {
+  durationMonths?: number;
+  paymentMethod?: string;
+};
+
+export type RenewWorkspaceResponse = {
+  orderId: string;
+  orderNumber: string;
+  billingCode: string;
+  totalAmount: number;
+  expiresAt: string;
+  extendedUntil: string;
+  status: "pending_payment" | "paid";
+};
+
+export type MitraWorkspaceRenewalTriggerProps = {
+  workspace: MitraWorkspaceItem;
+  children?: React.ReactNode;
+  modalKey?: string;
+};
+
+export type MitraWorkspaceRenewalModalContentProps = {
+  workspace: MitraWorkspaceItem;
+  close: () => void;
+};
+
 export type MitraMyDataEditTriggerProps = {
   item: MyDataItem;
   children?: React.ReactNode;
@@ -127,5 +153,6 @@ export type MitraMyDataEditModalContentProps = {
   item: MyDataItem;
   close: () => void;
 };
+
 
 

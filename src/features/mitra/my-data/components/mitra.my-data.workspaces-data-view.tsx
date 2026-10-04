@@ -24,6 +24,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
+import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
 import { useMitraWorkspacesQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraMyDataViewProps,
@@ -46,6 +47,7 @@ import {
   FolderOpenIcon,
   LayersIcon,
   ReceiptTextIcon,
+  RotateCwIcon,
   SquarePen,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -210,6 +212,19 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             to: "/mitra/my-data/$workspaceId",
             params: { workspaceId: item.id },
           });
+        },
+      },
+      {
+        key: "renew-workspace",
+        label: "Perpanjang Layanan",
+        icon: RotateCwIcon,
+        modal: {
+          triggerComponent: (item: MitraWorkspaceItem) => (
+            <MitraWorkspaceRenewalTrigger
+              modalKey={`workspace-renew-${item.id}`}
+              workspace={item}
+            />
+          ),
         },
       },
       {

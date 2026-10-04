@@ -16,6 +16,7 @@ import type {
   CartSummaryResponse,
   CheckoutResponse,
 } from "@/features/mitra/cart/types/cart.type";
+import { dummyMitraWorkspaces } from "@/shared/constants/dummy-data/dummy-my-data";
 import { getStorage, setStorage } from "@/shared/utils/client/client.storage";
 
 const LOCAL_STORAGE_KEY = "mitra_cart_ids";
@@ -614,6 +615,25 @@ export async function checkOrderPaymentStatus(
         targetOrder.tteInvoiceUrl = null;
         targetOrder.tte = false;
       }
+      if (orderId.startsWith("ord-renew-")) {
+        const workspaceId = orderId.replace("ord-renew-", "").split("-")[0];
+        const ws = dummyMitraWorkspaces.find((w) => w.id === workspaceId);
+        if (ws) {
+          ws.status = "ready";
+          const currentExp = new Date(ws.expiresAt).getTime();
+          const baseTime =
+            !Number.isNaN(currentExp) && currentExp > Date.now()
+              ? currentExp
+              : Date.now();
+          ws.expiresAt = new Date(
+            baseTime + 365 * 24 * 60 * 60 * 1000,
+          ).toISOString();
+          ws.layers.forEach((l) => {
+            l.status = "ready";
+            l.expiresAt = ws.expiresAt;
+          });
+        }
+      }
     }
     return {
       orderId,
@@ -631,6 +651,25 @@ export async function checkOrderPaymentStatus(
         targetOrder.invoiceUrl = `${baseUrl}/invoices/INV-${orderId}.pdf`;
         targetOrder.tteInvoiceUrl = null;
         targetOrder.tte = false;
+      }
+      if (orderId.startsWith("ord-renew-")) {
+        const workspaceId = orderId.replace("ord-renew-", "").split("-")[0];
+        const ws = dummyMitraWorkspaces.find((w) => w.id === workspaceId);
+        if (ws) {
+          ws.status = "ready";
+          const currentExp = new Date(ws.expiresAt).getTime();
+          const baseTime =
+            !Number.isNaN(currentExp) && currentExp > Date.now()
+              ? currentExp
+              : Date.now();
+          ws.expiresAt = new Date(
+            baseTime + 365 * 24 * 60 * 60 * 1000,
+          ).toISOString();
+          ws.layers.forEach((l) => {
+            l.status = "ready";
+            l.expiresAt = ws.expiresAt;
+          });
+        }
       }
       return {
         orderId,

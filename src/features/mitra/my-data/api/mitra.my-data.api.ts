@@ -1,5 +1,3 @@
-// src/features/mitra/my-data/api/mitra.my-data.api.ts
-
 import type {
   MitraWorkspaceItem,
   MitraWorkspaceListResponse,
@@ -7,6 +5,8 @@ import type {
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
+  RenewWorkspacePayload,
+  RenewWorkspaceResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
@@ -34,6 +34,18 @@ export const fetchMitraWorkspaceDetailApi = async (
     {
       signal,
     },
+  );
+};
+
+export const renewWorkspaceApi = async (
+  workspaceId: string,
+  payload: RenewWorkspacePayload,
+  signal?: AbortSignal,
+): Promise<ApiResponse<RenewWorkspaceResponse>> => {
+  return apiClient.post<ApiResponse<RenewWorkspaceResponse>>(
+    `/api/mitra/my-data/${workspaceId}/renew`,
+    payload,
+    { signal },
   );
 };
 
