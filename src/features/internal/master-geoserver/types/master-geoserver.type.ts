@@ -12,6 +12,8 @@ export type MasterGeoserverItem = {
   username: string;
   password?: string;
   description?: string;
+  isActive?: boolean;
+  status?: "active" | "inactive" | "unreachable";
   deletedAt?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -30,6 +32,7 @@ export type CreateMasterGeoserverPayload = {
   username: string;
   password?: string;
   description?: string;
+  isActive?: boolean;
 };
 
 export type UpdateMasterGeoserverPayload =

@@ -23,6 +23,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMasterGeoserverCreateTrigger } from "@/features/internal/master-geoserver/components/internal.master-geoserver.create-modal";
@@ -85,6 +86,7 @@ export const InternalMasterGeoserverDataView = () => {
       { th: "Nama Server", sortable: true },
       { th: "Base URL Geoserver", sortable: true },
       { th: "Username", sortable: true },
+      { th: "Status", sortable: true, align: "center" },
       { th: "Deskripsi" },
       { th: "Terakhir Diperbarui", sortable: true },
     ];
@@ -141,6 +143,19 @@ export const InternalMasterGeoserverDataView = () => {
               </P>
             ),
             align: "start" as const,
+          },
+          {
+            value: item.isActive !== false ? "Aktif" : "Nonaktif",
+            td: (
+              <Badge
+                size={"xs"}
+                colorPalette={item.isActive !== false ? "green" : "gray"}
+                variant={"subtle"}
+              >
+                {item.isActive !== false ? "Aktif" : "Nonaktif"}
+              </Badge>
+            ),
+            align: "center" as const,
           },
           {
             value: item.description ?? "-",

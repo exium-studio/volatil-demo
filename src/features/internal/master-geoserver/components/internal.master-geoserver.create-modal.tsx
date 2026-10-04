@@ -5,6 +5,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
+import { Switch } from "@/design-system/components/input/ui/switch";
 import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -93,6 +94,7 @@ const InternalMasterGeoserverCreateModalContent = (
       username: "",
       password: "",
       description: "",
+      isActive: true,
     },
   });
 
@@ -137,6 +139,7 @@ const InternalMasterGeoserverCreateModalContent = (
         username: data.username.trim(),
         password: data.password?.trim() || undefined,
         description: data.description?.trim() || undefined,
+        isActive: data.isActive,
       },
       {
         onSuccess: () => {
@@ -235,6 +238,24 @@ const InternalMasterGeoserverCreateModalContent = (
                   placeholder={"Keterangan peruntukan GeoServer (opsional)..."}
                   rows={2}
                 />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name={"isActive"}
+            render={({ field }) => (
+              <Field label={"Status Server"}>
+                <HStack justify={"space-between"} align={"center"} w={"full"} py={"xs"}>
+                  <P fontSize={"sm"} color={"fg.muted"}>
+                    {field.value ? "Server Aktif (Dapat digunakan)" : "Server Nonaktif"}
+                  </P>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={(details) => field.onChange(details.checked)}
+                  />
+                </HStack>
               </Field>
             )}
           />
