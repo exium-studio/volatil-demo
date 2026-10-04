@@ -76,35 +76,36 @@ export const apiClient = {
 
         if (response.status === 401 || response.status === 403) {
           if (typeof window !== "undefined") {
-            localStorage.removeItem("auth_token");
-            localStorage.removeItem("user");
-            sessionStorage.removeItem("user");
-            sessionStorage.removeItem("keycloakIdToken");
+            const currentPath =
+              window.location.pathname.replace(/\/$/, "") || "/";
+            const isSigninRoute =
+              currentPath === "/" || currentPath === "/admin";
 
-            const isPublicPage =
-              window.location.pathname === "/" ||
-              window.location.pathname === "/admin";
+            if (!isSigninRoute) {
+              localStorage.removeItem("auth_token");
+              localStorage.removeItem("user");
+              sessionStorage.removeItem("user");
+              sessionStorage.removeItem("keycloakIdToken");
 
-            const toastTitle =
-              response.status === 401
-                ? t["error.unauthorized"]()
-                : t["error.forbidden"]();
-
-            toast.error(toastTitle, {
-              id: "auth-session-expired-toast",
-              group: t["common.system"](),
-              description:
-                errorMessage ||
-                (response.status === 401
+              const toastTitle =
+                response.status === 401
                   ? t["error.unauthorized"]()
-                  : t["error.forbidden"]()),
-            });
+                  : t["error.forbidden"]();
 
-            const isInternal =
-              window.location.pathname.startsWith("/internal") ||
-              window.location.pathname.startsWith("/admin");
+              toast.error(toastTitle, {
+                id: "auth-session-expired-toast",
+                group: t["common.system"](),
+                description:
+                  errorMessage ||
+                  (response.status === 401
+                    ? t["error.unauthorized"]()
+                    : t["error.forbidden"]()),
+              });
 
-            if (!isPublicPage) {
+              const isInternal =
+                window.location.pathname.startsWith("/internal") ||
+                window.location.pathname.startsWith("/admin");
+
               void router.navigate({ to: isInternal ? "/admin" : "/" });
             }
           }
