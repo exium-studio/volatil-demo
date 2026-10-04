@@ -5,6 +5,8 @@ import type {
   MasterGeoserverItem,
   MasterGeoserverListResponse,
   MasterGeoserverQueryParams,
+  TestGeoserverConnectionPayload,
+  TestGeoserverConnectionResponse,
   UpdateMasterGeoserverPayload,
 } from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
@@ -60,4 +62,15 @@ export const deleteMasterGeoserverApi = async (
   return apiClient.delete<
     ApiResponse<{ success: boolean; deletedAt: string }> | { success: boolean; deletedAt: string }
   >(`/api/internal/master-geoserver/${id}`, { signal });
+};
+
+export const testMasterGeoserverConnectionApi = async (
+  payload: TestGeoserverConnectionPayload,
+  signal?: AbortSignal,
+): Promise<
+  ApiResponse<TestGeoserverConnectionResponse> | TestGeoserverConnectionResponse
+> => {
+  return apiClient.post<
+    ApiResponse<TestGeoserverConnectionResponse> | TestGeoserverConnectionResponse
+  >("/api/internal/master-geoserver/test-connection", payload, { signal });
 };

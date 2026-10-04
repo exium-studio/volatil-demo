@@ -37,6 +37,20 @@ export type UpdateMasterGeoserverPayload =
     id: string;
   };
 
+export type TestGeoserverConnectionPayload = {
+  baseUrl: string;
+  username?: string;
+  password?: string;
+};
+
+export type TestGeoserverConnectionResponse = {
+  success: boolean;
+  message: string;
+  version?: string;
+  latencyMs?: number;
+  workspacesCount?: number;
+};
+
 import { masterGeoserverFormSchema } from "@/features/internal/master-geoserver/types/master-geoserver.schema";
 import type { ReactNode } from "react";
 import type { z } from "zod";

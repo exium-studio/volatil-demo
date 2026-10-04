@@ -5,11 +5,14 @@ import {
   deleteMasterGeoserver,
   getMasterGeoserverDetail,
   getMasterGeoserverList,
+  testMasterGeoserverConnection,
   updateMasterGeoserver,
 } from "@/features/internal/master-geoserver/services/master-geoserver.service";
 import type {
   CreateMasterGeoserverPayload,
   MasterGeoserverQueryParams,
+  TestGeoserverConnectionPayload,
+  TestGeoserverConnectionResponse,
   UpdateMasterGeoserverPayload,
 } from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -124,5 +127,16 @@ export const useDeleteMasterGeoserver = () => {
       });
     },
     onError: toastHandlers.onError,
+  });
+};
+
+export const useTestMasterGeoserverConnection = () => {
+  return useMutation<
+    TestGeoserverConnectionResponse,
+    Error,
+    TestGeoserverConnectionPayload
+  >({
+    mutationFn: (payload: TestGeoserverConnectionPayload) =>
+      testMasterGeoserverConnection(payload),
   });
 };

@@ -5,6 +5,7 @@ import {
   deleteMasterGeoserverApi,
   fetchMasterGeoserverDetailApi,
   fetchMasterGeoserverListApi,
+  testMasterGeoserverConnectionApi,
   updateMasterGeoserverApi,
 } from "@/features/internal/master-geoserver/api/master-geoserver.api";
 import type {
@@ -12,6 +13,8 @@ import type {
   MasterGeoserverItem,
   MasterGeoserverListResponse,
   MasterGeoserverQueryParams,
+  TestGeoserverConnectionPayload,
+  TestGeoserverConnectionResponse,
   UpdateMasterGeoserverPayload,
 } from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import {
@@ -216,6 +219,46 @@ export const deleteMasterGeoserver = async (
         found.deletedAt = new Date().toISOString();
       }
       return true;
+    }
+    throw error;
+  }
+};
+
+export const testMasterGeoserverConnection = async (
+  payload: TestGeoserverConnectionPayload,
+  signal?: AbortSignal,
+): Promise<TestGeoserverConnectionResponse> => {
+  try {
+    const response = await testMasterGeoserverConnectionApi(payload, signal);
+    const resultData =
+      response && "data" in response && response.data
+        ? response.data
+        : (response as TestGeoserverConnectionResponse);
+
+    if (resultData && typeof resultData.success === "boolean") {
+      return resultData;
+    }
+
+    if (isDummyDataEnabled()) {
+      return {
+        success: true,
+        message: "Koneksi ke instance GeoServer berhasil terverifikasi",
+        version: "GeoServer 2.24.2 (WFS 2.0.0 / WMS 1.3.0)",
+        latencyMs: 95,
+        workspacesCount: 8,
+      };
+    }
+
+    throw new Error("Gagal menguji koneksi GeoServer");
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return {
+        success: true,
+        message: "Koneksi ke instance GeoServer berhasil terverifikasi",
+        version: "GeoServer 2.24.2 (WFS 2.0.0 / WMS 1.3.0)",
+        latencyMs: 95,
+        workspacesCount: 8,
+      };
     }
     throw error;
   }
