@@ -35,6 +35,7 @@ import {
 import {
   BellIcon,
   CheckCheckIcon,
+  ClockIcon,
   CreditCardIcon,
   HelpCircleIcon,
   InboxIcon,
@@ -50,6 +51,7 @@ const CATEGORY_ICON_MAP: Record<InboxCategory, typeof BellIcon> = {
   sistem: InfoIcon,
   bantuan: HelpCircleIcon,
   akun: UserIcon,
+  kedaluwarsa: ClockIcon,
 };
 
 const CATEGORY_COLOR_MAP: Record<InboxCategory, string> = {
@@ -57,6 +59,7 @@ const CATEGORY_COLOR_MAP: Record<InboxCategory, string> = {
   sistem: "gray",
   bantuan: "green",
   akun: "purple",
+  kedaluwarsa: "orange",
 };
 
 export const NotificationInboxDataView = memo(() => {

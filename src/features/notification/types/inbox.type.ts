@@ -1,11 +1,25 @@
 // src/features/notification/types/inbox.type.ts
 
-export type InboxCategory = "transaksi" | "sistem" | "bantuan" | "akun";
+export type InboxCategory =
+  | "transaksi"
+  | "sistem"
+  | "bantuan"
+  | "akun"
+  | "kedaluwarsa";
 
 export type InboxCardItemProps = {
   item: InboxItem;
   onMarkAsRead: (id: string) => void;
   onDelete: (id: string) => void;
+};
+
+export type InboxItemMetadata = {
+  workspaceId?: string;
+  workspaceName?: string;
+  orderId?: string;
+  expiresAt?: string;
+  daysRemaining?: number;
+  [key: string]: unknown;
 };
 
 export type InboxItem = {
@@ -15,6 +29,8 @@ export type InboxItem = {
   category: InboxCategory;
   isRead: boolean;
   actionUrl?: string;
+  actionLabel?: string;
+  metadata?: InboxItemMetadata;
   createdAt: string;
 };
 
