@@ -5,8 +5,11 @@ import {
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -17,7 +20,9 @@ import type {
   InternalHomeTrendProps,
 } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import { Chart, useChart } from "@chakra-ui/charts";
+import { TrendingUpIcon } from "lucide-react";
 import { useState } from "react";
 import {
   Area,
@@ -49,7 +54,7 @@ const InternalHomeTrendContent = () => {
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   // Queries / Data
-  const { acquisitionTrends, isLoading } =
+  const { acquisitionTrends, isLoading, isError, error, refetch } =
     useInternalAcquisitionTrendsQuery(period);
 
   if (isLoading) {
@@ -60,11 +65,48 @@ const InternalHomeTrendContent = () => {
     <Container.Body gap={8} pt={"md"} pb={"md"}>
       <InternalHomeTrendHeader period={period} onPeriodChange={setPeriod} />
 
-      <VStack mt={"auto"}>
-        <InternalHomeTrendChartContent
-          acquisitionTrends={acquisitionTrends}
-        />
-      </VStack>
+      {isError ? (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={"full"}
+          py={"xl"}
+        >
+          <RetryState
+            title={"Gagal Memuat Tren Akuisisi"}
+            description={
+              error?.message ||
+              "Terjadi kesalahan saat memuat grafik tren akuisisi data IGT. Silakan coba lagi."
+            }
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        </Box>
+      ) : isEmptyArray(acquisitionTrends) ? (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={"full"}
+          py={"xl"}
+        >
+          <NoDataState
+            icon={TrendingUpIcon}
+            title={"Belum Ada Data Tren Akuisisi"}
+            description={
+              "Belum ada data tren akuisisi IGT pada periode yang dipilih."
+            }
+          />
+        </Box>
+      ) : (
+        <VStack mt={"auto"}>
+          <InternalHomeTrendChartContent
+            acquisitionTrends={acquisitionTrends}
+          />
+        </VStack>
+      )}
     </Container.Body>
   );
 };

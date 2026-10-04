@@ -1,8 +1,11 @@
 // src/features/internal/home/components/internal.home.leaderboard.tsx
 
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -22,6 +25,8 @@ import type {
   TopMitraAcquisitionItem,
 } from "@/features/internal/home/types/internal.home.leaderboard.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
+import { isEmptyArray } from "@/shared/utils/data/array";
+import { HandshakeIcon, LayersIcon } from "lucide-react";
 
 export const InternalHomeLeaderboard = (
   props: InternalHomeLeaderboardProps,
@@ -57,7 +62,8 @@ const TopMitraLeaderboardCard = (props: LeaderboardCardProps) => {
   const { flex } = props;
 
   // Queries
-  const { topMitraList, isLoading } = useInternalLeaderboardQuery();
+  const { topMitraList, isLoading, isError, error, refetch } =
+    useInternalLeaderboardQuery();
 
   if (isLoading) {
     return (
@@ -87,66 +93,116 @@ const TopMitraLeaderboardCard = (props: LeaderboardCardProps) => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <VStack align={"stretch"} gap={0} w={"full"}>
-          {topMitraList.map((mitra: TopMitraAcquisitionItem, index: number) => (
-            <HStack
-              key={mitra.mitraId}
-              align={"center"}
-              px={"md"}
-              py={"sm"}
-              gap={"md"}
-              borderBottom={
-                index < topMitraList.length - 1 ? "1px solid" : "none"
+        {isError ? (
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+            flex={1}
+          >
+            <RetryState
+              title={"Gagal Memuat Peringkat Mitra"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat data peringkat mitra. Silakan coba lagi."
               }
-              borderColor={"bg.canvas"}
-            >
-              {/* Ranking di paling kiri */}
-              <LeaderboardRankBadge rank={mitra.rank} />
-
-              {/* Konten di kanan (wrap responsive antara info mitra & nominal/order) */}
-              <HStack
-                wrap={"wrap"}
-                justify={"space-between"}
-                align={"center"}
-                flex={1}
-                minW={0}
-                gap={"sm"}
-              >
-                <VStack align={"start"} gap={"2xs"} flex={"1 1 200px"} minW={0}>
-                  <ClampedP fontWeight={"semibold"} fontSize={"md"} w={"full"}>
-                    {mitra.mitraName}
-                  </ClampedP>
-
-                  <P fontSize={"sm"} color={"fg.subtle"} truncate={true}>
-                    {mitra.agencyOrCompany}
-                  </P>
-                </VStack>
-
-                <VStack
-                  align={"start"}
-                  textAlign={"start"}
-                  gap={"2xs"}
-                  flex={"1 1 160px"}
-                  alignSelf={"stretch"}
-                  justify={"center"}
+              onRetry={() => {
+                void refetch();
+              }}
+            />
+          </Box>
+        ) : isEmptyArray(topMitraList) ? (
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+            flex={1}
+          >
+            <NoDataState
+              icon={HandshakeIcon}
+              title={"Belum Ada Data Peringkat Mitra"}
+              description={
+                "Belum ada data aktivitas transaksi dari mitra untuk ditampilkan pada peringkat."
+              }
+            />
+          </Box>
+        ) : (
+          <VStack align={"stretch"} gap={0} w={"full"}>
+            {topMitraList.map(
+              (mitra: TopMitraAcquisitionItem, index: number) => (
+                <HStack
+                  key={mitra.mitraId}
+                  align={"center"}
+                  px={"md"}
+                  py={"sm"}
+                  gap={"md"}
+                  borderBottom={
+                    index < topMitraList.length - 1 ? "1px solid" : "none"
+                  }
+                  borderColor={"bg.canvas"}
                 >
-                  <P fontWeight={"bold"} fontSize={"md"}>
-                    <FormatNumber
-                      value={mitra.totalSpending}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </P>
+                  {/* Ranking di paling kiri */}
+                  <LeaderboardRankBadge rank={mitra.rank} />
 
-                  <P fontSize={"sm"} color={"fg.subtle"}>
-                    {`${mitra.totalOrders} Pesanan · ${mitra.totalVolume}`}
-                  </P>
-                </VStack>
-              </HStack>
-            </HStack>
-          ))}
-        </VStack>
+                  {/* Konten di kanan (wrap responsive antara info mitra & nominal/order) */}
+                  <HStack
+                    wrap={"wrap"}
+                    justify={"space-between"}
+                    align={"center"}
+                    flex={1}
+                    minW={0}
+                    gap={"sm"}
+                  >
+                    <VStack
+                      align={"start"}
+                      gap={"2xs"}
+                      flex={"1 1 200px"}
+                      minW={0}
+                    >
+                      <ClampedP
+                        fontWeight={"semibold"}
+                        fontSize={"md"}
+                        w={"full"}
+                      >
+                        {mitra.mitraName}
+                      </ClampedP>
+
+                      <P fontSize={"sm"} color={"fg.subtle"} truncate={true}>
+                        {mitra.agencyOrCompany}
+                      </P>
+                    </VStack>
+
+                    <VStack
+                      align={"start"}
+                      textAlign={"start"}
+                      gap={"2xs"}
+                      flex={"1 1 160px"}
+                      alignSelf={"stretch"}
+                      justify={"center"}
+                    >
+                      <P fontWeight={"bold"} fontSize={"md"}>
+                        <FormatNumber
+                          value={mitra.totalSpending}
+                          style={"currency"}
+                          currency={"IDR"}
+                          maximumFractionDigits={0}
+                        />
+                      </P>
+
+                      <P fontSize={"sm"} color={"fg.subtle"}>
+                        {`${mitra.totalOrders} Pesanan · ${mitra.totalVolume}`}
+                      </P>
+                    </VStack>
+                  </HStack>
+                </HStack>
+              ),
+            )}
+          </VStack>
+        )}
       </Container.Body>
     </Container.Root>
   );
@@ -157,7 +213,8 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
   const { flex } = props;
 
   // Queries
-  const { topIgtLayers, isLoading } = useInternalLeaderboardQuery();
+  const { topIgtLayers, isLoading, isError, error, refetch } =
+    useInternalLeaderboardQuery();
 
   if (isLoading) {
     return (
@@ -189,91 +246,130 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
 
         <Separator borderColor={"bg.canvas"} />
 
-        <VStack align={"stretch"} gap={0} w={"full"}>
-          {topIgtLayers.map((layer: TopIgtLayerItem, index: number) => {
-            const basisConfig = IGT_BASIS_MAP[layer.spatialBasis];
-            return (
-              <HStack
-                key={layer.layerId}
-                align={"center"}
-                px={"md"}
-                py={"sm"}
-                gap={"md"}
-                borderBottom={
-                  index < topIgtLayers.length - 1 ? "1px solid" : "none"
-                }
-                borderColor={"bg.canvas"}
-              >
-                {/* Ranking di paling kiri */}
-                <LeaderboardRankBadge rank={layer.rank} />
-
-                {/* Konten di kanan (wrap responsive antara info layer & pendapatan/volume) */}
+        {isError ? (
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+            flex={1}
+          >
+            <RetryState
+              title={"Gagal Memuat Layer IGT Paling Diminati"}
+              description={
+                error?.message ||
+                "Terjadi kesalahan saat memuat data layer IGT paling diminati. Silakan coba lagi."
+              }
+              onRetry={() => {
+                void refetch();
+              }}
+            />
+          </Box>
+        ) : isEmptyArray(topIgtLayers) ? (
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            w={"full"}
+            py={"xl"}
+            flex={1}
+          >
+            <NoDataState
+              icon={LayersIcon}
+              title={"Belum Ada Data Layer IGT"}
+              description={
+                "Belum ada data layer IGT yang diakuisisi untuk ditampilkan pada daftar minat."
+              }
+            />
+          </Box>
+        ) : (
+          <VStack align={"stretch"} gap={0} w={"full"}>
+            {topIgtLayers.map((layer: TopIgtLayerItem, index: number) => {
+              const basisConfig = IGT_BASIS_MAP[layer.spatialBasis];
+              return (
                 <HStack
-                  wrap={"wrap"}
-                  justify={"space-between"}
+                  key={layer.layerId}
                   align={"center"}
-                  flex={1}
-                  minW={0}
-                  gap={"sm"}
+                  px={"md"}
+                  py={"sm"}
+                  gap={"md"}
+                  borderBottom={
+                    index < topIgtLayers.length - 1 ? "1px solid" : "none"
+                  }
+                  borderColor={"bg.canvas"}
                 >
-                  <VStack
-                    align={"start"}
-                    gap={"2xs"}
-                    flex={"1 1 200px"}
+                  {/* Ranking di paling kiri */}
+                  <LeaderboardRankBadge rank={layer.rank} />
+
+                  {/* Konten di kanan (wrap responsive antara info layer & pendapatan/volume) */}
+                  <HStack
+                    wrap={"wrap"}
+                    justify={"space-between"}
+                    align={"center"}
+                    flex={1}
                     minW={0}
+                    gap={"sm"}
                   >
-                    <ClampedP
-                      fontWeight={"semibold"}
-                      fontSize={"md"}
-                      w={"full"}
+                    <VStack
+                      align={"start"}
+                      gap={"2xs"}
+                      flex={"1 1 200px"}
+                      minW={0}
                     >
-                      {layer.layerTitle}
-                    </ClampedP>
-
-                    <HStack gap={"xs"} align={"center"}>
-                      <Badge
-                        variant={"subtle"}
-                        colorPalette={basisConfig?.colorPalette ?? "gray"}
+                      <ClampedP
+                        fontWeight={"semibold"}
+                        fontSize={"md"}
+                        w={"full"}
                       >
-                        {basisConfig?.icon && (
-                          <AppIcon icon={basisConfig.icon} size={"sm"} />
-                        )}
-                        {basisConfig?.label ?? layer.spatialBasis}
-                      </Badge>
+                        {layer.layerTitle}
+                      </ClampedP>
 
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {`${layer.totalAcquisitions}x pesanan`}
+                      <HStack gap={"xs"} align={"center"}>
+                        <Badge
+                          variant={"subtle"}
+                          colorPalette={basisConfig?.colorPalette ?? "gray"}
+                        >
+                          {basisConfig?.icon && (
+                            <AppIcon icon={basisConfig.icon} size={"sm"} />
+                          )}
+                          {basisConfig?.label ?? layer.spatialBasis}
+                        </Badge>
+
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {`${layer.totalAcquisitions}x pesanan`}
+                        </P>
+                      </HStack>
+                    </VStack>
+
+                    <VStack
+                      align={"start"}
+                      textAlign={"start"}
+                      gap={"2xs"}
+                      flex={"1 1 160px"}
+                      alignSelf={"stretch"}
+                      justify={"center"}
+                    >
+                      <P fontWeight={"bold"} fontSize={"md"}>
+                        <FormatNumber
+                          value={layer.totalPnbpRevenue}
+                          style={"currency"}
+                          currency={"IDR"}
+                          maximumFractionDigits={0}
+                        />
                       </P>
-                    </HStack>
-                  </VStack>
 
-                  <VStack
-                    align={"start"}
-                    textAlign={"start"}
-                    gap={"2xs"}
-                    flex={"1 1 160px"}
-                    alignSelf={"stretch"}
-                    justify={"center"}
-                  >
-                    <P fontWeight={"bold"} fontSize={"md"}>
-                      <FormatNumber
-                        value={layer.totalPnbpRevenue}
-                        style={"currency"}
-                        currency={"IDR"}
-                        maximumFractionDigits={0}
-                      />
-                    </P>
-
-                    <P fontSize={"sm"} color={"fg.subtle"}>
-                      <FormatNumber value={layer.totalVolume} />
-                      <Span ml={1}>{layer.unit}</Span>
-                    </P>
-                  </VStack>
+                      <P fontSize={"sm"} color={"fg.subtle"}>
+                        <FormatNumber value={layer.totalVolume} />
+                        <Span ml={1}>{layer.unit}</Span>
+                      </P>
+                    </VStack>
+                  </HStack>
                 </HStack>
-              </HStack>
-            );
-          })}
-        </VStack>
+              );
+            })}
+          </VStack>
+        )}
       </Container.Body>
     </Container.Root>
   );
