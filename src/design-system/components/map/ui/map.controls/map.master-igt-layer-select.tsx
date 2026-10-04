@@ -1,4 +1,5 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
+import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -11,6 +12,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapMasterIgtLayerItemProps } from "@/design-system/components/map/types/map.master-igt-layer-select.type";
 import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overlay";
+import { LayerSymbologyContent } from "@/design-system/components/map/ui/map.symbology-panel";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -26,7 +28,7 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useQuery } from "@tanstack/react-query";
 import { BlendIcon, FlagIcon, FocusIcon, LayersIcon } from "lucide-react";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 export const MapMasterIgtLayerSelect = memo(() => {
   // Stores
@@ -252,6 +254,11 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   const { theme } = useThemeStore();
   const { flyTo } = useFlyToLayer();
 
+  // States
+  const [isSymbologyOpen, setIsSymbologyOpen] = useState<boolean>(
+    Boolean(isSymbologyEnabled),
+  );
+
   // Handlers
   const handleToggle = () => {
     onToggle(layer.id);
@@ -260,6 +267,12 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   const handleFlyTo = (e: React.MouseEvent) => {
     e.stopPropagation();
     void flyTo(layer);
+  };
+
+  const handleToggleSymbology = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsSymbologyOpen((prev) => !prev);
+    onToggleSymbology?.(layer.id);
   };
 
   // Derived Values
@@ -275,132 +288,154 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   const basisLabel = basisConfig?.label ?? layer.spatialBasis ?? "Layer IGT";
 
   return (
-    <HStack
-      align={"center"}
-      justify={"space-between"}
-      gap={"md"}
-      p={"2xs"}
-      colorPalette={colorPalette}
-      rounded={theme.radii.component}
-      cursor={"pointer"}
-      onClick={handleToggle}
-      _hover={{ bg: "bg.subtle" }}
-      w={"full"}
-    >
-      <HStack gap={"md"} align={"center"} flex={1} minW={0}>
-        <Center
-          p={"xs"}
-          bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
-          rounded={theme.radii.component}
-          flexShrink={0}
-        >
-          <AppIcon
-            icon={LayerIcon}
-            color={isEnabled ? `${colorPalette}.fg` : "fg.subtle"}
-          />
-        </Center>
-
-        <VStack flex={1} align={"start"} minW={0}>
-          <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
-            {displayName.replace(/_/g, " ")}
-          </ClampedP>
-
-          <ClampedP fontSize={"sm"} color={"fg.subtle"}>
-            {basisLabel}
-          </ClampedP>
-        </VStack>
-      </HStack>
-
-      <HStack gap={"xs"} align={"center"} flexShrink={0}>
-        <Switch
-          size={"sm"}
-          checked={isEnabled}
-          pointerEvents={"none"}
-          mr={"xs"}
-        />
-
-        <Tooltip
-          content={
-            isSymbologyEnabled ? "Sembunyikan Simbologi" : "Tampilkan Simbologi"
-          }
-        >
-          <IconButton
-            size={"xs"}
-            variant={"ghost"}
-            aria-label={"Simbologi"}
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleSymbology?.(layer.id);
-            }}
+    <VStack gap={isSymbologyOpen ? "2xs" : 0} align={"stretch"} w={"full"}>
+      <HStack
+        align={"center"}
+        justify={"space-between"}
+        gap={"md"}
+        p={"2xs"}
+        colorPalette={colorPalette}
+        rounded={theme.radii.component}
+        cursor={"pointer"}
+        onClick={handleToggle}
+        _hover={{ bg: "bg.subtle" }}
+        w={"full"}
+      >
+        <HStack gap={"md"} align={"center"} flex={1} minW={0}>
+          <Center
+            p={"xs"}
+            bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
+            rounded={theme.radii.component}
+            flexShrink={0}
           >
             <AppIcon
-              icon={FlagIcon}
-              fill={isSymbologyEnabled ? "blue.fg" : ""}
+              icon={LayerIcon}
+              color={isEnabled ? `${colorPalette}.fg` : "fg.subtle"}
             />
-          </IconButton>
-        </Tooltip>
+          </Center>
 
-        <Tooltip content={"Zoom ke Layer"}>
-          <IconButton
-            size={"xs"}
-            variant={"ghost"}
-            aria-label={"Zoom ke Layer"}
-            onClick={handleFlyTo}
+          <VStack flex={1} align={"start"} minW={0}>
+            <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
+              {displayName.replace(/_/g, " ")}
+            </ClampedP>
+
+            <ClampedP fontSize={"sm"} color={"fg.subtle"}>
+              {basisLabel}
+            </ClampedP>
+          </VStack>
+        </HStack>
+
+        <HStack gap={"xs"} align={"center"} flexShrink={0}>
+          <Switch
+            size={"sm"}
+            checked={isEnabled}
+            pointerEvents={"none"}
+            mr={"xs"}
+          />
+
+          <Tooltip
+            content={
+              isSymbologyOpen ? "Sembunyikan Simbologi" : "Tampilkan Simbologi"
+            }
           >
-            <AppIcon icon={FocusIcon} />
-          </IconButton>
-        </Tooltip>
-
-        <Popover.Root
-          positioning={{
-            placement: "left",
-            offset: { mainAxis: 8 },
-          }}
-          portalled={true}
-        >
-          <Popover.Trigger>
-            <Tooltip content={"Atur Opasitas"}>
-              <IconButton
-                size={"xs"}
-                variant={"ghost"}
-                aria-label={"Atur Opasitas"}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <AppIcon icon={BlendIcon} />
-              </IconButton>
-            </Tooltip>
-          </Popover.Trigger>
-
-          <Popover.Content
-            w={"220px"}
-            p={3}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <VStack gap={"xs"} align={"stretch"} w={"full"}>
-              <HStack justify={"space-between"} w={"full"}>
-                <P fontSize={"sm"} fontWeight={"medium"}>
-                  {"Opasitas Layer"}
-                </P>
-
-                <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
-                  {`${Math.round(opacity * 100)}%`}
-                </P>
-              </HStack>
-
-              <Slider
-                value={[Math.round(opacity * 100)]}
-                min={0}
-                max={100}
-                step={1}
-                showValue={false}
-                onValueChange={(details) =>
-                  onOpacityChange(layer.id, details.value[0] / 100)
-                }
+            <IconButton
+              size={"xs"}
+              variant={"ghost"}
+              aria-label={"Simbologi"}
+              onClick={handleToggleSymbology}
+            >
+              <AppIcon
+                icon={FlagIcon}
+                fill={isSymbologyOpen ? "blue.fg" : ""}
+                color={isSymbologyOpen ? "blue.fg" : undefined}
               />
-            </VStack>
-          </Popover.Content>
-        </Popover.Root>
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip content={"Zoom ke Layer"}>
+            <IconButton
+              size={"xs"}
+              variant={"ghost"}
+              aria-label={"Zoom ke Layer"}
+              onClick={handleFlyTo}
+            >
+              <AppIcon icon={FocusIcon} />
+            </IconButton>
+          </Tooltip>
+
+          <Popover.Root
+            positioning={{
+              placement: "left",
+              offset: { mainAxis: 8 },
+            }}
+            portalled={true}
+          >
+            <Popover.Trigger>
+              <Tooltip content={"Atur Opasitas"}>
+                <IconButton
+                  size={"xs"}
+                  variant={"ghost"}
+                  aria-label={"Atur Opasitas"}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <AppIcon icon={BlendIcon} />
+                </IconButton>
+              </Tooltip>
+            </Popover.Trigger>
+
+            <Popover.Content
+              w={"220px"}
+              p={3}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <VStack gap={"xs"} align={"stretch"} w={"full"}>
+                <HStack justify={"space-between"} w={"full"}>
+                  <P fontSize={"sm"} fontWeight={"medium"}>
+                    {"Opasitas Layer"}
+                  </P>
+
+                  <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
+                    {`${Math.round(opacity * 100)}%`}
+                  </P>
+                </HStack>
+
+                <Slider
+                  value={[Math.round(opacity * 100)]}
+                  min={0}
+                  max={100}
+                  step={1}
+                  showValue={false}
+                  onValueChange={(details) =>
+                    onOpacityChange(layer.id, details.value[0] / 100)
+                  }
+                />
+              </VStack>
+            </Popover.Content>
+          </Popover.Root>
+        </HStack>
       </HStack>
-    </HStack>
+
+      <Collapsible.Root opened={isSymbologyOpen}>
+        <Collapsible.Content>
+          <VStack
+            gap={"xs"}
+            p={3}
+            bg={"bg.subtle"}
+            rounded={theme.radii.component}
+            onClick={(e) => e.stopPropagation()}
+            align={"stretch"}
+            w={"full"}
+          >
+            <HStack justify={"space-between"} align={"center"} w={"full"}>
+              <P fontSize={"xs"} fontWeight={"semibold"} color={"fg.muted"}>
+                {"Simbologi & Legenda"}
+              </P>
+            </HStack>
+
+            <LayerSymbologyContent layer={layer} />
+          </VStack>
+        </Collapsible.Content>
+      </Collapsible.Root>
+    </VStack>
   );
 });

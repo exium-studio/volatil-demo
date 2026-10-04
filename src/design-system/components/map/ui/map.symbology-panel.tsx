@@ -238,7 +238,7 @@ export const MapSymbologyPanel = memo((props: MapSymbologyPanelProps) => {
   );
 });
 
-const LayerSymbologyContent = memo((props: LayerSymbologyContentProps) => {
+export const LayerSymbologyContent = memo((props: LayerSymbologyContentProps) => {
   // Props
   const { layer } = props;
 

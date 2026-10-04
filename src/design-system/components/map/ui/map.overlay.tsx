@@ -10,7 +10,6 @@ import { MapMasterIgtLayerSelect } from "@/design-system/components/map/ui/map.c
 import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinates";
 import { MapFeatureInfoPanel } from "@/design-system/components/map/ui/map.feature-info-panel";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
-import { MapSymbologyPanel } from "@/design-system/components/map/ui/map.symbology-panel";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
 export const MapOverlay = (props: MapOverlayProps) => {
@@ -54,17 +53,6 @@ export const MapOverlay = (props: MapOverlayProps) => {
         zIndex={10}
       >
         <MapFeatureInfoPanel />
-      </Box>
-
-      {/* Floating: Symbology Panel (Bottom-Left above controls) */}
-      <Box
-        position={"absolute"}
-        bottom={"104px"}
-        left={4}
-        pointerEvents={"none"}
-        zIndex={10}
-      >
-        <MapSymbologyPanel />
       </Box>
 
       {/* Center Coordinates Indicator */}
