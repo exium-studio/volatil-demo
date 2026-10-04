@@ -17,6 +17,7 @@ import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import type GeoJSON from "geojson";
 
 export const useIgtCatalog = (params?: MitraDataRequestGetCatalogParams) => {
@@ -76,7 +77,9 @@ export const useIgtByUploadedAoi = () => {
  * Add ALL WFS features matching the given filter/AOI to cart.
  */
 export const useAddToCartAll = () => {
+  // Hooks
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (params: AddToCartLayerParam) => {
@@ -134,6 +137,7 @@ export const useAddToCartAll = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
+      void navigate({ to: "/mitra/cart" });
     },
     onError: (error, _params, context) => {
       const toastId = context?.toastId;
@@ -150,7 +154,9 @@ export const useAddToCartAll = () => {
  * Add multiple selected IGT layers to cart in a single request and 1 toast.
  */
 export const useAddToCartMultipleLayers = () => {
+  // Hooks
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (params: {
@@ -219,6 +225,7 @@ export const useAddToCartMultipleLayers = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
+      void navigate({ to: "/mitra/cart" });
     },
     onError: (error, _params, context) => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
