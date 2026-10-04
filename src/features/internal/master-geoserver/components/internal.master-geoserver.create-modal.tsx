@@ -33,7 +33,7 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 export const InternalMasterGeoserverCreateTrigger = (
   props: InternalMasterGeoserverCreateTriggerProps,
@@ -98,10 +98,16 @@ const InternalMasterGeoserverCreateModalContent = (
     },
   });
 
+  // Watch required fields for testing connection
+  const baseUrl = useWatch({ control, name: "baseUrl" });
+  const username = useWatch({ control, name: "username" });
+  const isTestDisabled =
+    !baseUrl?.trim() || !username?.trim() || testMutation.isPending;
+
   // Handlers
   const handleTestConnection = () => {
     const values = getValues();
-    if (!values.baseUrl?.trim()) return;
+    if (!values.baseUrl?.trim() || !values.username?.trim()) return;
 
     setTestResult(null);
     setTestError(null);
@@ -266,6 +272,7 @@ const InternalMasterGeoserverCreateModalContent = (
               variant={"outline"}
               size={"sm"}
               onClick={handleTestConnection}
+              disabled={isTestDisabled}
               loading={testMutation.isPending}
             >
               <AppIcon icon={ActivityIcon} />
