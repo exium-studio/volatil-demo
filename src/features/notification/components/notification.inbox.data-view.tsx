@@ -32,7 +32,9 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { useNavigate } from "@tanstack/react-router";
 import {
+  ArrowRightIcon,
   BellIcon,
   CheckCheckIcon,
   ClockIcon,
@@ -196,6 +198,9 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
   // Props
   const { item, onMarkAsRead, onDelete } = props;
 
+  // Navigation
+  const navigate = useNavigate();
+
   // Stores & Hooks
   const { theme } = useThemeStore();
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
@@ -203,6 +208,28 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
   // Derived Values
   const IconComponent = CATEGORY_ICON_MAP[item.category] ?? BellIcon;
   const colorPalette = CATEGORY_COLOR_MAP[item.category] ?? "blue";
+  const hasAction = Boolean(item.actionUrl);
+
+  // Handlers
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (!item.actionUrl) return;
+    const target = e.target as HTMLElement;
+    if (target.closest("button") || target.closest("a")) return;
+
+    if (!item.isRead) {
+      onMarkAsRead(item.id);
+    }
+    void navigate({ to: item.actionUrl });
+  };
+
+  const handleActionClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!item.actionUrl) return;
+    if (!item.isRead) {
+      onMarkAsRead(item.id);
+    }
+    void navigate({ to: item.actionUrl });
+  };
 
   return (
     <HStack
@@ -212,10 +239,22 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       gap={["sm", null, "md"]}
       bg={item.isRead ? "bg.body" : "bg.subtle"}
       borderWidth={"1px"}
-      borderColor={"border.subtle"}
+      borderColor={item.isRead ? "border.subtle" : `${colorPalette}.subtle`}
       shadow={"xs"}
       rounded={theme.radii.container}
       w={"full"}
+      cursor={hasAction ? "pointer" : "default"}
+      transition={"all 0.15s ease"}
+      _hover={
+        hasAction
+          ? {
+              borderColor: "border.emphasized",
+              shadow: "sm",
+              bg: item.isRead ? "bg.muted" : "bg.subtle",
+            }
+          : undefined
+      }
+      onClick={handleCardClick}
     >
       <Circle
         aspectRatio={1}
@@ -293,6 +332,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
                 variant={"subtle"}
                 aria-label={"Hapus pesan"}
                 rounded={"full"}
+                onClick={(e) => e.stopPropagation()}
               >
                 <AppIcon icon={XIcon} size={"xs"} />
               </IconButton>
@@ -313,19 +353,42 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
           </P>
         </Box>
 
-        {/* Action Button: Mark As Read */}
-        {!item.isRead && (
-          <HStack justify={"end"} pt={"2xs"}>
+        {/* Action Footer: Navigation Button / Mark As Read */}
+        <HStack
+          justify={"space-between"}
+          align={"center"}
+          wrap={"wrap"}
+          gap={"xs"}
+          pt={"2xs"}
+        >
+          {hasAction ? (
+            <Button
+              size={"xs"}
+              variant={"subtle"}
+              colorPalette={colorPalette}
+              onClick={handleActionClick}
+            >
+              <AppIcon icon={ArrowRightIcon} size={"xs"} />
+              {item.actionLabel || "Buka Data Saya"}
+            </Button>
+          ) : (
+            <Box />
+          )}
+
+          {!item.isRead && (
             <Button
               size={"xs"}
               variant={"ghost"}
-              onClick={() => onMarkAsRead(item.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onMarkAsRead(item.id);
+              }}
             >
               <AppIcon icon={CheckCheckIcon} size={"xs"} />
               {"Tandai dibaca"}
             </Button>
-          </HStack>
-        )}
+          )}
+        </HStack>
       </VStack>
     </HStack>
   );
