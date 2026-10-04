@@ -28,6 +28,7 @@ import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
 const EMPTY_CART_SUMMARY: CartSummaryResponse = {
@@ -235,6 +236,7 @@ export const useActiveCartOrderQuery = () => {
 
 export const useCreateCartOrder = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const toastHandlers = mutationToastHandlers("create-cart-order", {
     group: "Keranjang",
     loadingMessage: {
@@ -261,6 +263,10 @@ export const useCreateCartOrder = () => {
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "orders"],
       });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.cart.all,
+      });
+      void navigate({ to: "/mitra/cart" });
     },
     onError: toastHandlers.onError,
   });
