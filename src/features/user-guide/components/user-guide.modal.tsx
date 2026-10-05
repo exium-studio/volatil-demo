@@ -30,7 +30,7 @@ import { StatusFilterSelect } from "@/features/shared/components/status-filter.s
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { DownloadIcon, ExternalLinkIcon, FileTextIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export const UserGuideModal = (props: UserGuideModalProps) => {
   // Props
@@ -92,14 +92,7 @@ const UserGuideModalContent = (props: {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Queries & Mutations
-  const categoryOptions = useMemo(() => {
-    if (portalType === "mitra") {
-      return USER_GUIDE_CATEGORY_OPTIONS.filter(
-        (opt) => opt.value !== "internal",
-      );
-    }
-    return USER_GUIDE_CATEGORY_OPTIONS;
-  }, [portalType]);
+  const categoryOptions = USER_GUIDE_CATEGORY_OPTIONS;
 
   const { guides, isLoading, isError, error, refetch } = useUserGuidesQuery({
     page: 1,
@@ -217,7 +210,7 @@ const UserGuideModalContent = (props: {
               {guides.map((guide, index) => {
                 const catMeta =
                   USER_GUIDE_CATEGORY_MAP[guide.category] ??
-                  USER_GUIDE_CATEGORY_MAP.general;
+                  USER_GUIDE_CATEGORY_MAP.manual_book;
 
                 return (
                   <VStack

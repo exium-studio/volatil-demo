@@ -2,9 +2,13 @@
 
 import type { ReactNode } from "react";
 
-export type UserGuideCategory = "mitra" | "internal" | "general" | "api";
+export type UserGuideCategory =
+  | "manual_book"
+  | "sop"
+  | "technical_spec"
+  | "regulation";
 
-export type UserGuideTargetRole = "mitra" | "internal" | "all";
+export type UserGuideTargetRole = "all" | "mitra" | "internal";
 
 export type UserGuideItem = {
   id: string;
@@ -20,7 +24,6 @@ export type UserGuideItem = {
   fileType: string;
   isPublished: boolean;
   downloadCount: number;
-  orderIndex: number;
   author: string;
   createdAt: string;
   updatedAt: string;
@@ -42,17 +45,25 @@ export type UserGuideFormValues = {
   category: UserGuideCategory;
   targetRole: UserGuideTargetRole;
   version: string;
-  fileName: string;
-  fileUrl: string;
-  fileSize: number;
-  fileType: string;
+  files: File[];
   isPublished: boolean;
-  orderIndex: number;
 };
 
-export type CreateUserGuidePayload = Omit<UserGuideFormValues, "id">;
+export type CreateUserGuidePayload = {
+  title: string;
+  description: string;
+  category: UserGuideCategory;
+  targetRole: UserGuideTargetRole;
+  version: string;
+  isPublished: boolean;
+  file?: File | null;
+  fileName?: string;
+  fileUrl?: string;
+  fileSize?: number;
+  fileType?: string;
+};
 
-export type UpdateUserGuidePayload = Partial<UserGuideFormValues>;
+export type UpdateUserGuidePayload = Partial<CreateUserGuidePayload>;
 
 export type UserGuideListResponse = {
   items: UserGuideItem[];

@@ -4,12 +4,13 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
+import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { Input } from "@/design-system/components/input/ui/input";
-import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import { RadioCardInput } from "@/design-system/components/input/ui/radio-card-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Textarea } from "@/design-system/components/input/ui/textarea";
+import { VersionInput } from "@/design-system/components/input/ui/version-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
@@ -25,6 +26,8 @@ import {
 } from "@/features/user-guide/hooks/use-user-guide.mutations";
 import { userGuideFormSchema } from "@/features/user-guide/schemas/user-guide.schema";
 import type {
+  CreateUserGuidePayload,
+  UpdateUserGuidePayload,
   UserGuideCategory,
   UserGuideFormModalProps,
   UserGuideFormValues,
@@ -32,8 +35,8 @@ import type {
   UserGuideTargetRole,
 } from "@/features/user-guide/types/user-guide.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 export const UserGuideFormModal = (props: UserGuideFormModalProps) => {
   // Props
@@ -105,17 +108,15 @@ const UserGuideFormModalContent = (props: {
       id: initialData?.id ?? "",
       title: initialData?.title ?? "",
       description: initialData?.description ?? "",
-      category: initialData?.category ?? "mitra",
+      category: initialData?.category ?? "manual_book",
       targetRole: initialData?.targetRole ?? "all",
       version: initialData?.version ?? "v1.0.0",
-      fileName: initialData?.fileName ?? "",
-      fileUrl: initialData?.fileUrl ?? "",
-      fileSize: initialData?.fileSize ?? 1048576,
-      fileType: initialData?.fileType ?? "pdf",
+      files: [],
       isPublished: initialData?.isPublished ?? true,
-      orderIndex: initialData?.orderIndex ?? 1,
     },
   });
+
+  const watchedFiles = useWatch({ control, name: "files" });
 
   useEffect(() => {
     if (initialData) {
@@ -126,23 +127,51 @@ const UserGuideFormModalContent = (props: {
         category: initialData.category,
         targetRole: initialData.targetRole,
         version: initialData.version,
-        fileName: initialData.fileName,
-        fileUrl: initialData.fileUrl,
-        fileSize: initialData.fileSize,
-        fileType: initialData.fileType,
+        files: [],
         isPublished: initialData.isPublished,
-        orderIndex: initialData.orderIndex,
       });
     }
   }, [initialData, reset]);
 
+  // Derived Values
+  const existingFiles = useMemo(() => {
+    if (isEdit && initialData?.fileName) {
+      return [
+        {
+          id: initialData.id,
+          name: initialData.fileName,
+          size: initialData.fileSize,
+          url: initialData.fileUrl,
+          mimeType:
+            initialData.fileType === "pdf" ? "application/pdf" : undefined,
+        },
+      ];
+    }
+    return [];
+  }, [isEdit, initialData]);
+
+  const hasFile = isEdit ? true : watchedFiles.length > 0;
+  const isSubmitDisabled = !isValid || !hasFile;
+
   // Handlers
   const onSubmit = (data: UserGuideFormValues) => {
+    const uploadedFile = data.files[0] ?? null;
+
     if (isEdit && initialData) {
+      const payload: UpdateUserGuidePayload = {
+        title: data.title,
+        description: data.description,
+        category: data.category,
+        targetRole: data.targetRole,
+        version: data.version,
+        isPublished: data.isPublished,
+        file: uploadedFile,
+      };
+
       updateMutation.mutate(
         {
           id: initialData.id,
-          payload: data,
+          payload,
         },
         {
           onSuccess: () => {
@@ -151,7 +180,17 @@ const UserGuideFormModalContent = (props: {
         },
       );
     } else {
-      createMutation.mutate(data, {
+      const payload: CreateUserGuidePayload = {
+        title: data.title,
+        description: data.description,
+        category: data.category,
+        targetRole: data.targetRole,
+        version: data.version,
+        isPublished: data.isPublished,
+        file: uploadedFile,
+      };
+
+      createMutation.mutate(payload, {
         onSuccess: () => {
           close();
         },
@@ -173,7 +212,7 @@ const UserGuideFormModalContent = (props: {
 
           <P color={"fg.subtle"} textAlign={"center"}>
             {
-              "Kelola buku manual & petunjuk penggunaan yang dapat diakses pengguna"
+              "Kelola buku manual, SOP, dan petunjuk teknis yang dapat diakses pengguna"
             }
           </P>
         </VStack>
@@ -225,56 +264,35 @@ const UserGuideFormModalContent = (props: {
                 )}
               />
 
-              {/* Versi & Urutan Index */}
-              <HStack gap={"md"} align={"start"}>
-                <Controller
-                  control={control}
-                  name={"version"}
-                  render={({ field, fieldState }) => (
-                    <Field
-                      label={"Versi Dokumen"}
-                      errorText={fieldState.error?.message}
-                      invalid={Boolean(fieldState.error)}
-                      flex={1}
-                    >
-                      <Input
-                        value={field.value}
-                        onChange={field.onChange}
-                        placeholder={"v1.0.0"}
-                      />
-                    </Field>
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name={"orderIndex"}
-                  render={({ field }) => (
-                    <Field label={"Urutan Tampilan"} flex={1}>
-                      <NumberInput
-                        min={1}
-                        max={999}
-                        value={String(field.value)}
-                        onValueChange={({ value }) =>
-                          field.onChange(Number(value) || 1)
-                        }
-                      />
-                    </Field>
-                  )}
-                />
-              </HStack>
+              {/* Versi Dokumen */}
+              <Controller
+                control={control}
+                name={"version"}
+                render={({ field, fieldState }) => (
+                  <Field
+                    label={"Versi Dokumen"}
+                    errorText={fieldState.error?.message}
+                    invalid={Boolean(fieldState.error)}
+                  >
+                    <VersionInput
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </Field>
+                )}
+              />
             </VStack>
           </Fieldset>
 
-          {/* Grup 2: Kategori & Target Audiens */}
-          <Fieldset legend={"Kategori & Audiens"} containeredContent={true}>
+          {/* Grup 2: Kategori & Hak Akses */}
+          <Fieldset legend={"Klasifikasi & Akses"} containeredContent={true}>
             <VStack align={"stretch"} gap={"md"}>
               {/* Kategori Dokumen via RadioCardInput */}
               <Controller
                 control={control}
                 name={"category"}
                 render={({ field }) => (
-                  <Field label={"Kategori Panduan"}>
+                  <Field label={"Kategori Dokumen"}>
                     <RadioCardInput.Root
                       value={field.value}
                       onValueChange={({ value }) => {
@@ -325,7 +343,7 @@ const UserGuideFormModalContent = (props: {
                 control={control}
                 name={"targetRole"}
                 render={({ field }) => (
-                  <Field label={"Target Audiens Pengguna"}>
+                  <Field label={"Target Audiens / Hak Akses"}>
                     <FocusSelectInput
                       modalKey={`${modalKey}.target-role-select`}
                       options={USER_GUIDE_TARGET_ROLE_OPTIONS}
@@ -343,63 +361,22 @@ const UserGuideFormModalContent = (props: {
             </VStack>
           </Fieldset>
 
-          {/* Grup 3: File Dokumen & Publikasi */}
-          <Fieldset legend={"Berkas File & Status"} containeredContent={true}>
+          {/* Grup 3: Upload Berkas Dokumen & Publikasi */}
+          <Fieldset legend={"Berkas Dokumen"} containeredContent={true}>
             <VStack align={"stretch"} gap={"md"}>
-              {/* Nama Berkas File */}
+              {/* Upload Berkas FileInput */}
               <Controller
                 control={control}
-                name={"fileName"}
-                render={({ field, fieldState }) => (
-                  <Field
-                    label={"Nama Berkas File"}
-                    errorText={fieldState.error?.message}
-                    invalid={Boolean(fieldState.error)}
-                  >
-                    <Input
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder={"Manual_Book_IGT_v1.0.pdf"}
-                    />
-                  </Field>
-                )}
-              />
-
-              {/* File URL / Path */}
-              <Controller
-                control={control}
-                name={"fileUrl"}
-                render={({ field, fieldState }) => (
-                  <Field
-                    label={"URL / Lokasi Berkas"}
-                    errorText={fieldState.error?.message}
-                    invalid={Boolean(fieldState.error)}
-                  >
-                    <Input
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder={"/docs/Manual_Book_IGT_v1.0.pdf"}
-                    />
-                  </Field>
-                )}
-              />
-
-              {/* Ukuran File (Bytes) */}
-              <Controller
-                control={control}
-                name={"fileSize"}
+                name={"files"}
                 render={({ field }) => (
-                  <Field
-                    label={"Ukuran Berkas (Bytes)"}
-                    helperText={"1 MB = 1048576 Bytes, 3 MB = 3145728 Bytes"}
-                  >
-                    <NumberInput
-                      min={1024}
-                      max={104857600}
-                      value={String(field.value)}
-                      onValueChange={({ value }) =>
-                        field.onChange(Number(value) || 1048576)
-                      }
+                  <Field label={"Berkas Panduan (PDF / DOCX)"}>
+                    <FileInput
+                      accept={[".pdf", ".docx", ".doc"]}
+                      maxFiles={1}
+                      maxFileSize={25 * 1024 * 1024}
+                      value={field.value}
+                      existingFiles={existingFiles}
+                      onFileAccept={(details) => field.onChange(details.files)}
                     />
                   </Field>
                 )}
@@ -427,7 +404,7 @@ const UserGuideFormModalContent = (props: {
 
                         <P color={"fg.subtle"}>
                           {
-                            "Dokumen yang dipublikasikan akan langsung tampil di halaman login"
+                            "Dokumen yang dipublikasikan akan langsung tampil di modal panduan"
                           }
                         </P>
                       </VStack>
@@ -452,7 +429,7 @@ const UserGuideFormModalContent = (props: {
           <Button
             primary={true}
             loading={isPending}
-            disabled={!isValid || isPending}
+            disabled={isSubmitDisabled || isPending}
             onClick={handleSubmit(onSubmit)}
           >
             {isEdit ? "Simpan Perubahan" : "Tambah Dokumen"}

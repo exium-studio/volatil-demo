@@ -12,19 +12,14 @@ export const userGuideFormSchema = z.object({
     .string()
     .min(10, "Deskripsi dokumen minimal 10 karakter")
     .max(500, "Deskripsi dokumen maksimal 500 karakter"),
-  category: z.enum(["mitra", "internal", "general", "api"]),
-  targetRole: z.enum(["mitra", "internal", "all"]),
+  category: z.enum(["manual_book", "sop", "technical_spec", "regulation"]),
+  targetRole: z.enum(["all", "mitra", "internal"]),
   version: z
     .string()
     .min(1, "Versi dokumen wajib diisi")
     .max(20, "Versi maksimal 20 karakter"),
-  fileName: z
-    .string()
-    .min(3, "Nama file wajib diisi")
-    .max(100, "Nama file maksimal 100 karakter"),
-  fileUrl: z.string().min(1, "URL atau path file wajib diisi"),
-  fileSize: z.number().min(1, "Ukuran file harus lebih dari 0"),
-  fileType: z.string(),
+  files: z.array(z.custom<File>()),
   isPublished: z.boolean(),
-  orderIndex: z.number().min(1, "Urutan minimal 1"),
 });
+
+

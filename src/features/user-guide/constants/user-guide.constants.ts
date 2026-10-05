@@ -10,32 +10,31 @@ import {
   Code2Icon,
   FileTextIcon,
   ShieldCheckIcon,
-  UsersIcon,
 } from "lucide-react";
 
 export const USER_GUIDE_CATEGORY_MAP: Record<
   UserGuideCategory,
   { label: string; colorPalette: string; icon: typeof BookOpenIcon }
 > = {
-  mitra: {
-    label: "Portal Mitra",
+  manual_book: {
+    label: "Buku Panduan",
     colorPalette: "blue",
-    icon: UsersIcon,
+    icon: BookOpenIcon,
   },
-  internal: {
-    label: "Portal Internal",
+  sop: {
+    label: "SOP & Prosedur",
     colorPalette: "purple",
     icon: ShieldCheckIcon,
   },
-  general: {
-    label: "Panduan Umum",
-    colorPalette: "teal",
-    icon: FileTextIcon,
-  },
-  api: {
-    label: "Integrasi API / GIS",
+  technical_spec: {
+    label: "Spesifikasi Teknis",
     colorPalette: "amber",
     icon: Code2Icon,
+  },
+  regulation: {
+    label: "Regulasi & Kebijakan",
+    colorPalette: "teal",
+    icon: FileTextIcon,
   },
 };
 
@@ -43,6 +42,10 @@ export const USER_GUIDE_TARGET_ROLE_MAP: Record<
   UserGuideTargetRole,
   { label: string; colorPalette: string }
 > = {
+  all: {
+    label: "Semua Pengguna",
+    colorPalette: "green",
+  },
   mitra: {
     label: "Mitra Saja",
     colorPalette: "blue",
@@ -51,18 +54,14 @@ export const USER_GUIDE_TARGET_ROLE_MAP: Record<
     label: "Internal Saja",
     colorPalette: "purple",
   },
-  all: {
-    label: "Semua Pengguna",
-    colorPalette: "green",
-  },
 };
 
 export const USER_GUIDE_CATEGORY_OPTIONS: FocusSelectOption[] = [
   { value: "all", label: "Semua Kategori" },
-  { value: "mitra", label: "Portal Mitra" },
-  { value: "internal", label: "Portal Internal" },
-  { value: "general", label: "Panduan Umum" },
-  { value: "api", label: "Integrasi API / GIS" },
+  { value: "manual_book", label: "Buku Panduan" },
+  { value: "sop", label: "SOP & Prosedur" },
+  { value: "technical_spec", label: "Spesifikasi Teknis" },
+  { value: "regulation", label: "Regulasi & Kebijakan" },
 ];
 
 export const USER_GUIDE_TARGET_ROLE_OPTIONS: FocusSelectOption[] = [

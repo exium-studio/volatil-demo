@@ -26,6 +26,7 @@ Endpoint dikelompokkan ke dalam 4 kategori hak akses utama:
   - [2.2 Pusat Bantuan (Help Center)](#22-pusat-bantuan-help-center)
   - [2.3 Notifikasi & Inbox](#23-notifikasi--inbox)
   - [2.4 GeoServer Proxy](#24-geoserver-proxy)
+  - [2.5 Dokumen Panduan Pengguna (User Guides)](#25-dokumen-panduan-pengguna-user-guides)
 - [3. MITRA ONLY ENDPOINTS](#3-mitra-only-endpoints)
   - [3.1 Dashboard & Statistik Mitra](#31-dashboard--statistik-mitra)
   - [3.2 Data Request & Eksplorasi IGT Spasial](#32-data-request--eksplorasi-igt-spasial)
@@ -568,9 +569,190 @@ Seluruh akses tile dan fitur spasial dialihkan melalui endpoint proxy Backend de
 - **Endpoint**: `GET /api/proxy/wfs`
 - **Akses**: `Authenticated (Mitra & Internal)` *(via cookie)*
 - **Query Params**:
-  - `layerId` *(string, required)*: ID layer target.
-  - Standar OGC WFS (`SERVICE=WFS`, `REQUEST=GetFeature`, `CQL_FILTER`, `SRSNAME=EPSG:4326`, `OUTPUTFORMAT=application/json`, dll.)
+- `layerId` *(string, required)*: ID layer target.
+- Standar OGC WFS (`SERVICE=WFS`, `REQUEST=GetFeature`, `CQL_FILTER`, `SRSNAME=EPSG:4326`, `OUTPUTFORMAT=application/json`, dll.)
 - **Response**: `GeoJSON.FeatureCollection` / JSON Schema.
+
+---
+
+## 2.5 Dokumen Panduan Pengguna (User Guides)
+
+### Get List Dokumen Panduan
+- **Endpoint**: `GET /api/user-guides`
+- **Akses**: `Authenticated (Mitra & Internal)`
+- **Query Params**:
+  - `page?: number`
+  - `limit?: number`
+  - `search?: string`
+  - `category?: "manual_book" | "sop" | "technical_spec" | "regulation"`
+  - `targetRole?: "all" | "mitra" | "internal"`
+  - `isPublished?: boolean`
+- **Response (200 OK)**:
+```typescript
+type UserGuideListApiResponse = {
+  success: boolean;
+  message?: string;
+  data: Array<{
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    category: "manual_book" | "sop" | "technical_spec" | "regulation";
+    targetRole: "all" | "mitra" | "internal";
+    version: string;
+    fileName: string;
+    fileUrl: string;
+    fileSize: number;
+    fileType: string;
+    isPublished: boolean;
+    downloadCount: number;
+    author: string;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+};
+```
+
+### Get Detail Dokumen Panduan
+- **Endpoint**: `GET /api/user-guides/:id`
+- **Akses**: `Authenticated (Mitra & Internal)`
+- **Response (200 OK)**:
+```typescript
+type UserGuideDetailApiResponse = {
+  success: boolean;
+  message?: string;
+  data: {
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    category: "manual_book" | "sop" | "technical_spec" | "regulation";
+    targetRole: "all" | "mitra" | "internal";
+    version: string;
+    fileName: string;
+    fileUrl: string;
+    fileSize: number;
+    fileType: string;
+    isPublished: boolean;
+    downloadCount: number;
+    author: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
+```
+
+### Create Dokumen Panduan (Internal Only)
+- **Endpoint**: `POST /api/user-guides`
+- **Akses**: `Internal Only`
+- **Request Body (Multipart Form-Data / JSON)**:
+```typescript
+type CreateUserGuidePayload = {
+  title: string;
+  description: string;
+  category: "manual_book" | "sop" | "technical_spec" | "regulation";
+  targetRole: "all" | "mitra" | "internal";
+  version: string;
+  isPublished: boolean;
+  file?: File;
+};
+```
+- **Response (200 OK)**:
+```typescript
+type CreateUserGuideApiResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    category: "manual_book" | "sop" | "technical_spec" | "regulation";
+    targetRole: "all" | "mitra" | "internal";
+    version: string;
+    fileName: string;
+    fileUrl: string;
+    fileSize: number;
+    fileType: string;
+    isPublished: boolean;
+    downloadCount: number;
+    author: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
+```
+
+### Update Dokumen Panduan (Internal Only)
+- **Endpoint**: `PUT /api/user-guides/:id`
+- **Akses**: `Internal Only`
+- **Request Body**:
+```typescript
+type UpdateUserGuidePayload = {
+  title?: string;
+  description?: string;
+  category?: "manual_book" | "sop" | "technical_spec" | "regulation";
+  targetRole?: "all" | "mitra" | "internal";
+  version?: string;
+  isPublished?: boolean;
+  file?: File;
+};
+```
+- **Response (200 OK)**:
+```typescript
+type UpdateUserGuideApiResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    title: string;
+    slug: string;
+    description: string;
+    category: "manual_book" | "sop" | "technical_spec" | "regulation";
+    targetRole: "all" | "mitra" | "internal";
+    version: string;
+    fileName: string;
+    fileUrl: string;
+    fileSize: number;
+    fileType: string;
+    isPublished: boolean;
+    downloadCount: number;
+    author: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
+```
+
+### Delete Dokumen Panduan (Internal Only)
+- **Endpoint**: `DELETE /api/user-guides/:id`
+- **Akses**: `Internal Only`
+- **Response (200 OK)**:
+```typescript
+type DeleteUserGuideApiResponse = {
+  success: boolean;
+  message: string;
+};
+```
+
+### Track Download Dokumen Panduan
+- **Endpoint**: `POST /api/user-guides/:id/download`
+- **Akses**: `Authenticated (Mitra & Internal)`
+- **Response (200 OK)**:
+```typescript
+type TrackDownloadApiResponse = {
+  success: boolean;
+  message: string;
+};
+```
 
 ---
 

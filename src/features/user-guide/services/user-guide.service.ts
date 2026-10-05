@@ -94,24 +94,19 @@ export const userGuideService = {
     }
 
     if (targetRole && targetRole !== "all") {
-      if (targetRole === "mitra") {
-        filtered = filtered.filter(
-          (item) =>
-            (item.targetRole === "mitra" || item.targetRole === "all") &&
-            item.category !== "internal",
-        );
-      } else {
-        filtered = filtered.filter(
-          (item) => item.targetRole === targetRole || item.targetRole === "all",
-        );
-      }
+      filtered = filtered.filter(
+        (item) => item.targetRole === targetRole || item.targetRole === "all",
+      );
     }
 
     if (typeof isPublished === "boolean") {
       filtered = filtered.filter((item) => item.isPublished === isPublished);
     }
 
-    filtered.sort((a, b) => a.orderIndex - b.orderIndex);
+    filtered.sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    );
 
     const total = filtered.length;
     const totalPages = Math.max(1, Math.ceil(total / limit));
@@ -160,10 +155,30 @@ export const userGuideService = {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
 
+    const file = payload.file;
+    const fileName = file?.name ?? payload.fileName ?? "Dokumen_Panduan.pdf";
+    const fileSize = file?.size ?? payload.fileSize ?? 1048576;
+    const fileType =
+      fileName.split(".").pop()?.toLowerCase() ??
+      payload.fileType ??
+      "pdf";
+    const fileUrl = file
+      ? URL.createObjectURL(file)
+      : (payload.fileUrl ?? `/docs/${fileName}`);
+
     const newGuide: UserGuideItem = {
-      ...payload,
       id: newId,
+      title: payload.title,
       slug,
+      description: payload.description,
+      category: payload.category,
+      targetRole: payload.targetRole,
+      version: payload.version,
+      fileName,
+      fileUrl,
+      fileSize,
+      fileType,
+      isPublished: payload.isPublished ?? true,
       downloadCount: 0,
       author: "Administrator Internal",
       createdAt: new Date().toISOString(),
@@ -193,9 +208,23 @@ export const userGuideService = {
     }
 
     const existing = localList[index];
+    const file = payload.file;
+    const fileName = file?.name ?? payload.fileName ?? existing.fileName;
+    const fileSize = file?.size ?? payload.fileSize ?? existing.fileSize;
+    const fileType = file
+      ? (file.name.split(".").pop()?.toLowerCase() ?? "pdf")
+      : (payload.fileType ?? existing.fileType);
+    const fileUrl = file
+      ? URL.createObjectURL(file)
+      : (payload.fileUrl ?? existing.fileUrl);
+
     const updated: UserGuideItem = {
       ...existing,
       ...payload,
+      fileName,
+      fileSize,
+      fileType,
+      fileUrl,
       updatedAt: new Date().toISOString(),
     };
 
@@ -238,3 +267,4 @@ export const userGuideService = {
     }
   },
 };
+

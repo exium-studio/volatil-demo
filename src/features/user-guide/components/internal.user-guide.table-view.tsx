@@ -121,7 +121,7 @@ export const InternalUserGuideTableView = (
       items: rawItems.map((item) => {
         const catMeta =
           USER_GUIDE_CATEGORY_MAP[item.category] ??
-          USER_GUIDE_CATEGORY_MAP.general;
+          USER_GUIDE_CATEGORY_MAP.manual_book;
         const roleMeta =
           USER_GUIDE_TARGET_ROLE_MAP[item.targetRole] ??
           USER_GUIDE_TARGET_ROLE_MAP.all;
@@ -151,10 +151,7 @@ export const InternalUserGuideTableView = (
             {
               value: catMeta.label,
               td: (
-                <Badge
-                  variant={"subtle"}
-                  colorPalette={catMeta.colorPalette}
-                >
+                <Badge variant={"subtle"} colorPalette={catMeta.colorPalette}>
                   {catMeta.label}
                 </Badge>
               ),
@@ -165,10 +162,7 @@ export const InternalUserGuideTableView = (
             {
               value: roleMeta.label,
               td: (
-                <Badge
-                  variant={"outline"}
-                  colorPalette={roleMeta.colorPalette}
-                >
+                <Badge variant={"outline"} colorPalette={roleMeta.colorPalette}>
                   {roleMeta.label}
                 </Badge>
               ),
@@ -180,12 +174,8 @@ export const InternalUserGuideTableView = (
               value: item.version,
               td: (
                 <VStack align={"start"} gap={0}>
-                  <P fontWeight={"medium"}>
-                    {item.version}
-                  </P>
-                  <P color={"fg.subtle"}>
-                    {formatByte(item.fileSize)}
-                  </P>
+                  <P fontWeight={"medium"}>{item.version}</P>
+                  <P color={"fg.subtle"}>{formatByte(item.fileSize)}</P>
                 </VStack>
               ),
               align: "start" as const,
@@ -210,9 +200,7 @@ export const InternalUserGuideTableView = (
                         : "Klik untuk Publikasikan"
                     }
                   />
-                  <Badge
-                    colorPalette={item.isPublished ? "green" : "gray"}
-                  >
+                  <Badge colorPalette={item.isPublished ? "green" : "gray"}>
                     {item.isPublished ? "Publik" : "Draf"}
                   </Badge>
                 </HStack>
@@ -297,12 +285,7 @@ export const InternalUserGuideTableView = (
         },
       ] as DataViewItemActionsGenerator<UserGuideItem>[],
     }),
-    [
-      rawItems,
-      deleteMutation,
-      togglePublishMutation,
-      handleDownload,
-    ],
+    [rawItems, deleteMutation, togglePublishMutation, handleDownload],
   );
 
   const isEmpty = isEmptyArray(rawItems);
@@ -316,13 +299,7 @@ export const InternalUserGuideTableView = (
       {/* Filters Toolbar */}
       {showFilters && (
         <ActionHeaderScrollContainer>
-          <HStack
-            align={"center"}
-            gap={"xs"}
-            w={"full"}
-            p={"xs"}
-            wrap={"wrap"}
-          >
+          <HStack align={"center"} gap={"xs"} w={"full"} p={"xs"} wrap={"wrap"}>
             <SearchInput
               value={params.search ?? ""}
               onValueChange={(val: string) => {

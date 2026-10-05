@@ -34,7 +34,7 @@ export const InternalHomeUserGuideManagement = () => {
           </HStack>
 
           <UserGuideFormModal mode={"create"}>
-            <Button primary={true}>
+            <Button primary={true} variant={"ghost"}>
               <AppIcon icon={PlusIcon} />
               {"Tambah Panduan"}
             </Button>
@@ -45,7 +45,6 @@ export const InternalHomeUserGuideManagement = () => {
 
         {/* Table View */}
         <InternalUserGuideTableView
-          initialLimit={10}
           showPagination={true}
           showFilters={true}
           roundedTop={0}
