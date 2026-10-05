@@ -150,16 +150,14 @@ export const LayerAttributeTableView = memo(
           <HStack gap={"sm"} align={"center"} minW={0}>
             <BackButton onClick={handleBackClick} />
 
-            <VStack align={"start"} gap={0} minW={0}>
+            <VStack align={"start"} gap={"xs"} minW={0}>
               <HStack gap={"xs"} align={"center"}>
-                <P fontWeight={"semibold"} fontSize={"md"}>
-                  {`Detail Atribut: ${layerTitle}`}
-                </P>
+                <P fontWeight={"semibold"}>{`Detail Atribut: ${layerTitle}`}</P>
                 {spatialBasis && <IgtBasisBadge>{spatialBasis}</IgtBasisBadge>}
               </HStack>
 
               {effectiveTypeName && (
-                <P fontSize={"xs"} color={"fg.subtle"}>
+                <P fontSize={"sm"} color={"fg.subtle"}>
                   {effectiveTypeName}
                 </P>
               )}
