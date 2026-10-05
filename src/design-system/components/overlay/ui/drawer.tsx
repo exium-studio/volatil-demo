@@ -7,6 +7,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import type {
   DrawerCloseButtonProps,
   DrawerContentProps,
@@ -447,12 +448,34 @@ const DrawerFullscreenButton = (props: IconButtonProps) => {
 };
 
 const DrawerHeader = (props: ChakraDrawer.HeaderProps) => {
-  return <ChakraDrawer.Header pos={"relative"} p={4} {...props} />;
+  return (
+    <ChakraDrawer.Header
+      justifyContent={"center"}
+      pos={"relative"}
+      py={4}
+      px={"78px"}
+      {...props}
+    />
+  );
 };
 
 const DrawerBody = (props: ChakraDrawer.BodyProps) => {
+  // Props
+  const { children, ...restProps } = props;
+
   return (
-    <ChakraDrawer.Body display={"flex"} flexDir={"column"} p={4} {...props} />
+    <ChakraDrawer.Body
+      display={"flex"}
+      flexDir={"column"}
+      flex={1}
+      minH={0}
+      h={"full"}
+      overflow={"hidden"}
+      p={0}
+      {...restProps}
+    >
+      <VScrollContainer p={4}>{children}</VScrollContainer>
+    </ChakraDrawer.Body>
   );
 };
 

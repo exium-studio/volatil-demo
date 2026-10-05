@@ -22,12 +22,7 @@ import { Drawer } from "@/design-system/components/overlay/ui/drawer";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { type DrawerRootProps } from "@chakra-ui/react";
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 
 export const ModalContext = createContext<ModalContextValue | null>(null);
 

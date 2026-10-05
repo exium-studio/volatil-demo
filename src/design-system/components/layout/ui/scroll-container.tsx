@@ -96,7 +96,15 @@ export const VScrollContainer = forwardRef<
   };
 
   return (
-    <Box position={"relative"} h={"full"} w={"full"} role={"group"}>
+    <VStack
+      role={"group"}
+      flex={1}
+      position={"relative"}
+      overflow={"hidden"}
+      w={"full"}
+      minH={0}
+      h={"full"}
+    >
       {showScrollButtons && showUp && (
         <ScrollButton
           direction={"up"}
@@ -125,6 +133,8 @@ export const VScrollContainer = forwardRef<
         ref={containerRef}
         tabIndex={-1}
         overflowY={"auto"}
+        minH={0}
+        flex={1}
         borderTop={showTopBorderOnScroll ? "1px solid" : undefined}
         borderBottom={showBottomBorderOnScroll ? "1px solid" : undefined}
         borderTopColor={
@@ -142,7 +152,7 @@ export const VScrollContainer = forwardRef<
       >
         {children}
       </VStack>
-    </Box>
+    </VStack>
   );
 });
 
