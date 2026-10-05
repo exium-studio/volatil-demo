@@ -431,7 +431,7 @@ const DialogBody = (props: ChakraDialog.BodyProps) => {
       minH={0}
       h={"full"}
       overflow={"hidden"}
-      p={0}
+      p={"0!important"}
       {...restProps}
     >
       <VScrollContainer p={4}>{children}</VScrollContainer>

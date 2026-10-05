@@ -12,7 +12,6 @@ import type {
   OrderedIgtLayersPreviewCellProps,
   OrderedIgtLayersPreviewModalContentProps,
 } from "@/features/shared/types/ordered-igt-layers-preview.type";
-import { DUMMY_INTERNAL_ORDERS } from "@/shared/constants/dummy-data/dummy-internal-order-review";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatCurrency,
@@ -103,7 +102,6 @@ export const OrderedIgtLayers = (props: OrderedIgtLayersPreviewCellProps) => {
         open={open}
         close={close}
         size={"lg"}
-        scrollBehavior={"inside"}
       >
         <OrderedIgtLayersPreviewModalContent
           items={items}
@@ -174,7 +172,7 @@ export const OrderedIgtLayersPreviewModalContent = (
 
           {/* List of Ordered Layers */}
           <VStack align={"stretch"} gap={"sm"}>
-            {DUMMY_INTERNAL_ORDERS[0].items.map((item, index) => {
+            {items.map((item, index) => {
               const displayName = item.sourceLayerTitle || "-";
               const isBidang = item.spatialBasis === "bidang";
               const isKawasan = item.spatialBasis === "kawasan";
