@@ -1,6 +1,7 @@
 // src/design-system/components/map/ui/map.controls/map.basemap-select.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Slider } from "@/design-system/components/input/ui/slider";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -25,7 +26,8 @@ import { MoonIcon, SunIcon } from "lucide-react";
 
 export const MapBasemapSelect = () => {
   // Stores
-  const { activeStyleKey, setActiveStyleKey } = useMapBaseMapStore();
+  const { activeStyleKey, setActiveStyleKey, opacity, setOpacity } =
+    useMapBaseMapStore();
   const { theme } = useThemeStore();
 
   // Hooks
@@ -188,6 +190,35 @@ export const MapBasemapSelect = () => {
               );
             })}
           </Grid>
+
+          <Separator borderColor={"bg.canvas"} my={"sm"} />
+
+          <VStack gap={"xs"} align={"stretch"} px={"xs"} pb={"2xs"}>
+            <HStack justify={"space-between"} w={"full"}>
+              <P fontSize={"sm"} fontWeight={"medium"}>
+                {"Opasitas Peta Dasar"}
+              </P>
+
+              <P
+                fontSize={"sm"}
+                fontWeight={"semibold"}
+                color={"fg.muted"}
+              >
+                {`${Math.round(opacity * 100)}%`}
+              </P>
+            </HStack>
+
+            <Slider
+              value={[Math.round(opacity * 100)]}
+              min={0}
+              max={100}
+              step={1}
+              showValue={false}
+              onValueChange={(details) =>
+                setOpacity(details.value[0] / 100)
+              }
+            />
+          </VStack>
         </Popover.Body>
       </Popover.Content>
     </Popover.Root>
