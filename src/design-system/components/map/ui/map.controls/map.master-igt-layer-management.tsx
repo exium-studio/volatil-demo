@@ -433,7 +433,7 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
           >
             <HStack justify={"space-between"} align={"center"} w={"full"}>
               <P fontSize={"xs"} fontWeight={"semibold"} color={"fg.muted"}>
-                {"Simbologi & Legenda"}
+                {"Simbologi"}
               </P>
             </HStack>
 

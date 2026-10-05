@@ -573,6 +573,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       isShowLoading ||
       isCalculating ||
       isEmptyArray(bidangLayers) ||
+      totalBidangCount === 0 ||
       isBidangBelowMin;
 
     const isKawasanDisabled =
@@ -581,6 +582,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       isShowLoading ||
       isCalculating ||
       isEmptyArray(kawasanLayers) ||
+      totalKawasanAreaHa === 0 ||
       isKawasanBelowMin;
 
     const bidangLimitTooltip = isBidangBelowMin

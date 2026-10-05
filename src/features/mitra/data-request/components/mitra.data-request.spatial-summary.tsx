@@ -171,7 +171,7 @@ export const MitraDataRequestSpatialSummary = memo(
     const isTotalPurchaseValid =
       isPurchaseLimitValid !== false &&
       (totalBidangCount === 0 && totalKawasanAreaHa === 0
-        ? true
+        ? false
         : isOrValidForCheckout);
 
     // Jika OR valid (bisa checkout untuk yang valid), gunakan warna orange (warning)
@@ -240,30 +240,21 @@ export const MitraDataRequestSpatialSummary = memo(
                     "-"
                   )
                 ) : (
-                  "0 bidang"
+                  "-"
                 )}
               </P>
             </VStack>
 
             <P fontWeight={"semibold"}>
-              {totalBidangCount > 0 ? (
-                isBidangPurchaseValid ? (
-                  <FormatNumber
-                    value={subtotalBidangPrice}
-                    style={"currency"}
-                    currency={"IDR"}
-                    maximumFractionDigits={0}
-                  />
-                ) : (
-                  "-"
-                )
-              ) : (
+              {totalBidangCount > 0 && isBidangPurchaseValid ? (
                 <FormatNumber
-                  value={0}
+                  value={subtotalBidangPrice}
                   style={"currency"}
                   currency={"IDR"}
                   maximumFractionDigits={0}
                 />
+              ) : (
+                "-"
               )}
             </P>
           </HStack>
@@ -296,30 +287,21 @@ export const MitraDataRequestSpatialSummary = memo(
                     "-"
                   )
                 ) : (
-                  "0 ha"
+                  "-"
                 )}
               </P>
             </VStack>
 
             <P fontWeight={"semibold"}>
-              {totalKawasanAreaHa > 0 ? (
-                isKawasanPurchaseValid ? (
-                  <FormatNumber
-                    value={subtotalKawasanPrice}
-                    style={"currency"}
-                    currency={"IDR"}
-                    maximumFractionDigits={0}
-                  />
-                ) : (
-                  "-"
-                )
-              ) : (
+              {totalKawasanAreaHa > 0 && isKawasanPurchaseValid ? (
                 <FormatNumber
-                  value={0}
+                  value={subtotalKawasanPrice}
                   style={"currency"}
                   currency={"IDR"}
                   maximumFractionDigits={0}
                 />
+              ) : (
+                "-"
               )}
             </P>
           </HStack>
@@ -335,7 +317,7 @@ export const MitraDataRequestSpatialSummary = memo(
               fontWeight={"bold"}
               color={isTotalPurchaseValid ? "blue.fg" : "fg.subtle"}
             >
-              {isTotalPurchaseValid ? (
+              {isTotalPurchaseValid && estimatedTotalPrice > 0 ? (
                 <FormatNumber
                   value={estimatedTotalPrice}
                   style={"currency"}
