@@ -70,6 +70,7 @@ export const UserGuideFormModal = (props: UserGuideFormModalProps) => {
           close={close}
           initialData={initialData}
           mode={mode}
+          modalKey={modalKey}
         />
       )}
     </Modal.Root>
@@ -80,9 +81,10 @@ const UserGuideFormModalContent = (props: {
   close: () => void;
   initialData?: UserGuideItem | null;
   mode: "create" | "edit";
+  modalKey: string;
 }) => {
   // Props
-  const { close, initialData, mode } = props;
+  const { close, initialData, mode, modalKey } = props;
 
   // Mutations
   const createMutation = useCreateUserGuideMutation();
@@ -168,7 +170,8 @@ const UserGuideFormModalContent = (props: {
           <Modal.Title>
             {isEdit ? "Edit Dokumen Panduan" : "Tambah Dokumen Panduan"}
           </Modal.Title>
-          <P color={"fg.muted"} textAlign={"center"}>
+
+          <P color={"fg.subtle"} textAlign={"center"}>
             {
               "Kelola buku manual & petunjuk penggunaan yang dapat diakses pengguna"
             }
@@ -194,9 +197,7 @@ const UserGuideFormModalContent = (props: {
                     <Input
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder={
-                        "Buku Panduan Pengguna Portal Mitra IGT"
-                      }
+                      placeholder={"Buku Panduan Pengguna Portal Mitra IGT"}
                     />
                   </Field>
                 )}
@@ -326,7 +327,7 @@ const UserGuideFormModalContent = (props: {
                 render={({ field }) => (
                   <Field label={"Target Audiens Pengguna"}>
                     <FocusSelectInput
-                      modalKey={"user-guide-target-role-select"}
+                      modalKey={`${modalKey}.target-role-select`}
                       options={USER_GUIDE_TARGET_ROLE_OPTIONS}
                       value={field.value}
                       onValueChange={(val) => {
@@ -413,15 +414,17 @@ const UserGuideFormModalContent = (props: {
                     <HStack
                       justify={"space-between"}
                       align={"center"}
+                      gap={"md"}
                       w={"full"}
                       py={1}
                     >
-                      <VStack align={"start"} gap={0}>
+                      <VStack align={"start"} gap={"xs"}>
                         <P fontWeight={"medium"}>
                           {field.value
                             ? "Dipublikasikan (Publik)"
                             : "Draf (Internal Only)"}
                         </P>
+
                         <P color={"fg.subtle"}>
                           {
                             "Dokumen yang dipublikasikan akan langsung tampil di halaman login"

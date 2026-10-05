@@ -1,5 +1,6 @@
 // src/features/internal/home/components/internal.home.user-guide-management.tsx
 
+import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Container } from "@/design-system/components/layout/ui/container";
@@ -8,7 +9,8 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { InternalUserGuideTableView } from "@/features/user-guide/components/internal.user-guide.table-view";
-import { BookOpenIcon } from "lucide-react";
+import { UserGuideFormModal } from "@/features/user-guide/components/user-guide.form-modal";
+import { PlusIcon } from "lucide-react";
 
 export const InternalHomeUserGuideManagement = () => {
   return (
@@ -18,8 +20,6 @@ export const InternalHomeUserGuideManagement = () => {
         <HeaderContainer justify={"space-between"} gap={"sm"} pr={"xs"}>
           <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>
             <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
-              <AppIcon icon={BookOpenIcon} boxSize={5} color={"fg.muted"} />
-
               <Heading>{"Manajemen Dokumen Panduan Pengguna"}</Heading>
 
               <InfoTip
@@ -32,6 +32,13 @@ export const InternalHomeUserGuideManagement = () => {
               </InfoTip>
             </HStack>
           </HStack>
+
+          <UserGuideFormModal mode={"create"}>
+            <Button primary={true}>
+              <AppIcon icon={PlusIcon} />
+              {"Tambah Panduan"}
+            </Button>
+          </UserGuideFormModal>
         </HeaderContainer>
 
         <Separator borderColor={"bg.canvas"} />

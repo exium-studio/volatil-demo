@@ -1,6 +1,9 @@
 // src/features/user-guide/components/user-guide.modal.tsx
 
-import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
@@ -30,11 +33,7 @@ import type {
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
-import {
-  DownloadIcon,
-  ExternalLinkIcon,
-  FileTextIcon,
-} from "lucide-react";
+import { DownloadIcon, ExternalLinkIcon, FileTextIcon } from "lucide-react";
 import { useState } from "react";
 
 export const UserGuideModal = (props: UserGuideModalProps) => {
@@ -74,6 +73,7 @@ export const UserGuideModal = (props: UserGuideModalProps) => {
         <UserGuideModalContent
           close={resolvedClose}
           portalType={portalType}
+          modalKey={modalKey}
         />
       )}
     </Modal.Root>
@@ -83,9 +83,10 @@ export const UserGuideModal = (props: UserGuideModalProps) => {
 const UserGuideModalContent = (props: {
   close: () => void;
   portalType: "mitra" | "internal" | "all";
+  modalKey: string;
 }) => {
   // Props
-  const { close, portalType } = props;
+  const { close, portalType, modalKey } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -151,7 +152,7 @@ const UserGuideModalContent = (props: {
             />
 
             <StatusFilterSelect
-              modalKey={"modal-user-guide-category-filter"}
+              modalKey={`${modalKey}.category-filter`}
               options={USER_GUIDE_CATEGORY_OPTIONS}
               value={selectedCategory}
               onValueChange={(val) => setSelectedCategory(val)}
@@ -207,7 +208,12 @@ const UserGuideModalContent = (props: {
 
           {/* Clean Documents List */}
           {!isLoading && !isError && !isEmpty && (
-            <VStack gap={"xs"} align={"stretch"} maxH={"480px"} overflowY={"auto"}>
+            <VStack
+              gap={"xs"}
+              align={"stretch"}
+              maxH={"480px"}
+              overflowY={"auto"}
+            >
               {guides.map((guide) => {
                 const catMeta =
                   USER_GUIDE_CATEGORY_MAP[guide.category] ??
@@ -221,8 +227,6 @@ const UserGuideModalContent = (props: {
                     align={"center"}
                     gap={"md"}
                     bg={"bg.subtle"}
-                    border={"1px solid"}
-                    borderColor={"border.subtle"}
                     rounded={theme.radii.component}
                     transition={"150ms"}
                     _hover={{
@@ -265,7 +269,9 @@ const UserGuideModalContent = (props: {
                         <HStack gap={"xs"} color={"fg.subtle"} wrap={"wrap"}>
                           <P color={"fg.subtle"}>{guide.fileName}</P>
                           <P color={"fg.subtle"}>{"•"}</P>
-                          <P color={"fg.subtle"}>{formatByte(guide.fileSize)}</P>
+                          <P color={"fg.subtle"}>
+                            {formatByte(guide.fileSize)}
+                          </P>
                           <P color={"fg.subtle"}>{"•"}</P>
                           <P color={"fg.subtle"}>{guide.version}</P>
                         </HStack>
@@ -302,7 +308,9 @@ const UserGuideModalContent = (props: {
       <Separator borderColor={"bg.canvas"} />
 
       <Modal.Footer>
-        <Button onClick={close}>{"Tutup"}</Button>
+        <Button flex={1} onClick={close}>
+          {"Tutup"}
+        </Button>
       </Modal.Footer>
     </Modal.Content>
   );

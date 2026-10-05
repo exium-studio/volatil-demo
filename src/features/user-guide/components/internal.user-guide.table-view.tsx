@@ -1,6 +1,5 @@
 // src/features/user-guide/components/internal.user-guide.table-view.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
@@ -12,7 +11,6 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
@@ -46,9 +44,7 @@ import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import {
   DownloadIcon,
   ExternalLinkIcon,
-  FileTextIcon,
   PencilIcon,
-  PlusIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
@@ -72,9 +68,6 @@ export const InternalUserGuideTableView = (
     category: undefined,
     isPublished: undefined,
   });
-
-  const [selectedGuideForEdit, setSelectedGuideForEdit] =
-    useState<UserGuideItem | null>(null);
 
   // Queries & Mutations
   const {
@@ -112,17 +105,13 @@ export const InternalUserGuideTableView = (
     [trackDownloadMutation],
   );
 
-  const handleOpenEdit = useCallback((guide: UserGuideItem) => {
-    setSelectedGuideForEdit(guide);
-  }, []);
-
   // DataList Table Pattern: Wajib 1 useMemo implicit return
   const dataList = useMemo(
     () => ({
       headers: [
-        { th: "Judul & Berkas Dokumen", sortable: true },
+        { th: "Judul Dokumen", sortable: true },
         { th: "Kategori", sortable: true },
-        { th: "Target Pengguna", sortable: true },
+        { th: "Target Audiens", sortable: true },
         { th: "Versi & Ukuran", sortable: true },
         { th: "Status Publikasi", sortable: true },
         { th: "Unduhan", sortable: true, align: "center" },
@@ -145,31 +134,15 @@ export const InternalUserGuideTableView = (
             {
               value: item.title,
               td: (
-                <HStack gap={"sm"} align={"start"} maxW={"360px"}>
-                  <Center
-                    p={"xs"}
-                    bg={`${catMeta.colorPalette}.subtle`}
-                    rounded={"sm"}
-                    flexShrink={0}
-                    mt={"2xs"}
-                  >
-                    <AppIcon
-                      icon={FileTextIcon}
-                      boxSize={4}
-                      color={`${catMeta.colorPalette}.fg`}
-                    />
-                  </Center>
+                <VStack align={"start"} gap={"2xs"} maxW={"320px"}>
+                  <ClampedP fontWeight={"medium"} lineClamp={1}>
+                    {item.title}
+                  </ClampedP>
 
-                  <VStack align={"start"} gap={0}>
-                    <ClampedP fontWeight={"medium"} lineClamp={1}>
-                      {item.title}
-                    </ClampedP>
-
-                    <ClampedP color={"fg.subtle"} lineClamp={1}>
-                      {item.fileName}
-                    </ClampedP>
-                  </VStack>
-                </HStack>
+                  <ClampedP color={"fg.subtle"} lineClamp={1}>
+                    {item.fileName}
+                  </ClampedP>
+                </VStack>
               ),
               align: "start" as const,
             },
@@ -292,7 +265,15 @@ export const InternalUserGuideTableView = (
           key: "edit-guide",
           label: "Edit Dokumen",
           icon: PencilIcon,
-          onClick: (item: UserGuideItem) => handleOpenEdit(item),
+          modal: {
+            triggerComponent: (item: UserGuideItem) => (
+              <UserGuideFormModal
+                modalKey={`edit-user-guide-${item.id}`}
+                initialData={item}
+                mode={"edit"}
+              />
+            ),
+          },
         },
         {
           key: "delete-guide",
@@ -321,7 +302,6 @@ export const InternalUserGuideTableView = (
       deleteMutation,
       togglePublishMutation,
       handleDownload,
-      handleOpenEdit,
     ],
   );
 
@@ -333,74 +313,67 @@ export const InternalUserGuideTableView = (
     <>
       <TopBarLoader isFetching={isFetching} />
 
-      {/* Filters & Actions Bar */}
+      {/* Filters Toolbar */}
       {showFilters && (
         <ActionHeaderScrollContainer>
           <HStack
             align={"center"}
-            justify={"space-between"}
-            gap={"md"}
+            gap={"xs"}
             w={"full"}
             p={"xs"}
+            wrap={"wrap"}
           >
-            <HStack gap={"xs"} flex={1} wrap={"wrap"}>
-              <SearchInput
-                value={params.search ?? ""}
-                onValueChange={(val: string) => {
-                  setParams((prev) => ({
-                    ...prev,
-                    search: val,
-                    page: 1,
-                  }));
-                }}
-                placeholder={"Cari judul dokumen atau nama berkas..."}
-                maxW={"280px"}
-              />
+            <SearchInput
+              value={params.search ?? ""}
+              onValueChange={(val: string) => {
+                setParams((prev) => ({
+                  ...prev,
+                  search: val,
+                  page: 1,
+                }));
+              }}
+              placeholder={"Cari judul dokumen atau nama berkas..."}
+              maxW={"300px"}
+            />
 
-              <StatusFilterSelect
-                options={USER_GUIDE_CATEGORY_OPTIONS}
-                value={params.category ?? "all"}
-                onValueChange={(val) => {
-                  setParams((prev) => ({
-                    ...prev,
-                    category: val !== "all" ? val : undefined,
-                    page: 1,
-                  }));
-                }}
-                placeholder={"Semua Kategori"}
-              />
+            <StatusFilterSelect
+              modalKey={"internal-user-guide-category-filter"}
+              options={USER_GUIDE_CATEGORY_OPTIONS}
+              value={params.category ?? "all"}
+              onValueChange={(val) => {
+                setParams((prev) => ({
+                  ...prev,
+                  category: val !== "all" ? val : undefined,
+                  page: 1,
+                }));
+              }}
+              placeholder={"Semua Kategori"}
+            />
 
-              <StatusFilterSelect
-                options={USER_GUIDE_PUBLISH_STATUS_OPTIONS}
-                value={
-                  params.isPublished === undefined
-                    ? "all"
-                    : params.isPublished
-                      ? "published"
-                      : "draft"
-                }
-                onValueChange={(val) => {
-                  setParams((prev) => ({
-                    ...prev,
-                    isPublished:
-                      val === "published"
-                        ? true
-                        : val === "draft"
-                          ? false
-                          : undefined,
-                    page: 1,
-                  }));
-                }}
-                placeholder={"Semua Status"}
-              />
-            </HStack>
-
-            <UserGuideFormModal mode={"create"}>
-              <Button primary={true}>
-                <AppIcon icon={PlusIcon} />
-                {"Tambah Panduan"}
-              </Button>
-            </UserGuideFormModal>
+            <StatusFilterSelect
+              modalKey={"internal-user-guide-status-filter"}
+              options={USER_GUIDE_PUBLISH_STATUS_OPTIONS}
+              value={
+                params.isPublished === undefined
+                  ? "all"
+                  : params.isPublished
+                    ? "published"
+                    : "draft"
+              }
+              onValueChange={(val) => {
+                setParams((prev) => ({
+                  ...prev,
+                  isPublished:
+                    val === "published"
+                      ? true
+                      : val === "draft"
+                        ? false
+                        : undefined,
+                  page: 1,
+                }));
+              }}
+              placeholder={"Semua Status"}
+            />
           </HStack>
         </ActionHeaderScrollContainer>
       )}
@@ -492,15 +465,6 @@ export const InternalUserGuideTableView = (
             />
           )}
         </VStack>
-      )}
-
-      {/* Edit Form Modal */}
-      {selectedGuideForEdit && (
-        <UserGuideFormModal
-          modalKey={`edit-user-guide-${selectedGuideForEdit.id}`}
-          initialData={selectedGuideForEdit}
-          mode={"edit"}
-        />
       )}
     </>
   );
