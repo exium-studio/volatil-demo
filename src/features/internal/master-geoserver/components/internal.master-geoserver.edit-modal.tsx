@@ -7,14 +7,12 @@ import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Textarea } from "@/design-system/components/input/ui/textarea";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
-import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P, TNum } from "@/design-system/components/typography/ui/p";
-import { useThemeStore } from "@/design-system/stores/theme-store";
+import { P } from "@/design-system/components/typography/ui/p";
+import { InternalMasterGeoserverTestResultAlert } from "@/features/internal/master-geoserver/components/internal.master-geoserver.test-result-alert";
 import {
   useTestMasterGeoserverConnection,
   useUpdateMasterGeoserver,
@@ -28,12 +26,8 @@ import type {
 } from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ActivityIcon,
-  CheckCircle2Icon,
-  XCircleIcon,
-} from "lucide-react";
-import { useState } from "react";
+import { ActivityIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
 export const InternalMasterGeoserverEditTrigger = (
@@ -80,9 +74,6 @@ const InternalMasterGeoserverEditModalContent = (
   // Props
   const { item, close } = props;
 
-  // Stores
-  const { theme } = useThemeStore();
-
   // States
   const [testResult, setTestResult] =
     useState<TestGeoserverConnectionResponse | null>(null);
@@ -91,6 +82,19 @@ const InternalMasterGeoserverEditModalContent = (
   // Mutations
   const updateMutation = useUpdateMasterGeoserver();
   const testMutation = useTestMasterGeoserverConnection();
+
+  // Derived Values
+  const formValues = useMemo<MasterGeoserverFormValues>(
+    () => ({
+      name: item.name,
+      baseUrl: item.baseUrl,
+      username: item.username,
+      password: "",
+      description: item.description ?? "",
+      isActive: item.isActive !== false,
+    }),
+    [item],
+  );
 
   // Form (RHF + Zod)
   const {
@@ -101,14 +105,7 @@ const InternalMasterGeoserverEditModalContent = (
   } = useForm<MasterGeoserverFormValues>({
     resolver: zodResolver(masterGeoserverFormSchema),
     mode: "onChange",
-    defaultValues: {
-      name: item.name,
-      baseUrl: item.baseUrl,
-      username: item.username,
-      password: "",
-      description: item.description ?? "",
-      isActive: item.isActive !== false,
-    },
+    values: formValues,
   });
 
   // Watch required fields for testing connection
@@ -297,66 +294,10 @@ const InternalMasterGeoserverEditModalContent = (
               {"Uji Koneksi Server"}
             </Button>
 
-            {testResult && (
-              <Box
-                p={"sm"}
-                bg={"green.subtle"}
-                borderWidth={"1px"}
-                borderColor={"green.muted"}
-                rounded={theme.radii.component}
-              >
-                <VStack align={"start"} gap={1}>
-                  <HStack gap={1} align={"center"}>
-                    <AppIcon
-                      icon={CheckCircle2Icon}
-                      size={"xs"}
-                      color={"green.fg"}
-                    />
-                    <P fontSize={"xs"} fontWeight={"bold"} color={"green.fg"}>
-                      {testResult.message}
-                    </P>
-                  </HStack>
-                  <HStack gap={"xs"} flexWrap={"wrap"}>
-                    {testResult.version && (
-                      <Badge size={"xs"} colorPalette={"green"}>
-                        {testResult.version}
-                      </Badge>
-                    )}
-                    {typeof testResult.latencyMs === "number" && (
-                      <Badge size={"xs"} variant={"subtle"} colorPalette={"teal"}>
-                        <TNum>{`${testResult.latencyMs}ms`}</TNum>
-                      </Badge>
-                    )}
-                    {typeof testResult.workspacesCount === "number" && (
-                      <Badge size={"xs"} variant={"subtle"} colorPalette={"blue"}>
-                        {`${testResult.workspacesCount} Workspace`}
-                      </Badge>
-                    )}
-                  </HStack>
-                </VStack>
-              </Box>
-            )}
-
-            {testError && (
-              <Box
-                p={"sm"}
-                bg={"red.subtle"}
-                borderWidth={"1px"}
-                borderColor={"red.muted"}
-                rounded={theme.radii.component}
-              >
-                <HStack gap={1} align={"center"}>
-                  <AppIcon
-                    icon={XCircleIcon}
-                    size={"xs"}
-                    color={"red.fg"}
-                  />
-                  <P fontSize={"xs"} color={"red.fg"}>
-                    {testError}
-                  </P>
-                </HStack>
-              </Box>
-            )}
+            <InternalMasterGeoserverTestResultAlert
+              testResult={testResult}
+              testError={testError}
+            />
           </VStack>
         </VStack>
       </Modal.Body>

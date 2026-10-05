@@ -79,3 +79,8 @@ export type InternalMasterGeoserverEditModalContentProps = {
   close: () => void;
 };
 
+export type InternalMasterGeoserverTestResultAlertProps = {
+  testResult?: TestGeoserverConnectionResponse | null;
+  testError?: string | null;
+};
+

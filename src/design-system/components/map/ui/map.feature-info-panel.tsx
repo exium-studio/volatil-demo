@@ -145,9 +145,7 @@ export const MapFeatureInfoPanel = () => {
           w={"full"}
           h={"auto"}
           minH={"48px"}
-          py={"xs"}
-          px={"md"}
-          pr={"xs"}
+          p={"sm"}
           borderBottom={"1px solid"}
           borderColor={"border.subtle"}
         >
@@ -158,10 +156,7 @@ export const MapFeatureInfoPanel = () => {
               rounded={theme.radii.component}
               flexShrink={0}
             >
-              <AppIcon
-                icon={LayerIcon}
-                color={`${colorPalette}.fg`}
-              />
+              <AppIcon icon={LayerIcon} color={`${colorPalette}.fg`} />
             </Center>
 
             <VStack flex={1} align={"start"} minW={0} gap={0}>
@@ -181,7 +176,6 @@ export const MapFeatureInfoPanel = () => {
             {(selectedFeature?.geometry || displayFeature?.geometry) && (
               <Tooltip content={"Zoom ke Fitur"}>
                 <IconButton
-                  size={"sm"}
                   variant={"ghost"}
                   aria-label={"Zoom ke Fitur"}
                   onClick={handleZoomToFeature}
@@ -193,7 +187,6 @@ export const MapFeatureInfoPanel = () => {
 
             <Tooltip content={"Tutup"}>
               <IconButton
-                size={"xs"}
                 variant={"ghost"}
                 aria-label={"Tutup"}
                 onClick={clearFeatureInfo}
@@ -221,7 +214,7 @@ export const MapFeatureInfoPanel = () => {
         ) : (
           <VStack w={"full"} flex={1} gap={0} overflowY={"auto"}>
             {Object.keys(properties).length > 5 && (
-              <Box p={"xs"} w={"full"} borderColor={"border.subtle"}>
+              <Box p={"sm"} w={"full"} borderColor={"border.subtle"}>
                 <SearchInput
                   placeholder={"Cari atribut..."}
                   value={searchQuery}

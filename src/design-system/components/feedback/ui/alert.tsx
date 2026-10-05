@@ -26,7 +26,9 @@ export const AlertRoot = (props: AlertRootProps) => {
 
   const resolvedColorPalette =
     colorPalette ??
-    (typeof status === "string" ? STATUS_COLOR_PALETTE_MAP[status] : undefined) ??
+    (typeof status === "string"
+      ? STATUS_COLOR_PALETTE_MAP[status]
+      : undefined) ??
     "neutral";
 
   return (
@@ -41,7 +43,7 @@ export const AlertRoot = (props: AlertRootProps) => {
 };
 
 export const AlertIndicator = (props: AlertIndicatorProps) => {
-  return <ChakraAlert.Indicator boxSize={5} {...props} />;
+  return <ChakraAlert.Indicator boxSize={4.5} {...props} />;
 };
 
 export const AlertTitle = (props: AlertTitleProps) => {

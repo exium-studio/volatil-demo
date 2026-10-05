@@ -90,16 +90,9 @@ const InternalDataManagementEditModalContent = (
   const { items: geoserverList } = useMasterGeoserverQuery();
   const updateMutation = useUpdateMasterIgtLayer();
 
-  // Form (RHF + Zod)
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { isValid },
-  } = useForm<MasterIgtLayerFormValues>({
-    resolver: zodResolver(masterIgtLayerFormSchema),
-    mode: "onChange",
-    defaultValues: {
+  // Derived Values
+  const formValues = useMemo<MasterIgtLayerFormValues>(
+    () => ({
       id: item.id,
       title: item.title,
       description: item.description ?? "",
@@ -110,7 +103,20 @@ const InternalDataManagementEditModalContent = (
       typeName: item.typeName ?? item.id ?? "",
       isActive: item.isActive,
       defaultVisible: item.defaultVisible ?? false,
-    },
+    }),
+    [item, initialWorkspace],
+  );
+
+  // Form (RHF + Zod)
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { isValid },
+  } = useForm<MasterIgtLayerFormValues>({
+    resolver: zodResolver(masterIgtLayerFormSchema),
+    mode: "onChange",
+    values: formValues,
   });
 
   // Watch Form Values

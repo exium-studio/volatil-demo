@@ -12,6 +12,7 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { P } from "@/design-system/components/typography/ui/p";
 import { GeoserverCascadeSelect } from "@/features/internal/data-management/components/geoserver-cascade-select";
 import { useCreateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
@@ -40,6 +41,12 @@ export const InternalDataManagementCreateTrigger = (
     modalKey: customModalKey,
   });
 
+  const isMounted = useMountTimeout({
+    isOpen,
+    mountDelay: 0,
+    unmountDelay: 250,
+  });
+
   return (
     <Modal.Root
       modalKey={modalKey}
@@ -50,10 +57,12 @@ export const InternalDataManagementCreateTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalDataManagementCreateModalContent
-        modalKey={modalKey}
-        close={close}
-      />
+      {isMounted && (
+        <InternalDataManagementCreateModalContent
+          modalKey={modalKey}
+          close={close}
+        />
+      )}
     </Modal.Root>
   );
 };
@@ -73,6 +82,7 @@ const InternalDataManagementCreateModalContent = (
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { isValid },
   } = useForm<MasterIgtLayerFormValues>({
     resolver: zodResolver(masterIgtLayerFormSchema),
@@ -153,6 +163,7 @@ const InternalDataManagementCreateModalContent = (
       },
       {
         onSuccess: () => {
+          reset();
           close();
         },
       },
