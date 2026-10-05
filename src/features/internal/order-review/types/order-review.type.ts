@@ -80,6 +80,7 @@ export type InternalOrderItem = {
   readyAt?: string;
   expiredAt?: string;
   totalPrice: number;
+  coverageHa?: number;
   items: CartOrderItem[];
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon | null;
   invoiceUrl?: string | null;

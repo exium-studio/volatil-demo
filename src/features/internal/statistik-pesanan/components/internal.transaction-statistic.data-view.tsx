@@ -21,7 +21,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -32,11 +31,12 @@ import type {
   InternalTransactionQueryParams,
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { OrderedIgtLayers } from "@/features/shared/components/ordered-igt-layers";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import type {
@@ -121,20 +121,14 @@ export const InternalTransactionStatisticDataView = () => {
           columns: [
             {
               value: item.transactionNumber,
-              td: (
-                <P fontSize={"sm"}>
-                  {item.transactionNumber}
-                </P>
-              ),
+              td: <P fontSize={"sm"}>{item.transactionNumber}</P>,
               align: "start" as const,
             },
             {
               value: item.mitra.name,
               td: (
                 <VStack align={"start"} gap={0} w={"180px"}>
-                  <ClampedP fontSize={"sm"}>
-                    {item.mitra.name}
-                  </ClampedP>
+                  <ClampedP fontSize={"sm"}>{item.mitra.name}</ClampedP>
                   <ClampedP fontSize={"xs"} color={"fg.subtle"}>
                     {item.mitra.agencyOrCompany || item.mitra.email}
                   </ClampedP>
@@ -204,16 +198,11 @@ export const InternalTransactionStatisticDataView = () => {
             {
               value: itemNames,
               td: (
-                <Tooltip content={itemNames || "-"}>
-                  <P
-                    fontSize={"sm"}
-                    lineClamp={2}
-                    w={"220px"}
-                    title={itemNames}
-                  >
-                    {itemNames || "-"}
-                  </P>
-                </Tooltip>
+                <OrderedIgtLayers
+                  items={item.items}
+                  orderNumber={item.orderNumber || item.transactionNumber}
+                  coverageHa={item.coverageHa}
+                />
               ),
               align: "start" as const,
             },

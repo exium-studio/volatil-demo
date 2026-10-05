@@ -33,9 +33,10 @@ import type {
 } from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderStatus } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { OrderedIgtLayers } from "@/features/shared/components/ordered-igt-layers";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -118,14 +119,6 @@ export const InternalOrderReviewDataView = () => {
     ];
 
     const items = orders.map((order) => {
-      const totalBidang = order.items
-        .filter((i) => i.spatialBasis === "bidang")
-        .reduce((sum, item) => sum + item.featuresCount, 0);
-
-      const totalKawasanHa = order.items
-        .filter((i) => i.spatialBasis === "kawasan")
-        .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
-
       const displayOrderNumber = order.orderNumber || order.orderId;
 
       return {
@@ -157,19 +150,13 @@ export const InternalOrderReviewDataView = () => {
             align: "start" as const,
           },
           {
-            value: order.items.length,
+            value: order.items.map((i) => i.sourceLayerTitle).join(", "),
             td: (
-              <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"}>
-                  {order.items.map((i) => i.sourceLayerTitle).join(", ")}
-                </P>
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {`${order.items.length} layer • `}
-                  {totalBidang > 0 && `${totalBidang} bidang`}
-                  {totalBidang > 0 && totalKawasanHa > 0 && " • "}
-                  {totalKawasanHa > 0 && `${totalKawasanHa} ha`}
-                </P>
-              </VStack>
+              <OrderedIgtLayers
+                items={order.items}
+                orderNumber={order.orderNumber || order.orderId}
+                coverageHa={order.coverageHa}
+              />
             ),
             align: "start" as const,
           },

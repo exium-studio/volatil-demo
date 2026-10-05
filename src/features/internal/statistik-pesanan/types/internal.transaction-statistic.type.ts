@@ -45,6 +45,7 @@ export type InternalTransactionItem = {
   orderStatus: OrderStatus;
   selectionType: SelectionType;
   totalAmount: number;
+  coverageHa?: number;
   mitra: InternalTransactionMitra;
   createdAt: string;
   paidAt?: string;

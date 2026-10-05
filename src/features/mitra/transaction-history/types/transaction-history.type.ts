@@ -39,6 +39,7 @@ export type TransactionRecord = {
   orderStatus?: OrderStatus;
   selectionType: SelectionType;
   totalAmount: number;
+  coverageHa?: number;
   createdAt: string;
   paidAt?: string;
   expiredAt?: string;

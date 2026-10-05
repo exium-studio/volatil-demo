@@ -17,7 +17,6 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -25,6 +24,7 @@ import type { MitraHomeLastTransactionProps } from "@/features/mitra/home/types/
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type { TransactionRecord } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { OrderedIgtLayers } from "@/features/shared/components/ordered-igt-layers";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
@@ -221,11 +221,11 @@ const MitraHomeLastTransactionDataView = (props: {
             {
               value: itemNames,
               td: (
-                <Tooltip content={itemNames || "-"}>
-                  <P lineClamp={2} w={"220px"} title={itemNames}>
-                    {itemNames || "-"}
-                  </P>
-                </Tooltip>
+                <OrderedIgtLayers
+                  items={item.items}
+                  orderNumber={item.orderNumber || item.transactionNumber}
+                  coverageHa={item.coverageHa}
+                />
               ),
               align: "start" as const,
             },
