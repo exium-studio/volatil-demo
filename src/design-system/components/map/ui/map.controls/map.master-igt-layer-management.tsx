@@ -27,10 +27,15 @@ import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useQuery } from "@tanstack/react-query";
-import { BlendIcon, FlagIcon, FocusIcon, LayersIcon } from "lucide-react";
+import {
+  FocusIcon,
+  LayersIcon,
+  PaletteIcon,
+  SquareDashedIcon,
+} from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
-export const MapMasterIgtLayerSelect = memo(() => {
+export const MapMasterIgtLayerManagement = memo(() => {
   // Stores
   const {
     enabledLayerIds,
@@ -345,7 +350,7 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
               onClick={handleToggleSymbology}
             >
               <AppIcon
-                icon={FlagIcon}
+                icon={PaletteIcon}
                 fill={isSymbologyOpen ? "blue.fg" : ""}
                 color={isSymbologyOpen ? "blue.fg" : undefined}
               />
@@ -378,7 +383,7 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
                   aria-label={"Atur Opasitas"}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <AppIcon icon={BlendIcon} />
+                  <AppIcon icon={SquareDashedIcon} />
                 </IconButton>
               </Tooltip>
             </Popover.Trigger>

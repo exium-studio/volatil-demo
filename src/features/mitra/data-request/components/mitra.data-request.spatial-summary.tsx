@@ -157,11 +157,22 @@ export const MitraDataRequestSpatialSummary = memo(
       totalKawasanAreaHa >= pricingPolicy.minKawasanHa &&
       totalKawasanAreaHa > 0;
 
+    const isBidangPurchaseValid =
+      isPurchaseLimitValid !== false && !isBidangBelowMin;
+    const isKawasanPurchaseValid =
+      isPurchaseLimitValid !== false && !isKawasanBelowMin;
+
     const hasAnyLimitViolation =
       isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
 
     // Logika OR: Jika salah satu valid (misal kawasan valid tapi bidang tidak), maka tetap valid untuk checkout
     const isOrValidForCheckout = hasValidBidang || hasValidKawasan;
+
+    const isTotalPurchaseValid =
+      isPurchaseLimitValid !== false &&
+      (totalBidangCount === 0 && totalKawasanAreaHa === 0
+        ? true
+        : isOrValidForCheckout);
 
     // Jika OR valid (bisa checkout untuk yang valid), gunakan warna orange (warning)
     // Jika KEDUA-DUANYA tidak valid (tidak bisa checkout sama sekali), gunakan warna red (error)
@@ -214,16 +225,20 @@ export const MitraDataRequestSpatialSummary = memo(
 
               <P>
                 {totalBidangCount > 0 ? (
-                  <>
-                    <TNum>{formatNumber(totalBidangCount)}</TNum>
-                    {" bidang × "}
-                    <FormatNumber
-                      value={effectivePricePerBidang}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </>
+                  isBidangPurchaseValid ? (
+                    <>
+                      <TNum>{formatNumber(totalBidangCount)}</TNum>
+                      {" bidang × "}
+                      <FormatNumber
+                        value={effectivePricePerBidang}
+                        style={"currency"}
+                        currency={"IDR"}
+                        maximumFractionDigits={0}
+                      />
+                    </>
+                  ) : (
+                    "-"
+                  )
                 ) : (
                   "0 bidang"
                 )}
@@ -231,12 +246,25 @@ export const MitraDataRequestSpatialSummary = memo(
             </VStack>
 
             <P fontWeight={"semibold"}>
-              <FormatNumber
-                value={subtotalBidangPrice}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
+              {totalBidangCount > 0 ? (
+                isBidangPurchaseValid ? (
+                  <FormatNumber
+                    value={subtotalBidangPrice}
+                    style={"currency"}
+                    currency={"IDR"}
+                    maximumFractionDigits={0}
+                  />
+                ) : (
+                  "-"
+                )
+              ) : (
+                <FormatNumber
+                  value={0}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              )}
             </P>
           </HStack>
 
@@ -249,20 +277,24 @@ export const MitraDataRequestSpatialSummary = memo(
 
               <P>
                 {totalKawasanAreaHa > 0 ? (
-                  <>
-                    <TNum>
-                      {formatNumber(totalKawasanAreaHa, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </TNum>
-                    {" ha × "}
-                    <FormatNumber
-                      value={effectivePricePerKawasanHa}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </>
+                  isKawasanPurchaseValid ? (
+                    <>
+                      <TNum>
+                        {formatNumber(totalKawasanAreaHa, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </TNum>
+                      {" ha × "}
+                      <FormatNumber
+                        value={effectivePricePerKawasanHa}
+                        style={"currency"}
+                        currency={"IDR"}
+                        maximumFractionDigits={0}
+                      />
+                    </>
+                  ) : (
+                    "-"
+                  )
                 ) : (
                   "0 ha"
                 )}
@@ -270,12 +302,25 @@ export const MitraDataRequestSpatialSummary = memo(
             </VStack>
 
             <P fontWeight={"semibold"}>
-              <FormatNumber
-                value={subtotalKawasanPrice}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
+              {totalKawasanAreaHa > 0 ? (
+                isKawasanPurchaseValid ? (
+                  <FormatNumber
+                    value={subtotalKawasanPrice}
+                    style={"currency"}
+                    currency={"IDR"}
+                    maximumFractionDigits={0}
+                  />
+                ) : (
+                  "-"
+                )
+              ) : (
+                <FormatNumber
+                  value={0}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              )}
             </P>
           </HStack>
 
@@ -285,13 +330,21 @@ export const MitraDataRequestSpatialSummary = memo(
           <HStack justify={"space-between"} align={"center"}>
             <P fontWeight={"medium"}>{"Total Estimasi"}</P>
 
-            <P fontSize={"lg"} fontWeight={"bold"} color={"blue.fg"}>
-              <FormatNumber
-                value={estimatedTotalPrice}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
+            <P
+              fontSize={"lg"}
+              fontWeight={"bold"}
+              color={isTotalPurchaseValid ? "blue.fg" : "fg.subtle"}
+            >
+              {isTotalPurchaseValid ? (
+                <FormatNumber
+                  value={estimatedTotalPrice}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              ) : (
+                "-"
+              )}
             </P>
           </HStack>
         </VStack>
