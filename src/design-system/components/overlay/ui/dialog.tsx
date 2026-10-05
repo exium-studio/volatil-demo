@@ -6,6 +6,7 @@ import type { IconButtonProps } from "@/design-system/components/button/types/bu
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { VScrollContainerProps } from "@/design-system/components/layout/types/scroll-container.type";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import {
   DIALOG_OFFSET_X_VAR,
@@ -419,7 +420,7 @@ const DialogHeader = (props: ChakraDialog.TitleProps) => {
   );
 };
 
-const DialogBody = (props: ChakraDialog.BodyProps) => {
+const DialogBody = (props: VScrollContainerProps) => {
   // Props
   const { children, ...restProps } = props;
 
@@ -432,9 +433,10 @@ const DialogBody = (props: ChakraDialog.BodyProps) => {
       h={"full"}
       overflow={"hidden"}
       p={"0!important"}
-      {...restProps}
     >
-      <VScrollContainer p={4}>{children}</VScrollContainer>
+      <VScrollContainer p={4} {...restProps}>
+        {children}
+      </VScrollContainer>
     </ChakraDialog.Body>
   );
 };

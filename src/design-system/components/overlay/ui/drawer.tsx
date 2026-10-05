@@ -6,6 +6,7 @@ import type { IconButtonProps } from "@/design-system/components/button/types/bu
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { VScrollContainerProps } from "@/design-system/components/layout/types/scroll-container.type";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import type {
@@ -459,7 +460,7 @@ const DrawerHeader = (props: ChakraDrawer.HeaderProps) => {
   );
 };
 
-const DrawerBody = (props: ChakraDrawer.BodyProps) => {
+const DrawerBody = (props: VScrollContainerProps) => {
   // Props
   const { children, ...restProps } = props;
 
@@ -472,9 +473,10 @@ const DrawerBody = (props: ChakraDrawer.BodyProps) => {
       h={"full"}
       overflow={"hidden"}
       p={0}
-      {...restProps}
     >
-      <VScrollContainer p={4}>{children}</VScrollContainer>
+      <VScrollContainer p={4} {...restProps}>
+        {children}
+      </VScrollContainer>
     </ChakraDrawer.Body>
   );
 };
