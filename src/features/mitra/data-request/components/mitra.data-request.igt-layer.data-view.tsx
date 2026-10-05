@@ -80,9 +80,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const isCalculating = useMitraDataRequestStore(
       (state) => state.isCalculating,
     );
-    const calculationError = useMitraDataRequestStore(
-      (state) => state.error,
-    );
+    const calculationError = useMitraDataRequestStore((state) => state.error);
     const isCatalogCoverageVisible = useMitraDataRequestStore(
       (state) => state.isCatalogCoverageVisible,
     );
@@ -455,8 +453,19 @@ export const MitraDataRequestIgtLayerDataView = memo(
           label: "Zoom ke Layer",
           icon: FocusIcon,
           onClick: (layer: IgtLayerItem) => {
+            const resolvedAoi =
+              effectiveAoiPolygon && "geometry" in effectiveAoiPolygon
+                ? (effectiveAoiPolygon.geometry as
+                    | GeoJSON.Polygon
+                    | GeoJSON.MultiPolygon)
+                : (effectiveAoiPolygon as
+                    | GeoJSON.Polygon
+                    | GeoJSON.MultiPolygon
+                    | undefined);
+
             void flyTo(layer, {
               cqlFilter: combinedCqlFilter,
+              aoiPolygon: resolvedAoi,
             });
           },
         },
@@ -480,6 +489,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       filteredLayers,
       calculationResult,
       combinedCqlFilter,
+      effectiveAoiPolygon,
       flyTo,
       onSelectIgtLayer,
     ]);
