@@ -1,5 +1,6 @@
 // src/features/mitra/home/components/mitra.home.cart-summary.tsx
 
+import { Button } from "@/design-system/components/button/ui/button";
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
@@ -12,6 +13,7 @@ import {
 } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { useMitraCartSummaryQuery } from "@/features/mitra/home/hooks/use-mitra-home.query";
 import type {
@@ -19,7 +21,7 @@ import type {
   MitraHomeCartSummaryProps,
 } from "@/features/mitra/home/types/mitra.home.cart-summary.type";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
-import { DatabaseIcon, ReceiptTextIcon } from "lucide-react";
+import { ArrowRightIcon, DatabaseIcon, ReceiptTextIcon } from "lucide-react";
 
 export const MitraHomeCartSummary = (props: MitraHomeCartSummaryProps) => {
   return (
@@ -94,6 +96,13 @@ const MitraHomeCartSummaryHeader = () => {
           {"Ringkasan informasi keranjang pembelian data Anda."}
         </InfoTip>
       </HStack>
+
+      <NavLink to={"/mitra/cart"}>
+        <Button size={"xs"}>
+          Lihat Keranjang
+          <AppIcon icon={ArrowRightIcon} />
+        </Button>
+      </NavLink>
     </HStack>
   );
 };

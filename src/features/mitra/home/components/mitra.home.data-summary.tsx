@@ -4,6 +4,7 @@ import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -26,6 +27,7 @@ import type {
   MitraHomeDataSummaryProps,
   MitraHomeDataSummaryStatusConfig,
 } from "@/features/mitra/home/types/mitra.home.data-summary.type";
+import { DatabaseIcon } from "lucide-react";
 import { useState } from "react";
 
 const PERIOD_OPTIONS = [
@@ -55,6 +57,17 @@ const MitraHomeDataSummaryContent = () => {
   const { dataSummary, isLoading, isError, error, refetch } =
     useMitraDataSummaryQuery(period);
 
+  // Derived Values
+  const totalField =
+    (dataSummary?.field?.active ?? 0) +
+    (dataSummary?.field?.almostExpired ?? 0) +
+    (dataSummary?.field?.expired ?? 0);
+  const totalArea =
+    (dataSummary?.area?.active ?? 0) +
+    (dataSummary?.area?.almostExpired ?? 0) +
+    (dataSummary?.area?.expired ?? 0);
+  const isEmpty = !dataSummary || (totalField === 0 && totalArea === 0);
+
   if (isLoading) {
     return <Skeleton minH={isSmContainer ? "386px" : "233px"} w={"full"} />;
   }
@@ -82,6 +95,22 @@ const MitraHomeDataSummaryContent = () => {
             onRetry={() => {
               void refetch();
             }}
+          />
+        </Box>
+      ) : isEmpty ? (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={"full"}
+          py={"xl"}
+        >
+          <NoDataState
+            icon={DatabaseIcon}
+            title={"Belum Ada Data IGT"}
+            description={
+              "Belum ada data IGT aktif atau kedaluwarsa pada periode ini."
+            }
           />
         </Box>
       ) : (
