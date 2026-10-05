@@ -1,9 +1,6 @@
 // src/features/user-guide/components/user-guide.modal.tsx
 
-import {
-  Button,
-  IconButton,
-} from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
@@ -15,7 +12,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
@@ -149,10 +145,10 @@ const UserGuideModalContent = (props: {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <Modal.Body p={"md"}>
+      <Modal.Body p={0}>
         <VStack gap={"md"} align={"stretch"}>
           {/* Search & Category Filter Bar */}
-          <HStack gap={"xs"} align={"center"} w={"full"}>
+          <HStack gap={"xs"} align={"center"} w={"full"} p={"md"}>
             <SearchInput
               value={search}
               onValueChange={setSearch}
@@ -217,96 +213,91 @@ const UserGuideModalContent = (props: {
 
           {/* Clean Documents List */}
           {!isLoading && !isError && !isEmpty && (
-            <VStack
-              gap={"xs"}
-              align={"stretch"}
-              maxH={"480px"}
-              overflowY={"auto"}
-            >
-              {guides.map((guide) => {
+            <VStack gap={"md"} overflowY={"auto"} px={"md"}>
+              {guides.map((guide, index) => {
                 const catMeta =
                   USER_GUIDE_CATEGORY_MAP[guide.category] ??
                   USER_GUIDE_CATEGORY_MAP.general;
 
                 return (
-                  <HStack
+                  <VStack
                     key={guide.id}
-                    p={"sm"}
-                    justify={"space-between"}
-                    align={"center"}
-                    gap={"md"}
-                    bg={"bg.subtle"}
-                    rounded={theme.radii.component}
-                    transition={"150ms"}
-                    _hover={{
-                      bg: "bg.canvas",
-                      borderColor: `${theme.colorPalette}.focusRing`,
-                    }}
+                    align={"stretch"}
+                    gap={"sm"}
+                    pb={"md"}
+                    borderBottom={
+                      index < guides.length - 1 ? "1px solid" : "none"
+                    }
+                    borderColor={"bg.canvas"}
                   >
-                    <HStack gap={"md"} align={"center"} flex={1} minW={0}>
-                      <Center
-                        boxSize={"38px"}
-                        bg={`${catMeta.colorPalette}.subtle`}
-                        rounded={theme.radii.component}
-                        flexShrink={0}
-                      >
+                    {/* Header: Title + Category + Version */}
+                    <HStack
+                      justify={"space-between"}
+                      align={"start"}
+                      gap={"sm"}
+                      wrap={"wrap"}
+                    >
+                      <HStack gap={"xs"} align={"center"} flex={1} minW={0}>
                         <AppIcon
                           icon={FileTextIcon}
                           boxSize={4}
                           color={`${catMeta.colorPalette}.fg`}
                         />
-                      </Center>
 
-                      <VStack align={"start"} gap={"2xs"} flex={1} minW={0}>
-                        <HStack gap={"xs"} align={"center"} wrap={"wrap"}>
-                          <ClampedP fontWeight={"medium"} lineClamp={1}>
-                            {guide.title}
-                          </ClampedP>
-
-                          <Badge
-                            variant={"subtle"}
-                            colorPalette={catMeta.colorPalette}
-                          >
-                            {catMeta.label}
-                          </Badge>
-                        </HStack>
-
-                        <ClampedP color={"fg.muted"} lineClamp={1}>
-                          {guide.description}
+                        <ClampedP fontWeight={"semibold"} lineClamp={1}>
+                          {guide.title}
                         </ClampedP>
 
-                        <HStack gap={"xs"} color={"fg.subtle"} wrap={"wrap"}>
-                          <P color={"fg.subtle"}>{guide.fileName}</P>
-                          <P color={"fg.subtle"}>{"•"}</P>
-                          <P color={"fg.subtle"}>
-                            {formatByte(guide.fileSize)}
-                          </P>
-                          <P color={"fg.subtle"}>{"•"}</P>
-                          <P color={"fg.subtle"}>{guide.version}</P>
-                        </HStack>
-                      </VStack>
+                        <Badge
+                          variant={"subtle"}
+                          colorPalette={catMeta.colorPalette}
+                        >
+                          {catMeta.label}
+                        </Badge>
+                      </HStack>
+
+                      <Badge variant={"outline"}>{guide.version}</Badge>
                     </HStack>
 
-                    <HStack gap={"xs"} flexShrink={0} align={"center"}>
-                      <Tooltip content={"Pratinjau di tab baru"}>
-                        <IconButton
+                    {/* Description */}
+                    <ClampedP color={"fg.muted"} lineClamp={2}>
+                      {guide.description}
+                    </ClampedP>
+
+                    {/* Footer: Metadata & Actions */}
+                    <HStack
+                      justify={"space-between"}
+                      align={"center"}
+                      gap={"md"}
+                      pt={"2xs"}
+                      wrap={"wrap"}
+                    >
+                      <HStack gap={"xs"} color={"fg.subtle"} wrap={"wrap"}>
+                        <P color={"fg.subtle"}>{guide.fileName}</P>
+                        <P color={"fg.subtle"}>{"•"}</P>
+                        <P color={"fg.subtle"}>{formatByte(guide.fileSize)}</P>
+                      </HStack>
+
+                      <HStack gap={"xs"} align={"center"}>
+                        <Button
                           variant={"ghost"}
-                          aria-label={"Pratinjau"}
+                          colorPalette={"gray"}
                           onClick={() => handlePreview(guide)}
                         >
                           <AppIcon icon={ExternalLinkIcon} />
-                        </IconButton>
-                      </Tooltip>
+                          {"Pratinjau"}
+                        </Button>
 
-                      <Button
-                        primary={true}
-                        onClick={() => handleDownload(guide)}
-                      >
-                        <AppIcon icon={DownloadIcon} />
-                        {"Unduh"}
-                      </Button>
+                        <Button
+                          primary={true}
+                          onClick={() => handleDownload(guide)}
+                        >
+                          <AppIcon icon={DownloadIcon} />
+                          {"Unduh"}
+                        </Button>
+                      </HStack>
                     </HStack>
-                  </HStack>
+                  </VStack>
                 );
               })}
             </VStack>

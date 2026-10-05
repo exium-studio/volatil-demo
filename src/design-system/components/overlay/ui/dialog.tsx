@@ -432,7 +432,7 @@ const DialogBody = (props: VScrollContainerProps) => {
       minH={0}
       h={"full"}
       overflow={"hidden"}
-      p={"0!important"}
+      p={"0 !important"}
     >
       <VScrollContainer p={4} {...restProps}>
         {children}
