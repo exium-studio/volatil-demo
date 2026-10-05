@@ -195,7 +195,9 @@ export const MitraDataRequestSpatialSummary = memo(
 
     return (
       <VStack gap={"md"}>
-        {/* Coverage Layer Switch (Only rendered if coverage polygon exists) */}
+        {/* TODO disini toggle layer bidang dalam aoi */}
+
+        {/* Toggle Selected Layer Bidang & Kawasan  */}
         {hasCoveragePolygon && onToggleCoverageVisible && (
           <HStack justify={"space-between"} align={"center"}>
             <HStack gap={"xs"} align={"center"}>
