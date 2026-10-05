@@ -19,6 +19,7 @@ export type MitraDataRequestCatalogSlice = {
   cqlFilter: string | undefined;
   isCatalogAoiVisible: boolean;
   isCatalogCoverageVisible: boolean;
+  isCatalogBidangVisible: boolean;
   setAppliedAdministrativeFilters: (filters: FilterAdministrativeAreaValues) => void;
   setDraftAdministrativeFilters: (filters: FilterAdministrativeAreaValues) => void;
   setAdminBoundaryPolygon: (
@@ -26,6 +27,7 @@ export type MitraDataRequestCatalogSlice = {
   ) => void;
   setIsCatalogAoiVisible: (visible: boolean) => void;
   setIsCatalogCoverageVisible: (visible: boolean) => void;
+  setIsCatalogBidangVisible: (visible: boolean) => void;
   resetCatalog: () => void;
 };
 
@@ -35,6 +37,7 @@ export type MitraDataRequestUploadAoiSlice = {
   confirmedFeature: AoiFeatureItem | null;
   isUploadAoiVisible: boolean;
   isUploadCoverageVisible: boolean;
+  isUploadBidangVisible: boolean;
   setUploadedFile: (
     fileOrUpdater:
       | UploadedAoiFile
@@ -46,6 +49,7 @@ export type MitraDataRequestUploadAoiSlice = {
   toggleUploadFeatureVisibility: (featureId: string) => void;
   setIsUploadAoiVisible: (visible: boolean) => void;
   setIsUploadCoverageVisible: (visible: boolean) => void;
+  setIsUploadBidangVisible: (visible: boolean) => void;
   resetUploadAoi: () => void;
   resetUploadFile: () => void;
 };
@@ -54,9 +58,11 @@ export type MitraDataRequestDrawAoiSlice = {
   confirmedPolygon: GeoJSON.Feature<GeoJSON.Polygon> | null;
   isDrawAoiVisible: boolean;
   isDrawCoverageVisible: boolean;
+  isDrawBidangVisible: boolean;
   setConfirmedPolygon: (polygon: GeoJSON.Feature<GeoJSON.Polygon> | null) => void;
   setIsDrawAoiVisible: (visible: boolean) => void;
   setIsDrawCoverageVisible: (visible: boolean) => void;
+  setIsDrawBidangVisible: (visible: boolean) => void;
   resetDrawAoi: () => void;
 };
 

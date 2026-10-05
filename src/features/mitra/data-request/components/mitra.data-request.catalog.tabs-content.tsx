@@ -15,6 +15,7 @@ import {
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
+import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import type { MitraDataRequestCatalogTabsContentProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
@@ -85,14 +86,24 @@ export const MitraDataRequestCatalogTabsContent = (
   const isCoverageVisible = useMitraDataRequestStore(
     (state) => state.isCatalogCoverageVisible,
   );
+  const isBidangVisible = useMitraDataRequestStore(
+    (state) => state.isCatalogBidangVisible,
+  );
 
-  // Keep AOI and Coverage layers mounted across both layer cards and attribute table view
+  const bidangQueryResult = useBidangAoiFeatures({
+    aoiPolygon: adminBoundaryQuery.aoiPolygon,
+    enabled: Boolean(isActive && hasFilter && isBidangVisible),
+  });
+
+  // Keep AOI, Coverage, and Bidang layers mounted across both layer cards and attribute table view
   useCartAoiCoverageMap(map, {
     aoiPolygon: adminBoundaryQuery.aoiPolygon,
     coveragePolygon: calculationResult?.coveragePolygon,
+    bidangFeatures: bidangQueryResult.features,
     selectionType: "catalog",
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible,
     isActive: isActive && hasFilter,
   });
   const filterLabel = useMemo(() => {

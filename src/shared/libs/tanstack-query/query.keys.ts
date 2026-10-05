@@ -58,6 +58,8 @@ export const queryKeys = {
         [...queryKeys.mitra.dataRequest.all, "admin-boundary", levelOrHierarchy, name] as const,
       kawasanCoverage: (aoiHash: string) =>
         [...queryKeys.mitra.dataRequest.all, "kawasan-coverage", aoiHash] as const,
+      bidangFeatures: (aoiHash: string) =>
+        [...queryKeys.mitra.dataRequest.all, "bidang-features", aoiHash] as const,
     },
     helpCenter: {
       all: ["mitra", "help-center"] as const,

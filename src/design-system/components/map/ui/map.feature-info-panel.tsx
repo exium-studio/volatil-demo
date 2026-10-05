@@ -3,6 +3,8 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Presence } from "@/design-system/components/disclosure/ui/presence";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -13,9 +15,11 @@ import { useMapFeatureInfoStore } from "@/design-system/components/map/stores/ma
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { MapFeatureInfoItem } from "@/design-system/components/map/types/map.feature-info.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { toast } from "@/design-system/components/toast";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { isEmptyArray } from "@/shared/utils/data/array";
 import * as turf from "@turf/turf";
 import { FocusIcon, Grid2X2Icon, Layers2Icon, XIcon } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -70,15 +74,19 @@ export const MapFeatureInfoPanel = () => {
     [displayFeature],
   );
 
+  const allEntries = useMemo(
+    () => Object.entries(properties),
+    [properties],
+  );
+
   const filteredEntries = useMemo(() => {
-    const entries = Object.entries(properties);
-    if (!searchQuery.trim()) return entries;
+    if (!searchQuery.trim()) return allEntries;
     const q = searchQuery.toLowerCase();
-    return entries.filter(
+    return allEntries.filter(
       ([k, v]) =>
         k.toLowerCase().includes(q) || String(v).toLowerCase().includes(q),
     );
-  }, [properties, searchQuery]);
+  }, [allEntries, searchQuery]);
 
   // Handlers
   const handleExitComplete = () => {
@@ -137,6 +145,22 @@ export const MapFeatureInfoPanel = () => {
         gap={0}
       >
         {/* Header */}
+        <HeaderContainer pr={"sm"}>
+          <P fontWeight={"medium"}>{"Properties"}</P>
+
+          <Tooltip content={"Tutup"}>
+            <IconButton
+              size={"sm"}
+              aria-label={"Tutup"}
+              onClick={clearFeatureInfo}
+            >
+              <AppIcon icon={XIcon} />
+            </IconButton>
+          </Tooltip>
+        </HeaderContainer>
+
+        <Separator borderColor={"bg.canvas"} />
+
         <HStack
           flexShrink={0}
           align={"center"}
@@ -159,7 +183,7 @@ export const MapFeatureInfoPanel = () => {
               <AppIcon icon={LayerIcon} color={`${colorPalette}.fg`} />
             </Center>
 
-            <VStack flex={1} align={"start"} minW={0} gap={0}>
+            <VStack flex={1} align={"start"}>
               <ClampedP fontWeight={"medium"} lineHeight={"tight"}>
                 {displayFeature?.title ??
                   displayFeature?.layerTitle ??
@@ -176,7 +200,7 @@ export const MapFeatureInfoPanel = () => {
             {(selectedFeature?.geometry || displayFeature?.geometry) && (
               <Tooltip content={"Zoom ke Fitur"}>
                 <IconButton
-                  variant={"ghost"}
+                  size={"sm"}
                   aria-label={"Zoom ke Fitur"}
                   onClick={handleZoomToFeature}
                 >
@@ -184,89 +208,100 @@ export const MapFeatureInfoPanel = () => {
                 </IconButton>
               </Tooltip>
             )}
-
-            <Tooltip content={"Tutup"}>
-              <IconButton
-                variant={"ghost"}
-                aria-label={"Tutup"}
-                onClick={clearFeatureInfo}
-              >
-                <AppIcon icon={XIcon} />
-              </IconButton>
-            </Tooltip>
           </HStack>
         </HStack>
 
         {/* Content */}
-        {isLoading && !displayFeature ? (
+        {isLoading && !displayFeature && (
           <VStack w={"full"} p={"md"} gap={"sm"}>
             <Skeleton h={"28px"} w={"full"} />
             <Skeleton h={"18px"} w={"75%"} />
             <Skeleton h={"18px"} w={"60%"} />
             <Skeleton h={"18px"} w={"90%"} />
           </VStack>
-        ) : filteredEntries.length === 0 ? (
-          <VStack w={"full"} p={"lg"} align={"center"} justify={"center"}>
-            <P fontSize={"sm"} color={"fg.muted"}>
-              {"Tidak ada atribut fitur"}
-            </P>
-          </VStack>
-        ) : (
-          <VStack w={"full"} flex={1} gap={0} overflowY={"auto"}>
-            {Object.keys(properties).length > 5 && (
-              <Box p={"sm"} w={"full"} borderColor={"border.subtle"}>
-                <SearchInput
-                  placeholder={"Cari atribut..."}
-                  value={searchQuery}
-                  onValueChange={(val) => setSearchQuery(val)}
-                  w={"full"}
-                />
-              </Box>
-            )}
-
-            <VStack w={"full"} flex={1} p={"sm"} gap={"xs"}>
-              {filteredEntries.map(([key, value], idx) => {
-                const stringVal =
-                  value === null || value === undefined
-                    ? "-"
-                    : typeof value === "object"
-                      ? JSON.stringify(value)
-                      : String(value);
-
-                return (
-                  <VStack key={key} w={"full"} gap={"xs"}>
-                    {idx > 0 && <Separator borderColor={"border.subtle"} />}
-                    <HStack
-                      w={"full"}
-                      justify={"space-between"}
-                      align={"start"}
-                      gap={"sm"}
-                      py={"2xs"}
-                    >
-                      <P
-                        fontSize={"sm"}
-                        color={"fg.muted"}
-                        w={"40%"}
-                        wordBreak={"break-word"}
-                      >
-                        {key}
-                      </P>
-
-                      <P
-                        fontWeight={"medium"}
-                        w={"60%"}
-                        textAlign={"right"}
-                        wordBreak={"break-word"}
-                      >
-                        {stringVal}
-                      </P>
-                    </HStack>
-                  </VStack>
-                );
-              })}
-            </VStack>
-          </VStack>
         )}
+
+        {(!isLoading || Boolean(displayFeature)) &&
+          isEmptyArray(allEntries) && (
+            <VStack w={"full"} p={"lg"} align={"center"} justify={"center"}>
+              <NoDataState description={"Tidak ada atribut fitur"} />
+            </VStack>
+          )}
+
+        {(!isLoading || Boolean(displayFeature)) &&
+          !isEmptyArray(allEntries) && (
+            <VStack w={"full"} flex={1} gap={0} overflow={"hidden"}>
+              {allEntries.length > 5 && (
+                <Box
+                  p={"sm"}
+                  w={"full"}
+                  borderBottom={"1px solid"}
+                  borderColor={"border.subtle"}
+                >
+                  <SearchInput
+                    placeholder={"Cari atribut..."}
+                    value={searchQuery}
+                    onValueChange={(val) => setSearchQuery(val)}
+                    w={"full"}
+                  />
+                </Box>
+              )}
+
+              <VStack w={"full"} flex={1} p={"sm"} gap={"xs"} overflowY={"auto"}>
+                {isEmptyArray(filteredEntries) && (
+                  <VStack
+                    w={"full"}
+                    py={"md"}
+                    align={"center"}
+                    justify={"center"}
+                  >
+                    <NoResultState query={searchQuery || "..."} />
+                  </VStack>
+                )}
+
+                {!isEmptyArray(filteredEntries) &&
+                  filteredEntries.map(([key, value], idx) => {
+                    const stringVal =
+                      value === null || value === undefined
+                        ? "-"
+                        : typeof value === "object"
+                          ? JSON.stringify(value)
+                          : String(value);
+
+                    return (
+                      <VStack key={key} w={"full"} gap={"xs"}>
+                        {idx > 0 && <Separator borderColor={"border.subtle"} />}
+                        <HStack
+                          w={"full"}
+                          justify={"space-between"}
+                          align={"start"}
+                          gap={"sm"}
+                          py={"2xs"}
+                        >
+                          <P
+                            fontSize={"sm"}
+                            color={"fg.muted"}
+                            w={"40%"}
+                            wordBreak={"break-word"}
+                          >
+                            {key}
+                          </P>
+
+                          <P
+                            fontWeight={"medium"}
+                            w={"60%"}
+                            textAlign={"right"}
+                            wordBreak={"break-word"}
+                          >
+                            {stringVal}
+                          </P>
+                        </HStack>
+                      </VStack>
+                    );
+                  })}
+              </VStack>
+            </VStack>
+          )}
       </VStack>
     </Presence>
   );

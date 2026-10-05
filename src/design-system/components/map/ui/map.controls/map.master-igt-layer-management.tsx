@@ -15,6 +15,7 @@ import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overl
 import { LayerSymbologyContent } from "@/design-system/components/map/ui/map.symbology-panel";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -113,22 +114,17 @@ export const MapMasterIgtLayerManagement = memo(() => {
       </Popover.Trigger>
 
       <Popover.Content w={"full"} maxW={"380px"}>
-        <Popover.Header
-          p={3}
-          borderBottom={"1px solid"}
-          borderColor={"border"}
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-        >
+        <HeaderContainer>
           <HStack justify={"space-between"} gap={"md"} w={"full"}>
             <P fontWeight={"medium"}>{"Manajemen Layer & Simbologi IGT"}</P>
 
             <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
           </HStack>
-        </Popover.Header>
+        </HeaderContainer>
 
-        <Popover.Body p={2} maxH={"500px"} overflowY={"auto"}>
+        <Separator borderColor={"bg.canvas"} />
+
+        <Popover.Body p={"sm"} maxH={"500px"} overflowY={"auto"}>
           {isLoading ? (
             <HStack align={"center"} justify={"center"} gap={"md"} p={"md"}>
               <Loader />

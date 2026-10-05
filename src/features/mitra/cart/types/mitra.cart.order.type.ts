@@ -131,9 +131,11 @@ export type CartMapLayerOptions = {
     | GeoJSON.Polygon
     | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
     | null;
+  bidangFeatures?: GeoJSON.FeatureCollection | null;
   selectionType?: string | null;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  isBidangVisible?: boolean;
   isActive?: boolean;
   exclusive?: boolean;
 };

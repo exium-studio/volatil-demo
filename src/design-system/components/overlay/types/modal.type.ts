@@ -58,10 +58,9 @@ export type ModalHeaderProps = (
   | ChakraDialog.HeaderProps
 ) & {};
 
-export type ModalBodyProps = (
-  | ChakraDrawer.BodyProps
-  | ChakraDialog.BodyProps
-) & {};
+import type { VScrollContainerProps } from "@/design-system/components/layout/types/scroll-container.type";
+
+export type ModalBodyProps = VScrollContainerProps & {};
 
 export type ModalFooterProps = (
   | ChakraDrawer.FooterProps

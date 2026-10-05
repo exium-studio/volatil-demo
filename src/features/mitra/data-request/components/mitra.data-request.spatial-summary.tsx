@@ -34,8 +34,12 @@ export const MitraDataRequestSpatialSummary = memo(
       progressMessage: propProgressMessage,
       progressPercentage: propProgressPercentage,
       hasCoveragePolygon = false,
+      hasBidangLayer = false,
       isCoverageVisible = true,
+      isBidangVisible = true,
+      isFetchingBidang = false,
       onToggleCoverageVisible,
+      onToggleBidangVisible,
     } = props;
 
     // Stores
@@ -195,9 +199,29 @@ export const MitraDataRequestSpatialSummary = memo(
 
     return (
       <VStack gap={"md"}>
-        {/* TODO disini toggle layer bidang dalam aoi */}
+        {/* Toggle Selected Layer Bidang */}
+        {(hasBidangLayer || totalBidangCount > 0) && onToggleBidangVisible && (
+          <HStack justify={"space-between"} align={"center"}>
+            <HStack gap={"xs"} align={"center"}>
+              <P>{"Tampilkan Cakupan Bidang"}</P>
 
-        {/* Toggle Selected Layer Bidang & Kawasan  */}
+              {isFetchingBidang && <Loader size={"xs"} />}
+            </HStack>
+
+            <Switch
+              checked={isBidangVisible}
+              disabled={isFetchingBidang}
+              onCheckedChange={onToggleBidangVisible}
+              tooltip={
+                isBidangVisible
+                  ? "Sembunyikan Cakupan Bidang"
+                  : "Tampilkan Cakupan Bidang"
+              }
+            />
+          </HStack>
+        )}
+
+        {/* Toggle Selected Layer Cakupan Kawasan  */}
         {hasCoveragePolygon && onToggleCoverageVisible && (
           <HStack justify={"space-between"} align={"center"}>
             <HStack gap={"xs"} align={"center"}>

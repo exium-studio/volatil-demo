@@ -16,12 +16,16 @@ export type MitraDataRequestSpatialSummaryProps = {
   progressPercentage?: number;
   hasAoiPolygon?: boolean;
   hasCoveragePolygon?: boolean;
+  hasBidangLayer?: boolean;
   aoiColorPalette?: string;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  isBidangVisible?: boolean;
+  isFetchingBidang?: boolean;
   selectionType?: string;
   onToggleAoiVisible?: () => void;
   onToggleCoverageVisible?: () => void;
+  onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
   onFlyToCoverage?: () => void;
 };

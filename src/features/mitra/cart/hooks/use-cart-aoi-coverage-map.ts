@@ -53,6 +53,15 @@ export const getCartCoverageLayerIds = (selectionType?: string | null) => {
   };
 };
 
+export const getCartBidangLayerIds = (selectionType?: string | null) => {
+  const key = normalizeSelectionTypeKey(selectionType);
+  return {
+    sourceId: `${key}-bidang-source`,
+    fillId: `${key}-bidang-fill`,
+    lineId: `${key}-bidang-line`,
+  };
+};
+
 /** Backwards-compatible constants default to catalog */
 export const CART_AOI_SOURCE_ID = "catalog-aoi-source";
 export const CART_AOI_FILL_ID = "catalog-aoi-fill";
@@ -62,12 +71,21 @@ export const CART_COVERAGE_SOURCE_ID = "catalog-coverage-source";
 export const CART_COVERAGE_FILL_ID = "catalog-coverage-fill";
 export const CART_COVERAGE_LINE_ID = "catalog-coverage-line";
 
+export const CART_BIDANG_SOURCE_ID = "catalog-bidang-source";
+export const CART_BIDANG_FILL_ID = "catalog-bidang-fill";
+export const CART_BIDANG_LINE_ID = "catalog-bidang-line";
+
 /** Compatibility color helpers backed by SSOT */
 export const getAoiColor = (selectionType?: string) =>
   getSelectionTypeMapColors(selectionType);
 
 export const getCoverageColor = (selectionType?: string) =>
   getSelectionTypeMapColors(selectionType);
+
+export const BIDANG_MAP_COLOR = {
+  fill: "#f59e0b",
+  line: "#d97706",
+};
 
 import { FEATURE_INFO_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-feature-info";
 import { HIGHLIGHT_FILL_LAYER_ID } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
@@ -83,7 +101,7 @@ const getBeforeId = (map: maplibregl.Map): string | undefined => {
   return undefined;
 };
 
-/** Removes recycled Cart AOI and Coverage layers & sources for a given selectionType (or all if omitted) from map. */
+/** Removes recycled Cart AOI, Coverage, and Bidang layers & sources for a given selectionType (or all if omitted) from map. */
 export const removeCartMapLayers = (
   map: maplibregl.Map | null,
   selectionType?: string | null,
@@ -98,8 +116,13 @@ export const removeCartMapLayers = (
   for (const key of typesToRemove) {
     const aoiIds = getCartAoiLayerIds(key);
     const covIds = getCartCoverageLayerIds(key);
+    const bidIds = getCartBidangLayerIds(key);
 
     try {
+      if (map.getLayer(bidIds.fillId)) map.removeLayer(bidIds.fillId);
+      if (map.getLayer(bidIds.lineId)) map.removeLayer(bidIds.lineId);
+      if (map.getSource(bidIds.sourceId)) map.removeSource(bidIds.sourceId);
+
       if (map.getLayer(covIds.fillId)) map.removeLayer(covIds.fillId);
       if (map.getLayer(covIds.lineId)) map.removeLayer(covIds.lineId);
       if (map.getSource(covIds.sourceId)) map.removeSource(covIds.sourceId);
@@ -127,15 +150,18 @@ export const renderCartMapLayers = (
   const {
     aoiPolygon,
     coveragePolygon,
+    bidangFeatures,
     selectionType = "catalog",
     isAoiVisible = true,
     isCoverageVisible = true,
+    isBidangVisible = true,
     isActive = true,
     exclusive = false,
   } = options;
 
   const aoiIds = getCartAoiLayerIds(selectionType);
   const covIds = getCartCoverageLayerIds(selectionType);
+  const bidIds = getCartBidangLayerIds(selectionType);
   const colors = getSelectionTypeMapColors(selectionType);
   const beforeId = getBeforeId(map);
   const aoiFeature = normalizePolygonFeature(aoiPolygon);
@@ -148,6 +174,7 @@ export const renderCartMapLayers = (
       (otherKey) => {
         const otherAoi = getCartAoiLayerIds(otherKey);
         const otherCov = getCartCoverageLayerIds(otherKey);
+        const otherBid = getCartBidangLayerIds(otherKey);
 
         const aoiSource = map.getSource(otherAoi.sourceId) as
           | maplibregl.GeoJSONSource
@@ -169,6 +196,17 @@ export const renderCartMapLayers = (
         }
         if (map.getLayer(otherCov.lineId)) {
           map.setLayoutProperty(otherCov.lineId, "visibility", "none");
+        }
+
+        const bidSource = map.getSource(otherBid.sourceId) as
+          | maplibregl.GeoJSONSource
+          | undefined;
+        if (bidSource) bidSource.setData(EMPTY_FEATURE_COLLECTION);
+        if (map.getLayer(otherBid.fillId)) {
+          map.setLayoutProperty(otherBid.fillId, "visibility", "none");
+        }
+        if (map.getLayer(otherBid.lineId)) {
+          map.setLayoutProperty(otherBid.lineId, "visibility", "none");
         }
       },
     );
@@ -367,6 +405,109 @@ export const renderCartMapLayers = (
       map.setLayoutProperty(covIds.lineId, "visibility", "none");
     }
   }
+
+  // 3. Manage Recycled Bidang features layer for this selectionType
+  const shouldShowBidang =
+    isActive &&
+    isBidangVisible &&
+    Boolean(bidangFeatures?.features && bidangFeatures.features.length > 0);
+
+  if (shouldShowBidang && bidangFeatures) {
+    const existingSource = map.getSource(bidIds.sourceId) as
+      | maplibregl.GeoJSONSource
+      | undefined;
+
+    if (existingSource) {
+      existingSource.setData(bidangFeatures);
+    } else {
+      try {
+        map.addSource(bidIds.sourceId, {
+          type: "geojson",
+          data: bidangFeatures,
+        });
+      } catch (err) {
+        console.warn(`Failed to add source ${bidIds.sourceId}:`, err);
+      }
+    }
+
+    if (!map.getLayer(bidIds.fillId)) {
+      try {
+        map.addLayer(
+          {
+            id: bidIds.fillId,
+            type: "fill",
+            source: bidIds.sourceId,
+            paint: {
+              "fill-color": BIDANG_MAP_COLOR.fill,
+              "fill-opacity": 0.25,
+            },
+          } as maplibregl.LayerSpecification,
+          beforeId,
+        );
+      } catch (err) {
+        console.warn(`Failed to add layer ${bidIds.fillId}:`, err);
+      }
+    } else {
+      map.setPaintProperty(bidIds.fillId, "fill-color", BIDANG_MAP_COLOR.fill);
+      map.setLayoutProperty(bidIds.fillId, "visibility", "visible");
+    }
+
+    if (!map.getLayer(bidIds.lineId)) {
+      try {
+        map.addLayer(
+          {
+            id: bidIds.lineId,
+            type: "line",
+            source: bidIds.sourceId,
+            paint: {
+              "line-color": BIDANG_MAP_COLOR.line,
+              "line-width": 1.8,
+              "line-opacity": 0.9,
+            },
+          } as maplibregl.LayerSpecification,
+          beforeId,
+        );
+      } catch (err) {
+        console.warn(`Failed to add layer ${bidIds.lineId}:`, err);
+      }
+    } else {
+      map.setPaintProperty(bidIds.lineId, "line-color", BIDANG_MAP_COLOR.line);
+      map.setLayoutProperty(bidIds.lineId, "visibility", "visible");
+    }
+
+    // Stack Bidang below Coverage and AOI
+    try {
+      const bidBefore = map.getLayer(covIds.fillId)
+        ? covIds.fillId
+        : map.getLayer(aoiIds.fillId)
+          ? aoiIds.fillId
+          : beforeId && map.getLayer(beforeId)
+            ? beforeId
+            : undefined;
+      if (map.getLayer(bidIds.fillId)) {
+        map.moveLayer(bidIds.fillId, bidBefore);
+      }
+      if (map.getLayer(bidIds.lineId)) {
+        map.moveLayer(bidIds.lineId, bidBefore);
+      }
+    } catch (err) {
+      console.warn("Failed to move Bidang layers:", err);
+    }
+  } else {
+    // Hide or clear Bidang layers for this selectionType
+    const existingSource = map.getSource(bidIds.sourceId) as
+      | maplibregl.GeoJSONSource
+      | undefined;
+    if (existingSource) {
+      existingSource.setData(EMPTY_FEATURE_COLLECTION);
+    }
+    if (map.getLayer(bidIds.fillId)) {
+      map.setLayoutProperty(bidIds.fillId, "visibility", "none");
+    }
+    if (map.getLayer(bidIds.lineId)) {
+      map.setLayoutProperty(bidIds.lineId, "visibility", "none");
+    }
+  }
 };
 
 /**
@@ -398,7 +539,7 @@ export const flyToCartGeometry = (
 };
 
 /**
- * Hook to manage independent recycled AOI and Coverage layers per tab/selectionType with cleanup on unmount.
+ * Hook to manage independent recycled AOI, Coverage, and Bidang layers per tab/selectionType with cleanup on unmount.
  */
 export const useCartAoiCoverageMap = (
   map: maplibregl.Map | null,
@@ -408,9 +549,11 @@ export const useCartAoiCoverageMap = (
   const {
     aoiPolygon,
     coveragePolygon,
+    bidangFeatures,
     selectionType,
     isAoiVisible = true,
     isCoverageVisible = true,
+    isBidangVisible = true,
     isActive = true,
     exclusive = false,
   } = options;
@@ -462,9 +605,11 @@ export const useCartAoiCoverageMap = (
     renderCartMapLayers(map, {
       aoiPolygon,
       coveragePolygon,
+      bidangFeatures,
       selectionType,
       isAoiVisible,
       isCoverageVisible,
+      isBidangVisible,
       isActive,
       exclusive,
     });
@@ -472,9 +617,11 @@ export const useCartAoiCoverageMap = (
     map,
     aoiPolygon,
     coveragePolygon,
+    bidangFeatures,
     selectionType,
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible,
     isActive,
     exclusive,
   ]);

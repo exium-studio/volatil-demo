@@ -26,6 +26,7 @@ import { flyToCartGeometry } from "@/features/mitra/cart/hooks/use-cart-aoi-cove
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { MitraDataRequestSpatialSummary } from "@/features/mitra/data-request/components/mitra.data-request.spatial-summary";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
+import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useAddToCartMultipleLayers } from "@/features/mitra/data-request/hooks/use-mitra-data-request";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
@@ -87,11 +88,23 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const setIsCatalogCoverageVisible = useMitraDataRequestStore(
       (state) => state.setIsCatalogCoverageVisible,
     );
+    const isCatalogBidangVisible = useMitraDataRequestStore(
+      (state) => state.isCatalogBidangVisible,
+    );
+    const setIsCatalogBidangVisible = useMitraDataRequestStore(
+      (state) => state.setIsCatalogBidangVisible,
+    );
     const isUploadCoverageVisible = useMitraDataRequestStore(
       (state) => state.isUploadCoverageVisible,
     );
     const setIsUploadCoverageVisible = useMitraDataRequestStore(
       (state) => state.setIsUploadCoverageVisible,
+    );
+    const isUploadBidangVisible = useMitraDataRequestStore(
+      (state) => state.isUploadBidangVisible,
+    );
+    const setIsUploadBidangVisible = useMitraDataRequestStore(
+      (state) => state.setIsUploadBidangVisible,
     );
     const isDrawCoverageVisible = useMitraDataRequestStore(
       (state) => state.isDrawCoverageVisible,
@@ -99,14 +112,27 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const setIsDrawCoverageVisible = useMitraDataRequestStore(
       (state) => state.setIsDrawCoverageVisible,
     );
+    const isDrawBidangVisible = useMitraDataRequestStore(
+      (state) => state.isDrawBidangVisible,
+    );
+    const setIsDrawBidangVisible = useMitraDataRequestStore(
+      (state) => state.setIsDrawBidangVisible,
+    );
 
-    // Derived Values — Coverage visibility bound to active tab slice
+    // Derived Values — Coverage & Bidang visibility bound to active tab slice
     const isCoverageVisible =
       selectionType === "upload_aoi"
         ? isUploadCoverageVisible
         : selectionType === "draw_aoi"
           ? isDrawCoverageVisible
           : isCatalogCoverageVisible;
+
+    const isBidangVisible =
+      selectionType === "upload_aoi"
+        ? isUploadBidangVisible
+        : selectionType === "draw_aoi"
+          ? isDrawBidangVisible
+          : isCatalogBidangVisible;
 
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
@@ -216,6 +242,31 @@ export const MitraDataRequestIgtLayerDataView = memo(
       () => filteredLayers.filter((l) => l.spatialBasis === "kawasan"),
       [filteredLayers],
     );
+
+    const bidangTargetLayers = useMemo(() => {
+      return intersectingLayers
+        .filter(
+          (l) =>
+            l.spatialBasis === "bidang" &&
+            Boolean(l.wfs?.wfsTypeName && l.wfs?.wfsUrl),
+        )
+        .map((l) => ({
+          id: l.id,
+          typeName: l.wfs!.wfsTypeName!,
+          wfsUrl: l.wfs!.wfsUrl!,
+          title: l.title,
+        }));
+    }, [intersectingLayers]);
+
+    // Query WFS features for Bidang layers when toggle is ON
+    const bidangQueryResult = useBidangAoiFeatures({
+      aoiPolygon: effectiveAoiPolygon,
+      bidangLayers: bidangTargetLayers,
+      enabled:
+        isBidangVisible &&
+        Boolean(effectiveAoiPolygon) &&
+        bidangTargetLayers.length > 0,
+    });
 
     // Derived stable trigger key: depends strictly on AOI, selectionType, and all intersecting layers in that AOI
     const calcTriggerKey = useMemo(() => {
@@ -631,7 +682,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 isPurchaseLimitValid={isPurchaseLimitValid}
                 purchaseLimitMessage={purchaseLimitMessage}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
+                hasBidangLayer={
+                  bidangTargetLayers.length > 0 ||
+                  (calculationResult?.totalBidangCount ?? 0) > 0
+                }
                 isCoverageVisible={isCoverageVisible}
+                isBidangVisible={isBidangVisible}
+                isFetchingBidang={bidangQueryResult.isLoading}
                 selectionType={selectionType}
                 onToggleCoverageVisible={() => {
                   if (selectionType === "upload_aoi") {
@@ -640,6 +697,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     setIsDrawCoverageVisible(!isDrawCoverageVisible);
                   } else {
                     setIsCatalogCoverageVisible(!isCatalogCoverageVisible);
+                  }
+                }}
+                onToggleBidangVisible={() => {
+                  if (selectionType === "upload_aoi") {
+                    setIsUploadBidangVisible(!isUploadBidangVisible);
+                  } else if (selectionType === "draw_aoi") {
+                    setIsDrawBidangVisible(!isDrawBidangVisible);
+                  } else {
+                    setIsCatalogBidangVisible(!isCatalogBidangVisible);
                   }
                 }}
               />

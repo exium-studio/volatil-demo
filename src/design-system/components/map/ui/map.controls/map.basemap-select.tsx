@@ -6,6 +6,7 @@ import { Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import {
   MAP_BASEMAP_MAP,
   MAP_BASEMAP_OPTIONS_LIST,
@@ -16,6 +17,7 @@ import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overl
 import { Image } from "@/design-system/components/media/ui/image";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -94,14 +96,17 @@ export const MapBasemapSelect = () => {
       </Popover.Trigger>
 
       <Popover.Content>
-        <Popover.Header p={3} borderBottom={"1px solid"} borderColor={"border"}>
+        <HeaderContainer>
           <P fontWeight={"medium"}>{"Peta Dasar"}</P>
-        </Popover.Header>
+        </HeaderContainer>
+
+        <Separator borderColor={"bg.canvas"} />
 
         <Popover.Body
           className={"noScrollbar"}
           w={["full", null, "400px"]}
-          p={2}
+          px={"xs"}
+          py={"md"}
           overflowY={"auto"}
         >
           <Grid

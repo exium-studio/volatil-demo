@@ -14,6 +14,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCartAoiCoverageMap } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
+import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
@@ -248,17 +249,27 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
   const isCoverageVisible = useMitraDataRequestStore(
     (state) => state.isDrawCoverageVisible,
   );
+  const isBidangVisible = useMitraDataRequestStore(
+    (state) => state.isDrawBidangVisible,
+  );
   const calculationResult = useMitraDataRequestStore(
     (state) => state.calculationResults["draw_aoi"] ?? state.result,
   );
 
-  // Keep AOI and Coverage layers mounted across both layer list and attribute table view
+  const bidangQueryResult = useBidangAoiFeatures({
+    aoiPolygon: confirmedPolygon,
+    enabled: Boolean(isActive && confirmedPolygon && isBidangVisible),
+  });
+
+  // Keep AOI, Coverage, and Bidang layers mounted across both layer list and attribute table view
   useCartAoiCoverageMap(map, {
     aoiPolygon: confirmedPolygon,
     coveragePolygon: calculationResult?.coveragePolygon,
+    bidangFeatures: bidangQueryResult.features,
     selectionType: "draw_aoi",
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible,
     isActive,
   });
 
