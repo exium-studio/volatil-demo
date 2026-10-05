@@ -34,7 +34,7 @@ import { StatusFilterSelect } from "@/features/shared/components/status-filter.s
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { DownloadIcon, ExternalLinkIcon, FileTextIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export const UserGuideModal = (props: UserGuideModalProps) => {
   // Props
@@ -96,12 +96,21 @@ const UserGuideModalContent = (props: {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Queries & Mutations
+  const categoryOptions = useMemo(() => {
+    if (portalType === "mitra") {
+      return USER_GUIDE_CATEGORY_OPTIONS.filter(
+        (opt) => opt.value !== "internal",
+      );
+    }
+    return USER_GUIDE_CATEGORY_OPTIONS;
+  }, [portalType]);
+
   const { guides, isLoading, isError, error, refetch } = useUserGuidesQuery({
     page: 1,
     limit: 100,
     search: search.trim() || undefined,
     category: selectedCategory !== "all" ? selectedCategory : undefined,
-    targetRole: portalType !== "all" ? portalType : undefined,
+    targetRole: portalType === "mitra" ? "mitra" : undefined,
     isPublished: true,
   });
 
@@ -153,7 +162,7 @@ const UserGuideModalContent = (props: {
 
             <StatusFilterSelect
               modalKey={`${modalKey}.category-filter`}
-              options={USER_GUIDE_CATEGORY_OPTIONS}
+              options={categoryOptions}
               value={selectedCategory}
               onValueChange={(val) => setSelectedCategory(val)}
               placeholder={"Semua Kategori"}

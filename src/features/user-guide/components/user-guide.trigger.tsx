@@ -90,9 +90,7 @@ export const UserGuideTrigger = (props: UserGuideTriggerProps) => {
           _hover={{ color: `${theme.colorPalette}.fg` }}
         >
           <AppIcon icon={HelpCircleIcon} boxSize={3.5} />
-          <P textDecoration={"underline"}>
-            {"Buku Petunjuk Penggunaan"}
-          </P>
+          <P textDecoration={"underline"}>{"Buku Petunjuk Penggunaan"}</P>
         </HStack>
       )}
 

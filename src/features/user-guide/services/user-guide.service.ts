@@ -94,9 +94,17 @@ export const userGuideService = {
     }
 
     if (targetRole && targetRole !== "all") {
-      filtered = filtered.filter(
-        (item) => item.targetRole === targetRole || item.targetRole === "all",
-      );
+      if (targetRole === "mitra") {
+        filtered = filtered.filter(
+          (item) =>
+            (item.targetRole === "mitra" || item.targetRole === "all") &&
+            item.category !== "internal",
+        );
+      } else {
+        filtered = filtered.filter(
+          (item) => item.targetRole === targetRole || item.targetRole === "all",
+        );
+      }
     }
 
     if (typeof isPublished === "boolean") {
