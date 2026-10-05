@@ -577,21 +577,28 @@ Seluruh akses tile dan fitur spasial dialihkan melalui endpoint proxy Backend de
 
 ## 2.5 Dokumen Panduan Pengguna (User Guides)
 
-### Get List Dokumen Panduan
+Modul manajemen dokumen panduan sistem (Buku Manual, SOP, Petunjuk Teknis, Regulasi) yang diakses oleh Mitra dan staf Internal serta dikelola oleh Administrator Internal ATR/BPN.
+
+---
+
+### 2.5.1 Get List Dokumen Panduan
+Mengambil daftar dokumen panduan dengan dukungan pencarian teks, filter kategori, target audiens/role, dan status publikasi.
+
 - **Endpoint**: `GET /api/user-guides`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Query Params**:
-  - `page?: number`
-  - `limit?: number`
-  - `search?: string`
-  - `category?: "manual_book" | "sop" | "technical_spec" | "regulation"`
-  - `targetRole?: "all" | "mitra" | "internal"`
-  - `isPublished?: boolean`
+  - `page?: number` — Halaman saat ini (Default: `1`)
+  - `limit?: number` — Jumlah item per halaman (Default: `10`, Max: `100`)
+  - `search?: string` — Pencarian substring pada `title`, `description`, `fileName`, atau `version`
+  - `category?: "manual_book" | "sop" | "technical_spec" | "regulation"` — Filter jenis kategori dokumen
+  - `targetRole?: "all" | "mitra" | "internal"` — Filter target hak akses pengguna
+  - `isPublished?: boolean` — Status publikasi (User publik/mitra hanya melihat `isPublished=true`, admin internal dapat melihat semua)
+- **Sorting Default**: `updatedAt DESC` (dokumen terbitan/pembaruan terbaru berada di posisi teratas)
+
 - **Response (200 OK)**:
 ```typescript
 type UserGuideListApiResponse = {
-  success: boolean;
-  message?: string;
+  success: true;
   data: Array<{
     id: string;
     title: string;
@@ -599,16 +606,16 @@ type UserGuideListApiResponse = {
     description: string;
     category: "manual_book" | "sop" | "technical_spec" | "regulation";
     targetRole: "all" | "mitra" | "internal";
-    version: string;
-    fileName: string;
-    fileUrl: string;
-    fileSize: number;
-    fileType: string;
+    version: string; // Format: "vX.Y.Z" (contoh: "v1.0.0", "v2.1.0")
+    fileName: string; // Contoh: "Manual_Book_Mitra_IGT_v2.1.pdf"
+    fileUrl: string; // URL endpoint unduh / storage asset (contoh: "/api/files/guides/uuid.pdf")
+    fileSize: number; // Ukuran file dalam satuan Bytes (contoh: 4980736 = ~4.75 MB)
+    fileType: string; // Ekstensi berkas tanpa titik (contoh: "pdf", "docx")
     isPublished: boolean;
     downloadCount: number;
     author: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: string; // ISO 8601 UTC
+    updatedAt: string; // ISO 8601 UTC
   }>;
   pagination: {
     totalItems: number;
@@ -621,14 +628,17 @@ type UserGuideListApiResponse = {
 };
 ```
 
-### Get Detail Dokumen Panduan
+---
+
+### 2.5.2 Get Detail Dokumen Panduan
 - **Endpoint**: `GET /api/user-guides/:id`
 - **Akses**: `Authenticated (Mitra & Internal)`
+- **Path Params**:
+  - `id` *(string, required)*: ID unik dokumen panduan
 - **Response (200 OK)**:
 ```typescript
 type UserGuideDetailApiResponse = {
-  success: boolean;
-  message?: string;
+  success: true;
   data: {
     id: string;
     title: string;
@@ -649,27 +659,36 @@ type UserGuideDetailApiResponse = {
   };
 };
 ```
-
-### Create Dokumen Panduan (Internal Only)
-- **Endpoint**: `POST /api/user-guides`
-- **Akses**: `Internal Only`
-- **Request Body (Multipart Form-Data / JSON)**:
-```typescript
-type CreateUserGuidePayload = {
-  title: string;
-  description: string;
-  category: "manual_book" | "sop" | "technical_spec" | "regulation";
-  targetRole: "all" | "mitra" | "internal";
-  version: string;
-  isPublished: boolean;
-  file?: File;
-};
+- **Response Error (404 Not Found)**:
+```json
+{
+  "success": false,
+  "message": "Dokumen panduan tidak ditemukan"
+}
 ```
-- **Response (200 OK)**:
+
+---
+
+### 2.5.3 Create Dokumen Panduan
+Mengunggah dan membuat data dokumen panduan baru ke sistem. Backend mengekstrak `fileName`, `fileSize`, dan `fileType` secara otomatis dari berkas biner yang diunggah.
+
+- **Endpoint**: `POST /api/user-guides`
+- **Akses**: `Internal Only (Administrator ATR/BPN)`
+- **Content-Type**: `multipart/form-data`
+- **Request Body (Form Data)**:
+  - `title` *(string, required)*: Judul dokumen (min 3, maks 150 karakter)
+  - `description` *(string, required)*: Ringkasan isi materi dokumen (min 10, maks 500 karakter)
+  - `category` *(string, required)*: `"manual_book"` | `"sop"` | `"technical_spec"` | `"regulation"`
+  - `targetRole` *(string, required)*: `"all"` | `"mitra"` | `"internal"`
+  - `version` *(string, required)*: Format versi (`"vX.Y.Z"` atau `"X.Y.Z"`, contoh `"v1.0.0"`)
+  - `isPublished` *(boolean / string "true"|"false", optional, default: true)*: Status visibilitas publik
+  - `file` *(binary File, required)*: Berkas panduan (`.pdf`, `.docx`, `.doc` — maks. 25 MB)
+
+- **Response (201 Created / 200 OK)**:
 ```typescript
 type CreateUserGuideApiResponse = {
-  success: boolean;
-  message: string;
+  success: true;
+  message: "Dokumen panduan berhasil ditambahkan";
   data: {
     id: string;
     title: string;
@@ -683,34 +702,48 @@ type CreateUserGuideApiResponse = {
     fileSize: number;
     fileType: string;
     isPublished: boolean;
-    downloadCount: number;
+    downloadCount: 0;
     author: string;
     createdAt: string;
     updatedAt: string;
   };
 };
 ```
-
-### Update Dokumen Panduan (Internal Only)
-- **Endpoint**: `PUT /api/user-guides/:id`
-- **Akses**: `Internal Only`
-- **Request Body**:
-```typescript
-type UpdateUserGuidePayload = {
-  title?: string;
-  description?: string;
-  category?: "manual_book" | "sop" | "technical_spec" | "regulation";
-  targetRole?: "all" | "mitra" | "internal";
-  version?: string;
-  isPublished?: boolean;
-  file?: File;
-};
+- **Response Error (400 Bad Request / 422 Unprocessable Entity)**:
+```json
+{
+  "success": false,
+  "message": "Format berkas tidak didukung. Harap unggah berkas PDF atau Word (.docx)",
+  "errors": {
+    "file": ["Format berkas harus PDF atau DOCX"]
+  }
+}
 ```
+
+---
+
+### 2.5.4 Update Dokumen Panduan
+Memperbarui metadata dokumen dan/atau mengganti berkas lampiran yang sudah ada. Jika field `file` tidak dikirim, berkas biner eksisting tetap dipertahankan.
+
+- **Endpoint**: `PUT /api/user-guides/:id`
+- **Akses**: `Internal Only (Administrator ATR/BPN)`
+- **Path Params**:
+  - `id` *(string, required)*: ID unik dokumen panduan
+- **Content-Type**: `multipart/form-data` atau `application/json` (jika tidak ada file baru)
+- **Request Body**:
+  - `title?` *(string)*: Judul dokumen panduan
+  - `description?` *(string)*: Ringkasan isi materi dokumen
+  - `category?` *(string)*: `"manual_book"` | `"sop"` | `"technical_spec"` | `"regulation"`
+  - `targetRole?` *(string)*: `"all"` | `"mitra"` | `"internal"`
+  - `version?` *(string)*: Versi dokumen baru
+  - `isPublished?` *(boolean)*: Status publikasi
+  - `file?` *(binary File, optional)*: Berkas baru pengganti (jika ingin mengganti file fisik)
+
 - **Response (200 OK)**:
 ```typescript
 type UpdateUserGuideApiResponse = {
-  success: boolean;
-  message: string;
+  success: true;
+  message: "Dokumen panduan berhasil diperbarui";
   data: {
     id: string;
     title: string;
@@ -732,25 +765,37 @@ type UpdateUserGuideApiResponse = {
 };
 ```
 
-### Delete Dokumen Panduan (Internal Only)
+---
+
+### 2.5.5 Delete Dokumen Panduan
+Menghapus rekaman dokumen panduan dan berkas fisik terkait di storage.
+
 - **Endpoint**: `DELETE /api/user-guides/:id`
-- **Akses**: `Internal Only`
+- **Akses**: `Internal Only (Administrator ATR/BPN)`
+- **Path Params**:
+  - `id` *(string, required)*: ID unik dokumen panduan yang akan dihapus
 - **Response (200 OK)**:
 ```typescript
 type DeleteUserGuideApiResponse = {
-  success: boolean;
-  message: string;
+  success: true;
+  message: "Dokumen panduan berhasil dihapus";
 };
 ```
 
-### Track Download Dokumen Panduan
+---
+
+### 2.5.6 Track Download Dokumen
+Mencatat dan menambahkan hit counter unduhan berkas secara atomik saat user mengunduh dokumen panduan.
+
 - **Endpoint**: `POST /api/user-guides/:id/download`
 - **Akses**: `Authenticated (Mitra & Internal)`
+- **Path Params**:
+  - `id` *(string, required)*: ID unik dokumen panduan
 - **Response (200 OK)**:
 ```typescript
 type TrackDownloadApiResponse = {
-  success: boolean;
-  message: string;
+  success: true;
+  message: "Statistik unduhan berhasil dicatat";
 };
 ```
 
@@ -1669,4 +1714,21 @@ export type MyDataStatus =
 ### 5. SSOT Role Pengguna (`UserRole`)
 ```typescript
 export type UserRole = "internal" | "mitra";
+```
+
+### 6. SSOT Kategori Dokumen Panduan (`UserGuideCategory`)
+```typescript
+export type UserGuideCategory =
+  | "manual_book"    // Buku Panduan / Manual Penggunaan Sistem
+  | "sop"            // SOP & Prosedur Operasional
+  | "technical_spec" // Spesifikasi Teknis & Format Data Spasial
+  | "regulation";    // Regulasi & Kebijakan
+```
+
+### 7. SSOT Target Akses Dokumen Panduan (`UserGuideTargetRole`)
+```typescript
+export type UserGuideTargetRole =
+  | "all"      // Dapat diakses oleh semua pengguna (Mitra & Internal)
+  | "mitra"    // Khusus pengguna portal Mitra
+  | "internal" // Khusus verifikator & admin Internal ATR/BPN
 ```
