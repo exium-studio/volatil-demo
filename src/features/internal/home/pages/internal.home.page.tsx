@@ -9,6 +9,7 @@ import { InternalHomeIgtBasisSummary } from "@/features/internal/home/components
 import { InternalHomeMitraLayerSyncJobsQuickView } from "@/features/internal/home/components/internal.home.mitra-layer-sync-jobs-quick-view";
 import { InternalHomeServiceRate } from "@/features/internal/home/components/internal.home.service-rate";
 import { InternalHomeTrend } from "@/features/internal/home/components/internal.home.trend";
+import { InternalHomeUserGuideManagement } from "@/features/internal/home/components/internal.home.user-guide-management";
 
 export const InternalHomePage = () => {
   return (
@@ -29,6 +30,9 @@ export const InternalHomePage = () => {
 
       {/* Row 4: Quick View Antrean Job Pembaruan Layer Mitra (Max 10) */}
       <InternalHomeMitraLayerSyncJobsQuickView />
+
+      {/* Row 5: Manajemen Dokumen Panduan Pengguna */}
+      <InternalHomeUserGuideManagement />
     </AppContentContainer>
   );
 };

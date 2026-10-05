@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # API Docs Rule
 
 ## Wajib Update `docs/api/api-docs.md`

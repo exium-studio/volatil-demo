@@ -1,12 +1,12 @@
-// src/features/auth/pages/mitra.signin.page.tsx
-
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { P, PSerif } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { MitraSignin } from "@/features/auth/components/ui/signin.form";
 import { FeaturesCarousel } from "@/features/branding/components/ui/features-carousel";
+import { UserGuideTrigger } from "@/features/user-guide/components/user-guide.trigger";
 
 export const MitraSigninPage = () => {
   // Stores
@@ -18,7 +18,8 @@ export const MitraSigninPage = () => {
       overflow={"clip"}
       w={"full"}
       maxW={"1200px"}
-      h={[null, null, "720px"]}
+      minH={[null, null, "780px"]}
+      h={[null, null, "780px"]}
       m={"auto"}
       bg={"bg.body"}
       rounded={theme.radii.container}
@@ -46,6 +47,14 @@ export const MitraSigninPage = () => {
         </HStack>
 
         <MitraSignin px={[0, null, 8]} mt={8} />
+
+        <Box w={"full"} px={[0, null, 8]} mt={8}>
+          <UserGuideTrigger
+            modalKey={"mitra-login-user-guide"}
+            portalType={"mitra"}
+            variant={"banner"}
+          />
+        </Box>
       </VStack>
     </SimpleGrid>
   );

@@ -311,12 +311,7 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
                     minW={0}
                     gap={"sm"}
                   >
-                    <VStack
-                      align={"start"}
-                      gap={"2xs"}
-                      flex={"1 1 200px"}
-                      minW={0}
-                    >
+                    <VStack align={"start"} gap={"xs"} flex={"1 1 200px"}>
                       <ClampedP
                         fontWeight={"semibold"}
                         fontSize={"md"}
