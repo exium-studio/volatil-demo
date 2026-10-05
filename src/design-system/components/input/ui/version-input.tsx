@@ -2,14 +2,17 @@
 
 "use client";
 
+import { useFieldContextValue } from "@/design-system/components/input/context/field.context";
 import type {
   VersionFieldKey,
   VersionFieldValues,
   VersionInputProps,
   VersionSegmentInputProps,
 } from "@/design-system/components/input/types/version-input.type";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
-import { P } from "@/design-system/components/typography/ui/p";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFieldContext } from "@chakra-ui/react";
 import {
@@ -142,7 +145,7 @@ const VersionSegmentInput = memo(function VersionSegmentInput(
       onBlur={onBlur}
       style={{
         width: "32px",
-        height: "28px",
+        height: "26px",
         textAlign: "center",
         background: "transparent",
         border: "none",
@@ -166,6 +169,7 @@ export const VersionInput = memo(
     // Props
     const {
       name,
+      label: propLabel,
       value: controlledValue,
       defaultValue = "1.0.0",
       onChange,
@@ -183,9 +187,14 @@ export const VersionInput = memo(
     const { theme } = useThemeStore();
 
     // Contexts
-    const fieldContext = useFieldContext();
-    const isFieldInvalid = fieldContext?.invalid;
-    const disabled = propDisabled || fieldContext?.disabled;
+    const chakraFieldContext = useFieldContext();
+    const fieldContext = useFieldContextValue();
+    const isFloatingVariant = fieldContext?.variant === "floating";
+    const floatingLabel =
+      propLabel ?? (isFloatingVariant ? fieldContext?.label : undefined);
+    const isOptional = fieldContext?.optional;
+    const isFieldInvalid = chakraFieldContext?.invalid;
+    const disabled = propDisabled || chakraFieldContext?.disabled;
 
     // States
     const isControlled = controlledValue !== undefined;
@@ -306,7 +315,7 @@ export const VersionInput = memo(
 
     const committedString = fieldsToVersionString(fields, withPrefix);
 
-    return (
+    const inputCore = (
       <HStack
         align={"center"}
         gap={1}
@@ -317,7 +326,9 @@ export const VersionInput = memo(
         pointerEvents={disabled ? "none" : undefined}
         transition={"200ms"}
         px={3}
-        h={10}
+        h={isFloatingVariant && floatingLabel ? "60px" : 10}
+        pt={isFloatingVariant && floatingLabel ? "20px" : "0px"}
+        pb={isFloatingVariant && floatingLabel ? "4px" : "0px"}
         w={"full"}
         onClick={handleContainerClick}
         {...restProps}
@@ -369,5 +380,44 @@ export const VersionInput = memo(
         </HStack>
       </HStack>
     );
+
+    if (isFloatingVariant && floatingLabel) {
+      return (
+        <Box position={"relative"} w={"full"}>
+          <Box
+            position={"absolute"}
+            left={"12px"}
+            top={"7px"}
+            zIndex={1}
+            pointerEvents={"none"}
+          >
+            <HStack align={"center"} gap={2}>
+              <ClampedP
+                fontSize={"xs"}
+                fontWeight={"medium"}
+                color={"fg.subtle"}
+              >
+                {floatingLabel}
+              </ClampedP>
+
+              {isOptional && (
+                <Badge
+                  size={"xs"}
+                  fontSize={"2xs"}
+                  colorPalette={"gray"}
+                  color={"fg.subtle"}
+                >
+                  {"Optional"}
+                </Badge>
+              )}
+            </HStack>
+          </Box>
+
+          {inputCore}
+        </Box>
+      );
+    }
+
+    return inputCore;
   }),
 );

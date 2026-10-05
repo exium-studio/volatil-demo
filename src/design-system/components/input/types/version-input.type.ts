@@ -12,6 +12,7 @@ export type VersionFieldValues = {
 
 export type VersionInputProps = {
   name?: string;
+  label?: string;
   value?: string;
   defaultValue?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement> | string) => void;
