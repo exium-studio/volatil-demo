@@ -12,6 +12,7 @@ import type {
   OrderedIgtLayersPreviewCellProps,
   OrderedIgtLayersPreviewModalContentProps,
 } from "@/features/shared/types/ordered-igt-layers-preview.type";
+import { DUMMY_INTERNAL_ORDERS } from "@/shared/constants/dummy-data/dummy-internal-order-review";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatCurrency,
@@ -102,6 +103,7 @@ export const OrderedIgtLayers = (props: OrderedIgtLayersPreviewCellProps) => {
         open={open}
         close={close}
         size={"lg"}
+        scrollBehavior={"inside"}
       >
         <OrderedIgtLayersPreviewModalContent
           items={items}
@@ -153,7 +155,7 @@ export const OrderedIgtLayersPreviewModalContent = (
 
       <Modal.Body>
         <VStack align={"stretch"} gap={"md"}>
-          {/* Spatial Summary Badges */}
+          {/* Summary */}
           <VStack gap={"xs"} p={"sm"} bg={"bg.subtle"} rounded={"md"}>
             <P>{`${formatNumber(totalCount)} Total Layer IGT`}</P>
 
@@ -171,13 +173,9 @@ export const OrderedIgtLayersPreviewModalContent = (
           </VStack>
 
           {/* List of Ordered Layers */}
-          <VStack align={"stretch"} gap={"sm"} maxH={"420px"}>
-            {items.map((item, index) => {
-              const displayName =
-                item.sourceLayerTitle ||
-                item.title ||
-                item.sourceLayerId ||
-                "-";
+          <VStack align={"stretch"} gap={"sm"}>
+            {DUMMY_INTERNAL_ORDERS[0].items.map((item, index) => {
+              const displayName = item.sourceLayerTitle || "-";
               const isBidang = item.spatialBasis === "bidang";
               const isKawasan = item.spatialBasis === "kawasan";
 
@@ -204,9 +202,7 @@ export const OrderedIgtLayersPreviewModalContent = (
                     <HStack align={"start"} gap={"sm"} flex={1} minW={0}>
                       <VStack align={"start"} gap={"2xs"} flex={1} minW={0}>
                         <HStack align={"center"} gap={"xs"}>
-                          <P fontWeight={"semibold"} wordBreak={"break-word"}>
-                            {displayName}
-                          </P>
+                          <P wordBreak={"break-word"}>{displayName}</P>
 
                           {item.spatialBasis && (
                             <IgtBasisBadge size={"xs"}>
