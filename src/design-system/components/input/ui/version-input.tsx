@@ -8,7 +8,6 @@ import type {
   VersionInputProps,
   VersionSegmentInputProps,
 } from "@/design-system/components/input/types/version-input.type";
-import { Input } from "@/design-system/components/input/ui/input";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -68,7 +67,6 @@ const VersionSegmentInput = memo(function VersionSegmentInput(
     value,
     disabled = false,
     readOnly = false,
-    placeholder,
     onValueChange,
     onAutoAdvance,
     onArrowNavigate,
@@ -129,19 +127,12 @@ const VersionSegmentInput = memo(function VersionSegmentInput(
   };
 
   return (
-    <Input
+    <input
       ref={inputRef as RefObject<HTMLInputElement>}
-      value={value}
-      minW={"28px"}
-      w={"28px"}
-      maxW={"28px"}
-      p={0}
-      border={"none"}
-      outline={"none"}
+      type={"text"}
       inputMode={"numeric"}
-      textAlign={"center"}
-      placeholder={placeholder}
-      maxLength={3}
+      pattern={"[0-9]*"}
+      value={value}
       disabled={disabled}
       readOnly={readOnly}
       aria-label={`Versi ${fieldKey}`}
@@ -149,6 +140,19 @@ const VersionSegmentInput = memo(function VersionSegmentInput(
       onKeyDown={handleKeyDown}
       onFocus={(e) => e.target.select()}
       onBlur={onBlur}
+      style={{
+        width: "32px",
+        height: "28px",
+        textAlign: "center",
+        background: "transparent",
+        border: "none",
+        outline: "none",
+        fontWeight: "500",
+        fontSize: "14px",
+        color: "inherit",
+        padding: "0",
+        margin: "0",
+      }}
     />
   );
 });
@@ -345,7 +349,6 @@ export const VersionInput = memo(
               <VersionSegmentInput
                 fieldKey={fieldKey}
                 value={fields[fieldKey]}
-                placeholder={fieldKey === "major" ? "1" : "0"}
                 disabled={disabled}
                 readOnly={readOnly}
                 inputRef={fieldRefs.current[fieldKey]}

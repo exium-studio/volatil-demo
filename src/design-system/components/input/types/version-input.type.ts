@@ -20,7 +20,6 @@ export type VersionInputProps = {
   disabled?: boolean;
   readOnly?: boolean;
   withPrefix?: boolean;
-  size?: "sm" | "md" | "lg";
   min?: number;
   max?: number;
 };
@@ -30,7 +29,6 @@ export type VersionSegmentInputProps = {
   value: string;
   disabled?: boolean;
   readOnly?: boolean;
-  placeholder: string;
   onValueChange: (field: VersionFieldKey, rawValue: string) => void;
   onAutoAdvance: (field: VersionFieldKey) => void;
   onArrowNavigate: (field: VersionFieldKey, direction: "left" | "right") => void;
