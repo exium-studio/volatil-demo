@@ -6,6 +6,10 @@ import type {
   RawGeoServerResponse,
   WfsVersion,
 } from "@/design-system/components/map/types/map.fetch-wfs.type";
+import {
+  getApiBaseWmsProxyUrl,
+  normalizeApiUrl,
+} from "@/shared/utils/env/env.utils";
 
 export const buildWfsUrl = (
   {
@@ -22,17 +26,11 @@ export const buildWfsUrl = (
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
-  const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(
-    /\/+$/,
-    "",
-  );
+  const apiBaseUrl = getApiBaseWmsProxyUrl();
   const defaultBaseUrl = `${apiBaseUrl}/api/proxy/wfs`;
 
   const rawUrl = wfsUrl || defaultBaseUrl;
-  const targetUrlStr =
-    rawUrl.startsWith("http://") || rawUrl.startsWith("https://")
-      ? rawUrl
-      : `${apiBaseUrl}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
+  const targetUrlStr = normalizeApiUrl(rawUrl);
 
   const origin =
     typeof window !== "undefined"

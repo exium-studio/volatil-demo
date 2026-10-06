@@ -45,6 +45,7 @@ import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-fil
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -139,23 +140,26 @@ export const InternalDataManagementDataView = () => {
         setLayerEnabled(item.id, false);
         setCustomLayerConfig(item.id, null);
       } else {
+        const normalizedWmsUrl = normalizeApiUrl(item.wmsUrl);
+        const normalizedWfsUrl = normalizeApiUrl(item.wfsUrl);
+
         setCustomLayerConfig(item.id, {
-          wmsUrl: item.wmsUrl || "",
+          wmsUrl: normalizedWmsUrl || "",
           layers: item.typeName || item.id,
           spatialBasis: item.spatialBasis,
         });
         setLayerEnabled(item.id, true);
 
-        if (item.bbox || item.wfsUrl) {
+        if (item.bbox || normalizedWfsUrl) {
           void flyTo({
             id: item.id,
             title: item.title,
             spatialBasis: item.spatialBasis,
             bbox: item.bbox,
-            wfs: item.wfsUrl
+            wfs: normalizedWfsUrl
               ? {
                   wfsTypeName: item.typeName || item.id,
-                  wfsUrl: item.wfsUrl,
+                  wfsUrl: normalizedWfsUrl,
                 }
               : undefined,
           });

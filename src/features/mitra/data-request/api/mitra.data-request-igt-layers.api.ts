@@ -7,6 +7,7 @@ import type {
 import type { IgtLayersApiResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
+import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
 export async function getIgtLayers(
@@ -41,23 +42,33 @@ export async function getIgtLayers(
         raw.defaultVisible ?? raw.default_visible ?? false,
       ),
       zIndex: raw.zIndex ?? 1,
-      wms: raw.wms ?? {
-        layers: raw.typeName || raw.id,
-        wmsUrl: raw.wmsUrl,
-        format: raw.format ?? "image/png",
-        transparent: raw.transparent ?? true,
-        tileSize: raw.tileSize ?? 512,
-        version: raw.version ?? "1.1.1",
-        srs: raw.srs ?? "EPSG:3857",
-        styles: raw.styles ?? "",
-      },
-      wfs: raw.wfs ?? {
-        wfsTypeName: raw.typeName || raw.id,
-        wfsUrl: raw.wfsUrl,
-        type: raw.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
-        version: "2.0.0",
-        srsName: "EPSG:4326",
-      },
+      wms: raw.wms
+        ? {
+            ...raw.wms,
+            wmsUrl: normalizeApiUrl(raw.wms.wmsUrl ?? raw.wmsUrl),
+          }
+        : {
+            layers: raw.typeName || raw.id,
+            wmsUrl: normalizeApiUrl(raw.wmsUrl),
+            format: raw.format ?? "image/png",
+            transparent: raw.transparent ?? true,
+            tileSize: raw.tileSize ?? 512,
+            version: raw.version ?? "1.1.1",
+            srs: raw.srs ?? "EPSG:3857",
+            styles: raw.styles ?? "",
+          },
+      wfs: raw.wfs
+        ? {
+            ...raw.wfs,
+            wfsUrl: normalizeApiUrl(raw.wfs.wfsUrl ?? raw.wfsUrl),
+          }
+        : {
+            wfsTypeName: raw.typeName || raw.id,
+            wfsUrl: normalizeApiUrl(raw.wfsUrl),
+            type: raw.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
+            version: "2.0.0",
+            srsName: "EPSG:4326",
+          },
     }));
 
     const rawPag = resolvedData.pagination;

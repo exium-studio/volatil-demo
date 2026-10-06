@@ -11,15 +11,17 @@ import {
   type WmsRasterLayerConfig,
 } from "@/design-system/components/map/types/map.type";
 
+import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
 import type maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
 
 /** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
-  if (layer.tileUrl) return layer.tileUrl;
+  if (layer.tileUrl) return normalizeApiUrl(layer.tileUrl);
   if (!layer.wmsUrl) return "";
 
-  const [baseUrl, existingSearch] = layer.wmsUrl.split("?");
+  const fullWmsUrl = normalizeApiUrl(layer.wmsUrl);
+  const [baseUrl, existingSearch] = fullWmsUrl.split("?");
   const layerName = layer.layers ?? layer.id ?? "";
 
   const queryParams: Record<string, string> = {
@@ -187,9 +189,10 @@ export const useMapLayers = (
 
         case "raster-tile": {
           if (!layer.tileUrl) break;
+          const normalizedTileUrl = normalizeApiUrl(layer.tileUrl);
           safeAddSource(layer.id, {
             type: "raster",
-            tiles: [layer.tileUrl],
+            tiles: [normalizedTileUrl],
             tileSize: layer.tileSize ?? MAP_CONFIG.raster.tileSize,
           });
           safeAddLayer(
@@ -207,7 +210,11 @@ export const useMapLayers = (
 
         case "vector-tile": {
           if (!layer.tileUrl) break;
-          safeAddSource(layer.id, { type: "vector", tiles: [layer.tileUrl] });
+          const normalizedTileUrl = normalizeApiUrl(layer.tileUrl);
+          safeAddSource(layer.id, {
+            type: "vector",
+            tiles: [normalizedTileUrl],
+          });
           safeAddLayer(
             {
               id: layer.id,

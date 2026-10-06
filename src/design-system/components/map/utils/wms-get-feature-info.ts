@@ -1,6 +1,7 @@
 // src/design-system/components/map/utils/wms-get-feature-info.ts
 
 import type { GetFeatureInfoOptions } from "@/design-system/components/map/types/map.feature-info.type";
+import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
 
 export const fetchWmsGetFeatureInfo = async (
   options: GetFeatureInfoOptions,
@@ -38,7 +39,8 @@ export const fetchWmsGetFeatureInfo = async (
     }
   }
 
-  const [baseUrl, existingSearch] = wmsUrl.split("?");
+  const fullWmsUrl = normalizeApiUrl(wmsUrl);
+  const [baseUrl, existingSearch] = fullWmsUrl.split("?");
   const queryParams: Record<string, string> = {
     service: "WMS",
     version: "1.1.1",

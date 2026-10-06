@@ -5,6 +5,7 @@ import type {
   GeoServerLegendResponse,
   GeoServerLegendRule,
 } from "@/design-system/components/map/types/map.symbology.type";
+import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
 
 export const fetchLegendGraphic = async (
   params: FetchLegendGraphicParams,
@@ -12,7 +13,8 @@ export const fetchLegendGraphic = async (
   const { layer, signal } = params;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const raw = layer as any;
-  const wmsUrl = raw?.wms?.wmsUrl ?? raw?.wmsUrl;
+  const rawWmsUrl = raw?.wms?.wmsUrl ?? raw?.wmsUrl;
+  const wmsUrl = normalizeApiUrl(rawWmsUrl);
   const layerName =
     raw?.wms?.layers ?? raw?.layers ?? raw?.typeName ?? layer.id;
 
