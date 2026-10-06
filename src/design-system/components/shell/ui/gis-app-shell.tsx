@@ -2,7 +2,6 @@
 
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Avatar } from "@/design-system/components/media/ui/avatar";
@@ -33,8 +32,6 @@ import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
-import { InternalSigninPage } from "@/features/auth/pages/internal.signin.page";
-import { MitraSigninPage } from "@/features/auth/pages/mitra.signin.page";
 import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
@@ -82,20 +79,9 @@ export const GisAppShell = (props: GisAppShellProps) => {
   // Derived Values
   const userSession = user ?? getUserSession();
   const currentUserId = userSession?.id;
-  const isInternal =
-    pathname.startsWith("/admin") ||
-    pathname.startsWith("/internal") ||
-    userSession?.role === "internal";
-  const isLoginRoute = pathname === "/" || pathname === "/admin";
-  const isStandaloneRoute =
-    !isLoginRoute &&
-    !pathname.startsWith("/mitra") &&
-    !pathname.startsWith("/internal");
 
   // Effects
   useEffect(() => {
-    if (isLoginRoute || isStandaloneRoute) return;
-
     const userData = getUserSession();
     const role = pathname.startsWith("/internal")
       ? "internal"
@@ -113,7 +99,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
         titleKey: navItem.titleKey,
       });
     }
-  }, [pathname, isLoginRoute, isStandaloneRoute]);
+  }, [pathname]);
 
   // Reset all active map layers and filters when user/role changes
   useEffect(() => {
@@ -130,45 +116,9 @@ export const GisAppShell = (props: GisAppShellProps) => {
     >
       {!isSmallViewport && <GisAppSidebar />}
 
-      <Content isLoginRoute={isLoginRoute} />
+      <Content />
 
       {isSmallViewport && <MobileBottomNav />}
-
-      {/* Overlay */}
-      <Box
-        pos={"fixed"}
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        zIndex={100}
-        bg={"bodyDark/20"}
-        backdropFilter={"blur(5px)"}
-        pointerEvents={"none"}
-        opacity={isLoginRoute ? 1 : 0}
-        transition={"300ms"}
-      />
-
-      {/* Login Screen Container with smooth opacity and scale transition */}
-      <Center
-        pos={"fixed"}
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        zIndex={101}
-        w={"full"}
-        h={"full"}
-        p={["0 !important", 4, 6]}
-        overflow={"auto"}
-        pointerEvents={isLoginRoute ? "auto" : "none"}
-        opacity={isLoginRoute ? 1 : 0}
-        transform={isLoginRoute ? "scale(1)" : "scale(0.96)"}
-        transition={"300ms"}
-        aria-hidden={!isLoginRoute}
-      >
-        {isInternal ? <InternalSigninPage /> : <MitraSigninPage />}
-      </Center>
     </AppPageContainer>
   );
 };
@@ -351,10 +301,7 @@ const SidebarFooter = () => {
 
 // -------------------------------------------------------------------------------------
 
-const Content = (props: GisContentProps) => {
-  // Props
-  const { isLoginRoute } = props;
-
+const Content = (_props: GisContentProps) => {
   // Refs
   const contentPanelRef = useRef<HTMLDivElement | null>(null);
 
@@ -381,7 +328,7 @@ const Content = (props: GisContentProps) => {
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
-    enabled: !isLoginRoute && isAuthenticated,
+    enabled: isAuthenticated,
   });
 
   const {
@@ -411,8 +358,6 @@ const Content = (props: GisContentProps) => {
   }, [fetchedLayers]);
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
-    if (isLoginRoute) return [];
-
     const rawList = fetchedLayers?.items ?? [];
     const sorted = [...rawList].sort(
       (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
@@ -482,7 +427,6 @@ const Content = (props: GisContentProps) => {
 
     return configs;
   }, [
-    isLoginRoute,
     fetchedLayers,
     wmsVisible,
     enabledLayerIds,

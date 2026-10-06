@@ -2,6 +2,7 @@ import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { PageContainer } from "@/design-system/components/layout/ui/page-container";
 import { P, PSerif } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { InternalSignin } from "@/features/auth/components/ui/signin.form";
@@ -13,48 +14,50 @@ export const InternalSigninPage = () => {
   const { theme } = useThemeStore();
 
   return (
-    <SimpleGrid
-      columns={[1, null, 2]}
-      overflow={"clip"}
-      w={"full"}
-      maxW={"1200px"}
-      h={[null, null, "800px"]}
-      m={"auto"}
-      bg={"bg.body"}
-      rounded={theme.radii.container}
-      shadow={"2xl"}
-    >
-      <FeaturesCarousel h={"full"} />
-
-      <VStack
-        h={"full"}
-        overflowY={"auto"}
-        px={[6, 8, 12]}
-        py={[8, 10, 12]}
-        justify={"center"}
+    <PageContainer p={[2, 4, 6]}>
+      <SimpleGrid
+        columns={[1, null, 2]}
+        overflow={"clip"}
+        w={"full"}
+        maxW={"1200px"}
+        h={[null, null, "800px"]}
+        m={"auto"}
+        bg={"bg.body"}
+        rounded={theme.radii.container}
+        shadow={"2xl"}
       >
-        <HStack align={"center"} justify={"center"} gap={4} ml={-4}>
-          <IgtLogo />
+        <FeaturesCarousel h={"full"} />
 
-          <VStack>
-            <P fontSize={"lg"} fontWeight={"semibold"}>
-              {"Kementrian ATR/BPN"}
-            </P>
+        <VStack
+          h={"full"}
+          overflowY={"auto"}
+          px={[6, 8, 12]}
+          py={[8, 10, 12]}
+          justify={"center"}
+        >
+          <HStack align={"center"} justify={"center"} gap={4} ml={-4}>
+            <IgtLogo />
 
-            <PSerif>{"Melayani Profesional Terpercaya"}</PSerif>
-          </VStack>
-        </HStack>
+            <VStack>
+              <P fontSize={"lg"} fontWeight={"semibold"}>
+                {"Kementrian ATR/BPN"}
+              </P>
 
-        <InternalSignin px={[0, null, 8]} mt={8} />
+              <PSerif>{"Melayani Profesional Terpercaya"}</PSerif>
+            </VStack>
+          </HStack>
 
-        <Box w={"full"} px={[0, null, 8]} mt={8}>
-          <UserGuideTrigger
-            modalKey={"internal-login-user-guide"}
-            portalType={"internal"}
-            variant={"banner"}
-          />
-        </Box>
-      </VStack>
-    </SimpleGrid>
+          <InternalSignin px={[0, null, 8]} mt={8} />
+
+          <Box w={"full"} px={[0, null, 8]} mt={8}>
+            <UserGuideTrigger
+              modalKey={"internal-login-user-guide"}
+              portalType={"internal"}
+              variant={"banner"}
+            />
+          </Box>
+        </VStack>
+      </SimpleGrid>
+    </PageContainer>
   );
 };
