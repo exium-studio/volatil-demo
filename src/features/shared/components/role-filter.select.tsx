@@ -4,11 +4,10 @@ import type { FocusSelectOption } from "@/design-system/components/input/types/f
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type { RoleFilterSelectProps } from "@/features/shared/types/role-filter-select.type";
 
-export const DEFAULT_ROLE_FILTER_OPTIONS: FocusSelectOption[] = [
-  { value: "all", label: "Semua Role" },
-  { value: "internal", label: "Internal" },
-  { value: "mitra", label: "Mitra" },
-];
+import { USER_ROLE_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+
+export const DEFAULT_ROLE_FILTER_OPTIONS: FocusSelectOption[] =
+  USER_ROLE_OPTIONS;
 
 export const RoleFilterSelect = (props: RoleFilterSelectProps) => {
   // Props

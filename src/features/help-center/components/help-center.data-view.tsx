@@ -321,7 +321,7 @@ export const HelpCenterDataView = () => {
 
           {!isInternalAdmin && (
             <CreateHelpCenterTrigger>
-              <Button primary={true} pl={3}>
+              <Button primary={true} variant={"ghost"} pl={3}>
                 <AppIcon icon={PlusIcon} />
                 {"Buat Laporan"}
               </Button>

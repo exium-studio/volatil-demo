@@ -136,19 +136,19 @@ export const IGT_BASIS_OPTIONS: {
   label: string;
   colorPalette: "blue" | "orange";
   icon: typeof Layers2Icon;
-}[] = [
-  {
-    value: "bidang",
-    label: IGT_BASIS_MAP.bidang.label,
-    colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
-    icon: IGT_BASIS_MAP.bidang.icon,
-  },
-  {
-    value: "kawasan",
-    label: IGT_BASIS_MAP.kawasan.label,
-    colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,
-    icon: IGT_BASIS_MAP.kawasan.icon,
-  },
+}[] = (Object.keys(IGT_BASIS_MAP) as IgtBasisType[]).map((key) => ({
+  value: key,
+  label: IGT_BASIS_MAP[key].label,
+  colorPalette: IGT_BASIS_MAP[key].colorPalette,
+  icon: IGT_BASIS_MAP[key].icon,
+}));
+
+export const IGT_BASIS_FILTER_OPTIONS: FocusSelectOption[] = [
+  { value: "all", label: "Semua Basis" },
+  ...(Object.keys(IGT_BASIS_MAP) as IgtBasisType[]).map((key) => ({
+    value: key,
+    label: IGT_BASIS_MAP[key].label,
+  })),
 ];
 
 export const PAYMENT_METHOD_MAP: Record<PaymentMethod, PaymentMethodConfig> = {
@@ -179,13 +179,20 @@ export const PAYMENT_METHOD_MAP: Record<PaymentMethod, PaymentMethodConfig> = {
   },
 };
 
-export const PAYMENT_METHOD_LABEL_MAP: Record<PaymentMethod, string> = {
-  MPN_GEN2: PAYMENT_METHOD_MAP.MPN_GEN2.label,
-  VA_MANDIRI: PAYMENT_METHOD_MAP.VA_MANDIRI.label,
-  VA_BRI: PAYMENT_METHOD_MAP.VA_BRI.label,
-  VA_BCA: PAYMENT_METHOD_MAP.VA_BCA.label,
-  QRIS: PAYMENT_METHOD_MAP.QRIS.label,
-};
+export const PAYMENT_METHOD_LABEL_MAP: Record<PaymentMethod, string> =
+  Object.fromEntries(
+    (Object.keys(PAYMENT_METHOD_MAP) as PaymentMethod[]).map((key) => [
+      key,
+      PAYMENT_METHOD_MAP[key].label,
+    ]),
+  ) as Record<PaymentMethod, string>;
+
+export const PAYMENT_METHOD_OPTIONS: (PaymentMethodConfig & {
+  value: PaymentMethod;
+})[] = (Object.keys(PAYMENT_METHOD_MAP) as PaymentMethod[]).map((key) => ({
+  value: key,
+  ...PAYMENT_METHOD_MAP[key],
+}));
 
 /**
  * SSOT 2: Transaction Status Map (Payment & Billing)
@@ -223,10 +230,12 @@ export const TRANSACTION_STATUS_MAP: Record<
 
 export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Semua Status", value: "" },
-  { label: "Terbayar", value: "paid" },
-  { label: "Kedaluwarsa", value: "expired" },
-  { label: "Gagal", value: "failed" },
-  { label: "Dikembalikan", value: "refunded" },
+  ...(Object.keys(TRANSACTION_STATUS_MAP) as TransactionStatus[]).map(
+    (key) => ({
+      value: key,
+      label: TRANSACTION_STATUS_MAP[key].label,
+    }),
+  ),
 ];
 
 /**
@@ -298,6 +307,14 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   },
 };
 
+export const ORDER_STATUS_OPTIONS: FocusSelectOption[] = [
+  { label: "Semua Status", value: "all" },
+  ...(Object.keys(ORDER_STATUS_MAP) as OrderStatus[]).map((key) => ({
+    value: key,
+    label: ORDER_STATUS_MAP[key].label,
+  })),
+];
+
 /**
  * SSOT 4: My Data Active Status Map (Mitra Data Saya)
  */
@@ -314,13 +331,13 @@ export const MY_DATA_STATUS_MAP: Record<MyDataStatus, MyDataStatusConfig> = {
     icon: LoaderIcon,
     iconColor: "purple.fg",
   },
-  active: {
+  ready: {
     label: "Aktif",
     colorPalette: "green",
     icon: CheckCircleIcon,
     iconColor: "green.fg",
   },
-  ready: {
+  active: {
     label: "Aktif",
     colorPalette: "green",
     icon: CheckCircleIcon,
@@ -348,12 +365,12 @@ export const MY_DATA_STATUS_MAP: Record<MyDataStatus, MyDataStatusConfig> = {
 
 export const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Semua Status", value: "" },
-  { label: "Aktif", value: "ready" },
-  { label: "Dalam Antrean", value: "queued" },
-  { label: "Sedang Diproses", value: "provisioning" },
-  { label: "Gagal", value: "failed" },
-  { label: "Kedaluwarsa", value: "expired" },
-  { label: "Dicabut", value: "revoked" },
+  ...(Object.keys(MY_DATA_STATUS_MAP) as MyDataStatus[])
+    .filter((key) => key !== "active")
+    .map((key) => ({
+      value: key,
+      label: MY_DATA_STATUS_MAP[key].label,
+    })),
 ];
 
 /**
@@ -371,6 +388,14 @@ export const USER_ROLE_MAP: Record<"internal" | "mitra", UserRoleConfig> = {
     icon: HandshakeIcon,
   },
 };
+
+export const USER_ROLE_OPTIONS: FocusSelectOption[] = [
+  { label: "Semua Role", value: "all" },
+  ...(Object.keys(USER_ROLE_MAP) as ("internal" | "mitra")[]).map((key) => ({
+    value: key,
+    label: USER_ROLE_MAP[key].label,
+  })),
+];
 
 /**
  * SSOT 6: Mitra Registration Status Map
@@ -403,7 +428,10 @@ export const MITRA_REGISTRATION_STATUS_MAP: Record<
 
 export const MITRA_REGISTRATION_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Semua Status", value: "all" },
-  { label: "Menunggu Verifikasi", value: "pending_verification" },
-  { label: "Terverifikasi", value: "verified" },
-  { label: "Ditolak", value: "rejected" },
+  ...(Object.keys(MITRA_REGISTRATION_STATUS_MAP) as MitraRegistrationStatus[])
+    .filter((key) => key !== "approved")
+    .map((key) => ({
+      value: key,
+      label: MITRA_REGISTRATION_STATUS_MAP[key].label,
+    })),
 ];
