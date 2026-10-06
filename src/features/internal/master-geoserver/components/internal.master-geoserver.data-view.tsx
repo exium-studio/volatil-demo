@@ -31,20 +31,33 @@ import { InternalMasterGeoserverEditTrigger } from "@/features/internal/master-g
 import {
   useDeleteMasterGeoserver,
   useMasterGeoserverQuery,
+  useTestMasterGeoserverConnection,
 } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import type {
   MasterGeoserverItem,
   MasterGeoserverQueryParams,
 } from "@/features/internal/master-geoserver/types/master-geoserver.type";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { toast } from "@/design-system/components/toast";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { PencilIcon, PlusIcon, ServerOffIcon, Trash2Icon } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  ActivityIcon,
+  PencilIcon,
+  PlusIcon,
+  ServerOffIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { useMemo, useCallback, useState, useTransition } from "react";
 
 export const InternalMasterGeoserverDataView = () => {
+  // Hooks
+  const queryClient = useQueryClient();
+
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
@@ -72,6 +85,73 @@ export const InternalMasterGeoserverDataView = () => {
 
   // Mutations
   const deleteMutation = useDeleteMasterGeoserver();
+  const testMutation = useTestMasterGeoserverConnection();
+
+  // Handlers
+  const handleTestConnection = useCallback(
+    (server: MasterGeoserverItem) => {
+      const toastId = `test-connection-${server.id}`;
+      toast.loading(`Menguji koneksi ke "${server.name}"...`, {
+        id: toastId,
+        group: "Master GeoServer",
+      });
+
+      testMutation.mutate(
+        {
+          id: server.id,
+          baseUrl: server.baseUrl,
+          username: server.username,
+        },
+        {
+          onSuccess: (data) => {
+            if (data.success) {
+              const extraInfo = [
+                data.version,
+                data.latencyMs ? `${data.latencyMs}ms` : undefined,
+                data.workspacesCount !== undefined
+                  ? `${data.workspacesCount} workspace`
+                  : undefined,
+              ]
+                .filter(Boolean)
+                .join(" • ");
+
+              toast.success(
+                data.message || `Koneksi ke "${server.name}" berhasil terverifikasi!`,
+                {
+                  id: toastId,
+                  group: "Master GeoServer",
+                  description: extraInfo || undefined,
+                },
+              );
+              void queryClient.invalidateQueries({
+                queryKey: queryKeys.internal.masterGeoserver.all,
+              });
+            } else {
+              toast.error(
+                data.message || `Koneksi ke "${server.name}" gagal terhubung.`,
+                {
+                  id: toastId,
+                  group: "Master GeoServer",
+                },
+              );
+            }
+          },
+          onError: (err) => {
+            toast.error(
+              err instanceof Error
+                ? err.message
+                : `Gagal menguji koneksi ke "${server.name}".`,
+              {
+                id: toastId,
+                group: "Master GeoServer",
+              },
+            );
+          },
+        },
+      );
+    },
+    [testMutation, queryClient],
+  );
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
@@ -181,6 +261,14 @@ export const InternalMasterGeoserverDataView = () => {
 
     const itemActions: DataViewItemActionsGenerator<MasterGeoserverItem>[] = [
       {
+        key: "test-connection-geoserver",
+        label: "Uji Koneksi",
+        icon: ActivityIcon,
+        onClick: (server: MasterGeoserverItem) => {
+          handleTestConnection(server);
+        },
+      },
+      {
         key: "edit-geoserver",
         label: "Ubah Server",
         icon: PencilIcon,
@@ -221,7 +309,7 @@ export const InternalMasterGeoserverDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [rawItems, preferredTimezone, deleteMutation]);
+  }, [rawItems, preferredTimezone, deleteMutation, handleTestConnection]);
 
   return (
     <Container.Root withContext={true} flex={1}>
@@ -229,7 +317,7 @@ export const InternalMasterGeoserverDataView = () => {
         <HeaderContainer pr={"xs"}>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
-              <Heading>{"Master GeoServer"}</Heading>
+              <Heading>{"Manajemen Master GeoServer"}</Heading>
 
               <InfoTip
                 variant={"icon"}
