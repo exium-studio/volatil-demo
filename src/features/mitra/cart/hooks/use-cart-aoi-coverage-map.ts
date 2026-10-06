@@ -99,7 +99,8 @@ import { HIGHLIGHT_FILL_LAYER_ID } from "@/features/mitra/data-request/utils/hig
  */
 const getBeforeId = (map: maplibregl.Map): string | undefined => {
   if (map.getLayer(HIGHLIGHT_FILL_LAYER_ID)) return HIGHLIGHT_FILL_LAYER_ID;
-  if (map.getLayer(FEATURE_INFO_FILL_LAYER_ID)) return FEATURE_INFO_FILL_LAYER_ID;
+  if (map.getLayer(FEATURE_INFO_FILL_LAYER_ID))
+    return FEATURE_INFO_FILL_LAYER_ID;
   if (map.getLayer(DRAW_FILL_LAYER_ID)) return DRAW_FILL_LAYER_ID;
   return undefined;
 };

@@ -59,9 +59,7 @@ export const MitraDataRequestCatalogTabsContent = (
   const setAdminBoundaryPolygon = useMitraDataRequestStore(
     (state) => state.setAdminBoundaryPolygon,
   );
-  const resetCatalog = useMitraDataRequestStore(
-    (state) => state.resetCatalog,
-  );
+  const resetCatalog = useMitraDataRequestStore((state) => state.resetCatalog);
 
   // Hooks
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
@@ -289,4 +287,3 @@ export const MitraDataRequestCatalogTabsContent = (
     </Tabs.Content>
   );
 };
-
