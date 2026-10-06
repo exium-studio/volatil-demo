@@ -41,6 +41,10 @@ export const useInternalMitraRegistrationDetailQuery = (
     queryKey: queryKeys.internal.mitraRegistration.detail(id),
     queryFn: ({ signal }) => getInternalMitraRegistrationDetail(id, signal),
     enabled: Boolean(id),
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 };
 

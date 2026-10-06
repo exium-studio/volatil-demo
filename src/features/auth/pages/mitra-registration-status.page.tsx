@@ -89,15 +89,22 @@ export const MitraRegistrationStatusPage = () => {
   const {
     data: statusData,
     isLoading,
+    isFetching,
     isError,
     error,
+    refetch,
   } = useRegistrationStatusQuery(queryRegNumber, Boolean(queryRegNumber));
 
   // Handlers
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!searchInput.trim()) return;
-    setQueryRegNumber(searchInput.trim().toUpperCase());
+    const trimmed = searchInput.trim().toUpperCase();
+    if (!trimmed) return;
+    if (trimmed === queryRegNumber) {
+      void refetch();
+    } else {
+      setQueryRegNumber(trimmed);
+    }
   };
 
   // Derived Contract Document Info
@@ -181,7 +188,7 @@ export const MitraRegistrationStatusPage = () => {
                   <Button
                     primary={true}
                     type={"submit"}
-                    loading={isLoading}
+                    loading={isLoading || isFetching}
                     disabled={!searchInput.trim()}
                   >
                     <AppIcon icon={SearchIcon} />

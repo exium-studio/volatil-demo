@@ -24,6 +24,12 @@ export const fetchRegistrationStatusApi = async (
 ): Promise<ApiResponse<MitraRegistrationStatusData>> => {
   return apiClient.get<ApiResponse<MitraRegistrationStatusData>>(
     `/api/auth/registration-status/${registrationNumber}`,
-    { signal },
+    {
+      signal,
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+      },
+    },
   );
 };

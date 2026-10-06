@@ -36,5 +36,9 @@ export const useRegistrationStatusQuery = (
     queryFn: ({ signal }) => getMitraRegistrationStatus(registrationNumber, signal),
     enabled: Boolean(registrationNumber) && enabled,
     retry: false,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 };

@@ -162,7 +162,13 @@ export async function fetchOrderPaymentStatusApi(
 ): Promise<ApiResponse<OrderPaymentStatusResponse>> {
   return apiClient.get<ApiResponse<OrderPaymentStatusResponse>>(
     `/api/mitra/orders/${orderId}/status`,
-    { signal },
+    {
+      signal,
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+      },
+    },
   );
 }
 
