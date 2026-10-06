@@ -123,7 +123,7 @@ const InternalOrderReviewApproveModalContent = (
         <Modal.CloseButton />
         <VStack gap={"2xs"}>
           <Modal.Title>{"Verifikasi & Setujui Pesanan"}</Modal.Title>
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
+          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
             {`${order.mitraName} • ${order.orderNumber || order.orderId}`}
           </P>
         </VStack>

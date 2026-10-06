@@ -92,7 +92,7 @@ const InternalPricingEditModalContent = (
 
           <VStack gap={"xs"}>
             <Modal.Title>{"Ubah Tarif PNBP"}</Modal.Title>
-            <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
+            <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
               {item.layerTitle ?? item.id}
             </P>
           </VStack>

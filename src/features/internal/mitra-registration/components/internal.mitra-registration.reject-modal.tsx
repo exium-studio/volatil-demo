@@ -92,7 +92,7 @@ const InternalMitraRegistrationRejectModalContent = (
         <VStack gap={"2xs"}>
           <Modal.Title>{"Tolak Pendaftaran Mitra"}</Modal.Title>
 
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
+          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
             {`${registration.organizationName ?? registration.namaInstansi} (${registration.registrationNumber})`}
           </P>
         </VStack>

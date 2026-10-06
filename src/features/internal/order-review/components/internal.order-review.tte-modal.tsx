@@ -134,7 +134,7 @@ export const InternalOrderReviewTteModalContent = (
         <VStack gap={"2xs"} align={"start"}>
           <Modal.Title>{"Pasang Tanda Tangan Elektronik (TTE)"}</Modal.Title>
 
-          <P fontSize={"xs"} color={"fg.subtle"}>
+          <P fontSize={"xs"} color={"fg.muted"}>
             {`Pesanan: ${order.orderId} • Mitra: ${order.mitraName}`}
           </P>
         </VStack>

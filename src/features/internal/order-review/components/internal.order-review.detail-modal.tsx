@@ -70,7 +70,7 @@ const InternalOrderReviewDetailModalContent = (
 
         <VStack gap={"2xs"}>
           <Modal.Title>{"Detail Permintaan Pesanan"}</Modal.Title>
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
+          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
             {order.orderNumber || order.orderId}
           </P>
         </VStack>

@@ -210,7 +210,7 @@ const UserGuideFormModalContent = (props: {
             {isEdit ? "Edit Dokumen Panduan" : "Tambah Dokumen Panduan"}
           </Modal.Title>
 
-          <P color={"fg.subtle"} textAlign={"center"}>
+          <P color={"fg.muted"} textAlign={"center"}>
             {
               "Kelola buku manual, SOP, dan petunjuk teknis yang dapat diakses pengguna"
             }

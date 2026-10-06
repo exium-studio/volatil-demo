@@ -330,7 +330,7 @@ export const TransactionDetailModalContent = (
         <VStack gap={"xs"}>
           <Modal.Title>{"Detail Transaksi & Pesanan"}</Modal.Title>
 
-          <P fontSize={"sm"} textAlign={"center"} color={"fg.subtle"}>
+          <P fontSize={"sm"} textAlign={"center"} color={"fg.muted"}>
             {transaction.transactionNumber}
           </P>
         </VStack>

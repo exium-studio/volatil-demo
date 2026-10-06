@@ -144,7 +144,7 @@ export const OrderedIgtLayersPreviewModalContent = (
           <Modal.Title>{`Daftar Layer IGT`}</Modal.Title>
 
           {orderNumber && (
-            <P fontSize={"sm"} color={"fg.subtle"}>
+            <P fontSize={"sm"} color={"fg.muted"}>
               {`No. Pesanan: ${orderNumber}`}
             </P>
           )}

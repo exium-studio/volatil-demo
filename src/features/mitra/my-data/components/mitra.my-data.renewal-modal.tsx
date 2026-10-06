@@ -134,7 +134,7 @@ export const MitraWorkspaceRenewalModalContent = (
         <VStack gap={"2xs"} w={"full"}>
           <Modal.Title>{"Perpanjang Masa Aktif"}</Modal.Title>
 
-          <P color={"fg.subtle"} textAlign={"center"}>
+          <P color={"fg.muted"} textAlign={"center"}>
             {"Perbarui masa aktif lisensi layanan geoserver workspace"}
           </P>
         </VStack>

@@ -53,8 +53,22 @@ export const FeaturesCarousel = (props: FeaturesCarouselProps) => {
       p={[4, null, 6]}
       rounded={theme.radii.container}
       bg={`${theme.colorPalette}.solid`}
+      pos={"relative"}
       {...restProps}
     >
+      <Box pos={"absolute"} top={"0"} right={"0"} p={6}>
+        <Box overflow={"hidden"}>
+          <IgtLogo
+            boxSize={"300px"}
+            opacity={0.1}
+            filter={"brightness(0) invert(1)"}
+            pointerEvents={"none"}
+            mt={"-50px"}
+            mr={"-50px"}
+          />
+        </Box>
+      </Box>
+
       <Carousel.Root
         defaultPage={0}
         loop
@@ -81,35 +95,30 @@ export const FeaturesCarousel = (props: FeaturesCarouselProps) => {
                 gap={4}
                 p={[4, null, 6]}
                 color={"white"}
-                pos={"relative"}
                 overflow={"clip"}
+                justifyContent={"center"}
               >
-                <IgtLogo
-                  pos={"absolute"}
-                  top={"-50px"}
-                  right={"-50px"}
-                  boxSize={"300px"}
-                  opacity={0.1}
-                  filter={"brightness(0) invert(1)"}
-                  pointerEvents={"none"}
-                />
-
-                <P fontSize={"xl"} fontWeight={"semibold"} textAlign={"center"}>
-                  {carousel.title}
-                </P>
-
                 <Image
                   src={carousel.image}
                   alt={`Image ${index + 1}`}
                   objectFit={"contain"}
                   w={"full"}
-                  mt={4}
                   aspectRatio={16 / 10}
                 />
 
-                <P textAlign={"center"} mt={"auto"}>
-                  {carousel.description}
-                </P>
+                <VStack gap={"sm"} mt={"md"}>
+                  <P
+                    fontSize={"xl"}
+                    fontWeight={"semibold"}
+                    textAlign={"center"}
+                  >
+                    {carousel.title}
+                  </P>
+
+                  <P textAlign={"center"} mt={"auto"}>
+                    {carousel.description}
+                  </P>
+                </VStack>
               </Carousel.Item>
             ))}
           </Carousel.ItemGroup>
