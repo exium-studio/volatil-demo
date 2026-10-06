@@ -58,7 +58,7 @@ export const SigninShell = (props: SigninShellProps) => {
 
               <VStack>
                 <P fontSize={"lg"} fontWeight={"semibold"}>
-                  {"Kementrian ATR/BPN"}
+                  {"Kementerian ATR/BPN"}
                 </P>
 
                 <PSerif>{"Melayani Profesional Terpercaya"}</PSerif>
