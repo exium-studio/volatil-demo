@@ -6,11 +6,10 @@ export const userGuideFormSchema = z.object({
   id: z.string().optional(),
   title: z
     .string()
-    .min(3, "Judul panduan minimal 3 karakter")
+    .min(1, "Judul panduan wajib diisi")
     .max(150, "Judul panduan maksimal 150 karakter"),
   description: z
     .string()
-    .min(10, "Deskripsi dokumen minimal 10 karakter")
     .max(500, "Deskripsi dokumen maksimal 500 karakter"),
   category: z.enum(["manual_book", "sop", "technical_spec", "regulation"]),
   targetRole: z.enum(["all", "mitra", "internal"]),

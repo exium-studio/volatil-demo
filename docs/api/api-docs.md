@@ -676,8 +676,8 @@ Mengunggah dan membuat data dokumen panduan baru ke sistem. Backend mengekstrak 
 - **Akses**: `Internal Only (Administrator ATR/BPN)`
 - **Content-Type**: `multipart/form-data`
 - **Request Body (Form Data)**:
-  - `title` *(string, required)*: Judul dokumen (min 3, maks 150 karakter)
-  - `description` *(string, required)*: Ringkasan isi materi dokumen (min 10, maks 500 karakter)
+  - `title` *(string, required)*: Judul dokumen (maks 150 karakter)
+  - `description` *(string, required)*: Ringkasan isi materi dokumen (maks 500 karakter)
   - `category` *(string, required)*: `"manual_book"` | `"sop"` | `"technical_spec"` | `"regulation"`
   - `targetRole` *(string, required)*: `"all"` | `"mitra"` | `"internal"`
   - `version` *(string, required)*: Format versi (`"vX.Y.Z"` atau `"X.Y.Z"`, contoh `"v1.0.0"`)
