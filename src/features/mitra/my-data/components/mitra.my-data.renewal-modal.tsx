@@ -143,17 +143,14 @@ export const MitraWorkspaceRenewalModalContent = (
     <Modal.Content>
       <Modal.Header>
         <HStack justify={"space-between"} align={"center"} w={"full"} pr={"lg"}>
-          <HStack gap={3} align={"center"}>
-            <AppIcon icon={RotateCwIcon} />
-            <VStack align={"start"} gap={0}>
-              <Heading size={"md"}>{"Perpanjang Masa Aktif Layanan"}</Heading>
-              <P fontSize={"xs"} color={"fg.muted"}>
-                {
-                  "Perbarui lisensi WMS/WFS Interop GeoServer untuk workspace ini"
-                }
-              </P>
-            </VStack>
-          </HStack>
+          <VStack align={"center"} gap={"xs"}>
+            <Modal.Title>{"Perpanjang Masa Aktif Layanan"}</Modal.Title>
+
+            <P fontSize={"sm"} color={"fg.subtle"} textAlign={"center"}>
+              {"Perbarui lisensi WMS/WFS Interop GeoServer untuk workspace ini"}
+            </P>
+          </VStack>
+
           <Modal.CloseButton />
         </HStack>
       </Modal.Header>
