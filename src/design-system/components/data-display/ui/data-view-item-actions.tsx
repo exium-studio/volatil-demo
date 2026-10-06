@@ -159,6 +159,7 @@ export function DataViewSpreadActions<
               colorPalette={resolvedColorPalette}
               disabled={isDisabled}
               aria-label={resolvedLabel}
+              title={resolvedLabel}
             >
               <a
                 href={resolvedHref}
@@ -181,6 +182,7 @@ export function DataViewSpreadActions<
               variant={action.variant ?? "outline"}
               colorPalette={resolvedColorPalette}
               disabled={isDisabled}
+              title={resolvedLabel}
             >
               <a
                 href={resolvedHref}
@@ -204,6 +206,7 @@ export function DataViewSpreadActions<
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
             aria-label={resolvedLabel}
+            title={resolvedLabel}
             onClick={
               triggerElement ? undefined : () => executeItemAction(action, item)
             }
@@ -215,6 +218,7 @@ export function DataViewSpreadActions<
             variant={action.variant ?? "outline"}
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
+            title={resolvedLabel}
             onClick={
               triggerElement ? undefined : () => executeItemAction(action, item)
             }
@@ -290,6 +294,7 @@ export function DataViewStickyActions<
               colorPalette={resolvedColorPalette}
               disabled={isDisabled}
               aria-label={resolvedLabel}
+              title={resolvedLabel}
             >
               <a
                 href={resolvedHref}
@@ -312,6 +317,7 @@ export function DataViewStickyActions<
               variant={action.variant ?? "outline"}
               colorPalette={resolvedColorPalette}
               disabled={isDisabled}
+              title={resolvedLabel}
             >
               <a
                 href={resolvedHref}
@@ -335,6 +341,7 @@ export function DataViewStickyActions<
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
             aria-label={resolvedLabel}
+            title={resolvedLabel}
             onClick={
               triggerElement ? undefined : () => executeItemAction(action, item)
             }
@@ -346,6 +353,7 @@ export function DataViewStickyActions<
             variant={action.variant ?? "outline"}
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
+            title={resolvedLabel}
             onClick={
               triggerElement ? undefined : () => executeItemAction(action, item)
             }
