@@ -5,4 +5,5 @@ export type RequestOptions = Omit<RequestInit, "body"> & {
   body?: any;
   params?: Record<string, string | number | boolean | undefined>;
   toastId?: string;
+  suppressToast?: boolean;
 };

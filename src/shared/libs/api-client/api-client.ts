@@ -73,6 +73,11 @@ export const apiClient = {
           // Fallback if response is not JSON
         }
 
+        const isAuthLoginEndpoint =
+          endpoint.includes("/api/auth/login") ||
+          endpoint.includes("/api/auth/sso/internal/callback") ||
+          endpoint.includes("/api/auth/login/totp-verify");
+
         if (response.status === 401 || response.status === 403) {
           if (typeof window !== "undefined") {
             const currentPath =
@@ -80,7 +85,7 @@ export const apiClient = {
             const isSigninRoute =
               currentPath === "/" || currentPath === "/admin";
 
-            if (!isSigninRoute) {
+            if (!isSigninRoute && !isAuthLoginEndpoint) {
               localStorage.removeItem("auth_token");
               localStorage.removeItem("user");
               sessionStorage.removeItem("user");
@@ -107,6 +112,39 @@ export const apiClient = {
 
               window.location.replace(isInternal ? "/admin" : "/");
             }
+          }
+        } else {
+          // Fire error toast for all other non-OK responses (400, 422, 500, etc.)
+          if (!options.suppressToast && typeof window !== "undefined") {
+            let detailDescription: string | undefined = undefined;
+            if (errorData && typeof errorData === "object") {
+              const errorEntries = Object.entries(errorData);
+              if (errorEntries.length > 0) {
+                const messages = errorEntries
+                  .flatMap(([field, msgs]) =>
+                    Array.isArray(msgs)
+                      ? msgs.map((m) =>
+                          field !== "file" && field !== "general"
+                            ? `${field}: ${m}`
+                            : m,
+                        )
+                      : [String(msgs)],
+                  )
+                  .filter(Boolean);
+                if (messages.length > 0) {
+                  detailDescription = messages.join(", ");
+                }
+              }
+            }
+
+            if (detailDescription && detailDescription === errorMessage) {
+              detailDescription = undefined;
+            }
+
+            toast.error(errorMessage, {
+              id: options.toastId,
+              description: detailDescription,
+            });
           }
         }
 
@@ -136,10 +174,16 @@ export const apiClient = {
         window.dispatchEvent(new CustomEvent("app:network-offline"));
       }
 
-      throw new ApiError(
-        err instanceof Error ? err.message : "Terjadi kesalahan jaringan",
-        0,
-      );
+      const networkMsg =
+        err instanceof Error ? err.message : "Terjadi kesalahan jaringan";
+
+      if (!options.suppressToast && typeof window !== "undefined") {
+        toast.error(networkMsg, {
+          id: options.toastId ?? "network-error-toast",
+        });
+      }
+
+      throw new ApiError(networkMsg, 0);
     }
   },
 
