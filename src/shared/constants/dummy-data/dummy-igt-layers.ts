@@ -16,6 +16,9 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       wfs: {
         wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
         wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
+        type: "wfs-fill",
+        version: "2.0.0",
+        srsName: "EPSG:4326",
       },
       wms: {
         layers: "testing_workspace:TEST_BIDANG_TANAH",
@@ -33,6 +36,9 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       wfs: {
         wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",
         wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
+        type: "wfs-line",
+        version: "2.0.0",
+        srsName: "EPSG:4326",
       },
       wms: {
         layers: "testing_workspace:TEST_RTRW_BADUNG",
@@ -50,6 +56,9 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       wfs: {
         wfsTypeName: "testing_workspace:TEST_ZNT_BADUNG",
         wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
+        type: "wfs-line",
+        version: "2.0.0",
+        srsName: "EPSG:4326",
       },
       wms: {
         layers: "testing_workspace:TEST_ZNT_BADUNG",

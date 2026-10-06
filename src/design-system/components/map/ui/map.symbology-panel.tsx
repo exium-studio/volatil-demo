@@ -4,6 +4,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Presence } from "@/design-system/components/disclosure/ui/presence";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -243,7 +244,13 @@ export const LayerSymbologyContent = memo((props: LayerSymbologyContentProps) =>
   const { layer } = props;
 
   // Queries — Fetch SLD / GetLegendGraphic rules from GeoServer
-  const { data: rules, isLoading } = useQuery({
+  const {
+    data: rules,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["map", "legend-graphic", layer.id],
     queryFn: ({ signal }) => fetchLegendGraphic({ layer, signal }),
     staleTime: 1000 * 60 * 15,
@@ -258,25 +265,33 @@ export const LayerSymbologyContent = memo((props: LayerSymbologyContentProps) =>
     );
   }
 
-  // If rules exist from SLD JSON response
-  if (rules && rules.length > 0) {
+  if (isError || !rules || rules.length === 0) {
     return (
-      <VStack w={"full"} gap={"xs"} align={"stretch"} pt={"2xs"}>
-        {rules.map((rule, idx) => (
-          <LegendRuleItem
-            key={rule.name ?? idx}
-            rule={rule}
-            fallbackBasis={layer.spatialBasis}
-          />
-        ))}
-      </VStack>
+      <Center w={"full"} py={"xs"}>
+        <RetryState
+          title={"Gagal Memuat Simbologi"}
+          description={
+            error instanceof Error
+              ? error.message
+              : "Tidak dapat memuat aturan SLD dari GeoServer."
+          }
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      </Center>
     );
   }
 
-  // Fallback: Default Thematic Vector Swatch
   return (
     <VStack w={"full"} gap={"xs"} align={"stretch"} pt={"2xs"}>
-      <DefaultThematicSwatch basis={layer.spatialBasis} />
+      {rules.map((rule, idx) => (
+        <LegendRuleItem
+          key={rule.name ?? idx}
+          rule={rule}
+          fallbackBasis={layer.spatialBasis}
+        />
+      ))}
     </VStack>
   );
 });

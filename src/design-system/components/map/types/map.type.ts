@@ -84,16 +84,16 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
 /** WFS-specific query configuration for an IGT layer */
 export type IgtLayerWfsConfig = {
   wfsTypeName: string;
-  wfsUrl?: string;
-  type?: "wfs-fill" | "wfs-line" | "wfs-circle" | "wfs-symbol";
-  version?: string;
-  srsName?: string;
+  wfsUrl: string;
+  type: "wfs-fill" | "wfs-line" | "wfs-circle" | "wfs-symbol";
+  version: string;
+  srsName: string;
 };
 
 /** WMS-specific tile rendering configuration for an IGT layer */
 export type IgtLayerWmsConfig = {
   layers: string;
-  wmsUrl?: string;
+  wmsUrl: string;
   tileSize?: number;
   format?: string;
   transparent?: boolean;
@@ -105,12 +105,12 @@ export type IgtLayerWmsConfig = {
 /** Centralized IGT Layer Item containing metadata, WFS query config, and WMS render config */
 export type IgtLayerItem = {
   id: string;
-  title?: string;
+  title: string;
   spatialBasis: "bidang" | "kawasan";
-  bbox?: [number, number, number, number];
-  visible?: boolean;
-  defaultVisible?: boolean;
-  zIndex?: number;
+  bbox: [number, number, number, number];
+  visible: boolean;
+  defaultVisible: boolean;
+  zIndex: number;
   wfs: IgtLayerWfsConfig;
   wms: IgtLayerWmsConfig;
 };
@@ -119,7 +119,7 @@ import type { PaginationMeta } from "@/shared/types/common-response.type";
 
 export type IgtLayersResponse = {
   items: IgtLayerItem[];
-  pagination?: PaginationMeta;
+  pagination: PaginationMeta;
 };
 
 /** Helper converter to build WmsRasterLayerConfig for map rendering from an IgtLayerItem */
@@ -127,24 +127,34 @@ export const getWmsRasterConfigFromIgtLayer = (
   igtLayer: IgtLayerItem,
   visible = true,
   opacity = 0.5,
-): WmsRasterLayerConfig => ({
-  id: igtLayer.id,
-  title: igtLayer.title,
-  type: "wms-raster",
-  spatialBasis: igtLayer.spatialBasis,
-  bbox: igtLayer.bbox,
-  visible,
-  opacity,
-  zIndex: igtLayer.zIndex,
-  wmsUrl: igtLayer.wms?.wmsUrl ?? "",
-  layers: igtLayer.wms?.layers ?? "",
-  wfsUrl: igtLayer.wfs?.wfsUrl,
-  wfsTypeName: igtLayer.wfs?.wfsTypeName,
-  tileSize: igtLayer.wms?.tileSize,
-  format: igtLayer.wms?.format,
-  transparent: igtLayer.wms?.transparent,
-  styles: igtLayer.wms?.styles,
-});
+): WmsRasterLayerConfig => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const raw = igtLayer as any;
+  const wmsUrl = raw?.wms?.wmsUrl ?? raw?.wmsUrl ?? "";
+  const layers = raw?.wms?.layers ?? raw?.layers ?? raw?.typeName ?? igtLayer.id;
+  const wfsUrl = raw?.wfs?.wfsUrl ?? raw?.wfsUrl;
+  const wfsTypeName =
+    raw?.wfs?.wfsTypeName ?? raw?.wfsTypeName ?? raw?.typeName ?? igtLayer.id;
+
+  return {
+    id: igtLayer.id,
+    title: igtLayer.title,
+    type: "wms-raster",
+    spatialBasis: igtLayer.spatialBasis,
+    bbox: igtLayer.bbox,
+    visible,
+    opacity,
+    zIndex: igtLayer.zIndex,
+    wmsUrl,
+    layers,
+    wfsUrl,
+    wfsTypeName,
+    tileSize: raw?.wms?.tileSize,
+    format: raw?.wms?.format,
+    transparent: raw?.wms?.transparent,
+    styles: raw?.wms?.styles,
+  };
+};
 
 export type UseGeolocationResult = {
   isActive: boolean;

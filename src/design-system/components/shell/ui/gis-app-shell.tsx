@@ -9,6 +9,7 @@ import { Splitter } from "@/design-system/components/layout/ui/splitter";
 import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-view-padding";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import { fitBoundsSafe } from "@/design-system/components/map/utils/map-camera";
 import {
   getWmsRasterConfigFromIgtLayer,
   type IgtLayerItem,
@@ -343,7 +344,7 @@ const Content = (_props: GisContentProps) => {
     layerConfigs: previewLayerConfigs,
   } = useOrderReviewLayerStore();
 
-  // Auto-enable layers configured with defaultVisible on initial load
+  // Auto-enable layers configured with defaultVisible on initial load and fit map camera
   useEffect(() => {
     const rawList = fetchedLayers?.items;
     if (rawList && rawList.length > 0 && !hasInitializedDefaultsRef.current) {
@@ -354,8 +355,17 @@ const Content = (_props: GisContentProps) => {
       defaultActiveLayers.forEach((l) => {
         useMapLayerStore.getState().setLayerEnabled(l.id, true);
       });
+
+      const targetLayer = defaultActiveLayers[0] ?? rawList[0];
+      if (targetLayer?.bbox && map) {
+        fitBoundsSafe(map, targetLayer.bbox, {
+          padding: 80,
+          maxZoom: 14,
+          duration: 1200,
+        });
+      }
     }
-  }, [fetchedLayers]);
+  }, [fetchedLayers, map]);
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
     const rawList = fetchedLayers?.items ?? [];
@@ -363,7 +373,7 @@ const Content = (_props: GisContentProps) => {
       (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
     );
     const configs: MapLayerConfig[] = sorted
-      .filter((layer: IgtLayerItem) => Boolean(layer.wms))
+      .filter((layer: IgtLayerItem) => Boolean(layer.wms?.wmsUrl || layer.wms?.layers || layer.id))
       .map((layer: IgtLayerItem) => {
         const isEnabled = Boolean(enabledLayerIds[layer.id]);
         const individualOpacity = layerOpacities[layer.id] ?? 1.0;
@@ -401,8 +411,8 @@ const Content = (_props: GisContentProps) => {
           spatialBasis: customOverride?.spatialBasis ?? "bidang",
           visible: wmsVisible && Boolean(isEnabled),
           opacity: layerOpacities[layerId] ?? 1.0,
-          wmsUrl: "",
-          layers: layerId,
+          wmsUrl: customOverride?.wmsUrl ?? "",
+          layers: customOverride?.layers ?? layerId,
           ...(customOverride ?? {}),
         });
       }

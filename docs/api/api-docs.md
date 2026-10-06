@@ -984,20 +984,66 @@ Menyajikan 5 transaksi paling baru milik mitra untuk tabel widget transaksi tera
 - **Response (200 OK)**:
 ```typescript
 type MitraIgtLayersResponse = {
-  items: Array<{
+  success: true;
+  message: string;
+  data: {
+    items: Array<{
+      id: string;
+      title: string;
+      spatialBasis: "bidang" | "kawasan";
+      bbox: [number, number, number, number];
+      visible: boolean;
+      defaultVisible: boolean;
+      zIndex: number;
+      wms: {
+        layers: string;
+        wmsUrl: string;
+        format?: string;
+        transparent?: boolean;
+        tileSize?: number;
+        version?: string;
+        srs?: string;
+        styles?: string;
+      };
+      wfs: {
+        wfsTypeName: string;
+        wfsUrl: string;
+        type: "wfs-fill" | "wfs-line" | "wfs-circle" | "wfs-symbol";
+        version: string;
+        srsName: string;
+      };
+    }>;
+    pagination: {
+      totalItems: number;
+      totalPages: number;
+      currentPage: number;
+      itemsPerPage: number;
+    };
+  };
+  items?: Array<{
     id: string;
     title: string;
     spatialBasis: "bidang" | "kawasan";
     bbox: [number, number, number, number];
-    visible?: boolean;
-    zIndex?: number;
-    wfs: {
-      wfsUrl: string;
-      wfsTypeName: string;
-    };
+    visible: boolean;
+    defaultVisible: boolean;
+    zIndex: number;
     wms: {
-      wmsUrl: string;
       layers: string;
+      wmsUrl: string;
+      format?: string;
+      transparent?: boolean;
+      tileSize?: number;
+      version?: string;
+      srs?: string;
+      styles?: string;
+    };
+    wfs: {
+      wfsTypeName: string;
+      wfsUrl: string;
+      type: "wfs-fill" | "wfs-line" | "wfs-circle" | "wfs-symbol";
+      version: string;
+      srsName: string;
     };
   }>;
   pagination?: {
@@ -1006,6 +1052,7 @@ type MitraIgtLayersResponse = {
     currentPage: number;
     itemsPerPage: number;
   };
+  timestamp?: string;
 };
 ```
 
