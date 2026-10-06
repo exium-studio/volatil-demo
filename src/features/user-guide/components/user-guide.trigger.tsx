@@ -62,8 +62,12 @@ export const UserGuideTrigger = (props: UserGuideTriggerProps) => {
           }}
           onClick={() => open()}
         >
-          <HStack gap={"sm"} align={"center"}>
-            <AppIcon icon={BookOpenIcon} color={`${theme.colorPalette}.fg`} />
+          <HStack gap={"md"} align={"center"}>
+            <AppIcon
+              icon={BookOpenIcon}
+              color={`${theme.colorPalette}.fg`}
+              size={"lg"}
+            />
 
             <VStack align={"start"} gap={0}>
               <P fontWeight={"medium"} color={"fg"}>

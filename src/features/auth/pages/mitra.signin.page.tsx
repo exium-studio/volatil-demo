@@ -20,7 +20,7 @@ export const MitraSigninPage = () => {
         overflow={"clip"}
         w={"full"}
         maxW={"1200px"}
-        h={[null, null, "800px"]}
+        h={[null, null, "720px"]}
         m={"auto"}
         bg={"bg.body"}
         rounded={theme.radii.container}
