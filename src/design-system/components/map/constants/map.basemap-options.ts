@@ -17,12 +17,14 @@ export const OPENFREEMAP_LIBERTY_STYLE_URL =
 //
 // - CARTO raster (Positron/Dark Matter): officially supports z0–20.
 // - Esri World Imagery: real-world satellite coverage varies by region —
-//   many areas have no data past z19, so 19 is the safe global default
-//   (higher zooms overzoom visually instead of requesting missing tiles).
+//   many areas in Indonesia & globally have no data past z18 (returning
+//   a "Map data not yet available" placeholder tile on z19+). Setting maxzoom
+//   to 18 ensures MapLibre automatically overzooms/rescales the crisp z18
+//   satellite tiles when zooming up to z24 without showing placeholder error tiles.
 // - Vector styles (OpenFreeMap Liberty) don't have this problem — geometry
 //   scales without quality loss, so no cap needed here.
 
-const SOURCE_ESRI_MAX_ZOOM = 19;
+const SOURCE_ESRI_MAX_ZOOM = 18;
 
 const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
   version: 8,
