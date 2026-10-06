@@ -427,8 +427,6 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
                 right={0}
                 zIndex={11}
                 bg={"bg.body"}
-                borderLeft={"1px solid"}
-                borderColor={"border.subtle"}
                 px={hasStickyActions ? undefined : "xs"}
                 pl={hasStickyActions ? "md" : undefined}
                 pr={hasStickyActions ? "xs" : undefined}
@@ -573,8 +571,6 @@ const DataListTableRow = memo(
                   zIndex={2}
                   minW={hasStickyActions ? "68px" : "56px"}
                   bg={"bg.body"}
-                  borderLeft={"1px solid"}
-                  borderColor={"border.subtle"}
                 >
                   <HStack
                     w={"full"}
