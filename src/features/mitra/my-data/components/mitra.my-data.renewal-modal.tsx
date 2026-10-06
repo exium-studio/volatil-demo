@@ -203,13 +203,16 @@ export const MitraWorkspaceRenewalModalContent = (
         <VStack gap={"xs"} w={"full"}>
           <Button
             primary={true}
+            w={"full"}
             loading={renewMutation.isPending}
             onClick={handleProceedToPayment}
           >
             {"Lanjut ke Pembayaran"}
           </Button>
 
-          <Button onClick={close}>{"Batal"}</Button>
+          <Button w={"full"} onClick={close}>
+            {"Batal"}
+          </Button>
         </VStack>
       </Modal.Footer>
     </Modal.Content>
