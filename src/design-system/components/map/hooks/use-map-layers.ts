@@ -4,9 +4,11 @@ import {
   MAP_CONFIG,
   MAP_EVENTS_MAP,
 } from "@/design-system/components/map/constants/map.config";
-import type {
-  MapLayerConfig,
-  WmsRasterLayerConfig,
+import {
+  isMapActive,
+  type MapLayerConfig,
+  type MapLibreRasterSource,
+  type WmsRasterLayerConfig,
 } from "@/design-system/components/map/types/map.type";
 
 import type maplibregl from "maplibre-gl";
@@ -110,8 +112,7 @@ export const useMapLayers = (
 
   const safeAddSource = useCallback(
     (id: string, sourceSpec: maplibregl.SourceSpecification) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!map || !(map as any).style || (map as any)._removed || map.getSource(id)) return;
+      if (!isMapActive(map) || map.getSource(id)) return;
       try {
         map.addSource(id, sourceSpec);
       } catch (err) {
@@ -123,8 +124,7 @@ export const useMapLayers = (
 
   const safeAddLayer = useCallback(
     (spec: maplibregl.LayerSpecification, beforeId?: string) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!map || !(map as any).style || (map as any)._removed || map.getLayer(spec.id)) return;
+      if (!isMapActive(map) || map.getLayer(spec.id)) return;
       const targetBeforeId =
         beforeId && map.getLayer(beforeId) ? beforeId : undefined;
       try {
@@ -146,8 +146,7 @@ export const useMapLayers = (
 
   const addLayer = useCallback(
     async (layer: MapLayerConfig) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!map || !(map as any).style || (map as any)._removed) return;
+      if (!isMapActive(map)) return;
       const beforeId = getCustomLayerBeforeId(map);
       const visibility = resolveVisibility(layer);
       const opacity = resolveOpacity(layer);
@@ -229,8 +228,7 @@ export const useMapLayers = (
 
   const removeLayers = useCallback(
     (configs: MapLayerConfig[]) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!map || !(map as any).style || (map as any)._removed) return;
+      if (!isMapActive(map)) return;
 
       configs.forEach((layer) => {
         if (map.getLayer(layer.id)) map.removeLayer(layer.id);
@@ -242,8 +240,7 @@ export const useMapLayers = (
   );
 
   const setupLayers = useCallback(async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!map || !(map as any).style || (map as any)._removed) return;
+    if (!isMapActive(map)) return;
 
     const configs = layersRef.current;
     for (const layer of configs) {
@@ -256,8 +253,7 @@ export const useMapLayers = (
         console.error(`Failed to add layer "${layer.id}"`, error);
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!map || (map as any)._removed) return;
+    if (!isMapActive(map)) return;
     map.fire(MAP_EVENTS_MAP.layersReady);
   }, [map, addLayer]);
 
@@ -274,16 +270,14 @@ export const useMapLayers = (
     void setupLayers();
 
     return () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!map || (map as any)._removed) return;
+      if (!isMapActive(map)) return;
       map.off(MAP_EVENTS_MAP.styleReady as string, handleStyleReady);
     };
   }, [map, setupLayers, removeLayers]);
 
   // Respond to dynamic changes in layers array, visibility, and opacity
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!map || !(map as any).style || (map as any)._removed) return;
+    if (!isMapActive(map)) return;
 
     const currentLayerIds = new Set(layers.map((l) => l.id));
 
@@ -297,8 +291,7 @@ export const useMapLayers = (
     });
 
     layers.forEach(async (layer) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!map || !(map as any).style || (map as any)._removed) return;
+      if (!isMapActive(map)) return;
       registeredLayerIdsRef.current.add(layer.id);
 
       if (!map.getSource(layer.id) || !map.getLayer(layer.id)) {
@@ -309,13 +302,12 @@ export const useMapLayers = (
       if (layer.type === "wms-raster") {
         const newTileUrl = resolveWmsTileUrl(layer);
         if (newTileUrl) {
-          const source = map.getSource(
-            layer.id,
-          ) as maplibregl.RasterTileSource | undefined;
+          const source = map.getSource(layer.id) as
+            | MapLibreRasterSource
+            | undefined;
 
           if (source && typeof source.setTiles === "function") {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const currentTiles = (source as any).tiles;
+            const currentTiles = source.tiles;
             if (!currentTiles || currentTiles[0] !== newTileUrl) {
               source.setTiles([newTileUrl]);
             }
@@ -325,10 +317,7 @@ export const useMapLayers = (
 
       if (map.getLayer(layer.id)) {
         const targetVisibility = resolveVisibility(layer);
-        const currentVisibility = map.getLayoutProperty(
-          layer.id,
-          "visibility",
-        );
+        const currentVisibility = map.getLayoutProperty(layer.id, "visibility");
         if (currentVisibility !== targetVisibility) {
           map.setLayoutProperty(layer.id, "visibility", targetVisibility);
         }

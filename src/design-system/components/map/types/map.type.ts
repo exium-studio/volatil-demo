@@ -117,6 +117,23 @@ export type IgtLayerItem = {
 
 import type { PaginationMeta } from "@/shared/types/common-response.type";
 
+export type MapLibreInternalMap = maplibregl.Map & {
+  style?: unknown;
+  _removed?: boolean;
+};
+
+export type MapLibreRasterSource = maplibregl.RasterTileSource & {
+  tiles?: string[];
+};
+
+export const isMapActive = (
+  map: maplibregl.Map | null,
+): map is MapLibreInternalMap => {
+  if (!map) return false;
+  const internal = map as unknown as { style?: unknown; _removed?: boolean };
+  return Boolean(internal.style && !internal._removed);
+};
+
 export type IgtLayersResponse = {
   items: IgtLayerItem[];
   pagination: PaginationMeta;
@@ -128,13 +145,10 @@ export const getWmsRasterConfigFromIgtLayer = (
   visible = true,
   opacity = 0.5,
 ): WmsRasterLayerConfig => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const raw = igtLayer as any;
-  const wmsUrl = raw?.wms?.wmsUrl ?? raw?.wmsUrl ?? "";
-  const layers = raw?.wms?.layers ?? raw?.layers ?? raw?.typeName ?? igtLayer.id;
-  const wfsUrl = raw?.wfs?.wfsUrl ?? raw?.wfsUrl;
-  const wfsTypeName =
-    raw?.wfs?.wfsTypeName ?? raw?.wfsTypeName ?? raw?.typeName ?? igtLayer.id;
+  const wmsUrl = igtLayer.wms?.wmsUrl ?? "";
+  const layers = igtLayer.wms?.layers ?? igtLayer.id;
+  const wfsUrl = igtLayer.wfs?.wfsUrl;
+  const wfsTypeName = igtLayer.wfs?.wfsTypeName ?? igtLayer.id;
 
   return {
     id: igtLayer.id,
@@ -149,10 +163,10 @@ export const getWmsRasterConfigFromIgtLayer = (
     layers,
     wfsUrl,
     wfsTypeName,
-    tileSize: raw?.wms?.tileSize,
-    format: raw?.wms?.format,
-    transparent: raw?.wms?.transparent,
-    styles: raw?.wms?.styles,
+    tileSize: igtLayer.wms?.tileSize,
+    format: igtLayer.wms?.format,
+    transparent: igtLayer.wms?.transparent,
+    styles: igtLayer.wms?.styles,
   };
 };
 
