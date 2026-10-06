@@ -19,6 +19,7 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { CountBadge } from "@/design-system/components/typography/ui/count-badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
@@ -49,6 +50,9 @@ export const MapMasterIgtLayerManagement = memo(() => {
     setLayerOpacity,
     setAllLayersEnabled,
   } = useMapLayerStore();
+
+  // Contexts
+  const isSmallViewport = useIsSmallViewport();
 
   // Derived Values
   const userSession = getUserSession();
@@ -113,9 +117,14 @@ export const MapMasterIgtLayerManagement = memo(() => {
         </MapOverlayContainer>
       </Popover.Trigger>
 
-      <Popover.Content w={"full"} maxW={"380px"}>
+      <Popover.Content w={isSmallViewport ? "300px" : "380px"}>
         <HeaderContainer>
-          <HStack justify={"space-between"} gap={"md"} w={"full"}>
+          <HStack
+            align={"start"}
+            justify={"space-between"}
+            gap={"md"}
+            w={"full"}
+          >
             <P fontWeight={"medium"}>{"Manajemen Layer & Simbologi IGT"}</P>
 
             <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
