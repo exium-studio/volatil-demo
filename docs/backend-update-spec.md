@@ -152,11 +152,17 @@ Frontend memanggil endpoint ini sebelum menyimpan server untuk memastikan instan
 #### Request Body:
 ```json
 {
+  "id": "geo-uuid-12345", 
   "baseUrl": "https://geoserver.atrbpn.go.id/geoserver",
   "username": "admin_spatial",
   "password": "rahasiaPassword123"
 }
 ```
+> **Catatan Kredensial & Mode Edit:**
+> - `id` (*opsional*): Jika dikirim (pada form edit server), backend dapat mencari record GeoServer tersimpan di database.
+> - Jika `id` ada dan `password` bernilai kosong / `undefined`, backend **wajib** menggunakan password tersimpan di database untuk melakukan uji koneksi (karena password tidak pernah dikirim ke frontend pada form edit demi keamanan).
+> - Jika `password` diisi oleh user, backend menggunakan password baru tersebut.
+> - Pada form tambah server baru (`Create`), parameter `id` tidak dikirim dan `password` wajib diisi.
 
 #### Response Body Berhasil (`200 OK`):
 ```json

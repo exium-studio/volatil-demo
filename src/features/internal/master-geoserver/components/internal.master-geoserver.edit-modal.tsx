@@ -124,6 +124,7 @@ const InternalMasterGeoserverEditModalContent = (
 
     testMutation.mutate(
       {
+        id: item.id,
         baseUrl: values.baseUrl.trim(),
         username: values.username?.trim() || undefined,
         password: values.password?.trim() || undefined,

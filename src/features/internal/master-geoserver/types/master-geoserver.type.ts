@@ -41,6 +41,7 @@ export type UpdateMasterGeoserverPayload =
   };
 
 export type TestGeoserverConnectionPayload = {
+  id?: string;
   baseUrl: string;
   username?: string;
   password?: string;
