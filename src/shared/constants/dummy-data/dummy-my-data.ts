@@ -111,7 +111,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
 
 export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
   {
-    id: "ws_ord_20260830_001",
+    id: "22a298d6-e948-49a7-a8ac-4374c3f3f063",
     workspaceName: "ws_ord_20260830_001",
     orderId: "ord-2026-0830-001",
     orderNumber: "ORD-20260830-001",

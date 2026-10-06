@@ -28,7 +28,6 @@ export const IgtBasisBadge = (props: IgtBasisBadgeProps) => {
     >
       {showIcon && config?.icon && <AppIcon icon={config.icon} size={"xs"} />}
 
-
       {showLabel ? (config?.label ?? children ?? "-") : null}
     </Badge>
   );

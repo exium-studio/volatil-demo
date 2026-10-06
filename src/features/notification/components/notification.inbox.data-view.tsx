@@ -208,27 +208,39 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
   // Derived Values
   const IconComponent = CATEGORY_ICON_MAP[item.category] ?? BellIcon;
   const colorPalette = CATEGORY_COLOR_MAP[item.category] ?? "blue";
-  const hasAction = Boolean(item.actionUrl);
+  const targetUrl = useMemo(() => {
+    if (item.actionUrl) {
+      if (item.actionUrl === "/mitra/my-data" && item.metadata?.workspaceId) {
+        return `/mitra/my-data/${item.metadata.workspaceId}`;
+      }
+      return item.actionUrl;
+    }
+    if (item.metadata?.workspaceId) {
+      return `/mitra/my-data/${item.metadata.workspaceId}`;
+    }
+    return null;
+  }, [item.actionUrl, item.metadata?.workspaceId]);
+  const hasAction = Boolean(targetUrl);
 
   // Handlers
   const handleCardClick = (e: React.MouseEvent) => {
-    if (!item.actionUrl) return;
+    if (!targetUrl) return;
     const target = e.target as HTMLElement;
     if (target.closest("button") || target.closest("a")) return;
 
     if (!item.isRead) {
       onMarkAsRead(item.id);
     }
-    void navigate({ to: item.actionUrl });
+    void navigate({ to: targetUrl });
   };
 
   const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!item.actionUrl) return;
+    if (!targetUrl) return;
     if (!item.isRead) {
       onMarkAsRead(item.id);
     }
-    void navigate({ to: item.actionUrl });
+    void navigate({ to: targetUrl });
   };
 
   return (
@@ -359,17 +371,12 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
           align={"center"}
           wrap={"wrap"}
           gap={"xs"}
-          pt={"2xs"}
+          mt={"xs"}
         >
           {hasAction ? (
-            <Button
-              size={"xs"}
-              variant={"subtle"}
-              colorPalette={colorPalette}
-              onClick={handleActionClick}
-            >
-              <AppIcon icon={ArrowRightIcon} size={"xs"} />
+            <Button variant={"outline"} onClick={handleActionClick}>
               {item.actionLabel || "Buka Data Saya"}
+              <AppIcon icon={ArrowRightIcon} />
             </Button>
           ) : (
             <Box />
@@ -377,8 +384,6 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
 
           {!item.isRead && (
             <Button
-              size={"xs"}
-              variant={"ghost"}
               onClick={(e) => {
                 e.stopPropagation();
                 onMarkAsRead(item.id);
