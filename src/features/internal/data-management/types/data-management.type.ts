@@ -102,6 +102,11 @@ export type GeoserverCascadeSelectProps = {
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => void;
   initialLayerOption?: FocusSelectOption;
+  errors?: {
+    geoserverId?: { message?: string };
+    workspace?: { message?: string };
+    typeName?: { message?: string };
+  };
 };
 
 export type InternalDataManagementCreateTriggerProps = {

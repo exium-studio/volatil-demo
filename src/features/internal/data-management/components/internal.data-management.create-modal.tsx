@@ -26,6 +26,7 @@ import type {
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { IGT_BASIS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import { toast } from "@/design-system/components/toast";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
@@ -83,7 +84,7 @@ const InternalDataManagementCreateModalContent = (
     handleSubmit,
     setValue,
     reset,
-    formState: { isValid },
+    formState: { errors },
   } = useForm<MasterIgtLayerFormValues>({
     resolver: zodResolver(masterIgtLayerFormSchema),
     mode: "onChange",
@@ -144,8 +145,20 @@ const InternalDataManagementCreateModalContent = (
     }
   };
 
+  const onInvalid = () => {
+    toast.error("Formulir Belum Lengkap", {
+      description:
+        "Mohon periksa dan lengkapi semua isian wajib (Nama layer, Master GeoServer, Workspace, dan Layer).",
+    });
+  };
+
   const onSubmit = (data: MasterIgtLayerFormValues) => {
-    if (!selectedGeoserver) return;
+    if (!selectedGeoserver) {
+      toast.error("GeoServer Belum Dipilih", {
+        description: "Silakan pilih master GeoServer terlebih dahulu.",
+      });
+      return;
+    }
 
     const layerId = data.id?.trim() || data.typeName.trim();
 
@@ -341,6 +354,7 @@ const InternalDataManagementCreateModalContent = (
               }}
               selectedTypeName={typeName}
               onLayerChange={handleLayerChange}
+              errors={errors}
             />
           </Fieldset>
 
@@ -426,13 +440,13 @@ const InternalDataManagementCreateModalContent = (
           <Button
             primary
             loading={createMutation.isPending}
-            disabled={!isValid || createMutation.isPending}
-            onClick={handleSubmit(onSubmit)}
+            disabled={createMutation.isPending}
+            onClick={handleSubmit(onSubmit, onInvalid)}
           >
             {"Tambah Layer"}
           </Button>
 
-          <Button onClick={close}>{t["action.cancel"]()}</Button>
+          <Button type={"button"} onClick={close}>{t["action.cancel"]()}</Button>
         </VStack>
       </Modal.Footer>
     </Modal.Content>

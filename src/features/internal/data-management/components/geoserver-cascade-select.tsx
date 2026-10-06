@@ -23,6 +23,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     selectedTypeName,
     onLayerChange,
     initialLayerOption,
+    errors,
   } = props;
 
   // Hooks (Queries)
@@ -92,7 +93,11 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
   return (
     <VStack align={"stretch"} gap={"md"} w={"full"}>
       {/* 1. Select Master GeoServer */}
-      <Field label={"Master GeoServer"}>
+      <Field
+        label={"Master GeoServer"}
+        invalid={Boolean(errors?.geoserverId)}
+        errorText={errors?.geoserverId?.message}
+      >
         <FocusSelectInput
           modalKey={`${parentModalKey}.geoserver`}
           title={"Master GeoServer"}
@@ -111,7 +116,11 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       </Field>
 
       {/* 2. Select Workspace */}
-      <Field label={"Workspace GeoServer"}>
+      <Field
+        label={"Workspace GeoServer"}
+        invalid={Boolean(errors?.workspace)}
+        errorText={errors?.workspace?.message}
+      >
         <FocusSelectInput
           modalKey={`${parentModalKey}.workspace`}
           title={"Workspace GeoServer"}
@@ -134,7 +143,11 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       </Field>
 
       {/* 3. Select Layer */}
-      <Field label={"Layer"}>
+      <Field
+        label={"Layer"}
+        invalid={Boolean(errors?.typeName)}
+        errorText={errors?.typeName?.message}
+      >
         <FocusSelectInput
           modalKey={`${parentModalKey}.layer`}
           title={"Layer"}
