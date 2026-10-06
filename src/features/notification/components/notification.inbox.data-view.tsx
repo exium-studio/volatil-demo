@@ -46,7 +46,7 @@ import {
   UserIcon,
   XIcon,
 } from "lucide-react";
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 const CATEGORY_ICON_MAP: Record<InboxCategory, typeof BellIcon> = {
   transaksi: CreditCardIcon,
@@ -208,39 +208,62 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
   // Derived Values
   const IconComponent = CATEGORY_ICON_MAP[item.category] ?? BellIcon;
   const colorPalette = CATEGORY_COLOR_MAP[item.category] ?? "blue";
-  const targetUrl = useMemo(() => {
-    if (item.actionUrl) {
-      if (item.actionUrl === "/mitra/my-data" && item.metadata?.workspaceId) {
-        return `/mitra/my-data/${item.metadata.workspaceId}`;
-      }
-      return item.actionUrl;
-    }
-    if (item.metadata?.workspaceId) {
-      return `/mitra/my-data/${item.metadata.workspaceId}`;
-    }
-    return null;
-  }, [item.actionUrl, item.metadata?.workspaceId]);
-  const hasAction = Boolean(targetUrl);
+  const hasAction = Boolean(
+    item.actionUrl ||
+      item.metadata?.workspaceId ||
+      item.category === "kedaluwarsa" ||
+      item.category === "transaksi",
+  );
 
   // Handlers
+  const handleNavigate = useCallback(() => {
+    const rawUrl = item.actionUrl;
+    const wsId =
+      item.metadata?.workspaceId ||
+      (rawUrl?.startsWith("/mitra/my-data/")
+        ? rawUrl.replace("/mitra/my-data/", "").split("?")[0]
+        : null);
+
+    // 1. If we have a workspaceId, navigate to workspace detail page
+    if (wsId) {
+      void navigate({
+        to: "/mitra/my-data/$workspaceId",
+        params: { workspaceId: wsId },
+      });
+      return;
+    }
+
+    // 2. If rawUrl is specified and points elsewhere
+    if (rawUrl && rawUrl !== "/mitra/my-data") {
+      if (rawUrl.startsWith("/")) {
+        void navigate({ href: rawUrl });
+      } else {
+        window.location.href = rawUrl;
+      }
+      return;
+    }
+
+    // 3. Fallback: navigate to my-data list page
+    void navigate({ to: "/mitra/my-data" });
+  }, [item.actionUrl, item.metadata?.workspaceId, navigate]);
+
   const handleCardClick = (e: React.MouseEvent) => {
-    if (!targetUrl) return;
+    if (!hasAction) return;
     const target = e.target as HTMLElement;
     if (target.closest("button") || target.closest("a")) return;
 
     if (!item.isRead) {
       onMarkAsRead(item.id);
     }
-    void navigate({ to: targetUrl });
+    handleNavigate();
   };
 
   const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!targetUrl) return;
     if (!item.isRead) {
       onMarkAsRead(item.id);
     }
-    void navigate({ to: targetUrl });
+    handleNavigate();
   };
 
   return (

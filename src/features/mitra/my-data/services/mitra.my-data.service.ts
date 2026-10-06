@@ -94,7 +94,7 @@ export const getMitraWorkspaceDetail = async (
             w.id === workspaceId ||
             w.orderId === workspaceId ||
             w.workspaceName === workspaceId,
-        ) ?? null
+        ) ?? dummyMitraWorkspaces[0] ?? null
       );
     }
     return null;
@@ -106,7 +106,7 @@ export const getMitraWorkspaceDetail = async (
             w.id === workspaceId ||
             w.orderId === workspaceId ||
             w.workspaceName === workspaceId,
-        ) ?? null
+        ) ?? dummyMitraWorkspaces[0] ?? null
       );
     }
     throw error;
