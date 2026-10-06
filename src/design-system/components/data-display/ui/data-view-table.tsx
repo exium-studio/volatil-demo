@@ -274,6 +274,7 @@ const DataListTableRootInternal = <
       <VStack
         className={"table-container"}
         ref={setTableContainerRef}
+        overflowX={"auto"}
         overflowY={"auto"}
         flex={1}
         w={"full"}
@@ -285,7 +286,8 @@ const DataListTableRootInternal = <
         <Grid
           role={"table"}
           gridTemplateColumns={gridCols}
-          w={headersList.length > 1 ? "full" : "fit"}
+          w={"full"}
+          minW={"max-content"}
         >
           {children}
         </Grid>
@@ -336,7 +338,7 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
       display={"grid"}
       gridTemplateColumns={"subgrid"}
       gridColumn={"1 / -1"}
-      overflow={"clip"}
+      minW={"full"}
       h={"56px"}
       pos={"sticky"}
       top={0}
@@ -424,6 +426,9 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
                 top={0}
                 right={0}
                 zIndex={11}
+                bg={"bg.body"}
+                borderLeft={"1px solid"}
+                borderColor={"border.subtle"}
                 px={hasStickyActions ? undefined : "xs"}
                 pl={hasStickyActions ? "md" : undefined}
                 pr={hasStickyActions ? "xs" : undefined}
@@ -465,7 +470,7 @@ const DataListTableRow = memo(
         display={"grid"}
         gridTemplateColumns={"subgrid"}
         gridColumn={"1 / -1"}
-        overflow={"clip"}
+        minW={"full"}
         minH={"56px"}
         bg={"bg.body"}
         borderBottom={"1px solid"}
@@ -568,6 +573,8 @@ const DataListTableRow = memo(
                   zIndex={2}
                   minW={hasStickyActions ? "68px" : "56px"}
                   bg={"bg.body"}
+                  borderLeft={"1px solid"}
+                  borderColor={"border.subtle"}
                 >
                   <HStack
                     w={"full"}
