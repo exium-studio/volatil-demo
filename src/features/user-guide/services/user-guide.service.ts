@@ -16,6 +16,7 @@ import type {
   UserGuideListResponse,
   UserGuideQueryParams,
 } from "@/features/user-guide/types/user-guide.type";
+import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const USER_GUIDE_STORAGE_KEY = "volatil_user_guides_db";
 
@@ -202,8 +203,10 @@ export const userGuideService = {
     try {
       const response = await postCreateUserGuideApi(payload, signal);
       if (response && response.data) return response.data;
-    } catch {
-      // Fallback
+    } catch (error) {
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
     }
 
     const localList = getLocalGuides();
@@ -255,8 +258,10 @@ export const userGuideService = {
     try {
       const response = await putUpdateUserGuideApi(id, payload, signal);
       if (response && response.data) return response.data;
-    } catch {
-      // Fallback
+    } catch (error) {
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
     }
 
     const localList = getLocalGuides();
@@ -297,8 +302,10 @@ export const userGuideService = {
   ): Promise<{ success: boolean }> => {
     try {
       await deleteUserGuideApi(id, signal);
-    } catch {
-      // Fallback
+    } catch (error) {
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
     }
 
     const localList = getLocalGuides();
