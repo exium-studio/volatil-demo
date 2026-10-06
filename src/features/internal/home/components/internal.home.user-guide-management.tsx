@@ -34,7 +34,7 @@ export const InternalHomeUserGuideManagement = () => {
           </HStack>
 
           <UserGuideFormModal mode={"create"}>
-            <Button primary={true} variant={"ghost"}>
+            <Button primary={true} variant={"ghost"} pl={"sm"}>
               <AppIcon icon={PlusIcon} />
               {"Tambah Panduan"}
             </Button>

@@ -130,7 +130,7 @@ const UserGuideModalContent = (props: {
   };
 
   return (
-    <Modal.Content maxW={"760px"}>
+    <Modal.Content>
       <Modal.Header>
         <Modal.Title>{"Dokumen Panduan Pengguna"}</Modal.Title>
         <Modal.CloseButton />
@@ -213,9 +213,9 @@ const UserGuideModalContent = (props: {
                   USER_GUIDE_CATEGORY_MAP.manual_book;
 
                 return (
-                  <VStack
+                  <HStack
                     key={guide.id}
-                    align={"stretch"}
+                    align={"start"}
                     gap={"sm"}
                     pb={"md"}
                     borderBottom={
@@ -223,58 +223,53 @@ const UserGuideModalContent = (props: {
                     }
                     borderColor={"bg.canvas"}
                   >
-                    {/* Header: Title + Category + Version */}
-                    <HStack
-                      justify={"space-between"}
-                      align={"start"}
-                      gap={"sm"}
-                      wrap={"wrap"}
-                    >
-                      <HStack gap={"xs"} align={"center"} flex={1} minW={0}>
-                        <AppIcon
-                          icon={FileTextIcon}
-                          color={`${catMeta.colorPalette}.fg`}
-                        />
+                    <AppIcon
+                      icon={FileTextIcon}
+                      color={`${catMeta.colorPalette}.fg`}
+                    />
 
-                        <ClampedP fontWeight={"semibold"} lineClamp={1}>
-                          {guide.title}
-                        </ClampedP>
+                    <VStack gap={"xs"}>
+                      {/* Header: Title + Category + Version */}
+                      <HStack
+                        justify={"space-between"}
+                        align={"start"}
+                        gap={"sm"}
+                        wrap={"wrap"}
+                      >
+                        <HStack gap={"xs"} align={"center"} flex={1} minW={0}>
+                          <ClampedP fontWeight={"semibold"} lineClamp={1}>
+                            {guide.title}
+                          </ClampedP>
 
-                        <P fontSize={"sm"} color={"fg.muted"}>
-                          {guide.version}
-                        </P>
+                          <P fontSize={"sm"} color={"fg.muted"}>
+                            {guide.version}
+                          </P>
 
-                        <Badge
-                          variant={"subtle"}
-                          colorPalette={catMeta.colorPalette}
-                        >
-                          {catMeta.label}
-                        </Badge>
+                          <Badge
+                            variant={"subtle"}
+                            colorPalette={catMeta.colorPalette}
+                          >
+                            {catMeta.label}
+                          </Badge>
+                        </HStack>
                       </HStack>
-                    </HStack>
 
-                    {/* Description */}
-                    <ClampedP color={"fg.subtle"} lineClamp={2}>
-                      {guide.description}
-                    </ClampedP>
+                      {/* Description */}
+                      <ClampedP color={"fg.subtle"} lineClamp={2}>
+                        {guide.description}
+                      </ClampedP>
 
-                    {/* Footer: Metadata & Actions */}
-                    <HStack
-                      justify={"space-between"}
-                      align={"center"}
-                      gap={"md"}
-                      pt={"2xs"}
-                      wrap={"wrap"}
-                    >
+                      {/* Metadata */}
                       <HStack gap={"xs"} color={"fg.subtle"} wrap={"wrap"}>
                         <P color={"fg.subtle"}>{guide.fileName}</P>
                         <P color={"fg.subtle"}>{"•"}</P>
                         <P color={"fg.subtle"}>{formatByte(guide.fileSize)}</P>
                       </HStack>
 
-                      <HStack gap={"xs"} align={"center"}>
+                      {/* Actions */}
+                      <HStack gap={"xs"} align={"center"} mt={"xs"}>
                         <Button
-                          variant={"ghost"}
+                          variant={"outline"}
                           onClick={() => handlePreview(guide)}
                         >
                           <AppIcon icon={ExternalLinkIcon} />
@@ -282,16 +277,15 @@ const UserGuideModalContent = (props: {
                         </Button>
 
                         <Button
-                          primary={true}
-                          variant={"ghost"}
+                          variant={"outline"}
                           onClick={() => handleDownload(guide)}
                         >
                           <AppIcon icon={DownloadIcon} />
                           {"Unduh"}
                         </Button>
                       </HStack>
-                    </HStack>
-                  </VStack>
+                    </VStack>
+                  </HStack>
                 );
               })}
             </VStack>
