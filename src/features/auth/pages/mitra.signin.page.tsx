@@ -24,7 +24,6 @@ export const MitraSigninPage = () => {
         m={"auto"}
         bg={"bg.body"}
         rounded={theme.radii.container}
-        shadow={"2xl"}
       >
         <FeaturesCarousel h={"full"} />
 
