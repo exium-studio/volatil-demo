@@ -11,9 +11,10 @@ export const isDummyDataEnabled = (): boolean => {
 
 /**
  * Checks whether dev mode is enabled via environment variable VITE_ENABLE_DEV_MODE or VITE_DEV_MODE.
- * When true, renders development purpose features (e.g. dev login with credentials on Mitra portal).
+ * Never active in production builds. When true in local dev, renders development purpose features (e.g. dev login with credentials on Mitra portal).
  */
 export const isDevModeEnabled = (): boolean => {
+  if (import.meta.env.PROD) return false;
   const envVal =
     import.meta.env.VITE_ENABLE_DEV_MODE ?? import.meta.env.VITE_DEV_MODE;
   return envVal === "true" || envVal === true;
