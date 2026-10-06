@@ -1,6 +1,7 @@
 // src/design-system/components/toast/ui/toast.stack.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import { IconButton } from "@/design-system/components/button/ui/button";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { DEFAULT_TOAST_GROUP } from "@/design-system/components/toast/core/toast.config";
 import { toastTimerControls } from "@/design-system/components/toast/core/toast.manager";
@@ -11,6 +12,7 @@ import { useFirstMountEffect } from "@/shared/hooks/use-first-mount-effect";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { Box } from "@chakra-ui/react";
+import { ChevronUpIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function ToastStack<TItem>({
@@ -104,36 +106,32 @@ export function ToastStack<TItem>({
             : groupLabel}
         </P>
 
-        <Box display={"flex"} gap={1}>
-          <Button
-            size={"2xs"}
-            fontSize={"sm"}
-            variant={"subtle"}
-            rounded={"full"}
-            onClick={(event) => {
-              event.stopPropagation();
-              setExpanded(false);
-            }}
-          >
-            {t["action.close"]()}
-          </Button>
-
+        <HStack align={"center"} gap={"xs"}>
           {onCloseAll && (
-            <Button
+            <IconButton
               size={"2xs"}
-              fontSize={"sm"}
-              variant={"subtle"}
-              rounded={"full"}
+              variant={"blend"}
               onClick={(event) => {
                 event.stopPropagation();
                 setExpanded(false);
                 onCloseAll();
               }}
             >
-              {t["action.clear"]()}
-            </Button>
+              <AppIcon icon={Trash2Icon} size={"sm"} />
+            </IconButton>
           )}
-        </Box>
+
+          <IconButton
+            size={"2xs"}
+            variant={"blend"}
+            onClick={(event) => {
+              event.stopPropagation();
+              setExpanded(false);
+            }}
+          >
+            <AppIcon icon={ChevronUpIcon} size={"sm"} />
+          </IconButton>
+        </HStack>
       </HStack>
 
       {/* Items */}
