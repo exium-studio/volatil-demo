@@ -49,7 +49,6 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { IconLayersOff } from "@tabler/icons-react";
 import {
   EyeIcon,
@@ -140,35 +139,30 @@ export const InternalDataManagementDataView = () => {
         setLayerEnabled(item.id, false);
         setCustomLayerConfig(item.id, null);
       } else {
-        const rawWmsUrl =
-          item.wmsUrl || `/api/proxy/wms?layerId=${item.typeName}`;
-        const proxyWmsUrl = buildWmsProxyUrl(rawWmsUrl);
-        // const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
-
         setCustomLayerConfig(item.id, {
-          wmsUrl: proxyWmsUrl,
+          wmsUrl: item.wmsUrl || "",
           layers: item.typeName || item.id,
           spatialBasis: item.spatialBasis,
         });
         setLayerEnabled(item.id, true);
 
-        // void flyTo({
-        //   id: item.id,
-        //   title: item.title,
-        //   spatialBasis: item.spatialBasis,
-        //   bbox: item.bbox,
-        //   wfs: {
-        //     wfsTypeName: item.typeName || item.id,
-        //     wfsUrl: proxyWfsUrl,
-        //   },
-        // });
+        if (item.bbox || item.wfsUrl) {
+          void flyTo({
+            id: item.id,
+            title: item.title,
+            spatialBasis: item.spatialBasis,
+            bbox: item.bbox,
+            wfs: item.wfsUrl
+              ? {
+                  wfsTypeName: item.typeName || item.id,
+                  wfsUrl: item.wfsUrl,
+                }
+              : undefined,
+          });
+        }
       }
     },
-    [
-      // flyTo,
-      setCustomLayerConfig,
-      setLayerEnabled,
-    ],
+    [flyTo, setCustomLayerConfig, setLayerEnabled],
   );
 
   const dataList = useMemo(() => {

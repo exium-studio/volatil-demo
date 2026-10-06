@@ -1,12 +1,13 @@
 // src/design-system/components/map/utils/wms-get-feature-info.ts
 
 import type { GetFeatureInfoOptions } from "@/design-system/components/map/types/map.feature-info.type";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 
 export const fetchWmsGetFeatureInfo = async (
   options: GetFeatureInfoOptions,
 ): Promise<GeoJSON.FeatureCollection | null> => {
   const { wmsUrl, layerId, layers, point, lngLat, map, cqlFilter } = options;
+  if (!wmsUrl) return null;
+
   const bounds = map.getBounds();
   const canvas = map.getCanvas();
   const width = canvas.clientWidth || 800;
@@ -37,11 +38,7 @@ export const fetchWmsGetFeatureInfo = async (
     }
   }
 
-  const rawBase = wmsUrl
-    ? buildWmsProxyUrl(wmsUrl)
-    : buildWmsProxyUrl("/api/proxy/wms");
-
-  const [baseUrl, existingSearch] = rawBase.split("?");
+  const [baseUrl, existingSearch] = wmsUrl.split("?");
   const queryParams: Record<string, string> = {
     service: "WMS",
     version: "1.1.1",

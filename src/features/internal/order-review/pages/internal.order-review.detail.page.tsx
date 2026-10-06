@@ -46,7 +46,6 @@ import {
   formatCurrency,
   formatNumber,
 } from "@/shared/utils/formatter/number.formatter";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
@@ -524,12 +523,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
 
     const items: FormattedListItem<CartOrderItem>[] = (order.items ?? []).map(
       (item) => {
-        const previewUrl =
-          item.previewWmsUrl ||
-          item.wmsUrl ||
-          (item.sourceLayerId
-            ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
-            : "");
+        const previewUrl = item.previewWmsUrl || item.wmsUrl || "";
 
         return {
           id: item.id,

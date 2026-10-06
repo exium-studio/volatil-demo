@@ -10,8 +10,6 @@ import type { ApiResponse } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
-
 const EMPTY_LAYERS_RESPONSE: IgtLayersResponse = {
   items: [],
 };
@@ -24,21 +22,19 @@ const normalizeIgtLayer = (raw: any): IgtLayerItem => {
   );
 
   // Read actual wmsUrl and wfsUrl directly from backend response
-  const rawWmsUrl =
+  const wmsUrl =
     raw.wmsUrl ??
     raw.wms_url ??
     raw.wms?.wmsUrl ??
     raw.wms?.url ??
-    (id ? `/api/proxy/wms?layerId=${encodeURIComponent(id)}` : "");
-  const wmsUrl = rawWmsUrl ? buildWmsProxyUrl(rawWmsUrl) : "";
+    "";
 
-  const rawWfsUrl =
+  const wfsUrl =
     raw.wfsUrl ??
     raw.wfs_url ??
     raw.wfs?.wfsUrl ??
     raw.wfs?.url ??
-    (id ? `/api/proxy/wfs?layerId=${encodeURIComponent(id)}` : "");
-  const wfsUrl = rawWfsUrl;
+    "";
 
   const spatialBasis = raw.spatialBasis ?? raw.spatial_basis ?? "bidang";
 

@@ -23,7 +23,6 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 import { CheckCircleIcon, LoaderIcon, MapPlusIcon } from "lucide-react";
 import { useMemo } from "react";
 
@@ -135,14 +134,7 @@ const InternalOrderReviewDetailModalContent = (
             </P>
 
             {order.items.map((item) => {
-              const previewUrl =
-                item.previewWmsUrl ||
-                item.wmsUrl ||
-                (item.sourceLayerId
-                  ? buildWmsProxyUrl(
-                      `/api/proxy/wms?layerId=${item.sourceLayerId}`,
-                    )
-                  : "");
+              const previewUrl = item.previewWmsUrl || item.wmsUrl || "";
 
               return (
                 <VStack

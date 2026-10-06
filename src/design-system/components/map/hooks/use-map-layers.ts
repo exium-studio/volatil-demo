@@ -8,7 +8,6 @@ import type {
   MapLayerConfig,
   WmsRasterLayerConfig,
 } from "@/design-system/components/map/types/map.type";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 
 import type maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
@@ -16,12 +15,9 @@ import { useCallback, useEffect, useRef } from "react";
 /** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
   if (layer.tileUrl) return layer.tileUrl;
+  if (!layer.wmsUrl) return "";
 
-  const rawBase = layer.wmsUrl
-    ? buildWmsProxyUrl(layer.wmsUrl)
-    : buildWmsProxyUrl("/api/proxy/wms");
-
-  const [baseUrl, existingSearch] = rawBase.split("?");
+  const [baseUrl, existingSearch] = layer.wmsUrl.split("?");
   const layerName = layer.layers ?? layer.id ?? "";
 
   const queryParams: Record<string, string> = {
