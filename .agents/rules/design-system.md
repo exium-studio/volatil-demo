@@ -42,8 +42,6 @@ const { theme } = useThemeStore();
   3. **PinInput Failure Recovery**: Jika verifikasi OTP/TOTP gagal, user cukup menekan tombol `Enter` untuk men-submit ulang form secara langsung.
 - **JANGAN PERNAH SENTUH UI YANG SUDAH DIDEV USER (MUTLAK)**: Dilarang keras menyentuh, merombak, memodifikasi struktur JSX/layout/styling UI yang sudah dibuat user. Hanya boleh menyentuh UI jika user secara eksplisit meminta dibuatkan page/komponen tertentu atau secara eksplisit meminta refactor UI.
 
-
-
 ---
 
 ## 3. Typography Components
@@ -311,4 +309,3 @@ import { IconMapPin } from "@tabler/icons-react";
 - **Strict Real Data by Default**: Seluruh service dan API query WAJIB mengonsumsi response data asli dari backend jika resource/endpoint tersedia.
 - **Dummy Fallback Condition**: Dummy data HANYA boleh digunakan sebagai fallback ketika endpoint belum ada / return 404 DAN environment variable `VITE_ENABLE_DUMMY_RESPONSE_FALLBACK=true` (dicek via `isDummyDataEnabled()`). DILARANG keras meng-override data real dari backend dengan dummy data jika endpoint backend mengembalikan data valid.
 - **WMS Proxy URLs**: URL proxy internal Volatil WAJIB dibangun menggunakan helper `buildWmsProxyUrl()` dari `@/shared/utils/url/wms-proxy.utils` yang mengacu pada `VITE_API_BASE_WMS_PROXY_URL`.
-
