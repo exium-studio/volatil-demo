@@ -204,7 +204,7 @@ const UserGuideModalContent = (props: {
             </Center>
           )}
 
-          {/* Clean Documents List */}
+          {/* Documents List */}
           {!isLoading && !isError && !isEmpty && (
             <VStack gap={"md"} overflowY={"auto"} px={"md"}>
               {guides.map((guide, index) => {
@@ -233,13 +233,16 @@ const UserGuideModalContent = (props: {
                       <HStack gap={"xs"} align={"center"} flex={1} minW={0}>
                         <AppIcon
                           icon={FileTextIcon}
-                          boxSize={4}
                           color={`${catMeta.colorPalette}.fg`}
                         />
 
                         <ClampedP fontWeight={"semibold"} lineClamp={1}>
                           {guide.title}
                         </ClampedP>
+
+                        <P fontSize={"sm"} color={"fg.muted"}>
+                          {guide.version}
+                        </P>
 
                         <Badge
                           variant={"subtle"}
@@ -248,12 +251,10 @@ const UserGuideModalContent = (props: {
                           {catMeta.label}
                         </Badge>
                       </HStack>
-
-                      <Badge variant={"outline"}>{guide.version}</Badge>
                     </HStack>
 
                     {/* Description */}
-                    <ClampedP color={"fg.muted"} lineClamp={2}>
+                    <ClampedP color={"fg.subtle"} lineClamp={2}>
                       {guide.description}
                     </ClampedP>
 
@@ -274,7 +275,6 @@ const UserGuideModalContent = (props: {
                       <HStack gap={"xs"} align={"center"}>
                         <Button
                           variant={"ghost"}
-                          colorPalette={"gray"}
                           onClick={() => handlePreview(guide)}
                         >
                           <AppIcon icon={ExternalLinkIcon} />
@@ -283,6 +283,7 @@ const UserGuideModalContent = (props: {
 
                         <Button
                           primary={true}
+                          variant={"ghost"}
                           onClick={() => handleDownload(guide)}
                         >
                           <AppIcon icon={DownloadIcon} />
