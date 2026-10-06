@@ -82,9 +82,12 @@ export const getAoiColor = (selectionType?: string) =>
 export const getCoverageColor = (selectionType?: string) =>
   getSelectionTypeMapColors(selectionType);
 
+export const getBidangColor = (selectionType?: string) =>
+  getSelectionTypeMapColors(selectionType);
+
 export const BIDANG_MAP_COLOR = {
-  fill: "#f59e0b",
-  line: "#d97706",
+  fill: "#a855f7",
+  line: "#7c3aed",
 };
 
 import { FEATURE_INFO_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-feature-info";
@@ -438,7 +441,7 @@ export const renderCartMapLayers = (
             type: "fill",
             source: bidIds.sourceId,
             paint: {
-              "fill-color": BIDANG_MAP_COLOR.fill,
+              "fill-color": colors.fill,
               "fill-opacity": 0.25,
             },
           } as maplibregl.LayerSpecification,
@@ -448,7 +451,7 @@ export const renderCartMapLayers = (
         console.warn(`Failed to add layer ${bidIds.fillId}:`, err);
       }
     } else {
-      map.setPaintProperty(bidIds.fillId, "fill-color", BIDANG_MAP_COLOR.fill);
+      map.setPaintProperty(bidIds.fillId, "fill-color", colors.fill);
       map.setLayoutProperty(bidIds.fillId, "visibility", "visible");
     }
 
@@ -460,7 +463,7 @@ export const renderCartMapLayers = (
             type: "line",
             source: bidIds.sourceId,
             paint: {
-              "line-color": BIDANG_MAP_COLOR.line,
+              "line-color": colors.line,
               "line-width": 1.8,
               "line-opacity": 0.9,
             },
@@ -471,7 +474,7 @@ export const renderCartMapLayers = (
         console.warn(`Failed to add layer ${bidIds.lineId}:`, err);
       }
     } else {
-      map.setPaintProperty(bidIds.lineId, "line-color", BIDANG_MAP_COLOR.line);
+      map.setPaintProperty(bidIds.lineId, "line-color", colors.line);
       map.setLayoutProperty(bidIds.lineId, "visibility", "visible");
     }
 
