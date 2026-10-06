@@ -63,16 +63,7 @@ export const MitraWorkspaceRenewalTrigger = (
       close={close}
       size={"lg"}
     >
-      <Modal.Trigger>
-        {children ? (
-          children
-        ) : (
-          <Button size={"sm"} variant={"outline"} colorPalette={"orange"}>
-            <AppIcon icon={RotateCwIcon} />
-            {"Perpanjang Layanan"}
-          </Button>
-        )}
-      </Modal.Trigger>
+      <Modal.Trigger>{children}</Modal.Trigger>
 
       {isMounted && (
         <MitraWorkspaceRenewalModalContent
@@ -157,7 +148,9 @@ export const MitraWorkspaceRenewalModalContent = (
             <VStack align={"start"} gap={0}>
               <Heading size={"md"}>{"Perpanjang Masa Aktif Layanan"}</Heading>
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Perbarui lisensi WMS/WFS Interop GeoServer untuk workspace ini"}
+                {
+                  "Perbarui lisensi WMS/WFS Interop GeoServer untuk workspace ini"
+                }
               </P>
             </VStack>
           </HStack>

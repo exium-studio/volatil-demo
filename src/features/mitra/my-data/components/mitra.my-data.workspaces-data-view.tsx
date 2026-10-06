@@ -43,11 +43,11 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
+  ClockPlusIcon,
   FileCheckIcon,
   FolderOpenIcon,
   LayersIcon,
   ReceiptTextIcon,
-  RotateCwIcon,
   SquarePen,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -217,7 +217,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       {
         key: "renew-workspace",
         label: "Perpanjang Layanan",
-        icon: RotateCwIcon,
+        icon: ClockPlusIcon,
         modal: {
           triggerComponent: (item: MitraWorkspaceItem) => (
             <MitraWorkspaceRenewalTrigger

@@ -1,6 +1,7 @@
 // src/features/mitra/my-data/pages/mitra.my-data.workspace-detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -11,6 +12,7 @@ import { DataViewTable } from "@/design-system/components/data-display/ui/data-v
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -40,6 +42,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
+  ClockPlusIcon,
   DatabaseIcon,
   Edit3Icon,
   EyeIcon,
@@ -356,7 +359,12 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         <Container.Body overflowY={"auto"}>
           {/* Header */}
           <HeaderContainer px={"xs"}>
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
+            <HStack
+              justify={"space-between"}
+              align={"center"}
+              gap={"md"}
+              w={"full"}
+            >
               <HStack align={"center"} gap={"sm"}>
                 <BackButton
                   onClick={() => navigate({ to: "/mitra/my-data" })}
@@ -364,10 +372,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
                 <ClampedHeading>{`${workspace.workspaceName}`}</ClampedHeading>
                 <MyDataStatusBadge>{workspace.status}</MyDataStatusBadge>
-              </HStack>
-
-              <HStack align={"center"} gap={"sm"}>
-                <MitraWorkspaceRenewalTrigger workspace={workspace} />
               </HStack>
             </HStack>
           </HeaderContainer>
@@ -378,11 +382,19 @@ export const MitraMyDataWorkspaceDetailPage = () => {
               {"WMS URL Workspace (INTEROP Pusdatin)"}
             </P>
 
-            <Url
-              url={workspace.wmsUrl}
-              label={"Salin WMS URL Workspace"}
-              maxW={"full"}
-            />
+            <HStack gap={"2xs"}>
+              <Url
+                url={workspace.wmsUrl}
+                label={"Salin WMS URL Workspace"}
+                maxW={"full"}
+              />
+
+              <MitraWorkspaceRenewalTrigger workspace={workspace}>
+                <IconButton>
+                  <AppIcon icon={ClockPlusIcon} />
+                </IconButton>
+              </MitraWorkspaceRenewalTrigger>
+            </HStack>
 
             <Box
               p={"sm"}
