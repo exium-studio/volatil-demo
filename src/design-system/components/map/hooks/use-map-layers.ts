@@ -11,7 +11,7 @@ import {
   type WmsRasterLayerConfig,
 } from "@/design-system/components/map/types/map.type";
 
-import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
+import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import type maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
 

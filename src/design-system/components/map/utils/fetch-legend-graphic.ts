@@ -5,7 +5,7 @@ import type {
   GeoServerLegendResponse,
   GeoServerLegendRule,
 } from "@/design-system/components/map/types/map.symbology.type";
-import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
+import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 
 export const fetchLegendGraphic = async (
   params: FetchLegendGraphicParams,

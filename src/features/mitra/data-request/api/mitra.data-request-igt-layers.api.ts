@@ -7,7 +7,7 @@ import type {
 import type { IgtLayersApiResponse } from "@/features/mitra/data-request/types/mitra.data-request.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
-import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
+import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 
 export async function getIgtLayers(

@@ -45,7 +45,7 @@ import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-fil
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
+import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,

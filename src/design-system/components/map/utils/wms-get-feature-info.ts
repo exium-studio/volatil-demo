@@ -1,7 +1,7 @@
 // src/design-system/components/map/utils/wms-get-feature-info.ts
 
 import type { GetFeatureInfoOptions } from "@/design-system/components/map/types/map.feature-info.type";
-import { normalizeApiUrl } from "@/shared/utils/env/env.utils";
+import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 
 export const fetchWmsGetFeatureInfo = async (
   options: GetFeatureInfoOptions,

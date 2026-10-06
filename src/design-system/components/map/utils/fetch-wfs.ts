@@ -9,7 +9,7 @@ import type {
 import {
   getApiBaseWmsProxyUrl,
   normalizeApiUrl,
-} from "@/shared/utils/env/env.utils";
+} from "@/shared/utils/url/url.utils";
 
 export const buildWfsUrl = (
   {
