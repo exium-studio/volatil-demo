@@ -402,7 +402,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
               rounded={theme.radii.component}
               mt={"xs"}
             >
-              <P fontSize={"xs"} color={"fg.muted"}>
+              <P color={"fg.muted"}>
                 {
                   "Gunakan URL WMS Workspace di atas untuk menambahkan seluruh layer dalam pesanan ini ke QGIS melalui menu Layer → Add Layer → Add WMS/WMTS Layer..."
                 }
