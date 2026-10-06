@@ -27,6 +27,7 @@ import type {
   MitraRegistrationStatus,
 } from "@/features/auth/types/mitra-registration.type";
 import { MitraRegistrationStatusBadge } from "@/features/shared/components/mitra-registration-status.badge";
+import { ApiError } from "@/shared/libs/api-client/api-error";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import {
   formatUtcDateTime,
@@ -45,6 +46,7 @@ import {
   LogInIcon,
   MailIcon,
   PhoneIcon,
+  RefreshCwIcon,
   SearchIcon,
   UserCheckIcon,
 } from "lucide-react";
@@ -106,6 +108,21 @@ export const MitraRegistrationStatusPage = () => {
       setQueryRegNumber(trimmed);
     }
   };
+
+  // Derived Error State
+  const isNotFoundError =
+    (error instanceof ApiError && error.statusCode === 404) ||
+    (error?.message &&
+      (error.message.toLowerCase().includes("tidak ditemukan") ||
+        error.message.toLowerCase().includes("not found")));
+
+  const errorTitle = isNotFoundError
+    ? "Nomor Registrasi Tidak Ditemukan"
+    : "Gagal Menghubungi Server";
+
+  const errorDescription = isNotFoundError
+    ? `Nomor registrasi "${queryRegNumber}" tidak ditemukan dalam sistem. Mohon periksa kembali nomor registrasi yang Anda masukkan.`
+    : "Terjadi kendala saat memeriksa status pendaftaran ke server. Silakan periksa koneksi internet Anda atau coba beberapa saat lagi.";
 
   // Derived Contract Document Info
   const isApproved =
@@ -209,16 +226,27 @@ export const MitraRegistrationStatusPage = () => {
 
             {/* Error State */}
             {isError && (
-              <Alert.Root status={"error"} size={"sm"}>
+              <Alert.Root
+                status={isNotFoundError ? "warning" : "error"}
+                size={"sm"}
+              >
                 <Alert.Indicator />
                 <Alert.Content>
-                  <Alert.Title>
-                    {"Nomor Registrasi Tidak Ditemukan"}
-                  </Alert.Title>
-                  <Alert.Description>
-                    {error?.message ||
-                      "Mohon pastikan nomor registrasi yang Anda masukkan sudah benar."}
-                  </Alert.Description>
+                  <Alert.Title>{errorTitle}</Alert.Title>
+                  <Alert.Description>{errorDescription}</Alert.Description>
+                  {!isNotFoundError && (
+                    <Box mt={2}>
+                      <Button
+                        size={"xs"}
+                        variant={"outline"}
+                        onClick={() => void refetch()}
+                        loading={isFetching}
+                      >
+                        <AppIcon icon={RefreshCwIcon} />
+                        {"Coba Lagi"}
+                      </Button>
+                    </Box>
+                  )}
                 </Alert.Content>
               </Alert.Root>
             )}
