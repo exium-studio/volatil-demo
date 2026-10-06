@@ -36,7 +36,9 @@ export const FilterAdministrativeAreaRegencySelect = (
   const {
     data: kabupatenOptionsData,
     isLoading,
+    isFetching,
     isError,
+    error,
     refetch,
   } = useFilterOptionsKabupaten({
     provinsiId: provinceId,
@@ -77,8 +79,13 @@ export const FilterAdministrativeAreaRegencySelect = (
             : undefined,
         )
       }
-      isFetching={isLoading}
+      isFetching={isLoading || isFetching}
       isError={isError}
+      errorTitle={"Gagal Memuat Daftar Kabupaten / Kota"}
+      errorMessage={
+        error?.message ||
+        "Data batas wilayah kabupaten/kota belum tersedia di GeoServer."
+      }
       onRetry={() => void refetch()}
       disabled={disabled}
     />
