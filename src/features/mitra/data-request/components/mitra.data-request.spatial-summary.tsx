@@ -186,6 +186,9 @@ export const MitraDataRequestSpatialSummary = memo(
       return "Total permohonan melebihi batas pembelian (purchase limit) akun Anda.";
     })();
 
+    const isBidangValid = hasValidBidang;
+    const isKawasanValid = hasValidKawasan;
+
     const calculatedSubtotalBidang =
       subtotalBidangPrice > 0
         ? subtotalBidangPrice
@@ -195,10 +198,10 @@ export const MitraDataRequestSpatialSummary = memo(
         ? subtotalKawasanPrice
         : Math.ceil(totalKawasanAreaHa) * effectivePricePerKawasanHa;
     const calculatedTotalPrice =
-      estimatedTotalPrice > 0
+      isBidangValid && isKawasanValid && estimatedTotalPrice > 0
         ? estimatedTotalPrice
-        : (totalBidangCount > 0 ? calculatedSubtotalBidang : 0) +
-          (totalKawasanAreaHa > 0 ? calculatedSubtotalKawasan : 0);
+        : (isBidangValid ? calculatedSubtotalBidang : 0) +
+          (isKawasanValid ? calculatedSubtotalKawasan : 0);
 
     return (
       <VStack gap={"md"}>
@@ -253,7 +256,7 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
 
               <P>
-                {totalBidangCount > 0 ? (
+                {isBidangValid ? (
                   <>
                     <TNum>{formatNumber(totalBidangCount)}</TNum>
                     {" bidang × "}
@@ -271,7 +274,7 @@ export const MitraDataRequestSpatialSummary = memo(
             </VStack>
 
             <P fontWeight={"semibold"}>
-              {totalBidangCount > 0 ? (
+              {isBidangValid ? (
                 <FormatNumber
                   value={calculatedSubtotalBidang}
                   style={"currency"}
@@ -292,7 +295,7 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
 
               <P>
-                {totalKawasanAreaHa > 0 ? (
+                {isKawasanValid ? (
                   <>
                     <TNum>
                       {formatNumber(totalKawasanAreaHa, {
@@ -314,7 +317,7 @@ export const MitraDataRequestSpatialSummary = memo(
             </VStack>
 
             <P fontWeight={"semibold"}>
-              {totalKawasanAreaHa > 0 ? (
+              {isKawasanValid ? (
                 <FormatNumber
                   value={calculatedSubtotalKawasan}
                   style={"currency"}
@@ -338,7 +341,7 @@ export const MitraDataRequestSpatialSummary = memo(
               fontWeight={"bold"}
               color={isOrValidForCheckout ? "blue.fg" : "fg.subtle"}
             >
-              {calculatedTotalPrice > 0 ? (
+              {isOrValidForCheckout && calculatedTotalPrice > 0 ? (
                 <FormatNumber
                   value={calculatedTotalPrice}
                   style={"currency"}
