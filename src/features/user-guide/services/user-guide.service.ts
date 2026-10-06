@@ -56,13 +56,71 @@ export const userGuideService = {
   ): Promise<UserGuideListResponse> => {
     try {
       const response = await getUserGuidesApi(params, signal);
-      if (response && response.data) {
+      let items: UserGuideItem[] | null = null;
+      let total = 0;
+      let totalPages = 1;
+      let page = params?.page ?? 1;
+      let limit = params?.limit ?? 10;
+
+      if (response) {
+        if (Array.isArray(response)) {
+          items = response;
+          total = response.length;
+        } else if (Array.isArray(response.data)) {
+          items = response.data;
+          total = response.pagination?.totalItems ?? response.data.length;
+          totalPages =
+            response.pagination?.totalPages ??
+            Math.max(1, Math.ceil(total / limit));
+          page = response.pagination?.currentPage ?? page;
+          limit = response.pagination?.itemsPerPage ?? limit;
+        } else if (
+          response.data &&
+          typeof response.data === "object" &&
+          Array.isArray((response.data as { items?: UserGuideItem[] }).items)
+        ) {
+          items = (response.data as { items: UserGuideItem[] }).items;
+          const dataObj = response.data as {
+            pagination?: {
+              totalItems?: number;
+              totalPages?: number;
+              currentPage?: number;
+              itemsPerPage?: number;
+            };
+            total?: number;
+            totalPages?: number;
+            page?: number;
+            limit?: number;
+          };
+          const pag = dataObj.pagination ?? response.pagination;
+          total = pag?.totalItems ?? dataObj.total ?? items.length;
+          totalPages =
+            pag?.totalPages ??
+            dataObj.totalPages ??
+            Math.max(1, Math.ceil(total / limit));
+          page = pag?.currentPage ?? dataObj.page ?? page;
+          limit = pag?.itemsPerPage ?? dataObj.limit ?? limit;
+        } else if (
+          "items" in response &&
+          Array.isArray((response as { items?: UserGuideItem[] }).items)
+        ) {
+          const respObj = response as unknown as UserGuideListResponse;
+          items = respObj.items;
+          total = respObj.total ?? items.length;
+          totalPages =
+            respObj.totalPages ?? Math.max(1, Math.ceil(total / limit));
+          page = respObj.page ?? page;
+          limit = respObj.limit ?? limit;
+        }
+      }
+
+      if (items !== null && Array.isArray(items)) {
         return {
-          items: response.data,
-          total: response.pagination?.totalItems ?? response.data.length,
-          page: response.pagination?.currentPage ?? 1,
-          limit: response.pagination?.itemsPerPage ?? 10,
-          totalPages: response.pagination?.totalPages ?? 1,
+          items,
+          total,
+          page,
+          limit,
+          totalPages,
         };
       }
     } catch {

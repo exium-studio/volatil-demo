@@ -415,11 +415,11 @@ export const authService = {
     let keycloakLogoutUrl: string | null = null;
 
     try {
-      if (role === "internal") {
+      if (role === "internal" && idToken) {
         const postLogoutUri = `${window.location.origin}/admin`;
         const response = await postSsoInternalLogoutUrlApi(
           {
-            idToken: idToken || undefined,
+            idToken,
             postLogoutRedirectUri: postLogoutUri,
           },
           signal,

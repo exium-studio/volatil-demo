@@ -15,9 +15,16 @@ export const useUserGuidesQuery = (params?: UserGuideQueryParams) => {
     staleTime: 1000 * 60 * 5,
   });
 
+  const rawGuides = query.data?.items;
+  const guides: UserGuideItem[] = Array.isArray(rawGuides)
+    ? rawGuides
+    : Array.isArray(query.data)
+      ? (query.data as unknown as UserGuideItem[])
+      : [];
+
   return {
-    guides: query.data?.items ?? [],
-    total: query.data?.total ?? 0,
+    guides,
+    total: query.data?.total ?? guides.length,
     totalPages: query.data?.totalPages ?? 1,
     page: query.data?.page ?? 1,
     limit: query.data?.limit ?? 10,

@@ -118,7 +118,7 @@ export const InternalUserGuideTableView = (
         { th: "Terakhir Diperbarui", sortable: true },
       ] as FormattedTableHeader[],
 
-      items: rawItems.map((item) => {
+      items: (Array.isArray(rawItems) ? rawItems : []).map((item) => {
         const catMeta =
           USER_GUIDE_CATEGORY_MAP[item.category] ??
           USER_GUIDE_CATEGORY_MAP.manual_book;
