@@ -118,8 +118,8 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                   >
                     {item.workspaceName}
                   </ClampedP>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {item.id}
+                  <P fontSize={"xs"} color={"fg.subtle"} fontFamily={"mono"}>
+                    {`ID: ${item.id}`}
                   </P>
                 </VStack>
               ),

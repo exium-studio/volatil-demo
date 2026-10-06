@@ -157,8 +157,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                 <VStack align={"start"} gap={"2xs"}>
                   <ClampedP maxW={"220px"}>{layerDisplayName}</ClampedP>
 
-                  <P fontSize={"sm"} color={"fg.subtle"}>
-                    {item.id}
+                  <P fontSize={"xs"} color={"fg.subtle"} fontFamily={"mono"}>
+                    {`ID: ${item.id}`}
                   </P>
                 </VStack>
               ),

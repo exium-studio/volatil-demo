@@ -102,8 +102,8 @@ export const InternalMasterGeoserverDataView = () => {
               <VStack align={"start"} gap={0} w={"200px"}>
                 <ClampedP>{item.name}</ClampedP>
 
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {item.id}
+                <P fontSize={"xs"} color={"fg.subtle"} fontFamily={"mono"}>
+                  {`ID: ${item.id}`}
                 </P>
               </VStack>
             ),
