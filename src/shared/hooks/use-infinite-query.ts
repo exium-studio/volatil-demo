@@ -58,7 +58,17 @@ export const useInfiniteQuery = <
   }, [query.data]);
 
   const total = query.data?.pages[0]?.total ?? 0;
-  const unreadCount = query.data?.pages[0]?.unreadCount;
+  const rawUnreadCount = query.data?.pages[0]?.unreadCount;
+  const unreadCount = useMemo(() => {
+    if (total === 0 || items.length === 0) return 0;
+    if (typeof rawUnreadCount === "number") return rawUnreadCount;
+    return items.filter((item) => {
+      if (item && typeof item === "object" && "isRead" in item) {
+        return !item.isRead;
+      }
+      return false;
+    }).length;
+  }, [total, items, rawUnreadCount]);
 
   return {
     ...query,
