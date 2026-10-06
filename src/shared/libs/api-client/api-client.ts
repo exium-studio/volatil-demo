@@ -1,6 +1,5 @@
 // src/shared/libs/api-client/api-client.ts
 
-import { router } from "@/app/router";
 import { toast } from "@/design-system/components/toast";
 import { ApiError } from "@/shared/libs/api-client/api-error";
 import { t } from "@/shared/libs/i18n";
@@ -106,7 +105,7 @@ export const apiClient = {
                 window.location.pathname.startsWith("/internal") ||
                 window.location.pathname.startsWith("/admin");
 
-              void router.navigate({ to: isInternal ? "/admin" : "/" });
+              window.location.replace(isInternal ? "/admin" : "/");
             }
           }
         }
