@@ -345,7 +345,7 @@ export const InternalDataManagementDataView = () => {
             spatialBasis: item.spatialBasis,
             bbox: item.bbox,
             wfs: {
-              wfsTypeName: item.typeName,
+              wfsTypeName: item.typeName || item.id,
               wfsUrl: item.wfsUrl || "",
             },
           });

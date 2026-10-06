@@ -145,6 +145,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       {/* 3. Select Layer */}
       <Field
         label={"Layer"}
+        optional
         invalid={Boolean(errors?.typeName)}
         errorText={errors?.typeName?.message}
       >
@@ -153,7 +154,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
           title={"Layer"}
           placeholder={
             selectedWorkspace
-              ? "Pilih layer..."
+              ? "Pilih layer (opsional)..."
               : "Pilih workspace terlebih dahulu"
           }
           options={layerOptions}

@@ -151,7 +151,7 @@ const InternalDataManagementEditModalContent = (
   const onInvalid = () => {
     toast.error("Formulir Belum Lengkap", {
       description:
-        "Mohon periksa dan lengkapi semua isian wajib (Nama layer, Master GeoServer, Workspace, dan Layer).",
+        "Mohon periksa dan lengkapi semua isian wajib (Nama layer, Master GeoServer, dan Workspace).",
     });
   };
 
@@ -166,7 +166,7 @@ const InternalDataManagementEditModalContent = (
         isActive: data.isActive,
         defaultVisible: data.defaultVisible,
         geoserverId: selectedGeoserver.id,
-        typeName: data.typeName.trim(),
+        typeName: data.typeName?.trim() || undefined,
       },
       {
         onSuccess: () => {

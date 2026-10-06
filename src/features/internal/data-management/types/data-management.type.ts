@@ -31,9 +31,9 @@ export type MasterIgtLayerItem = {
     baseUrl: string;
   };
   workspaceName: string;
-  typeName: string; // format: workspace:layerName
-  wfsUrl: string;
-  wmsUrl: string;
+  typeName?: string; // format: workspace:layerName (optional)
+  wfsUrl?: string;
+  wmsUrl?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -51,7 +51,7 @@ export type MasterIgtLayersResponse = {
 export type CreateMasterIgtLayerPayload = {
   id?: string;
   geoserverId: string;
-  typeName: string;
+  typeName?: string;
   title: string;
   description?: string;
   spatialBasis: IgtBasisType;
@@ -96,7 +96,7 @@ export type GeoserverCascadeSelectProps = {
   onGeoserverChange: (geoserverId: string) => void;
   selectedWorkspace: string;
   onWorkspaceChange: (workspace: string) => void;
-  selectedTypeName: string;
+  selectedTypeName?: string;
   onLayerChange: (
     typeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
