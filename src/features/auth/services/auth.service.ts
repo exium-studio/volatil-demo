@@ -53,9 +53,8 @@ export const authService = {
     payload: SigninPayload,
     signal?: AbortSignal,
   ): Promise<User> => {
-    if (authService.getToken()) {
-      await authService.logout();
-    }
+    localStorage.removeItem("auth_token");
+    removeStorage("user");
 
     try {
       const response = await postLoginApi(payload, signal);
@@ -121,9 +120,8 @@ export const authService = {
     payload: SigninPayload,
     signal?: AbortSignal,
   ): Promise<AuthLoginData<User>> => {
-    if (authService.getToken()) {
-      await authService.logout();
-    }
+    localStorage.removeItem("auth_token");
+    removeStorage("user");
 
     try {
       const response = await postLoginApi(payload, signal);
@@ -308,9 +306,9 @@ export const authService = {
   },
 
   getSsoLoginUrl: async (signal?: AbortSignal): Promise<string> => {
-    if (authService.getToken()) {
-      await authService.logout();
-    }
+    localStorage.removeItem("auth_token");
+    removeStorage("user");
+    sessionStorage.removeItem("keycloakIdToken");
 
     const state = crypto.randomUUID();
     const callbackUrl = `${window.location.origin}/auth/callback/keycloak`;
