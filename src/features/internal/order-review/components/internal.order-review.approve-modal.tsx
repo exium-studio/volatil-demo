@@ -13,14 +13,17 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useApproveOrder } from "@/features/internal/order-review/hooks/use-order-review";
-import type {
-  InternalOrderReviewApproveModalContentProps,
-  InternalOrderReviewApproveTriggerProps,
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  approveOrderSchema,
+  type ApproveOrderFormValues,
+  type InternalOrderReviewApproveModalContentProps,
+  type InternalOrderReviewApproveTriggerProps,
 } from "@/features/internal/order-review/types/order-review.type";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import { CheckCircleIcon, InfoIcon } from "lucide-react";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 export const InternalOrderReviewApproveTrigger = (
   props: InternalOrderReviewApproveTriggerProps,
@@ -76,10 +79,18 @@ const InternalOrderReviewApproveModalContent = (
   // Stores
   const { theme } = useThemeStore();
 
-  // States
-  const [workspaceInteropUrl, setWorkspaceInteropUrl] = useState<string>(
-    order.workspaceInteropUrl || "",
-  );
+  // Forms
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<ApproveOrderFormValues>({
+    resolver: zodResolver(approveOrderSchema),
+    defaultValues: {
+      workspaceInteropUrl: order.workspaceInteropUrl || "",
+    },
+    mode: "onChange",
+  });
 
   // Hooks
   const navigate = useNavigate();
@@ -93,13 +104,11 @@ const InternalOrderReviewApproveModalContent = (
     `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`;
 
   // Handlers
-  const handleApprove = () => {
-    if (!workspaceInteropUrl.trim()) return;
-
+  const onSubmit = (values: ApproveOrderFormValues) => {
     approveMutation.mutate(
       {
         orderId: order.orderId,
-        workspaceInteropUrl: workspaceInteropUrl.trim(),
+        workspaceInteropUrl: values.workspaceInteropUrl.trim(),
       },
       {
         onSuccess: () => {
@@ -114,8 +123,7 @@ const InternalOrderReviewApproveModalContent = (
     );
   };
 
-  const isSubmitDisabled =
-    !workspaceInteropUrl.trim() || approveMutation.isPending;
+  const isSubmitDisabled = !isValid || approveMutation.isPending || isSubmitting;
 
   return (
     <Modal.Content>
@@ -129,114 +137,125 @@ const InternalOrderReviewApproveModalContent = (
         </VStack>
       </Modal.Header>
 
-      <Modal.Body>
-        <VStack align={"stretch"} gap={"md"}>
-          <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
-            <AppIcon icon={InfoIcon} />
-            <Alert.Description>
-              {
-                "Salin URL Workspace GeoServer internal di bawah, buka aplikasi INTEROP Pusdatin ATR/BPN untuk mendaftarkan workspace pesanan dan mendapatkan link proxy wrapper resmi, lalu masukkan link proxy tersebut ke formulir di bawah ini."
-              }
-            </Alert.Description>
-          </Alert.Root>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Modal.Body>
+          <VStack align={"stretch"} gap={"md"}>
+            <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+              <AppIcon icon={InfoIcon} />
+              <Alert.Description>
+                {
+                  "Salin URL Workspace GeoServer internal di bawah, buka aplikasi INTEROP Pusdatin ATR/BPN untuk mendaftarkan workspace pesanan dan mendapatkan link proxy wrapper resmi, lalu masukkan link proxy tersebut ke formulir di bawah ini."
+                }
+              </Alert.Description>
+            </Alert.Root>
 
-          {/* Internal GeoServer Workspace URL */}
-          <VStack align={"stretch"} gap={1}>
-            <P fontSize={"xs"} color={"fg.muted"}>
-              {"URL Workspace GeoServer Volatil (Internal):"}
-            </P>
+            {/* Internal GeoServer Workspace URL */}
+            <VStack align={"stretch"} gap={1}>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"URL Workspace GeoServer Volatil (Internal):"}
+              </P>
 
-            <HStack
-              gap={"md"}
-              bg={"bg.panel"}
-              p={"md"}
-              rounded={theme.radii.component}
-              border={"1px solid"}
-              borderColor={"border.subtle"}
-            >
-              <P
-                fontFamily={"mono"}
-                fontSize={"xs"}
-                flex={1}
-                color={"fg.default"}
+              <HStack
+                gap={"md"}
+                bg={"bg.panel"}
+                p={"md"}
+                rounded={theme.radii.component}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
               >
-                {internalWorkspaceUrl}
-              </P>
+                <P
+                  fontFamily={"mono"}
+                  fontSize={"xs"}
+                  flex={1}
+                  color={"fg.default"}
+                >
+                  {internalWorkspaceUrl}
+                </P>
 
-              <ClipboardButton
-                value={internalWorkspaceUrl}
-                variant={"ghost"}
-                size={"xs"}
-                aria-label={"Salin URL Workspace Internal"}
-              />
-            </HStack>
-          </VStack>
-
-          {/* Input INTEROP Workspace Proxy URL */}
-          <Field
-            variant={"default"}
-            label={"URL Workspace Resmi (INTEROP Pusdatin - Wajib)"}
-          >
-            <Textarea
-              placeholder={
-                "https://geoportal.atrbpn.go.id/interop/wms?workspace=..."
-              }
-              value={workspaceInteropUrl}
-              onChange={(e) => setWorkspaceInteropUrl(e.target.value)}
-              minH={"90px"}
-            />
-          </Field>
-
-          {/* Order Summary Box */}
-          <HStack
-            p={"sm"}
-            bg={"bg.subtle"}
-            rounded={theme.radii.component}
-            justify={"space-between"}
-            align={"center"}
-          >
-            <VStack align={"start"} gap={0}>
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Jumlah Layer"}
-              </P>
-              <P fontSize={"sm"} fontWeight={"medium"}>
-                {`${order.items?.length ?? 0} Layer`}
-              </P>
+                <ClipboardButton
+                  value={internalWorkspaceUrl}
+                  variant={"ghost"}
+                  size={"xs"}
+                  aria-label={"Salin URL Workspace Internal"}
+                />
+              </HStack>
             </VStack>
 
-            {order.totalPrice > 0 && (
-              <VStack align={"end"} gap={0}>
+            {/* Input INTEROP Workspace Proxy URL */}
+            <Controller
+              control={control}
+              name={"workspaceInteropUrl"}
+              render={({ field }) => (
+                <Field
+                  variant={"default"}
+                  label={"URL Workspace Resmi (INTEROP Pusdatin - Wajib)"}
+                  invalid={Boolean(errors.workspaceInteropUrl)}
+                  errorText={errors.workspaceInteropUrl?.message}
+                >
+                  <Textarea
+                    placeholder={
+                      "https://geoportal.atrbpn.go.id/interop/wms?workspace=..."
+                    }
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    minH={"90px"}
+                  />
+                </Field>
+              )}
+            />
+
+            {/* Order Summary Box */}
+            <HStack
+              p={"sm"}
+              bg={"bg.subtle"}
+              rounded={theme.radii.component}
+              justify={"space-between"}
+              align={"center"}
+            >
+              <VStack align={"start"} gap={0}>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Total Biaya"}
+                  {"Jumlah Layer"}
                 </P>
-                <P fontSize={"sm"} fontWeight={"bold"} color={"colorPalette.fg"}>
-                  {formatCurrency(order.totalPrice)}
+                <P fontSize={"sm"} fontWeight={"medium"}>
+                  {`${order.items?.length ?? 0} Layer`}
                 </P>
               </VStack>
-            )}
-          </HStack>
-        </VStack>
-      </Modal.Body>
 
-      <Modal.Footer>
-        <VStack gap={"xs"} w={"full"}>
-          <Button
-            primary
-            colorPalette={"green"}
-            disabled={isSubmitDisabled}
-            loading={approveMutation.isPending}
-            onClick={handleApprove}
-            w={"full"}
-          >
-            <AppIcon icon={CheckCircleIcon} />
-            {"Ya, Setujui Pesanan"}
-          </Button>
+              {order.totalPrice > 0 && (
+                <VStack align={"end"} gap={0}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"Total Biaya"}
+                  </P>
+                  <P fontSize={"sm"} fontWeight={"bold"} color={"colorPalette.fg"}>
+                    {formatCurrency(order.totalPrice)}
+                  </P>
+                </VStack>
+              )}
+            </HStack>
+          </VStack>
+        </Modal.Body>
 
-          <Button onClick={close} w={"full"}>
-            {"Batal"}
-          </Button>
-        </VStack>
-      </Modal.Footer>
+        <Modal.Footer>
+          <VStack gap={"xs"} w={"full"}>
+            <Button
+              type={"submit"}
+              primary
+              colorPalette={"green"}
+              disabled={isSubmitDisabled}
+              loading={approveMutation.isPending || isSubmitting}
+              w={"full"}
+            >
+              <AppIcon icon={CheckCircleIcon} />
+              {"Ya, Setujui Pesanan"}
+            </Button>
+
+            <Button type={"button"} onClick={close} w={"full"}>
+              {"Batal"}
+            </Button>
+          </VStack>
+        </Modal.Footer>
+      </form>
     </Modal.Content>
   );
 };

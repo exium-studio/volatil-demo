@@ -155,7 +155,11 @@ export const approveOrderSchema = z.object({
   workspaceInteropUrl: z
     .string()
     .min(1, "URL Workspace dari INTEROP wajib diisi")
-    .url("Format URL tidak valid"),
+    .url("Format URL tidak valid")
+    .refine(
+      (val) => /^https?:\/\//i.test(val),
+      "URL harus diawali dengan http:// atau https://",
+    ),
 });
 
 export type ApproveOrderFormValues = z.infer<typeof approveOrderSchema>;
