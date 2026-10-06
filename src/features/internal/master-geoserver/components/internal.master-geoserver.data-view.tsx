@@ -67,6 +67,7 @@ export const InternalMasterGeoserverDataView = () => {
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
   });
+  const [testingServerId, setTestingServerId] = useState<string | null>(null);
 
   // Queries
   const {
@@ -90,6 +91,7 @@ export const InternalMasterGeoserverDataView = () => {
   // Handlers
   const handleTestConnection = useCallback(
     (server: MasterGeoserverItem) => {
+      setTestingServerId(server.id);
       const toastId = `test-connection-${server.id}`;
       toast.loading(`Menguji koneksi ke "${server.name}"...`, {
         id: toastId,
@@ -146,6 +148,9 @@ export const InternalMasterGeoserverDataView = () => {
                 group: "Master GeoServer",
               },
             );
+          },
+          onSettled: () => {
+            setTestingServerId(null);
           },
         },
       );
@@ -262,8 +267,12 @@ export const InternalMasterGeoserverDataView = () => {
     const itemActions: DataViewItemActionsGenerator<MasterGeoserverItem>[] = [
       {
         key: "test-connection-geoserver",
-        label: "Uji Koneksi",
+        label: (server: MasterGeoserverItem) =>
+          testingServerId === server.id ? "Menguji..." : "Uji Koneksi",
         icon: ActivityIcon,
+        loading: (server: MasterGeoserverItem) => testingServerId === server.id,
+        disabled: (server: MasterGeoserverItem) =>
+          testingServerId !== null && testingServerId !== server.id,
         onClick: (server: MasterGeoserverItem) => {
           handleTestConnection(server);
         },
@@ -309,7 +318,13 @@ export const InternalMasterGeoserverDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [rawItems, preferredTimezone, deleteMutation, handleTestConnection]);
+  }, [
+    rawItems,
+    preferredTimezone,
+    deleteMutation,
+    handleTestConnection,
+    testingServerId,
+  ]);
 
   return (
     <Container.Root withContext={true} flex={1}>

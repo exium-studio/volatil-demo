@@ -16,6 +16,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { updateClickOrigin } from "@/design-system/components/overlay/stores/dialog-animation-store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useNavigate } from "@tanstack/react-router";
@@ -38,6 +39,20 @@ export function executeItemAction<T = Record<string, unknown>>(
   item: FormattedListItem<T>,
 ) {
   void action.onClick?.(item.data, item);
+}
+
+function resolveLoading<T>(
+  loadingProp:
+    | boolean
+    | ((item: T, formattedItem: FormattedListItem<T>) => boolean)
+    | undefined,
+  item: T,
+  formattedItem: FormattedListItem<T>,
+): boolean {
+  if (typeof loadingProp === "function") {
+    return Boolean(loadingProp(item, formattedItem));
+  }
+  return Boolean(loadingProp);
 }
 
 function resolveIcon<T>(
@@ -140,7 +155,9 @@ export function DataViewSpreadActions<
     >
       {visibleRowActions.map((action, index) => {
         const key = action.key ?? `spread-action-${index}`;
-        const isDisabled = Boolean(action.disabled?.(item.data, item));
+        const isLoading = resolveLoading(action.loading, item.data, item);
+        const isDisabled =
+          isLoading || Boolean(action.disabled?.(item.data, item));
         const resolvedLabel = resolveLabel(action.label, item.data);
         const resolvedIcon = resolveIcon(action.icon, item.data);
         const resolvedColorPalette = resolveColorPalette(
@@ -158,6 +175,7 @@ export function DataViewSpreadActions<
               variant={action.variant ?? "ghost"}
               colorPalette={resolvedColorPalette}
               disabled={isDisabled}
+              loading={isLoading}
               aria-label={resolvedLabel}
               title={resolvedLabel}
             >
@@ -182,6 +200,7 @@ export function DataViewSpreadActions<
               variant={action.variant ?? "outline"}
               colorPalette={resolvedColorPalette}
               disabled={isDisabled}
+              loading={isLoading}
               title={resolvedLabel}
             >
               <a
@@ -205,6 +224,7 @@ export function DataViewSpreadActions<
             variant={action.variant ?? "ghost"}
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
+            loading={isLoading}
             aria-label={resolvedLabel}
             title={resolvedLabel}
             onClick={
@@ -218,6 +238,7 @@ export function DataViewSpreadActions<
             variant={action.variant ?? "outline"}
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
+            loading={isLoading}
             title={resolvedLabel}
             onClick={
               triggerElement ? undefined : () => executeItemAction(action, item)
@@ -275,7 +296,9 @@ export function DataViewStickyActions<
     >
       {stickyActions.map((action, index) => {
         const key = action.key ?? `sticky-action-${index}`;
-        const isDisabled = Boolean(action.disabled?.(item.data, item));
+        const isLoading = resolveLoading(action.loading, item.data, item);
+        const isDisabled =
+          isLoading || Boolean(action.disabled?.(item.data, item));
         const resolvedLabel = resolveLabel(action.label, item.data);
         const resolvedIcon = resolveIcon(action.icon, item.data);
         const resolvedColorPalette = resolveColorPalette(
@@ -293,6 +316,7 @@ export function DataViewStickyActions<
               variant={action.variant ?? "ghost"}
               colorPalette={resolvedColorPalette}
               disabled={isDisabled}
+              loading={isLoading}
               aria-label={resolvedLabel}
               title={resolvedLabel}
             >
@@ -317,6 +341,7 @@ export function DataViewStickyActions<
               variant={action.variant ?? "outline"}
               colorPalette={resolvedColorPalette}
               disabled={isDisabled}
+              loading={isLoading}
               title={resolvedLabel}
             >
               <a
@@ -340,6 +365,7 @@ export function DataViewStickyActions<
             variant={action.variant ?? "ghost"}
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
+            loading={isLoading}
             aria-label={resolvedLabel}
             title={resolvedLabel}
             onClick={
@@ -353,6 +379,7 @@ export function DataViewStickyActions<
             variant={action.variant ?? "outline"}
             colorPalette={resolvedColorPalette}
             disabled={isDisabled}
+            loading={isLoading}
             title={resolvedLabel}
             onClick={
               triggerElement ? undefined : () => executeItemAction(action, item)
@@ -444,7 +471,9 @@ export function DataListItemActionsTrigger<
             visibleActions.map((action, index) => {
               if (isDeclarativeAction(action)) {
                 const key = action.key ?? `menu-action-${index}`;
-                const isDisabled = Boolean(action.disabled?.(item.data, item));
+                const isLoading = resolveLoading(action.loading, item.data, item);
+                const isDisabled =
+                  isLoading || Boolean(action.disabled?.(item.data, item));
                 const resolvedLabel = resolveLabel(action.label, item.data);
                 const resolvedIcon = resolveIcon(action.icon, item.data);
                 const resolvedColorPalette = resolveColorPalette(
@@ -462,7 +491,7 @@ export function DataListItemActionsTrigger<
 
                 const menuItemContent = (
                   <>
-                    {iconNode}
+                    {isLoading ? <Loader size={"xs"} /> : iconNode}
                     {resolvedLabel}
                   </>
                 );
