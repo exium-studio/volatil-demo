@@ -20,10 +20,26 @@ const EMPTY_LAYERS_RESPONSE: IgtLayersResponse = {
 const normalizeIgtLayer = (raw: any): IgtLayerItem => {
   const id = String(raw.id ?? raw._id ?? raw.typeName ?? raw.type_name ?? "");
   const typeName = String(
-    raw.typeName ?? raw.type_name ?? raw.wfsTypeName ?? id,
+    raw.typeName ?? raw.type_name ?? raw.wfsTypeName ?? raw.wms?.layers ?? id,
   );
-  const wmsUrl = buildWmsProxyUrl(`/api/proxy/wms?layerId=${id}`);
-  const wfsUrl = `/api/proxy/wfs?layerId=${id}`;
+
+  // Read actual wmsUrl and wfsUrl directly from backend response
+  const rawWmsUrl =
+    raw.wmsUrl ??
+    raw.wms_url ??
+    raw.wms?.wmsUrl ??
+    raw.wms?.url ??
+    (id ? `/api/proxy/wms?layerId=${encodeURIComponent(id)}` : "");
+  const wmsUrl = rawWmsUrl ? buildWmsProxyUrl(rawWmsUrl) : "";
+
+  const rawWfsUrl =
+    raw.wfsUrl ??
+    raw.wfs_url ??
+    raw.wfs?.wfsUrl ??
+    raw.wfs?.url ??
+    (id ? `/api/proxy/wfs?layerId=${encodeURIComponent(id)}` : "");
+  const wfsUrl = rawWfsUrl;
+
   const spatialBasis = raw.spatialBasis ?? raw.spatial_basis ?? "bidang";
 
   return {
@@ -35,12 +51,12 @@ const normalizeIgtLayer = (raw: any): IgtLayerItem => {
     defaultVisible: Boolean(raw.defaultVisible ?? raw.default_visible ?? false),
     zIndex: raw.zIndex != null ? Number(raw.zIndex) : 1,
     wms: {
-      layers: raw.wms?.layers ?? typeName ?? id,
+      layers: raw.wms?.layers ?? raw.layers ?? typeName ?? id,
       wmsUrl,
       format: raw.wms?.format ?? "image/png",
       transparent: raw.wms?.transparent ?? true,
       tileSize: raw.wms?.tileSize ?? 512,
-      styles: raw.wms?.styles ?? "",
+      styles: raw.wms?.styles ?? raw.styleName ?? "",
       version: raw.wms?.version ?? "1.1.1",
       srs: raw.wms?.srs ?? "EPSG:3857",
     },

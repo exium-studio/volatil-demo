@@ -17,7 +17,7 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
     spatialBasis: "kawasan",
     bbox: [115.083839, -8.850039, 115.251389, -8.239441],
     isActive: true,
-    defaultVisible: true,
+    defaultVisible: false,
     zIndex: 1,
     geoserverId: "gs_prod_01",
     geoserver: {

@@ -11,7 +11,7 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       spatialBasis: "bidang",
       bbox: [115.134102, -8.685009, 115.183136, -8.622203],
       visible: true,
-      defaultVisible: true,
+      defaultVisible: false,
       zIndex: 3,
       wfs: {
         wfsTypeName: "testing_workspace:TEST_BIDANG_TANAH",
@@ -28,7 +28,7 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
       spatialBasis: "kawasan",
       bbox: [115.083839, -8.850039, 115.251389, -8.239441],
       visible: true,
-      defaultVisible: true,
+      defaultVisible: false,
       zIndex: 1,
       wfs: {
         wfsTypeName: "testing_workspace:TEST_RTRW_BADUNG",

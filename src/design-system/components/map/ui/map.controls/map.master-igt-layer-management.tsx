@@ -32,8 +32,8 @@ import { useQuery } from "@tanstack/react-query";
 import {
   FocusIcon,
   LayersIcon,
-  PaletteIcon,
   SquareDashedIcon,
+  SwatchBookIcon,
 } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
@@ -355,8 +355,7 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
               onClick={handleToggleSymbology}
             >
               <AppIcon
-                icon={PaletteIcon}
-                fill={isSymbologyOpen ? "blue.fg" : ""}
+                icon={SwatchBookIcon}
                 color={isSymbologyOpen ? "blue.fg" : undefined}
               />
             </IconButton>
