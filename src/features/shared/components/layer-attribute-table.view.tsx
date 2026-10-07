@@ -50,13 +50,15 @@ export const LayerAttributeTableView = memo(
 
     const effectiveTypeName = useMemo(() => {
       if (!targetLayer) return "";
+      if ("typeName" in targetLayer && targetLayer.typeName)
+        return targetLayer.typeName;
       if ("wfs" in targetLayer && targetLayer.wfs?.wfsTypeName)
         return targetLayer.wfs.wfsTypeName;
       if ("wfsTypeName" in targetLayer && targetLayer.wfsTypeName)
         return targetLayer.wfsTypeName;
       if ("wmsLayers" in targetLayer && targetLayer.wmsLayers)
         return targetLayer.wmsLayers;
-      return targetLayer.id;
+      return "";
     }, [targetLayer]);
 
     const effectiveWfsUrl = useMemo(() => {

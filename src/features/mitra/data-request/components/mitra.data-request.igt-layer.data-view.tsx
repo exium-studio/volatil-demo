@@ -300,7 +300,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       const itemsList = validCalculationLayers.map((layer) => ({
         layerId: layer.id,
-        typeName: layer.wfs?.wfsTypeName || layer.id,
+        typeName: layer.typeName || layer.wfs?.wfsTypeName || "",
         title: layer.title,
         spatialBasis: layer.spatialBasis,
       }));

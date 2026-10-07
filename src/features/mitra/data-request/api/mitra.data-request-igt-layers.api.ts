@@ -32,44 +32,53 @@ export async function getIgtLayers(
 
   if (Array.isArray(rawItems)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const items: IgtLayerItem[] = rawItems.map((raw: any) => ({
-      id: raw.id,
-      title: raw.title,
-      spatialBasis: raw.spatialBasis,
-      bbox: raw.bbox as [number, number, number, number],
-      visible: raw.visible ?? raw.isActive ?? true,
-      defaultVisible: Boolean(
-        raw.defaultVisible ?? raw.default_visible ?? false,
-      ),
-      zIndex: raw.zIndex ?? 1,
-      wms: raw.wms
-        ? {
-            ...raw.wms,
-            wmsUrl: normalizeApiUrl(raw.wms.wmsUrl ?? raw.wmsUrl),
-          }
-        : {
-            layers: raw.typeName || raw.id,
-            wmsUrl: normalizeApiUrl(raw.wmsUrl),
-            format: raw.format ?? "image/png",
-            transparent: raw.transparent ?? true,
-            tileSize: raw.tileSize ?? 512,
-            version: raw.version ?? "1.1.1",
-            srs: raw.srs ?? "EPSG:3857",
-            styles: raw.styles ?? "",
-          },
-      wfs: raw.wfs
-        ? {
-            ...raw.wfs,
-            wfsUrl: normalizeApiUrl(raw.wfs.wfsUrl ?? raw.wfsUrl),
-          }
-        : {
-            wfsTypeName: raw.typeName || raw.id,
-            wfsUrl: normalizeApiUrl(raw.wfsUrl),
-            type: raw.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
-            version: "2.0.0",
-            srsName: "EPSG:4326",
-          },
-    }));
+    const items: IgtLayerItem[] = rawItems.map((raw: any) => {
+      const typeName = raw.typeName || raw.wms?.layers || raw.wfs?.wfsTypeName || "";
+      const rawWmsUrl = raw.wms?.wmsUrl ?? raw.wmsUrl;
+      const rawWfsUrl = raw.wfs?.wfsUrl ?? raw.wfsUrl;
+
+      return {
+        id: raw.id,
+        typeName,
+        title: raw.title,
+        spatialBasis: raw.spatialBasis,
+        bbox: raw.bbox as [number, number, number, number],
+        visible: raw.visible ?? raw.isActive ?? true,
+        defaultVisible: Boolean(
+          raw.defaultVisible ?? raw.default_visible ?? false,
+        ),
+        zIndex: raw.zIndex ?? 1,
+        wms: raw.wms
+          ? {
+              ...raw.wms,
+              layers: raw.wms.layers || typeName,
+              wmsUrl: normalizeApiUrl(rawWmsUrl),
+            }
+          : {
+              layers: typeName,
+              wmsUrl: normalizeApiUrl(rawWmsUrl),
+              format: raw.format ?? "image/png",
+              transparent: raw.transparent ?? true,
+              tileSize: raw.tileSize ?? 512,
+              version: raw.version ?? "1.1.1",
+              srs: raw.srs ?? "EPSG:3857",
+              styles: raw.styles ?? "",
+            },
+        wfs: raw.wfs
+          ? {
+              ...raw.wfs,
+              wfsTypeName: raw.wfs.wfsTypeName || typeName,
+              wfsUrl: normalizeApiUrl(rawWfsUrl),
+            }
+          : {
+              wfsTypeName: typeName,
+              wfsUrl: normalizeApiUrl(rawWfsUrl),
+              type: raw.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
+              version: "2.0.0",
+              srsName: "EPSG:4326",
+            },
+      };
+    });
 
     const rawPag = resolvedData.pagination;
     const pagination = rawPag

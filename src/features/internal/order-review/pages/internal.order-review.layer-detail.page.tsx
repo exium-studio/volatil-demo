@@ -59,7 +59,8 @@ export const InternalOrderReviewLayerDetailPage = () => {
   const { features, totalFeatures, isLoading, isFetching } = useIgtWfsCatalog({
     page: pageState.page,
     pageSize: pageState.pageSize,
-    typeName: selectedIgtLayer?.wfs?.wfsTypeName ?? layerId,
+    typeName:
+      selectedIgtLayer?.typeName ?? selectedIgtLayer?.wfs?.wfsTypeName ?? "",
   });
 
   // Handlers

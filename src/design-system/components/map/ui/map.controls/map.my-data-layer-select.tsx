@@ -75,7 +75,7 @@ export const MapMyDataLayerSelect = memo(() => {
       } else {
         setCustomLayerConfig(item.id, {
           wmsUrl: item.externalWmsUrl || item.wmsUrl,
-          layers: item.wmsLayers || item.id,
+          layers: item.wmsLayers || item.wfsTypeName || "",
           spatialBasis: item.spatialBasis,
         });
         setLayerEnabled(item.id, true);
@@ -90,7 +90,7 @@ export const MapMyDataLayerSelect = memo(() => {
         if (checked) {
           setCustomLayerConfig(item.id, {
             wmsUrl: item.externalWmsUrl || item.wmsUrl,
-            layers: item.wmsLayers || item.id,
+            layers: item.wmsLayers || item.wfsTypeName || "",
             spatialBasis: item.spatialBasis,
           });
           setLayerEnabled(item.id, true);
@@ -275,7 +275,7 @@ const MapMyDataLayerItem = memo((props: MapMyDataLayerItemProps) => {
       spatialBasis: item.spatialBasis,
       bbox: item.bbox,
       wfs: {
-        wfsTypeName: item.wfsTypeName || item.id,
+        wfsTypeName: item.wfsTypeName || item.wmsLayers || "",
         wfsUrl: item.externalWfsUrl || item.wfsUrl,
       },
     });

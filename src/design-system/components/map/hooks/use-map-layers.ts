@@ -22,10 +22,9 @@ const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
 
   const fullWmsUrl = normalizeApiUrl(layer.wmsUrl);
   const [baseUrl, existingSearch] = fullWmsUrl.split("?");
-  const layerName = layer.layers ?? layer.id ?? "";
+  const layerName = layer.layers || layer.wfsTypeName || "";
 
   const queryParams: Record<string, string> = {
-    layerId: layer.id || layerName,
     service: "WMS",
     version: layer.version ?? "1.1.1",
     request: "GetMap",

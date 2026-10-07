@@ -160,7 +160,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
         setCustomLayerConfig(item.id, {
           wmsUrl: workspace.wmsUrl,
-          layers: item.wmsLayers || item.id,
+          layers: item.wmsLayers || item.wfsTypeName || "",
           spatialBasis: item.spatialBasis,
         });
         setLayerEnabled(item.id, true);

@@ -145,7 +145,7 @@ export const InternalDataManagementDataView = () => {
 
         setCustomLayerConfig(item.id, {
           wmsUrl: normalizedWmsUrl || "",
-          layers: item.typeName || item.id,
+          layers: item.typeName || "",
           spatialBasis: item.spatialBasis,
         });
         setLayerEnabled(item.id, true);
@@ -158,7 +158,7 @@ export const InternalDataManagementDataView = () => {
             bbox: item.bbox,
             wfs: normalizedWfsUrl
               ? {
-                  wfsTypeName: item.typeName || item.id,
+                  wfsTypeName: item.typeName || "",
                   wfsUrl: normalizedWfsUrl,
                 }
               : undefined,
@@ -349,7 +349,7 @@ export const InternalDataManagementDataView = () => {
             spatialBasis: item.spatialBasis,
             bbox: item.bbox,
             wfs: {
-              wfsTypeName: item.typeName || item.id,
+              wfsTypeName: item.typeName || "",
               wfsUrl: item.wfsUrl || "",
             },
           });

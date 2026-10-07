@@ -28,6 +28,8 @@ export type MapLayerConfig =
 
 export type BaseLayerConfig = {
   id: string;
+  /** GeoServer qualified layer typeName (e.g. 'workspace:layer_name') */
+  typeName?: string;
   /** Human-readable title of the layer */
   title?: string;
   /** Spatial basis of this IGT layer ("bidang" or "kawasan"). */
@@ -105,6 +107,7 @@ export type IgtLayerWmsConfig = {
 /** Centralized IGT Layer Item containing metadata, WFS query config, and WMS render config */
 export type IgtLayerItem = {
   id: string;
+  typeName?: string;
   title: string;
   spatialBasis: "bidang" | "kawasan";
   bbox: [number, number, number, number];
@@ -146,12 +149,13 @@ export const getWmsRasterConfigFromIgtLayer = (
   opacity = 0.5,
 ): WmsRasterLayerConfig => {
   const wmsUrl = igtLayer.wms?.wmsUrl ?? "";
-  const layers = igtLayer.wms?.layers ?? igtLayer.id;
+  const layers = igtLayer.wms?.layers || igtLayer.typeName || "";
   const wfsUrl = igtLayer.wfs?.wfsUrl;
-  const wfsTypeName = igtLayer.wfs?.wfsTypeName ?? igtLayer.id;
+  const wfsTypeName = igtLayer.wfs?.wfsTypeName || igtLayer.typeName || "";
 
   return {
     id: igtLayer.id,
+    typeName: igtLayer.typeName || layers || wfsTypeName,
     title: igtLayer.title,
     type: "wms-raster",
     spatialBasis: igtLayer.spatialBasis,

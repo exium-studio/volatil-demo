@@ -16,7 +16,7 @@ export const fetchLegendGraphic = async (
   const rawWmsUrl = raw?.wms?.wmsUrl ?? raw?.wmsUrl;
   const wmsUrl = normalizeApiUrl(rawWmsUrl);
   const layerName =
-    raw?.wms?.layers ?? raw?.layers ?? raw?.typeName ?? layer.id;
+    raw?.wms?.layers || raw?.layers || raw?.typeName || "";
 
   if (!wmsUrl || !layerName) {
     throw new Error("Konfigurasi WMS layer tidak valid atau belum tersedia.");

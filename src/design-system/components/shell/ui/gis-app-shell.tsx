@@ -412,7 +412,7 @@ const Content = (_props: GisContentProps) => {
           visible: wmsVisible && Boolean(isEnabled),
           opacity: layerOpacities[layerId] ?? 1.0,
           wmsUrl: customOverride?.wmsUrl ?? "",
-          layers: customOverride?.layers ?? layerId,
+          layers: customOverride?.layers ?? "",
           ...(customOverride ?? {}),
         });
       }
@@ -429,7 +429,7 @@ const Content = (_props: GisContentProps) => {
           visible: wmsVisible && Boolean(isEnabled),
           opacity: 1.0,
           wmsUrl: previewConfig?.wmsUrl ?? "",
-          layers: previewConfig?.layers ?? layerId,
+          layers: previewConfig?.layers ?? "",
           ...(previewConfig ?? {}),
         });
       }
