@@ -323,100 +323,72 @@ export const useMapFeatureInfo = (
           const layerName = layer.layers ?? layer.id;
           const wfsTypeName = resolveWfsTypeName(layer);
           const wfsEndpoint = resolveWfsUrl(layer);
+          const delta = calculateSpatialSearchDelta(map, 16);
 
-          const result = await fetchWmsGetFeatureInfo({
-            map,
-            wmsUrl: layer.wmsUrl,
-            layerId: layer.id,
-            layers: layerName,
-            point: e.point,
-            lngLat: { lng: e.lngLat.lng, lat: e.lngLat.lat },
-            cqlFilter: cqlFilterRef.current,
-          });
+          let feat: GeoJSON.Feature | undefined = undefined;
 
-          let feat = result?.features?.[0];
+          // 1. Direct WFS Spatial Query using bounding box / buffer around clicked point
+          try {
+            const wfsRes = await fetchWfs({
+              typeName: wfsTypeName,
+              wfsUrl: wfsEndpoint,
+              bbox: [
+                e.lngLat.lng - delta,
+                e.lngLat.lat - delta,
+                e.lngLat.lng + delta,
+                e.lngLat.lat + delta,
+              ],
+              version: "1.1.0",
+              cqlFilter: cqlFilterRef.current,
+              maxFeatures: 1,
+            });
+            if (wfsRes.features && wfsRes.features.length > 0) {
+              feat = wfsRes.features[0];
+            }
+          } catch {
+            // WFS direct search error, proceed to WMS GetFeatureInfo
+          }
 
-          // Fallback to dynamic zoom-aware WFS point buffer if WMS GetFeatureInfo was empty
+          // 2. If WFS direct search didn't return, fallback to WMS GetFeatureInfo
           if (!feat) {
+            const wmsResult = await fetchWmsGetFeatureInfo({
+              map,
+              wmsUrl: layer.wmsUrl,
+              layerId: layer.id,
+              layers: layerName,
+              point: e.point,
+              lngLat: { lng: e.lngLat.lng, lat: e.lngLat.lat },
+              cqlFilter: cqlFilterRef.current,
+            });
+
+            feat = wmsResult?.features?.[0];
+          }
+
+          // 3. If feature found but has no geometry (GeoServer GetFeatureInfo without geom), fetch full geometry by ID via WFS
+          if (feat && (!feat.geometry || feat.geometry.type === "Point") && feat.id) {
             try {
-              const delta = calculateSpatialSearchDelta(map, 16);
-              const wfsRes = await fetchWfs({
+              const wfsByIdRes = await fetchWfs({
                 typeName: wfsTypeName,
                 wfsUrl: wfsEndpoint,
-                bbox: [
-                  e.lngLat.lng - delta,
-                  e.lngLat.lat - delta,
-                  e.lngLat.lng + delta,
-                  e.lngLat.lat + delta,
-                ],
-                version: "1.1.0",
-                cqlFilter: cqlFilterRef.current,
+                cqlFilter: `IN('${feat.id}')`,
                 maxFeatures: 1,
               });
-              if (wfsRes.features && wfsRes.features.length > 0) {
-                feat = wfsRes.features[0];
+              if (wfsByIdRes.features && wfsByIdRes.features[0]?.geometry) {
+                feat = {
+                  ...feat,
+                  geometry: wfsByIdRes.features[0].geometry,
+                  properties: {
+                    ...feat.properties,
+                    ...wfsByIdRes.features[0].properties,
+                  },
+                };
               }
             } catch {
-              // ignore
+              // Ignore
             }
           }
 
           if (feat) {
-            // If feature has no geometry (standard GeoServer GetFeatureInfo behavior), fetch from WFS
-            if (!feat.geometry && feat.id) {
-              try {
-                const wfsRes = await fetchWfs({
-                  typeName: wfsTypeName,
-                  wfsUrl: wfsEndpoint,
-                  cqlFilter: `IN('${feat.id}')`,
-                  maxFeatures: 1,
-                });
-                if (wfsRes.features && wfsRes.features[0]?.geometry) {
-                  feat = {
-                    ...feat,
-                    geometry: wfsRes.features[0].geometry,
-                    properties: {
-                      ...feat.properties,
-                      ...wfsRes.features[0].properties,
-                    },
-                  };
-                }
-              } catch {
-                try {
-                  const delta = calculateSpatialSearchDelta(map, 16);
-                  const wfsRes = await fetchWfs({
-                    typeName: wfsTypeName,
-                    wfsUrl: wfsEndpoint,
-                    bbox: [
-                      e.lngLat.lng - delta,
-                      e.lngLat.lat - delta,
-                      e.lngLat.lng + delta,
-                      e.lngLat.lat + delta,
-                    ],
-                    version: "1.1.0",
-                    maxFeatures: 1,
-                  });
-                  if (wfsRes.features && wfsRes.features[0]?.geometry) {
-                    feat = {
-                      ...feat,
-                      geometry: wfsRes.features[0].geometry,
-                      properties: {
-                        ...feat.properties,
-                        ...wfsRes.features[0].properties,
-                      },
-                    };
-                  }
-                } catch {
-                  // ignore
-                }
-              }
-            }
-
-            const resolvedGeometry: GeoJSON.Geometry = feat.geometry ?? {
-              type: "Point",
-              coordinates: [e.lngLat.lng, e.lngLat.lat],
-            };
-
             const humanTitle = layer.title ?? layer.layers ?? layer.id;
             const typeName = layer.layers ?? layer.id;
 
@@ -429,17 +401,17 @@ export const useMapFeatureInfo = (
               basis: layer.spatialBasis,
               typeName,
               properties: (feat.properties as Record<string, unknown>) ?? {},
-              geometry: resolvedGeometry,
+              geometry: feat.geometry ?? null,
               coordinate: [e.lngLat.lng, e.lngLat.lat],
             });
             foundFeature = true;
 
-            if (resolvedGeometry.type !== "Point") {
+            if (feat.geometry && feat.geometry.type !== "Point") {
               try {
                 const bbox = turf.bbox({
                   type: "Feature",
                   properties: {},
-                  geometry: resolvedGeometry,
+                  geometry: feat.geometry,
                 });
                 map.fitBounds(
                   [
