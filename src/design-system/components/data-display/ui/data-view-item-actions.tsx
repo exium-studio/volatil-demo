@@ -471,7 +471,11 @@ export function DataListItemActionsTrigger<
             visibleActions.map((action, index) => {
               if (isDeclarativeAction(action)) {
                 const key = action.key ?? `menu-action-${index}`;
-                const isLoading = resolveLoading(action.loading, item.data, item);
+                const isLoading = resolveLoading(
+                  action.loading,
+                  item.data,
+                  item,
+                );
                 const isDisabled =
                   isLoading || Boolean(action.disabled?.(item.data, item));
                 const resolvedLabel = resolveLabel(action.label, item.data);
@@ -491,7 +495,8 @@ export function DataListItemActionsTrigger<
 
                 const menuItemContent = (
                   <>
-                    {isLoading ? <Loader size={"xs"} /> : iconNode}
+                    {isLoading ? <Loader /> : iconNode}
+
                     {resolvedLabel}
                   </>
                 );

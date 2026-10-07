@@ -5,8 +5,8 @@ import type { ToastEngineConfig } from "@/design-system/components/toast/types/t
 export const DEFAULT_TOAST_GROUP = "Sistem";
 
 const DEFAULT_TOAST_CONFIG: ToastEngineConfig = {
-  // defaultDuration: 5000,
-  defaultDuration: null,
+  defaultDuration: 5000,
+  // defaultDuration: null,
   maxVisiblePerGroup: 3,
   newestOnTop: true,
   duplicateStrategy: "replace",

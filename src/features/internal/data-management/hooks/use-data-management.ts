@@ -17,7 +17,9 @@ import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const useMasterIgtLayersQuery = (params?: MasterIgtLayersQueryParams) => {
+export const useMasterIgtLayersQuery = (
+  params?: MasterIgtLayersQueryParams,
+) => {
   const query = useQuery({
     queryKey: queryKeys.internal.dataManagement.layers(
       params as Record<string, unknown>,
@@ -56,7 +58,11 @@ export const useGeoServerWorkspaceLayersQuery = (
       workspaceName || "",
     ),
     queryFn: ({ signal }) =>
-      getGeoServerWorkspaceLayers(geoserverId || "", workspaceName || "", signal),
+      getGeoServerWorkspaceLayers(
+        geoserverId || "",
+        workspaceName || "",
+        signal,
+      ),
     enabled: Boolean(geoserverId && workspaceName),
     staleTime: 60 * 1000,
   });
@@ -70,7 +76,7 @@ export const useGeoServerWorkspaceLayersQuery = (
 export const useUpdateMasterIgtLayer = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("update-master-igt-layer", {
-    group: "Manajemen Data IGT",
+    group: "Manajemen Master Layer IGT",
     loadingMessage: {
       title: "Menyimpan perubahan layer...",
     },
@@ -102,7 +108,7 @@ export const useUpdateMasterIgtLayer = () => {
 export const useCreateMasterIgtLayer = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("create-master-igt-layer", {
-    group: "Manajemen Data IGT",
+    group: "Manajemen Master Layer IGT",
     loadingMessage: {
       title: "Mendaftarkan layer IGT baru...",
     },
@@ -134,7 +140,7 @@ export const useCreateMasterIgtLayer = () => {
 export const useDeleteMasterIgtLayer = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("delete-master-igt-layer", {
-    group: "Manajemen Data IGT",
+    group: "Manajemen Master Layer IGT",
     loadingMessage: {
       title: "Menghapus layer IGT...",
     },

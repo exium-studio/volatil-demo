@@ -432,7 +432,7 @@ export const InternalDataManagementDataView = () => {
       <HeaderContainer pr={"xs"}>
         <HStack justify={"space-between"} align={"center"} w={"full"}>
           <HStack gap={"xs"} align={"center"}>
-            <Heading>{"Manajemen Data IGT"}</Heading>
+            <Heading>{"Manajemen Master Layer IGT"}</Heading>
 
             <InfoTip
               variant={"icon"}
