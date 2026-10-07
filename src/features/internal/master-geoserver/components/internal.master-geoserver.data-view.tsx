@@ -118,7 +118,8 @@ export const InternalMasterGeoserverDataView = () => {
                 .join(" • ");
 
               toast.success(
-                data.message || `Koneksi ke "${server.name}" berhasil terverifikasi!`,
+                data.message ||
+                  `Koneksi ke "${server.name}" berhasil terverifikasi!`,
                 {
                   id: toastId,
                   group: "Master GeoServer",
@@ -187,9 +188,9 @@ export const InternalMasterGeoserverDataView = () => {
               <VStack align={"start"} gap={0} w={"200px"}>
                 <ClampedP>{item.name}</ClampedP>
 
-                <P fontSize={"xs"} color={"fg.subtle"} fontFamily={"mono"}>
+                <ClampedP fontSize={"sm"} color={"fg.subtle"}>
                   {`ID: ${item.id}`}
-                </P>
+                </ClampedP>
               </VStack>
             ),
             align: "start" as const,
