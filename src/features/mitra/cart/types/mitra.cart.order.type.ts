@@ -38,8 +38,10 @@ export type MitraCartOrderItemProps = {
   isDeleting?: boolean;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  isBidangVisible?: boolean;
   onToggleAoiVisible?: () => void;
   onToggleCoverageVisible?: () => void;
+  onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
   onFlyToCoverage?: () => void;
 };
@@ -49,8 +51,10 @@ export type MitraCartOrderListProps = {
   onSelectOrder: (orderId: string | null) => void;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  isBidangVisible?: boolean;
   onToggleAoiVisible?: () => void;
   onToggleCoverageVisible?: () => void;
+  onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
   onFlyToCoverage?: () => void;
 };

@@ -245,15 +245,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     const bidangTargetLayers = useMemo(() => {
       return intersectingLayers
-        .filter(
-          (l) =>
-            l.spatialBasis === "bidang" &&
-            Boolean(l.wfs?.wfsTypeName && l.wfs?.wfsUrl),
-        )
+        .filter((l) => {
+          const isBidang = (l.igtBasis ?? l.spatialBasis) === "bidang";
+          const hasUrl = Boolean(l.wfs?.url || l.wfs?.wfsUrl || l.wfs?.baseUrl);
+          return isBidang && hasUrl;
+        })
         .map((l) => ({
           id: l.id,
-          typeName: l.wfs!.wfsTypeName!,
-          wfsUrl: l.wfs!.wfsUrl!,
+          typeName: l.typeName || l.wfs?.wfsTypeName || l.id,
+          wfsUrl: l.wfs?.url || l.wfs?.wfsUrl || l.wfs?.baseUrl || "",
           title: l.title,
         }));
     }, [intersectingLayers]);

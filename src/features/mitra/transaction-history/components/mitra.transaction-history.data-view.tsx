@@ -94,7 +94,7 @@ export const TransactionHistoryDataView = () => {
       { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
-      { th: "Tanggal Dipesan", sortable: true, align: "start" },
+      { th: "Tanggal Pemesanan", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },

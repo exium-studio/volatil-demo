@@ -37,8 +37,9 @@ import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
-import { InfoIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
+import { ShoppingCartIcon, Trash2Icon } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const MitraCartPage = () => {
   return (
@@ -65,6 +66,7 @@ const MitraCartContent = () => {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
   const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
+  const [isBidangVisible, setIsBidangVisible] = useState<boolean>(true);
 
   // Derived Values — Validate selectedOrderId against current orders list
   const effectiveSelectedOrderId =
@@ -85,13 +87,42 @@ const MitraCartContent = () => {
   // Derived Values
   const isOrderSelected = Boolean(effectiveSelectedOrderId && selectedOrder);
 
+  const selectedOrderItems = selectedOrder?.items;
+  const bidangTargetLayers = useMemo(() => {
+    if (!selectedOrderItems) return [];
+    return selectedOrderItems
+      .filter(
+        (it) =>
+          it.spatialBasis === "bidang" &&
+          Boolean((it.wfsUrl || it.previewWfsUrl) && it.sourceLayerId),
+      )
+      .map((it) => ({
+        id: it.id || it.sourceLayerId,
+        typeName: it.sourceLayerId,
+        wfsUrl: it.wfsUrl || it.previewWfsUrl || "",
+        title: it.sourceLayerTitle,
+      }));
+  }, [selectedOrderItems]);
+
+  const bidangQueryResult = useBidangAoiFeatures({
+    aoiPolygon: isOrderSelected ? selectedOrder?.aoiPolygon : null,
+    bidangLayers: bidangTargetLayers,
+    enabled:
+      isOrderSelected &&
+      isBidangVisible &&
+      Boolean(selectedOrder?.aoiPolygon) &&
+      bidangTargetLayers.length > 0,
+  });
+
   // Map layer synchronization hook for Cart AOI & Coverage Polygon
   useCartAoiCoverageMap(map, {
     aoiPolygon: isOrderSelected ? selectedOrder?.aoiPolygon : null,
     coveragePolygon: isOrderSelected ? selectedOrder?.coveragePolygon : null,
+    bidangFeatures: isOrderSelected ? bidangQueryResult.features : null,
     selectionType: selectedOrder?.selectionType,
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible,
     isActive: isOrderSelected,
     exclusive: true,
   });
@@ -121,6 +152,7 @@ const MitraCartContent = () => {
       if (prev !== orderId) {
         setIsAoiVisible(true);
         setIsCoverageVisible(true);
+        setIsBidangVisible(true);
       }
       return orderId;
     });
@@ -132,6 +164,10 @@ const MitraCartContent = () => {
 
   const handleToggleCoverage = useCallback(() => {
     setIsCoverageVisible((prev) => !prev);
+  }, []);
+
+  const handleToggleBidang = useCallback(() => {
+    setIsBidangVisible((prev) => !prev);
   }, []);
 
   const handleFlyToAoi = useCallback(() => {
@@ -175,8 +211,10 @@ const MitraCartContent = () => {
           onSelectOrder={handleSelectOrder}
           isAoiVisible={isAoiVisible}
           isCoverageVisible={isCoverageVisible}
+          isBidangVisible={isBidangVisible}
           onToggleAoiVisible={handleToggleAoi}
           onToggleCoverageVisible={handleToggleCoverage}
+          onToggleBidangVisible={handleToggleBidang}
           onFlyToAoi={handleFlyToAoi}
           onFlyToCoverage={handleFlyToCoverage}
         />
@@ -205,8 +243,10 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
     onSelectOrder,
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible,
     onToggleAoiVisible,
     onToggleCoverageVisible,
+    onToggleBidangVisible,
     onFlyToAoi,
     onFlyToCoverage,
   } = props;
@@ -334,7 +374,9 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
               <VStack gap={"xs"} align={"stretch"} w={"full"}>
                 {!selectedOrderId && (
                   <Alert.Root status={"info"} mb={1}>
-                    <AppIcon icon={InfoIcon} />
+                    {/* <AppIcon icon={InfoIcon} /> */}
+                    <Alert.Indicator />
+
                     <Alert.Description>
                       {
                         "Silakan pilih salah satu pesanan untuk melihat rincian layer atau melanjutkan ke pembayaran."
@@ -360,8 +402,10 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
                       }
                       isAoiVisible={isAoiVisible}
                       isCoverageVisible={isCoverageVisible}
+                      isBidangVisible={isBidangVisible}
                       onToggleAoiVisible={onToggleAoiVisible}
                       onToggleCoverageVisible={onToggleCoverageVisible}
+                      onToggleBidangVisible={onToggleBidangVisible}
                       onFlyToAoi={onFlyToAoi}
                       onFlyToCoverage={onFlyToCoverage}
                     />

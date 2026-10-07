@@ -74,9 +74,11 @@ export const useBidangAoiFeatures = (
         const resolvedList: BidangAoiLayerItem[] = [];
 
         for (const l of layersResp.items ?? []) {
-          const typeName = l.wfs?.wfsTypeName;
-          const wfsUrl = l.wfs?.wfsUrl;
-          if (l.spatialBasis === "bidang" && typeName && wfsUrl) {
+          const isBidang = (l.igtBasis ?? l.spatialBasis) === "bidang";
+          const typeName = l.typeName || l.wfs?.wfsTypeName || l.id;
+          const wfsUrl = l.wfs?.url || l.wfs?.wfsUrl || l.wfs?.baseUrl;
+
+          if (isBidang && typeName && wfsUrl) {
             resolvedList.push({
               id: l.id,
               typeName,

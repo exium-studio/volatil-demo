@@ -1,6 +1,9 @@
 // src/features/mitra/cart/components/mitra.cart.order-item.tsx
 
-import { IconButton } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -10,7 +13,6 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -18,11 +20,9 @@ import type {
   MitraCartBatchItemProps,
   MitraCartOrderItemProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import {
-  ORDER_STATUS_MAP,
-  SELECTION_TYPE_CONFIG_MAP,
-} from "@/features/shared/constants/volatil.ssot-map";
+import { ORDER_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { formatDateTime } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { FocusIcon, Trash2Icon } from "lucide-react";
@@ -39,8 +39,10 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
     isDeleting = false,
     isAoiVisible = true,
     isCoverageVisible = true,
+    isBidangVisible = true,
     onToggleAoiVisible,
     onToggleCoverageVisible,
+    onToggleBidangVisible,
     onFlyToAoi,
     onFlyToCoverage,
   } = props;
@@ -50,8 +52,6 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
 
   // Derived Values
   const statusConfig = ORDER_STATUS_MAP[order.status];
-  const selectionConfig = SELECTION_TYPE_CONFIG_MAP[order.selectionType];
-  const aoiColorPalette = selectionConfig?.colorPalette ?? "blue";
 
   const totalBidang = order.items
     .filter((i) => i.spatialBasis === "bidang")
@@ -60,7 +60,8 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
   const totalKawasanHa = order.coverageHa;
 
   const hasAoiPolygon = Boolean(order.aoiPolygon);
-  const hasCoveragePolygon = Boolean(order.coveragePolygon);
+  const hasCoverageKawasan = Boolean(order.coveragePolygon);
+  const hasCoverageBidang = totalBidang > 0 && Boolean(order.aoiPolygon);
 
   return (
     <Box
@@ -83,10 +84,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
         <HStack justify={"space-between"} gapX={"md"} gapY={"xs"} w={"full"}>
           <HStack wrap={"wrap"} justify={"space-between"} gap={"sm"} w={"full"}>
             <HStack gap={"sm"} align={"center"}>
-              <AppIcon
-                icon={statusConfig.icon}
-                color={statusConfig.iconColor}
-              />
+              <RadioIndicator checked={isSelected} mt={"2px"} />
 
               <VStack>
                 <P fontWeight={"semibold"} fontSize={"sm"}>
@@ -95,16 +93,10 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
               </VStack>
             </HStack>
 
-            <Badge
-              size={"sm"}
-              variant={"subtle"}
-              colorPalette={statusConfig.colorPalette}
-            >
-              {statusConfig.label}
-            </Badge>
+            <HStack align={"center"} gap={"xs"}>
+              <OrderStatusBadge>{order.status}</OrderStatusBadge>
+            </HStack>
           </HStack>
-
-          <RadioIndicator checked={isSelected} mt={"2px"} />
         </HStack>
 
         <Separator />
@@ -112,7 +104,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
         {/* Content Details */}
         <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
           <HStack justify={"space-between"} align={"center"}>
-            <P color={"fg.subtle"}>{"Tanggal Pesan:"}</P>
+            <P color={"fg.subtle"}>{"Tanggal Pemesanan:"}</P>
             <P fontWeight={"medium"}>
               {order.createdAt ? formatDateTime(order.createdAt) : "-"}
             </P>
@@ -172,7 +164,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
             gap={"md"}
             bg={"bg.subtle"}
             p={2}
-            rounded={"md"}
+            rounded={theme.radii.component}
             fontSize={"xs"}
           >
             <P color={"fg.muted"}>{"Sisa Waktu Pembayaran (TTL):"}</P>
@@ -183,30 +175,13 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
               color={"orange.fg"}
             />
           </HStack>
-        ) : order.status === "rejected" ? (
+        ) : statusConfig?.noticeDescription ? (
           <HStack
             align={"center"}
             gap={"xs"}
             bg={`${statusConfig.colorPalette}.subtle`}
             p={2}
-            rounded={"md"}
-            fontSize={"xs"}
-            color={`${statusConfig.colorPalette}.fg`}
-          >
-            {statusConfig.icon && <AppIcon icon={statusConfig.icon} />}
-            <P>
-              {order.rejectionReason
-                ? `Alasan penolakan: ${order.rejectionReason}`
-                : statusConfig.noticeDescription || statusConfig.label}
-            </P>
-          </HStack>
-        ) : statusConfig.noticeDescription ? (
-          <HStack
-            align={"center"}
-            gap={"xs"}
-            bg={`${statusConfig.colorPalette}.subtle`}
-            p={2}
-            rounded={"md"}
+            rounded={theme.radii.component}
             fontSize={"xs"}
             color={`${statusConfig.colorPalette}.fg`}
           >
@@ -220,102 +195,121 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           <>
             <Separator />
 
-            <HStack
-              justify={"space-between"}
-              align={"end"}
-              w={"full"}
+            {/* Actions (AOI, Coverage Bidang/Kawasan) */}
+            <VStack
+              gap={"2xs"}
               onClick={(e) => {
                 e.stopPropagation();
               }}
             >
-              {/* Pojok Kiri: Spatial Actions (AOI & Coverage) */}
-              <HStack wrap={"wrap"} gapX={"md"}>
-                {hasAoiPolygon && (
-                  <HStack gap={"sm"} align={"center"}>
-                    <HStack gap={"xs"} align={"center"}>
-                      <Box
-                        w={"8px"}
-                        h={"8px"}
-                        bg={`${aoiColorPalette}.solid`}
-                      />
+              {hasAoiPolygon && (
+                <HStack gap={"sm"} align={"center"} justify={"space-between"}>
+                  <P>{"AOI"}</P>
 
-                      <P>{"AOI"}</P>
-                    </HStack>
+                  <HStack gap={"2xs"} align={"center"}>
+                    {onToggleAoiVisible && (
+                      <Tooltip
+                        content={
+                          isAoiVisible
+                            ? "Sembunyikan Polygon AOI"
+                            : "Tampilkan Polygon AOI"
+                        }
+                      >
+                        <Switch
+                          size={"sm"}
+                          checked={isAoiVisible}
+                          onCheckedChange={onToggleAoiVisible}
+                        />
+                      </Tooltip>
+                    )}
 
-                    <HStack gap={"2xs"} align={"center"}>
-                      {onToggleAoiVisible && (
-                        <Tooltip
-                          content={
-                            isAoiVisible
-                              ? "Sembunyikan Polygon AOI"
-                              : "Tampilkan Polygon AOI"
-                          }
+                    {onFlyToAoi && (
+                      <Tooltip content={"Zoom ke Polygon AOI"}>
+                        <IconButton
+                          size={"xs"}
+                          variant={"ghost"}
+                          onClick={onFlyToAoi}
                         >
-                          <Switch
-                            size={"sm"}
-                            checked={isAoiVisible}
-                            onCheckedChange={onToggleAoiVisible}
-                          />
-                        </Tooltip>
-                      )}
-
-                      {onFlyToAoi && (
-                        <Tooltip content={"Zoom ke Polygon AOI"}>
-                          <IconButton
-                            size={"xs"}
-                            variant={"ghost"}
-                            onClick={onFlyToAoi}
-                          >
-                            <AppIcon icon={FocusIcon} />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </HStack>
+                          <AppIcon icon={FocusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </HStack>
-                )}
+                </HStack>
+              )}
 
-                {hasCoveragePolygon && (
-                  <HStack gap={"sm"} align={"center"}>
-                    <HStack gap={"xs"} align={"center"}>
-                      <Box w={"8px"} h={"8px"} bg={`${aoiColorPalette}.solid`} />
+              {hasCoverageKawasan && (
+                <HStack gap={"sm"} align={"center"} justify={"space-between"}>
+                  <P>{"Cakupan Kawasan"}</P>
 
-                      <P>{"Kawasan"}</P>
-                    </HStack>
+                  <HStack gap={"2xs"} align={"center"}>
+                    {onToggleCoverageVisible && (
+                      <Tooltip
+                        content={
+                          isCoverageVisible
+                            ? "Sembunyikan Cakupan Kawasan"
+                            : "Tampilkan Cakupan Kawasan"
+                        }
+                      >
+                        <Switch
+                          size={"sm"}
+                          checked={isCoverageVisible}
+                          onCheckedChange={onToggleCoverageVisible}
+                        />
+                      </Tooltip>
+                    )}
 
-                    <HStack gap={"2xs"} align={"center"}>
-                      {onToggleCoverageVisible && (
-                        <Tooltip
-                          content={
-                            isCoverageVisible
-                              ? "Sembunyikan Coverage Area"
-                              : "Tampilkan Coverage Area"
-                          }
+                    {onFlyToCoverage && (
+                      <Tooltip content={"Zoom ke Coverage Area"}>
+                        <IconButton
+                          size={"xs"}
+                          variant={"ghost"}
+                          onClick={onFlyToCoverage}
                         >
-                          <Switch
-                            size={"sm"}
-                            checked={isCoverageVisible}
-                            onCheckedChange={onToggleCoverageVisible}
-                          />
-                        </Tooltip>
-                      )}
-
-                      {onFlyToCoverage && (
-                        <Tooltip content={"Zoom ke Coverage Area"}>
-                          <IconButton
-                            size={"xs"}
-                            variant={"ghost"}
-                            onClick={onFlyToCoverage}
-                          >
-                            <AppIcon icon={FocusIcon} />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </HStack>
+                          <AppIcon icon={FocusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </HStack>
-                )}
-              </HStack>
+                </HStack>
+              )}
 
-              {/* Pojok Kanan: Hapus Pesanan */}
+              {hasCoverageBidang && (
+                <HStack gap={"sm"} align={"center"} justify={"space-between"}>
+                  <P>{"Cakupan Bidang"}</P>
+
+                  <HStack gap={"2xs"} align={"center"}>
+                    {onToggleBidangVisible && (
+                      <Tooltip
+                        content={
+                          isBidangVisible
+                            ? "Sembunyikan Cakupan Bidang"
+                            : "Tampilkan Cakupan Bidang"
+                        }
+                      >
+                        <Switch
+                          size={"sm"}
+                          checked={isBidangVisible}
+                          onCheckedChange={onToggleBidangVisible}
+                        />
+                      </Tooltip>
+                    )}
+
+                    {onFlyToAoi && (
+                      <Tooltip content={"Zoom ke Cakupan Bidang"}>
+                        <IconButton
+                          size={"xs"}
+                          variant={"ghost"}
+                          onClick={onFlyToAoi}
+                        >
+                          <AppIcon icon={FocusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </HStack>
+                </HStack>
+              )}
+
               {onDelete && (
                 <ConfirmationTrigger
                   modalKey={`delete-order-${order.orderId}`}
@@ -327,12 +321,18 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
                     onDelete(order.orderId);
                   }}
                 >
-                  <IconButton colorPalette={"red"} loading={isDeleting}>
+                  <Button
+                    variant={"subtle"}
+                    colorPalette={"red"}
+                    loading={isDeleting}
+                    mt={"sm"}
+                  >
                     <AppIcon icon={Trash2Icon} />
-                  </IconButton>
+                    Hapus Pesanan Ini
+                  </Button>
                 </ConfirmationTrigger>
               )}
-            </HStack>
+            </VStack>
           </>
         )}
       </VStack>

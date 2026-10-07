@@ -246,6 +246,8 @@ export const MitraDataRequestSpatialSummary = memo(
           </HStack>
         )}
 
+        <Separator variant={"dashed"} />
+
         {/* Pricing Subtotal & Details */}
         <VStack gap={"sm"} align={"stretch"} fontSize={"sm"}>
           {/* Subtotal Bidang */}
@@ -330,7 +332,7 @@ export const MitraDataRequestSpatialSummary = memo(
             </P>
           </HStack>
 
-          <Separator variant={"dashed"} borderColor={"border.subtle"} />
+          <Separator variant={"dashed"} />
 
           {/* Total Estimasi */}
           <HStack justify={"space-between"} align={"center"}>

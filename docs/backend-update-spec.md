@@ -7,12 +7,14 @@ Dokumen ini berisi spesifikasi teknis dan acceptance criteria terbaru untuk tim 
 ## 1. Standarisasi Manajemen Master Layer IGT & URL Service GeoServer
 
 ### 1.1. Latar Belakang & Masalah Sebelumnya
+
 1. `id` di database sebelumnya diisi string `workspace:layerName` bukannya UUID murni.
 2. Naming convention basis IGT tidak seragam (`spatialBasis` vs `igtBasis`).
 3. Master IGT hanya bisa dibuat jika memilih layer spesifik, belum mendukung pendaftaran master data level **Workspace penuh** (`layerName = null`).
 4. URL Service GeoServer (WMS/WFS) terpisah-pisah dan tidak membedakan antara Full URL (siap render/copy) vs Base URL (untuk custom query).
 
 ### 1.2. Skema Entity / Tabel `master_igt_layers`
+
 - `id` (UUID, Primary Key, Auto-generated)
 - `geoserverId` (UUID, Foreign Key ke tabel `master_geoservers`)
 - `title` (String, wajib)
@@ -54,6 +56,7 @@ Seluruh endpoint yang mengembalikan data layer/workspace GeoServer (`GET /api/in
 
 > [!CAUTION]
 > **PENGHAPUSAN FIELD DEPRECATED (CLEAN BREAK / NO BACKWARD COMPATIBILITY)**:
+>
 > - Field `spatialBasis` **dihapus total**, wajib gunakan **`igtBasis`**.
 > - Field `wmsUrl` & `wfsUrl` string flat di root layer **dihapus total**, wajib gunakan objek **`wms`** dan **`wfs`**.
 > - Field `id` pada tabel `master_igt_layers` **wajib berupa UUID murni**, dilarang keras menyimpan string `workspace:layerName` di kolom `id`.
@@ -63,7 +66,9 @@ Seluruh endpoint yang mengembalikan data layer/workspace GeoServer (`GET /api/in
 ## 3. Endpoint Manajemen Master Layer IGT
 
 ### 3.1. `POST /api/internal/igt-layers` (Create Master IGT)
+
 **Request Body**:
+
 ```json
 {
   "title": "ZNT Badung",
@@ -78,9 +83,11 @@ Seluruh endpoint yang mengembalikan data layer/workspace GeoServer (`GET /api/in
   "zIndex": 1
 }
 ```
-> *Catatan*: Jika master data level workspace (tanpa layer spesifik), kirim `"layerName": null` dan `"typeName": "volatil-master-layer-igt"`.
+
+> _Catatan_: Jika master data level workspace (tanpa layer spesifik), kirim `"layerName": null` dan `"typeName": "volatil-master-layer-igt"`.
 
 **Response (201 Created)**:
+
 ```json
 {
   "success": true,
@@ -119,11 +126,13 @@ Seluruh endpoint yang mengembalikan data layer/workspace GeoServer (`GET /api/in
 ```
 
 ### 3.2. `PUT /api/internal/igt-layers/:id` (Update Master IGT)
+
 - **Path Param**: `id` (UUID)
 - **Request Body**: Sama seperti create (termasuk `workspaceName`, `layerName`, `typeName`, `igtBasis`).
 - **Response**: Mengembalikan data master layer IGT terbaru beserta objek `wms` & `wfs`.
 
 ### 3.3. `GET /api/internal/igt-layers` & `GET /api/mitra/igt-layers`
+
 - Mengembalikan array `items` dengan struktur terstandarisasi di atas (`id` berupa UUID, `igtBasis`, `workspaceName`, `layerName`, `typeName`, `wms: {url, baseUrl}`, `wfs: {url, baseUrl}`).
 
 ---
