@@ -94,8 +94,8 @@ export const TransactionHistoryDataView = () => {
       { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
+      { th: "Tanggal Dipesan", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
-      { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
@@ -144,19 +144,19 @@ export const TransactionHistoryDataView = () => {
               align: "start" as const,
             },
             {
-              value: item.billingCode,
+              value: item.createdAt,
               td: (
-                <P>
-                  <TNum>{item.billingCode}</TNum>
+                <P whiteSpace={"nowrap"}>
+                  {formatUtcDateTime(item.createdAt, preferredTimezone)}
                 </P>
               ),
               align: "start" as const,
             },
             {
-              value: item.createdAt,
+              value: item.billingCode,
               td: (
-                <P whiteSpace={"nowrap"}>
-                  {formatUtcDateTime(item.createdAt, preferredTimezone)}
+                <P>
+                  <TNum>{item.billingCode}</TNum>
                 </P>
               ),
               align: "start" as const,
