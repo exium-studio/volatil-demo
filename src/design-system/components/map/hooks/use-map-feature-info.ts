@@ -323,54 +323,33 @@ export const useMapFeatureInfo = (
           const layerName = layer.layers ?? layer.id;
           const wfsTypeName = resolveWfsTypeName(layer);
           const wfsEndpoint = resolveWfsUrl(layer);
-          const delta = calculateSpatialSearchDelta(map, 16);
 
           let feat: GeoJSON.Feature | undefined = undefined;
 
-          // 1. Direct WFS Spatial Query using bounding box / buffer around clicked point
-          try {
-            const wfsRes = await fetchWfs({
-              typeName: wfsTypeName,
-              wfsUrl: wfsEndpoint,
-              bbox: [
-                e.lngLat.lng - delta,
-                e.lngLat.lat - delta,
-                e.lngLat.lng + delta,
-                e.lngLat.lat + delta,
-              ],
-              version: "1.1.0",
-              cqlFilter: cqlFilterRef.current,
-              maxFeatures: 1,
-            });
-            if (wfsRes.features && wfsRes.features.length > 0) {
-              feat = wfsRes.features[0];
-            }
-          } catch {
-            // WFS direct search error, proceed to WMS GetFeatureInfo
+          // 1. WMS GetFeatureInfo on exact clicked pixel (accurate targeting on WMS raster)
+          const wmsResult = await fetchWmsGetFeatureInfo({
+            map,
+            wmsUrl: layer.wmsUrl,
+            layerId: layer.id,
+            layers: layerName,
+            point: e.point,
+            lngLat: { lng: e.lngLat.lng, lat: e.lngLat.lat },
+            cqlFilter: cqlFilterRef.current,
+          });
+
+          if (wmsResult?.features && wmsResult.features.length > 0) {
+            feat = wmsResult.features[0];
           }
 
-          // 2. If WFS direct search didn't return, fallback to WMS GetFeatureInfo
-          if (!feat) {
-            const wmsResult = await fetchWmsGetFeatureInfo({
-              map,
-              wmsUrl: layer.wmsUrl,
-              layerId: layer.id,
-              layers: layerName,
-              point: e.point,
-              lngLat: { lng: e.lngLat.lng, lat: e.lngLat.lat },
-              cqlFilter: cqlFilterRef.current,
-            });
-
-            feat = wmsResult?.features?.[0];
-          }
-
-          // 3. If feature found but has no geometry (GeoServer GetFeatureInfo without geom), fetch full geometry by ID via WFS
+          // 2. If WMS returned a feature but without full polygon geometry, query WFS for the exact feature by ID
           if (feat && (!feat.geometry || feat.geometry.type === "Point") && feat.id) {
             try {
               const wfsByIdRes = await fetchWfs({
                 typeName: wfsTypeName,
                 wfsUrl: wfsEndpoint,
                 cqlFilter: `IN('${feat.id}')`,
+                srsName: "EPSG:4326",
+                version: "1.1.0",
                 maxFeatures: 1,
               });
               if (wfsByIdRes.features && wfsByIdRes.features[0]?.geometry) {
@@ -382,6 +361,56 @@ export const useMapFeatureInfo = (
                     ...wfsByIdRes.features[0].properties,
                   },
                 };
+              }
+            } catch {
+              // Ignore
+            }
+          }
+
+          // 3. If WMS GetFeatureInfo was empty, query WFS using spatial point intersection INTERSECTS(geom, POINT(lon lat))
+          if (!feat) {
+            try {
+              const pointCql = `INTERSECTS(geom, POINT(${e.lngLat.lng} ${e.lngLat.lat}))`;
+              const combinedCql = cqlFilterRef.current
+                ? `(${cqlFilterRef.current}) AND (${pointCql})`
+                : pointCql;
+
+              const wfsPointRes = await fetchWfs({
+                typeName: wfsTypeName,
+                wfsUrl: wfsEndpoint,
+                cqlFilter: combinedCql,
+                srsName: "EPSG:4326",
+                version: "1.1.0",
+                maxFeatures: 1,
+              });
+
+              if (wfsPointRes.features && wfsPointRes.features.length > 0) {
+                feat = wfsPointRes.features[0];
+              }
+            } catch {
+              // Ignore
+            }
+          }
+
+          // 4. Fallback to dynamic zoom-aware bounding box if point search yielded nothing
+          if (!feat) {
+            try {
+              const delta = calculateSpatialSearchDelta(map, 10);
+              const wfsBboxRes = await fetchWfs({
+                typeName: wfsTypeName,
+                wfsUrl: wfsEndpoint,
+                bbox: [
+                  e.lngLat.lng - delta,
+                  e.lngLat.lat - delta,
+                  e.lngLat.lng + delta,
+                  e.lngLat.lat + delta,
+                ],
+                version: "1.1.0",
+                cqlFilter: cqlFilterRef.current,
+                maxFeatures: 1,
+              });
+              if (wfsBboxRes.features && wfsBboxRes.features.length > 0) {
+                feat = wfsBboxRes.features[0];
               }
             } catch {
               // Ignore

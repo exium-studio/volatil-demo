@@ -6,7 +6,7 @@ import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 export const fetchWmsGetFeatureInfo = async (
   options: GetFeatureInfoOptions,
 ): Promise<GeoJSON.FeatureCollection | null> => {
-  const { wmsUrl, layerId, layers, point, lngLat, map, cqlFilter } = options;
+  const { wmsUrl, layerId, layers, point, map, cqlFilter } = options;
   if (!wmsUrl) return null;
 
   const bounds = map.getBounds();
@@ -20,24 +20,9 @@ export const fetchWmsGetFeatureInfo = async (
   const north = bounds.getNorth();
   const bbox = `${west},${south},${east},${north}`;
 
-  // Calculate linear equirectangular X/Y for accurate EPSG:4326 GeoServer mapping
-  let clickX = Math.round(point.x);
-  let clickY = Math.round(point.y);
-
-  if (lngLat) {
-    const calculatedX = Math.round(
-      ((lngLat.lng - west) / (east - west)) * width,
-    );
-    const calculatedY = Math.round(
-      ((north - lngLat.lat) / (north - south)) * height,
-    );
-    if (!isNaN(calculatedX) && calculatedX >= 0 && calculatedX <= width) {
-      clickX = calculatedX;
-    }
-    if (!isNaN(calculatedY) && calculatedY >= 0 && calculatedY <= height) {
-      clickY = calculatedY;
-    }
-  }
+  // Exact canvas pixel point matching the MapLibre viewport
+  const clickX = Math.round(point.x);
+  const clickY = Math.round(point.y);
 
   const fullWmsUrl = normalizeApiUrl(wmsUrl);
   const [baseUrl, existingSearch] = fullWmsUrl.split("?");
