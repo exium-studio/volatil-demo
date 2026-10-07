@@ -94,7 +94,13 @@ const BillingPageBillingCode = () => {
   return (
     <Container.Root>
       <Container.Body>
-        <HStack align={"center"} justify={"space-between"} gap={"md"} p={"md"}>
+        <HStack
+          wrap={"wrap"}
+          align={"center"}
+          justify={"space-between"}
+          gap={"md"}
+          p={"md"}
+        >
           <VStack gap={1}>
             <Heading>Kode Billing </Heading>
 

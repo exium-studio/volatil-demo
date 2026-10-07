@@ -152,7 +152,8 @@ export const ToastItem = memo(function ToastItem(
         if (event.key === "Escape") toast.close(toastData.id);
       }}
       onClick={() => {
-        const selection = typeof window !== "undefined" ? window.getSelection() : null;
+        const selection =
+          typeof window !== "undefined" ? window.getSelection() : null;
         if (selection && selection.toString().length > 0) return;
         if (!hasExpandableContent) return;
         if (!stackExpanded) {
@@ -174,7 +175,7 @@ export const ToastItem = memo(function ToastItem(
 
         <VStack flex={1} minW={0} w={"full"}>
           {/* Header */}
-          <HStack align={"center"} gap={2} w={"full"} minW={0}>
+          <HStack align={"start"} gap={2} w={"full"} minW={0}>
             {/* Title */}
             {toastData.title && (
               <ClampedP
