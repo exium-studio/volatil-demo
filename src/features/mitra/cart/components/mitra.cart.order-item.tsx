@@ -5,6 +5,7 @@ import {
   IconButton,
 } from "@/design-system/components/button/ui/button";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
+import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { RadioIndicator } from "@/design-system/components/input/ui/radio-indicator";
@@ -157,38 +158,39 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
         </VStack>
 
         {/* Dynamic Status Notices */}
-        {order.status === "pending_payment" && order.expiredAt ? (
-          <HStack
-            justify={"space-between"}
-            align={"center"}
-            gap={"md"}
-            bg={"bg.subtle"}
-            p={2}
-            rounded={theme.radii.component}
-            fontSize={"xs"}
-          >
-            <P color={"fg.muted"}>{"Sisa Waktu Pembayaran (TTL):"}</P>
+        {order.status === "pending_payment" && order.expiredAt && (
+          <Alert.Root status={"warning"} colorPalette={"orange"} variant={"subtle"} size={"sm"}>
+            <HStack justify={"space-between"} align={"center"} w={"full"}>
+              <HStack gap={"xs"} align={"center"}>
+                <AppIcon icon={statusConfig?.icon} />
+                <Alert.Description fontSize={"xs"}>
+                  {"Sisa Waktu Pembayaran (TTL):"}
+                </Alert.Description>
+              </HStack>
 
-            <Countdown
-              finishedAt={order.expiredAt}
-              fontWeight={"semibold"}
-              color={"orange.fg"}
-            />
-          </HStack>
-        ) : statusConfig?.noticeDescription ? (
-          <HStack
-            align={"center"}
-            gap={"xs"}
-            bg={`${statusConfig.colorPalette}.subtle`}
-            p={2}
-            rounded={theme.radii.component}
-            fontSize={"xs"}
-            color={`${statusConfig.colorPalette}.fg`}
+              <Countdown
+                finishedAt={order.expiredAt}
+                fontWeight={"semibold"}
+                fontSize={"xs"}
+                color={"orange.fg"}
+              />
+            </HStack>
+          </Alert.Root>
+        )}
+
+        {order.status !== "pending_payment" && statusConfig?.noticeDescription && (
+          <Alert.Root
+            status={"info"}
+            colorPalette={statusConfig.colorPalette}
+            variant={"subtle"}
+            size={"sm"}
           >
             {statusConfig.icon && <AppIcon icon={statusConfig.icon} />}
-            <P>{statusConfig.noticeDescription}</P>
-          </HStack>
-        ) : null}
+            <Alert.Description fontSize={"xs"}>
+              {statusConfig.noticeDescription}
+            </Alert.Description>
+          </Alert.Root>
+        )}
 
         {/* Selected Order Actions: Spatial Actions (Left) & Delete (Right) */}
         {isSelected && (

@@ -38,7 +38,7 @@ import type {
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
-import { ShoppingCartIcon, Trash2Icon } from "lucide-react";
+import { InfoIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const MitraCartPage = () => {
@@ -374,8 +374,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
               <VStack gap={"xs"} align={"stretch"} w={"full"}>
                 {!selectedOrderId && (
                   <Alert.Root status={"info"} mb={1}>
-                    {/* <AppIcon icon={InfoIcon} /> */}
-                    <Alert.Indicator />
+                    <AppIcon icon={InfoIcon} />
 
                     <Alert.Description>
                       {
