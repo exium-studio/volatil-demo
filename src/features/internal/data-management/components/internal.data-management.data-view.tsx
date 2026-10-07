@@ -98,7 +98,7 @@ export const InternalDataManagementDataView = () => {
     page: params.page,
     pageSize: params.pageSize,
     search: params.search || undefined,
-    spatialBasis:
+    igtBasis:
       params.spatialBasis !== "all"
         ? (params.spatialBasis as IgtBasisType)
         : undefined,
@@ -140,15 +140,15 @@ export const InternalDataManagementDataView = () => {
         setLayerEnabled(item.id, false);
         setCustomLayerConfig(item.id, null);
       } else {
-        const rawWmsUrl = item.wms?.url ?? item.wms?.baseUrl ?? item.wmsUrl;
-        const rawWfsUrl = item.wfs?.url ?? item.wfs?.baseUrl ?? item.wfsUrl;
+        const rawWmsUrl = item.wms.url || item.wms.baseUrl;
+        const rawWfsUrl = item.wfs.url || item.wfs.baseUrl;
         const normalizedWmsUrl = normalizeApiUrl(rawWmsUrl);
         const normalizedWfsUrl = normalizeApiUrl(rawWfsUrl);
 
         setCustomLayerConfig(item.id, {
           wmsUrl: normalizedWmsUrl || "",
           layers: item.typeName || "",
-          spatialBasis: item.igtBasis ?? item.spatialBasis,
+          spatialBasis: item.igtBasis,
         });
         setLayerEnabled(item.id, true);
 
@@ -156,7 +156,7 @@ export const InternalDataManagementDataView = () => {
           void flyTo({
             id: item.id,
             title: item.title,
-            spatialBasis: item.igtBasis ?? item.spatialBasis,
+            spatialBasis: item.igtBasis,
             bbox: item.bbox,
             wfs: normalizedWfsUrl
               ? {
@@ -185,7 +185,7 @@ export const InternalDataManagementDataView = () => {
 
     const items = rawItems.map((item) => {
       const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
-      const basis = item.igtBasis ?? item.spatialBasis;
+      const basis = item.igtBasis;
 
       return {
         id: item.id,
@@ -346,11 +346,11 @@ export const InternalDataManagementDataView = () => {
         label: "Zoom ke Layer",
         icon: FocusIcon,
         onClick: (item: MasterIgtLayerItem) => {
-          const rawWfsUrl = item.wfs?.url ?? item.wfs?.baseUrl ?? item.wfsUrl;
+          const rawWfsUrl = item.wfs.url || item.wfs.baseUrl;
           void flyTo({
             id: item.id,
             title: item.title,
-            spatialBasis: item.igtBasis ?? item.spatialBasis,
+            spatialBasis: item.igtBasis,
             bbox: item.bbox,
             wfs: {
               wfsTypeName: item.typeName || "",

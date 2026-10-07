@@ -443,8 +443,12 @@ Seluruh status pesanan, item layer, dan workspace kini diseragamkan ke satu enum
 - `createdAt` (Timestamp with timezone)
 - `updatedAt` (Timestamp with timezone)
 
-### 9.3. Standarisasi Response Service GeoServer (`wms` & `wfs`)
-Seluruh endpoint yang mengembalikan data layer/workspace GeoServer (Katalog IGT, Master IGT, Data Saya) wajib menyertakan objek `wms` dan `wfs`:
+### 9.3. Standarisasi Response Service GeoServer (`wms` & `wfs`) & Kebijakan Strict SSOT
+
+> [!IMPORTANT]
+> **Kebijakan Strict SSOT**: Seluruh URL GeoServer (WMS dan WFS) dikontrol 100% oleh Backend sebagai Single Source of Truth. Frontend **tidak melakukan konstruksi URL manual** atau fallback buatan.
+
+Seluruh endpoint yang mengembalikan data layer/workspace GeoServer (`GET /api/internal/igt-layers`, `GET /api/mitra/igt-layers`, `GET /api/mitra/workspaces`, `GET /api/mitra/workspaces/:id`) **wajib menyertakan objek `wms` dan `wfs` secara lengkap**:
 
 ```json
 {
@@ -458,6 +462,12 @@ Seluruh endpoint yang mengembalikan data layer/workspace GeoServer (Katalog IGT,
   }
 }
 ```
+
+> [!CAUTION]
+> **PENGHAPUSAN FIELD DEPRECATED (CLEAN BREAK / NO BACKWARD COMPATIBILITY)**:
+> - Field `spatialBasis` **dihapus total**, wajib gunakan **`igtBasis`**.
+> - Field `wmsUrl` & `wfsUrl` string flat di root layer **dihapus total**, wajib gunakan objek **`wms`** dan **`wfs`**.
+> - Field `id` pada tabel `master_igt_layers` **wajib berupa UUID murni**, dilarang keras menyimpan string `workspace:layerName` di kolom `id`.
 
 ### 9.4. Endpoint Manajemen Master Layer IGT
 

@@ -25,7 +25,6 @@ export type MasterIgtLayerItem = {
   title: string;
   description?: string;
   igtBasis: IgtBasisType;
-  spatialBasis?: IgtBasisType; // Alias for backward compatibility
   bbox?: [number, number, number, number];
   isActive: boolean;
   defaultVisible?: boolean;
@@ -37,19 +36,16 @@ export type MasterIgtLayerItem = {
     baseUrl: string;
   };
   workspaceName: string;
-  layerName?: string | null;
+  layerName: string | null;
   typeName: string; // Not null: either "workspace:layer" or "workspace"
-  wms?: MasterIgtLayerServiceConfig;
-  wfs?: MasterIgtLayerServiceConfig;
-  wfsUrl?: string; // Compatibility fallback
-  wmsUrl?: string; // Compatibility fallback
+  wms: MasterIgtLayerServiceConfig;
+  wfs: MasterIgtLayerServiceConfig;
   createdAt: string;
   updatedAt: string;
 };
 
 export type MasterIgtLayersQueryParams = PaginatedParams & {
   igtBasis?: IgtBasisType;
-  spatialBasis?: IgtBasisType;
   isActive?: boolean;
 };
 

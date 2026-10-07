@@ -30,7 +30,7 @@ export const fetchMasterIgtLayersApi = async (
         page: params?.page,
         pageSize: params?.pageSize,
         search: params?.search,
-        spatialBasis: params?.spatialBasis,
+        igtBasis: params?.igtBasis,
         isActive: params?.isActive,
       },
       signal,
