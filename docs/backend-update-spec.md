@@ -200,7 +200,74 @@ Frontend memanggil endpoint ini sebelum menyimpan server untuk memastikan instan
 
 ---
 
-## 5. Checklist Ringkas untuk Tim BE
+## 5. Bounding Box Workspace (`bbox`) pada Detail & List Workspace
+
+### 5.1. Kebutuhan & Perilaku Frontend
+Ketika mitra membuka halaman detail workspace pada menu **Data Saya** (`/mitra/my-data/:workspaceId`), peta interaktif di sisi kiri secara otomatis mengarahkan kamera (*auto-fly & fit bounds*) ke batas wilayah spasial dari workspace tersebut.
+
+Oleh karena itu, response detail workspace (dan list workspace) membutuhkan field `bbox`.
+
+### 5.2. Format `bbox` Spasial
+Field `bbox` menggunakan format array 4 elemen koordinat geografis **EPSG:4326 (WGS84)** dengan urutan **`[minLng, minLat, maxLng, maxLat]`** (*West, South, East, North*):
+
+```json
+"bbox": [115.083839, -8.850039, 115.251534, -8.239441]
+```
+
+### 5.3. Endpoint `GET /api/mitra/workspaces/:id`
+Response detail workspace yang dikembalikan ke frontend:
+
+```json
+{
+  "success": true,
+  "code": 200,
+  "message": "Detail workspace berhasil dimuat",
+  "data": {
+    "id": "ws_ord_20260830_001",
+    "workspaceName": "ws_ord_20260830_001",
+    "orderId": "ord-2026-0830-001",
+    "orderNumber": "ORD-20260830-001",
+    "transactionNumber": "TRX-20260830-001",
+    "userId": 42,
+    "status": "ready",
+    "wmsUrl": "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001",
+    "wfsUrl": "https://geoportal.atrbpn.go.id/interop/wfs?workspace=ws_ord_20260830_001",
+    "qgisWmsUrl": "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001",
+    "bbox": [115.083839, -8.850039, 115.251534, -8.239441],
+    "layersCount": 2,
+    "layers": [
+      {
+        "id": "testing_workspace:TEST_RTRW_BADUNG",
+        "label": null,
+        "title": "RTRW Badung",
+        "spatialBasis": "kawasan",
+        "wfsUrl": "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
+        "wmsUrl": "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
+        "externalWmsUrl": "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001&layer=TEST_RTRW_BADUNG",
+        "wfsTypeName": "testing_workspace:TEST_RTRW_BADUNG",
+        "wmsLayers": "testing_workspace:TEST_RTRW_BADUNG",
+        "status": "ready",
+        "expiresAt": "2026-12-31T23:59:59.000Z",
+        "bbox": [115.083839, -8.850039, 115.251389, -8.239441]
+      }
+    ],
+    "createdAt": "2026-08-30T09:15:00.000Z",
+    "expiresAt": "2026-12-31T23:59:59.000Z",
+    "invoiceUrl": "https://volatil-be.exium.web.id/invoices/INV-2026-0825-001.pdf",
+    "tteInvoiceUrl": "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
+    "tte": true
+  }
+}
+```
+
+### 5.4. Logika Penentuan `bbox` di Sisi Backend
+Backend dapat menghitung nilai `bbox` workspace melalui salah satu cara berikut:
+1. **Berdasarkan AOI Polygon Pesanan**: Menghitung bounding box dari geometri Polygon AOI yang digambar/dipilih mitra saat membuat order permohonan data.
+2. **Union Bounding Box dari Layer**: Menghitung gabungan (*union extent*) dari `bbox` seluruh layer yang tergabung dalam workspace tersebut (`ST_Extent` / `ST_Envelope` pada PostGIS).
+
+---
+
+## 6. Checklist Ringkas untuk Tim BE
 
 - [ ] Tambahkan enum/kategori `"kedaluwarsa"` pada tabel notifikasi.
 - [ ] Buat cron job harian notifikasi H-7 masa kedaluwarsa dengan menyertakan `actionUrl: "/mitra/my-data/{workspaceId}"`.
@@ -208,3 +275,5 @@ Frontend memanggil endpoint ini sebelum menyimpan server untuk memastikan instan
 - [ ] Hubungkan webhook pembayaran Simponi/PG untuk mengeksekusi penambahan masa aktif `expiresAt` (+12 bulan) dan status workspace menjadi `ready`.
 - [ ] Implementasikan endpoint `POST /api/internal/master-geoserver/test-connection`.
 - [ ] Terapkan masking kredensial password pada endpoint `GET /api/internal/master-geoserver`.
+- [ ] Sertakan field `bbox: [minLng, minLat, maxLng, maxLat]` pada endpoint `GET /api/mitra/workspaces/:id` dan `GET /api/mitra/workspaces`.
+

@@ -52,7 +52,7 @@ import {
   FocusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 export const MitraMyDataWorkspaceDetailPage = () => {
   // Navigation
@@ -72,7 +72,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   const setCustomLayerConfig = useMapLayerStore((s) => s.setCustomLayerConfig);
 
   // Hooks
-  const { flyTo } = useFlyToLayer();
+  const { map, flyTo } = useFlyToLayer();
 
   // Queries
   const {
@@ -82,6 +82,49 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     error,
     refetch,
   } = useMitraWorkspaceDetailQuery(workspaceId);
+
+  // Refs
+  const hasFlownWorkspaceRef = useRef<string | null>(null);
+
+  // Effects — Auto fly camera to workspace bounding box on load
+  useEffect(() => {
+    if (!map || !workspace || hasFlownWorkspaceRef.current === workspace.id) {
+      return;
+    }
+
+    let targetBbox = workspace.bbox;
+    if (!targetBbox && workspace.layers?.length) {
+      let minLng = Infinity;
+      let minLat = Infinity;
+      let maxLng = -Infinity;
+      let maxLat = -Infinity;
+      for (const layer of workspace.layers) {
+        if (layer.bbox && layer.bbox.length === 4) {
+          if (layer.bbox[0] < minLng) minLng = layer.bbox[0];
+          if (layer.bbox[1] < minLat) minLat = layer.bbox[1];
+          if (layer.bbox[2] > maxLng) maxLng = layer.bbox[2];
+          if (layer.bbox[3] > maxLat) maxLat = layer.bbox[3];
+        }
+      }
+      if (
+        minLng !== Infinity &&
+        minLat !== Infinity &&
+        maxLng !== -Infinity &&
+        maxLat !== -Infinity
+      ) {
+        targetBbox = [minLng, minLat, maxLng, maxLat];
+      }
+    }
+
+    if (targetBbox) {
+      hasFlownWorkspaceRef.current = workspace.id;
+      void flyTo({
+        id: workspace.id,
+        title: workspace.workspaceName,
+        bbox: targetBbox,
+      });
+    }
+  }, [map, workspace, flyTo]);
 
   // Effects — Cleanup loaded workspace layers on unmount / navigation
   useEffect(() => {

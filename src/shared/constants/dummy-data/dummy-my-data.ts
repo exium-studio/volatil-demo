@@ -124,6 +124,7 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
       "https://geoportal.atrbpn.go.id/interop/wfs?workspace=ws_ord_20260830_001",
     qgisWmsUrl:
       "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001",
+    bbox: [115.083839, -8.850039, 115.251534, -8.239441],
     layersCount: 2,
     layers: [dummyMitraMyDataItems[0], dummyMitraMyDataItems[1]],
     createdAt: "2026-08-30T09:15:00.000Z",
@@ -148,6 +149,7 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
       "https://geoportal.atrbpn.go.id/interop/wfs?workspace=ws_ord_20260829_003",
     qgisWmsUrl:
       "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260829_003",
+    bbox: [115.134102, -8.685009, 115.183136, -8.622203],
     layersCount: 1,
     layers: [dummyMitraMyDataItems[2]],
     createdAt: "2026-08-29T14:30:00.000Z",
@@ -167,6 +169,7 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
     userId: 42,
     status: "provisioning",
     wmsUrl: null,
+    bbox: [115.2, -8.65, 115.25, -8.6],
     layersCount: 1,
     layers: [dummyMitraMyDataItems[3]],
     createdAt: "2026-08-18T10:25:00.000Z",

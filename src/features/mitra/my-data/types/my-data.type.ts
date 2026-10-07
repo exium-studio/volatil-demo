@@ -45,6 +45,7 @@ export type MitraWorkspaceItem = {
   qgisWmsUrl?: string | null;
   qgisWfsUrl?: string | null;
   apiKey?: string | null;
+  bbox?: [number, number, number, number];
   layersCount: number;
   layers: MyDataItem[];
   createdAt: string;
