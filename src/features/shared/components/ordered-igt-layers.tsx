@@ -84,8 +84,7 @@ export const OrderedIgtLayers = (props: OrderedIgtLayersPreviewCellProps) => {
             {remainingCount > 0 && (
               <Badge
                 size={"xs"}
-                variant={"surface"}
-                colorPalette={"blue"}
+                variant={"subtle"}
                 fontWeight={"semibold"}
               >
                 {`+${remainingCount}`}
