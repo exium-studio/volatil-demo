@@ -21,6 +21,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -432,10 +433,53 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                 maxW={"full"}
               />
 
-              <MitraWorkspaceRenewalTrigger workspace={workspace}>
-                <IconButton>
-                  <AppIcon icon={ClockPlusIcon} />
+              <Tooltip content={"Zoom ke Workspace"}>
+                <IconButton
+                  aria-label={"Zoom ke Workspace"}
+                  onClick={() => {
+                    let targetBbox = workspace.bbox;
+                    if (!targetBbox && workspace.layers?.length) {
+                      let minLng = Infinity;
+                      let minLat = Infinity;
+                      let maxLng = -Infinity;
+                      let maxLat = -Infinity;
+                      for (const layer of workspace.layers) {
+                        if (layer.bbox && layer.bbox.length === 4) {
+                          if (layer.bbox[0] < minLng) minLng = layer.bbox[0];
+                          if (layer.bbox[1] < minLat) minLat = layer.bbox[1];
+                          if (layer.bbox[2] > maxLng) maxLng = layer.bbox[2];
+                          if (layer.bbox[3] > maxLat) maxLat = layer.bbox[3];
+                        }
+                      }
+                      if (
+                        minLng !== Infinity &&
+                        minLat !== Infinity &&
+                        maxLng !== -Infinity &&
+                        maxLat !== -Infinity
+                      ) {
+                        targetBbox = [minLng, minLat, maxLng, maxLat];
+                      }
+                    }
+
+                    if (targetBbox) {
+                      void flyTo({
+                        id: workspace.id,
+                        title: workspace.workspaceName,
+                        bbox: targetBbox,
+                      });
+                    }
+                  }}
+                >
+                  <AppIcon icon={FocusIcon} />
                 </IconButton>
+              </Tooltip>
+
+              <MitraWorkspaceRenewalTrigger workspace={workspace}>
+                <Tooltip content={"Perpanjang Workspace"}>
+                  <IconButton aria-label={"Perpanjang Workspace"}>
+                    <AppIcon icon={ClockPlusIcon} />
+                  </IconButton>
+                </Tooltip>
               </MitraWorkspaceRenewalTrigger>
             </HStack>
 
