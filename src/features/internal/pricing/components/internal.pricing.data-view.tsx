@@ -114,8 +114,12 @@ export const InternalPricingDataView = () => {
             align: "start" as const,
           },
           {
-            value: item.spatialBasis,
-            td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
+            value: item.igtBasis ?? item.spatialBasis,
+            td: (
+              <IgtBasisBadge>
+                {item.igtBasis ?? item.spatialBasis ?? "kawasan"}
+              </IgtBasisBadge>
+            ),
             align: "start" as const,
           },
           {

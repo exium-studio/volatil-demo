@@ -100,8 +100,12 @@ const InternalHomeServiceRateStats = (props: {
       return [];
     }
 
-    const bidangRate = pricingItems.find((p) => p.spatialBasis === "bidang");
-    const kawasanRate = pricingItems.find((p) => p.spatialBasis === "kawasan");
+    const bidangRate = pricingItems.find(
+      (p) => (p.igtBasis ?? p.spatialBasis) === "bidang",
+    );
+    const kawasanRate = pricingItems.find(
+      (p) => (p.igtBasis ?? p.spatialBasis) === "kawasan",
+    );
 
     const result: InternalHomeServiceRateItem[] = [];
 

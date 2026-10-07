@@ -12,6 +12,7 @@ export type LayerAttributeTarget =
       id: string;
       title?: string | null;
       label?: string | null;
+      igtBasis?: "bidang" | "kawasan";
       spatialBasis?: "bidang" | "kawasan";
       wfsTypeName?: string;
       wmsLayers?: string;

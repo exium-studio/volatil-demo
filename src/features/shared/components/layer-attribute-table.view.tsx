@@ -95,7 +95,7 @@ export const LayerAttributeTableView = memo(
       );
     }, [targetLayer, effectiveTypeName]);
 
-    const spatialBasis = targetLayer?.spatialBasis;
+    const igtBasis = targetLayer?.igtBasis ?? targetLayer?.spatialBasis;
 
     // Queries — server-side WFS pagination
     const {
@@ -130,7 +130,8 @@ export const LayerAttributeTableView = memo(
           id: targetLayer.id,
           title: targetLayer.title,
           bbox: targetLayer.bbox ?? null,
-          spatialBasis: targetLayer.spatialBasis,
+          igtBasis,
+          spatialBasis: igtBasis,
           wfs: {
             wfsTypeName: effectiveTypeName,
             wfsUrl: effectiveWfsUrl,
@@ -169,7 +170,7 @@ export const LayerAttributeTableView = memo(
             <VStack align={"start"} gap={"xs"} minW={0}>
               <HStack gap={"xs"} align={"center"}>
                 <P fontWeight={"semibold"}>{`Detail Atribut: ${layerTitle}`}</P>
-                {spatialBasis && <IgtBasisBadge>{spatialBasis}</IgtBasisBadge>}
+                {igtBasis && <IgtBasisBadge>{igtBasis}</IgtBasisBadge>}
               </HStack>
 
               {effectiveTypeName && (

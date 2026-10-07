@@ -2,6 +2,7 @@
 
 export type MitraPolicyItem = {
   id: string;
+  igtBasis?: "bidang" | "kawasan";
   spatialBasis: "bidang" | "kawasan";
   unitPrice: number;
   unitLabel: string;

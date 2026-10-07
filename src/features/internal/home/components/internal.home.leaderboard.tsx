@@ -286,7 +286,9 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
         ) : (
           <VStack align={"stretch"} gap={0} w={"full"}>
             {topIgtLayers.map((layer: TopIgtLayerItem, index: number) => {
-              const basisConfig = IGT_BASIS_MAP[layer.spatialBasis];
+              const effectiveBasis =
+                layer.igtBasis ?? layer.spatialBasis ?? "kawasan";
+              const basisConfig = IGT_BASIS_MAP[effectiveBasis];
               return (
                 <HStack
                   key={layer.layerId}
@@ -328,7 +330,7 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
                           {basisConfig?.icon && (
                             <AppIcon icon={basisConfig.icon} size={"sm"} />
                           )}
-                          {basisConfig?.label ?? layer.spatialBasis}
+                          {basisConfig?.label ?? effectiveBasis}
                         </Badge>
 
                         <P fontSize={"xs"} color={"fg.subtle"}>

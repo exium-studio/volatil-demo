@@ -8,6 +8,7 @@ export type OrderedIgtLayerPreviewItem = {
   sourceLayerId?: string;
   sourceLayerTitle?: string;
   title?: string;
+  igtBasis?: IgtBasisType | string;
   spatialBasis?: IgtBasisType | string;
   featuresCount?: number;
   areaHa?: number;

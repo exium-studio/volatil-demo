@@ -34,18 +34,47 @@ export type CalculateSpatialCoverageRequest = {
   };
 };
 
-export type CalculateSpatialCalculatedItem = {
-  id?: string;
-  sourceLayerId: string;
-  sourceLayerTitle: string;
-  spatialBasis: IgtBasisType;
-  featuresCount: number;
-  areaHa?: number;
+export type CalculateSpatialCoverageKawasan = {
+  areaHa: number;
+  polygon: GeoJSON.Polygon | GeoJSON.MultiPolygon;
+};
+
+export type CalculateSpatialSummaryItem = {
   unitPrice: number;
+  featureCount: number;
   subtotalPrice: number;
 };
 
+export type CalculateSpatialSummary = {
+  bidang: CalculateSpatialSummaryItem;
+  kawasan: CalculateSpatialSummaryItem;
+  totalPrice: number;
+};
+
+export type CalculateSpatialValidation = {
+  isValid: boolean;
+  message?: string;
+};
+
+export type CalculateSpatialCalculatedItem = {
+  id?: string;
+  layerId?: string;
+  sourceLayerId: string;
+  sourceLayerTitle: string;
+  title?: string;
+  igtBasis: IgtBasisType;
+  spatialBasis: IgtBasisType;
+  featureCount: number;
+  featuresCount: number;
+  areaHa?: number;
+  unitPrice?: number;
+  subtotalPrice?: number;
+};
+
 export type CalculateSpatialCoverageResult = {
+  coverageKawasan?: CalculateSpatialCoverageKawasan;
+  summary?: CalculateSpatialSummary;
+  validation?: CalculateSpatialValidation;
   coveragePolygon: GeoJSON.Polygon | GeoJSON.MultiPolygon | null;
   totalBidangCount: number;
   totalKawasanCount: number;

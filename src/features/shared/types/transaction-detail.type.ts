@@ -21,7 +21,8 @@ export type SharedTransactionOrderItem = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
-  spatialBasis: IgtBasisType;
+  igtBasis?: IgtBasisType;
+  spatialBasis?: IgtBasisType;
   featuresCount?: number;
   snapshotFeaturesCount?: number;
   areaHa?: number;

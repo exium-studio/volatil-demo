@@ -1,11 +1,111 @@
-// src/features/mitra/data-request/api/mitra.data-request-calculation.api.ts
-
 import type {
-  CalculateSpatialCoverageRequest,
+  CalculateSpatialCalculatedItem,
   CalculateSpatialCoverageResult,
+  CalculateSpatialCoverageRequest,
   CalculateSpatialStreamCallbacks,
 } from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
 import { getApiBaseUrl } from "@/shared/utils/url/url.utils";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const normalizeSpatialCalculationResult = (raw: any): CalculateSpatialCoverageResult => {
+  if (!raw) {
+    return {
+      coveragePolygon: null,
+      totalBidangCount: 0,
+      totalKawasanCount: 0,
+      totalKawasanAreaHa: 0,
+      subtotalBidangPrice: 0,
+      subtotalKawasanPrice: 0,
+      estimatedTotalPrice: 0,
+      isPurchaseLimitValid: true,
+      items: [],
+    };
+  }
+
+  const rawData = raw.data ?? raw;
+  const coverageKawasan = rawData.coverageKawasan;
+  const summary = rawData.summary;
+  const validation = rawData.validation;
+
+  const rawItems = rawData.items ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const items: CalculateSpatialCalculatedItem[] = rawItems.map((it: any) => {
+    const igtBasis = it.igtBasis ?? it.spatialBasis ?? "kawasan";
+    const featureCount = it.featureCount ?? it.featuresCount ?? 0;
+    const sourceLayerId = it.layerId ?? it.sourceLayerId ?? it.id ?? "";
+    const sourceLayerTitle = it.title ?? it.sourceLayerTitle ?? sourceLayerId;
+
+    return {
+      id: it.id ?? sourceLayerId,
+      layerId: sourceLayerId,
+      sourceLayerId,
+      sourceLayerTitle,
+      title: sourceLayerTitle,
+      igtBasis,
+      spatialBasis: igtBasis,
+      featureCount,
+      featuresCount: featureCount,
+      areaHa: it.areaHa ?? 0,
+      unitPrice: it.unitPrice,
+      subtotalPrice: it.subtotalPrice,
+    };
+  });
+
+  const totalBidangCount =
+    summary?.bidang?.featureCount ??
+    rawData.totalBidangCount ??
+    items
+      .filter((i) => i.igtBasis === "bidang")
+      .reduce((sum, i) => sum + (i.featureCount || 0), 0);
+
+  const totalKawasanCount =
+    summary?.kawasan?.featureCount ??
+    rawData.totalKawasanCount ??
+    items
+      .filter((i) => i.igtBasis === "kawasan")
+      .reduce((sum, i) => sum + (i.featureCount || 0), 0);
+
+  const totalKawasanAreaHa =
+    coverageKawasan?.areaHa ?? rawData.totalKawasanAreaHa ?? 0;
+
+  const subtotalBidangPrice =
+    summary?.bidang?.subtotalPrice ?? rawData.subtotalBidangPrice ?? 0;
+
+  const subtotalKawasanPrice =
+    summary?.kawasan?.subtotalPrice ?? rawData.subtotalKawasanPrice ?? 0;
+
+  const estimatedTotalPrice =
+    summary?.totalPrice ??
+    rawData.estimatedTotalPrice ??
+    subtotalBidangPrice + subtotalKawasanPrice;
+
+  const isPurchaseLimitValid =
+    validation?.isValid !== undefined
+      ? validation.isValid
+      : rawData.isPurchaseLimitValid ?? true;
+
+  const purchaseLimitMessage =
+    validation?.message ?? rawData.purchaseLimitMessage;
+
+  const coveragePolygon =
+    coverageKawasan?.polygon ?? rawData.coveragePolygon ?? null;
+
+  return {
+    coverageKawasan,
+    summary,
+    validation,
+    coveragePolygon,
+    totalBidangCount,
+    totalKawasanCount,
+    totalKawasanAreaHa,
+    subtotalBidangPrice,
+    subtotalKawasanPrice,
+    estimatedTotalPrice,
+    isPurchaseLimitValid,
+    purchaseLimitMessage,
+    items,
+  };
+};
 
 /**
  * Triggers spatial calculation (clipping & ST_Union) on Backend PostGIS via HTTP SSE Stream.
@@ -56,7 +156,8 @@ export async function calculateSpatialCoverageStream(
     const contentType = response.headers.get("content-type") || "";
     if (contentType.includes("application/json") && response.ok) {
       const data = await response.json();
-      const result: CalculateSpatialCoverageResult = data.data ?? data;
+      const result: CalculateSpatialCoverageResult =
+        normalizeSpatialCalculationResult(data);
       callbacks.onEvent?.({
         type: "completed",
         data: result,
@@ -148,7 +249,7 @@ export async function calculateSpatialCoverageStream(
             try {
               const parsed = JSON.parse(currentData);
               const result: CalculateSpatialCoverageResult =
-                parsed.data ?? parsed;
+                normalizeSpatialCalculationResult(parsed);
               callbacks.onCompleted?.(result);
               callbacks.onEvent?.({
                 type: "completed",
@@ -198,10 +299,11 @@ export async function calculateSpatialCoverageStream(
               } else if (
                 parsed.type === "completed" ||
                 parsed.done === true ||
+                parsed.coverageKawasan !== undefined ||
                 parsed.totalBidangCount !== undefined
               ) {
                 const result: CalculateSpatialCoverageResult =
-                  parsed.data ?? parsed;
+                  normalizeSpatialCalculationResult(parsed);
                 callbacks.onCompleted?.(result);
                 callbacks.onEvent?.({
                   type: "completed",

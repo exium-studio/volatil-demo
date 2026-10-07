@@ -990,7 +990,8 @@ type MitraIgtLayersResponse = {
     items: Array<{
       id: string;
       title: string;
-      spatialBasis: "bidang" | "kawasan";
+      igtBasis: "bidang" | "kawasan";
+      spatialBasis?: "bidang" | "kawasan";
       bbox: [number, number, number, number];
       visible: boolean;
       defaultVisible: boolean;
@@ -1023,7 +1024,8 @@ type MitraIgtLayersResponse = {
   items?: Array<{
     id: string;
     title: string;
-    spatialBasis: "bidang" | "kawasan";
+    igtBasis: "bidang" | "kawasan";
+    spatialBasis?: "bidang" | "kawasan";
     bbox: [number, number, number, number];
     visible: boolean;
     defaultVisible: boolean;
@@ -1228,7 +1230,8 @@ type OrderListResponse = {
       id: string;
       sourceLayerId: string;
       sourceLayerTitle: string;
-      spatialBasis: "bidang" | "kawasan";
+      igtBasis: "bidang" | "kawasan";
+      spatialBasis?: "bidang" | "kawasan";
       featuresCount: number;
       areaHa?: number;
       unitPrice: number;
@@ -1270,7 +1273,8 @@ type GetOrderDetailResponse = {
       id: string;
       sourceLayerId: string;
       sourceLayerTitle: string;
-      spatialBasis: "bidang" | "kawasan";
+      igtBasis: "bidang" | "kawasan";
+      spatialBasis?: "bidang" | "kawasan";
       selectionType: string;
       featuresCount: number;
       unitPrice: number;
@@ -1356,6 +1360,8 @@ type OrderPaymentStatusResponse = {
   data: {
     orderId: string;
     transactionStatus: TransactionStatus;
+    orderStatus?: OrderStatus;
+    settledAt?: string;
     paidAt?: string;
   };
 };
@@ -1378,7 +1384,8 @@ type MyDataResponse = {
     items: Array<{
       id: string;
       title: string;
-      spatialBasis: "bidang" | "kawasan";
+      igtBasis: "bidang" | "kawasan";
+      spatialBasis?: "bidang" | "kawasan";
       wfsUrl: string | null;
       wmsUrl: string | null;
       externalWfsUrl?: string | null;
@@ -1392,6 +1399,35 @@ type MyDataResponse = {
     pagination: PaginationMeta;
   };
   timestamp: string;
+};
+```
+
+### Perpanjangan Masa Aktif Workspace (Renewal)
+- **Endpoint**: `POST /api/mitra/my-data/{workspaceId}/renew`
+- **Akses**: `Mitra Only`
+- **Payload**:
+```typescript
+type RenewWorkspaceRequest = {
+  durationMonths?: number;
+  paymentMethod?: "MPN_GEN2" | "VA_MANDIRI" | "VA_BRI" | "VA_BCA" | "QRIS";
+};
+```
+- **Response (200 OK / 201 Created)**:
+```typescript
+type RenewWorkspaceResponse = {
+  success: true;
+  data: {
+    workspaceId: string;
+    orderId: string;
+    orderNumber: string;
+    billingCode: string;
+    totalAmount: number;
+    status: "pending_payment" | "paid";
+    expiresAt: string;
+    extendedUntil: string;
+    createdAt: string;
+    billingExpiredAt: string;
+  };
 };
 ```
 
@@ -1413,6 +1449,7 @@ type TransactionHistoryResponse = {
     selectionType: "catalog" | "upload_aoi" | "draw_aoi";
     totalAmount: number;
     createdAt: string;
+    settledAt?: string;
     paidAt?: string;
     expiredAt?: string;
     billingExpiredAt?: string;
@@ -1420,7 +1457,8 @@ type TransactionHistoryResponse = {
       id: string;
       sourceLayerId: string;
       sourceLayerTitle: string;
-      spatialBasis: "bidang" | "kawasan";
+      igtBasis: "bidang" | "kawasan";
+      spatialBasis?: "bidang" | "kawasan";
       snapshotFeaturesCount: number;
       snapshotAreaHa?: number;
       unitPrice: number;
@@ -1575,7 +1613,8 @@ type InternalOrderListResponse = {
       id: string;
       sourceLayerId: string;
       sourceLayerTitle: string;
-      spatialBasis: "bidang" | "kawasan";
+      igtBasis: "bidang" | "kawasan";
+      spatialBasis?: "bidang" | "kawasan";
       featuresCount: number;
       areaHa?: number;
       unitPrice: number;
@@ -1779,3 +1818,11 @@ export type UserGuideTargetRole =
   | "mitra"    // Khusus pengguna portal Mitra
   | "internal" // Khusus verifikator & admin Internal ATR/BPN
 ```
+
+### 8. SSOT Basis IGT Spasial (`IgtBasisType`)
+```typescript
+export type IgtBasisType = "bidang" | "kawasan";
+```
+> [!IMPORTANT]
+> Properti `spatialBasis` telah didegradasi / dihapus total (clean break) dan digantikan secara standar dengan `igtBasis: "bidang" | "kawasan"`.
+

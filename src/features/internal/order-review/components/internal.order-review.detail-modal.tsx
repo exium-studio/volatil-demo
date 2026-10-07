@@ -150,7 +150,7 @@ const InternalOrderReviewDetailModalContent = (
                   <HStack justify={"space-between"} align={"center"}>
                     <HStack gap={"xs"}>
                       <IgtBasisBadge size={"xs"}>
-                        {item.spatialBasis}
+                        {item.igtBasis ?? item.spatialBasis ?? "kawasan"}
                       </IgtBasisBadge>
                       <P fontSize={"xs"} fontWeight={"medium"}>
                         {item.sourceLayerTitle}
@@ -166,7 +166,7 @@ const InternalOrderReviewDetailModalContent = (
                       {item.sourceLayerId}
                     </P>
                     <P fontSize={"2xs"} color={"fg.muted"}>
-                      {item.spatialBasis === "bidang"
+                      {(item.igtBasis ?? item.spatialBasis) === "bidang"
                         ? `${item.featuresCount} bidang`
                         : `${item.areaHa ?? 0} ha`}
                     </P>

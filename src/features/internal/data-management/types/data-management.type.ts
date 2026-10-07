@@ -83,6 +83,7 @@ export type GeoServerWorkspaceLayerOption = {
   abstract?: string;
   srs?: string;
   geometryType?: "Polygon" | "MultiPolygon" | "Point" | "LineString";
+  igtBasis?: IgtBasisType;
   spatialBasis?: IgtBasisType;
   bbox?: [number, number, number, number];
 };

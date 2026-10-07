@@ -122,6 +122,7 @@ export type ProvisionStreamItem = {
   totalItems: number;
   sourceLayerId: string;
   sourceLayerTitle: string;
+  igtBasis?: string;
   spatialBasis?: string;
   status: ProvisionStreamItemStatus;
   proxyWmsUrl?: string;

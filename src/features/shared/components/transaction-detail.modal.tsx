@@ -265,7 +265,8 @@ export const TransactionDetailModalContent = (
     if (!transaction?.items) return [];
 
     return transaction.items.map((item: SharedTransactionOrderItem) => {
-      const isBidang = item.spatialBasis === "bidang";
+      const basis = item.igtBasis ?? item.spatialBasis ?? "kawasan";
+      const isBidang = basis === "bidang";
       const count = item.featuresCount ?? item.snapshotFeaturesCount ?? 0;
       const area = item.areaHa ?? item.snapshotAreaHa ?? 0;
       const qty = isBidang
@@ -282,8 +283,8 @@ export const TransactionDetailModalContent = (
             align: "start" as const,
           },
           {
-            value: item.spatialBasis,
-            td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
+            value: basis,
+            td: <IgtBasisBadge>{basis}</IgtBasisBadge>,
             align: "start" as const,
           },
           {

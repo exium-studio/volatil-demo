@@ -178,7 +178,8 @@ export type CartOrderItem = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
-  spatialBasis: IgtBasisType;
+  igtBasis?: IgtBasisType;
+  spatialBasis?: IgtBasisType;
   featuresCount: number;
   areaHa?: number;
   unitPrice: number;

@@ -71,13 +71,16 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
 
   const layerOptions: FocusSelectOption[] = useMemo(
     () =>
-      workspaceLayers.map((lyr) => ({
-        label: lyr.title || lyr.name,
-        value: lyr.name,
-        description:
-          lyr.abstract ||
-          (lyr.spatialBasis ? `Basis: ${lyr.spatialBasis}` : undefined),
-      })),
+      workspaceLayers.map((lyr) => {
+        const basis = lyr.igtBasis ?? lyr.spatialBasis;
+        return {
+          label: lyr.title || lyr.name,
+          value: lyr.name,
+          description:
+            lyr.abstract ||
+            (basis ? `Basis: ${basis}` : undefined),
+        };
+      }),
     [workspaceLayers],
   );
 

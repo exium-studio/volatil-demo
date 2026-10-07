@@ -8,18 +8,22 @@ import type { ApiResponse } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const DUMMY_POLICIES_RESPONSE: MitraPricingPolicyResponse = {
-  policies: DUMMY_PRICING_ITEMS.map((item) => ({
-    id: item.id,
-    spatialBasis: item.spatialBasis,
-    unitPrice: item.unitPrice,
-    unitLabel: item.unitLabel,
-    minPurchase:
-      item.spatialBasis === "bidang"
-        ? CART_CONFIG.minimumBidangCount
-        : CART_CONFIG.minimumKawasanHa,
-    minUnit: item.spatialBasis === "bidang" ? "bidang" : "ha",
-    description: item.description,
-  })),
+  policies: DUMMY_PRICING_ITEMS.map((item) => {
+    const basis = item.igtBasis ?? item.spatialBasis ?? "kawasan";
+    return {
+      id: item.id,
+      igtBasis: basis,
+      spatialBasis: basis,
+      unitPrice: item.unitPrice,
+      unitLabel: item.unitLabel,
+      minPurchase:
+        basis === "bidang"
+          ? CART_CONFIG.minimumBidangCount
+          : CART_CONFIG.minimumKawasanHa,
+      minUnit: basis === "bidang" ? "bidang" : "ha",
+      description: item.description,
+    };
+  }),
   config: {
     minimumBidangCount: CART_CONFIG.minimumBidangCount,
     minimumKawasanHa: CART_CONFIG.minimumKawasanHa,

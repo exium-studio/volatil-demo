@@ -219,9 +219,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const filteredLayers = useMemo(() => {
       let layers = intersectingLayers;
       if (basisFilter === "bidang") {
-        layers = layers.filter((l) => l.spatialBasis === "bidang");
+        layers = layers.filter(
+          (l) => (l.igtBasis ?? l.spatialBasis) === "bidang",
+        );
       } else if (basisFilter === "kawasan") {
-        layers = layers.filter((l) => l.spatialBasis === "kawasan");
+        layers = layers.filter(
+          (l) => (l.igtBasis ?? l.spatialBasis) === "kawasan",
+        );
       }
       if (!debouncedSearch) return layers;
       const lower = debouncedSearch.toLowerCase();
@@ -234,12 +238,18 @@ export const MitraDataRequestIgtLayerDataView = memo(
     }, [intersectingLayers, basisFilter, debouncedSearch]);
 
     const bidangLayers = useMemo(
-      () => filteredLayers.filter((l) => l.spatialBasis === "bidang"),
+      () =>
+        filteredLayers.filter(
+          (l) => (l.igtBasis ?? l.spatialBasis) === "bidang",
+        ),
       [filteredLayers],
     );
 
     const kawasanLayers = useMemo(
-      () => filteredLayers.filter((l) => l.spatialBasis === "kawasan"),
+      () =>
+        filteredLayers.filter(
+          (l) => (l.igtBasis ?? l.spatialBasis) === "kawasan",
+        ),
       [filteredLayers],
     );
 
@@ -463,7 +473,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
           const formattedTitle = layerDisplayName.replace(/_/g, " ");
 
           const calcItem = calculationResult?.items?.find(
-            (it) => it.sourceLayerId === layer.id,
+            (it) =>
+              it.sourceLayerId === layer.id ||
+              it.layerId === layer.id ||
+              it.sourceLayerId === layer.typeName ||
+              it.layerId === layer.typeName ||
+              it.sourceLayerId === layer.wfs?.wfsTypeName ||
+              it.layerId === layer.wfs?.wfsTypeName,
           );
 
           const countOrAreaText =
@@ -585,10 +601,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
       .map((item) => item.data)
       .filter(Boolean) as IgtLayerItem[];
     const selectedHasBidang = selectedLayers.some(
-      (layer) => layer.spatialBasis === "bidang",
+      (layer) => (layer.igtBasis ?? layer.spatialBasis) === "bidang",
     );
     const selectedHasKawasan = selectedLayers.some(
-      (layer) => layer.spatialBasis === "kawasan",
+      (layer) => (layer.igtBasis ?? layer.spatialBasis) === "kawasan",
     );
 
     let isSelectionLimitInvalid = false;

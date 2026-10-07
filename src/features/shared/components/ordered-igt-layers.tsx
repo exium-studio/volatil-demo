@@ -124,7 +124,7 @@ export const OrderedIgtLayersPreviewModalContent = (
   const totalBidang = useMemo(
     () =>
       items
-        .filter((it) => it.spatialBasis === "bidang")
+        .filter((it) => (it.igtBasis ?? it.spatialBasis) === "bidang")
         .reduce((sum, it) => sum + (it.featuresCount ?? 0), 0),
     [items],
   );
@@ -173,8 +173,9 @@ export const OrderedIgtLayersPreviewModalContent = (
           <VStack align={"stretch"} gap={"sm"}>
             {items.map((item, index) => {
               const displayName = item.sourceLayerTitle || "-";
-              const isBidang = item.spatialBasis === "bidang";
-              const isKawasan = item.spatialBasis === "kawasan";
+              const basis = item.igtBasis ?? item.spatialBasis;
+              const isBidang = basis === "bidang";
+              const isKawasan = basis === "kawasan";
 
               let countOrAreaDetail = "-";
               if (isBidang && (item.featuresCount ?? 0) > 0) {
@@ -201,9 +202,9 @@ export const OrderedIgtLayersPreviewModalContent = (
                         <HStack align={"center"} gap={"xs"}>
                           <P wordBreak={"break-word"}>{displayName}</P>
 
-                          {item.spatialBasis && (
+                          {basis && (
                             <IgtBasisBadge size={"xs"}>
-                              {item.spatialBasis}
+                              {basis}
                             </IgtBasisBadge>
                           )}
                         </HStack>

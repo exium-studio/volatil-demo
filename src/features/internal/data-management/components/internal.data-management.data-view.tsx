@@ -71,13 +71,13 @@ export const InternalDataManagementDataView = () => {
     page: number;
     pageSize: number;
     search: string;
-    spatialBasis: string;
+    igtBasis: string;
     publishStatus: string;
   }>({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
-    spatialBasis: "all",
+    igtBasis: "all",
     publishStatus: "all",
   });
 
@@ -99,8 +99,8 @@ export const InternalDataManagementDataView = () => {
     pageSize: params.pageSize,
     search: params.search || undefined,
     igtBasis:
-      params.spatialBasis !== "all"
-        ? (params.spatialBasis as IgtBasisType)
+      params.igtBasis !== "all"
+        ? (params.igtBasis as IgtBasisType)
         : undefined,
     isActive:
       params.publishStatus === "published"
@@ -114,18 +114,18 @@ export const InternalDataManagementDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const isSearching = Boolean(
     params.search.trim() ||
-    params.spatialBasis !== "all" ||
+    params.igtBasis !== "all" ||
     params.publishStatus !== "all",
   );
   const searchQuery = useMemo(() => {
     if (params.search.trim()) return params.search;
-    if (params.spatialBasis !== "all" && params.publishStatus !== "all") {
-      return `${params.spatialBasis}, ${params.publishStatus}`;
+    if (params.igtBasis !== "all" && params.publishStatus !== "all") {
+      return `${params.igtBasis}, ${params.publishStatus}`;
     }
-    if (params.spatialBasis !== "all") return params.spatialBasis;
+    if (params.igtBasis !== "all") return params.igtBasis;
     if (params.publishStatus !== "all") return params.publishStatus;
     return "...";
-  }, [params.search, params.spatialBasis, params.publishStatus]);
+  }, [params.search, params.igtBasis, params.publishStatus]);
 
   // Map Layer Store for toggling visibility
   const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
@@ -476,10 +476,10 @@ export const InternalDataManagementDataView = () => {
 
         <IgtBasisFilterSelect
           modalKey={"data-management-igt-basis-filter"}
-          value={params.spatialBasis}
+          value={params.igtBasis}
           onValueChange={(val) =>
             startTransition(() => {
-              setParams((prev) => ({ ...prev, spatialBasis: val, page: 1 }));
+              setParams((prev) => ({ ...prev, igtBasis: val, page: 1 }));
             })
           }
           w={"150px"}

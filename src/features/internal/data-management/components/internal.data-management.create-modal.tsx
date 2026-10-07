@@ -134,8 +134,9 @@ const InternalDataManagementCreateModalContent = (
           shouldValidate: true,
         });
       }
-      if (layerDetail.spatialBasis) {
-        setValue("igtBasis", layerDetail.spatialBasis, {
+      const basis = layerDetail.igtBasis ?? layerDetail.spatialBasis;
+      if (basis) {
+        setValue("igtBasis", basis, {
           shouldValidate: true,
         });
       }

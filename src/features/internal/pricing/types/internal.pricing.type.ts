@@ -11,7 +11,8 @@ export type PricingItem = {
   layerId?: string;
   layerTitle?: string;
   kodePnbp?: string;
-  spatialBasis: IgtBasisType;
+  igtBasis?: IgtBasisType;
+  spatialBasis?: IgtBasisType;
   unitPrice: number;
   unitLabel: string;
   minPurchase?: number;
@@ -23,6 +24,7 @@ export type PricingItem = {
 };
 
 export type PricingQueryParams = PaginatedParams & {
+  igtBasis?: IgtBasisType;
   spatialBasis?: IgtBasisType;
 };
 
@@ -42,7 +44,8 @@ export type UpdatePricingPayload = {
 export type CreatePricingPayload = {
   layerId?: string;
   layerTitle?: string;
-  spatialBasis: IgtBasisType;
+  igtBasis: IgtBasisType;
+  spatialBasis?: IgtBasisType;
   unitPrice: number;
   unitLabel: string;
   effectiveDate: string;
