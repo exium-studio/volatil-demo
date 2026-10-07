@@ -1,170 +1,250 @@
 # Spesifikasi Integrasi Backend (BE) — Update Fitur Volatil
 
-Dokumen ini ditujukan untuk tim Backend (BE) sebagai panduan penyesuaian API dan background job sehubungan dengan implementasi fitur terbaru di frontend Volatil:
-1. **Notifikasi Peringatan Masa Aktif Layanan IGT Kedaluwarsa (H-7)**
-2. **Interaktivitas Inbox & Deep Link ke Detail Workspace Data Saya**
-3. **Alur Perpanjangan Layanan Workspace IGT (_Renew -> Bayar -> Aktif/Ready_)**
-4. **Modul Master GeoServer (Source of Data): Uji Koneksi & Keamanan Kredensial**
+Dokumen ini merupakan panduan spesifikasi teknis lengkap untuk tim Backend (BE) dalam rangka pengembangan dan penyesuaian API, background job scheduler, notification service, modul master GeoServer, perbaikan layout generator PDF invoice, dan dukungan spasial bounding box (`bbox`).
 
 ---
 
-## 1. Notifikasi Service Kedaluwarsa (H-7 Alert)
+## 1. Modul Notification & Inbox
 
-### 1.1. Mekanisme & Trigger (Cron Job)
-- **Frekuensi Job**: Dijalankan setiap hari (rekomendasi: pukul 00:00 atau 06:00 WIB).
-- **Kondisi Trigger**:
-  - Workspace / Layer IGT mitra memiliki status `ready` atau `active`.
-  - `expiresAt` tersisa antara **0 < `expiresAt - NOW()` <= 7 hari**.
-  - Mitra belum menerima notifikasi peringatan H-7 untuk siklus kedaluwarsa yang sama (idempotent / flag `is_notified_h7 = true`).
+### 1.1. Scope & Entity
 
-### 1.2. Schema Payload Item Inbox (`GET /api/inbox`)
-- **Kategori baru**: `"kedaluwarsa"`
-- **Action URL**: `/mitra/my-data/:workspaceId`
+Menyimpan dan mengambil notifikasi untuk pengguna (Mitra/Internal) dengan dukungan multi-channel terpusat (Inbox & Email).
+
+**Entity / Tabel `notifications` (atau `inbox`):**
+
+- `id` (UUID, Primary Key)
+- `userId` (ID Pengguna penerima)
+- `title` (String)
+- `message` (Text)
+- `category` (Enum / String: `"kedaluwarsa"` | `"transaksi"` | `"sistem"`)
+- `isRead` (Boolean, default `false`)
+- `actionUrl` (String, nullable — URL target navigasi di frontend, contoh: `/mitra/my-data/{workspaceId}`)
+- `actionLabel` (String, nullable — contoh: `"Perpanjang Layanan"`, `"Lihat Detail"`)
+- `metadata` (JSONB / Text nullable — menyimpan context seperti `workspaceId`, `orderId`, `daysRemaining`, dll.)
+- `createdAt` (Timestamp with timezone)
+- `readAt` (Timestamp with timezone, nullable)
+
+### 1.2. Endpoint Inbox API
+
+- **`GET /notifications`** : Mengambil daftar notifikasi milik pengguna yang sedang login (support pagination / sort by `createdAt DESC`).
+- **`GET /notifications/unread-count`** : Mengambil jumlah notifikasi yang belum dibaca (`isRead = false`).
+- **`PATCH /notifications/:id/read`** : Menandai satu notifikasi spesifik sebagai telah dibaca (`isRead = true`, set `readAt = NOW()`).
+- **`PATCH /notifications/read-all`** : Menandai semua notifikasi milik pengguna sebagai telah dibaca.
+
+> [!IMPORTANT]
+> User hanya dapat mengakses dan memodifikasi notifikasi miliknya sendiri (filter otomatis berdasarkan `userId` dari token JWT autentikasi).
+
+#### Contoh Response `GET /notifications`:
 
 ```json
 {
-  "id": "inbox-ntf-20261005-001",
-  "title": "Masa Aktif Service IGT Segera Berakhir",
-  "message": "Layanan WMS/WFS untuk workspace Peta Bidang Tanah Kab. Bogor akan kedaluwarsa dalam 7 hari. Segera lakukan perpanjangan agar integrasi GIS Anda tidak terputus.",
-  "category": "kedaluwarsa",
-  "isRead": false,
-  "createdAt": "2026-10-05T06:00:00Z",
-  "actionUrl": "/mitra/my-data/ws_ord_20260829_003",
-  "metadata": {
-    "orderId": "ord_20260829_003",
-    "workspaceId": "ws_ord_20260829_003",
-    "expiresAt": "2026-10-12T23:59:59Z",
-    "daysRemaining": 7
-  }
+  "success": true,
+  "code": 200,
+  "data": [
+    {
+      "id": "inbox-uuid-12345",
+      "title": "Peringatan Masa Aktif: Sisa 1 Minggu (H-7)",
+      "message": "Masa aktif layanan data spasial IGT pada workspace 'Workspace Bidang Tanah RTRW' akan kedaluwarsa dalam 7 hari (15 Okt 2026). Segera lakukan perpanjangan layanan untuk menjaga kelangsungan akses interoperabilitas WMS/WFS Anda.",
+      "category": "kedaluwarsa",
+      "isRead": false,
+      "actionUrl": "/mitra/my-data/22a298d6-e948-49a7-a8ac-4374c3f3f063",
+      "actionLabel": "Perpanjang Layanan",
+      "metadata": {
+        "workspaceId": "22a298d6-e948-49a7-a8ac-4374c3f3f063",
+        "workspaceName": "Workspace Bidang Tanah RTRW",
+        "orderId": "ord-20260830-001"
+      },
+      "createdAt": "2026-10-06T13:34:00Z",
+      "readAt": null
+    }
+  ],
+  "unreadCount": 1
 }
 ```
 
 ---
 
-## 2. Interaktivitas Inbox Notifikasi
+## 2. Notifikasi Kedaluwarsa H-7 (Background Scheduler)
 
-### 2.1. Standarisasi `actionUrl` pada Semua Notifikasi
-Frontend kini menjadikan seluruh kartu notifikasi di Inbox interaktif (dapat diklik langsung untuk mengarahkan pengguna ke halaman target terkait):
+### 2.1. Scope & Trigger
 
-| Skenario Notifikasi | Kategori | Nilai `actionUrl` yang Diharapkan |
-| :--- | :--- | :--- |
-| Pembelian IGT Berhasil / Service Ready | `transaksi` / `sistem` | `/mitra/my-data/:workspaceId` |
-| Peringatan Service Kedaluwarsa (H-7) | `kedaluwarsa` | `/mitra/my-data/:workspaceId` |
-| Billing / Menunggu Pembayaran | `transaksi` | `/mitra/billing/:billingCode?orderId=:orderId` |
-| Verifikasi Akun Mitra Disetujui | `sistem` | `/mitra/data-request` |
+Mengirimkan peringatan otomatis ketika masa aktif layanan data spasial IGT suatu workspace/service akan berakhir dalam 7 hari.
+
+**Trigger Scheduler:**
+
+1. Service/workspace memiliki field `expiresAt` (atau `expiredAt`).
+2. Sistem mendeteksi kondisi **H-7** terhadap `expiresAt` ($0 < \text{expiresAt} - \text{NOW()} \le 7\text{ hari}$).
+3. Scheduler mengecek dan memproses user/mitra terkait.
+4. Membuat **1 Inbox Notification** dan mengirim **1 Email Notification** ke user.
+5. Menyimpan metadata referensi resource (`workspaceId`, `orderId`, dll.).
+
+```json
+{
+  "title": "Peringatan Masa Aktif: Sisa 1 Minggu (H-7)",
+  "message": "Masa aktif layanan data spasial IGT pada workspace 'Workspace Bidang Tanah' akan kedaluwarsa dalam 7 hari (15 Okt 2026). Segera lakukan perpanjangan layanan untuk menjaga kelangsungan akses interoperabilitas WMS/WFS Anda.",
+  "category": "kedaluwarsa",
+  "actionUrl": "/mitra/my-data/{workspaceId}",
+  "actionLabel": "Perpanjang Layanan",
+  "metadata": {
+    "workspaceId": "22a298d6-e948-49a7-a8ac-4374c3f3f063",
+    "workspaceName": "Workspace Bidang Tanah RTRW",
+    "orderId": "ord-20260830-001"
+  }
+}
+```
+
+### 2.2. Aturan Wajib H-7 & Siklus Perpanjangan
+
+- **Tepat 1 Kali per Periode**: H-7 hanya dikirim 1 kali untuk setiap periode masa aktif layanan (1 Inbox + 1 Email).
+- **Idempotency Scheduler**: Scheduler yang berjalan berkali-kali / retry job **TIDAK BOLEH** menghasilkan duplikasi notifikasi.
+- **Siklus Renewal Baru**: Setelah layanan diperpanjang (_renewal_), `expiresAt` bergeser ke periode baru (contoh: +1 tahun). Periode baru ini berhak mendapatkan **1 kali kesempatan H-7 baru** saat mendekati tanggal kedaluwarsa yang baru.
+- Notifikasi H-7 dari periode masa aktif yang lama tidak boleh dikirim ulang.
+- Jika layanan sudah terlanjur kedaluwarsa atau sudah diperpanjang sebelum trigger H-7 terpicu, lewati pengiriman H-7 periode lama.
+
+```
+Expiry: 15 Okt 2026
+        ↓
+H-7: 8 Okt 2026 ───> Kirim 1 Inbox + 1 Email
+        ↓
+Scheduler 9 Okt  ───> SKIP (Idempotent)
+Scheduler 10 Okt ───> SKIP (Idempotent)
+...
+        ↓
+Perpanjangan (Renewal) Berhasil
+        ↓
+Expiry Baru: 15 Nov 2027
+        ↓
+H-7 Baru: 8 Nov 2027 ───> Kirim 1 Inbox + 1 Email Baru
+```
+
+---
+
+## 3. Order Event Lifecycle ke Notifikasi
+
+### 3.1. Flow Event
+
+Setiap transisi status order yang memerlukan informasi ke pengguna wajib menghasilkan notifikasi Inbox dan Email melalui service terpusat:
+
+```mermaid
+flowchart LR
+    A["Order Status Berubah"] --> B["BE Detect Event"]
+    B --> C["NotificationService.notify()"]
+    C --> D["Buat Record Inbox"]
+    C --> E["Kirim Email ke Mitra"]
+```
+
+### 3.2. Mapping Status / Event Order Existing
+
+Gunakan status/enum order existing di Backend tanpa membuat status baru:
+
+- `ORDER_CREATED`
+- `ORDER_SUBMITTED`
+- `PAYMENT_PENDING`
+- `PAYMENT_CONFIRMED`
+- `ORDER_PROCESSING`
+- `ORDER_COMPLETED`
+- `ORDER_REJECTED`
+- `ORDER_FAILED`
+- `ORDER_CANCELLED`
+
+Setiap event wajib menyediakan: `title`, `message`, `category`, `actionUrl`, `actionLabel`, dan `metadata`.
+
+---
+
+## 4. Arsitektur Notification Service & Idempotency Key
+
+### 4.1. Centralized Notification Service
+
+```
+NotificationService
+├── createInbox()
+├── sendEmail()
+└── notify(user, notificationPayload)
+        ├── create inbox
+        └── send email
+```
+
+**Manfaat:**
+
+- Format notifikasi seragam di seluruh channel.
+- Logika pencegahan duplikasi (_duplicate prevention_) terkontrol di satu titik.
+- Order service tidak perlu mengelola query database inbox secara manual.
+
+### 4.2. Aturan Idempotency Key
+
+Gunakan unique reference/event key pada tabel lock/log notifikasi:
+
+- **Format Order Event**: `ORDER_{STATUS}:order:{orderId}:user:{userId}`  
+  _Contoh:_ `ORDER_COMPLETED:order:ord-123:user-456`
+- **Format H-7 Expiry**: `EXPIRING_7_DAYS:workspace:{workspaceId}:expiry-{YYYY-MM-DD}:user:{userId}`  
+  _Contoh:_ `EXPIRING_7_DAYS:workspace:ws-123:expiry-2026-10-15:user-456`
 
 > [!NOTE]
-> Jika notifikasi bersifat informatif umum tanpa halaman tujuan khusus, field `actionUrl` dapat diisi `null` atau dihilangkan.
+> Dengan menyertakan string tanggal expiry (`expiry-2026-10-15`) ke dalam key, ketika layanan diperpanjang dan memiliki tanggal expiry baru, key idempotency otomatis berubah sehingga H-7 periode baru tetap dapat terkirim saat waktunya tiba.
 
 ---
 
-## 3. Fitur Perpanjangan Layanan (_Workspace Renewal_)
+## 5. Master GeoServer: Uji Koneksi (_Test Connection_)
 
-Alur lengkap perpanjangan:
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Mitra as Frontend (Mitra)
-    participant BE as Backend API
-    participant PG as Payment Gateway / Simponi
-    participant GS as GeoServer Internal
+### 5.1. Endpoint Schema
 
-    Mitra->>BE: POST /api/mitra/my-data/:workspaceId/renew
-    BE-->>Mitra: Return orderId, billingCode, totalAmount, extendedUntil
-    Mitra->>Mitra: Redirect ke /mitra/billing/:billingCode
-    Mitra->>PG: Pembayaran Billing Simponi
-    PG-->>BE: Webhook / Callback Payment Settled
-    Mitra->>BE: GET /api/mitra/cart/orders/:orderId/status
-    BE->>GS: Perbarui lisensi & pastikan WMS/WFS Layer status = "ready"
-    BE-->>Mitra: { transactionStatus: "paid", paidAt: "..." }
-    Mitra->>Mitra: Alert Sukses -> Redirect ke /mitra/my-data/:workspaceId
-```
-
-### 3.1. Endpoint Inisiasi Perpanjangan Layanan
-**`POST /api/mitra/my-data/:workspaceId/renew`**
-
-#### Headers:
-```http
-Authorization: Bearer <token_mitra>
-Content-Type: application/json
-```
-
-#### Request Body:
-```json
-{
-  "durationMonths": 12,
-  "paymentMethod": "billing_simponi"
-}
-```
-
-#### Response Body (`200 OK` / `201 Created`):
-```json
-{
-  "success": true,
-  "code": 200,
-  "message": "Order perpanjangan layanan berhasil dibuat",
-  "data": {
-    "orderId": "ord-renew-ws_ord_20260829_003-1728100000",
-    "orderNumber": "RNW-202610-0089",
-    "billingCode": "820269182374",
-    "totalAmount": 1500000,
-    "expiresAt": "2026-10-12T23:59:59Z",
-    "extendedUntil": "2027-10-12T23:59:59Z",
-    "status": "pending_payment"
-  }
-}
-```
-
-### 3.2. Endpoint Cek Status Pembayaran Order
-**`GET /api/mitra/cart/orders/:orderId/status`** (atau `/api/orders/:orderId/status`)
-
-#### Response Body Saat Sudah Dibayar (`200 OK`):
-```json
-{
-  "success": true,
-  "code": 200,
-  "message": "Status pembayaran berhasil diverifikasi",
-  "data": {
-    "orderId": "ord-renew-ws_ord_20260829_003-1728100000",
-    "transactionStatus": "paid",
-    "paidAt": "2026-10-05T06:15:30Z"
-  }
-}
-```
-
-### 3.3. Logika Update Data di Sisi Backend Saat Pembayaran Lunas
-Saat status pembayaran renewal menjadi `"paid"`:
-1. Perpanjang `expiresAt` pada tabel `mitra_workspaces` dan seluruh record `mitra_workspace_layers` terkait:
-   $$\text{expiresAt Baru} = \max(\text{expiresAt Lama}, \text{NOW()}) + (\text{durationMonths} \times 30 \text{ hari})$$
-2. Jika workspace sebelumnya berstatus `expired`, ubah kembali statusnya menjadi `ready` / `active`.
-3. Pastikan API key dan endpoint proxy GeoServer untuk workspace tersebut tetap aktif tanpa mengubah URL atau format koneksi QGIS yang sudah dimiliki mitra.
-4. Buat record faktur/invoice pembayaran baru di histori transaksi mitra.
-
----
-
-## 4. Modul Master GeoServer (Source of Data)
-
-### 4.1. Endpoint Uji Koneksi Server (*Test Connection*)
 **`POST /api/internal/master-geoserver/test-connection`**
 
-Frontend memanggil endpoint ini sebelum menyimpan server untuk memastikan instance GeoServer aktif dan kredensial valid.
+#### Request Payload:
 
-#### Request Body:
-```json
+```typescript
 {
-  "id": "geo-uuid-12345", 
-  "baseUrl": "https://geoserver.atrbpn.go.id/geoserver",
-  "username": "admin_spatial",
-  "password": "rahasiaPassword123"
+  id?: string;          // UUID Master GeoServer (Wajib dikirim jika dari form EDIT)
+  baseUrl: string;      // Base URL GeoServer
+  username?: string;    // Username autentikasi GeoServer
+  password?: string;    // Password (opsional jika dari form EDIT)
 }
 ```
-> **Catatan Kredensial & Mode Edit:**
-> - `id` (*opsional*): Jika dikirim (pada form edit server), backend dapat mencari record GeoServer tersimpan di database.
-> - Jika `id` ada dan `password` bernilai kosong / `undefined`, backend **wajib** menggunakan password tersimpan di database untuk melakukan uji koneksi (karena password tidak pernah dikirim ke frontend pada form edit demi keamanan).
-> - Jika `password` diisi oleh user, backend menggunakan password baru tersebut.
-> - Pada form tambah server baru (`Create`), parameter `id` tidak dikirim dan `password` wajib diisi.
 
-#### Response Body Berhasil (`200 OK`):
+### 5.2. Logika Resolusi Kredensial di Backend:
+
+```mermaid
+flowchart TD
+    A["Request Masuk (baseUrl, username, id?, password?)"] --> B{"Apakah 'id' ada?"}
+
+    B -- "TIDAK (Mode Create)" --> C{"Password diisi?"}
+    C -- "Ya" --> D["Uji koneksi dengan baseUrl, username & password input"]
+    C -- "Tidak" --> E["Return 400 Bad Request: Password wajib diisi"]
+
+    B -- "YA (Mode Edit)" --> F{"Password diisi oleh user?"}
+    F -- "Ya (User ganti password)" --> D
+    F -- "Tidak / Kosong" --> G["Ambil password tersimpan di DB berdasarkan id"]
+    G --> H{"Record GeoServer ditemukan?"}
+    H -- "Ya" --> I["Uji koneksi dengan baseUrl, username input + password dari DB"]
+    H -- "Tidak" --> J["Return 404 Not Found: Master GeoServer tidak ditemukan"]
+```
+
+### 5.3. Contoh Request & Response
+
+#### A. Request dari Form Edit (Password tidak diubah):
+
+```json
+{
+  "id": "7b8f9e0a-1234-4567-89ab-cdef01234567",
+  "baseUrl": "https://geoserver.atrbpn.go.id/geoserver",
+  "username": "admin_spatial"
+}
+```
+
+_Backend mengambil password tersimpan untuk `id` tersebut dari DB lalu melakukan tes request (misal: `GET /rest/workspaces.json`) ke instance GeoServer._
+
+#### B. Request dari Form Create (Server Baru):
+
+```json
+{
+  "baseUrl": "https://geoserver-dev.atrbpn.go.id/geoserver",
+  "username": "admin_dev",
+  "password": "PasswordBaru123"
+}
+```
+
+#### C. Response Berhasil (`200 OK`):
+
 ```json
 {
   "success": true,
@@ -180,7 +260,8 @@ Frontend memanggil endpoint ini sebelum menyimpan server untuk memastikan instan
 }
 ```
 
-#### Response Body Gagal (`200 OK` / `400 Bad Request`):
+#### D. Response Gagal (`200 OK` / `400 Bad Request`):
+
 ```json
 {
   "success": false,
@@ -193,29 +274,30 @@ Frontend memanggil endpoint ini sebelum menyimpan server untuk memastikan instan
 }
 ```
 
-### 4.2. Keamanan Kredensial & Response Masking
-1. **Password Write-Only**: Pada `GET /api/internal/master-geoserver` dan `GET /api/internal/master-geoserver/:id`, BE **DILARANG** mengembalikan plain text password. Field `password` pada response harus di-omit atau di-masking.
-2. **Update Password Opsional**: Pada `PUT /api/internal/master-geoserver/:id`, jika field `password` tidak dikirim / bernilai `undefined`, Backend harus mempertahankan password lama di database.
-3. **Field `isActive`**: Backend menyimpan status aktif boolean `isActive: true/false` pada record server.
+### 5.4. Keamanan Kredensial
+
+- Pada `GET /api/internal/master-geoserver` dan `GET /api/internal/master-geoserver/:id`, field `password` **DILARANG** dikembalikan dalam bentuk plain text (wajib di-omit atau di-masking).
+- Pada `PUT /api/internal/master-geoserver/:id`, jika field `password` kosong/undefined, pertahankan password yang sudah ada di database.
 
 ---
 
-## 5. Bounding Box Workspace (`bbox`) pada Detail & List Workspace
+## 6. Bounding Box Workspace (`bbox`) pada Data Saya
 
-### 5.1. Kebutuhan & Perilaku Frontend
-Ketika mitra membuka halaman detail workspace pada menu **Data Saya** (`/mitra/my-data/:workspaceId`), peta interaktif di sisi kiri secara otomatis mengarahkan kamera (*auto-fly & fit bounds*) ke batas wilayah spasial dari workspace tersebut.
+### 6.1. Kebutuhan & Perilaku Frontend
 
-Oleh karena itu, response detail workspace (dan list workspace) membutuhkan field `bbox`.
+Ketika mitra membuka halaman detail workspace pada menu **Data Saya** (`/mitra/my-data/:workspaceId`), peta interaktif di sisi kiri secara otomatis mengarahkan kamera (_auto-fly & fit bounds_) ke batas wilayah spasial dari workspace tersebut.
 
-### 5.2. Format `bbox` Spasial
-Field `bbox` menggunakan format array 4 elemen koordinat geografis **EPSG:4326 (WGS84)** dengan urutan **`[minLng, minLat, maxLng, maxLat]`** (*West, South, East, North*):
+Oleh karena itu, response detail workspace (`GET /api/mitra/workspaces/:id`) dan list workspace (`GET /api/mitra/workspaces`) membutuhkan field `bbox`.
+
+### 6.2. Format Koordinat Spasial `bbox`
+
+Field `bbox` menggunakan format array 4 elemen koordinat geografis **EPSG:4326 (WGS84)** dengan urutan **`[minLng, minLat, maxLng, maxLat]`** (_West, South, East, North_):
 
 ```json
 "bbox": [115.083839, -8.850039, 115.251534, -8.239441]
 ```
 
-### 5.3. Endpoint `GET /api/mitra/workspaces/:id`
-Response detail workspace yang dikembalikan ke frontend:
+### 6.3. Endpoint `GET /api/mitra/workspaces/:id`
 
 ```json
 {
@@ -260,20 +342,44 @@ Response detail workspace yang dikembalikan ke frontend:
 }
 ```
 
-### 5.4. Logika Penentuan `bbox` di Sisi Backend
-Backend dapat menghitung nilai `bbox` workspace melalui salah satu cara berikut:
-1. **Berdasarkan AOI Polygon Pesanan**: Menghitung bounding box dari geometri Polygon AOI yang digambar/dipilih mitra saat membuat order permohonan data.
-2. **Union Bounding Box dari Layer**: Menghitung gabungan (*union extent*) dari `bbox` seluruh layer yang tergabung dalam workspace tersebut (`ST_Extent` / `ST_Envelope` pada PostGIS).
+### 6.4. Logika Penentuan `bbox` di Backend
+
+1. **Berdasarkan AOI Polygon Pesanan**: Menghitung bounding box dari geometri Polygon AOI yang digambar/dipilih mitra saat membuat permohonan pesanan data.
+2. **Union Bounding Box dari Layer**: Menghitung gabungan (_union extent_) dari `bbox` seluruh layer yang tergabung dalam workspace tersebut (`ST_Extent` / `ST_Envelope` pada PostGIS).
 
 ---
 
-## 6. Checklist Ringkas untuk Tim BE
+## 7. Perbaikan Layout PDF Generator Invoice
 
-- [ ] Tambahkan enum/kategori `"kedaluwarsa"` pada tabel notifikasi.
-- [ ] Buat cron job harian notifikasi H-7 masa kedaluwarsa dengan menyertakan `actionUrl: "/mitra/my-data/{workspaceId}"`.
-- [ ] Implementasikan endpoint `POST /api/mitra/my-data/:workspaceId/renew`.
-- [ ] Hubungkan webhook pembayaran Simponi/PG untuk mengeksekusi penambahan masa aktif `expiresAt` (+12 bulan) dan status workspace menjadi `ready`.
-- [ ] Implementasikan endpoint `POST /api/internal/master-geoserver/test-connection`.
-- [ ] Terapkan masking kredensial password pada endpoint `GET /api/internal/master-geoserver`.
-- [ ] Sertakan field `bbox: [minLng, minLat, maxLng, maxLat]` pada endpoint `GET /api/mitra/workspaces/:id` dan `GET /api/mitra/workspaces`.
+### 7.1. Permasalahan Saat Ini
 
+Pada pesanan dengan item sedikit (contoh: 1-3 layer IGT), dokumen invoice terpecah menjadi 2 halaman dengan kondisi:
+
+- Halaman 1 berisi hampir seluruh konten tabel dan ringkasan.
+- Halaman 2 hanya berisi 1 baris teks footer (_orphan text_):  
+  `"Dicetak otomatis oleh Sistem IGTPR Prioritas • Waktu Cetak: 2026-10-06T02:02:39.477Z"`.
+
+### 7.2. Penyesuaian yang Diperlukan
+
+1. **Aturan Page Break (`page-break-inside: avoid`)**:
+   - Pastikan blok ringkasan total, tanda tangan TTE/QR, dan footer cetak dibungkus dalam kontainer yang tidak memicu page break paksa jika ruang di halaman 1 masih mencukupi.
+2. **Margin & Padding Dinamis**:
+   - Kurangi `margin-bottom` / `padding` antar seksi (header invoice, tabel item, info pembayaran) agar pesanan standar ($\le 5$ item) muat sempurna dalam **1 halaman utuh**.
+3. **Multi-page Dinamis**:
+   - Jika item layer sangat banyak ($> 6$ item) sehingga memerlukan halaman kedua, pastikan tabel terbelah secara rapi (_thead repeating_) dan footer tetap berada di bagian paling bawah halaman terakhir.
+
+---
+
+## 8. Acceptance Checklist untuk Tim BE
+
+- [ ] Entity/tabel `notifications` / `inbox` dibuat sesuai schema.
+- [ ] Centralized `NotificationService` terimplementasi (`createInbox`, `sendEmail`, `notify`).
+- [ ] Endpoint `GET /notifications` dan `GET /notifications/unread-count`.
+- [ ] Endpoint `PATCH /notifications/:id/read` dan `PATCH /notifications/read-all`.
+- [ ] Scheduler H-7 menghasilkan tepat 1 inbox + 1 email per periode expiry.
+- [ ] Idempotency key terpasang pada order event dan scheduler H-7 (pencegahan duplikasi notifikasi).
+- [ ] Renewal menghasilkan periode expiry baru yang memiliki kesempatan trigger H-7 baru.
+- [ ] Endpoint `POST /api/internal/master-geoserver/test-connection` mendukung parameter `id?` untuk mode edit tanpa kirim ulang password.
+- [ ] Password pada master GeoServer di-masking/omit pada response GET.
+- [ ] Field `bbox: [minLng, minLat, maxLng, maxLat]` disertakan pada response `GET /api/mitra/workspaces/:id` dan list workspace.
+- [ ] Template PDF Invoice dirapikan agar pesanan ringkas muat dalam 1 halaman tanpa footer terlempar ke halaman 2.
