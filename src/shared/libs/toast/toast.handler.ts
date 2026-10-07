@@ -1,6 +1,7 @@
 // src/shared/libs/toast/toast.handler.ts
 
 import { toast } from "@/design-system/components/toast";
+import { ApiError } from "@/shared/libs/api-client/api-error";
 import type { MutationToastOptions } from "@/shared/types/toast-handler.type";
 
 /**
@@ -38,6 +39,16 @@ export const mutationToastHandlers = (
       }
     },
     onError: (error: unknown) => {
+      // Close any active loading toast created by onMutate
+      toast.close(toastId);
+
+      // If the error was already handled and toasted by apiClient and no custom errorMessage is configured, skip duplicate toast
+      const isAlreadyHandled =
+        error instanceof ApiError && Boolean(error.isHandled);
+      if (isAlreadyHandled && !options.errorMessage) {
+        return;
+      }
+
       let errorMessageString = "Terjadi kesalahan";
       if (error instanceof Error) {
         errorMessageString = error.message;

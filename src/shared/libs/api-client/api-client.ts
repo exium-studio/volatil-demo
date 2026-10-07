@@ -78,6 +78,8 @@ export const apiClient = {
           endpoint.includes("/api/auth/sso/internal/callback") ||
           endpoint.includes("/api/auth/login/totp-verify");
 
+        let isToastFired = false;
+
         if (response.status === 401 || response.status === 403) {
           if (typeof window !== "undefined") {
             const currentPath =
@@ -105,6 +107,7 @@ export const apiClient = {
                     ? t["error.unauthorized"]()
                     : t["error.forbidden"]()),
               });
+              isToastFired = true;
 
               const isInternal =
                 window.location.pathname.startsWith("/internal") ||
@@ -145,10 +148,11 @@ export const apiClient = {
               id: options.toastId,
               description: detailDescription,
             });
+            isToastFired = true;
           }
         }
 
-        throw new ApiError(errorMessage, response.status, errorData);
+        throw new ApiError(errorMessage, response.status, errorData, isToastFired);
       }
 
       // Handle 204 No Content
@@ -177,13 +181,15 @@ export const apiClient = {
       const networkMsg =
         err instanceof Error ? err.message : "Terjadi kesalahan jaringan";
 
+      let isNetworkToastFired = false;
       if (!options.suppressToast && typeof window !== "undefined") {
         toast.error(networkMsg, {
           id: options.toastId ?? "network-error-toast",
         });
+        isNetworkToastFired = true;
       }
 
-      throw new ApiError(networkMsg, 0);
+      throw new ApiError(networkMsg, 0, undefined, isNetworkToastFired);
     }
   },
 
