@@ -348,7 +348,7 @@ export const TransactionDetailModalContent = (
           )}
 
           {isMounted && (
-            <SimpleGrid columns={[1, 1, 2]} gap={"sm"}>
+            <SimpleGrid columns={[1, 1, 2]} gapX={"lg"} gapY={"md"}>
               {/* Kiri: Timeline Riwayat Alur Pesanan */}
               <VStack gap={"md"} h={"full"} py={"xs"}>
                 {/* <P fontWeight={"semibold"}>{"Riwayat Alur Pesanan"}</P> */}
