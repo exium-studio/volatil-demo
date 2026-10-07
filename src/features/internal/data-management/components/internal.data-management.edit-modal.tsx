@@ -320,10 +320,6 @@ const InternalDataManagementEditModalContent = (
               }}
               selectedTypeName={typeName}
               onLayerChange={handleLayerChange}
-              initialLayerOption={{
-                label: item.title || item.typeName || item.id,
-                value: item.typeName || item.id,
-              }}
               errors={errors}
             />
           </Fieldset>

@@ -84,7 +84,6 @@ export type GeoServerWorkspaceLayersResponse = {
   layers: GeoServerWorkspaceLayerOption[];
 };
 
-import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
 import type { ReactNode } from "react";
 import type { z } from "zod";
@@ -101,7 +100,6 @@ export type GeoserverCascadeSelectProps = {
     typeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => void;
-  initialLayerOption?: FocusSelectOption;
   errors?: {
     geoserverId?: { message?: string };
     workspace?: { message?: string };
