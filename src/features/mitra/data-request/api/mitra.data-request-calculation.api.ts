@@ -7,7 +7,6 @@ import type {
 } from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
 import { getApiBaseUrl } from "@/shared/utils/url/url.utils";
 
-
 /**
  * Triggers spatial calculation (clipping & ST_Union) on Backend PostGIS via HTTP SSE Stream.
  * Supports streaming response via ReadableStream.
@@ -254,4 +253,3 @@ export async function calculateSpatialCoverageStream(
     }
   }
 }
-
