@@ -13,11 +13,19 @@ export type MaskedSecretFieldProps = BoxProps & {
   defaultVisible?: boolean;
 };
 
+export type MyDataServiceConfig = {
+  url: string;
+  baseUrl: string;
+};
+
 export type MyDataItem = {
   id: string;
   label: string | null;
   title: string;
+  igtBasis?: MyDataSpatialBasis;
   spatialBasis: MyDataSpatialBasis;
+  wms?: MyDataServiceConfig;
+  wfs?: MyDataServiceConfig;
   wfsUrl: string | null;
   wmsUrl: string | null;
   externalWfsUrl?: string | null;
@@ -40,6 +48,8 @@ export type MitraWorkspaceItem = {
   transactionNumber?: string;
   userId?: number | string;
   status: OrderStatus;
+  wms?: MyDataServiceConfig;
+  wfs?: MyDataServiceConfig;
   wmsUrl: string | null;
   wfsUrl?: string | null;
   qgisWmsUrl?: string | null;

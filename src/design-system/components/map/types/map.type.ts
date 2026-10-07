@@ -28,11 +28,13 @@ export type MapLayerConfig =
 
 export type BaseLayerConfig = {
   id: string;
-  /** GeoServer qualified layer typeName (e.g. 'workspace:layer_name') */
+  /** GeoServer qualified layer typeName (e.g. 'workspace:layer_name' or 'workspace') */
   typeName?: string;
   /** Human-readable title of the layer */
   title?: string;
-  /** Spatial basis of this IGT layer ("bidang" or "kawasan"). */
+  /** IGT Basis of this layer ("bidang" or "kawasan"). */
+  igtBasis?: "bidang" | "kawasan";
+  /** Spatial basis alias for backward compatibility */
   spatialBasis?: "bidang" | "kawasan";
   /** Bounding box of the layer [minLon, minLat, maxLon, maxLat]. */
   bbox?: [number, number, number, number];
@@ -85,6 +87,8 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
 
 /** WFS-specific query configuration for an IGT layer */
 export type IgtLayerWfsConfig = {
+  url?: string;
+  baseUrl?: string;
   wfsTypeName: string;
   wfsUrl: string;
   type: "wfs-fill" | "wfs-line" | "wfs-circle" | "wfs-symbol";
@@ -94,6 +98,8 @@ export type IgtLayerWfsConfig = {
 
 /** WMS-specific tile rendering configuration for an IGT layer */
 export type IgtLayerWmsConfig = {
+  url?: string;
+  baseUrl?: string;
   layers: string;
   wmsUrl: string;
   tileSize?: number;
@@ -107,8 +113,11 @@ export type IgtLayerWmsConfig = {
 /** Centralized IGT Layer Item containing metadata, WFS query config, and WMS render config */
 export type IgtLayerItem = {
   id: string;
+  workspaceName?: string;
+  layerName?: string | null;
   typeName?: string;
   title: string;
+  igtBasis: "bidang" | "kawasan";
   spatialBasis: "bidang" | "kawasan";
   bbox: [number, number, number, number];
   visible: boolean;

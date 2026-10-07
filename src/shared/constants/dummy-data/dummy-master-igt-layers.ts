@@ -10,10 +10,11 @@ import { createPaginationMeta } from "@/shared/types/common-response.type";
 
 export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
   {
-    id: "testing_workspace:TEST_RTRW_BADUNG",
+    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     title: "RTRW Badung",
     description:
       "Peta Rencana Tata Ruang Wilayah Kabupaten Badung (Pola Ruang & Struktur Ruang)",
+    igtBasis: "kawasan",
     spatialBasis: "kawasan",
     bbox: [115.083839, -8.850039, 115.251389, -8.239441],
     isActive: true,
@@ -26,17 +27,27 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
       baseUrl: "https://geoserver.atrbpn.go.id/geoserver",
     },
     workspaceName: "testing_workspace",
+    layerName: "TEST_RTRW_BADUNG",
     typeName: "testing_workspace:TEST_RTRW_BADUNG",
+    wms: {
+      url: "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
+      baseUrl: "/api/proxy/wms",
+    },
+    wfs: {
+      url: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
+      baseUrl: "/api/proxy/wfs",
+    },
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_RTRW_BADUNG",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_RTRW_BADUNG",
     createdAt: "2025-01-10T08:00:00Z",
     updatedAt: "2025-02-15T10:30:00Z",
   },
   {
-    id: "testing_workspace:TEST_ZNT_BADUNG",
+    id: "4ba85f64-5717-4562-b3fc-2c963f66afa7",
     title: "ZNT Badung",
     description:
       "Zona Nilai Tanah Wilayah Kabupaten Badung untuk penilaian nilai pasar wajar",
+    igtBasis: "kawasan",
     spatialBasis: "kawasan",
     bbox: [115.083839, -8.849308, 115.251534, -8.239852],
     isActive: true,
@@ -49,16 +60,26 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
       baseUrl: "https://geoserver.atrbpn.go.id/geoserver",
     },
     workspaceName: "testing_workspace",
+    layerName: "TEST_ZNT_BADUNG",
     typeName: "testing_workspace:TEST_ZNT_BADUNG",
+    wms: {
+      url: "/api/proxy/wms?layerId=testing_workspace:TEST_ZNT_BADUNG",
+      baseUrl: "/api/proxy/wms",
+    },
+    wfs: {
+      url: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
+      baseUrl: "/api/proxy/wfs",
+    },
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_ZNT_BADUNG",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_ZNT_BADUNG",
     createdAt: "2025-01-12T09:00:00Z",
     updatedAt: "2025-02-18T14:20:00Z",
   },
   {
-    id: "testing_workspace:TEST_BIDANG_TANAH",
+    id: "5ca85f64-5717-4562-b3fc-2c963f66afa8",
     title: "Bidang Tanah",
     description: "Peta Pendaftaran Tanah Kadastral Bidang Persil Terdaftar",
+    igtBasis: "bidang",
     spatialBasis: "bidang",
     bbox: [115.134102, -8.685009, 115.183136, -8.622203],
     isActive: true,
@@ -71,7 +92,16 @@ export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [
       baseUrl: "https://geoserver.atrbpn.go.id/geoserver",
     },
     workspaceName: "testing_workspace",
+    layerName: "TEST_BIDANG_TANAH",
     typeName: "testing_workspace:TEST_BIDANG_TANAH",
+    wms: {
+      url: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
+      baseUrl: "/api/proxy/wms",
+    },
+    wfs: {
+      url: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
+      baseUrl: "/api/proxy/wfs",
+    },
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_TANAH",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_TANAH",
     createdAt: "2025-01-05T07:30:00Z",

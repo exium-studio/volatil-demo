@@ -8,6 +8,7 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
     {
       id: "testing_workspace:TEST_BIDANG_TANAH",
       title: "Bidang Tanah",
+      igtBasis: "bidang",
       spatialBasis: "bidang",
       bbox: [115.134102, -8.685009, 115.183136, -8.622203],
       visible: true,
@@ -28,6 +29,7 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
     {
       id: "testing_workspace:TEST_RTRW_BADUNG",
       title: "RTRW Badung",
+      igtBasis: "kawasan",
       spatialBasis: "kawasan",
       bbox: [115.083839, -8.850039, 115.251389, -8.239441],
       visible: true,
@@ -48,6 +50,7 @@ export const DUMMY_IGT_LAYERS: IgtLayersResponse = {
     {
       id: "testing_workspace:TEST_ZNT_BADUNG",
       title: "ZNT Badung",
+      igtBasis: "kawasan",
       spatialBasis: "kawasan",
       bbox: [115.083839, -8.849308, 115.251534, -8.239852],
       visible: true,

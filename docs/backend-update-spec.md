@@ -417,7 +417,117 @@ Seluruh status pesanan, item layer, dan workspace kini diseragamkan ke satu enum
 
 ---
 
-## 9. Acceptance Checklist untuk Tim BE
+## 9. Standarisasi Manajemen Master Layer IGT & URL Service GeoServer
+
+### 9.1. Latar Belakang & Masalah Sebelumnya
+1. `id` di database sebelumnya diisi string `workspace:layerName` bukannya UUID murni.
+2. Naming convention basis IGT tidak seragam (`spatialBasis` vs `igtBasis`).
+3. Master IGT hanya bisa dibuat jika memilih layer spesifik, belum mendukung pendaftaran master data level **Workspace penuh** (`layerName = null`).
+4. URL Service GeoServer (WMS/WFS) terpisah-pisah dan tidak membedakan antara Full URL (siap render/copy) vs Base URL (untuk custom query).
+
+### 9.2. Skema Entity / Tabel `master_igt_layers`
+- `id` (UUID, Primary Key, Auto-generated)
+- `geoserverId` (UUID, Foreign Key ke tabel `master_geoservers`)
+- `title` (String, wajib)
+- `description` (Text, nullable)
+- `igtBasis` (Enum / String: `"bidang"` | `"kawasan"`, wajib — menggantikan `spatialBasis`)
+- `workspaceName` (String, wajib)
+- `layerName` (String, nullable — `NULL` jika master data level workspace)
+- `typeName` (String, **NOT NULL**):
+  - Jika `layerName` ada: `"${workspaceName}:${layerName}"`
+  - Jika `layerName` null: `"${workspaceName}"`
+- `bbox` (Array 4 Float `[minLng, minLat, maxLng, maxLat]`, nullable — di-cache dari GeoServer)
+- `isActive` (Boolean, default `true`)
+- `defaultVisible` (Boolean, default `false`)
+- `zIndex` (Integer, default `1`)
+- `createdAt` (Timestamp with timezone)
+- `updatedAt` (Timestamp with timezone)
+
+### 9.3. Standarisasi Response Service GeoServer (`wms` & `wfs`)
+Seluruh endpoint yang mengembalikan data layer/workspace GeoServer (Katalog IGT, Master IGT, Data Saya) wajib menyertakan objek `wms` dan `wfs`:
+
+```json
+{
+  "wms": {
+    "url": "https://geoserver-domain/geoserver/wms?service=WMS&version=1.1.1&request=GetMap&layers={typeName}&format=image/png&transparent=true",
+    "baseUrl": "https://geoserver-domain/geoserver/wms"
+  },
+  "wfs": {
+    "url": "https://geoserver-domain/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames={typeName}&outputFormat=application/json",
+    "baseUrl": "https://geoserver-domain/geoserver/wfs"
+  }
+}
+```
+
+### 9.4. Endpoint Manajemen Master Layer IGT
+
+#### 1. `POST /api/internal/igt-layers` (Create Master IGT)
+**Request Body**:
+```json
+{
+  "title": "ZNT Badung",
+  "description": "Zona Nilai Tanah Wilayah Kabupaten Badung",
+  "igtBasis": "kawasan",
+  "geoserverId": "283396d5-3052-4466-8812-e741559075d5",
+  "workspaceName": "volatil-master-layer-igt",
+  "layerName": "TEST_ZNT_BADUNG",
+  "typeName": "volatil-master-layer-igt:TEST_ZNT_BADUNG",
+  "isActive": true,
+  "defaultVisible": false,
+  "zIndex": 1
+}
+```
+> *Catatan*: Jika master data level workspace (tanpa layer spesifik), kirim `"layerName": null` dan `"typeName": "volatil-master-layer-igt"`.
+
+**Response (201 Created)**:
+```json
+{
+  "success": true,
+  "code": 201,
+  "message": "Berhasil menambahkan master layer IGT",
+  "data": {
+    "id": "e4b1c2a3-9876-4abc-9def-1234567890ab",
+    "title": "ZNT Badung",
+    "description": "Zona Nilai Tanah Wilayah Kabupaten Badung",
+    "igtBasis": "kawasan",
+    "geoserverId": "283396d5-3052-4466-8812-e741559075d5",
+    "geoserver": {
+      "id": "283396d5-3052-4466-8812-e741559075d5",
+      "name": "Staging Geoserver (Volatil)",
+      "baseUrl": "https://geoserver-volatil.exium.web.id/geoserver"
+    },
+    "workspaceName": "volatil-master-layer-igt",
+    "layerName": "TEST_ZNT_BADUNG",
+    "typeName": "volatil-master-layer-igt:TEST_ZNT_BADUNG",
+    "wms": {
+      "url": "https://geoserver-volatil.exium.web.id/geoserver/wms?service=WMS&version=1.1.1&request=GetMap&layers=volatil-master-layer-igt:TEST_ZNT_BADUNG&format=image/png&transparent=true",
+      "baseUrl": "https://geoserver-volatil.exium.web.id/geoserver/wms"
+    },
+    "wfs": {
+      "url": "https://geoserver-volatil.exium.web.id/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=volatil-master-layer-igt:TEST_ZNT_BADUNG&outputFormat=application/json",
+      "baseUrl": "https://geoserver-volatil.exium.web.id/geoserver/wfs"
+    },
+    "bbox": [115.083844, -8.849307, 115.251528, -8.239852],
+    "isActive": true,
+    "defaultVisible": false,
+    "zIndex": 1,
+    "createdAt": "2026-10-07T04:00:00.000Z",
+    "updatedAt": "2026-10-07T04:00:00.000Z"
+  }
+}
+```
+
+#### 2. `PUT /api/internal/igt-layers/:id` (Update Master IGT)
+- **Path Param**: `id` (UUID)
+- **Request Body**: Sama seperti create (termasuk `workspaceName`, `layerName`, `typeName`, `igtBasis`).
+- **Response**: Mengembalikan data master layer IGT terbaru beserta objek `wms` & `wfs`.
+
+#### 3. `GET /api/internal/igt-layers` & `GET /api/mitra/igt-layers`
+- Mengembalikan array `items` dengan struktur terstandarisasi di atas (`id` berupa UUID, `igtBasis`, `workspaceName`, `layerName`, `typeName`, `wms: {url, baseUrl}`, `wfs: {url, baseUrl}`).
+
+---
+
+## 10. Acceptance Checklist untuk Tim BE
 
 - [ ] Entity/tabel `notifications` / `inbox` dibuat sesuai schema.
 - [ ] Centralized `NotificationService` terimplementasi (`createInbox`, `sendEmail`, `notify`).
@@ -432,4 +542,8 @@ Seluruh status pesanan, item layer, dan workspace kini diseragamkan ke satu enum
 - [ ] Endpoint `GET /api/internal/transactions/statistics` menyertakan metrik WMS (`wmsPotential`, `wmsProcessing`, `wmsActive`, `wmsExpired`).
 - [ ] Status pesanan/workspace/layer diseragamkan mengikuti enum `OrderStatus`.
 - [ ] Template PDF Invoice dirapikan agar pesanan ringkas muat dalam 1 halaman tanpa footer terlempar ke halaman 2.
+- [ ] Tabel `master_igt_layers` menggunakan Primary Key `id` bertipe **UUID** (bukan string `workspace:layer`).
+- [ ] Standarisasi field master IGT: `igtBasis`, `workspaceName`, `layerName` (nullable), `typeName` (not null).
+- [ ] Response WMS/WFS GeoServer distandarisasi menjadi objek `{ wms: { url, baseUrl }, wfs: { url, baseUrl } }`.
+
 

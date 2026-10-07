@@ -15,11 +15,17 @@ export type PublishStatusTypeConfig = {
   colorPalette: "gray" | "green";
 };
 
+export type MasterIgtLayerServiceConfig = {
+  url: string;
+  baseUrl: string;
+};
+
 export type MasterIgtLayerItem = {
   id: string;
   title: string;
   description?: string;
-  spatialBasis: IgtBasisType;
+  igtBasis: IgtBasisType;
+  spatialBasis?: IgtBasisType; // Alias for backward compatibility
   bbox?: [number, number, number, number];
   isActive: boolean;
   defaultVisible?: boolean;
@@ -31,14 +37,18 @@ export type MasterIgtLayerItem = {
     baseUrl: string;
   };
   workspaceName: string;
-  typeName?: string; // format: workspace:layerName (optional)
-  wfsUrl?: string;
-  wmsUrl?: string;
+  layerName?: string | null;
+  typeName: string; // Not null: either "workspace:layer" or "workspace"
+  wms?: MasterIgtLayerServiceConfig;
+  wfs?: MasterIgtLayerServiceConfig;
+  wfsUrl?: string; // Compatibility fallback
+  wmsUrl?: string; // Compatibility fallback
   createdAt: string;
   updatedAt: string;
 };
 
 export type MasterIgtLayersQueryParams = PaginatedParams & {
+  igtBasis?: IgtBasisType;
   spatialBasis?: IgtBasisType;
   isActive?: boolean;
 };
@@ -49,12 +59,13 @@ export type MasterIgtLayersResponse = {
 };
 
 export type CreateMasterIgtLayerPayload = {
-  id?: string;
   geoserverId: string;
-  typeName?: string;
+  workspaceName: string;
+  layerName?: string | null;
+  typeName: string;
   title: string;
   description?: string;
-  spatialBasis: IgtBasisType;
+  igtBasis: IgtBasisType;
   isActive: boolean;
   defaultVisible?: boolean;
   zIndex?: number;
@@ -95,14 +106,18 @@ export type GeoserverCascadeSelectProps = {
   onGeoserverChange: (geoserverId: string) => void;
   selectedWorkspace: string;
   onWorkspaceChange: (workspace: string) => void;
+  selectedLayerName?: string | null;
   selectedTypeName?: string;
   onLayerChange: (
+    layerName: string | null,
     typeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => void;
   errors?: {
     geoserverId?: { message?: string };
+    workspaceName?: { message?: string };
     workspace?: { message?: string };
+    layerName?: { message?: string };
     typeName?: { message?: string };
   };
 };

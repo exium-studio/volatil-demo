@@ -20,6 +20,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     onGeoserverChange,
     selectedWorkspace,
     onWorkspaceChange,
+    selectedLayerName,
     selectedTypeName,
     onLayerChange,
     errors,
@@ -72,7 +73,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     () =>
       workspaceLayers.map((lyr) => ({
         label: lyr.title || lyr.name,
-        value: lyr.typeName,
+        value: lyr.name,
         description:
           lyr.abstract ||
           (lyr.spatialBasis ? `Basis: ${lyr.spatialBasis}` : undefined),
@@ -80,10 +81,33 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     [workspaceLayers],
   );
 
-  const handleLayerSelect = (typeName: string) => {
-    const foundLayer = workspaceLayers.find((l) => l.typeName === typeName);
-    onLayerChange(typeName, foundLayer);
+  const handleLayerSelect = (layerName: string) => {
+    if (!layerName) {
+      // Level Workspace (all layers in workspace)
+      onLayerChange(null, selectedWorkspace, undefined);
+      return;
+    }
+    const foundLayer = workspaceLayers.find(
+      (l) => l.name === layerName || l.typeName === layerName,
+    );
+    const constructedTypeName = selectedWorkspace
+      ? `${selectedWorkspace}:${layerName}`
+      : layerName;
+    onLayerChange(layerName, constructedTypeName, foundLayer);
   };
+
+  // Determine active layer selection for FocusSelectInput
+  const effectiveLayerSelectValue = useMemo(() => {
+    if (selectedLayerName) return selectedLayerName;
+    if (
+      selectedTypeName &&
+      selectedWorkspace &&
+      selectedTypeName.startsWith(`${selectedWorkspace}:`)
+    ) {
+      return selectedTypeName.replace(`${selectedWorkspace}:`, "");
+    }
+    return "";
+  }, [selectedLayerName, selectedTypeName, selectedWorkspace]);
 
   return (
     <VStack align={"stretch"} gap={"md"} w={"full"}>
@@ -102,7 +126,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
           onValueChange={(val) => {
             onGeoserverChange(val);
             onWorkspaceChange("");
-            onLayerChange("", undefined);
+            onLayerChange(null, "", undefined);
           }}
           isFetching={isLoadingGeoserver}
           isError={isErrorGeoserver}
@@ -113,8 +137,8 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       {/* 2. Select Workspace */}
       <Field
         label={"Workspace GeoServer"}
-        invalid={Boolean(errors?.workspace)}
-        errorText={errors?.workspace?.message}
+        invalid={Boolean(errors?.workspaceName || errors?.workspace)}
+        errorText={errors?.workspaceName?.message || errors?.workspace?.message}
       >
         <FocusSelectInput
           modalKey={`${parentModalKey}.workspace`}
@@ -128,7 +152,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
           value={selectedWorkspace}
           onValueChange={(val) => {
             onWorkspaceChange(val);
-            onLayerChange("", undefined);
+            onLayerChange(null, val, undefined);
           }}
           disabled={!selectedGeoserverId}
           isFetching={isLoadingWorkspaces}
@@ -141,19 +165,19 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       <Field
         label={"Layer"}
         optional
-        invalid={Boolean(errors?.typeName)}
-        errorText={errors?.typeName?.message}
+        invalid={Boolean(errors?.layerName || errors?.typeName)}
+        errorText={errors?.layerName?.message || errors?.typeName?.message}
       >
         <FocusSelectInput
           modalKey={`${parentModalKey}.layer`}
           title={"Layer"}
           placeholder={
             selectedWorkspace
-              ? "Pilih layer (opsional)..."
+              ? "Pilih layer (opsional — kosongkan jika level workspace)..."
               : "Pilih workspace terlebih dahulu"
           }
           options={layerOptions}
-          value={selectedTypeName}
+          value={effectiveLayerSelectValue}
           onValueChange={handleLayerSelect}
           disabled={!selectedWorkspace}
           isFetching={isLoadingLayers}

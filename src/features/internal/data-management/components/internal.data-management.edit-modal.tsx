@@ -78,13 +78,21 @@ const InternalDataManagementEditModalContent = (
 ) => {
   const { modalKey, item, close } = props;
 
-  // Extract initial workspace from typeName if exists
+  // Extract initial workspace & layerName from item
   const initialWorkspace = useMemo(() => {
     if (item.workspaceName) return item.workspaceName;
     if (item.typeName && item.typeName.includes(":")) {
       return item.typeName.split(":")[0];
     }
     return "";
+  }, [item]);
+
+  const initialLayerName = useMemo(() => {
+    if (item.layerName !== undefined) return item.layerName;
+    if (item.typeName && item.typeName.includes(":")) {
+      return item.typeName.split(":")[1];
+    }
+    return null;
   }, [item]);
 
   // Hooks (Queries & Mutations)
@@ -97,15 +105,16 @@ const InternalDataManagementEditModalContent = (
       id: item.id,
       title: item.title,
       description: item.description ?? "",
-      spatialBasis: item.spatialBasis,
+      igtBasis: item.igtBasis ?? item.spatialBasis ?? "kawasan",
       zIndex: item.zIndex ?? 1,
       geoserverId: item.geoserverId ?? "gs_prod_01",
-      workspace: initialWorkspace,
+      workspaceName: initialWorkspace,
+      layerName: initialLayerName,
       typeName: item.typeName ?? item.id ?? "",
       isActive: item.isActive,
       defaultVisible: item.defaultVisible ?? false,
     }),
-    [item, initialWorkspace],
+    [item, initialWorkspace, initialLayerName],
   );
 
   // Form (RHF + Zod)
@@ -122,7 +131,8 @@ const InternalDataManagementEditModalContent = (
 
   // Watch Form Values
   const geoserverId = useWatch({ control, name: "geoserverId" });
-  const workspace = useWatch({ control, name: "workspace" });
+  const workspaceName = useWatch({ control, name: "workspaceName" });
+  const layerName = useWatch({ control, name: "layerName" });
   const typeName = useWatch({ control, name: "typeName" });
 
   // Derived Values
@@ -137,12 +147,14 @@ const InternalDataManagementEditModalContent = (
   );
 
   const handleLayerChange = (
+    selectedLayerName: string | null,
     selectedTypeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => {
+    setValue("layerName", selectedLayerName, { shouldValidate: true });
     setValue("typeName", selectedTypeName, { shouldValidate: true });
     if (layerDetail?.spatialBasis) {
-      setValue("spatialBasis", layerDetail.spatialBasis, {
+      setValue("igtBasis", layerDetail.spatialBasis, {
         shouldValidate: true,
       });
     }
@@ -161,12 +173,14 @@ const InternalDataManagementEditModalContent = (
         id: item.id,
         title: data.title.trim(),
         description: data.description?.trim(),
-        spatialBasis: data.spatialBasis,
+        igtBasis: data.igtBasis,
         zIndex: data.zIndex,
         isActive: data.isActive,
         defaultVisible: data.defaultVisible,
         geoserverId: selectedGeoserver.id,
-        typeName: data.typeName?.trim() || undefined,
+        workspaceName: data.workspaceName.trim(),
+        layerName: data.layerName ? data.layerName.trim() : null,
+        typeName: data.typeName.trim(),
       },
       {
         onSuccess: () => {
@@ -310,14 +324,17 @@ const InternalDataManagementEditModalContent = (
               selectedGeoserverId={geoserverId}
               onGeoserverChange={(val) => {
                 setValue("geoserverId", val, { shouldValidate: true });
-                setValue("workspace", "", { shouldValidate: true });
+                setValue("workspaceName", "", { shouldValidate: true });
+                setValue("layerName", null, { shouldValidate: true });
                 setValue("typeName", "", { shouldValidate: true });
               }}
-              selectedWorkspace={workspace}
+              selectedWorkspace={workspaceName}
               onWorkspaceChange={(val) => {
-                setValue("workspace", val, { shouldValidate: true });
-                setValue("typeName", "", { shouldValidate: true });
+                setValue("workspaceName", val, { shouldValidate: true });
+                setValue("layerName", null, { shouldValidate: true });
+                setValue("typeName", val, { shouldValidate: true });
               }}
+              selectedLayerName={layerName}
               selectedTypeName={typeName}
               onLayerChange={handleLayerChange}
               errors={errors}
@@ -330,7 +347,7 @@ const InternalDataManagementEditModalContent = (
               {/* Select Basis IGT via RadioCardInput */}
               <Controller
                 control={control}
-                name={"spatialBasis"}
+                name={"igtBasis"}
                 render={({ field }) => (
                   <Field label={"Basis IGT"}>
                     <RadioCardInput.Root

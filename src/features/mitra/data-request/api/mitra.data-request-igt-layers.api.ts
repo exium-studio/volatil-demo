@@ -33,15 +33,37 @@ export async function getIgtLayers(
   if (Array.isArray(rawItems)) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const items: IgtLayerItem[] = rawItems.map((raw: any) => {
-      const typeName = raw.typeName || raw.wms?.layers || raw.wfs?.wfsTypeName || "";
-      const rawWmsUrl = raw.wms?.wmsUrl ?? raw.wmsUrl;
-      const rawWfsUrl = raw.wfs?.wfsUrl ?? raw.wfsUrl;
+      const workspaceName =
+        raw.workspaceName ||
+        (raw.typeName && raw.typeName.includes(":")
+          ? raw.typeName.split(":")[0]
+          : "");
+      const layerName =
+        raw.layerName !== undefined
+          ? raw.layerName
+          : raw.typeName && raw.typeName.includes(":")
+            ? raw.typeName.split(":")[1]
+            : null;
+      const typeName =
+        raw.typeName ||
+        (layerName ? `${workspaceName}:${layerName}` : workspaceName) ||
+        raw.wms?.layers ||
+        raw.wfs?.wfsTypeName ||
+        "";
+      const rawWmsUrl = raw.wms?.url ?? raw.wms?.wmsUrl ?? raw.wmsUrl;
+      const rawWfsUrl = raw.wfs?.url ?? raw.wfs?.wfsUrl ?? raw.wfsUrl;
+      const rawWmsBaseUrl = raw.wms?.baseUrl ?? raw.wmsBaseUrl ?? rawWmsUrl;
+      const rawWfsBaseUrl = raw.wfs?.baseUrl ?? raw.wfsBaseUrl ?? rawWfsUrl;
+      const igtBasis = raw.igtBasis ?? raw.spatialBasis ?? "kawasan";
 
       return {
         id: raw.id,
+        workspaceName,
+        layerName,
         typeName,
         title: raw.title,
-        spatialBasis: raw.spatialBasis,
+        igtBasis,
+        spatialBasis: igtBasis,
         bbox: raw.bbox as [number, number, number, number],
         visible: raw.visible ?? raw.isActive ?? true,
         defaultVisible: Boolean(
@@ -51,10 +73,14 @@ export async function getIgtLayers(
         wms: raw.wms
           ? {
               ...raw.wms,
+              url: raw.wms.url,
+              baseUrl: normalizeApiUrl(rawWmsBaseUrl),
               layers: raw.wms.layers || typeName,
               wmsUrl: normalizeApiUrl(rawWmsUrl),
             }
           : {
+              url: rawWmsUrl ? normalizeApiUrl(rawWmsUrl) : undefined,
+              baseUrl: normalizeApiUrl(rawWmsBaseUrl),
               layers: typeName,
               wmsUrl: normalizeApiUrl(rawWmsUrl),
               format: raw.format ?? "image/png",
@@ -67,13 +93,17 @@ export async function getIgtLayers(
         wfs: raw.wfs
           ? {
               ...raw.wfs,
+              url: raw.wfs.url,
+              baseUrl: normalizeApiUrl(rawWfsBaseUrl),
               wfsTypeName: raw.wfs.wfsTypeName || typeName,
               wfsUrl: normalizeApiUrl(rawWfsUrl),
             }
           : {
+              url: rawWfsUrl ? normalizeApiUrl(rawWfsUrl) : undefined,
+              baseUrl: normalizeApiUrl(rawWfsBaseUrl),
               wfsTypeName: typeName,
               wfsUrl: normalizeApiUrl(rawWfsUrl),
-              type: raw.spatialBasis === "kawasan" ? "wfs-line" : "wfs-fill",
+              type: igtBasis === "kawasan" ? "wfs-line" : "wfs-fill",
               version: "2.0.0",
               srsName: "EPSG:4326",
             },

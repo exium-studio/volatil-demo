@@ -52,8 +52,12 @@ export const LayerAttributeTableView = memo(
       if (!targetLayer) return "";
       if ("typeName" in targetLayer && targetLayer.typeName)
         return targetLayer.typeName;
-      if ("wfs" in targetLayer && targetLayer.wfs?.wfsTypeName)
-        return targetLayer.wfs.wfsTypeName;
+      if ("wfs" in targetLayer && targetLayer.wfs) {
+        const wfs = targetLayer.wfs as Record<string, unknown>;
+        if (typeof wfs.wfsTypeName === "string" && wfs.wfsTypeName) {
+          return wfs.wfsTypeName;
+        }
+      }
       if ("wfsTypeName" in targetLayer && targetLayer.wfsTypeName)
         return targetLayer.wfsTypeName;
       if ("wmsLayers" in targetLayer && targetLayer.wmsLayers)
@@ -63,8 +67,18 @@ export const LayerAttributeTableView = memo(
 
     const effectiveWfsUrl = useMemo(() => {
       if (!targetLayer) return "";
-      if ("wfs" in targetLayer && targetLayer.wfs?.wfsUrl)
-        return targetLayer.wfs.wfsUrl;
+      if ("wfs" in targetLayer && targetLayer.wfs) {
+        const wfs = targetLayer.wfs as Record<string, unknown>;
+        if (typeof wfs.url === "string" && wfs.url) {
+          return wfs.url;
+        }
+        if (typeof wfs.wfsUrl === "string" && wfs.wfsUrl) {
+          return wfs.wfsUrl;
+        }
+        if (typeof wfs.baseUrl === "string" && wfs.baseUrl) {
+          return wfs.baseUrl;
+        }
+      }
       if ("externalWfsUrl" in targetLayer && targetLayer.externalWfsUrl)
         return targetLayer.externalWfsUrl;
       if ("wfsUrl" in targetLayer && targetLayer.wfsUrl)

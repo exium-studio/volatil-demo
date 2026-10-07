@@ -89,13 +89,13 @@ const InternalDataManagementCreateModalContent = (
     resolver: zodResolver(masterIgtLayerFormSchema),
     mode: "onChange",
     defaultValues: {
-      id: "",
       title: "",
       description: "",
-      spatialBasis: "kawasan",
+      igtBasis: "kawasan",
       zIndex: 1,
       geoserverId: "",
-      workspace: "",
+      workspaceName: "",
+      layerName: null,
       typeName: "",
       isActive: true,
       defaultVisible: false,
@@ -104,11 +104,11 @@ const InternalDataManagementCreateModalContent = (
 
   // Watch Form Values
   const geoserverId = useWatch({ control, name: "geoserverId" });
-  const workspace = useWatch({ control, name: "workspace" });
+  const workspaceName = useWatch({ control, name: "workspaceName" });
+  const layerName = useWatch({ control, name: "layerName" });
   const typeName = useWatch({ control, name: "typeName" });
   const title = useWatch({ control, name: "title" });
   const description = useWatch({ control, name: "description" });
-  const idValue = useWatch({ control, name: "id" });
 
   // Derived Values
   const selectedGeoserver = useMemo(
@@ -117,9 +117,11 @@ const InternalDataManagementCreateModalContent = (
   );
 
   const handleLayerChange = (
+    selectedLayerName: string | null,
     selectedTypeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => {
+    setValue("layerName", selectedLayerName, { shouldValidate: true });
     setValue("typeName", selectedTypeName, { shouldValidate: true });
     if (layerDetail) {
       if (!title) {
@@ -133,12 +135,7 @@ const InternalDataManagementCreateModalContent = (
         });
       }
       if (layerDetail.spatialBasis) {
-        setValue("spatialBasis", layerDetail.spatialBasis, {
-          shouldValidate: true,
-        });
-      }
-      if (!idValue) {
-        setValue("id", layerDetail.typeName, {
+        setValue("igtBasis", layerDetail.spatialBasis, {
           shouldValidate: true,
         });
       }
@@ -160,19 +157,18 @@ const InternalDataManagementCreateModalContent = (
       return;
     }
 
-    const layerId = data.id?.trim() || data.typeName?.trim() || undefined;
-
     createMutation.mutate(
       {
-        id: layerId,
         title: data.title.trim(),
         description: data.description?.trim(),
-        spatialBasis: data.spatialBasis,
+        igtBasis: data.igtBasis,
         zIndex: data.zIndex,
         isActive: data.isActive,
         defaultVisible: data.defaultVisible,
         geoserverId: selectedGeoserver.id,
-        typeName: data.typeName?.trim() || undefined,
+        workspaceName: data.workspaceName.trim(),
+        layerName: data.layerName ? data.layerName.trim() : null,
+        typeName: data.typeName.trim(),
       },
       {
         onSuccess: () => {
@@ -344,14 +340,17 @@ const InternalDataManagementCreateModalContent = (
               selectedGeoserverId={geoserverId}
               onGeoserverChange={(val) => {
                 setValue("geoserverId", val, { shouldValidate: true });
-                setValue("workspace", "", { shouldValidate: true });
+                setValue("workspaceName", "", { shouldValidate: true });
+                setValue("layerName", null, { shouldValidate: true });
                 setValue("typeName", "", { shouldValidate: true });
               }}
-              selectedWorkspace={workspace}
+              selectedWorkspace={workspaceName}
               onWorkspaceChange={(val) => {
-                setValue("workspace", val, { shouldValidate: true });
-                setValue("typeName", "", { shouldValidate: true });
+                setValue("workspaceName", val, { shouldValidate: true });
+                setValue("layerName", null, { shouldValidate: true });
+                setValue("typeName", val, { shouldValidate: true });
               }}
+              selectedLayerName={layerName}
               selectedTypeName={typeName}
               onLayerChange={handleLayerChange}
               errors={errors}
@@ -364,7 +363,7 @@ const InternalDataManagementCreateModalContent = (
               {/* Select Basis IGT via RadioCardInput */}
               <Controller
                 control={control}
-                name={"spatialBasis"}
+                name={"igtBasis"}
                 render={({ field }) => (
                   <Field label={"Basis IGT"}>
                     <RadioCardInput.Root
