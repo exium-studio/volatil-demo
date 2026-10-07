@@ -30,7 +30,9 @@ export type OrderStatus =
   | "pending_tte"
   | "pending_review"
   | "rejected"
-  | "ready";
+  | "ready"
+  | "expired"
+  | "failed";
 
 export type OrderProvisionStatus = OrderStatus;
 
@@ -48,32 +50,6 @@ export type OrderStatusConfig = {
   icon?: LucideIcon;
   iconColor?: string;
   noticeDescription?: string;
-};
-
-/**
- * SSOT 3: My Data Active Status Types (Mitra Data Saya)
- */
-export type MyDataStatus =
-  | "queued"
-  | "provisioning"
-  | "ready"
-  | "active"
-  | "failed"
-  | "expired"
-  | "revoked";
-
-export type MyDataStatusConfig = {
-  label: string;
-  colorPalette:
-    | "orange"
-    | "blue"
-    | "purple"
-    | "green"
-    | "red"
-    | "neutral"
-    | "gray";
-  icon?: LucideIcon;
-  iconColor?: string;
 };
 
 /**

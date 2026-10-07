@@ -9,6 +9,10 @@ export const DUMMY_INTERNAL_TRANSACTION_STATISTICS: InternalTransactionStatistic
   activeOrders: 14,
   settledTransactions: 86,
   netWorth: 1845000000,
+  wmsPotential: 28,
+  wmsProcessing: 6,
+  wmsActive: 14,
+  wmsExpired: 9,
 };
 
 export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [

@@ -370,7 +370,54 @@ Pada pesanan dengan item sedikit (contoh: 1-3 layer IGT), dokumen invoice terpec
 
 ---
 
-## 8. Acceptance Checklist untuk Tim BE
+## 8. Modul Statistik Internal & Unifikasi Status Order
+
+### 8.1. Endpoint Statistik Transaksi & Layanan WMS
+**`GET /api/internal/transactions/statistics`**
+
+Menyediakan ringkasan akumulasi metrik finansial transaksi dan distribusi status layanan WMS spasial.
+
+#### Response Body:
+```json
+{
+  "success": true,
+  "code": 200,
+  "message": "Statistik transaksi dan layanan WMS berhasil dimuat",
+  "data": {
+    "activeOrders": 14,
+    "settledTransactions": 86,
+    "netWorth": 1845000000,
+    "wmsPotential": 28,
+    "wmsProcessing": 6,
+    "wmsActive": 14,
+    "wmsExpired": 9
+  }
+}
+```
+
+#### Logika Penentuan Metrik WMS:
+1. **`wmsPotential` (Potensi WMS)**: Dihitung dari akumulasi total item layer IGT yang ada di dalam keranjang belanja (`carts`) seluruh pengguna mitra.
+2. **`wmsProcessing` (WMS Diproses)**: Dihitung dari total order/layanan dengan status `"processing"` (sedang dalam proses provisioning / pembuatan layer GeoServer).
+3. **`wmsActive` (WMS Aktif)**: Dihitung dari total order/layanan dengan status `"ready"` (layanan aktif dan siap digunakan).
+4. **`wmsExpired` (WMS Expired)**: Dihitung dari total order/layanan dengan status `"expired"` (masa aktif layanan kedaluwarsa).
+
+### 8.2. Unifikasi Enum `OrderStatus` (Single Source of Truth)
+Seluruh status pesanan, item layer, dan workspace kini diseragamkan ke satu enum `OrderStatus` tunggal:
+- `"requesting"` : Menyiapkan data IGT (kalkulasi clipping)
+- `"preparing"` : Menyiapkan pesanan
+- `"pending_payment"` : Menunggu pembayaran
+- `"paid"` : Terbayar
+- `"processing"` : Menyiapkan layanan WMS
+- `"pending_tte"` : Menunggu TTE
+- `"pending_review"` : Menunggu validasi admin
+- `"rejected"` : Ditolak
+- `"ready"` : Siap digunakan / aktif
+- `"expired"` : Kedaluwarsa
+- `"failed"` : Gagal
+
+---
+
+## 9. Acceptance Checklist untuk Tim BE
 
 - [ ] Entity/tabel `notifications` / `inbox` dibuat sesuai schema.
 - [ ] Centralized `NotificationService` terimplementasi (`createInbox`, `sendEmail`, `notify`).
@@ -382,4 +429,7 @@ Pada pesanan dengan item sedikit (contoh: 1-3 layer IGT), dokumen invoice terpec
 - [ ] Endpoint `POST /api/internal/master-geoserver/test-connection` mendukung parameter `id?` untuk mode edit tanpa kirim ulang password.
 - [ ] Password pada master GeoServer di-masking/omit pada response GET.
 - [ ] Field `bbox: [minLng, minLat, maxLng, maxLat]` disertakan pada response `GET /api/mitra/workspaces/:id` dan list workspace.
+- [ ] Endpoint `GET /api/internal/transactions/statistics` menyertakan metrik WMS (`wmsPotential`, `wmsProcessing`, `wmsActive`, `wmsExpired`).
+- [ ] Status pesanan/workspace/layer diseragamkan mengikuti enum `OrderStatus`.
 - [ ] Template PDF Invoice dirapikan agar pesanan ringkas muat dalam 1 halaman tanpa footer terlempar ke halaman 2.
+

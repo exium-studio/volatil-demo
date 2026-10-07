@@ -3,9 +3,9 @@
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PaginatedResponse } from "@/shared/types/common-response.type";
-import type { MyDataStatus } from "@/shared/types/status.type";
+import type { OrderStatus } from "@/shared/types/status.type";
 
-export type { MyDataStatus };
+export type { OrderStatus };
 export type MyDataSpatialBasis = "bidang" | "kawasan";
 
 export type MaskedSecretFieldProps = BoxProps & {
@@ -24,7 +24,7 @@ export type MyDataItem = {
   externalWmsUrl?: string | null;
   wfsTypeName?: string;
   wmsLayers?: string;
-  status: MyDataStatus;
+  status: OrderStatus;
   expiresAt: string;
   bbox?: [number, number, number, number];
   invoiceUrl?: string | null;
@@ -39,7 +39,7 @@ export type MitraWorkspaceItem = {
   orderNumber?: string;
   transactionNumber?: string;
   userId?: number | string;
-  status: MyDataStatus;
+  status: OrderStatus;
   wmsUrl: string | null;
   wfsUrl?: string | null;
   qgisWmsUrl?: string | null;
@@ -59,7 +59,7 @@ export type MitraWorkspaceQueryParams = {
   page: number;
   pageSize: number;
   search?: string;
-  status?: MyDataStatus;
+  status?: OrderStatus;
 };
 
 export type MitraWorkspaceListResponse = PaginatedResponse<MitraWorkspaceItem>;
@@ -78,7 +78,7 @@ export type MyDataQueryParams = {
   pageSize: number;
   search?: string;
   basis?: MyDataSpatialBasis;
-  status?: MyDataStatus;
+  status?: OrderStatus;
 };
 
 export type MyDataResponse = PaginatedResponse<MyDataItem> & {

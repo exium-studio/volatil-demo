@@ -30,12 +30,12 @@ import type {
   MitraMyDataViewProps,
   MitraWorkspaceItem,
   MitraWorkspaceQueryParams,
-  MyDataStatus,
+  OrderStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
-import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import { MY_DATA_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import { ORDER_STATUS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -94,7 +94,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       { th: "WMS URL (Interop)", sortable: false },
       { th: "No. Transaksi / Pesanan", sortable: true },
       { th: "Jumlah Layer", sortable: true, align: "center" },
-      { th: "Status Aktif", sortable: true },
+      { th: "Status Order", sortable: true },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
@@ -163,7 +163,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             },
             {
               value: item.status,
-              td: <MyDataStatusBadge>{item.status}</MyDataStatusBadge>,
+              td: <OrderStatusBadge>{item.status}</OrderStatusBadge>,
               align: "start" as const,
             },
             {
@@ -272,13 +272,13 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
           <StatusFilterSelect
             modalKey={"my-data-workspace-status-filter"}
             placeholder={"Status"}
-            options={MY_DATA_STATUS_OPTIONS}
+            options={ORDER_STATUS_FILTER_OPTIONS}
             value={params.status ?? ""}
             onValueChange={(value) => {
               startTransition(() => {
                 setParams((prev) => ({
                   ...prev,
-                  status: (value as MyDataStatus) || undefined,
+                  status: (value as OrderStatus) || undefined,
                   page: 1,
                 }));
               });

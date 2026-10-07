@@ -13,6 +13,10 @@ export type InternalTransactionStatistics = {
   activeOrders: number;
   settledTransactions: number;
   netWorth: number;
+  wmsPotential?: number;
+  wmsProcessing?: number;
+  wmsActive?: number;
+  wmsExpired?: number;
 };
 
 export type InternalTransactionMitra = {

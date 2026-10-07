@@ -12,8 +12,6 @@ import type {
 import type {
   MitraRegistrationStatus,
   MitraRegistrationStatusConfig,
-  MyDataStatus,
-  MyDataStatusConfig,
   OrderStatus,
   OrderStatusConfig,
   TransactionStatus,
@@ -35,7 +33,6 @@ import {
   LoaderIcon,
   QrCodeIcon,
   RotateCcwIcon,
-  ShieldAlertIcon,
   ShieldCheckIcon,
   TimerOffIcon,
   XCircleIcon,
@@ -305,6 +302,20 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "green.fg",
     noticeDescription: "Layanan data spasial siap digunakan.",
   },
+  expired: {
+    label: "Kedaluwarsa",
+    colorPalette: "gray",
+    icon: TimerOffIcon,
+    iconColor: "gray.fg",
+    noticeDescription: "Masa aktif layanan data spasial telah berakhir.",
+  },
+  failed: {
+    label: "Gagal",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+    noticeDescription: "Layanan data spasial gagal diproses.",
+  },
 };
 
 export const ORDER_STATUS_OPTIONS: FocusSelectOption[] = [
@@ -315,62 +326,12 @@ export const ORDER_STATUS_OPTIONS: FocusSelectOption[] = [
   })),
 ];
 
-/**
- * SSOT 4: My Data Active Status Map (Mitra Data Saya)
- */
-export const MY_DATA_STATUS_MAP: Record<MyDataStatus, MyDataStatusConfig> = {
-  queued: {
-    label: "Dalam Antrean",
-    colorPalette: "gray",
-    icon: ClockIcon,
-    iconColor: "gray.fg",
-  },
-  provisioning: {
-    label: "Menyiapkan Layanan WMS",
-    colorPalette: "purple",
-    icon: LoaderIcon,
-    iconColor: "purple.fg",
-  },
-  ready: {
-    label: "Aktif",
-    colorPalette: "green",
-    icon: CheckCircleIcon,
-    iconColor: "green.fg",
-  },
-  active: {
-    label: "Aktif",
-    colorPalette: "green",
-    icon: CheckCircleIcon,
-    iconColor: "green.fg",
-  },
-  failed: {
-    label: "Gagal",
-    colorPalette: "red",
-    icon: AlertCircleIcon,
-    iconColor: "red.fg",
-  },
-  expired: {
-    label: "Kedaluwarsa",
-    colorPalette: "orange",
-    icon: TimerOffIcon,
-    iconColor: "orange.fg",
-  },
-  revoked: {
-    label: "Dicabut",
-    colorPalette: "red",
-    icon: ShieldAlertIcon,
-    iconColor: "red.fg",
-  },
-};
-
-export const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
+export const ORDER_STATUS_FILTER_OPTIONS: FocusSelectOption[] = [
   { label: "Semua Status", value: "" },
-  ...(Object.keys(MY_DATA_STATUS_MAP) as MyDataStatus[])
-    .filter((key) => key !== "active")
-    .map((key) => ({
-      value: key,
-      label: MY_DATA_STATUS_MAP[key].label,
-    })),
+  ...(Object.keys(ORDER_STATUS_MAP) as OrderStatus[]).map((key) => ({
+    value: key,
+    label: ORDER_STATUS_MAP[key].label,
+  })),
 ];
 
 /**

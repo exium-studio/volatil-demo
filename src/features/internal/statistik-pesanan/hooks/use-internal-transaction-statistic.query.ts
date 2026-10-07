@@ -26,6 +26,10 @@ export const useInternalTransactionStatisticsQuery = () => {
       activeOrders: 0,
       settledTransactions: 0,
       netWorth: 0,
+      wmsPotential: 0,
+      wmsProcessing: 0,
+      wmsActive: 0,
+      wmsExpired: 0,
     },
   };
 };

@@ -34,7 +34,7 @@ import { useMitraWorkspaceDetailQuery } from "@/features/mitra/my-data/hooks/use
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
-import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -178,7 +178,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT (Label)", sortable: true },
       { th: "Basis IGT", sortable: true },
-      { th: "Status Aktif", sortable: true },
+      { th: "Status Order", sortable: true },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },
@@ -214,7 +214,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             },
             {
               value: item.status,
-              td: <MyDataStatusBadge>{item.status}</MyDataStatusBadge>,
+              td: <OrderStatusBadge>{item.status}</OrderStatusBadge>,
               align: "start" as const,
             },
             {
@@ -414,7 +414,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                 />
 
                 <ClampedHeading>{`${workspace.workspaceName}`}</ClampedHeading>
-                <MyDataStatusBadge>{workspace.status}</MyDataStatusBadge>
+                <OrderStatusBadge>{workspace.status}</OrderStatusBadge>
               </HStack>
             </HStack>
           </HeaderContainer>
