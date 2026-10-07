@@ -3,7 +3,6 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
-import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { toast } from "@/design-system/components/toast";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { InternalHomeIgtBasisSummary } from "@/features/internal/home/components/internal.home.igt-basis-summary";
@@ -31,7 +30,9 @@ export const InternalHomePage = () => {
     setIsRefreshing(true);
     try {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: queryKeys.internal.home.all }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.internal.home.all,
+        }),
         queryClient.invalidateQueries({
           queryKey: queryKeys.internal.mitraLayerSyncJobs.all,
         }),
@@ -55,13 +56,13 @@ export const InternalHomePage = () => {
   return (
     <AppContentContainer h={"auto"} position={"relative"}>
       {/* Dashboard Top Header */}
-      <HeaderContainer
-        justify={"space-between"}
-        align={"center"}
-        w={"full"}
-        px={0}
-      >
-        <HStack gap={"xs"} align={"center"}>
+      <HStack justify={"space-between"} align={"center"} w={"full"}>
+        <HStack
+          gap={"xs"}
+          align={"center"}
+          justify={"space-between"}
+          w={"full"}
+        >
           <Heading>{"Dashboard Internal"}</Heading>
 
           <InfoTip
@@ -87,7 +88,7 @@ export const InternalHomePage = () => {
           <AppIcon icon={RefreshCwIcon} />
           {"Segarkan Data"}
         </Button>
-      </HeaderContainer>
+      </HStack>
 
       {/* Row 1: 3 Dedicated Summary Cards + Tarif Jasa Akses */}
       <HStack wrap={"wrap"} gap={"sm"} align={"stretch"} w={"full"}>

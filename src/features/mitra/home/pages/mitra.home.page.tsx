@@ -3,7 +3,6 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
-import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { toast } from "@/design-system/components/toast";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { MitraHomeCartSummary } from "@/features/mitra/home/components/mitra.home.cart-summary";
@@ -47,12 +46,7 @@ export const MitraHomePage = () => {
   return (
     <AppContentContainer h={"auto"} position={"relative"}>
       {/* Dashboard Top Header */}
-      <HeaderContainer
-        justify={"space-between"}
-        align={"center"}
-        w={"full"}
-        px={0}
-      >
+      <HStack gap={"xs"} align={"center"} justify={"space-between"} w={"full"}>
         <HStack gap={"xs"} align={"center"}>
           <Heading>{"Dashboard Mitra"}</Heading>
 
@@ -79,7 +73,7 @@ export const MitraHomePage = () => {
           <AppIcon icon={RefreshCwIcon} />
           {"Segarkan Data"}
         </Button>
-      </HeaderContainer>
+      </HStack>
 
       {/* 1. Ketersediaan Data Spasial IGT */}
       <MitraHomeDataAvailability />
