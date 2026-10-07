@@ -5,10 +5,7 @@ import type {
   CalculateSpatialCoverageResult,
   CalculateSpatialStreamCallbacks,
 } from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://9ac2a7d6-05ee-4c71-a067-b15fb595b85a.mock.pstmn.io";
+import { getApiBaseUrl } from "@/shared/utils/url/url.utils";
 
 
 /**
@@ -22,8 +19,16 @@ export async function calculateSpatialCoverageStream(
 ): Promise<void> {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
-  const baseUrl = API_BASE_URL.replace(/\/$/, "");
-  const url = new URL(`${baseUrl}/api/mitra/data-request/calculate/stream`);
+  const baseUrl = getApiBaseUrl();
+  const targetPath = `${baseUrl}/api/mitra/data-request/calculate/stream`;
+  const url = baseUrl
+    ? new URL(targetPath)
+    : new URL(
+        targetPath,
+        typeof window !== "undefined"
+          ? window.location.origin
+          : "http://localhost:5173",
+      );
   if (token) {
     url.searchParams.set("token", token);
   }
