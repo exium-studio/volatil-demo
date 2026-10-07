@@ -5,6 +5,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
@@ -95,6 +96,7 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
+      { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
@@ -108,6 +110,7 @@ export const InternalTransactionStatisticDataView = () => {
         const itemNames = item.items
           .map((it) => it.sourceLayerTitle)
           .join(", ");
+        const targetExpiry = item.billingExpiredAt || item.expiredAt;
 
         const effectiveOrderStatus: OrderStatus | undefined =
           item.transactionStatus === "expired" &&
@@ -177,6 +180,22 @@ export const InternalTransactionStatisticDataView = () => {
                   })}
                 </P>
               ),
+              align: "start" as const,
+            },
+            {
+              value: targetExpiry ?? "",
+              td:
+                effectiveOrderStatus === "pending_payment" && targetExpiry ? (
+                  <Countdown
+                    finishedAt={targetExpiry}
+                    warningThresholdHours={1}
+                    finishColor={"fg.subtle"}
+                  />
+                ) : (
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {"-"}
+                  </P>
+                ),
               align: "start" as const,
             },
             {

@@ -164,9 +164,7 @@ export const TransactionHistoryDataView = () => {
             {
               value: targetExpiry ?? "",
               td:
-                item.transactionStatus !== "paid" &&
-                item.transactionStatus !== "refunded" &&
-                targetExpiry ? (
+                effectiveOrderStatus === "pending_payment" && targetExpiry ? (
                   <Countdown
                     finishedAt={targetExpiry}
                     warningThresholdHours={1}
