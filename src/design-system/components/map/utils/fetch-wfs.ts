@@ -108,13 +108,76 @@ const normalizeTotalFeatures = (
   return raw.totalFeatures ?? raw.numberOfFeatures ?? raw.features?.length ?? 0;
 };
 
+// In-memory cache mapping typeName -> geometry property name (e.g. "the_geom", "geom", "shape")
+const geometryColumnCache = new Map<string, string>();
+
+/**
+ * Dynamically queries GeoServer DescribeFeatureType to discover the exact geometry column name for a layer.
+ * Caches the result in memory for subsequent queries.
+ */
+export const getLayerGeometryColumnName = async (
+  typeName: string,
+  wfsUrl?: string,
+  signal?: AbortSignal,
+): Promise<string> => {
+  if (geometryColumnCache.has(typeName)) {
+    return geometryColumnCache.get(typeName)!;
+  }
+
+  try {
+    const apiBaseUrl = getApiBaseWmsProxyUrl();
+    const defaultBaseUrl = `${apiBaseUrl}/api/proxy/wfs`;
+    const targetUrlStr = normalizeApiUrl(wfsUrl || defaultBaseUrl);
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:5174";
+    const url = new URL(targetUrlStr, origin);
+
+    if (!url.searchParams.has("layerId") && typeName) {
+      url.searchParams.set("layerId", typeName);
+    }
+    url.searchParams.set("service", "WFS");
+    url.searchParams.set("version", "1.0.0");
+    url.searchParams.set("request", "DescribeFeatureType");
+    url.searchParams.set("typeName", typeName);
+    url.searchParams.set("outputFormat", "application/json");
+
+    const res = await fetch(url.toString(), { signal });
+    if (res.ok) {
+      const data = await res.json();
+      const element = data?.featureTypes?.[0]?.properties?.find(
+        (p: { type?: string; localType?: string }) => {
+          const typeStr = (p.type || p.localType || "").toLowerCase();
+          return (
+            typeStr.startsWith("gml:") ||
+            typeStr.includes("geometry") ||
+            typeStr.includes("polygon") ||
+            typeStr.includes("point") ||
+            typeStr.includes("linestring") ||
+            typeStr.includes("multipolygon")
+          );
+        },
+      );
+      if (element?.name) {
+        geometryColumnCache.set(typeName, element.name);
+        return element.name;
+      }
+    }
+  } catch {
+    // Fallback gracefully to the_geom
+  }
+
+  return "the_geom";
+};
+
 // -------------------------------------------------------------------------------------
 
-/** Fetches features from a WFS endpoint as GeoJSON with automatic GeoServer NPE fallback. */
+/** Fetches features from a WFS endpoint as GeoJSON with automatic GeoServer NPE and adaptive column fallback. */
 export const fetchWfs = async (
   params: FetchWfsParams,
 ): Promise<GeoServerFeatureCollection> => {
-  const { version = "2.0.0", signal, startIndex = 0, maxFeatures } = params;
+  const { version = "1.0.0", signal, startIndex = 0, maxFeatures } = params;
 
   let url = buildWfsUrl(params, true);
   let res: Response;
@@ -163,43 +226,28 @@ export const fetchWfs = async (
 
   // If server throws 400 Bad Request due to GeoServer CQL_FILTER errors (e.g. geometry column name mismatch)
   if (!res.ok && res.status === 400 && params.cqlFilter) {
-    const errorText = await res.text().catch(() => "");
-    let adaptedFilter: string | undefined;
+    const discoveredGeomName = await getLayerGeometryColumnName(
+      params.typeName,
+      params.wfsUrl,
+      signal,
+    );
 
-    const matchIllegalProp =
-      /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(errorText) ||
-      /Property\s*['"]?([a-zA-Z0-9_]+)['"]?\s*does not exist/i.exec(errorText);
-
-    if (matchIllegalProp && matchIllegalProp[1]) {
-      const illegalProp = matchIllegalProp[1];
-      if (
-        illegalProp.toLowerCase() === "geom" &&
-        /\bgeom\b/i.test(params.cqlFilter)
-      ) {
-        adaptedFilter = params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
-      } else if (
-        illegalProp.toLowerCase() === "the_geom" &&
-        /\bthe_geom\b/i.test(params.cqlFilter)
-      ) {
-        adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
-      } else {
-        const clauses = params.cqlFilter.split(/\s+AND\s+/i);
-        const filteredClauses = clauses.filter(
-          (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
-        );
-        adaptedFilter =
-          filteredClauses.length > 0
-            ? filteredClauses.join(" AND ")
-            : undefined;
-      }
-    } else if (/\bgeom\b/i.test(params.cqlFilter)) {
-      adaptedFilter = params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
-    } else if (/\bthe_geom\b/i.test(params.cqlFilter)) {
-      adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
+    let adaptedFilter = params.cqlFilter;
+    if (discoveredGeomName) {
+      adaptedFilter = adaptedFilter
+        .replace(/\bthe_geom\b/gi, discoveredGeomName)
+        .replace(/\bgeom\b/gi, discoveredGeomName);
     }
 
-    if (adaptedFilter) {
+    if (adaptedFilter !== params.cqlFilter) {
       url = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
+      res = await fetch(url.toString(), { signal });
+    } else {
+      // Fallback swap if discovered name is the same as current
+      const fallbackFilter = /\bthe_geom\b/i.test(params.cqlFilter)
+        ? params.cqlFilter.replace(/\bthe_geom\b/gi, "geom")
+        : params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
+      url = buildWfsUrl({ ...params, cqlFilter: fallbackFilter }, true);
       res = await fetch(url.toString(), { signal });
     }
   }
@@ -228,40 +276,24 @@ export const fetchWfs = async (
     trimmedText.includes("<ows:ExceptionText>") ||
     trimmedText.includes("ServiceException")
   ) {
-    let adaptedFilter: string | undefined;
-    const matchIllegalProp =
-      /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(text) ||
-      /Property\s*['"]?([a-zA-Z0-9_]+)['"]?\s*does not exist/i.exec(text);
+    if (params.cqlFilter) {
+      const discoveredGeomName = await getLayerGeometryColumnName(
+        params.typeName,
+        params.wfsUrl,
+        signal,
+      );
 
-    if (matchIllegalProp && matchIllegalProp[1] && params.cqlFilter) {
-      const illegalProp = matchIllegalProp[1];
-      if (
-        illegalProp.toLowerCase() === "geom" &&
-        /\bgeom\b/i.test(params.cqlFilter)
-      ) {
-        adaptedFilter = params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
-      } else if (
-        illegalProp.toLowerCase() === "the_geom" &&
-        /\bthe_geom\b/i.test(params.cqlFilter)
-      ) {
-        adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
+      let adaptedFilter = params.cqlFilter;
+      if (discoveredGeomName) {
+        adaptedFilter = adaptedFilter
+          .replace(/\bthe_geom\b/gi, discoveredGeomName)
+          .replace(/\bgeom\b/gi, discoveredGeomName);
       } else {
-        const clauses = params.cqlFilter.split(/\s+AND\s+/i);
-        const filteredClauses = clauses.filter(
-          (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
-        );
-        adaptedFilter =
-          filteredClauses.length > 0
-            ? filteredClauses.join(" AND ")
-            : undefined;
+        adaptedFilter = /\bthe_geom\b/i.test(params.cqlFilter)
+          ? params.cqlFilter.replace(/\bthe_geom\b/gi, "geom")
+          : params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
       }
-    } else if (params.cqlFilter && /\bgeom\b/i.test(params.cqlFilter)) {
-      adaptedFilter = params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
-    } else if (params.cqlFilter && /\bthe_geom\b/i.test(params.cqlFilter)) {
-      adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
-    }
 
-    if (adaptedFilter) {
       const retryUrl = buildWfsUrl(
         { ...params, cqlFilter: adaptedFilter },
         true,
