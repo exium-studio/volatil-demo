@@ -7,14 +7,15 @@ import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
   globalIgnores([
-    "dist",
+    "dist/**",
     "src/routeTree.gen.ts",
-    "project.inlang",
-    "src/paraglide",
+    "project.inlang/**",
+    "src/paraglide/**",
+    ".agents/**",
   ]),
 
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}"],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,

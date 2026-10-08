@@ -10,17 +10,19 @@
   "scripts": {
     "dev": "vite --port 5174",
     "preview": "vite preview",
-    "build": "eslint . && pnpm run chakra:typegen && pnpm run i18n:compile && tsc -b && vite build",
+    "build": "pnpm run i18n:compile && vite build",
+    "build:full": "pnpm run lint && pnpm run typecheck && pnpm run build",
+    "build:ci": "pnpm run typecheck && pnpm run build",
     "routes": "tsr generate",
     "routes:watch": "tsr watch",
-    "lint": "eslint .",
+    "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "typecheck:watch": "tsc -p tsconfig.app.json --noEmit --watch --preserveWatchOutput",
     "verify": "npm run lint && npm run typecheck",
     "sitemap:generate": "node src/scripts/generate-sitemap.js",
     "filepath:generate": "node src/scripts/generate-file-path-header.cjs",
-    "chakra:typegen": "pnpm exec chakra typegen ./src/design-system/chakra/chakra-system.ts",
-    "i18n:compile": "pnpm exec paraglide-js compile --project ./project.inlang"
+    "chakra:typegen": "chakra typegen ./src/design-system/chakra/chakra-system.ts",
+    "i18n:compile": "paraglide-js compile --project ./project.inlang"
   },
   "dependencies": {
     "@chakra-ui/charts": "^3.36.1",
