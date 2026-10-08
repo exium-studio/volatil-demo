@@ -42,20 +42,35 @@ export const toPolygonFeature = (
   };
 };
 
+const EPSG3857_MAX = 20037508.342789244;
+
+/**
+ * Converts Web Mercator (EPSG:3857) meter coordinates to WGS84 (EPSG:4326) [lon, lat].
+ */
+export const unproject3857To4326 = (x: number, y: number): [number, number] => {
+  const lon = (x / EPSG3857_MAX) * 180;
+  const lat =
+    (Math.atan(Math.exp((y / EPSG3857_MAX) * Math.PI)) * 360) / Math.PI - 90;
+  return [Number(lon.toFixed(8)), Number(lat.toFixed(8))];
+};
+
 /**
  * Validates and ensures coordinates are in standard [longitude, latitude] GeoJSON format.
- * In Indonesia, longitude is roughly ~95 to 142 and latitude is roughly -11 to 6.
- * If coordinates are inverted ([lat, lon]), this automatically swaps them.
+ * Automatically converts EPSG:3857 meters if detected, and fixes inverted [lat, lon] coordinates.
  */
 export const normalizeCoordinatePair = (
   pair: [number, number] | number[],
 ): [number, number] => {
   const [first, second] = pair;
+  // If coordinates are in Web Mercator (EPSG:3857) meters (|x| > 180 or |y| > 90)
+  if (Math.abs(first) > 180 || Math.abs(second) > 90) {
+    return unproject3857To4326(first, second);
+  }
   // If first number is in latitude range [-11, 10] and second is in Indonesia longitude range [90, 145], it is inverted
   if (Math.abs(first) <= 20 && second >= 90 && second <= 150) {
-    return [Number(second.toFixed(6)), Number(first.toFixed(6))];
+    return [Number(second.toFixed(8)), Number(first.toFixed(8))];
   }
-  return [Number(first.toFixed(6)), Number(second.toFixed(6))];
+  return [Number(first.toFixed(8)), Number(second.toFixed(8))];
 };
 
 /**

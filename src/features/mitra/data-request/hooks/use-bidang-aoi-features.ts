@@ -12,6 +12,7 @@ import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/cli
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useQuery } from "@tanstack/react-query";
+import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
 import { useMemo } from "react";
 
@@ -38,7 +39,7 @@ export const useBidangAoiFeatures = (
 
   const aoiCqlFilter = useMemo(() => {
     if (!aoiWkt) return "";
-    return `INTERSECTS(geom, ${aoiWkt})`;
+    return `INTERSECTS(the_geom, ${aoiWkt})`;
   }, [aoiWkt]);
 
   const isEnabled = Boolean(enabled && aoiFeature && aoiCqlFilter);
@@ -136,9 +137,36 @@ export const useBidangAoiFeatures = (
       const featureArrays = await Promise.all(fetchPromises);
       const combinedFeatures: GeoJSON.Feature[] = featureArrays.flat();
 
+      // Client-side strict spatial intersection filter: ensure only features intersecting the AOI are returned
+      const aoiTyped = aoiFeature as GeoJSON.Feature<
+        GeoJSON.Polygon | GeoJSON.MultiPolygon
+      >;
+      const intersectedFeatures = combinedFeatures.filter((feat) => {
+        if (!feat.geometry) return false;
+        try {
+          return turf.booleanIntersects(
+            aoiTyped,
+            feat as GeoJSON.Feature<GeoJSON.Geometry>,
+          );
+        } catch {
+          try {
+            const aoiBbox = turf.bbox(aoiTyped);
+            const featBbox = turf.bbox(feat);
+            return (
+              aoiBbox[0] <= featBbox[2] &&
+              aoiBbox[2] >= featBbox[0] &&
+              aoiBbox[1] <= featBbox[3] &&
+              aoiBbox[3] >= featBbox[1]
+            );
+          } catch {
+            return false;
+          }
+        }
+      });
+
       return {
         type: "FeatureCollection",
-        features: combinedFeatures,
+        features: intersectedFeatures,
       };
     },
     enabled: isEnabled,

@@ -174,13 +174,26 @@ export const fetchWfs = async (
         `GeoServer layer "${params.typeName}" does not have property "${illegalProp}". Retrying with adapted filter.`,
       );
 
-      // Remove clauses containing the illegal property
-      const clauses = params.cqlFilter.split(/\s+AND\s+/i);
-      const filteredClauses = clauses.filter(
-        (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
-      );
-      const adaptedFilter =
-        filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
+      let adaptedFilter: string | undefined;
+      if (
+        illegalProp.toLowerCase() === "geom" &&
+        /\bgeom\b/i.test(params.cqlFilter)
+      ) {
+        adaptedFilter = params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
+      } else if (
+        illegalProp.toLowerCase() === "the_geom" &&
+        /\bthe_geom\b/i.test(params.cqlFilter)
+      ) {
+        adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
+      } else {
+        // Remove clauses containing the illegal property
+        const clauses = params.cqlFilter.split(/\s+AND\s+/i);
+        const filteredClauses = clauses.filter(
+          (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
+        );
+        adaptedFilter =
+          filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
+      }
 
       url = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
       res = await fetch(url.toString(), { signal });
@@ -200,18 +213,63 @@ export const fetchWfs = async (
     );
   }
 
-  const text = await res.text();
-  const trimmedText = text.trim();
+  let text = await res.text();
+  let trimmedText = text.trim();
 
+  // If GeoServer returned XML ServiceException (e.g. Illegal property name in CQL) with 200 OK
   if (
+    trimmedText.startsWith("<ServiceExceptionReport") ||
+    trimmedText.startsWith("<ServiceException") ||
     trimmedText.startsWith("<ows:ExceptionReport") ||
-    trimmedText.includes("<ows:ExceptionText>")
+    trimmedText.includes("<ows:ExceptionText>") ||
+    trimmedText.includes("ServiceException")
   ) {
-    const matchText = /<ows:ExceptionText>(.*?)<\/ows:ExceptionText>/s.exec(
+    const matchIllegalProp = /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(
       text,
     );
-    const errorMsg = matchText?.[1]?.trim() ?? "WFS OGC Exception occurred";
-    throw new Error(`WFS OGC Error (${version}): ${errorMsg}`);
+
+    if (matchIllegalProp && matchIllegalProp[1] && params.cqlFilter) {
+      const illegalProp = matchIllegalProp[1];
+      let adaptedFilter: string | undefined;
+      if (
+        illegalProp.toLowerCase() === "geom" &&
+        /\bgeom\b/i.test(params.cqlFilter)
+      ) {
+        adaptedFilter = params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
+      } else if (
+        illegalProp.toLowerCase() === "the_geom" &&
+        /\bthe_geom\b/i.test(params.cqlFilter)
+      ) {
+        adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
+      } else {
+        const clauses = params.cqlFilter.split(/\s+AND\s+/i);
+        const filteredClauses = clauses.filter(
+          (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
+        );
+        adaptedFilter =
+          filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
+      }
+
+      const retryUrl = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
+      const retryRes = await fetch(retryUrl.toString(), { signal });
+      if (retryRes.ok) {
+        text = await retryRes.text();
+        trimmedText = text.trim();
+      }
+    }
+
+    if (
+      trimmedText.startsWith("<ServiceExceptionReport") ||
+      trimmedText.startsWith("<ServiceException") ||
+      trimmedText.startsWith("<ows:ExceptionReport") ||
+      trimmedText.includes("<ows:ExceptionText>")
+    ) {
+      const matchText =
+        /<ows:ExceptionText>(.*?)<\/ows:ExceptionText>/s.exec(text) ||
+        /<ServiceException.*?>(.*?)<\/ServiceException>/s.exec(text);
+      const errorMsg = matchText?.[1]?.trim() ?? "WFS OGC Exception occurred";
+      throw new Error(`WFS OGC Error (${version}): ${errorMsg}`);
+    }
   }
 
   // When resultType=hits, some GeoServer versions return XML FeatureCollection instead of JSON

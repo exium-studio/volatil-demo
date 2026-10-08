@@ -43,7 +43,7 @@ export const useKawasanCoverage = (
 
   const aoiCqlFilter = useMemo(() => {
     if (!aoiWkt) return "";
-    return `INTERSECTS(geom, ${aoiWkt})`;
+    return `INTERSECTS(the_geom, ${aoiWkt})`;
   }, [aoiWkt]);
 
   // Instantly compute AOI area in Hectares (1 polygon calculation is <1ms)

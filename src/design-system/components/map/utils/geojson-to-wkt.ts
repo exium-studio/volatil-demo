@@ -13,7 +13,7 @@ import type GeoJSON from "geojson";
 const formatCoord = (coord: number[]): string => {
   const lon = Number(coord[0].toFixed(6));
   const lat = Number(coord[1].toFixed(6));
-  return `${lat} ${lon}`;
+  return `${lon} ${lat}`;
 };
 
 export const geojsonPolygonToWkt = (
