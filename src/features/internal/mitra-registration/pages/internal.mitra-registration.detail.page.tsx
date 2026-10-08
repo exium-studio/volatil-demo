@@ -3,8 +3,10 @@
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { Button } from "@/design-system/components/button/ui/button";
 import { FileIcon } from "@/design-system/components/data-display/ui/file-item";
+import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -33,7 +35,6 @@ import {
   FileTextIcon,
   MailIcon,
   PhoneIcon,
-  FilePenLine,
   SquareArrowOutUpRightIcon,
   UserCheckIcon,
   XCircleIcon,
@@ -148,7 +149,7 @@ export function InternalMitraRegistrationDetailPage() {
       <Container.Root withContext flex={1} overflowY={"auto"}>
         <Container.Body overflowY={"auto"}>
           {/* Header Bar */}
-          <HeaderContainer pl={"xs"}>
+          <HeaderContainer px={"xs"}>
             <HStack
               justify={"space-between"}
               align={"center"}
@@ -200,12 +201,15 @@ export function InternalMitraRegistrationDetailPage() {
               )}
 
               {registration.contractDocument?.url && (
-                <ExternalLink href={registration.contractDocument?.url}>
-                  <HStack align={"center"} gap={"xs"}>
-                    <AppIcon icon={FilePenLine} />
+                <ExternalLink
+                  href={registration.contractDocument?.url}
+                  variant={"plain"}
+                >
+                  <Button>
+                    <AppIcon icon={SquareArrowOutUpRightIcon} />
 
                     <P>{"Berkas kontrak"}</P>
-                  </HStack>
+                  </Button>
                 </ExternalLink>
               )}
             </HStack>
@@ -233,224 +237,258 @@ export function InternalMitraRegistrationDetailPage() {
 
             <Separator borderColor={"bg.canvas"} />
 
-            {/* Main Info Sections */}
-            <VStack p={"md"} gap={"lg"} align={"stretch"}>
+            {/* Main Info Sections Accordion */}
+            <Accordion.Root
+              multiple={true}
+              defaultValue={["company-info", "pic-info", "documents"]}
+              w={"full"}
+            >
               {/* Section 1: Data Perusahaan */}
-              <VStack align={"stretch"} gap={"md"}>
-                <HStack align={"center"} gap={2}>
-                  <AppIcon icon={Building2Icon} color={"fg.muted"} />
-                  <Heading>{"Informasi Instansi / Perusahaan"}</Heading>
-                </HStack>
+              <Accordion.Item value={"company-info"}>
+                <Accordion.ItemTrigger px={"md"} py={"sm"}>
+                  <HStack align={"center"} gap={2} flex={1}>
+                    <AppIcon icon={Building2Icon} color={"fg.muted"} />
+                    <Heading>{"Informasi Instansi / Perusahaan"}</Heading>
+                  </HStack>
+                  <Accordion.ItemIndicator />
+                </Accordion.ItemTrigger>
 
-                <SimpleGrid columns={[1, null, 2]} gap={"md"}>
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Nama Instansi / Perusahaan"}
-                    </P>
-                    <P fontWeight={"medium"}>
-                      {registration.organizationName ??
-                        registration.namaInstansi ??
-                        "-"}
-                    </P>
-                  </VStack>
+                <Accordion.ItemContent>
+                  <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
+                    <SimpleGrid columns={[1, null, 2]} gap={"md"}>
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Nama Instansi / Perusahaan"}
+                        </P>
+                        <P fontWeight={"medium"}>
+                          {registration.organizationName ??
+                            registration.namaInstansi ??
+                            "-"}
+                        </P>
+                      </VStack>
 
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Nomor Induk Berusaha (NIB)"}
-                    </P>
-                    <P fontWeight={"medium"}>{registration.nib || "-"}</P>
-                  </VStack>
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Nomor Induk Berusaha (NIB)"}
+                        </P>
+                        <P fontWeight={"medium"}>{registration.nib || "-"}</P>
+                      </VStack>
 
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Nomor Pokok Wajib Pajak (NPWP)"}
-                    </P>
-                    <P fontWeight={"medium"}>{registration.npwp || "-"}</P>
-                  </VStack>
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Nomor Pokok Wajib Pajak (NPWP)"}
+                        </P>
+                        <P fontWeight={"medium"}>{registration.npwp || "-"}</P>
+                      </VStack>
 
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Situs Web"}
-                    </P>
-                    {registration.website ? (
-                      <ExternalLink
-                        href={
-                          registration.website.startsWith("http")
-                            ? registration.website
-                            : `https://${registration.website}`
-                        }
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Situs Web"}
+                        </P>
+                        {registration.website ? (
+                          <ExternalLink
+                            href={
+                              registration.website.startsWith("http")
+                                ? registration.website
+                                : `https://${registration.website}`
+                            }
+                          >
+                            <HStack gap={1} align={"center"}>
+                              <P fontWeight={"medium"}>
+                                {registration.website}
+                              </P>
+                              <AppIcon
+                                icon={ExternalLinkIcon}
+                                size={"xs"}
+                                color={"fg.muted"}
+                              />
+                            </HStack>
+                          </ExternalLink>
+                        ) : (
+                          <P color={"fg.muted"}>{"-"}</P>
+                        )}
+                      </VStack>
+
+                      <VStack
+                        align={"start"}
+                        gap={"2xs"}
+                        gridColumn={[null, null, "span 2"]}
                       >
-                        <HStack gap={1} align={"center"}>
-                          <P fontWeight={"medium"}>{registration.website}</P>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Alamat Kantor Operasional"}
+                        </P>
+                        <P fontWeight={"medium"}>
+                          {registration.officeAddress ??
+                            registration.alamatKantor ??
+                            "-"}
+                        </P>
+                      </VStack>
+                    </SimpleGrid>
+                  </Accordion.ItemBody>
+                </Accordion.ItemContent>
+              </Accordion.Item>
+
+              {/* Section 2: Penanggung Jawab */}
+              <Accordion.Item value={"pic-info"}>
+                <Accordion.ItemTrigger px={"md"} py={"sm"}>
+                  <HStack align={"center"} gap={2} flex={1}>
+                    <AppIcon icon={UserCheckIcon} color={"fg.muted"} />
+                    <Heading>{"Penanggung Jawab & Kontak"}</Heading>
+                  </HStack>
+                  <Accordion.ItemIndicator />
+                </Accordion.ItemTrigger>
+
+                <Accordion.ItemContent>
+                  <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
+                    <SimpleGrid columns={[1, null, 2]} gap={"md"}>
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Nama Penanggung Jawab"}
+                        </P>
+
+                        <P fontWeight={"medium"}>
+                          {registration.picName ??
+                            registration.namaPenanggungJawab ??
+                            "-"}
+                        </P>
+                      </VStack>
+
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Jabatan"}
+                        </P>
+
+                        <P fontWeight={"medium"}>
+                          {registration.position ?? registration.jabatan ?? "-"}
+                        </P>
+                      </VStack>
+
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Email Resmi (SSO)"}
+                        </P>
+
+                        <HStack align={"center"} gap={1.5}>
                           <AppIcon
-                            icon={ExternalLinkIcon}
+                            icon={MailIcon}
                             size={"xs"}
                             color={"fg.muted"}
                           />
+
+                          <P fontWeight={"medium"}>
+                            {registration.email || "-"}
+                          </P>
                         </HStack>
-                      </ExternalLink>
-                    ) : (
-                      <P color={"fg.muted"}>{"-"}</P>
-                    )}
-                  </VStack>
+                      </VStack>
 
-                  <VStack
-                    align={"start"}
-                    gap={"2xs"}
-                    gridColumn={[null, null, "span 2"]}
-                  >
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Alamat Kantor Operasional"}
-                    </P>
-                    <P fontWeight={"medium"}>
-                      {registration.officeAddress ??
-                        registration.alamatKantor ??
-                        "-"}
-                    </P>
-                  </VStack>
-                </SimpleGrid>
-              </VStack>
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"xs"} color={"fg.subtle"}>
+                          {"Nomor HP / WhatsApp"}
+                        </P>
 
-              <Separator borderColor={"bg.canvas"} />
-
-              {/* Section 2: Penanggung Jawab */}
-              <VStack align={"stretch"} gap={"md"}>
-                <HStack align={"center"} gap={2}>
-                  <AppIcon icon={UserCheckIcon} color={"fg.muted"} />
-                  <Heading>{"Penanggung Jawab & Kontak"}</Heading>
-                </HStack>
-
-                <SimpleGrid columns={[1, null, 2]} gap={"md"}>
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Nama Penanggung Jawab"}
-                    </P>
-
-                    <P fontWeight={"medium"}>
-                      {registration.picName ??
-                        registration.namaPenanggungJawab ??
-                        "-"}
-                    </P>
-                  </VStack>
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Jabatan"}
-                    </P>
-
-                    <P fontWeight={"medium"}>
-                      {registration.position ?? registration.jabatan ?? "-"}
-                    </P>
-                  </VStack>
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Email Resmi (SSO)"}
-                    </P>
-
-                    <HStack align={"center"} gap={1.5}>
-                      <AppIcon icon={MailIcon} size={"xs"} color={"fg.muted"} />
-
-                      <P fontWeight={"medium"}>{registration.email || "-"}</P>
-                    </HStack>
-                  </VStack>
-
-                  <VStack align={"start"} gap={"2xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Nomor HP / WhatsApp"}
-                    </P>
-
-                    <HStack align={"center"} gap={1.5}>
-                      <AppIcon
-                        icon={PhoneIcon}
-                        size={"xs"}
-                        color={"fg.muted"}
-                      />
-                      <P fontWeight={"medium"}>
-                        {registration.phoneNumber ??
-                          registration.nomorHp ??
-                          "-"}
-                      </P>
-                    </HStack>
-                  </VStack>
-                </SimpleGrid>
-              </VStack>
-
-              <Separator borderColor={"bg.canvas"} />
+                        <HStack align={"center"} gap={1.5}>
+                          <AppIcon
+                            icon={PhoneIcon}
+                            size={"xs"}
+                            color={"fg.muted"}
+                          />
+                          <P fontWeight={"medium"}>
+                            {registration.phoneNumber ??
+                              registration.nomorHp ??
+                              "-"}
+                          </P>
+                        </HStack>
+                      </VStack>
+                    </SimpleGrid>
+                  </Accordion.ItemBody>
+                </Accordion.ItemContent>
+              </Accordion.Item>
 
               {/* Section 3: 6 Berkas Dokumen Persyaratan */}
-              <VStack align={"stretch"} gap={"md"}>
-                <HStack align={"center"} gap={2}>
-                  <AppIcon icon={FileTextIcon} color={"fg.muted"} />
-                  <Heading>{"Berkas Dokumen Persyaratan"}</Heading>
-                </HStack>
+              <Accordion.Item value={"documents"}>
+                <Accordion.ItemTrigger px={"md"} py={"sm"}>
+                  <HStack align={"center"} gap={2} flex={1}>
+                    <AppIcon icon={FileTextIcon} color={"fg.muted"} />
+                    <Heading>{"Berkas Dokumen Persyaratan"}</Heading>
+                  </HStack>
+                  <Accordion.ItemIndicator />
+                </Accordion.ItemTrigger>
 
-                <VStack gap={0} w={"full"} align={"stretch"}>
-                  {documents.map((doc, idx) => (
-                    <HStack
-                      key={doc.title}
-                      w={"full"}
-                      py={3}
-                      justify={"space-between"}
-                      align={"center"}
-                      gap={"md"}
-                      borderBottom={
-                        idx < documents.length - 1 ? "1px solid" : "none"
-                      }
-                      borderColor={"border.subtle"}
-                    >
-                      <HStack gap={3} flex={1} minW={0} align={"center"}>
-                        <FileIcon
-                          mimeType={doc.mimeType ?? "application/pdf"}
-                          size={"lg"}
-                          color={"fg.muted"}
-                          flexShrink={0}
-                        />
-
-                        <VStack align={"start"} gap={"2xs"} flex={1} minW={0}>
-                          <ClampedP
-                            fontWeight={"medium"}
-                            fontSize={"sm"}
-                            title={doc.title}
-                          >
-                            {doc.title}
-                          </ClampedP>
-
-                          <ClampedP
-                            fontSize={"xs"}
-                            color={"fg.muted"}
-                            title={doc.desc}
-                          >
-                            {doc.desc}
-                          </ClampedP>
-                        </VStack>
-                      </HStack>
-
-                      {doc.url ? (
-                        <ExternalLink
-                          href={doc.url}
-                          download={true}
-                          variant={"plain"}
+                <Accordion.ItemContent>
+                  <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
+                    <VStack gap={0} w={"full"} align={"stretch"}>
+                      {documents.map((doc, idx) => (
+                        <HStack
+                          key={doc.title}
+                          w={"full"}
+                          py={3}
+                          justify={"space-between"}
+                          align={"center"}
+                          gap={"md"}
+                          borderBottom={
+                            idx < documents.length - 1 ? "1px solid" : "none"
+                          }
+                          borderColor={"border.subtle"}
                         >
-                          <Button size={"xs"} variant={"outline"}>
-                            <AppIcon icon={SquareArrowOutUpRightIcon} />
-                            {"Tinjau Dokumen"}
-                          </Button>
-                        </ExternalLink>
-                      ) : (
-                        <Badge
-                          colorPalette={"gray"}
-                          variant={"subtle"}
-                          size={"xs"}
-                        >
-                          {"Belum Diunggah"}
-                        </Badge>
-                      )}
-                    </HStack>
-                  ))}
-                </VStack>
-              </VStack>
-            </VStack>
+                          <HStack gap={3} flex={1} minW={0} align={"center"}>
+                            <FileIcon
+                              mimeType={doc.mimeType ?? "application/pdf"}
+                              size={"lg"}
+                              color={"fg.muted"}
+                              flexShrink={0}
+                            />
+
+                            <VStack
+                              align={"start"}
+                              gap={"2xs"}
+                              flex={1}
+                              minW={0}
+                            >
+                              <ClampedP
+                                fontWeight={"medium"}
+                                fontSize={"sm"}
+                                title={doc.title}
+                              >
+                                {doc.title}
+                              </ClampedP>
+
+                              <ClampedP
+                                fontSize={"xs"}
+                                color={"fg.muted"}
+                                title={doc.desc}
+                              >
+                                {doc.desc}
+                              </ClampedP>
+                            </VStack>
+                          </HStack>
+
+                          {doc.url ? (
+                            <ExternalLink
+                              href={doc.url}
+                              download={true}
+                              variant={"plain"}
+                            >
+                              <Button size={"xs"} variant={"outline"}>
+                                <AppIcon icon={SquareArrowOutUpRightIcon} />
+                                {"Tinjau Dokumen"}
+                              </Button>
+                            </ExternalLink>
+                          ) : (
+                            <Badge
+                              colorPalette={"gray"}
+                              variant={"subtle"}
+                              size={"xs"}
+                            >
+                              {"Belum Diunggah"}
+                            </Badge>
+                          )}
+                        </HStack>
+                      ))}
+                    </VStack>
+                  </Accordion.ItemBody>
+                </Accordion.ItemContent>
+              </Accordion.Item>
+            </Accordion.Root>
           </VStack>
         </Container.Body>
       </Container.Root>

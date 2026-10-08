@@ -26,7 +26,6 @@ export type FetchWfsParams = {
   signal?: AbortSignal;
 };
 
-
 export type RawGeoServerResponse = GeoJSON.FeatureCollection & {
   totalFeatures?: number;
   numberMatched?: number;
