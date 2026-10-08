@@ -680,6 +680,8 @@ const Layout = () => {
     <Splitter.Panel
       key={"a"}
       id={"a"}
+      defaultSize={splitterSize[0]}
+      minSize={20}
       borderRight={"1px solid"}
       borderColor={"border"}
     >
@@ -700,7 +702,12 @@ const Layout = () => {
   );
 
   const panelB = (
-    <Splitter.Panel key={"b"} id={"b"}>
+    <Splitter.Panel
+      key={"b"}
+      id={"b"}
+      defaultSize={splitterSize[1]}
+      minSize={20}
+    >
       <Center boxSize={"full"} textStyle={"2xl"}>
         B
       </Center>
@@ -726,13 +733,9 @@ const Layout = () => {
           h={"300px"}
         >
           <Splitter.Root
-            panels={[
-              { id: "a", minSize: 30 },
-              { id: "b", minSize: 30 },
-            ]}
-            size={splitterSize}
-            onResize={(details) => setSplitterSize("demo-layout", details.size)}
-            orientation={"horizontal"}
+            direction={"horizontal"}
+            defaultLayout={DEFAULT_DEMO_SPLITTER_SIZE}
+            onLayout={(layout: number[]) => setSplitterSize("demo-layout", layout)}
             borderWidth={"1px"}
             h={"300px"}
             w={"full"}

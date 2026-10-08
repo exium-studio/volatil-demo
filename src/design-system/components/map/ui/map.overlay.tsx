@@ -23,25 +23,31 @@ export const MapOverlay = (props: MapOverlayProps) => {
       left={0}
       w={"full"}
       h={"full"}
+      minW={"fit-content"}
       overflow={"hidden"}
       pointerEvents={"none"}
     >
-      {/* Top Left: Search */}
-      <Box position={"absolute"} top={4} left={4} pointerEvents={"none"}>
-        <MapSearch />
-      </Box>
-
-      {/* Top Right: Layer Select & Attribution */}
+      {/* Top Header Bar (Search on Left, Layer Select on Right) */}
       <HStack
         position={"absolute"}
         top={4}
-        right={4}
-        align={"center"}
-        gap={2}
+        left={0}
+        right={0}
+        px={4}
+        justify={"space-between"}
+        align={"start"}
+        gap={4}
+        minW={"480px"}
         pointerEvents={"none"}
       >
-        {showMasterIgtLayerSelect && <MapMasterIgtLayerManagement />}
-        <MapAttribution />
+        <Box pointerEvents={"none"} flexShrink={0}>
+          <MapSearch />
+        </Box>
+
+        <HStack align={"center"} gap={2} pointerEvents={"none"} flexShrink={0}>
+          {showMasterIgtLayerSelect && <MapMasterIgtLayerManagement />}
+          <MapAttribution />
+        </HStack>
       </HStack>
 
       {/* Floating: Feature Info Panel (Top-Right under actions) */}
@@ -64,6 +70,7 @@ export const MapOverlay = (props: MapOverlayProps) => {
         bottom={0}
         left={0}
         right={0}
+        minW={"480px"}
         pointerEvents={"none"}
       >
         <MapControls px={"md"} pb={"md"} />

@@ -450,11 +450,6 @@ const Content = (_props: GisContentProps) => {
   // Derived Values
   const sidebarPx = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
 
-  const panels = [
-    { id: "content", minSize: 5 },
-    { id: "spacer", minSize: 5 },
-  ];
-
   // Sync map padding — ResizeObserver inside hook handles splitter drag,
   // sidebar toggle triggers a smooth animated transition
   useMapViewPadding(map, {
@@ -467,6 +462,8 @@ const Content = (_props: GisContentProps) => {
     <Splitter.Panel
       key={"content"}
       id={"content"}
+      defaultSize={isSmallViewport ? splitterSize[1] : splitterSize[0]}
+      minSize={15}
       alignItems={"end"}
       overflow={"auto"}
     >
@@ -491,19 +488,26 @@ const Content = (_props: GisContentProps) => {
     <Splitter.Panel
       key={"spacer"}
       id={"spacer"}
+      defaultSize={isSmallViewport ? splitterSize[0] : splitterSize[1]}
+      minSize={isSmallViewport ? 20 : 30}
+      minW={isSmallViewport ? "full" : "480px"}
       display={"flex"}
       flexDir={"column"}
       justifyContent={"end"}
       pointerEvents={"none"}
     >
-      <VStack pos={"relative"} minH={"300px"} h={"full"} pointerEvents={"none"}>
+      <VStack
+        pos={"relative"}
+        minH={"300px"}
+        minW={isSmallViewport ? "full" : "480px"}
+        w={"full"}
+        h={"full"}
+        pointerEvents={"none"}
+      >
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
           showMasterIgtLayerSelect={true}
-          // onDrawFinish={(feature, originalPoints) => {
-          //   console.log("draw finished", { feature, originalPoints });
-          // }}
         />
       </VStack>
     </Splitter.Panel>
@@ -530,12 +534,11 @@ const Content = (_props: GisContentProps) => {
       {/* Splitter — content panel + transparent spacer (no map inside) */}
       <Splitter.Root
         flex={1}
-        panels={panels}
-        size={splitterSize}
-        onResize={(details) => {
-          setSplitterSize(SPLITTER_KEY, details.size);
+        direction={isSmallViewport ? "vertical" : "horizontal"}
+        defaultLayout={DEFAULT_SPLITTER_SIZE}
+        onLayout={(layout: number[]) => {
+          setSplitterSize(SPLITTER_KEY, layout);
         }}
-        orientation={isSmallViewport ? "vertical" : "horizontal"}
         pos={"relative"}
         zIndex={2}
         pointerEvents={"none"}
