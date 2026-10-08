@@ -126,3 +126,11 @@ export type MitraRegistrationDetailFieldItem = {
   isFullWidth?: boolean;
 };
 
+export type MitraRegistrationDetailSectionItem = {
+  value: string;
+  icon: React.ComponentType<{ size?: string | number; color?: string }>;
+  label: string;
+  content: React.ReactNode;
+};
+
+

@@ -22,6 +22,7 @@ import { InternalMitraRegistrationRejectTrigger } from "@/features/internal/mitr
 import { useInternalMitraRegistrationDetailQuery } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
 import type {
   MitraRegistrationDetailFieldItem,
+  MitraRegistrationDetailSectionItem,
   MitraRegistrationDocumentItem,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 
@@ -116,7 +117,7 @@ export function InternalMitraRegistrationDetailPage() {
         label: "Email Resmi (SSO)",
         value: (
           <HStack align={"center"} gap={1.5}>
-            <AppIcon icon={MailIcon} size={"xs"} color={"fg.muted"} />
+            <AppIcon icon={MailIcon} size={"xs"} color={"fg.subtle"} />
             <P fontWeight={"medium"}>{registration.email || "-"}</P>
           </HStack>
         ),
@@ -125,7 +126,7 @@ export function InternalMitraRegistrationDetailPage() {
         label: "Nomor HP / WhatsApp",
         value: (
           <HStack align={"center"} gap={1.5}>
-            <AppIcon icon={PhoneIcon} size={"xs"} color={"fg.muted"} />
+            <AppIcon icon={PhoneIcon} size={"xs"} color={"fg.subtle"} />
             <P fontWeight={"medium"}>
               {registration.phoneNumber ?? registration.nomorHp ?? "-"}
             </P>
@@ -205,6 +206,134 @@ export function InternalMitraRegistrationDetailPage() {
       },
     ];
   }, [registration]);
+
+  const sections: MitraRegistrationDetailSectionItem[] = useMemo(() => {
+    return [
+      {
+        value: "company-info",
+        icon: Building2Icon,
+        label: "Informasi Instansi / Perusahaan",
+        content: (
+          <SimpleGrid columns={[1, null, 2]} gap={"md"}>
+            {companyInfoFields.map((field) => (
+              <VStack
+                key={field.label}
+                align={"start"}
+                gap={"2xs"}
+                gridColumn={
+                  field.isFullWidth ? [null, null, "span 2"] : undefined
+                }
+              >
+                <P fontSize={"sm"} color={"fg.subtle"}>
+                  {field.label}
+                </P>
+
+                {typeof field.value === "string" ? (
+                  <P fontWeight={"medium"}>{field.value}</P>
+                ) : (
+                  field.value
+                )}
+              </VStack>
+            ))}
+          </SimpleGrid>
+        ),
+      },
+      {
+        value: "pic-info",
+        icon: UserCheckIcon,
+        label: "Penanggung Jawab & Kontak",
+        content: (
+          <SimpleGrid columns={[1, null, 2]} gap={"md"}>
+            {picInfoFields.map((field) => (
+              <VStack
+                key={field.label}
+                align={"start"}
+                gap={"2xs"}
+                gridColumn={
+                  field.isFullWidth ? [null, null, "span 2"] : undefined
+                }
+              >
+                <P fontSize={"sm"} color={"fg.subtle"}>
+                  {field.label}
+                </P>
+
+                {typeof field.value === "string" ? (
+                  <P fontWeight={"medium"}>{field.value}</P>
+                ) : (
+                  field.value
+                )}
+              </VStack>
+            ))}
+          </SimpleGrid>
+        ),
+      },
+      {
+        value: "documents",
+        icon: FileTextIcon,
+        label: "Berkas Dokumen Persyaratan",
+        content: (
+          <VStack gap={0} w={"full"} align={"stretch"}>
+            {documents.map((doc, idx) => (
+              <HStack
+                key={doc.title}
+                w={"full"}
+                py={3}
+                justify={"space-between"}
+                align={"center"}
+                gap={"md"}
+                borderBottom={idx < documents.length - 1 ? "1px solid" : "none"}
+                borderColor={"border.subtle"}
+              >
+                <HStack gap={3} flex={1} minW={0} align={"center"}>
+                  <FileIcon
+                    mimeType={doc.mimeType ?? "application/pdf"}
+                    size={"lg"}
+                    color={"fg.muted"}
+                    flexShrink={0}
+                  />
+
+                  <VStack align={"start"} gap={"2xs"} flex={1} minW={0}>
+                    <ClampedP
+                      fontWeight={"medium"}
+                      fontSize={"sm"}
+                      title={doc.title}
+                    >
+                      {doc.title}
+                    </ClampedP>
+
+                    <ClampedP
+                      fontSize={"xs"}
+                      color={"fg.muted"}
+                      title={doc.desc}
+                    >
+                      {doc.desc}
+                    </ClampedP>
+                  </VStack>
+                </HStack>
+
+                {doc.url ? (
+                  <ExternalLink
+                    href={doc.url}
+                    download={true}
+                    variant={"plain"}
+                  >
+                    <Button size={"xs"} variant={"outline"}>
+                      <AppIcon icon={SquareArrowOutUpRightIcon} />
+                      {"Tinjau Dokumen"}
+                    </Button>
+                  </ExternalLink>
+                ) : (
+                  <Badge colorPalette={"gray"} variant={"subtle"} size={"xs"}>
+                    {"Belum Diunggah"}
+                  </Badge>
+                )}
+              </HStack>
+            ))}
+          </VStack>
+        ),
+      },
+    ];
+  }, [companyInfoFields, picInfoFields, documents]);
 
   if (isLoading) {
     return (
@@ -320,175 +449,27 @@ export function InternalMitraRegistrationDetailPage() {
             {/* Main Info Sections Accordion */}
             <Accordion.Root
               multiple={true}
-              defaultValue={["company-info", "pic-info", "documents"]}
+              defaultValue={sections.map((s) => s.value)}
               w={"full"}
             >
-              {/* Section 1: Data Perusahaan */}
-              <Accordion.Item value={"company-info"}>
-                <Accordion.ItemTrigger px={"md"} py={"sm"}>
-                  <HStack align={"center"} gap={2} flex={1}>
-                    <AppIcon icon={Building2Icon} color={"fg.subtle"} />
+              {sections.map((section) => (
+                <Accordion.Item key={section.value} value={section.value}>
+                  <Accordion.ItemTrigger px={"md"} py={"sm"}>
+                    <HStack flex={1} align={"center"} gap={2} py={"xs"}>
+                      <AppIcon icon={section.icon} color={"fg.subtle"} />
 
-                    <Heading>{"Informasi Instansi / Perusahaan"}</Heading>
-                  </HStack>
-                  <Accordion.ItemIndicator />
-                </Accordion.ItemTrigger>
+                      <Heading fontWeight={"medium"}>{section.label}</Heading>
+                    </HStack>
+                    <Accordion.ItemIndicator />
+                  </Accordion.ItemTrigger>
 
-                <Accordion.ItemContent>
-                  <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
-                    <SimpleGrid columns={[1, null, 2]} gap={"md"}>
-                      {companyInfoFields.map((field) => (
-                        <VStack
-                          key={field.label}
-                          align={"start"}
-                          gap={"2xs"}
-                          gridColumn={
-                            field.isFullWidth
-                              ? [null, null, "span 2"]
-                              : undefined
-                          }
-                        >
-                          <P fontSize={"xs"} color={"fg.subtle"}>
-                            {field.label}
-                          </P>
-
-                          {typeof field.value === "string" ? (
-                            <P fontWeight={"medium"}>{field.value}</P>
-                          ) : (
-                            field.value
-                          )}
-                        </VStack>
-                      ))}
-                    </SimpleGrid>
-                  </Accordion.ItemBody>
-                </Accordion.ItemContent>
-              </Accordion.Item>
-
-              {/* Section 2: Penanggung Jawab */}
-              <Accordion.Item value={"pic-info"}>
-                <Accordion.ItemTrigger px={"md"} py={"sm"}>
-                  <HStack align={"center"} gap={2} flex={1}>
-                    <AppIcon icon={UserCheckIcon} color={"fg.subtle"} />
-
-                    <Heading>{"Penanggung Jawab & Kontak"}</Heading>
-                  </HStack>
-                  <Accordion.ItemIndicator />
-                </Accordion.ItemTrigger>
-
-                <Accordion.ItemContent>
-                  <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
-                    <SimpleGrid columns={[1, null, 2]} gap={"md"}>
-                      {picInfoFields.map((field) => (
-                        <VStack
-                          key={field.label}
-                          align={"start"}
-                          gap={"2xs"}
-                          gridColumn={
-                            field.isFullWidth
-                              ? [null, null, "span 2"]
-                              : undefined
-                          }
-                        >
-                          <P fontSize={"xs"} color={"fg.subtle"}>
-                            {field.label}
-                          </P>
-
-                          {typeof field.value === "string" ? (
-                            <P fontWeight={"medium"}>{field.value}</P>
-                          ) : (
-                            field.value
-                          )}
-                        </VStack>
-                      ))}
-                    </SimpleGrid>
-                  </Accordion.ItemBody>
-                </Accordion.ItemContent>
-              </Accordion.Item>
-
-              {/* Section 3: 6 Berkas Dokumen Persyaratan */}
-              <Accordion.Item value={"documents"}>
-                <Accordion.ItemTrigger px={"md"} py={"sm"}>
-                  <HStack align={"center"} gap={2} flex={1}>
-                    <AppIcon icon={FileTextIcon} color={"fg.muted"} />
-                    <Heading>{"Berkas Dokumen Persyaratan"}</Heading>
-                  </HStack>
-                  <Accordion.ItemIndicator />
-                </Accordion.ItemTrigger>
-
-                <Accordion.ItemContent>
-                  <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
-                    <VStack gap={0} w={"full"} align={"stretch"}>
-                      {documents.map((doc, idx) => (
-                        <HStack
-                          key={doc.title}
-                          w={"full"}
-                          py={3}
-                          justify={"space-between"}
-                          align={"center"}
-                          gap={"md"}
-                          borderBottom={
-                            idx < documents.length - 1 ? "1px solid" : "none"
-                          }
-                          borderColor={"border.subtle"}
-                        >
-                          <HStack gap={3} flex={1} minW={0} align={"center"}>
-                            <FileIcon
-                              mimeType={doc.mimeType ?? "application/pdf"}
-                              size={"lg"}
-                              color={"fg.muted"}
-                              flexShrink={0}
-                            />
-
-                            <VStack
-                              align={"start"}
-                              gap={"2xs"}
-                              flex={1}
-                              minW={0}
-                            >
-                              <ClampedP
-                                fontWeight={"medium"}
-                                fontSize={"sm"}
-                                title={doc.title}
-                              >
-                                {doc.title}
-                              </ClampedP>
-
-                              <ClampedP
-                                fontSize={"xs"}
-                                color={"fg.muted"}
-                                title={doc.desc}
-                              >
-                                {doc.desc}
-                              </ClampedP>
-                            </VStack>
-                          </HStack>
-
-                          {doc.url ? (
-                            <ExternalLink
-                              href={doc.url}
-                              download={true}
-                              variant={"plain"}
-                            >
-                              <Button size={"xs"} variant={"outline"}>
-                                <AppIcon icon={SquareArrowOutUpRightIcon} />
-                                {"Tinjau Dokumen"}
-                              </Button>
-                            </ExternalLink>
-                          ) : (
-                            <Badge
-                              colorPalette={"gray"}
-                              variant={"subtle"}
-                              size={"xs"}
-                            >
-                              {"Belum Diunggah"}
-                            </Badge>
-                          )}
-                        </HStack>
-                      ))}
-                    </VStack>
-                  </Accordion.ItemBody>
-                </Accordion.ItemContent>
-              </Accordion.Item>
+                  <Accordion.ItemContent>
+                    <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
+                      {section.content}
+                    </Accordion.ItemBody>
+                  </Accordion.ItemContent>
+                </Accordion.Item>
+              ))}
             </Accordion.Root>
           </VStack>
         </Container.Body>
