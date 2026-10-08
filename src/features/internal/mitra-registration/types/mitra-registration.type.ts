@@ -119,3 +119,10 @@ export type MitraRegistrationDocumentItem = {
   originalName?: string;
   size?: number;
 };
+
+export type MitraRegistrationDetailFieldItem = {
+  label: string;
+  value?: React.ReactNode;
+  isFullWidth?: boolean;
+};
+

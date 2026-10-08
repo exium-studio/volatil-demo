@@ -6,7 +6,6 @@ import { FileIcon } from "@/design-system/components/data-display/ui/file-item";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -21,7 +20,11 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMitraRegistrationApproveTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal";
 import { InternalMitraRegistrationRejectTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal";
 import { useInternalMitraRegistrationDetailQuery } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
-import type { MitraRegistrationDocumentItem } from "@/features/internal/mitra-registration/types/mitra-registration.type";
+import type {
+  MitraRegistrationDetailFieldItem,
+  MitraRegistrationDocumentItem,
+} from "@/features/internal/mitra-registration/types/mitra-registration.type";
+
 import { MitraRegistrationStatusBadge } from "@/features/shared/components/mitra-registration-status.badge";
 import {
   formatUtcDateTime,
@@ -54,6 +57,83 @@ export function InternalMitraRegistrationDetailPage() {
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  const companyInfoFields: MitraRegistrationDetailFieldItem[] = useMemo(() => {
+    if (!registration) return [];
+    return [
+      {
+        label: "Nama Instansi / Perusahaan",
+        value:
+          registration.organizationName ?? registration.namaInstansi ?? "-",
+      },
+      {
+        label: "Nomor Induk Berusaha (NIB)",
+        value: registration.nib || "-",
+      },
+      {
+        label: "Nomor Pokok Wajib Pajak (NPWP)",
+        value: registration.npwp || "-",
+      },
+      {
+        label: "Situs Web",
+        value: registration.website ? (
+          <ExternalLink
+            href={
+              registration.website.startsWith("http")
+                ? registration.website
+                : `https://${registration.website}`
+            }
+          >
+            <HStack gap={1} align={"center"}>
+              <P fontWeight={"medium"}>{registration.website}</P>
+              <AppIcon icon={ExternalLinkIcon} size={"xs"} color={"fg.muted"} />
+            </HStack>
+          </ExternalLink>
+        ) : (
+          <P color={"fg.muted"}>{"-"}</P>
+        ),
+      },
+      {
+        label: "Alamat Kantor Operasional",
+        value: registration.officeAddress ?? registration.alamatKantor ?? "-",
+        isFullWidth: true,
+      },
+    ];
+  }, [registration]);
+
+  const picInfoFields: MitraRegistrationDetailFieldItem[] = useMemo(() => {
+    if (!registration) return [];
+    return [
+      {
+        label: "Nama Penanggung Jawab",
+        value: registration.picName ?? registration.namaPenanggungJawab ?? "-",
+      },
+      {
+        label: "Jabatan",
+        value: registration.position ?? registration.jabatan ?? "-",
+      },
+      {
+        label: "Email Resmi (SSO)",
+        value: (
+          <HStack align={"center"} gap={1.5}>
+            <AppIcon icon={MailIcon} size={"xs"} color={"fg.muted"} />
+            <P fontWeight={"medium"}>{registration.email || "-"}</P>
+          </HStack>
+        ),
+      },
+      {
+        label: "Nomor HP / WhatsApp",
+        value: (
+          <HStack align={"center"} gap={1.5}>
+            <AppIcon icon={PhoneIcon} size={"xs"} color={"fg.muted"} />
+            <P fontWeight={"medium"}>
+              {registration.phoneNumber ?? registration.nomorHp ?? "-"}
+            </P>
+          </HStack>
+        ),
+      },
+    ];
+  }, [registration]);
 
   const documents: MitraRegistrationDocumentItem[] = useMemo(() => {
     if (!registration) return [];
@@ -247,7 +327,8 @@ export function InternalMitraRegistrationDetailPage() {
               <Accordion.Item value={"company-info"}>
                 <Accordion.ItemTrigger px={"md"} py={"sm"}>
                   <HStack align={"center"} gap={2} flex={1}>
-                    <AppIcon icon={Building2Icon} color={"fg.muted"} />
+                    <AppIcon icon={Building2Icon} color={"fg.subtle"} />
+
                     <Heading>{"Informasi Instansi / Perusahaan"}</Heading>
                   </HStack>
                   <Accordion.ItemIndicator />
@@ -256,73 +337,28 @@ export function InternalMitraRegistrationDetailPage() {
                 <Accordion.ItemContent>
                   <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
                     <SimpleGrid columns={[1, null, 2]} gap={"md"}>
-                      <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Nama Instansi / Perusahaan"}
-                        </P>
-                        <P fontWeight={"medium"}>
-                          {registration.organizationName ??
-                            registration.namaInstansi ??
-                            "-"}
-                        </P>
-                      </VStack>
+                      {companyInfoFields.map((field) => (
+                        <VStack
+                          key={field.label}
+                          align={"start"}
+                          gap={"2xs"}
+                          gridColumn={
+                            field.isFullWidth
+                              ? [null, null, "span 2"]
+                              : undefined
+                          }
+                        >
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {field.label}
+                          </P>
 
-                      <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Nomor Induk Berusaha (NIB)"}
-                        </P>
-                        <P fontWeight={"medium"}>{registration.nib || "-"}</P>
-                      </VStack>
-
-                      <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Nomor Pokok Wajib Pajak (NPWP)"}
-                        </P>
-                        <P fontWeight={"medium"}>{registration.npwp || "-"}</P>
-                      </VStack>
-
-                      <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Situs Web"}
-                        </P>
-                        {registration.website ? (
-                          <ExternalLink
-                            href={
-                              registration.website.startsWith("http")
-                                ? registration.website
-                                : `https://${registration.website}`
-                            }
-                          >
-                            <HStack gap={1} align={"center"}>
-                              <P fontWeight={"medium"}>
-                                {registration.website}
-                              </P>
-                              <AppIcon
-                                icon={ExternalLinkIcon}
-                                size={"xs"}
-                                color={"fg.muted"}
-                              />
-                            </HStack>
-                          </ExternalLink>
-                        ) : (
-                          <P color={"fg.muted"}>{"-"}</P>
-                        )}
-                      </VStack>
-
-                      <VStack
-                        align={"start"}
-                        gap={"2xs"}
-                        gridColumn={[null, null, "span 2"]}
-                      >
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Alamat Kantor Operasional"}
-                        </P>
-                        <P fontWeight={"medium"}>
-                          {registration.officeAddress ??
-                            registration.alamatKantor ??
-                            "-"}
-                        </P>
-                      </VStack>
+                          {typeof field.value === "string" ? (
+                            <P fontWeight={"medium"}>{field.value}</P>
+                          ) : (
+                            field.value
+                          )}
+                        </VStack>
+                      ))}
                     </SimpleGrid>
                   </Accordion.ItemBody>
                 </Accordion.ItemContent>
@@ -332,7 +368,8 @@ export function InternalMitraRegistrationDetailPage() {
               <Accordion.Item value={"pic-info"}>
                 <Accordion.ItemTrigger px={"md"} py={"sm"}>
                   <HStack align={"center"} gap={2} flex={1}>
-                    <AppIcon icon={UserCheckIcon} color={"fg.muted"} />
+                    <AppIcon icon={UserCheckIcon} color={"fg.subtle"} />
+
                     <Heading>{"Penanggung Jawab & Kontak"}</Heading>
                   </HStack>
                   <Accordion.ItemIndicator />
@@ -341,64 +378,28 @@ export function InternalMitraRegistrationDetailPage() {
                 <Accordion.ItemContent>
                   <Accordion.ItemBody px={"md"} pb={"md"} pt={0}>
                     <SimpleGrid columns={[1, null, 2]} gap={"md"}>
-                      <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Nama Penanggung Jawab"}
-                        </P>
-
-                        <P fontWeight={"medium"}>
-                          {registration.picName ??
-                            registration.namaPenanggungJawab ??
-                            "-"}
-                        </P>
-                      </VStack>
-
-                      <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Jabatan"}
-                        </P>
-
-                        <P fontWeight={"medium"}>
-                          {registration.position ?? registration.jabatan ?? "-"}
-                        </P>
-                      </VStack>
-
-                      <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Email Resmi (SSO)"}
-                        </P>
-
-                        <HStack align={"center"} gap={1.5}>
-                          <AppIcon
-                            icon={MailIcon}
-                            size={"xs"}
-                            color={"fg.muted"}
-                          />
-
-                          <P fontWeight={"medium"}>
-                            {registration.email || "-"}
+                      {picInfoFields.map((field) => (
+                        <VStack
+                          key={field.label}
+                          align={"start"}
+                          gap={"2xs"}
+                          gridColumn={
+                            field.isFullWidth
+                              ? [null, null, "span 2"]
+                              : undefined
+                          }
+                        >
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {field.label}
                           </P>
-                        </HStack>
-                      </VStack>
 
-                      <VStack align={"start"} gap={"2xs"}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Nomor HP / WhatsApp"}
-                        </P>
-
-                        <HStack align={"center"} gap={1.5}>
-                          <AppIcon
-                            icon={PhoneIcon}
-                            size={"xs"}
-                            color={"fg.muted"}
-                          />
-                          <P fontWeight={"medium"}>
-                            {registration.phoneNumber ??
-                              registration.nomorHp ??
-                              "-"}
-                          </P>
-                        </HStack>
-                      </VStack>
+                          {typeof field.value === "string" ? (
+                            <P fontWeight={"medium"}>{field.value}</P>
+                          ) : (
+                            field.value
+                          )}
+                        </VStack>
+                      ))}
                     </SimpleGrid>
                   </Accordion.ItemBody>
                 </Accordion.ItemContent>
