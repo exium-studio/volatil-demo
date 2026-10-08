@@ -200,7 +200,7 @@ const InternalDataManagementEditModalContent = (
       </Modal.Header>
 
       <Modal.Body>
-        <VStack align={"stretch"} gap={"xl"}>
+        <VStack gap={"xl"}>
           {/* Grup 1: Informasi Dasar */}
           <Fieldset legend={"Informasi Dasar"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
@@ -430,7 +430,9 @@ const InternalDataManagementEditModalContent = (
             {"Simpan"}
           </Button>
 
-          <Button type={"button"} onClick={close}>{t["action.cancel"]()}</Button>
+          <Button type={"button"} onClick={close}>
+            {t["action.cancel"]()}
+          </Button>
         </VStack>
       </Modal.Footer>
     </Modal.Content>

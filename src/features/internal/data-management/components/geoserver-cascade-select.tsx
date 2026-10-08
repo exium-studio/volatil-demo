@@ -32,22 +32,19 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     isLoading: isLoadingGeoserver,
     isError: isErrorGeoserver,
     refetch: refetchGeoserver,
-  } =
-    useMasterGeoserverQuery();
+  } = useMasterGeoserverQuery();
   const {
     workspaces,
     isLoading: isLoadingWorkspaces,
     isError: isErrorWorkspaces,
     refetch: refetchWorkspaces,
-  } =
-    useGeoServerWorkspacesQuery(selectedGeoserverId);
+  } = useGeoServerWorkspacesQuery(selectedGeoserverId);
   const {
     layers: workspaceLayers,
     isLoading: isLoadingLayers,
     isError: isErrorLayers,
     refetch: refetchLayers,
-  } =
-    useGeoServerWorkspaceLayersQuery(selectedGeoserverId, selectedWorkspace);
+  } = useGeoServerWorkspaceLayersQuery(selectedGeoserverId, selectedWorkspace);
 
   // Derived Values
   const geoserverOptions: FocusSelectOption[] = useMemo(
@@ -76,9 +73,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
         return {
           label: lyr.title || lyr.name,
           value: lyr.name,
-          description:
-            lyr.abstract ||
-            (basis ? `Basis: ${basis}` : undefined),
+          description: lyr.abstract || (basis ? `Basis: ${basis}` : undefined),
         };
       }),
     [workspaceLayers],
@@ -113,7 +108,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
   }, [selectedLayerName, selectedTypeName, selectedWorkspace]);
 
   return (
-    <VStack align={"stretch"} gap={"md"} w={"full"}>
+    <VStack gap={"md"} w={"full"}>
       {/* 1. Select Master GeoServer */}
       <Field
         label={"Master GeoServer"}
@@ -168,8 +163,8 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       <Field
         label={"Layer"}
         optional
-        invalid={Boolean(errors?.layerName || errors?.typeName)}
-        errorText={errors?.layerName?.message || errors?.typeName?.message}
+        invalid={Boolean(errors?.layerName)}
+        errorText={errors?.layerName?.message}
       >
         <FocusSelectInput
           modalKey={`${parentModalKey}.layer`}

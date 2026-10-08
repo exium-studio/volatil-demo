@@ -107,9 +107,6 @@ const InternalDataManagementCreateModalContent = (
   const workspaceName = useWatch({ control, name: "workspaceName" });
   const layerName = useWatch({ control, name: "layerName" });
   const typeName = useWatch({ control, name: "typeName" });
-  const title = useWatch({ control, name: "title" });
-  const description = useWatch({ control, name: "description" });
-
   // Derived Values
   const selectedGeoserver = useMemo(
     () => geoserverList.find((g) => g.id === geoserverId),
@@ -123,23 +120,11 @@ const InternalDataManagementCreateModalContent = (
   ) => {
     setValue("layerName", selectedLayerName, { shouldValidate: true });
     setValue("typeName", selectedTypeName, { shouldValidate: true });
-    if (layerDetail) {
-      if (!title) {
-        setValue("title", layerDetail.title || layerDetail.name, {
-          shouldValidate: true,
-        });
-      }
-      if (!description && layerDetail.abstract) {
-        setValue("description", layerDetail.abstract, {
-          shouldValidate: true,
-        });
-      }
-      const basis = layerDetail.igtBasis ?? layerDetail.spatialBasis;
-      if (basis) {
-        setValue("igtBasis", basis, {
-          shouldValidate: true,
-        });
-      }
+    const basis = layerDetail?.igtBasis ?? layerDetail?.spatialBasis;
+    if (basis) {
+      setValue("igtBasis", basis, {
+        shouldValidate: true,
+      });
     }
   };
 
@@ -446,7 +431,9 @@ const InternalDataManagementCreateModalContent = (
             {"Tambah Layer"}
           </Button>
 
-          <Button type={"button"} onClick={close}>{t["action.cancel"]()}</Button>
+          <Button type={"button"} onClick={close}>
+            {t["action.cancel"]()}
+          </Button>
         </VStack>
       </Modal.Footer>
     </Modal.Content>
