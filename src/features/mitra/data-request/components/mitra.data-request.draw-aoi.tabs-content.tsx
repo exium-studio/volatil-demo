@@ -287,7 +287,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
       <VStack
         flex={1}
         gap={0}
-        overflowY={"auto"}
+        overflow={"hidden"}
         bg={"bg.canvas"}
         position={"relative"}
         w={"full"}
@@ -299,6 +299,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
           p={"md"}
           bg={"bg.body"}
           w={"full"}
+          flexShrink={0}
         >
           <HStack
             wrap={"wrap"}
@@ -363,7 +364,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
           </HStack>
         </VStack>
 
-        <Separator borderColor={"bg.canvas"} />
+        <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
         <MitraDataRequestIgtLayerDataView
           cqlFilter={aoiCqlFilter}

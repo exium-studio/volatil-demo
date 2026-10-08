@@ -93,7 +93,6 @@ export const MapFeatureInfoPanel = () => {
     );
   }, [allEntries, searchQuery]);
 
-
   // Handlers
   const handleExitComplete = () => {
     setCachedFeature(null);

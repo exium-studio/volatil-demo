@@ -688,7 +688,7 @@ const UploadAoiConfirmedAttributeList = memo(
         <VStack
           flex={1}
           gap={0}
-          overflowY={"auto"}
+          overflow={"hidden"}
           bg={"bg.canvas"}
           position={"relative"}
           w={"full"}
@@ -701,6 +701,7 @@ const UploadAoiConfirmedAttributeList = memo(
             p={"md"}
             bg={"bg.body"}
             w={"full"}
+            flexShrink={0}
           >
             <HStack
               wrap={"wrap"}
@@ -766,7 +767,7 @@ const UploadAoiConfirmedAttributeList = memo(
             </HStack>
           </VStack>
 
-          <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
           <MitraDataRequestIgtLayerDataView
             cqlFilter={aoiCqlFilter}

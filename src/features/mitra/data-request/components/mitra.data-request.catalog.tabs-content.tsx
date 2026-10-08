@@ -169,7 +169,7 @@ export const MitraDataRequestCatalogTabsContent = (
         <VStack
           flex={1}
           gap={0}
-          overflowY={"auto"}
+          overflow={"hidden"}
           bg={"bg.canvas"}
           position={"relative"}
           w={"full"}
@@ -182,6 +182,7 @@ export const MitraDataRequestCatalogTabsContent = (
             p={"md"}
             bg={"bg.body"}
             w={"full"}
+            flexShrink={0}
           >
             <HStack
               wrap={"wrap"}
@@ -266,7 +267,7 @@ export const MitraDataRequestCatalogTabsContent = (
             </HStack>
           </VStack>
 
-          <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
           <MitraDataRequestIgtLayerDataView
             selectionType={"catalog"}

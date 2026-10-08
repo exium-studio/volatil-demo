@@ -674,7 +674,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       <VStack
         flex={1}
         position={"relative"}
-        overflowY={"auto"}
+        overflow={"hidden"}
         w={"full"}
         bg={"bg.body"}
         roundedBottom={theme.radii.container}
@@ -682,7 +682,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         <VStack flex={1} w={"full"} overflowY={"auto"}>
           {/* Spatial Calculation Summary Box */}
           {effectiveAoiPolygon && (
-            <Box p={"md"} bg={"bg.body"} w={"full"}>
+            <Box p={"md"} bg={"bg.body"} w={"full"} flexShrink={0}>
               <MitraDataRequestSpatialSummary
                 totalBidangCount={calculationResult?.totalBidangCount ?? 0}
                 totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
@@ -728,7 +728,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             </Box>
           )}
 
-          <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
           {/* Actions Header: Search Bar & Basis IGT Filter */}
           <HStack
@@ -739,6 +739,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             w={"full"}
             p={"md"}
             bg={"bg.body"}
+            flexShrink={0}
           >
             {/* Left: Search Bar */}
             <HStack gap={"sm"} flex={1} maxW={"full"}>
@@ -763,10 +764,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
             </HStack>
           </HStack>
 
-          <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
           {/* DataList Table with Multi-Selection Checkbox */}
-          <VStack flex={1} w={"full"} bg={"bg.body"} minH={"240px"}>
+          <VStack flex={"unset"} w={"full"} bg={"bg.body"}>
             {isShowLoading && (
               <Skeleton
                 flex={1}
@@ -802,7 +803,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                         void adminBoundaryQuery.refetch();
                       if (calculationError && !calculationResult) {
                         useMitraDataRequestStore
-                          .getState()
+                           .getState()
                           .resetCalculation(selectionType);
                         const resolvedAoi = to2DGeometry(effectiveAoiPolygon);
                         if (!resolvedAoi) return;
@@ -866,9 +867,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 onSelectedItemChange={({ selectedItems }) =>
                   setSelectedTableItems(selectedItems)
                 }
-                virtualized={true}
+                virtualized={false}
                 withNumbering={true}
                 roundedTop={0}
+                overflowY={"visible"}
+                overflowX={"auto"}
+                maxH={"none"}
+                flex={"unset"}
               >
                 <DataViewTable.Header />
                 <DataViewTable.Body />
@@ -877,10 +882,16 @@ export const MitraDataRequestIgtLayerDataView = memo(
           </VStack>
         </VStack>
 
-        <Separator borderColor={"bg.canvas"} />
+        <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
         {/* Action Bar Footer */}
-        <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} mt={"auto"}>
+        <VStack
+          gap={"sm"}
+          w={"full"}
+          p={"md"}
+          bg={"bg.body"}
+          flexShrink={0}
+        >
           {/* Action Buttons */}
           <VStack w={"full"} gap={"xs"}>
             {isSelectionLimitInvalid && purchaseLimitMessage ? (
