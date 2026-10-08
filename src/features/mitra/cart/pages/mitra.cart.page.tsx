@@ -19,6 +19,7 @@ import { useMapInstanceStore } from "@/design-system/components/map/stores/map.i
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.order-item";
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
 import {
@@ -53,6 +54,10 @@ const MitraCartContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
+  // Search Params
+  const { queryValue: orderIdParam, setQueryValue: setOrderIdParam } =
+    useSearchParam("orderId");
+
   // Stores
   const map = useMapInstanceStore((state) => state.map);
 
@@ -62,16 +67,15 @@ const MitraCartContent = () => {
   // Queries (for derived index between orders and selected order)
   const { orders } = useCartOrdersQuery();
 
-  // States — initial load has NO selected order
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  // States
   const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
   const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
   const [isBidangVisible, setIsBidangVisible] = useState<boolean>(true);
 
   // Derived Values — Validate selectedOrderId against current orders list
   const effectiveSelectedOrderId =
-    selectedOrderId && orders.some((o) => o.orderId === selectedOrderId)
-      ? selectedOrderId
+    orderIdParam && orders.some((o) => o.orderId === orderIdParam)
+      ? orderIdParam
       : null;
 
   // Queries — detail of selected order
@@ -147,16 +151,15 @@ const MitraCartContent = () => {
   }, [isOrderSelected, selectedOrder, map]);
 
   // Handlers
-  const handleSelectOrder = useCallback((orderId: string | null) => {
-    setSelectedOrderId((prev) => {
-      if (prev !== orderId) {
-        setIsAoiVisible(true);
-        setIsCoverageVisible(true);
-        setIsBidangVisible(true);
-      }
-      return orderId;
-    });
-  }, []);
+  const handleSelectOrder = useCallback(
+    (orderId: string | null) => {
+      setOrderIdParam(orderId ?? undefined, { replace: true });
+      setIsAoiVisible(true);
+      setIsCoverageVisible(true);
+      setIsBidangVisible(true);
+    },
+    [setOrderIdParam],
+  );
 
   const handleToggleAoi = useCallback(() => {
     setIsAoiVisible((prev) => !prev);

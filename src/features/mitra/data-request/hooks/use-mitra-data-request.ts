@@ -107,7 +107,7 @@ export const useAddToCartAll = () => {
       });
       return { toastId };
     },
-    onSuccess: (_, params, context) => {
+    onSuccess: (data, params, context) => {
       const toastId = context?.toastId;
       const layerDisplayName =
         params.title ||
@@ -137,7 +137,10 @@ export const useAddToCartAll = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
-      void navigate({ to: "/mitra/cart" });
+      void navigate({
+        to: "/mitra/cart",
+        search: data?.orderId ? { orderId: data.orderId } : undefined,
+      });
     },
     onError: (error, _params, context) => {
       const toastId = context?.toastId;
@@ -198,7 +201,7 @@ export const useAddToCartMultipleLayers = () => {
       toast.loading(title, { id: toastId, group: "Keranjang" });
       return { toastId, count };
     },
-    onSuccess: (_, params, context) => {
+    onSuccess: (data, params, context) => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
       const count = params.layers.length;
 
@@ -225,7 +228,10 @@ export const useAddToCartMultipleLayers = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
-      void navigate({ to: "/mitra/cart" });
+      void navigate({
+        to: "/mitra/cart",
+        search: data?.orderId ? { orderId: data.orderId } : undefined,
+      });
     },
     onError: (error, _params, context) => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;

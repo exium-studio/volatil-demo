@@ -255,7 +255,7 @@ export const useCreateCartOrder = () => {
   return useMutation({
     mutationFn: (payload: AddToCartOrderRequest) => createCartOrder(payload),
     onMutate: toastHandlers.onLoading,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "active-order"],
@@ -266,7 +266,10 @@ export const useCreateCartOrder = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
-      void navigate({ to: "/mitra/cart" });
+      void navigate({
+        to: "/mitra/cart",
+        search: data?.orderId ? { orderId: data.orderId } : undefined,
+      });
     },
     onError: toastHandlers.onError,
   });

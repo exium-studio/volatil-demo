@@ -25,6 +25,7 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import { Field as ChakraField } from "@chakra-ui/react";
 import { CheckIcon, ChevronDownIcon, PlusIcon, XIcon } from "lucide-react";
 import type React from "react";
 import { isValidElement, useEffect, useMemo, useRef, useState } from "react";
@@ -340,168 +341,173 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
       {triggerContent}
 
       <FieldContext.Provider value={null}>
-        <Modal.Content>
-          <Modal.Header>
-            <Modal.Title fontWeight={"semibold"}>{resolvedTitle}</Modal.Title>
+        <ChakraField.Root invalid={false}>
+          <Modal.Content>
+            <Modal.Header>
+              <Modal.Title fontWeight={"semibold"}>{resolvedTitle}</Modal.Title>
 
-            <Modal.CloseButton />
-          </Modal.Header>
+              <Modal.CloseButton />
+            </Modal.Header>
 
-          <Modal.Body p={0}>
-            {/* Always render SearchInput when not fetching */}
-            {!isFetchingLoading && !isError && (
-              <VStack w={"full"} px={"md"} pt={"2px"} mb={"sm"}>
-                <SearchInput
-                  ref={searchInputRef}
-                  placeholder={t["action.search"]()}
-                  onValueChange={setSearchQuery}
-                  w={"full"}
-                  autoFocus={true}
-                />
-              </VStack>
-            )}
-
-            {customOption && !isFetchingLoading && !isError && (
-              <VStack w={"full"} px={"md"} mb={"sm"}>
-                <Button
-                  variant={
-                    isCustomValueSelected && currentValue === searchQuery.trim()
-                      ? "subtle"
-                      : "outline"
-                  }
-                  w={"full"}
-                  py={"sm"}
-                  px={3}
-                  justifyContent={"space-between"}
-                  alignItems={"center"}
-                  onClick={() => {
-                    if (searchQuery.trim()) {
-                      handleOptionSelect(searchQuery.trim(), {
-                        label: searchQuery.trim(),
-                        value: searchQuery.trim(),
-                        description: "Opsi kustom",
-                      });
-                    }
-                  }}
-                  disabled={!searchQuery.trim()}
-                >
-                  <HStack gap={"sm"} align={"center"} flex={1} minW={0}>
-                    <AppIcon icon={PlusIcon} size={"sm"} />
-                    <ClampedP>
-                      {searchQuery.trim()
-                        ? searchQuery.trim()
-                        : "Ketik di atas untuk input kustom..."}
-                    </ClampedP>
-                  </HStack>
-                  <Badge>Opsi Kustom</Badge>
-                </Button>
-              </VStack>
-            )}
-
-            {/* Clean options list container */}
-            <VScrollContainer w={"full"} maxH={"300px"} px={"md"} pb={"md"}>
-              {isFetchingLoading ? (
-                <VStack gap={"xs"} w={"full"} h={"240px"}>
-                  {Array.from({ length: SKELETON_LIST_COUNT }).map(
-                    (_, index) => (
-                      <Skeleton
-                        key={`skeleton-${index + 1}`}
-                        w={"full"}
-                        flex={1}
-                      />
-                    ),
-                  )}
-                </VStack>
-              ) : isError ? (
-                <RetryState
-                  onRetry={onRetry}
-                  title={errorTitle}
-                  description={errorMessage}
-                />
-              ) : isEmptyArray(filteredOptions) ? (
-                <NoResultState query={searchQuery || "..."} />
-              ) : (
-                <VStack gap={1} w={"full"}>
-                  {filteredOptions.map((opt) => {
-                    const isSelected = opt.value === currentValue;
-
-                    return (
-                      <Button
-                        key={opt.value}
-                        variant={isSelected ? "subtle" : "ghost"}
-                        w={"full"}
-                        minH={"40px"}
-                        h={"max"}
-                        px={3}
-                        py={"xs"}
-                        alignItems={"center"}
-                        justifyContent={"start"}
-                        onClick={() => handleOptionSelect(opt.value, opt)}
-                      >
-                        {renderOption ? (
-                          renderOption(opt)
-                        ) : (
-                          <HStack
-                            gap={"sm"}
-                            align={"center"}
-                            flex={1}
-                            minW={0}
-                            justify={"start"}
-                          >
-                            {renderStartElement(
-                              opt.startElement,
-                              opt.icon,
-                              "sm",
-                            )}
-                            <VStack align={"start"}>
-                              <ClampedP
-                                fontWeight={isSelected ? "semibold" : "normal"}
-                                textAlign={"start"}
-                              >
-                                {opt.label}
-                              </ClampedP>
-
-                              {opt.description && (
-                                <ClampedP
-                                  fontSize={"xs"}
-                                  textAlign={"start"}
-                                  color={"fg.subtle"}
-                                >
-                                  {opt.description}
-                                </ClampedP>
-                              )}
-                            </VStack>
-                          </HStack>
-                        )}
-
-                        {isSelected && (
-                          <AppIcon
-                            icon={CheckIcon}
-                            color={`${theme.colorPalette}.fg`}
-                            mr={"-2px"}
-                          />
-                        )}
-                      </Button>
-                    );
-                  })}
+            <Modal.Body p={0}>
+              {/* Always render SearchInput when not fetching */}
+              {!isFetchingLoading && !isError && (
+                <VStack w={"full"} px={"md"} pt={"2px"} mb={"sm"}>
+                  <SearchInput
+                    ref={searchInputRef}
+                    placeholder={t["action.search"]()}
+                    onValueChange={setSearchQuery}
+                    w={"full"}
+                    autoFocus={true}
+                  />
                 </VStack>
               )}
-            </VScrollContainer>
-          </Modal.Body>
 
-          {clearable && (
-            <Modal.Footer>
-              <Button
-                variant={"ghost"}
-                w={"full"}
-                disabled={!currentValue}
-                onClick={handleResetSelection}
-              >
-                {t["action.reset"]()}
-              </Button>
-            </Modal.Footer>
-          )}
-        </Modal.Content>
+              {customOption && !isFetchingLoading && !isError && (
+                <VStack w={"full"} px={"md"} mb={"sm"}>
+                  <Button
+                    variant={
+                      isCustomValueSelected &&
+                      currentValue === searchQuery.trim()
+                        ? "subtle"
+                        : "outline"
+                    }
+                    w={"full"}
+                    py={"sm"}
+                    px={3}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                    onClick={() => {
+                      if (searchQuery.trim()) {
+                        handleOptionSelect(searchQuery.trim(), {
+                          label: searchQuery.trim(),
+                          value: searchQuery.trim(),
+                          description: "Opsi kustom",
+                        });
+                      }
+                    }}
+                    disabled={!searchQuery.trim()}
+                  >
+                    <HStack gap={"sm"} align={"center"} flex={1} minW={0}>
+                      <AppIcon icon={PlusIcon} size={"sm"} />
+                      <ClampedP>
+                        {searchQuery.trim()
+                          ? searchQuery.trim()
+                          : "Ketik di atas untuk input kustom..."}
+                      </ClampedP>
+                    </HStack>
+                    <Badge>Opsi Kustom</Badge>
+                  </Button>
+                </VStack>
+              )}
+
+              {/* Clean options list container */}
+              <VScrollContainer w={"full"} maxH={"300px"} px={"md"} pb={"md"}>
+                {isFetchingLoading ? (
+                  <VStack gap={"xs"} w={"full"} h={"240px"}>
+                    {Array.from({ length: SKELETON_LIST_COUNT }).map(
+                      (_, index) => (
+                        <Skeleton
+                          key={`skeleton-${index + 1}`}
+                          w={"full"}
+                          flex={1}
+                        />
+                      ),
+                    )}
+                  </VStack>
+                ) : isError ? (
+                  <RetryState
+                    onRetry={onRetry}
+                    title={errorTitle}
+                    description={errorMessage}
+                  />
+                ) : isEmptyArray(filteredOptions) ? (
+                  <NoResultState query={searchQuery || "..."} />
+                ) : (
+                  <VStack gap={1} w={"full"}>
+                    {filteredOptions.map((opt) => {
+                      const isSelected = opt.value === currentValue;
+
+                      return (
+                        <Button
+                          key={opt.value}
+                          variant={isSelected ? "subtle" : "ghost"}
+                          w={"full"}
+                          minH={"40px"}
+                          h={"max"}
+                          px={3}
+                          py={"xs"}
+                          alignItems={"center"}
+                          justifyContent={"start"}
+                          onClick={() => handleOptionSelect(opt.value, opt)}
+                        >
+                          {renderOption ? (
+                            renderOption(opt)
+                          ) : (
+                            <HStack
+                              gap={"sm"}
+                              align={"center"}
+                              flex={1}
+                              minW={0}
+                              justify={"start"}
+                            >
+                              {renderStartElement(
+                                opt.startElement,
+                                opt.icon,
+                                "sm",
+                              )}
+                              <VStack align={"start"}>
+                                <ClampedP
+                                  fontWeight={
+                                    isSelected ? "semibold" : "normal"
+                                  }
+                                  textAlign={"start"}
+                                >
+                                  {opt.label}
+                                </ClampedP>
+
+                                {opt.description && (
+                                  <ClampedP
+                                    fontSize={"xs"}
+                                    textAlign={"start"}
+                                    color={"fg.subtle"}
+                                  >
+                                    {opt.description}
+                                  </ClampedP>
+                                )}
+                              </VStack>
+                            </HStack>
+                          )}
+
+                          {isSelected && (
+                            <AppIcon
+                              icon={CheckIcon}
+                              color={`${theme.colorPalette}.fg`}
+                              mr={"-2px"}
+                            />
+                          )}
+                        </Button>
+                      );
+                    })}
+                  </VStack>
+                )}
+              </VScrollContainer>
+            </Modal.Body>
+
+            {clearable && (
+              <Modal.Footer>
+                <Button
+                  variant={"ghost"}
+                  w={"full"}
+                  disabled={!currentValue}
+                  onClick={handleResetSelection}
+                >
+                  {t["action.reset"]()}
+                </Button>
+              </Modal.Footer>
+            )}
+          </Modal.Content>
+        </ChakraField.Root>
       </FieldContext.Provider>
     </Modal.Root>
   );

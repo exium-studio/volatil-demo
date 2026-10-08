@@ -1664,18 +1664,118 @@ type ApproveOrderPayload = {
 
 ## 4.4 Master IGT Layers & Sinkronisasi Mitra
 
+### Standarisasi Manajemen Master Layer IGT & URL Service GeoServer (Strict SSOT)
+- `id` (UUID, Primary Key, Auto-generated oleh Backend).
+- `geoserverId` (UUID, Foreign Key ke tabel `master_geoservers`).
+- `title` (String, wajib).
+- `description` (Text, nullable).
+- `igtBasis` (Enum / String: `"bidang"` | `"kawasan"`, wajib — menggantikan `spatialBasis`).
+- `workspaceName` (String, wajib).
+- `layerName` (String, nullable — `NULL` jika master data level workspace).
+- `typeName` (String, **NOT NULL**):
+  - Jika `layerName` ada: `"${workspaceName}:${layerName}"`
+  - Jika `layerName` null: `"${workspaceName}"`
+- `bbox` (Array 4 Float `[minLng, minLat, maxLng, maxLat]`, nullable — di-cache dari GeoServer).
+- `isActive` (Boolean, default `true`).
+- `defaultVisible` (Boolean, default `false`).
+- `zIndex` (Integer, default `1`).
+
 ### List Master IGT Layers
 - **Endpoint**: `GET /api/internal/igt-layers`
 - **Akses**: `Internal Only`
-- **Params**: `page?: number`, `limit?: number`, `search?: string`, `isActive?: boolean`, `basis?: "bidang" | "kawasan"`
+- **Params**: `page?: number`, `limit?: number`, `search?: string`, `isActive?: boolean`, `igtBasis?: "bidang" | "kawasan"`
+- **Response (200 OK)**:
+```typescript
+type MasterIgtLayersListResponse = {
+  success: true;
+  message: string;
+  data: {
+    items: Array<{
+      id: string; // UUID v4
+      title: string;
+      description?: string | null;
+      igtBasis: "bidang" | "kawasan";
+      geoserverId: string;
+      geoserver: {
+        id: string;
+        name: string;
+        baseUrl: string;
+      };
+      workspaceName: string;
+      layerName?: string | null;
+      typeName: string;
+      wms: {
+        url: string;
+        baseUrl: string;
+        version?: string;
+        layers?: string;
+        format?: string;
+        srs?: string;
+        transparent?: boolean;
+      };
+      wfs: {
+        url: string;
+        baseUrl: string;
+        version?: string;
+        typeName?: string;
+        outputFormat?: string;
+        srsName?: string;
+      };
+      bbox?: [number, number, number, number] | null;
+      isActive: boolean;
+      defaultVisible: boolean;
+      zIndex: number;
+      createdAt: string;
+      updatedAt: string;
+    }>;
+    total: number;
+    page: number;
+    limit: number;
+  };
+};
+```
 
 ### Create Master IGT Layer
 - **Endpoint**: `POST /api/internal/igt-layers`
 - **Akses**: `Internal Only`
+- **Request Body**:
+```typescript
+type CreateMasterIgtLayerRequest = {
+  title: string;
+  description?: string;
+  igtBasis: "bidang" | "kawasan";
+  geoserverId: string; // UUID Master GeoServer
+  workspaceName: string;
+  layerName?: string | null; // null jika master level workspace
+  typeName: string; // "workspace:layerName" atau "workspace"
+  isActive?: boolean;
+  defaultVisible?: boolean;
+  zIndex?: number;
+};
+```
+- **Response (201 Created)**: Mengembalikan item data layer IGT yang baru dibuat dengan `id` berupa UUID (v4) auto-generated dan objek `wms` & `wfs` yang telah di-resolve.
 
 ### Update Master IGT Layer
 - **Endpoint**: `PUT /api/internal/igt-layers/{id}`
 - **Akses**: `Internal Only`
+- **Path Param**: `id` (UUID)
+- **Request Body**:
+```typescript
+type UpdateMasterIgtLayerRequest = {
+  title?: string;
+  description?: string;
+  igtBasis?: "bidang" | "kawasan";
+  geoserverId?: string; // UUID Master GeoServer baru
+  workspaceName?: string;
+  layerName?: string | null;
+  typeName?: string;
+  isActive?: boolean;
+  defaultVisible?: boolean;
+  zIndex?: number;
+};
+```
+> [!IMPORTANT]
+> **Dynamic URL Regeneration**: Saat `geoserverId`, `workspaceName`, atau `layerName` diubah, Backend wajib meng-update relasi Foreign Key dan otomatis **me-regenerasi URL `wms` & `wfs`** agar mengarah ke GeoServer yang baru.
 
 ### Delete Master IGT Layer (Soft Delete)
 - **Endpoint**: `DELETE /api/internal/igt-layers/{id}`
