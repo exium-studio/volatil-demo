@@ -12,7 +12,7 @@ export type KawasanCoverageResult = {
 export type KawasanCoverageLayerItem = {
   id: string;
   typeName: string;
-  wfsUrl: string;
+  wfsUrl?: string;
   title?: string;
 };
 

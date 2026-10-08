@@ -12,7 +12,7 @@ export type GeoServerFeatureCollection = GeoJSON.FeatureCollection & {
 
 export type FetchWfsParams = {
   typeName: string;
-  wfsUrl: string;
+  wfsUrl?: string;
   bbox?: WfsBbox;
   cqlFilter?: string;
   featureID?: string;

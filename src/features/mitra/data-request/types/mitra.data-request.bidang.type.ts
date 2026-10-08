@@ -5,7 +5,7 @@ import type GeoJSON from "geojson";
 export type BidangAoiLayerItem = {
   id: string;
   typeName: string;
-  wfsUrl: string;
+  wfsUrl?: string;
   title?: string;
 };
 

@@ -27,10 +27,7 @@ export const useBidangAoiFeatures = (
   } = params;
 
   // Derived Values
-  const aoiFeature = useMemo(
-    () => normalizePolygonFeature(rawAoi),
-    [rawAoi],
-  );
+  const aoiFeature = useMemo(() => normalizePolygonFeature(rawAoi), [rawAoi]);
 
   const aoiWkt = useMemo(() => {
     if (!aoiFeature) return "";
@@ -79,11 +76,11 @@ export const useBidangAoiFeatures = (
           const typeName = l.typeName || l.wfs?.wfsTypeName || l.id;
           const wfsUrl = l.wfs?.url || l.wfs?.wfsUrl || l.wfs?.baseUrl;
 
-          if (isBidang && typeName && wfsUrl) {
+          if (isBidang && typeName) {
             resolvedList.push({
               id: l.id,
               typeName,
-              wfsUrl,
+              wfsUrl: wfsUrl || undefined,
               title: l.title,
             });
           }
@@ -105,6 +102,7 @@ export const useBidangAoiFeatures = (
             typeName: layer.typeName,
             wfsUrl: layer.wfsUrl,
             cqlFilter: aoiCqlFilter,
+            version: "1.0.0",
             srsName: "EPSG:4326",
             signal,
           });
@@ -141,17 +139,24 @@ export const useBidangAoiFeatures = (
       const aoiTyped = aoiFeature as GeoJSON.Feature<
         GeoJSON.Polygon | GeoJSON.MultiPolygon
       >;
+
       const intersectedFeatures = combinedFeatures.filter((feat) => {
-        if (!feat.geometry) return false;
+        if (!feat || !feat.geometry) return false;
+        const featFeature: GeoJSON.Feature<GeoJSON.Geometry> =
+          feat.type === "Feature"
+            ? (feat as GeoJSON.Feature<GeoJSON.Geometry>)
+            : {
+                type: "Feature",
+                properties: feat.properties ?? {},
+                geometry: feat.geometry,
+              };
+
         try {
-          return turf.booleanIntersects(
-            aoiTyped,
-            feat as GeoJSON.Feature<GeoJSON.Geometry>,
-          );
+          return turf.booleanIntersects(aoiTyped, featFeature);
         } catch {
           try {
             const aoiBbox = turf.bbox(aoiTyped);
-            const featBbox = turf.bbox(feat);
+            const featBbox = turf.bbox(featFeature);
             return (
               aoiBbox[0] <= featBbox[2] &&
               aoiBbox[2] >= featBbox[0] &&

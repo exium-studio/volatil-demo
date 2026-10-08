@@ -28,13 +28,14 @@ import { useEffect, useMemo, useState } from "react";
 export const useKawasanCoverage = (
   params: UseKawasanCoverageParams,
 ): UseKawasanCoverageResult => {
-  const { aoiPolygon: rawAoi, kawasanLayers: explicitKawasanLayers, enabled = true } = params;
+  const {
+    aoiPolygon: rawAoi,
+    kawasanLayers: explicitKawasanLayers,
+    enabled = true,
+  } = params;
 
   // Derived Values
-  const aoiFeature = useMemo(
-    () => normalizePolygonFeature(rawAoi),
-    [rawAoi],
-  );
+  const aoiFeature = useMemo(() => normalizePolygonFeature(rawAoi), [rawAoi]);
 
   const aoiWkt = useMemo(() => {
     if (!aoiFeature) return "";
@@ -90,13 +91,14 @@ export const useKawasanCoverage = (
         const resolvedList: KawasanCoverageLayerItem[] = [];
 
         for (const l of layersResp.items ?? []) {
-          const typeName = l.wfs?.wfsTypeName;
-          const wfsUrl = l.wfs?.wfsUrl;
-          if (l.spatialBasis === "kawasan" && typeName && wfsUrl) {
+          const typeName = l.typeName || l.wfs?.wfsTypeName || l.id;
+          const wfsUrl = l.wfs?.url || l.wfs?.wfsUrl || l.wfs?.baseUrl;
+          const isKawasan = (l.igtBasis ?? l.spatialBasis) === "kawasan";
+          if (isKawasan && typeName) {
             resolvedList.push({
               id: l.id,
               typeName,
-              wfsUrl,
+              wfsUrl: wfsUrl || undefined,
               title: l.title,
             });
           }
@@ -128,14 +130,15 @@ export const useKawasanCoverage = (
           const res = await fetchWfs({
             typeName: layer.typeName,
             wfsUrl: layer.wfsUrl,
-            version: "2.0.0",
+            version: "1.0.0",
             srsName: "EPSG:4326",
             cqlFilter: aoiCqlFilter,
             signal,
           });
           completedFetches++;
           // WFS fetch phase maps to 15% - 50%
-          const fetchProgress = 15 + Math.round((completedFetches / totalLayers) * 35);
+          const fetchProgress =
+            15 + Math.round((completedFetches / totalLayers) * 35);
           setRealProgress(fetchProgress);
           setStepMessage(
             `Mengunduh data layer kawasan (${completedFetches}/${totalLayers})...`,
@@ -143,7 +146,8 @@ export const useKawasanCoverage = (
           return res.features ?? [];
         } catch (err) {
           completedFetches++;
-          const fetchProgress = 15 + Math.round((completedFetches / totalLayers) * 35);
+          const fetchProgress =
+            15 + Math.round((completedFetches / totalLayers) * 35);
           setRealProgress(fetchProgress);
           if (
             signal?.aborted ||
@@ -152,7 +156,10 @@ export const useKawasanCoverage = (
           ) {
             throw err;
           }
-          console.warn(`Failed to fetch features for layer ${layer.typeName}:`, err);
+          console.warn(
+            `Failed to fetch features for layer ${layer.typeName}:`,
+            err,
+          );
           return [] as GeoJSON.Feature[];
         }
       });

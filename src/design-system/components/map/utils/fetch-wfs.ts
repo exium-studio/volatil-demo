@@ -161,20 +161,17 @@ export const fetchWfs = async (
     }
   }
 
-  // If server throws 400 Bad Request due to GeoServer "Illegal property name" in CQL_FILTER
+  // If server throws 400 Bad Request due to GeoServer CQL_FILTER errors (e.g. geometry column name mismatch)
   if (!res.ok && res.status === 400 && params.cqlFilter) {
     const errorText = await res.text().catch(() => "");
-    const matchIllegalProp = /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(
-      errorText,
-    );
+    let adaptedFilter: string | undefined;
+
+    const matchIllegalProp =
+      /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(errorText) ||
+      /Property\s*['"]?([a-zA-Z0-9_]+)['"]?\s*does not exist/i.exec(errorText);
 
     if (matchIllegalProp && matchIllegalProp[1]) {
       const illegalProp = matchIllegalProp[1];
-      console.warn(
-        `GeoServer layer "${params.typeName}" does not have property "${illegalProp}". Retrying with adapted filter.`,
-      );
-
-      let adaptedFilter: string | undefined;
       if (
         illegalProp.toLowerCase() === "geom" &&
         /\bgeom\b/i.test(params.cqlFilter)
@@ -186,15 +183,22 @@ export const fetchWfs = async (
       ) {
         adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
       } else {
-        // Remove clauses containing the illegal property
         const clauses = params.cqlFilter.split(/\s+AND\s+/i);
         const filteredClauses = clauses.filter(
           (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
         );
         adaptedFilter =
-          filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
+          filteredClauses.length > 0
+            ? filteredClauses.join(" AND ")
+            : undefined;
       }
+    } else if (/\bgeom\b/i.test(params.cqlFilter)) {
+      adaptedFilter = params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
+    } else if (/\bthe_geom\b/i.test(params.cqlFilter)) {
+      adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
+    }
 
+    if (adaptedFilter) {
       url = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
       res = await fetch(url.toString(), { signal });
     }
@@ -216,7 +220,7 @@ export const fetchWfs = async (
   let text = await res.text();
   let trimmedText = text.trim();
 
-  // If GeoServer returned XML ServiceException (e.g. Illegal property name in CQL) with 200 OK
+  // If GeoServer returned XML ServiceException with 200 OK
   if (
     trimmedText.startsWith("<ServiceExceptionReport") ||
     trimmedText.startsWith("<ServiceException") ||
@@ -224,13 +228,13 @@ export const fetchWfs = async (
     trimmedText.includes("<ows:ExceptionText>") ||
     trimmedText.includes("ServiceException")
   ) {
-    const matchIllegalProp = /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(
-      text,
-    );
+    let adaptedFilter: string | undefined;
+    const matchIllegalProp =
+      /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(text) ||
+      /Property\s*['"]?([a-zA-Z0-9_]+)['"]?\s*does not exist/i.exec(text);
 
     if (matchIllegalProp && matchIllegalProp[1] && params.cqlFilter) {
       const illegalProp = matchIllegalProp[1];
-      let adaptedFilter: string | undefined;
       if (
         illegalProp.toLowerCase() === "geom" &&
         /\bgeom\b/i.test(params.cqlFilter)
@@ -247,10 +251,21 @@ export const fetchWfs = async (
           (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
         );
         adaptedFilter =
-          filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
+          filteredClauses.length > 0
+            ? filteredClauses.join(" AND ")
+            : undefined;
       }
+    } else if (params.cqlFilter && /\bgeom\b/i.test(params.cqlFilter)) {
+      adaptedFilter = params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
+    } else if (params.cqlFilter && /\bthe_geom\b/i.test(params.cqlFilter)) {
+      adaptedFilter = params.cqlFilter.replace(/\bthe_geom\b/gi, "geom");
+    }
 
-      const retryUrl = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
+    if (adaptedFilter) {
+      const retryUrl = buildWfsUrl(
+        { ...params, cqlFilter: adaptedFilter },
+        true,
+      );
       const retryRes = await fetch(retryUrl.toString(), { signal });
       if (retryRes.ok) {
         text = await retryRes.text();

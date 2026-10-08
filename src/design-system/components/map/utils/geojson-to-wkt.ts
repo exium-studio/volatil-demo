@@ -41,10 +41,14 @@ export const geojsonPolygonToWkt = (
     const polys = (geometry as GeoJSON.MultiPolygon).coordinates
       .map((poly) => {
         const rings = poly
-          .map(
-            (ring) =>
-              `(${ring.map((coord) => formatCoord(coord)).join(", ")})`,
-          )
+          .map((ring) => {
+            const isClosed =
+              ring.length > 0 &&
+              ring[0][0] === ring[ring.length - 1][0] &&
+              ring[0][1] === ring[ring.length - 1][1];
+            const closedRing = isClosed ? ring : [...ring, ring[0]];
+            return `(${closedRing.map((coord) => formatCoord(coord)).join(", ")})`;
+          })
           .join(", ");
         return `(${rings})`;
       })
@@ -55,10 +59,14 @@ export const geojsonPolygonToWkt = (
 
   if (geometry.type === "Polygon") {
     const rings = (geometry as GeoJSON.Polygon).coordinates
-      .map(
-        (ring) =>
-          `(${ring.map((coord) => formatCoord(coord)).join(", ")})`,
-      )
+      .map((ring) => {
+        const isClosed =
+          ring.length > 0 &&
+          ring[0][0] === ring[ring.length - 1][0] &&
+          ring[0][1] === ring[ring.length - 1][1];
+        const closedRing = isClosed ? ring : [...ring, ring[0]];
+        return `(${closedRing.map((coord) => formatCoord(coord)).join(", ")})`;
+      })
       .join(", ");
 
     return `POLYGON(${rings})`;
