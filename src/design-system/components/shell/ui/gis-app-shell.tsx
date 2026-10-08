@@ -373,7 +373,9 @@ const Content = (_props: GisContentProps) => {
       (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
     );
     const configs: MapLayerConfig[] = sorted
-      .filter((layer: IgtLayerItem) => Boolean(layer.wms?.wmsUrl || layer.wms?.layers || layer.id))
+      .filter((layer: IgtLayerItem) =>
+        Boolean(layer.wms?.wmsUrl || layer.wms?.layers || layer.id),
+      )
       .map((layer: IgtLayerItem) => {
         const isEnabled = Boolean(enabledLayerIds[layer.id]);
         const individualOpacity = layerOpacities[layer.id] ?? 1.0;
@@ -462,13 +464,13 @@ const Content = (_props: GisContentProps) => {
     <Splitter.Panel
       key={"content"}
       id={"content"}
+      elementRef={contentPanelRef}
       defaultSize={isSmallViewport ? splitterSize[1] : splitterSize[0]}
       minSize={15}
       alignItems={"end"}
       overflow={"auto"}
     >
       <VStack
-        ref={contentPanelRef}
         flex={1}
         overflow={"auto"}
         minW={[0, null, "360px"]}

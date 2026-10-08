@@ -30,6 +30,7 @@ export type SplitterRootProps = Omit<HTMLChakraProps<"div">, "onResize" | "direc
 export type SplitterPanelProps = Omit<HTMLChakraProps<"div">, "id" | "defaultValue" | "onResize"> &
   Omit<PanelProps, "id"> & {
     id?: string;
+    elementRef?: React.Ref<HTMLElement | null>;
   };
 
 export type SplitterResizeTriggerProps = Omit<HTMLChakraProps<"div">, "id"> &

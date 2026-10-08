@@ -155,11 +155,12 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
 const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
   (props, ref) => {
     // Props
-    const { panelRef, children, ...restProps } = props;
+    const { panelRef, elementRef, children, ...restProps } = props;
 
     return (
       <ChakraPanel
         panelRef={ref ?? panelRef}
+        elementRef={elementRef}
         display={"flex"}
         flexDir={"column"}
         overflow={"hidden"}

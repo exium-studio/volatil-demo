@@ -9,8 +9,8 @@ import { useEffect, useRef } from "react";
  * (sidebar + content panel), exactly like Google Maps mobile behavior.
  *
  * Uses ResizeObserver on the content panel for real-time tracking during splitter drag:
- * - Continuous drag: duration 0 — instant, pixel-perfect tracking.
- * - Discrete sidebar toggle: duration 250ms — smooth animated transition.
+ * - Continuous drag: duration 0 — instant, direct map.setPadding tracking.
+ * - Discrete sidebar toggle / double click reset: duration > 0 — smooth animated transition via map.easeTo.
  */
 export const useMapViewPadding = (
   map: maplibregl.Map | null,
@@ -45,7 +45,11 @@ export const useMapViewPadding = (
           bottom: 0,
         };
 
-    map.easeTo({ padding, duration });
+    if (duration === 0) {
+      map.setPadding(padding);
+    } else {
+      map.easeTo({ padding, duration, essential: true });
+    }
   };
 
   // ResizeObserver: fires on every splitter drag tick and initial mount
@@ -53,16 +57,33 @@ export const useMapViewPadding = (
     const el = options.contentPanelRef.current;
     if (!map || !el) return;
 
-    const observer = new ResizeObserver(() => {
-      const panelPx = options.isVertical ? el.clientHeight : el.clientWidth;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      const panelPx = entry
+        ? options.isVertical
+          ? entry.contentRect.height
+          : entry.contentRect.width
+        : options.isVertical
+          ? el.clientHeight
+          : el.clientWidth;
+
+      if (panelPx <= 0) return;
+
       const panelDelta = Math.abs(panelPx - prevPanelPx.current);
-      // Large delta (e.g. initial mount/transition) animates smoothly, small delta (drag) is instant
-      const duration = panelDelta > 100 ? 500 : 0;
+      // First calculation is instant, large jump (reset layout) is animated, drag is instant
+      const duration = prevPanelPx.current === 0 ? 0 : panelDelta > 100 ? 300 : 0;
       applyPadding(options.sidebarPx, panelPx, options.isVertical, duration);
       prevPanelPx.current = panelPx;
     });
 
     observer.observe(el);
+
+    const initialPx = options.isVertical ? el.clientHeight : el.clientWidth;
+    if (initialPx > 0) {
+      applyPadding(options.sidebarPx, initialPx, options.isVertical, 0);
+      prevPanelPx.current = initialPx;
+    }
+
     return () => {
       observer.disconnect();
     };
