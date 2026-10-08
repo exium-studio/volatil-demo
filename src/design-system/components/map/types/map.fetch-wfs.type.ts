@@ -15,6 +15,8 @@ export type FetchWfsParams = {
   wfsUrl: string;
   bbox?: WfsBbox;
   cqlFilter?: string;
+  featureID?: string;
+  resourceId?: string;
   version?: WfsVersion;
   srsName?: string;
   maxFeatures?: number;
@@ -23,6 +25,7 @@ export type FetchWfsParams = {
   resultType?: "results" | "hits";
   signal?: AbortSignal;
 };
+
 
 export type RawGeoServerResponse = GeoJSON.FeatureCollection & {
   totalFeatures?: number;

@@ -6,10 +6,12 @@ import type {
   RawGeoServerResponse,
   WfsVersion,
 } from "@/design-system/components/map/types/map.fetch-wfs.type";
+import { normalizeGeometryCoordinates } from "@/design-system/components/map/utils/geometry";
 import {
   getApiBaseWmsProxyUrl,
   normalizeApiUrl,
 } from "@/shared/utils/url/url.utils";
+
 
 export const buildWfsUrl = (
   {
@@ -17,6 +19,8 @@ export const buildWfsUrl = (
     wfsUrl,
     bbox,
     cqlFilter,
+    featureID,
+    resourceId,
     propertyName,
     version = "2.0.0",
     srsName = "EPSG:4326",
@@ -50,10 +54,16 @@ export const buildWfsUrl = (
   if (version === "2.0.0") {
     url.searchParams.set("typeNames", typeName);
     if (maxFeatures != null) url.searchParams.set("count", String(maxFeatures));
+    if (resourceId || featureID) {
+      url.searchParams.set("resourceId", (resourceId || featureID)!);
+    }
   } else {
     url.searchParams.set("typeName", typeName);
     if (maxFeatures != null)
       url.searchParams.set("maxFeatures", String(maxFeatures));
+    if (featureID || resourceId) {
+      url.searchParams.set("featureID", (featureID || resourceId)!);
+    }
   }
 
   // NOTE: Some GeoServer builds throw NullPointerException when startIndex is present.
@@ -85,6 +95,8 @@ export const buildWfsUrl = (
 
   return url;
 };
+
+
 
 const normalizeTotalFeatures = (
   raw: RawGeoServerResponse,
@@ -225,7 +237,15 @@ export const fetchWfs = async (
 
   const raw = JSON.parse(text) as RawGeoServerResponse;
   const total = normalizeTotalFeatures(raw, version);
-  let features = raw.features ?? [];
+  let features = (raw.features ?? []).map((feat) => {
+    if (feat.geometry) {
+      return {
+        ...feat,
+        geometry: normalizeGeometryCoordinates(feat.geometry),
+      };
+    }
+    return feat;
+  });
 
   // If we had to fallback to fetching without startIndex, slice features on client-side
   if (startIndex > 0 && features.length > startIndex && maxFeatures != null) {
@@ -238,3 +258,4 @@ export const fetchWfs = async (
     totalFeatures: total,
   };
 };
+

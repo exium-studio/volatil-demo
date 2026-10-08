@@ -74,10 +74,15 @@ export const MapFeatureInfoPanel = () => {
     [displayFeature],
   );
 
-  const allEntries = useMemo(
-    () => Object.entries(properties),
-    [properties],
-  );
+  const allEntries = useMemo(() => {
+    return Object.entries(properties).filter(
+      ([key]) =>
+        key !== "geom" &&
+        key !== "the_geom" &&
+        key !== "geometry" &&
+        key !== "bbox",
+    );
+  }, [properties]);
 
   const filteredEntries = useMemo(() => {
     if (!searchQuery.trim()) return allEntries;
@@ -87,6 +92,7 @@ export const MapFeatureInfoPanel = () => {
         k.toLowerCase().includes(q) || String(v).toLowerCase().includes(q),
     );
   }, [allEntries, searchQuery]);
+
 
   // Handlers
   const handleExitComplete = () => {
@@ -171,7 +177,7 @@ export const MapFeatureInfoPanel = () => {
           minH={"48px"}
           p={"sm"}
           borderBottom={"1px solid"}
-          borderColor={"border.subtle"}
+          borderColor={"bg.canvas"}
         >
           <HStack gap={"md"} align={"center"} flex={1} minW={0}>
             <Center
@@ -230,14 +236,9 @@ export const MapFeatureInfoPanel = () => {
 
         {(!isLoading || Boolean(displayFeature)) &&
           !isEmptyArray(allEntries) && (
-            <VStack w={"full"} flex={1} gap={0} overflow={"hidden"}>
+            <VStack w={"full"} flex={1} gap={0} overflowY={"auto"}>
               {allEntries.length > 5 && (
-                <Box
-                  p={"sm"}
-                  w={"full"}
-                  borderBottom={"1px solid"}
-                  borderColor={"border.subtle"}
-                >
+                <Box p={"sm"} w={"full"}>
                   <SearchInput
                     placeholder={"Cari atribut..."}
                     value={searchQuery}
@@ -247,7 +248,7 @@ export const MapFeatureInfoPanel = () => {
                 </Box>
               )}
 
-              <VStack w={"full"} flex={1} p={"sm"} gap={"xs"} overflowY={"auto"}>
+              <VStack w={"full"} flex={1} p={"sm"} gap={"xs"}>
                 {isEmptyArray(filteredEntries) && (
                   <VStack
                     w={"full"}

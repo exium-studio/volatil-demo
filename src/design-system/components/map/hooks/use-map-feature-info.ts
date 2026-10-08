@@ -6,8 +6,10 @@ import { useMapFeatureInfoStore } from "@/design-system/components/map/stores/ma
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import type { MapLayerConfig } from "@/design-system/components/map/types/map.type";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
+import { normalizeGeometryCoordinates } from "@/design-system/components/map/utils/geometry";
 import { fetchWmsGetFeatureInfo } from "@/design-system/components/map/utils/wms-get-feature-info";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+
 import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
@@ -338,37 +340,97 @@ export const useMapFeatureInfo = (
           });
 
           if (wmsResult?.features && wmsResult.features.length > 0) {
-            feat = wmsResult.features[0];
+            // Find feature containing clicked point or first feature
+            const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
+            const matchedPolygon = wmsResult.features.find((f) => {
+              if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
+                try {
+                  const normalizedGeom = normalizeGeometryCoordinates(f.geometry);
+                  return turf.booleanPointInPolygon(clickPoint, {
+                    type: "Feature",
+                    properties: f.properties ?? {},
+                    geometry: normalizedGeom as GeoJSON.Polygon | GeoJSON.MultiPolygon,
+                  });
+                } catch {
+                  return false;
+                }
+              }
+              return false;
+            });
+
+            const candidateFeat = matchedPolygon ?? wmsResult.features[0];
+            feat = {
+              ...candidateFeat,
+              geometry: candidateFeat.geometry
+                ? normalizeGeometryCoordinates(candidateFeat.geometry)
+                : candidateFeat.geometry,
+            };
           }
 
           // 2. If WMS returned a feature but without full polygon geometry, query WFS for the exact feature by ID
-          if (feat && (!feat.geometry || feat.geometry.type === "Point") && feat.id) {
-            try {
-              const wfsByIdRes = await fetchWfs({
-                typeName: wfsTypeName,
-                wfsUrl: wfsEndpoint,
-                cqlFilter: `IN('${feat.id}')`,
-                srsName: "EPSG:4326",
-                version: "1.1.0",
-                maxFeatures: 1,
-              });
-              if (wfsByIdRes.features && wfsByIdRes.features[0]?.geometry) {
-                feat = {
-                  ...feat,
-                  geometry: wfsByIdRes.features[0].geometry,
-                  properties: {
-                    ...feat.properties,
-                    ...wfsByIdRes.features[0].properties,
-                  },
-                };
+          if (feat && (!feat.geometry || feat.geometry.type === "Point")) {
+            const props = (feat.properties as Record<string, unknown>) ?? {};
+            const rawId = props.id ?? props.gid ?? props.OBJECTID ?? props.ID ?? feat.id;
+            const featureIdStr = rawId != null ? String(rawId) : "";
+
+            if (featureIdStr) {
+              try {
+                // Try 1: WFS standard featureID / resourceId query
+                let wfsByIdRes = await fetchWfs({
+                  typeName: wfsTypeName,
+                  wfsUrl: wfsEndpoint,
+                  featureID: feat.id ? String(feat.id) : undefined,
+                  resourceId: feat.id ? String(feat.id) : undefined,
+                  srsName: "EPSG:4326",
+                  version: "2.0.0",
+                  maxFeatures: 1,
+                });
+
+                // Try 2: If no result and property id exists, filter by property in CQL
+                if ((!wfsByIdRes.features || wfsByIdRes.features.length === 0) && props.id != null) {
+                  const idFilter = typeof props.id === "number" ? `id = ${props.id}` : `id = '${props.id}'`;
+                  wfsByIdRes = await fetchWfs({
+                    typeName: wfsTypeName,
+                    wfsUrl: wfsEndpoint,
+                    cqlFilter: idFilter,
+                    srsName: "EPSG:4326",
+                    version: "1.1.0",
+                    maxFeatures: 1,
+                  });
+                }
+
+                // Try 3: If gid exists, filter by gid
+                if ((!wfsByIdRes.features || wfsByIdRes.features.length === 0) && props.gid != null) {
+                  const gidFilter = typeof props.gid === "number" ? `gid = ${props.gid}` : `gid = '${props.gid}'`;
+                  wfsByIdRes = await fetchWfs({
+                    typeName: wfsTypeName,
+                    wfsUrl: wfsEndpoint,
+                    cqlFilter: gidFilter,
+                    srsName: "EPSG:4326",
+                    version: "1.1.0",
+                    maxFeatures: 1,
+                  });
+                }
+
+                if (wfsByIdRes.features && wfsByIdRes.features[0]?.geometry) {
+                  feat = {
+                    ...feat,
+                    geometry: normalizeGeometryCoordinates(wfsByIdRes.features[0].geometry),
+                    properties: {
+                      ...feat.properties,
+                      ...wfsByIdRes.features[0].properties,
+                    },
+                  };
+                }
+              } catch {
+                // Ignore
               }
-            } catch {
-              // Ignore
             }
           }
 
-          // 3. If WMS GetFeatureInfo was empty, query WFS using spatial point intersection INTERSECTS(geom, POINT(lon lat))
-          if (!feat) {
+
+          // 3. If WMS GetFeatureInfo was empty or didn't yield polygon, query WFS using spatial point intersection
+          if (!feat || !feat.geometry || feat.geometry.type === "Point") {
             try {
               const pointCql = `INTERSECTS(geom, POINT(${e.lngLat.lng} ${e.lngLat.lat}))`;
               const combinedCql = cqlFilterRef.current
@@ -381,14 +443,79 @@ export const useMapFeatureInfo = (
                 cqlFilter: combinedCql,
                 srsName: "EPSG:4326",
                 version: "1.1.0",
-                maxFeatures: 1,
+                maxFeatures: 5,
               });
 
               if (wfsPointRes.features && wfsPointRes.features.length > 0) {
-                feat = wfsPointRes.features[0];
+                const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
+                const matchingFeature = wfsPointRes.features.find((f) => {
+                  if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
+                    try {
+                      return turf.booleanPointInPolygon(clickPoint, {
+                        type: "Feature",
+                        properties: f.properties ?? {},
+                        geometry: f.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon,
+                      });
+                    } catch {
+                      return false;
+                    }
+                  }
+                  return false;
+                });
+
+                const selected = matchingFeature ?? wfsPointRes.features[0];
+                feat = {
+                  ...selected,
+                  geometry: selected.geometry
+                    ? normalizeGeometryCoordinates(selected.geometry)
+                    : selected.geometry,
+                };
               }
             } catch {
-              // Ignore
+              // Try fallback with the_geom if geom is not the column name
+              try {
+                const pointCql = `INTERSECTS(the_geom, POINT(${e.lngLat.lng} ${e.lngLat.lat}))`;
+                const combinedCql = cqlFilterRef.current
+                  ? `(${cqlFilterRef.current}) AND (${pointCql})`
+                  : pointCql;
+
+                const wfsPointRes = await fetchWfs({
+                  typeName: wfsTypeName,
+                  wfsUrl: wfsEndpoint,
+                  cqlFilter: combinedCql,
+                  srsName: "EPSG:4326",
+                  version: "1.1.0",
+                  maxFeatures: 5,
+                });
+
+                if (wfsPointRes.features && wfsPointRes.features.length > 0) {
+                  const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
+                  const matchingFeature = wfsPointRes.features.find((f) => {
+                    if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
+                      try {
+                        return turf.booleanPointInPolygon(clickPoint, {
+                          type: "Feature",
+                          properties: f.properties ?? {},
+                          geometry: f.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon,
+                        });
+                      } catch {
+                        return false;
+                      }
+                    }
+                    return false;
+                  });
+
+                  const selected = matchingFeature ?? wfsPointRes.features[0];
+                  feat = {
+                    ...selected,
+                    geometry: selected.geometry
+                      ? normalizeGeometryCoordinates(selected.geometry)
+                      : selected.geometry,
+                  };
+                }
+              } catch {
+                // Ignore
+              }
             }
           }
 
@@ -407,15 +534,39 @@ export const useMapFeatureInfo = (
                 ],
                 version: "1.1.0",
                 cqlFilter: cqlFilterRef.current,
-                maxFeatures: 1,
+                maxFeatures: 5,
               });
               if (wfsBboxRes.features && wfsBboxRes.features.length > 0) {
-                feat = wfsBboxRes.features[0];
+                const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
+                const matchingFeature = wfsBboxRes.features.find((f) => {
+                  if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
+                    try {
+                      return turf.booleanPointInPolygon(clickPoint, {
+                        type: "Feature",
+                        properties: f.properties ?? {},
+                        geometry: f.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon,
+                      });
+                    } catch {
+                      return false;
+                    }
+                  }
+                  return false;
+                });
+
+                const selected = matchingFeature ?? wfsBboxRes.features[0];
+                feat = {
+                  ...selected,
+                  geometry: selected.geometry
+                    ? normalizeGeometryCoordinates(selected.geometry)
+                    : selected.geometry,
+                };
               }
             } catch {
               // Ignore
             }
           }
+
+
 
           if (feat) {
             const humanTitle = layer.title ?? layer.layers ?? layer.id;

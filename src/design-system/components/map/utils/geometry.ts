@@ -43,8 +43,68 @@ export const toPolygonFeature = (
 };
 
 /**
+ * Validates and ensures coordinates are in standard [longitude, latitude] GeoJSON format.
+ * In Indonesia, longitude is roughly ~95 to 142 and latitude is roughly -11 to 6.
+ * If coordinates are inverted ([lat, lon]), this automatically swaps them.
+ */
+export const normalizeCoordinatePair = (
+  pair: [number, number] | number[],
+): [number, number] => {
+  const [first, second] = pair;
+  // If first number is in latitude range [-11, 10] and second is in Indonesia longitude range [90, 145], it is inverted
+  if (Math.abs(first) <= 20 && second >= 90 && second <= 150) {
+    return [Number(second.toFixed(6)), Number(first.toFixed(6))];
+  }
+  return [Number(first.toFixed(6)), Number(second.toFixed(6))];
+};
+
+/**
+ * Recursively normalizes all coordinate pairs within any GeoJSON geometry to [lon, lat].
+ */
+export const normalizeGeometryCoordinates = <T extends GeoJSON.Geometry>(
+  geometry: T,
+): T => {
+  if (!geometry) return geometry;
+
+  if (geometry.type === "Point") {
+    return {
+      ...geometry,
+      coordinates: normalizeCoordinatePair(geometry.coordinates),
+    };
+  }
+
+  if (geometry.type === "MultiPoint" || geometry.type === "LineString") {
+    return {
+      ...geometry,
+      coordinates: geometry.coordinates.map((c) => normalizeCoordinatePair(c)),
+    };
+  }
+
+  if (geometry.type === "MultiLineString" || geometry.type === "Polygon") {
+    return {
+      ...geometry,
+      coordinates: geometry.coordinates.map((ring) =>
+        ring.map((c) => normalizeCoordinatePair(c)),
+      ),
+    };
+  }
+
+  if (geometry.type === "MultiPolygon") {
+    return {
+      ...geometry,
+      coordinates: geometry.coordinates.map((poly) =>
+        poly.map((ring) => ring.map((c) => normalizeCoordinatePair(c))),
+      ),
+    };
+  }
+
+  return geometry;
+};
+
+/**
  * Normalizes input geometry into a strictly 2D GeoJSON Polygon or MultiPolygon Geometry.
- * Extracts geometry from Feature, strips any extra Z/elevation values, and trims coordinate decimals.
+ * Extracts geometry from Feature, strips any extra Z/elevation values, trims coordinate decimals,
+ * and ensures standard [longitude, latitude] axis order.
  */
 export const to2DGeometry = (
   polygon?:
@@ -69,11 +129,7 @@ export const to2DGeometry = (
 
   if (rawGeometry.type === "Polygon") {
     const coordinates = (rawGeometry as GeoJSON.Polygon).coordinates.map(
-      (ring) =>
-        ring.map((coord) => [
-          Number(coord[0].toFixed(6)),
-          Number(coord[1].toFixed(6)),
-        ]),
+      (ring) => ring.map((coord) => normalizeCoordinatePair(coord)),
     );
     return {
       type: "Polygon",
@@ -84,12 +140,7 @@ export const to2DGeometry = (
   if (rawGeometry.type === "MultiPolygon") {
     const coordinates = (rawGeometry as GeoJSON.MultiPolygon).coordinates.map(
       (poly) =>
-        poly.map((ring) =>
-          ring.map((coord) => [
-            Number(coord[0].toFixed(6)),
-            Number(coord[1].toFixed(6)),
-          ]),
-        ),
+        poly.map((ring) => ring.map((coord) => normalizeCoordinatePair(coord))),
     );
     return {
       type: "MultiPolygon",
