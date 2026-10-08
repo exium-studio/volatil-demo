@@ -182,8 +182,8 @@ const InternalTransactionWmsStatsGrid = () => {
       icon: ShoppingCartIcon,
       label: "Potensi WMS",
       value: statistics.wmsPotential ?? 0,
-      suffix: "item",
-      color: "purple.fg",
+      suffix: "pesanan",
+      color: "blue.fg",
       tooltip: "Diambil dari total item keranjang (cart) seluruh user mitra",
     },
     {
@@ -192,7 +192,8 @@ const InternalTransactionWmsStatsGrid = () => {
       value: statistics.wmsProcessing ?? 0,
       suffix: "layanan",
       color: "purple.fg",
-      tooltip: "Pesanan dengan status processing (sedang menyiapkan layanan WMS)",
+      tooltip:
+        "Pesanan dengan status processing (sedang menyiapkan layanan WMS)",
     },
     {
       icon: CheckCircleIcon,
@@ -207,7 +208,7 @@ const InternalTransactionWmsStatsGrid = () => {
       label: "WMS Expired",
       value: statistics.wmsExpired ?? 0,
       suffix: "layanan",
-      color: "orange.fg",
+      color: "red.fg",
       tooltip: "Layanan data spasial dengan status expired (kedaluwarsa)",
     },
   ];
