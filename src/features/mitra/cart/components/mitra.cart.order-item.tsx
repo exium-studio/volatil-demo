@@ -159,10 +159,16 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
 
         {/* Dynamic Status Notices */}
         {order.status === "pending_payment" && order.expiredAt && (
-          <Alert.Root status={"warning"} colorPalette={"orange"} variant={"subtle"} size={"sm"}>
+          <Alert.Root
+            status={"warning"}
+            colorPalette={"orange"}
+            variant={"subtle"}
+            size={"sm"}
+          >
             <HStack justify={"space-between"} align={"center"} w={"full"}>
               <HStack gap={"xs"} align={"center"}>
                 <AppIcon icon={statusConfig?.icon} />
+
                 <Alert.Description fontSize={"xs"}>
                   {"Sisa Waktu Pembayaran (TTL):"}
                 </Alert.Description>
@@ -178,19 +184,21 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
           </Alert.Root>
         )}
 
-        {order.status !== "pending_payment" && statusConfig?.noticeDescription && (
-          <Alert.Root
-            status={"info"}
-            colorPalette={statusConfig.colorPalette}
-            variant={"subtle"}
-            size={"sm"}
-          >
-            {statusConfig.icon && <AppIcon icon={statusConfig.icon} />}
-            <Alert.Description fontSize={"xs"}>
-              {statusConfig.noticeDescription}
-            </Alert.Description>
-          </Alert.Root>
-        )}
+        {order.status !== "pending_payment" &&
+          statusConfig?.noticeDescription && (
+            <Alert.Root
+              status={"info"}
+              colorPalette={statusConfig.colorPalette}
+              variant={"subtle"}
+              size={"sm"}
+            >
+              {statusConfig.icon && <AppIcon icon={statusConfig.icon} />}
+
+              <Alert.Description fontSize={"xs"}>
+                {statusConfig.noticeDescription}
+              </Alert.Description>
+            </Alert.Root>
+          )}
 
         {/* Selected Order Actions: Spatial Actions (Left) & Delete (Right) */}
         {isSelected && (
