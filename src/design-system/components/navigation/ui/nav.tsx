@@ -7,11 +7,12 @@ import { forwardRef } from "react";
 export const NavButton = forwardRef<HTMLButtonElement, NavButtonProps>(
   function NavButton(props, ref) {
     // Props
-    const { children, ...restProps } = props;
+    const { children, clicky = false, ...restProps } = props;
 
     return (
       <Button
         ref={ref}
+        clicky={clicky}
         justifyContent={"start"}
         textAlign={"start"}
         gap={3}

@@ -477,7 +477,6 @@ const Content = (_props: GisContentProps) => {
         w={"full"}
         minH={"300px"}
         bg={"bg.canvas"}
-        shadow={"md"}
         pointerEvents={"auto"}
       >
         <Outlet />

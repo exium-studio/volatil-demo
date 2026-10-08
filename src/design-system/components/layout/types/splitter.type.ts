@@ -33,9 +33,12 @@ export type SplitterPanelProps = Omit<HTMLChakraProps<"div">, "id" | "defaultVal
     elementRef?: React.Ref<HTMLElement | null>;
   };
 
+export type SplitterTriggerVariant = "default" | "plain";
+
 export type SplitterResizeTriggerProps = Omit<HTMLChakraProps<"div">, "id"> &
   Omit<SeparatorProps, "id"> & {
     id?: string;
+    variant?: SplitterTriggerVariant;
     transparentTrigger?: boolean;
     onDoubleClick?: () => void;
   };

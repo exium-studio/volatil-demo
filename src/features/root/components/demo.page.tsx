@@ -682,8 +682,6 @@ const Layout = () => {
       id={"a"}
       defaultSize={splitterSize[0]}
       minSize={20}
-      borderRight={"1px solid"}
-      borderColor={"border"}
     >
       <Center boxSize={"full"} textStyle={"2xl"}>
         A

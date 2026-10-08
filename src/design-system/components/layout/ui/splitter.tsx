@@ -181,6 +181,7 @@ const SplitterResizeTrigger = forwardRef<
 >((props, ref) => {
   // Props
   const {
+    variant = "default",
     transparentTrigger = false,
     onDoubleClick,
     children,
@@ -191,6 +192,7 @@ const SplitterResizeTrigger = forwardRef<
   // Context
   const { orientation, resetLayout } = useContext(SplitterContext);
   const isVertical = orientation === "vertical";
+  const isPlain = variant === "plain";
 
   // Handlers
   const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -212,10 +214,10 @@ const SplitterResizeTrigger = forwardRef<
         disableDoubleClick={true}
         className={"group"}
         transition={"background 150ms ease"}
-        minW={isVertical ? "full" : "8px"}
-        w={isVertical ? "full" : "8px"}
-        minH={isVertical ? "8px" : "full"}
-        h={isVertical ? "8px" : "full"}
+        minW={isVertical ? "full" : "1px"}
+        w={isVertical ? "full" : "1px"}
+        minH={isVertical ? "1px" : "full"}
+        h={isVertical ? "1px" : "full"}
         flexShrink={0}
         display={"flex"}
         alignItems={"center"}
@@ -224,59 +226,64 @@ const SplitterResizeTrigger = forwardRef<
         zIndex={10}
         cursor={isVertical ? "row-resize" : "col-resize"}
         outline={"none"}
-        _hover={{
-          bg: transparentTrigger ? "transparent" : "border.subtle",
-        }}
-        _active={{
-          bg: transparentTrigger ? "transparent" : "border",
-        }}
+        border={"none"}
+        bg={isPlain ? "transparent" : "bg.muted"}
         onDoubleClick={handleDoubleClick}
         {...restProps}
       >
-        {children ?? (
-          <>
-            <SplitterResizeTriggerIndicator
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              bg={"bg.body"}
-              border={"1px solid"}
-              borderColor={"border.subtle"}
-              rounded={"sm"}
-              shadow={"xs"}
-              w={isVertical ? "80px" : "16px"}
-              minW={isVertical ? "80px" : "16px"}
-              maxW={isVertical ? "80px" : "16px"}
-              h={isVertical ? "16px" : "80px"}
-              minH={isVertical ? "16px" : "80px"}
-              maxH={isVertical ? "16px" : "80px"}
-              flexShrink={0}
-              opacity={0}
-              pointerEvents={"none"}
-              transition={"opacity 150ms ease, transform 150ms ease"}
-              _groupHover={{
-                opacity: 1,
-              }}
-              _groupActive={{
-                opacity: 1,
-              }}
-            >
-              <AppIcon
-                icon={isVertical ? GripHorizontal : GripVertical}
-                size={"xs"}
-                color={"fg.subtle"}
-              />
-            </SplitterResizeTriggerIndicator>
+        {/* Expanded hit area so user can easily grab and drag */}
+        <Box
+          pos={"absolute"}
+          top={isVertical ? "-4px" : 0}
+          bottom={isVertical ? "-4px" : 0}
+          left={isVertical ? 0 : "-4px"}
+          right={isVertical ? 0 : "-4px"}
+          zIndex={0}
+          cursor={isVertical ? "row-resize" : "col-resize"}
+          transition={"background 150ms ease"}
+          _groupHover={{
+            bg: isPlain || transparentTrigger ? "transparent" : "bg.muted",
+          }}
+          _groupActive={{
+            bg: isPlain || transparentTrigger ? "transparent" : "bg.muted",
+          }}
+        />
 
-            <SplitterResizeTriggerSeparator
-              pos={"absolute"}
-              bg={"border.subtle"}
-              w={isVertical ? "full" : "1px"}
-              h={isVertical ? "1px" : "full"}
-              zIndex={-1}
-              pointerEvents={"none"}
+        {children ?? (
+          <SplitterResizeTriggerIndicator
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            bg={"bg.body"}
+            border={"1px solid"}
+            borderColor={"border.subtle"}
+            rounded={"sm"}
+            shadow={"xs"}
+            w={isVertical ? "80px" : "16px"}
+            minW={isVertical ? "80px" : "16px"}
+            maxW={isVertical ? "80px" : "16px"}
+            h={isVertical ? "16px" : "80px"}
+            minH={isVertical ? "16px" : "80px"}
+            maxH={isVertical ? "16px" : "80px"}
+            flexShrink={0}
+            opacity={0}
+            pointerEvents={"none"}
+            transition={"opacity 150ms ease, transform 150ms ease"}
+            zIndex={2}
+            pos={"relative"}
+            _groupHover={{
+              opacity: 1,
+            }}
+            _groupActive={{
+              opacity: 1,
+            }}
+          >
+            <AppIcon
+              icon={isVertical ? GripHorizontal : GripVertical}
+              size={"xs"}
+              color={"fg.subtle"}
             />
-          </>
+          </SplitterResizeTriggerIndicator>
         )}
       </ChakraSeparator>
     </Tooltip>
