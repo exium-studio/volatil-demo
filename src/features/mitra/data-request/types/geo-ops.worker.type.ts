@@ -3,7 +3,10 @@
 import type { KawasanCoverageResult } from "@/features/mitra/data-request/types/mitra.data-request.coverage.type";
 import type GeoJSON from "geojson";
 
-export type GeoOpsWorkerRequestType = "CLIP_AND_UNION_KAWASAN" | "UNION_GEOJSON_POLYGONS";
+export type GeoOpsWorkerRequestType =
+  | "CLIP_AND_UNION_KAWASAN"
+  | "UNION_GEOJSON_POLYGONS"
+  | "FILTER_BIDANG_AOI";
 
 export type GeoOpsWorkerRequest =
   | {
@@ -25,6 +28,19 @@ export type GeoOpsWorkerRequest =
       payload: {
         featureCollection: GeoJSON.FeatureCollection;
       };
+    }
+  | {
+      id: string;
+      type: "FILTER_BIDANG_AOI";
+      payload: {
+        rawFeatures: GeoJSON.Feature[];
+        aoiPolygon:
+          | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+          | GeoJSON.Polygon
+          | GeoJSON.MultiPolygon
+          | null
+          | undefined;
+      };
     };
 
 export type GeoOpsWorkerResponse =
@@ -39,6 +55,12 @@ export type GeoOpsWorkerResponse =
       ok: true;
       type: "UNION_GEOJSON_POLYGONS";
       data: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null;
+    }
+  | {
+      id: string;
+      ok: true;
+      type: "FILTER_BIDANG_AOI";
+      data: GeoJSON.Feature[];
     }
   | {
       id: string;

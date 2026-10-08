@@ -767,7 +767,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
           {/* DataList Table with Multi-Selection Checkbox */}
-          <VStack flex={"unset"} w={"full"} bg={"bg.body"}>
+          <VStack flex={1} w={"full"} bg={"bg.body"}>
             {isShowLoading && (
               <Skeleton
                 flex={1}
@@ -803,7 +803,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                         void adminBoundaryQuery.refetch();
                       if (calculationError && !calculationResult) {
                         useMitraDataRequestStore
-                           .getState()
+                          .getState()
                           .resetCalculation(selectionType);
                         const resolvedAoi = to2DGeometry(effectiveAoiPolygon);
                         if (!resolvedAoi) return;
@@ -885,13 +885,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
         {/* Action Bar Footer */}
-        <VStack
-          gap={"sm"}
-          w={"full"}
-          p={"md"}
-          bg={"bg.body"}
-          flexShrink={0}
-        >
+        <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} flexShrink={0}>
           {/* Action Buttons */}
           <VStack w={"full"} gap={"xs"}>
             {isSelectionLimitInvalid && purchaseLimitMessage ? (

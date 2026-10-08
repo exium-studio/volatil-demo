@@ -137,3 +137,75 @@ export const runUnionGeoJsonPolygonsInWorker = (
     worker.postMessage(request);
   });
 };
+
+/**
+ * Dispatches strict AOI intersection filtering for bidang features to dedicated Web Worker.
+ * Preserves 100% geometric accuracy with the unsimplified AOI polygon while offloading CPU computation from main thread.
+ */
+export const runFilterBidangAoiInWorker = (
+  rawFeatures: GeoJSON.Feature[],
+  aoiPolygon:
+    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+    | GeoJSON.Polygon
+    | GeoJSON.MultiPolygon
+    | null
+    | undefined,
+  signal?: AbortSignal,
+): Promise<GeoJSON.Feature[]> => {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException("Aborted", "AbortError"));
+      return;
+    }
+
+    if (!rawFeatures || rawFeatures.length === 0 || !aoiPolygon) {
+      resolve([]);
+      return;
+    }
+
+    const worker = new GeoOpsWorker();
+    const requestId = `filter_bidang_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+
+    const cleanup = () => {
+      signal?.removeEventListener("abort", onAbort);
+      worker.terminate();
+    };
+
+    const onAbort = () => {
+      cleanup();
+      reject(new DOMException("Aborted", "AbortError"));
+    };
+
+    signal?.addEventListener("abort", onAbort, { once: true });
+
+    worker.onmessage = (e: MessageEvent<GeoOpsWorkerResponse>) => {
+      const resp = e.data;
+      if (resp.id !== requestId) return;
+
+      cleanup();
+
+      if (resp.ok && resp.type === "FILTER_BIDANG_AOI") {
+        resolve(resp.data);
+      } else if (!resp.ok) {
+        reject(new Error(resp.error));
+      }
+    };
+
+    worker.onerror = (err) => {
+      cleanup();
+      reject(new Error(err.message || "GeoOps Worker error"));
+    };
+
+    const request: GeoOpsWorkerRequest = {
+      id: requestId,
+      type: "FILTER_BIDANG_AOI",
+      payload: {
+        rawFeatures,
+        aoiPolygon,
+      },
+    };
+
+    worker.postMessage(request);
+  });
+};
+

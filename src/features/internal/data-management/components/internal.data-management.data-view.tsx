@@ -99,9 +99,7 @@ export const InternalDataManagementDataView = () => {
     pageSize: params.pageSize,
     search: params.search || undefined,
     igtBasis:
-      params.igtBasis !== "all"
-        ? (params.igtBasis as IgtBasisType)
-        : undefined,
+      params.igtBasis !== "all" ? (params.igtBasis as IgtBasisType) : undefined,
     isActive:
       params.publishStatus === "published"
         ? true

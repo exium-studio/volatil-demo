@@ -3,6 +3,7 @@
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { runFilterBidangAoiInWorker } from "@/features/mitra/data-request/services/geo-ops-worker.service";
 import type {
   BidangAoiLayerItem,
   UseBidangAoiFeaturesParams,
@@ -12,7 +13,6 @@ import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/cli
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useQuery } from "@tanstack/react-query";
-import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
 import { useMemo } from "react";
 
@@ -135,39 +135,12 @@ export const useBidangAoiFeatures = (
       const featureArrays = await Promise.all(fetchPromises);
       const combinedFeatures: GeoJSON.Feature[] = featureArrays.flat();
 
-      // Client-side strict spatial intersection filter: ensure only features intersecting the AOI are returned
-      const aoiTyped = aoiFeature as GeoJSON.Feature<
-        GeoJSON.Polygon | GeoJSON.MultiPolygon
-      >;
-
-      const intersectedFeatures = combinedFeatures.filter((feat) => {
-        if (!feat || !feat.geometry) return false;
-        const featFeature: GeoJSON.Feature<GeoJSON.Geometry> =
-          feat.type === "Feature"
-            ? (feat as GeoJSON.Feature<GeoJSON.Geometry>)
-            : {
-                type: "Feature",
-                properties: feat.properties ?? {},
-                geometry: feat.geometry,
-              };
-
-        try {
-          return turf.booleanIntersects(aoiTyped, featFeature);
-        } catch {
-          try {
-            const aoiBbox = turf.bbox(aoiTyped);
-            const featBbox = turf.bbox(featFeature);
-            return (
-              aoiBbox[0] <= featBbox[2] &&
-              aoiBbox[2] >= featBbox[0] &&
-              aoiBbox[1] <= featBbox[3] &&
-              aoiBbox[3] >= featBbox[1]
-            );
-          } catch {
-            return false;
-          }
-        }
-      });
+      // Strict spatial intersection filter executed in Web Worker with exact unsimplified AOI
+      const intersectedFeatures = await runFilterBidangAoiInWorker(
+        combinedFeatures,
+        aoiFeature,
+        signal,
+      );
 
       return {
         type: "FeatureCollection",
