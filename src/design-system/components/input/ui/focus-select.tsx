@@ -111,11 +111,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   const selectedOption = useMemo(() => {
     const found = options.find((opt) => opt.value === currentValue);
     if (found) return found;
-    if (currentValue) {
+    if (currentValue && !isFetchingLoading) {
       return { label: currentValue, value: currentValue };
     }
     return undefined;
-  }, [options, currentValue]);
+  }, [options, currentValue, isFetchingLoading]);
 
   // Handlers
   const handleOptionSelect = (
@@ -207,7 +207,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         w={w}
         px={3}
         pr={clearable && currentValue && !disabled ? "60px" : "36px"}
-        disabled={disabled}
+        disabled={disabled || isFetchingLoading}
         fontWeight={"normal"}
         data-has-value={currentValue ? "true" : "false"}
         {...(isFloatingField && {
@@ -254,22 +254,28 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         )}
 
         <HStack gap={"sm"} flex={1} minW={0} justify={"start"}>
-          {renderStartElement(
-            selectedOption?.startElement,
-            selectedOption?.icon,
-            iconSize,
-          )}
+          {isFetchingLoading ? (
+            <Skeleton h={"16px"} w={"120px"} />
+          ) : (
+            <>
+              {renderStartElement(
+                selectedOption?.startElement,
+                selectedOption?.icon,
+                iconSize,
+              )}
 
-          <P
-            color={selectedOption ? "fg.default" : "fg.subtle"}
-            truncate
-            data-placeholder={!selectedOption ? "true" : undefined}
-            opacity={
-              isFloatingField && floatingLabel && !selectedOption ? 0 : 1
-            }
-          >
-            {selectedOption?.label ?? placeholder}
-          </P>
+              <P
+                color={selectedOption ? "fg.default" : "fg.subtle"}
+                truncate
+                data-placeholder={!selectedOption ? "true" : undefined}
+                opacity={
+                  isFloatingField && floatingLabel && !selectedOption ? 0 : 1
+                }
+              >
+                {selectedOption?.label ?? placeholder}
+              </P>
+            </>
+          )}
         </HStack>
 
         <HStack
@@ -311,7 +317,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   };
 
   const triggerContent = (
-    <Modal.Trigger asChild disabled={disabled}>
+    <Modal.Trigger asChild disabled={disabled || isFetchingLoading}>
       {renderTrigger()}
     </Modal.Trigger>
   );

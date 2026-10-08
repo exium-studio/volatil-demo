@@ -107,7 +107,7 @@ const InternalDataManagementEditModalContent = (
       description: item.description ?? "",
       igtBasis: item.igtBasis ?? "kawasan",
       zIndex: item.zIndex ?? 1,
-      geoserverId: item.geoserverId ?? "gs_prod_01",
+      geoserverId: item.geoserverId ?? "",
       workspaceName: initialWorkspace,
       layerName: initialLayerName,
       typeName: item.typeName ?? "",
@@ -149,16 +149,10 @@ const InternalDataManagementEditModalContent = (
   const handleLayerChange = (
     selectedLayerName: string | null,
     selectedTypeName: string,
-    layerDetail?: GeoServerWorkspaceLayerOption,
+    _layerDetail?: GeoServerWorkspaceLayerOption,
   ) => {
     setValue("layerName", selectedLayerName, { shouldValidate: true });
     setValue("typeName", selectedTypeName, { shouldValidate: true });
-    const basis = layerDetail?.igtBasis ?? layerDetail?.spatialBasis;
-    if (basis) {
-      setValue("igtBasis", basis, {
-        shouldValidate: true,
-      });
-    }
   };
 
   const onInvalid = () => {

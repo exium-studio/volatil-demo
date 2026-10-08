@@ -46,6 +46,7 @@ import { IconDatabaseOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { FocusIcon, ShoppingCartIcon, TablePropertiesIcon } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 
 const BASIS_FILTER_OPTIONS: Array<{ value: BasisFilterType; label: string }> = [
   { value: "all", label: "Semua" },
@@ -731,7 +732,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
           {/* Actions Header: Search Bar & Basis IGT Filter */}
-          <HStack
+          <ActionHeaderScrollContainer
             wrap={"wrap"}
             align={"center"}
             justify={"space-between"}
@@ -762,7 +763,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 options={BASIS_FILTER_OPTIONS}
               />
             </HStack>
-          </HStack>
+          </ActionHeaderScrollContainer>
 
           <Separator borderColor={"bg.canvas"} flexShrink={0} />
 

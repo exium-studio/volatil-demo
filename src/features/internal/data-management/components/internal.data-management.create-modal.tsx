@@ -116,16 +116,10 @@ const InternalDataManagementCreateModalContent = (
   const handleLayerChange = (
     selectedLayerName: string | null,
     selectedTypeName: string,
-    layerDetail?: GeoServerWorkspaceLayerOption,
+    _layerDetail?: GeoServerWorkspaceLayerOption,
   ) => {
     setValue("layerName", selectedLayerName, { shouldValidate: true });
     setValue("typeName", selectedTypeName, { shouldValidate: true });
-    const basis = layerDetail?.igtBasis ?? layerDetail?.spatialBasis;
-    if (basis) {
-      setValue("igtBasis", basis, {
-        shouldValidate: true,
-      });
-    }
   };
 
   const onInvalid = () => {
