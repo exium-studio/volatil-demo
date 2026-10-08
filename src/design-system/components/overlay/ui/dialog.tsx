@@ -413,6 +413,7 @@ const DialogHeader = (props: ChakraDialog.TitleProps) => {
     <ChakraDialog.Header
       justifyContent={"center"}
       pos={"relative"}
+      minH={"headerH"}
       py={4}
       px={"78px"}
       {...props}

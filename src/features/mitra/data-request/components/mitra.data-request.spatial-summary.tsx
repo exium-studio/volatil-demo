@@ -186,8 +186,10 @@ export const MitraDataRequestSpatialSummary = memo(
       return "Total permohonan melebihi batas pembelian (purchase limit) akun Anda.";
     })();
 
-    const isBidangValid = hasValidBidang;
-    const isKawasanValid = hasValidKawasan;
+    const isBidangValid =
+      hasValidBidang && isPurchaseLimitValid !== false;
+    const isKawasanValid =
+      hasValidKawasan && isPurchaseLimitValid !== false;
 
     const calculatedSubtotalBidang =
       subtotalBidangPrice > 0
@@ -258,7 +260,7 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
 
               <P>
-                {isBidangValid ? (
+                {totalBidangCount > 0 ? (
                   <>
                     <TNum>{formatNumber(totalBidangCount)}</TNum>
                     {" bidang × "}
@@ -275,18 +277,22 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
             </VStack>
 
-            <P fontWeight={"semibold"}>
-              {isBidangValid ? (
+            {totalBidangCount === 0 ? (
+              <P fontWeight={"semibold"}>{"-"}</P>
+            ) : isBidangValid ? (
+              <P fontWeight={"semibold"}>
                 <FormatNumber
                   value={calculatedSubtotalBidang}
                   style={"currency"}
                   currency={"IDR"}
                   maximumFractionDigits={0}
                 />
-              ) : (
-                "-"
-              )}
-            </P>
+              </P>
+            ) : (
+              <P fontSize={"sm"} color={"fg.error"} fontWeight={"medium"}>
+                {"Tidak valid"}
+              </P>
+            )}
           </HStack>
 
           {/* Subtotal Kawasan */}
@@ -297,7 +303,7 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
 
               <P>
-                {isKawasanValid ? (
+                {totalKawasanAreaHa > 0 ? (
                   <>
                     <TNum>
                       {formatNumber(totalKawasanAreaHa, {
@@ -318,18 +324,22 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
             </VStack>
 
-            <P fontWeight={"semibold"}>
-              {isKawasanValid ? (
+            {totalKawasanAreaHa === 0 ? (
+              <P fontWeight={"semibold"}>{"-"}</P>
+            ) : isKawasanValid ? (
+              <P fontWeight={"semibold"}>
                 <FormatNumber
                   value={calculatedSubtotalKawasan}
                   style={"currency"}
                   currency={"IDR"}
                   maximumFractionDigits={0}
                 />
-              ) : (
-                "-"
-              )}
-            </P>
+              </P>
+            ) : (
+              <P fontSize={"sm"} color={"fg.error"} fontWeight={"medium"}>
+                {"Tidak valid"}
+              </P>
+            )}
           </HStack>
 
           <Separator variant={"dashed"} />
@@ -338,22 +348,24 @@ export const MitraDataRequestSpatialSummary = memo(
           <HStack justify={"space-between"} align={"center"}>
             <P fontWeight={"medium"}>{"Total Estimasi"}</P>
 
-            <P
-              fontSize={"lg"}
-              fontWeight={"bold"}
-              color={isOrValidForCheckout ? "blue.fg" : "fg.subtle"}
-            >
-              {isOrValidForCheckout && calculatedTotalPrice > 0 ? (
+            {isOrValidForCheckout && calculatedTotalPrice > 0 ? (
+              <P fontSize={"lg"} fontWeight={"bold"} color={"blue.fg"}>
                 <FormatNumber
                   value={calculatedTotalPrice}
                   style={"currency"}
                   currency={"IDR"}
                   maximumFractionDigits={0}
                 />
-              ) : (
-                "-"
-              )}
-            </P>
+              </P>
+            ) : totalBidangCount > 0 || totalKawasanAreaHa > 0 ? (
+              <P fontSize={"md"} fontWeight={"semibold"} color={"fg.error"}>
+                {"Tidak valid"}
+              </P>
+            ) : (
+              <P fontSize={"lg"} fontWeight={"bold"} color={"fg.subtle"}>
+                {"-"}
+              </P>
+            )}
           </HStack>
         </VStack>
 

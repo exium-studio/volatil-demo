@@ -483,9 +483,19 @@ export const MitraDataRequestIgtLayerDataView = memo(
               it.layerId === layer.wfs?.wfsTypeName,
           );
 
+          const bidangFeatureCount =
+            calcItem?.featuresCount && calcItem.featuresCount > 0
+              ? calcItem.featuresCount
+              : bidangQueryResult.features?.features?.filter(
+                  (f) =>
+                    f.properties?.__sourceLayerId === layer.id ||
+                    f.properties?.__sourceLayerTitle === layer.title ||
+                    f.properties?.__sourceLayerTitle === layer.typeName,
+                ).length ?? 0;
+
           const countOrAreaText =
             layer.spatialBasis === "bidang"
-              ? `${formatNumber(calcItem?.featuresCount ?? 0)} bidang`
+              ? `${formatNumber(bidangFeatureCount)} bidang`
               : `${formatNumber(calcItem?.areaHa ?? 0, { maximumFractionDigits: 2 })} ha`;
 
           return {
@@ -505,7 +515,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
               {
                 value:
                   layer.spatialBasis === "bidang"
-                    ? (calcItem?.featuresCount ?? 0)
+                    ? bidangFeatureCount
                     : (calcItem?.areaHa ?? 0),
                 td: <P>{countOrAreaText}</P>,
                 align: "start",
@@ -560,10 +570,15 @@ export const MitraDataRequestIgtLayerDataView = memo(
       effectiveAoiPolygon,
       flyTo,
       onSelectIgtLayer,
+      bidangQueryResult.features?.features,
     ]);
 
     const pricingPolicy = usePricingPolicy();
-    const totalBidangCount = calculationResult?.totalBidangCount ?? 0;
+    const effectiveTotalBidangCount = Math.max(
+      calculationResult?.totalBidangCount ?? 0,
+      bidangQueryResult.totalFeatures ?? 0,
+    );
+    const totalBidangCount = effectiveTotalBidangCount;
     const totalKawasanAreaHa = calculationResult?.totalKawasanAreaHa ?? 0;
     const minBidangCount = pricingPolicy.minBidangCount;
     const minKawasanHa = pricingPolicy.minKawasanHa;
@@ -685,10 +700,14 @@ export const MitraDataRequestIgtLayerDataView = memo(
           {effectiveAoiPolygon && (
             <Box p={"md"} bg={"bg.body"} w={"full"} flexShrink={0}>
               <MitraDataRequestSpatialSummary
-                totalBidangCount={calculationResult?.totalBidangCount ?? 0}
+                totalBidangCount={effectiveTotalBidangCount}
                 totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
                 subtotalBidangPrice={
-                  calculationResult?.subtotalBidangPrice ?? 0
+                  calculationResult?.subtotalBidangPrice &&
+                  calculationResult.subtotalBidangPrice > 0
+                    ? calculationResult.subtotalBidangPrice
+                    : effectiveTotalBidangCount *
+                      (pricingPolicy.pricePerBidang ?? CART_CONFIG.pricePerBidang)
                 }
                 subtotalKawasanPrice={
                   calculationResult?.subtotalKawasanPrice ?? 0
@@ -701,7 +720,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
                 hasBidangLayer={
                   bidangTargetLayers.length > 0 ||
-                  (calculationResult?.totalBidangCount ?? 0) > 0
+                  effectiveTotalBidangCount > 0
                 }
                 isCoverageVisible={isCoverageVisible}
                 isBidangVisible={isBidangVisible}

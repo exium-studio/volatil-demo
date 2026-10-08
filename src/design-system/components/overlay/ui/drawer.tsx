@@ -453,6 +453,7 @@ const DrawerHeader = (props: ChakraDrawer.HeaderProps) => {
     <ChakraDrawer.Header
       justifyContent={"center"}
       pos={"relative"}
+      minH={"headerH"}
       py={4}
       px={"78px"}
       {...props}

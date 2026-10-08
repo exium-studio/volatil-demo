@@ -1,6 +1,7 @@
 // src/design-system/components/map/ui/map.feature-info-panel.tsx
 
 import { IconButton } from "@/design-system/components/button/ui/button";
+import { HeaderCloseButton } from "@/design-system/components/button/ui/close-button";
 import { Presence } from "@/design-system/components/disclosure/ui/presence";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
@@ -15,13 +16,12 @@ import { useMapFeatureInfoStore } from "@/design-system/components/map/stores/ma
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { MapFeatureInfoItem } from "@/design-system/components/map/types/map.feature-info.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { toast } from "@/design-system/components/toast";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import * as turf from "@turf/turf";
-import { FocusIcon, Grid2X2Icon, Layers2Icon, XIcon } from "lucide-react";
+import { FocusIcon, Grid2X2Icon, Layers2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export const MapFeatureInfoPanel = () => {
@@ -150,19 +150,16 @@ export const MapFeatureInfoPanel = () => {
         gap={0}
       >
         {/* Header */}
-        <HeaderContainer pr={"sm"}>
+        <HStack align={"center"} justify={"space-between"} p={"md"}>
           <P fontWeight={"medium"}>{"Properties"}</P>
 
           <Tooltip content={"Tutup"}>
-            <IconButton
-              size={"sm"}
+            <HeaderCloseButton
               aria-label={"Tutup"}
               onClick={clearFeatureInfo}
-            >
-              <AppIcon icon={XIcon} />
-            </IconButton>
+            />
           </Tooltip>
-        </HeaderContainer>
+        </HStack>
 
         <Separator borderColor={"bg.canvas"} />
 
