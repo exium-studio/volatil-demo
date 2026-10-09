@@ -568,11 +568,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
     ]);
 
     const pricingPolicy = usePricingPolicy();
-    const effectiveTotalBidangCount = Math.max(
-      calculationResult?.totalBidangCount ?? 0,
-      bidangQueryResult.totalFeatures ?? 0,
-    );
-    const totalBidangCount = effectiveTotalBidangCount;
+    const totalBidangCount = calculationResult?.totalBidangCount ?? 0;
     const totalKawasanAreaHa = calculationResult?.totalKawasanAreaHa ?? 0;
     const minBidangCount =
       calculationResult?.policy?.minimumBidangCount ??
@@ -698,13 +694,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
           {effectiveAoiPolygon && (
             <Box p={"md"} bg={"bg.body"} w={"full"} flexShrink={0}>
               <MitraDataRequestSpatialSummary
-                totalBidangCount={effectiveTotalBidangCount}
+                totalBidangCount={totalBidangCount}
                 totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
                 subtotalBidangPrice={
                   calculationResult?.subtotalBidangPrice &&
                   calculationResult.subtotalBidangPrice > 0
                     ? calculationResult.subtotalBidangPrice
-                    : effectiveTotalBidangCount *
+                    : totalBidangCount *
                       (calculationResult?.policy?.pricePerBidang ??
                         pricingPolicy.pricePerBidang ??
                         CART_CONFIG.pricePerBidang)
@@ -731,7 +727,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 purchaseLimitMessage={purchaseLimitMessage}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
                 hasBidangLayer={
-                  bidangTargetLayers.length > 0 || effectiveTotalBidangCount > 0
+                  bidangTargetLayers.length > 0 || totalBidangCount > 0
                 }
                 isCoverageVisible={isCoverageVisible}
                 isBidangVisible={isBidangVisible}
