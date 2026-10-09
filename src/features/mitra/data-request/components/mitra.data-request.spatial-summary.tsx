@@ -219,20 +219,6 @@ export const MitraDataRequestSpatialSummary = memo(
       (hasValidBidang && isKawasanBelowMin) ||
       (hasValidKawasan && isBidangBelowMin);
 
-    const displayAlertMessage = (() => {
-      if (purchaseLimitMessage) return purchaseLimitMessage;
-      if (isBidangBelowMin && isKawasanBelowMin) {
-        return `Minimum pembelian belum terpenuhi (Bidang: min ${formatNumber(effectiveMinBidangCount)} bidang [saat ini: ${formatNumber(totalBidangCount)}], Kawasan: min ${formatNumber(effectiveMinKawasanHa)} ha [saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha]).`;
-      }
-      if (isBidangBelowMin) {
-        return `Minimum pembelian untuk bidang tanah adalah ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`;
-      }
-      if (isKawasanBelowMin) {
-        return `Minimum pembelian untuk kawasan adalah ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha).`;
-      }
-      return "Total permohonan melebihi batas pembelian (purchase limit) akun Anda.";
-    })();
-
     const calculatedSubtotalBidang =
       subtotalBidangPrice > 0
         ? subtotalBidangPrice
@@ -402,7 +388,23 @@ export const MitraDataRequestSpatialSummary = memo(
             mt={1}
           >
             <AppIcon icon={ShieldAlertIcon} />
-            <Alert.Description>{displayAlertMessage}</Alert.Description>
+            <Alert.Description>
+              <VStack align={"start"} gap={"2xs"} fontSize={"xs"}>
+                {purchaseLimitMessage && (
+                  <P fontSize={"xs"}>{purchaseLimitMessage}</P>
+                )}
+                {!isBidangValid && (hasBidangLayer || totalBidangCount > 0) && (
+                  <P fontSize={"xs"}>
+                    {`• Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}
+                  </P>
+                )}
+                {!isKawasanValid && (hasKawasanLayer || totalKawasanAreaHa > 0) && (
+                  <P fontSize={"xs"}>
+                    {`• Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
+                  </P>
+                )}
+              </VStack>
+            </Alert.Description>
           </Alert.Root>
         )}
       </VStack>
