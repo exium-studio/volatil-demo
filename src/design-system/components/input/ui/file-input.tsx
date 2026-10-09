@@ -552,7 +552,6 @@ const FileItem = (props: FileItemProps) => {
 
       <ClampedP
         flex={1}
-        minW={0}
         textDecoration={markedForDelete ? "line-through" : undefined}
         opacity={contentOpacity}
       >

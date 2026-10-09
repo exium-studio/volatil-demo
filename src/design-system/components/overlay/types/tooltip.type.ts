@@ -14,4 +14,6 @@ export type TooltipProps = ChakraTooltip.RootProps & {
   asChild?: boolean;
   w?: BoxProps["w"];
   width?: BoxProps["width"];
+  minW?: BoxProps["minW"];
+  minWidth?: BoxProps["minWidth"];
 };

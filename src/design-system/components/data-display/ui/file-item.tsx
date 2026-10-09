@@ -59,7 +59,7 @@ export const FileItem = (props: FileItemProps) => {
         <FileIcon mimeType={mimeType} />
       )}
 
-      <ClampedP flex={1} minW={0}>
+      <ClampedP flex={1}>
         {name}
       </ClampedP>
 

@@ -91,11 +91,23 @@ export const PLink = forwardRef<HTMLSpanElement, PProps>(
 export const ClampedP = forwardRef<HTMLParagraphElement, PProps>(
   function ClampedP(props, ref) {
     // Props
-    const { children, ...restProps } = props;
+    const { children, minW = 0, minWidth, ...restProps } = props;
+
+    const resolvedMinW = minWidth ?? minW;
 
     return (
-      <Tooltip content={children} w={restProps.w ?? restProps.width}>
-        <P ref={ref} lineClamp={1} wordBreak={"break-all"} {...restProps}>
+      <Tooltip
+        content={children}
+        w={restProps.w ?? restProps.width}
+        minW={resolvedMinW}
+      >
+        <P
+          ref={ref}
+          lineClamp={1}
+          wordBreak={"break-all"}
+          minW={resolvedMinW}
+          {...restProps}
+        >
           {children}
         </P>
       </Tooltip>
