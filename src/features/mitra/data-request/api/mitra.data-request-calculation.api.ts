@@ -119,7 +119,7 @@ export async function calculateSpatialCoverageStream(
   const token =
     typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
   const baseUrl = getApiBaseUrl();
-  const targetPath = `${baseUrl}/api/mitra/data-request/calculate/stream`;
+  const targetPath = `${baseUrl}/api/igt/data-request/calculate`;
   const url = baseUrl
     ? new URL(targetPath)
     : new URL(

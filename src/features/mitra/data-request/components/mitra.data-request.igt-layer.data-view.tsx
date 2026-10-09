@@ -311,7 +311,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       if (!resolvedAoi) return;
 
       const itemsList = validCalculationLayers.map((layer) => ({
-        layerId: layer.id,
+        sourceLayerId: layer.id,
         typeName: layer.typeName || layer.wfs?.wfsTypeName || "",
         title: layer.title,
         spatialBasis: layer.spatialBasis,
@@ -322,7 +322,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
           selectionType,
           aoiPolygon: resolvedAoi,
           items: itemsList,
-          cqlFilter: combinedCqlFilter,
         },
         calcTriggerKey,
       );
@@ -376,7 +375,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
-        cqlFilter: combinedCqlFilter,
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
@@ -385,7 +383,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
           title: layer.title,
           spatialBasis: layer.spatialBasis,
           selectionType,
-          cqlFilter: combinedCqlFilter,
         })),
       });
     };
@@ -409,7 +406,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
-        cqlFilter: combinedCqlFilter,
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
@@ -418,7 +414,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
           title: layer.title,
           spatialBasis: layer.spatialBasis,
           selectionType,
-          cqlFilter: combinedCqlFilter,
         })),
       });
     };
@@ -442,7 +437,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
-        cqlFilter: combinedCqlFilter,
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
@@ -451,7 +445,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
           title: layer.title,
           spatialBasis: layer.spatialBasis,
           selectionType,
-          cqlFilter: combinedCqlFilter,
         })),
       });
     };
@@ -487,12 +480,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
           const bidangFeatureCount =
             calcItem?.featuresCount && calcItem.featuresCount > 0
               ? calcItem.featuresCount
-              : bidangQueryResult.features?.features?.filter(
+              : (bidangQueryResult.features?.features?.filter(
                   (f) =>
                     f.properties?.__sourceLayerId === layer.id ||
                     f.properties?.__sourceLayerTitle === layer.title ||
                     f.properties?.__sourceLayerTitle === layer.typeName,
-                ).length ?? 0;
+                ).length ?? 0);
 
           const countOrAreaText =
             layer.spatialBasis === "bidang"
@@ -708,7 +701,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
                   calculationResult.subtotalBidangPrice > 0
                     ? calculationResult.subtotalBidangPrice
                     : effectiveTotalBidangCount *
-                      (pricingPolicy.pricePerBidang ?? CART_CONFIG.pricePerBidang)
+                      (pricingPolicy.pricePerBidang ??
+                        CART_CONFIG.pricePerBidang)
                 }
                 subtotalKawasanPrice={
                   calculationResult?.subtotalKawasanPrice ?? 0
@@ -720,8 +714,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 purchaseLimitMessage={purchaseLimitMessage}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
                 hasBidangLayer={
-                  bidangTargetLayers.length > 0 ||
-                  effectiveTotalBidangCount > 0
+                  bidangTargetLayers.length > 0 || effectiveTotalBidangCount > 0
                 }
                 isCoverageVisible={isCoverageVisible}
                 isBidangVisible={isBidangVisible}
@@ -831,7 +824,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
                         const itemsList = validCalculationLayers.map(
                           (layer) => ({
-                            layerId: layer.id,
+                            sourceLayerId: layer.id,
                             typeName: layer.wfs?.wfsTypeName || layer.id,
                             title: layer.title,
                             spatialBasis: layer.spatialBasis,
@@ -842,7 +835,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
                             selectionType,
                             aoiPolygon: resolvedAoi,
                             items: itemsList,
-                            cqlFilter: combinedCqlFilter,
                           },
                           `${calcTriggerKey}|retry-${Date.now()}`,
                         );

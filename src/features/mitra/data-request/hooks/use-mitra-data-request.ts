@@ -85,11 +85,11 @@ export const useAddToCartAll = () => {
     mutationFn: (params: AddToCartLayerParam) => {
       const payload: AddToCartOrderRequest = {
         selectionType: params.selectionType ?? "catalog",
-        cqlFilter: params.cqlFilter,
+        aoiPolygon: params.aoiPolygon,
+        coveragePolygon: params.coveragePolygon,
         items: [
           {
             sourceLayerId: params.layerId,
-            cqlFilter: params.cqlFilter,
           },
         ],
       };
@@ -174,13 +174,11 @@ export const useAddToCartMultipleLayers = () => {
           params.selectionType ??
           params.layers[0]?.selectionType ??
           "catalog",
-        cqlFilter: params.cqlFilter ?? params.layers[0]?.cqlFilter,
         aoiPolygon: params.aoiPolygon ?? params.layers[0]?.aoiPolygon,
         coveragePolygon:
           params.coveragePolygon ?? params.layers[0]?.coveragePolygon,
         items: params.layers.map((l) => ({
           sourceLayerId: l.layerId,
-          cqlFilter: l.cqlFilter,
         })),
       };
       return createCartOrder(payload);
