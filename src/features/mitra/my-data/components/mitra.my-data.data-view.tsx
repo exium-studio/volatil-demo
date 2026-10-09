@@ -11,9 +11,9 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -386,7 +386,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           <Skeleton p={"md"} rounded={0} />
         ) : isError ? (
           <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Data IGT"}
               description={
                 error?.message ||
@@ -408,13 +408,13 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             bg={"bg.body"}
           >
             {debouncedSearch || params.status ? (
-              <NoResultState
+              <StateNoResult
                 description={
                   "Tidak ada layer IGT yang sesuai dengan kata kunci atau filter yang Anda pilih."
                 }
               />
             ) : (
-              <NoDataState
+              <StateNoData
                 icon={DatabaseIcon}
                 title={"Belum Ada Data IGT"}
                 description={
@@ -431,7 +431,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
                   <AppIcon icon={SquarePen} />
                   {"Permintaan Data"}
                 </Button>
-              </NoDataState>
+              </StateNoData>
             )}
           </VStack>
         ) : (

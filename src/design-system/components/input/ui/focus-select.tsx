@@ -3,8 +3,8 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { useFieldContextValue } from "@/design-system/components/input/context/field.context";
@@ -420,13 +420,13 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                 ))}
               </VStack>
             ) : isError ? (
-              <RetryState
+              <StateRetry
                 onRetry={onRetry}
                 title={errorTitle}
                 description={errorMessage}
               />
             ) : isEmptyArray(filteredOptions) ? (
-              <NoResultState query={searchQuery || "..."} />
+              <StateNoResult query={searchQuery || "..."} />
             ) : (
               <VStack gap={1} w={"full"}>
                 {filteredOptions.map((opt) => {

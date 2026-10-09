@@ -1,8 +1,8 @@
 // src/features/mitra/data-request/components/mitra.data-request.detail-attribute-view.tsx
 
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { MitraDataRequestDetailAttributeHeader } from "@/features/mitra/data-request/components/mitra.data-request.detail-attribute-header";
 import { SpatialFeaturesDataView } from "@/features/shared/components/spatial-features.data-view";
@@ -68,7 +68,7 @@ export const MitraDataRequestDetailAttributeView = memo(
             bg={"bg.body"}
             minH={0}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Data Spasial"}
               description={
                 error?.message ||
@@ -88,7 +88,7 @@ export const MitraDataRequestDetailAttributeView = memo(
             bg={"bg.body"}
             minH={0}
           >
-            <NoResultState />
+            <StateNoResult />
           </VStack>
         )}
 

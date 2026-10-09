@@ -6,7 +6,7 @@ import {
 } from "@/design-system/components/button/ui/button";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -353,7 +353,7 @@ export const MapSearch = () => {
 
               {!showLoader && !isError && isEmptyArray(results) && (
                 <Box px={3} py={3}>
-                  <NoResultState query={debouncedQuery} />
+                  <StateNoResult query={debouncedQuery} />
                 </Box>
               )}
 

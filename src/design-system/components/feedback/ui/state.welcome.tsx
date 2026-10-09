@@ -2,7 +2,7 @@
 
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { Button } from "@/design-system/components/button/ui/button";
-import type { WelcomeStateProps } from "@/design-system/components/feedback/types/state.welcome.type";
+import type { StateWelcomeProps } from "@/design-system/components/feedback/types/state.welcome.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
@@ -83,7 +83,7 @@ const getDisplayNavItems = (isMitra: boolean) => {
   return merged.slice(0, 3);
 };
 
-export const WelcomeState = (props: WelcomeStateProps) => {
+export const StateWelcome = (props: StateWelcomeProps) => {
   // Navigation
   const navigate = useNavigate();
 
@@ -103,7 +103,7 @@ export const WelcomeState = (props: WelcomeStateProps) => {
       align={"center"}
       justify={"center"}
       p={"xl"}
-      bg={"bg.canvas"}
+      // bg={"bg.canvas"}
       {...restProps}
     >
       <VStack

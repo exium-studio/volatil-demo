@@ -2,9 +2,9 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -161,7 +161,7 @@ const UserGuideModalContent = (props: {
           {/* Error State */}
           {!isLoading && isError && (
             <Center p={"xl"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Dokumen Panduan"}
                 description={
                   error instanceof Error
@@ -178,7 +178,7 @@ const UserGuideModalContent = (props: {
           {/* No Data State */}
           {isNoData && (
             <Center p={"xl"}>
-              <NoDataState
+              <StateNoData
                 title={"Belum Ada Dokumen Panduan"}
                 description={
                   "Dokumen panduan pengguna akan segera tersedia di portal ini."
@@ -190,7 +190,7 @@ const UserGuideModalContent = (props: {
           {/* No Result State */}
           {isNoResult && (
             <Center p={"xl"}>
-              <NoResultState query={search} />
+              <StateNoResult query={search} />
             </Center>
           )}
 

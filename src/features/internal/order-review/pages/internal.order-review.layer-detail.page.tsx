@@ -4,7 +4,7 @@ import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
@@ -124,7 +124,7 @@ export const InternalOrderReviewLayerDetailPage = () => {
           {isLoading ? (
             <Skeleton h={"350px"} rounded={"md"} w={"full"} />
           ) : isEmptyArray(features) ? (
-            <NoResultState
+            <StateNoResult
               title={"Data Fitur Tidak Tersedia"}
               description={
                 "Tidak dapat memuat atribut fitur spasial dari endpoint WFS layer ini."

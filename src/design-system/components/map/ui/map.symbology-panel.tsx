@@ -4,7 +4,7 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Presence } from "@/design-system/components/disclosure/ui/presence";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -268,7 +268,7 @@ export const LayerSymbologyContent = memo((props: LayerSymbologyContentProps) =>
   if (isError || !rules || rules.length === 0) {
     return (
       <Center w={"full"} py={"xs"}>
-        <RetryState
+        <StateRetry
           title={"Gagal Memuat Simbologi"}
           description={
             error instanceof Error

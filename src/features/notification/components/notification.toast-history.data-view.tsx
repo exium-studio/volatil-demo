@@ -3,7 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -51,7 +51,7 @@ export const NotificationToastHistoryDataView = memo(
           p={"md"}
           overflowY={"auto"}
         >
-          <NoDataState
+          <StateNoData
             icon={BellIcon}
             title={"Belum Ada Riwayat Notifikasi"}
             description={

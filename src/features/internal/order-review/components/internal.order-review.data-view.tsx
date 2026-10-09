@@ -6,9 +6,9 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -322,7 +322,7 @@ export const InternalOrderReviewDataView = () => {
             <Skeleton p={"md"} rounded={0} />
           ) : isError ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Antrean Review"}
                 description={
                   error?.message ||
@@ -336,13 +336,13 @@ export const InternalOrderReviewDataView = () => {
           ) : isEmptyArray(orders) ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
               {params.search || params.status !== "all" ? (
-                <NoResultState
+                <StateNoResult
                   description={
                     "Tidak ada pesanan permintaan yang sesuai dengan filter atau kata kunci pencarian Anda."
                   }
                 />
               ) : (
-                <NoDataState
+                <StateNoData
                   icon={CheckCircleIcon}
                   title={"Tidak Ada Antrean Review"}
                   description={

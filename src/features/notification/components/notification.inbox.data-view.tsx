@@ -6,8 +6,8 @@ import {
 } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box, Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -90,7 +90,7 @@ export const NotificationInboxDataView = memo(() => {
   if (isError) {
     return (
       <Center flex={1} py={"xl"}>
-        <RetryState
+        <StateRetry
           title={"Gagal Memuat Inbox"}
           description={
             error?.message || "Terjadi kesalahan saat memuat pesan inbox."
@@ -105,7 +105,7 @@ export const NotificationInboxDataView = memo(() => {
 
   if (isEmptyArray(items)) {
     return (
-      <NoDataState
+      <StateNoData
         icon={InboxIcon}
         title={"Inbox Kosong"}
         description={"Belum ada pesan atau pengumuman baru untuk Anda."}

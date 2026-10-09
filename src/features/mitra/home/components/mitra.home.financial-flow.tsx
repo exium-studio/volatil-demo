@@ -5,7 +5,7 @@ import {
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -75,7 +75,7 @@ const MitraHomeFinancialFlowContent = () => {
             w={"full"}
             py={"xl"}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Statistik Alur Keuangan"}
               description={
                 error?.message ||

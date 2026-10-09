@@ -6,7 +6,7 @@ import {
 } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -180,7 +180,7 @@ const MitraCartExpiredOrdersModalContent = (
         {!isLoading && (
           <>
             {isEmptyArray(expiredOrders) && (
-              <NoDataState
+              <StateNoData
                 icon={HistoryIcon}
                 title={"Tidak Ada Pesanan Kedaluwarsa"}
                 description={

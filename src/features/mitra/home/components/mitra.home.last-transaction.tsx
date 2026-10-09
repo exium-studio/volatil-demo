@@ -8,8 +8,8 @@ import type {
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -313,7 +313,7 @@ const MitraHomeLastTransactionDataView = (props: {
           py={"xl"}
           bg={"bg.body"}
         >
-          <RetryState
+          <StateRetry
             title={"Gagal Memuat Riwayat Transaksi"}
             description={
               error?.message ||
@@ -333,7 +333,7 @@ const MitraHomeLastTransactionDataView = (props: {
           py={"xl"}
           bg={"bg.body"}
         >
-          <NoDataState
+          <StateNoData
             icon={HistoryIcon}
             title={"Belum Ada Riwayat Transaksi"}
             description={

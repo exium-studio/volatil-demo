@@ -4,8 +4,8 @@ import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -214,7 +214,7 @@ export const LayerAttributeTableView = memo(
             p={"md"}
             bg={"bg.body"}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Data Spasial"}
               description={
                 error?.message ||
@@ -236,7 +236,7 @@ export const LayerAttributeTableView = memo(
             bg={"bg.body"}
             minH={0}
           >
-            <NoResultState />
+            <StateNoResult />
           </VStack>
         )}
 

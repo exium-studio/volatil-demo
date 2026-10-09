@@ -1,7 +1,7 @@
 // src/design-system/components/input/ui/focus-search.tsx
 
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
 
 import type {
   FocusSearchResultItemProps,
@@ -245,7 +245,7 @@ const FocusSearchBody = () => {
 
         {hasQuery && (
           <>
-            {isEmptyArray(results) && <NoResultState query={query} />}
+            {isEmptyArray(results) && <StateNoResult query={query} />}
 
             {!isEmptyArray(results) && (
               <VStack gap={1}>

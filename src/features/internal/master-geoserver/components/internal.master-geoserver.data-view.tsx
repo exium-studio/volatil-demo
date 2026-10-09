@@ -9,9 +9,9 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -379,7 +379,7 @@ export const InternalMasterGeoserverDataView = () => {
 
           {!isLoading && isError && (
             <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat GeoServer"}
                 description={
                   error?.message ||
@@ -397,9 +397,9 @@ export const InternalMasterGeoserverDataView = () => {
               {isEmptyArray(rawItems) && (
                 <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
                   {isSearching ? (
-                    <NoResultState query={searchQuery} />
+                    <StateNoResult query={searchQuery} />
                   ) : (
-                    <NoDataState
+                    <StateNoData
                       icon={ServerOffIcon}
                       title={"GeoServer Kosong"}
                       description={

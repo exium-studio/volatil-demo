@@ -5,7 +5,7 @@ import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -87,7 +87,7 @@ export const MitraDataRequestSpatialSummary = memo(
       calculatedPolicy?.minimumKawasanHa ??
       pricingPolicy.minKawasanHa;
 
-    // Show inline RetryState if policy query failed and no policy is available from SSE calculation
+    // Show inline StateRetry if policy query failed and no policy is available from SSE calculation
     const isPolicyError =
       pricingPolicy.isError &&
       !calculatedPolicy &&
@@ -172,7 +172,7 @@ export const MitraDataRequestSpatialSummary = memo(
 
     if (isPolicyError) {
       return (
-        <RetryState
+        <StateRetry
           title={"Gagal memuat kebijakan tarif"}
           description={
             pricingPolicy.error?.message ||

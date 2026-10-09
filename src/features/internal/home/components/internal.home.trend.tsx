@@ -5,8 +5,8 @@ import {
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -73,7 +73,7 @@ const InternalHomeTrendContent = () => {
           w={"full"}
           py={"xl"}
         >
-          <RetryState
+          <StateRetry
             title={"Gagal Memuat Tren Akuisisi"}
             description={
               error?.message ||
@@ -92,7 +92,7 @@ const InternalHomeTrendContent = () => {
           w={"full"}
           py={"xl"}
         >
-          <NoDataState
+          <StateNoData
             icon={TrendingUpIcon}
             title={"Belum Ada Data Tren Akuisisi"}
             description={

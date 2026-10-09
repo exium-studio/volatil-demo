@@ -10,9 +10,9 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -291,7 +291,7 @@ export const InternalUserManagementDataView = () => {
 
           {!isLoading && isError && (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Pengguna"}
                 description={
                   error?.message ||
@@ -309,14 +309,14 @@ export const InternalUserManagementDataView = () => {
               {isEmptyArray(users) && (
                 <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
                   {params.search || params.status || params.role ? (
-                    <NoResultState
+                    <StateNoResult
                       query={params.search || params.status || params.role}
                       description={
                         "Tidak ada pengguna yang sesuai dengan filter atau kata kunci pencarian Anda."
                       }
                     />
                   ) : (
-                    <NoDataState
+                    <StateNoData
                       title={"Belum Ada Pengguna"}
                       description={
                         "Belum ada akun pengguna terdaftar pada sistem."

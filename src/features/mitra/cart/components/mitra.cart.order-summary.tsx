@@ -3,7 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -261,7 +261,7 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
         bg={"bg.body"}
         rounded={theme.radii.container}
       >
-        <RetryState
+        <StateRetry
           title={"Gagal Memuat Rincian Pesanan"}
           description={
             error?.message ||

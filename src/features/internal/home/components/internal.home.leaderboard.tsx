@@ -1,8 +1,8 @@
 // src/features/internal/home/components/internal.home.leaderboard.tsx
 
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -102,7 +102,7 @@ const TopMitraLeaderboardCard = (props: LeaderboardCardProps) => {
             py={"xl"}
             flex={1}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Peringkat Mitra"}
               description={
                 error?.message ||
@@ -122,7 +122,7 @@ const TopMitraLeaderboardCard = (props: LeaderboardCardProps) => {
             py={"xl"}
             flex={1}
           >
-            <NoDataState
+            <StateNoData
               icon={HandshakeIcon}
               title={"Belum Ada Data Peringkat Mitra"}
               description={
@@ -255,7 +255,7 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
             py={"xl"}
             flex={1}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Layer IGT Paling Diminati"}
               description={
                 error?.message ||
@@ -275,7 +275,7 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
             py={"xl"}
             flex={1}
           >
-            <NoDataState
+            <StateNoData
               icon={LayersIcon}
               title={"Belum Ada Data Layer IGT"}
               description={

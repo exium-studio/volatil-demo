@@ -4,8 +4,8 @@ import { IconButton } from "@/design-system/components/button/ui/button";
 import { HeaderCloseButton } from "@/design-system/components/button/ui/close-button";
 import { Presence } from "@/design-system/components/disclosure/ui/presence";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -226,7 +226,7 @@ export const MapFeatureInfoPanel = () => {
         {(!isLoading || Boolean(displayFeature)) &&
           isEmptyArray(allEntries) && (
             <VStack w={"full"} p={"lg"} align={"center"} justify={"center"}>
-              <NoDataState description={"Tidak ada atribut fitur"} />
+              <StateNoData description={"Tidak ada atribut fitur"} />
             </VStack>
           )}
 
@@ -252,7 +252,7 @@ export const MapFeatureInfoPanel = () => {
                     align={"center"}
                     justify={"center"}
                   >
-                    <NoResultState query={searchQuery || "..."} />
+                    <StateNoResult query={searchQuery || "..."} />
                   </VStack>
                 )}
 

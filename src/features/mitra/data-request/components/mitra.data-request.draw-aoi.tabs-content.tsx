@@ -3,7 +3,7 @@ import {
   IconButton,
 } from "@/design-system/components/button/ui/button";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -83,7 +83,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
               isVisible={hasStartedDrawing}
             />
 
-            <NoDataState
+            <StateNoData
               description={
                 "Tentukan area spesifik pada peta untuk mengambil data IGT."
               }
@@ -134,7 +134,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
                   </Button>
                 </HStack>
               )}
-            </NoDataState>
+            </StateNoData>
 
             <GuideAlert
               isLoading={isLoading}

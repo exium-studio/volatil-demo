@@ -5,9 +5,9 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
@@ -266,7 +266,7 @@ export const InternalMitraLayerSyncJobTableView = (
 
         {!isLoading && isError && (
           <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Riwayat Sinkronisasi"}
               description={
                 error?.message ||
@@ -284,14 +284,14 @@ export const InternalMitraLayerSyncJobTableView = (
             {isEmptyArray(rawItems) && (
               <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
                 {params.search || params.status !== "all" ? (
-                  <NoResultState
+                  <StateNoResult
                     query={params.search || params.status}
                     description={
                       "Tidak ada tugas sinkronisasi yang sesuai dengan filter atau kata kunci pencarian Anda."
                     }
                   />
                 ) : (
-                  <NoDataState
+                  <StateNoData
                     title={"Belum Ada Tugas Sinkronisasi"}
                     description={
                       "Belum ada riwayat tugas sinkronisasi layer IGT ke geoserver mitra."

@@ -6,8 +6,8 @@ import type {
   SelectProps,
 } from "@/design-system/components/input/types/select.type";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -258,7 +258,7 @@ export default function SelectInput(props: SelectProps) {
               </VStack>
             ) : isError ? (
               <Box p={2}>
-                <RetryState
+                <StateRetry
                   onRetry={onRetry}
                   title={errorTitle}
                   description={errorMessage}
@@ -266,7 +266,7 @@ export default function SelectInput(props: SelectProps) {
               </Box>
             ) : isEmptyArray(options) ? (
               <Box p={2}>
-                <NoResultState />
+                <StateNoResult />
               </Box>
             ) : (
               collection.items.map((item) => (

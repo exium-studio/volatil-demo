@@ -10,8 +10,8 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
@@ -338,7 +338,7 @@ export const HelpCenterDataView = () => {
 
           {!isLoading && isError && (
             <Center py={"xl"} w={"full"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Laporan"}
                 description={
                   error?.message ??
@@ -353,7 +353,7 @@ export const HelpCenterDataView = () => {
 
           {!isLoading && !isError && isEmptyArray(tickets) && (
             <Box py={"xl"} w={"full"} bg={"bg.body"}>
-              <NoDataState
+              <StateNoData
                 icon={InboxIcon}
                 title={"Belum Ada Laporan"}
                 description={

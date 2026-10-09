@@ -4,8 +4,8 @@ import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -86,7 +86,7 @@ const MitraHomeDataSummaryContent = () => {
           w={"full"}
           py={"xl"}
         >
-          <RetryState
+          <StateRetry
             title={"Gagal Memuat Ringkasan Data"}
             description={
               error?.message ||
@@ -105,7 +105,7 @@ const MitraHomeDataSummaryContent = () => {
           w={"full"}
           py={"xl"}
         >
-          <NoDataState
+          <StateNoData
             icon={DatabaseIcon}
             title={"Belum Ada Data IGT"}
             description={

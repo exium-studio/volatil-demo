@@ -2,13 +2,13 @@
 
 "use client";
 
-import type { NoResultStateProps } from "@/design-system/components/feedback/types/feedback-state.type";
+import type { StateNoResultProps } from "@/design-system/components/feedback/types/feedback-state.type";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
 import { P } from "@/design-system/components/typography/ui/p";
 import { t } from "@/shared/libs/i18n";
 import { IconMoodPuzzled } from "@tabler/icons-react";
 
-export const NoResultState = (props: NoResultStateProps) => {
+export const StateNoResult = (props: StateNoResultProps) => {
   // Props
   const {
     icon = IconMoodPuzzled,

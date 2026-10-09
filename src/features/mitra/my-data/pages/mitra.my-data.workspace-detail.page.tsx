@@ -10,8 +10,8 @@ import type { DataViewItemActionsGenerator } from "@/design-system/components/da
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -364,7 +364,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         <Container.Root flex={1}>
           <Container.Body flex={1}>
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Detail Workspace"}
                 description={
                   error?.message ||
@@ -503,7 +503,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
           <VStack flex={1} w={"full"}>
             {isEmptyArray(workspace.layers) ? (
               <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-                <NoDataState
+                <StateNoData
                   icon={DatabaseIcon}
                   title={"Belum Ada Layer di Workspace Ini"}
                   description={

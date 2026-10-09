@@ -2,7 +2,7 @@
 
 import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -58,7 +58,7 @@ const MitraHomeDataAvailabilityContent = () => {
             w={"full"}
             py={"xl"}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Ketersediaan Data"}
               description={
                 error?.message ||

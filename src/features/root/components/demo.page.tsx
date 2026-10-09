@@ -33,10 +33,10 @@ import {
   SkeletonCircle,
   SkeletonText,
 } from "@/design-system/components/feedback/ui/skeleton";
-import { AccessDeniedState } from "@/design-system/components/feedback/ui/state.access-denied";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateAccessDenied } from "@/design-system/components/feedback/ui/state.access-denied";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { useExistingFiles } from "@/design-system/components/input/hooks/use-existing-files";
 import type { FieldProps } from "@/design-system/components/input/types/field.type";
@@ -1558,13 +1558,13 @@ export const Feedback = () => {
             justify={"center"}
             gap={10}
           >
-            <NoDataState />
+            <StateNoData />
 
-            <AccessDeniedState />
+            <StateAccessDenied />
 
-            <NoResultState />
+            <StateNoResult />
 
-            <RetryState />
+            <StateRetry />
           </HStack>
 
           <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={10}>

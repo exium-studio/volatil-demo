@@ -4,8 +4,8 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import {
@@ -345,7 +345,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
 
         {!isOrdersLoading && isOrdersError && (
           <Center flex={1} w={"full"} h={"full"} py={"xl"}>
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Keranjang Pesanan"}
               description={
                 ordersError?.message ||
@@ -362,7 +362,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
           <>
             {!hasOrders && (
               <Center flex={1} w={"full"} h={"full"} py={"xl"}>
-                <NoDataState
+                <StateNoData
                   icon={ShoppingCartIcon}
                   title={"Keranjang Kosong"}
                   description={

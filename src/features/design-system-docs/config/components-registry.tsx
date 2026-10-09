@@ -32,7 +32,7 @@ import {
   ProgressRoot,
 } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
 import { FocusAlertItem } from "@/design-system/components/focus-alert/ui/focus-alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
@@ -745,7 +745,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         name: "isError",
         type: "boolean",
         defaultValue: false,
-        description: "Status gagal memuat opsi, merender RetryState.",
+        description: "Status gagal memuat opsi, merender StateRetry.",
         controlKind: "boolean",
 
       },
@@ -1510,8 +1510,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     description:
       "Komponen ilustratif untuk halaman data kosong atau kondisi belum ada data.",
     importPath:
-      'import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";',
-    component: NoDataState,
+      'import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";',
+    component: StateNoData,
     defaultProps: {
       title: "Tidak Ada Data",
       description: "Belum ada item atau rekaman data yang tersedia.",
@@ -1533,7 +1533,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
       },
     ],
     renderPlayground: (props) => (
-      <NoDataState
+      <StateNoData
         title={props.title as string}
         description={props.description as string}
       />

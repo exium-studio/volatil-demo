@@ -10,9 +10,9 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
@@ -383,7 +383,7 @@ export const InternalTransactionStatisticDataView = () => {
               py={"xl"}
               bg={"bg.body"}
             >
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Transaksi"}
                 description={
                   error?.message ||
@@ -405,14 +405,14 @@ export const InternalTransactionStatisticDataView = () => {
               bg={"bg.body"}
             >
               {debouncedSearch || params.transactionStatus ? (
-                <NoResultState
+                <StateNoResult
                   query={debouncedSearch || undefined}
                   description={
                     "Tidak ada transaksi yang sesuai dengan kata kunci atau filter yang Anda pilih."
                   }
                 />
               ) : (
-                <NoDataState
+                <StateNoData
                   icon={HistoryIcon}
                   title={"Belum Ada Transaksi"}
                   description={

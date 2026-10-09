@@ -7,9 +7,9 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -370,7 +370,7 @@ export const InternalUserGuideTableView = (
       {/* Retry Error State */}
       {!isLoading && isError && (
         <Center p={"xl"}>
-          <RetryState
+          <StateRetry
             title={"Gagal Memuat Daftar Panduan"}
             description={
               error instanceof Error
@@ -387,7 +387,7 @@ export const InternalUserGuideTableView = (
       {/* No Data State */}
       {isNoData && (
         <Center p={"xl"}>
-          <NoDataState
+          <StateNoData
             title={"Belum Ada Dokumen Panduan"}
             description={
               "Klik tombol Tambah Panduan di atas untuk menambahkan dokumen panduan baru."
@@ -399,7 +399,7 @@ export const InternalUserGuideTableView = (
       {/* No Result State */}
       {isNoResult && (
         <Center p={"xl"}>
-          <NoResultState query={searchQuery} />
+          <StateNoResult query={searchQuery} />
         </Center>
       )}
 

@@ -7,9 +7,9 @@ import type {
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
@@ -778,7 +778,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 (showFilter && adminBoundaryQuery.isError) ||
                 Boolean(calculationError && !calculationResult)) && (
                 <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
-                  <RetryState
+                  <StateRetry
                     title={
                       calculationError && !calculationResult
                         ? "Gagal Menghitung Cakupan Spasial IGT"
@@ -827,7 +827,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
             {!isShowLoading && !isErrorLayers && !hasIntersectingLayers && (
               <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
-                <NoDataState
+                <StateNoData
                   icon={IconDatabaseOff}
                   title={"Tidak Ada Layer IGT pada Area Ini"}
                   description={
@@ -842,7 +842,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
               hasIntersectingLayers &&
               !hasFilteredLayers && (
                 <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
-                  <NoResultState
+                  <StateNoResult
                     query={
                       debouncedSearch ||
                       (basisFilter !== "all" ? `Basis: ${basisFilter}` : "...")
