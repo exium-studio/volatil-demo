@@ -519,7 +519,6 @@ const Content = (_props: GisContentProps) => {
     <Splitter.ResizeTrigger
       key={"trigger"}
       id={isSmallViewport ? "spacer:content" : "content:spacer"}
-      variant={"plain"}
       pointerEvents={"auto"}
       onDoubleClick={() => {
         setSplitterSize(SPLITTER_KEY, DEFAULT_SPLITTER_SIZE);

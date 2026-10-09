@@ -17,11 +17,14 @@ export type SplitterOrientation = Orientation;
 export type SplitterLayout = Layout;
 export type SplitterLayoutChangedMeta = LayoutChangedMeta;
 
+export type SplitterTriggerVariant = "default" | "plain";
+
 export type SplitterRootProps = Omit<HTMLChakraProps<"div">, "onResize" | "direction" | "defaultValue" | "id" | "defaultLayout"> &
   Omit<GroupProps, "orientation" | "id" | "defaultLayout"> & {
     id?: string;
     orientation?: SplitterOrientation;
     direction?: SplitterOrientation;
+    variant?: SplitterTriggerVariant;
     defaultLayout?: Layout | number[];
     onResize?: (details: { size: number[] }) => void;
     onLayout?: (layout: number[]) => void;
@@ -32,8 +35,6 @@ export type SplitterPanelProps = Omit<HTMLChakraProps<"div">, "id" | "defaultVal
     id?: string;
     elementRef?: React.Ref<HTMLElement | null>;
   };
-
-export type SplitterTriggerVariant = "default" | "plain";
 
 export type SplitterResizeTriggerProps = Omit<HTMLChakraProps<"div">, "id"> &
   Omit<SeparatorProps, "id"> & {
@@ -54,6 +55,7 @@ export type SplitterPanelHandle = PanelImperativeHandle;
 
 export type SplitterContextValue = {
   orientation: SplitterOrientation;
+  variant: SplitterTriggerVariant;
   groupRef: React.RefObject<SplitterGroupHandle | null>;
   resetLayout: (targetSizes?: number[] | Record<string, number>) => void;
 };

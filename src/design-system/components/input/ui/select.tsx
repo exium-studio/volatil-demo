@@ -270,36 +270,37 @@ export default function SelectInput(props: SelectProps) {
               </Box>
             ) : (
               collection.items.map((item) => (
-              <ChakraSelect.Item
-                key={String(item.value)}
-                item={item}
-                gap={2}
-                p={2}
-                rounded={theme?.radii.component}
-                fontSize={restProps.fontSize}
-                cursor={"pointer"}
-                transition={"200ms"}
-                _hover={{
-                  bg: "bg.subtle",
-                }}
-                _selected={{
-                  bg: "bg.muted",
-                }}
-              >
-                {renderOption ? (
-                  renderOption(item)
-                ) : (
-                  <HStack gap={2} align={"center"} flex={1} minW={0}>
-                    {renderStartElement(item.startElement, item.icon, "sm")}
-                    {item.label}
-                  </HStack>
-                )}
+                <ChakraSelect.Item
+                  key={String(item.value)}
+                  item={item}
+                  gap={2}
+                  p={2}
+                  rounded={theme?.radii.component}
+                  fontSize={restProps.fontSize}
+                  cursor={"pointer"}
+                  transition={"200ms"}
+                  _hover={{
+                    bg: "bg.subtle",
+                  }}
+                  _selected={{
+                    bg: "bg.muted",
+                  }}
+                >
+                  {renderOption ? (
+                    renderOption(item)
+                  ) : (
+                    <HStack gap={2} align={"center"} flex={1} minW={0}>
+                      {renderStartElement(item.startElement, item.icon, "sm")}
+                      {item.label}
+                    </HStack>
+                  )}
 
-                <ChakraSelect.ItemIndicator
-                  color={`${theme.colorPalette}.fg`}
-                />
-              </ChakraSelect.Item>
-            )))}
+                  <ChakraSelect.ItemIndicator
+                    color={`${theme.colorPalette}.fg`}
+                  />
+                </ChakraSelect.Item>
+              ))
+            )}
           </ChakraSelect.Content>
         </ChakraSelect.Positioner>
       </Portal>

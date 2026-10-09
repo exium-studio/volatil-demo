@@ -31,9 +31,10 @@ import {
   type Layout,
 } from "react-resizable-panels";
 
-// Context to pass orientation and imperative layout controls down to triggers
+// Context to pass orientation, variant, and imperative layout controls down to triggers
 const SplitterContext = createContext<SplitterContextValue>({
   orientation: "horizontal",
+  variant: "default",
   groupRef: { current: null },
   resetLayout: () => {},
 });
@@ -50,6 +51,7 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
     const {
       orientation,
       direction = orientation ?? "horizontal",
+      variant = "default",
       defaultLayout,
       onLayout,
       onResize,
@@ -128,6 +130,7 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
       <SplitterContext.Provider
         value={{
           orientation: direction,
+          variant,
           groupRef:
             internalGroupRef as React.RefObject<SplitterGroupHandle | null>,
           resetLayout,
@@ -179,9 +182,12 @@ const SplitterResizeTrigger = forwardRef<
   HTMLDivElement,
   SplitterResizeTriggerProps
 >((props, ref) => {
+  // Context
+  const { orientation, variant: contextVariant, resetLayout } = useContext(SplitterContext);
+
   // Props
   const {
-    variant = "default",
+    variant = contextVariant,
     transparentTrigger = false,
     onDoubleClick,
     children,
@@ -189,8 +195,6 @@ const SplitterResizeTrigger = forwardRef<
     ...restProps
   } = props;
 
-  // Context
-  const { orientation, resetLayout } = useContext(SplitterContext);
   const isVertical = orientation === "vertical";
   const isPlain = variant === "plain";
 
