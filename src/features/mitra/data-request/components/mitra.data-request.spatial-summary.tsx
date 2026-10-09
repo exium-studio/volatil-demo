@@ -32,13 +32,10 @@ export const MitraDataRequestSpatialSummary = memo(
       minKawasanHa: propMinKawasanHa,
       calculatedPolicy,
       estimatedTotalPrice = 0,
-      isPurchaseLimitValid,
       isCalculating: propIsCalculating,
       progressMessage: propProgressMessage,
       progressPercentage: propProgressPercentage,
       hasCoveragePolygon = false,
-      hasBidangLayer = false,
-      hasKawasanLayer = false,
       isCoverageVisible = true,
       isBidangVisible = true,
       isFetchingBidang = false,
@@ -181,41 +178,11 @@ export const MitraDataRequestSpatialSummary = memo(
       );
     }
 
-    // Validation logic strictly computed in Frontend based on actual count vs minimum limit
-    const isBidangBelowMin =
-      (hasBidangLayer || totalBidangCount > 0) &&
-      effectiveMinBidangCount > 0 &&
-      totalBidangCount < effectiveMinBidangCount;
+    // Validation: valid jika count/area >= minimum policy limit
+    const isBidangValid = totalBidangCount >= effectiveMinBidangCount;
+    const isKawasanValid = totalKawasanAreaHa >= effectiveMinKawasanHa;
 
-    const isKawasanBelowMin =
-      (hasKawasanLayer || totalKawasanAreaHa > 0) &&
-      effectiveMinKawasanHa > 0 &&
-      totalKawasanAreaHa < effectiveMinKawasanHa;
-
-    // Basis dinyatakan valid HANYA jika total count/area >= minimum batas beli
-    const hasValidBidang =
-      totalBidangCount > 0 &&
-      effectiveMinBidangCount > 0 &&
-      totalBidangCount >= effectiveMinBidangCount;
-
-    const hasValidKawasan =
-      totalKawasanAreaHa > 0 &&
-      effectiveMinKawasanHa > 0 &&
-      totalKawasanAreaHa >= effectiveMinKawasanHa;
-
-    const isBidangValid = hasValidBidang && isPurchaseLimitValid !== false;
-    const isKawasanValid = hasValidKawasan && isPurchaseLimitValid !== false;
-
-    const hasAnyLimitViolation =
-      isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
-
-    // Logika OR: Checkout hanya bisa jika minimal ada SATU basis yang benar-benar valid dan tidak di bawah minimum
-    const isOrValidForCheckout = hasValidBidang || hasValidKawasan;
-
-    // Warning jika salah satu valid tapi basis lainnya berada di bawah batas minimum
-    const isOrangeWarning =
-      (hasValidBidang && isKawasanBelowMin) ||
-      (hasValidKawasan && isBidangBelowMin);
+    const isOrValidForCheckout = isBidangValid || isKawasanValid;
 
     const calculatedSubtotalBidang =
       subtotalBidangPrice > 0
@@ -226,17 +193,16 @@ export const MitraDataRequestSpatialSummary = memo(
         ? subtotalKawasanPrice
         : Math.ceil(totalKawasanAreaHa) * effectivePricePerKawasanHa;
 
-    // Total estimasi: jika kedua valid dan backend estimatedTotalPrice > 0 gunakan itu, jika OR hitung komponen yang valid
     const calculatedTotalPrice =
-      hasValidBidang && hasValidKawasan && estimatedTotalPrice > 0
+      isBidangValid && isKawasanValid && estimatedTotalPrice > 0
         ? estimatedTotalPrice
-        : (hasValidBidang ? calculatedSubtotalBidang : 0) +
-          (hasValidKawasan ? calculatedSubtotalKawasan : 0);
+        : (isBidangValid ? calculatedSubtotalBidang : 0) +
+          (isKawasanValid ? calculatedSubtotalKawasan : 0);
 
     return (
       <VStack gap={"md"}>
         {/* Toggle Selected Layer Bidang */}
-        {(hasBidangLayer || totalBidangCount > 0) && onToggleBidangVisible && (
+        {totalBidangCount > 0 && onToggleBidangVisible && (
           <HStack justify={"space-between"} align={"center"}>
             <HStack gap={"xs"} align={"center"}>
               <P>{"Tampilkan Cakupan Bidang"}</P>
@@ -378,27 +344,17 @@ export const MitraDataRequestSpatialSummary = memo(
         </VStack>
 
         {/* Limit Warning Notice */}
-        {hasAnyLimitViolation && (
-          <Alert.Root
-            status={isOrangeWarning ? "warning" : "error"}
-            colorPalette={isOrangeWarning ? "orange" : "red"}
-            variant={"subtle"}
-            mt={1}
-          >
+        {(!isBidangValid || !isKawasanValid) && (
+          <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"} mt={1}>
             <AppIcon icon={ShieldAlertIcon} />
             <Alert.Description>
               <VStack align={"start"} gap={"2xs"} fontSize={"xs"}>
-                {!isBidangValid && (hasBidangLayer || totalBidangCount > 0) && (
-                  <P>
-                    {`• Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}
-                  </P>
+                {!isBidangValid && (
+                  <P>{`• Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}</P>
                 )}
-                {!isKawasanValid &&
-                  (hasKawasanLayer || totalKawasanAreaHa > 0) && (
-                    <P>
-                      {`• Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
-                    </P>
-                  )}
+                {!isKawasanValid && (
+                  <P>{`• Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}</P>
+                )}
               </VStack>
             </Alert.Description>
           </Alert.Root>
