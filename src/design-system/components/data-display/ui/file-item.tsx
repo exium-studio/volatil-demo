@@ -59,15 +59,17 @@ export const FileItem = (props: FileItemProps) => {
         <FileIcon mimeType={mimeType} />
       )}
 
-      <ClampedP>{name}</ClampedP>
+      <ClampedP flex={1} minW={0}>
+        {name}
+      </ClampedP>
 
-      <HStack align={"center"} gap={4} ml={"auto"}>
+      <HStack align={"center"} gap={2} ml={"auto"} flexShrink={0}>
         <P fontSize={"sm"} whiteSpace={"nowrap"} color={"fg.subtle"}>
           {sizeLabel}
         </P>
       </HStack>
 
-      <HStack align={"center"} gap={"xs"}>
+      <HStack align={"center"} gap={"xs"} flexShrink={0}>
         {actionButtons}
 
         {onDelete && (
