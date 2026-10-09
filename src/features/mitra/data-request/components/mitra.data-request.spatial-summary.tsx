@@ -192,21 +192,35 @@ export const MitraDataRequestSpatialSummary = memo(
       effectiveMinKawasanHa > 0 &&
       totalKawasanAreaHa < effectiveMinKawasanHa;
 
+    // A basis is valid if it meets the minimum threshold (or if count/area is 0, it has no violation)
     const hasValidBidang =
       totalBidangCount >= effectiveMinBidangCount && totalBidangCount > 0;
     const hasValidKawasan =
       totalKawasanAreaHa >= effectiveMinKawasanHa && totalKawasanAreaHa > 0;
 
+    const isBidangValid =
+      totalBidangCount > 0
+        ? hasValidBidang && isPurchaseLimitValid !== false
+        : true;
+
+    const isKawasanValid =
+      totalKawasanAreaHa > 0
+        ? hasValidKawasan && isPurchaseLimitValid !== false
+        : true;
+
     const hasAnyLimitViolation =
       isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
 
-    // Logika OR: Jika salah satu valid (misal kawasan valid tapi bidang tidak), maka tetap valid untuk checkout
-    const isOrValidForCheckout = hasValidBidang || hasValidKawasan;
+    // Logika OR: Jika salah satu valid dan memiliki data (misal bidang 2.203 valid, kawasan 302.3 ha < 1000 ha), maka checkout tetap bisa dilakukan untuk yang valid
+    const isOrValidForCheckout =
+      (hasValidBidang && !isKawasanBelowMin) ||
+      (hasValidKawasan && !isBidangBelowMin) ||
+      (hasValidBidang || hasValidKawasan);
 
-    // Jika OR valid (bisa checkout untuk yang valid), gunakan warna orange (warning)
-    // Jika KEDUA-DUANYA tidak valid (tidak bisa checkout sama sekali), gunakan warna red (error)
+    // Warning jika ada salah satu yang di bawah minimum tapi salah satunya valid
     const isOrangeWarning =
-      isOrValidForCheckout && (isBidangBelowMin || isKawasanBelowMin);
+      (hasValidBidang && isKawasanBelowMin) ||
+      (hasValidKawasan && isBidangBelowMin);
 
     const displayAlertMessage = (() => {
       if (purchaseLimitMessage) return purchaseLimitMessage;
@@ -222,11 +236,6 @@ export const MitraDataRequestSpatialSummary = memo(
       return "Total permohonan melebihi batas pembelian (purchase limit) akun Anda.";
     })();
 
-    const isBidangValid =
-      hasValidBidang && isPurchaseLimitValid !== false;
-    const isKawasanValid =
-      hasValidKawasan && isPurchaseLimitValid !== false;
-
     const calculatedSubtotalBidang =
       subtotalBidangPrice > 0
         ? subtotalBidangPrice
@@ -235,11 +244,13 @@ export const MitraDataRequestSpatialSummary = memo(
       subtotalKawasanPrice > 0
         ? subtotalKawasanPrice
         : Math.ceil(totalKawasanAreaHa) * effectivePricePerKawasanHa;
+
+    // Total estimasi: jika kedua valid dan backend estimatedTotalPrice > 0 gunakan itu, jika OR hitung komponen yang valid
     const calculatedTotalPrice =
-      isBidangValid && isKawasanValid && estimatedTotalPrice > 0
+      hasValidBidang && hasValidKawasan && estimatedTotalPrice > 0
         ? estimatedTotalPrice
-        : (isBidangValid ? calculatedSubtotalBidang : 0) +
-          (isKawasanValid ? calculatedSubtotalKawasan : 0);
+        : (hasValidBidang ? calculatedSubtotalBidang : 0) +
+          (hasValidKawasan ? calculatedSubtotalKawasan : 0);
 
     return (
       <VStack gap={"md"}>
