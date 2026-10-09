@@ -22,9 +22,7 @@ const extractAdminFeatureName = (
   if (!props) return "";
   for (const key of primaryKeys) {
     const val =
-      props[key] ??
-      props[key.toLowerCase()] ??
-      props[key.toUpperCase()];
+      props[key] ?? props[key.toLowerCase()] ?? props[key.toUpperCase()];
     if (typeof val === "string" && val.trim() !== "") {
       return val.trim();
     }
@@ -68,7 +66,14 @@ export const fetchFilterOptionsProvinsiApi = async (
     signal,
   });
 
-  const keys = [config.attributeKey, "WADMPR", "wadmpr", "provinsi", "NAMA", "nama"];
+  const keys = [
+    config.attributeKey,
+    "WADMPR",
+    "wadmpr",
+    "provinsi",
+    "NAMA",
+    "nama",
+  ];
   const uniqueNames = Array.from(
     new Set(
       res.features
@@ -98,9 +103,7 @@ export const fetchFilterOptionsKabupatenApi = async (
 
   const config = ADMIN_BOUNDARY_WFS_CONFIG.kabupaten;
   const cleanProv = escapeCql(params.provinsiId);
-  const cqlFilter = cleanProv
-    ? `WADMPR ILIKE '${cleanProv}'`
-    : undefined;
+  const cqlFilter = cleanProv ? `WADMPR ILIKE '${cleanProv}'` : undefined;
 
   const res = await fetchWfs({
     typeName: config.typeName,
@@ -112,7 +115,15 @@ export const fetchFilterOptionsKabupatenApi = async (
     signal,
   });
 
-  const keys = [config.attributeKey, "WADMKK", "wadmkk", "kabupaten", "kota", "NAMA", "nama"];
+  const keys = [
+    config.attributeKey,
+    "WADMKK",
+    "wadmkk",
+    "kabupaten",
+    "kota",
+    "NAMA",
+    "nama",
+  ];
   const uniqueNames = Array.from(
     new Set(
       res.features
@@ -165,7 +176,14 @@ export const fetchFilterOptionsKecamatanApi = async (
     signal,
   });
 
-  const keys = [config.attributeKey, "WADMKC", "wadmkc", "kecamatan", "NAMA", "nama"];
+  const keys = [
+    config.attributeKey,
+    "WADMKC",
+    "wadmkc",
+    "kecamatan",
+    "NAMA",
+    "nama",
+  ];
   const uniqueNames = Array.from(
     new Set(
       res.features
@@ -181,10 +199,6 @@ export const fetchFilterOptionsKecamatanApi = async (
   return { data };
 };
 
-/**
- * Fetches unique Kelurahan/Desa options directly from GeoServer WFS BATAS_ADMIN_BIG_LEVEL_DESA layer.
- * Filtered strictly by parent Provinsi (WADMPR), Kabupaten (WADMKK), and Kecamatan (WADMKC) when provided.
- */
 export const fetchFilterOptionsKelurahanApi = async (
   params?: FilterKelurahanParams,
   signal?: AbortSignal,
@@ -194,36 +208,81 @@ export const fetchFilterOptionsKelurahanApi = async (
   }
 
   const config = ADMIN_BOUNDARY_WFS_CONFIG.kelurahan;
-  const clauses: string[] = [];
+  const cleanKec = escapeCql(params.kecamatanId);
 
+  // Strategy 1: Strict match with kecamatan & parent kab/prov
+  const strictClauses: string[] = [];
   if (params.provinsiId) {
     const cleanProv = escapeCql(params.provinsiId);
-    if (cleanProv) clauses.push(`WADMPR ILIKE '${cleanProv}'`);
+    if (cleanProv) strictClauses.push(`WADMPR ILIKE '${cleanProv}'`);
   }
-
   if (params.kabupatenId) {
     const cleanKab = escapeCql(params.kabupatenId);
-    if (cleanKab) clauses.push(`WADMKK ILIKE '${cleanKab}'`);
+    if (cleanKab) strictClauses.push(`WADMKK ILIKE '${cleanKab}'`);
   }
-
-  const cleanKec = escapeCql(params.kecamatanId);
   if (cleanKec) {
-    clauses.push(`WADMKC ILIKE '${cleanKec}'`);
+    strictClauses.push(`WADMKC ILIKE '${cleanKec}'`);
   }
 
-  const cqlFilter = clauses.length > 0 ? clauses.join(" AND ") : undefined;
-
-  const res = await fetchWfs({
+  let res = await fetchWfs({
     typeName: config.typeName,
     wfsUrl: config.wfsUrl,
     version: "2.0.0",
-    cqlFilter,
+    cqlFilter:
+      strictClauses.length > 0 ? strictClauses.join(" AND ") : undefined,
     propertyName: `${config.attributeKey},WADMKC`,
     maxFeatures: 5000,
     signal,
+  }).catch(async (err) => {
+    // If strict match fails, try relaxed match by only WADMKC or KECAMATAN
+    console.warn(
+      "Strict Kelurahan WFS query failed, retrying with relaxed filter:",
+      err,
+    );
+    return fetchWfs({
+      typeName: config.typeName,
+      wfsUrl: config.wfsUrl,
+      version: "2.0.0",
+      cqlFilter: `WADMKC ILIKE '${cleanKec}'`,
+      propertyName: `${config.attributeKey},WADMKC`,
+      maxFeatures: 5000,
+      signal,
+    });
   });
 
-  const keys = [config.attributeKey, "WADMKD", "wadmkd", "kelurahan", "desa", "NAMA", "nama"];
+  // Strategy 2: If strict query returned 0 features, try filtering purely by Kecamatan (in case WADMPR/WADMKK spelling differs)
+  if (res.features.length === 0 && (params.provinsiId || params.kabupatenId)) {
+    try {
+      const relaxedRes = await fetchWfs({
+        typeName: config.typeName,
+        wfsUrl: config.wfsUrl,
+        version: "2.0.0",
+        cqlFilter: `WADMKC ILIKE '${cleanKec}'`,
+        propertyName: `${config.attributeKey},WADMKC`,
+        maxFeatures: 5000,
+        signal,
+      });
+      if (relaxedRes.features.length > 0) {
+        res = relaxedRes;
+      }
+    } catch {
+      // Ignore relaxed failure
+    }
+  }
+
+  const keys = [
+    config.attributeKey,
+    "NAMBOJ",
+    "namboj",
+    "NAMOBJ",
+    "namobj",
+    "WADMKD",
+    "wadmkd",
+    "kelurahan",
+    "desa",
+    "NAMA",
+    "nama",
+  ];
   const uniqueNames = Array.from(
     new Set(
       res.features
@@ -231,6 +290,12 @@ export const fetchFilterOptionsKelurahanApi = async (
         .filter(Boolean),
     ),
   ).sort((a, b) => a.localeCompare(b, "id"));
+
+  if (uniqueNames.length === 0) {
+    throw new Error(
+      `Data kelurahan/desa untuk kecamatan "${params.kecamatanId}" tidak ditemukan atau belum dipublish di GeoServer.`,
+    );
+  }
 
   const data: FilterOptionItem[] = uniqueNames.map((name) => ({
     label: name,
