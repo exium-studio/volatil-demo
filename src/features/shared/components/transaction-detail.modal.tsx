@@ -40,7 +40,6 @@ import {
   CreditCardIcon,
   EyeIcon,
   Layers2Icon,
-  RotateCcwIcon,
 } from "lucide-react";
 import { useMemo } from "react";
 
@@ -114,8 +113,7 @@ export const TransactionDetailModalContent = (
 
   const isPaid = transaction.transactionStatus === "paid";
   const isExpired = transaction.transactionStatus === "expired";
-  const isRefunded = transaction.transactionStatus === "refunded";
-  const isPayable = !isPaid && !isRefunded && !isExpired && showPayButton;
+  const isPayable = !isPaid && !isExpired && showPayButton;
   const targetExpiry = transaction.billingExpiredAt || transaction.expiredAt;
 
   const effectiveOrderStatus: OrderStatus | undefined =
@@ -148,34 +146,26 @@ export const TransactionDetailModalContent = (
           ? "Pembayaran Terverifikasi"
           : isExpired
             ? "Pembayaran Kedaluwarsa"
-            : isRefunded
-              ? "Pembayaran Dikembalikan"
-              : ORDER_STATUS_MAP.pending_payment.label,
+            : ORDER_STATUS_MAP.pending_payment.label,
         description: isPaid
           ? transaction.paidAt
             ? formatUtcDateTime(transaction.paidAt, preferredTimezone)
             : `Terbayar (${transaction.paymentMethod || "MPN"})`
           : isExpired
             ? "Batas waktu pembayaran habis"
-            : isRefunded
-              ? "Dana transaksi telah dikembalikan"
-              : transaction.billingCode
-                ? `Billing: ${transaction.billingCode}`
-                : "Menunggu pembayaran",
+            : transaction.billingCode
+              ? `Billing: ${transaction.billingCode}`
+              : "Menunggu pembayaran",
         icon: isPaid
           ? ORDER_STATUS_MAP.paid.icon
           : isExpired
             ? ORDER_STATUS_MAP.rejected.icon
-            : isRefunded
-              ? RotateCcwIcon
-              : ORDER_STATUS_MAP.pending_payment.icon,
+            : ORDER_STATUS_MAP.pending_payment.icon,
         colorPalette: isPaid
           ? ORDER_STATUS_MAP.ready.colorPalette
           : isExpired
             ? ORDER_STATUS_MAP.rejected.colorPalette
-            : isRefunded
-              ? "purple"
-              : ORDER_STATUS_MAP.pending_payment.colorPalette,
+            : ORDER_STATUS_MAP.pending_payment.colorPalette,
         isMuted: false,
       },
       {
@@ -207,7 +197,7 @@ export const TransactionDetailModalContent = (
               : isRejected
                 ? ORDER_STATUS_MAP.rejected.colorPalette
                 : "gray",
-        isMuted: !isPaid && !isExpired && !isRefunded,
+        isMuted: !isPaid && !isExpired,
       },
       {
         id: "processing" as OrderStatus,
@@ -244,7 +234,6 @@ export const TransactionDetailModalContent = (
     effectiveOrderStatus,
     isExpired,
     isPaid,
-    isRefunded,
     preferredTimezone,
     transaction,
   ]);
@@ -470,7 +459,7 @@ export const TransactionDetailModalContent = (
                   </VStack>
                 )}
 
-                {targetExpiry && !isPaid && !isRefunded && (
+                {targetExpiry && !isPaid && (
                   <VStack align={"start"} gap={"2xs"}>
                     <P fontSize={"sm"} color={"fg.subtle"}>
                       {"Sisa Waktu Pembayaran"}

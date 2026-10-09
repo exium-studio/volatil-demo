@@ -191,7 +191,7 @@ export const PAYMENT_METHOD_OPTIONS: (PaymentMethodConfig & {
 }));
 
 /**
- * SSOT 2: Transaction Status Map (Payment & Billing)
+ * SSOT 2: Transaction Status Map (Payment & Billing) -- DEPRECATED
  */
 export const TRANSACTION_STATUS_MAP: Record<
   TransactionStatus,

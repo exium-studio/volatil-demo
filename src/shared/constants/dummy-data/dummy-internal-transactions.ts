@@ -184,7 +184,7 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     orderNumber: "ORD-2026-0818-005",
     billingCode: "8202608180005",
     paymentMethod: "VA_BRI",
-    transactionStatus: "refunded",
+    transactionStatus: "failed",
     orderStatus: "rejected",
     selectionType: "catalog",
     totalAmount: 55000000,

@@ -76,28 +76,28 @@ const InternalTransactionStatsGrid = () => {
   const STATS = [
     {
       icon: CircleDollarSignIcon,
-      label: "Revenue WMS Bidang",
+      label: "Pendapatan WMS Bidang",
       value: statistics.revenueWmsBidang,
       isCurrency: true,
-      color: "purple.fg",
+      color: "blue.fg",
       tooltip:
-        "Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS ber-basis Bidang",
+        "Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS berbasis Bidang",
     },
     {
       icon: CircleDollarSignIcon,
-      label: "Revenue WMS Kawasan",
+      label: "Pendapatan WMS Kawasan",
       value: statistics.revenueWmsKawasan,
       isCurrency: true,
-      color: "teal.fg",
+      color: "orange.fg",
       tooltip:
-        "Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS ber-basis Kawasan",
+        "Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS berbasis Kawasan",
     },
     {
       icon: CircleDollarSignIcon,
-      label: "Total Pendapatan (Networth)",
+      label: "Total Pendapatan (Nilai Bersih)",
       value: statistics.netWorth,
       isCurrency: true,
-      color: "blue.fg",
+      color: "fg",
       tooltip:
         "Akumulasi total seluruh pendapatan PNBP dari transaksi lunas/settled",
     },
