@@ -390,9 +390,6 @@ export const MitraDataRequestSpatialSummary = memo(
             <AppIcon icon={ShieldAlertIcon} />
             <Alert.Description>
               <VStack align={"start"} gap={"2xs"} fontSize={"xs"}>
-                {purchaseLimitMessage && (
-                  <P fontSize={"xs"}>{purchaseLimitMessage}</P>
-                )}
                 {!isBidangValid && (hasBidangLayer || totalBidangCount > 0) && (
                   <P fontSize={"xs"}>
                     {`• Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}
