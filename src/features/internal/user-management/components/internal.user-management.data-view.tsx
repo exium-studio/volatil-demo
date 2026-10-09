@@ -26,6 +26,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import {
+  useDeleteUser,
   useUpdateUserStatus,
   useUserManagementUsersQuery,
 } from "@/features/internal/user-management/hooks/use-user-management.query";
@@ -41,7 +42,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { CheckCircleIcon, ShieldAlertIcon } from "lucide-react";
+import { CheckCircleIcon, ShieldAlertIcon, Trash2Icon } from "lucide-react";
 import { startTransition, useMemo, useState } from "react";
 
 const STATUS_MAP: Record<UserStatus, { label: string; color: string }> = {
@@ -68,6 +69,7 @@ export const InternalUserManagementDataView = () => {
 
   // Mutations
   const updateStatusMutation = useUpdateUserStatus();
+  const deleteUserMutation = useDeleteUser();
 
   // Queries
   const { users, total, totalPages, isLoading, isFetching, isError, error, refetch } =
@@ -152,6 +154,7 @@ export const InternalUserManagementDataView = () => {
           user.status === "active" ? ShieldAlertIcon : CheckCircleIcon,
         colorPalette: (user: UserManagementItem) =>
           user.status === "active" ? "red" : "green",
+        hidden: (user: UserManagementItem) => user.role !== "mitra",
         modal: {
           triggerComponent: (user: UserManagementItem) => (
             <ConfirmationTrigger
@@ -163,8 +166,8 @@ export const InternalUserManagementDataView = () => {
               }
               description={
                 user.status === "active"
-                  ? `Akun ${user.name} akan dinonaktifkan sehingga tidak dapat mengakses sistem.`
-                  : `Akun ${user.name} akan diaktifkan kembali sehingga dapat mengakses sistem.`
+                  ? `Akun mitra ${user.name} akan dinonaktifkan (suspend) sehingga tidak dapat mengakses sistem.`
+                  : `Akun mitra ${user.name} akan diaktifkan kembali sehingga dapat mengakses sistem.`
               }
               confirmLabel={
                 user.status === "active" ? "Nonaktifkan" : "Aktifkan"
@@ -180,6 +183,29 @@ export const InternalUserManagementDataView = () => {
           ),
         },
       },
+      {
+        key: "delete-user",
+        label: "Hapus Pengguna",
+        icon: Trash2Icon,
+        colorPalette: "red",
+        hidden: (user: UserManagementItem) => user.role !== "mitra",
+        modal: {
+          triggerComponent: (user: UserManagementItem) => (
+            <ConfirmationTrigger
+              modalKey={`delete-user-${user.id}`}
+              title={"Hapus Akun Pengguna"}
+              description={`Apakah Anda yakin ingin menghapus akun mitra ${user.name}? Akun yang dihapus tidak akan ditampilkan lagi di daftar pengguna.`}
+              confirmLabel={"Hapus"}
+              colorPalette={"red"}
+              onConfirm={() => {
+                deleteUserMutation.mutate({
+                  id: user.id,
+                });
+              }}
+            />
+          ),
+        },
+      },
     ];
 
     return {
@@ -188,7 +214,7 @@ export const InternalUserManagementDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [users, preferredTimezone, updateStatusMutation]);
+  }, [users, preferredTimezone, updateStatusMutation, deleteUserMutation]);
 
   return (
     <Container.Root flex={1} withContext={true} position={"relative"}>

@@ -1,6 +1,7 @@
 // src/features/internal/user-management/services/user-management.service.ts
 
 import {
+  deleteAdminUserApi,
   fetchAdminUserDetailApi,
   fetchAdminUsersApi,
   fetchAdminUsersStatisticsApi,
@@ -12,6 +13,7 @@ import type {
   UserManagementUsersListResponse,
 } from "@/features/internal/user-management/types/user-management.api.type";
 import type {
+  DeleteUserPayload,
   UpdateUserStatusPayload,
   UserManagementItem,
   UserManagementQueryParams,
@@ -46,6 +48,7 @@ export const normalizeAdminUserItem = (
   phoneNumber: undefined,
   lastLoginAt: raw.updatedAt ?? raw.joinedAt,
   createdAt: raw.joinedAt,
+  deletedAt: raw.deletedAt ?? null,
 });
 
 /** Transforms backend statistics response into normalized UserManagementStatsResponse */
@@ -71,9 +74,12 @@ export const getAdminUsersList = async (
   const rawUsers = response.data ?? [];
   const pagination = response.pagination;
 
+  // Filter out any soft-deleted users on the client side just in case
+  const activeRawUsers = rawUsers.filter((u) => !u.deletedAt);
+
   return {
-    users: rawUsers.map(normalizeAdminUserItem),
-    total: pagination?.totalItems ?? rawUsers.length,
+    users: activeRawUsers.map(normalizeAdminUserItem),
+    total: pagination?.totalItems ?? activeRawUsers.length,
     totalPages: pagination?.totalPages ?? 1,
     currentPage: pagination?.currentPage ?? params?.page ?? 1,
   };
@@ -130,4 +136,22 @@ export const updateAdminUserStatus = async (
     status: payload.status,
     createdAt: new Date().toISOString(),
   };
+};
+
+export const deleteAdminUser = async (
+  payload: DeleteUserPayload,
+  signal?: AbortSignal,
+): Promise<{ id: string | number }> => {
+  const currentUser = getUserSession();
+  if (
+    currentUser &&
+    (String(currentUser.id) === String(payload.id) ||
+      (currentUser.email &&
+        currentUser.email.toLowerCase() === String(payload.id).toLowerCase()))
+  ) {
+    throw new Error("Anda tidak dapat menghapus akun Anda sendiri.");
+  }
+
+  await deleteAdminUserApi(payload.id, signal);
+  return { id: payload.id };
 };

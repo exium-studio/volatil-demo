@@ -75,3 +75,40 @@ export const USER_GUIDE_PUBLISH_STATUS_OPTIONS: FocusSelectOption[] = [
   { value: "published", label: "Dipublikasikan" },
   { value: "draft", label: "Draf" },
 ];
+
+/**
+ * Resolves the MIME type from fileName or fileType for various document formats.
+ */
+export const resolveUserGuideMimeType = (
+  fileName?: string,
+  fileType?: string,
+): string => {
+  const ext = (
+    fileName?.split(".").pop() ||
+    fileType ||
+    ""
+  ).toLowerCase();
+
+  switch (ext) {
+    case "pdf":
+      return "application/pdf";
+    case "doc":
+      return "application/msword";
+    case "docx":
+      return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    case "xls":
+      return "application/vnd.ms-excel";
+    case "xlsx":
+      return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    case "ppt":
+      return "application/vnd.ms-powerpoint";
+    case "pptx":
+      return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    case "txt":
+      return "text/plain";
+    case "zip":
+      return "application/zip";
+    default:
+      return "application/octet-stream";
+  }
+};

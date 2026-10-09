@@ -65,3 +65,16 @@ export const patchAdminUserStatusApi = async (
     },
   );
 };
+
+export const deleteAdminUserApi = async (
+  id: string | number,
+  signal?: AbortSignal,
+): Promise<AdminUserDetailApiResponse> => {
+  return apiClient.request<AdminUserDetailApiResponse>(
+    `/api/internal/user-management/${id}`,
+    {
+      method: "DELETE",
+      signal,
+    },
+  );
+};

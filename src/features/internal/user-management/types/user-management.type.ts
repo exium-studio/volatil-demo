@@ -22,6 +22,7 @@ export type UserManagementItem = {
   phoneNumber?: string;
   lastLoginAt?: string;
   createdAt: string;
+  deletedAt?: string | null;
 };
 
 export type UserManagementStatusStats = {
@@ -82,4 +83,8 @@ export type UserManagementStatsLegendProps = StackProps & {
 export type UpdateUserStatusPayload = {
   id: string | number;
   status: UserStatus;
+};
+
+export type DeleteUserPayload = {
+  id: string | number;
 };

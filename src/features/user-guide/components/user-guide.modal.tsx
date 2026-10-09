@@ -10,13 +10,16 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
+  resolveUserGuideMimeType,
   USER_GUIDE_CATEGORY_MAP,
   USER_GUIDE_CATEGORY_OPTIONS,
 } from "@/features/user-guide/constants/user-guide.constants";
@@ -114,19 +117,6 @@ const UserGuideModalContent = (props: {
   // Handlers
   const handleDownload = (guide: UserGuideItem) => {
     trackDownloadMutation.mutate(guide.id);
-
-    const link = document.createElement("a");
-    link.href = guide.fileUrl;
-    link.download = guide.fileName;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const handlePreview = (guide: UserGuideItem) => {
-    window.open(guide.fileUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -267,21 +257,33 @@ const UserGuideModalContent = (props: {
 
                       {/* Actions */}
                       <HStack gap={"xs"} align={"center"} mt={"xs"}>
-                        <Button
-                          variant={"outline"}
-                          onClick={() => handlePreview(guide)}
+                        <ExternalLink
+                          href={guide.fileUrl}
+                          variant={"plain"}
+                          colorPalette={"neutral"}
                         >
-                          <AppIcon icon={ExternalLinkIcon} />
-                          {"Pratinjau"}
-                        </Button>
+                          <Button variant={"outline"}>
+                            <AppIcon icon={ExternalLinkIcon} />
+                            {"Pratinjau"}
+                          </Button>
+                        </ExternalLink>
 
-                        <Button
-                          variant={"outline"}
-                          onClick={() => handleDownload(guide)}
+                        <DownloadTrigger
+                          data={guide.fileUrl}
+                          fileName={guide.fileName}
+                          mimeType={resolveUserGuideMimeType(
+                            guide.fileName,
+                            guide.fileType,
+                          )}
                         >
-                          <AppIcon icon={DownloadIcon} />
-                          {"Unduh"}
-                        </Button>
+                          <Button
+                            variant={"outline"}
+                            onClick={() => handleDownload(guide)}
+                          >
+                            <AppIcon icon={DownloadIcon} />
+                            {"Unduh"}
+                          </Button>
+                        </DownloadTrigger>
                       </HStack>
                     </VStack>
                   </HStack>
