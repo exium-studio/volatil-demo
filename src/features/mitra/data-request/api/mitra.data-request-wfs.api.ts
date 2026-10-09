@@ -29,7 +29,6 @@ export const getWfsDynamicAttributes = async (
     const res = await fetchWfs({
       typeName,
       wfsUrl,
-      version: "2.0.0",
       maxFeatures: 1,
       signal,
     });
@@ -73,7 +72,6 @@ export const getWfsStringAttributes = async (
     const res = await fetchWfs({
       typeName,
       wfsUrl,
-      version: "2.0.0",
       maxFeatures: 1,
       signal,
     });
@@ -164,11 +162,10 @@ export const fetchWfsCatalog = async ({
   );
 
   try {
-    // Fetch current page of actual features using WFS 2.0.0
+    // Fetch current page of actual features using adaptive WFS
     const pageResult = await fetchWfs({
       typeName,
       wfsUrl,
-      version: "2.0.0",
       maxFeatures: pageSize,
       startIndex,
       cqlFilter: mergedCqlFilter,

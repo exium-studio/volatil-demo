@@ -21,7 +21,7 @@ export const buildWfsUrl = (
     featureID,
     resourceId,
     propertyName,
-    version = "2.0.0",
+    version = "1.0.0",
     srsName = "EPSG:4326",
     maxFeatures,
     startIndex,

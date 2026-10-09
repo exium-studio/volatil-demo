@@ -183,7 +183,11 @@ const SplitterResizeTrigger = forwardRef<
   SplitterResizeTriggerProps
 >((props, ref) => {
   // Context
-  const { orientation, variant: contextVariant, resetLayout } = useContext(SplitterContext);
+  const {
+    orientation,
+    variant: contextVariant,
+    resetLayout,
+  } = useContext(SplitterContext);
 
   // Props
   const {
@@ -246,9 +250,6 @@ const SplitterResizeTrigger = forwardRef<
           cursor={isVertical ? "row-resize" : "col-resize"}
           transition={"background 150ms ease"}
           _groupHover={{
-            bg: isPlain || transparentTrigger ? "transparent" : "bg.muted",
-          }}
-          _groupActive={{
             bg: isPlain || transparentTrigger ? "transparent" : "bg.muted",
           }}
         />
