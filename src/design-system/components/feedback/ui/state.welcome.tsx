@@ -136,6 +136,9 @@ export const StateWelcome = (props: StateWelcomeProps) => {
               borderColor={"an1"}
               w={"full"}
               justifyContent={"space-between"}
+              _hover={{
+                bg: "an0",
+              }}
               onClick={() => {
                 navigate({ to: nav.pathname });
               }}
@@ -155,7 +158,7 @@ export const StateWelcome = (props: StateWelcomeProps) => {
 
         <Separator w={"60px"} />
 
-        <P fontSize={"xs"} color={"fg.subtle"}>
+        <P fontSize={"xs"} color={"fg.subtle/50"}>
           {"Pilih menu pada bilah samping untuk mulai bernavigasi."}
         </P>
       </VStack>

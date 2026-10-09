@@ -94,6 +94,10 @@ export const queryKeys = {
         [...queryKeys.internal.home.all, "leaderboard", "mitra"] as const,
       leaderboardLayers: () =>
         [...queryKeys.internal.home.all, "leaderboard", "layers"] as const,
+      pricing: () =>
+        [...queryKeys.internal.home.all, "pricing"] as const,
+      policies: () =>
+        [...queryKeys.internal.home.all, "policies"] as const,
     },
     userManagement: {
       all: ["internal", "user-management"] as const,
@@ -108,6 +112,9 @@ export const queryKeys = {
       all: ["internal", "pricing"] as const,
       list: (params?: Record<string, unknown>) =>
         [...queryKeys.internal.pricing.all, "list", params] as const,
+    },
+    systemPolicies: {
+      all: ["internal", "system-policies"] as const,
     },
     dataManagement: {
       all: ["internal", "data-management"] as const,

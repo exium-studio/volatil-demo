@@ -13,16 +13,22 @@ import {
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
-import { InternalHomeServiceRateModalTrigger } from "@/features/internal/home/components/internal.home.service-rate-modal";
-import type {
-  InternalHomeServiceRateItem,
-  InternalHomeServiceRateProps,
-} from "@/features/internal/home/types/internal.home.service-rate.type";
-import { useInternalPricingListQuery } from "@/features/internal/pricing/hooks/use-internal-pricing";
-import type { PricingItem } from "@/features/internal/pricing/types/internal.pricing.type";
-import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
-import { PencilIcon } from "lucide-react";
+import { P } from "@/design-system/components/typography/ui/p";
+import type { InternalHomeServiceRateProps } from "@/features/internal/home/types/internal.home.service-rate.type";
+import { InternalSystemPolicyModalTrigger } from "@/features/internal/system-policies/components/internal.system-policies.modal";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
+import type { SystemPolicyItem } from "@/features/mitra/data-request/types/mitra.data-request.pricing-policy.type";
+import {
+  ClockIcon,
+  CoinsIcon,
+  CreditCardIcon,
+  HourglassIcon,
+  LayersIcon,
+  MapPinIcon,
+  PencilIcon,
+  RefreshCwIcon,
+  ShieldAlertIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export const InternalHomeServiceRate = (
@@ -39,148 +45,273 @@ const InternalHomeServiceRateContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
-  // Queries / Data — directly hit dedicated pricing API
-  const { items: pricingItems, isLoading } = useInternalPricingListQuery();
+  // Queries / Data — Unified endpoint GET /api/mitra/data-request/policies
+  const { pricing, order, isLoading } = usePricingPolicy();
+
+  // Derived Values - Category 1: Pricing & PNBP Items
+  const pricingItems = useMemo<SystemPolicyItem[]>(() => {
+    const list: SystemPolicyItem[] = [];
+    if (!pricing) return list;
+
+    // 1. Kode Akun PNBP SIMPONI
+    list.push({
+      key: "pnbp_code",
+      value: pricing.pnbpCode ?? "425121",
+      valueType: "string",
+      label: "Kode Akun PNBP SIMPONI",
+      description: "Kode akun setoran resmi SIMPONI untuk transaksi data spasial ATR/BPN.",
+    });
+
+    // 2. Fallback Timeout Pembayaran
+    list.push({
+      key: "payment_timeout_fallback_hours",
+      value: String(pricing.paymentTimeoutFallbackHours ?? 24),
+      valueType: "number",
+      label: "Timeout Pembayaran SIMPONI",
+      unit: "jam",
+      description: "Batas waktu kedaluwarsa kode billing pembayaran jika SIMPONI tidak mengembalikan tanggal jatuh tempo.",
+    });
+
+    // 3. Global Limits / Rates
+    if (pricing.globalLimits) {
+      list.push(
+        {
+          key: "price_per_bidang",
+          value: String(pricing.globalLimits.pricePerBidang ?? 7500),
+          valueType: "number",
+          label: "Tarif Dasar per Bidang",
+          unit: "IDR",
+          description: "Tarif dasar PNBP ATR/BPN per objek bidang tanah.",
+        },
+        {
+          key: "price_per_kawasan_ha",
+          value: String(pricing.globalLimits.pricePerKawasanHa ?? 20000),
+          valueType: "number",
+          label: "Tarif Dasar per Hektar Kawasan",
+          unit: "IDR",
+          description: "Tarif dasar PNBP per hektar area kawasan.",
+        },
+        {
+          key: "minimum_bidang_count",
+          value: String(pricing.globalLimits.minimumBidangCount ?? 1000),
+          valueType: "number",
+          label: "Minimal Pembelian Bidang",
+          unit: "Bidang",
+          description: "Batas minimum jumlah objek bidang tanah per permohonan data.",
+        },
+        {
+          key: "minimum_kawasan_ha",
+          value: String(pricing.globalLimits.minimumKawasanHa ?? 1000),
+          valueType: "number",
+          label: "Minimal Luas Kawasan",
+          unit: "Ha",
+          description: "Batas minimum luas kawasan dalam hektar per permohonan data.",
+        },
+      );
+    }
+
+    // 4. Per Layer / Specific Master Items (if any overrides exist)
+    if (pricing.items && pricing.items.length > 0) {
+      pricing.items.forEach((p) => {
+        // If it's a specific layer override
+        if (p.layerId || p.layerTitle) {
+          list.push({
+            key: `price_layer_${p.id}`,
+            value: String(p.unitPrice),
+            valueType: "number",
+            label: `Tarif: ${p.layerTitle ?? p.id}`,
+            unit: "IDR",
+            description: p.description
+              ? `${p.description} (Min: ${p.minPurchase} ${p.minUnit})`
+              : `Kode PNBP: ${p.kodePnbp ?? "-"}`,
+          });
+        }
+      });
+    }
+
+    return list;
+  }, [pricing]);
+
+  // Derived Values - Category 2: Order & Lifecycle Policies
+  const orderItems = useMemo<SystemPolicyItem[]>(() => {
+    const list: SystemPolicyItem[] = [];
+    if (!order) return list;
+
+    list.push(
+      {
+        key: "order_access_duration_days",
+        value: String(order.accessDurationDays ?? 365),
+        valueType: "number",
+        label: "Durasi Masa Aktif Akses Data",
+        unit: "hari",
+        description: "Durasi masa aktif akses data terbayar pada workspace mitra (default 365 hari).",
+      },
+      {
+        key: "order_max_extension_count",
+        value: String(order.maxExtensionCount ?? 1),
+        valueType: "number",
+        label: "Batas Maksimal Perpanjangan",
+        unit: "kali",
+        description: "Batas maksimal berapa kali pesanan diperbolehkan diperpanjang (default 1 kali).",
+      },
+      {
+        key: "order_extension_window_days",
+        value: String(order.extensionWindowDays ?? 7),
+        valueType: "number",
+        label: "Jendela Tombol Perpanjang (H-)",
+        unit: "hari",
+        description: "Rentang waktu sebelum expired saat tombol perpanjang diizinkan muncul (default 7 hari).",
+      },
+    );
+
+    return list;
+  }, [order]);
 
   if (isLoading) {
     return <Skeleton minH={isSmContainer ? "320px" : "240px"} w={"full"} />;
   }
 
   return (
-    <Container.Body gap={4} pt={"md"}>
-      <InternalHomeServiceRateHeader />
+    <Container.Body gap={5} pt={"md"}>
+      {/* Category 1: Pricing & PNBP Limits */}
+      <VStack align={"stretch"} gap={"sm"}>
+        <HStack wrap={"wrap"} align={"center"} justify={"space-between"} px={"md"}>
+          <HStack gap={"xs"} align={"center"}>
+            <Heading size={"md"}>{"1. Kebijakan Tarif & Limit PNBP (Pricing)"}</Heading>
+            <InfoTip
+              variant={"icon"}
+              appIconProps={{
+                size: "xs",
+                color: "fg.subtle",
+              }}
+            >
+              {
+                "Konfigurasi harga per objek/kawasan, limit minimal pembelian, kode PNBP SIMPONI, dan timeout pembayaran."
+              }
+            </InfoTip>
+          </HStack>
+          <P color={"fg.muted"} fontSize={"xs"}>
+            {"Kategori: pricing"}
+          </P>
+        </HStack>
 
-      <VStack flex={1}>
         <Separator borderColor={"bg.canvas"} />
+        <InternalSystemPoliciesStats items={pricingItems} />
+      </VStack>
 
-        <InternalHomeServiceRateStats pricingItems={pricingItems} />
+      <Separator borderColor={"border.muted"} />
+
+      {/* Category 2: Order & Lifecycle Policies */}
+      <VStack align={"stretch"} gap={"sm"}>
+        <HStack wrap={"wrap"} align={"center"} justify={"space-between"} px={"md"}>
+          <HStack gap={"xs"} align={"center"}>
+            <Heading size={"md"}>{"2. Kebijakan Siklus & Perpanjangan Pesanan (Order)"}</Heading>
+            <InfoTip
+              variant={"icon"}
+              appIconProps={{
+                size: "xs",
+                color: "fg.subtle",
+              }}
+            >
+              {
+                "Aturan masa aktif akses data terbayar, batas perpanjangan pesanan, dan rentang jendela perpanjangan H-7."
+              }
+            </InfoTip>
+          </HStack>
+          <P color={"fg.muted"} fontSize={"xs"}>
+            {"Kategori: order"}
+          </P>
+        </HStack>
+
+        <Separator borderColor={"bg.canvas"} />
+        <InternalSystemPoliciesStats items={orderItems} />
       </VStack>
     </Container.Body>
   );
 };
 
-const InternalHomeServiceRateHeader = () => {
-  return (
-    <HStack
-      wrap={"wrap"}
-      align={"center"}
-      justify={"space-between"}
-      gap={"md"}
-      px={"md"}
-    >
-      <HStack gap={"xs"} align={"center"}>
-        <Heading>{"Tarif Jasa Akses IGT-PR"}</Heading>
-
-        <InfoTip
-          variant={"icon"}
-          appIconProps={{
-            size: "xs",
-            color: "fg.subtle",
-          }}
-        >
-          {"Pengaturan tarif bidang dan kawasan"}
-        </InfoTip>
-      </HStack>
-    </HStack>
-  );
-};
-
-const InternalHomeServiceRateStats = (props: {
-  pricingItems: PricingItem[];
+const InternalSystemPoliciesStats = (props: {
+  items: SystemPolicyItem[];
 }) => {
-  // Props
-  const { pricingItems } = props;
-
-  // Contexts
+  const { items } = props;
   const { isSmContainer } = useContainerContext();
-
-  // Derived Values - transform pricing items directly from response
-  const serviceRates = useMemo<InternalHomeServiceRateItem[]>(() => {
-    if (!pricingItems || pricingItems.length === 0) {
-      return [];
-    }
-
-    const bidangRate = pricingItems.find(
-      (p) => (p.igtBasis ?? p.spatialBasis) === "bidang",
-    );
-    const kawasanRate = pricingItems.find(
-      (p) => (p.igtBasis ?? p.spatialBasis) === "kawasan",
-    );
-
-    const result: InternalHomeServiceRateItem[] = [];
-
-    if (bidangRate) {
-      result.push({
-        id: bidangRate.id,
-        title: `IGT Berbasis ${IGT_BASIS_MAP.bidang.label}`,
-        icon: IGT_BASIS_MAP.bidang.icon,
-        price: bidangRate.unitPrice,
-        unit: "Bidang",
-        kodePnbp: bidangRate.kodePnbp ?? "PNBP-IGT-01",
-        minPurchase: bidangRate.minPurchase ?? 1000,
-        minUnit: "Bidang",
-        colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
-      });
-    }
-
-    if (kawasanRate) {
-      result.push({
-        id: kawasanRate.id,
-        title: `IGT Berbasis ${IGT_BASIS_MAP.kawasan.label}`,
-        icon: IGT_BASIS_MAP.kawasan.icon,
-        price: kawasanRate.unitPrice,
-        unit: "Ha",
-        kodePnbp: kawasanRate.kodePnbp ?? "PNBP-IGT-02",
-        minPurchase: kawasanRate.minPurchase ?? 1000,
-        minUnit: "Ha",
-        colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,
-      });
-    }
-
-    return result;
-  }, [pricingItems]);
 
   const cols = isSmContainer ? 1 : 2;
 
+  const getPolicyIcon = (key: string) => {
+    if (key.includes("pnbp_code")) return CreditCardIcon;
+    if (key.includes("bidang") && key.includes("price")) return MapPinIcon;
+    if (key.includes("kawasan") && key.includes("price")) return LayersIcon;
+    if (key.includes("minimum") || key.includes("min")) return CoinsIcon;
+    if (key.includes("timeout")) return HourglassIcon;
+    if (key.includes("duration") || key.includes("access")) return ClockIcon;
+    if (key.includes("extension_count") || key.includes("max_extension")) return RefreshCwIcon;
+    if (key.includes("extension_window") || key.includes("window")) return ShieldAlertIcon;
+    return ClockIcon;
+  };
+
+  const getPolicyColor = (key: string) => {
+    if (key.includes("pnbp_code")) return "emerald";
+    if (key.includes("bidang") && key.includes("price")) return "teal";
+    if (key.includes("kawasan") && key.includes("price")) return "purple";
+    if (key.includes("minimum") || key.includes("min")) return "orange";
+    if (key.includes("timeout")) return "amber";
+    if (key.includes("duration") || key.includes("access")) return "blue";
+    if (key.includes("extension_count") || key.includes("max_extension")) return "cyan";
+    if (key.includes("extension_window") || key.includes("window")) return "red";
+    return "blue";
+  };
+
   return (
     <StatGrid.Root columns={cols}>
-      {serviceRates.map((rate, index) => (
-        <StatGrid.Item key={rate.id} index={index} columns={cols}>
-          <StatGrid.Header>
-            <HStack gap={"xs"} align={"center"}>
-              <Circle bg={`${rate.colorPalette}.subtle`} p={"2xs"}>
-                <AppIcon
-                  icon={rate.icon}
-                  size={"sm"}
-                  color={`${rate.colorPalette}.fg`}
-                />
-              </Circle>
+      {items.map((policy, index) => {
+        const IconComp = getPolicyIcon(policy.key);
+        const colorPalette = getPolicyColor(policy.key);
+        const isCurrency =
+          policy.unit === "IDR" || policy.unit === "Rupiah";
+        const formattedValue =
+          policy.valueType === "number" && !Number.isNaN(Number(policy.value))
+            ? isCurrency
+              ? new Intl.NumberFormat("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(Number(policy.value))
+              : `${new Intl.NumberFormat("id-ID").format(Number(policy.value))} ${policy.unit ?? ""}`
+            : `${policy.value} ${policy.unit ?? ""}`;
 
-              <StatGrid.Label>{rate.title}</StatGrid.Label>
-            </HStack>
+        return (
+          <StatGrid.Item key={policy.key} index={index} columns={cols}>
+            <StatGrid.Header>
+              <HStack gap={"2xs"} align={"center"}>
+                <Circle bg={`${colorPalette}.subtle`} p={"2xs"}>
+                  <AppIcon icon={IconComp} size={"xs"} color={`${colorPalette}.fg`} />
+                </Circle>
 
-            <InternalHomeServiceRateModalTrigger rate={rate}>
-              <IconButton
-                variant={"ghost"}
-                aria-label={`Ubah tarif ${rate.title}`}
-              >
-                <AppIcon icon={PencilIcon} />
-              </IconButton>
-            </InternalHomeServiceRateModalTrigger>
-          </StatGrid.Header>
+                <StatGrid.Label>{policy.label ?? policy.key}</StatGrid.Label>
+              </HStack>
 
-          <StatGrid.Value
-            value={rate.price}
-            isCurrency
-            suffix={`/ ${rate.unit}`}
-          />
+              <InternalSystemPolicyModalTrigger policy={policy}>
+                <IconButton
+                  variant={"ghost"}
+                  aria-label={`Ubah kebijakan ${policy.label ?? policy.key}`}
+                >
+                  <AppIcon icon={PencilIcon} />
+                </IconButton>
+              </InternalSystemPolicyModalTrigger>
+            </StatGrid.Header>
 
-          <StatGrid.Description>
-            {"Minimal pembelian "}
-            <FormatNumber value={rate.minPurchase} /> {rate.minUnit}
-          </StatGrid.Description>
-        </StatGrid.Item>
-      ))}
+            <StatGrid.Value value={formattedValue} />
+
+            {policy.description && (
+              <StatGrid.Description>
+                {policy.description}
+              </StatGrid.Description>
+            )}
+          </StatGrid.Item>
+        );
+      })}
     </StatGrid.Root>
   );
 };
+

@@ -79,7 +79,7 @@ const InternalHomeMitraRegistrationChart = (props: {
         </HStack>
       </HStack>
 
-      <VStack align={"stretch"} gap={"xs"} px={"md"}>
+      <VStack align={"stretch"} gap={"xs"} px={"md"} mt={"lg"}>
         <Chart.Root maxH={"150px"} chart={chart}>
           <BarChart
             data={chart.data}

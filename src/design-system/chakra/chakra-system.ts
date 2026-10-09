@@ -2487,8 +2487,8 @@ export const chakraConfig = defineConfig({
       glass: {
         value: {
           bg: "bg.body/50",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
           boxShadow:
             "inset -1px 1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px -1px 1px 0 rgba(255, 255, 255, 0.25)",
         },
@@ -2496,29 +2496,29 @@ export const chakraConfig = defineConfig({
       frosted: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
         },
       },
       frostedInverted: {
         value: {
           bg: "bg.frostedInverted",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
         },
       },
       frostedLight: {
         value: {
           bg: "{colors.frostedLight}",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
         },
       },
       frostedDark: {
         value: {
           bg: "{colors.frostedDark}",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
         },
       },
     },

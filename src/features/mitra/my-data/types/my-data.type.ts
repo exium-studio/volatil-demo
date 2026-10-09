@@ -60,6 +60,7 @@ export type MitraWorkspaceItem = {
   layers: MyDataItem[];
   createdAt: string;
   expiresAt: string;
+  extensionCount?: number;
   invoiceUrl?: string | null;
   tteInvoiceUrl?: string | null;
   tte?: boolean;

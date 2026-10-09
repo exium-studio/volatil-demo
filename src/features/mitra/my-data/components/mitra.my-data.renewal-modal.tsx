@@ -10,18 +10,21 @@ import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { useRenewMitraWorkspace } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraWorkspaceRenewalModalContentProps,
   MitraWorkspaceRenewalTriggerProps,
 } from "@/features/mitra/my-data/types/my-data.type";
+import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, ClockPlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export const MitraWorkspaceRenewalTrigger = (
@@ -35,6 +38,12 @@ export const MitraWorkspaceRenewalTrigger = (
   } = props;
 
   // Stores & Hooks
+  const { systemPolicies } = usePricingPolicy();
+
+  const eligibility = useMemo(() => {
+    return checkOrderExtensionEligibility(workspace, systemPolicies);
+  }, [workspace, systemPolicies]);
+
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: customModalKey,
   });
@@ -45,6 +54,27 @@ export const MitraWorkspaceRenewalTrigger = (
     unmountDelay: 250,
   });
 
+  const triggerNode = useMemo(() => {
+    if (children) {
+      if (!eligibility.canExtend && eligibility.reason) {
+        return <Tooltip content={eligibility.reason}>{children}</Tooltip>;
+      }
+      return children;
+    }
+    return (
+      <Tooltip content={eligibility.reason ?? "Perpanjang Pesanan"}>
+        <Button
+          size={"xs"}
+          variant={"outline"}
+          disabled={!eligibility.canExtend}
+        >
+          <AppIcon icon={ClockPlusIcon} />
+          {"Perpanjang"}
+        </Button>
+      </Tooltip>
+    );
+  }, [children, eligibility]);
+
   return (
     <Modal.Root
       modalKey={modalKey}
@@ -53,7 +83,11 @@ export const MitraWorkspaceRenewalTrigger = (
       close={close}
       size={"md"}
     >
-      <Modal.Trigger>{children}</Modal.Trigger>
+      {eligibility.canExtend ? (
+        <Modal.Trigger>{triggerNode}</Modal.Trigger>
+      ) : (
+        triggerNode
+      )}
 
       {isMounted && (
         <MitraWorkspaceRenewalModalContent

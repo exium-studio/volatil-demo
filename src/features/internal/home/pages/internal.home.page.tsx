@@ -1,6 +1,5 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { toast } from "@/design-system/components/toast";
@@ -9,10 +8,12 @@ import { InternalHomeIgtBasisSummary } from "@/features/internal/home/components
 import { InternalHomeLeaderboard } from "@/features/internal/home/components/internal.home.leaderboard";
 import { InternalHomeMitraLayerSyncJobsQuickView } from "@/features/internal/home/components/internal.home.mitra-layer-sync-jobs-quick-view";
 import { InternalHomeMitraRegistration } from "@/features/internal/home/components/internal.home.mitra-registration";
+import { InternalHomePolicies } from "@/features/internal/home/components/internal.home.policies";
+import { InternalHomePricing } from "@/features/internal/home/components/internal.home.pricing";
 import { InternalHomePublishStatusSummary } from "@/features/internal/home/components/internal.home.publish-status-summary";
-import { InternalHomeServiceRate } from "@/features/internal/home/components/internal.home.service-rate";
 import { InternalHomeTrend } from "@/features/internal/home/components/internal.home.trend";
 import { InternalHomeUserGuideManagement } from "@/features/internal/home/components/internal.home.user-guide-management";
+import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQueryClient } from "@tanstack/react-query";
 import { RefreshCwIcon } from "lucide-react";
@@ -21,6 +22,21 @@ import { useState } from "react";
 export const InternalHomePage = () => {
   // Hooks
   const queryClient = useQueryClient();
+  const { user } = useAuthSession();
+
+  // Derived Values
+  const displayName = user?.fullName || user?.username || "Admin";
+  const currentHour = new Date().getHours();
+  const timeGreeting =
+    currentHour >= 4 && currentHour < 11
+      ? "Selamat Pagi"
+      : currentHour >= 11 && currentHour < 15
+        ? "Selamat Siang"
+        : currentHour >= 15 && currentHour < 18
+          ? "Selamat Sore"
+          : "Selamat Malam";
+
+  const greetingText = `Halo, ${displayName}! ${timeGreeting}`;
 
   // States
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -40,6 +56,9 @@ export const InternalHomePage = () => {
         queryClient.invalidateQueries({
           queryKey: queryKeys.internal.pricing.all,
         }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.internal.systemPolicies.all,
+        }),
       ]);
       toast.success("Data dashboard berhasil diperbarui", {
         group: "Dashboard",
@@ -54,28 +73,11 @@ export const InternalHomePage = () => {
   };
 
   return (
-    <AppContentContainer h={"auto"} position={"relative"}>
+    <AppContentContainer position={"relative"} h={"auto"}>
       {/* Dashboard Top Header */}
-      <HStack justify={"space-between"} align={"center"} w={"full"}>
-        <HStack
-          gap={"xs"}
-          align={"center"}
-          justify={"space-between"}
-          w={"full"}
-        >
-          <Heading>{"Dashboard Internal"}</Heading>
-
-          <InfoTip
-            variant={"icon"}
-            appIconProps={{
-              size: "xs",
-              color: "fg.subtle",
-            }}
-          >
-            {
-              "Ringkasan analitik data spasial IGT, status registrasi mitra, antrean sinkronisasi, dan statistik akuisisi."
-            }
-          </InfoTip>
+      <HStack justify={"space-between"} align={"center"} w={"full"} mb={"xs"}>
+        <HStack align={"center"} pl={"md"}>
+          <Heading>{greetingText}</Heading>
         </HStack>
 
         <Button
@@ -90,13 +92,18 @@ export const InternalHomePage = () => {
         </Button>
       </HStack>
 
-      {/* Row 1: 3 Dedicated Summary Cards + Tarif Jasa Akses */}
+      {/* Row 1: 3 Dedicated Summary Cards */}
       <HStack wrap={"wrap"} gap={"sm"} align={"stretch"} w={"full"}>
         <InternalHomeIgtBasisSummary />
         <InternalHomePublishStatusSummary />
         <InternalHomeMitraRegistration />
-        <InternalHomeServiceRate />
       </HStack>
+
+      {/* Row 2: Master Tarif & Limit PNBP (Pricing) */}
+      <InternalHomePricing w={"full"} />
+
+      {/* Row 3: Kebijakan Siklus & Perpanjangan Pesanan (Policy) */}
+      <InternalHomePolicies w={"full"} />
 
       {/* Row 2: Grafik Tren Akuisisi Data IGT */}
       <InternalHomeTrend />
