@@ -574,8 +574,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
     );
     const totalBidangCount = effectiveTotalBidangCount;
     const totalKawasanAreaHa = calculationResult?.totalKawasanAreaHa ?? 0;
-    const minBidangCount = pricingPolicy.minBidangCount;
-    const minKawasanHa = pricingPolicy.minKawasanHa;
+    const minBidangCount =
+      calculationResult?.policy?.minimumBidangCount ??
+      pricingPolicy.minBidangCount;
+    const minKawasanHa =
+      calculationResult?.policy?.minimumKawasanHa ??
+      pricingPolicy.minKawasanHa;
 
     const isBidangBelowMin =
       totalBidangCount > 0 &&
@@ -701,12 +705,24 @@ export const MitraDataRequestIgtLayerDataView = memo(
                   calculationResult.subtotalBidangPrice > 0
                     ? calculationResult.subtotalBidangPrice
                     : effectiveTotalBidangCount *
-                      (pricingPolicy.pricePerBidang ??
+                      (calculationResult?.policy?.pricePerBidang ??
+                        pricingPolicy.pricePerBidang ??
                         CART_CONFIG.pricePerBidang)
                 }
                 subtotalKawasanPrice={
                   calculationResult?.subtotalKawasanPrice ?? 0
                 }
+                pricePerBidang={
+                  calculationResult?.policy?.pricePerBidang ??
+                  pricingPolicy.pricePerBidang
+                }
+                pricePerKawasanHa={
+                  calculationResult?.policy?.pricePerKawasanHa ??
+                  pricingPolicy.pricePerKawasanHa
+                }
+                minBidangCount={minBidangCount}
+                minKawasanHa={minKawasanHa}
+                calculatedPolicy={calculationResult?.policy}
                 estimatedTotalPrice={
                   calculationResult?.estimatedTotalPrice ?? 0
                 }

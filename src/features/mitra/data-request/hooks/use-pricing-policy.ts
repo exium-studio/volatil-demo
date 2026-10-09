@@ -9,7 +9,7 @@ import { useMemo } from "react";
 
 export const usePricingPolicy = (): MitraPricingPolicy => {
   // Queries — fetch active pricing policies for Mitra data request
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: queryKeys.mitra.dataRequest.policies(),
     queryFn: ({ signal }) => getMitraDataRequestPolicies(signal),
     staleTime: 10 * 60 * 1000,
@@ -49,6 +49,11 @@ export const usePricingPolicy = (): MitraPricingPolicy => {
       pricePerBidang,
       pricePerKawasanHa,
       isLoading,
+      isError,
+      error: error instanceof Error ? error : error ? new Error(String(error)) : null,
+      refetch: () => {
+        void refetch();
+      },
     };
-  }, [data, isLoading]);
+  }, [data, isLoading, isError, error, refetch]);
 };

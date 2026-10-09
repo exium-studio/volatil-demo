@@ -27,4 +27,7 @@ export type MitraPricingPolicy = {
   pricePerBidang: number;
   pricePerKawasanHa: number;
   isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
+  refetch: () => void;
 };

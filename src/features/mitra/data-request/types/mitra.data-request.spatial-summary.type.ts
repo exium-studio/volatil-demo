@@ -1,4 +1,4 @@
-// src/features/mitra/data-request/types/mitra.data-request.spatial-summary.type.ts
+import type { CalculateSpatialPolicy } from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
 
 export type MitraDataRequestSpatialSummaryProps = {
   totalBidangCount?: number;
@@ -8,6 +8,9 @@ export type MitraDataRequestSpatialSummaryProps = {
   subtotalKawasanPrice?: number;
   pricePerBidang?: number;
   pricePerKawasanHa?: number;
+  minBidangCount?: number;
+  minKawasanHa?: number;
+  calculatedPolicy?: CalculateSpatialPolicy;
   estimatedTotalPrice?: number;
   isPurchaseLimitValid?: boolean;
   purchaseLimitMessage?: string;

@@ -66,6 +66,6 @@ export const getMitraDataRequestPolicies = async (
       return DUMMY_POLICIES_RESPONSE;
     }
 
-    return DUMMY_POLICIES_RESPONSE;
+    throw error;
   }
 };

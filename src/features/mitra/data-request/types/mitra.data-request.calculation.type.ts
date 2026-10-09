@@ -52,7 +52,16 @@ export type CalculateSpatialSummary = {
 
 export type CalculateSpatialValidation = {
   isValid: boolean;
+  isBidangValid?: boolean;
+  isKawasanValid?: boolean;
   message?: string;
+};
+
+export type CalculateSpatialPolicy = {
+  minimumBidangCount?: number;
+  minimumKawasanHa?: number;
+  pricePerBidang?: number;
+  pricePerKawasanHa?: number;
 };
 
 export type CalculateSpatialCalculatedItem = {
@@ -73,6 +82,7 @@ export type CalculateSpatialCalculatedItem = {
 export type CalculateSpatialCoverageResult = {
   coverageKawasan?: CalculateSpatialCoverageKawasan;
   summary?: CalculateSpatialSummary;
+  policy?: CalculateSpatialPolicy;
   validation?: CalculateSpatialValidation;
   coveragePolygon: GeoJSON.Polygon | GeoJSON.MultiPolygon | null;
   totalBidangCount: number;

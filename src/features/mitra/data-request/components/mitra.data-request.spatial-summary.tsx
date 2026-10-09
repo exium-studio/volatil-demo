@@ -4,6 +4,7 @@ import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -27,6 +28,9 @@ export const MitraDataRequestSpatialSummary = memo(
       subtotalKawasanPrice = 0,
       pricePerBidang: propPricePerBidang,
       pricePerKawasanHa: propPricePerKawasanHa,
+      minBidangCount: propMinBidangCount,
+      minKawasanHa: propMinKawasanHa,
+      calculatedPolicy,
       estimatedTotalPrice = 0,
       isPurchaseLimitValid = true,
       purchaseLimitMessage,
@@ -64,9 +68,29 @@ export const MitraDataRequestSpatialSummary = memo(
       propProgressPercentage ?? storeProgressPercentage;
 
     const effectivePricePerBidang =
-      propPricePerBidang ?? pricingPolicy.pricePerBidang;
+      propPricePerBidang ??
+      calculatedPolicy?.pricePerBidang ??
+      pricingPolicy.pricePerBidang;
     const effectivePricePerKawasanHa =
-      propPricePerKawasanHa ?? pricingPolicy.pricePerKawasanHa;
+      propPricePerKawasanHa ??
+      calculatedPolicy?.pricePerKawasanHa ??
+      pricingPolicy.pricePerKawasanHa;
+
+    const effectiveMinBidangCount =
+      propMinBidangCount ??
+      calculatedPolicy?.minimumBidangCount ??
+      pricingPolicy.minBidangCount;
+    const effectiveMinKawasanHa =
+      propMinKawasanHa ??
+      calculatedPolicy?.minimumKawasanHa ??
+      pricingPolicy.minKawasanHa;
+
+    // Show inline RetryState if policy query failed and no policy is available from SSE calculation
+    const isPolicyError =
+      pricingPolicy.isError &&
+      !calculatedPolicy &&
+      !propMinBidangCount &&
+      !propPricePerBidang;
 
     if (effectiveIsCalculating) {
       return (
@@ -144,22 +168,34 @@ export const MitraDataRequestSpatialSummary = memo(
       );
     }
 
+    if (isPolicyError) {
+      return (
+        <RetryState
+          title={"Gagal memuat kebijakan tarif"}
+          description={
+            pricingPolicy.error?.message ||
+            "Terjadi kesalahan saat memuat batas minimum dan tarif layanan."
+          }
+          onRetry={pricingPolicy.refetch}
+        />
+      );
+    }
+
     // Validation logic against purchase policies with OR logic
     const isBidangBelowMin =
       totalBidangCount > 0 &&
-      pricingPolicy.minBidangCount > 0 &&
-      totalBidangCount < pricingPolicy.minBidangCount;
+      effectiveMinBidangCount > 0 &&
+      totalBidangCount < effectiveMinBidangCount;
 
     const isKawasanBelowMin =
       totalKawasanAreaHa > 0 &&
-      pricingPolicy.minKawasanHa > 0 &&
-      totalKawasanAreaHa < pricingPolicy.minKawasanHa;
+      effectiveMinKawasanHa > 0 &&
+      totalKawasanAreaHa < effectiveMinKawasanHa;
 
     const hasValidBidang =
-      totalBidangCount >= pricingPolicy.minBidangCount && totalBidangCount > 0;
+      totalBidangCount >= effectiveMinBidangCount && totalBidangCount > 0;
     const hasValidKawasan =
-      totalKawasanAreaHa >= pricingPolicy.minKawasanHa &&
-      totalKawasanAreaHa > 0;
+      totalKawasanAreaHa >= effectiveMinKawasanHa && totalKawasanAreaHa > 0;
 
     const hasAnyLimitViolation =
       isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
@@ -175,13 +211,13 @@ export const MitraDataRequestSpatialSummary = memo(
     const displayAlertMessage = (() => {
       if (purchaseLimitMessage) return purchaseLimitMessage;
       if (isBidangBelowMin && isKawasanBelowMin) {
-        return `Minimum pembelian belum terpenuhi (Bidang: min ${formatNumber(pricingPolicy.minBidangCount)} bidang, Kawasan: min ${formatNumber(pricingPolicy.minKawasanHa)} ha).`;
+        return `Minimum pembelian belum terpenuhi (Bidang: min ${formatNumber(effectiveMinBidangCount)} bidang, Kawasan: min ${formatNumber(effectiveMinKawasanHa)} ha).`;
       }
       if (isBidangBelowMin) {
-        return `Minimum pembelian untuk bidang tanah adalah ${formatNumber(pricingPolicy.minBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`;
+        return `Minimum pembelian untuk bidang tanah adalah ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`;
       }
       if (isKawasanBelowMin) {
-        return `Minimum pembelian untuk kawasan adalah ${formatNumber(pricingPolicy.minKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha).`;
+        return `Minimum pembelian untuk kawasan adalah ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha).`;
       }
       return "Total permohonan melebihi batas pembelian (purchase limit) akun Anda.";
     })();

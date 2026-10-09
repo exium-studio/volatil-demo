@@ -79,6 +79,20 @@ export const normalizeSpatialCalculationResult = (raw: any): CalculateSpatialCov
     rawData.estimatedTotalPrice ??
     subtotalBidangPrice + subtotalKawasanPrice;
 
+  const rawPolicy = rawData.policy ?? rawData.config;
+  const policy = rawPolicy
+    ? {
+        minimumBidangCount:
+          rawPolicy.minimumBidangCount ?? rawPolicy.minBidangCount,
+        minimumKawasanHa:
+          rawPolicy.minimumKawasanHa ?? rawPolicy.minKawasanHa,
+        pricePerBidang:
+          rawPolicy.pricePerBidang ?? rawPolicy.unitPriceBidang,
+        pricePerKawasanHa:
+          rawPolicy.pricePerKawasanHa ?? rawPolicy.unitPriceKawasan,
+      }
+    : undefined;
+
   const isPurchaseLimitValid =
     validation?.isValid !== undefined
       ? validation.isValid
@@ -93,6 +107,7 @@ export const normalizeSpatialCalculationResult = (raw: any): CalculateSpatialCov
   return {
     coverageKawasan,
     summary,
+    policy,
     validation,
     coveragePolygon,
     totalBidangCount,
