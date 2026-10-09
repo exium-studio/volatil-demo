@@ -723,6 +723,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 minBidangCount={minBidangCount}
                 minKawasanHa={minKawasanHa}
                 calculatedPolicy={calculationResult?.policy}
+                validation={calculationResult?.validation}
                 estimatedTotalPrice={
                   calculationResult?.estimatedTotalPrice ?? 0
                 }

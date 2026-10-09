@@ -31,8 +31,9 @@ export const MitraDataRequestSpatialSummary = memo(
       minBidangCount: propMinBidangCount,
       minKawasanHa: propMinKawasanHa,
       calculatedPolicy,
+      validation: propValidation,
       estimatedTotalPrice = 0,
-      isPurchaseLimitValid = true,
+      isPurchaseLimitValid,
       purchaseLimitMessage,
       isCalculating: propIsCalculating,
       progressMessage: propProgressMessage,
@@ -192,24 +193,28 @@ export const MitraDataRequestSpatialSummary = memo(
       effectiveMinKawasanHa > 0 &&
       totalKawasanAreaHa < effectiveMinKawasanHa;
 
-    // A basis is valid if it meets the minimum threshold (or if count/area is 0, it has no violation)
+    // A basis is valid if it meets the minimum threshold (or explicitly confirmed by BE)
     const hasValidBidang =
-      totalBidangCount >= effectiveMinBidangCount && totalBidangCount > 0;
+      propValidation?.isBidangValid !== undefined
+        ? propValidation.isBidangValid
+        : totalBidangCount >= effectiveMinBidangCount && totalBidangCount > 0;
+
     const hasValidKawasan =
-      totalKawasanAreaHa >= effectiveMinKawasanHa && totalKawasanAreaHa > 0;
+      propValidation?.isKawasanValid !== undefined
+        ? propValidation.isKawasanValid
+        : totalKawasanAreaHa >= effectiveMinKawasanHa && totalKawasanAreaHa > 0;
 
     const isBidangValid =
-      totalBidangCount > 0
-        ? hasValidBidang && isPurchaseLimitValid !== false
-        : true;
+      totalBidangCount > 0 ? hasValidBidang : true;
 
     const isKawasanValid =
-      totalKawasanAreaHa > 0
-        ? hasValidKawasan && isPurchaseLimitValid !== false
-        : true;
+      totalKawasanAreaHa > 0 ? hasValidKawasan : true;
 
     const hasAnyLimitViolation =
-      isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
+      isBidangBelowMin ||
+      isKawasanBelowMin ||
+      isPurchaseLimitValid === false ||
+      (propValidation?.isValid === false && (!hasValidBidang || !hasValidKawasan));
 
     // Logika OR: Jika salah satu valid dan memiliki data (misal bidang 2.203 valid, kawasan 302.3 ha < 1000 ha), maka checkout tetap bisa dilakukan untuk yang valid
     const isOrValidForCheckout =
