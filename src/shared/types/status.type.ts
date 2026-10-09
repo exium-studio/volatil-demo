@@ -5,12 +5,8 @@ import type { LucideIcon } from "lucide-react";
 /**
  * SSOT 1: Transaction Status Types (Billing & Payment)
  */
-export type TransactionStatus =
-  | "pending"
-  | "expired"
-  | "paid"
-  | "failed"
-  | "refunded";
+export type TransactionStatus = "pending" | "expired" | "paid" | "failed";
+// | "refunded";
 
 export type TransactionStatusConfig = {
   label: string;

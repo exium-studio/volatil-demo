@@ -1352,14 +1352,18 @@ type MitraPricingPolicyResponse = {
 
 - **Endpoint**: `POST /api/mitra/cart/orders`
 - **Akses**: `Mitra Only`
+- **Header**: `Authorization: Bearer <TOKEN>` & `Content-Type: application/json`
 - **Payload**:
 
 ```typescript
 type AddToCartOrderRequest = {
   selectionType: "upload_aoi" | "draw_aoi" | "catalog";
-  aoiPolygon: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  calculationToken?: string; // Token hasil SSE calculation stream (POST /api/mitra/data-request/calculate/stream)
+  targetBasis?: "bidang" | "kawasan" | "all";
+  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   cqlFilter?: string; // e.g. "INTERSECTS(geom, POLYGON(...))"
-  items: Array<{
+  items?: Array<{
     sourceLayerId: string;
     cqlFilter?: string;
     wfsUrl?: string;
@@ -2144,8 +2148,7 @@ export type TransactionStatus =
   | "pending" // Menunggu Pembayaran
   | "paid" // Terbayar / Settled
   | "expired" // Kedaluwarsa
-  | "failed" // Gagal
-  | "refunded"; // Dikembalikan
+  | "failed"; // Gagal
 ```
 
 ### 2. SSOT Status Pesanan & Layanan Spasial (`OrderStatus`)

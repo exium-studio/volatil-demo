@@ -2,12 +2,12 @@
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import type {
+  IgtBasisType,
+  IgtBasisTypeConfig,
   PaymentMethod,
   PaymentMethodConfig,
   SelectionType,
   SelectionTypeConfig,
-  IgtBasisType,
-  IgtBasisTypeConfig,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
   MitraRegistrationStatus,
@@ -32,7 +32,6 @@ import {
   ListIcon,
   LoaderIcon,
   QrCodeIcon,
-  RotateCcwIcon,
   ShieldCheckIcon,
   TimerOffIcon,
   XCircleIcon,
@@ -218,11 +217,11 @@ export const TRANSACTION_STATUS_MAP: Record<
     colorPalette: "red",
     icon: AlertCircleIcon,
   },
-  refunded: {
-    label: "Dikembalikan",
-    colorPalette: "purple",
-    icon: RotateCcwIcon,
-  },
+  // refunded: {
+  //   label: "Dikembalikan",
+  //   colorPalette: "purple",
+  //   icon: RotateCcwIcon,
+  // },
 };
 
 export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [

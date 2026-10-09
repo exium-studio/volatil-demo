@@ -177,7 +177,7 @@ export async function postCreateCartOrderApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<AddToCartOrderResponse>> {
   return apiClient.post<ApiResponse<AddToCartOrderResponse>>(
-    "/api/mitra/cart/batch",
+    "/api/mitra/cart/orders",
     payload,
     { signal },
   );
