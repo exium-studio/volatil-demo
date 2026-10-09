@@ -3,11 +3,14 @@ import type {
   CalculateSpatialCoverageResult,
   CalculateSpatialCoverageRequest,
   CalculateSpatialStreamCallbacks,
+  RawCalculateSpatialResponse,
+  RawCalculateSpatialItem,
 } from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
 import { getApiBaseUrl } from "@/shared/utils/url/url.utils";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const normalizeSpatialCalculationResult = (raw: any): CalculateSpatialCoverageResult => {
+export const normalizeSpatialCalculationResult = (
+  raw: RawCalculateSpatialResponse | null | undefined,
+): CalculateSpatialCoverageResult => {
   if (!raw) {
     return {
       coveragePolygon: null,
@@ -28,28 +31,29 @@ export const normalizeSpatialCalculationResult = (raw: any): CalculateSpatialCov
   const validation = rawData.validation;
 
   const rawItems = rawData.items ?? [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const items: CalculateSpatialCalculatedItem[] = rawItems.map((it: any) => {
-    const igtBasis = it.igtBasis ?? it.spatialBasis ?? "kawasan";
-    const featureCount = it.featureCount ?? it.featuresCount ?? 0;
-    const sourceLayerId = it.layerId ?? it.sourceLayerId ?? it.id ?? "";
-    const sourceLayerTitle = it.title ?? it.sourceLayerTitle ?? sourceLayerId;
+  const items: CalculateSpatialCalculatedItem[] = rawItems.map(
+    (it: RawCalculateSpatialItem) => {
+      const igtBasis = it.igtBasis ?? it.spatialBasis ?? "kawasan";
+      const featureCount = it.featureCount ?? it.featuresCount ?? 0;
+      const sourceLayerId = it.layerId ?? it.sourceLayerId ?? it.id ?? "";
+      const sourceLayerTitle = it.title ?? it.sourceLayerTitle ?? sourceLayerId;
 
-    return {
-      id: it.id ?? sourceLayerId,
-      layerId: sourceLayerId,
-      sourceLayerId,
-      sourceLayerTitle,
-      title: sourceLayerTitle,
-      igtBasis,
-      spatialBasis: igtBasis,
-      featureCount,
-      featuresCount: featureCount,
-      areaHa: it.areaHa ?? 0,
-      unitPrice: it.unitPrice,
-      subtotalPrice: it.subtotalPrice,
-    };
-  });
+      return {
+        id: it.id ?? sourceLayerId,
+        layerId: sourceLayerId,
+        sourceLayerId,
+        sourceLayerTitle,
+        title: sourceLayerTitle,
+        igtBasis,
+        spatialBasis: igtBasis,
+        featureCount,
+        featuresCount: featureCount,
+        areaHa: it.areaHa ?? 0,
+        unitPrice: it.unitPrice,
+        subtotalPrice: it.subtotalPrice,
+      };
+    },
+  );
 
   const totalBidangCount =
     summary?.bidang?.featureCount ??
@@ -84,10 +88,8 @@ export const normalizeSpatialCalculationResult = (raw: any): CalculateSpatialCov
     ? {
         minimumBidangCount:
           rawPolicy.minimumBidangCount ?? rawPolicy.minBidangCount,
-        minimumKawasanHa:
-          rawPolicy.minimumKawasanHa ?? rawPolicy.minKawasanHa,
-        pricePerBidang:
-          rawPolicy.pricePerBidang ?? rawPolicy.unitPriceBidang,
+        minimumKawasanHa: rawPolicy.minimumKawasanHa ?? rawPolicy.minKawasanHa,
+        pricePerBidang: rawPolicy.pricePerBidang ?? rawPolicy.unitPriceBidang,
         pricePerKawasanHa:
           rawPolicy.pricePerKawasanHa ?? rawPolicy.unitPriceKawasan,
       }
@@ -96,7 +98,7 @@ export const normalizeSpatialCalculationResult = (raw: any): CalculateSpatialCov
   const isPurchaseLimitValid =
     validation?.isValid !== undefined
       ? validation.isValid
-      : rawData.isPurchaseLimitValid ?? true;
+      : (rawData.isPurchaseLimitValid ?? true);
 
   const purchaseLimitMessage =
     validation?.message ?? rawData.purchaseLimitMessage;

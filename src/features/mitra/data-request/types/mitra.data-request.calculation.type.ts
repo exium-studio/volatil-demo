@@ -79,6 +79,52 @@ export type CalculateSpatialCalculatedItem = {
   subtotalPrice?: number;
 };
 
+export type RawCalculateSpatialItem = {
+  id?: string;
+  layerId?: string;
+  sourceLayerId?: string;
+  title?: string;
+  sourceLayerTitle?: string;
+  igtBasis?: IgtBasisType;
+  spatialBasis?: IgtBasisType;
+  featureCount?: number;
+  featuresCount?: number;
+  areaHa?: number;
+  unitPrice?: number;
+  subtotalPrice?: number;
+};
+
+export type RawCalculateSpatialPolicy = {
+  minimumBidangCount?: number;
+  minBidangCount?: number;
+  minimumKawasanHa?: number;
+  minKawasanHa?: number;
+  pricePerBidang?: number;
+  unitPriceBidang?: number;
+  pricePerKawasanHa?: number;
+  unitPriceKawasan?: number;
+};
+
+export type RawCalculateSpatialResponse = {
+  data?: RawCalculateSpatialResponse;
+  coverageKawasan?: CalculateSpatialCoverageKawasan;
+  summary?: CalculateSpatialSummary;
+  policy?: RawCalculateSpatialPolicy;
+  config?: RawCalculateSpatialPolicy;
+  validation?: CalculateSpatialValidation;
+  coveragePolygon?: GeoJSON.Polygon | GeoJSON.MultiPolygon | null;
+  totalBidangCount?: number;
+  totalKawasanCount?: number;
+  totalKawasanAreaHa?: number;
+  subtotalBidangPrice?: number;
+  subtotalKawasanPrice?: number;
+  estimatedTotalPrice?: number;
+  isPurchaseLimitValid?: boolean;
+  purchaseLimitMessage?: string;
+  items?: RawCalculateSpatialItem[];
+  selectionType?: SelectionType;
+};
+
 export type CalculateSpatialCoverageResult = {
   coverageKawasan?: CalculateSpatialCoverageKawasan;
   summary?: CalculateSpatialSummary;
