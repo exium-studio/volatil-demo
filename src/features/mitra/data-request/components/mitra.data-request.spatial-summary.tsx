@@ -31,7 +31,6 @@ export const MitraDataRequestSpatialSummary = memo(
       minBidangCount: propMinBidangCount,
       minKawasanHa: propMinKawasanHa,
       calculatedPolicy,
-      validation: propValidation,
       estimatedTotalPrice = 0,
       isPurchaseLimitValid,
       purchaseLimitMessage,
@@ -182,7 +181,7 @@ export const MitraDataRequestSpatialSummary = memo(
       );
     }
 
-    // Validation logic against purchase policies with OR logic
+    // Validation logic strictly computed in Frontend based on actual count vs minimum limit
     const isBidangBelowMin =
       totalBidangCount > 0 &&
       effectiveMinBidangCount > 0 &&
@@ -193,16 +192,16 @@ export const MitraDataRequestSpatialSummary = memo(
       effectiveMinKawasanHa > 0 &&
       totalKawasanAreaHa < effectiveMinKawasanHa;
 
-    // A basis is valid if it meets the minimum threshold (or explicitly confirmed by BE)
+    // Basis dinyatakan valid HANYA jika total count/area >= minimum batas beli
     const hasValidBidang =
-      propValidation?.isBidangValid !== undefined
-        ? propValidation.isBidangValid
-        : totalBidangCount >= effectiveMinBidangCount && totalBidangCount > 0;
+      totalBidangCount > 0 &&
+      effectiveMinBidangCount > 0 &&
+      totalBidangCount >= effectiveMinBidangCount;
 
     const hasValidKawasan =
-      propValidation?.isKawasanValid !== undefined
-        ? propValidation.isKawasanValid
-        : totalKawasanAreaHa >= effectiveMinKawasanHa && totalKawasanAreaHa > 0;
+      totalKawasanAreaHa > 0 &&
+      effectiveMinKawasanHa > 0 &&
+      totalKawasanAreaHa >= effectiveMinKawasanHa;
 
     const isBidangValid =
       totalBidangCount > 0 ? hasValidBidang : true;
@@ -211,18 +210,13 @@ export const MitraDataRequestSpatialSummary = memo(
       totalKawasanAreaHa > 0 ? hasValidKawasan : true;
 
     const hasAnyLimitViolation =
-      isBidangBelowMin ||
-      isKawasanBelowMin ||
-      isPurchaseLimitValid === false ||
-      (propValidation?.isValid === false && (!hasValidBidang || !hasValidKawasan));
+      isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
 
-    // Logika OR: Jika salah satu valid dan memiliki data (misal bidang 2.203 valid, kawasan 302.3 ha < 1000 ha), maka checkout tetap bisa dilakukan untuk yang valid
+    // Logika OR: Checkout hanya bisa jika minimal ada SATU basis yang benar-benar valid dan tidak di bawah minimum
     const isOrValidForCheckout =
-      (hasValidBidang && !isKawasanBelowMin) ||
-      (hasValidKawasan && !isBidangBelowMin) ||
-      (hasValidBidang || hasValidKawasan);
+      hasValidBidang || hasValidKawasan;
 
-    // Warning jika ada salah satu yang di bawah minimum tapi salah satunya valid
+    // Warning jika salah satu valid tapi basis lainnya berada di bawah batas minimum
     const isOrangeWarning =
       (hasValidBidang && isKawasanBelowMin) ||
       (hasValidKawasan && isBidangBelowMin);
