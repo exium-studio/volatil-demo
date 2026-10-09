@@ -119,7 +119,7 @@ export async function calculateSpatialCoverageStream(
   const token =
     typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
   const baseUrl = getApiBaseUrl();
-  const targetPath = `${baseUrl}/api/igt/data-request/calculate`;
+  const targetPath = `${baseUrl}/api/mitra/data-request/calculate/stream`;
   const url = baseUrl
     ? new URL(targetPath)
     : new URL(
@@ -176,10 +176,6 @@ export async function calculateSpatialCoverageStream(
         // fallback text
       }
       const err = new Error(errorMsg);
-      callbacks.onEvent?.({
-        type: "error",
-        message: errorMsg,
-      });
       callbacks.onError?.(err);
       return;
     }
@@ -269,20 +265,15 @@ export async function calculateSpatialCoverageStream(
               // ignore malformed completed JSON
             }
           } else if (currentEvent === "error") {
+            let errMsg = "Terjadi kesalahan kalkulasi spasial";
             try {
               const parsed = JSON.parse(currentData);
-              const errMsg =
-                parsed.message ?? "Terjadi kesalahan kalkulasi spasial";
-              const err = new Error(errMsg);
-              callbacks.onEvent?.({
-                type: "error",
-                message: errMsg,
-              });
-              callbacks.onError?.(err);
+              errMsg = parsed.message ?? errMsg;
             } catch {
-              const err = new Error("Terjadi kesalahan kalkulasi spasial");
-              callbacks.onError?.(err);
+              // ignore
             }
+            const err = new Error(errMsg);
+            callbacks.onError?.(err);
             try {
               await reader.cancel();
             } catch {
@@ -340,10 +331,6 @@ export async function calculateSpatialCoverageStream(
     }
     const err =
       error instanceof Error ? error : new Error("Stream connection failed");
-    callbacks.onEvent?.({
-      type: "error",
-      message: err.message,
-    });
     callbacks.onError?.(err);
   } finally {
     if (reader) {
@@ -354,4 +341,47 @@ export async function calculateSpatialCoverageStream(
       }
     }
   }
+}
+
+/**
+ * Direct JSON calculation API: POST /api/mitra/data-request/calculate
+ */
+export async function calculateSpatialCoverageJsonApi(
+  request: CalculateSpatialCoverageRequest,
+  signal?: AbortSignal,
+): Promise<CalculateSpatialCoverageResult> {
+  const baseUrl = getApiBaseUrl();
+  const endpoint = `${baseUrl}/api/mitra/data-request/calculate`;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(request),
+    signal,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorMsg = `Kalkulasi spasial gagal (${response.status})`;
+    try {
+      const parsed = JSON.parse(errorText);
+      errorMsg = parsed.message || errorMsg;
+    } catch {
+      // fallback
+    }
+    throw new Error(errorMsg);
+  }
+
+  const json = await response.json();
+  return normalizeSpatialCalculationResult(json);
 }
