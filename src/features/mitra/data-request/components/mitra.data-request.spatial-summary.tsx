@@ -210,8 +210,7 @@ export const MitraDataRequestSpatialSummary = memo(
       isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
 
     // Logika OR: Checkout hanya bisa jika minimal ada SATU basis yang benar-benar valid dan tidak di bawah minimum
-    const isOrValidForCheckout =
-      hasValidBidang || hasValidKawasan;
+    const isOrValidForCheckout = hasValidBidang || hasValidKawasan;
 
     // Warning jika salah satu valid tapi basis lainnya berada di bawah batas minimum
     const isOrangeWarning =
@@ -390,15 +389,16 @@ export const MitraDataRequestSpatialSummary = memo(
             <Alert.Description>
               <VStack align={"start"} gap={"2xs"} fontSize={"xs"}>
                 {!isBidangValid && (hasBidangLayer || totalBidangCount > 0) && (
-                  <P fontSize={"xs"}>
+                  <P>
                     {`• Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}
                   </P>
                 )}
-                {!isKawasanValid && (hasKawasanLayer || totalKawasanAreaHa > 0) && (
-                  <P fontSize={"xs"}>
-                    {`• Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
-                  </P>
-                )}
+                {!isKawasanValid &&
+                  (hasKawasanLayer || totalKawasanAreaHa > 0) && (
+                    <P>
+                      {`• Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
+                    </P>
+                  )}
               </VStack>
             </Alert.Description>
           </Alert.Root>

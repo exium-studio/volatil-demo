@@ -1190,26 +1190,34 @@ type MitraIgtLayersResponse = {
 
 ### Spatial Coverage & Limit Calculation Stream (PostGIS Streaming)
 
-- **Endpoint**: `POST /api/mitra/data-request/calculate/stream`
+- **Endpoint**: `POST /api/mitra/data-request/calculate/stream` _(SSE Stream)_ atau `POST /api/mitra/data-request/calculate` _(Direct JSON)_
 - **Akses**: `Mitra Only`
 - **Content-Type**: `application/json`
-- **Response Format**: Server-Sent Events (`text/event-stream`) / Line-delimited JSON stream
-- **Deskripsi**: Menjalankan kalkulasi spasial terpusat di server (PostGIS) untuk memotong (_spatial clipping_) fitur IGT terhadap polygon AOI, melakukan _ST_Union_ pada seluruh fitur beririsan bertipe kawasan, menghitung total bidang & luas hektar cakupan kawasan, mengevaluasi validitas terhadap _purchase limit_ mitra, dan mengalirkan progress real-time ke client.
+- **Header Autentikasi**: `Authorization: Bearer <token>`
+- **Query Autentikasi (khusus SSE / EventSource)**: `?token=<token>`
+- **Response Format**: Server-Sent Events (`text/event-stream`) / JSON
+- **Deskripsi**: Menjalankan kalkulasi spasial terpusat di server (PostGIS) untuk memotong (_spatial clipping_) fitur IGT terhadap polygon AOI, melakukan _ST_Union_ pada seluruh fitur beririsan bertipe kawasan, menghitung total bidang & luas hektar cakupan kawasan, mengevaluasi validitas terhadap _purchase limit_ mitra, dan mengembalikan rincian tarif serta status validitas.
 - **Request Body**:
 
 ```typescript
 type CalculateSpatialCoverageRequest = {
-  selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
-  cqlFilter?: string;
-  aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  layers: Array<{
-    layerId: string;
-    typeName: string;
+  selectionType: "catalog" | "upload_aoi" | "draw_aoi";
+  aoiPolygon: {
+    type: "Polygon" | "MultiPolygon";
+    coordinates: number[][][] | number[][][][];
+  };
+  items: Array<{
+    sourceLayerId: string;
+    typeName?: string;
     title?: string;
-    spatialBasis: "bidang" | "kawasan";
-    selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
-    cqlFilter?: string;
+    spatialBasis?: "bidang" | "kawasan";
   }>;
+  administrativeFilter?: {
+    kodeProvinsi?: string;
+    kodeKabupaten?: string;
+    kodeKecamatan?: string;
+    kodeDesa?: string;
+  };
 };
 ```
 
@@ -1219,19 +1227,51 @@ type CalculateSpatialCoverageRequest = {
 // Progress event
 type CalculateSpatialProgressEvent = {
   type: "progress";
-  stage: "downloading" | "clipping" | "unioning" | "calculating" | "validating";
+  stage: "downloading" | "clipping" | "union" | "validating" | "idle";
   percentage: number; // 0 - 100
   message: string;
-  currentLayerIndex?: number;
+  currentLayer?: number;
   totalLayers?: number;
-  processedFeatures?: number;
+  currentFeature?: number;
   totalFeatures?: number;
 };
 
-// Completed event (final payload)
+// Completed event (final payload) / Direct JSON response
 type CalculateSpatialCompletedEvent = {
   type: "completed";
   data: {
+    summary: {
+      bidang: {
+        unitPrice: number;
+        featureCount: number;
+        subtotalPrice: number;
+      };
+      kawasan: {
+        unitPrice: number;
+        areaHa: number;
+        subtotalPrice: number;
+      };
+      totalPrice: number;
+    };
+    policy: {
+      minimumBidangCount: number;
+      minimumKawasanHa: number;
+      pricePerBidang: number;
+      pricePerKawasanHa: number;
+    };
+    validation: {
+      isValid: boolean;
+      isBidangValid?: boolean;
+      isKawasanValid?: boolean;
+      message?: string;
+    };
+    coverageKawasan?: {
+      areaHa: number;
+      polygon: {
+        type: "Polygon" | "MultiPolygon";
+        coordinates: number[][][] | number[][][][];
+      };
+    };
     totalBidangCount: number;
     totalKawasanCount: number;
     totalKawasanAreaHa: number;
@@ -1240,14 +1280,18 @@ type CalculateSpatialCompletedEvent = {
     estimatedTotalPrice: number;
     isPurchaseLimitValid: boolean;
     purchaseLimitMessage?: string;
-    coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-    layersSummary: Array<{
-      layerId: string;
-      title: string;
+    coveragePolygon?: {
+      type: "Polygon" | "MultiPolygon";
+      coordinates: number[][][] | number[][][][];
+    } | null;
+    items: Array<{
+      sourceLayerId: string;
+      sourceLayerTitle: string;
       spatialBasis: "bidang" | "kawasan";
       featureCount: number;
-      areaHa: number;
-      subtotalPrice: number;
+      areaHa?: number;
+      unitPrice?: number;
+      subtotalPrice?: number;
     }>;
   };
 };
@@ -1256,6 +1300,7 @@ type CalculateSpatialCompletedEvent = {
 type CalculateSpatialErrorEvent = {
   type: "error";
   message: string;
+  code?: string;
 };
 ```
 
