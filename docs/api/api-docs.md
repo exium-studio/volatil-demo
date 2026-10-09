@@ -2158,11 +2158,16 @@ export type OrderStatus =
   | "requesting" // Permintaan Dibuat (Sedang Dikalkulasi Spasial di BE)
   | "preparing" // Penyiapan / kalkulasi pesanan
   | "pending_payment" // Menunggu Pembayaran
-  | "paid" // Terbayar
+  | "paid" // Terbayar / Lunas
+  | "transaction_expired" // Kode billing SIMPONI kedaluwarsa
+  | "transaction_failed" // Gagal bayar / transaksi pembayaran gagal
   | "processing" // Sedang Diproses (Interop Engine / Provisioning WMS)
   | "pending_review" // Menunggu Validasi Admin
+  | "pending_tte" // Menunggu Tanda Tangan Elektronik
   | "rejected" // Ditolak Admin
-  | "ready"; // Siap Digunakan
+  | "ready" // Siap Digunakan (Layanan Aktif WMS/WFS)
+  | "expired" // TTL Akses Data Habis
+  | "failed"; // Gagal
 ```
 
 ### 3. SSOT Status Pendaftaran Mitra (`MitraRegistrationStatus`)

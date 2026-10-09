@@ -535,6 +535,7 @@ const Content = (_props: GisContentProps) => {
 
       {/* Splitter — content panel + transparent spacer (no map inside) */}
       <Splitter.Root
+        variant={"plain"}
         flex={1}
         direction={isSmallViewport ? "vertical" : "horizontal"}
         defaultLayout={DEFAULT_SPLITTER_SIZE}

@@ -309,11 +309,25 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     noticeDescription: "Masa aktif layanan data spasial telah berakhir.",
   },
   failed: {
-    label: "Gagal",
+    label: "Transaksi Gagal",
     colorPalette: "red",
     icon: AlertCircleIcon,
     iconColor: "red.fg",
     noticeDescription: "Layanan data spasial gagal diproses.",
+  },
+  transaction_expired: {
+    label: "Pembayaran Kedaluwarsa",
+    colorPalette: "gray",
+    icon: TimerOffIcon,
+    iconColor: "gray.fg",
+    noticeDescription: "Batas waktu pembayaran SIMPONI telah kedaluwarsa.",
+  },
+  transaction_failed: {
+    label: "Transaksi Gagal",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+    noticeDescription: "Terjadi kesalahan/kegagalan transaksi pembayaran.",
   },
 };
 

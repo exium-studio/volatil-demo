@@ -28,7 +28,9 @@ export type OrderStatus =
   | "rejected"
   | "ready"
   | "expired"
-  | "failed";
+  | "failed"
+  | "transaction_expired"
+  | "transaction_failed";
 
 export type OrderProvisionStatus = OrderStatus;
 
