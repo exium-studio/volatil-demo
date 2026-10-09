@@ -33,7 +33,6 @@ export const MitraDataRequestSpatialSummary = memo(
       calculatedPolicy,
       estimatedTotalPrice = 0,
       isPurchaseLimitValid,
-      purchaseLimitMessage,
       isCalculating: propIsCalculating,
       progressMessage: propProgressMessage,
       progressPercentage: propProgressPercentage,
