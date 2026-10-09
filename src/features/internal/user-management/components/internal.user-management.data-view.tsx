@@ -153,7 +153,7 @@ export const InternalUserManagementDataView = () => {
         icon: (user: UserManagementItem) =>
           user.status === "active" ? ShieldAlertIcon : CheckCircleIcon,
         colorPalette: (user: UserManagementItem) =>
-          user.status === "active" ? "red" : "green",
+          user.status === "active" ? "orange" : "green",
         hidden: (user: UserManagementItem) => user.role !== "mitra",
         modal: {
           triggerComponent: (user: UserManagementItem) => (
@@ -172,7 +172,7 @@ export const InternalUserManagementDataView = () => {
               confirmLabel={
                 user.status === "active" ? "Nonaktifkan" : "Aktifkan"
               }
-              colorPalette={user.status === "active" ? "red" : "green"}
+              colorPalette={user.status === "active" ? "orange" : "green"}
               onConfirm={() => {
                 updateStatusMutation.mutate({
                   id: user.id,
