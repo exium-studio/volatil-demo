@@ -319,7 +319,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
               )}
             </VStack>
 
-            <HStack align={"center"} gap={"sm"}>
+            <HStack align={"center"} gap={"xs"}>
               {confirmedPolygon && map && (
                 <>
                   <Tooltip

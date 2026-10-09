@@ -354,78 +354,78 @@ export const MitraDataRequestUploadAoiTabsContent = (
         <>
           {/* Step 1: Upload Dropzone (No File Uploaded Yet) */}
           {!uploadedFile && !confirmedFeature && (
-              <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
-                <FileInput
-                  variant={"dropzone"}
-                  label={
-                    "Upload file AOI (.shp/.zip atau .geojson/.json) untuk mengambil data IGT"
+            <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
+              <FileInput
+                variant={"dropzone"}
+                label={
+                  "Upload file AOI (.shp/.zip atau .geojson/.json) untuk mengambil data IGT"
+                }
+                accept={[
+                  ".zip",
+                  ".shp",
+                  ".geojson",
+                  ".json",
+                  "application/zip",
+                  "application/x-zip-compressed",
+                ]}
+                maxFiles={1}
+                maxFileSize={10 * 1024 * 1024}
+                onFileChange={({ acceptedFiles }) => {
+                  if (!isEmptyArray(acceptedFiles)) {
+                    void processFile(acceptedFiles[0]);
                   }
-                  accept={[
-                    ".zip",
-                    ".shp",
-                    ".geojson",
-                    ".json",
-                    "application/zip",
-                    "application/x-zip-compressed",
-                  ]}
-                  maxFiles={1}
-                  maxFileSize={10 * 1024 * 1024}
-                  onFileChange={({ acceptedFiles }) => {
-                    if (!isEmptyArray(acceptedFiles)) {
-                      void processFile(acceptedFiles[0]);
-                    }
-                  }}
-                  dropzoneProps={{
-                    flex: 1,
-                    h: "full",
-                    minH: "0",
-                  }}
-                  dropzoneButtonProps={{
-                    primary: true,
-                    children: (
-                      <>
-                        <AppIcon icon={FilePlusIcon} />
-                        {"Upload Berkas AOI"}
-                      </>
-                    ),
-                  }}
-                  flex={1}
-                  h={"full"}
-                />
-              </Box>
-            )}
+                }}
+                dropzoneProps={{
+                  flex: 1,
+                  h: "full",
+                  minH: "0",
+                }}
+                dropzoneButtonProps={{
+                  primary: true,
+                  children: (
+                    <>
+                      <AppIcon icon={FilePlusIcon} />
+                      {"Upload Berkas AOI"}
+                    </>
+                  ),
+                }}
+                flex={1}
+                h={"full"}
+              />
+            </Box>
+          )}
 
-            {/* Loading skeleton while parsing */}
-            {uploadedFile?.status === "parsing" && (
-              <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
-            )}
+          {/* Loading skeleton while parsing */}
+          {uploadedFile?.status === "parsing" && (
+            <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
+          )}
 
-            {/* Step 2: Uploaded State — Polygon Selection List */}
-            {uploadedFile &&
-              uploadedFile.status === "done" &&
-              !confirmedFeature && (
-                <UploadAoiFeatureList
-                  file={uploadedFile}
-                  selectedFeatureId={selectedFeatureId}
-                  onSelectFeature={handleSelectFeature}
-                  onToggleFeatureVisibility={handleToggleFeatureVisibility}
-                  onConfirmSelection={handleConfirmSelection}
-                  onResetFile={handleResetFile}
-                />
-              )}
-
-            {/* Step 3: Confirmed AOI State — Query & IGT Layer Data View */}
-            {confirmedFeature && aoiCqlFilter && (
-              <UploadAoiConfirmedAttributeList
-                aoiCqlFilter={aoiCqlFilter}
-                confirmedPolygon={confirmedFeature.polygon}
-                isActive={isActive}
-                onResetAoi={handleResetAoi}
+          {/* Step 2: Uploaded State — Polygon Selection List */}
+          {uploadedFile &&
+            uploadedFile.status === "done" &&
+            !confirmedFeature && (
+              <UploadAoiFeatureList
+                file={uploadedFile}
+                selectedFeatureId={selectedFeatureId}
+                onSelectFeature={handleSelectFeature}
+                onToggleFeatureVisibility={handleToggleFeatureVisibility}
+                onConfirmSelection={handleConfirmSelection}
+                onResetFile={handleResetFile}
               />
             )}
-          </>
-        )}
-      </Tabs.Content>
+
+          {/* Step 3: Confirmed AOI State — Query & IGT Layer Data View */}
+          {confirmedFeature && aoiCqlFilter && (
+            <UploadAoiConfirmedAttributeList
+              aoiCqlFilter={aoiCqlFilter}
+              confirmedPolygon={confirmedFeature.polygon}
+              isActive={isActive}
+              onResetAoi={handleResetAoi}
+            />
+          )}
+        </>
+      )}
+    </Tabs.Content>
   );
 };
 
@@ -464,7 +464,7 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
           justify={"space-between"}
           align={"center"}
           wrap={"wrap"}
-          gap={2}
+          gap={"sm"}
         >
           <VStack align={"start"} gap={0}>
             <P fontWeight={"semibold"} fontSize={"md"}>
@@ -552,13 +552,13 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
                         <VStack align={"start"} gap={0} flex={1} minW={0}>
                           <P
                             fontWeight={isSelected ? "semibold" : "medium"}
-                            fontSize={"sm"}
                             truncate
                           >
                             {feat.name}
                           </P>
+
                           {feat.areaHa > 0 && (
-                            <P fontSize={"xs"} color={"fg.subtle"}>
+                            <P fontSize={"sm"} color={"fg.subtle"}>
                               {`Luas: ${formatNumber(feat.areaHa, { maximumFractionDigits: 2 })} ha`}
                             </P>
                           )}
@@ -722,7 +722,7 @@ const UploadAoiConfirmedAttributeList = memo(
                 )}
               </VStack>
 
-              <HStack align={"center"} gap={"sm"}>
+              <HStack align={"center"} gap={"xs"}>
                 {confirmedPolygon && map && (
                   <>
                     <Tooltip

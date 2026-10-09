@@ -216,18 +216,6 @@ export const MitraDataRequestSpatialSummary = memo(
             </HStack>
 
             <HStack align={"center"} gap={"xs"}>
-              {onFlyToBidang && (
-                <Tooltip content={"Zoom ke Cakupan Bidang"}>
-                  <IconButton
-                    variant={"ghost"}
-                    onClick={onFlyToBidang}
-                    aria-label={"Zoom ke Cakupan Bidang"}
-                  >
-                    <AppIcon icon={FocusIcon} />
-                  </IconButton>
-                </Tooltip>
-              )}
-
               <Switch
                 checked={isBidangVisible}
                 disabled={isFetchingBidang}
@@ -238,6 +226,18 @@ export const MitraDataRequestSpatialSummary = memo(
                     : "Tampilkan Cakupan Bidang"
                 }
               />
+
+              {onFlyToBidang && (
+                <Tooltip content={"Zoom ke Cakupan Bidang"}>
+                  <IconButton
+                    variant={"outline"}
+                    onClick={onFlyToBidang}
+                    aria-label={"Zoom ke Cakupan Bidang"}
+                  >
+                    <AppIcon icon={FocusIcon} />
+                  </IconButton>
+                </Tooltip>
+              )}
             </HStack>
           </HStack>
         )}
@@ -250,18 +250,6 @@ export const MitraDataRequestSpatialSummary = memo(
             </HStack>
 
             <HStack gap={"xs"} align={"center"}>
-              {onFlyToCoverage && (
-                <Tooltip content={"Zoom ke Cakupan Kawasan"}>
-                  <IconButton
-                    variant={"ghost"}
-                    onClick={onFlyToCoverage}
-                    aria-label={"Zoom ke Cakupan Kawasan"}
-                  >
-                    <AppIcon icon={FocusIcon} />
-                  </IconButton>
-                </Tooltip>
-              )}
-
               <Switch
                 checked={isCoverageVisible}
                 onCheckedChange={onToggleCoverageVisible}
@@ -271,6 +259,18 @@ export const MitraDataRequestSpatialSummary = memo(
                     : "Tampilkan Cakupan Kawasan"
                 }
               />
+
+              {onFlyToCoverage && (
+                <Tooltip content={"Zoom ke Cakupan Kawasan"}>
+                  <IconButton
+                    variant={"outline"}
+                    onClick={onFlyToCoverage}
+                    aria-label={"Zoom ke Cakupan Kawasan"}
+                  >
+                    <AppIcon icon={FocusIcon} />
+                  </IconButton>
+                </Tooltip>
+              )}
             </HStack>
           </HStack>
         )}

@@ -209,7 +209,7 @@ export const MitraDataRequestCatalogTabsContent = (
                 )}
               </VStack>
 
-              <HStack align={"center"} gap={"sm"}>
+              <HStack align={"center"} gap={"xs"}>
                 {adminBoundaryQuery.aoiPolygon && map && (
                   <>
                     <Tooltip

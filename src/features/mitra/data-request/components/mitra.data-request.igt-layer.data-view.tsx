@@ -798,8 +798,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
             flexShrink={0}
           >
             {/* Left: Search Bar */}
-            <HStack gap={"sm"} flex={1} minW={"220px"}>
+            <HStack gap={"sm"} flex={1} w={"240px"} maxW={"240px"}>
               <SearchInput
+                w={"full"}
                 placeholder={"Cari nama / layer IGT"}
                 value={searchRaw}
                 onValueChange={(val) => setSearchRaw(val)}
