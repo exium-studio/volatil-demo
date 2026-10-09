@@ -11,18 +11,20 @@ import { NoDataState } from "@/design-system/components/feedback/ui/state.no-dat
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
+import { to2DGeometry } from "@/design-system/components/map/utils/geometry";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
 import { flyToCartGeometry } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { MitraDataRequestSpatialSummary } from "@/features/mitra/data-request/components/mitra.data-request.spatial-summary";
@@ -36,9 +38,8 @@ import type {
   BasisFilterType,
   MitraDataRequestIgtLayerDataViewProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
-import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
-import { to2DGeometry } from "@/design-system/components/map/utils/geometry";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -48,7 +49,6 @@ import { IconDatabaseOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { FocusIcon, ShoppingCartIcon, TablePropertiesIcon } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
-import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 
 const BASIS_FILTER_OPTIONS: Array<{ value: BasisFilterType; label: string }> = [
   { value: "all", label: "Semua" },
@@ -140,9 +140,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
     const [basisFilter, setBasisFilter] = useState<BasisFilterType>("all");
-    const [selectedTableItems, setSelectedTableItems] = useState<
-      FormattedListItem<IgtLayerItem>[]
-    >([]);
 
     // Mutations
     const addToCartMultipleMutation = useAddToCartMultipleLayers();
@@ -341,27 +338,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
     // Handlers — Cart actions (Direct submit to BE without local spatial processing)
     const handleAddToCartSelected = () => {
-      let targetLayers =
-        selectedTableItems.length > 0
-          ? (selectedTableItems
-              .map((item) => item.data)
-              .filter(Boolean) as IgtLayerItem[])
-          : filteredLayers;
-
-      // Jika user klik tambah semua dan bidang tidak memenuhi batas tapi kawasan memenuhi:
-      // otomatis hanya tambahkan layer kawasan yang valid
-      if (selectedTableItems.length === 0) {
-        if (isBidangBelowMin && hasValidKawasan) {
-          targetLayers = targetLayers.filter(
-            (layer) => layer.spatialBasis !== "bidang",
-          );
-        } else if (isKawasanBelowMin && hasValidBidang) {
-          targetLayers = targetLayers.filter(
-            (layer) => layer.spatialBasis !== "kawasan",
-          );
-        }
-      }
-
+      const targetLayers = filteredLayers;
       const validLayers = targetLayers.filter((layer) =>
         Boolean(layer?.wfs?.wfsTypeName || layer?.id),
       );
@@ -591,15 +568,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
       minKawasanHa > 0 &&
       totalKawasanAreaHa < minKawasanHa;
 
-    const hasValidBidang =
-      totalBidangCount >= minBidangCount && totalBidangCount > 0;
-    const hasValidKawasan =
-      totalKawasanAreaHa >= minKawasanHa && totalKawasanAreaHa > 0;
-
-    // Logika OR: jika limit bidang tidak terpenuhi tapi kawasan terpenuhi (atau sebaliknya), maka tetap valid untuk checkout
-    const hasValidAny = hasValidBidang || hasValidKawasan;
-
-    const hasSelectedLayers = selectedTableItems.length > 0;
     const isShowLoading =
       isLoadingLayers ||
       (showFilter && adminBoundaryQuery.isLoading) ||
@@ -610,53 +578,17 @@ export const MitraDataRequestIgtLayerDataView = memo(
       calculationResult?.isPurchaseLimitValid ?? true;
     const purchaseLimitMessage = calculationResult?.purchaseLimitMessage;
 
-    // Cek seleksi layer jika ada yang dipilih
-    const selectedLayers = selectedTableItems
-      .map((item) => item.data)
-      .filter(Boolean) as IgtLayerItem[];
-    const selectedHasBidang = selectedLayers.some(
-      (layer) => (layer.igtBasis ?? layer.spatialBasis) === "bidang",
-    );
-    const selectedHasKawasan = selectedLayers.some(
-      (layer) => (layer.igtBasis ?? layer.spatialBasis) === "kawasan",
-    );
-
-    let isSelectionLimitInvalid = false;
-    if (hasSelectedLayers) {
-      if (selectedHasBidang && !selectedHasKawasan && isBidangBelowMin) {
-        isSelectionLimitInvalid = true;
-      } else if (
-        selectedHasKawasan &&
-        !selectedHasBidang &&
-        isKawasanBelowMin
-      ) {
-        isSelectionLimitInvalid = true;
-      } else if (
-        selectedHasBidang &&
-        selectedHasKawasan &&
-        isBidangBelowMin &&
-        isKawasanBelowMin
-      ) {
-        isSelectionLimitInvalid = true;
-      }
-    } else {
-      // Jika tambah semua: invalid hanya jika TIDAK ADA yang valid sama sekali
-      if (
-        (isBidangBelowMin && isKawasanBelowMin) ||
-        (isBidangBelowMin && isEmptyArray(kawasanLayers)) ||
-        (isKawasanBelowMin && isEmptyArray(bidangLayers)) ||
-        (calculationResult?.isPurchaseLimitValid === false && !hasValidAny)
-      ) {
-        isSelectionLimitInvalid = true;
-      }
-    }
+    // Option A: Tombol "Tambah semua layer" HANYA aktif jika seluruh basis yang ada di list lolos threshold minimum masing-masing.
+    const isAllLayersLimitInvalid =
+      (bidangLayers.length > 0 && isBidangBelowMin) ||
+      (kawasanLayers.length > 0 && isKawasanBelowMin);
 
     const isCartDisabled =
       !hasFilteredLayers ||
       addToCartMultipleMutation.isPending ||
       isShowLoading ||
       isCalculating ||
-      isSelectionLimitInvalid;
+      isAllLayersLimitInvalid;
 
     const isBidangDisabled =
       !hasFilteredLayers ||
@@ -918,11 +850,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
-                canBatchSelect={true}
-                selectedItems={selectedTableItems}
-                onSelectedItemChange={({ selectedItems }) =>
-                  setSelectedTableItems(selectedItems)
-                }
                 virtualized={false}
                 withNumbering={true}
                 roundedTop={0}
@@ -944,8 +871,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} flexShrink={0}>
           {/* Action Buttons */}
           <VStack w={"full"} gap={"xs"}>
-            {isSelectionLimitInvalid && purchaseLimitMessage ? (
-              <Tooltip content={purchaseLimitMessage}>
+            {isAllLayersLimitInvalid &&
+            (bidangLimitTooltip || kawasanLimitTooltip) ? (
+              <Tooltip content={bidangLimitTooltip ?? kawasanLimitTooltip}>
                 <VStack w={"full"} align={"stretch"}>
                   <Button
                     primary
@@ -955,9 +883,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     onClick={handleAddToCartSelected}
                   >
                     <AppIcon icon={ShoppingCartIcon} />
-                    {hasSelectedLayers
-                      ? `Tambah ${selectedTableItems.length} layer terpilih ke keranjang`
-                      : `Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
+                    {`Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
                   </Button>
                 </VStack>
               </Tooltip>
@@ -970,9 +896,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 onClick={handleAddToCartSelected}
               >
                 <AppIcon icon={ShoppingCartIcon} />
-                {hasSelectedLayers
-                  ? `Tambah ${selectedTableItems.length} layer terpilih ke keranjang`
-                  : `Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
+                {`Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
               </Button>
             )}
 

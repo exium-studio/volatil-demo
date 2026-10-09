@@ -294,7 +294,8 @@ export const useMapFeatureInfo = (
     if (!map) return;
 
     const handleMapClick = async (e: maplibregl.MapMouseEvent) => {
-      if (useMapDrawStore.getState().isDrawing) return;
+      const drawState = useMapDrawStore.getState();
+      if (drawState.isDrawing || drawState.points.length > 0) return;
 
       const activeEnabledIds = useMapLayerStore.getState().enabledLayerIds;
       const wmsVisible = useMapLayerStore.getState().wmsVisible;

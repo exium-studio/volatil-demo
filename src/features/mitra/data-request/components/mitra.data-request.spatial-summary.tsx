@@ -18,7 +18,7 @@ import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricin
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestSpatialSummaryProps } from "@/features/mitra/data-request/types/mitra.data-request.spatial-summary.type";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { FocusIcon, ShieldAlertIcon } from "lucide-react";
+import { FocusIcon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraDataRequestSpatialSummary = memo(
@@ -384,31 +384,34 @@ export const MitraDataRequestSpatialSummary = memo(
             variant={"subtle"}
             mt={1}
           >
-            <AppIcon icon={ShieldAlertIcon} mt={"1px"} />
+            <Alert.Indicator />
 
-            <Alert.Description>
-              <List.Root
-                variant={"plain"}
-                fontSize={"xs"}
-                color={"fg.error"}
-                align={"start"}
-                gap={"2xs"}
-              >
-                {!isBidangValid && (
-                  <List.Item>
-                    <List.Indicator color={"fg.error"}>{"•"}</List.Indicator>
-                    {`Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}
-                  </List.Item>
-                )}
+            <Alert.Content>
+              <Alert.Title>Peringatan batas minimum pesanan</Alert.Title>
 
-                {!isKawasanValid && (
-                  <List.Item>
-                    <List.Indicator color={"fg.error"}>{"•"}</List.Indicator>
-                    {`Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
-                  </List.Item>
-                )}
-              </List.Root>
-            </Alert.Description>
+              <Alert.Description>
+                <List.Root
+                  variant={"plain"}
+                  fontSize={"xs"}
+                  align={"start"}
+                  gap={"2xs"}
+                >
+                  {!isBidangValid && (
+                    <List.Item>
+                      <List.Indicator color={"fg.error"}>{"•"}</List.Indicator>
+                      {`Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}
+                    </List.Item>
+                  )}
+
+                  {!isKawasanValid && (
+                    <List.Item>
+                      <List.Indicator color={"fg.error"}>{"•"}</List.Indicator>
+                      {`Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
+                    </List.Item>
+                  )}
+                </List.Root>
+              </Alert.Description>
+            </Alert.Content>
           </Alert.Root>
         )}
       </VStack>

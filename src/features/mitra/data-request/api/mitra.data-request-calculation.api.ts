@@ -1,10 +1,10 @@
 import type {
   CalculateSpatialCalculatedItem,
-  CalculateSpatialCoverageResult,
   CalculateSpatialCoverageRequest,
+  CalculateSpatialCoverageResult,
   CalculateSpatialStreamCallbacks,
-  RawCalculateSpatialResponse,
   RawCalculateSpatialItem,
+  RawCalculateSpatialResponse,
 } from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
 import { getApiBaseUrl } from "@/shared/utils/url/url.utils";
 
@@ -358,47 +358,4 @@ export async function calculateSpatialCoverageStream(
       }
     }
   }
-}
-
-/**
- * Direct JSON calculation API: POST /api/mitra/data-request/calculate
- */
-export async function calculateSpatialCoverageJsonApi(
-  request: CalculateSpatialCoverageRequest,
-  signal?: AbortSignal,
-): Promise<CalculateSpatialCoverageResult> {
-  const baseUrl = getApiBaseUrl();
-  const endpoint = `${baseUrl}/api/mitra/data-request/calculate`;
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(request),
-    signal,
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    let errorMsg = `Kalkulasi spasial gagal (${response.status})`;
-    try {
-      const parsed = JSON.parse(errorText);
-      errorMsg = parsed.message || errorMsg;
-    } catch {
-      // fallback
-    }
-    throw new Error(errorMsg);
-  }
-
-  const json = await response.json();
-  return normalizeSpatialCalculationResult(json);
 }

@@ -443,7 +443,7 @@ export const renderCartMapLayers = (
             source: bidIds.sourceId,
             paint: {
               "fill-color": colors.fill,
-              "fill-opacity": 0.25,
+              "fill-opacity": 0,
             },
           } as maplibregl.LayerSpecification,
           beforeId,
@@ -453,6 +453,7 @@ export const renderCartMapLayers = (
       }
     } else {
       map.setPaintProperty(bidIds.fillId, "fill-color", colors.fill);
+      map.setPaintProperty(bidIds.fillId, "fill-opacity", 0);
       map.setLayoutProperty(bidIds.fillId, "visibility", "visible");
     }
 
