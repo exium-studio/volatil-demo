@@ -235,8 +235,11 @@ const SplitterResizeTrigger = forwardRef<
         cursor={isVertical ? "row-resize" : "col-resize"}
         outline={"none"}
         border={"none"}
-        bg={isPlain ? "transparent" : "bg.muted"}
+        bg={isPlain ? "transparent" : "border.subtle"}
         onDoubleClick={handleDoubleClick}
+        _hover={{
+          bg: "transparent",
+        }}
         {...restProps}
       >
         {/* Expanded hit area so user can easily grab and drag */}
@@ -250,7 +253,7 @@ const SplitterResizeTrigger = forwardRef<
           cursor={isVertical ? "row-resize" : "col-resize"}
           transition={"background 150ms ease"}
           _groupHover={{
-            bg: isPlain || transparentTrigger ? "transparent" : "bg.muted",
+            bg: isPlain || transparentTrigger ? "transparent" : "border.subtle",
           }}
         />
 
