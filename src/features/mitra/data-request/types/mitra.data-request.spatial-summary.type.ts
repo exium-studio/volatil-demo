@@ -24,6 +24,7 @@ export type MitraDataRequestSpatialSummaryProps = {
   hasAoiPolygon?: boolean;
   hasCoveragePolygon?: boolean;
   hasBidangLayer?: boolean;
+  hasKawasanLayer?: boolean;
   aoiColorPalette?: string;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;

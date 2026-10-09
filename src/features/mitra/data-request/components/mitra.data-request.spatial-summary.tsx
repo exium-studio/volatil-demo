@@ -39,6 +39,7 @@ export const MitraDataRequestSpatialSummary = memo(
       progressPercentage: propProgressPercentage,
       hasCoveragePolygon = false,
       hasBidangLayer = false,
+      hasKawasanLayer = false,
       isCoverageVisible = true,
       isBidangVisible = true,
       isFetchingBidang = false,
@@ -183,12 +184,12 @@ export const MitraDataRequestSpatialSummary = memo(
 
     // Validation logic strictly computed in Frontend based on actual count vs minimum limit
     const isBidangBelowMin =
-      totalBidangCount > 0 &&
+      (hasBidangLayer || totalBidangCount > 0) &&
       effectiveMinBidangCount > 0 &&
       totalBidangCount < effectiveMinBidangCount;
 
     const isKawasanBelowMin =
-      totalKawasanAreaHa > 0 &&
+      (hasKawasanLayer || totalKawasanAreaHa > 0) &&
       effectiveMinKawasanHa > 0 &&
       totalKawasanAreaHa < effectiveMinKawasanHa;
 
@@ -203,11 +204,8 @@ export const MitraDataRequestSpatialSummary = memo(
       effectiveMinKawasanHa > 0 &&
       totalKawasanAreaHa >= effectiveMinKawasanHa;
 
-    const isBidangValid =
-      totalBidangCount > 0 ? hasValidBidang : true;
-
-    const isKawasanValid =
-      totalKawasanAreaHa > 0 ? hasValidKawasan : true;
+    const isBidangValid = hasValidBidang && isPurchaseLimitValid !== false;
+    const isKawasanValid = hasValidKawasan && isPurchaseLimitValid !== false;
 
     const hasAnyLimitViolation =
       isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
@@ -224,7 +222,7 @@ export const MitraDataRequestSpatialSummary = memo(
     const displayAlertMessage = (() => {
       if (purchaseLimitMessage) return purchaseLimitMessage;
       if (isBidangBelowMin && isKawasanBelowMin) {
-        return `Minimum pembelian belum terpenuhi (Bidang: min ${formatNumber(effectiveMinBidangCount)} bidang, Kawasan: min ${formatNumber(effectiveMinKawasanHa)} ha).`;
+        return `Minimum pembelian belum terpenuhi (Bidang: min ${formatNumber(effectiveMinBidangCount)} bidang [saat ini: ${formatNumber(totalBidangCount)}], Kawasan: min ${formatNumber(effectiveMinKawasanHa)} ha [saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha]).`;
       }
       if (isBidangBelowMin) {
         return `Minimum pembelian untuk bidang tanah adalah ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`;
@@ -306,26 +304,18 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
 
               <P>
-                {totalBidangCount > 0 ? (
-                  <>
-                    <TNum>{formatNumber(totalBidangCount)}</TNum>
-                    {" bidang × "}
-                    <FormatNumber
-                      value={effectivePricePerBidang}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </>
-                ) : (
-                  "-"
-                )}
+                <TNum>{formatNumber(totalBidangCount)}</TNum>
+                {" bidang × "}
+                <FormatNumber
+                  value={effectivePricePerBidang}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
               </P>
             </VStack>
 
-            {totalBidangCount === 0 ? (
-              <P fontWeight={"semibold"}>{"-"}</P>
-            ) : isBidangValid ? (
+            {isBidangValid ? (
               <P fontWeight={"semibold"}>
                 <FormatNumber
                   value={calculatedSubtotalBidang}
@@ -349,30 +339,22 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
 
               <P>
-                {totalKawasanAreaHa > 0 ? (
-                  <>
-                    <TNum>
-                      {formatNumber(totalKawasanAreaHa, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </TNum>
-                    {" ha × "}
-                    <FormatNumber
-                      value={effectivePricePerKawasanHa}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </>
-                ) : (
-                  "-"
-                )}
+                <TNum>
+                  {formatNumber(totalKawasanAreaHa, {
+                    maximumFractionDigits: 2,
+                  })}
+                </TNum>
+                {" ha × "}
+                <FormatNumber
+                  value={effectivePricePerKawasanHa}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
               </P>
             </VStack>
 
-            {totalKawasanAreaHa === 0 ? (
-              <P fontWeight={"semibold"}>{"-"}</P>
-            ) : isKawasanValid ? (
+            {isKawasanValid ? (
               <P fontWeight={"semibold"}>
                 <FormatNumber
                   value={calculatedSubtotalKawasan}
@@ -403,13 +385,9 @@ export const MitraDataRequestSpatialSummary = memo(
                   maximumFractionDigits={0}
                 />
               </P>
-            ) : totalBidangCount > 0 || totalKawasanAreaHa > 0 ? (
+            ) : (
               <P fontSize={"md"} fontWeight={"semibold"} color={"fg.error"}>
                 {"Tidak valid"}
-              </P>
-            ) : (
-              <P fontSize={"lg"} fontWeight={"bold"} color={"fg.subtle"}>
-                {"-"}
               </P>
             )}
           </HStack>

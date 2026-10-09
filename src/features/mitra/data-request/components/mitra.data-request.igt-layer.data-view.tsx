@@ -727,7 +727,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 purchaseLimitMessage={purchaseLimitMessage}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
                 hasBidangLayer={
-                  bidangTargetLayers.length > 0 || totalBidangCount > 0
+                  bidangLayers.length > 0 || totalBidangCount > 0
+                }
+                hasKawasanLayer={
+                  kawasanLayers.length > 0 || totalKawasanAreaHa > 0
                 }
                 isCoverageVisible={isCoverageVisible}
                 isBidangVisible={isBidangVisible}
