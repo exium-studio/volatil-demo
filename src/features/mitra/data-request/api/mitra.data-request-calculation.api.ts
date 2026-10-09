@@ -26,6 +26,8 @@ export const normalizeSpatialCalculationResult = (
   }
 
   const rawData = raw.data ?? raw;
+  const calculationToken = rawData.calculationToken;
+  const expiresInSeconds = rawData.expiresInSeconds;
   const coverageKawasan = rawData.coverageKawasan;
   const summary = rawData.summary;
   const validation = rawData.validation;
@@ -107,6 +109,8 @@ export const normalizeSpatialCalculationResult = (
     coverageKawasan?.polygon ?? rawData.coveragePolygon ?? null;
 
   return {
+    calculationToken,
+    expiresInSeconds,
     coverageKawasan,
     summary,
     policy,

@@ -336,7 +336,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       flyToCartGeometry(map, effectiveAoiPolygon);
     }, [map, effectiveAoiPolygon, selectionType]);
 
-    // Handlers — Cart actions (Direct submit to BE without local spatial processing)
+    // Handlers — Cart actions (Direct submit to BE with calculationToken)
     const handleAddToCartSelected = () => {
       const targetLayers = filteredLayers;
       const validLayers = targetLayers.filter((layer) =>
@@ -357,6 +357,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
+        calculationToken: calculationResult?.calculationToken,
+        targetBasis: "all",
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
@@ -388,6 +390,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
+        calculationToken: calculationResult?.calculationToken,
+        targetBasis: "bidang",
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
@@ -419,6 +423,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
+        calculationToken: calculationResult?.calculationToken,
+        targetBasis: "kawasan",
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({

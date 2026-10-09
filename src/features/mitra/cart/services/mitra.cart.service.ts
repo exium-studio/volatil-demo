@@ -262,7 +262,7 @@ export async function createCartOrder(
       cqlFilter: payload.cqlFilter,
       createdAt: new Date().toISOString(),
       totalPrice: 0,
-      items: payload.items.map((it, idx) => ({
+      items: (payload.items ?? []).map((it, idx) => ({
         id: `coi-${Date.now()}-${idx}`,
         sourceLayerId: it.sourceLayerId ?? "geonode:layer",
         sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
@@ -292,7 +292,7 @@ export async function createCartOrder(
         cqlFilter: payload.cqlFilter,
         createdAt: new Date().toISOString(),
         totalPrice: 0,
-        items: payload.items.map((it, idx) => ({
+        items: (payload.items ?? []).map((it, idx) => ({
           id: `coi-${Date.now()}-${idx}`,
           sourceLayerId: it.sourceLayerId ?? "geonode:layer",
           sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,

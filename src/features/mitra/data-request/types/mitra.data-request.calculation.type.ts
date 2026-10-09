@@ -24,7 +24,7 @@ export type CalculateSpatialItemParam = {
 export type CalculateSpatialCoverageRequest = {
   selectionType: SelectionType;
   aoiPolygon: GeoJSON.Polygon | GeoJSON.MultiPolygon;
-  items: CalculateSpatialItemParam[];
+  items?: CalculateSpatialItemParam[];
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;
@@ -107,6 +107,8 @@ export type RawCalculateSpatialPolicy = {
 
 export type RawCalculateSpatialResponse = {
   data?: RawCalculateSpatialResponse;
+  calculationToken?: string;
+  expiresInSeconds?: number;
   coverageKawasan?: CalculateSpatialCoverageKawasan;
   summary?: CalculateSpatialSummary;
   policy?: RawCalculateSpatialPolicy;
@@ -126,6 +128,8 @@ export type RawCalculateSpatialResponse = {
 };
 
 export type CalculateSpatialCoverageResult = {
+  calculationToken?: string;
+  expiresInSeconds?: number;
   coverageKawasan?: CalculateSpatialCoverageKawasan;
   summary?: CalculateSpatialSummary;
   policy?: CalculateSpatialPolicy;

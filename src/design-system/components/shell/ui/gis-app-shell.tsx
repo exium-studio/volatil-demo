@@ -476,7 +476,8 @@ const Content = (_props: GisContentProps) => {
         minW={[0, null, "360px"]}
         w={"full"}
         minH={"300px"}
-        bg={"bg.canvas"}
+        layerStyle={"frosted"}
+        // bg={"bg.canvas"}
         pointerEvents={"auto"}
       >
         <Outlet />
@@ -518,6 +519,7 @@ const Content = (_props: GisContentProps) => {
     <Splitter.ResizeTrigger
       key={"trigger"}
       id={isSmallViewport ? "spacer:content" : "content:spacer"}
+      variant={"plain"}
       pointerEvents={"auto"}
       onDoubleClick={() => {
         setSplitterSize(SPLITTER_KEY, DEFAULT_SPLITTER_SIZE);

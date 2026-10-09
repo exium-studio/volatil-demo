@@ -153,9 +153,11 @@ export type CartOrderItemPayload = {
 
 export type AddToCartOrderRequest = {
   selectionType: SelectionType;
+  calculationToken?: string;
+  targetBasis?: "bidang" | "kawasan" | "all";
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  items: CartOrderItemPayload[];
+  items?: CartOrderItemPayload[];
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;

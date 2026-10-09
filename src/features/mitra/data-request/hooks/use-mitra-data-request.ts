@@ -165,6 +165,8 @@ export const useAddToCartMultipleLayers = () => {
     mutationFn: (params: {
       layers: AddToCartLayerParam[];
       selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
+      calculationToken?: string;
+      targetBasis?: "bidang" | "kawasan" | "all";
       cqlFilter?: string;
       aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
       coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
@@ -174,6 +176,8 @@ export const useAddToCartMultipleLayers = () => {
           params.selectionType ??
           params.layers[0]?.selectionType ??
           "catalog",
+        calculationToken: params.calculationToken,
+        targetBasis: params.targetBasis,
         aoiPolygon: params.aoiPolygon ?? params.layers[0]?.aoiPolygon,
         coveragePolygon:
           params.coveragePolygon ?? params.layers[0]?.coveragePolygon,
