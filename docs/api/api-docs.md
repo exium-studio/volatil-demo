@@ -53,17 +53,21 @@ Endpoint terbuka yang dapat diakses oleh publik tanpa memerlukan session token /
 ## 1.1 Auth & Session
 
 ### Sign In / Login (Step 1)
+
 - **Endpoint**: `POST /api/auth/login`
 - **Akses**: `Public`
 - **Content-Type**: `application/json`
 - **Request Body**:
+
 ```typescript
 type SignInPayload = {
   email: string;
   password: string;
 };
 ```
+
 - **Response A — Belum setup TOTP (200 OK)**:
+
 ```typescript
 type RequiresTotpSetupResponse = {
   success: true;
@@ -75,7 +79,9 @@ type RequiresTotpSetupResponse = {
   };
 };
 ```
+
 - **Response B — Sudah setup TOTP, perlu verifikasi (200 OK)**:
+
 ```typescript
 type MfaRequiredResponse = {
   success: true;
@@ -87,7 +93,9 @@ type MfaRequiredResponse = {
   };
 };
 ```
+
 - **Response C — Akun Dev / Direct Login (200 OK)**:
+
 ```typescript
 type DirectSignInResponse = {
   success: true;
@@ -107,7 +115,9 @@ type DirectSignInResponse = {
   };
 };
 ```
+
 - **Response Error (401 Unauthorized)**:
+
 ```json
 {
   "success": false,
@@ -116,17 +126,21 @@ type DirectSignInResponse = {
 ```
 
 ### Verifikasi Kode TOTP (Step 2 - Login Normal)
+
 - **Endpoint**: `POST /api/auth/login/totp-verify`
 - **Akses**: `Public`
 - **Content-Type**: `application/json`
 - **Request Body**:
+
 ```typescript
 type TotpVerifyPayload = {
   mfaToken: string;
   totpCode: string; // 6-digit numeric string
 };
 ```
+
 - **Response (200 OK)**:
+
 ```typescript
 type TotpVerifySuccessResponse = {
   success: true;
@@ -148,15 +162,18 @@ type TotpVerifySuccessResponse = {
   };
 };
 ```
+
 - **Response Error (401 Unauthorized)**:
   - `code: "TOTP_INVALID"`: Kode Google Authenticator salah atau kedaluwarsa.
   - `code: "MFA_TOKEN_EXPIRED"`: MFA intermediate token habis masa berlakunya (>5 menit).
 
 ### Setup Google Authenticator Awal (Step 2 - First Setup)
+
 - **Endpoint**: `GET /api/auth/totp/setup`
 - **Akses**: `Public (Memerlukan MFA Token Header)`
 - **Request Header**: `Authorization: Bearer <mfaToken>`
 - **Response (200 OK)**:
+
 ```typescript
 type TotpSetupResponse = {
   success: true;
@@ -171,17 +188,21 @@ type TotpSetupResponse = {
 ```
 
 ### Konfirmasi Kode Pertama Setup TOTP (Step 3 - First Setup)
+
 - **Endpoint**: `POST /api/auth/totp/setup/confirm`
 - **Akses**: `Public (Memerlukan MFA Token Header)`
 - **Request Header**: `Authorization: Bearer <mfaToken>`
 - **Content-Type**: `application/json`
 - **Request Body**:
+
 ```typescript
 type TotpSetupConfirmPayload = {
   totpCode: string; // 6-digit numeric string
 };
 ```
+
 - **Response (200 OK)**:
+
 ```typescript
 type TotpSetupConfirmResponse = {
   success: true;
@@ -203,21 +224,27 @@ type TotpSetupConfirmResponse = {
   };
 };
 ```
+
 - **Response Error (401 Unauthorized)**:
   - `code: "TOTP_INVALID"`: Kode tidak cocok atau waktu perangkat tidak sinkron.
 
 ### Reset Password — Step 1: Request Kode OTP Email
+
 Digunakan untuk meminta kode verifikasi OTP 6 digit yang dikirimkan ke email akun.
+
 - **Endpoint**: `POST /api/auth/reset-password/request`
 - **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
 - **Request Body**:
+
 ```typescript
 type ResetPasswordRequestPayload = {
   email: string; // Email akun pengguna (e.g. pegawai@atrbpn.go.id)
 };
 ```
+
 - **Response (200 OK)**:
+
 ```typescript
 type ResetPasswordRequestResponse = {
   success: true;
@@ -229,7 +256,9 @@ type ResetPasswordRequestResponse = {
   };
 };
 ```
+
 - **Response Error (404 Not Found / 400 Bad Request)**:
+
 ```json
 {
   "success": false,
@@ -238,18 +267,23 @@ type ResetPasswordRequestResponse = {
 ```
 
 ### Reset Password — Step 2A: Verifikasi Kode OTP Email
+
 Digunakan untuk memvalidasi kode OTP 6-digit yang dikirimkan via email sebelum menampilkan form kata sandi baru.
+
 - **Endpoint**: `POST /api/auth/reset-password/verify-otp`
 - **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
 - **Request Body**:
+
 ```typescript
 type ResetPasswordVerifyOtpPayload = {
   email: string;
   resetToken: string; // 6-digit kode OTP email
 };
 ```
+
 - **Response (200 OK)**:
+
 ```typescript
 type ResetPasswordVerifyOtpResponse = {
   success: true;
@@ -262,7 +296,9 @@ type ResetPasswordVerifyOtpResponse = {
   };
 };
 ```
+
 - **Response Error (400 Bad Request / 401 Unauthorized)**:
+
 ```json
 {
   "success": false,
@@ -271,18 +307,23 @@ type ResetPasswordVerifyOtpResponse = {
 ```
 
 ### Reset Password — Step 2B: Verifikasi Kode Google Authenticator (TOTP)
+
 Digunakan untuk memvalidasi kode 6 digit dari aplikasi Google Authenticator akun sebelum menampilkan form kata sandi baru.
+
 - **Endpoint**: `POST /api/auth/reset-password/verify-totp`
 - **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
 - **Request Body**:
+
 ```typescript
 type ResetPasswordVerifyTotpPayload = {
   email: string;
   totpCode: string; // 6-digit numeric string dari Google Authenticator
 };
 ```
+
 - **Response (200 OK)**:
+
 ```typescript
 type ResetPasswordVerifyTotpResponse = {
   success: true;
@@ -295,7 +336,9 @@ type ResetPasswordVerifyTotpResponse = {
   };
 };
 ```
+
 - **Response Error (400 Bad Request / 401 Unauthorized)**:
+
 ```json
 {
   "success": false,
@@ -304,11 +347,14 @@ type ResetPasswordVerifyTotpResponse = {
 ```
 
 ### Reset Password — Step 3: Konfirmasi & Simpan Kata Sandi Baru
+
 Digunakan untuk mengonfirmasi pembaruan kata sandi akun setelah kode OTP atau TOTP terverifikasi.
+
 - **Endpoint**: `POST /api/auth/reset-password/confirm`
 - **Akses**: `Public / Authenticated`
 - **Content-Type**: `application/json`
 - **Request Body**:
+
 ```typescript
 type ResetPasswordConfirmPayload = {
   email: string;
@@ -317,7 +363,9 @@ type ResetPasswordConfirmPayload = {
   confirmPassword?: string;
 };
 ```
+
 - **Response (200 OK)**:
+
 ```typescript
 type ResetPasswordConfirmResponse = {
   success: true;
@@ -328,7 +376,9 @@ type ResetPasswordConfirmResponse = {
   };
 };
 ```
+
 - **Response Error (400 Bad Request / 401 Unauthorized)**:
+
 ```json
 {
   "success": false,
@@ -341,25 +391,27 @@ type ResetPasswordConfirmResponse = {
 ## 1.2 Pendaftaran Calon Mitra
 
 ### Registrasi Mitra Baru
+
 - **Endpoint**: `POST /api/auth/register`
 - **Akses**: `Public`
 - **Payload**: `multipart/form-data`
-  - `namaInstansi` *(string, required)*: Nama instansi / perusahaan
-  - `alamatKantor` *(string, required)*: Alamat kantor operasional
-  - `nib` *(string, required)*: Nomor Induk Berusaha
-  - `npwp` *(string, required)*: Nomor Pokok Wajib Pajak
-  - `website` *(string, optional)*: URL website resmi
-  - `namaPenanggungJawab` *(string, required)*: Nama PIC
-  - `jabatan` *(string, required)*: Jabatan PIC
-  - `email` *(string, required)*: Email resmi calon mitra (untuk akun SSO)
-  - `nomorHp` *(string, required)*: Nomor HP / WhatsApp aktif
-  - `suratPermohonan` *(file, required)*: Surat permohonan kerjasama kemitraan (PDF)
-  - `dokumenDik` *(file, required)*: Dokumen Informasi Kebutuhan Data (DIK) (PDF)
-  - `suratPernyataanHukum` *(file, required)*: Surat pernyataan tunduk pada ketentuan hukum (PDF)
-  - `suratKomitmenEvaluasi` *(file, required)*: Surat komitmen evaluasi berkala pemanfaatan IGT (PDF)
-  - `suratKomitmenPerbaikan` *(file, required)*: Surat komitmen perbaikan mutu & kepatuhan data (PDF)
-  - `proposalTeknis` *(file, required)*: Proposal teknis rencana pemanfaatan spasial (PDF)
+  - `namaInstansi` _(string, required)_: Nama instansi / perusahaan
+  - `alamatKantor` _(string, required)_: Alamat kantor operasional
+  - `nib` _(string, required)_: Nomor Induk Berusaha
+  - `npwp` _(string, required)_: Nomor Pokok Wajib Pajak
+  - `website` _(string, optional)_: URL website resmi
+  - `namaPenanggungJawab` _(string, required)_: Nama PIC
+  - `jabatan` _(string, required)_: Jabatan PIC
+  - `email` _(string, required)_: Email resmi calon mitra (untuk akun SSO)
+  - `nomorHp` _(string, required)_: Nomor HP / WhatsApp aktif
+  - `suratPermohonan` _(file, required)_: Surat permohonan kerjasama kemitraan (PDF)
+  - `dokumenDik` _(file, required)_: Dokumen Informasi Kebutuhan Data (DIK) (PDF)
+  - `suratPernyataanHukum` _(file, required)_: Surat pernyataan tunduk pada ketentuan hukum (PDF)
+  - `suratKomitmenEvaluasi` _(file, required)_: Surat komitmen evaluasi berkala pemanfaatan IGT (PDF)
+  - `suratKomitmenPerbaikan` _(file, required)_: Surat komitmen perbaikan mutu & kepatuhan data (PDF)
+  - `proposalTeknis` _(file, required)_: Proposal teknis rencana pemanfaatan spasial (PDF)
 - **Response (201 Created)**:
+
 ```typescript
 type MitraRegistrationCreatedData = {
   registrationNumber: string;
@@ -368,9 +420,11 @@ type MitraRegistrationCreatedData = {
 ```
 
 ### Cek Status Registrasi Mitra
+
 - **Endpoint**: `GET /api/auth/registration-status/{registrationNumber}`
 - **Akses**: `Public`
 - **Response (200 OK)**:
+
 ```typescript
 type MitraRegistrationStatusData = {
   registrationNumber: string;
@@ -389,7 +443,9 @@ type MitraRegistrationStatusData = {
 ## 1.3 Geometri Wilayah Administrasi (WFS Resolver)
 
 ### WFS Batas Wilayah Administrasi
+
 Digunakan untuk mengambil GeoJSON polygon geometri batas wilayah administrasi terdalam yang dipilih user (Provinsi / Kabupaten / Kecamatan / Kelurahan) via GeoServer WFS Proxy:
+
 - **Endpoint**: `GET /api/proxy/wfs`
 - **Akses**: `Public`
 - **Hierarchical Configuration Layer & Attribute Key**:
@@ -416,9 +472,11 @@ Endpoint privat yang memerlukan token / cookie autentikasi yang valid dan dapat 
 ## 2.1 Profil & Session
 
 ### User Profile
+
 - **Endpoint**: `GET /api/auth/me`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Response (200 OK)**:
+
 ```typescript
 type UserProfileResponse = {
   id: string | number;
@@ -430,6 +488,7 @@ type UserProfileResponse = {
 ```
 
 ### Logout
+
 - **Endpoint**: `POST /api/auth/logout`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Response (200 OK)**: `{ success: true, message: "Logged out successfully" }`
@@ -439,8 +498,9 @@ type UserProfileResponse = {
 ## 2.2 Pusat Bantuan (Help Center)
 
 ### Get List Tiket
+
 - **Endpoint**: `GET /api/tickets`
-- **Akses**: `Authenticated (Mitra & Internal)` *(Mitra hanya melihat tiket miliknya, Internal melihat semua tiket)*
+- **Akses**: `Authenticated (Mitra & Internal)` _(Mitra hanya melihat tiket miliknya, Internal melihat semua tiket)_
 - **Params**:
   - `scope?: "all" | "my"`
   - `status?: "active" | "history" | "submitted" | "in_review" | "in_progress" | "resolved" | "rejected"`
@@ -448,6 +508,7 @@ type UserProfileResponse = {
   - `page?: number`
   - `limit?: number`
 - **Response (200 OK)**:
+
 ```typescript
 type HelpCenterListApiResponse = {
   success: boolean;
@@ -482,21 +543,24 @@ type HelpCenterListApiResponse = {
 ```
 
 ### Create Tiket Laporan
+
 - **Endpoint**: `POST /api/tickets`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Payload**: `multipart/form-data`
-  - `title` *(string, required)*: Judul laporan
-  - `description` *(string, required)*: Rincian kendala
-  - `transactionId` *(string, optional)*: ID transaksi terkait
-  - `priority` *(string, optional)*: `low` | `medium` | `high` | `urgent`
-  - `category` *(string, optional)*: Kategori kendala
-  - `files` *(binary array, optional)*: Berkas lampiran foto, dokumen, atau video
+  - `title` _(string, required)_: Judul laporan
+  - `description` _(string, required)_: Rincian kendala
+  - `transactionId` _(string, optional)_: ID transaksi terkait
+  - `priority` _(string, optional)_: `low` | `medium` | `high` | `urgent`
+  - `category` _(string, optional)_: Kategori kendala
+  - `files` _(binary array, optional)_: Berkas lampiran foto, dokumen, atau video
 
 ### Detail Tiket
+
 - **Endpoint**: `GET /api/tickets/{id}`
 - **Akses**: `Authenticated (Mitra & Internal)`
 
 ### Balas Tiket (Reply Ticket)
+
 - **Endpoint**: `POST /api/tickets/{id}/reply`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Payload**: `multipart/form-data` (`message`, `status`, `files`)
@@ -506,6 +570,7 @@ type HelpCenterListApiResponse = {
 ## 2.3 Notifikasi & Inbox
 
 ### Get List Inbox / Notifikasi
+
 - **Endpoint**: `GET /api/inbox`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Params**:
@@ -515,6 +580,7 @@ type HelpCenterListApiResponse = {
   - `isRead?: boolean`
   - `search?: string`
 - **Response (200 OK)**:
+
 ```typescript
 type InboxListResponse = {
   items: Array<{
@@ -534,20 +600,24 @@ type InboxListResponse = {
 ```
 
 ### Tandai Notifikasi Telah Dibaca
+
 - **Endpoint**: `PATCH /api/inbox/{id}/read`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Response (200 OK)**: `{ success: true }`
 
 ### Tandai Semua Notifikasi Telah Dibaca
+
 - **Endpoint**: `PATCH /api/inbox/read-all`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Response (200 OK)**: `{ success: true }`
 
 ### Hapus Notifikasi
+
 - **Endpoint**: `DELETE /api/inbox/{id}`
 - **Akses**: `Authenticated (Mitra & Internal)`
 
 ### Hapus Semua Notifikasi
+
 - **Endpoint**: `DELETE /api/inbox/clear-all`
 - **Akses**: `Authenticated (Mitra & Internal)`
 
@@ -558,18 +628,20 @@ type InboxListResponse = {
 Seluruh akses tile dan fitur spasial dialihkan melalui endpoint proxy Backend demi keamanan kredensial master GeoServer.
 
 ### WMS Proxy
+
 - **Endpoint**: `GET /api/proxy/wms`
-- **Akses**: `Authenticated (Mitra & Internal)` *(via cookie)* atau `API Key (Mitra Service)` *(via `apiKey` query param / header)*
+- **Akses**: `Authenticated (Mitra & Internal)` _(via cookie)_ atau `API Key (Mitra Service)` _(via `apiKey` query param / header)_
 - **Query Params**:
-  - `layerId` *(string, required)*: ID layer target (contoh: `testing_workspace:TEST_BIDANG_TANAH`).
+  - `layerId` _(string, required)_: ID layer target (contoh: `testing_workspace:TEST_BIDANG_TANAH`).
   - Standar OGC WMS (`SERVICE=WMS`, `REQUEST=GetMap`, `BBOX`, `WIDTH`, `HEIGHT`, `FORMAT=image/png`, `SRS=EPSG:3857`, dll.)
 - **Response**: Raw image tile stream dari GeoServer fisik.
 
 ### WFS Proxy
+
 - **Endpoint**: `GET /api/proxy/wfs`
-- **Akses**: `Authenticated (Mitra & Internal)` *(via cookie)*
+- **Akses**: `Authenticated (Mitra & Internal)` _(via cookie)_
 - **Query Params**:
-- `layerId` *(string, required)*: ID layer target.
+- `layerId` _(string, required)_: ID layer target.
 - Standar OGC WFS (`SERVICE=WFS`, `REQUEST=GetFeature`, `CQL_FILTER`, `SRSNAME=EPSG:4326`, `OUTPUTFORMAT=application/json`, dll.)
 - **Response**: `GeoJSON.FeatureCollection` / JSON Schema.
 
@@ -582,6 +654,7 @@ Modul manajemen dokumen panduan sistem (Buku Manual, SOP, Petunjuk Teknis, Regul
 ---
 
 ### 2.5.1 Get List Dokumen Panduan
+
 Mengambil daftar dokumen panduan dengan dukungan pencarian teks, filter kategori, target audiens/role, dan status publikasi.
 
 - **Endpoint**: `GET /api/user-guides`
@@ -596,6 +669,7 @@ Mengambil daftar dokumen panduan dengan dukungan pencarian teks, filter kategori
 - **Sorting Default**: `updatedAt DESC` (dokumen terbitan/pembaruan terbaru berada di posisi teratas)
 
 - **Response (200 OK)**:
+
 ```typescript
 type UserGuideListApiResponse = {
   success: true;
@@ -631,11 +705,13 @@ type UserGuideListApiResponse = {
 ---
 
 ### 2.5.2 Get Detail Dokumen Panduan
+
 - **Endpoint**: `GET /api/user-guides/:id`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Path Params**:
-  - `id` *(string, required)*: ID unik dokumen panduan
+  - `id` _(string, required)_: ID unik dokumen panduan
 - **Response (200 OK)**:
+
 ```typescript
 type UserGuideDetailApiResponse = {
   success: true;
@@ -659,7 +735,9 @@ type UserGuideDetailApiResponse = {
   };
 };
 ```
+
 - **Response Error (404 Not Found)**:
+
 ```json
 {
   "success": false,
@@ -670,21 +748,23 @@ type UserGuideDetailApiResponse = {
 ---
 
 ### 2.5.3 Create Dokumen Panduan
+
 Mengunggah dan membuat data dokumen panduan baru ke sistem. Backend mengekstrak `fileName`, `fileSize`, dan `fileType` secara otomatis dari berkas biner yang diunggah.
 
 - **Endpoint**: `POST /api/user-guides`
 - **Akses**: `Internal Only (Administrator ATR/BPN)`
 - **Content-Type**: `multipart/form-data`
 - **Request Body (Form Data)**:
-  - `title` *(string, required)*: Judul dokumen (maks 150 karakter)
-  - `description` *(string, required)*: Ringkasan isi materi dokumen (maks 500 karakter)
-  - `category` *(string, required)*: `"manual_book"` | `"sop"` | `"technical_spec"` | `"regulation"`
-  - `targetRole` *(string, required)*: `"all"` | `"mitra"` | `"internal"`
-  - `version` *(string, required)*: Format versi (`"vX.Y.Z"` atau `"X.Y.Z"`, contoh `"v1.0.0"`)
-  - `isPublished` *(boolean / string "true"|"false", optional, default: true)*: Status visibilitas publik
-  - `file` *(binary File, required)*: Berkas panduan (`.pdf`, `.docx`, `.doc` — maks. 25 MB)
+  - `title` _(string, required)_: Judul dokumen (maks 150 karakter)
+  - `description` _(string, required)_: Ringkasan isi materi dokumen (maks 500 karakter)
+  - `category` _(string, required)_: `"manual_book"` | `"sop"` | `"technical_spec"` | `"regulation"`
+  - `targetRole` _(string, required)_: `"all"` | `"mitra"` | `"internal"`
+  - `version` _(string, required)_: Format versi (`"vX.Y.Z"` atau `"X.Y.Z"`, contoh `"v1.0.0"`)
+  - `isPublished` _(boolean / string "true"|"false", optional, default: true)_: Status visibilitas publik
+  - `file` _(binary File, required)_: Berkas panduan (`.pdf`, `.docx`, `.doc` — maks. 25 MB)
 
 - **Response (201 Created / 200 OK)**:
+
 ```typescript
 type CreateUserGuideApiResponse = {
   success: true;
@@ -709,7 +789,9 @@ type CreateUserGuideApiResponse = {
   };
 };
 ```
+
 - **Response Error (400 Bad Request / 422 Unprocessable Entity)**:
+
 ```json
 {
   "success": false,
@@ -723,23 +805,25 @@ type CreateUserGuideApiResponse = {
 ---
 
 ### 2.5.4 Update Dokumen Panduan
+
 Memperbarui metadata dokumen dan/atau mengganti berkas lampiran yang sudah ada. Jika field `file` tidak dikirim, berkas biner eksisting tetap dipertahankan.
 
 - **Endpoint**: `PUT /api/user-guides/:id`
 - **Akses**: `Internal Only (Administrator ATR/BPN)`
 - **Path Params**:
-  - `id` *(string, required)*: ID unik dokumen panduan
+  - `id` _(string, required)_: ID unik dokumen panduan
 - **Content-Type**: `multipart/form-data` atau `application/json` (jika tidak ada file baru)
 - **Request Body**:
-  - `title?` *(string)*: Judul dokumen panduan
-  - `description?` *(string)*: Ringkasan isi materi dokumen
-  - `category?` *(string)*: `"manual_book"` | `"sop"` | `"technical_spec"` | `"regulation"`
-  - `targetRole?` *(string)*: `"all"` | `"mitra"` | `"internal"`
-  - `version?` *(string)*: Versi dokumen baru
-  - `isPublished?` *(boolean)*: Status publikasi
-  - `file?` *(binary File, optional)*: Berkas baru pengganti (jika ingin mengganti file fisik)
+  - `title?` _(string)_: Judul dokumen panduan
+  - `description?` _(string)_: Ringkasan isi materi dokumen
+  - `category?` _(string)_: `"manual_book"` | `"sop"` | `"technical_spec"` | `"regulation"`
+  - `targetRole?` _(string)_: `"all"` | `"mitra"` | `"internal"`
+  - `version?` _(string)_: Versi dokumen baru
+  - `isPublished?` _(boolean)_: Status publikasi
+  - `file?` _(binary File, optional)_: Berkas baru pengganti (jika ingin mengganti file fisik)
 
 - **Response (200 OK)**:
+
 ```typescript
 type UpdateUserGuideApiResponse = {
   success: true;
@@ -768,13 +852,15 @@ type UpdateUserGuideApiResponse = {
 ---
 
 ### 2.5.5 Delete Dokumen Panduan
+
 Menghapus rekaman dokumen panduan dan berkas fisik terkait di storage.
 
 - **Endpoint**: `DELETE /api/user-guides/:id`
 - **Akses**: `Internal Only (Administrator ATR/BPN)`
 - **Path Params**:
-  - `id` *(string, required)*: ID unik dokumen panduan yang akan dihapus
+  - `id` _(string, required)_: ID unik dokumen panduan yang akan dihapus
 - **Response (200 OK)**:
+
 ```typescript
 type DeleteUserGuideApiResponse = {
   success: true;
@@ -785,13 +871,15 @@ type DeleteUserGuideApiResponse = {
 ---
 
 ### 2.5.6 Track Download Dokumen
+
 Mencatat dan menambahkan hit counter unduhan berkas secara atomik saat user mengunduh dokumen panduan.
 
 - **Endpoint**: `POST /api/user-guides/:id/download`
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Path Params**:
-  - `id` *(string, required)*: ID unik dokumen panduan
+  - `id` _(string, required)_: ID unik dokumen panduan
 - **Response (200 OK)**:
+
 ```typescript
 type TrackDownloadApiResponse = {
   success: true;
@@ -810,23 +898,28 @@ Endpoint khusus yang hanya dapat diakses oleh user dengan role `mitra`.
 Setiap widget/section pada halaman Mitra Home memiliki endpoint independen agar data dimuat secara modular:
 
 ### 3.1.1 Ketersediaan Data Spasial IGT (Data Availability)
+
 Menyajikan statistik total ketersediaan dataset spasial IGT yang terintegrasi di sistem (Total Layer, Berbasis Bidang, dan Berbasis Kawasan).
+
 - **Endpoint**: `GET /api/mitra/home/data-availability`
 - **Akses**: `Mitra Only`
 - **Header**: `Authorization: Bearer <token>` atau Session Cookie
 - **Response (200 OK)**:
+
 ```typescript
 type MitraDataAvailabilityResponse = {
   success: boolean;
   message?: string;
   data: {
     totalIgt: number; // Total seluruh dataset IGT terintegrasi
-    bidang: number;   // Total layer IGT berbasis bidang tanah / persil
-    kawasan: number;  // Total layer IGT berbasis kawasan / tata ruang
+    bidang: number; // Total layer IGT berbasis bidang tanah / persil
+    kawasan: number; // Total layer IGT berbasis kawasan / tata ruang
   };
 };
 ```
-*Contoh Response JSON:*
+
+_Contoh Response JSON:_
+
 ```json
 {
   "success": true,
@@ -841,12 +934,15 @@ type MitraDataAvailabilityResponse = {
 ---
 
 ### 3.1.2 Ringkasan Data Anda (Data Summary)
+
 Menyajikan ringkasan status kepemilikan data IGT milik akun mitra yang sedang login (Aktif, Hampir Kedaluwarsa, dan Kedaluwarsa) untuk tipe Bidang dan Kawasan sesuai filter periode.
+
 - **Endpoint**: `GET /api/mitra/home/data-summary`
 - **Akses**: `Mitra Only`
 - **Query Params**:
   - `period?: "1d" | "1w" | "1m" | "1y" | "all"` (Default: `"all"`)
 - **Response (200 OK)**:
+
 ```typescript
 type MitraDataSummaryResponse = {
   success: boolean;
@@ -865,7 +961,9 @@ type MitraDataSummaryResponse = {
   };
 };
 ```
-*Contoh Response JSON:*
+
+_Contoh Response JSON:_
+
 ```json
 {
   "success": true,
@@ -887,23 +985,28 @@ type MitraDataSummaryResponse = {
 ---
 
 ### 3.1.3 Ringkasan Keranjang Pembelian (Cart Summary)
+
 Menyajikan ringkasan item yang ada di keranjang belanja aktif milik mitra (Total bidang, total luas kawasan, total dataset, dan subtotal biaya).
+
 - **Endpoint**: `GET /api/mitra/home/cart-summary`
 - **Akses**: `Mitra Only`
 - **Response (200 OK)**:
+
 ```typescript
 type MitraCartSummaryResponse = {
   success: boolean;
   message?: string;
   data: {
-    totalField: number;    // Total kuantitas bidang
-    totalArea: number;     // Total luas kawasan (Hektar / ha)
-    totalIgtData: number;  // Total layer/dataset IGT di keranjang
+    totalField: number; // Total kuantitas bidang
+    totalArea: number; // Total luas kawasan (Hektar / ha)
+    totalIgtData: number; // Total layer/dataset IGT di keranjang
     subtotalPrice: number; // Subtotal nominal harga (IDR)
   };
 };
 ```
-*Contoh Response JSON:*
+
+_Contoh Response JSON:_
+
 ```json
 {
   "success": true,
@@ -919,12 +1022,15 @@ type MitraCartSummaryResponse = {
 ---
 
 ### 3.1.4 Statistik Alur Keuangan (Financial Flow)
-Menyajikan data grafik runtun waktu (*time series*) transaksi pengeluaran pembelian data spasial mitra berdasarkan periode.
+
+Menyajikan data grafik runtun waktu (_time series_) transaksi pengeluaran pembelian data spasial mitra berdasarkan periode.
+
 - **Endpoint**: `GET /api/mitra/home/financial-flow`
 - **Akses**: `Mitra Only`
 - **Query Params**:
   - `period?: "1d" | "1w" | "1m" | "1y" | "all"` (Default: `"all"`)
 - **Response (200 OK)**:
+
 ```typescript
 type MitraFinancialFlowResponse = {
   success: boolean;
@@ -935,12 +1041,14 @@ type MitraFinancialFlowResponse = {
     currency?: string;
     breakdown: Array<{
       label: string; // Label waktu (e.g. "00:00", "Sen", "Minggu 1", "Jan", "2024")
-      sale: number;  // Nominal transaksi pada titik waktu tersebut (IDR)
+      sale: number; // Nominal transaksi pada titik waktu tersebut (IDR)
     }>;
   };
 };
 ```
-*Contoh Response JSON:*
+
+_Contoh Response JSON:_
+
 ```json
 {
   "success": true,
@@ -964,8 +1072,10 @@ type MitraFinancialFlowResponse = {
 ---
 
 ### 3.1.5 Riwayat Transaksi Terbaru (Last Transactions)
+
 Menyajikan 5 transaksi paling baru milik mitra untuk tabel widget transaksi terakhir.
-- **Endpoint**: `GET /api/mitra/transactions` *(atau `GET /api/transactions`)*
+
+- **Endpoint**: `GET /api/mitra/transactions` _(atau `GET /api/transactions`)_
 - **Akses**: `Mitra Only`
 - **Query Params**:
   - `page=1`
@@ -978,10 +1088,12 @@ Menyajikan 5 transaksi paling baru milik mitra untuk tabel widget transaksi tera
 ## 3.2 Data Request & Eksplorasi IGT Spasial
 
 ### List IGT Layers Aktif
+
 - **Endpoint**: `GET /api/mitra/igt-layers`
 - **Akses**: `Mitra Only`
 - **Params**: `page?: number`, `limit?: number`, `search?: string`, `basis?: "bidang" | "kawasan"`, `tema?: string`
 - **Response (200 OK)**:
+
 ```typescript
 type MitraIgtLayersResponse = {
   success: true;
@@ -1059,27 +1171,32 @@ type MitraIgtLayersResponse = {
 ```
 
 ### Query IGT by AOI Polygon
+
 - **Endpoint**: `POST /api/mitra/data-request/by-aoi`
 - **Akses**: `Mitra Only`
 - **Payload**: `{ geometry: GeoJSON.Polygon }`
 
 ### Query IGT by Upload AOI File
+
 - **Endpoint**: `POST /api/mitra/data-request/upload-aoi`
 - **Akses**: `Mitra Only`
 - **Payload**: `FormData` (`file: File`) (.zip shp, .geojson, .kml)
 
 ### Get IGT Catalog
+
 - **Endpoint**: `GET /api/mitra/data-request/catalog`
 - **Akses**: `Mitra Only`
 - **Params**: `page?: number`, `pageSize?: number`, `search?: string`
 
 ### Spatial Coverage & Limit Calculation Stream (PostGIS Streaming)
+
 - **Endpoint**: `POST /api/mitra/data-request/calculate/stream`
 - **Akses**: `Mitra Only`
 - **Content-Type**: `application/json`
 - **Response Format**: Server-Sent Events (`text/event-stream`) / Line-delimited JSON stream
-- **Deskripsi**: Menjalankan kalkulasi spasial terpusat di server (PostGIS) untuk memotong (*spatial clipping*) fitur IGT terhadap polygon AOI, melakukan *ST_Union* pada seluruh fitur beririsan bertipe kawasan, menghitung total bidang & luas hektar cakupan kawasan, mengevaluasi validitas terhadap *purchase limit* mitra, dan mengalirkan progress real-time ke client.
+- **Deskripsi**: Menjalankan kalkulasi spasial terpusat di server (PostGIS) untuk memotong (_spatial clipping_) fitur IGT terhadap polygon AOI, melakukan _ST_Union_ pada seluruh fitur beririsan bertipe kawasan, menghitung total bidang & luas hektar cakupan kawasan, mengevaluasi validitas terhadap _purchase limit_ mitra, dan mengalirkan progress real-time ke client.
 - **Request Body**:
+
 ```typescript
 type CalculateSpatialCoverageRequest = {
   selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
@@ -1095,7 +1212,9 @@ type CalculateSpatialCoverageRequest = {
   }>;
 };
 ```
+
 - **Stream Event Format**:
+
 ```typescript
 // Progress event
 type CalculateSpatialProgressEvent = {
@@ -1141,13 +1260,16 @@ type CalculateSpatialErrorEvent = {
 ```
 
 ### Filter Options Wilayah & Tema
+
 - `GET /api/mitra/data-request/filter-options/basis` — **Akses**: `Mitra Only`
 - `GET /api/mitra/data-request/filter-options/tema` — **Akses**: `Mitra Only`
 
 ### Kebijakan Tarif & Batas Pembelian (Pricing & Policies)
+
 - **Endpoint**: `GET /api/mitra/data-request/policies`
 - **Akses**: `Mitra Only`
 - **Response (200 OK)**:
+
 ```typescript
 type MitraPricingPolicyResponse = {
   policies: Array<{
@@ -1174,16 +1296,19 @@ type MitraPricingPolicyResponse = {
 
 > [!NOTE]
 > **Alur Permintaan Data Berbasis AOI (AOI-Driven Request Flow)**:
+>
 > 1. Mitra menentukan batas area spasial melalui **Upload AOI** (`upload_aoi`) atau **Gambar AOI** (`draw_aoi`).
 > 2. Frontend mengirimkan request pembuatan pesanan dengan geometri `aoiPolygon` dan daftar layer target.
 > 3. Backend langsung mengembalikan order dengan status awal **`requesting`**.
-> 4. Backend Worker secara asinkron memproses pemotongan (*spatial clipping*), *unary union* cakupan kawasan, penghitungan jumlah bidang & luas hektar kawasan, serta estimasi harga berdasarkan tarif resmi PNBP.
+> 4. Backend Worker secara asinkron memproses pemotongan (_spatial clipping_), _unary union_ cakupan kawasan, penghitungan jumlah bidang & luas hektar kawasan, serta estimasi harga berdasarkan tarif resmi PNBP.
 > 5. Setelah kalkulasi selesai, status order bertransisi menjadi **`pending_payment`** (atau **`pending_review`**).
 
 ### Add to Cart / Create Spatial Order (Buat Order Keranjang)
+
 - **Endpoint**: `POST /api/mitra/cart/orders`
 - **Akses**: `Mitra Only`
 - **Payload**:
+
 ```typescript
 type AddToCartOrderRequest = {
   selectionType: "upload_aoi" | "draw_aoi" | "catalog";
@@ -1197,7 +1322,9 @@ type AddToCartOrderRequest = {
   }>;
 };
 ```
+
 - **Response (201 Created)**:
+
 ```typescript
 type AddToCartOrderResponse = {
   orderId: string;
@@ -1208,10 +1335,12 @@ type AddToCartOrderResponse = {
 ```
 
 ### Ambil Daftar Order di Keranjang
+
 - **Endpoint**: `GET /api/mitra/cart/orders`
 - **Akses**: `Mitra Only`
 - **Params**: `status?: OrderStatus`
 - **Response (200 OK)**:
+
 ```typescript
 type OrderListResponse = {
   orders: Array<{
@@ -1246,9 +1375,11 @@ type OrderListResponse = {
 ```
 
 ### Ambil Detail Order di Keranjang
+
 - **Endpoint**: `GET /api/mitra/cart/orders/{orderId}`
 - **Akses**: `Mitra Only`
 - **Response (200 OK)**:
+
 ```typescript
 type GetOrderDetailResponse = {
   success: true;
@@ -1286,18 +1417,21 @@ type GetOrderDetailResponse = {
 ```
 
 ### Real-Time Stream Order Keranjang (Server-Sent Events / SSE)
-Mengalirkan notifikasi status dan progres kalkulasi spasial pesanan secara *real-time* ke antarmuka keranjang mitra (misal transisi otomatis dari status `requesting` ke `pending_payment` setelah kalkulasi selesai di BE).
+
+Mengalirkan notifikasi status dan progres kalkulasi spasial pesanan secara _real-time_ ke antarmuka keranjang mitra (misal transisi otomatis dari status `requesting` ke `pending_payment` setelah kalkulasi selesai di BE).
+
 - **Endpoint**: `GET /api/mitra/cart/orders/stream`
 - **Akses**: `Mitra Only`
 - **Protocol**: `text/event-stream`
 - **Authentication**: `?token=<jwt_token>` query parameter (standard EventSource browser client)
 - **Response Stream Event Types**:
   - `order_created`: Diterbitkan saat pesanan baru berhasil dibuat (`status: "requesting"`).
-  - `order_calculating`: Diterbitkan berkala untuk membagikan progres komputasi spasial (*clipping*/*union*).
+  - `order_calculating`: Diterbitkan berkala untuk membagikan progres komputasi spasial (_clipping_/_union_).
   - `order_updated` / `order_ready`: Diterbitkan saat kalkulasi spasial selesai dan rincian harga siap dibayar (`status: "pending_payment"`).
   - `order_cancelled`: Diterbitkan saat order dibatalkan atau komputasi gagal.
   - `heartbeat`: Ping keep-alive koneksi setiap 15–30 detik (`: ping\n\n`).
 - **Contoh Event Payload (`order_ready` / `order_updated`)**:
+
 ```json
 event: order_ready
 data: {
@@ -1320,23 +1454,29 @@ data: {
 ```
 
 ### Hapus Order dari Keranjang
+
 - **Endpoint**: `DELETE /api/mitra/cart/orders/{orderId}`
 - **Akses**: `Mitra Only`
 
 ### Re-order Pesanan
+
 - **Endpoint**: `POST /api/mitra/cart/orders/{orderId}/reorder`
 - **Akses**: `Mitra Only`
 
 ### Checkout & Request Kode Billing (Bayar)
+
 - **Endpoint**: `POST /api/mitra/cart/orders/{orderId}/checkout`
 - **Akses**: `Mitra Only`
 - **Payload**:
+
 ```typescript
 type CheckoutOrderRequest = {
   paymentMethod?: "MPN_GEN2" | "VA_MANDIRI" | "VA_BRI" | "VA_BCA" | "QRIS";
 };
 ```
+
 - **Response (200 OK)**:
+
 ```typescript
 type CheckoutOrderResponse = {
   orderId: string;
@@ -1351,9 +1491,11 @@ type CheckoutOrderResponse = {
 ```
 
 ### Cek Status Pembayaran (Trigger Bayar)
+
 - **Endpoint**: `GET /api/mitra/orders/{orderId}/status`
 - **Akses**: `Mitra Only`
 - **Response (200 OK)**:
+
 ```typescript
 type OrderPaymentStatusResponse = {
   success: boolean;
@@ -1372,10 +1514,12 @@ type OrderPaymentStatusResponse = {
 ## 3.4 My Data & Riwayat Transaksi
 
 ### My Data (Layer Aktif Mitra)
+
 - **Endpoint**: `GET /api/mitra/my-data`
 - **Akses**: `Mitra Only`
 - **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `basis?: "bidang" | "kawasan"`, `status?: OrderStatus`
 - **Response (200 OK)**:
+
 ```typescript
 type MyDataResponse = {
   success: boolean;
@@ -1403,16 +1547,20 @@ type MyDataResponse = {
 ```
 
 ### Perpanjangan Masa Aktif Workspace (Renewal)
+
 - **Endpoint**: `POST /api/mitra/my-data/{workspaceId}/renew`
 - **Akses**: `Mitra Only`
 - **Payload**:
+
 ```typescript
 type RenewWorkspaceRequest = {
   durationMonths?: number;
   paymentMethod?: "MPN_GEN2" | "VA_MANDIRI" | "VA_BRI" | "VA_BCA" | "QRIS";
 };
 ```
+
 - **Response (200 OK / 201 Created)**:
+
 ```typescript
 type RenewWorkspaceResponse = {
   success: true;
@@ -1432,10 +1580,12 @@ type RenewWorkspaceResponse = {
 ```
 
 ### Riwayat Transaksi Mitra
+
 - **Endpoint**: `GET /api/mitra/transaction-history`
 - **Akses**: `Mitra Only`
 - **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `status?: TransactionStatus`
 - **Response (200 OK)**:
+
 ```typescript
 type TransactionHistoryResponse = {
   items: Array<{
@@ -1493,6 +1643,7 @@ Endpoint khusus yang hanya dapat diakses oleh verifikator / admin ATR/BPN dengan
 Modul verifikasi data pendaftaran kemitraan calon mitra eksternal, pengecekan 6 berkas persyaratan legal/teknis, serta persetujuan penerbitan kontrak atau penolakan.
 
 ### 1. List Pendaftaran Mitra
+
 - **Endpoint**: `GET /api/internal/mitra-registrations`
 - **Akses**: `Internal Only`
 - **Query Params**:
@@ -1501,6 +1652,7 @@ Modul verifikasi data pendaftaran kemitraan calon mitra eksternal, pengecekan 6 
   - `search?: string` (nama instansi, nomor registrasi, NIB, nama PIC)
   - `status?: "pending_verification" | "verified" | "rejected" | "all"`
 - **Response (200 OK)**:
+
 ```typescript
 type InternalMitraRegistrationListResponse = {
   items: Array<{
@@ -1535,9 +1687,11 @@ type InternalMitraRegistrationListResponse = {
 ```
 
 ### 2. Detail Pendaftaran Mitra
+
 - **Endpoint**: `GET /api/internal/mitra-registrations/{id}`
 - **Akses**: `Internal Only`
 - **Response (200 OK)**:
+
 ```typescript
 type InternalMitraRegistrationDetailResponse = {
   id: string;
@@ -1554,12 +1708,42 @@ type InternalMitraRegistrationDetailResponse = {
   status: "pending_verification" | "verified" | "rejected";
   statusDescription?: string;
   documents: {
-    suratPermohonan?: { url: string; originalName?: string; mimeType?: string; size?: number };
-    dokumenDik?: { url: string; originalName?: string; mimeType?: string; size?: number };
-    suratPernyataanHukum?: { url: string; originalName?: string; mimeType?: string; size?: number };
-    suratKomitmenEvaluasi?: { url: string; originalName?: string; mimeType?: string; size?: number };
-    suratKomitmenPerbaikan?: { url: string; originalName?: string; mimeType?: string; size?: number };
-    proposalTeknis?: { url: string; originalName?: string; mimeType?: string; size?: number };
+    suratPermohonan?: {
+      url: string;
+      originalName?: string;
+      mimeType?: string;
+      size?: number;
+    };
+    dokumenDik?: {
+      url: string;
+      originalName?: string;
+      mimeType?: string;
+      size?: number;
+    };
+    suratPernyataanHukum?: {
+      url: string;
+      originalName?: string;
+      mimeType?: string;
+      size?: number;
+    };
+    suratKomitmenEvaluasi?: {
+      url: string;
+      originalName?: string;
+      mimeType?: string;
+      size?: number;
+    };
+    suratKomitmenPerbaikan?: {
+      url: string;
+      originalName?: string;
+      mimeType?: string;
+      size?: number;
+    };
+    proposalTeknis?: {
+      url: string;
+      originalName?: string;
+      mimeType?: string;
+      size?: number;
+    };
   };
   contractDocument?: string | null;
   rejectionReason?: string | null;
@@ -1571,21 +1755,25 @@ type InternalMitraRegistrationDetailResponse = {
 ```
 
 ### 3. Setujui Pendaftaran Mitra & Unggah Kontrak Kerjasama
+
 - **Endpoint**: `POST /api/internal/mitra-registrations/{id}/approve`
 - **Akses**: `Internal Only`
 - **Payload**: `multipart/form-data`
-  - `contractDocument` *(file, required)*: Berkas kontrak kemitraan resmi bertandatangan (PDF)
+  - `contractDocument` _(file, required)_: Berkas kontrak kemitraan resmi bertandatangan (PDF)
 - **Response (200 OK)**: Mengembalikan data registrasi yang telah berstatus `"verified"`.
 
 ### 4. Tolak Pendaftaran Mitra
+
 - **Endpoint**: `POST /api/internal/mitra-registrations/{id}/reject`
 - **Akses**: `Internal Only`
 - **Payload**:
+
 ```typescript
 type RejectMitraRegistrationPayload = {
   rejectionReason: string;
 };
 ```
+
 - **Response (200 OK)**: Mengembalikan data registrasi yang telah berstatus `"rejected"`.
 
 ---
@@ -1593,10 +1781,12 @@ type RejectMitraRegistrationPayload = {
 ## 4.3 Review Permohonan Data Spasial (Interop Order Review)
 
 ### List Orders Review Permohonan
+
 - **Endpoint**: `GET /api/internal/interop/orders`
 - **Akses**: `Internal Only`
 - **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `status?: "paid" | "pending_review" | "all"`
 - **Response (200 OK)**:
+
 ```typescript
 type InternalOrderListResponse = {
   items: Array<{
@@ -1633,17 +1823,21 @@ type InternalOrderListResponse = {
 ```
 
 ### Detail Order Review
+
 - **Endpoint**: `GET /api/internal/interop/orders/{orderId}`
 - **Akses**: `Internal Only`
 
 ### Trigger Provisioning GeoServer (Create Service WMS)
+
 - **Endpoint**: `POST /api/mitra/orders/{orderId}/provision`
 - **Akses**: `Internal Only`
 
 ### Approve Order (Input URL Wrapper INTEROP)
+
 - **Endpoint**: `PUT /api/internal/interop/orders/{orderId}/approve`
 - **Akses**: `Internal Only`
 - **Payload**:
+
 ```typescript
 type ApproveOrderPayload = {
   orderId: string;
@@ -1656,6 +1850,7 @@ type ApproveOrderPayload = {
 ```
 
 ### Reject Order
+
 - **Endpoint**: `PUT /api/internal/interop/orders/{orderId}/reject`
 - **Akses**: `Internal Only`
 - **Payload**: `{ reason: string }`
@@ -1665,6 +1860,7 @@ type ApproveOrderPayload = {
 ## 4.4 Master IGT Layers & Sinkronisasi Mitra
 
 ### Standarisasi Manajemen Master Layer IGT & URL Service GeoServer (Strict SSOT)
+
 - `id` (UUID, Primary Key, Auto-generated oleh Backend).
 - `geoserverId` (UUID, Foreign Key ke tabel `master_geoservers`).
 - `title` (String, wajib).
@@ -1681,10 +1877,12 @@ type ApproveOrderPayload = {
 - `zIndex` (Integer, default `1`).
 
 ### List Master IGT Layers
+
 - **Endpoint**: `GET /api/internal/igt-layers`
 - **Akses**: `Internal Only`
 - **Params**: `page?: number`, `limit?: number`, `search?: string`, `isActive?: boolean`, `igtBasis?: "bidang" | "kawasan"`
 - **Response (200 OK)**:
+
 ```typescript
 type MasterIgtLayersListResponse = {
   success: true;
@@ -1736,9 +1934,11 @@ type MasterIgtLayersListResponse = {
 ```
 
 ### Create Master IGT Layer
+
 - **Endpoint**: `POST /api/internal/igt-layers`
 - **Akses**: `Internal Only`
 - **Request Body**:
+
 ```typescript
 type CreateMasterIgtLayerRequest = {
   title: string;
@@ -1753,13 +1953,16 @@ type CreateMasterIgtLayerRequest = {
   zIndex?: number;
 };
 ```
+
 - **Response (201 Created)**: Mengembalikan item data layer IGT yang baru dibuat dengan `id` berupa UUID (v4) auto-generated dan objek `wms` & `wfs` yang telah di-resolve.
 
 ### Update Master IGT Layer
+
 - **Endpoint**: `PUT /api/internal/igt-layers/{id}`
 - **Akses**: `Internal Only`
 - **Path Param**: `id` (UUID)
 - **Request Body**:
+
 ```typescript
 type UpdateMasterIgtLayerRequest = {
   title?: string;
@@ -1774,24 +1977,29 @@ type UpdateMasterIgtLayerRequest = {
   zIndex?: number;
 };
 ```
+
 > [!IMPORTANT]
 > **Dynamic URL Regeneration**: Saat `geoserverId`, `workspaceName`, atau `layerName` diubah, Backend wajib meng-update relasi Foreign Key dan otomatis **me-regenerasi URL `wms` & `wfs`** agar mengarah ke GeoServer yang baru.
 
 ### Delete Master IGT Layer (Soft Delete)
+
 - **Endpoint**: `DELETE /api/internal/igt-layers/{id}`
 - **Akses**: `Internal Only`
 
 ### Trigger Sinkronisasi Pembaruan Layer Mitra (Queue Job)
+
 - **Endpoint**: `POST /api/internal/igt-layers/sync-mitra`
 - **Akses**: `Internal Only`
 - **Payload**: `{ layerIds: string[] }`
 - **Response**: `202 Accepted`
 
 ### List & Detail Antrean Job Sinkronisasi
+
 - `GET /api/internal/mitra-layer-sync-jobs` — List background jobs
 - `GET /api/internal/mitra-layer-sync-jobs/{jobId}` — Detail single job
 
 ### Real-time Job Progress Stream (SSE)
+
 - **Endpoint**: `GET /api/internal/mitra-layer-sync-jobs/stream?token=<JWT_TOKEN>`
 - **Akses**: `Internal Only`
 - **Stream Event**: `job_created`, `job_started`, `job_progress`, `job_completed`, `job_failed`
@@ -1813,16 +2021,19 @@ type UpdateMasterIgtLayerRequest = {
 ## 4.6 Monitoring & Statistik Transaksi Internal
 
 ### Ringkasan Statistik Transaksi
+
 - **Endpoint**: `GET /api/internal/transactions/statistics`
 - **Akses**: `Internal Only`
 - **Response (200 OK)**: `{ activeOrders: number, settledTransactions: number, netWorth: number }`
 
 ### Daftar Transaksi Global Internal
+
 - **Endpoint**: `GET /api/internal/transactions`
 - **Akses**: `Internal Only`
 - **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `transactionStatus?: TransactionStatus`, `orderStatus?: OrderStatus`, `selectionType?: string`, `startDate?: string`, `endDate?: string`
 
 ### Detail Transaksi Internal
+
 - **Endpoint**: `GET /api/internal/transactions/{id}`
 - **Akses**: `Internal Only`
 
@@ -1855,74 +2066,82 @@ type UpdateMasterIgtLayerRequest = {
 # 5. KAMUS ENUM & SSOT STATUS
 
 ### 1. SSOT Status Transaksi & Pembayaran (`TransactionStatus`)
+
 ```typescript
 export type TransactionStatus =
-  | "pending"   // Menunggu Pembayaran
-  | "paid"      // Terbayar / Settled
-  | "expired"   // Kedaluwarsa
-  | "failed"    // Gagal
+  | "pending" // Menunggu Pembayaran
+  | "paid" // Terbayar / Settled
+  | "expired" // Kedaluwarsa
+  | "failed" // Gagal
   | "refunded"; // Dikembalikan
 ```
 
-### 2. SSOT Status Order & Layanan Spasial (`OrderStatus`)
+### 2. SSOT Status Pesanan & Layanan Spasial (`OrderStatus`)
+
 ```typescript
 export type OrderStatus =
-  | "requesting"       // Permintaan Dibuat (Sedang Dikalkulasi Spasial di BE)
-  | "preparing"        // Penyiapan / kalkulasi pesanan
-  | "pending_payment"  // Menunggu Pembayaran
-  | "paid"             // Terbayar
-  | "processing"       // Sedang Diproses (Interop Engine / Provisioning WMS)
-  | "pending_review"   // Menunggu Validasi Admin
-  | "rejected"         // Ditolak Admin
-  | "ready";           // Siap Digunakan
+  | "requesting" // Permintaan Dibuat (Sedang Dikalkulasi Spasial di BE)
+  | "preparing" // Penyiapan / kalkulasi pesanan
+  | "pending_payment" // Menunggu Pembayaran
+  | "paid" // Terbayar
+  | "processing" // Sedang Diproses (Interop Engine / Provisioning WMS)
+  | "pending_review" // Menunggu Validasi Admin
+  | "rejected" // Ditolak Admin
+  | "ready"; // Siap Digunakan
 ```
 
 ### 3. SSOT Status Pendaftaran Mitra (`MitraRegistrationStatus`)
+
 ```typescript
 export type MitraRegistrationStatus =
   | "pending_verification" // Menunggu Verifikasi Berkas
-  | "verified"             // Terverifikasi / Disetujui (Akun SSO Aktif)
-  | "rejected";            // Ditolak
+  | "verified" // Terverifikasi / Disetujui (Akun SSO Aktif)
+  | "rejected"; // Ditolak
 ```
 
 ### 4. SSOT Status Layer Aktif Mitra (`MyDataStatus`)
+
 ```typescript
 export type MyDataStatus =
-  | "queued"        // Dalam Antrean
-  | "provisioning"  // Menyiapkan Layanan WMS
-  | "ready"         // Siap Digunakan
-  | "active"        // Aktif
-  | "failed"        // Gagal
-  | "expired"       // Kedaluwarsa
-  | "revoked";      // Dicabut
+  | "queued" // Dalam Antrean
+  | "provisioning" // Menyiapkan Layanan WMS
+  | "ready" // Siap Digunakan
+  | "active" // Aktif
+  | "failed" // Gagal
+  | "expired" // Kedaluwarsa
+  | "revoked"; // Dicabut
 ```
 
 ### 5. SSOT Role Pengguna (`UserRole`)
+
 ```typescript
 export type UserRole = "internal" | "mitra";
 ```
 
 ### 6. SSOT Kategori Dokumen Panduan (`UserGuideCategory`)
+
 ```typescript
 export type UserGuideCategory =
-  | "manual_book"    // Buku Panduan / Manual Penggunaan Sistem
-  | "sop"            // SOP & Prosedur Operasional
+  | "manual_book" // Buku Panduan / Manual Penggunaan Sistem
+  | "sop" // SOP & Prosedur Operasional
   | "technical_spec" // Spesifikasi Teknis & Format Data Spasial
-  | "regulation";    // Regulasi & Kebijakan
+  | "regulation"; // Regulasi & Kebijakan
 ```
 
 ### 7. SSOT Target Akses Dokumen Panduan (`UserGuideTargetRole`)
+
 ```typescript
 export type UserGuideTargetRole =
-  | "all"      // Dapat diakses oleh semua pengguna (Mitra & Internal)
-  | "mitra"    // Khusus pengguna portal Mitra
-  | "internal" // Khusus verifikator & admin Internal ATR/BPN
+  | "all" // Dapat diakses oleh semua pengguna (Mitra & Internal)
+  | "mitra" // Khusus pengguna portal Mitra
+  | "internal"; // Khusus verifikator & admin Internal ATR/BPN
 ```
 
 ### 8. SSOT Basis IGT Spasial (`IgtBasisType`)
+
 ```typescript
 export type IgtBasisType = "bidang" | "kawasan";
 ```
+
 > [!IMPORTANT]
 > Properti `spatialBasis` telah didegradasi / dihapus total (clean break) dan digantikan secara standar dengan `igtBasis: "bidang" | "kawasan"`.
-

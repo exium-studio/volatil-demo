@@ -21,6 +21,8 @@ export const RoleFilterSelect = (props: RoleFilterSelectProps) => {
     w = "140px",
     disabled = false,
     clearable = false,
+    isLoading = false,
+    isFetching = false,
   } = props;
 
   return (
@@ -33,6 +35,8 @@ export const RoleFilterSelect = (props: RoleFilterSelectProps) => {
       w={w}
       disabled={disabled}
       clearable={clearable}
+      isLoading={isLoading}
+      isFetching={isFetching}
     />
   );
 };

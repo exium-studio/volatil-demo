@@ -22,6 +22,8 @@ export const StatusFilterSelect = (props: StatusFilterSelectProps) => {
     w = "160px",
     disabled = false,
     clearable = false,
+    isLoading = false,
+    isFetching = false,
   } = props;
 
   return (
@@ -34,6 +36,8 @@ export const StatusFilterSelect = (props: StatusFilterSelectProps) => {
       w={w}
       disabled={disabled}
       clearable={clearable}
+      isLoading={isLoading}
+      isFetching={isFetching}
     />
   );
 };

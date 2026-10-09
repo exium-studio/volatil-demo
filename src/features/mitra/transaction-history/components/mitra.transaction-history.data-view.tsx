@@ -115,7 +115,7 @@ export const TransactionHistoryDataView = () => {
         const effectiveOrderStatus: OrderStatus | undefined =
           item.transactionStatus === "expired" &&
           (!item.orderStatus || item.orderStatus === "pending_payment")
-            ? "rejected"
+            ? "expired"
             : item.orderStatus;
 
         return {

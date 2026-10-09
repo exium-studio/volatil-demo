@@ -121,7 +121,7 @@ export const TransactionDetailModalContent = (
   const effectiveOrderStatus: OrderStatus | undefined =
     transaction.transactionStatus === "expired" &&
     (!transaction.orderStatus || transaction.orderStatus === "pending_payment")
-      ? "rejected"
+      ? "expired"
       : transaction.orderStatus;
 
   const timelineSteps = useMemo(() => {
@@ -187,9 +187,7 @@ export const TransactionDetailModalContent = (
             : isPendingReview
               ? ORDER_STATUS_MAP.pending_review.label
               : isRejected
-                ? isExpired
-                  ? "Dibatalkan otomatis (kedaluwarsa)"
-                  : "Pesanan ditolak oleh admin"
+                ? "Pesanan ditolak oleh admin"
                 : isPaid
                   ? "Menunggu validasi admin"
                   : "Diproses setelah pembayaran",

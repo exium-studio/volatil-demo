@@ -94,7 +94,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       { th: "WMS URL (Interop)", sortable: false },
       { th: "No. Transaksi / Pesanan", sortable: true },
       { th: "Jumlah Layer", sortable: true, align: "center" },
-      { th: "Status Order", sortable: true },
+      { th: "Status Pesanan", sortable: true },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },

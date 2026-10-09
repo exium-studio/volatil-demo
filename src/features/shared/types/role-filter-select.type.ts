@@ -12,4 +12,6 @@ export type RoleFilterSelectProps = {
   w?: string | number;
   disabled?: boolean;
   clearable?: boolean;
+  isLoading?: boolean;
+  isFetching?: boolean;
 };

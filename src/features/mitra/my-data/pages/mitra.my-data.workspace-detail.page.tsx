@@ -179,7 +179,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT (Label)", sortable: true },
       { th: "Basis IGT", sortable: true },
-      { th: "Status Order", sortable: true },
+      { th: "Status Pesanan", sortable: true },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },

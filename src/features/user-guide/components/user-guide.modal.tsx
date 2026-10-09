@@ -231,27 +231,26 @@ const UserGuideModalContent = (props: {
                     <VStack gap={"xs"}>
                       {/* Header: Title + Category + Version */}
                       <HStack
-                        justify={"space-between"}
-                        align={"start"}
-                        gap={"sm"}
                         wrap={"wrap"}
+                        gap={"xs"}
+                        align={"center"}
+                        flex={1}
+                        minW={0}
                       >
-                        <HStack gap={"xs"} align={"center"} flex={1} minW={0}>
-                          <ClampedP fontWeight={"semibold"} lineClamp={1}>
-                            {guide.title}
-                          </ClampedP>
+                        <ClampedP fontWeight={"semibold"} lineClamp={1}>
+                          {guide.title}
+                        </ClampedP>
 
-                          <P fontSize={"sm"} color={"fg.muted"}>
-                            {guide.version}
-                          </P>
+                        <P fontSize={"sm"} color={"fg.muted"}>
+                          {guide.version}
+                        </P>
 
-                          <Badge
-                            variant={"subtle"}
-                            colorPalette={catMeta.colorPalette}
-                          >
-                            {catMeta.label}
-                          </Badge>
-                        </HStack>
+                        <Badge
+                          variant={"subtle"}
+                          colorPalette={catMeta.colorPalette}
+                        >
+                          {catMeta.label}
+                        </Badge>
                       </HStack>
 
                       {/* Description */}

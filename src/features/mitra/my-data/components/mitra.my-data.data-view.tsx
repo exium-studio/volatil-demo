@@ -139,7 +139,7 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "Layer IGT (Label)", sortable: true },
       { th: "WMS URL", sortable: false },
       { th: "Basis IGT", sortable: true },
-      { th: "Status Order", sortable: true },
+      { th: "Status Pesanan", sortable: true },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
@@ -477,4 +477,3 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     </VStack>
   );
 };
-

@@ -1,6 +1,7 @@
 // src/design-system/components/input/ui/focus-select.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
 import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
@@ -254,8 +255,13 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         )}
 
         <HStack gap={"sm"} flex={1} minW={0} justify={"start"}>
-          {isFetchingLoading ? (
-            <Skeleton h={"16px"} w={"120px"} />
+          {isFetchingLoading && !currentValue ? (
+            <Skeleton
+              h={"16px"}
+              w={"120px"}
+              bg={"bg.subtle"}
+              display={"inline-block"}
+            />
           ) : (
             <>
               {renderStartElement(
@@ -288,7 +294,9 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           justify={"center"}
           pointerEvents={"auto"}
         >
-          {clearable && currentValue && !disabled ? (
+          {isFetchingLoading ? (
+            <Loader size={"xs"} color={"fg.subtle"} />
+          ) : clearable && currentValue && !disabled ? (
             <AppIcon
               icon={XIcon}
               size={iconSize}

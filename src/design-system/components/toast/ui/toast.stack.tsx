@@ -111,6 +111,7 @@ export function ToastStack<TItem>({
             <IconButton
               size={"2xs"}
               variant={"blend"}
+              rounded={"full"}
               onClick={(event) => {
                 event.stopPropagation();
                 setExpanded(false);
@@ -124,6 +125,7 @@ export function ToastStack<TItem>({
           <IconButton
             size={"2xs"}
             variant={"blend"}
+            rounded={"full"}
             onClick={(event) => {
               event.stopPropagation();
               setExpanded(false);
