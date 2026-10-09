@@ -345,7 +345,12 @@ export const MitraDataRequestSpatialSummary = memo(
 
         {/* Limit Warning Notice */}
         {(!isBidangValid || !isKawasanValid) && (
-          <Alert.Root status={"error"} colorPalette={"red"} variant={"subtle"} mt={1}>
+          <Alert.Root
+            status={"error"}
+            colorPalette={"red"}
+            variant={"subtle"}
+            mt={1}
+          >
             <AppIcon icon={ShieldAlertIcon} />
             <Alert.Description>
               <VStack align={"start"} gap={"2xs"} fontSize={"xs"}>
