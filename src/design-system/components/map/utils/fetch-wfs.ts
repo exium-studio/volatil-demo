@@ -12,7 +12,6 @@ import {
   normalizeApiUrl,
 } from "@/shared/utils/url/url.utils";
 
-
 export const buildWfsUrl = (
   {
     typeName,
@@ -96,8 +95,6 @@ export const buildWfsUrl = (
   return url;
 };
 
-
-
 const normalizeTotalFeatures = (
   raw: RawGeoServerResponse,
   version: WfsVersion,
@@ -173,6 +170,29 @@ export const getLayerGeometryColumnName = async (
 
 // -------------------------------------------------------------------------------------
 
+/**
+ * Executes a WFS GetFeature request via POST (application/x-www-form-urlencoded).
+ * Used when the GET URL exceeds browser/server URL length limits (HTTP 414).
+ * GeoServer supports WFS POST natively per the OGC WFS specification.
+ */
+const fetchWfsPost = async (
+  params: FetchWfsParams,
+  includeStartIndex = true,
+): Promise<Response> => {
+  const url = buildWfsUrl(params, includeStartIndex);
+
+  // Extract base endpoint (strip all query params — they go into POST body)
+  const baseUrl = `${url.origin}${url.pathname}`;
+  const body = url.searchParams.toString();
+
+  return fetch(baseUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+    signal: params.signal,
+  });
+};
+
 /** Fetches features from a WFS endpoint as GeoJSON with automatic GeoServer NPE and adaptive column fallback. */
 export const fetchWfs = async (
   params: FetchWfsParams,
@@ -181,10 +201,14 @@ export const fetchWfs = async (
 
   let url = buildWfsUrl(params, true);
   let res: Response;
+
+  // Use POST when URL is too long to avoid HTTP 414
+  const usePost = url.toString().length > 2000;
+
   try {
-    res = await fetch(url.toString(), {
-      signal,
-    });
+    res = usePost
+      ? await fetchWfsPost(params, true)
+      : await fetch(url.toString(), { signal });
   } catch (err: unknown) {
     if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
       throw err;
@@ -199,6 +223,18 @@ export const fetchWfs = async (
     throw err;
   }
 
+  // Retry as POST if server returned 414 URI Too Long
+  if (res.status === 414) {
+    try {
+      res = await fetchWfsPost(params, true);
+    } catch (err: unknown) {
+      if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
+        throw err;
+      }
+      throw err;
+    }
+  }
+
   // If server throws 400 Bad Request due to GeoServer startIndex NullPointerException bug, retry without startIndex
   if (!res.ok && res.status === 400 && startIndex > 0) {
     console.warn(
@@ -206,9 +242,9 @@ export const fetchWfs = async (
     );
     url = buildWfsUrl({ ...params, maxFeatures: undefined }, false);
     try {
-      res = await fetch(url.toString(), {
-        signal,
-      });
+      res = usePost
+        ? await fetchWfsPost({ ...params, maxFeatures: undefined }, false)
+        : await fetch(url.toString(), { signal });
     } catch (err: unknown) {
       if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
         throw err;
@@ -240,15 +276,23 @@ export const fetchWfs = async (
     }
 
     if (adaptedFilter !== params.cqlFilter) {
-      url = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
-      res = await fetch(url.toString(), { signal });
+      const adaptedParams = { ...params, cqlFilter: adaptedFilter };
+      url = buildWfsUrl(adaptedParams, true);
+      res =
+        usePost || url.toString().length > 2000
+          ? await fetchWfsPost(adaptedParams, true)
+          : await fetch(url.toString(), { signal });
     } else {
       // Fallback swap if discovered name is the same as current
       const fallbackFilter = /\bthe_geom\b/i.test(params.cqlFilter)
         ? params.cqlFilter.replace(/\bthe_geom\b/gi, "geom")
         : params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
-      url = buildWfsUrl({ ...params, cqlFilter: fallbackFilter }, true);
-      res = await fetch(url.toString(), { signal });
+      const fallbackParams = { ...params, cqlFilter: fallbackFilter };
+      url = buildWfsUrl(fallbackParams, true);
+      res =
+        usePost || url.toString().length > 2000
+          ? await fetchWfsPost(fallbackParams, true)
+          : await fetch(url.toString(), { signal });
     }
   }
 
@@ -294,11 +338,12 @@ export const fetchWfs = async (
           : params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
       }
 
-      const retryUrl = buildWfsUrl(
-        { ...params, cqlFilter: adaptedFilter },
-        true,
-      );
-      const retryRes = await fetch(retryUrl.toString(), { signal });
+      const retryParams = { ...params, cqlFilter: adaptedFilter };
+      const retryUrl = buildWfsUrl(retryParams, true);
+      const retryRes =
+        usePost || retryUrl.toString().length > 2000
+          ? await fetchWfsPost(retryParams, true)
+          : await fetch(retryUrl.toString(), { signal });
       if (retryRes.ok) {
         text = await retryRes.text();
         trimmedText = text.trim();
@@ -363,4 +408,3 @@ export const fetchWfs = async (
     totalFeatures: total,
   };
 };
-

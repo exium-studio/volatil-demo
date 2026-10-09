@@ -1,5 +1,6 @@
 // src/features/mitra/data-request/components/mitra.data-request.spatial-summary.tsx
 
+import { IconButton } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
@@ -9,13 +10,14 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestSpatialSummaryProps } from "@/features/mitra/data-request/types/mitra.data-request.spatial-summary.type";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { ShieldAlertIcon } from "lucide-react";
+import { FocusIcon, ShieldAlertIcon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraDataRequestSpatialSummary = memo(
@@ -41,6 +43,8 @@ export const MitraDataRequestSpatialSummary = memo(
       isFetchingBidang = false,
       onToggleCoverageVisible,
       onToggleBidangVisible,
+      onFlyToCoverage,
+      onFlyToBidang,
     } = props;
 
     // Stores
@@ -204,22 +208,36 @@ export const MitraDataRequestSpatialSummary = memo(
         {/* Toggle Selected Layer Bidang */}
         {totalBidangCount > 0 && onToggleBidangVisible && (
           <HStack justify={"space-between"} align={"center"}>
-            <HStack gap={"xs"} align={"center"}>
+            <HStack align={"center"} gap={"xs"}>
               <P>{"Tampilkan Cakupan Bidang"}</P>
 
               {isFetchingBidang && <Loader size={"xs"} />}
             </HStack>
 
-            <Switch
-              checked={isBidangVisible}
-              disabled={isFetchingBidang}
-              onCheckedChange={onToggleBidangVisible}
-              tooltip={
-                isBidangVisible
-                  ? "Sembunyikan Cakupan Bidang"
-                  : "Tampilkan Cakupan Bidang"
-              }
-            />
+            <HStack align={"center"} gap={"xs"}>
+              {onFlyToBidang && (
+                <Tooltip content={"Zoom ke Cakupan Bidang"}>
+                  <IconButton
+                    variant={"ghost"}
+                    onClick={onFlyToBidang}
+                    aria-label={"Zoom ke Cakupan Bidang"}
+                  >
+                    <AppIcon icon={FocusIcon} />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              <Switch
+                checked={isBidangVisible}
+                disabled={isFetchingBidang}
+                onCheckedChange={onToggleBidangVisible}
+                tooltip={
+                  isBidangVisible
+                    ? "Sembunyikan Cakupan Bidang"
+                    : "Tampilkan Cakupan Bidang"
+                }
+              />
+            </HStack>
           </HStack>
         )}
 
@@ -230,15 +248,29 @@ export const MitraDataRequestSpatialSummary = memo(
               <P>{"Tampilkan Cakupan Kawasan"}</P>
             </HStack>
 
-            <Switch
-              checked={isCoverageVisible}
-              onCheckedChange={onToggleCoverageVisible}
-              tooltip={
-                isCoverageVisible
-                  ? "Sembunyikan Cakupan Kawasan"
-                  : "Tampilkan Cakupan Kawasan"
-              }
-            />
+            <HStack gap={"xs"} align={"center"}>
+              {onFlyToCoverage && (
+                <Tooltip content={"Zoom ke Cakupan Kawasan"}>
+                  <IconButton
+                    variant={"ghost"}
+                    onClick={onFlyToCoverage}
+                    aria-label={"Zoom ke Cakupan Kawasan"}
+                  >
+                    <AppIcon icon={FocusIcon} />
+                  </IconButton>
+                </Tooltip>
+              )}
+
+              <Switch
+                checked={isCoverageVisible}
+                onCheckedChange={onToggleCoverageVisible}
+                tooltip={
+                  isCoverageVisible
+                    ? "Sembunyikan Cakupan Kawasan"
+                    : "Tampilkan Cakupan Kawasan"
+                }
+              />
+            </HStack>
           </HStack>
         )}
 

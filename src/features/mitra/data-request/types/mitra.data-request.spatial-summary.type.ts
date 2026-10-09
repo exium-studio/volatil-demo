@@ -36,4 +36,6 @@ export type MitraDataRequestSpatialSummaryProps = {
   onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
   onFlyToCoverage?: () => void;
+  onFlyToBidang?: () => void;
 };
+

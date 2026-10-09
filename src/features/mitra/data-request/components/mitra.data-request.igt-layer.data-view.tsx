@@ -38,6 +38,7 @@ import type {
 } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { to2DGeometry } from "@/design-system/components/map/utils/geometry";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -175,14 +176,16 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const effectiveAoiPolygon = useMemo(() => {
       if (propAoiPolygon) return propAoiPolygon;
       if (showFilter) {
-        return cachedBoundary || adminBoundaryQuery.aoiPolygon || null;
+        if (adminBoundaryQuery.isLoading) return null;
+        return adminBoundaryQuery.aoiPolygon || cachedBoundary || null;
       }
       return null;
     }, [
       propAoiPolygon,
       showFilter,
-      cachedBoundary,
+      adminBoundaryQuery.isLoading,
       adminBoundaryQuery.aoiPolygon,
+      cachedBoundary,
     ]);
 
     // Pure AOI spatial CQL filter: INTERSECTS(geom, POLYGON(...)) across all tabs
@@ -574,8 +577,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       calculationResult?.policy?.minimumBidangCount ??
       pricingPolicy.minBidangCount;
     const minKawasanHa =
-      calculationResult?.policy?.minimumKawasanHa ??
-      pricingPolicy.minKawasanHa;
+      calculationResult?.policy?.minimumKawasanHa ?? pricingPolicy.minKawasanHa;
 
     const isBidangBelowMin =
       totalBidangCount > 0 &&
@@ -691,9 +693,17 @@ export const MitraDataRequestIgtLayerDataView = memo(
       >
         <VStack flex={1} w={"full"} overflowY={"auto"}>
           {/* Spatial Calculation Summary Box */}
-          {effectiveAoiPolygon && (
+          {(Boolean(effectiveAoiPolygon) ||
+            adminBoundaryQuery.isLoading ||
+            isCalculating) && (
             <Box p={"md"} bg={"bg.body"} w={"full"} flexShrink={0}>
               <MitraDataRequestSpatialSummary
+                isCalculating={adminBoundaryQuery.isLoading || isCalculating}
+                progressMessage={
+                  adminBoundaryQuery.isLoading
+                    ? "Memuat batas wilayah administrasi..."
+                    : undefined
+                }
                 totalBidangCount={totalBidangCount}
                 totalKawasanAreaHa={calculationResult?.totalKawasanAreaHa ?? 0}
                 subtotalBidangPrice={
@@ -726,9 +736,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 isPurchaseLimitValid={isPurchaseLimitValid}
                 purchaseLimitMessage={purchaseLimitMessage}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
-                hasBidangLayer={
-                  bidangLayers.length > 0 || totalBidangCount > 0
-                }
+                hasBidangLayer={bidangLayers.length > 0 || totalBidangCount > 0}
                 hasKawasanLayer={
                   kawasanLayers.length > 0 || totalKawasanAreaHa > 0
                 }
@@ -754,6 +762,23 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     setIsCatalogBidangVisible(!isCatalogBidangVisible);
                   }
                 }}
+                onFlyToCoverage={() => {
+                  if (map && calculationResult?.coveragePolygon) {
+                    flyToCartGeometry(map, calculationResult.coveragePolygon);
+                  }
+                }}
+                onFlyToBidang={() => {
+                  if (
+                    map &&
+                    bidangQueryResult.features &&
+                    bidangQueryResult.features.features.length > 0
+                  ) {
+                    highlightFeatureOnMap(map, bidangQueryResult.features, {
+                      fitCamera: true,
+                      zoom: 16,
+                    });
+                  }
+                }}
               />
             </Box>
           )}
@@ -762,7 +787,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
           {/* Actions Header: Search Bar & Basis IGT Filter */}
           <ActionHeaderScrollContainer
-            wrap={"wrap"}
             align={"center"}
             justify={"space-between"}
             gap={"sm"}
@@ -772,7 +796,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             flexShrink={0}
           >
             {/* Left: Search Bar */}
-            <HStack gap={"sm"} flex={1} maxW={"full"}>
+            <HStack gap={"sm"} flex={1} minW={"220px"}>
               <SearchInput
                 placeholder={"Cari nama / layer IGT"}
                 value={searchRaw}
